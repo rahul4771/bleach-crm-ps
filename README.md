@@ -11,7 +11,14 @@ These instructions will get you a copy of the project up and running on your loc
 What things you need to install the software and how to install them
 
 ```
-Give examples
+$Operating System Ubuntu 18.04
+$Install Python 3.5
+ sudo apt update
+ sudo apt install software-properties-common
+ sudo apt install python3.5
+$Install Git(version controll)
+ sudo apt-get install git 
+$Text Editor Sublime 
 ```
 
 ### Installing
@@ -21,8 +28,56 @@ A step by step series of examples that tell you how to get a development env run
 Say what the step will be
 
 ```
-Give the example
+
+$Install and Create Virtual Environment
+	pip install virtualenv
+	virtualenv my_name
+$Activate virtual Environment 
+    cd to my_name path
+    ./bin/activate
+$Clone the Project
+ git clone https://gitlab.com/crm-ps/bleach-crm-ps.git    
+$pip install -r requirements.txt 
+$Copy local_settings to bleach_crm_ps folder
+$python3 manage.py makemigrations
+$python3 manage.py migrate
+$python3 manage.py runserver 
 ```
+
+### local_settings.py
+Copy local_settings.py to bleach_crm_ps Folder
+
+```
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+debug=True
+
+allowed_hosts=['127.0.0.1','localhost'] 
+
+secret_key='<your_secret_key>'
+
+databases={
+
+'default': {
+
+    'ENGINE': 'django.db.backends.sqlite3',
+
+    'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+
+    }
+
+}
+
+
+static_root='/home/django/static/'
+
+media_root= '/home/django/media/'
+
+
+```
+
 
 ## Deployment
 
@@ -37,7 +92,9 @@ Give examples
 What are the basic building tools for the project
 
 ```
-Give examples
+$Python 3.5
+$Django 1.11
+$sqlite3
 ```
 
 ## Versioning
@@ -48,7 +105,7 @@ CRM-PS Version 1.0
 ## Authors
 
 Owner        :   vinayak.muralidharan@bleach-kw.com
-Developers   :   ansabm
+Developers   :   ansab m
 
 
 ## License
