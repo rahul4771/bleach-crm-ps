@@ -25,5 +25,4 @@ admin.site.register(EvaluationDetails,EvaluationDetailsAdmin)
 admin.site.register(EvaluationMedia,EvaluationMediaAdmin)
 
 #Django Panel Customisation
-admin.site.site_header = "Bleach Administration"
-admin.site.site_title  = "Bleach Kuwait"
+admin.site.site_header = "Bleach Kuwait"

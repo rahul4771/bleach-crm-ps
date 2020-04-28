@@ -39,6 +39,8 @@ MEDIA_CHOICES = (
 	('AUDIO','AUDIO')
 	)
 
+#Store the Order Details.DownPayment,Subscription and Direct Cleaning Comes Under a Single Order
+
 class Order(models.Model):
 	evaluation 		= models.ForeignKey(Evaluation,blank=False,null=False)
 	order_no   		= models.CharField(max_length=20,blank=False,null=False)
@@ -57,7 +59,7 @@ class Order(models.Model):
 		return self.order_no
 
 
-
+#Devide an Order into a number of Schedules.This is to handle multiple days cleaning,multiple address cleaning Subscription Cleaning etc...
 
 class OrderScheduler(models.Model):
 	order 			= models.ForeignKey('Order',blank=False,null=False)
@@ -73,8 +75,7 @@ class OrderScheduler(models.Model):
 	def __str__(self):
 		return self.order.order_no
 
-
-
+#If the Customer is not Satisfied and reported a complaint. An Investigation team is assigned for Investigation
 
 class Investigation(models.Model):
 	order 				 = models.ForeignKey('Order',blank=False,null=False)
@@ -95,7 +96,7 @@ class Investigation(models.Model):
 		return self.order.order_no
 
 
-
+#For Tracking Medias Uploaded by Investigator on Site
 
 class InvestigationMedia(models.Model):
 	investigation 			 = models.ForeignKey('Investigation',blank=False,null=False)
@@ -109,7 +110,7 @@ class InvestigationMedia(models.Model):
 	def __str__(self):
 		return self.investigation.order.order_no
 
-
+#Followup details for followup order.Followup granded by Investigator
 
 class FollowUp(models.Model): 
 	order 			= models.ForeignKey('Order',blank=False,null=False)
@@ -125,6 +126,7 @@ class FollowUp(models.Model):
 	def __str__(self):
 		return self.order.order_no
 
+#Devide an Followup into a number of Schedules.This is to handle multiple days cleaning,multiple address cleaning Subscription Cleaning etc...
 
 
 class FollowUpScheduler(models.Model):
@@ -141,6 +143,8 @@ class FollowUpScheduler(models.Model):
 	def __str__(self):
 		return self.order.order_no
 
+#Questions asked by Agent to Customer, after cleaning.
+
 class Question(models.Model):
 	question 			= models.CharField(max_length=500,blank=False,null=False)
 	is_active          	= models.BooleanField(null=False,blank=True,default=True)
@@ -152,6 +156,8 @@ class Question(models.Model):
 
 	def __str__(self):
 		return self.question
+
+#Storing Feedback of Customer, after cleaning
 
 class FeedBack(models.Model):
 	order 				= models.ForeignKey('Order',blank=False,null=False)

@@ -13,6 +13,7 @@ MEDIA_CHOICES = (
 	('AUDIO','AUDIO') 
 	)
 
+#Cleaning team for different Order Schedules
 
 class CleaningTeam(models.Model):
 	order_scheduler = models.ForeignKey(OrderScheduler,blank=True,null=True)
@@ -31,6 +32,8 @@ class CleaningTeam(models.Model):
 	def __str__(self):
 		return self.order_scheduler.order
 
+#For Tracking Medias Uploaded by Team Leader on Site
+
 class CleaningTeamMedia(models.Model):
 	team 					 = models.ForeignKey('CleaningTeam',blank=False,null=False)
 	media                    = models.FileField(upload_to='cleaning/',blank=True,null=True)
@@ -46,6 +49,7 @@ class CleaningTeamMedia(models.Model):
 	def __str__(self):
 		return self.team.name
 
+#Tasks assigned to Cleaning Team
 
 class CleaningTeamTask(models.Model):
 	cleaning_team 			 = models.ForeignKey('CleaningTeam',blank=False,null=False)
@@ -62,7 +66,7 @@ class CleaningTeamTask(models.Model):
 	def __str__(self):
 		return self.cleaning_team.name
 
-
+#To Save Cleaning Team Members Details
 
 class CleaningTeamMember(models.Model):
 	team 			= models.ForeignKey('CleaningTeam',blank=False,null=False)
@@ -76,6 +80,8 @@ class CleaningTeamMember(models.Model):
 
 	def __str__(self):
 		return self.team.order_scheduler.order
+
+#Followup team for different Followup Schedules
 
 class FollowUpTeam(models.Model):
 	followup_scheduler = models.ForeignKey(FollowUpScheduler,blank=True,null=True)
@@ -94,20 +100,7 @@ class FollowUpTeam(models.Model):
 	def __str__(self):
 		return self.followup_scheduler.follow_up.order
 
-class FollowUpTeamTask(models.Model):
-	followup_team 			 = models.ForeignKey('FollowUpTeam',blank=False,null=False)
-	discription 			 = models.CharField(max_length=500,blank=True,null=True)
-	is_completed     		 = models.BooleanField(null=False,blank=True,default=False)
-	start_time 				 = models.DateTimeField(blank=True,null=True)
-	end_time                 = models.DateTimeField(blank=True,null=True)
-	is_active          = models.BooleanField(null=False,blank=True,default=True)
-	created            = models.DateTimeField(auto_now_add=True)
-	updated            = models.DateTimeField(auto_now=True)
-	def __unicode__(self):
-		return str(self.followup_team.name)
-
-	def __str__(self):
-		return self.followup_team.name
+#For Tracking Medias Uploaded by Followup Team Leader on Site
 
 class FollowUpTeamMedia(models.Model):
 	team 					 = models.ForeignKey('FollowUpTeam',blank=False,null=False)
@@ -124,6 +117,25 @@ class FollowUpTeamMedia(models.Model):
 	def __str__(self):
 		return self.team.name
 
+#Tasks assigned to Followup Team
+
+class FollowUpTeamTask(models.Model):
+	followup_team 			 = models.ForeignKey('FollowUpTeam',blank=False,null=False)
+	discription 			 = models.CharField(max_length=500,blank=True,null=True)
+	is_completed     		 = models.BooleanField(null=False,blank=True,default=False)
+	start_time 				 = models.DateTimeField(blank=True,null=True)
+	end_time                 = models.DateTimeField(blank=True,null=True)
+	is_active          = models.BooleanField(null=False,blank=True,default=True)
+	created            = models.DateTimeField(auto_now_add=True)
+	updated            = models.DateTimeField(auto_now=True)
+	def __unicode__(self):
+		return str(self.followup_team.name)
+
+	def __str__(self):
+		return self.followup_team.name
+
+
+#To Save Followup Team Members Details
 
 class FollowUpTeamMember(models.Model):
 	team 			= models.ForeignKey('FollowUpTeam',blank=False,null=False)

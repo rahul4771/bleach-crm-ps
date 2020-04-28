@@ -10,6 +10,7 @@ PAYMENT_MODE_CHOICES = (
 	)
 
 
+#Invoice Details of Each Order
 
 class Invoice(models.Model):
 	invoice_number               = models.CharField(max_length=30,blank=False,null=False)
@@ -34,6 +35,8 @@ class Invoice(models.Model):
 
 	def __str__(self):
 		return self.invoice_number
+
+#Payment History of Customers...There may be multiple payment history for single order(in case of subscription,down payment)
 
 class PaymentHistory(models.Model):
 	invoice 					 = models.ForeignKey(Invoice,blank=False,null=False,related_name='payment_history_invoice')
