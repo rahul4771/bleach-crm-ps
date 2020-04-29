@@ -1,0 +1,45 @@
+/* message_wrapper */
+.message_wrapper {
+   width: 640px;
+    text-align: center;
+    z-index: 999;
+    position: fixed;
+    top: 35px;
+    margin: 0 auto;
+    left: 0;
+    right: 0;}
+.message_wrapper .message_common {
+  border-radius: 5px;
+  background: #fff;
+  border: 1px solid #f7f2f2;}
+.message_common.success .fa-exclamation-triangle,
+.message_common.error .fa-check {
+  display: none;} 
+.message_wrapper .message_common .fa-times {
+  cursor: pointer;
+  color: #ff2626;
+  padding: 10px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: #fff;
+  border: 1px solid #ffabab;
+  border-top-right-radius: 7px;}
+/*
+.message_wrapper .message_common .fa-times:not() {
+    color: #ff3c3c;}*/
+.message_wrapper .message_common h3 {
+    font-size: 17px;
+    padding: 15px 10px;}
+.message_wrapper .message_common h3 .fa {
+  margin-right: 8px;
+  font-size: 20px;} 
+/**/  
+.message_common.error {
+  color: #e67eb7;}
+.message_common.success {
+  color: #8a8a8a;}     
+@media screen and (max-width: 767px) {
+.message_wrapper {
+  width: 90%;}
+}    

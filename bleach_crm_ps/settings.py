@@ -111,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Asia/Qatar'
+TIME_ZONE = 'Asia/Kuwait'
 
 USE_I18N = True
 
@@ -142,4 +142,4 @@ EMAIL_PORT = 587
 
 LOGIN_URL='home'
 LOGOUT_URL = 'logout'
-LOGOUT_REDIRECT_URL= 'home'
+LOGOUT_REDIRECT_URL= 'login'

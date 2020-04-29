@@ -1,0 +1,37 @@
+{% load static %}
+{% block xtra_css %}
+<link href="{% static 'files/css/message_wrapper.css' %}?v=1" rel="stylesheet" type="text/css" /> 
+{% endblock %}
+    {% if messages %}
+	{% for message in messages %}
+	{% if forloop.counter0 == 0 %}
+    <div class="message_wrapper">
+        <div class="message_common {{ message.tags }}">
+		 <i class="fa fa-times" aria-hidden="true" onclick="close_message();" title="Close"></i>
+         <h3>
+		 <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+		 <i class="fa fa-check" aria-hidden="true"></i>
+		 {% autoescape off %}{{ message }}{% endautoescape %}</h3>
+        </div>
+	</div>
+	{% endif %}
+	{% endfor %}
+    <script>
+    function close_message()
+        {
+		$('.message_wrapper').hide();
+        }
+	$(window).ready(function(){
+         $('.message_wrapper').addClass('display_class');
+         AutoCloseDialogBox(3000);
+            return false;
+     }); 
+     function AutoCloseDialogBox(WaitSeconds) {
+            //Auto Close Dialog Box after few seconds
+            setTimeout(
+                function () {
+                    $(".message_wrapper").hide();
+                }, WaitSeconds);
+        }
+    </script>
+    {% endif %}

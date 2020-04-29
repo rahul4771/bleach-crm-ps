@@ -65,6 +65,7 @@ class OrderScheduler(models.Model):
 	order 			= models.ForeignKey('Order',blank=False,null=False)
 	#cleaning_type & other details
 	customer_address= models.ForeignKey(Address,blank=True,null=True)
+	is_confirmed	= models.BooleanField(null=False,blank=True,default=False)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
@@ -133,6 +134,7 @@ class FollowUpScheduler(models.Model):
 	follow_up 			= models.ForeignKey('FollowUp',blank=False,null=False)
 	#cleaning_type & other details
 	customer_address	= models.ForeignKey(Address,blank=True,null=True)
+	is_confirmed		= models.BooleanField(null=False,blank=True,default=False)
 	is_active       	= models.BooleanField(null=False,blank=True,default=True)
 	created         	= models.DateTimeField(auto_now_add=True)
 	updated         	= models.DateTimeField(auto_now=True)

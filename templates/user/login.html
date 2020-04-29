@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="kw-login-full-wrapper"><!--kw-login-full-wrapper-->
+ 
+<div class="kw-login-midwrapper shadow-effect"><!--kw-login-midwrapper fixed-->
+<div class="kw-left-area"><!--kw-left-area-->
+<img src="{% static 'files/images/logo-white.svg' %}">
+<p>Get the Deepest Clean of Fall</p>
+</div><!--kw-left-area-->
+
+<div class="kw-right-area"><!--kw-right-area-->
+<h1>Login</h1>
+<p>Enter your details below to continue</p>
+<form method="post" action="">
+{% csrf_token %}	
+<label><input name="username" type="text" class="login-username" placeholder="User Name" id="username"></label>
+<label><input name="password" type="text" class="login-password" placeholder="Password"></label>
+<p class="forgot-password"><a href="#">Forgot Password</a></p>
+<center><input name="Sign in" type="submit" value="Sign in" class="sign-in-button"></center>
+</form>
+</div><!--kw-right-area-->
+</div><!--kw-login-midwrapper fixed-->
+ 
+
+</div><!--kw-login-full-wrapper-->
+{% endblock %}
+{% block css_links %}
+ <link href="{% static 'files/css/login.css' %}?v=1" rel="stylesheet" type="text/css">
+{% endblock %}
