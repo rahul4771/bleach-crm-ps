@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate,login
 from django.contrib.auth import logout as auth_logout
 # Create your views here.
 
+#Login in Page
 class Signin(View):  
 	def get(self,request):
 		return render(request,'user/login.html',{})
@@ -20,6 +21,7 @@ class Signin(View):
 
 		return redirect('login')
 
+#Logout Page
 class logout(View):
 	def get(self,request):
 		auth_logout(request)
