@@ -94,9 +94,9 @@ Give examples
 What are the basic building tools for the project
 
 ```
-$Python 3.5
-$Django 1.11
-$sqlite3
+Python 3.5
+Django 1.11
+sqlite3
 ```
 
 ## Versioning
