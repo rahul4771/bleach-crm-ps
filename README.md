@@ -11,17 +11,17 @@ These instructions will get you a copy of the project up and running on your loc
 What things you need to install the software and how to install them
 
 ```
-$Operating System Ubuntu 18.04
-$Install Python 3.5
- sudo apt update
- sudo apt install software-properties-common
- sudo apt install python3.5
-$Install Git(version controll)
- sudo apt-get install git 
-$Text Editor Sublime 
+*Operating System Ubuntu 18.04 
+*Install Python 3.5
+    $sudo apt update
+    $sudo apt install software-properties-common
+    $sudo apt install python3.5
+*Install Git(version controll)
+    $sudo apt-get install git 
+*Text Editor Sublime 
 ```
 
-### Installing
+### Installing & Running
 
 A step by step series of examples that tell you how to get a development env running
 
@@ -29,21 +29,23 @@ Say what the step will be
 
 ```
 
-$Install and Create Virtual Environment
-	pip install virtualenv
-	virtualenv my_name
-$Activate virtual Environment 
-    cd to my_name path
-    ./bin/activate
-$Clone the Project
- git clone https://gitlab.com/crm-ps/bleach-crm-ps.git    
-$pip install -r requirements.txt 
-$Copy local_settings to bleach_crm_ps folder
-$python3 manage.py makemigrations
-$python3 manage.py migrate
-$python3 manage.py runserver
-$Create Super User
-	python3 manage.py createsuperuser 
+*Install and Create Virtual Environment
+	$pip install virtualenv
+	$virtualenv my_name
+*Activate virtual Environment 
+    $cd to my_name path
+    $./bin/activate
+*Clone the Project
+    $git clone https://gitlab.com/crm-ps/bleach-crm-ps.git    
+*Install Requirements
+    $pip install -r requirements.txt 
+*Copy local_settings to bleach_crm_ps folder
+*To Run
+    $python3 manage.py makemigrations
+    $python3 manage.py migrate
+    $python3 manage.py runserver
+*Create Super User
+	$python3 manage.py createsuperuser 
 ```
 
 ### local_settings.py
