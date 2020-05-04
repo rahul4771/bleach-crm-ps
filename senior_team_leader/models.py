@@ -21,6 +21,8 @@ class CleaningTeam(models.Model):
 	name			= models.CharField(max_length=50,blank=True,null=True)
 	start_at 		= models.DateTimeField(blank=True,null=True)
 	end_at 			= models.DateTimeField(blank=True,null=True)
+	drop_off_driver = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaningteam_drop_off')
+	pick_up_driver  = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaningteam_pick_up')
 	created_by      = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaningteam_created_by')
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)

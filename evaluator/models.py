@@ -116,11 +116,6 @@ class Evaluation(models.Model):
 	attender_notes 		= models.CharField(max_length=500,blank=True,null=True)
 	customer			= models.ForeignKey(UserProfile,blank=False,null=False,related_name='customer_evaluation')
 	
-	evaluator           = models.ForeignKey(UserProfile,blank=True,null=True,related_name='evaluator_evaluation')
-	prposed_time		= models.DateTimeField(blank=True,null=True)
-	check_in			= models.DateTimeField(blank=True,null=True)
-	check_out			= models.DateTimeField(blank=True,null=True)
-	
 	evaluator_note		= models.CharField(max_length=500,blank=True,null=True)
 	cleaning_hours		= models.FloatField(default=0,blank=True,null=True)
 	number_of_cleaners	= models.IntegerField(blank=True,null=True)
@@ -151,6 +146,11 @@ class Evaluation(models.Model):
 
 class EvaluationDetails(models.Model):
 	evaluation 			= models.ForeignKey('Evaluation',blank=True,null=True,related_name='evaluation_details')
+	evaluator           = models.ForeignKey(UserProfile,blank=True,null=True,related_name='evaluator_evaluation')
+	prposed_time		= models.DateTimeField(blank=True,null=True)
+	check_in			= models.DateTimeField(blank=True,null=True)
+	check_out			= models.DateTimeField(blank=True,null=True)
+	
 	service_type		= models.ForeignKey('ServiceType',blank=True,null=True,related_name='evaluation_details_service_type')
 	location_type		= models.ForeignKey('LocationType',blank=True,null=True,related_name='evaluation_details_location_type')
 	address 			= models.ForeignKey(Address,blank=True,null=True,related_name='evaluation_details_address')
