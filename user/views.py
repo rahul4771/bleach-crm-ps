@@ -14,7 +14,10 @@ class Signin(View):
 			
 		if user:
 			login(request, user)
-			messages.success(request, "Welcome " + user.username)			
+			messages.success(request, "Welcome " + user.username)	
+
+			if user.user_type == 'AGENT':
+				return redirect('agent:agentdash-board')		
 			
 		else:
 			messages.error(request, "Username or Password Invalid")

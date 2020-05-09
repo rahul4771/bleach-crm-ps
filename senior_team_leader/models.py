@@ -16,7 +16,7 @@ MEDIA_CHOICES = (
 #Cleaning team for different Order Schedules
 
 class CleaningTeam(models.Model):
-	order_scheduler = models.ForeignKey(OrderScheduler,blank=True,null=True)
+	order_scheduler = models.ForeignKey(OrderScheduler,blank=True,null=True,related_name='cleaning_team_order_scheduler')
 	team_leader 	= models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaningteam_team_leader')
 	name			= models.CharField(max_length=50,blank=True,null=True)
 	start_at 		= models.DateTimeField(blank=True,null=True)
@@ -32,12 +32,12 @@ class CleaningTeam(models.Model):
 		return str(self.order_scheduler.order)
 
 	def __str__(self):
-		return self.order_scheduler.order
+		return self.order_scheduler.order.order_no
 
 #For Tracking Medias Uploaded by Team Leader on Site
 
 class CleaningTeamMedia(models.Model):
-	team 					 = models.ForeignKey('CleaningTeam',blank=False,null=False)
+	team 					 = models.ForeignKey('CleaningTeam',blank=False,null=False,)
 	media                    = models.FileField(upload_to='cleaning/',blank=True,null=True)
 	media_type 				 = models.CharField(max_length=20,blank=False,null=False,choices=MEDIA_CHOICES)
 	taken_status 			 = models.CharField(max_length=20,blank=False,null=False,choices=MEDIA_TAKEN_CHOICES)
@@ -71,17 +71,17 @@ class CleaningTeamTask(models.Model):
 #To Save Cleaning Team Members Details
 
 class CleaningTeamMember(models.Model):
-	team 			= models.ForeignKey('CleaningTeam',blank=False,null=False)
-	member 			= models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaning_member')
+	team 			= models.ForeignKey('CleaningTeam',blank=False,null=False,related_name='cleaning_member_team')
+	member 			= models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaning_member_user')
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.team.order_scheduler.order)
+		return str(self.team)
 
 	def __str__(self):
-		return self.team.order_scheduler.order
+		return str(self.team.id)
 
 #Followup team for different Followup Schedules
 
@@ -147,7 +147,7 @@ class FollowUpTeamMember(models.Model):
 	updated         = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.team.followup_scheduler.follow_up.order)
+		return str(self.team)
 
 	def __str__(self):
-		return self.team.followup_scheduler.follow_up.order		
+		return self.team.id		

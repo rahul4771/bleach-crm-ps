@@ -135,4 +135,4 @@ class Address(models.Model):
         return str(self.customer.username)
 
     def __str__(self):
-        return self.custmer.username
+        return self.customer.username

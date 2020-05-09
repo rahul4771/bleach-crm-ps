@@ -8,10 +8,9 @@ GENDER_CHOICES=(
 	)
 
 
-PAYMENT_CHOICES=(
-	('ONE_TIME','ONE_TIME'),
+CLEANING_CHOICES=(
+	('ONE TIME SERVICE','ONE_TIME_SERVICE'),
 	('SUBSCRIPTION','SUBSCRIPTION'),
-	('DOWN_PAYMENT','DOWN_PAYMENT')
 	)
 
 
@@ -116,7 +115,6 @@ class Evaluation(models.Model):
 	attender_notes 		= models.CharField(max_length=500,blank=True,null=True)
 	customer			= models.ForeignKey(UserProfile,blank=False,null=False,related_name='customer_evaluation')
 	
-	evaluator_note		= models.CharField(max_length=500,blank=True,null=True)
 	cleaning_hours		= models.FloatField(default=0,blank=True,null=True)
 	number_of_cleaners	= models.IntegerField(blank=True,null=True)
 	estimated_price		= models.FloatField(blank=True,null=True)
@@ -124,11 +122,12 @@ class Evaluation(models.Model):
 	preffered_gender 	= models.CharField(max_length=20,blank=True,null=True,choices=GENDER_CHOICES)
 
 	quatation_status	= models.CharField(max_length=50,blank=True,null=True,choices=QUATATION_CHOICES)
-	payment_policy		= models.CharField(max_length=20,blank=True,null=True,choices=PAYMENT_CHOICES)
+	cleaning_policy		= models.CharField(max_length=20,blank=True,null=True,choices=CLEANING_CHOICES)
 
 	subscription_start 	= models.DateTimeField(blank=True,null=True)
 	subscription_end 	= models.DateTimeField(blank=True,null=True)
 	no_of_cleanings 	= models.IntegerField(blank=True,null=True)
+	is_downpayment		= models.BooleanField(null=False,blank=True,default=False)
 	no_of_down_payments = models.IntegerField(blank=True,null=True)
 	down_payment_deadend= models.DateTimeField(blank=True,null=True)
 
@@ -147,9 +146,10 @@ class Evaluation(models.Model):
 class EvaluationDetails(models.Model):
 	evaluation 			= models.ForeignKey('Evaluation',blank=True,null=True,related_name='evaluation_details')
 	evaluator           = models.ForeignKey(UserProfile,blank=True,null=True,related_name='evaluator_evaluation')
-	prposed_time		= models.DateTimeField(blank=True,null=True)
+	proposed_time		= models.DateTimeField(blank=True,null=True)
 	check_in			= models.DateTimeField(blank=True,null=True)
 	check_out			= models.DateTimeField(blank=True,null=True)
+	evaluator_note		= models.CharField(max_length=500,blank=True,null=True)
 	
 	service_type		= models.ForeignKey('ServiceType',blank=True,null=True,related_name='evaluation_details_service_type')
 	location_type		= models.ForeignKey('LocationType',blank=True,null=True,related_name='evaluation_details_location_type')
