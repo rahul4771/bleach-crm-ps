@@ -13,16 +13,30 @@
 <meta name="Description" content="Home - Bleach Housekeepin">
 <meta name="Keywords" content="We at Bleach always strive to meet our customers need for exceptional housecleaning and housekeeping services in their homes, apartments and offices">
 <meta name="Robots" content="index, follow">
-<title>Bleach - KW</title>
- <link href="{% static 'files/css/main.css' %}?v=1" rel="stylesheet" type="text/css">
-<link href="{% static 'files/fonts/web-fonts/web-fonts.css' %}?v=1" rel="stylesheet" type="text/css" />
-  <link href="{% static 'files/fonts/font-awesome/css/font-awesome.min.css' %}?v=1" rel="stylesheet" type="text/css" />
+<title>Bleach - KW</title> 
+<!--Common Css -->
+<link href="{% static 'files/css/main.css' %}?v=1" rel="stylesheet" type="text/css">
+<!--Common Css -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+
+<!--Bootstrap 3.3.7 -->
+<link rel='stylesheet' href="{% static 'files/plugins/bootstrap-3.3.7/css/bootstrap.min.css'%}">
+<link rel='stylesheet' href="{% static 'files/plugins/bootstrap-3.3.7/css/bootstrap-theme.min.css'%}">
+<!--Bootstrap 3.3.7 -->
+
+
+<!-- Bootstrap Datepicker -->
 <link rel="stylesheet" href="{% static 'files/plugins/bootstrap-datepicker/bootstrap-datetimepicker.min.css'  %}">
+<!-- Bootstrap Datepicker -->
+
+<!--Bootstrap Fontawesome -->
 <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>  
+<!--Bootstrap Fontawesome -->
+
+<!-- Jquery -->
 <script src="{% static 'files/js/jquery-3.3.1.min.js' %}"></script>
+<!-- Jquery -->
 {% block css_links %}
 {% endblock %}
 {% block xtra_css %}
@@ -32,13 +46,18 @@
      {% block content %}
      {% endblock %}
 
-<!--bootstrap -->
-<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
+<!--Bootstrap -->
+<script src="{% static 'files/plugins/bootstrap-3.3.7/js/bootstrap.min.js'%}"></script>
+<!--Bootstrap -->
 
- <!-- bootstrap-datepicker -->
+<!--Bootstrap Date Picker-->
  <script src="{% static  'files/plugins/bootstrap-datepicker/moment.min.js' %}" type="text/javascript"></script>
  <script src="{% static 'files/plugins/bootstrap-datepicker/bootstrap-datetimepicker.min.js' %}" type="text/javascript"></script>
+<!--Bootstrap Date Picker-->
+
+<!--Common javascript-->
 <script src="{% static 'files/js/common.js' %}"></script>
+<!--Common javascript-->
 
 <script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-157cd5b220a5c80d4ff8e0e70ac069bffd87a61252088146915e8726e5d9f147.js"></script>
 
