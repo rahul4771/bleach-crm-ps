@@ -60,18 +60,19 @@ class AgentHome(View):
 
 		#Order and Followup Schedules for date confirmation
 		try:
-			order_schedules		  = OrderScheduler.objects.filter(is_active=True).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED')))
+			order_schedules		  = OrderScheduler.objects.filter(is_active=True).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address')
 		except:
 			order_schedules		  = None
 		
 		try:
-			follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED')))
+			follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
 		except:
 			follow_up_schedules	  = None	
 
 		order_scheduler_confirmation_form    = OrderSchedulerConfirmationForm()	
 		followup_scheduler_confirmation_form = FollowUpSchedulerConfirmationForm()	
 		
+
 		#cleaning schedule & followup schedule for cleaning calendar			
 		cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
 		
@@ -81,22 +82,22 @@ class AgentHome(View):
 			schedule_date = timezone.now()
 
 		try:
-			calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__date=schedule_date.date())&Q(end_at__date=schedule_date.date()))&Q(status='CONFIRMED')))
+			calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__date=schedule_date.date())&Q(end_at__date=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address')
 		except:
 			calendar_order_schedules = None
 
 		try:
-			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__date=schedule_date.date())&Q(end_at__date=schedule_date.date()))&Q(status='CONFIRMED')))
+			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__date=schedule_date.date())&Q(end_at__date=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
 		except:
 			calendar_followup_schedules = None
 	
 		try:
-			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__date=schedule_date.date())&~Q(end_at__date=schedule_date.date()))&Q(status='CONFIRMED')))
+			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__date=schedule_date.date())&~Q(end_at__date=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address')
 		except:
 			sp_calendar_order_schedules = None
 
 		try:
-			sp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__date=schedule_date.date())&~Q(end_at__date=schedule_date.date()))&Q(status='CONFIRMED')))
+			sp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__date=schedule_date.date())&~Q(end_at__date=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
 		except:
 			sp_calendar_followup_schedules = None							
 
