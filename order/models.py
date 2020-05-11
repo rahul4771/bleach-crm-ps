@@ -186,12 +186,13 @@ class FeedBack(models.Model):
 	order 				= models.ForeignKey('Order',blank=False,null=False)
 	question			= models.ForeignKey('Question',blank=False,null=False)
 	rating				= models.FloatField(blank=True,null=True)
+	response_date		= models.DateTimeField(blank=True,null=True)
 	is_active          	= models.BooleanField(null=False,blank=True,default=True)
 	created            	= models.DateTimeField(auto_now_add=True)
 	updated            	= models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.order.order_id)
+		return str(self.order.order_no)
 
 	def __str__(self):
-		return self.order.order_id
+		return self.order.order_no

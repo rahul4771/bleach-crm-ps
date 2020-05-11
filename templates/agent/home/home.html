@@ -50,8 +50,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-rating-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Rating</h1>
-            	<h2 class="red-text"><label>Today<span>20</span></label> </h2>
-            	<p><label>This Week <span>4.2</span></label></p>
+            	<h2 class="red-text"><label>Today<span>{{today_average_feedback|floatformat:1}}</span></label> </h2>
+            	<p><label>This Week <span>{{week_average_feedback|floatformat:1}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->

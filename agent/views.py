@@ -3,17 +3,17 @@ from django.views import View
 
 from django.utils import timezone 
 from datetime import timedelta,date,datetime
-from django.db.models import Q,Sum,When,Case,BooleanField,IntegerField,Value,F,Func,Count
+from django.db.models import Q,Sum,When,Case,BooleanField,IntegerField,Value,F,Func,Count,Avg
 from django.db.models import Prefetch
 
 from user.models import UserProfile
 from evaluator.models import Evaluation,EvaluationDetails
-from order.models import OrderScheduler,FollowUpScheduler
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack
 from senior_team_leader.models import CleaningTeam,FollowUpTeam
 
 from order.forms import OrderSchedulerConfirmationForm,FollowUpSchedulerConfirmationForm
 
-# Create your views here.
+# Create your views here. 
 class AgentHome(View):
 	def get(self,request):
 
@@ -44,6 +44,15 @@ class AgentHome(View):
 		today_follow_up_job_count = follow_up_job.filter(start_at__date=timezone.now().date()).count() 
 		week_follow_up_job_count  = follow_up_job.filter(start_at__gte=timezone.now().date()-timedelta(6)).count()		
 
+		#Feedback Staring
+		try:
+			feedbacks                 = FeedBack.objects.filter(is_active=True)
+		except:
+			feedbacks				  = None
+
+		today_average_feedback		  = feedbacks.filter(response_date__date=timezone.now().date()).aggregate(Avg('rating'))['rating__avg']
+		week_average_feedback		  = feedbacks.filter(response_date__gte=timezone.now().date()-timedelta(6)).aggregate(Avg('rating'))['rating__avg']	
+		
 		#Evaluation details of each evaluator for evaluation table
 		evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
 		
@@ -101,4 +110,9 @@ class AgentHome(View):
 		except:
 			sp_calendar_followup_schedules = None							
 
-		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'order_schedules':order_schedules,'follow_up_schedules':follow_up_schedules,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'schedule_date':schedule_date,'order_scheduler_confirmation_form':order_scheduler_confirmation_form,'followup_scheduler_confirmation_form':followup_scheduler_confirmation_form,})
+		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_average_feedback':today_average_feedback,'week_average_feedback':week_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'order_schedules':order_schedules,'follow_up_schedules':follow_up_schedules,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'schedule_date':schedule_date,'order_scheduler_confirmation_form':order_scheduler_confirmation_form,'followup_scheduler_confirmation_form':followup_scheduler_confirmation_form,})
+
+
+class ResourceManagement(View):
+	def get(self,request):
+		return render(request,'agent/resource/resource_management.html',{})		

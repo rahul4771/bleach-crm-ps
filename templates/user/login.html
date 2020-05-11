@@ -12,7 +12,7 @@
 <div class="kw-right-area"><!--kw-right-area-->
 <h1>Login</h1>
 <p>Enter your details below to continue</p>
-<form method="post" action="">
+<form method="post" action="{% url 'login' %}">
 {% csrf_token %}	
 <label><input name="username" type="text" class="login-username" placeholder="User Name" id="username"></label>
 <label><input name="password" type="text" class="login-password" placeholder="Password"></label>
