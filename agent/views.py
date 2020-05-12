@@ -1,17 +1,20 @@
 from django.shortcuts import render
 from django.views import View
 
+from django.conf import settings
 from django.utils import timezone 
 from datetime import timedelta,date,datetime
-from django.db.models import Q,Sum,When,Case,BooleanField,IntegerField,Value,F,Func,Count,Avg
+from django.db.models import Q,Sum,When,Case,BooleanField,IntegerField,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField
 from django.db.models import Prefetch
 
 from user.models import UserProfile
 from evaluator.models import Evaluation,EvaluationDetails
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack
-from senior_team_leader.models import CleaningTeam,FollowUpTeam
+from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember
 
 from order.forms import OrderSchedulerConfirmationForm,FollowUpSchedulerConfirmationForm
+
+from tzlocal import get_localzone
 
 # Create your views here. 
 class AgentHome(View):
@@ -115,4 +118,67 @@ class AgentHome(View):
 
 class ResourceManagement(View):
 	def get(self,request):
-		return render(request,'agent/resource/resource_management.html',{})		
+
+		# exact_cleaning_date 				 = timezone.localtime(timezone.now())
+		# cleaning_date                        = exact_cleaning_date.replace(hour=00,minute=0,second=0,microsecond=0)
+
+		# exact_cleaning_date_tomorrow         = exact_cleaning_date+timezone.timedelta(days=1)
+		# cleaning_date_tomorrow               = exact_cleaning_date_tomorrow.replace(hour=00,minute=0,second=0,microsecond=0)
+
+		# exact_cleaning_date_for_filter_start = exact_cleaning_date+timezone.timedelta(days=-1)
+		# cleaning_date_for_filter_start       = exact_cleaning_date_for_filter.replace(hour=18,minute=30,second=0,microsecond=0)
+		# cleaning_date_for_filter_end         = .replace(hour=5,minute=30,second=0,microsecond=0)
+
+		# #cleaning_team	    = CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_member')).annotate(team_duration=Case(When(start_at__date=cleaning_date.date(),then=ExpressionWrapper(((F('end_at'))-F('start_at'))*Count('cleaning_member_team'),output_field=DurationField())),When(~Q(start_at__date=cleaning_date.date()),then=ExpressionWrapper(((cleaning_date+timedelta(days=1))-F('start_at'))*Count('cleaning_member_team'),output_field=DurationField())),default=0,output_field=DurationField()),   team_average_duration=Case(When(start_at__date=cleaning_date.date(),then=ExpressionWrapper((F('end_at')-F('start_at')),output_field=DurationField())),When(~Q(start_at__date=cleaning_date.date()),then=ExpressionWrapper((F('end_at')-F('start_at')),output_field=DurationField())),default=0,output_field=DurationField()),    team_active_cleaners=Count('cleaning_member_team'),).aggregate(total_duration=Sum(ExpressionWrapper(F('team_duration'),output_field=DurationField())),average_duration=Sum(ExpressionWrapper(F('team_average_duration'),output_field=DurationField())),active_cleaners=Sum('team_active_cleaners'))
+		
+		# cleaning_team	    = CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_member')).annotate(team_active_cleaners=Count('cleaning_member_team'),)
+		
+		# for team in cleaning_team.filter(Q(Q(start_at__gt=cleaning_date_for_filter)|Q(end_at__gt=cleaning_date_for_filter))):
+		# 	print(team)
+
+		# today_cleaning_hours = timedelta()		
+		# for team in cleaning_team:
+
+		# 	if timezone.localtime(team.end_at).date()==timezone.localtime(team.start_at).date():
+		# 		today_cleaning_hours += (timezone.localtime(team.end_at)-timezone.localtime(team.start_at))*team.team_active_cleaners
+			
+		# 	if timezone.localtime(team.end_at).date()!=timezone.localtime(team.start_at).date():
+		# 		if timezone.localtime(exact_cleaning_date).date() == timezone.localtime(team.start_at).date():
+		# 			today_cleaning_hours += (cleaning_date_tomorrow-timezone.localtime(team.start_at))*team.team_active_cleaners 
+		# 		else:
+		# 			today_cleaning_hours += (timezone.localtime(team.end_at) - cleaning_date_tomorrow)*team.team_active_cleaners	
+
+		#cleaning schedule & followup schedule for cleaning calendar			
+		workers_calendar_date	= request.GET.get('workers_calendar_date')
+		
+		try:
+			workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
+		except:
+			workers_date = timezone.now()
+
+		try:
+			workers_details = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter(Q(Q(is_active=True)&Q(Q(start_at__date=workers_date.date())|Q(end_at__date=workers_date.date())))),to_attr='cleaning_member_details'))
+		except:
+			workers_details = None
+
+		return render(request,'agent/resource/resource_management.html',{"workers_details":workers_details})		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

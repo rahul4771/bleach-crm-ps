@@ -9,7 +9,7 @@ MEDIA_TAKEN_CHOICES = (
 
 MEDIA_CHOICES = (
 	('PHOTO','PHOTO'),
-	('VIDEO','VIDEO'),
+	('VIDEO','VIDEO'), 
 	('AUDIO','AUDIO') 
 	)
 
@@ -73,6 +73,9 @@ class CleaningTeamTask(models.Model):
 class CleaningTeamMember(models.Model):
 	team 			= models.ForeignKey('CleaningTeam',blank=False,null=False,related_name='cleaning_member_team')
 	member 			= models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaning_member_user')
+	start_at 		= models.DateTimeField(blank=True,null=True)
+	end_at 			= models.DateTimeField(blank=True,null=True)
+	
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
