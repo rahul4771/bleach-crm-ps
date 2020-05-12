@@ -186,14 +186,41 @@
 <script type="text/javascript">
     $('document').ready(function(){
         {% for details in workers_details %}
-            {% if details.workers_details %}
-            
-                {% for cleaning_details in details.workers_details %}
-                    console.log(cleaning_details.start_at);
-                    console.log(cleaning_details.end_at);
+
+            {% if details.cleaning_member_details %}
+                
+                total_duration = 0
+
+                {% for cleaning_details in details.cleaning_member_details %}
+                    
+                    starting_time_string      = '{{cleaning_details.start_at|date:'H:i'}}'.replace(":",".");
+                    ending_time_string        = '{{cleaning_details.end_at|date:'H:i'}}'.replace(":",".");
+
+                    starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                    ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
+
+
+                    if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{cleaning_details.end_at|date:'d'}}')))
+                        {
+                            total_duration += ending_time;
+                    }
+
+                    else if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{cleaning_details.start_at|date:'d'}}')))
+                        {
+                        
+                        total_duration += 24-starting_time;
+                    
+                        }
+                    else
+                    {
+                        total_duration += ending_time-starting_time;    
+                    }    
+
+
                 {% endfor %}
             {% else %}
             {% endif %}
+            console.log(total_duration);
         {% endfor %}
     });
 </script>

@@ -157,11 +157,11 @@ class ResourceManagement(View):
 			workers_date = timezone.now()
 
 		try:
-			workers_details = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter(Q(Q(is_active=True)&Q(Q(start_at__date=workers_date.date())|Q(end_at__date=workers_date.date())))),to_attr='cleaning_member_details'))
+			workers_details = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date.date())|Q(end_at__date=workers_date.date())) )),to_attr='cleaning_member_details'))
 		except:
 			workers_details = None
 
-		return render(request,'agent/resource/resource_management.html',{"workers_details":workers_details})		
+		return render(request,'agent/resource/resource_management.html',{"workers_details":workers_details,"workers_date":workers_date,})		
 
 
 
