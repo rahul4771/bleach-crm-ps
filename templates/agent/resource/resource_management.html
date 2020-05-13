@@ -18,7 +18,7 @@
                 <div class="column-right"><!--column-right-->
                 <h1>Workers</h1>
             	<h2 class="blue-text"><label>Active<span>20</span></label> </h2>
-            	<p><label>Total <span>{{workers_details.count}}</span></label></p>
+            	<p><label>Total <span>100</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -64,8 +64,8 @@
 <div class="toolbar-div"><!--toolbar-div-->
 
 <div class="search-middle"><!--search-middle-->
-<div class="filter-button"><a href="#">Filter</a></div>  <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here...">
-<a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+<div class="filter-button"><a href="#">Filter</a></div>  <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}">
+<a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
 </div><!--search-middle-->
 
         <div class="filter-right"><!--filter-right-->
@@ -319,7 +319,7 @@
 function set_params_go(args)
 {
 var url='{% url 'agent:resource-management' %}';
-var params={workers_calendar_date:$('#working_calendar').val(),
+var params={workers_calendar_date:$('#working_calendar').val(),search:$('#search-bar').val(),
 };
 for(key in args) 
     params[key]=args[key];
