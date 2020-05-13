@@ -20,7 +20,7 @@ from tzlocal import get_localzone
 class AgentHome(View):
 	def get(self,request):
 
-		#Enquiry Details
+		#Enquiry Details count
 		try:
 			enquiry = Evaluation.objects.filter(is_active=True)
 		except:
@@ -29,7 +29,7 @@ class AgentHome(View):
 		today_enquiry_count = enquiry.filter(created__date=timezone.now().date()).count()
 		week_enquiry_count  = enquiry.filter(created__date__gte=timezone.now().date()-timedelta(6)).count()	
 
-		#Cleaning Jobs
+		#Cleaning Jobs count
 		try:
 			cleaning_job	= CleaningTeam.objects.filter(is_active=True)
 		except:
@@ -38,7 +38,7 @@ class AgentHome(View):
 		today_cleaning_job_count = cleaning_job.filter(start_at__date=timezone.now().date()).count() 
 		week_cleaning_job_count  = cleaning_job.filter(start_at__gte=timezone.now().date()-timedelta(6)).count()		
 
-		#Followup jobs
+		#Followup jobs count
 		try:
 			follow_up_job    = FollowUpTeam.objects.filter(is_active=True)
 		except:
@@ -47,7 +47,7 @@ class AgentHome(View):
 		today_follow_up_job_count = follow_up_job.filter(start_at__date=timezone.now().date()).count() 
 		week_follow_up_job_count  = follow_up_job.filter(start_at__gte=timezone.now().date()-timedelta(6)).count()		
 
-		#Feedback Staring
+		#Feedback Staring count
 		try:
 			feedbacks                 = FeedBack.objects.filter(is_active=True)
 		except:
@@ -148,6 +148,30 @@ class ResourceManagement(View):
 		# 		else:
 		# 			today_cleaning_hours += (timezone.localtime(team.end_at) - cleaning_date_tomorrow)*team.team_active_cleaners	
 
+		#total workers count
+		try:
+			total_workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))).count()
+		except:
+			total_workers = 0
+		print(total_workers)
+
+		#active cleaning and followup teamss
+		try:
+			cleaning_teams  = CleaningTeam.objects.filter(is_active=True)
+		except:
+			cleaning_teams  = None
+		try:
+			follow_up_teams = FollowUpTeam.objects.filter(is_active=True)
+		except:
+			follow_up_teams = None
+
+		today_active_teams_count = follow_up_teams.filter(Q(Q(start_at__date=timezone.now().date())|Q(end_at__date=timezone.now().date()))).count()+cleaning_teams.filter(Q(Q(start_at__date=timezone.now().date())|Q(end_at__date=timezone.now().date()))).count()	
+		week_active_teams_count  = follow_up_teams.filter(Q(Q(start_at__gte=timezone.now().date()-timedelta(6))|Q(end_at__gte=timezone.now().date()-timedelta(6)))).count()+cleaning_teams.filter(Q(Q(start_at__gte=timezone.now().date()-timedelta(6))|Q(end_at__gte=timezone.now().date()-timedelta(6)))).count()
+
+		print(today_active_teams_count)
+		print(week_active_teams_count)
+
+
 		#cleaning schedule & followup schedule for cleaning calendar			
 		workers_calendar_date	= request.GET.get('workers_calendar_date')
 		search                  = request.GET.get('search')
@@ -173,7 +197,7 @@ class ResourceManagement(View):
 		
 
 
-		return render(request,'agent/resource/resource_management.html',{"workers_details":workers_details,"workers_date":workers_date,"search_query":search})		
+		return render(request,'agent/resource/resource_management.html',{"total_workers":total_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search})		
 
 
 

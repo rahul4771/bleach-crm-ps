@@ -18,7 +18,7 @@
                 <div class="column-right"><!--column-right-->
                 <h1>Workers</h1>
             	<h2 class="blue-text"><label>Active<span>20</span></label> </h2>
-            	<p><label>Total <span>100</span></label></p>
+            	<p><label>Total <span>{{total_workers}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -50,8 +50,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-active-team-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Active Team</h1>
-            	<h2 class="red-text"><label>Today<span>5</span></label> </h2>
-            	<p><label>This Week <span>4</span></label></p>
+            	<h2 class="red-text"><label>Today<span>{{today_active_teams_count}}</span></label> </h2>
+            	<p><label>This Week <span>{{week_active_teams_count}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -107,7 +107,7 @@
     {% for details in workers_details %}
     <tr id="worker{{details.id}}">
     <th class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
-    <th  class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
+    <th class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
     <td><div class="name-bold">{{details.name}}<div class="position">{{details.user_type}}</div></div></td>
     </tr>
     {% endfor %}
