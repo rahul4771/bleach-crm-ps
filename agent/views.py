@@ -10,7 +10,7 @@ from django.db.models import Prefetch
 from user.models import UserProfile
 from evaluator.models import Evaluation,EvaluationDetails
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack
-from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember
+from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 
 from order.forms import OrderSchedulerConfirmationForm,FollowUpSchedulerConfirmationForm
 
@@ -156,10 +156,9 @@ class ResourceManagement(View):
 		except:
 			workers_date = timezone.now()
 
-		try:
-			workers_details = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date.date())|Q(end_at__date=workers_date.date())) )),to_attr='cleaning_member_details'))
-		except:
-			workers_details = None
+		workers_details = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date.date())|Q(end_at__date=workers_date.date())) )),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date.date())|Q(end_at__date=workers_date.date())) )),to_attr='followup_member_details'))
+		
+
 
 		return render(request,'agent/resource/resource_management.html',{"workers_details":workers_details,"workers_date":workers_date,})		
 

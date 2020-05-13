@@ -13,7 +13,7 @@ $(function () {
   $('.date_pick').datetimepicker({ 
     pickTime: false, 
     format: "DD-MM-YYYY", 
-    maxDate: 'now().date()', 
+    //maxDate: 'now().date()', 
   });
 });
 

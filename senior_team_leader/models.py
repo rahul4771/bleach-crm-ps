@@ -100,10 +100,10 @@ class FollowUpTeam(models.Model):
 	updated            = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.followup_scheduler.follow_up.order)
+		return str(self.followup_scheduler.follow_up.investigation.order)
 
 	def __str__(self):
-		return self.followup_scheduler.follow_up.order
+		return self.followup_scheduler.follow_up.investigation.order.order_no
 
 #For Tracking Medias Uploaded by Followup Team Leader on Site
 
@@ -130,9 +130,9 @@ class FollowUpTeamTask(models.Model):
 	is_completed     		 = models.BooleanField(null=False,blank=True,default=False)
 	start_time 				 = models.DateTimeField(blank=True,null=True)
 	end_time                 = models.DateTimeField(blank=True,null=True)
-	is_active          = models.BooleanField(null=False,blank=True,default=True)
-	created            = models.DateTimeField(auto_now_add=True)
-	updated            = models.DateTimeField(auto_now=True)
+	is_active          		 = models.BooleanField(null=False,blank=True,default=True)
+	created            		 = models.DateTimeField(auto_now_add=True)
+	updated           		 = models.DateTimeField(auto_now=True)
 	def __unicode__(self):
 		return str(self.followup_team.name)
 
@@ -145,6 +145,8 @@ class FollowUpTeamTask(models.Model):
 class FollowUpTeamMember(models.Model):
 	team 			= models.ForeignKey('FollowUpTeam',blank=False,null=False)
 	member 			= models.ForeignKey(UserProfile,blank=True,null=True,related_name='followup_member')
+	start_at 		= models.DateTimeField(blank=True,null=True)
+	end_at 			= models.DateTimeField(blank=True,null=True)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
@@ -153,4 +155,4 @@ class FollowUpTeamMember(models.Model):
 		return str(self.team)
 
 	def __str__(self):
-		return self.team.id		
+		return str(self.team.id)		
