@@ -116,46 +116,26 @@ class AgentHome(View):
 		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_average_feedback':today_average_feedback,'week_average_feedback':week_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'order_schedules':order_schedules,'follow_up_schedules':follow_up_schedules,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'schedule_date':schedule_date,'order_scheduler_confirmation_form':order_scheduler_confirmation_form,'followup_scheduler_confirmation_form':followup_scheduler_confirmation_form,})
 
 
+
+
 class ResourceManagement(View):
 	def get(self,request):
 
-		# exact_cleaning_date 				 = timezone.localtime(timezone.now())
-		# cleaning_date                        = exact_cleaning_date.replace(hour=00,minute=0,second=0,microsecond=0)
-
-		# exact_cleaning_date_tomorrow         = exact_cleaning_date+timezone.timedelta(days=1)
-		# cleaning_date_tomorrow               = exact_cleaning_date_tomorrow.replace(hour=00,minute=0,second=0,microsecond=0)
-
-		# exact_cleaning_date_for_filter_start = exact_cleaning_date+timezone.timedelta(days=-1)
-		# cleaning_date_for_filter_start       = exact_cleaning_date_for_filter.replace(hour=18,minute=30,second=0,microsecond=0)
-		# cleaning_date_for_filter_end         = .replace(hour=5,minute=30,second=0,microsecond=0)
-
-		# #cleaning_team	    = CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_member')).annotate(team_duration=Case(When(start_at__date=cleaning_date.date(),then=ExpressionWrapper(((F('end_at'))-F('start_at'))*Count('cleaning_member_team'),output_field=DurationField())),When(~Q(start_at__date=cleaning_date.date()),then=ExpressionWrapper(((cleaning_date+timedelta(days=1))-F('start_at'))*Count('cleaning_member_team'),output_field=DurationField())),default=0,output_field=DurationField()),   team_average_duration=Case(When(start_at__date=cleaning_date.date(),then=ExpressionWrapper((F('end_at')-F('start_at')),output_field=DurationField())),When(~Q(start_at__date=cleaning_date.date()),then=ExpressionWrapper((F('end_at')-F('start_at')),output_field=DurationField())),default=0,output_field=DurationField()),    team_active_cleaners=Count('cleaning_member_team'),).aggregate(total_duration=Sum(ExpressionWrapper(F('team_duration'),output_field=DurationField())),average_duration=Sum(ExpressionWrapper(F('team_average_duration'),output_field=DurationField())),active_cleaners=Sum('team_active_cleaners'))
-		
-		# cleaning_team	    = CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_member')).annotate(team_active_cleaners=Count('cleaning_member_team'),)
-		
-		# for team in cleaning_team.filter(Q(Q(start_at__gt=cleaning_date_for_filter)|Q(end_at__gt=cleaning_date_for_filter))):
-		# 	print(team)
-
-		# today_cleaning_hours = timedelta()		
-		# for team in cleaning_team:
-
-		# 	if timezone.localtime(team.end_at).date()==timezone.localtime(team.start_at).date():
-		# 		today_cleaning_hours += (timezone.localtime(team.end_at)-timezone.localtime(team.start_at))*team.team_active_cleaners
-			
-		# 	if timezone.localtime(team.end_at).date()!=timezone.localtime(team.start_at).date():
-		# 		if timezone.localtime(exact_cleaning_date).date() == timezone.localtime(team.start_at).date():
-		# 			today_cleaning_hours += (cleaning_date_tomorrow-timezone.localtime(team.start_at))*team.team_active_cleaners 
-		# 		else:
-		# 			today_cleaning_hours += (timezone.localtime(team.end_at) - cleaning_date_tomorrow)*team.team_active_cleaners	
 
 		#total workers count
 		try:
 			total_workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))).count()
 		except:
 			total_workers = 0
-		print(total_workers)
-
-		#active cleaning and followup teamss
+		
+		#total active workers
+		try:
+			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=timezone.now().date())|Q(end_at__date=timezone.now().date())) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=timezone.now().date())|Q(end_at__date=timezone.now().date())) )).values_list('member',flat=True)).distinct().count()
+		except:
+			total_active_workers = 0	
+	
+	
+		##To find average and total men hour from script data
 		try:
 			cleaning_teams  = CleaningTeam.objects.filter(is_active=True)
 		except:
@@ -165,11 +145,22 @@ class ResourceManagement(View):
 		except:
 			follow_up_teams = None
 
-		today_active_teams_count = follow_up_teams.filter(Q(Q(start_at__date=timezone.now().date())|Q(end_at__date=timezone.now().date()))).count()+cleaning_teams.filter(Q(Q(start_at__date=timezone.now().date())|Q(end_at__date=timezone.now().date()))).count()	
-		week_active_teams_count  = follow_up_teams.filter(Q(Q(start_at__gte=timezone.now().date()-timedelta(6))|Q(end_at__gte=timezone.now().date()-timedelta(6)))).count()+cleaning_teams.filter(Q(Q(start_at__gte=timezone.now().date()-timedelta(6))|Q(end_at__gte=timezone.now().date()-timedelta(6)))).count()
+	
+		today_cleaning_active_teams  = cleaning_teams.filter(Q(Q(start_at__date=timezone.now().date())|Q(end_at__date=timezone.now().date())))
+		today_followup_active_teams  = follow_up_teams.filter(Q(Q(start_at__date=timezone.now().date())|Q(end_at__date=timezone.now().date())))
+		week_cleaning_active_teams   = cleaning_teams.filter(Q(Q(start_at__gte=timezone.now().date()-timedelta(6))|Q(end_at__gte=timezone.now().date()-timedelta(6))))
+		week_followup_active_teams   = follow_up_teams.filter(Q(Q(start_at__gte=timezone.now().date()-timedelta(6))|Q(end_at__gte=timezone.now().date()-timedelta(6))))
 
-		print(today_active_teams_count)
-		print(week_active_teams_count)
+		today_date            = timezone.now()
+		weekstart_date        = timezone.now().date()-timedelta(6)
+
+		today_total_team_mens = today_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0+today_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0
+		week_total_team_mens  = week_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0+week_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0
+
+
+		#today and weekly active team count
+		today_active_teams_count = today_cleaning_active_teams.count()+today_followup_active_teams.count()
+		week_active_teams_count  = week_cleaning_active_teams.count()+week_followup_active_teams.count() 
 
 
 		#cleaning schedule & followup schedule for cleaning calendar			
@@ -191,13 +182,14 @@ class ResourceManagement(View):
 				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
 			except:
 				workers =  None
+ 
+		try:		
+			workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date.date())|Q(end_at__date=workers_date.date())) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date.date())|Q(end_at__date=workers_date.date())) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
+		except:
+			workers_details = None
 
 
-		workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date.date())|Q(end_at__date=workers_date.date())) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date.date())|Q(end_at__date=workers_date.date())) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
-		
-
-
-		return render(request,'agent/resource/resource_management.html',{"total_workers":total_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search})		
+		return render(request,'agent/resource/resource_management.html',{"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams})		
 
 
 

@@ -21,6 +21,7 @@ class CleaningTeam(models.Model):
 	name			= models.CharField(max_length=50,blank=True,null=True)
 	start_at 		= models.DateTimeField(blank=True,null=True)
 	end_at 			= models.DateTimeField(blank=True,null=True)
+	no_of_cleaners  = models.IntegerField(blank=True,null=True,default=1)
 	drop_off_driver = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaningteam_drop_off')
 	pick_up_driver  = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaningteam_pick_up')
 	created_by      = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaningteam_created_by')
@@ -94,6 +95,7 @@ class FollowUpTeam(models.Model):
 	name			   = models.CharField(max_length=50,blank=True,null=True)
 	start_at 		   = models.DateTimeField(blank=True,null=True)
 	end_at 			   = models.DateTimeField(blank=True,null=True)
+	no_of_cleaners     = models.IntegerField(blank=True,null=True,default=1)
 	created_by         = models.ForeignKey(UserProfile,blank=True,null=True,related_name='followupteam_created_by')
 	is_active          = models.BooleanField(null=False,blank=True,default=True)
 	created            = models.DateTimeField(auto_now_add=True)
@@ -109,7 +111,7 @@ class FollowUpTeam(models.Model):
 
 class FollowUpTeamMedia(models.Model):
 	team 					 = models.ForeignKey('FollowUpTeam',blank=False,null=False)
-	media                    = models.FileField(upload_to='followuo/',blank=True,null=True)
+	media                    = models.FileField(upload_to='followup/',blank=True,null=True)
 	media_type 				 = models.CharField(max_length=20,blank=False,null=False,choices=MEDIA_CHOICES)
 	taken_status 			 = models.CharField(max_length=20,blank=False,null=False,choices=MEDIA_TAKEN_CHOICES)
 	is_active          		 = models.BooleanField(null=False,blank=True,default=True)
@@ -143,7 +145,7 @@ class FollowUpTeamTask(models.Model):
 #To Save Followup Team Members Details
 
 class FollowUpTeamMember(models.Model):
-	team 			= models.ForeignKey('FollowUpTeam',blank=False,null=False)
+	team 			= models.ForeignKey('FollowUpTeam',blank=False,null=False,related_name='followup_member_team')
 	member 			= models.ForeignKey(UserProfile,blank=True,null=True,related_name='followup_member')
 	start_at 		= models.DateTimeField(blank=True,null=True)
 	end_at 			= models.DateTimeField(blank=True,null=True)

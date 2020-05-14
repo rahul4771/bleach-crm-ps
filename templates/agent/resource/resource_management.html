@@ -17,7 +17,7 @@
                 <div class="column-left"><img src="{% static 'files/images/card-workers-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Workers</h1>
-            	<h2 class="blue-text"><label>Active<span>20</span></label> </h2>
+            	<h2 class="blue-text"><label>Active<span>{{total_active_workers}}</span></label> </h2>
             	<p><label>Total <span>{{total_workers}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
@@ -28,8 +28,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-manhours-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Man Hours</h1>
-            	<h2 class="green-text"><label>Today<span>150</span></label>  </h2>
-            	<p><label>This Week <span>1202</span></label></p>
+            	<h2 class="green-text"><label>Today<span id="today_man_hour"></span></label>  </h2>
+            	<p><label>This Week <span id="week_man_hour"></span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -39,8 +39,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-man-average-hours-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Man Average Hours</h1>
-            	<h2 class="orange-text"><label>Today<span>4.5</span></label> </h2>
-            	<p><label>This Week <span>4.1</span></label></p>
+            	<h2 class="orange-text"><label>Today<span id="today_avg_man_hour"></span></label> </h2>
+            	<p><label>This Week <span id="week_avg_man_hour"></span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -128,6 +128,149 @@
 {% block javascript %}
 <script type="text/javascript">
     $('document').ready(function(){
+        //To find total and avergae man hour weekly and today
+        //to find today man hour
+        total_today_hours = 0
+        {% for cleaning_team in today_cleaning_active_teams %}
+        
+        starting_time_string      = '{{cleaning_team.start_at|date:'H:i'}}'.replace(":",".");
+        ending_time_string        = '{{cleaning_team.end_at|date:'H:i'}}'.replace(":",".");
+
+        starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+        ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
+
+        
+        if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.end_at|date:'d'}}')))
+                {
+                        total_today_hours += ending_time*parseInt('{{cleaning_team.no_of_cleaners}}');
+                }
+
+                else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.start_at|date:'d'}}')))
+                    {
+                    
+                    total_today_hours += (24-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');
+                    }
+                else
+                {
+                    total_today_hours += (ending_time-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');    
+                }
+
+        {% endfor %}
+        
+        {% for followup_team in today_followup_active_teams %}
+            
+        starting_time_string      = '{{followup_team.start_at|date:'H:i'}}'.replace(":",".");
+        ending_time_string        = '{{followup_team.end_at|date:'H:i'}}'.replace(":",".");
+
+        starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+        ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
+
+
+        if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{followup_team.end_at|date:'d'}}')))
+                {
+                        total_today_hours += ending_time*parseInt('{{followup_team.no_of_cleaners}}')
+                
+                }
+
+        else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{followup_team.start_at|date:'d'}}')))
+            {
+            
+            total_today_hours += (24-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');
+            
+            }
+        else
+        {
+            total_today_hours += (ending_time-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');   
+        }
+
+        {% endfor %}
+        average_today_hours = total_today_hours/parseInt('{{today_total_team_mens}}')
+        
+        //to find week man hour
+        total_week_hours = 0
+        {% for cleaning_team in week_cleaning_active_teams %}
+        
+        starting_time_string      = '{{cleaning_team.start_at|date:'H:i'}}'.replace(":",".");
+        ending_time_string        = '{{cleaning_team.end_at|date:'H:i'}}'.replace(":",".");
+
+        starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+        ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
+
+        
+        if((ending_time<starting_time)&(parseInt('{{weekstart_date|date:'d'}}')==parseInt('{{cleaning_team.end_at|date:'d'}}')))
+                {
+                        total_week_hours += ending_time*parseInt('{{cleaning_team.no_of_cleaners}}');
+                    console.log(total_week_hours,"cleaning")
+                }
+
+                else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.start_at|date:'d'}}')))
+                    {
+                    
+                    total_week_hours += (24-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');
+                    console.log(total_week_hours,"cleaning")
+                    }
+                else
+                {
+                    if(ending_time<starting_time)
+                        {
+                        total_week_hours += ((24-starting_time)+ending_time)*parseInt('{{cleaning_team.no_of_cleaners}}');        
+                        } 
+                    else{
+                        total_week_hours += (ending_time-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');
+                    } 
+                    console.log(total_week_hours,"cleaning")   
+                }
+
+        {% endfor %}
+        
+        {% for followup_team in week_followup_active_teams %}
+            
+        starting_time_string      = '{{followup_team.start_at|date:'H:i'}}'.replace(":",".");
+        ending_time_string        = '{{followup_team.end_at|date:'H:i'}}'.replace(":",".");
+
+        starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+        ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
+
+
+        if((ending_time<starting_time)&(parseInt('{{weekstart_date|date:'d'}}')==parseInt('{{followup_team.end_at|date:'d'}}')))
+                {
+                        total_week_hours += ending_time*parseInt('{{followup_team.no_of_cleaners}}')
+                console.log(total_week_hours,"followup")
+                }
+
+        else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{followup_team.start_at|date:'d'}}')))
+            {
+            
+            total_week_hours += (24-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');
+            console.log(total_week_hours,"followup")
+            }
+        else
+        {   if(ending_time<starting_time)
+                {
+                total_week_hours += ((24-starting_time)+ending_time)*parseInt('{{followup_team.no_of_cleaners}}');        
+                } 
+            else{
+                total_week_hours += (ending_time-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');
+            }    
+            console.log(total_week_hours,"followup")   
+        }
+
+        {% endfor %}
+        average_week_hours = total_week_hours/parseInt('{{week_total_team_mens}}')
+        
+
+        $("#today_man_hour").html(total_today_hours.toFixed(2));
+        $("#week_man_hour").html(total_week_hours.toFixed(2));
+        $("#today_avg_man_hour").html(average_today_hours.toFixed(2));
+        $("#week_avg_man_hour").html(average_week_hours.toFixed(2));
+
+
+
+
+
+
+
+
 
         //To Find Total working Hours of each user
         {% for details in workers_details %}
