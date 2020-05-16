@@ -46,7 +46,7 @@
      
      <div class="white-wrapper-search"><!--white-wrapper-search-->
      <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
-          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..."><a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
      </div><!--left-box leftbox-item1-->
      <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
      <input name="filter" type="button" value="Filter" id="filter" class="blue-button"> 
@@ -107,11 +107,6 @@
 {% endblock %}
 
 {% block javascript %}
-<script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-157cd5b220a5c80d4ff8e0e70ac069bffd87a61252088146915e8726e5d9f147.js"></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
-<script src='js/toggle-menu.js'></script> 
-<script src='js/hyperlink.js'></script> 
 <script src='js/footable.js'></script> 
 <script id="rendered-js">
 $('.footable').footable({
@@ -123,4 +118,21 @@ $('.footable').footable({
 // http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
 //# sourceURL=pen.js
     </script>
+<script>
+function set_params_go(args)
+{
+var url='{% url 'agent:agent-orders' %}';
+var params={search:$('#search-bar').val(),
+};
+for(key in args) 
+    params[key]=args[key];
+var query='';
+for(key in params)
+    if(params[key]) 
+        query+='&'+key+'='+params[key].toString();
+query=query.replace('&','?');
+window.location.href=url+query;  
+}
+
+</script>    
 {% endblock %}

@@ -154,8 +154,15 @@ class ResourceManagement(View):
 		today_date            = timezone.now()
 		weekstart_date        = timezone.now().date()-timedelta(6)
 
-		today_total_team_mens = today_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0+today_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0
-		week_total_team_mens  = week_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0+week_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0
+		try:
+			today_total_team_mens = today_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0+today_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0
+		except:
+			today_total_team_mens = 0
+		try:	
+			week_total_team_mens  = week_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0+week_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0
+		except:	
+			week_total_team_mens  = 0
+
 
 
 		#today and weekly active team count
@@ -195,18 +202,38 @@ class ResourceManagement(View):
 class OrderDetails(View):
 	def get(self,request):
 
-		try:
-			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='details_evaluation'))
-		except:
-			evaluations = None 
+		#Evaluation Details
+		search                  = request.GET.get('search')
 		
+		if search:
+			try:
+				evaluations = Evaluation.objects.select_related('customer').filter(is_active=True,customer__name__icontains=search).prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='details_evaluation'))
+			except:
+				evaluations = None 
+		 
+		else:
+			try:
+				evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='details_evaluation'))
+			except:
+				evaluations = None 
+			
 		approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
 		pending_orders_count  =	evaluations.filter(Q(Q(quatation_status='ASK_FOR_DISCOUNT')|Q(quatation_status='PENDING'))).count()
 		
-		return render(request,'agent/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,})
+		return render(request,'agent/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search})
 
 
+class FeedbackDetails(View):
+	def get(self,request):
+		return render(request,'agent/feedback/feedbacks.html',{})
 
+class PaymentDetails(View):
+	def get(self,request):
+		return render(request,'agent/payment/payments.html',{})		
+
+class TicketDetails(View):
+	def get(self,request):
+		return render(request,"agent/ticket/tickets.html",{})		
 
 
 
