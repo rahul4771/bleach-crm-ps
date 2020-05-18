@@ -4,12 +4,13 @@ from django.views import View
 from django.conf import settings
 from django.utils import timezone 
 from datetime import timedelta,date,datetime
-from django.db.models import Q,Sum,When,Case,BooleanField,IntegerField,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField
+from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField
+from django.db.models.functions import Cast 
 from django.db.models import Prefetch
 
 from user.models import UserProfile
 from evaluator.models import Evaluation,EvaluationDetails
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 
 from order.forms import OrderSchedulerConfirmationForm,FollowUpSchedulerConfirmationForm
@@ -225,15 +226,63 @@ class OrderDetails(View):
 
 class FeedbackDetails(View):
 	def get(self,request):
-		return render(request,'agent/feedback/feedbacks.html',{})
+		
+		search                  = request.GET.get('search')
 
-class PaymentDetails(View):
-	def get(self,request):
-		return render(request,'agent/payment/payments.html',{})		
+		#Feedback Staring count
+		try:
+			feedbacks                 = FeedBack.objects.filter(is_active=True)
+		except:
+			feedbacks				  = None
+
+		average_feedback    		  = feedbacks.aggregate(Avg('rating'))['rating__avg']
+		total_feedbacks               = feedbacks.count()
+		starring_percentages          = feedbacks.values('rating').annotate(percentage=Cast(Count('rating')/float(total_feedbacks)*100,FloatField())).order_by('rating')
+		
+		#order wise feedback
+		if search:
+			try:
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,evaluation__customer__name__icontains=search).prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('cleaning_type','address__area'),to_attr='order_evaluation_details'))		
+			except:
+				order_wise_feedbacks = None
+
+		else:
+			try:
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True).prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('cleaning_type','address__area'),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))						
+			except:	
+				order_wise_feedbacks = None
+
+		return render(request,'agent/feedback/feedbacks.html',{"feedbacks":feedbacks,"average_feedback":average_feedback,"total_feedbacks":total_feedbacks,"starring_percentages":starring_percentages,"order_wise_feedbacks":order_wise_feedbacks,"search_query":search})
+		
 
 class TicketDetails(View):
 	def get(self,request):
-		return render(request,"agent/ticket/tickets.html",{})		
+		
+		search                  = request.GET.get('search')
+		
+		#Followup details
+		if search:
+			try:
+				tickets 	             = FollowUp.objects.select_related('investigation__order_schedule__order__evaluation__customer').filter(is_active=True,investigation__order_schedule__order__evaluation__customer__name__icontains=search).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))
+				follow_ups_count         = tickets.count()
+			except:
+				tickets          = None
+				follow_ups_count = 0
+		else:
+			try:
+				tickets 	             = FollowUp.objects.filter(is_active=True).select_related('investigation__order_schedule__order__evaluation__customer').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))
+				follow_ups_count         = tickets.count()
+			except:
+				tickets          = None
+				follow_ups_count = 0
+
+		#followup cleaning count	
+		try:
+			follow_up_cleaning_count = FollowUpScheduler.objects.filter(is_active=True,work_status='FOLLOW_UP_CLEANING_FULFILLED').count()
+		except:
+			follow_up_cleaning_count = 0
+
+		return render(request,"agent/ticket/tickets.html",{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search})		
 
 
 

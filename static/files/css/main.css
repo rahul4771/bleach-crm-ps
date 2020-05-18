@@ -682,13 +682,7 @@ a:visited:hover {color: #22a1c4; text-decoration: none;}
 .row:after { content: ""; display: table; clear: both;}
 /* The bar container */
 .bar-container {width: 100%; background-color: #f1f1f1; text-align: center; color: white;}
-/* Individual bars */
-.bar-5 {width: 60%; height: 18px; background-color: #4CAF50;}
-.bar-4 {width: 30%; height: 18px; background-color: #2196F3;}
-.bar-3 {width: 10%; height: 18px; background-color: #00bcd4;}
-.bar-2 {width: 4%; height: 18px; background-color: #ff9800;}
-.bar-1 {width: 15%; height: 18px; background-color: #f44336;}
- 
+
 .pagination-containter{ padding:0 0; margin:0;  display:flex; }
 .pagination-column{ margin:0px; padding:0px;  }
 .pagination-column-left{flex-grow:1; text-align:left; padding:0; color:#666; }
@@ -1068,3 +1062,6 @@ a:visited:hover {color: #22a1c4; text-decoration: none;}
 .red-bg{background:#ec6262; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
 .orange-bg{background:#ff8c56; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
 .blue-bg{background:#528ce6; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
+
+/* Individual bars */
+.bar-n {height: 18px;}

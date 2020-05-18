@@ -10,7 +10,16 @@ ORDER_STATUS = (
 	('ORDER_CLOSED','ORDER_CLOSED')
 	)
 
-ORDER_SHEDULER_STATUS = (
+FOLLOWUP_STATUS = (
+	('APPROVED_BY_CLIENT','APPROVED_BY_CLIENT'),
+	('INVESTIGATOR_ASSIGNED','INVESTIGATOR_ASSIGNED'),
+	('INVESTIGATOR_APPROVED','INVESTIGATOR_APPRVED'),
+	('FOLLOWUP_IN_PROGRESS','FOLLOWUP_IN_PROGRESS'),
+	('FOLLOWUP_CANCELLED','FOLLOWUP_CANCELLED'),
+	('FOLLOWUP_CLOSED','FOLLOWUP_CLOSED')
+	)
+ 
+ORDER_SHEDULER_STATUS = ( 
 	('CLEANING_TEAM_ASSIGNED','CLEANING_TEAM_ASSIGNED'),
 	('CLEANING_IN_PROGRESS','CLEANING_IN_PROGRESS'),
 	('CLEANING_FULFILLED','CLEANING_FULFILLED'),
@@ -47,6 +56,7 @@ MEDIA_CHOICES = (
 	('AUDIO','AUDIO')
 	)
 
+#date confirmation like
 SCHEDULER_CHOICES = (
 	('WAITING','WAITING'),
 	('CONFIRMED','CONFIRMED'),
@@ -135,6 +145,7 @@ class InvestigationMedia(models.Model):
 class FollowUp(models.Model): 
 	investigation   = models.ForeignKey('INVESTIGATION',blank=False,null=False) 
 	instructions    = models.CharField(max_length=500,blank=True,null=True)
+	status      	= models.CharField(max_length=20,blank=True,null=True,choices=FOLLOWUP_STATUS)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
@@ -149,7 +160,7 @@ class FollowUp(models.Model):
 
 
 class FollowUpScheduler(models.Model):
-	follow_up 			= models.ForeignKey('FollowUp',blank=False,null=False)
+	follow_up 			= models.ForeignKey('FollowUp',blank=False,null=False,related_name='follow_up_of_scheduler')
 	#cleaning_type & other details
 	start_at		    = models.DateTimeField(blank=True,null=True)
 	end_at			    = models.DateTimeField(blank=True,null=True)
@@ -183,9 +194,9 @@ class Question(models.Model):
 #Storing Feedback of Customer, after cleaning
 
 class FeedBack(models.Model):
-	order 				= models.ForeignKey('Order',blank=False,null=False)
+	order 				= models.ForeignKey('Order',blank=False,null=False,related_name='feed_backs_order')
 	question			= models.ForeignKey('Question',blank=False,null=False)
-	rating				= models.FloatField(blank=True,null=True)
+	rating				= models.IntegerField(blank=True,null=True)
 	response_date		= models.DateTimeField(blank=True,null=True)
 	is_active          	= models.BooleanField(null=False,blank=True,default=True)
 	created            	= models.DateTimeField(auto_now_add=True)
