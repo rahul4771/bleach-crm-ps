@@ -21,7 +21,7 @@
 
 <div class="rating-containter"><!--rating-containter-->
 	<div class="rating-column column-left-rating"><!--column-left-rating-->
-        <p class="rating-range">{{average_feedback}}</p>
+        <p class="rating-range">{{average_feedback|floatformat:2|default_if_none:'0.0'}}</p>
         {% if average_feedback == 5 %}
         <span class="fa fa-star checked"></span>
         <span class="fa fa-star checked"></span>

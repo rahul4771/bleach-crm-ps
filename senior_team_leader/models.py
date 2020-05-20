@@ -18,7 +18,7 @@ MEDIA_CHOICES = (
 class CleaningTeam(models.Model):
 	order_scheduler = models.ForeignKey(OrderScheduler,blank=True,null=True,related_name='cleaning_team_order_scheduler')
 	team_leader 	= models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaningteam_team_leader')
-	name			= models.CharField(max_length=50,blank=True,null=True)
+	name			= models.CharField(max_length=50,blank=False,null=False)
 	start_at 		= models.DateTimeField(blank=True,null=True)
 	end_at 			= models.DateTimeField(blank=True,null=True)
 	no_of_cleaners  = models.IntegerField(blank=True,null=True,default=1)
@@ -30,10 +30,10 @@ class CleaningTeam(models.Model):
 	updated         = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.order_scheduler.order)
+		return str(self.name)
 
 	def __str__(self):
-		return self.order_scheduler.order.order_no
+		return self.name
 
 #For Tracking Medias Uploaded by Team Leader on Site
 
@@ -85,14 +85,14 @@ class CleaningTeamMember(models.Model):
 		return str(self.team)
 
 	def __str__(self):
-		return str(self.team.id)
+		return str(self.team)
 
 #Followup team for different Followup Schedules
 
 class FollowUpTeam(models.Model):
 	followup_scheduler = models.ForeignKey(FollowUpScheduler,blank=True,null=True)
 	team_leader 	   = models.ForeignKey(UserProfile,blank=True,null=True,related_name='followupteam_team_leader')
-	name			   = models.CharField(max_length=50,blank=True,null=True)
+	name			   = models.CharField(max_length=50,blank=False,null=False)
 	start_at 		   = models.DateTimeField(blank=True,null=True)
 	end_at 			   = models.DateTimeField(blank=True,null=True)
 	no_of_cleaners     = models.IntegerField(blank=True,null=True,default=1)
@@ -102,10 +102,10 @@ class FollowUpTeam(models.Model):
 	updated            = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.followup_scheduler.follow_up.investigation.order)
+		return str(self.name)
 
 	def __str__(self):
-		return self.followup_scheduler.follow_up.investigation.order.order_no
+		return self.name
 
 #For Tracking Medias Uploaded by Followup Team Leader on Site
 
@@ -154,7 +154,7 @@ class FollowUpTeamMember(models.Model):
 	updated         = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.team)
+		return str(self.team.name)
 
 	def __str__(self):
-		return str(self.team.id)		
+		return str(self.team.name)		

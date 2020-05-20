@@ -40,8 +40,6 @@ PAYMENT_STATUS = (
 	('DOWN_PAYMENT_FULFILLED','DOWN_PAYMENT_PENDING_FULFILLED'),
 	('OUT_STANDING_PENDING','OUT_STANDING_PENDING'),
 	('OUT_STANDING_FULFILLED','OUT_STANDING_FULFILLED'),
-	('SUBSCRIPTION_PENDING','SUBSCRIPTION_PENDING'),
-	('SUBSCRIPTION_FULFILLED','SUBSCRIPTION_FULFILLED')
 	)
 
 MEDIA_TAKEN_CHOICES = (
@@ -68,8 +66,8 @@ SCHEDULER_CHOICES = (
 class Order(models.Model):
 	evaluation 		= models.ForeignKey(Evaluation,blank=False,null=False)
 	order_no   		= models.CharField(max_length=20,blank=False,null=False)
-	order_status 	= models.CharField(max_length=20,blank=True,null=True,choices=ORDER_STATUS)
-	payment_status  = models.CharField(max_length=20,blank=True,null=True,choices=PAYMENT_STATUS)
+	order_status 	= models.CharField(max_length=50,blank=True,null=True,choices=ORDER_STATUS)
+	payment_status  = models.CharField(max_length=50,blank=True,null=True,choices=PAYMENT_STATUS)
 	instructions	= models.CharField(max_length=500,blank=True,null=True)
 	created_by      = models.ForeignKey(UserProfile,blank=True,null=True)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
@@ -92,17 +90,17 @@ class OrderScheduler(models.Model):
 	end_at			   = models.DateTimeField(blank=True,null=True)
 	#cleaning_type & other details
 	customer_address= models.ForeignKey(Address,blank=True,null=True)
-	work_status 	= models.CharField(max_length=20,blank=True,null=True,choices=ORDER_SHEDULER_STATUS)
+	work_status 	= models.CharField(max_length=50,blank=True,null=True,choices=ORDER_SHEDULER_STATUS)
 	status      	= models.CharField(max_length=20,blank=True,null=True,default='WAITING',choices=SCHEDULER_CHOICES)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.order.order_no)
+		return str(self.id)
 
 	def __str__(self):
-		return self.order.order_no
+		return str(self.id)
 
 #If the Customer is not Satisfied and reported a complaint. An Investigation team is assigned for Investigation
 
@@ -120,10 +118,10 @@ class Investigation(models.Model):
 	updated              = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.order.order_no)
+		return str(self.id)
 
 	def __str__(self):
-		return self.order.order_no
+		return str(self.id)
 
 
 #For Tracking Medias Uploaded by Investigator on Site
@@ -135,10 +133,10 @@ class InvestigationMedia(models.Model):
 	taken_status 			 = models.CharField(max_length=20,blank=False,null=False,choices=MEDIA_TAKEN_CHOICES)
 
 	def __unicode__(self):
-		return str(self.investigation.order.order_no)
+		return str(self.investigation.id)
 
 	def __str__(self):
-		return self.investigation.order.order_no
+		return str(self.investigation.id)
 
 #Followup details for followup order.Followup granded by Investigator
 
@@ -151,10 +149,10 @@ class FollowUp(models.Model):
 	updated         = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.investigation.order.order_no)
+		return str(self.id)
 
 	def __str__(self):
-		return self.investigation.order.order_no
+		return str(self.id)
 
 #Devide an Followup into a number of Schedules.This is to handle multiple days cleaning,multiple address cleaning Subscription Cleaning etc...
 
@@ -165,17 +163,17 @@ class FollowUpScheduler(models.Model):
 	start_at		    = models.DateTimeField(blank=True,null=True)
 	end_at			    = models.DateTimeField(blank=True,null=True)
 	customer_address	= models.ForeignKey(Address,blank=True,null=True)
-	work_status 	    = models.CharField(max_length=20,blank=True,null=True,choices=FOLLOWUP_SHEDULER_STATUS)
-	status      		= models.CharField(max_length=20,blank=True,null=True,default='WAITING',choices=SCHEDULER_CHOICES)
+	work_status 	    = models.CharField(max_length=50,blank=True,null=True,choices=FOLLOWUP_SHEDULER_STATUS)
+	status      		= models.CharField(max_length=50,blank=True,null=True,default='WAITING',choices=SCHEDULER_CHOICES)
 	is_active       	= models.BooleanField(null=False,blank=True,default=True)
 	created         	= models.DateTimeField(auto_now_add=True)
 	updated         	= models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.follow_up.investigation.order.order_no)
+		return str(self.id)
 
 	def __str__(self):
-		return self.follow_up.investigation.order.order_no
+		return str(self.id)
 
 #Questions asked by Agent to Customer, after cleaning.
 

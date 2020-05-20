@@ -15,6 +15,7 @@ USER_TYPE_CHOICES=(
     ('CLEANER','CLEANER'),
     ('CUSTOMER','CUSTOMER'),
     ('DRIVER','DRIVER'),
+    ('ACCOUNTANT','ACCOUNTANT'),
 )
 
 TITLE_CHOICES=(
@@ -63,7 +64,7 @@ class CustomUserManager(BaseUserManager):
 
 
 class UserProfile(AbstractUser):
-    name			= models.CharField(max_length=100,blank=True,null=True)
+    name			= models.CharField(max_length=100,blank=False,null=False)
     user_type 		= models.CharField(max_length=20,blank=True,null=True,choices=USER_TYPE_CHOICES)
     title	  		= models.CharField(max_length=20,blank=True,null=True,choices=TITLE_CHOICES)
     gender 	  		= models.CharField(max_length=20,blank=True,null=True,choices=GENDER_CHOICES)
@@ -132,7 +133,7 @@ class Address(models.Model):
     updated         = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return str(self.customer.username)
+        return str(self.customer.name)
 
     def __str__(self):
-        return self.customer.username
+        return self.customer.name

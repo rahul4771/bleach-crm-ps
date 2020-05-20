@@ -175,15 +175,15 @@ class EvaluationDetails(models.Model):
 	updated              = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.evaluation.evaluation_id)
+		return str(self.id)
 
 	def __str__(self):
-		return self.evaluation.evaluation_id
+		return str(self.id)
 
 #For Tracking Medias Uploaded by Evaluator on Site
 
 class EvaluationMedia(models.Model):
-	evaluation_details 			 	 = models.ForeignKey('EvaluationDetails',blank=False,null=False)
+	evaluation_details 		 = models.ForeignKey('EvaluationDetails',blank=False,null=False)
 	media                    = models.FileField(upload_to='evaluation/',blank=True,null=True)
 	media_type 				 = models.CharField(max_length=20,blank=False,null=False,choices=MEDIA_CHOICES)
 	taken_status 			 = models.CharField(max_length=20,blank=False,null=False,choices=MEDIA_TAKEN_CHOICES)
@@ -193,7 +193,7 @@ class EvaluationMedia(models.Model):
 	updated              = models.DateTimeField(auto_now=True)
 	
 	def __unicode__(self):
-		return str(self.evaluation_details.evaluation.evaluation_no)
+		return str(self.evaluation_details.id)
 
 	def __str__(self):
-		return self.evaluation_details.evaluation.evaluation_no		
+		return str(self.evaluation_details.id)		

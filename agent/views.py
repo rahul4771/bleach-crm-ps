@@ -10,7 +10,7 @@ from django.db.models import Prefetch
 
 from user.models import UserProfile
 from evaluator.models import Evaluation,EvaluationDetails
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 
 from order.forms import OrderSchedulerConfirmationForm,FollowUpSchedulerConfirmationForm
@@ -23,12 +23,12 @@ class AgentHome(View):
 
 		#Enquiry Details count
 		try:
-			enquiry = Evaluation.objects.filter(is_active=True)
+			enquiry = EvaluationDetails.objects.filter(is_active=True)
 		except:
 			enquiry	= None
 
-		today_enquiry_count = enquiry.filter(created__date=timezone.now().date()).count()
-		week_enquiry_count  = enquiry.filter(created__date__gte=timezone.now().date()-timedelta(6)).count()	
+		today_enquiry_count = enquiry.filter(proposed_time__date=timezone.now().date()).count()
+		week_enquiry_count  = enquiry.filter(proposed_time__date__gte=timezone.now().date()-timedelta(6)).count()	
 
 		#Cleaning Jobs count
 		try:
@@ -275,6 +275,7 @@ class TicketDetails(View):
 			except:
 				tickets          = None
 				follow_ups_count = 0
+		print(tickets)
 
 		#followup cleaning count	
 		try:

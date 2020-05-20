@@ -74,7 +74,7 @@
 <tbody>
     {% for ticket in tickets %}
 	<tr>
-    <td class="red-line">{{ticket.investigation.investigator.order.order_no}}</td>
+    <td class="red-line">{{ticket.investigation.order.order_no}}</td>
     <td>{{ticket.investigation.order_schedule.order.evaluation.customer.name}}</td>
     <td>
     {% for scheduler_details in ticket.follow_up_scheduler_details %}
@@ -82,7 +82,7 @@
     {% endfor %}
     </td>
     <td>{{ticket.investigation.investigator.name}}</td>
-    <td>{{ticket.investigation.order_schedule.order.evaluation.customer.mobile_no}</td>
+    <td>{{ticket.investigation.order_schedule.order.evaluation.customer.mobile_number}}</td>
     {% if ticket.status == 'APPROVED_BY_CLIENT' %}
     <td><span class="blue-bg">Open</span></td> 
     {% elif ticket.status == 'INVESTIGATOR_ASSIGNED' or ticket.status == 'INVESTIGATOR_APPROVED' %}
