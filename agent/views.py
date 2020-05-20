@@ -2,6 +2,9 @@ from django.shortcuts import render
 from django.views import View
 
 from django.conf import settings
+from bleach_crm_ps.permissions import IsAgent
+
+
 from django.utils import timezone 
 from datetime import timedelta,date,datetime
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField
@@ -12,13 +15,10 @@ from user.models import UserProfile
 from evaluator.models import Evaluation,EvaluationDetails
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
-
 from order.forms import OrderSchedulerConfirmationForm,FollowUpSchedulerConfirmationForm
 
-from tzlocal import get_localzone
-
 # Create your views here. 
-class AgentHome(View):
+class AgentHome(IsAgent,View):
 	def get(self,request):
 
 		#Enquiry Details count
@@ -119,7 +119,7 @@ class AgentHome(View):
 
 
 
-class ResourceManagement(View):
+class ResourceManagement(IsAgent,View):
 	def get(self,request):
 
 
@@ -200,7 +200,7 @@ class ResourceManagement(View):
 		return render(request,'agent/resource/resource_management.html',{"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams})		
 
 
-class OrderDetails(View):
+class OrderDetails(IsAgent,View):
 	def get(self,request):
 
 		#Evaluation Details
@@ -224,7 +224,7 @@ class OrderDetails(View):
 		return render(request,'agent/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search})
 
 
-class FeedbackDetails(View):
+class FeedbackDetails(IsAgent,View):
 	def get(self,request):
 		
 		search                  = request.GET.get('search')
@@ -255,7 +255,7 @@ class FeedbackDetails(View):
 		return render(request,'agent/feedback/feedbacks.html',{"feedbacks":feedbacks,"average_feedback":average_feedback,"total_feedbacks":total_feedbacks,"starring_percentages":starring_percentages,"order_wise_feedbacks":order_wise_feedbacks,"search_query":search})
 		
 
-class TicketDetails(View):
+class TicketDetails(IsAgent,View):
 	def get(self,request):
 		
 		search                  = request.GET.get('search')
@@ -275,7 +275,7 @@ class TicketDetails(View):
 			except:
 				tickets          = None
 				follow_ups_count = 0
-		print(tickets)
+
 
 		#followup cleaning count	
 		try:
