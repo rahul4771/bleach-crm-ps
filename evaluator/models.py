@@ -126,8 +126,10 @@ class Evaluation(models.Model):
 	cleaning_policy		= models.CharField(max_length=20,blank=True,null=True,choices=CLEANING_CHOICES)
 
 	subscription_start 	= models.DateTimeField(blank=True,null=True)
+	subscription_days_gap=models.IntegerField(blank=True,null=True)
 	subscription_end 	= models.DateTimeField(blank=True,null=True)
 	no_of_cleanings 	= models.IntegerField(blank=True,null=True)
+	
 	is_downpayment		= models.BooleanField(null=False,blank=True,default=False)
 	no_of_down_payments = models.IntegerField(blank=True,null=True)
 	down_payment_deadend= models.DateTimeField(blank=True,null=True)
@@ -151,16 +153,31 @@ class EvaluationDetails(models.Model):
 	check_in			= models.DateTimeField(blank=True,null=True)
 	check_out			= models.DateTimeField(blank=True,null=True)
 	evaluator_note		= models.CharField(max_length=500,blank=True,null=True)
-	
-	service_type		= models.ForeignKey('ServiceType',blank=True,null=True,related_name='evaluation_details_service_type')
-	location_type		= models.ForeignKey('LocationType',blank=True,null=True,related_name='evaluation_details_location_type')
+	number_of_cleaners  = models.IntegerField(blank=True,null=True)
 	address 			= models.ForeignKey(Address,blank=True,null=True,related_name='evaluation_details_address')
 	evaluator_note		= models.CharField(max_length=500,blank=True,null=True)
 	estimated_cost      = models.FloatField(blank=True,null=True)
 	cleaning_hours 		= models.FloatField(blank=True,null=True)
-	number_of_cleaners  = models.IntegerField(blank=True,null=True)
-	cleaning_type 		= models.ForeignKey('CleaningType',blank=True,null=True,related_name='evaluation_details_cleaning_type')
-	cleaning_method 	= models.ForeignKey('CleaningMethod',blank=True,null=True,related_name='evaluation_details_cleaning_method')
+	service_type		= models.ForeignKey('ServiceType',blank=True,null=True,related_name='evaluation_details_service_type')
+	
+	
+	is_active            = models.BooleanField(null=False,blank=True,default=True)
+	created              = models.DateTimeField(auto_now_add=True)
+	updated              = models.DateTimeField(auto_now=True)
+
+	def __unicode__(self):
+		return str(self.id)
+
+	def __str__(self):
+		return str(self.id)
+
+#For Multiple Cleaning evaluation details
+class EvaluationBook(models.Model):
+	evaluation_details 	= models.ForeignKey('EvaluationDetails',blank=True,null=True,related_name='evaluation_book_evaluation_details')
+	
+	cleaning_type 		= models.ForeignKey('CleaningType',blank=True,null=True,related_name='evaluation_book_details_cleaning_type')
+	location_type		= models.ForeignKey('LocationType',blank=True,null=True,related_name='evaluation_book_location_type')
+	cleaning_method 	= models.ForeignKey('CleaningMethod',blank=True,null=True,related_name='evaluation_book_cleaning_method')
 	fabric_type 		= models.CharField(max_length=20,blank=True,null=True,choices=FABRIC_TYPE_CHOICES)
 	spot_stain_status	= models.BooleanField(blank=True,null=False)
 	size_of_carpet 		= models.CharField(max_length=100,blank=True,null=True)
@@ -175,11 +192,10 @@ class EvaluationDetails(models.Model):
 	updated              = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.id)
+		return str(self.evaluation_details.id)
 
 	def __str__(self):
-		return str(self.id)
-
+		return str(self.evaluation_details.id)
 #For Tracking Medias Uploaded by Evaluator on Site
 
 class EvaluationMedia(models.Model):
