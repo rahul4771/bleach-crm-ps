@@ -74,11 +74,24 @@
 <tbody>
     {% for ticket in tickets %}
 	<tr>
-    <td class="red-line">{{ticket.investigation.order.order_no}}</td>
+    <td 
+    {% if ticket.status == 'APPROVED_BY_CLIENT' %}
+    class="blue-line"
+    {% elif ticket.status == 'INVESTIGATOR_ASSIGNED' or ticket.status == 'INVESTIGATOR_APPROVED' %}
+    class="orange-line"
+    {% elif ticket.status == 'FOLLOWUP_IN_PROGRESS' %}
+    class="yellow-line"
+    {% elif ticket.status == 'FOLLOWUP_CLOSED' %}
+    class="green-line"
+    {% else %}
+    class="red-line"
+    {% endif %}
+    >{{ticket.investigation.order.order_no}}</td>
     <td>{{ticket.investigation.order_schedule.order.evaluation.customer.name}}</td>
     <td>
     {% for scheduler_details in ticket.follow_up_scheduler_details %}
-    {{scheduler_details.customer_address.area.name}},
+    {{scheduler_details.customer_address.area.name}}
+    <br>
     {% endfor %}
     </td>
     <td>{{ticket.investigation.investigator.name}}</td>
