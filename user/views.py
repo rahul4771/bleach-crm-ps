@@ -17,8 +17,23 @@ class Signin(View):
 			messages.success(request, "Welcome " + user.username)	
 
 			if user.user_type == 'AGENT':
-				return redirect('agent:agentdash-board')		
-			
+				return redirect('agent:agentdash-board')
+
+
+			if user.user_type == 'ADMIN':
+				return redirect('bleach_admin:admindash-board')
+
+			if user.user_type == 'EVALUATOR':
+				return redirect('evaluator:evaluatordash-board')
+
+			if user.user_type == 'SENIORTEAMLEADER':	
+				return redirect('stl:stldash-board')
+
+			if user.user_type == 'TEAMLEADER':	
+				return redirect('tl:tldash-board')
+
+			if user.user_type == 'ACCOUNTANT':	
+				return redirect('accountant:accountantdash-board')		
 		else:
 			messages.error(request, "Username or Password Invalid")
 

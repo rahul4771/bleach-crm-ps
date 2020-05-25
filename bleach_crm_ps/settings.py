@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'team_leader',
     'agent',
     'accountant',
+    'bleachadmin',
 ]
 
 MIDDLEWARE = [

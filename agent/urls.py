@@ -8,5 +8,6 @@ urlpatterns = [
 	url(r'^orders/$',views.OrderDetails.as_view(),name='agent-orders'),
 	url(r'^feedbacks/$',views.FeedbackDetails.as_view(),name='agent-feedbacks'),
 	url(r'^tickets/$',views.TicketDetails.as_view(),name='agent-tickets'),
+	url(r'^clients/$',views.ClientDetails.as_view(),name='agent-clients'),
 
 ]

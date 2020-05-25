@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "evaluator/common/header.html" %}      
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Tickets</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+            </div><!--welcome-wrapper-->
+       
+     <div class="clients-top-card-wrapper"><!--clients-top-card-wrapper-->
+     	<div class="clients-card-wrapper"><!--clients-card-wrapper-->
+       	<div class="clients-card-column clients-column-left"><!--clients-card-column clients-column-left-->
+        <div class="card-column whitebg blue-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-open-tickets-icon.svg' %}"></div>
+                <div class="column-right"><!--column-right-->
+              	<!--  <h1>Evaluations</h1>-->
+            	<h2 class="blue-text"><label>Open Tickets<span>20</span></label> </h2>
+            	<!--<p><label>This Week <span>42</span></label></p>-->
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg yellow-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-followp-cleaning-icon.svg' %}"></div>
+                <div class="column-right"><!--column-right-->
+            	<h2 class="yellow-text"><label>Follow up <br>Cleaning <span>40</span></label>  </h2>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        </div><!--clients-card-column clients-column-left-->
+		  <div class="clients-card-column clients-column-right whitebg"><!--lients-card-column clients-column-right-->
+            <img src="{% static 'files/images/tickets-chart.jpg' %}">
+            <div class="chart-btnWrapper"><input name="thismonth" type="button" class="blue-button" value="This Month" id="thismonth"></div>
+          </div><!--lients-card-column clients-column-right-->
+        </div><!--clients-card-wrapper-->
+
+</div><!--clients-top-card-wrapper-->       
+            
+     <div class="main-content-holder"><!--main-content-holder-->            
+     
+     <div class="white-wrapper-search"><!--white-wrapper-search-->
+     <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
+          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..."><a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+     </div><!--left-box leftbox-item1-->
+     <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
+     <input name="filter" type="button" value="Filter" id="filter" class="blue-button"> 
+     </div><!--right-box leftbox-item1-->     
+     
+     
+ 
+     </div><!--white-wrapper-search-->
+     
+            
+<div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Tickets List</h2>
+<div class="page-entries">Show 10 entries</div>
+<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+ 
+<thead>
+<tr>
+<th>Order Number</th>
+<th data-hide="phone,tablet">Name</th>
+<th data-hide="phone">Area</th>
+<th data-hide="phone,tablet">Investigator </th>
+<th>Contact</th>
+<th class="align-center" data-hide="phone,tablet">Status</th>
+</tr>
+</thead>
+<tbody>
+
+	<tr>
+    <td class="red-line">BLC20200405</td>
+    <td>Rajesh</td>
+    <td>Rawda</td>
+    <td>General Cleaning</td>
+    <td>60610005</td>
+    <td><span class="red-bg">Open</span></td> 
+    </tr> 
+    
+    <tr>
+    <td class="yellow-line">BLC20200402</td>
+    <td>Penny</td>
+    <td>Qurtuba</td>
+    <td>General Cleaning</td>
+    <td>60610002</td>
+    <td><span class="yellow-bg">Cleaning</span></td>
+    </tr>
+    
+    <tr>
+    <td class="yellow-line">BLC20200403</td>
+    <td>Lenonard</td>
+    <td>Sulaibikhat</td>
+    <td>Part Time Service</td>
+    <td>60610003</td>
+    <td><span class="yellow-bg">Cleaning</span></td>
+    </tr>
+     
+    
+	<tr>
+    <td class="red-line">BLC20200405</td>
+    <td>Rajesh</td>
+    <td>Rawda</td>
+    <td>Part Time Service</td>
+    <td>60610005</td>
+    <td><span class="red-bg">Open</span></td> 
+    </tr> 
+
+	<tr>
+    <td class="red-line">BLC20200405</td>
+    <td>Rajesh</td>
+    <td>Rawda</td>
+    <td>General Cleaning</td>
+    <td>60610005</td>
+    <td><span class="red-bg">Open</span></td> 
+    </tr> 
+ 
+    
+    <tr>
+    <td class="green-line">BLC20200405</td>
+    <td>Sheldon</td>
+    <td>Sura</td>
+    <td>Uppostry Cleaning</td>
+    <td>60610001</td>
+    <td><span class="green-bg">Closed</span></td>
+    </tr>
+</tbody>
+<tfoot>
+ 
+</tfoot>
+</table>
+<div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
+    <div class="pagination-containter"><!--pagination-containter-->
+    	<div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
+        Showing 1 to 10 of 57 entries
+        </div><!--pagination-column pagination-column-left-->
+        
+        <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
+        Pagination here
+        </div><!--pagination-column pagination-column-right-->
+    </div><!--pagination-containter-->         
+</div><!--white-wrapper-pagination--> 
+</div><!--white-wrapper-->      
+             
+            
+            
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+{% include 'evaluator/common/footer.html' %} 
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script src='js/footable.js'></script> 
+<script id="rendered-js">
+$('.footable').footable({
+  calculateWidthOverride: function () {
+    return { width: $(window).width() };
+  } });
+
+
+// See:
+// http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
+//# sourceURL=pen.js
+    </script>
+{% endblock %}

@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "admin/common/header.html" %}
+    
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Feedback</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+            </div><!--welcome-wrapper-->
+       
+     <div class="clients-top-card-wrapper"><!--clients-top-card-wrapper-->
+     	<div class="feedback-card-wrapper "><!--feedback-card-wrapper -->
+       	<div class="feedback-card-column feedback-column-left whitebg"><!--feedback-card-column feedback-column-left-->
+<div class="rating-containter"><!--rating-containter-->
+	<div class="rating-column column-left-rating"><!--column-left-rating-->
+        <p class="rating-range">4.1</p>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <p><span class="fa fa-user"></span>1,050,008 total </p>
+     </div><!--column-left-rating-->
+     <div class="rating-column column-right-rating"><!--column-right-rating-->
+            <div class="row">
+              <div class="side">
+                <div><span class="fa fa-star"></span> 5</div>
+              </div>
+              <div class="middle">
+                <div class="bar-container">
+                  <div class="bar-5"></div>
+                </div>
+              </div>
+              <div class="side right">
+                <div>80%</div>
+              </div>
+              <div class="side">
+                <div><span class="fa fa-star"></span> 4</div>
+              </div>
+              <div class="middle">
+                <div class="bar-container">
+                  <div class="bar-4"></div>
+                </div>
+              </div>
+              <div class="side right">
+                <div>63%</div>
+              </div>
+              <div class="side">
+                <div><span class="fa fa-star"></span> 3</div>
+              </div>
+              <div class="middle">
+                <div class="bar-container">
+                  <div class="bar-3"></div>
+                </div>
+              </div>
+              <div class="side right">
+                <div>15%</div>
+              </div>
+              <div class="side">
+                <div><span class="fa fa-star"></span> 2</div>
+              </div>
+              <div class="middle">
+                <div class="bar-container">
+                  <div class="bar-2"></div>
+                </div>
+              </div>
+              <div class="side right">
+                <div>6%</div>
+              </div>
+              <div class="side">
+                <div><span class="fa fa-star"></span> 1</div>
+              </div>
+              <div class="middle">
+                <div class="bar-container">
+                  <div class="bar-1"></div>
+                </div>
+              </div>
+              <div class="side right">
+                <div>20%</div>
+              </div>
+            </div>
+        </div><!--column-right-rating-->
+</div><!--rating-containter-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </div><!--feedback-card-column feedback-column-left-->
+		  <div class="feedback-card-column feedback-column-right whitebg"><!--lients-card-column feedback-column-right-->
+            <img src="{% static 'files/images/feedback-chart.jpg' %}">
+            <div class="chart-btnWrapper"><input name="thismonth" type="button" class="blue-button" value="This Month" id="thismonth"></div>
+          </div><!--lients-card-column feedback-column-right-->
+        </div><!--feedback-card-wrapper -->
+
+</div><!--clients-top-card-wrapper-->       
+            
+     <div class="main-content-holder"><!--main-content-holder-->            
+     
+     <div class="white-wrapper-search"><!--white-wrapper-search-->
+     <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
+          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..."><a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+     </div><!--left-box leftbox-item1-->
+     <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
+     <input name="filter" type="button" value="Filter" id="filter" class="blue-button"> 
+     </div><!--right-box leftbox-item1-->     
+     
+     
+ 
+     </div><!--white-wrapper-search-->
+     
+            
+<div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Feedback List</h2>
+<div class="page-entries">Show 10 entries</div>
+<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+ 
+<thead>
+<tr>
+<th>Order Number</th>
+<th data-hide="phone,tablet">Name</th>
+<th data-hide="phone">Area</th>
+<th data-hide="phone,tablet">Cleaning Type</th>
+<th class="align-center">Contact</th>
+<th class="align-center" data-hide="phone,tablet">Ratings</th>
+</tr>
+</thead>
+<tbody>
+    <tr>
+    <td class="yellow-line">BLC20200405</td>
+    <td>Sheldon</td>
+    <td>Sura</td>
+    <td>General Cleaning</td>
+    <td class="align-center">60610001</td>
+    <td class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td>
+    </tr>
+    
+    <tr>
+    <td class="yellow-line">BLC20200402</td>
+    <td>Penny</td>
+    <td>Qurtuba</td>
+    <td>General Cleaning</td>
+    <td class="align-center">60610002</td>
+    <td class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td>
+    </tr>
+    
+    <tr>
+    <td class="yellow-line">BLC20200403</td>
+    <td>Lenonard</td>
+    <td>Sulaibikhat</td>
+    <td>Part Time Service</td>
+    <td class="align-center">60610003</td>
+    <td class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td>
+    </tr>
+     
+    <tr>
+    <td class="yellow-line">BLC20200404</td>
+    <td>Howard</td>
+    <td>Doha</td>
+    <td>Part Time Service</td>
+    <td class="align-center">60610004</td>
+    <td class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td>
+        </tr>  
+
+	<tr>
+    <td class="yellow-line">BLC20200405</td>
+    <td>Rajesh</td>
+    <td>Rawda</td>
+    <td>General Cleaning</td>
+    <td class="align-center">60610005</td>
+    <td class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td> 
+    </tr> 
+ 
+	<tr>
+    <td class="yellow-line">BLC20200407</td>
+    <td>Amy</td>
+    <td>Kaifan</td>
+    <td>Uppostry Cleaning</td>
+    <td class="align-center">60610006</td>
+    <td class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td>
+    </tr> 
+</tbody>
+<tfoot>
+ 
+</tfoot>
+</table>
+<div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
+    <div class="pagination-containter"><!--pagination-containter-->
+    	<div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
+        Showing 1 to 10 of 57 entries
+        </div><!--pagination-column pagination-column-left-->
+        
+        <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
+        Pagination here
+        </div><!--pagination-column pagination-column-right-->
+    </div><!--pagination-containter-->         
+</div><!--white-wrapper-pagination--> 
+</div><!--white-wrapper-->      
+             
+            
+            
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+{% include 'admin/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script id="rendered-js">
+$('.footable').footable({
+  calculateWidthOverride: function () {
+    return { width: $(window).width() };
+  } });
+
+    </script>
+{% endblock %}

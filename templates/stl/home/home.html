@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "stl/common/header.html" %}
+    
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Welcome to Dashboard</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+            </div><!--welcome-wrapper-->
+       
+     <div class="main-card"><!--main-card-->
+<div class="card-row"><!--card-row-->
+            <div class="card-column whitebg blue-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-active-workers-icon.svg' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Workers</h1>
+            	<h2 class="blue-text"><label>Active<span>20</span></label> </h2>
+            	<p><label>Total <span>42</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg green-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-manhours-icon.svg' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Man Hours</h1>
+            	<h2 class="green-text"><label>Today<span>150</span></label>  </h2>
+            	<p><label>This Week <span>1200</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg orange-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-man-average-hours-icon.svg' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Man Average Hours</h1>
+            	<h2 class="orange-text"><label>Today<span>4.5</span></label> </h2>
+            	<p><label>This Week <span>4.1</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg red-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-cleaning-red-job-icon.svg' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Cleaning Jobs</h1>
+            	<h2 class="red-text"><label>Today<span>20</span></label> </h2>
+            	<p><label>This Week <span>42</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+   </div><!--card-row-->
+</div><!--main-card-->       
+            
+     <div class="main-content-holder"><!--main-content-holder-->            
+          
+      <div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Investigation Task</h2>
+ <div class="date-picker">Date Picker</div>
+<table class="main-table">
+<tbody>
+
+<tr class="green-line clickable-row" data-href='#'>
+<td data-label="Order Name" ><a href="#">BLC20200405</a></td>
+<td data-label="Customenr Name"><a href="#">Sheldon</a> </td>
+<td class="hide-a" data-label=""><a href="#">Surra </a></td>
+<td data-label="Contact Number"><a href="#">6061 0001</a></td>
+<td class="hide-a" data-label=""><img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar"> <img src="{% static 'files/images/profile-picblack.jpg' %}" class="profile-avtar"></td>
+<td class="hide-a" data-label=""><span class="blue-text">One time service</span></td>
+</tr>
+
+<tr class="green-line clickable-row" data-href='#'>
+<td data-label="Order Name"><a href="#">BLC20200405</a></td>
+<td data-label="Customenr Name"><a href="#">Sheldon </a></td>
+<td class="hide-a" data-label=""><a href="#">Surra </a></td>
+<td data-label="Contact Number"><a href="#">6061 0001</a></td>
+<td class="hide-a" data-label=""><img src="{% static 'files/images/profile-picblack.jpg' %}" class="profile-avtar"> <img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar"> </td>
+<td class="hide-a" data-label=""><span class="blue-text">One time service</span></td>
+</tr> 
+<tr class="green-line clickable-row" data-href='#'>
+<td data-label="Order Name" ><a href="#">BLC20200405</a> </td>
+<td data-label="Customenr Name"><a href="#">Sheldon </a></td>
+<td class="hide-a" data-label=""><a href="#">Surra </a></td>
+<td data-label="Contact Number"><a href="#">6061 0001</a></td>
+<td class="hide-a" data-label=""><img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar"> <img src="{% static 'files/images/profile-picblack.jpg' %}" class="profile-avtar"> </td>
+<td class="hide-a" data-label=""><span class="blue-text">One time service</span></td>
+</tr>
+<tr class="green-line clickable-row" data-href='#'>
+<td data-label="Order Name"><a href="#">BLC20200405</a> </td>
+<td data-label="Customenr Name"><a href="#">Sheldon</a> </td>
+<td class="hide-a" data-label=""><a href="#">Surra</a> </td>
+<td data-label="Contact Number"><a href="#">6061 0001</a></td>
+<td class="hide-a" data-label=""><img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar"> <img src="{% static 'files/images/profile-picblack.jpg' %}" class="profile-avtar"> </td>
+<td class="hide-a" data-label=""><span class="blue-text">One time service</span></td>
+</tr>
+<tr class="green-line clickable-row" data-href='#'>
+<td data-label="Order Name"><a href="#">BLC20200405</a> </td>
+<td data-label="Customenr Name"><a href="#">Sheldon </a></td>
+<td class="hide-a" data-label=""><a href="#">Surra</a> </td>
+<td data-label="Contact Number"><a href="#">6061 0001</a></td>
+<td class="hide-a" data-label=""><img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar"> <img src="{% static 'files/images/profile-picblack.jpg' %}" class="profile-avtar"> </td>
+<td class="hide-a" data-label=""><span class="blue-text">One time service</span></td>
+</tr>
+ 
+</tbody>
+</table>
+</div><!--white-wrapper-->   
+             
+ 
+
+<div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Cleaning Callender</h2>
+<div class="date-picker">Date Picker</div>
+<div class="cleaning-container"><!--cleaning-container-->
+<div class="scrollable"><!--scrollable-->
+<div>
+  <table cellpadding="1" cellspacing="1" class="cleaning-table">
+  <tr>
+  <th width="4.166%" colspan="2"> </th>
+    <th width="8.333%" colspan="2">2 AM</th>
+    <th width="8.333%" colspan="2">4 AM</th>
+    <th width="8.333%" colspan="2">6 AM</th>
+    <th width="8.333%" colspan="2">8 AM</th>
+    <th width="8.333%" colspan="2">10 AM</th>
+    <th width="8.333%" colspan="2">12 PM</th>
+    <th width="8.333%" colspan="2">2 PM</th>
+    <th width="8.333%" colspan="2">4 PM</th>
+    <th width="8.333%" colspan="2">6 PM</th>
+    <th width="8.333%" colspan="2">8 PM</th>
+    <th width="8.333%" colspan="2">10 PM</th>
+    <th width="4.166%" colspan="2"></th>
+  </tr>
+  <tr>
+    <td colspan="26"><div class="red-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value red-text">4</div></div> 
+    <div class="green-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center> <div class="right-value green-text">4</div></div></td>
+    </tr>
+  <tr>
+    <td colspan="26"><div class="yellow-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value yellow-text">4</div></div>
+    <div class="green-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center> <div class="right-value green-text">4</div></div></td>
+    </tr>
+  <tr>
+    <td colspan="26"><div class="yellow-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value yellow-text">4</div></div></td>
+    </tr>
+      <tr>
+    <td colspan="26"><div class="blue-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value blue-text">4</div></div></td>
+    </tr>
+    <tr>
+    <td colspan="26"><div class="red-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value red-text">4</div></div></td>
+    </tr>
+  <tr>
+    <td colspan="26"><div class="green-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center> <div class="right-value green-text">4</div></div></td>
+    </tr>
+  <tr>
+    <td colspan="26"><div class="yellow-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value yellow-text">4</div></div></td>
+    </tr>
+      <tr>
+    <td colspan="26"><div class="blue-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value blue-text">4</div></div></td>
+    </tr>
+  </table>
+</div>
+</div><!--scrollable-->
+</div><!--cleaning-container-->
+</div><!--white-wrapper-->            
+            
+       
+       
+       <div class="white-wrapper"><!--white-wrapper-->
+<div class="toolbar-div"><!--toolbar-div-->
+
+<div class="search-middle"><!--search-middle-->
+<div class="filter-button"><a href="#">Filter</a></div>  <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here...">
+<a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+</div><!--search-middle-->
+
+        <div class="filter-right"><!--filter-right-->
+       <div class="date-picker-resource"><a href="#">Date Picker</a></div>
+       <div class="day-month-togggle-button"><a href="#">Date/Month Toggle Button</a></div>
+        </div><!--filter-right-->
+
+
+</div><!--toolbar-div-->
+
+
+
+
+
+
+<div id="resource-scroll" class="resource-scroll">
+<div class="table-wrap">
+<table class="resource-table" id="myTable" >
+<thead>
+<tr class="resource-graybg">
+<th colspan="2" class="fixed-side resource-graybg" scope="col">&nbsp;</th>
+<th onclick="sortTable(0)" class="resource-graybg align-left" width="200" scope="col">Name<div class="sort-icon"></div></th>
+<th onclick="sortTable(1)" class="resource-graybg align-center" width="90" scope="col">Working Time<div class="sort-icon"></div></th>
+	<th class="border-right" width="11"> </td>
+    <th class="border-right" width="58">2 AM</th>
+    <th class="border-right" width="58">4 AM</th>
+    <th class="border-right" width="58">6 AM</th>
+    <th class="border-right" width="58">8 AM</th>
+    <th class="border-right" width="58">10 AM</th>
+    <th class="border-right" width="54">12 PM</th>
+    <th class="border-right" width="54">2 PM</th>
+    <th class="border-right" width="54">4 PM</th>
+    <th class="border-right" width="54">6 PM</th>
+    <th class="border-right" width="54">8 PM</th>
+    <th class="border-right" width="54">10 PM</th>
+    <th  width="25"></th>
+</tr>
+</thead>
+<tbody>
+    <tr>
+    <th width="25"  class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
+    <th width="40" class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
+    <td><div class="name-bold">Anton Shevchuk<div class="position">Team Member</div></div></td>
+    <td class="align-center">8h 0m</td>
+    <td colspan="13"><div class="red-box"> <center>AREA</center></div> <div class="green-box"><center>AREA</center></div></td>
+    </tr>
+
+    <tr>
+    <th class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
+    <th class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
+    <td><div class="name-bold">Danis Ali<div class="position">Team Lead</div></div></td>
+    <td class="align-center">16h 0m</td>
+    <td colspan="13"><div class="yellow-box"> <center>AREA</center></div><div class="green-box"><center>AREA</center></div></td>
+    </tr>
+    
+    <tr>
+    <th  class="fixed-side"><img src="{% static 'files/images/gray-dot.png' %}"></th>
+    <th class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
+    <td><div class="name-bold">Neam Codova<div class="position">Team Member</div></div></td>
+    <td class="align-center">0h 0m</td>
+    <td colspan="13"><div class="yellow-box"><center>AREA</center></div></td>
+    </tr> 
+       
+    <tr>
+    <th class="fixed-side"><img src="{% static 'files/images/red-dot.png' %}"></th>
+    <th class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
+    <td><div class="name-bold">Lou Diaz<div class="position">Team Member</div></div></td>
+    <td class="align-center">0h 0m</td>
+    <td colspan="13"><div class="red-box"><center>AREA</center></div></td>
+    </tr> 
+         
+    <tr>
+    <th class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
+    <th class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
+    <td><div class="name-bold">Neil Barlao<div class="position">Team Incharge</div></div></td>
+    <td class="align-center">0h 0m</td>
+    <td colspan="13"><div class="red-box"><center>AREA</center></div></td>
+    </tr>
+    
+ 	<tr>
+    <th class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
+    <th class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
+    <td><div class="name-bold">Anton Shevchuk<div class="position">Team Member</div></div></td>
+    <td class="align-center">8h 0m</td>
+    <td colspan="13"><div class="red-box"> <center>AREA</center></div> <div class="green-box"><center>AREA</center></div></td>
+    </tr>
+
+    <tr>
+    <th class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
+    <th  class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
+    <td><div class="name-bold">Danis Ali<div class="position">Team Lead</div></div></td>
+    <td class="align-center">16h 0m</td>
+    <td colspan="13"><div class="yellow-box"> <center>AREA</center></div><div class="green-box"><center>AREA</center></div></td>
+    </tr>
+ </tbody>
+</table>
+</div>
+</div>
+
+
+</div><!--white-wrapper--> 
+            
+            
+            
+       
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+{% include 'stl/common/footer.html' %} 
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}
