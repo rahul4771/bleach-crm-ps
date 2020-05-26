@@ -11,7 +11,7 @@ from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWr
 from django.db.models.functions import Cast 
 from django.db.models import Prefetch
 
-from user.models import UserProfile
+from user.models import UserProfile,Address
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
@@ -288,7 +288,35 @@ class TicketDetails(IsAgent,View):
 
 class ClientDetails(IsAgent,View):
 	def get(self,request):
-		return render(request,"agent/client/clients.html",{}) 
+		search                  = request.GET.get('search')
+
+		if search:
+			try:
+				client_details = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True,name__icontains=search).prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area'),to_attr='customer_address'),Prefetch('customer_evaluation',queryset=Evaluation.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True,order_status='ORDER_CLOSED'),to_attr='order_evaluation')),to_attr='customer_evaluations'))
+			except:
+				client_details = None
+		else:
+			client_details = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True).prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area'),to_attr='customer_address'),Prefetch('customer_evaluation',queryset=Evaluation.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True,order_status='ORDER_CLOSED'),to_attr='order_evaluation')),to_attr='customer_evaluations'))			
+
+		#code must change for optimisation	
+		for detail in client_details:
+			detail.active_status = False
+			if detail.customer_evaluations:
+				for evaluation in detail.customer_evaluations:
+					if evaluation.order_evaluation:
+						detail.active_status = True	
+
+		#To Find active and new client
+		try:
+			orders = Order.objects.filter(is_active=True).select_related('evaluation__customer')
+		except:
+			orders = None	
+
+		active_clients_count = orders.filter(~Q(order_status='ORDER_CLOSED')).values_list('evaluation__customer').distinct().count()	
+		new_clients_count    = orders.filter(evaluation__created__date__gte=timezone.now().date()-timedelta(30),evaluation__customer__created__date__gte=timezone.now().date()-timedelta(30),).values_list('evaluation__customer').distinct().count()
+		
+		
+		return render(request,"agent/client/clients.html",{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count}) 
 
 
 

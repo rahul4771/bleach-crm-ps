@@ -64,7 +64,7 @@ SCHEDULER_CHOICES = (
 #Store the Order Details.DownPayment,Subscription and Direct Cleaning Comes Under a Single Order
 
 class Order(models.Model):
-	evaluation 		= models.ForeignKey(Evaluation,blank=False,null=False)
+	evaluation 		= models.ForeignKey(Evaluation,blank=False,null=False,related_name='evaluation_order')
 	order_no   		= models.CharField(max_length=20,blank=False,null=False)
 	order_status 	= models.CharField(max_length=50,blank=True,null=True,choices=ORDER_STATUS)
 	payment_status  = models.CharField(max_length=50,blank=True,null=True,choices=PAYMENT_STATUS)
