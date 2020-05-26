@@ -15,7 +15,9 @@
 <form method="post" action="{% url 'login' %}">
 {% csrf_token %}	
 <label><input name="username" type="text" class="login-username" placeholder="User Name" id="username"></label>
-<label><input name="password" type="text" class="login-password" placeholder="Password"></label>
+<label><input name="password" id="password_field" type="password" class="login-password" placeholder="Password" autocomplete="off">
+<button type="button" toggle="#password_field" class="fa fa-eye toggle-password"></button>
+</label>
 <p class="forgot-password"><a href="#">Forgot Password</a></p>
 <center><input name="Sign in" type="submit" value="Sign in" class="sign-in-button"></center>
 </form>

@@ -118,7 +118,7 @@ class Area(models.Model):
 
 
 class Address(models.Model):
-    customer        = models.ForeignKey('UserProfile',blank=False,null=False)
+    customer        = models.ForeignKey('UserProfile',blank=False,null=False,related_name='address_customer')
     governorate     = models.ForeignKey('Governorate',blank=True,null=True)
     area            = models.ForeignKey('Area',blank=True,null=True)
     block           = models.CharField(max_length=100,blank=True,null=True)
