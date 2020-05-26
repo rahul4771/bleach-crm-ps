@@ -286,7 +286,9 @@ class TicketDetails(IsAgent,View):
 		return render(request,"agent/ticket/tickets.html",{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search})		
 
 
-
+class ClientDetails(IsAgent,View):
+	def get(self,request):
+		return render(request,"agent/client/clients.html",{}) 
 
 
 

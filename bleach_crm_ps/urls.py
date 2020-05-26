@@ -25,6 +25,11 @@ urlpatterns = [
     url(r'^$',Signin.as_view(),name='login'),
     url(r'^logout/$',logout.as_view(),name='logout'),
 
+    url(r'^bleach_admin/',include('bleachadmin.urls',namespace='bleach_admin')),
     url(r'^agent/',include('agent.urls',namespace='agent')),
+    url(r'^evaluator/',include('evaluator.urls',namespace='evaluator')),
+    url(r'^stl/',include('senior_team_leader.urls',namespace='stl')),
+    url(r'^tl/',include('team_leader.urls',namespace='tl')),
+    url(r'^accountant/',include('accountant.urls',namespace='accountant')),
 
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "evaluator/common/header.html" %}    
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Resources</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+            </div><!--welcome-wrapper-->
+       
+     <div class="main-card"><!--main-card-->
+<div class="card-row"><!--card-row-->
+            <div class="card-column whitebg blue-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-workers-icon.svg' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Workers</h1>
+            	<h2 class="blue-text"><label>Active<span>20</span></label> </h2>
+            	<p><label>Total <span>42</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg green-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-manhours-icon.svg' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Man Hours</h1>
+            	<h2 class="green-text"><label>Today<span>150</span></label>  </h2>
+            	<p><label>This Week <span>1202</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg orange-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-man-average-hours-icon.svg' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Man Average Hours</h1>
+            	<h2 class="orange-text"><label>Today<span>4.5</span></label> </h2>
+            	<p><label>This Week <span>4.1</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg red-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-active-team-icon.svg' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Active Team</h1>
+            	<h2 class="red-text"><label>Today<span>5</span></label> </h2>
+            	<p><label>This Week <span>4</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+   </div><!--card-row-->
+</div><!--main-card-->       
+            
+     <div class="main-content-holder"><!--main-content-holder-->            
+            
+<div class="white-wrapper"><!--white-wrapper-->
+<div class="toolbar-div"><!--toolbar-div-->
+
+<div class="search-middle"><!--search-middle-->
+<div class="filter-button"><a href="#">Filter</a></div>  <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here...">
+<a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+</div><!--search-middle-->
+
+        <div class="filter-right"><!--filter-right-->
+       <div class="date-picker-resource"><a href="#">Date Picker</a></div>
+       <div class="day-month-togggle-button"><a href="#">Date/Month Toggle Button</a></div>
+        </div><!--filter-right-->
+
+
+</div><!--toolbar-div-->
+
+
+
+
+
+
+<div id="resource-scroll" class="resource-scroll">
+<div class="table-wrap">
+<table class="resource-table" id="myTable" >
+<thead>
+<tr class="resource-graybg">
+<th colspan="2" class="fixed-side resource-graybg" scope="col">&nbsp;</th>
+<th onclick="sortTable(0)" class="resource-graybg align-left" width="200" scope="col">Name<div class="sort-icon"></div></th>
+<th onclick="sortTable(1)" class="resource-graybg align-center" width="90" scope="col">Working Time<div class="sort-icon"></div></th>
+	<th class="border-right" width="11"> </td>
+    <th class="border-right" width="58">2 AM</th>
+    <th class="border-right" width="58">4 AM</th>
+    <th class="border-right" width="58">6 AM</th>
+    <th class="border-right" width="58">8 AM</th>
+    <th class="border-right" width="58">10 AM</th>
+    <th class="border-right" width="54">12 PM</th>
+    <th class="border-right" width="54">2 PM</th>
+    <th class="border-right" width="54">4 PM</th>
+    <th class="border-right" width="54">6 PM</th>
+    <th class="border-right" width="54">8 PM</th>
+    <th class="border-right" width="54">10 PM</th>
+    <th  width="25"></th>
+</tr>
+</thead>
+<tbody>
+    <tr>
+    <th width="25"  class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
+    <th width="40" class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
+    <td><div class="name-bold">Anton Shevchuk<div class="position">Team Member</div></div></td>
+    <td class="align-center">8h 0m</td>
+    <td colspan="13"><div class="red-box"> <center>AREA</center></div> <div class="green-box"><center>AREA</center></div></td>
+    </tr>
+
+    <tr>
+    <th class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
+    <th class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
+    <td><div class="name-bold">Danis Ali<div class="position">Team Lead</div></div></td>
+    <td class="align-center">16h 0m</td>
+    <td colspan="13"><div class="yellow-box"> <center>AREA</center></div><div class="green-box"><center>AREA</center></div></td>
+    </tr>
+    
+    <tr>
+    <th  class="fixed-side"><img src="{% static 'files/images/gray-dot.png' %}"></th>
+    <th class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
+    <td><div class="name-bold">Neam Codova<div class="position">Team Member</div></div></td>
+    <td class="align-center">0h 0m</td>
+    <td colspan="13"><div class="yellow-box"><center>AREA</center></div></td>
+    </tr> 
+       
+    <tr>
+    <th class="fixed-side"><img src="{% static 'files/images/red-dot.png' %}"></th>
+    <th class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
+    <td><div class="name-bold">Lou Diaz<div class="position">Team Member</div></div></td>
+    <td class="align-center">0h 0m</td>
+    <td colspan="13"><div class="red-box"><center>AREA</center></div></td>
+    </tr> 
+         
+    <tr>
+    <th class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
+    <th class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
+    <td><div class="name-bold">Neil Barlao<div class="position">Team Incharge</div></div></td>
+    <td class="align-center">0h 0m</td>
+    <td colspan="13"><div class="red-box"><center>AREA</center></div></td>
+    </tr>
+    
+ 	<tr>
+    <th class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
+    <th class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
+    <td><div class="name-bold">Anton Shevchuk<div class="position">Team Member</div></div></td>
+    <td class="align-center">8h 0m</td>
+    <td colspan="13"><div class="red-box"> <center>AREA</center></div> <div class="green-box"><center>AREA</center></div></td>
+    </tr>
+
+    <tr>
+    <th class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
+    <th  class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
+    <td><div class="name-bold">Danis Ali<div class="position">Team Lead</div></div></td>
+    <td class="align-center">16h 0m</td>
+    <td colspan="13"><div class="yellow-box"> <center>AREA</center></div><div class="green-box"><center>AREA</center></div></td>
+    </tr>
+ </tbody>
+</table>
+</div>
+</div>
+
+
+</div><!--white-wrapper-->            
+            
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+
+{% include 'agent/common/footer.html' %} 
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}

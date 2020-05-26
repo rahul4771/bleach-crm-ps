@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "evaluator/common/header.html" %}    
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Welcome to Dashboard</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+            </div><!--welcome-wrapper-->
+       
+     <div class="main-card"><!--main-card-->
+		<div class="evaluator-column-wrapper"><!--evaluator-column-wrapper-->
+		<div class="evaluator-column-items evaluator-left-items"><!--evaluator-column-items evaluator-left-items-->
+        <div class="card-row"><!--card-row-->
+        
+         
+            	<div class="card-column whitebg blue-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-today-icon.svg' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Evaluations</h1>
+            	<h2 class="blue-text"><label>Today<span>20</span></label> </h2>
+            	<p><label>This Week <span>42</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+ 
+            	<div class="card-column whitebg green-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-cleaning-job-icon.svg' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Cleaning Jobs</h1>
+            	<h2 class="green-text"><label>Today<span>20</span></label>  </h2>
+            	<p><label>This Week <span>42</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+ 
+            	<div class="card-column whitebg yellow-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-week-yellow-icon.svg' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Weekly Sales</h1>
+            	<h2 class="yellow-text"><label>Current<span>6000KD</span></label>  </h2>
+            	<p><label>Last Week <span>1200KD</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+ 
+ </div><!--card-row-->
+ <div class="card-row"><!--card-row-->
+            	<div class="card-column whitebg orange-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-investigation-orange-icon.svg' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>My Investigation</h1>
+            	<h2 class="orange-text"><label>Today<span>3</span></label> </h2>
+            	<p><label>This Week <span>7</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            	</div><!--card-column-->
+ 
+            
+ 
+            	<div class="card-column whitebg red-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-rating-icon.svg' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Rating</h1>
+            	<h2 class="red-text"><label>Today<span>20</span></label> </h2>
+            	<p><label>This Week <span>4.2</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+  
+            
+ 
+            	<div class="card-column whitebg gray-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-month-gray-icon.svg' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Monthly Sales</h1>
+            	<h2 class="gray-text"><label>Current<span>6000KD</span></label> </h2>
+            	<p><label>Last Month <span>12000KD</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+ 
+         
+        </div><!--card-row-->
+        
+        </div><!--evaluator-column-items evaluator-left-items-->
+        
+        <div class="evaluator-column-items evaluator-right-items"><!--evaluator-column-items evaluator-right-items-->
+        <img src="{% static 'files/images/daily-target-chart.jpg' %}">
+        </div><!--evaluator-column-items evaluator-right-items-->
+        </div><!--evaluator-column-wrapper-->
+
+	</div><!--main-card-->       
+            
+     <div class="main-content-holder"><!--main-content-holder-->            
+          
+      <div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Investigation Task</h2>
+ <div class="date-picker">Date Picker</div>
+<table class="main-table">
+<tbody>
+
+<tr class="green-line clickable-row" data-href='#'>
+<td data-label="Order Name" ><a href="#">BLC20200405</a></td>
+<td data-label="Customenr Name"><a href="#">Sheldon</a> </td>
+<td class="hide-a" data-label=""><a href="#">Surra </a></td>
+<td data-label="Contact Number"><a href="#">6061 0001</a></td>
+<td class="hide-a" data-label=""><img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar"> <img src="{% static 'files/images/profile-picblack.jpg' %}" class="profile-avtar"></td>
+<td class="hide-a" data-label=""><span class="blue-text">One time service</span></td>
+</tr>
+
+<tr class="green-line clickable-row" data-href='#'>
+<td data-label="Order Name"><a href="#">BLC20200405</a></td>
+<td data-label="Customenr Name"><a href="#">Sheldon </a></td>
+<td class="hide-a" data-label=""><a href="#">Surra </a></td>
+<td data-label="Contact Number"><a href="#">6061 0001</a></td>
+<td class="hide-a" data-label=""><img src="{% static 'files/images/profile-picblack.jpg' %}" class="profile-avtar"> <img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar"> </td>
+<td class="hide-a" data-label=""><span class="blue-text">One time service</span></td>
+</tr> 
+<tr class="green-line clickable-row" data-href='#'>
+<td data-label="Order Name" ><a href="#">BLC20200405</a> </td>
+<td data-label="Customenr Name"><a href="#">Sheldon </a></td>
+<td class="hide-a" data-label=""><a href="#">Surra </a></td>
+<td data-label="Contact Number"><a href="#">6061 0001</a></td>
+<td class="hide-a" data-label=""><img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar"> <img src="{% static 'files/images/profile-picblack.jpg' %}" class="profile-avtar"> </td>
+<td class="hide-a" data-label=""><span class="blue-text">One time service</span></td>
+</tr>
+<tr class="green-line clickable-row" data-href='#'>
+<td data-label="Order Name"><a href="#">BLC20200405</a> </td>
+<td data-label="Customenr Name"><a href="#">Sheldon</a> </td>
+<td class="hide-a" data-label=""><a href="#">Surra</a> </td>
+<td data-label="Contact Number"><a href="#">6061 0001</a></td>
+<td class="hide-a" data-label=""><img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar"> <img src="{% static 'files/images/profile-picblack.jpg' %}" class="profile-avtar"> </td>
+<td class="hide-a" data-label=""><span class="blue-text">One time service</span></td>
+</tr>
+<tr class="green-line clickable-row" data-href='#'>
+<td data-label="Order Name"><a href="#">BLC20200405</a> </td>
+<td data-label="Customenr Name"><a href="#">Sheldon </a></td>
+<td class="hide-a" data-label=""><a href="#">Surra</a> </td>
+<td data-label="Contact Number"><a href="#">6061 0001</a></td>
+<td class="hide-a" data-label=""><img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar"> <img src="{% static 'files/images/profile-picblack.jpg' %}" class="profile-avtar"> </td>
+<td class="hide-a" data-label=""><span class="blue-text">One time service</span></td>
+</tr>
+ 
+</tbody>
+</table>
+</div><!--white-wrapper-->   
+             
+
+ <div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">My Evaluation</h2>
+ <div class="date-picker">Date Picker</div>
+<table summary="" class="table table-hover footable common-table default footable-loaded" cellspacing="0" cellpadding="0" border="0">
+<tbody>
+
+<tr class="clickable-row" data-href='#'>
+<td class="green-line" data-label="Order Name" ><a href="#">8.00 AM</a></td>
+<td data-label="Customenr Name"><a href="#">Sheldon</a> </td>
+<td class="hide-a" data-label=""><a href="#">Surra </a></td>
+<td data-label="Contact Number"><a href="#">6061 0001</a></td>
+<td class="hide-a" data-label=""><span class="green-bg">Evaluated</span></td>
+</tr>
+
+<tr class="clickable-row" data-href='#'>
+<td class="yellow-line" data-label="Order Name"><a href="#">9.00 AM</a></td>
+<td data-label="Customenr Name"><a href="#">Penny </a></td>
+<td class="hide-a" data-label=""><a href="#">Surra </a></td>
+<td data-label="Contact Number"><a href="#">6061 0001</a></td>
+<td class="hide-a" data-label=""><span class="yellow-bg">On Hold</span></td>
+</tr> 
+<tr class="clickable-row" data-href='#'>
+<td class="blue-line"  data-label="Order Name" ><a href="#">10.30 AM</a> </td>
+<td data-label="Customenr Name"><a href="#">Leonard </a></td>
+<td class="hide-a" data-label=""><a href="#">Surra </a></td>
+<td data-label="Contact Number"><a href="#">6061 0001</a></td>
+<td class="hide-a" data-label=""><span class="blue-bg">To be Evaluated</span></td>
+</tr>
+<tr class="clickable-row" data-href='#'>
+<td class="blue-line" data-label="Order Name"><a href="#">01-00 AM</a> </td>
+<td data-label="Customenr Name"><a href="#">Howard </a> </td>
+<td class="hide-a" data-label=""><a href="#">Surra</a> </td>
+<td data-label="Contact Number"><a href="#">6061 0001</a></td>
+<td class="hide-a" data-label=""><span class="blue-bg">To be Evaluated</span></td>
+</tr>
+<tr class="clickable-row" data-href='#'>
+<td  class="blue-line" data-label="Order Name"><a href="#">03.00 PM</a> </td>
+<td data-label="Customenr Name"><a href="#">Rajesh  </a></td>
+<td class="hide-a" data-label=""><a href="#">Surra</a> </td>
+<td data-label="Contact Number"><a href="#">6061 0001</a></td>
+<td class="hide-a" data-label=""><span class="blue-bg">To be Evaluated</span></td>
+</tr>
+ 
+</tbody>
+</table>
+</div><!--white-wrapper-->  
+ 
+
+<div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Cleaning Callender</h2>
+<div class="date-picker">Date Picker</div>
+<div class="cleaning-container"><!--cleaning-container-->
+<div class="scrollable"><!--scrollable-->
+<div>
+  <table cellpadding="1" cellspacing="1" class="cleaning-table">
+  <tr>
+  <th width="4.166%" colspan="2"> </th>
+    <th width="8.333%" colspan="2">2 AM</th>
+    <th width="8.333%" colspan="2">4 AM</th>
+    <th width="8.333%" colspan="2">6 AM</th>
+    <th width="8.333%" colspan="2">8 AM</th>
+    <th width="8.333%" colspan="2">10 AM</th>
+    <th width="8.333%" colspan="2">12 PM</th>
+    <th width="8.333%" colspan="2">2 PM</th>
+    <th width="8.333%" colspan="2">4 PM</th>
+    <th width="8.333%" colspan="2">6 PM</th>
+    <th width="8.333%" colspan="2">8 PM</th>
+    <th width="8.333%" colspan="2">10 PM</th>
+    <th width="4.166%" colspan="2"></th>
+  </tr>
+  <tr>
+    <td colspan="26"><div class="red-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value red-text">4</div></div> 
+    <div class="green-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center> <div class="right-value green-text">4</div></div></td>
+    </tr>
+  <tr>
+    <td colspan="26"><div class="yellow-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value yellow-text">4</div></div>
+    <div class="green-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center> <div class="right-value green-text">4</div></div></td>
+    </tr>
+  <tr>
+    <td colspan="26"><div class="yellow-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value yellow-text">4</div></div></td>
+    </tr>
+      <tr>
+    <td colspan="26"><div class="blue-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value blue-text">4</div></div></td>
+    </tr>
+    <tr>
+    <td colspan="26"><div class="red-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value red-text">4</div></div></td>
+    </tr>
+  <tr>
+    <td colspan="26"><div class="green-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center> <div class="right-value green-text">4</div></div></td>
+    </tr>
+  <tr>
+    <td colspan="26"><div class="yellow-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value yellow-text">4</div></div></td>
+    </tr>
+      <tr>
+    <td colspan="26"><div class="blue-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value blue-text">4</div></div></td>
+    </tr>
+  </table>
+</div>
+</div><!--scrollable-->
+</div><!--cleaning-container-->
+</div><!--white-wrapper-->
+            
+            
+            
+       
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+{% include 'evaluator/common/footer.html' %} 
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}
