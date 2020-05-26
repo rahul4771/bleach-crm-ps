@@ -4,23 +4,22 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 debug=True
 
-allowed_hosts=['127.0.0.1','localhost'] 
+allowed_hosts=['127.0.0.1','localhost','15.206.173.198',] 
 
 secret_key='sx$k=8(*ad%t%&l_^%8bst0l62f_$0t3k!r4r7h0l_4)65habj'
 
-databases={
-
-'default': {
-
-    'ENGINE': 'django.db.backends.sqlite3',
-
-    'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-
+databases = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'bleach_db',
+        'USER': 'bleachuser',
+        'PASSWORD': 'bleachuser',
+        'HOST': 'localhost',
+        'PORT': '',
     }
-
 }
 
 
-static_root='/home/ansab/static/'
+static_root='/home/static/'
 
-media_root= '/home/ansab/media/'
+media_root= '/home/media/'
