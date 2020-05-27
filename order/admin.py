@@ -1,5 +1,5 @@
 from django.contrib import admin
-from order.models import Order,OrderScheduler,Investigation,InvestigationMedia,FollowUp,FollowUpScheduler,Question,FeedBack
+from order.models import Order,OrderScheduler,FollowUp,FollowUpScheduler,Question,FeedBack,Investigation,InvestigationMedia
 # Register your models here.
 
 class OrderAdmin(admin.ModelAdmin):
@@ -7,7 +7,6 @@ class OrderAdmin(admin.ModelAdmin):
 
 admin.site.register(Order,OrderAdmin)
 admin.site.register(OrderScheduler)
-
 
 class InvestigationMediaInline(admin.TabularInline):
 	model = InvestigationMedia
@@ -22,6 +21,8 @@ class InvestigationMediaAdmin(admin.ModelAdmin):
 
 admin.site.register(Investigation,InvestigationAdmin)
 admin.site.register(InvestigationMedia,InvestigationMediaAdmin)
+
+
 
 admin.site.register(FollowUp)
 admin.site.register(FollowUpScheduler)

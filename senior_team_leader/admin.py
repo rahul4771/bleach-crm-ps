@@ -15,6 +15,7 @@ class CleaningTeamMediaAdmin(admin.ModelAdmin):
 admin.site.register(CleaningTeam,CleaningTeamAdmin)
 admin.site.register(CleaningTeamMedia,CleaningTeamMediaAdmin)
 
+
 admin.site.register(CleaningTeamTask)
 admin.site.register(CleaningTeamMember)
 
@@ -33,3 +34,4 @@ admin.site.register(FollowUpTeamMedia,FollowUpTeamMediaAdmin)
 
 admin.site.register(FollowUpTeamTask)
 admin.site.register(FollowUpTeamMember)
+
