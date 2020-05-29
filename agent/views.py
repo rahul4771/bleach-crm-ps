@@ -38,7 +38,7 @@ class AgentHome(IsAgent,View):
 
 		today_cleaning_job_count = cleaning_job.filter(start_at__date=timezone.now().date()).count() 
 		week_cleaning_job_count  = cleaning_job.filter(start_at__gte=timezone.now().date()-timedelta(6)).count()		
-
+		
 		#Followup jobs count
 		try:
 			follow_up_job    = FollowUpTeam.objects.filter(is_active=True)
@@ -151,7 +151,7 @@ class ResourceManagement(IsAgent,View):
 		today_followup_active_teams  = follow_up_teams.filter(Q(Q(start_at__date=timezone.now().date())|Q(end_at__date=timezone.now().date())))
 		week_cleaning_active_teams   = cleaning_teams.filter(Q(Q(start_at__gte=timezone.now().date()-timedelta(6))|Q(end_at__gte=timezone.now().date()-timedelta(6))))
 		week_followup_active_teams   = follow_up_teams.filter(Q(Q(start_at__gte=timezone.now().date()-timedelta(6))|Q(end_at__gte=timezone.now().date()-timedelta(6))))
-
+		
 		today_date            = timezone.now()
 		weekstart_date        = timezone.now().date()-timedelta(6)
 
@@ -288,6 +288,7 @@ class TicketDetails(IsAgent,View):
 
 class ClientDetails(IsAgent,View):
 	def get(self,request):
+		
 		search                  = request.GET.get('search')
 
 		if search:

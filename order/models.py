@@ -10,12 +10,12 @@ ORDER_STATUS = (
 	('ORDER_CLOSED','ORDER_CLOSED')
 	)
 
-FOLLOWUP_STATUS = (
+FOLLOWUP_STATUS = ( 
 	('APPROVED_BY_CLIENT','APPROVED_BY_CLIENT'),
 	('INVESTIGATOR_ASSIGNED','INVESTIGATOR_ASSIGNED'),
 	('INVESTIGATOR_APPROVED','INVESTIGATOR_APPRVED'),
 	('FOLLOWUP_IN_PROGRESS','FOLLOWUP_IN_PROGRESS'),
-	('FOLLOWUP_CANCELLED','FOLLOWUP_CANCELLED'),
+    ('FOLLOWUP_CANCELLED','FOLLOWUP_CANCELLED'),
 	('FOLLOWUP_CLOSED','FOLLOWUP_CLOSED')
 	)
  
@@ -110,6 +110,7 @@ class Investigation(models.Model):
 	problem 			 = models.CharField(max_length=100,blank=True,null=True)
 	description     	 = models.CharField(max_length=500,blank=True,null=True)
 	investigator    	 = models.ForeignKey(UserProfile,blank=True,null=True)
+	assigned_by          = models.ForeignKey(UserProfile,blank=True,null=True,related_name='investigation_assigned_by')
 	sheduled_at 		 = models.DateTimeField(blank=True,null=True)
 	notes 				 = models.CharField(max_length=500,blank=True,null=True)
 	is_followup_approved = models.BooleanField(null=False,blank=True,default=False)
@@ -122,7 +123,6 @@ class Investigation(models.Model):
 
 	def __str__(self):
 		return str(self.id)
-
 
 #For Tracking Medias Uploaded by Investigator on Site
 
@@ -141,7 +141,7 @@ class InvestigationMedia(models.Model):
 #Followup details for followup order.Followup granded by Investigator
 
 class FollowUp(models.Model): 
-	investigation   = models.ForeignKey('INVESTIGATION',blank=False,null=False) 
+	investigation   = models.ForeignKey('Investigation',blank=False,null=False) 
 	instructions    = models.CharField(max_length=500,blank=True,null=True)
 	status      	= models.CharField(max_length=20,blank=True,null=True,choices=FOLLOWUP_STATUS)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)

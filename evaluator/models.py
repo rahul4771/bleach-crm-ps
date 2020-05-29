@@ -52,6 +52,14 @@ MEDIA_CHOICES = (
 	('AUDIO','AUDIO')
 	)
 
+EVALUATION_STATUS =(
+('EVALUATING','EVALUATING'),
+('EVALUATED','EVALUATED'),
+('TOBEEVALUATED','TOBEEVALUATED'),
+('ONHOLD','ONHOLD')
+	)
+
+
 #Different cleaning service types.Eg:General Cleaning,Carpet Cleaning etc
 
 class ServiceType(models.Model):
@@ -123,6 +131,7 @@ class Evaluation(models.Model):
 	preffered_gender 	= models.CharField(max_length=20,blank=True,null=True,choices=GENDER_CHOICES)
 
 	quatation_status	= models.CharField(max_length=50,blank=True,null=True,choices=QUATATION_CHOICES)
+	quatation_approved_date = models.DateTimeField(blank=True,null=True)
 	cleaning_policy		= models.CharField(max_length=20,blank=True,null=True,choices=CLEANING_CHOICES)
 
 	subscription_start 	= models.DateTimeField(blank=True,null=True)
@@ -159,6 +168,7 @@ class EvaluationDetails(models.Model):
 	estimated_cost      = models.FloatField(blank=True,null=True)
 	cleaning_hours 		= models.FloatField(blank=True,null=True)
 	location_type		= models.ForeignKey('LocationType',blank=True,null=True,related_name='evaluation_book_location_type')
+	status		        = models.CharField(max_length=20,blank=True,null=True,default='TOBEEVALUATED',choices=EVALUATION_STATUS)
 	
 	
 	is_active            = models.BooleanField(null=False,blank=True,default=True)

@@ -1,6 +1,6 @@
 from django.db import models
 from user.models import UserProfile
-from order.models import OrderScheduler,FollowUpScheduler
+from order.models import OrderScheduler,FollowUpScheduler,Order
 
 MEDIA_TAKEN_CHOICES = (
 	('BEFORE_CLEANING','BEFORE_CLEANING'),
