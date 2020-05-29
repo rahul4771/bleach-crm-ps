@@ -3,6 +3,7 @@
 {% load static %}
 <div class="wrapper"><!--wrapper-->
 {% include "evaluator/common/header.html" %}    
+   
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
@@ -10,206 +11,156 @@
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
             </div><!--welcome-wrapper-->
        
-     <div class="main-card"><!--main-card-->
-		<div class="evaluator-column-wrapper"><!--evaluator-column-wrapper-->
-		<div class="evaluator-column-items evaluator-left-items"><!--evaluator-column-items evaluator-left-items-->
-        <div class="card-row"><!--card-row-->
-        
-         
-            	<div class="card-column whitebg blue-border"><!--card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+       <div class="main-card"><!--main-card-->
+<div class="card-row"><!--card-row-->
+            <div class="card-column whitebg blue-border"><!--card-column-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-today-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Evaluations</h1>
-            	<h2 class="blue-text"><label>Today<span>20</span></label> </h2>
-            	<p><label>This Week <span>42</span></label></p>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
+                <h2 class="blue-text"><label>Today<span>{{today_enquiry_count}}</span></label> </h2>
+                <p><label>This Week <span>{{week_enquiry_count}}</span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
             </div><!--card-column-->
- 
-            	<div class="card-column whitebg green-border"><!--card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+        
+            <div class="card-column whitebg green-border"><!--card-column-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-cleaning-job-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Cleaning Jobs</h1>
-            	<h2 class="green-text"><label>Today<span>20</span></label>  </h2>
-            	<p><label>This Week <span>42</span></label></p>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
+                <h2 class="green-text"><label>Today<span>{{today_cleaning_job_count}}</span></label>  </h2>
+                <p><label>This Week <span>{{week_cleaning_job_count}}</span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
             </div><!--card-column-->
- 
-            	<div class="card-column whitebg yellow-border"><!--card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+        
+            <div class="card-column whitebg orange-border"><!--card-column-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-week-yellow-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Weekly Sales</h1>
-            	<h2 class="yellow-text"><label>Current<span>6000KD</span></label>  </h2>
-            	<p><label>Last Week <span>1200KD</span></label></p>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
+                <h2 class="orange-text"><label>Current<span>{{this_week_sales|default_if_none:'0'}}KD</span></label>  </h2>
+                <p><label>Last Week <span>{{last_week_sales|default_if_none:'0'}}KD</span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
             </div><!--card-column-->
- 
- </div><!--card-row-->
- <div class="card-row"><!--card-row-->
-            	<div class="card-column whitebg orange-border"><!--card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-investigation-orange-icon.svg' %}"></div>
-                <div class="column-right"><!--column-right-->
-                <h1>My Investigation</h1>
-            	<h2 class="orange-text"><label>Today<span>3</span></label> </h2>
-            	<p><label>This Week <span>7</span></label></p>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
-            	</div><!--card-column-->
- 
-            
- 
-            	<div class="card-column whitebg red-border"><!--card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-rating-icon.svg' %}"></div>
-                <div class="column-right"><!--column-right-->
-                <h1>Rating</h1>
-            	<h2 class="red-text"><label>Today<span>20</span></label> </h2>
-            	<p><label>This Week <span>4.2</span></label></p>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
-            </div><!--card-column-->
-  
-            
- 
-            	<div class="card-column whitebg gray-border"><!--card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+        
+            <div class="card-column whitebg red-border"><!--card-column-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-month-gray-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Monthly Sales</h1>
-            	<h2 class="gray-text"><label>Current<span>6000KD</span></label> </h2>
-            	<p><label>Last Month <span>12000KD</span></label></p>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
+                <h2 class="red-text"><label>Current<span>{{this_month_sales|default_if_none:'0'}}KD</span></label> </h2>
+                <p><label>Last Month <span>{{last_month_sales|default_if_none:'0'}}KD</span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
             </div><!--card-column-->
- 
-         
-        </div><!--card-row-->
-        
-        </div><!--evaluator-column-items evaluator-left-items-->
-        
-        <div class="evaluator-column-items evaluator-right-items"><!--evaluator-column-items evaluator-right-items-->
-        <img src="{% static 'files/images/daily-target-chart.jpg' %}">
-        </div><!--evaluator-column-items evaluator-right-items-->
-        </div><!--evaluator-column-wrapper-->
-
-	</div><!--main-card-->       
+   </div><!--card-row-->
+</div><!--main-card--> 
+       
             
      <div class="main-content-holder"><!--main-content-holder-->            
           
       <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Investigation Task</h2>
- <div class="date-picker">Date Picker</div>
+<div>
+ <input type="text" id="investigation_calendar" class="date_pick date-picker" value={{investigation_date|date:"d-m-Y"}} onchange="set_params_go();">
+</div>
 <table class="main-table">
 <tbody>
 
-<tr class="green-line clickable-row" data-href='#'>
-<td data-label="Order Name" ><a href="#">BLC20200405</a></td>
-<td data-label="Customenr Name"><a href="#">Sheldon</a> </td>
-<td class="hide-a" data-label=""><a href="#">Surra </a></td>
-<td data-label="Contact Number"><a href="#">6061 0001</a></td>
-<td class="hide-a" data-label=""><img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar"> <img src="{% static 'files/images/profile-picblack.jpg' %}" class="profile-avtar"></td>
-<td class="hide-a" data-label=""><span class="blue-text">One time service</span></td>
-</tr>
+{% for investigation in investigations %}
+<tr class="{% if investigation.order.evaluation.cleaning_policy == 'ONE TIME SERVICE' %} blue-line{% else %}green-line{% endif %} clickable-row" data-href='#'>
+<td data-label="Order Name" ><a href="#">{{investigation.order.evaluation.evaluation_id}}</a></td>
+<td data-label="Customenr Name"><a href="#">{{investigation.order.evaluation.customer.name}}</a> </td>
+<td class="hide-a" data-label=""><a href="#">{{investigation.order_schedule.customer_address.area.name}}</a></td>
+<td data-label="Contact Number"><a href="#">{{investigation.order.evaluation.customer.mobile_number}}</a></td>
+<td class="hide-a" data-label="">
 
-<tr class="green-line clickable-row" data-href='#'>
-<td data-label="Order Name"><a href="#">BLC20200405</a></td>
-<td data-label="Customenr Name"><a href="#">Sheldon </a></td>
-<td class="hide-a" data-label=""><a href="#">Surra </a></td>
-<td data-label="Contact Number"><a href="#">6061 0001</a></td>
-<td class="hide-a" data-label=""><img src="{% static 'files/images/profile-picblack.jpg' %}" class="profile-avtar"> <img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar"> </td>
-<td class="hide-a" data-label=""><span class="blue-text">One time service</span></td>
-</tr> 
-<tr class="green-line clickable-row" data-href='#'>
-<td data-label="Order Name" ><a href="#">BLC20200405</a> </td>
-<td data-label="Customenr Name"><a href="#">Sheldon </a></td>
-<td class="hide-a" data-label=""><a href="#">Surra </a></td>
-<td data-label="Contact Number"><a href="#">6061 0001</a></td>
-<td class="hide-a" data-label=""><img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar"> <img src="{% static 'files/images/profile-picblack.jpg' %}" class="profile-avtar"> </td>
-<td class="hide-a" data-label=""><span class="blue-text">One time service</span></td>
+{% for team_detail in investigation.order_schedule.cleaning_team_details %}
+{% if team_detail.team_leader.profile_image %}
+<img src="{{team_detail.team_leader.profile_image.url}}" class="profile-avtar image-table-view">
+{% else %}
+<img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar image-table-view">
+{% endif %}
+{% endfor %}
+{% if investigation.assigned_by.profile_image %}
+<img src="{{investigation.assigned_by.profile_image.url}}" class="profile-avtar image-table-view">
+{% else %}
+<img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar image-table-view">
+{% endif %}
+</td>
+<td class="hide-a" data-label="">
+    {% if investigation.order.evaluation.cleaning_policy == 'ONE TIME SERVICE' %}
+    <span class="blue-text">One time service</span>
+    {% else %}
+    <span class="blue-text">Subscription</span>
+    {% endif %}
+</td>
 </tr>
-<tr class="green-line clickable-row" data-href='#'>
-<td data-label="Order Name"><a href="#">BLC20200405</a> </td>
-<td data-label="Customenr Name"><a href="#">Sheldon</a> </td>
-<td class="hide-a" data-label=""><a href="#">Surra</a> </td>
-<td data-label="Contact Number"><a href="#">6061 0001</a></td>
-<td class="hide-a" data-label=""><img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar"> <img src="{% static 'files/images/profile-picblack.jpg' %}" class="profile-avtar"> </td>
-<td class="hide-a" data-label=""><span class="blue-text">One time service</span></td>
-</tr>
-<tr class="green-line clickable-row" data-href='#'>
-<td data-label="Order Name"><a href="#">BLC20200405</a> </td>
-<td data-label="Customenr Name"><a href="#">Sheldon </a></td>
-<td class="hide-a" data-label=""><a href="#">Surra</a> </td>
-<td data-label="Contact Number"><a href="#">6061 0001</a></td>
-<td class="hide-a" data-label=""><img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar"> <img src="{% static 'files/images/profile-picblack.jpg' %}" class="profile-avtar"> </td>
-<td class="hide-a" data-label=""><span class="blue-text">One time service</span></td>
-</tr>
+{% endfor %}
  
 </tbody>
 </table>
 </div><!--white-wrapper-->   
              
 
- <div class="white-wrapper"><!--white-wrapper-->
-<h2 class="h2">My Evaluation</h2>
- <div class="date-picker">Date Picker</div>
+ <div class="plain-wrapper"><!--plain-wrapper-->
+ <div class="two-column-fixed-right"><!--two-column-fixed-right-->
+    <div class="two-column-fixed-items two-column-fixed-left-items"><!--two-column-fixed-items two-column-fixed-left-items-->
+    <h2 class="h2">My Evaluation</h2>
+ <div><input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" class="date_pick date-picker" onchange="set_params_go();"></div>
 <table summary="" class="table table-hover footable common-table default footable-loaded" cellspacing="0" cellpadding="0" border="0">
 <tbody>
 
+{% for evaluation in my_evaluations %}
 <tr class="clickable-row" data-href='#'>
-<td class="green-line" data-label="Order Name" ><a href="#">8.00 AM</a></td>
-<td data-label="Customenr Name"><a href="#">Sheldon</a> </td>
-<td class="hide-a" data-label=""><a href="#">Surra </a></td>
-<td data-label="Contact Number"><a href="#">6061 0001</a></td>
-<td class="hide-a" data-label=""><span class="green-bg">Evaluated</span></td>
+<td {% if evaluation.status == 'EVALUATING' %}
+    class="yellow-line"
+    {% elif evaluation.status == 'EVALUATED'  %}
+    class="green-line"
+    {% elif evaluation.status == 'TOBEEVALUATED' %}
+    class="red-line"
+    {% else %}
+    class="orange-line"
+    {% endif %}
+ data-label="Order Name" ><a href="#">{{evaluation.proposed_time|time:"P"}}</a></td>
+<td data-label="Customenr Name"><a href="#">{{evaluation.evaluation.customer.name}}</a> </td>
+<td class="hide-a" data-label=""><a href="#">{{evaluation.address.area.name}} </a></td>
+<td data-label="Contact Number"><a href="#">{{evaluation.evaluation.customer.mobile_number}}</a></td>
+<td class="hide-a" data-label="">
+    {% if evaluation.status == 'EVALUATING' %}
+    <span class="yellow-bg">Evaluating</span>
+    {% elif evaluation.status == 'EVALUATED'  %}
+    <span class="green-bg">Evaluated</span>
+    {% elif evaluation.status == 'TOBEEVALUATED' %}
+    <span class="red-bg">To Be Evaluated</span>
+    {% else %}
+    <span class="orange-bg">On Hold</span>    
+    {% endif %}   
+</td>
 </tr>
-
-<tr class="clickable-row" data-href='#'>
-<td class="yellow-line" data-label="Order Name"><a href="#">9.00 AM</a></td>
-<td data-label="Customenr Name"><a href="#">Penny </a></td>
-<td class="hide-a" data-label=""><a href="#">Surra </a></td>
-<td data-label="Contact Number"><a href="#">6061 0001</a></td>
-<td class="hide-a" data-label=""><span class="yellow-bg">On Hold</span></td>
-</tr> 
-<tr class="clickable-row" data-href='#'>
-<td class="blue-line"  data-label="Order Name" ><a href="#">10.30 AM</a> </td>
-<td data-label="Customenr Name"><a href="#">Leonard </a></td>
-<td class="hide-a" data-label=""><a href="#">Surra </a></td>
-<td data-label="Contact Number"><a href="#">6061 0001</a></td>
-<td class="hide-a" data-label=""><span class="blue-bg">To be Evaluated</span></td>
-</tr>
-<tr class="clickable-row" data-href='#'>
-<td class="blue-line" data-label="Order Name"><a href="#">01-00 AM</a> </td>
-<td data-label="Customenr Name"><a href="#">Howard </a> </td>
-<td class="hide-a" data-label=""><a href="#">Surra</a> </td>
-<td data-label="Contact Number"><a href="#">6061 0001</a></td>
-<td class="hide-a" data-label=""><span class="blue-bg">To be Evaluated</span></td>
-</tr>
-<tr class="clickable-row" data-href='#'>
-<td  class="blue-line" data-label="Order Name"><a href="#">03.00 PM</a> </td>
-<td data-label="Customenr Name"><a href="#">Rajesh  </a></td>
-<td class="hide-a" data-label=""><a href="#">Surra</a> </td>
-<td data-label="Contact Number"><a href="#">6061 0001</a></td>
-<td class="hide-a" data-label=""><span class="blue-bg">To be Evaluated</span></td>
-</tr>
- 
+{% endfor %} 
 </tbody>
 </table>
-</div><!--white-wrapper-->  
+    </div><!--two-column-fixed-items two-column-fixed-left-items-->
+    
+    <div class="two-column-fixed-items two-column-fixed-right-items"><!--two-column-fixed-itemss two-column-fixed-right-items-->
+    <img src="{% static 'files/images/daily-target-chart.jpg' %}">
+    </div><!--two-column-fixed-items two-column-fixed-right-items-->
+ </div><!--two-column-fixed-right-->
+
+</div><!--plain-wrapper-->  
  
 
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Cleaning Callender</h2>
-<div class="date-picker">Date Picker</div>
+<input type="text" id="cleaning_calendar" value="{{schedule_date|date:"d-m-Y"}}" class="date_pick date-picker" onchange="set_params_go();">
 <div class="cleaning-container"><!--cleaning-container-->
 <div class="scrollable"><!--scrollable-->
 <div>
-  <table cellpadding="1" cellspacing="1" class="cleaning-table">
+  <table id="cleaning_table" cellpadding="1" cellspacing="1" class="cleaning-table">
   <tr>
   <th width="4.166%" colspan="2"> </th>
     <th width="8.333%" colspan="2">2 AM</th>
@@ -224,33 +175,7 @@
     <th width="8.333%" colspan="2">8 PM</th>
     <th width="8.333%" colspan="2">10 PM</th>
     <th width="4.166%" colspan="2"></th>
-  </tr>
-  <tr>
-    <td colspan="26"><div class="red-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value red-text">4</div></div> 
-    <div class="green-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center> <div class="right-value green-text">4</div></div></td>
-    </tr>
-  <tr>
-    <td colspan="26"><div class="yellow-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value yellow-text">4</div></div>
-    <div class="green-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center> <div class="right-value green-text">4</div></div></td>
-    </tr>
-  <tr>
-    <td colspan="26"><div class="yellow-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value yellow-text">4</div></div></td>
-    </tr>
-      <tr>
-    <td colspan="26"><div class="blue-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value blue-text">4</div></div></td>
-    </tr>
-    <tr>
-    <td colspan="26"><div class="red-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value red-text">4</div></div></td>
-    </tr>
-  <tr>
-    <td colspan="26"><div class="green-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center> <div class="right-value green-text">4</div></div></td>
-    </tr>
-  <tr>
-    <td colspan="26"><div class="yellow-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value yellow-text">4</div></div></td>
-    </tr>
-      <tr>
-    <td colspan="26"><div class="blue-box"><div class="left-avatar"><img src="{% static 'files/images/profile-pic.jpg' %}"></div><center>AREA</center>  <div class="right-value blue-text">4</div></div></td>
-    </tr>
+  </tr>  
   </table>
 </div>
 </div><!--scrollable-->
@@ -266,6 +191,198 @@
 {% include 'evaluator/common/footer.html' %} 
 </div><!--wrapper-->
 {% endblock %}
-
 {% block javascript %}
+<script>
+$('document').ready(function(){    
+    //Function Used For Cleaning Calender    
+    function isArrayInArrayOverlap(source,search)
+    {   count1=1;
+        count2=1;
+
+
+        for(var i=0,len=source.length;i<len;i++)
+        {
+            if(source[i][0]>=search[0] && source[i][0] >= search[1])
+            {
+                count1++;
+            }
+            if(source[i][1]<=search[0] && source[i][1] >= search[1])
+            {
+                count2++;
+            }
+        
+        }
+        if(count1==source.length || count2 == source.length)
+        {
+            return true;
+            }
+        else{
+            return false;
+        }    
+        }
+
+
+      //To add cleaning schedules in cleaning calender  
+      completed_calender = []; 
+      {% for old_schedule in calendar_order_schedules %} 
+            old_starting_time_string      = '{{old_schedule.start_at|date:'H:i'}}'.replace(":",".");
+            old_ending_time_string        = '{{old_schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+            old_starting_time             = parseInt(old_starting_time_string.split('.')[0])+parseInt(old_starting_time_string.split('.')[1])/60
+            old_ending_time               = parseInt(old_ending_time_string.split('.')[0])+parseInt(
+                old_ending_time_string.split('.')[1])/60
+            
+            current_raw_timings = []
+            {% for schedule in calendar_order_schedules %}
+                starting_time_string      = '{{schedule.start_at|date:'H:i'}}'.replace(":",".");
+                ending_time_string        = '{{schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+                starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+                    ending_time_string.split('.')[1])/60
+                if(completed_calender.includes('{{forloop.counter}}'))
+                {
+                    console.log("includes");
+                }
+                else
+                {
+                if(old_starting_time_string>=starting_time && old_starting_time_string>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0)||old_ending_time_string<=starting_time && old_ending_time_string<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0))
+                    {
+                        completed_calender.push('{{forloop.counter}}');
+                        current_raw_timings.push([starting_time,ending_time]);
+                        //append raw
+                        if(current_raw_timings.length==1)
+                        {
+                            left_percentage  = 100/24*starting_time
+                            width_percentage = 100/24*ending_time-100/24*starting_time;
+                            
+                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{schedule.id}}" {% if schedule.evaluation.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box"{% else %}class="green-box"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.evaluation_details.evaluator.profile_image %}src="{{schedule.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="image-table-view"></div><center>{{schedule.customer_address.area}}</center> <div {% if schedule.evaluation.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.evaluation_details.number_of_cleaners}}</div></div></td></tr>')
+                        }
+                        //append td to the raw 
+                        else
+                        { 
+                           left_percentage  = 100/24*starting_time
+                           width_percentage = 100/24*ending_time-100/24*starting_time; 
+                          
+                            $('#cleaning_table tr:last td').append('<div id="cleaningschedule{{schedule.id}}" {% if schedule.evaluation.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box"{% else %}class="green-box"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.evaluation_details.evaluator.profile_image %}src="{{schedule.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="image-table-view"></div><center>{{schedule.customer_address.area}}</center> <div {% if schedule.evaluation.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.evaluation_details.number_of_cleaners}}</div></div>')      
+                        }
+                    }
+                }
+            {% endfor %}        
+
+       {% endfor %}
+
+       //for special cases like 2 days cleanings
+       {% for sp_schedule in sp_calendar_order_schedules %}
+       starting_time_string      = '{{sp_schedule.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{sp_schedule.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{sp_schedule.id}}" {% if sp_schedule.evaluation.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-first"{% else %}class="sp-green-box-first"{% endif %} style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_schedule.evaluation_details.evaluator.profile_image %} src="{{sp_schedule.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="image-table-view"></div><center>{{sp_schedule.customer_address.area}}</center> </div></td></tr>')
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{sp_schedule.id}}" {% if sp_schedule.evaluation.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-second"{% else %}class="sp-green-box-second"{% endif %} style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div {% if sp_schedule.evaluation.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{sp_schedule.evaluation_details.number_of_cleaners}}</div></div></td></tr>')
+       
+       {% endfor %}
+
+
+      //To add followup schedules in cleaning calender  
+      completed_calender_followup = []; 
+      {% for old_schedule in calendar_followup_schedules %} 
+            old_starting_time_string      = '{{old_schedule.start_at|date:'H:i'}}'.replace(":",".");
+            old_ending_time_string        = '{{old_schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+            old_starting_time             = parseInt(old_starting_time_string.split('.')[0])+parseInt(old_starting_time_string.split('.')[1])/60
+            old_ending_time               = parseInt(old_ending_time_string.split('.')[0])+parseInt(
+                old_ending_time_string.split('.')[1])/60
+            
+            current_raw_timings = []
+            {% for schedule in calendar_followup_schedules %}
+                starting_time_string      = '{{schedule.start_at|date:'H:i'}}'.replace(":",".");
+                ending_time_string        = '{{schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+                starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+                    ending_time_string.split('.')[1])/60
+                if(completed_calender_followup.includes('{{forloop.counter}}'))
+                {
+                    console.log("includes");
+                }
+                else
+                {
+                if(old_starting_time_string>=starting_time && old_starting_time_string>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0)||old_ending_time_string<=starting_time && old_ending_time_string<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0))
+                    {
+                        completed_calender_followup.push('{{forloop.counter}}');
+                        current_raw_timings.push([starting_time,ending_time]);
+                        //append raw
+                        if(current_raw_timings.length==1)
+                        {
+                            left_percentage  = 100/24*starting_time
+                            width_percentage = 100/24*ending_time-100/24*starting_time;
+                            
+                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{schedule.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.follow_up.investigation.investigator.profile_image %}src="{{schedule.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %} class="image-table-view"></div><center>{{schedule.customer_address.area}}</center> <div class="right-value yellow-text">{{schedule.follow_up.investigation.order_schedule.evaluation_details.number_of_cleaners}}</div></div></td></tr>')
+                        }
+                        //append td to the raw 
+                        else
+                        { 
+                           left_percentage  = 100/24*starting_time
+                           width_percentage = 100/24*ending_time-100/24*starting_time; 
+                          
+                            $('#cleaning_table tr:last td').append('<div id="followupschedule{{schedule.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.follow_up.investigation.investigator.profile_image %}src="{{schedule.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %} class="image-table-view"></div><center>{{schedule.customer_address.area}}</center> <div class="right-value yellow-text">{{schedule.follow_up.investigation.order_schedule.evaluation_details.number_of_cleaners}}</div></div>')      
+                        }
+                    }
+                }
+            {% endfor %}        
+
+       {% endfor %}
+
+       //for special cases like 2 days fllowup cleanings
+       {% for sp_schedule in sp_calendar_followup_schedules %}
+       starting_time_string      = '{{sp_schedule.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{sp_schedule.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{sp_schedule.id}}" class="sp-yellow-box-first" style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_schedule.follow_up.investigation.investigator.profile_image %}src="{{sp_schedule.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %} class="image-table-view"></div><center>{{sp_schedule.customer_address.area}}</center> </div></td></tr>')
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{sp_schedule.id}}" class="sp-yellow-box-second" style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div class="right-value yellow-text">{{sp_schedule.follow_up.investigation.order_schedule.evaluation_details.number_of_cleaners}}</div></div></td></tr>')
+       
+       {% endfor %}
+
+});
+
+function set_params_go(args)
+{
+var url='{% url 'evaluator:evaluatordash-board' %}';
+var params={cleaning_calendar_date:$('#cleaning_calendar').val(),evaluation_calendar_date:$('#evaluation_calendar').val(),investigation_calendar_date:$('#investigation_calendar').val(),
+};
+for(key in args) 
+    params[key]=args[key];
+var query='';
+for(key in params)
+    if(params[key]) 
+        query+='&'+key+'='+params[key].toString();
+query=query.replace('&','?');
+window.location.href=url+query;  
+}
+
+</script>
 {% endblock %}

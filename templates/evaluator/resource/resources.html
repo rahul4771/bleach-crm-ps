@@ -17,8 +17,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-workers-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Workers</h1>
-            	<h2 class="blue-text"><label>Active<span>20</span></label> </h2>
-            	<p><label>Total <span>42</span></label></p>
+            	<h2 class="blue-text"><label>Active<span>{{total_active_workers}}</span></label> </h2>
+            	<p><label>Total <span>{{total_workers}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -28,8 +28,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-manhours-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Man Hours</h1>
-            	<h2 class="green-text"><label>Today<span>150</span></label>  </h2>
-            	<p><label>This Week <span>1202</span></label></p>
+            	<h2 class="green-text"><label>Today<span id="today_man_hour"></span></label>  </h2>
+            	<p><label>This Week <span id="week_man_hour"></span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -39,8 +39,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-man-average-hours-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Man Average Hours</h1>
-            	<h2 class="orange-text"><label>Today<span>4.5</span></label> </h2>
-            	<p><label>This Week <span>4.1</span></label></p>
+            	<h2 class="orange-text"><label>Today<span id="today_avg_man_hour"></span></label> </h2>
+            	<p><label>This Week <span id="week_avg_man_hour"></span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -50,8 +50,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-active-team-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Active Team</h1>
-            	<h2 class="red-text"><label>Today<span>5</span></label> </h2>
-            	<p><label>This Week <span>4</span></label></p>
+            	<h2 class="red-text"><label>Today<span id="today_avg_man_hour"></span></label> </h2>
+            	<p><label>This Week <span id="week_avg_man_hour"></span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -64,12 +64,12 @@
 <div class="toolbar-div"><!--toolbar-div-->
 
 <div class="search-middle"><!--search-middle-->
-<div class="filter-button"><a href="#">Filter</a></div>  <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here...">
-<a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+<div class="filter-button"><a href="#">Filter</a></div>  <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()">
+<a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
 </div><!--search-middle-->
 
         <div class="filter-right"><!--filter-right-->
-       <div class="date-picker-resource"><a href="#">Date Picker</a></div>
+       <input type="text" id="working_calendar" class="date_pick date-picker-resource" value={{workers_date|date:"d-m-Y"}} onchange="set_params_go();">
        <div class="day-month-togggle-button"><a href="#">Date/Month Toggle Button</a></div>
         </div><!--filter-right-->
 
@@ -105,67 +105,17 @@
 </tr>
 </thead>
 <tbody>
-    <tr>
-    <th width="25"  class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
-    <th width="40" class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
-    <td><div class="name-bold">Anton Shevchuk<div class="position">Team Member</div></div></td>
-    <td class="align-center">8h 0m</td>
-    <td colspan="13"><div class="red-box"> <center>AREA</center></div> <div class="green-box"><center>AREA</center></div></td>
-    </tr>
-
-    <tr>
+    {% for details in workers_details %}
+    <tr id="worker{{details.id}}">
     <th class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
-    <th class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
-    <td><div class="name-bold">Danis Ali<div class="position">Team Lead</div></div></td>
-    <td class="align-center">16h 0m</td>
-    <td colspan="13"><div class="yellow-box"> <center>AREA</center></div><div class="green-box"><center>AREA</center></div></td>
+    <th class="profile fixed-side"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} align="absmiddle"></th>
+    <td><div class="name-bold">{{details.name}}<div class="position">{{details.user_type}}</div></div></td>
     </tr>
-    
-    <tr>
-    <th  class="fixed-side"><img src="{% static 'files/images/gray-dot.png' %}"></th>
-    <th class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
-    <td><div class="name-bold">Neam Codova<div class="position">Team Member</div></div></td>
-    <td class="align-center">0h 0m</td>
-    <td colspan="13"><div class="yellow-box"><center>AREA</center></div></td>
-    </tr> 
-       
-    <tr>
-    <th class="fixed-side"><img src="{% static 'files/images/red-dot.png' %}"></th>
-    <th class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
-    <td><div class="name-bold">Lou Diaz<div class="position">Team Member</div></div></td>
-    <td class="align-center">0h 0m</td>
-    <td colspan="13"><div class="red-box"><center>AREA</center></div></td>
-    </tr> 
-         
-    <tr>
-    <th class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
-    <th class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
-    <td><div class="name-bold">Neil Barlao<div class="position">Team Incharge</div></div></td>
-    <td class="align-center">0h 0m</td>
-    <td colspan="13"><div class="red-box"><center>AREA</center></div></td>
-    </tr>
-    
- 	<tr>
-    <th class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
-    <th class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
-    <td><div class="name-bold">Anton Shevchuk<div class="position">Team Member</div></div></td>
-    <td class="align-center">8h 0m</td>
-    <td colspan="13"><div class="red-box"> <center>AREA</center></div> <div class="green-box"><center>AREA</center></div></td>
-    </tr>
-
-    <tr>
-    <th class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
-    <th  class="profile fixed-side"><img src="{% static 'files/images/profile-picblack.jpg' %}" align="absmiddle"></th>
-    <td><div class="name-bold">Danis Ali<div class="position">Team Lead</div></div></td>
-    <td class="align-center">16h 0m</td>
-    <td colspan="13"><div class="yellow-box"> <center>AREA</center></div><div class="green-box"><center>AREA</center></div></td>
-    </tr>
+    {% endfor %}
  </tbody>
 </table>
 </div>
 </div>
-
-
 </div><!--white-wrapper-->            
             
       </div><!--main-content-holder-->
@@ -177,4 +127,338 @@
 {% endblock %}
 
 {% block javascript %}
+<script type="text/javascript">
+    $('document').ready(function(){
+        //To find total and avergae man hour weekly and today
+        //to find today man hour
+        total_today_hours = 0
+        {% for cleaning_team in today_cleaning_active_teams %}
+        
+        starting_time_string      = '{{cleaning_team.start_at|date:'H:i'}}'.replace(":",".");
+        ending_time_string        = '{{cleaning_team.end_at|date:'H:i'}}'.replace(":",".");
+
+        starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+        ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
+
+        
+        if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.end_at|date:'d'}}')))
+                {
+                        total_today_hours += ending_time*parseInt('{{cleaning_team.no_of_cleaners}}');
+                }
+
+                else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.start_at|date:'d'}}')))
+                    {
+                    
+                    total_today_hours += (24-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');
+                    }
+                else
+                {
+                    total_today_hours += (ending_time-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');    
+                }
+
+        {% endfor %}
+        
+        {% for followup_team in today_followup_active_teams %}
+            
+        starting_time_string      = '{{followup_team.start_at|date:'H:i'}}'.replace(":",".");
+        ending_time_string        = '{{followup_team.end_at|date:'H:i'}}'.replace(":",".");
+
+        starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+        ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
+
+
+        if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{followup_team.end_at|date:'d'}}')))
+                {
+                        total_today_hours += ending_time*parseInt('{{followup_team.no_of_cleaners}}')
+                
+                }
+
+        else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{followup_team.start_at|date:'d'}}')))
+            {
+            
+            total_today_hours += (24-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');
+            
+            }
+        else
+        {
+            total_today_hours += (ending_time-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');   
+        }
+
+        {% endfor %}
+        average_today_hours = total_today_hours/parseInt('{{today_total_team_mens}}')
+        
+        //to find week man hour
+        total_week_hours = 0
+        {% for cleaning_team in week_cleaning_active_teams %}
+        
+        starting_time_string      = '{{cleaning_team.start_at|date:'H:i'}}'.replace(":",".");
+        ending_time_string        = '{{cleaning_team.end_at|date:'H:i'}}'.replace(":",".");
+
+        starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+        ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
+
+        
+        if((ending_time<starting_time)&(parseInt('{{weekstart_date|date:'d'}}')==parseInt('{{cleaning_team.end_at|date:'d'}}')))
+                {
+                        total_week_hours += ending_time*parseInt('{{cleaning_team.no_of_cleaners}}');
+                    console.log(total_week_hours,"cleaning")
+                }
+
+                else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.start_at|date:'d'}}')))
+                    {
+                    
+                    total_week_hours += (24-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');
+                    console.log(total_week_hours,"cleaning")
+                    }
+                else
+                {
+                    if(ending_time<starting_time)
+                        {
+                        total_week_hours += ((24-starting_time)+ending_time)*parseInt('{{cleaning_team.no_of_cleaners}}');        
+                        } 
+                    else{
+                        total_week_hours += (ending_time-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');
+                    } 
+                    console.log(total_week_hours,"cleaning")   
+                }
+
+        {% endfor %}
+        
+        {% for followup_team in week_followup_active_teams %}
+            
+        starting_time_string      = '{{followup_team.start_at|date:'H:i'}}'.replace(":",".");
+        ending_time_string        = '{{followup_team.end_at|date:'H:i'}}'.replace(":",".");
+
+        starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+        ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
+
+
+        if((ending_time<starting_time)&(parseInt('{{weekstart_date|date:'d'}}')==parseInt('{{followup_team.end_at|date:'d'}}')))
+                {
+                        total_week_hours += ending_time*parseInt('{{followup_team.no_of_cleaners}}')
+                console.log(total_week_hours,"followup")
+                }
+
+        else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{followup_team.start_at|date:'d'}}')))
+            {
+            
+            total_week_hours += (24-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');
+            console.log(total_week_hours,"followup")
+            }
+        else
+        {   if(ending_time<starting_time)
+                {
+                total_week_hours += ((24-starting_time)+ending_time)*parseInt('{{followup_team.no_of_cleaners}}');        
+                } 
+            else{
+                total_week_hours += (ending_time-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');
+            }    
+            console.log(total_week_hours,"followup")   
+        }
+
+        {% endfor %}
+        average_week_hours = total_week_hours/parseInt('{{week_total_team_mens}}')
+        
+
+        $("#today_man_hour").html(total_today_hours.toFixed(2));
+        $("#week_man_hour").html(total_week_hours.toFixed(2));
+        $("#today_avg_man_hour").html(average_today_hours.toFixed(2));
+        $("#week_avg_man_hour").html(average_week_hours.toFixed(2));
+
+
+        //To Find Total working Hours of each user
+        {% for details in workers_details %}
+
+            //cleaning
+            {% if details.cleaning_member_details %}
+                
+                total_cleaning_duration = 0
+
+                {% for cleaning_details in details.cleaning_member_details %}
+                    
+                    starting_time_string      = '{{cleaning_details.start_at|date:'H:i'}}'.replace(":",".");
+                    ending_time_string        = '{{cleaning_details.end_at|date:'H:i'}}'.replace(":",".");
+
+                    starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                    ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
+
+
+                    if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{cleaning_details.end_at|date:'d'}}')))
+                        {
+                            total_cleaning_duration += ending_time;
+                    }
+
+                    else if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{cleaning_details.start_at|date:'d'}}')))
+                        {
+                        
+                        total_cleaning_duration += 24-starting_time;
+                    
+                        }
+                    else
+                    {
+                        total_cleaning_duration += ending_time-starting_time;    
+                    }    
+
+
+                {% endfor %}
+            {% else %}
+            total_cleaning_duration = 0
+            {% endif %}
+
+            //follow up 
+            {% if details.followup_member_details %}
+                total_followup_duration = 0
+                {% for followup_details in details.followup_member_details %}
+                    
+                    starting_time_string      = '{{followup_details.start_at|date:'H:i'}}'.replace(":",".");
+                    ending_time_string        = '{{followup_details.end_at|date:'H:i'}}'.replace(":",".");
+
+                    starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                    ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
+
+
+                    if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{followup_details.end_at|date:'d'}}')))
+                        {
+                            total_followup_duration += ending_time;
+                    }
+
+                    else if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{followup_details.start_at|date:'d'}}')))
+                        {
+                        
+                        total_followup_duration += 24-starting_time;
+                    
+                        }
+                    else
+                    {
+                        total_followup_duration += ending_time-starting_time;    
+                    }    
+
+
+                {% endfor %}
+            {% else %}
+            total_followup_duration = 0.0
+            {% endif %}
+
+            
+            total_duration = total_followup_duration+total_cleaning_duration
+            hours   = (total_duration+"").split('.')[0]
+            minutes = parseInt((total_duration+"").split('.')[1])*6
+            if(Number.isNaN(minutes))
+            {
+                minutes = 0;
+            }
+            //append total hours to working table
+            $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
+
+        {% endfor %}
+
+
+        //To Draw Work Details of each worker
+        {% for details in workers_details %}
+
+            //cleaning
+            {% if details.cleaning_member_details %}
+                {% for cleaning_details in details.cleaning_member_details %}
+                
+                starting_time_string      = '{{cleaning_details.start_at|date:'H:i'}}'.replace(":",".");
+                ending_time_string        = '{{cleaning_details.end_at|date:'H:i'}}'.replace(":",".");         
+                starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+                    ending_time_string.split('.')[1])/60  
+
+
+                if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{cleaning_details.end_at|date:'d'}}')))
+                {
+                    left_percentage = 0
+                    width_percentage= 100/24*ending_time
+                    if((left_percentage==0)&(width_percentage==0))
+                    {
+
+                    }
+                    else
+                    {
+                     $("#calendar{{details.id}}").append('<div {% if cleaning_details.team.order_scheduler.order.evaluation.cleaning_policy == "ONE TIME SERVICE" %} class="sp-blue-box-second" {% else %}class="sp-green-box-second" {% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{cleaning_details.team.order_scheduler.customer_address.area.name}}</center></div>');   
+                    }
+                }
+                else if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{cleaning_details.start_at|date:'d'}}')))
+                {
+                    left_percentage = 100/24*starting_time
+                    width_percentage= 100-100/24*starting_time
+                    $("#calendar{{details.id}}").append('<div {% if cleaning_details.team.order_scheduler.order.evaluation.cleaning_policy == "ONE TIME SERVICE" %} class="sp-blue-box-first" {% else %}class="sp-green-box-first" {% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{cleaning_details.team.order_scheduler.customer_address.area.name}}</center></div>');
+                }
+                else
+                {
+                     left_percentage  = 100/24*starting_time;
+                     width_percentage = 100/24*ending_time-100/24*starting_time
+
+                     $("#calendar{{details.id}}").append('<div {% if cleaning_details.team.order_scheduler.order.evaluation.cleaning_policy == "ONE TIME SERVICE" %} class="blue-box" {% else %}class="green-box" {% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{cleaning_details.team.order_scheduler.customer_address.area.name}}</center></div>');         
+                  
+                }    
+
+                {% endfor %}
+            {% else %}
+            {% endif %}
+
+            //Follow up
+            {% if details.followup_member_details %}
+                {% for followup_details in details.followup_member_details %}
+                
+                starting_time_string      = '{{followup_details.start_at|date:'H:i'}}'.replace(":",".");
+                ending_time_string        = '{{followup_details.end_at|date:'H:i'}}'.replace(":",".");         
+                starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+                    ending_time_string.split('.')[1])/60  
+
+
+                if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{followup_details.end_at|date:'d'}}')))
+                {
+                    left_percentage = 0
+                    width_percentage= 100/24*ending_time
+                    if((left_percentage==0)&(width_percentage==0))
+                    {
+
+                    }
+                    else{
+                        $("#calendar{{details.id}}").append('<div class="sp-yellow-box-second" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{followup_details.team.followup_scheduler.customer_address.area.name}}</center></div>');
+                    }
+        
+                }
+                else if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{followup_details.start_at|date:'d'}}')))
+                {
+                    left_percentage = 100/24*starting_time
+                    width_percentage= 100-100/24*starting_time
+                    $("#calendar{{details.id}}").append('<div class="sp-yellow-box-first" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{followup_details.team.followup_scheduler.customer_address.area.name}}</center></div>');
+                }
+                else
+                {
+                     left_percentage  = 100/24*starting_time;
+                     width_percentage = 100/24*ending_time-100/24*starting_time
+
+                     $("#calendar{{details.id}}").append('<div class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{followup_details.team.followup_scheduler.customer_address.area.name}}</center></div>');         
+                  
+                }    
+
+                {% endfor %}
+            {% else %}
+            {% endif %}
+
+    {% endfor %}        
+    });
+
+function set_params_go(args)
+{
+var url='{% url 'evaluator:resource-management' %}';
+var params={workers_calendar_date:$('#working_calendar').val(),search:$('#search-bar').val(),
+};
+for(key in args) 
+    params[key]=args[key];
+var query='';
+for(key in params)
+    if(params[key]) 
+        query+='&'+key+'='+params[key].toString();
+query=query.replace('&','?');
+window.location.href=url+query;  
+}
+
+</script>
 {% endblock %}

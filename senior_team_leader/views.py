@@ -111,9 +111,11 @@ class StlHome(IsSeniorTeamLeader,View):
 			investigation_date = datetime.strptime(investigation_calendar_date,'%d-%m-%Y')
 		except:
 			investigation_date = timezone.now()
-
-		investigations  = Investigation.objects.filter(is_active=True,sheduled_at__date=investigation_date.date(),investigator=request.user).select_related('order__evaluation__customer','order_schedule__customer_address__area').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'))
-		
+		try:	
+			investigations  = Investigation.objects.filter(is_active=True,sheduled_at__date=investigation_date.date(),investigator=request.user).select_related('order__evaluation__customer','order_schedule__customer_address__area').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'))
+		except:
+			investigations  = 	None
+			
 		#cleaning schedule & followup schedule for cleaning calendar			
 		cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
 		

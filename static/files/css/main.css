@@ -716,6 +716,13 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .evaluator-right-items{flex-grow:0; background:#FFF;padding:20px; }
 .evaluator-right-items img{ width:100%;}
 
+.two-column-fixed-right{ display:flex; margin-bottom:35px; padding:0; position:relative; align-items: center;}
+.two-column-fixed-items{ margin:0;width:280px; padding:0;position:relative;}
+.two-column-fixed-left-items{flex-grow:2; background:#FFF;padding:20px; margin-right:35px; }
+.two-column-fixed-right-items{flex-grow:0; background:#FFF;padding:20px; vertical-align:middle; }
+.two-column-fixed-left-items img, .two-column-fixed-right-items img{width:100%; }
+
+
 
 @media (max-width: 768px) {
   .navbar-right {

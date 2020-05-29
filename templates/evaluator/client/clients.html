@@ -18,7 +18,7 @@
                 <div class="column-left"><img src="{% static 'files/images/card-newClients-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
               	<!--  <h1>Evaluations</h1>-->
-            	<h2 class="blue-text"><label>New Clients<span>20</span></label> </h2>
+            	<h2 class="blue-text"><label>New Clients<span>{{new_clients_count}}</span></label> </h2>
             	<!--<p><label>This Week <span>42</span></label></p>-->
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
@@ -28,7 +28,7 @@
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-active-clients-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
-            	<h2 class="green-text"><label>Active Clients<span>20</span></label>  </h2>
+            	<h2 class="green-text"><label>Active Clients<span>{{active_clients_count}}</span></label>  </h2>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -45,7 +45,7 @@
      
      <div class="white-wrapper-search"><!--white-wrapper-search-->
      <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
-          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..."><a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
      </div><!--left-box leftbox-item1-->
      <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
      <input name="filter" type="button" value="Filter" id="filter" class="blue-button"> 
@@ -72,78 +72,31 @@
 </tr>
 </thead>
 <tbody>
-    <tr>
-    <td class="green-line">Sheldon</td>
-    <td>Surra</td>
-    <td>Sheldon@email.com</td>
-    <td>ABC Kuwait</td>
-    <td>6061 0001</td>
-    <td><span class="green-bg">Active</span></td>
-    </tr>
-        <tr>
-    <td class="green-line">Sheldon</td>
-    <td>Surra</td>
-    <td>Sheldon@email.com</td>
-    <td>ABC Kuwait</td>
-    <td>6061 0001</td>
-    <td><span class="green-bg">Active</span></td>
-    </tr>
+ {% for client in client_details %}
 
     <tr>
-    <td class="green-line">Sheldon</td>
-    <td>Surra</td>
-    <td>Sheldon@email.com</td>
-    <td>ABC Kuwait</td>
-    <td>6061 0001</td>
-    <td><span class="green-bg">Active</span></td>
+    <td {% if client.active_status == True  %} 
+        class="green-line"
+        {% else%}
+        class="red-line"
+        {% endif %}>{{client.name}}</td>
+    <td>{% for address in client.customer_address %}
+        {{address.area.name}}<br>
+        {% endfor %}
+    </td>
+    <td>{{client.email}}</td>
+    <td>{{client.company}}</td>
+    <td>{{client.mobile_number}}</td>
+    <td>
+        {% if client.active_status == True %}
+        <span class="green-bg">Active</span>
+        {% else %}
+        <span class="red-bg">Not Active</span>        
+        {% endif %}
+    </td>
     </tr>
 
-    <tr>
-    <td class="red-line">Sheldon</td>
-    <td>Surra</td>
-    <td>Sheldon@email.com</td>
-    <td>ABC Kuwait</td>
-    <td>6061 0001</td>
-    <td><span class="red-bg">Not Active</span></td>
-    </tr>
-
-    <tr>
-    <td class="red-line">Sheldon</td>
-    <td>Surra</td>
-    <td>Sheldon@email.com</td>
-    <td>ABC Kuwait</td>
-    <td>6061 0001</td>
-    <td><span class="red-bg">Not Active</span></td>
-    </tr>
-
-    <tr>
-    <td class="red-line">Sheldon</td>
-    <td>Surra</td>
-    <td>Sheldon@email.com</td>
-    <td>ABC Kuwait</td>
-    <td>6061 0001</td>
-    <td><span class="red-bg">Not Active</span></td>
-    </tr>
-
-    <tr>
-    <td class="red-line">Sheldon</td>
-    <td>Surra</td>
-    <td>Sheldon@email.com</td>
-    <td>ABC Kuwait</td>
-    <td>6061 0001</td>
-    <td><span class="red-bg">Not Active</span></td>
-    </tr>
-
-    <tr>
-    <td class="green-line">Sheldon</td>
-    <td>Surra</td>
-    <td>Sheldon@email.com</td>
-    <td>ABC Kuwait</td>
-    <td>6061 0001</td>
-    <td><span class="green-bg">Active</span></td>
-    </tr>
-
- 
+{% endfor %}
 </tbody>
 <tfoot>
  
@@ -183,5 +136,22 @@ $('.footable').footable({
 // See:
 // http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
 //# sourceURL=pen.js
+</script>
+<script>
+function set_params_go(args)
+{
+var url='{% url 'evaluator:evaluator-clients' %}';
+var params={search:$('#search-bar').val(),
+};
+for(key in args) 
+    params[key]=args[key];
+var query='';
+for(key in params)
+    if(params[key]) 
+        query+='&'+key+'='+params[key].toString();
+query=query.replace('&','?');
+window.location.href=url+query;  
+}
+
 </script>
 {% endblock %}
