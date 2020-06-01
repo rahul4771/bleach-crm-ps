@@ -113,15 +113,16 @@ class PaymentDetails(IsAccountant,View):
 		#sales amount
 		if search:
 			try:
-				invoices         = Invoice.objects.filter(is_active=True).order_by('-id').select_related('order__evaluation__customer').prefetch_related(Prefetch('order__evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='invoice_evaluation_details'))
+				invoices         = Invoice.objects.filter(is_active=True).order_by('-id').select_related('order__evaluation__customer').filter(order__evaluation__customer__name__icontains=search).prefetch_related(Prefetch('order__evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='invoice_evaluation_details'))
 			except:
 				invoices         = None
 		else:
 			try:
-				invoices         = Invoice.objects.filter(is_active=True).order_by('-id').select_related('order__evaluation__customer').filter(order__evaluation__customer__name__icontains=search).prefetch_related(Prefetch('order__evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='invoice_evaluation_details'))
+				invoices         = Invoice.objects.filter(is_active=True).order_by('-id').select_related('order__evaluation__customer').prefetch_related(Prefetch('order__evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='invoice_evaluation_details'))
 			except:
 				invoices         = None
-
+		print(invoices)
+				
 		#Pending Payments
 		try:
 			pending_payments = invoices.filter(Q(Q(status='PENDING')|Q(status='ON_HOLD')))

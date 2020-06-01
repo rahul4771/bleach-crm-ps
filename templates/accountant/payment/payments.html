@@ -84,7 +84,7 @@
         {% endif %}>{{invoice.order.evaluation.evaluation_id}}</td>
     <td>{{invoice.order.evaluation.customer.name}}</td>
     <td>
-    {% for evaluation_details in invoice_evaluation_details %}
+    {% for evaluation_details in invoice.order.evaluation.invoice_evaluation_details %}
     {{evaluation_details.address.area.name}}<br>
     {% endfor %}
     </td>
