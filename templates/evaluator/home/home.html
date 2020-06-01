@@ -111,10 +111,14 @@
     <div class="two-column-fixed-items two-column-fixed-left-items"><!--two-column-fixed-items two-column-fixed-left-items-->
     <h2 class="h2">My Evaluation</h2>
  <div><input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" class="date_pick date-picker" onchange="set_params_go();"></div>
-<table summary="" class="table table-hover footable common-table default footable-loaded" cellspacing="0" cellpadding="0" border="0">
-<tbody>
 
+<div id="table-scroll" class="table-scroll"><!--table-scroll-->
+<div class="table-wrap"><!--table-wrap-->
+<table class="eval-table">
+<thead>
+<tbody>
 {% for evaluation in my_evaluations %}
+<tr class="clickable-row" data-href='#'>
 <tr class="clickable-row" data-href='#'>
 <td {% if evaluation.status == 'EVALUATING' %}
     class="yellow-line"
@@ -141,9 +145,15 @@
     {% endif %}   
 </td>
 </tr>
+</tr>
 {% endfor %} 
 </tbody>
 </table>
+</div><!--table-wrap-->
+</div><!--table-scroll-->
+
+
+
     </div><!--two-column-fixed-items two-column-fixed-left-items-->
     
     <div class="two-column-fixed-items two-column-fixed-right-items"><!--two-column-fixed-itemss two-column-fixed-right-items-->

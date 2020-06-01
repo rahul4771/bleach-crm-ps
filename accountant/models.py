@@ -6,15 +6,22 @@ from order.models import Order
 PAYMENT_MODE_CHOICES = (
 	('CASH','CASH'),
 	('CHECK','CHECK'),
-	('OTHER','OTHER')
+	('OTHER','OTHER'),
 	)
 
+
+PAYMENT_STATUS_CHOICES = (
+	('COMPLETED','COMPLETED'),
+	('PENDING','PENDING'),
+	('ON_HOLD','ON_HOLD'),
+	)
 
 #Invoice Details of Each Order
 
 class Invoice(models.Model):
 	invoice_number               = models.CharField(max_length=30,blank=False,null=False)
 	order 		                 = models.ForeignKey(Order,blank=False,null=False,related_name='invoice_order')
+	status                       = models.CharField(max_length=100,blank=True,null=True,default='PENDING',choices=PAYMENT_STATUS_CHOICES)
 	total_amount                 = models.IntegerField(blank=True,null=True)
 	amount_paid                  = models.IntegerField(blank=True,null=True)
 	is_subscription              = models.BooleanField(blank=True,null=False)

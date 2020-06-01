@@ -19,7 +19,7 @@
                 <div class="column-left"><img src="{% static 'files/images/card-pending-payment-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
               	<!--  <h1>Evaluations</h1>-->
-            	<h2 class="blue-text"><label>Pending <br>Payments<span>2000</span><br><span class="orders">Rate</span></label> </h2>
+            	<h2 class="blue-text"><label>Pending <br>Payments<span>{{total_pending_amount|default_if_none:"0"}}</span><br><span class="orders">Rate</span></label> </h2>
             	<!--<p><label>This Week <span>42</span></label></p>-->
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
@@ -29,7 +29,7 @@
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-pending-payment-orders-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
-            	<h2 class="green-text"><label>Pending<br>payments<span>30</span><br><span class="orders">Orders</span></label>  </h2>
+            	<h2 class="green-text"><label>Pending<br>payments<span>{{total_pending_orders|default_if_none:"0"}}</span><br><span class="orders">Orders</span></label>  </h2>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -46,7 +46,7 @@
      
      <div class="white-wrapper-search"><!--white-wrapper-search-->
      <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
-          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..."><a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
      </div><!--left-box leftbox-item1-->
      <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
      <input name="filter" type="button" value="Filter" id="filter" class="blue-button"> 
@@ -73,50 +73,35 @@
 </tr>
 </thead>
 <tbody>
+    {% for invoice in invoices %}
     <tr>
-    <td class="green-line">BLC20200405</td>
-    <td>Sheldon</td>
-    <td>Sura</td>
-    <td>60610001</td>
-    <td><span class="green-bg">Paid</span></td>
-    <td>150 KD</td>
+    <td {% if invoice.status == 'PENDING' %}
+        class="red-line"
+        {% elif invoice.status == 'COMPLETED' %}
+        class="green-line" 
+        {% else %}
+        class="yellow-line"
+        {% endif %}>{{invoice.order.evaluation.evaluation_id}}</td>
+    <td>{{invoice.order.evaluation.customer.name}}</td>
+    <td>
+    {% for evaluation_details in invoice_evaluation_details %}
+    {{evaluation_details.address.area.name}}<br>
+    {% endfor %}
+    </td>
+    <td>{{invoice.order.evaluation.customer.mobile_number}}</td>
+    <td><span 
+        {% if invoice.status == 'PENDING' %}
+        class="red-bg"
+        {% elif invoice.status == 'COMPLETED' %}
+        class="green-bg" 
+        {% else %}
+        class="yellow-bg"
+        {% endif %}
+        >{{invoice.status}}</span></td>
+    <td>{{invoice.total_amount}}KD</td>
     </tr>
-    
-    <tr>
-    <td class="red-line">BLC20200405</td>
-    <td>Penny</td>
-    <td>Qurtuba</td>
-    <td>60610002</td>
-    <td><span class="red-bg">Pending</span></td>
-    <td>200 KD</td>
-    </tr>
-    
-    <tr>
-    <td class="green-line">BLC20200406</td>
-    <td>Leonard</td>
-    <td>Sulaibikhat</td>
-    <td>606100032</td>
-    <td><span class="green-bg">paid</span></td>
-    <td>50 KD</td>
-    </tr>
-    
-    <tr>
-    <td class="yellow-line">BLC20200408</td>
-    <td>Howard</td>
-    <td>Doha</td>
-    <td>60610007</td>
-    <td><span class="yellow-bg">On-hold</span></td>
-    <td>90 KD</td>
-    </tr>
-     
-    <tr>
-    <td class="green-line">BLC20200409</td>
-    <td>Amy</td>
-    <td>Kaifan</td>
-    <td>606100052</td>
-    <td><span class="green-bg">paid</span></td>
-    <td>120 KD</td>
-    </tr>
+    {% endfor %}
+
 </tbody>
 <tfoot>
  
@@ -157,5 +142,22 @@ $('.footable').footable({
 // See:
 // http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
 //# sourceURL=pen.js
+    </script>
+
+    <script>
+function set_params_go(args)
+{
+var url='{% url 'accountant:accountant-payments' %}';
+var params={search:$('#search-bar').val(),
+};
+for(key in args) 
+    params[key]=args[key];
+var query='';
+for(key in params)
+    if(params[key]) 
+        query+='&'+key+'='+params[key].toString();
+query=query.replace('&','?');
+window.location.href=url+query;  
+}
     </script>
 {% endblock %}

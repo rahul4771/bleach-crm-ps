@@ -18,8 +18,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-pending-payment-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Pending Payments</h1>
-            	<h2 class="blue-text"><label>Orders<span>12</span></label> </h2>
-            	<p><label>Amount <span>100KD</span></label></p>
+            	<h2 class="blue-text"><label>Orders<span>{{total_pending_orders|default_if_none:'0'}}</span></label> </h2>
+            	<p><label>Amount <span>{{total_pending_amount|default_if_none:'0'}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -29,8 +29,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-week-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Week</h1>
-            	<h2 class="green-text"><label>Current<span>6000KD</span></label>  </h2>
-            	<p><label>Last Week <span>1200KD</span></label></p>
+            	<h2 class="green-text"><label>Current<span>{{this_week_sales|default_if_none:'0'}}KD</span></label>  </h2>
+            	<p><label>Last Week <span>{{last_week_sales|default_if_none:'0'}}KD</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -40,8 +40,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-month-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Month</h1>
-            	<h2 class="orange-text"><label>Current<span>6000KD</span></label> </h2>
-            	<p><label>Last Month <span>12000KD</span></label></p>
+            	<h2 class="orange-text"><label>Current<span>{{this_month_sales|default_if_none:'0'}}KD</span></label> </h2>
+            	<p><label>Last Month <span>{{last_month_sales|default_if_none:'0'}}KD</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -51,8 +51,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-quarter-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Quarter</h1>
-            	<h2 class="red-text"><label>Current<span>6000KD</span></label> </h2>
-            	<p><label>Last Quarter <span>12000KD</span></label></p>
+            	<h2 class="red-text"><label>Current<span>{{this_quarter_sales|default_if_none:'0'}}KD</span></label> </h2>
+            	<p><label>Last Quarter <span>{{last_quarter_sales|default_if_none:'0'}}KD</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -79,50 +79,30 @@
 </tr>
 </thead>
 <tbody>
+    {% for invoice in pending_payments %}
     <tr>
-    <td class="red-line">BLC20200405</td>
-    <td>Sheldon</td>
-    <td>Sura</td>
-    <td>60610001</td>
-    <td><span class="red-bg">pending</span></td>
-    <td>150 KD</td>
+    <td {% if invoice.status == 'PENDING' %}
+        class="red-line"
+        {% else %}
+        class="yellow-line"
+        {% endif %}>{{invoice.order.evaluation.evaluation_id}}</td>
+    <td>{{invoice.order.evaluation.customer.name}}</td>
+    <td>
+    {% for evaluation_details in invoice_evaluation_details %}
+    {{evaluation_details.address.area.name}}<br>
+    {% endfor %}
+    </td>
+    <td>{{invoice.order.evaluation.customer.mobile_number}}</td>
+    <td><span 
+        {% if invoice.status == 'PENDING' %}
+        class="red-bg"
+        {% else %}
+        class="yellow-bg"
+        {% endif %}
+        >{{invoice.status}}</span></td>
+    <td>{{invoice.total_amount}}KD</td>
     </tr>
-    
-    <tr>
-    <td class="red-line">BLC20200405</td>
-    <td>Penny</td>
-    <td>Qurtuba</td>
-    <td>60610002</td>
-    <td><span class="red-bg">Pending</span></td>
-    <td>200 KD</td>
-    </tr>
-    
-    <tr>
-    <td class="red-line">BLC20200406</td>
-    <td>Leonard</td>
-    <td>Sulaibikhat</td>
-    <td>606100032</td>
-    <td><span class="red-bg">Pending</span></td>
-    <td>50 KD</td>
-    </tr>
-    
-    <tr>
-    <td class="yellow-line">BLC20200408</td>
-    <td>Howard</td>
-    <td>Doha</td>
-    <td>60610007</td>
-    <td><span class="yellow-bg">On-hold</span></td>
-    <td>90 KD</td>
-    </tr>
-     
-    <tr>
-    <td class="red-line">BLC20200409</td>
-    <td>Amy</td>
-    <td>Kaifan</td>
-    <td>606100052</td>
-    <td><span class="red-bg">Pending</span></td>
-    <td>120 KD</td>
-    </tr>
+    {% endfor %}
 </tbody>
 <tfoot>
  

@@ -9,12 +9,15 @@ from datetime import timedelta,date,datetime
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField
 from django.db.models.functions import Cast 
 from django.db.models import Prefetch
+from dateutil.relativedelta import relativedelta
 
 from user.models import UserProfile,Address
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 from order.forms import OrderSchedulerConfirmationForm,FollowUpSchedulerConfirmationForm
+from accountant.models import Invoice
+
 # Create your views here.
 
 class EvaluatorHome(IsEvaluator,View):
@@ -38,15 +41,16 @@ class EvaluatorHome(IsEvaluator,View):
 		today_enquiry_count = enquiry.filter(proposed_time__date=timezone.now().date()).count()
 		week_enquiry_count  = enquiry.filter(proposed_time__date__gte=timezone.now().date()-timedelta(6)).count()	
 
+		#sales amount
 		try:
-			evaluations         = Evaluation.objects.filter(is_active=True)
+			invoices         = Invoice.objects.filter(is_active=True)
 		except:
-			evaluations         = None
+			invoices         = None
 
-		this_week_sales = evaluations.filter(quatation_approved_date__gte=timezone.now().date()-timedelta(6)).aggregate(total=Sum('estimated_price'))['total']
-		last_week_sales = evaluations.filter(quatation_approved_date__gte=timezone.now().date()-timedelta(13),quatation_approved_date__lte=timezone.now().date()-timedelta(6)).aggregate(total=Sum('estimated_price'))['total']		
-		this_month_sales=evaluations.filter(quatation_approved_date__month=timezone.now().month).aggregate(total=Sum('estimated_price'))['total']
-		last_month_sales=evaluations.filter(quatation_approved_date__month=timezone.now().month-1).aggregate(total=Sum('estimated_price'))['total']	
+		this_week_sales = invoices.filter(status='COMPLETED',created__date__gte=timezone.now().date()-timedelta(6)).aggregate(total=Sum('amount_paid'))['total']
+		last_week_sales = invoices.filter(status='COMPLETED',created__date__gte=timezone.now().date()-timedelta(13),created__date__lte=timezone.now().date()-timedelta(6)).aggregate(total=Sum('amount_paid'))['total']		
+		this_month_sales=invoices.filter(status='COMPLETED',created__month=timezone.now().month,created__year=timezone.now().year).aggregate(total=Sum('amount_paid'))['total']
+		last_month_sales=invoices.filter(status='COMPLETED',created__month=((timezone.now().date()-relativedelta(months=1)).month),created__year=timezone.now().year).aggregate(total=Sum('amount_paid'))['total']	
 			
 		#cleaning schedule & followup schedule for cleaning calendar			
 		cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
