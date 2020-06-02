@@ -191,7 +191,7 @@ class TicketDetails(IsAdmin,View):
 		except:
 			follow_up_cleaning_count = 0
 
-		#PAGINATION CLIENTS		
+		#PAGINATION TICKETS		
 		page = request.GET.get('page',1) 
 		paginator=Paginator(tickets,10)
 		try: 

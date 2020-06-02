@@ -113,6 +113,7 @@
             
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Feedback List</h2>
+<div class="page-entries">Show {{entry_per_page}} entries</div>
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
 <thead>
@@ -190,6 +191,62 @@
  
 </tfoot>
 </table>
+
+<div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
+    <div class="pagination-containter"><!--pagination-containter-->
+      <div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
+        Showing {{order_wise_feedbacks.start_index}} to {{order_wise_feedbacks.end_index}} of {{order_wise_feedbacks.paginator.count}} entries
+        </div><!--pagination-column pagination-column-left-->
+        
+        <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
+            <!--paginated-->
+   {% if order_wise_feedbacks.has_other_pages %}
+   <nav aria-label="Page navigation example">
+  <ul class="pagination">
+     {% if order_wise_feedbacks.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ order_wise_feedbacks.previous_page_number }}&search={{request.GET.search}}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% endif %}
+    {% for pg in page_range %}
+    {% if vus.number == pg %}
+            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}">{{pg}}</a></li>
+    {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}">{{pg}}</a></li>
+    {% endif %}
+    {% endfor %}
+    {% if order_wise_feedbacks.has_next %}        
+    <li class="page-item">
+      <a class="page-link" href="?page={{ order_wise_feedbacks.next_page_number}}&search={{request.GET.search}}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link disabled" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+    {% endif %}
+    <!--paginated-->
+        </div><!--pagination-column pagination-column-right-->
+    </div><!--pagination-containter-->         
+</div><!--white-wrapper-pagination--> 
 </div><!--white-wrapper-->      
              
             
