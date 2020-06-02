@@ -4,17 +4,23 @@ from django.views import View
 from django.conf import settings
 from bleach_crm_ps.permissions import IsEvaluator
 
+import functools
+import operator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone 
 from datetime import timedelta,date,datetime
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField
 from django.db.models.functions import Cast 
 from django.db.models import Prefetch
+from dateutil.relativedelta import relativedelta
 
 from user.models import UserProfile,Address
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 from order.forms import OrderSchedulerConfirmationForm,FollowUpSchedulerConfirmationForm
+from accountant.models import Invoice
+
 # Create your views here.
 
 class EvaluatorHome(IsEvaluator,View):
@@ -38,15 +44,16 @@ class EvaluatorHome(IsEvaluator,View):
 		today_enquiry_count = enquiry.filter(proposed_time__date=timezone.now().date()).count()
 		week_enquiry_count  = enquiry.filter(proposed_time__date__gte=timezone.now().date()-timedelta(6)).count()	
 
+		#sales amount
 		try:
-			evaluations         = Evaluation.objects.filter(is_active=True)
+			invoices         = Invoice.objects.filter(is_active=True)
 		except:
-			evaluations         = None
+			invoices         = None
 
-		this_week_sales = evaluations.filter(quatation_approved_date__gte=timezone.now().date()-timedelta(6)).aggregate(total=Sum('estimated_price'))['total']
-		last_week_sales = evaluations.filter(quatation_approved_date__gte=timezone.now().date()-timedelta(13),quatation_approved_date__lte=timezone.now().date()-timedelta(6)).aggregate(total=Sum('estimated_price'))['total']		
-		this_month_sales=evaluations.filter(quatation_approved_date__month=timezone.now().month).aggregate(total=Sum('estimated_price'))['total']
-		last_month_sales=evaluations.filter(quatation_approved_date__month=timezone.now().month-1).aggregate(total=Sum('estimated_price'))['total']	
+		this_week_sales = invoices.filter(status='COMPLETED',created__date__gte=timezone.now().date()-timedelta(6)).aggregate(total=Sum('amount_paid'))['total']
+		last_week_sales = invoices.filter(status='COMPLETED',created__date__gte=timezone.now().date()-timedelta(13),created__date__lte=timezone.now().date()-timedelta(6)).aggregate(total=Sum('amount_paid'))['total']		
+		this_month_sales=invoices.filter(status='COMPLETED',created__month=timezone.now().month,created__year=timezone.now().year).aggregate(total=Sum('amount_paid'))['total']
+		last_month_sales=invoices.filter(status='COMPLETED',created__month=((timezone.now().date()-relativedelta(months=1)).month),created__year=timezone.now().year).aggregate(total=Sum('amount_paid'))['total']	
 			
 		#cleaning schedule & followup schedule for cleaning calendar			
 		cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
@@ -133,7 +140,29 @@ class ClientDetails(IsEvaluator,View):
 		active_clients_count = orders.filter(~Q(order_status='ORDER_CLOSED')).values_list('evaluation__customer').distinct().count()	
 		new_clients_count    = orders.filter(evaluation__created__date__gte=timezone.now().date()-timedelta(30),evaluation__customer__created__date__gte=timezone.now().date()-timedelta(30),).values_list('evaluation__customer').distinct().count()
 		
-		return render(request,'evaluator/client/clients.html',{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count})		
+		#PAGINATION CLIENTS		
+		page = request.GET.get('page',1) 
+		paginator=Paginator(client_details,10)
+		try: 
+			client_details=paginator.page(page) 
+		except PageNotAnInteger:
+			client_details=paginator.page(1)
+		except EmptyPage:
+			client_details = paginator.page(paginator.num_pages) 
+
+		# Get the index of the current page
+		index = client_details.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns 
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(client_details.end_index())-(client_details.start_index())+1
+
+		return render(request,'evaluator/client/clients.html',{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page})		
 		
 
 class OrderDetails(IsEvaluator,View):
@@ -156,7 +185,29 @@ class OrderDetails(IsEvaluator,View):
 		approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
 		pending_orders_count  =	evaluations.filter(Q(Q(quatation_status='ASK_FOR_DISCOUNT')|Q(quatation_status='PENDING'))).count()
 		
-		return render(request,'evaluator/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search})		
+		#PAGINATION ORDERS		
+		page = request.GET.get('page',1) 
+		paginator=Paginator(evaluations,10)
+		try: 
+			evaluations=paginator.page(page) 
+		except PageNotAnInteger:
+			evaluations=paginator.page(1)
+		except EmptyPage:
+			evaluations = paginator.page(paginator.num_pages) 
+
+		# Get the index of the current page
+		index = evaluations.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns 
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
+
+		return render(request,'evaluator/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})		
 
 
 class ResourceManagement(IsEvaluator,View):
@@ -262,4 +313,27 @@ class TicketDetails(IsEvaluator,View):
 			follow_up_cleaning_count = FollowUpScheduler.objects.filter(is_active=True,work_status='FOLLOW_UP_CLEANING_FULFILLED').count()
 		except:
 			follow_up_cleaning_count = 0
-		return render(request,'evaluator/ticket/tickets.html',{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search})
+
+		#PAGINATION TICKETS		
+		page = request.GET.get('page',1) 
+		paginator=Paginator(tickets,10)
+		try: 
+			tickets=paginator.page(page) 
+		except PageNotAnInteger:
+			tickets=paginator.page(1)
+		except EmptyPage:
+			tickets = paginator.page(paginator.num_pages) 
+
+		# Get the index of the current page
+		index = tickets.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns 
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(tickets.end_index())-(tickets.start_index())+1	
+
+		return render(request,'evaluator/ticket/tickets.html',{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})

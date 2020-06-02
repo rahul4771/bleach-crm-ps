@@ -35,7 +35,13 @@
         	<div class="user-type-wrapper"><!--user-type-wrapper-->
         	<br>
                 <ul id="accordion" class="">
-                <li class="profile-avatar"><img src="{% static 'files/images/usertype-avtar.svg' %}"></li>
+                <li class="image-profile-sidebar-avatar">
+                    {% if request.user.profile_image %}
+                    <img class="image-profile-sidebar" src="{{request.user.profile_image.url}}">
+                    {% else %}
+                    <img class="image-profile-sidebar" src="{% static 'files/images/usertype-avtar.svg' %}">
+                    {% endif %}
+                </li>
                 <li class="profile-name">{{request.user.name}}<br><span>Evaluator</span></li>
                 </ul>
             </div><!--user-type-wrapper-->

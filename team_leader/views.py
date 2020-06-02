@@ -4,6 +4,9 @@ from django.views import View
 from django.conf import settings
 from bleach_crm_ps.permissions import IsTeamLeader
 
+import functools
+import operator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone 
 from datetime import timedelta,date,datetime
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField
@@ -124,7 +127,29 @@ class TicketDetails(IsTeamLeader,View):
 			follow_up_cleaning_count = FollowUpScheduler.objects.filter(is_active=True,work_status='FOLLOW_UP_CLEANING_FULFILLED').count()
 		except:
 			follow_up_cleaning_count = 0
-			
-		return render(request,'tl/ticket/tickets.html',{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search})		
+		
+		#PAGINATION TICKETS		
+		page = request.GET.get('page',1) 
+		paginator=Paginator(tickets,10)
+		try: 
+			tickets=paginator.page(page) 
+		except PageNotAnInteger:
+			tickets=paginator.page(1)
+		except EmptyPage:
+			tickets = paginator.page(paginator.num_pages) 
+
+		# Get the index of the current page
+		index = tickets.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns 
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(tickets.end_index())-(tickets.start_index())+1
+
+		return render(request,'tl/ticket/tickets.html',{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})		
 		
 
