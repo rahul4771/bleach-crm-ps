@@ -4,7 +4,9 @@ from django.views import View
 from django.conf import settings
 from bleach_crm_ps.permissions import IsAgent
 
-
+import functools
+import operator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone 
 from datetime import timedelta,date,datetime
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField
@@ -316,8 +318,29 @@ class ClientDetails(IsAgent,View):
 		active_clients_count = orders.filter(~Q(order_status='ORDER_CLOSED')).values_list('evaluation__customer').distinct().count()	
 		new_clients_count    = orders.filter(evaluation__created__date__gte=timezone.now().date()-timedelta(30),evaluation__customer__created__date__gte=timezone.now().date()-timedelta(30),).values_list('evaluation__customer').distinct().count()
 		
+		#PAGINATION CLIENTS		
+		page = request.GET.get('page',1) 
+		paginator=Paginator(client_details,10)
+		try: 
+			client_details=paginator.page(page) 
+		except PageNotAnInteger:
+			client_details=paginator.page(1)
+		except EmptyPage:
+			client_details = paginator.page(paginator.num_pages) 
+
+		# Get the index of the current page
+		index = client_details.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns 
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(client_details.end_index())-(client_details.start_index())+1
 		
-		return render(request,"agent/client/clients.html",{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count}) 
+		return render(request,"agent/client/clients.html",{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page}) 
 
 
 

@@ -16,44 +16,44 @@
 <div class="card-row"><!--card-row-->
             <div class="card-column whitebg blue-border"><!--card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="images/card-today-icon.svg"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-today-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Evaluations</h1>
-                <h2 class="blue-text"><label>Today<span>20</span></label> </h2>
-                <p><label>This Week <span>42</span></label></p>
+                <h2 class="blue-text"><label>Today<span>{{today_enquiry_count}}</span></label> </h2>
+                <p><label>This Week <span>{{week_enquiry_count}}</span></label></p>
                 </div><!--column-right-->
                 </div><!--card-innerwrapper-->
             </div><!--card-column-->
         
             <div class="card-column whitebg green-border"><!--card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="images/card-cleaning-job-icon.svg"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-cleaning-job-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Cleaning Jobs</h1>
-                <h2 class="green-text"><label>Today<span>20</span></label>  </h2>
-                <p><label>This Week <span>42</span></label></p>
+                <h2 class="green-text"><label>Today<span>{{today_cleaning_job_count}}</span></label>  </h2>
+                <p><label>This Week <span>{{week_cleaning_job_count}}</span></label></p>
                 </div><!--column-right-->
                 </div><!--card-innerwrapper-->
             </div><!--card-column-->
         
             <div class="card-column whitebg orange-border"><!--card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="images/card-followup-icon.svg"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-followup-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Follow-up</h1>
-                <h2 class="orange-text"><label>Today<span>20</span></label> </h2>
-                <p><label>This Week <span>42</span></label></p>
+                <h2 class="orange-text"><label>Today<span>{{today_follow_up_job_count}}</span></label> </h2>
+                <p><label>This Week <span>{{week_follow_up_job_count}}</span></label></p>
                 </div><!--column-right-->
                 </div><!--card-innerwrapper-->
             </div><!--card-column-->
         
             <div class="card-column whitebg red-border"><!--card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="images/card-rating-icon.svg"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-rating-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Rating</h1>
-                <h2 class="red-text"><label>Today<span>20</span></label> </h2>
-                <p><label>This Week <span>4.2</span></label></p>
+                <h2 class="red-text"><label>Today<span>{{today_average_feedback|floatformat:1}}</span></label> </h2>
+                <p><label>This Week <span>{{week_average_feedback|floatformat:1}}</span></label></p>
                 </div><!--column-right-->
                 </div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -66,19 +66,19 @@
             
             <div class="three-column column-one"><!--three-column column-one-->
             <h4>Sales on Types of locations</h4>
-            <img src="images/sales-location-chart.jpg">
+            <img src="{% static 'files/images/sales-location-chart.jpg' %}">
             <div class="chart-btnWrapper"><input name="thisweek" type="button" class="blue-button" value="This Week" id="thismonth"></div>
             </div><!--three-column column-one-->
             
             <div class="three-column column-two"><!--three-column column-two-->
             <h4>Sales on Types of Cleaning</h4>
-            <img src="images/sales-types-chart.jpg">
+            <img src="{% static 'files/images/sales-types-chart.jpg' %}">
             <div class="chart-btnWrapper"><input name="thisweek" type="button" class="blue-button" value="This Week" id="thismonth"></div>
             </div><!--three-column column-two-->
             
             <div class="three-column column-three"><!--three-column column-three-->
             <h4>Sales on Governerates</h4>
-            <img src="images/sales-govermerates-chart.jpg">
+            <img src="{% static 'files/images/sales-govermerates-chart.jpg' %}">
             <div class="chart-btnWrapper"><input name="thisweek" type="button" class="blue-button" value="This Week" id="thismonth"></div>
             </div><!--three-column column-three-->
           
@@ -91,7 +91,7 @@
             <div class="bar-chart"><!--bar-chart-->
             
                 <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                    <img src="images/profile.jpg" class="sals-team-profile">
+                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
                 </div><!--bar-chart-items chart-column-one-->
                 
                 <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
@@ -113,7 +113,7 @@
             <div class="bar-chart"><!--bar-chart-->
             
                 <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                    <img src="images/profile.jpg" class="sals-team-profile">
+                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
                 </div><!--bar-chart-items chart-column-one-->
                 
                 <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
@@ -135,7 +135,7 @@
             <div class="bar-chart"><!--bar-chart-->
             
                 <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                    <img src="images/profile.jpg" class="sals-team-profile">
+                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
                 </div><!--bar-chart-items chart-column-one-->
                 
                 <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
@@ -157,7 +157,7 @@
             <div class="bar-chart"><!--bar-chart-->
             
                 <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                    <img src="images/profile.jpg" class="sals-team-profile">
+                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
                 </div><!--bar-chart-items chart-column-one-->
                 
                 <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
@@ -179,7 +179,7 @@
             <div class="bar-chart"><!--bar-chart-->
             
                 <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                    <img src="images/profile.jpg" class="sals-team-profile">
+                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
                 </div><!--bar-chart-items chart-column-one-->
                 
                 <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
@@ -201,7 +201,7 @@
             <div class="bar-chart"><!--bar-chart-->
             
                 <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                    <img src="images/profile.jpg" class="sals-team-profile">
+                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
                 </div><!--bar-chart-items chart-column-one-->
                 
                 <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
@@ -224,7 +224,7 @@
         <div class="chart-btnWrapper"><input name="today" type="button" class="blue-button" value="Today" id="today"></div>
         </div><!--two-column-items two-column-left-items-->
         <div class="two-column-items two-column-right-items"><!--two-column-items two-column-right-items-->
-        <img src="images/sales-chart.jpg">
+        <img src="{% static 'files/images/sales-chart.jpg' %}">
         <div class="chart-btnWrapper"><input name="thisyear" type="button" class="blue-button" value="This Year" id="thisyear"></div>
         </div><!--two-column-items two-column-right-items-->
      
@@ -233,7 +233,7 @@
              
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Evaluation Callender</h2>
-<div class="date-picker">Date Picker</div>
+<input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" class="date_pick date-picker" onchange="set_params_go();">
 <div id="table-scroll" class="table-scroll"><!--table-scroll-->
 <div class="table-wrap"><!--table-wrap-->
 <table class="eval-table">
@@ -264,105 +264,11 @@
 </tr>
 </thead>
 <tbody>
-<tr class="clickable-row" data-href='#'>
-<th bgcolor="#eee" width="4.54%" class="fixed-side"><img src="images/profile-pic.jpg" class="profile-avtar"></th>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 1</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">----</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 2</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 3</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">----</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 3</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">----</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 4</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">----</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 5</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
+{% for evaluator in evaluation_details %}
+<tr class="clickable-row" id="evaluator{{evaluator.id}}" data-href='#'>
+<th width="4.54%" bgcolor="#eee" class="fixed-side"><img {% if evaluator.profile_image %} src="{{evaluator.profile_image.url}}" {% else %} src="{% static 'files/images/profile-pic.jpg' %}" {% endif %} class="profile-avtar image-table-view"></th>
 </tr>
-
-<tr class="clickable-row" data-href='#'>
-<th bgcolor="#eee" width="4.54%" class="fixed-side"><img src="images/profile-pic.jpg" class="profile-avtar"></th>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 1</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">----</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 2</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 3</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">----</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 3</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">----</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 4</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">----</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 5</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-</tr>
-
-<tr class="clickable-row" data-href='#'>
-<th bgcolor="#eee" width="4.54%" class="fixed-side"><img src="images/profile-pic.jpg" class="profile-avtar"></th>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 1</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">----</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 2</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 3</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">----</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 3</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">----</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 4</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">----</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 5</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-</tr>
-
-<tr class="clickable-row" data-href='#'>
-<th bgcolor="#eee" width="4.54%" class="fixed-side"><img src="images/profile-pic.jpg" class="profile-avtar"></th>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 1</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">----</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 2</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 3</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">----</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 3</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">----</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 4</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">----</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-<td width="4.54%"><a href="#">Area 5</a></td>
-<td width="4.54%"><a href="#">&nbsp;</a></td>
-</tr>
+{% endfor %}
 </tbody>
 </table>
 </div><!--table-wrap-->
@@ -371,11 +277,13 @@
 
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Cleaning Callender</h2>
-<div class="date-picker">Date Picker</div>
+<div>
+<input type="text" id="cleaning_calendar" value="{{schedule_date|date:"d-m-Y"}}" class="date_pick date-picker" onchange="set_params_go();">
+</div>
 <div class="cleaning-container"><!--cleaning-container-->
 <div class="scrollable"><!--scrollable-->
 <div>
-  <table cellpadding="1" cellspacing="1" class="cleaning-table">
+  <table id="cleaning_table" cellpadding="1" cellspacing="1" class="cleaning-table">
   <tr>
   <th width="4.166%" colspan="2"> </th>
     <th width="8.333%" colspan="2">2 AM</th>
@@ -391,32 +299,6 @@
     <th width="8.333%" colspan="2">10 PM</th>
     <th width="4.166%" colspan="2"></th>
   </tr>
-  <tr>
-    <td colspan="26"><div class="red-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center>  <div class="right-value red-text">4</div></div> 
-    <div class="green-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center> <div class="right-value green-text">4</div></div></td>
-    </tr>
-  <tr>
-    <td colspan="26"><div class="yellow-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center>  <div class="right-value yellow-text">4</div></div>
-    <div class="green-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center> <div class="right-value green-text">4</div></div></td>
-    </tr>
-  <tr>
-    <td colspan="26"><div class="yellow-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center>  <div class="right-value yellow-text">4</div></div></td>
-    </tr>
-      <tr>
-    <td colspan="26"><div class="blue-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center>  <div class="right-value blue-text">4</div></div></td>
-    </tr>
-    <tr>
-    <td colspan="26"><div class="red-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center>  <div class="right-value red-text">4</div></div></td>
-    </tr>
-  <tr>
-    <td colspan="26"><div class="green-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center> <div class="right-value green-text">4</div></div></td>
-    </tr>
-  <tr>
-    <td colspan="26"><div class="yellow-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center>  <div class="right-value yellow-text">4</div></div></td>
-    </tr>
-      <tr>
-    <td colspan="26"><div class="blue-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center>  <div class="right-value blue-text">4</div></div></td>
-    </tr>
   </table>
 </div>
 </div><!--scrollable-->
@@ -431,6 +313,274 @@
 {% endblock %}
 
 {% block javascript %}
+
+<script type="text/javascript">
+$('document').ready(function(){
+    //Evaluation Callender
+        {% for evaluator in evaluation_details %}
+            
+            {% if evaluator.evaluation_details %}
+                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            
+                evaluator_timings_list =[]
+                {% for evaluation in evaluator.evaluation_details %}
+                    proposed_timing_string      = '{{evaluation.proposed_time|date:'H'}}';
+                    proposed_timing             = parseInt(proposed_timing_string)
+                    evaluator_timings_list.push(proposed_timing);
+                {% endfor %}
+                for(i=8;i<=17;i++)
+                {
+                    if(evaluator_timings_list.includes(i))
+                    {
+                        same_slote_count = 0
+                        {% for evaluation in evaluator.evaluation_details %}
+                            proposed_timing_string      = '{{evaluation.proposed_time|date:'H'}}';
+                            proposed_timing             = parseInt(proposed_timing_string)
+                        
+                        if(i == proposed_timing)
+                            {
+                              same_slote_count += 1
+                              if(same_slote_count == 1)
+                              {
+                                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">{{evaluation.address.area.name}}</a></td>');
+                              }
+                              else
+                              {
+                                $("#evaluator{{evaluator.id}} td:last").append('<br><a href="#">{{evaluation.address.area.name}}</a>');
+                              }  
+                              
+                            }
+                            
+
+                        {% endfor %}
+                
+                    }
+                    else
+                    {
+                      $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">----</a></td>');  
+                    }
+                    $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+                }    
+            {% else %}
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            {% endif %}
+
+        {% endfor %}    
+
+
+
+    //Function Used For Cleaning Calender    
+    function isArrayInArrayOverlap(source,search)
+    {   count1=1;
+        count2=1;
+
+
+        for(var i=0,len=source.length;i<len;i++)
+        {
+            if(source[i][0]>=search[0] && source[i][0] >= search[1])
+            {
+                count1++;
+            }
+            if(source[i][1]<=search[0] && source[i][1] >= search[1])
+            {
+                count2++;
+            }
+        
+        }
+        if(count1==source.length || count2 == source.length)
+        {
+            return true;
+            }
+        else{
+            return false;
+        }    
+        }
+
+
+      //To add cleaning schedules in cleaning calender  
+      completed_calender = []; 
+      {% for old_schedule in calendar_order_schedules %} 
+            old_starting_time_string      = '{{old_schedule.start_at|date:'H:i'}}'.replace(":",".");
+            old_ending_time_string        = '{{old_schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+            old_starting_time             = parseInt(old_starting_time_string.split('.')[0])+parseInt(old_starting_time_string.split('.')[1])/60
+            old_ending_time               = parseInt(old_ending_time_string.split('.')[0])+parseInt(
+                old_ending_time_string.split('.')[1])/60
+            
+            current_raw_timings = []
+            {% for schedule in calendar_order_schedules %}
+                starting_time_string      = '{{schedule.start_at|date:'H:i'}}'.replace(":",".");
+                ending_time_string        = '{{schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+                starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+                    ending_time_string.split('.')[1])/60
+                if(completed_calender.includes('{{forloop.counter}}'))
+                {
+                    console.log("includes");
+                }
+                else
+                {
+                if(old_starting_time_string>=starting_time && old_starting_time_string>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0)||old_ending_time_string<=starting_time && old_ending_time_string<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0))
+                    {
+                        completed_calender.push('{{forloop.counter}}');
+                        current_raw_timings.push([starting_time,ending_time]);
+                        //append raw
+                        if(current_raw_timings.length==1)
+                        {
+                            left_percentage  = 100/24*starting_time
+                            width_percentage = 100/24*ending_time-100/24*starting_time;
+                            
+                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{schedule.id}}" {% if schedule.evaluation.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box"{% else %}class="green-box"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.evaluation_details.evaluator.profile_image %}src="{{schedule.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="image-table-view"></div><center>{{schedule.customer_address.area}}</center> <div {% if schedule.evaluation.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.evaluation_details.number_of_cleaners}}</div></div></td></tr>')
+                        }
+                        //append td to the raw 
+                        else
+                        { 
+                           left_percentage  = 100/24*starting_time
+                           width_percentage = 100/24*ending_time-100/24*starting_time; 
+                          
+                            $('#cleaning_table tr:last td').append('<div id="cleaningschedule{{schedule.id}}" {% if schedule.evaluation.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box"{% else %}class="green-box"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.evaluation_details.evaluator.profile_image %}src="{{schedule.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="image-table-view"></div><center>{{schedule.customer_address.area}}</center> <div {% if schedule.evaluation.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.evaluation_details.number_of_cleaners}}</div></div>')      
+                        }
+                    }
+                }
+            {% endfor %}        
+
+       {% endfor %}
+
+       //for special cases like 2 days cleanings
+       {% for sp_schedule in sp_calendar_order_schedules %}
+       starting_time_string      = '{{sp_schedule.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{sp_schedule.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{sp_schedule.id}}" {% if sp_schedule.evaluation.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-first"{% else %}class="sp-green-box-first"{% endif %} style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_schedule.evaluation_details.evaluator.profile_image %} src="{{sp_schedule.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="image-table-view"></div><center>{{sp_schedule.customer_address.area}}</center> </div></td></tr>')
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{sp_schedule.id}}" {% if sp_schedule.evaluation.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-second"{% else %}class="sp-green-box-second"{% endif %} style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div {% if sp_schedule.evaluation.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{sp_schedule.evaluation_details.number_of_cleaners}}</div></div></td></tr>')
+       
+       {% endfor %}
+
+
+      //To add followup schedules in cleaning calender  
+      completed_calender_followup = []; 
+      {% for old_schedule in calendar_followup_schedules %} 
+            old_starting_time_string      = '{{old_schedule.start_at|date:'H:i'}}'.replace(":",".");
+            old_ending_time_string        = '{{old_schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+            old_starting_time             = parseInt(old_starting_time_string.split('.')[0])+parseInt(old_starting_time_string.split('.')[1])/60
+            old_ending_time               = parseInt(old_ending_time_string.split('.')[0])+parseInt(
+                old_ending_time_string.split('.')[1])/60
+            
+            current_raw_timings = []
+            {% for schedule in calendar_followup_schedules %}
+                starting_time_string      = '{{schedule.start_at|date:'H:i'}}'.replace(":",".");
+                ending_time_string        = '{{schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+                starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+                    ending_time_string.split('.')[1])/60
+                if(completed_calender_followup.includes('{{forloop.counter}}'))
+                {
+                    console.log("includes");
+                }
+                else
+                {
+                if(old_starting_time_string>=starting_time && old_starting_time_string>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0)||old_ending_time_string<=starting_time && old_ending_time_string<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0))
+                    {
+                        completed_calender_followup.push('{{forloop.counter}}');
+                        current_raw_timings.push([starting_time,ending_time]);
+                        //append raw
+                        if(current_raw_timings.length==1)
+                        {
+                            left_percentage  = 100/24*starting_time
+                            width_percentage = 100/24*ending_time-100/24*starting_time;
+                            
+                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{schedule.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.follow_up.investigation.investigator.profile_image %}src="{{schedule.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %} class="image-table-view"></div><center>{{schedule.customer_address.area}}</center> <div class="right-value yellow-text">{{schedule.follow_up.investigation.order_schedule.evaluation_details.number_of_cleaners}}</div></div></td></tr>')
+                        }
+                        //append td to the raw 
+                        else
+                        { 
+                           left_percentage  = 100/24*starting_time
+                           width_percentage = 100/24*ending_time-100/24*starting_time; 
+                          
+                            $('#cleaning_table tr:last td').append('<div id="followupschedule{{schedule.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.follow_up.investigation.investigator.profile_image %}src="{{schedule.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %} class="image-table-view"></div><center>{{schedule.customer_address.area}}</center> <div class="right-value yellow-text">{{schedule.follow_up.investigation.order_schedule.evaluation_details.number_of_cleaners}}</div></div>')      
+                        }
+                    }
+                }
+            {% endfor %}        
+
+       {% endfor %}
+
+       //for special cases like 2 days fllowup cleanings
+       {% for sp_schedule in sp_calendar_followup_schedules %}
+       starting_time_string      = '{{sp_schedule.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{sp_schedule.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{sp_schedule.id}}" class="sp-yellow-box-first" style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_schedule.follow_up.investigation.investigator.profile_image %}src="{{sp_schedule.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %} class="image-table-view"></div><center>{{sp_schedule.customer_address.area}}</center> </div></td></tr>')
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{sp_schedule.id}}" class="sp-yellow-box-second" style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div class="right-value yellow-text">{{sp_schedule.follow_up.investigation.order_schedule.evaluation_details.number_of_cleaners}}</div></div></td></tr>')
+       
+       {% endfor %}
+
+
+});
+
+function set_params_go(args)
+{
+var url='{% url 'bleach_admin:admindash-board' %}';
+var params={cleaning_calendar_date:$('#cleaning_calendar').val(),evaluation_calendar_date:$('#evaluation_calendar').val(),
+};
+for(key in args) 
+    params[key]=args[key];
+var query='';
+for(key in params)
+    if(params[key]) 
+        query+='&'+key+'='+params[key].toString();
+query=query.replace('&','?');
+window.location.href=url+query;  
+}
+
+</script>
 {% endblock %}
 
 

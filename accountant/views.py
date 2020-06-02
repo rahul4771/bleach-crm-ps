@@ -5,6 +5,9 @@ from django.conf import settings
 from bleach_crm_ps.permissions import IsAccountant
 # Create your views here.
 
+import functools
+import operator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone 
 from datetime import timedelta,date,datetime
 from dateutil.relativedelta import relativedelta
@@ -45,7 +48,29 @@ class AccountantHome(IsAccountant,View):
 		total_pending_amount = pending_payments.aggregate(total=Sum(F('total_amount')-F('amount_paid')))['total']		
 		total_pending_orders = pending_payments.count()
 		
-		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders})
+		#PAGINATION PENDING PAYMENTS		
+		page = request.GET.get('page',1) 
+		paginator=Paginator(pending_payments,10)
+		try: 
+			pending_payments=paginator.page(page) 
+		except PageNotAnInteger:
+			pending_payments=paginator.page(1)
+		except EmptyPage:
+			pending_payments = paginator.page(paginator.num_pages) 
+
+		# Get the index of the current page
+		index = pending_payments.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns 
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(pending_payments.end_index())-(pending_payments.start_index())+1
+
+		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders,"page_range":page_range,"entry_per_page":entry_per_page})
 
 class ClientDetails(IsAccountant,View):
 	def get(self,request):
@@ -77,7 +102,29 @@ class ClientDetails(IsAccountant,View):
 		active_clients_count = orders.filter(~Q(order_status='ORDER_CLOSED')).values_list('evaluation__customer').distinct().count()	
 		new_clients_count    = orders.filter(evaluation__created__date__gte=timezone.now().date()-timedelta(30),evaluation__customer__created__date__gte=timezone.now().date()-timedelta(30),).values_list('evaluation__customer').distinct().count()
 		
-		return render(request,'accountant/client/clients.html',{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count})		
+		#PAGINATION CLIENTS		
+		page = request.GET.get('page',1) 
+		paginator=Paginator(client_details,10)
+		try: 
+			client_details=paginator.page(page) 
+		except PageNotAnInteger:
+			client_details=paginator.page(1)
+		except EmptyPage:
+			client_details = paginator.page(paginator.num_pages) 
+
+		# Get the index of the current page
+		index = client_details.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns 
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(client_details.end_index())-(client_details.start_index())+1
+
+		return render(request,'accountant/client/clients.html',{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page})		
 		
 
 class OrderDetails(IsAccountant,View):
@@ -101,7 +148,29 @@ class OrderDetails(IsAccountant,View):
 		approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
 		pending_orders_count  =	evaluations.filter(Q(Q(quatation_status='ASK_FOR_DISCOUNT')|Q(quatation_status='PENDING'))).count()
 		
-		return render(request,'accountant/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search})		
+		#PAGINATION ORDERS		
+		page = request.GET.get('page',1) 
+		paginator=Paginator(evaluations,10)
+		try: 
+			evaluations=paginator.page(page) 
+		except PageNotAnInteger:
+			evaluations=paginator.page(1)
+		except EmptyPage:
+			evaluations = paginator.page(paginator.num_pages) 
+
+		# Get the index of the current page
+		index = evaluations.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns 
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
+
+		return render(request,'accountant/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})		
 
 
 class PaymentDetails(IsAccountant,View):
@@ -121,7 +190,6 @@ class PaymentDetails(IsAccountant,View):
 				invoices         = Invoice.objects.filter(is_active=True).order_by('-id').select_related('order__evaluation__customer').prefetch_related(Prefetch('order__evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='invoice_evaluation_details'))
 			except:
 				invoices         = None
-		print(invoices)
 				
 		#Pending Payments
 		try:
@@ -136,6 +204,28 @@ class PaymentDetails(IsAccountant,View):
 		else:
 			total_pending_amount = 0
 			total_pending_orders = 0
-				
-		return render(request,'accountant/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search})
+		
+		#PAGINATION INVOICE		
+		page = request.GET.get('page',1) 
+		paginator=Paginator(invoices,10)
+		try: 
+			invoices=paginator.page(page) 
+		except PageNotAnInteger:
+			invoices=paginator.page(1)
+		except EmptyPage:
+			invoices = paginator.page(paginator.num_pages) 
+
+		# Get the index of the current page
+		index = invoices.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns 
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(invoices.end_index())-(invoices.start_index())+1
+
+		return render(request,'accountant/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})
 

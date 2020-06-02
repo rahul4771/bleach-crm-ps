@@ -58,7 +58,7 @@
             
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Order List</h2>
-<div class="page-entries">Show 10 entries</div>
+<div class="page-entries">Show {{entry_per_page}} entries</div>
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
 <thead>
@@ -102,11 +102,55 @@
 <div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
     <div class="pagination-containter"><!--pagination-containter-->
     	<div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
-        Showing 1 to 10 of 57 entries
+        Showing {{evaluations.start_index}} to {{evaluations.end_index}} of {{evaluations.paginator.count}} entries
         </div><!--pagination-column pagination-column-left-->
         
         <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
-        Pagination here
+        <!--paginated-->
+   {% if evaluations.has_other_pages %}
+   <nav aria-label="Page navigation example">
+  <ul class="pagination">
+     {% if evaluations.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% endif %}
+    {% for pg in page_range %}
+    {% if vus.number == pg %}
+            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}">{{pg}}</a></li>
+    {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}">{{pg}}</a></li>
+    {% endif %}
+    {% endfor %}
+    {% if evaluations.has_next %}        
+    <li class="page-item">
+      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link disabled" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+    {% endif %}
+    <!--paginated-->
         </div><!--pagination-column pagination-column-right-->
     </div><!--pagination-containter-->         
 </div><!--white-wrapper-pagination--> 
