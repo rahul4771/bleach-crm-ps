@@ -18,16 +18,16 @@ USER_TYPE_CHOICES=(
     ('ACCOUNTANT','ACCOUNTANT'),
 )
 
-TITLE_CHOICES=(
-	('Mr','Mr'),
-	('Mrs','Mrs')
-	)
 
 GENDER_CHOICES=(
 	('MALE','MALE'),
 	('FEMALE','FEMALE')
 	)
 
+SMS_LANGUAGE_CHOICES = (
+    ('ENGLISH','ENGLISH'),
+    ('ARABIC','ARABIC')
+    )
 
 #profile image Size Validator
 def validate_image(image):
@@ -66,7 +66,6 @@ class CustomUserManager(BaseUserManager):
 class UserProfile(AbstractUser):
     name			= models.CharField(max_length=100,blank=False,null=False)
     user_type 		= models.CharField(max_length=20,blank=True,null=True,choices=USER_TYPE_CHOICES)
-    title	  		= models.CharField(max_length=20,blank=True,null=True,choices=TITLE_CHOICES)
     gender 	  		= models.CharField(max_length=20,blank=True,null=True,choices=GENDER_CHOICES)
     nationality		= CountryField(null=True,blank=True)
     company 		= models.CharField(max_length=100,blank=True,null=True)
@@ -74,6 +73,7 @@ class UserProfile(AbstractUser):
     mobile_number 	= models.CharField(max_length=10,blank=True,null=True)
     phone_number 	= models.CharField(max_length=10,blank=True,null=True)
     profile_image	= models.ImageField(upload_to='profile_photo/',blank=True,null=True,validators=[FileExtensionValidator(allowed_extensions=['jpg','jpeg','png']),validate_image],)
+    sms_preference  = models.CharField(max_length=20,blank=True,null=True,choices=SMS_LANGUAGE_CHOICES)
     created_by      = models.ForeignKey('self',blank=True,null=True)
     is_active       = models.BooleanField(null=False,blank=True,default=True)
     created         = models.DateTimeField(auto_now_add=True)

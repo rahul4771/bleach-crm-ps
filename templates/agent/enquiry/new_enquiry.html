@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "agent/common/header.html" %}
+
+<section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Enquiry</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+            </div><!--welcome-wrapper-->       
+            
+     <div class="main-content-holder"><!--main-content-holder-->            
+     
+            
+<div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Enquiry Form</h2>
+  <div class="row">
+
+    <div class="col-12"> 
+
+      <div class="page-form">
+
+        <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+
+         <div class="page-form-head">
+
+           <h1>New Enquiry</h1>
+
+         </div>
+
+         <div class="page-body">
+
+          {% for field in enquiry_form %} 
+
+          <div class="page-col">
+
+           {{ field.errors }} 
+
+           {{ field.label_tag }} {{ field }}
+
+          <p class="help">{{ field.help_text|safe }}</p>
+
+          </div>
+
+          {% endfor %}
+
+
+         {{ address_formset.management_form }}
+
+         {% for form in address_formset %}
+
+          <div class="div-section">
+
+            <div class="div-section-head">
+
+              <h1>Customer Address</h1>  
+
+             </div>
+
+            <div class="link_formset">    
+
+              {% for field in form %}
+
+              <div class="page-col">
+
+                {{ field.errors }}    
+
+                {{ field.label_tag }} {{ field }}
+
+                {% if field.help_text %}
+
+                <p class="help">{{ field.help_text|safe }}</p>
+
+                {% endif %}
+
+             </div>
+
+             {% endfor %}
+
+          </div>
+
+        </div>
+
+      {% endfor %}
+
+</div>
+<div class="page-footer text-center">
+
+            <button type="button" class="primary-btn" onclick="submitAnyForm(this);">Save</button>
+            <button type="button" class="primary-btn" href="#">Assign Evaluator</button>
+            <button type="button" class="primary-btn" href="#">Make Quatation</button>
+
+</div>
+</form>
+</div>
+</div>
+</div>
+
+
+
+</div><!--white-wrapper-->      
+             
+            
+            
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+{% include 'agent/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script>
+var x=0;
+var ajax_ret_areas; 
+
+$('document').ready(function(){
+//formset
+    $('.link_formset').formset({
+
+        addText: 'Add Address',
+
+        deleteText: 'Remove Address', 
+
+        added: add_row,
+
+        removed: remove_row,
+
+    });
+
+
+function add_row()
+
+     {
+
+      x++;
+      $("#id_form-"+x+"-area").empty();
+    }
+
+
+function remove_row()
+
+     {
+
+       x--;
+
+     }
+
+$("#id_form-"+x+"-area").empty();    
+
+});
+
+//Append area for governorate change
+
+$(".governorate").change(function(){ 
+
+  id=this.id.match(/\d+/); 
+
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getarea' %}",
+
+        data: {'governorate_id':this.value}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+
+          ajax_ret_areas = data;     
+
+   $("#id_form-"+x+"-area").empty();
+
+  
+
+          $("#id_form-"+x+"-area").append($('<option>', {
+
+          value: "", 
+
+         text: "-------------"
+
+      })); 
+
+        $.each( ajax_ret_areas, function( key, values ) {
+
+              $("#id_form-"+x+"-area").append($('<option>', {        
+
+    value: key, 
+
+    text: values   
+
+  }));   
+
+      });
+
+
+        }  
+
+      }); 
+
+});
+
+</script>    
+{% endblock %}

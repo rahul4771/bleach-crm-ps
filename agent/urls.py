@@ -10,4 +10,9 @@ urlpatterns = [
 	url(r'^tickets/$',views.TicketDetails.as_view(),name='agent-tickets'),
 	url(r'^clients/$',views.ClientDetails.as_view(),name='agent-clients'),
 
+	url(r'^newenquiry/$',views.NewEnquiry.as_view(),name='agent-newenquiry'),
+
+	url(r'^ajax/getarea/$',views.GetArea,name='ajax-getarea'),
+
+
 ]

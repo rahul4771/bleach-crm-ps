@@ -2,4 +2,4 @@ django==1.11
 django-countries==6.1.2
 tzlocal
 pillow
-relativedelta
+python-dateutil
