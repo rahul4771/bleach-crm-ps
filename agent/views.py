@@ -1,9 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.views import View
+from django.forms import formset_factory,modelformset_factory
+from django.http import HttpResponse,JsonResponse
 
 from django.conf import settings
 from bleach_crm_ps.permissions import IsAgent
+from bleach_crm_ps.utils import get_error
 
+
+import random
+import string
 import functools
 import operator
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -12,12 +18,45 @@ from datetime import timedelta,date,datetime
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField
 from django.db.models.functions import Cast 
 from django.db.models import Prefetch
+from django.contrib import messages
 
-from user.models import UserProfile,Address
+from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
-from order.forms import OrderSchedulerConfirmationForm,FollowUpSchedulerConfirmationForm
+
+from agent.forms import UserProfileForm,AddressForm
+
+#Username Random Generation
+def generate_random_username(size=10, chars=string.ascii_uppercase + string.digits):
+    
+    username = ''.join(random.choice(chars) for n in range(size))
+
+    
+    try:
+        UserProfile.objects.get(username=username)
+        return generate_random_username(size=10, chars=string.ascii_uppercase + string.digits)
+    except UserProfile.DoesNotExist:
+        return username
+
+#Ajax for governorates Area
+def GetArea(request):
+	
+	governorate_id        = request.GET.get('governorate_id')
+	
+	try:
+		areas = Area.objects.filter(is_active=True,governorate_id=governorate_id)
+	except:
+		areas = None	
+		
+	dropdown_areas={}
+
+	if areas:
+		for area in areas:
+			dropdown_areas[area.id] = area.name
+
+	return JsonResponse(dropdown_areas)
+
 
 # Create your views here. 
 class AgentHome(IsAgent,View):
@@ -82,10 +121,7 @@ class AgentHome(IsAgent,View):
 		try:
 			follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
 		except:
-			follow_up_schedules	  = None	
-
-		order_scheduler_confirmation_form    = OrderSchedulerConfirmationForm()	
-		followup_scheduler_confirmation_form = FollowUpSchedulerConfirmationForm()	
+			follow_up_schedules	  = None		
 		
 
 		#cleaning schedule & followup schedule for cleaning calendar			
@@ -116,7 +152,7 @@ class AgentHome(IsAgent,View):
 		except:
 			sp_calendar_followup_schedules = None							
 
-		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_average_feedback':today_average_feedback,'week_average_feedback':week_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'order_schedules':order_schedules,'follow_up_schedules':follow_up_schedules,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'schedule_date':schedule_date,'order_scheduler_confirmation_form':order_scheduler_confirmation_form,'followup_scheduler_confirmation_form':followup_scheduler_confirmation_form,})
+		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_average_feedback':today_average_feedback,'week_average_feedback':week_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'order_schedules':order_schedules,'follow_up_schedules':follow_up_schedules,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'schedule_date':schedule_date,})
 
 
 
@@ -409,12 +445,42 @@ class ClientDetails(IsAgent,View):
 		return render(request,"agent/client/clients.html",{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page}) 
 
 
+class NewEnquiry(IsAgent,View):
+	address_formset_define    = formset_factory(AddressForm)
+	def get(self,request):
+		
+		enquiry_form    = UserProfileForm()	
+
+		return render(request,'agent/enquiry/new_enquiry.html',{'enquiry_form':enquiry_form,'address_formset':self.address_formset_define()})
+
+	def post(self,request):
+		enquiry_form     = UserProfileForm(request.POST,request.FILES or None)
+		address_formset  = self.address_formset_define(request.POST)
 
 
+		if enquiry_form.is_valid() and address_formset.is_valid(): 
+			enquiry_form_save            = enquiry_form.save(commit=False)	
+			enquiry_form_save.username   = generate_random_username()
+			enquiry_form_save.created_by = request.user
+			enquiry_form_save.user_type  = 'CUSTOMER'
+			enquiry_form_save.save()
 
+			for address_form in address_formset:
+				if address_form.is_valid():
+					address_form_save = address_form.save(commit=False)
+					address_form_save.customer = enquiry_form_save
+					address_form.save()
+			messages.success(request,"Enquiry Details Succesfully Added")
 
+		else:
+			if not enquiry_form.is_valid():
+				messages.error(request,get_error(enquiry_form))
+			if not address_formset.is_valid():
+				messages.error(request,get_error(address_formset))
 
+			return render(request,'agent/enquiry/new_enquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset})					
 
+		return redirect('agent:agent-newenquiry')	
 
 
 
