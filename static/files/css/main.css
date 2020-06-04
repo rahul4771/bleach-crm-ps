@@ -1846,3 +1846,32 @@ a.a-btn.primary-btn:hover {
   position: absolute;
   right: 0;
   top: 0;}  
+
+
+  /* auto-complete-results */
+/*.auto-complete-results {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-wrap: nowrap;
+  border: 1px solid #9e9e9e;
+  border-top: 0;
+  background: #fff;
+  border-radius: 5px;
+  max-height: 220px;
+  min-height: 80px;
+  z-index: 500;
+  padding: 7px 0;
+  position: absolute !important;}
+.auto-complete-result-item{
+  min-width: 100%;
+  padding: 2px 3px;
+  white-space: nowrap;
+  padding: 4px 10px;
+  color: #000;
+  cursor: pointer;
+  font-size: 13px;}       
+.auto-complete-result-item:hover{
+  background-color: #efefef;
+  color: #292929;}*/

@@ -11,8 +11,10 @@ urlpatterns = [
 	url(r'^clients/$',views.ClientDetails.as_view(),name='agent-clients'),
 
 	url(r'^newenquiry/$',views.NewEnquiry.as_view(),name='agent-newenquiry'),
+	url(r'^existingenquiry/(?P<enquiry_id>[-\w]+)$',views.ExistingEnquiry.as_view(),name='agent-existingenquiry'),
 
 	url(r'^ajax/getarea/$',views.GetArea,name='ajax-getarea'),
+	# url(r'^ajax/getcustomer/info/$',views.GetCustomerInfo,name='ajax-getcustomerinfo'),
 
 
 ]
