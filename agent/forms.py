@@ -5,7 +5,7 @@ from user.models import UserProfile,Address,Governorate,Area
 class UserProfileForm(forms.ModelForm):
 	class Meta:
 		model  = UserProfile
-		fields = ('name','gender','email','nationality','company','job_title','mobile_number','phone_number','sms_preference','profile_image',)	
+		fields = ('name','gender','email','nationality','company','job_title','mobile_number','phone_number','sms_preference',)	
 	
 	def __init__(self,*args,**kwargs):
 		super(UserProfileForm, self).__init__(*args, **kwargs)

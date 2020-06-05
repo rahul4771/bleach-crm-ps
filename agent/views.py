@@ -15,7 +15,7 @@ import operator
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone 
 from datetime import timedelta,date,datetime
-from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField
+from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField
 from django.db.models.functions import Cast 
 from django.db.models import Prefetch
 from django.contrib import messages
@@ -26,6 +26,7 @@ from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowU
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 
 from agent.forms import UserProfileForm,AddressForm
+from evaluator.forms import EvaluationDetailsForm
 
 #Username Random Generation
 def generate_random_username(size=10, chars=string.ascii_uppercase + string.digits):
@@ -56,6 +57,32 @@ def GetArea(request):
 			dropdown_areas[area.id] = area.name
 
 	return JsonResponse(dropdown_areas)
+
+#Ajax for get  allready registered users
+# def GetCustomerInfo(request):
+
+# 	data               = {}
+# 	customer_info_dict = {}
+
+# 	query       =   request.GET.get('keyword')
+
+
+# 	customer_info = UserProfile.objects.filter(is_active=True,user_type='CUSTOMER').filter(Q(Q(name__icontains=query)|Q(mobile_number__icontains=query)))
+
+
+# 	if customer_info:
+# 		for details in customer_info:
+# 			customer_info_dict[details.id] = details.name+'-'+details.mobile_number 	
+	
+# 	data['customer_details'] = customer_info_dict
+
+
+# 	data['status']     = 'true'
+
+# 	if customer_info_dict == {}: 
+# 		data['status'] = 'false'	
+	
+# 	return JsonResponse(data)	
 
 
 # Create your views here. 
@@ -451,7 +478,12 @@ class NewEnquiry(IsAgent,View):
 		
 		enquiry_form    = UserProfileForm()	
 
-		return render(request,'agent/enquiry/new_enquiry.html',{'enquiry_form':enquiry_form,'address_formset':self.address_formset_define()})
+		try:
+			customer_info = UserProfile.objects.filter(is_active=True,user_type='CUSTOMER')
+		except:	
+			customer_info = None
+
+		return render(request,'agent/enquiry/new_enquiry.html',{'enquiry_form':enquiry_form,'address_formset':self.address_formset_define(),'customer_info':customer_info})
 
 	def post(self,request):
 		enquiry_form     = UserProfileForm(request.POST,request.FILES or None)
@@ -470,17 +502,118 @@ class NewEnquiry(IsAgent,View):
 					address_form_save = address_form.save(commit=False)
 					address_form_save.customer = enquiry_form_save
 					address_form.save()
-			messages.success(request,"Enquiry Details Succesfully Added")
+			messages.success(request,"Customer Details Succesfully Added")
 
 		else:
 			if not enquiry_form.is_valid():
 				messages.error(request,get_error(enquiry_form))
 			if not address_formset.is_valid():
-				messages.error(request,get_error(address_formset))
+				messages.error(request,"An Error Occured")
 
 			return render(request,'agent/enquiry/new_enquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset})					
 
-		return redirect('agent:agent-newenquiry')	
+		return redirect('agent:agent-assignevaluator',enquiry_form_save.id)	
 
 
+class ExistingEnquiry(IsAgent,View):
+	address_formset_define    			= modelformset_factory(Address,form=AddressForm,extra=0,can_delete=True)
+	address_formset_Empty_define        = formset_factory(AddressForm,extra=1)
+	
+	def get(self,request,enquiry_id):
+		
+		enquiry_user    = UserProfile.objects.get(id=enquiry_id)
+
+		try:
+			addresses   = Address.objects.filter(customer__id=enquiry_id)
+		except:	
+			addresses   = None
+
+
+		enquiry_form    = UserProfileForm(request.FILES or None,instance=enquiry_user)	
+
+		if addresses:
+			address_formset = self.address_formset_define(queryset=addresses)
+		else:
+			address_formset = self.address_formset_Empty_define()	
+
+		return render(request,'agent/enquiry/existing_enquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'enquiryid':enquiry_id,'addresses':addresses,})
+
+	def post(self,request,enquiry_id):
+
+		enquiry_user    = UserProfile.objects.get(id=enquiry_id)
+		
+		enquiry_form    = UserProfileForm(request.POST,request.FILES or None,instance=enquiry_user)
+		
+		address_formset  = self.address_formset_define(request.POST)
+
+
+		if enquiry_form.is_valid() and address_formset.is_valid(): 
+			enquiry_form_save            = enquiry_form.save(commit=False)	
+			enquiry_form_save.save()
+
+			for address_form in address_formset:
+				if address_form.is_valid():
+					address_form_save = address_form.save(commit=False)
+					address_form.save()
+			messages.success(request,"Customer Details Succesfully Updated")
+
+		else:
+			if not enquiry_form.is_valid():
+				messages.error(request,get_error(enquiry_form))
+			if not address_formset.is_valid():
+				messages.error(request,"An Error Occured")
+
+			return render(request,'agent/enquiry/existing_enquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'enquiryid':enquiry_id,})					
+
+		return redirect('agent:agent-existingenquiry',enquiry_id)
+
+class AssignEvaluator(IsAgent,View):
+	evaluation_formset_define    = formset_factory(EvaluationDetailsForm)
+	def get(self,request,enquiry_id):
+				
+		#Evaluation details of each evaluator for evaluation table
+		evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
+		
+		try:
+			evaluation_date = datetime.strptime(evaluation_calendar_date,'%d-%m-%Y')
+		except:
+			evaluation_date = timezone.now()
+		
+		try:
+			evaluation_details		  = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').prefetch_related(Prefetch('evaluator_evaluation',queryset=EvaluationDetails.objects.filter(is_active=True,proposed_time__date=evaluation_date.date()),to_attr='evaluation_details'))
+		except:
+			evaluation_details 		  = None
+
+		return render(request,'agent/enquiry/assign_evaluator.html',{'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'enquiryid':enquiry_id,'evaluation_formset':self.evaluation_formset_define(form_kwargs={'enquiry_user_id':enquiry_id}),})
+
+	def post(self,request,enquiry_id):
+		evaluation_formset  = self.evaluation_formset_define(request.POST,form_kwargs={'enquiry_user_id':enquiry_id})
+
+		action_mode    = request.POST.get('action_type')
+
+
+		if action_mode == 'add':
+
+			agent_notes  = request.POST.get('agent_notes')
+			tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 1000000
+			evaluation_no= 'BCL'+str(tracking_no+1)
+
+			#Create New Evaluation
+			new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=tracking_no,call_attender=request.user,attender_notes=agent_notes,customer_id=enquiry_id)	
+
+			#Save Evaluation Details
+			if evaluation_formset.is_valid(): 
+
+				for evaluation_form in evaluation_formset:
+					if evaluation_form.is_valid():
+						evaluation_form_save            = evaluation_form.save(commit=False)
+						evaluation_form_save.evaluation = new_evaluation
+						evaluation_form_save.save()
+
+				messages.success(request,"Evaluation Details Succesfully Completed")
+
+			else:
+				messages.error(request,"An Error Occured")	
+		
+		return redirect('agent:agent-assignevaluator',enquiry_id)
 

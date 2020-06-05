@@ -133,7 +133,7 @@ class Address(models.Model):
     updated         = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return str(self.customer.name)
+        return str(self.area.name)
 
     def __str__(self):
-        return self.customer.name
+        return self.area.name

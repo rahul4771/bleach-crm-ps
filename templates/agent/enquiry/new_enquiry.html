@@ -16,6 +16,16 @@
             
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Enquiry Form</h2>
+          <div>
+            <label>Search Client</label>
+              <select name="client" class="chosen-select" id="client_id">
+                    <option value="">-- select --</option>
+                    {% for customer in customer_info %}
+                    <option value="{{customer.id}}">{{customer.name}}-{{customer.mobile_number}}</option> {% endfor %}
+              </select>
+            <button type="button" class="fa fa-search" onclick="set_parameters_go()" aria-hidden="true"></button> 
+          </div>
+
   <div class="row">
 
     <div class="col-12"> 
@@ -87,9 +97,8 @@
 
 </div>
 <div class="page-footer text-center">
-
-            <button type="button" class="primary-btn" onclick="submitAnyForm(this);">Save</button>
-            <button type="button" class="primary-btn" href="#">Assign Evaluator</button>
+  
+            <button type="button" class="primary-btn" onclick="submitAnyForm(this);">Assign Evaluator</button>
             <button type="button" class="primary-btn" href="#">Make Quatation</button>
 
 </div>
@@ -202,5 +211,138 @@ $(".governorate").change(function(){
 
 });
 
+function set_parameters_go()
+{
+     var client_id = $('#client_id').val();
+     if(client_id)
+     {
+window.location.href="{% url 'agent:agent-existingenquiry' enquiry_id=123 %}".replace(/123/,client_id.toString());
+     }
+       
+}
+
 </script>    
+
+
+
+
+<!-- <script>
+  //  auto complete search
+
+$(window).ready(function(){
+
+  $('.auto-complete-input').attr('autocomplete','off').keyup(search_live).focusout(autoSuggestionOnFocusOut
+      ).after($('<div/>',{class:'auto-complete-results'})).parent().css('position','relative',);
+      
+      //Initial case
+      $(".auto-complete-results").css('display','none');
+
+    
+});
+
+//Dont Know
+$(window).ready(function(){
+    $('.goto-url').click(function(){window.location.href=$(this).data('url');});
+}); 
+
+
+
+function autoSuggestionOnFocusOut(event)
+{
+  
+    setTimeout(function(){
+
+      $(event.target).siblings('.auto-complete-results').first().hide();
+      },100);
+
+}
+
+
+function select_searched_student(event,src){
+          var new_id=$(src).attr('data-id');
+          window.location='{% url 'agent:agent-newenquiry' %}'
+}
+
+
+
+
+function autoSuggestionOnSelect(event){
+    eval($(this).data('select-result'))(event,$(this));
+    $(this).parents('.auto-complete-results').first().hide().siblings('.auto-complete-input').val('');
+}
+
+
+//Keyup condition
+function search_live(event){
+    var src=$(this);
+    var min_size=src.data('min-size');
+
+    var test_pattern=src.data('pattern');
+    if(test_pattern)
+        {
+        test_pattern=RegExp(test_pattern);
+        var inp = String.fromCharCode(event.keyCode);
+        if (! test_pattern.test(inp)) return;
+        }
+        var val=src.val();
+    if(min_size)
+        {
+        if(val.length<min_size) return;
+        }
+    var fetch_params_fn_name=eval(src.data('fetch-params'));
+    var data={};
+    if(fetch_params_fn_name)
+        data=fetch_params_fn_name();
+    data['keyword']=val;//typed key words
+    var url=src.data('auto-suggest-url');//list fetching url
+    var on_result_click=src.data('result-onclick');//after result url
+
+
+    var ajax={type:'get',url:url,data:data,
+  
+    success:function (data){
+      var listOfObjects = [];
+        if( data['customer_details'])
+            {
+
+            $res=src.siblings('.auto-complete-results').first();
+            $res.contents().remove();
+            
+
+
+            $.each( data['customer_details'],(i,v)=>{
+              $('<div/>',{class:'auto-complete-result-item','data-id':i,
+                text:v}).appendTo($res).
+                on('click',autoSuggestionOnSelect).
+                data('select-result',on_result_click).
+                attr('tabindex',-1);
+
+                $res.onclick = autoSuggestionOnSelect();
+            });
+            $res.css('position','absolute');
+            $res.outerWidth(src.outerWidth());
+            $res.css('top',(src.position().top+src.outerHeight()).toString()+'px');
+          
+                $res.show();
+            }
+          if(data['status'] == 'false'){
+            $res=src.siblings('.auto-complete-results').first();
+            $res.contents().remove();
+          
+            $('<div/>',{class:'auto-complete-result-item','data-id':0,
+                text:"No result Found"}).appendTo($res).
+                on('click',autoSuggestionOnSelect).
+                data('select-result',on_result_click).
+                attr('tabindex',-1);
+            $res.outerWidth(src.outerWidth());
+            $res.css('top',(src.position().top+src.outerHeight()).toString()+'px');
+          
+                $res.show();
+          }
+          }
+        };
+        $.ajax(ajax);
+}
+
+</script> -->
 {% endblock %}
