@@ -120,6 +120,7 @@ class CleaningMethod(models.Model):
 
 class Evaluation(models.Model):
 	evaluation_id		= models.CharField(max_length=100,blank=False,null=False)
+	tracking_no         = models.IntegerField(blank=False,null=False)
 	call_attender 		= models.ForeignKey(UserProfile,blank=False,null=False,related_name='attender_evaluation')
 	attender_notes 		= models.CharField(max_length=500,blank=True,null=True)
 	customer			= models.ForeignKey(UserProfile,blank=False,null=False,related_name='customer_evaluation')

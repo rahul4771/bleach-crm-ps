@@ -89,7 +89,7 @@
 <div class="page-footer text-center">
 
             <button type="button" class="primary-btn" onclick="submitAnyForm(this);">Update</button>
-            <button type="button" class="primary-btn" href="#">Assign Evaluator</button>
+            <button type="button" class="primary-btn"><a href="{% url 'agent:agent-assignevaluator' enquiryid %}">Assign Evaluator</a></button>
             <button type="button" class="primary-btn" href="#">Make Quatation</button>
 
 </div>
@@ -113,7 +113,14 @@
 
 {% block javascript %}
 <script>
-var x=0;
+
+{% if addresses %}
+var x = {{addresses.count}}-1;
+{% else %}
+var x = 0;
+{% endif %}
+console.log(x);
+
 var ajax_ret_areas; 
 
 $('document').ready(function(){
@@ -137,6 +144,7 @@ function add_row()
 
       x++;
       $("#id_form-"+x+"-area").empty();
+      console.log(x);
     }
 
 
@@ -145,10 +153,10 @@ function remove_row()
      {
 
        x--;
+       console.log(x);
 
      }
-
-$("#id_form-"+x+"-area").empty();    
+    
 
 });
 

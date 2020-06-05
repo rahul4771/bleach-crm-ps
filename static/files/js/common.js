@@ -17,6 +17,13 @@ $(function () {
   });
 });
 
+// date_time_pick   
+$(function () {
+  $('.date_time_pick').datetimepicker({
+    format: "DD/MM/YYYY hh:mm A",
+  });
+});
+
  // toggle-password
  $(".toggle-password").click(function() {
   //$(this).toggleClass("fa-eye fa-eye-slash");
