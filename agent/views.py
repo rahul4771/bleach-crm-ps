@@ -689,5 +689,7 @@ class AddFeedBack(IsAgent,View):
 			FeedBack.objects.bulk_create(create_feedbacks)
 
 			messages.success(request,"Feedback Succesfully Submitted")		
-		
+		else:
+			messages.error(request,'Please Select a BLC Number')
+
 		return redirect('agent:new-feedback')	
