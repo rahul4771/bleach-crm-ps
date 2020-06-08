@@ -69,6 +69,9 @@ class Order(models.Model):
 	order_status 	= models.CharField(max_length=50,blank=True,null=True,choices=ORDER_STATUS)
 	payment_status  = models.CharField(max_length=50,blank=True,null=True,choices=PAYMENT_STATUS)
 	instructions	= models.CharField(max_length=500,blank=True,null=True)
+	
+	feedback_notes  = models.CharField(max_length=500,blank=True,null=True)
+	is_feedback_marked= models.BooleanField(null=False,blank=True,default=False)
 	created_by      = models.ForeignKey(UserProfile,blank=True,null=True)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
@@ -84,7 +87,7 @@ class Order(models.Model):
 #Devide an Order into a number of Schedules.This is to handle multiple days cleaning,multiple address cleaning Subscription Cleaning etc...
 
 class OrderScheduler(models.Model):
-	order 			   = models.ForeignKey('Order',blank=False,null=False)
+	order 			   = models.ForeignKey('Order',blank=False,null=False,related_name='order_scheduler_order')
 	evaluation_details = models.ForeignKey(EvaluationDetails,blank=True,null=True)
 	start_at		   = models.DateTimeField(blank=True,null=True)
 	end_at			   = models.DateTimeField(blank=True,null=True)

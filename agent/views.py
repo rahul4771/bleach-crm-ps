@@ -22,7 +22,7 @@ from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 
 from agent.forms import UserProfileForm,AddressForm
@@ -57,6 +57,38 @@ def GetArea(request):
 			dropdown_areas[area.id] = area.name
 
 	return JsonResponse(dropdown_areas)
+
+#Ajax for get feedback Order Information
+def GetFeedbackOrderInfo(request):
+
+		dropdown_order_info = {}
+
+		order_id            = request.GET.get('order_id')
+
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('customer_address__area','customer_address'),to_attr='order_secheduler_feedback')).get(id=order_id,is_active=True)
+		
+		dropdown_order_info['name']          = order.evaluation.customer.name
+		dropdown_order_info['mobile_number'] = order.evaluation.customer.mobile_number
+		dropdown_order_info['order_id']      = order.id 		
+		dropdown_order_info['address']       = []
+
+		#for multiple addresses
+		for scheduler in order.order_secheduler_feedback:
+			customer_address = {}
+
+			customer_address['governorate'] 	= scheduler.customer_address.governorate.name
+			customer_address['area'] 			= scheduler.customer_address.area.name
+			customer_address['block'] 		= scheduler.customer_address.block
+			customer_address['avenue'] 		= scheduler.customer_address.avenue
+			customer_address['building'] 		= scheduler.customer_address.building
+			customer_address['street'] 		= scheduler.customer_address.street
+			customer_address['floor'] 		= scheduler.customer_address.floor
+			customer_address['apartment'] 	= scheduler.customer_address.apartment
+
+			dropdown_order_info['address'].append(customer_address)			
+
+		return JsonResponse(dropdown_order_info)
+
 
 #Ajax for get  allready registered users
 # def GetCustomerInfo(request):
@@ -617,3 +649,45 @@ class AssignEvaluator(IsAgent,View):
 		
 		return redirect('agent:agent-assignevaluator',enquiry_id)
 
+class AddFeedBack(IsAgent,View):
+	def get(self,request):
+		
+		try:
+			orders = Order.objects.filter(is_active=True,is_feedback_marked=False)
+		except:
+			orders = None
+
+		try:
+			questions = Question.objects.filter(is_active=True).order_by('id')
+		except:
+			questions = None		
+			
+		return render(request,'agent/feedback/feedback_form.html',{'orders':orders,"questions":questions})
+
+	def post(self,request):
+		order_id        = request.POST.get('order_id')
+		feedback_remark = request.POST.get('notes')
+
+		try:
+			order = Order.objects.get(id=order_id)
+			order.feedback_notes = feedback_remark
+			order.save()
+		except:
+			order = 	None
+
+		try:
+			questions = Question.objects.filter(is_active=True).order_by('id')
+		except:
+			questions = None		
+
+		create_feedbacks = []
+		if order:
+			for question in questions:
+				rating = request.POST.get('rating'+str(question.id)) or 0
+
+				create_feedbacks.append(FeedBack(order=order,question=question,rating=rating,response_date=timezone.now(),is_feedback_marked=True))
+			FeedBack.objects.bulk_create(create_feedbacks)
+
+			messages.success(request,"Feedback Succesfully Submitted")		
+		
+		return redirect('agent:new-feedback')	

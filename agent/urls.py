@@ -6,7 +6,10 @@ urlpatterns = [
 	url(r'^dashboard/$',views.AgentHome.as_view(),name='agentdash-board'),
 	url(r'^resources/$',views.ResourceManagement.as_view(),name='resource-management'),
 	url(r'^orders/$',views.OrderDetails.as_view(),name='agent-orders'),
+
 	url(r'^feedbacks/$',views.FeedbackDetails.as_view(),name='agent-feedbacks'),
+	url(r'^newfeedback/$',views.AddFeedBack.as_view(),name='new-feedback'),
+
 	url(r'^tickets/$',views.TicketDetails.as_view(),name='agent-tickets'),
 	url(r'^clients/$',views.ClientDetails.as_view(),name='agent-clients'),
 
@@ -15,7 +18,7 @@ urlpatterns = [
 	url(r'^assignevaluator/(?P<enquiry_id>[-\w]+)$',views.AssignEvaluator.as_view(),name='agent-assignevaluator'),
 
 	url(r'^ajax/getarea/$',views.GetArea,name='ajax-getarea'),
-	# url(r'^ajax/getcustomer/info/$',views.GetCustomerInfo,name='ajax-getcustomerinfo'),
+	url(r'^ajax/feedback/order/info/$',views.GetFeedbackOrderInfo,name='get-feedbackorderinfo'),
 
 
 ]

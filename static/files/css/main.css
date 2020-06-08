@@ -1875,3 +1875,159 @@ a.a-btn.primary-btn:hover {
 .auto-complete-result-item:hover{
   background-color: #efefef;
   color: #292929;}*/
+
+
+
+/*Star rating in forms */
+/* component */
+
+.star-rating1 {
+  border:solid 1px #ccc;
+  display:flex;
+  flex-direction: row-reverse;
+  font-size:1.5em;
+  justify-content:space-around;
+  padding:0 .2em;
+  text-align:center;
+  width:5em;
+}
+
+.star-rating1 input {
+  display:none;
+}
+
+.star-rating1 label {
+  color:#ccc;
+  cursor:pointer;
+}
+
+.star-rating1 :checked ~ label {
+  color:#f90;
+}
+
+.star-rating1 label:hover,
+.star-rating1 label:hover ~ label {
+  color:#fc0;
+}
+
+
+.star-rating2 {
+  border:solid 1px #ccc;
+  display:flex;
+  flex-direction: row-reverse;
+  font-size:1.5em;
+  justify-content:space-around;
+  padding:0 .2em;
+  text-align:center;
+  width:5em;
+}
+
+.star-rating2 input {
+  display:none;
+}
+
+.star-rating2 label {
+  color:#ccc;
+  cursor:pointer;
+}
+
+.star-rating2 :checked ~ label {
+  color:#f90;
+}
+
+.star-rating2 label:hover,
+.star-rating2 label:hover ~ label {
+  color:#fc0;
+}
+
+
+.star-rating3 {
+  border:solid 1px #ccc;
+  display:flex;
+  flex-direction: row-reverse;
+  font-size:1.5em;
+  justify-content:space-around;
+  padding:0 .2em;
+  text-align:center;
+  width:5em;
+}
+
+.star-rating3 input {
+  display:none;
+}
+
+.star-rating3 label {
+  color:#ccc;
+  cursor:pointer;
+}
+
+.star-rating3 :checked ~ label {
+  color:#f90;
+}
+
+.star-rating3 label:hover,
+.star-rating3 label:hover ~ label {
+  color:#fc0;
+}
+
+
+
+.star-rating4 {
+  border:solid 1px #ccc;
+  display:flex;
+  flex-direction: row-reverse;
+  font-size:1.5em;
+  justify-content:space-around;
+  padding:0 .2em;
+  text-align:center;
+  width:5em;
+}
+
+.star-rating4 input {
+  display:none;
+}
+
+.star-rating4 label {
+  color:#ccc;
+  cursor:pointer;
+}
+
+.star-rating4 :checked ~ label {
+  color:#f90;
+}
+
+.star-rating1 label:hover,
+.star-rating4 label:hover ~ label {
+  color:#fc0;
+}
+
+
+
+.star-rating5 {
+  border:solid 1px #ccc;
+  display:flex;
+  flex-direction: row-reverse;
+  font-size:1.5em;
+  justify-content:space-around;
+  padding:0 .2em;
+  text-align:center;
+  width:5em;
+}
+
+.star-rating5 input {
+  display:none;
+}
+
+.star-rating5 label {
+  color:#ccc;
+  cursor:pointer;
+}
+
+.star-rating5 :checked ~ label {
+  color:#f90;
+}
+
+.star-rating5 label:hover,
+.star-rating5 label:hover ~ label {
+  color:#fc0;
+}

@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "agent/common/header.html" %}
+
+<section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Customer FeedBacks</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+            </div><!--welcome-wrapper-->
+		</div><!--container-fluid space-->
+<div class="main-content-holder"><!--main-content-holder-->
+
+<div class="white-wrapper"><!--white-wrapper-->
+	<div class="orders">
+        <label>Select BLC Number</label>
+          <select name="order" class="chosen-select" id="order_id">
+                <option value="">-- select --</option>
+                {% for order in orders %}
+                <option value="{{order.id}}">{{order.evaluation}}</option> {% endfor %}
+          </select> 
+   </div>
+   <div class="name">
+   	<label>Name:</label>
+   	<input class="form-control" type="text" name="name" id="name_id" readonly="true">
+   </div>
+   <div class="mobile_number">
+   	<label>Mobile Number:</label>
+   	<input class="form-control" type="text" name="mobile_number" id="mobile_no_id" readonly="true">
+   </div>
+   <div class="address">
+   	<label>Addresses:</label>
+   </div>
+   <div class="row">  
+    <div class="col-12">
+      <div class="page-form">
+        <form method="post" action="">{%csrf_token%}
+          <div class="page-body">
+            <div class="div-section">
+              <div class="page-form-head">
+                <h1>FeedBack Form</h1>  
+              </div>
+              <input type="hidden" name="order_id" id="order_id_hidden">
+
+              {% for question in questions %}
+                <div>
+                  <label>{{question.question}}?</label> 
+                  <div class="star-rating{{question.id}}">
+                        <input type="radio" id="5-stars{{question.id}}" name="rating{{question.id}}" value="5" />
+                        <label for="5-stars{{question.id}}" class="star">&#9733;</label>
+                        <input type="radio" id="4-stars{{question.id}}" name="rating{{question.id}}" value="4" />
+                        <label for="4-stars{{question.id}}" class="star">&#9733;</label>
+                        <input type="radio" id="3-stars{{question.id}}" name="rating{{question.id}}" value="3" />
+                        <label for="3-stars{{question.id}}" class="star">&#9733;</label>
+                        <input type="radio" id="2-stars{{question.id}}" name="rating{{question.id}}" value="2" />
+                        <label for="2-stars{{question.id}}" class="star">&#9733;</label>
+                        <input type="radio" id="1-star{{question.id}}" name="rating{{question.id}}" value="1" />
+                        <label for="1-star{{question.id}}" class="star">&#9733;</label>
+                  </div>
+               	</div>
+               	{% endfor %}
+               <div class="page-col">
+                        <label>Remarks</label> 
+                        <textarea maxlength="1000" name="notes" ></textarea>
+                     </div>
+
+                </div> 
+         <div class="page-footer text-center">
+          <button type="submit" class="primary-btn">Submit</button>
+       </div>
+       </form>
+      </div>
+    </div>
+  </div>
+</div><!--white-wrapper-->      
+    
+
+</div><!--main-content-holder-->	
+
+</div><!--container-fluid space-->
+ </section><!--content-->
+
+
+{% include 'agent/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script>
+	$('#order_id').change(function()
+	{
+		order_id=this.value;
+		
+		$.ajax({
+
+        url: "{% url 'agent:get-feedbackorderinfo' %}",
+
+        data: {'order_id':order_id}, 
+
+        dataType: 'json',
+
+        success: function (data) {
+
+        	ajax_ret_orders = data;
+
+        	$('#name_id').val(data['name'])
+        	$('#mobile_no_id').val(data['mobile_number']);
+          $("#order_id_hidden").val(data['order_id']);
+
+        	addresses = data['address'];
+        	
+        	$(".address").empty();
+        	for(i=0;i<addresses.length;++i)
+        	{
+        		$(".address").append('<div><h3>Address '+(i+1)+'</h3><h6>'+addresses[i].governorate+'</h6><h6>'+addresses[i].area+'</h6><h6>'+addresses[i].block+'</h6><h6>'+addresses[i].avenue+'</h6><h6>'+addresses[i].building+'</h6><h6>'+addresses[i].street+'</h6><h6>'+addresses[i].floor+'</h6><h6>'+addresses[i].apartment+'</h6></div>');
+        	}
+
+        }
+
+    });
+	});
+</script>
+{% endblock %}            
