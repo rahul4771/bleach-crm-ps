@@ -116,10 +116,10 @@
 
 {% if addresses %}
 var x = {{addresses.count}}-1;
+var old_count = {{addresses.count}}-1;
 {% else %}
 var x = 0;
 {% endif %}
-console.log(x);
 
 var ajax_ret_areas; 
 
@@ -141,10 +141,17 @@ $('document').ready(function(){
 function add_row()
 
      {
-
       x++;
+      if(old_count<x)
+      {
       $("#id_form-"+x+"-area").empty();
-      console.log(x);
+      $("#id_form-"+x+"-id").parents('.page-col').hide();
+      }
+      else
+      {
+        x--;
+      }
+
     }
 
 
@@ -152,10 +159,34 @@ function remove_row()
 
      {
 
-       x--;
-       console.log(x);
-
+        x--;
+        if(old_count<x)
+        {
+         console.log("hiiii");
+        }
+        else
+        {
+          x++;
+        }
      }
+
+
+//Initial Case
+counter=0;
+{% if addresses %}
+{%  for address in addresses %}
+$("#id_form-"+counter+"-id").parents('.page-col').hide();
+
+$("#id_form-"+counter+"-area").empty();
+$("#id_form-"+counter+"-area").append($('<option>', {
+                 value: "{{address.area.id}}", 
+                 text: "{{address.area.name}}",
+                 selected:true,
+           }));
+counter++;
+{% endfor %}
+{% endif %}
+
     
 
 });

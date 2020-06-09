@@ -168,7 +168,6 @@ class EvaluationDetails(models.Model):
 	evaluator_note		= models.CharField(max_length=500,blank=True,null=True)
 	estimated_cost      = models.FloatField(blank=True,null=True)
 	cleaning_hours 		= models.FloatField(blank=True,null=True)
-	location_type		= models.ForeignKey('LocationType',blank=True,null=True,related_name='evaluation_book_location_type')
 	status		        = models.CharField(max_length=20,blank=True,null=True,default='TOBEEVALUATED',choices=EVALUATION_STATUS)
 	
 	
@@ -184,8 +183,8 @@ class EvaluationDetails(models.Model):
 
 #For Multiple Cleaning evaluation details
 class EvaluationBook(models.Model):
-	evaluation_details 	= models.ForeignKey('EvaluationDetails',blank=True,null=True,related_name='evaluation_book_evaluation_details')
-	
+	evaluation_details 	= models.ForeignKey('EvaluationDetails',blank=True,null=True,related_name='evaluation_book_evaluation_details')	
+	location_type		= models.ForeignKey('LocationType',blank=True,null=True,related_name='evaluation_book_location_type')
 	service_type		= models.ForeignKey('ServiceType',blank=True,null=True,related_name='evaluation_details_service_type')
 	cleaning_type 		= models.ForeignKey('CleaningType',blank=True,null=True,related_name='evaluation_book_details_cleaning_type')
 	cleaning_method 	= models.ForeignKey('CleaningMethod',blank=True,null=True,related_name='evaluation_book_cleaning_method')
