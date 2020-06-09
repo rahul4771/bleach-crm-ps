@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "agent/common/header.html" %}
+
+<section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Ticket Registration</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+            </div><!--welcome-wrapper-->
+		</div><!--container-fluid space-->
+<div class="main-content-holder"><!--main-content-holder-->
+
+<div class="white-wrapper"><!--white-wrapper-->
+	<div class="orders">
+        <label>Select BLC Number</label>
+          <select name="order" class="chosen-select" id="order_id">
+                <option value="">-- select --</option>
+                {% for order in orders %}
+                <option value="{{order.id}}">{{order.evaluation}}</option> {% endfor %}
+          </select> 
+   </div>
+   <div class="name">
+   	<label>Name:</label>
+   	<input class="form-control" type="text" name="name" id="name_id" readonly="true">
+   </div>
+   <div class="mobile_number">
+   	<label>Mobile Number:</label>
+   	<input class="form-control" type="text" name="mobile_number" id="mobile_no_id" readonly="true">
+   </div>
+
+   <div class="row">  
+    <div class="col-12">
+      <div class="page-form">
+        <form method="post" action="">{%csrf_token%}
+          <div class="page-body">
+          	<div class="div-section">
+              <div class="page-form-head">
+                <h1>Ticket Rising Form</h1>  
+              </div>
+              <input type="hidden" name="order_id" id="order_id_hidden">
+              	{% for field in investigation_form %} 
+			    <div class="page-col">
+					{{ field.errors }} 
+					{{ field.label_tag }} {{ field }}
+					<p class="help">{{ field.help_text|safe }}</p>
+          	    </div>
+          		{% endfor %}
+          	</div>
+          	</div>	
+            <div class="page-footer text-center">
+            <button type="submit" class="primary-btn">Rise Ticket</button>
+            </div>
+       </form>
+      </div>
+    </div>
+  </div>
+</div><!--white-wrapper-->      
+    
+
+</div><!--main-content-holder-->	
+
+</div><!--container-fluid space-->
+ </section><!--content-->
+
+
+{% include 'agent/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script>
+$('document').ready(function(){
+	$('#id_order_schedule').empty();
+	$('#id_scheduled_cleaning').empty();
+	$("#id_order_schedule").append($('<option>', {
+
+          value: "", 
+
+         text: "-------------"
+
+      }));
+
+	$("#id_scheduled_cleaning").append($('<option>', {
+
+          value: "", 
+
+         text: "-------------"
+
+      }));
+
+});
+
+	$('#order_id').change(function()
+	{
+		order_id=this.value;
+		
+		$.ajax({
+
+        url: "{% url 'agent:get-orderscheduleticketInfo' %}",
+
+        data: {'order_id':order_id}, 
+
+        dataType: 'json',
+
+        success: function (data) {
+
+        	$('#name_id').val(data['name'])
+        	$('#mobile_no_id').val(data['mobile_number']);
+        	$("#order_id_hidden").val(data['order_id']);
+        	
+        	order_schedules = data['schedules'];
+        	$('#id_order_schedule').empty();
+        	$("#id_order_schedule").append($('<option>', {
+
+          			value: "", 
+
+         			text: "-------------"
+
+      							}));
+        	$.each( order_schedules, function( key, values ) {
+
+              $("#id_order_schedule").append($('<option>', {        
+
+   				 value: key, 
+
+    			text: values   
+
+ 										 }));   
+
+      			});
+        }
+
+    });
+	});
+
+
+
+	$('#id_order_schedule').change(function()
+	{
+		scheduler_id=this.value;
+		
+		$.ajax({
+
+        url: "{% url 'agent:get-cleaningticketInfo' %}",
+
+        data: {'scheduler_id':scheduler_id}, 
+
+        dataType: 'json',
+
+        success: function (data) {
+
+
+        	order_cleanings = data['cleaning_info'];
+        	
+        	$('#id_scheduled_cleaning').empty();
+        	$("#id_scheduled_cleaning").append($('<option>', {
+
+          			value: "", 
+
+         			text: "-------------"
+
+      							}));
+        	$.each( order_cleanings, function( key, values ) {
+
+              $("#id_scheduled_cleaning").append($('<option>', {        
+
+   				 value: key, 
+
+    			text: values   
+
+ 										 }));   
+
+      			});
+        }
+
+    });
+	});
+</script>
+{% endblock %}	

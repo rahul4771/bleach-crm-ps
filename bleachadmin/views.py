@@ -18,7 +18,6 @@ from user.models import UserProfile,Address
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
-from order.forms import OrderSchedulerConfirmationForm,FollowUpSchedulerConfirmationForm
 from accountant.models import Invoice
 
 

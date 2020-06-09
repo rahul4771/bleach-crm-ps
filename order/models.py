@@ -1,5 +1,5 @@
 from django.db import models
-from evaluator.models import Evaluation,EvaluationDetails
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
 from user.models import UserProfile,Address
 # Create your models here.
 
@@ -61,6 +61,7 @@ SCHEDULER_CHOICES = (
 	('HOLDING','HOLDING'),
 	('CANCELLED','CANCELLED')
 	)
+
 #Store the Order Details.DownPayment,Subscription and Direct Cleaning Comes Under a Single Order
 
 class Order(models.Model):
@@ -91,7 +92,7 @@ class OrderScheduler(models.Model):
 	evaluation_details = models.ForeignKey(EvaluationDetails,blank=True,null=True)
 	start_at		   = models.DateTimeField(blank=True,null=True)
 	end_at			   = models.DateTimeField(blank=True,null=True)
-	#cleaning_type & other details
+	#cleaning_type & other details foreign key connection
 	customer_address= models.ForeignKey(Address,blank=True,null=True)
 	work_status 	= models.CharField(max_length=50,blank=True,null=True,choices=ORDER_SHEDULER_STATUS)
 	status      	= models.CharField(max_length=20,blank=True,null=True,default='WAITING',choices=SCHEDULER_CHOICES)
@@ -105,13 +106,27 @@ class OrderScheduler(models.Model):
 	def __str__(self):
 		return str(self.id)
 
+
+class SheduledOrderCleanings(models.Model):
+	order_scheduler 	 = models.ForeignKey('OrderScheduler',blank=True,null=True,related_name='order_scheduler_details')	
+	order_scheduler_book = models.ForeignKey(EvaluationBook,blank=True,null=True,related_name='order_scheduler_book_details')
+	is_active            = models.BooleanField(null=False,blank=True,default=True)
+	created              = models.DateTimeField(auto_now_add=True)
+	updated              = models.DateTimeField(auto_now=True)
+
+	def __unicode__(self):
+		return str(self.order_scheduler.id)
+
+	def __str__(self):
+		return str(self.order_scheduler.id)
+
 #If the Customer is not Satisfied and reported a complaint. An Investigation team is assigned for Investigation
 
 class Investigation(models.Model):
 	order 				 = models.ForeignKey('Order',blank=False,null=False)
 	order_schedule		 = models.ForeignKey('OrderScheduler',blank=False,null=False)	
-	problem 			 = models.CharField(max_length=100,blank=True,null=True)
-	description     	 = models.CharField(max_length=500,blank=True,null=True)
+	scheduled_cleaning   = models.ForeignKey('SheduledOrderCleanings',blank=False,null=False)
+	notes            	 = models.CharField(max_length=500,blank=True,null=True)
 	investigator    	 = models.ForeignKey(UserProfile,blank=True,null=True)
 	assigned_by          = models.ForeignKey(UserProfile,blank=True,null=True,related_name='investigation_assigned_by')
 	sheduled_at 		 = models.DateTimeField(blank=True,null=True)
@@ -162,7 +177,7 @@ class FollowUp(models.Model):
 
 class FollowUpScheduler(models.Model):
 	follow_up 			= models.ForeignKey('FollowUp',blank=False,null=False,related_name='follow_up_of_scheduler')
-	#cleaning_type & other details
+	#cleaning_type & other details get from Investigation Model 
 	start_at		    = models.DateTimeField(blank=True,null=True)
 	end_at			    = models.DateTimeField(blank=True,null=True)
 	customer_address	= models.ForeignKey(Address,blank=True,null=True)

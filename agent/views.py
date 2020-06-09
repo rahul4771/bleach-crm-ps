@@ -22,11 +22,12 @@ from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Question
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Question,SheduledOrderCleanings
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import EvaluationDetailsForm
+from order.forms import InvestigationForm
 
 #Username Random Generation
 def generate_random_username(size=10, chars=string.ascii_uppercase + string.digits):
@@ -88,6 +89,50 @@ def GetFeedbackOrderInfo(request):
 			dropdown_order_info['address'].append(customer_address)			
 
 		return JsonResponse(dropdown_order_info)
+
+#Ajax for getticket ordershedules address Information
+def GetOrderScheduleTicketInfo(request):
+	dropdown_orderschedule_info = {}
+
+	order_id            = request.GET.get('order_id') 
+
+	try:
+		ordershedules   = OrderScheduler.objects.filter(order_id=order_id,is_active=True).select_related('customer_address__area')
+	except:
+		ordershedules   = None
+
+	order_schedule = {}
+	for schedule in ordershedules:
+		order_schedule[schedule.id] = schedule.customer_address.area.name
+
+		dropdown_orderschedule_info['name']          = schedule.customer_address.customer.name 
+		dropdown_orderschedule_info['mobile_number'] = schedule.customer_address.customer.mobile_number
+
+	dropdown_orderschedule_info['schedules'] = order_schedule
+	dropdown_orderschedule_info['order_id']  = order_id 	
+		
+
+	return JsonResponse(dropdown_orderschedule_info)
+
+#Ajax for getticket ordershedules address Information
+def GetCleaningTicketInfo(request):
+	dropdown_cleaning_info = {}
+
+	scheduler_id            = request.GET.get('scheduler_id') 
+
+	try:
+		scheduler_cleanings   = SheduledOrderCleanings.objects.filter(order_scheduler_id=scheduler_id,is_active=True).select_related('order_scheduler_book__cleaning_type')
+	except:
+		scheduler_cleanings   = None
+
+	cleanings = {}
+	for cleaning in scheduler_cleanings:
+		cleanings[cleaning.id] = cleaning.order_scheduler_book.cleaning_type.name
+
+	dropdown_cleaning_info['cleaning_info'] = cleanings	
+
+	return JsonResponse(dropdown_cleaning_info)
+
 
 
 #Ajax for get  allready registered users
@@ -585,7 +630,8 @@ class ExistingEnquiry(IsAgent,View):
 
 			for address_form in address_formset:
 				if address_form.is_valid():
-					address_form_save = address_form.save(commit=False)
+					address_form_save          = address_form.save(commit=False)
+					address_form_save.customer = enquiry_user
 					address_form.save()
 			messages.success(request,"Customer Details Succesfully Updated")
 
@@ -627,8 +673,8 @@ class AssignEvaluator(IsAgent,View):
 		if action_mode == 'add':
 
 			agent_notes  = request.POST.get('agent_notes')
-			tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 1000000
-			evaluation_no= 'BCL'+str(tracking_no+1)
+			tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000
+			evaluation_no= 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+str(tracking_no+1)
 
 			#Create New Evaluation
 			new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=tracking_no,call_attender=request.user,attender_notes=agent_notes,customer_id=enquiry_id)	
@@ -693,3 +739,33 @@ class AddFeedBack(IsAgent,View):
 			messages.error(request,'Please Select a BLC Number')
 
 		return redirect('agent:new-feedback')	
+
+class TicketRegistration(IsAgent,View):
+	def get(self,request):
+
+		try:
+			orders = Order.objects.filter(is_active=True)
+		except:
+			orders = None
+
+		investigation_form = InvestigationForm()
+		
+		return render(request,'agent/ticket/ticket_registration.html',{'investigation_form':investigation_form,'orders':orders,})		
+
+	def post(self,request):
+		order_id           = request.POST.get('order_id')
+		investigation_form = InvestigationForm(request.POST)
+
+		print(order_id)
+
+		if investigation_form.is_valid(): 
+			investigation_form_save            = investigation_form.save(commit=False)	
+			investigation_form_save.assigned_by= request.user
+			investigation_form_save.order_id   = order_id
+			investigation_form_save.save()	
+
+			messages.success(request,"Ticket Succesfully Rised")
+		else:
+			messages.error(request,get_error(investigation_form))
+
+		return redirect('agent:agent-ticketregister')		

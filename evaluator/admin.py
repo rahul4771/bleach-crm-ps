@@ -19,7 +19,6 @@ class EvaluationBookInline(admin.TabularInline):
 
 class EvaluationDetailsAdmin(admin.ModelAdmin):
 	inlines = (EvaluationMediaInline,EvaluationBookInline)
-	radio_fields = {"location_type":admin.VERTICAL,}
 
 class EvaluationMediaAdmin(admin.ModelAdmin):
 	radio_fields = {"media_type":admin.HORIZONTAL,"taken_status":admin.HORIZONTAL}

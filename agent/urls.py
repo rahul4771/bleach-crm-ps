@@ -11,6 +11,8 @@ urlpatterns = [
 	url(r'^newfeedback/$',views.AddFeedBack.as_view(),name='new-feedback'),
 
 	url(r'^tickets/$',views.TicketDetails.as_view(),name='agent-tickets'),
+	url(r'^tickets/register/$',views.TicketRegistration.as_view(),name='agent-ticketregister'),
+
 	url(r'^clients/$',views.ClientDetails.as_view(),name='agent-clients'),
 
 	url(r'^newenquiry/$',views.NewEnquiry.as_view(),name='agent-newenquiry'),
@@ -19,6 +21,7 @@ urlpatterns = [
 
 	url(r'^ajax/getarea/$',views.GetArea,name='ajax-getarea'),
 	url(r'^ajax/feedback/order/info/$',views.GetFeedbackOrderInfo,name='get-feedbackorderinfo'),
-
+	url(r'^ajax/ticket/orderscheduler/info/$',views.GetOrderScheduleTicketInfo,name='get-orderscheduleticketInfo'),
+	url(r'^ajax/ticket/cleaning/info/$',views.GetCleaningTicketInfo,name='get-cleaningticketInfo'),
 
 ]
