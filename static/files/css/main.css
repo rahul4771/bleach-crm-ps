@@ -1388,7 +1388,6 @@ a.a-btn.primary-btn:hover {
 }
 
 
-
 /*/ pop-up Start /*/
 
 /* pop-up-small */
@@ -2031,3 +2030,42 @@ a.a-btn.primary-btn:hover {
 .star-rating5 label:hover ~ label {
   color:#fc0;
 }
+
+
+/* multi-field-wrapper custom code */
+.multi-field-wrapper {
+  box-shadow: 0 0 5px #d6d1d1;
+  padding: 12px;
+  border-radius: 5px;
+  margin-top: 15px;
+  display: table;
+  width: 100%;}
+.multi-field-wrapper .add-field-btn,
+.multi-field-wrapper .multi-fields .multi-field .remove-field-btn {
+  padding: 0;
+  background: transparent;
+  min-width: auto;}
+.multi-field-wrapper .add-field-btn:not(:hover),
+.multi-field-wrapper .multi-fields .multi-field .remove-field-btn:not(:hover) {
+  opacity: .9;}
+.multi-field-wrapper .add-field-btn {
+  color: #5ea588;
+  font-size: 35px;
+  margin-top: 15px;
+  float: left;
+  clear: left;}
+.multi-field-wrapper .multi-fields .multi-field {
+  position: relative;
+  background: #f9fafb;
+  border: 1px solid #e0e5ea;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 5px;}
+.multi-field-wrapper .multi-fields .multi-field:first-of-type .remove-field-btn {
+  display: none;}
+.multi-field-wrapper .multi-fields .multi-field .remove-field-btn {
+  color: #e07b7b;
+  font-size: 25px;
+  position: absolute;
+  right: 0;
+  top: 0;}

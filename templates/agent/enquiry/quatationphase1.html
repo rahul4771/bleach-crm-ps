@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "agent/common/header.html" %}
+
+<section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Quatation Basic Details</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+            </div><!--welcome-wrapper-->       
+            
+<div class="main-content-holder"><!--main-content-holder-->                
+
+<div class="white-wrapper"><!--white-wrapper-->
+	<div class="name">
+   	<label>Name:</label>
+   	<input class="form-control" type="text" name="name" readonly="true" value="{{enquiry_user.name}}">
+   </div>
+   <div class="mobile_number">
+   	<label>Mobile Number:</label>
+   	<input class="form-control" type="text" name="mobile_number" readonly="true" value="{{enquiry_user.mobile_number}}">
+   </div>
+   <div class="row">
+
+    <div class="col-12"> 
+
+      <div class="page-form">
+
+        <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+
+         <div class="page-form-head">
+
+           <h1>Quatation Basic Details</h1>
+
+         </div>
+
+         <div class="page-body">
+
+          {% for field in quatationphaseoneform %} 
+
+          <div class="page-col">
+
+           {{ field.errors }} 
+
+           {{ field.label_tag }} {{ field }}
+
+          <p class="help">{{ field.help_text|safe }}</p>
+
+          </div>
+
+          {% endfor %}
+      </div>
+      <div class="page-footer text-center">
+			<button type="button" class="primary-btn" onclick="submitAnyForm(this);">Next--></button>
+	  </div>
+</form>
+</div>
+</div>
+</div>    
+</div><!--white-wrapper-->      
+             
+            
+            
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+{% include 'agent/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}	
+
+{% block javascript %}
+<script>
+$('document').ready(function(){
+	//Initial Form Hiding
+	$("#id_subscription_start").parents('.page-col').hide();
+	$("#id_subscription_days_gap").parents('.page-col').hide();
+	$("#id_subscription_end").parents('.page-col').hide();	
+	$("#id_no_of_cleanings").parents('.page-col').hide();
+
+	$("#id_no_of_down_payments").parents('.page-col').hide();
+	$("#id_down_payment_deadend").parents('.page-col').hide();
+})	
+
+//Hide and Show in Forms
+$('.cleaning_policy').change(function(){
+	cleaning_policy = this.value;
+	if(cleaning_policy=='SUBSCRIPTION')
+	{
+        $("#id_subscription_start").parents('.page-col').show();
+		$("#id_subscription_days_gap").parents('.page-col').show();
+		$("#id_subscription_end").parents('.page-col').show();	
+		$("#id_no_of_cleanings").parents('.page-col').show();
+	}
+	else
+	{
+		$("#id_subscription_start").val('').parents('.page-col').hide();
+		$("#id_subscription_days_gap").val('').parents('.page-col').hide();
+		$("#id_subscription_end").val('').parents('.page-col').hide();	
+		$("#id_no_of_cleanings").val('').parents('.page-col').hide();		
+	}
+});
+
+$(".is_down_payment").click(function () { 
+
+if($(this).is(":checked")) {
+  $("#id_no_of_down_payments").parents('.page-col').show();
+  $("#id_down_payment_deadend").parents('.page-col').show();
+  }
+
+else{  
+  $("#id_no_of_down_payments").val('').parents('.page-col').hide();
+  $("#id_down_payment_deadend").val('').parents('.page-col').hide();
+ }   
+
+  });
+
+</script>
+{% endblock %}

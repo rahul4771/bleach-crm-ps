@@ -31,7 +31,7 @@
 
       <div class="page-form">
 
-        <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+        <form method="post" id="enquiryform" action="" enctype= "multipart/form-data">{% csrf_token %}
 
          <div class="page-form-head">
 
@@ -39,6 +39,7 @@
 
          </div>
 
+         <input type="hidden" name="redirect_to" id="redirect_to_id">
          <div class="page-body">
 
           {% for field in enquiry_form %} 
@@ -97,8 +98,8 @@
 </div>
 <div class="page-footer text-center">
   
-            <button type="button" class="primary-btn" onclick="submitAnyForm(this);">Assign Evaluator</button>
-            <button type="button" class="primary-btn" href="#">Make Quatation</button>
+            <button type="button" class="primary-btn" onclick="submitAnyForm(this);" onmouseover="submitbuttontype('assign_evaluator')">Assign Evaluator</button>
+            <button type="button" class="primary-btn" onclick="submitAnyForm(this);" onmouseover="submitbuttontype('quatation')">Make Quatation</button>
 
 </div>
 </form>
@@ -220,9 +221,12 @@ window.location.href="{% url 'agent:agent-existingenquiry' enquiry_id=123 %}".re
        
 }
 
+function submitbuttontype(type)
+{
+  $("#redirect_to_id").val(type);
+}
+
 </script>    
-
-
 
 
 <!-- <script>
