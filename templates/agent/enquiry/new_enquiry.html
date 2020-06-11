@@ -15,15 +15,16 @@
 
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Enquiry Form</h2>
-          <div>
+          <div class="search auto-suggest">
             <label>Search Client</label>
-              <select name="client" class="chosen-select" id="client_id">
-                    <option value="">-- select --</option>
-                    {% for customer in customer_info %}
-                    <option value="{{customer.id}}">{{customer.name}}-{{customer.mobile_number}}</option> {% endfor %}
-              </select>
-            <button type="button" class="fa fa-search" onclick="set_parameters_go()" aria-hidden="true"></button> 
+        <form>
+          <div id="search_box">
+            <input id="searchbox"  type="search" name="name" placeholder="Search ....." class="auto-complete-input" data-min-size="2" data-pattern="[a-zA-Z0-9\s]"
+            data-result-onclick="select_existing_enquiry" data-auto-suggest-url="{% url 'agent:get-customerInfo' %}"/>
           </div>
+        </form>
+  
+       </div>
 
   <div class="row">
 
@@ -211,15 +212,6 @@ $(".governorate").change(function(){
 
 });
 
-function set_parameters_go()
-{
-     var client_id = $('#client_id').val();
-     if(client_id)
-     {
-window.location.href="{% url 'agent:agent-existingenquiry' enquiry_id=123 %}".replace(/123/,client_id.toString());
-     }
-       
-}
 
 function submitbuttontype(type)
 {
@@ -229,7 +221,7 @@ function submitbuttontype(type)
 </script>    
 
 
-<!-- <script>
+<script>
   //  auto complete search
 
 $(window).ready(function(){
@@ -256,14 +248,14 @@ function autoSuggestionOnFocusOut(event)
     setTimeout(function(){
 
       $(event.target).siblings('.auto-complete-results').first().hide();
-      },100);
+      },1000);
 
 }
 
 
-function select_searched_student(event,src){
-          var new_id=$(src).attr('data-id');
-          window.location='{% url 'agent:agent-newenquiry' %}'
+function select_existing_enquiry(event,src){
+          var client_id=$(src).attr('data-id');
+          window.location="{% url 'agent:agent-existingenquiry' enquiry_id=123 %}".replace(/123/,client_id.toString());
 }
 
 
@@ -319,8 +311,6 @@ function search_live(event){
                 on('click',autoSuggestionOnSelect).
                 data('select-result',on_result_click).
                 attr('tabindex',-1);
-
-                $res.onclick = autoSuggestionOnSelect();
             });
             $res.css('position','absolute');
             $res.outerWidth(src.outerWidth());
@@ -347,5 +337,5 @@ function search_live(event){
         $.ajax(ajax);
 }
 
-</script> -->
+</script>
 {% endblock %}

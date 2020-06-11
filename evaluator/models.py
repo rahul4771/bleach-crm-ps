@@ -125,10 +125,10 @@ class Evaluation(models.Model):
 	attender_notes 		= models.CharField(max_length=500,blank=True,null=True)
 	customer			= models.ForeignKey(UserProfile,blank=False,null=False,related_name='customer_evaluation')
 	
-	cleaning_hours		= models.FloatField(default=0,blank=True,null=True)
-	number_of_cleaners	= models.IntegerField(blank=True,null=True)
-	estimated_price		= models.FloatField(blank=True,null=True)
-	discount_price		= models.FloatField(blank=True,null=True)
+	cleaning_hours		= models.FloatField(blank=True,null=True,default=0,)
+	number_of_cleaners	= models.IntegerField(blank=True,null=True,default=0)
+	estimated_price		= models.FloatField(blank=True,null=True,default=0)
+	discount_price		= models.FloatField(blank=True,null=True,default=0)
 	preffered_gender 	= models.CharField(max_length=20,blank=True,null=True,choices=GENDER_CHOICES)
 
 	quatation_status	= models.CharField(max_length=50,blank=True,null=True,choices=QUATATION_CHOICES)

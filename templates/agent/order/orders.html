@@ -81,7 +81,7 @@
     <td>{% for evaluation_detail in evaluation.details_evaluation %}{{evaluation_detail.address.area.name}}<br>{% endfor %}</td>
     <td>{% for evaluation_detail in evaluation.details_evaluation %}
      {% for evaluation_book in evaluation_detail.evaluation_book %}
-     {{evaluation_book.service_type}},
+     {{evaluation_book.cleaning_type.name}},
      {% endfor %}
      <br> 
      {% endfor %}</td>

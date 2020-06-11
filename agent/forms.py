@@ -14,20 +14,27 @@ class UserProfileForm(forms.ModelForm):
 		self.fields['gender'].required        = True
 		self.fields['email'].required         = True
 		self.fields['mobile_number'].required = True
-		self.fields['phone_number'].required  = True
+		self.fields['nationality'].required = True
 
 
 #Customer Address add form
 class AddressForm(forms.ModelForm):
 	class Meta:
 		model  = Address
-		fields = ('governorate','area','block','avenue','building','street','floor','apartment')	
+		fields = ('governorate','area','block','avenue','building','street','floor','apartment')
+		
+		widgets = {
+						'block':forms.TextInput(attrs={'required':'required',}),
+						'avenue':forms.TextInput(attrs={'required':'required',}),
+						'building':forms.TextInput(attrs={'required':'required',}),
+						'street':forms.TextInput(attrs={'required':'required',}),
+				}	
 
 	def __init__(self,*args,**kwargs):
 		super(AddressForm, self).__init__(*args, **kwargs)
 
 		self.fields['governorate'] = forms.ModelChoiceField(
-		    queryset=Governorate.objects.filter(is_active=True),required=True,widget=forms.Select(attrs={'class':'governorate'}))
+		    queryset=Governorate.objects.filter(is_active=True),widget=forms.Select(attrs={'class':'governorate','required':'required'}))
 		self.fields['area'] = forms.ModelChoiceField(
-			queryset=Area.objects.filter(is_active=True),required=True,widget=forms.Select(attrs={'class':'area'}))
-		
+			queryset=Area.objects.filter(is_active=True),widget=forms.Select(attrs={'class':'area','required':'required'}))
+				

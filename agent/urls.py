@@ -26,5 +26,6 @@ urlpatterns = [
 	url(r'^ajax/feedback/order/info/$',views.GetFeedbackOrderInfo,name='get-feedbackorderinfo'),
 	url(r'^ajax/ticket/orderscheduler/info/$',views.GetOrderScheduleTicketInfo,name='get-orderscheduleticketInfo'),
 	url(r'^ajax/ticket/cleaning/info/$',views.GetCleaningTicketInfo,name='get-cleaningticketInfo'),
+	url(r'^ajax/customer/info/$',views.GetCustomerInfo,name='get-customerInfo'),
 
 ]
