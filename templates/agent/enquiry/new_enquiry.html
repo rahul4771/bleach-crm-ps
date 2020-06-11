@@ -255,7 +255,11 @@ function autoSuggestionOnFocusOut(event)
 
 function select_existing_enquiry(event,src){
           var client_id=$(src).attr('data-id');
-          window.location="{% url 'agent:agent-existingenquiry' enquiry_id=123 %}".replace(/123/,client_id.toString());
+          if(client_id!=0)
+          {
+              window.location="{% url 'agent:agent-existingenquiry' enquiry_id=123 %}".replace(/123/,client_id.toString());
+          }
+          
 }
 
 
