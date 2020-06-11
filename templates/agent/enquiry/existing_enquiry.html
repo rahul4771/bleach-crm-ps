@@ -15,7 +15,7 @@
      
             
 <div class="white-wrapper"><!--white-wrapper-->
-<h2 class="h2">Customer Details</h2>
+<h2 class="h2">Enquiry Form</h2>
   <div class="row">
 
     <div class="col-12"> 
@@ -26,7 +26,7 @@
 
          <div class="page-form-head">
 
-           <h1>Client Details</h1>
+           <h1>Existing Enquiry</h1>
 
          </div>
 
@@ -90,7 +90,7 @@
 
             <button type="button" class="primary-btn" onclick="submitAnyForm(this);">Update</button>
             <button type="button" class="primary-btn"><a href="{% url 'agent:agent-assignevaluator' enquiryid %}">Assign Evaluator</a></button>
-            <button type="button" class="primary-btn" href="#">Make Quatation</button>
+            <button type="button" class="primary-btn"><a href="{% url 'agent:agent-makequatation' enquiryid %}">Make Quatation</a></button>
 
 </div>
 </form>

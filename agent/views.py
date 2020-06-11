@@ -21,12 +21,12 @@ from django.db.models import Prefetch
 from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Question,SheduledOrderCleanings
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 
 from agent.forms import UserProfileForm,AddressForm
-from evaluator.forms import EvaluationDetailsForm
+from evaluator.forms import EvaluationDetailsForm,QuatationPhase1Form,QuatationPhase2ServiceForm,QuatationPhase2EstimationForm
 from order.forms import InvestigationForm
 
 #Username Random Generation
@@ -136,30 +136,30 @@ def GetCleaningTicketInfo(request):
 
 
 #Ajax for get  allready registered users
-# def GetCustomerInfo(request):
+def GetCustomerInfo(request):
 
-# 	data               = {}
-# 	customer_info_dict = {}
+	data               = {}
+	customer_info_dict = {}
 
-# 	query       =   request.GET.get('keyword')
-
-
-# 	customer_info = UserProfile.objects.filter(is_active=True,user_type='CUSTOMER').filter(Q(Q(name__icontains=query)|Q(mobile_number__icontains=query)))
+	query       =   request.GET.get('keyword')
 
 
-# 	if customer_info:
-# 		for details in customer_info:
-# 			customer_info_dict[details.id] = details.name+'-'+details.mobile_number 	
+	customer_info = UserProfile.objects.filter(is_active=True,user_type='CUSTOMER').filter(Q(Q(name__icontains=query)|Q(mobile_number__icontains=query)))
+
+
+	if customer_info:
+		for details in customer_info:
+			customer_info_dict[details.id] = details.name+'-'+details.mobile_number 	
 	
-# 	data['customer_details'] = customer_info_dict
+	data['customer_details'] = customer_info_dict
 
 
-# 	data['status']     = 'true'
+	data['status']     = 'true'
 
-# 	if customer_info_dict == {}: 
-# 		data['status'] = 'false'	
+	if customer_info_dict == {}: 
+		data['status'] = 'false'	
 	
-# 	return JsonResponse(data)	
+	return JsonResponse(data)	
 
 
 # Create your views here. 
@@ -350,13 +350,13 @@ class OrderDetails(IsAgent,View):
 		
 		if search:
 			try:
-				evaluations = Evaluation.objects.select_related('customer').filter(is_active=True,customer__name__icontains=search).prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_book')),to_attr='details_evaluation'))
+				evaluations = Evaluation.objects.select_related('customer').filter(is_active=True,customer__name__icontains=search).prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('cleaning_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))
 			except:
 				evaluations = None 
 		 
 		else:
 			try:
-				evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_book')),to_attr='details_evaluation'))
+				evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('cleaning_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))
 			except:
 				evaluations = None 
 			
@@ -406,16 +406,16 @@ class FeedbackDetails(IsAgent,View):
 		#order wise feedback
 		if search:
 			try:
-				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,evaluation__customer__name__icontains=search).prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_book')),to_attr='order_evaluation_details'))		
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,evaluation__customer__name__icontains=search).prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('cleaning_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))		
 			except:
 				order_wise_feedbacks = None
 
 		else:
 			try:
-				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True).prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))						
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True).prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('cleaning_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))						
 			except:	
-				order_wise_feedbacks = None
-
+				order_wise_feedbacks = None		
+				
 		#PAGINATION FEEDBACKS		
 		page = request.GET.get('page',1) 
 		paginator=Paginator(order_wise_feedbacks,10)
@@ -589,7 +589,14 @@ class NewEnquiry(IsAgent,View):
 
 			return render(request,'agent/enquiry/new_enquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset})					
 
-		return redirect('agent:agent-assignevaluator',enquiry_form_save.id)	
+		redirection = request.POST.get('redirect_to')	
+		
+		if redirection == 'assign_evaluator':
+			return redirect('agent:agent-assignevaluator',enquiry_form_save.id)	
+		elif redirection == 'quatation':
+			return redirect('agent:agent-makequatation',enquiry_form_save.id)
+		else:
+			return redirect('agent-existingenquiry',enquiry_form_save.id)
 
 
 class ExistingEnquiry(IsAgent,View):
@@ -632,7 +639,7 @@ class ExistingEnquiry(IsAgent,View):
 				if address_form.is_valid():
 					address_form_save          = address_form.save(commit=False)
 					address_form_save.customer = enquiry_user
-					address_form.save()
+					address_form_save.save()
 			messages.success(request,"Customer Details Succesfully Updated")
 
 		else:
@@ -677,7 +684,7 @@ class AssignEvaluator(IsAgent,View):
 			evaluation_no= 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+str(tracking_no+1)
 
 			#Create New Evaluation
-			new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=tracking_no,call_attender=request.user,attender_notes=agent_notes,customer_id=enquiry_id)	
+			new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=tracking_no+1,call_attender=request.user,attender_notes=agent_notes,customer_id=enquiry_id)	
 
 			#Save Evaluation Details
 			if evaluation_formset.is_valid(): 
@@ -694,6 +701,107 @@ class AssignEvaluator(IsAgent,View):
 				messages.error(request,"An Error Occured")	
 		
 		return redirect('agent:agent-assignevaluator',enquiry_id)
+
+
+
+class MakeQuatationPhase1(IsAgent,View):
+	
+	def get(self,request,enquiry_id):
+		quatationphaseoneform = QuatationPhase1Form()
+
+		enquiry_user    = UserProfile.objects.get(id=enquiry_id)
+
+		try:
+			addresses   = Address.objects.filter(customer__id=enquiry_id)
+		except:	
+			addresses   = None
+
+		try:
+			evaluators  = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')	
+		except:
+			evaluators  = None
+			
+		return render(request,'agent/enquiry/quatationphase1.html',{"quatationphaseoneform":quatationphaseoneform,"enquiry_user":enquiry_user,"addresses":addresses,"evaluators":evaluators,})
+
+	def post(self,request,enquiry_id):
+		quatationphaseoneform = QuatationPhase1Form(request.POST)
+
+		tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000
+		evaluation_no= 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+str(tracking_no+1)
+
+		if quatationphaseoneform.is_valid():
+			quatationphaseoneform_save               = quatationphaseoneform.save(commit=False)
+			quatationphaseoneform_save.call_attender = request.user
+			quatationphaseoneform_save.customer_id   = enquiry_id  
+			quatationphaseoneform_save.tracking_no   = tracking_no+1
+			quatationphaseoneform_save.evaluation_id = evaluation_no
+			quatationphaseoneform_save.save()	
+
+			messages.success(request,"Please Add Service Details and Estimation from Here !!!")
+		else:
+			messages.error(request,get_error(quatationphaseoneform))	
+		
+		return redirect('agent:agent-makequatation2',quatationphaseoneform_save.id)	
+
+
+class MakeQuatationPhase2(IsAgent,View):
+	service_formset_define    = formset_factory(QuatationPhase2ServiceForm)
+	def get(self,request,evaluation_id):
+
+		#To find Enquiry addresses
+		evaluation = Evaluation.objects.get(id=evaluation_id)
+		enquiry_id = evaluation.customer.id
+		
+		estimation_form = QuatationPhase2EstimationForm(enquiry_id=enquiry_id)
+
+		return render(request,'agent/enquiry/quatationphase2.html',{'service_formset':self.service_formset_define(),'estimation_form':estimation_form,})
+
+	def post(self,request,evaluation_id):
+		
+		#To find Enquiry addresses
+		evaluation = Evaluation.objects.get(id=evaluation_id)
+		enquiry_id = evaluation.customer.id
+
+		estimation_form     = QuatationPhase2EstimationForm(enquiry_id=enquiry_id,data=request.POST)
+		service_formset     = self.service_formset_define(request.POST)
+
+
+		if estimation_form.is_valid() and service_formset.is_valid(): 
+			estimation_save            = estimation_form.save(commit=False)	
+			estimation_save.status     = 'EVALUATED'
+			estimation_save.evaluation_id= evaluation_id
+			estimation_save.save()
+
+			for service_form in service_formset:
+				if service_form.is_valid():
+					service_form_save 					 = service_form.save(commit=False)
+					service_form_save.evaluation_details = estimation_save
+					service_form_save.save()
+
+			#update cost,no of cleaners,cleaning hours
+			Evaluation.objects.filter(id=evaluation_id,is_active=True).update(cleaning_hours=F('cleaning_hours')+estimation_save.cleaning_hours,number_of_cleaners=F('number_of_cleaners')+estimation_save.number_of_cleaners,estimated_price=F('estimated_price')+estimation_save.estimated_cost)		
+			
+			#To Save Media
+			medias = request.FILES.getlist('media')
+			if not medias==['']:
+				for media in medias:
+					EvaluationMedia.objects.create(
+					        evaluation_details_id=estimation_save.id,
+					        media=media,
+					        )
+
+			messages.success(request,"Estimation and Services Succesfully Added")
+
+		else:
+			if not estimation_form.is_valid():
+				messages.error(request,get_error(enquiry_form))
+			if not service_formset.is_valid():
+				messages.error(request,"An Error Occured")
+
+			return render(request,'agent/enquiry/quatationphase2.html',{'estimation_form':estimation_form,'service_formset':service_formset})	
+
+		return redirect('agent:agent-makequatation2',evaluation_id) 	
+		
 
 class AddFeedBack(IsAgent,View):
 	def get(self,request):
@@ -755,8 +863,6 @@ class TicketRegistration(IsAgent,View):
 	def post(self,request):
 		order_id           = request.POST.get('order_id')
 		investigation_form = InvestigationForm(request.POST)
-
-		print(order_id)
 
 		if investigation_form.is_valid(): 
 			investigation_form_save            = investigation_form.save(commit=False)	

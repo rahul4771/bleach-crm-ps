@@ -49,3 +49,18 @@ function submitAnyForm(src)
         form.submit();
         }
   } 
+
+// add-field and remove
+$('.multi_field_wrapper').each(function() {
+  var $wrapper = $('.multi-fields', this); 
+  $(".add-field-btn", $(this)).click(function(e) {
+    var filed = $('.multi-field:first-child', $wrapper).clone(true);
+      filed.appendTo($wrapper).find('textarea').val('')
+      filed.appendTo($wrapper).find('input').val('').focus()
+      filed.appendTo($wrapper).find('img').val('').focus().prop('src', "/static/files/images/default-img.png");
+});
+  $('.multi-field .remove-field-btn', $wrapper).click(function() {
+      if ($('.multi-field', $wrapper).length > 1)
+          $(this).parent('.multi-field').remove();
+  });
+});

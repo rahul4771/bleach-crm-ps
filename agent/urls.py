@@ -18,10 +18,14 @@ urlpatterns = [
 	url(r'^newenquiry/$',views.NewEnquiry.as_view(),name='agent-newenquiry'),
 	url(r'^existingenquiry/(?P<enquiry_id>[-\w]+)$',views.ExistingEnquiry.as_view(),name='agent-existingenquiry'),
 	url(r'^assignevaluator/(?P<enquiry_id>[-\w]+)$',views.AssignEvaluator.as_view(),name='agent-assignevaluator'),
+	url(r'^makequatation/phase1/(?P<enquiry_id>[-\w]+)$',views.MakeQuatationPhase1.as_view(),name='agent-makequatation'),
+	url(r'^makequatation/phase2/(?P<evaluation_id>[-\w]+)$',views.MakeQuatationPhase2.as_view(),name='agent-makequatation2'),
+
 
 	url(r'^ajax/getarea/$',views.GetArea,name='ajax-getarea'),
 	url(r'^ajax/feedback/order/info/$',views.GetFeedbackOrderInfo,name='get-feedbackorderinfo'),
 	url(r'^ajax/ticket/orderscheduler/info/$',views.GetOrderScheduleTicketInfo,name='get-orderscheduleticketInfo'),
 	url(r'^ajax/ticket/cleaning/info/$',views.GetCleaningTicketInfo,name='get-cleaningticketInfo'),
+	url(r'^ajax/customer/info/$',views.GetCustomerInfo,name='get-customerInfo'),
 
 ]

@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "agent/common/header.html" %}
+
+<section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Quatation Advanced Details</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+            </div><!--welcome-wrapper-->       
+            
+<div class="main-content-holder"><!--main-content-holder-->                
+
+<div class="white-wrapper"><!--white-wrapper-->
+	<h2 class="h2">Add Estimation and Services</h2>
+
+  <div class="row">
+
+    <div class="col-12"> 
+
+      <div class="page-form">
+
+        <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+
+         <div class="page-form-head">
+
+           <h1>Estimation</h1>
+
+         </div>	
+        
+         <div class="page-body">
+
+         {% for field in estimation_form %} 
+
+          <div class="page-col">
+
+           {{ field.errors }} 
+
+           {{ field.label_tag }} {{ field }}
+
+          <p class="help">{{ field.help_text|safe }}</p>
+
+          </div>
+
+          {% endfor %}	
+
+
+         {{ service_formset.management_form }}
+
+         {% for form in service_formset %}
+
+          <div class="div-section">
+
+            <div class="div-section-head">
+
+              <h1>Service Details</h1>  
+
+             </div>
+
+            <div class="link_formset">    
+
+              {% for field in form %}
+
+              <div class="page-col">
+
+                {{ field.errors }}    
+
+                {{ field.label_tag }} {{ field }}
+
+                {% if field.help_text %}
+
+                <p class="help">{{ field.help_text|safe }}</p>
+
+                {% endif %}
+
+             </div>
+
+             {% endfor %}
+
+          </div>
+
+        </div>
+
+      {% endfor %}
+      <div class="multi_field_wrapper multi-field-wrapper">
+
+        <div class="multi-fields">
+
+          <div class="multi-field page-col">
+
+           <label>Upload Media :</label>
+
+           <input type="file" name="media" maxlength="100"/>
+
+          <button type="button" class="remove-field-btn" title="Remove field">
+
+              <i class="fa fa-minus-square-o" aria-hidden="true"></i>
+
+            </button>
+
+          </div>
+
+        </div>
+
+      <button type="button" class="add-field-btn" title="Add field">
+
+        <i class="fa fa-plus-square-o" aria-hidden="true"></i>
+
+      </button> 
+
+    </div>
+
+</div>
+
+<div class="page-footer text-center">
+    <button type="button" class="primary-btn" onclick="submitAnyForm(this);">Save</button>
+</div>
+
+</form>
+</div>
+</div>
+</div>
+
+	
+</div><!--white-wrapper-->
+
+</div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+{% include 'agent/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script>
+var x=0; 
+
+$('document').ready(function(){
+//formset
+    $('.link_formset').formset({
+
+        addText: 'Add Service',
+
+        deleteText: 'Remove Service', 
+
+         added: add_row,
+
+        removed: remove_row,
+
+    });
+
+//Add raw function
+function add_row(){
+
+x++;
+$("#id_form-"+x+"-location_type").parents('.page-col').hide();
+$("#id_form-"+x+"-service_type").parents('.page-col').hide();
+$("#id_form-"+x+"-fabric_type").parents('.page-col').hide();
+$("#id_form-"+x+"-spot_stain_status").parents('.page-col').hide();
+$("#id_form-"+x+"-size_of_carpet").parents('.page-col').hide();
+$("#id_form-"+x+"-piece_of_chairs").parents('.page-col').hide();
+$("#id_form-"+x+"-set_type").parents('.page-col').hide();
+$("#id_form-"+x+"-sanitization_type").parents('.page-col').hide();
+$("#id_form-"+x+"-size_to_be_sanitised").parents('.page-col').hide();
+$("#id_form-"+x+"-bed_type").parents('.page-col').hide();
+
+}    
+
+//delete raw function
+function remove_row(){
+  x--;
+}
+
+//Initial hiding
+$("#id_form-"+x+"-location_type").parents('.page-col').hide();
+$("#id_form-"+x+"-service_type").parents('.page-col').hide();
+$("#id_form-"+x+"-fabric_type").parents('.page-col').hide();
+$("#id_form-"+x+"-spot_stain_status").parents('.page-col').hide();
+$("#id_form-"+x+"-size_of_carpet").parents('.page-col').hide();
+$("#id_form-"+x+"-piece_of_chairs").parents('.page-col').hide();
+$("#id_form-"+x+"-set_type").parents('.page-col').hide();
+$("#id_form-"+x+"-sanitization_type").parents('.page-col').hide();
+$("#id_form-"+x+"-size_to_be_sanitised").parents('.page-col').hide();
+$("#id_form-"+x+"-bed_type").parents('.page-col').hide();
+});
+
+
+//Trick based on Cleaning Type
+$(".cleaning_type").change(function (){  
+id=this.id.match(/\d+/); 
+
+cleaning_type =  $("#id_form-"+id+"-cleaning_type option:selected").text();
+
+
+if(cleaning_type == 'General Cleaning')
+{
+$("#id_form-"+id+"-service_type").parents('.page-col').show();
+$("#id_form-"+id+"-location_type").parents('.page-col').show();
+}
+else
+{
+$("#id_form-"+id+"-service_type").parents('.page-col').hide();
+$("#id_form-"+id+"-location_type").parents('.page-col').hide();
+$("#id_form-"+id+"-service_type").val('');
+$("#id_form-"+id+"-location_type").val('');
+}
+
+
+if(cleaning_type == 'Carpet Cleaning')
+{
+$("#id_form-"+id+"-fabric_type").parents('.page-col').show();
+$("#id_form-"+id+"-spot_stain_status").parents('.page-col').show();
+$("#id_form-"+id+"-size_of_carpet").parents('.page-col').show();
+}
+else
+{
+$("#id_form-"+id+"-size_of_carpet").parents('.page-col').hide();
+$("#id_form-"+id+"-cleaning_method").val('');
+$("#id_form-"+id+"-size_of_carpet").val('');
+if(cleaning_type != 'Uphortasy Cleaning')
+{
+    $("#id_form-"+id+"-fabric_type").parents('.page-col').hide();
+    $("#id_form-"+id+"-spot_stain_status").parents('.page-col').hide();
+    $("#id_form-"+id+"-fabric_type").val('');
+    $("#id_form-"+id+"-spot_stain_status").prop("checked",false);
+}
+}
+
+
+if(cleaning_type == 'Uphortasy Cleaning')
+{
+$("#id_form-"+id+"-fabric_type").parents('.page-col').show();
+$("#id_form-"+id+"-spot_stain_status").parents('.page-col').show();
+$("#id_form-"+id+"-piece_of_chairs").parents('.page-col').show();
+$("#id_form-"+id+"-set_type").parents('.page-col').show();
+}
+else
+{
+$("#id_form-"+id+"-piece_of_chairs").parents('.page-col').hide();
+$("#id_form-"+id+"-set_type").parents('.page-col').hide();
+$("#id_form-"+id+"-cleaning_method").val('');
+$("#id_form-"+id+"-piece_of_chairs").val('');
+$("#id_form-"+id+"-set_type").val('');
+if(cleaning_type != 'Carpet Cleaning')
+{
+    $("#id_form-"+id+"-fabric_type").parents('.page-col').hide();
+    $("#id_form-"+id+"-spot_stain_status").parents('.page-col').hide();
+    $("#id_form-"+id+"-fabric_type").val('');
+    $("#id_form-"+id+"-spot_stain_status").prop("checked",false);
+}
+}
+
+
+if(cleaning_type == 'Sanitization Services')
+{
+$("#id_form-"+id+"-sanitization_type").parents('.page-col').show();
+$("#id_form-"+id+"-size_to_be_sanitised").parents('.page-col').show();
+}
+else
+{
+$("#id_form-"+id+"-sanitization_type").parents('.page-col').hide();
+$("#id_form-"+id+"-size_to_be_sanitised").parents('.page-col').hide();
+$("#id_form-"+id+"-cleaning_method").val('');
+$("#id_form-"+id+"-sanitization_type").val('');
+$("#id_form-"+id+"-size_to_be_sanitised").val('');
+}
+
+
+if(cleaning_type == 'Mattress')
+{
+$("#id_form-"+id+"-bed_type").parents('.page-col').show();
+}
+else
+{
+$("#id_form-"+id+"-bed_type").parents('.page-col').hide();
+$("#id_form-"+id+"-bed_type").val('');
+}
+});
+</script>    
+{% endblock %}
