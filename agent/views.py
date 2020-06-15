@@ -221,7 +221,6 @@ class AgentHome(IsAgent,View):
 		except:
 			test_data = None 
 		test_date     = evaluation_date.date()	
-		
 
 		#Order and Followup Schedules for date confirmation
 		try:
