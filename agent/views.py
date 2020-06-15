@@ -208,7 +208,7 @@ class AgentHome(IsAgent,View):
 		try:
 			evaluation_date = datetime.strptime(evaluation_calendar_date,'%d-%m-%Y')
 		except:
-			evaluation_date = timezone.now()
+			evaluation_date = timezone.now()	
 		
 		try:
 			evaluation_details		  = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').prefetch_related(Prefetch('evaluator_evaluation',queryset=EvaluationDetails.objects.filter(is_active=True,proposed_time__date=evaluation_date.date()),to_attr='evaluation_details'))
@@ -217,7 +217,7 @@ class AgentHome(IsAgent,View):
 
 		#test data	
 		try:
-			test_data = EvaluationDetails.objects.filter(is_active=True,proposed_time__date=evaluation_date.date())	
+			test_data = EvaluationDetails.objects.filter(is_active=True,proposed_time__date=datetime(2020,6,15).date())	
 		except:
 			test_data = None 
 		test_date     = evaluation_date.date()	

@@ -116,7 +116,7 @@ TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
-DATE_FORMAT = ("d-m-Y","Y-m-d")
+DATE_FORMAT = "d-m-Y"
 
 USE_L10N = False
 
