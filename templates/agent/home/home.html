@@ -69,7 +69,7 @@
 <td data-label="Lorem"><a href="#">{{order_schedule.order.evaluation.customer.name}}</a> </td>
 <td data-label="Lorem"><a href="#">{{order_schedule.customer_address.area}}</a></td>
 <td data-label="Lorem"><a href="#">{{order_schedule.order.evaluation.customer.mobile_number}}</a></td>
-<td data-label="Lorem"><img {% if order_schedule.order.evaluation.customer.profile_image %}src="{{order_schedule.order.evaluation.customer.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %}class="image-table-view"></td>
+<td data-label="Lorem"><img {% if order_schedule.order.evaluation.customer.profile_image %}src="{{order_schedule.order.evaluation.customer.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="image-table-view"></td>
 <td data-label="Lorem"><span {% if order_schedule.order.evaluation.cleaning_policy == "SUBSCRIPTION" %}class="green-bg"{%else%}class="blue-bg"{% endif %}>{{order_schedule.status}}</span></td>
 <td data-label="Lorem"><span class="blue-text">{{order_schedule.order.evaluation.cleaning_policy}}</span></td>
 </tr>
@@ -91,7 +91,7 @@
 
 
 <div class="white-wrapper"><!--white-wrapper-->
-<h2 class="h2">Evaluation Callender {{evaluation_details}}</h2>
+<h2 class="h2">Evaluation Callender</h2>
 <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" class="date_pick date-picker" onchange="set_params_go();">
 <div id="table-scroll" class="table-scroll"><!--table-scroll-->
 <div class="table-wrap"><!--table-wrap-->
@@ -188,6 +188,7 @@ $('document').ready(function(){
         {% for evaluator in evaluation_details %}
             
             {% if evaluator.evaluation_details %}
+
                 $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
             
                 evaluator_timings_list =[]
@@ -195,6 +196,7 @@ $('document').ready(function(){
                     proposed_timing_string      = '{{evaluation.proposed_time|date:'H'}}';
                     proposed_timing             = parseInt(proposed_timing_string)
                     evaluator_timings_list.push(proposed_timing);
+                    console.log(proposed_timing);
                 {% endfor %}
                 for(i=8;i<=17;i++)
                 {
