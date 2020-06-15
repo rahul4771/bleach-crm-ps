@@ -2148,3 +2148,81 @@ input[type="radio"]::after {
 input[type="checkbox"]:checked::before {
   content: "\f00c";
 }
+
+
+
+/* button */
+button,
+.a-btn,
+input[type="submit"] {
+  white-space: nowrap;
+  line-height: normal;
+  background:#e1e9ec;
+  color: #5d5e5f;
+  padding: 10px 15px;
+  font-size: 14px;
+  text-transform: capitalize;
+  border: none;
+  border-radius: 5px;
+  min-width: 65px;
+  text-align: center;}
+button:not(:disabled),
+.a-btn,
+input[type="submit"] {
+  cursor: pointer;}
+button:hover,
+.a-btn:hover,
+a.a-btn:hover,
+input[type="submit"]:hover {
+  background: #ced8dc;
+  color: #4d4f50;}
+button:focus,
+.a-btn:focus,
+a.a-btn:focus,
+input[type="submit"]:focus {
+  outline: none;}
+a.a-btn {
+  text-decoration: none;}
+
+/* primary-btn */
+.primary-btn {
+  background: #4caee8;
+  color: #fff;}
+button.primary-btn:hover, 
+.a-btn.primary-btn:hover, 
+a.a-btn.primary-btn:hover {
+  background: #2d8dc5;
+  color: #fff;}
+
+
+
+/* delete-btn */
+.delete-btn {
+  background: #fff;
+  border: none;
+  color: #bf1b1b;
+  box-shadow: none;
+}
+
+.delete-btn:hover {
+  color: #800606;
+  text-shadow: none;
+}
+
+/* back-btn, close-btn, reset-btn */
+.back-btn,
+a.back-btn,
+.close-btn,
+.reset-btn {
+  background: #fff;
+  color: #1a473b;
+  box-shadow: 0 0 2px #7b7b7b
+}
+
+.back-btn:hover,
+a.back-btn:hover,
+.close-btn:hover,
+.reset-btn:hover {
+  color: #2791cf;
+  text-shadow: none;
+}
