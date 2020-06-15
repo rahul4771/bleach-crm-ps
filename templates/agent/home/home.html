@@ -7,17 +7,9 @@
 <div class="container-fluid space topspace"><!--container-fluid space-->
     <div class="welcome-wrapper"><!--welcome-wrapper-->
     <h1 class="dashboard-head">Welcome to Dashboard</h1>
-    {% for evaluator in evaluation_details %}
-    {% if evaluator.evaluation_details %}
-    {% for evaluation in evaluator.evaluation_details %}
-    <h1>{{evaluation.proposed_time|date:'H'}}</h1>
-    {% endfor %}
-    {% else %}
-    <h1>hiiiiiii</h1>
-    {% endif %}
-    {% endfor %}
     <h1>test</h1>
     {{test_data}}
+    {{test_date}}
     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
     </div><!--welcome-wrapper-->
     
