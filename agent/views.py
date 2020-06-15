@@ -669,9 +669,6 @@ class AssignEvaluator(IsAgent,View):
 		except:
 			evaluation_details 		  = None
 
-		print(evaluation_details)
-		print(evaluation_date.date())
-
 		return render(request,'agent/enquiry/assign_evaluator.html',{'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'enquiryid':enquiry_id,'evaluation_formset':self.evaluation_formset_define(form_kwargs={'enquiry_user_id':enquiry_id}),})
 
 	def post(self,request,enquiry_id):
