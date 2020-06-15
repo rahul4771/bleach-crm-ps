@@ -707,41 +707,16 @@ class AssignEvaluator(IsAgent,View):
 class MakeQuatationPhase1(IsAgent,View):
 	
 	def get(self,request,enquiry_id):
-		quatationphaseoneform = QuatationPhase1Form()
-
-		enquiry_user    = UserProfile.objects.get(id=enquiry_id)
-
-		try:
-			addresses   = Address.objects.filter(customer__id=enquiry_id)
-		except:	
-			addresses   = None
-
-		try:
-			evaluators  = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')	
-		except:
-			evaluators  = None
-			
-		return render(request,'agent/enquiry/quatationphase1.html',{"quatationphaseoneform":quatationphaseoneform,"enquiry_user":enquiry_user,"addresses":addresses,"evaluators":evaluators,})
-
-	def post(self,request,enquiry_id):
-		quatationphaseoneform = QuatationPhase1Form(request.POST)
 
 		tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000
 		evaluation_no= 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+str(tracking_no+1)
 
-		if quatationphaseoneform.is_valid():
-			quatationphaseoneform_save               = quatationphaseoneform.save(commit=False)
-			quatationphaseoneform_save.call_attender = request.user
-			quatationphaseoneform_save.customer_id   = enquiry_id  
-			quatationphaseoneform_save.tracking_no   = tracking_no+1
-			quatationphaseoneform_save.evaluation_id = evaluation_no
-			quatationphaseoneform_save.save()	
-
-			messages.success(request,"Please Add Service Details and Estimation from Here !!!")
-		else:
-			messages.error(request,get_error(quatationphaseoneform))	
-		
-		return redirect('agent:agent-makequatation2',quatationphaseoneform_save.id)	
+		try:
+			evaluation = Evaluation.objects.create(tracking_no=tracking_no+1,evaluation_id=evaluation_no,customer_id=enquiry_id,call_attender=request.user)
+		except:
+			evaluation = None		
+			
+		return redirect('agent:agent-makequatation2',evaluation.id)	
 
 
 class MakeQuatationPhase2(IsAgent,View):
@@ -752,9 +727,12 @@ class MakeQuatationPhase2(IsAgent,View):
 		evaluation = Evaluation.objects.get(id=evaluation_id)
 		enquiry_id = evaluation.customer.id
 		
-		estimation_form = QuatationPhase2EstimationForm(enquiry_id=enquiry_id)
+		enquiry_user    	  = UserProfile.objects.get(id=enquiry_id)
 
-		return render(request,'agent/enquiry/quatationphase2.html',{'service_formset':self.service_formset_define(),'estimation_form':estimation_form,})
+		quatationphaseoneform = QuatationPhase1Form(instance=evaluation)
+		estimation_form       = QuatationPhase2EstimationForm(enquiry_id=enquiry_id)
+
+		return render(request,'agent/enquiry/quatationphase2.html',{'service_formset':self.service_formset_define(),'estimation_form':estimation_form,'quatationphaseoneform':quatationphaseoneform,'enquiry_user':enquiry_user,'evaluation':evaluation,})
 
 	def post(self,request,evaluation_id):
 		
@@ -762,16 +740,27 @@ class MakeQuatationPhase2(IsAgent,View):
 		evaluation = Evaluation.objects.get(id=evaluation_id)
 		enquiry_id = evaluation.customer.id
 
-		estimation_form     = QuatationPhase2EstimationForm(enquiry_id=enquiry_id,data=request.POST)
-		service_formset     = self.service_formset_define(request.POST)
+		enquiry_user    	  = UserProfile.objects.get(id=enquiry_id)
+
+		quatationphaseoneform = QuatationPhase1Form(instance=evaluation,data=request.POST)
+		estimation_form       = QuatationPhase2EstimationForm(enquiry_id=enquiry_id,data=request.POST)
+		service_formset       = self.service_formset_define(request.POST)
 
 
-		if estimation_form.is_valid() and service_formset.is_valid(): 
+		if estimation_form.is_valid() and quatationphaseoneform.is_valid() and service_formset.is_valid() : 
+			
+			#Save Basic Form
+			quatationphaseoneform_save = quatationphaseoneform.save(commit=False)
+			quatationphaseoneform_save.quatation_status = 'PENDING'
+			quatationphaseoneform_save.save()
+
+			#Save Estimation Form
 			estimation_save            = estimation_form.save(commit=False)	
 			estimation_save.status     = 'EVALUATED'
 			estimation_save.evaluation_id= evaluation_id
 			estimation_save.save()
 
+			#Save Service Form
 			for service_form in service_formset:
 				if service_form.is_valid():
 					service_form_save 					 = service_form.save(commit=False)
@@ -795,10 +784,12 @@ class MakeQuatationPhase2(IsAgent,View):
 		else:
 			if not estimation_form.is_valid():
 				messages.error(request,get_error(enquiry_form))
+			if not quatationphaseoneform.is_valid():
+				messages.error(request,get_error(quatationphaseoneform))
 			if not service_formset.is_valid():
 				messages.error(request,"An Error Occured")
 
-			return render(request,'agent/enquiry/quatationphase2.html',{'estimation_form':estimation_form,'service_formset':service_formset})	
+			return render(request,'agent/enquiry/quatationphase2.html',{'estimation_form':estimation_form,'service_formset':service_formset,'quatationphaseoneform':quatationphaseoneform,'evaluation':evaluation,'enquiry_user':enquiry_user,})	
 
 		return redirect('agent:agent-makequatation2',evaluation_id) 	
 		
