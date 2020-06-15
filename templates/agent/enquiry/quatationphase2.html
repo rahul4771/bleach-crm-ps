@@ -14,7 +14,15 @@
 <div class="main-content-holder"><!--main-content-holder-->                
 
 <div class="white-wrapper"><!--white-wrapper-->
+  <div class="row">
+  <div class="col-md-10">  
 	<h2 class="h2">Quatation Form</h2>
+  </div>
+  <div class="col-md-2">
+  <a class="a-btn back-btn" href="{% url 'agent:agent-existingenquiry' enquiry_user.id %}">Back</a>
+  </div>
+  </div>
+  
   <div class="name">
     <label>BLC Number:</label>
     <input class="form-control" type="text" name="name" readonly="true" value="{{evaluation.evaluation_id}}">
