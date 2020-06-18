@@ -59,6 +59,16 @@ EVALUATION_STATUS =(
 ('ONHOLD','ONHOLD')
 	)
 
+PAYMENT_STATUS =(
+	('COMPLETED','COMPLETED'),
+	('PENDING','PENDING'),
+	)
+
+PAYMENT_CHOICES =(
+	('PREPAID','PREPAID'),
+	('POSTPAID','POSTPAID'),
+	('BREAKDOWN','BREAKDOWN'),
+	)
 
 #Different cleaning service types.Eg:General Cleaning,Carpet Cleaning etc
 
@@ -133,16 +143,10 @@ class Evaluation(models.Model):
 
 	quatation_status	= models.CharField(max_length=50,blank=True,null=True,choices=QUATATION_CHOICES)
 	quatation_approved_date = models.DateTimeField(blank=True,null=True)
-	cleaning_policy		= models.CharField(max_length=20,blank=True,null=True,choices=CLEANING_CHOICES)
-
-	subscription_start 	= models.DateField(blank=True,null=True)
-	subscription_days_gap=models.IntegerField(blank=True,null=True)
-	subscription_end 	= models.DateField(blank=True,null=True)
-	no_of_cleanings 	= models.IntegerField(blank=True,null=True)
 	
-	is_downpayment		= models.BooleanField(null=False,blank=True,default=False)
-	no_of_down_payments = models.IntegerField(blank=True,null=True)
-	down_payment_deadend= models.DateField(blank=True,null=True)
+	payment_method		= models.CharField(max_length=20,blank=True,null=True,choices=PAYMENT_CHOICES)
+	payment_status      = models.CharField(max_length=20,blank=True,null=True,choices=PAYMENT_STATUS)
+	payment_completed_date= models.DateTimeField(blank=True,null=True)
 
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)
@@ -154,6 +158,17 @@ class Evaluation(models.Model):
 	def __str__(self):
 		return self.evaluation_id
 
+#Payment dead end details
+class PaymentTrack(models.Model):
+	evaluation 			= models.ForeignKey('Evaluation',blank=True,null=True,related_name='evaluation_payment_track')
+	amount              = models.FloatField(blank=True,null=True)
+	due_date	     	= models.DateField(blank=True,null=True)
+	def __unicode__(self):
+		return str(self.evaluation.evaluation_id)
+
+	def __str__(self):
+		return self.evaluation.evaluation_id	
+
 #Store the Onsite Details by the Evaluator
 
 class EvaluationDetails(models.Model):
@@ -162,11 +177,13 @@ class EvaluationDetails(models.Model):
 	proposed_time		= models.DateTimeField(blank=True,null=True)
 	check_in			= models.DateTimeField(blank=True,null=True)
 	check_out			= models.DateTimeField(blank=True,null=True)
-	number_of_cleaners  = models.IntegerField(blank=True,null=True)
 	address 			= models.ForeignKey(Address,blank=True,null=True,related_name='evaluation_details_address')
+	
 	evaluator_note		= models.CharField(max_length=500,blank=True,null=True)
 	estimated_cost      = models.FloatField(blank=True,null=True)
 	cleaning_hours 		= models.FloatField(blank=True,null=True)
+	number_of_cleaners  = models.IntegerField(blank=True,null=True)
+	
 	status		        = models.CharField(max_length=20,blank=True,null=True,default='TOBEEVALUATED',choices=EVALUATION_STATUS)
 	
 	
@@ -183,6 +200,7 @@ class EvaluationDetails(models.Model):
 #For Multiple Cleaning evaluation details
 class EvaluationBook(models.Model):
 	evaluation_details 	= models.ForeignKey('EvaluationDetails',blank=True,null=True,related_name='evaluation_book_evaluation_details')	
+	cleaning_policy		= models.CharField(max_length=20,blank=True,null=True,choices=CLEANING_CHOICES)
 	location_type		= models.ForeignKey('LocationType',blank=True,null=True,related_name='evaluation_book_location_type')
 	service_type		= models.ForeignKey('ServiceType',blank=True,null=True,related_name='evaluation_details_service_type')
 	cleaning_type 		= models.ForeignKey('CleaningType',blank=True,null=True,related_name='evaluation_book_details_cleaning_type')
@@ -195,6 +213,12 @@ class EvaluationBook(models.Model):
 	sanitization_type 	= models.CharField(max_length=20,blank=True,null=True,choices=SANITIZATION_TYPE_CHOICES)
 	size_to_be_sanitised= models.CharField(max_length=100,blank=True,null=True)
 	bed_type 			= models.CharField(max_length=20,blank=True,null=True,choices=BED_TYPE_CHOICES)
+	
+	estimated_cost      = models.FloatField(blank=True,null=True)
+	discount            = models.FloatField(blank=True,null=True)
+	total_cost          = models.FloatField(blank=True,null=True)
+	cleaning_hours 		= models.FloatField(blank=True,null=True)
+	evaluator_note		= models.CharField(max_length=500,blank=True,null=True)
 	
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)

@@ -26,7 +26,7 @@ from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowU
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 
 from agent.forms import UserProfileForm,AddressForm
-from evaluator.forms import EvaluationDetailsForm,QuatationPhase1Form,QuatationPhase2ServiceForm,QuatationPhase2EstimationForm
+from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm,PaymentTrackForm
 from order.forms import InvestigationForm
 
 #Username Random Generation
@@ -705,93 +705,123 @@ class AssignEvaluator(IsAgent,View):
 
 
 class MakeQuatationPhase1(IsAgent,View):
-	
-	def get(self,request,enquiry_id):
+	payment_track_formset_define = formset_factory(PaymentTrackForm)
 
+	def get(self,request,enquiry_id):
+		enquiry_user    	  = UserProfile.objects.get(id=enquiry_id)
+		
+		#create Main Evaluation
 		tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000
 		evaluation_no= 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+str(tracking_no+1)
 
 		try:
 			evaluation = Evaluation.objects.create(tracking_no=tracking_no+1,evaluation_id=evaluation_no,customer_id=enquiry_id,call_attender=request.user)
 		except:
-			evaluation = None		
-			
-		return redirect('agent:agent-makequatation2',evaluation.id)	
+			evaluation = None	
 
+		#create evaluation details
+		try:
+			addresses = Address.objects.filter(is_active=True,customer_id=enquiry_id)
+		except:
+			addresses = None
 
+		evaluation_details_array = []	
+		for address in addresses:
+			evaluation_details_array.append(EvaluationDetails(evaluation=evaluation,address=address))
+		EvaluationDetails.objects.bulk_create(evaluation_details_array)	
+	
+		try:
+			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation)
+		except:
+			evaluation_details = None
+
+		return render(request,'agent/enquiry/quatationphase1.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,'payment_track_formset':self.payment_track_formset_define(),})	
+
+	def post(self,request,enquiry_id):
+		payment_track_formset       = self.payment_track_formset_define(request.POST)
+		
+		evaluation_id = request.POST.get('evaluation_id')
+		payment_method= request.POST.get('payment_method')
+
+		#update payment method
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING')
+		#SAVE payment breakdown details
+		if payment_method == 'BREAKDOWN':
+			if payment_track_formset.is_valid():
+				for payment_track_form in payment_track_formset:
+					if payment_track_form.is_valid():
+						payment_track_form_save 			  = payment_track_form.save(commit=False)
+						payment_track_form_save.evaluation_id = evaluation_id
+						payment_track_form_save.save()
+			else:
+				messages.error(request,"An Error Occured")
+				return redirect('agent:agent-makequatation',enquiry_id)
+							
+		messages.success(request,"Quatation Submitted Succesfully")		
+		return redirect('agent:agentdash-board')
+
+		
 class MakeQuatationPhase2(IsAgent,View):
-	service_formset_define    = formset_factory(QuatationPhase2ServiceForm)
-	def get(self,request,evaluation_id):
+	service_formset_define    = formset_factory(QuatationServiceForm)
+	def get(self,request,evaluation_detail_id):
 
-		#To find Enquiry addresses
-		evaluation = Evaluation.objects.get(id=evaluation_id)
-		enquiry_id = evaluation.customer.id
-		
-		enquiry_user    	  = UserProfile.objects.get(id=enquiry_id)
+		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
 
-		quatationphaseoneform = QuatationPhase1Form(instance=evaluation)
-		estimation_form       = QuatationPhase2EstimationForm(enquiry_id=enquiry_id)
+		return render(request,'agent/enquiry/quatationphase2.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,})
 
-		return render(request,'agent/enquiry/quatationphase2.html',{'service_formset':self.service_formset_define(),'estimation_form':estimation_form,'quatationphaseoneform':quatationphaseoneform,'enquiry_user':enquiry_user,'evaluation':evaluation,})
+	def post(self,request,evaluation_detail_id):
 
-	def post(self,request,evaluation_id):
-		
-		#To find Enquiry addresses
-		evaluation = Evaluation.objects.get(id=evaluation_id)
-		enquiry_id = evaluation.customer.id
-
-		enquiry_user    	  = UserProfile.objects.get(id=enquiry_id)
-
-		quatationphaseoneform = QuatationPhase1Form(instance=evaluation,data=request.POST)
-		estimation_form       = QuatationPhase2EstimationForm(enquiry_id=enquiry_id,data=request.POST)
 		service_formset       = self.service_formset_define(request.POST)
+		evaluation_details    = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
 
+		if service_formset.is_valid() : 
 
-		if estimation_form.is_valid() and quatationphaseoneform.is_valid() and service_formset.is_valid() : 
-			
-			#Save Basic Form
-			quatationphaseoneform_save = quatationphaseoneform.save(commit=False)
-			quatationphaseoneform_save.quatation_status = 'PENDING'
-			quatationphaseoneform_save.save()
-
-			#Save Estimation Form
-			estimation_save            = estimation_form.save(commit=False)	
-			estimation_save.status     = 'EVALUATED'
-			estimation_save.evaluation_id= evaluation_id
-			estimation_save.save()
-
+			form_count = 0
 			#Save Service Form
 			for service_form in service_formset:
 				if service_form.is_valid():
-					service_form_save 					 = service_form.save(commit=False)
-					service_form_save.evaluation_details = estimation_save
-					service_form_save.save()
+					# service_form_save 					    = service_form.save(commit=False)
+					# service_form_save.evaluation_details_id = evaluation_detail_id
+					# service_form_save.save()
 
-			#update cost,no of cleaners,cleaning hours
-			Evaluation.objects.filter(id=evaluation_id,is_active=True).update(cleaning_hours=F('cleaning_hours')+estimation_save.cleaning_hours,number_of_cleaners=F('number_of_cleaners')+estimation_save.number_of_cleaners,estimated_price=F('estimated_price')+estimation_save.estimated_cost)		
+					#for creating cleaning schedules
+					cleaning_policy = request.POST.get('form-'+str(form_count)+'-cleaning_policy')
+					start_time      = request.POST.get('form-'+str(form_count)+'-start_time')
+					end_time        = request.POST.get('form-'+str(form_count)+'-end_time')
+					if cleaning_policy == 'SUBSCRIPTION':
+						tendative_dates = request.POST.get('form-'+str(form_count)+'-tendative_dates').split(',')
+						
+						for date in tendative_dates:
+							start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
+							end_date_time   = datetime.strptime(date+' '+end_time,'%d-%m-%Y %I:%M %p')
+							print(start_date_time)
+							print(end_date_time)
+					else:
+						tendative_date  = request.POST.get('form-'+str(form_count)+'-tendative_date')	
+						
+						start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
+						end_date_time   = datetime.strptime(tendative_date+' '+end_time,'%d-%m-%Y %I:%M %p')
+						print(start_date_time)
+						print(end_date_time)
 			
 			#To Save Media
 			medias = request.FILES.getlist('media')
 			if not medias==['']:
 				for media in medias:
 					EvaluationMedia.objects.create(
-					        evaluation_details_id=estimation_save.id,
+					        evaluation_details_id=evaluation_detail_id,
 					        media=media,
 					        )
 
-			messages.success(request,"Estimation and Services Succesfully Added")
+			messages.success(request,"Services Succesfully Added")
 
 		else:
-			if not estimation_form.is_valid():
-				messages.error(request,get_error(enquiry_form))
-			if not quatationphaseoneform.is_valid():
-				messages.error(request,get_error(quatationphaseoneform))
 			if not service_formset.is_valid():
 				messages.error(request,"An Error Occured")
 
-			return render(request,'agent/enquiry/quatationphase2.html',{'estimation_form':estimation_form,'service_formset':service_formset,'quatationphaseoneform':quatationphaseoneform,'evaluation':evaluation,'enquiry_user':enquiry_user,})	
+			return render(request,'agent/enquiry/quatationphase2.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,})	
 
-		return redirect('agent:agent-makequatation2',evaluation_id) 	
+		return redirect('agent:agent-makequatation2',evaluation_details.evaluation.id) 	
 		
 
 class AddFeedBack(IsAgent,View):

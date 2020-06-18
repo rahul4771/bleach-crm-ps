@@ -19,21 +19,18 @@
 	<h2 class="h2">Quatation Form</h2>
   </div>
   <div class="col-md-2">
-  <a class="a-btn back-btn" href="{% url 'agent:agent-existingenquiry' enquiry_user.id %}">Back</a>
+  <a class="a-btn back-btn" href="#">Back</a>
   </div>
   </div>
   
   <div class="name">
-    <label>BLC Number:</label>
-    <input class="form-control" type="text" name="name" readonly="true" value="{{evaluation.evaluation_id}}">
+    <label>{{evaluation_details.evaluation.evaluation_id}}</label>
    </div>
-  <div class="name">
-    <label>Name:</label>
-    <input class="form-control" type="text" name="name" readonly="true" value="{{enquiry_user.name}}">
-   </div>
-   <div class="mobile_number">
-    <label>Mobile Number:</label>
-    <input class="form-control" type="text" name="mobile_number" readonly="true" value="{{enquiry_user.mobile_number}}">
+   <div class="address">
+    <label>{{evaluation_details.address.block}} Block</label><br> 
+    <label>{{evaluation_details.address.building}} Building</label><br>
+    <label>{{evaluation_details.address.street}} Street</label><br>
+    <label>{{evaluation_details.address.area.name}}</label>
    </div>
 
   <div class="row">
@@ -61,7 +58,6 @@
             <div class="link_formset">    
 
               {% for field in form %}
-
               <div class="page-col">
 
                 {{ field.errors }}    
@@ -76,7 +72,7 @@
 
              </div>
 
-             {% endfor %}
+             {% endfor %} 
 
           </div>
 
@@ -84,42 +80,7 @@
 
       {% endfor %}
 
-      <div class="div-section"> 
-         <div class="div-section-head">
-
-           <h2 class="h2">Cost Estimation</h2>
-
-         </div> 
-
-         {% for field in estimation_form %} 
-
-          <div class="page-col">
-
-           {{ field.errors }} 
-
-           {{ field.label_tag }} {{ field }}
-
-          <p class="help">{{ field.help_text|safe }}</p>
-
-          </div>
-
-          {% endfor %}
-          </div>
-
-
-      <div class=div-section>
-        <div class="div-section-head">
-          <h2 class="h2">Cleaning Policy and Payment Details</h2>
-        </div>
-        {% for field in quatationphaseoneform %}
-        <div class="page-col">
-          {{ field.errors }} 
-          {{ field.label_tag }} {{ field }}
-        <p class="help">{{ field.help_text|safe }}</p>  
-        </div>
-        {% endfor %}
-      </div>
-
+      
       <div class="multi_field_wrapper multi-field-wrapper">
 
         <div class="multi-fields">
@@ -202,7 +163,45 @@ $("#id_form-"+x+"-sanitization_type").parents('.page-col').hide();
 $("#id_form-"+x+"-size_to_be_sanitised").parents('.page-col').hide();
 $("#id_form-"+x+"-bed_type").parents('.page-col').hide();
 
+//Initial hiding of cleaning policy
+$("#id_form-"+x+"-tendative_date").parents('.page-col').hide();
+$("#id_form-"+x+"-tendative_dates").parents('.page-col').hide();
+$("#id_form-"+x+"-end_time").parents('.page-col').hide();
+$("#id_form-"+x+"-start_time").parents('.page-col').hide();
+$("#id_form-"+x+"-tendative_date").val('');
+$("#id_form-"+x+"-tendative_dates").val('');
+$("#id_form-"+x+"-end_time").val('');
+$("#id_form-"+x+"-start_time").val('');
+//tendative date initial
+$(function () {
+  $("#id_form-"+x+"-tendative_date").datetimepicker({ 
+    pickTime: false, 
+    format: "DD-MM-YYYY",
+  });
+});
+//tendative dates initial
+$(function () {
+  $("#id_form-"+x+"-tendative_dates").datepicker({ 
+    multidate: true,
+    closeOnDateSelect: true,
+    format: "dd-mm-yyyy",
+  });
+});
+//tendative time initial
+$(function () {
+  $("#id_form-"+x+"-start_time").datetimepicker({
+    pickDate:false,
+    format: 'hh:mm A',
+  });
+});
+$(function () {
+  $("#id_form-"+x+"-end_time").datetimepicker({
+    pickDate:false,
+    format: 'hh:mm A',
+  });
+});
 }    
+
 
 //delete raw function
 function remove_row(){
@@ -220,15 +219,49 @@ $("#id_form-"+x+"-set_type").parents('.page-col').hide();
 $("#id_form-"+x+"-sanitization_type").parents('.page-col').hide();
 $("#id_form-"+x+"-size_to_be_sanitised").parents('.page-col').hide();
 $("#id_form-"+x+"-bed_type").parents('.page-col').hide();
+//Initial hiding of cleaning policy
+$("#id_form-"+x+"-tendative_date").parents('.page-col').hide();
+$("#id_form-"+x+"-tendative_dates").parents('.page-col').hide();
+$("#id_form-"+x+"-end_time").parents('.page-col').hide();
+$("#id_form-"+x+"-start_time").parents('.page-col').hide();
+$("#id_form-"+x+"-tendative_date").val('');
+$("#id_form-"+x+"-tendative_dates").val('');
+$("#id_form-"+x+"-end_time").val('');
+$("#id_form-"+x+"-start_time").val('');
+
+//tendative date initial
+$(function () {
+  $("#id_form-"+x+"-tendative_date").datetimepicker({ 
+    pickTime: false, 
+    format: "DD-MM-YYYY",
+  });
+});
+//tendative dates initial
+$(function () {
+  $("#id_form-"+x+"-tendative_dates").datepicker({ 
+    multidate: true,
+    closeOnDateSelect: true,
+    format: "dd-mm-yyyy",
+  });
+});
+//tendative time initial
+$(function () {
+  $("#id_form-"+x+"-start_time").datetimepicker({
+    pickDate:false,
+    format: 'hh:mm A',
+  });
+});
+$(function () {
+  $("#id_form-"+x+"-end_time").datetimepicker({
+    pickDate:false,
+    format: 'hh:mm A',
+  });
 });
 
-//Initial Form Hiding Basic Form
-$("#id_subscription_start").parents('.page-col').hide();
-$("#id_subscription_days_gap").parents('.page-col').hide();
-$("#id_subscription_end").parents('.page-col').hide();  
-$("#id_no_of_cleanings").parents('.page-col').hide();
-$("#id_no_of_down_payments").parents('.page-col').hide();
-$("#id_down_payment_deadend").parents('.page-col').hide();
+
+
+
+});
 
 
 //Trick based on Cleaning Type
@@ -323,49 +356,41 @@ $("#id_form-"+id+"-bed_type").val('');
 }
 });
 
-//Hide and Show in basic Form
-$('.cleaning_policy').change(function(){
-  cleaning_policy = this.value;
-  if(cleaning_policy=='SUBSCRIPTION')
-  {
-    $("#id_subscription_start").parents('.page-col').show();
-    $("#id_subscription_days_gap").parents('.page-col').show();
-    $("#id_subscription_end").parents('.page-col').show();  
-    $("#id_no_of_cleanings").parents('.page-col').show();
-    $("#id_subscription_start").prop("required",true);
-    $("#id_subscription_days_gap").prop("required",true);
-    $("#id_subscription_end").prop("required",true);
-    $("#id_no_of_cleanings").prop("required",true);
-  }
-  else
-  {
-    $("#id_subscription_start").val('').parents('.page-col').hide();
-    $("#id_subscription_days_gap").val('').parents('.page-col').hide();
-    $("#id_subscription_end").val('').parents('.page-col').hide();  
-    $("#id_no_of_cleanings").val('').parents('.page-col').hide();
-    $("#id_subscription_start").prop("required",false);
-    $("#id_subscription_days_gap").prop("required",false);
-    $("#id_subscription_end").prop("required",false);
-    $("#id_no_of_cleanings").prop("required",false);    
-  }
+
+//Trick based on Cleaning Policy
+$(".cleaning_policy").change(function (){  
+id              = this.id.match(/\d+/);
+cleaning_policy = this.value;
+if(cleaning_policy=="SUBSCRIPTION")
+{
+$("#id_form-"+id+"-tendative_date").val('');
+$("#id_form-"+id+"-tendative_dates").val('');
+$("#id_form-"+id+"-tendative_dates").parents('.page-col').show();
+$("#id_form-"+id+"-end_time").parents('.page-col').show();
+$("#id_form-"+id+"-start_time").parents('.page-col').show();
+$("#id_form-"+id+"-tendative_date").parents('.page-col').hide();
+}
+else if(cleaning_policy=="ONE TIME SERVICE")
+{
+  $("#id_form-"+id+"-tendative_date").val('');
+$("#id_form-"+id+"-tendative_dates").val('');
+$("#id_form-"+id+"-tendative_date").parents('.page-col').show();
+$("#id_form-"+id+"-end_time").parents('.page-col').show();
+$("#id_form-"+id+"-start_time").parents('.page-col').show();
+$("#id_form-"+id+"-tendative_dates").parents('.page-col').hide();
+}
+else{
+$("#id_form-"+id+"-tendative_date").parents('.page-col').hide();
+$("#id_form-"+id+"-tendative_date").parents('.page-col').hide();
+$("#id_form-"+id+"-end_time").parents('.page-col').hide();
+$("#id_form-"+id+"-start_time").parents('.page-col').hide();
+$("#id_form-"+id+"-tendative_date").val('');
+$("#id_form-"+id+"-tendative_dates").val('');
+$("#id_form-"+id+"-end_time").val('');
+$("#id_form-"+id+"-start_time").val('');
+}
+
 });
 
-$(".is_down_payment").click(function () { 
-
-if($(this).is(":checked")) {
-  $("#id_no_of_down_payments").parents('.page-col').show();
-  $("#id_down_payment_deadend").parents('.page-col').show();
-  $("#id_no_of_down_payments").prop("required",true);
-  $("#id_down_payment_deadend").prop("required",true);
-  }
-
-else{  
-  $("#id_no_of_down_payments").val('').parents('.page-col').hide();
-  $("#id_down_payment_deadend").val('').parents('.page-col').hide();
-  $("#id_no_of_down_payments").prop("required",false);
-  $("#id_down_payment_deadend").prop("required",false);
- }   
-
-  });
 </script>    
 {% endblock %}
