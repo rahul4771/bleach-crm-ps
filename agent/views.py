@@ -186,16 +186,16 @@ def GetCleaningMethodsInfo(request):
 class AgentHome(IsAgent,View):
 	def get(self,request):
 
-		# try:
-		# 	users = UserProfile.objects.all()
-		# except:
-		# 	users = None
+		try:
+			users = UserProfile.objects.all()
+		except:
+			users = None
 
-		# count=1
-		# for user in users:
-		# 	count+=1
-		# 	user.mobile_number = count
-		# 	user.save()
+		count=1
+		for user in users:
+			count+=1
+			user.mobile_number = count
+			user.save()
 
 
 		#Enquiry Details count
