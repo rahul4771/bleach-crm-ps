@@ -34,6 +34,7 @@ class QuatationServiceForm(forms.ModelForm):
 				'total_cost':forms.NumberInput(attrs={'required':'required','min':0,'readonly':True}),
 				'estimated_cost':forms.NumberInput(attrs={'required':'required','class':'estimated_cost','min':0}),
 				'discount':forms.NumberInput(attrs={'class':'discount','min':0,}),
+				'cleaning_hours':forms.NumberInput(attrs={'required':'required'}),
 		}
 	def __init__(self,*args,**kwargs):
 		super(QuatationServiceForm, self).__init__(*args, **kwargs)	
