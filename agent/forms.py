@@ -21,7 +21,7 @@ class UserProfileForm(forms.ModelForm):
 class AddressForm(forms.ModelForm):
 	class Meta:
 		model  = Address
-		fields = ('governorate','area','block','avenue','building','street','floor','apartment','active')
+		fields = ('governorate','area','block','avenue','building','street','floor','apartment','currently_active')
 		
 		widgets = {
 						'block':forms.TextInput(attrs={'required':'required',}),
