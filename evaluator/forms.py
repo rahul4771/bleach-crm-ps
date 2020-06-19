@@ -16,7 +16,7 @@ class EvaluationDetailsForm(forms.ModelForm):
 		self.fields['evaluator'] = forms.ModelChoiceField(
 		    queryset=UserProfile.objects.filter(is_active=True,user_type='EVALUATOR'),required=True,widget=forms.Select(attrs={'class':'evaluator','required':'required'}))
 		self.fields['address'] = forms.ModelChoiceField(
-		    queryset=Address.objects.filter(is_active=True,customer_id=enquiry_user_id,active=True),required=True,widget=forms.Select(attrs={'class':'customer_address','required':'required'}))
+		    queryset=Address.objects.filter(is_active=True,customer_id=enquiry_user_id,currently_active=True),required=True,widget=forms.Select(attrs={'class':'customer_address','required':'required'}))
 
 
 class QuatationServiceForm(forms.ModelForm):

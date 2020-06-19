@@ -186,17 +186,6 @@ def GetCleaningMethodsInfo(request):
 class AgentHome(IsAgent,View):
 	def get(self,request):
 
-		try:
-			users = UserProfile.objects.all()
-		except:
-			users = None
-
-		count=1
-		for user in users:
-			count+=1
-			user.mobile_number = count
-			user.save()
-
 
 		#Enquiry Details count
 		try:
@@ -748,7 +737,7 @@ class MakeQuatationBase(IsAgent,View):
 
 		#create evaluation details
 		try:
-			addresses = Address.objects.filter(is_active=True,customer_id=enquiry_id,active=True)
+			addresses = Address.objects.filter(is_active=True,customer_id=enquiry_id,currently_active=True)
 		except:
 			addresses = None
 
