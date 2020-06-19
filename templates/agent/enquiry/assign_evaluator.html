@@ -136,7 +136,8 @@
 
 {% block javascript %}
 <script type="text/javascript">
-$('document').ready(function(){
+  var x=0;
+$('document').ready(function(){  
 
 //formset
     $('.link_formset').formset({
@@ -145,7 +146,37 @@ $('document').ready(function(){
 
         deleteText: 'Remove Address', 
 
+        added: add_row,
+
+        removed: remove_row,
+
     });
+
+function add_row()
+{
+  x++;
+  //initialisation of datetime field
+  $(function () {
+  $("#id_form-"+x+"-proposed_time").datetimepicker({  
+    format: "DD/MM/YYYY hh:mm A",
+  });
+});
+}
+
+
+function remove_row()
+{
+x--; 
+}
+
+
+//initialisation of datetime field
+  $(function () {
+  $("#id_form-"+x+"-proposed_time").datetimepicker({  
+    format: "DD/MM/YYYY hh:mm A",
+  });
+});
+
 
     //Evaluation Callender
         {% for evaluator in evaluation_details %}

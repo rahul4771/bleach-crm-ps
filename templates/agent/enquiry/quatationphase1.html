@@ -40,14 +40,21 @@
 <tbody>
   {% for detail in evaluation_details %}
   <tr>
-    <td>{{detail.address.block}}st Block</td>
-    <td>{{detail.address.building}}</td>
-    <td>{{detail.address.street}} Street</td>
-    <td>{{detail.address.area.name}}</td>
+    <td>{{detail.address.block}}st Block,{{detail.address.building}},{{detail.address.street}} Street,{{detail.address.area.name}}</td>
+    <td>
+     {% if detail.total_cost == 0.0 %}
+     Evaluation Not Completed
+     {% else %} 
+    {{detail.total_cost}} KwD
+    {% endif %}
+    </td>
     <td><a class="a-btn back-btn" href="{% url 'agent:agent-makequatation2' detail.id %}">View</a></td>
   </tr>
   {% endfor %}
   <tr>
+    <td>Total Amount</td>
+    <td>{{evaluation.total_cost}} KwD</td>
+    <td></td>
   </tr>
 </tbody>
 </table>	
@@ -57,11 +64,24 @@
 
       <div class="page-form">
 
-        <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %} 
-        <input type="hidden" name="evaluation_id" value="{{evaluation.id}}"> 
+        <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}  
         <div class="page-body">
           <div class="page-col">
-            <select name="payment_method" required class="payment_method">
+            <label>Customer Type:</label>
+            <select name="customer_type" required class="payment_method">
+                    <option value="">-- SELECT --</option>
+                    <option value="INDIVIDUAL">INDIVIDUAL</option>
+                    <option value="RETAIL">RETAIL</option>
+                    <option value="CORPORATE">CORPORATE</option>        
+            </select>
+          </div>
+          <div class="page-col">
+            <label>Civil ID Number:</label>
+            <input type=text name="civil_id_number" required>
+          </div>  
+          <div class="page-col">
+            <label>Payment Policy:</label>
+            <select name="payment_method" required class="payment_method" required>
                     <option value="">-- SELECT --</option>
                     <option value="PREPAID">Prepaid</option>
                     <option value="POSTPAID">Post Paid</option>

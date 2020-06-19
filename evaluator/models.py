@@ -7,6 +7,12 @@ GENDER_CHOICES=(
 	('FEMALE','FEMALE')
 	)
 
+CUSTOMER_TYPE_CHOICES=(
+	('INDIVIDUAL','INDIVIDUAL'),
+	('RETAIL','RETAIL'),
+	('CORPORATE','CORPORATE')
+	)
+
 
 CLEANING_CHOICES=(
 	('ONE TIME SERVICE','ONE_TIME_SERVICE'),
@@ -21,25 +27,51 @@ QUATATION_CHOICES=(
 	('PENDING','PENDING')
 	)
 
+DIRTLEVEL_CHOICES=(
+	('LOW','LOW'),
+	('MEDIUM','MEDIUM'),
+	('HIGH','HIGH')
+	)
+
+FLOOR_CHOICES=(
+	('CERAMIC','CERAMIC'),
+	('WOOD','WOOD'),
+	('CONCRETE','CONCRETE')
+	)
+
 FABRIC_TYPE_CHOICES=(
 	('SYNTHETIC','SYNTHETIC'),
 	('NATURAL','NATURAL'))
 
-SET_TYPE_CHOICES=(
+SET_SIZE_CHOICES=(
 	('SMALL_SET','SMALL_SET'),
 	('MEDIUM_SET','MEDIUM_SET'),
 	('LARGE_SET','LARGE_SET')
 	)
+
+SET_TYPE_CHOICES=(
+	('TYPE1','TYPE1'),
+	('TYPE2','TYPE2'),
+	('TYPE3','TYPE3')
+	)
+
 
 SANITIZATION_TYPE_CHOICES=(
 	('SANITIZATION','SANITIZATION'),
 	('DISINFECTION','DISINFECTION'),
 	('STERILIZATION','STERILIZATION'))
 
-BED_TYPE_CHOICES=(
+BED_SIZE_CHOICES=(
 	('SINGLE_BED','SINGLE_BED'),
+	('DOUBLE_BED','DOUBLE_BED'),
 	('QUEEN_BED','QUEEN_BED'),
 	('KIND_BED','KIND_BED'))
+
+BED_TYPE_CHOICES=(
+	('TYPE1','TYPE1'),
+	('TYPE2','TYPE2'),
+	('TYPE3','TYPE3'))
+
 
 MEDIA_TAKEN_CHOICES = (
 	('CUSTOMER_SEND','CUSTOMER_SEND'),
@@ -59,10 +91,6 @@ EVALUATION_STATUS =(
 ('ONHOLD','ONHOLD')
 	)
 
-PAYMENT_STATUS =(
-	('COMPLETED','COMPLETED'),
-	('PENDING','PENDING'),
-	)
 
 PAYMENT_CHOICES =(
 	('PREPAID','PREPAID'),
@@ -116,6 +144,8 @@ class CleaningType(models.Model):
 
 class CleaningMethod(models.Model):	
 	name 				= models.CharField(max_length=100,blank=False,null=False)
+	service_type 		= models.ForeignKey('ServiceType',blank=True,null=True,related_name='method_service_type')
+	
 	is_active       	= models.BooleanField(null=False,blank=True,default=True)
 	created         	= models.DateTimeField(auto_now_add=True)
 	updated         	= models.DateTimeField(auto_now=True)
@@ -134,19 +164,18 @@ class Evaluation(models.Model):
 	call_attender 		= models.ForeignKey(UserProfile,blank=False,null=False,related_name='attender_evaluation')
 	attender_notes 		= models.CharField(max_length=500,blank=True,null=True)
 	customer			= models.ForeignKey(UserProfile,blank=False,null=False,related_name='customer_evaluation')
-	
-	cleaning_hours		= models.FloatField(blank=True,null=True,default=0,)
-	number_of_cleaners	= models.IntegerField(blank=True,null=True,default=0)
-	estimated_price		= models.FloatField(blank=True,null=True,default=0)
-	discount_price		= models.FloatField(blank=True,null=True,default=0)
+	customer_type       = models.CharField(max_length=20,blank=True,null=True,choices=CUSTOMER_TYPE_CHOICES)
+	civil_id_number     = models.CharField(max_length=100,blank=True,null=True)
+
+	estimated_cost		= models.FloatField(blank=True,null=True,default=0)
+	discount			= models.FloatField(blank=True,null=True,default=0)
+	total_cost          = models.FloatField(blank=True,null=True,default=0)
 	preffered_gender 	= models.CharField(max_length=20,blank=True,null=True,choices=GENDER_CHOICES)
 
 	quatation_status	= models.CharField(max_length=50,blank=True,null=True,choices=QUATATION_CHOICES)
 	quatation_approved_date = models.DateTimeField(blank=True,null=True)
 	
 	payment_method		= models.CharField(max_length=20,blank=True,null=True,choices=PAYMENT_CHOICES)
-	payment_status      = models.CharField(max_length=20,blank=True,null=True,choices=PAYMENT_STATUS)
-	payment_completed_date= models.DateTimeField(blank=True,null=True)
 
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)
@@ -180,9 +209,9 @@ class EvaluationDetails(models.Model):
 	address 			= models.ForeignKey(Address,blank=True,null=True,related_name='evaluation_details_address')
 	
 	evaluator_note		= models.CharField(max_length=500,blank=True,null=True)
-	estimated_cost      = models.FloatField(blank=True,null=True)
-	cleaning_hours 		= models.FloatField(blank=True,null=True)
-	number_of_cleaners  = models.IntegerField(blank=True,null=True)
+	estimated_cost      = models.FloatField(blank=True,null=True,default=0)
+	discount            = models.FloatField(blank=True,null=True,default=0)
+	total_cost          = models.FloatField(blank=True,null=True,default=0)
 	
 	status		        = models.CharField(max_length=20,blank=True,null=True,default='TOBEEVALUATED',choices=EVALUATION_STATUS)
 	
@@ -201,24 +230,37 @@ class EvaluationDetails(models.Model):
 class EvaluationBook(models.Model):
 	evaluation_details 	= models.ForeignKey('EvaluationDetails',blank=True,null=True,related_name='evaluation_book_evaluation_details')	
 	cleaning_policy		= models.CharField(max_length=20,blank=True,null=True,choices=CLEANING_CHOICES)
+	dirt_level          = models.CharField(max_length=20,blank=True,null=True,choices=DIRTLEVEL_CHOICES)
 	location_type		= models.ForeignKey('LocationType',blank=True,null=True,related_name='evaluation_book_location_type')
 	service_type		= models.ForeignKey('ServiceType',blank=True,null=True,related_name='evaluation_details_service_type')
 	cleaning_type 		= models.ForeignKey('CleaningType',blank=True,null=True,related_name='evaluation_book_details_cleaning_type')
 	cleaning_method 	= models.ForeignKey('CleaningMethod',blank=True,null=True,related_name='evaluation_book_cleaning_method')
-	fabric_type 		= models.CharField(max_length=20,blank=True,null=True,choices=FABRIC_TYPE_CHOICES)
-	spot_stain_status	= models.BooleanField(blank=True,null=False)
-	size_of_carpet 		= models.CharField(max_length=100,blank=True,null=True)
-	piece_of_chairs 	= models.IntegerField(blank=True,null=True)
+	floor_type          = models.CharField(max_length=100,blank=True,null=True,choices=FLOOR_CHOICES)
+	number_of_floors    = models.IntegerField(blank=True,null=True)
+	number_of_rooms     = models.IntegerField(blank=True,null=True)
+	
 	set_type 			= models.CharField(max_length=20,blank=True,null=True,choices=SET_TYPE_CHOICES)
+	set_size            = models.CharField(max_length=20,blank=True,null=True,choices=SET_SIZE_CHOICES)
+	piece_of_chairs 	= models.IntegerField(blank=True,null=True)
+	chair_fabric_type 	= models.CharField(max_length=20,blank=True,null=True,choices=FABRIC_TYPE_CHOICES)
+	piece_of_sofas 	    = models.IntegerField(blank=True,null=True)
+	sofa_fabric_type 	= models.CharField(max_length=20,blank=True,null=True,choices=FABRIC_TYPE_CHOICES)
+		
+	size_of_carpet 		= models.CharField(max_length=100,blank=True,null=True)
+	fabric_type         = models.CharField(max_length=20,blank=True,null=True,choices=FABRIC_TYPE_CHOICES)
+	spot_stain_status	= models.BooleanField(blank=True,null=False)
+	
 	sanitization_type 	= models.CharField(max_length=20,blank=True,null=True,choices=SANITIZATION_TYPE_CHOICES)
 	size_to_be_sanitised= models.CharField(max_length=100,blank=True,null=True)
-	bed_type 			= models.CharField(max_length=20,blank=True,null=True,choices=BED_TYPE_CHOICES)
 	
+	bed_size 			= models.CharField(max_length=20,blank=True,null=True,choices=BED_SIZE_CHOICES)
+	bed_type            = models.CharField(max_length=20,blank=True,null=True,choices=BED_TYPE_CHOICES)
+
+	evaluator_note		= models.CharField(max_length=500,blank=True,null=True)
 	estimated_cost      = models.FloatField(blank=True,null=True)
-	discount            = models.FloatField(blank=True,null=True)
+	discount            = models.FloatField(blank=True,null=True,default=0)
 	total_cost          = models.FloatField(blank=True,null=True)
 	cleaning_hours 		= models.FloatField(blank=True,null=True)
-	evaluator_note		= models.CharField(max_length=500,blank=True,null=True)
 	
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)
