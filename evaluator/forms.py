@@ -4,7 +4,7 @@ from user.models import UserProfile,Address
 
 #Evaluator assignment form
 class EvaluationDetailsForm(forms.ModelForm):
-	proposed_time = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M %p'],widget=forms.TextInput(attrs={'class':'date_time_pick','required':'required'}))
+	proposed_time = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M %p'],widget=forms.TextInput(attrs={'required':'required'}))
 	class Meta:
 		model  = EvaluationDetails
 		fields = ('evaluator','proposed_time','address')	
@@ -16,21 +16,24 @@ class EvaluationDetailsForm(forms.ModelForm):
 		self.fields['evaluator'] = forms.ModelChoiceField(
 		    queryset=UserProfile.objects.filter(is_active=True,user_type='EVALUATOR'),required=True,widget=forms.Select(attrs={'class':'evaluator','required':'required'}))
 		self.fields['address'] = forms.ModelChoiceField(
-		    queryset=Address.objects.filter(is_active=True,customer_id=enquiry_user_id),required=True,widget=forms.Select(attrs={'class':'customer_address','required':'required'}))
+		    queryset=Address.objects.filter(is_active=True,customer_id=enquiry_user_id,active=True),required=True,widget=forms.Select(attrs={'class':'customer_address','required':'required'}))
 
 
 class QuatationServiceForm(forms.ModelForm):
 	tendative_date = forms.CharField(required=False)
 	tendative_dates= forms.CharField(required=False)
 	start_time     = forms.CharField(required=True)
-	end_time       = forms.CharField(required=True)
+
 
 	class Meta:
 		model = EvaluationBook
-		fields = ('cleaning_type','cleaning_method','location_type','service_type','fabric_type','spot_stain_status','size_of_carpet','piece_of_chairs','set_type','sanitization_type','size_to_be_sanitised','bed_type','estimated_cost','discount','total_cost','cleaning_hours','cleaning_policy')
+		fields = ('service_type','cleaning_method','cleaning_type','dirt_level','location_type','floor_type','number_of_floors','number_of_rooms','set_type','set_size','piece_of_chairs','chair_fabric_type','piece_of_sofas','sofa_fabric_type','size_of_carpet','spot_stain_status','fabric_type','sanitization_type','size_to_be_sanitised','bed_size','bed_type','estimated_cost','discount','total_cost','cleaning_hours','cleaning_policy')
 		widgets={
-				'cleaning_type':forms.Select(attrs={'class':'cleaning_type','required':'required',}),
+				'service_type':forms.Select(attrs={'class':'service_type','required':'required',}),
 				'cleaning_policy':forms.Select(attrs={'class':'cleaning_policy','required':'required',}),
+				'total_cost':forms.NumberInput(attrs={'required':'required','min':0,'disabled':'disabled'}),
+				'estimated_cost':forms.NumberInput(attrs={'required':'required','class':'estimated_cost','min':0}),
+				'discount':forms.NumberInput(attrs={'class':'discount','min':0,}),
 		}
 	def __init__(self,*args,**kwargs):
 		super(QuatationServiceForm, self).__init__(*args, **kwargs)	

@@ -21,7 +21,7 @@ from django.db.models import Prefetch
 from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Question,SheduledOrderCleanings
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 
@@ -162,9 +162,41 @@ def GetCustomerInfo(request):
 	return JsonResponse(data)	
 
 
+#Ajax for getting Cleaning Types
+def GetCleaningMethodsInfo(request):
+	
+	dropdown_methods = {}
+	service_type_id = request.GET.get('service_type_id')
+	
+	try:
+		cleaning_methods = CleaningMethod.objects.filter(is_active=True,service_type_id=service_type_id) 
+	except:
+		cleaning_methods = None	
+
+	if cleaning_methods:
+		for method in cleaning_methods:
+			dropdown_methods[method.id] = method.name	
+	
+	return JsonResponse(dropdown_methods)
+
+
+
+
 # Create your views here. 
 class AgentHome(IsAgent,View):
 	def get(self,request):
+
+		# try:
+		# 	users = UserProfile.objects.all()
+		# except:
+		# 	users = None
+
+		# count=1
+		# for user in users:
+		# 	count+=1
+		# 	user.mobile_number = count
+		# 	user.save()
+
 
 		#Enquiry Details count
 		try:
@@ -703,13 +735,8 @@ class AssignEvaluator(IsAgent,View):
 		return redirect('agent:agent-assignevaluator',enquiry_id)
 
 
-
-class MakeQuatationPhase1(IsAgent,View):
-	payment_track_formset_define = formset_factory(PaymentTrackForm)
-
+class MakeQuatationBase(IsAgent,View):
 	def get(self,request,enquiry_id):
-		enquiry_user    	  = UserProfile.objects.get(id=enquiry_id)
-		
 		#create Main Evaluation
 		tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000
 		evaluation_no= 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+str(tracking_no+1)
@@ -717,11 +744,11 @@ class MakeQuatationPhase1(IsAgent,View):
 		try:
 			evaluation = Evaluation.objects.create(tracking_no=tracking_no+1,evaluation_id=evaluation_no,customer_id=enquiry_id,call_attender=request.user)
 		except:
-			evaluation = None	
+			evaluation = None
 
 		#create evaluation details
 		try:
-			addresses = Address.objects.filter(is_active=True,customer_id=enquiry_id)
+			addresses = Address.objects.filter(is_active=True,customer_id=enquiry_id,active=True)
 		except:
 			addresses = None
 
@@ -729,6 +756,19 @@ class MakeQuatationPhase1(IsAgent,View):
 		for address in addresses:
 			evaluation_details_array.append(EvaluationDetails(evaluation=evaluation,address=address))
 		EvaluationDetails.objects.bulk_create(evaluation_details_array)	
+
+		return redirect('agent:agent-makequatation1',enquiry_id,evaluation.id)	
+
+class MakeQuatationPhase1(IsAgent,View):
+	payment_track_formset_define = formset_factory(PaymentTrackForm)
+
+	def get(self,request,enquiry_id,evaluation_id):
+		enquiry_user    	  = UserProfile.objects.get(id=enquiry_id)
+		
+		try:
+			evaluation = Evaluation.objects.get(id=evaluation_id)
+		except:
+			evaluation = None		
 	
 		try:
 			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation)
@@ -737,14 +777,15 @@ class MakeQuatationPhase1(IsAgent,View):
 
 		return render(request,'agent/enquiry/quatationphase1.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,'payment_track_formset':self.payment_track_formset_define(),})	
 
-	def post(self,request,enquiry_id):
+	def post(self,request,enquiry_id,evaluation_id):
 		payment_track_formset       = self.payment_track_formset_define(request.POST)
 		
-		evaluation_id = request.POST.get('evaluation_id')
-		payment_method= request.POST.get('payment_method')
+		payment_method = request.POST.get('payment_method')
+		customer_type  = request.POST.get('customer_type')
+		civil_id_number= request.POST.get('civil_id_number')
 
 		#update payment method
-		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING')
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,customer_type=customer_type,civil_id_number=civil_id_number,quatation_status='PENDING')
 		#SAVE payment breakdown details
 		if payment_method == 'BREAKDOWN':
 			if payment_track_formset.is_valid():
@@ -755,7 +796,7 @@ class MakeQuatationPhase1(IsAgent,View):
 						payment_track_form_save.save()
 			else:
 				messages.error(request,"An Error Occured")
-				return redirect('agent:agent-makequatation',enquiry_id)
+				return redirect('agent:agent-makequatation1',enquiry_id,evaluation_id)
 							
 		messages.success(request,"Quatation Submitted Succesfully")		
 		return redirect('agent:agentdash-board')
@@ -773,37 +814,72 @@ class MakeQuatationPhase2(IsAgent,View):
 
 		service_formset       = self.service_formset_define(request.POST)
 		evaluation_details    = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
-
 		if service_formset.is_valid() : 
 
 			form_count = 0
+			#create order					
+			new_order = Order.objects.get_or_create(evaluation=evaluation_details.evaluation,order_no=evaluation_details.evaluation.evaluation_id,)	
+				
+			order_schedule_array          = []
+			sheduled_order_cleaning_array = []
 			#Save Service Form
 			for service_form in service_formset:
+				
 				if service_form.is_valid():
-					# service_form_save 					    = service_form.save(commit=False)
-					# service_form_save.evaluation_details_id = evaluation_detail_id
-					# service_form_save.save()
+					service_form_save 					    = service_form.save(commit=False)
+					service_form_save.evaluation_details_id = evaluation_detail_id
+					service_form_save.save()
 
-					#for creating cleaning schedules
+
+					#for updating cost details in evaluation details
+					cost     = int(request.POST.get('form-'+str(form_count)+'-estimated_cost')) 
+					discount = int(request.POST.get('form-'+str(form_count)+'-discount') or 0)
+					total    = int(request.POST.get('form-'+str(form_count)+'-total_cost'))
+
+					#for creating cleaning schedules and corresponding cleanings
+
 					cleaning_policy = request.POST.get('form-'+str(form_count)+'-cleaning_policy')
 					start_time      = request.POST.get('form-'+str(form_count)+'-start_time')
-					end_time        = request.POST.get('form-'+str(form_count)+'-end_time')
+					cleaning_hours  = request.POST.get('form-'+str(form_count)+'-cleaning_hours')
+
 					if cleaning_policy == 'SUBSCRIPTION':
 						tendative_dates = request.POST.get('form-'+str(form_count)+'-tendative_dates').split(',')
 						
 						for date in tendative_dates:
 							start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
-							end_date_time   = datetime.strptime(date+' '+end_time,'%d-%m-%Y %I:%M %p')
-							print(start_date_time)
-							print(end_date_time)
+							end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours)) 
+							
+							order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address))	
+							
+							sheduled_order_cleaning_array.append(service_form_save)
+
+						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost*len(tendative_dates),discount=F('discount')+discount*len(tendative_dates),total_cost=F('total_cost')+total*len(tendative_dates),status='EVALUATED')
+						updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost*len(tendative_dates),discount=F('discount')+discount*len(tendative_dates),total_cost=F('total_cost')+total*len(tendative_dates))
 					else:
 						tendative_date  = request.POST.get('form-'+str(form_count)+'-tendative_date')	
 						
 						start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
-						end_date_time   = datetime.strptime(tendative_date+' '+end_time,'%d-%m-%Y %I:%M %p')
-						print(start_date_time)
-						print(end_date_time)
+						end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
+
+						order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address))
+						
+						sheduled_order_cleaning_array.append(service_form_save)
+
+						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
+						updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)	
 			
+			#bulk_create order schedules
+			now = timezone.now()
+			OrderScheduler.objects.bulk_create(order_schedule_array)
+			created_schedules = OrderScheduler.objects.filter(order=new_order[0],created__gte=now)
+			
+			#bulk create scheduled order cleanings
+			schedule_cleaning_save = []
+			for schedule,cleaning in zip(created_schedules,sheduled_order_cleaning_array):
+				schedule_cleaning_save.append(SheduledOrderCleanings(order_scheduler=schedule,order_scheduler_book=cleaning))
+			SheduledOrderCleanings.objects.bulk_create(schedule_cleaning_save)	
+	
+
 			#To Save Media
 			medias = request.FILES.getlist('media')
 			if not medias==['']:
@@ -821,7 +897,7 @@ class MakeQuatationPhase2(IsAgent,View):
 
 			return render(request,'agent/enquiry/quatationphase2.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,})	
 
-		return redirect('agent:agent-makequatation2',evaluation_details.evaluation.id) 	
+		return redirect('agent:agent-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
 		
 
 class AddFeedBack(IsAgent,View):

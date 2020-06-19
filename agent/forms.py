@@ -14,14 +14,14 @@ class UserProfileForm(forms.ModelForm):
 		self.fields['gender'].required        = True
 		self.fields['email'].required         = True
 		self.fields['mobile_number'].required = True
-		self.fields['nationality'].required = True
+		self.fields['nationality'].required	  = True
 
 
 #Customer Address add form
 class AddressForm(forms.ModelForm):
 	class Meta:
 		model  = Address
-		fields = ('governorate','area','block','avenue','building','street','floor','apartment')
+		fields = ('governorate','area','block','avenue','building','street','floor','apartment','active')
 		
 		widgets = {
 						'block':forms.TextInput(attrs={'required':'required',}),

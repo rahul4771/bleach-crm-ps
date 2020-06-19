@@ -36,10 +36,8 @@ FOLLOWUP_SHEDULER_STATUS = (
 
 
 PAYMENT_STATUS = (
-	('DOWN_PAYMENT_PENDING','DOWN_PAYMENT_PENDING'),
-	('DOWN_PAYMENT_FULFILLED','DOWN_PAYMENT_PENDING_FULFILLED'),
-	('OUT_STANDING_PENDING','OUT_STANDING_PENDING'),
-	('OUT_STANDING_FULFILLED','OUT_STANDING_FULFILLED'),
+	('PENDING','PENDING'),
+	('COMPLETED','COMPLETED')
 	)
 
 MEDIA_TAKEN_CHOICES = (
@@ -69,6 +67,7 @@ class Order(models.Model):
 	order_no   		= models.CharField(max_length=20,blank=False,null=False)
 	order_status 	= models.CharField(max_length=50,blank=True,null=True,choices=ORDER_STATUS)
 	payment_status  = models.CharField(max_length=50,blank=True,null=True,choices=PAYMENT_STATUS)
+	payment_completed_date= models.DateTimeField(blank=True,null=True)
 	instructions	= models.CharField(max_length=500,blank=True,null=True)
 	
 	feedback_notes  = models.CharField(max_length=500,blank=True,null=True)

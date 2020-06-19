@@ -70,7 +70,7 @@ class UserProfile(AbstractUser):
     nationality		= CountryField(null=True,blank=True)
     company 		= models.CharField(max_length=100,blank=True,null=True)
     job_title 		= models.CharField(max_length=100,blank=True,null=True)
-    mobile_number 	= models.CharField(max_length=10,blank=True,null=True)
+    mobile_number 	= models.CharField(max_length=10,blank=False,null=False,unique=True)
     phone_number 	= models.CharField(max_length=10,blank=True,null=True)
     profile_image	= models.ImageField(upload_to='profile_photo/',blank=True,null=True,validators=[FileExtensionValidator(allowed_extensions=['jpg','jpeg','png']),validate_image],)
     sms_preference  = models.CharField(max_length=20,blank=True,null=True,choices=SMS_LANGUAGE_CHOICES)
@@ -127,6 +127,7 @@ class Address(models.Model):
     street          = models.CharField(max_length=100,blank=True,null=True)
     floor           = models.CharField(max_length=100,blank=True,null=True)
     apartment       = models.CharField(max_length=100,blank=True,null=True)
+    active          = models.BooleanField(null=False,blank=True,default=True)
     
     is_active       = models.BooleanField(null=False,blank=True,default=True)
     created         = models.DateTimeField(auto_now_add=True)
