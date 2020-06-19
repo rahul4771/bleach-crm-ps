@@ -764,7 +764,15 @@ class MakeQuatationPhase1(IsAgent,View):
 		except:
 			evaluation_details = None
 
-		return render(request,'agent/enquiry/quatationphase1.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,'payment_track_formset':self.payment_track_formset_define(),})	
+		#allow submition	
+		evaluation_details_count         = evaluation_details.count()
+		evaluation_details_completed_count= evaluation_details.filter(status='EVALUATED').count()
+		if evaluation_details_count==evaluation_details_completed_count:
+			allow_submit = True
+		else:
+			allow_submit = False				
+
+		return render(request,'agent/enquiry/quatationphase1.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,'payment_track_formset':self.payment_track_formset_define(),"allow_submit":allow_submit})	
 
 	def post(self,request,enquiry_id,evaluation_id):
 		payment_track_formset       = self.payment_track_formset_define(request.POST)
@@ -822,7 +830,7 @@ class MakeQuatationPhase2(IsAgent,View):
 
 					#for updating cost details in evaluation details
 					cost     = int(request.POST.get('form-'+str(form_count)+'-estimated_cost')) 
-					discount = int(request.POST.get('form-'+str(form_count)+'-discount') or 0)
+					discount = int(request.POST.get('form-'+str(form_count)+'-discount'))
 					total    = int(request.POST.get('form-'+str(form_count)+'-total_cost'))
 
 					#for creating cleaning schedules and corresponding cleanings

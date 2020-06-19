@@ -31,7 +31,7 @@ class QuatationServiceForm(forms.ModelForm):
 		widgets={
 				'service_type':forms.Select(attrs={'class':'service_type','required':'required',}),
 				'cleaning_policy':forms.Select(attrs={'class':'cleaning_policy','required':'required',}),
-				'total_cost':forms.NumberInput(attrs={'required':'required','min':0,'disabled':'disabled'}),
+				'total_cost':forms.NumberInput(attrs={'required':'required','min':0,'readonly':True}),
 				'estimated_cost':forms.NumberInput(attrs={'required':'required','class':'estimated_cost','min':0}),
 				'discount':forms.NumberInput(attrs={'class':'discount','min':0,}),
 		}
