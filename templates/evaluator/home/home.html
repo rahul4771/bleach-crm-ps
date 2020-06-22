@@ -119,7 +119,7 @@
 <tbody>
 {% for evaluation in my_evaluations %}
 <tr class="clickable-row" data-href='#'>
-<tr class="clickable-row" data-href='#'>
+<tr class="clickable-row" data-href='{% url 'evaluator:evaluator-makeassignedquatation1' evaluation.evaluation.customer.id evaluation.evaluation.id%}'>
 <td {% if evaluation.status == 'EVALUATING' %}
     class="yellow-line"
     {% elif evaluation.status == 'EVALUATED'  %}

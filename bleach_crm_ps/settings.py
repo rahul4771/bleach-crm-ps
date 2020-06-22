@@ -118,7 +118,7 @@ USE_I18N = True
 
 DATE_FORMAT = "d-m-Y"
 
-USE_L10N = False
+USE_L10N = True
 
 USE_TZ = True
 

@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
-{% include "agent/common/header.html" %}
+{% include "evaluator/common/header.html" %}
 
 <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
@@ -20,7 +20,7 @@
 <h2 class="h2">Enquiry Form</h2>
 </div>
 <div class="col-md-2">
-  <a class="a-btn back-btn" href="{% url 'agent:agent-newenquiry' %}">Back</a>
+  <a class="a-btn back-btn" href="{% url 'evaluator:evaluator-newenquiry' %}">Back</a>
   </div>
 </div>  
   <div class="row">
@@ -96,8 +96,8 @@
 <div class="page-footer text-center">
 
             <button type="button" class="primary-btn" onclick="submitAnyForm(this);">Update</button>
-            <button type="button" class="primary-btn"><a href="{% url 'agent:agent-assignevaluator' enquiryid %}">Assign Evaluator</a></button>
-            <button type="button" class="primary-btn"><a href="{% url 'agent:agent-makequatation' enquiryid %}">Make Quatation</a></button>
+            <button type="button" class="primary-btn"><a href="{% url 'evaluator:evaluator-assignevaluator' enquiryid %}">Assign to My Callender</a></button>
+            <button type="button" class="primary-btn"><a href="{% url 'evaluator:evaluator-makequatation' enquiryid %}">Make Quatation</a></button>
 
 </div>
 </form>
@@ -114,7 +114,7 @@
       </div><!--main-content-holder-->
         </div><!--container-fluid space-->
     </section><!--content-->
-{% include 'agent/common/footer.html' %}
+{% include 'evaluator/common/footer.html' %}
 </div><!--wrapper-->
 {% endblock %}
 
@@ -177,7 +177,6 @@ function remove_row()
         }
      }
 
-
 //HIDE AND SHOW WITH CUSTOMER TYPE initial
 customer_type = $("#id_customer_type").val();
 
@@ -231,6 +230,7 @@ $("#id_company").val('');
 $("#id_job_title").val('');
 }
 });
+
 
 //Append area for governorate change
 

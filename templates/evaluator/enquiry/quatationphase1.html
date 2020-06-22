@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
-{% include "agent/common/header.html" %}
+{% include "evaluator/common/header.html" %}
 
 <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
@@ -23,7 +23,7 @@
   <div class="col-md-10">  
   </div>
   <div class="col-md-2">
-  <a class="a-btn back-btn" href="{% url 'agent:agent-existingenquiry' enquiry_user.id %}">Back</a>
+  <a class="a-btn back-btn" href="{% url 'evaluator:evaluator-existingenquiry' enquiry_user.id %}">Back</a>
   </div>
   </div>
   
@@ -48,7 +48,7 @@
     {{detail.total_cost}} KwD
     {% endif %}
     </td>
-    <td><a class="a-btn back-btn" href="{% url 'agent:agent-makequatation2' detail.id %}">View</a></td>
+    <td><a class="a-btn back-btn" href="{% url 'evaluator:evaluator-makequatation2' detail.id %}">View</a></td>
   </tr>
   {% endfor %}
   <tr>
@@ -123,7 +123,7 @@
 </div><!--main-content-holder-->
         </div><!--container-fluid space-->
     </section><!--content-->
-{% include 'agent/common/footer.html' %}
+{% include 'evaluator/common/footer.html' %}
 </div><!--wrapper-->
 {% endblock %}
 

@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
-{% include "agent/common/header.html" %}
+{% include "evaluator/common/header.html" %}
 
 <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
@@ -29,7 +29,7 @@
        </div>
        </div>
        <div class="col-md-2">
-       <a class="a-btn back-btn" href="{% url 'agent:agentdash-board' %}">Back</a>
+       <a class="a-btn back-btn" href="{% url 'evaluator:evaluatordash-board' %}">Back</a>
        </div>
        </div>
 
@@ -124,7 +124,7 @@
       </div><!--main-content-holder-->
         </div><!--container-fluid space-->
     </section><!--content-->
-{% include 'agent/common/footer.html' %}
+{% include 'evaluator/common/footer.html' %}
 </div><!--wrapper-->
 {% endblock %}
 
@@ -134,6 +134,7 @@ var x=0;
 var ajax_ret_areas; 
 
 $('document').ready(function(){
+
 //formset
     $('.link_formset').formset({
 
@@ -166,15 +167,17 @@ function remove_row()
      }
 
 $("#id_company").parents('.page-col').hide();
-$("#id_job_title").parents('.page-col').hide();
+$("#id_job_title").parents('.page-col').hide();    
 
-$("#id_form-"+x+"-area").empty();    
-
+$("#id_form-"+x+"-area").empty();
 });
+
 
 //HIDE AND SHOW WITH CUSTOMER TYPE
 $("#id_customer_type").change(function(){
-customer_type=this.value;
+
+customer_type = this.value;
+
 if(customer_type=='CORPORATE')
 {
 $("#id_company").parents('.page-col').show();
@@ -187,7 +190,12 @@ $("#id_job_title").parents('.page-col').hide();
 $("#id_company").val('');
 $("#id_job_title").val('');
 }
+
 });
+
+
+
+
 
 //Append area for governorate change
 
@@ -284,7 +292,7 @@ function select_existing_enquiry(event,src){
           var client_id=$(src).attr('data-id');
           if(client_id!=0)
           {
-              window.location="{% url 'agent:agent-existingenquiry' enquiry_id=123 %}".replace(/123/,client_id.toString());
+              window.location="{% url 'evaluator:evaluator-existingenquiry' enquiry_id=123 %}".replace(/123/,client_id.toString());
           }
           
 }
