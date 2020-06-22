@@ -7,12 +7,6 @@ GENDER_CHOICES=(
 	('FEMALE','FEMALE')
 	)
 
-CUSTOMER_TYPE_CHOICES=(
-	('INDIVIDUAL','INDIVIDUAL'),
-	('RETAIL','RETAIL'),
-	('CORPORATE','CORPORATE')
-	)
-
 
 CLEANING_CHOICES=(
 	('ONE TIME SERVICE','ONE_TIME_SERVICE'),
@@ -164,8 +158,6 @@ class Evaluation(models.Model):
 	call_attender 		= models.ForeignKey(UserProfile,blank=False,null=False,related_name='attender_evaluation')
 	attender_notes 		= models.CharField(max_length=500,blank=True,null=True)
 	customer			= models.ForeignKey(UserProfile,blank=False,null=False,related_name='customer_evaluation')
-	customer_type       = models.CharField(max_length=20,blank=True,null=True,choices=CUSTOMER_TYPE_CHOICES)
-	civil_id_number     = models.CharField(max_length=100,blank=True,null=True)
 
 	estimated_cost		= models.FloatField(blank=True,null=True,default=0)
 	discount			= models.FloatField(blank=True,null=True,default=0)

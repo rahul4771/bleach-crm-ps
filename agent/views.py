@@ -778,11 +778,9 @@ class MakeQuatationPhase1(IsAgent,View):
 		payment_track_formset       = self.payment_track_formset_define(request.POST)
 		
 		payment_method = request.POST.get('payment_method')
-		customer_type  = request.POST.get('customer_type')
-		civil_id_number= request.POST.get('civil_id_number')
 
 		#update payment method
-		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,customer_type=customer_type,civil_id_number=civil_id_number,quatation_status='PENDING')
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING')
 		#SAVE payment breakdown details
 		if payment_method == 'BREAKDOWN':
 			if payment_track_formset.is_valid():
@@ -897,11 +895,12 @@ class MakeQuatationPhase2(IsAgent,View):
 		return redirect('agent:agent-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
 		
 
+
 class AddFeedBack(IsAgent,View):
 	def get(self,request):
 		
 		try:
-			orders = Order.objects.filter(is_active=True,is_feedback_marked=False)
+			orders = Order.objects.filter(is_active=True,is_feedback_marked=False,)
 		except:
 			orders = None
 
@@ -917,8 +916,9 @@ class AddFeedBack(IsAgent,View):
 		feedback_remark = request.POST.get('notes')
 
 		try:
-			order = Order.objects.get(id=order_id)
-			order.feedback_notes = feedback_remark
+			order                    = Order.objects.get(id=order_id)
+			order.feedback_notes     = feedback_remark
+			order.is_feedback_marked = True
 			order.save()
 		except:
 			order = 	None
@@ -933,7 +933,7 @@ class AddFeedBack(IsAgent,View):
 			for question in questions:
 				rating = request.POST.get('rating'+str(question.id)) or 0
 
-				create_feedbacks.append(FeedBack(order=order,question=question,rating=rating,response_date=timezone.now(),is_feedback_marked=True))
+				create_feedbacks.append(FeedBack(order=order,question=question,rating=rating,response_date=timezone.now()))
 			FeedBack.objects.bulk_create(create_feedbacks)
 
 			messages.success(request,"Feedback Succesfully Submitted")		

@@ -4,7 +4,7 @@ from user.models import UserProfile,Address
 
 #Evaluator assignment form
 class EvaluationDetailsForm(forms.ModelForm):
-	proposed_time = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M %p'],widget=forms.TextInput(attrs={'required':'required'}))
+	proposed_time = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'],widget=forms.TextInput(attrs={'required':'required'}))
 	class Meta:
 		model  = EvaluationDetails
 		fields = ('evaluator','proposed_time','address')	
@@ -17,6 +17,22 @@ class EvaluationDetailsForm(forms.ModelForm):
 		    queryset=UserProfile.objects.filter(is_active=True,user_type='EVALUATOR'),required=True,widget=forms.Select(attrs={'class':'evaluator','required':'required'}))
 		self.fields['address'] = forms.ModelChoiceField(
 		    queryset=Address.objects.filter(is_active=True,customer_id=enquiry_user_id,currently_active=True),required=True,widget=forms.Select(attrs={'class':'customer_address','required':'required'}))
+
+
+#Evaluator assignment form by evaluator
+class MyEvaluationDetailsForm(forms.ModelForm):
+	proposed_time = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'],widget=forms.TextInput(attrs={'required':'required'}))
+	class Meta:
+		model  = EvaluationDetails
+		fields = ('proposed_time','address')	
+	
+	def __init__(self,*args,enquiry_user_id,**kwargs):
+		self.enquiry_user_id = kwargs.pop('enquiry_user_id', None)
+		super(MyEvaluationDetailsForm, self).__init__(*args, **kwargs)
+
+		self.fields['address'] = forms.ModelChoiceField(
+		    queryset=Address.objects.filter(is_active=True,customer_id=enquiry_user_id,currently_active=True),required=True,widget=forms.Select(attrs={'class':'customer_address','required':'required'}))
+
 
 
 class QuatationServiceForm(forms.ModelForm):

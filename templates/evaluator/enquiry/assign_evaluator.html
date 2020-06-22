@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "evaluator/common/header.html" %}
+
+<section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Assign Evaluator</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+            </div><!--welcome-wrapper-->       
+            
+<div class="white-wrapper"><!--white-wrapper-->    
+<h2 class="h2">Evaluation Callender</h2>
+<input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" class="date_pick date-picker" onchange="set_params_go();">
+<a class="a-btn back-btn" href="{% url 'evaluator:evaluator-existingenquiry' enquiryid %}">Back</a>
+<div id="table-scroll" class="table-scroll"><!--table-scroll-->
+<div class="table-wrap"><!--table-wrap-->
+<table class="eval-table">
+<thead>
+<tr>
+<th bgcolor="#eee" width="4.54%" class="fixed-side padding" scope="col">&nbsp;</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">08 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">09 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">10 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">11 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">12 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">01 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">02 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">03 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">04 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">05 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">06 PM</th>
+</tr>
+</thead>
+<tbody>
+{% for evaluator in evaluation_details %}
+<tr id="evaluator{{evaluator.id}}">
+<th width="4.54%" bgcolor="#eee" class="fixed-side"><img {% if evaluator.profile_image %} src="{{evaluator.profile_image.url}}" {% else %} src="{% static 'files/images/profile-pic.jpg' %}" {% endif %} class="profile-avtar image-table-view"></th>
+<td width="4.54%"><button type="button" class="primary-btn assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">Add</button></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div><!--table-wrap-->
+</div><!--table-scroll-->
+</div><!--white-wrapper-->
+
+
+
+     </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+
+
+<!-- add_evaluation_popup -->
+<div class="modal fade pop-up" id="addevaluationdetails_popup" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form method="post" enctype= "multipart/form-data">{% csrf_token %}
+      <input type="hidden" name="action_type" value="add">
+      <div class="body pop-up-small">
+          <div class="modal-header">
+            <h1>Evaluation Details</h1>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-12">
+                <div class="pop-up-col">
+                        <label>Notes</label>
+                        <textarea maxlength="1000" name="agent_notes" ></textarea>
+                </div>
+
+         {{ evaluation_formset.management_form }}
+
+         {% for form in evaluation_formset %}
+
+          <div class="div-section">
+              
+            <div class="link_formset">    
+
+              {% for field in form %}
+
+              <div class="page-col">
+
+                {{ field.errors }}    
+
+                {{ field.label_tag }} {{ field }}
+
+                {% if field.help_text %}
+
+                <p class="help">{{ field.help_text|safe }}</p>
+
+                {% endif %}
+
+             </div>
+
+             {% endfor %}
+
+          </div>
+
+        </div>
+
+      {% endfor %}
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="close-btn" data-dismiss="modal">Close</button>
+              <button type="button" class="primary-btn" onclick="submitAnyForm(this);">Add</button>
+          </div>
+        </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- /add_evaluation_popup -->
+
+
+
+{% include 'evaluator/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+  var x=0;
+$('document').ready(function(){  
+
+//formset
+    $('.link_formset').formset({
+
+        addText: 'Add Evaluation',
+
+        deleteText: 'Remove Address', 
+
+        added: add_row,
+
+        removed: remove_row,
+
+    });
+
+function add_row()
+{
+  x++;
+  //initialisation of datetime field
+  $(function () {
+  $("#id_form-"+x+"-proposed_time").datetimepicker({  
+    format: "DD/MM/YYYY hh:mm A",
+  });
+});
+}
+
+
+function remove_row()
+{
+x--; 
+}
+
+
+//initialisation of datetime field
+  $(function () {
+  $("#id_form-"+x+"-proposed_time").datetimepicker({  
+    format: "DD/MM/YYYY hh:mm A",
+  });
+});
+
+
+    //Evaluation Callender
+        {% for evaluator in evaluation_details %}
+            
+            {% if evaluator.evaluation_details %}
+                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            
+                evaluator_timings_list =[]
+                {% for evaluation in evaluator.evaluation_details %}
+                    proposed_timing_string      = '{{evaluation.proposed_time|date:'H'}}';
+                    proposed_timing             = parseInt(proposed_timing_string)
+                    evaluator_timings_list.push(proposed_timing);
+                {% endfor %}
+                for(i=8;i<=17;i++)
+                {
+                    if(evaluator_timings_list.includes(i))
+                    {
+                        same_slote_count = 0
+                        {% for evaluation in evaluator.evaluation_details %}
+                            proposed_timing_string      = '{{evaluation.proposed_time|date:'H'}}';
+                            proposed_timing             = parseInt(proposed_timing_string)
+                        
+                        if(i == proposed_timing)
+                            {
+                              same_slote_count += 1
+                              if(same_slote_count == 1)
+                              {
+                                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">{{evaluation.address.area.name}}</a></td>');
+                              }
+                              else
+                              {
+                                $("#evaluator{{evaluator.id}} td:last").append('<br><a href="#">{{evaluation.address.area.name}}</a>');
+                              }  
+                              
+                            }
+                            
+
+                        {% endfor %}
+                
+                    }
+                    else
+                    {
+                      $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">----</a></td>');  
+                    }
+                    $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+                }    
+            {% else %}
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            {% endif %}
+
+        {% endfor %}
+
+ });
+
+$(".assign_evaluator_button").click(function () { 	
+    $('#addevaluationdetails_popup').modal('show');  
+    $('#id_form-0-evaluator').val($(this).data('evaluator_id'));
+      
+      });
+
+ function set_params_go(args)
+{
+var url='{% url 'agent:agent-assignevaluator' enquiryid %}';
+var params={evaluation_calendar_date:$('#evaluation_calendar').val(),
+};
+for(key in args) 
+    params[key]=args[key];
+var query='';
+for(key in params)
+    if(params[key]) 
+        query+='&'+key+'='+params[key].toString();
+query=query.replace('&','?');
+window.location.href=url+query;  
+}       
+</script>
+{% endblock %}     	
