@@ -193,7 +193,7 @@ class AgentHome(IsAgent,View):
 		except:
 			enquiry	= None
 
-		today_enquiry_count = enquiry.filter(proposed_time__date=timezone.now().date()).count()
+		today_enquiry_count = enquiry.filter(proposed_time__contains=timezone.now().date()).count()
 		week_enquiry_count  = enquiry.filter(proposed_time__date__gte=timezone.now().date()-timedelta(6)).count()	
 
 		#Cleaning Jobs count
@@ -202,7 +202,7 @@ class AgentHome(IsAgent,View):
 		except:
 			cleaning_job    = None
 
-		today_cleaning_job_count = cleaning_job.filter(start_at__date=timezone.now().date()).count() 
+		today_cleaning_job_count = cleaning_job.filter(start_at__contains=timezone.now().date()).count() 
 		week_cleaning_job_count  = cleaning_job.filter(start_at__gte=timezone.now().date()-timedelta(6)).count()		
 		
 		#Followup jobs count
@@ -211,7 +211,7 @@ class AgentHome(IsAgent,View):
 		except:
 			follow_up_job	 = None
 
-		today_follow_up_job_count = follow_up_job.filter(start_at__date=timezone.now().date()).count() 
+		today_follow_up_job_count = follow_up_job.filter(start_at__contains=timezone.now().date()).count() 
 		week_follow_up_job_count  = follow_up_job.filter(start_at__gte=timezone.now().date()-timedelta(6)).count()		
 
 		#Feedback Staring count
@@ -220,7 +220,7 @@ class AgentHome(IsAgent,View):
 		except:
 			feedbacks				  = None
 
-		today_average_feedback		  = feedbacks.filter(response_date__date=timezone.now().date()).aggregate(Avg('rating'))['rating__avg']
+		today_average_feedback		  = feedbacks.filter(response_date__contains=timezone.now().date()).aggregate(Avg('rating'))['rating__avg']
 		week_average_feedback		  = feedbacks.filter(response_date__gte=timezone.now().date()-timedelta(6)).aggregate(Avg('rating'))['rating__avg']	
 		
 		#Evaluation details of each evaluator for evaluation table
@@ -844,7 +844,7 @@ class MakeQuatationPhase2(IsAgent,View):
 							start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
 							end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours)) 
 							
-							order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address))	
+							order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,cleaning_policy='SUBSCRIPTION'))	
 							
 							sheduled_order_cleaning_array.append(service_form_save)
 
@@ -856,7 +856,7 @@ class MakeQuatationPhase2(IsAgent,View):
 						start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
 						end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
 
-						order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address))
+						order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,cleaning_policy='ONE TIME SERVICE'))
 						
 						sheduled_order_cleaning_array.append(service_form_save)
 

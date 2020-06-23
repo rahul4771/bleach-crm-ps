@@ -69,16 +69,36 @@ class EvaluatorHome(IsEvaluator,View):
 		today_enquiry_count = enquiry.filter(proposed_time__date=timezone.now().date()).count()
 		week_enquiry_count  = enquiry.filter(proposed_time__date__gte=timezone.now().date()-timedelta(6)).count()	
 
-		#sales amount
+		#Followup jobs count
 		try:
-			invoices         = Invoice.objects.filter(is_active=True)
+			follow_up_job    = FollowUpTeam.objects.filter(is_active=True)
 		except:
-			invoices         = None
+			follow_up_job	 = None
 
-		this_week_sales = invoices.filter(status='COMPLETED',created__date__gte=timezone.now().date()-timedelta(6)).aggregate(total=Sum('amount_paid'))['total']
-		last_week_sales = invoices.filter(status='COMPLETED',created__date__gte=timezone.now().date()-timedelta(13),created__date__lte=timezone.now().date()-timedelta(6)).aggregate(total=Sum('amount_paid'))['total']		
-		this_month_sales=invoices.filter(status='COMPLETED',created__month=timezone.now().month,created__year=timezone.now().year).aggregate(total=Sum('amount_paid'))['total']
-		last_month_sales=invoices.filter(status='COMPLETED',created__month=((timezone.now().date()-relativedelta(months=1)).month),created__year=timezone.now().year).aggregate(total=Sum('amount_paid'))['total']	
+		today_follow_up_job_count = follow_up_job.filter(start_at__date=timezone.now().date()).count() 
+		week_follow_up_job_count  = follow_up_job.filter(start_at__gte=timezone.now().date()-timedelta(6)).count()		
+
+		#Feedback Staring count
+		try:
+			feedbacks                 = FeedBack.objects.filter(is_active=True)
+		except:
+			feedbacks				  = None
+
+		today_average_feedback		  = feedbacks.filter(response_date__date=timezone.now().date()).aggregate(Avg('rating'))['rating__avg']
+		week_average_feedback		  = feedbacks.filter(response_date__gte=timezone.now().date()-timedelta(6)).aggregate(Avg('rating'))['rating__avg']
+
+
+
+		#sales amount
+		# try:
+		# 	invoices         = Invoice.objects.filter(is_active=True)
+		# except:
+		# 	invoices         = None
+
+		# this_week_sales = invoices.filter(status='COMPLETED',created__date__gte=timezone.now().date()-timedelta(6)).aggregate(total=Sum('amount_paid'))['total']
+		# last_week_sales = invoices.filter(status='COMPLETED',created__date__gte=timezone.now().date()-timedelta(13),created__date__lte=timezone.now().date()-timedelta(6)).aggregate(total=Sum('amount_paid'))['total']		
+		# this_month_sales=invoices.filter(status='COMPLETED',created__month=timezone.now().month,created__year=timezone.now().year).aggregate(total=Sum('amount_paid'))['total']
+		# last_month_sales=invoices.filter(status='COMPLETED',created__month=((timezone.now().date()-relativedelta(months=1)).month),created__year=timezone.now().year).aggregate(total=Sum('amount_paid'))['total']	
 			
 		#cleaning schedule & followup schedule for cleaning calendar			
 		cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
@@ -133,7 +153,7 @@ class EvaluatorHome(IsEvaluator,View):
 		except:
 			my_evaluations = None	
 
-		return render(request,'evaluator/home/home.html',{'this_week_sales':this_week_sales,'this_month_sales':this_month_sales,'last_week_sales':last_week_sales,'last_month_sales':last_month_sales,'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'schedule_date':schedule_date,'investigation_date':investigation_date,'investigations':investigations,'evaluation_date':evaluation_date,'my_evaluations':my_evaluations})
+		return render(request,'evaluator/home/home.html',{'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'today_average_feedback':today_average_feedback,'week_average_feedback':week_average_feedback,'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'schedule_date':schedule_date,'investigation_date':investigation_date,'investigations':investigations,'evaluation_date':evaluation_date,'my_evaluations':my_evaluations})
 
 class ClientDetails(IsEvaluator,View):
 	def get(self,request):
@@ -637,7 +657,7 @@ class MakeQuatationPhase2(IsEvaluator,View):
 							start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
 							end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours)) 
 							
-							order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address))	
+							order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,cleaning_policy='SUBSCRIPTION'))	
 							
 							sheduled_order_cleaning_array.append(service_form_save)
 
@@ -649,7 +669,7 @@ class MakeQuatationPhase2(IsEvaluator,View):
 						start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
 						end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
 
-						order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address))
+						order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,cleaning_policy='ONE TIME SERVICE'))
 						
 						sheduled_order_cleaning_array.append(service_form_save)
 
