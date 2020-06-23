@@ -67,7 +67,7 @@
 <th>Order Number</th>
 <th data-hide="phone,tablet">Name</th>
 <th data-hide="phone">Area</th>
-<th data-hide="phone,tablet">Cleaning Type</th>
+<th data-hide="phone,tablet">Service Type</th>
 <th>Contact</th>
 <th data-hide="phone,tablet">Status</th>
 <th data-hide="phone,tablet">&nbsp;</th>
@@ -81,7 +81,7 @@
     <td>{% for evaluation_detail in evaluation.details_evaluation %}{{evaluation_detail.address.area.name}}<br>{% endfor %}</td>
     <td>{% for evaluation_detail in evaluation.details_evaluation %}
      {% for evaluation_book in evaluation_detail.evaluation_book %}
-     {{evaluation_book.cleaning_type.name}},
+     {{evaluation_book.service_type.name}},
      {% endfor %}
      <br> 
      {% endfor %}</td>
