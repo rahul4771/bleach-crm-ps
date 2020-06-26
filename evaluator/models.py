@@ -248,6 +248,7 @@ class EvaluationBook(models.Model):
 	bed_size 			= models.CharField(max_length=20,blank=True,null=True,choices=BED_SIZE_CHOICES)
 	bed_type            = models.CharField(max_length=20,blank=True,null=True,choices=BED_TYPE_CHOICES)
 
+	number_of_cleaners  = models.IntegerField(blank=True,null=True)
 	evaluator_note		= models.CharField(max_length=500,blank=True,null=True)
 	estimated_cost      = models.FloatField(blank=True,null=True)
 	discount            = models.FloatField(blank=True,null=True,default=0)

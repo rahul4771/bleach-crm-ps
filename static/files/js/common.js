@@ -17,6 +17,15 @@ $(function () {
   });
 });
 
+//time pick
+//tendative time initial
+$(function () {
+  $(".time_pick").datetimepicker({
+    pickDate:false,
+    format: 'hh:mm A',
+  });
+});
+
 // date_time_pick   
 $(function () {
   $('.date_time_pick').datetimepicker({

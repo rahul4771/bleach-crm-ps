@@ -5,4 +5,9 @@ urlpatterns = [
 
 	url(r'^dashboard/$',views.TlHome.as_view(),name='tldash-board'),
 	url(r'^tickets/$',views.TicketDetails.as_view(),name='tl-tickets'),
+
+	url(r'^investigation/(?P<investigation_id>[-\w]+)/$',views.InvestigationTask.as_view(),name='investigation'),
+
+	url(r'^cleaning/(?P<team_id>[-\w]+)/$',views.Cleaning.as_view(),name='cleaning'),
+	url(r'^followupcleaning/(?P<team_id>[-\w]+)/$',views.FollowupCleaning.as_view(),name='followupcleaning'),
 ]

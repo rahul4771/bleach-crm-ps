@@ -20,4 +20,6 @@ urlpatterns = [
 
 	url(r'^makequatation/assigned/phase1/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeAssignedQuatationPhase1.as_view(),name='evaluator-makeassignedquatation1'),
 	url(r'^makequatation/assigned/phase2/(?P<evaluation_detail_id>[-\w]+)$',views.MakeAssignedQuatationPhase2.as_view(),name='evaluator-makeassignedquatation2'),
+
+	url(r'^investigation/(?P<investigation_id>[-\w]+)/$',views.InvestigationTask.as_view(),name='investigation'),
 ]

@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "tl/common/header.html" %}
+
+<section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Cleaning</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+            </div><!--welcome-wrapper-->       
+            
+<div class="main-content-holder"><!--main-content-holder-->                
+
+<div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Cleaning Details</h2>
+      <div class="row">
+        <div class="col-md-10">
+        </div>
+        <div class="col-md-2">
+          <a class="a-btn back-btn" href="{% url 'tl:tldash-board' %}">Back</a>
+        </div>
+      </div>
+      <div class="name">
+        <label>{{cleaning_team_detail.order_scheduler.order.order_no}}</label>
+      </div>
+      <div class="address">
+        <label>{{cleaning_team_detail.order_scheduler.customer_address.block}} Block</label><br> 
+        <label>{{cleaning_team_detail.order_scheduler.customer_address.building}} Building</label><br>
+        <label>{{cleaning_team_detail.order_scheduler.customer_address.street}} Street</label><br>
+        <label>{{cleaning_team_detail.order_scheduler.customer_address}}</label>
+      </div>
+      <hr>
+      <div class="team_leader">
+        <label>Team Leader: {{cleaning_team_detail.team_leader.name}}</label>
+      </div>
+      <div class="no_of_cleaners">
+        <label>Number of Cleaners: {{cleaning_team_detail.no_of_cleaners}}</label>
+      </div>
+      <hr>
+      <div class="service_type">
+        <label>Service Type: {{cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name}}</label>
+      </div>
+      {% if cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name == 'General Cleaning' %}
+      
+      <div>
+      <label>Dirt Level:{{cleaning_team_detail.order_scheduler.order_scheduler_book.dirt_level|default_if_none:''}},</label>
+      <label> Cleaning Method:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_method|default_if_none:''}},
+      </label>
+      <label> Location Type:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.location_type|default_if_none:''}}
+      </label>
+      </div>
+
+      <div>
+      <label>Cleaning Type:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_type|default_if_none:''}},
+      </label>
+      <label> Floor Type:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.floor_type|default_if_none:''}},
+      </label>
+      <label> Numberof Floors:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.number_of_floors|default_if_none:''}},
+      </label>
+      <label> Number of Rooms:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.number_of_rooms|default_if_none:''}}
+      </label>
+      <div>
+      
+      {% elif cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name == 'Upholstery Cleaning' %}
+
+      <div>
+      <label>Dirt Level:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.dirt_level|default_if_none:''}}
+      </label>
+      <label> Cleaning Method:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_method|default_if_none:''}}
+      </label>
+      <label> Set Type:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.set_type|default_if_none:''}}
+      <label>
+      </div>
+
+      <div>
+      <label>Set Size:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.set_size|default_if_none:''}},
+      </label>
+      <label> Piece of Chairs:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.piece_of_chairs|default_if_none:''}},
+      </label>
+      <label> Chair Fabric Type:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.chair_fabric_type|default_if_none:''}}
+      </label>
+      </div>
+
+      <div>
+      <label>Piece of Sofas: 
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.piece_of_sofas|default_if_none:''}},
+      </label>
+      <label> Sofa Fabric Type:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.sofa_fabric_type|default_if_none:''}},
+      </label> 
+      <label> Spot Stain Status:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.spot_stain_status|default_if_none:''}}
+      </label>
+      </div>
+
+      {% elif cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name == 'Carpet Cleaning' %}
+
+      <div>
+      <label>Dirt Level:  
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.dirt_level|default_if_none:''}},
+      </label>
+      <label> Cleaning Method:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_method|default_if_none:''}}
+      </label>
+      </div>
+
+      <div>
+      <label>Fabric Type:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.fabric_type|default_if_none:''}},
+      </label>
+      <label> Size of Carpet:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.size_of_carpet|default_if_none:''}},
+      </label>
+      <label> Spot Stain Status:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.spot_stain_status|default_if_none:''}}
+      </label>
+      </div>
+
+      {% elif cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name == 'Sanitization Services' %}
+
+      <div>
+      <label>Cleaning Method:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_method|default_if_none:''}},
+      </label>
+      <label> Sanitization Type:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.sanitization_type|default_if_none:''}},
+      </label>
+      <label> Size to be Sanitized:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.size_to_be_sanitised|default_if_none:''}}
+      </label>
+      </div>
+
+      {% else %}
+
+      <div>
+      <label>Cleaning Method:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_method|default_if_none:''}},
+      </label>
+      <label> Bed Type:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.bed_type|default_if_none:''}},
+      </label>
+      <label> Bed Size:
+      {{cleaning_team_detail.order_scheduler.order_scheduler_book.bed_size|default_if_none:''}}
+      </label>
+      </div>
+
+      {% endif %}
+
+  <div class="row">
+
+    <div class="col-12"> 
+
+      <div class="page-form">
+
+        <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+
+         <div class="page-form-head">
+
+           <h1>Upload Media</h1>
+
+         </div>
+<div class="page-body">         
+              <div class="multi_field_wrapper multi-field-wrapper">
+                     <div class="multi-fields">
+                        <div class="multi-field page-col">
+                         <label>Media :</label>
+                         <input type="file" name="media" maxlength="100"/>
+                         <button type="button" class="remove-field-btn" title="Remove field">
+                            <i class="fa fa-minus-square-o" aria-hidden="true"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <button type="button" class="add-field-btn" title="Add field">
+                      <i class="fa fa-plus-square-o" aria-hidden="true"></i>
+                      </button> 
+              </div>
+
+</div>
+<div class="page-footer text-center">
+  <button type="button" class="primary-btn" onclick="submitAnyForm(this);">Checkout/Submit</button>
+</div>
+
+</form>
+</div>
+</div>
+</div>
+
+
+
+</div><!--white-wrapper-->      
+             
+            
+            
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+{% include 'tl/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}

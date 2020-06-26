@@ -22,7 +22,7 @@ from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Question,SheduledOrderCleanings
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 
 from agent.forms import UserProfileForm,AddressForm
@@ -97,13 +97,13 @@ def GetOrderScheduleTicketInfo(request):
 	order_id            = request.GET.get('order_id') 
 
 	try:
-		ordershedules   = OrderScheduler.objects.filter(order_id=order_id,is_active=True).select_related('customer_address__area')
+		ordershedules   = OrderScheduler.objects.filter(order_id=order_id,is_active=True).select_related('customer_address__area','order_scheduler_book')
 	except:
 		ordershedules   = None
 
 	order_schedule = {}
 	for schedule in ordershedules:
-		order_schedule[schedule.id] = schedule.customer_address.area.name
+		order_schedule[schedule.id] = schedule.customer_address.area.name+'-'+schedule.order_scheduler_book.service_type.name or ''
 
 		dropdown_orderschedule_info['name']          = schedule.customer_address.customer.name 
 		dropdown_orderschedule_info['mobile_number'] = schedule.customer_address.customer.mobile_number
@@ -193,7 +193,7 @@ class AgentHome(IsAgent,View):
 		except:
 			enquiry	= None
 
-		today_enquiry_count = enquiry.filter(proposed_time__date=timezone.now().date()).count()
+		today_enquiry_count = enquiry.filter(proposed_time__contains=timezone.now().date()).count()
 		week_enquiry_count  = enquiry.filter(proposed_time__date__gte=timezone.now().date()-timedelta(6)).count()	
 
 		#Cleaning Jobs count
@@ -202,7 +202,7 @@ class AgentHome(IsAgent,View):
 		except:
 			cleaning_job    = None
 
-		today_cleaning_job_count = cleaning_job.filter(start_at__date=timezone.now().date()).count() 
+		today_cleaning_job_count = cleaning_job.filter(start_at__contains=timezone.now().date()).count() 
 		week_cleaning_job_count  = cleaning_job.filter(start_at__gte=timezone.now().date()-timedelta(6)).count()		
 		
 		#Followup jobs count
@@ -211,7 +211,7 @@ class AgentHome(IsAgent,View):
 		except:
 			follow_up_job	 = None
 
-		today_follow_up_job_count = follow_up_job.filter(start_at__date=timezone.now().date()).count() 
+		today_follow_up_job_count = follow_up_job.filter(start_at__contains=timezone.now().date()).count() 
 		week_follow_up_job_count  = follow_up_job.filter(start_at__gte=timezone.now().date()-timedelta(6)).count()		
 
 		#Feedback Staring count
@@ -220,7 +220,7 @@ class AgentHome(IsAgent,View):
 		except:
 			feedbacks				  = None
 
-		today_average_feedback		  = feedbacks.filter(response_date__date=timezone.now().date()).aggregate(Avg('rating'))['rating__avg']
+		today_average_feedback		  = feedbacks.filter(response_date__contains=timezone.now().date()).aggregate(Avg('rating'))['rating__avg']
 		week_average_feedback		  = feedbacks.filter(response_date__gte=timezone.now().date()-timedelta(6)).aggregate(Avg('rating'))['rating__avg']	
 		
 		#Evaluation details of each evaluator for evaluation table
@@ -239,7 +239,7 @@ class AgentHome(IsAgent,View):
 
 		#Order and Followup Schedules for date confirmation
 		try:
-			order_schedules		  = OrderScheduler.objects.filter(is_active=True).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address')
+			order_schedules		  = OrderScheduler.objects.filter(is_active=True).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
 		except:
 			order_schedules		  = None
 		
@@ -258,7 +258,7 @@ class AgentHome(IsAgent,View):
 			schedule_date = timezone.now()
 
 		try:
-			calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__contains=schedule_date.date())&Q(end_at__contains=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address')
+			calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__contains=schedule_date.date())&Q(end_at__contains=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
 		except:
 			calendar_order_schedules = None
 
@@ -268,7 +268,7 @@ class AgentHome(IsAgent,View):
 			calendar_followup_schedules = None
 	
 		try:
-			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__contains=schedule_date.date())&~Q(end_at__contains=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address')
+			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__contains=schedule_date.date())&~Q(end_at__contains=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
 		except:
 			sp_calendar_order_schedules = None
 
@@ -280,6 +280,18 @@ class AgentHome(IsAgent,View):
 		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_average_feedback':today_average_feedback,'week_average_feedback':week_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'order_schedules':order_schedules,'follow_up_schedules':follow_up_schedules,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'schedule_date':schedule_date,})
 
 
+	def post(self,request):
+		action_mode = request.POST.get('action_type')
+
+		if action_mode =='delete_followupchedule':
+			followupscheduler_id = request.POST.get('followupscheduler')
+			FollowUpScheduler.objects.filter(id=followupscheduler_id).update(status='CONFIRMED')
+		
+		elif action_mode =='delete_orderschedule':	
+			orderscheduler_id = request.POST.get('orderscheduler')
+			OrderScheduler.objects.filter(id=orderscheduler_id).update(status='CONFIRMED')
+
+		return redirect('agent:agentdash-board')	
 
 
 class ResourceManagement(IsAgent,View):
@@ -355,7 +367,7 @@ class ResourceManagement(IsAgent,View):
 				workers =  None
  
 		try:		
-			workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date.date())|Q(end_at__date=workers_date.date())) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__contains=workers_date.date())|Q(end_at__contains=workers_date.date())) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
+			workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date.date())|Q(end_at__date=workers_date.date())) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__contains=workers_date.date())|Q(end_at__contains=workers_date.date())) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
 		except:
 			workers_details = None
 
@@ -816,7 +828,6 @@ class MakeQuatationPhase2(IsAgent,View):
 			new_order = Order.objects.get_or_create(evaluation=evaluation_details.evaluation,order_no=evaluation_details.evaluation.evaluation_id,)	
 				
 			order_schedule_array          = []
-			sheduled_order_cleaning_array = []
 			#Save Service Form
 			for service_form in service_formset:
 				
@@ -844,9 +855,8 @@ class MakeQuatationPhase2(IsAgent,View):
 							start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
 							end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours)) 
 							
-							order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address))	
+							order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))	
 							
-							sheduled_order_cleaning_array.append(service_form_save)
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost*len(tendative_dates),discount=F('discount')+discount*len(tendative_dates),total_cost=F('total_cost')+total*len(tendative_dates),status='EVALUATED')
 						updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost*len(tendative_dates),discount=F('discount')+discount*len(tendative_dates),total_cost=F('total_cost')+total*len(tendative_dates))
@@ -856,9 +866,8 @@ class MakeQuatationPhase2(IsAgent,View):
 						start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
 						end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
 
-						order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address))
+						order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))
 						
-						sheduled_order_cleaning_array.append(service_form_save)
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
 						updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)	
@@ -866,13 +875,7 @@ class MakeQuatationPhase2(IsAgent,View):
 			#bulk_create order schedules
 			now = timezone.now()
 			OrderScheduler.objects.bulk_create(order_schedule_array)
-			created_schedules = OrderScheduler.objects.filter(order=new_order[0],created__gte=now)
-			
-			#bulk create scheduled order cleanings
-			schedule_cleaning_save = []
-			for schedule,cleaning in zip(created_schedules,sheduled_order_cleaning_array):
-				schedule_cleaning_save.append(SheduledOrderCleanings(order_scheduler=schedule,order_scheduler_book=cleaning))
-			SheduledOrderCleanings.objects.bulk_create(schedule_cleaning_save)	
+			created_schedules = OrderScheduler.objects.filter(order=new_order[0],created__gte=now)	
 	
 
 			#To Save Media
