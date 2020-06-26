@@ -71,7 +71,7 @@
 <tbody>
 
 {% for investigation in investigations %}
-<tr class="{% if investigation.order_schedule.cleaning_policy == 'ONE TIME SERVICE' %} blue-line{% else %}green-line{% endif %} clickable-row" data-href='#'>
+<tr class="{% if investigation.order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %} blue-line{% else %}green-line{% endif %} clickable-row" data-href='#'>
 <td data-label="Order Name" ><a href="#">{{investigation.order.evaluation.evaluation_id}}</a></td>
 <td data-label="Customenr Name"><a href="#">{{investigation.order.evaluation.customer.name}}</a> </td>
 <td class="hide-a" data-label=""><a href="#">{{investigation.order_schedule.customer_address.area.name}}</a></td>
@@ -92,11 +92,10 @@
 {% endif %}
 </td>
 <td class="hide-a" data-label="">
-    {% if investigation.order_schedule.cleaning_policy == 'ONE TIME SERVICE' %}
-    <span class="blue-text">One time service</span>
-    {% else %}
-    <span class="blue-text">Subscription</span>
-    {% endif %}
+    <span class="blue-text">{{investigation.order_schedule.order_scheduler_book.cleaning_policy}}</span>
+</td>
+<td class="hide-a" data-label="">
+    <a href="{% url 'evaluator:investigation' investigation.id %}"><span>Checkin</span></a>
 </td>
 </tr>
 {% endfor %}
@@ -266,7 +265,7 @@ $('document').ready(function(){
                             left_percentage  = 100/24*starting_time
                             width_percentage = 100/24*ending_time-100/24*starting_time;
                             
-                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{schedule.id}}" {% if schedule.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box"{% else %}class="green-box"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.evaluation_details.evaluator.profile_image %}src="{{schedule.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="image-table-view"></div><center>{{schedule.customer_address.area}}</center> <div {% if schedule.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.evaluation_details.number_of_cleaners}}</div></div></td></tr>')
+                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{schedule.id}}" {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box"{% else %}class="green-box"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.evaluation_details.evaluator.profile_image %}src="{{schedule.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="image-table-view"></div><center>{{schedule.customer_address.area}}</center> <div {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.order_scheduler_book.number_of_cleaners}}</div></div></td></tr>')
                         }
                         //append td to the raw 
                         else
@@ -274,7 +273,7 @@ $('document').ready(function(){
                            left_percentage  = 100/24*starting_time
                            width_percentage = 100/24*ending_time-100/24*starting_time; 
                           
-                            $('#cleaning_table tr:last td').append('<div id="cleaningschedule{{schedule.id}}" {% if schedule.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box"{% else %}class="green-box"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.evaluation_details.evaluator.profile_image %}src="{{schedule.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="image-table-view"></div><center>{{schedule.customer_address.area}}</center> <div {% if schedule.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.evaluation_details.number_of_cleaners}}</div></div>')      
+                            $('#cleaning_table tr:last td').append('<div id="cleaningschedule{{schedule.id}}" {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box"{% else %}class="green-box"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.evaluation_details.evaluator.profile_image %}src="{{schedule.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="image-table-view"></div><center>{{schedule.customer_address.area}}</center> <div {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.order_scheduler_book.number_of_cleaners}}</div></div>')      
                         }
                     }
                 }
@@ -298,9 +297,9 @@ $('document').ready(function(){
        second_raw_width_percentage = 100/24*ending_time;
 
 
-       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{sp_schedule.id}}" {% if sp_schedule.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-first"{% else %}class="sp-green-box-first"{% endif %} style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_schedule.evaluation_details.evaluator.profile_image %} src="{{sp_schedule.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="image-table-view"></div><center>{{sp_schedule.customer_address.area}}</center> </div></td></tr>')
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{sp_schedule.id}}" {% if sp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-first"{% else %}class="sp-green-box-first"{% endif %} style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_schedule.evaluation_details.evaluator.profile_image %} src="{{sp_schedule.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="image-table-view"></div><center>{{sp_schedule.customer_address.area}}</center> </div></td></tr>')
 
-       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{sp_schedule.id}}" {% if sp_schedule.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-second"{% else %}class="sp-green-box-second"{% endif %} style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div {% if sp_schedule.evaluation.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{sp_schedule.evaluation_details.number_of_cleaners}}</div></div></td></tr>')
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{sp_schedule.id}}" {% if sp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-second"{% else %}class="sp-green-box-second"{% endif %} style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div {% if sp_schedule.evaluation.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{sp_schedule.order_scheduler_book.number_of_cleaners}}</div></div></td></tr>')
        
        {% endfor %}
 
@@ -339,7 +338,7 @@ $('document').ready(function(){
                             left_percentage  = 100/24*starting_time
                             width_percentage = 100/24*ending_time-100/24*starting_time;
                             
-                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{schedule.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.follow_up.investigation.investigator.profile_image %}src="{{schedule.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %} class="image-table-view"></div><center>{{schedule.customer_address.area}}</center> <div class="right-value yellow-text">{{schedule.follow_up.investigation.order_schedule.evaluation_details.number_of_cleaners}}</div></div></td></tr>')
+                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{schedule.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.follow_up.investigation.investigator.profile_image %}src="{{schedule.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %} class="image-table-view"></div><center>{{schedule.customer_address.area}}</center> <div class="right-value yellow-text">{{schedule.follow_up.investigation.order_schedule.order_scheduler_book.number_of_cleaners}}</div></div></td></tr>')
                         }
                         //append td to the raw 
                         else
@@ -347,7 +346,7 @@ $('document').ready(function(){
                            left_percentage  = 100/24*starting_time
                            width_percentage = 100/24*ending_time-100/24*starting_time; 
                           
-                            $('#cleaning_table tr:last td').append('<div id="followupschedule{{schedule.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.follow_up.investigation.investigator.profile_image %}src="{{schedule.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %} class="image-table-view"></div><center>{{schedule.customer_address.area}}</center> <div class="right-value yellow-text">{{schedule.follow_up.investigation.order_schedule.evaluation_details.number_of_cleaners}}</div></div>')      
+                            $('#cleaning_table tr:last td').append('<div id="followupschedule{{schedule.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.follow_up.investigation.investigator.profile_image %}src="{{schedule.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %} class="image-table-view"></div><center>{{schedule.customer_address.area}}</center> <div class="right-value yellow-text">{{schedule.follow_up.investigation.order_schedule.order_scheduler_book.number_of_cleaners}}</div></div>')      
                         }
                     }
                 }
@@ -373,7 +372,7 @@ $('document').ready(function(){
 
        $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{sp_schedule.id}}" class="sp-yellow-box-first" style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_schedule.follow_up.investigation.investigator.profile_image %}src="{{sp_schedule.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %} class="image-table-view"></div><center>{{sp_schedule.customer_address.area}}</center> </div></td></tr>')
 
-       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{sp_schedule.id}}" class="sp-yellow-box-second" style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div class="right-value yellow-text">{{sp_schedule.follow_up.investigation.order_schedule.evaluation_details.number_of_cleaners}}</div></div></td></tr>')
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{sp_schedule.id}}" class="sp-yellow-box-second" style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div class="right-value yellow-text">{{sp_schedule.follow_up.investigation.order_schedule.order_scheduler_book.number_of_cleaners}}</div></div></td></tr>')
        
        {% endfor %}
 

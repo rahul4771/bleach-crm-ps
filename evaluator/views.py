@@ -23,7 +23,7 @@ from dateutil.relativedelta import relativedelta
 
 from user.models import UserProfile,Address
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,CleaningMethod
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,SheduledOrderCleanings
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Investigation,InvestigationMedia
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 from accountant.models import Invoice
 
@@ -109,22 +109,22 @@ class EvaluatorHome(IsEvaluator,View):
 			schedule_date = timezone.now()
 
 		try:
-			calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__contains=schedule_date.date())&Q(end_at__contains=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address')
+			calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__contains=schedule_date.date())&Q(end_at__contains=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
 		except:
 			calendar_order_schedules = None
 
 		try:
-			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__contains=schedule_date.date())&Q(end_at__contains=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__contains=schedule_date.date())&Q(end_at__contains=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address','follow_up__investigation__order_schedule__order_scheduler_book')
 		except:
 			calendar_followup_schedules = None
 	
 		try:
-			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__contains=schedule_date.date())&~Q(end_at__contains=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address')
+			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__contains=schedule_date.date())&~Q(end_at__contains=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
 		except:
 			sp_calendar_order_schedules = None
 
 		try:
-			sp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__contains=schedule_date.date())&~Q(end_at__contains=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+			sp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__contains=schedule_date.date())&~Q(end_at__contains=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address','follow_up__investigation__order_schedule__order_scheduler_book')
 		except:
 			sp_calendar_followup_schedules = None
 
@@ -136,7 +136,7 @@ class EvaluatorHome(IsEvaluator,View):
 		except:
 			investigation_date = timezone.now()
 		try:	
-			investigations  = Investigation.objects.filter(is_active=True,sheduled_at__contains=investigation_date.date(),investigator=request.user).select_related('order__evaluation__customer','order_schedule__customer_address__area').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'))
+			investigations  = Investigation.objects.filter(is_active=True,sheduled_at__contains=investigation_date.date(),investigator=request.user,check_out=None).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'))
 		except:
 			investigations  = 	None	
 
@@ -629,7 +629,6 @@ class MakeQuatationPhase2(IsEvaluator,View):
 			new_order = Order.objects.get_or_create(evaluation=evaluation_details.evaluation,order_no=evaluation_details.evaluation.evaluation_id,)	
 				
 			order_schedule_array          = []
-			sheduled_order_cleaning_array = []
 			#Save Service Form
 			for service_form in service_formset:
 				
@@ -657,9 +656,8 @@ class MakeQuatationPhase2(IsEvaluator,View):
 							start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
 							end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours)) 
 							
-							order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,cleaning_policy='SUBSCRIPTION'))	
+							order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))	
 							
-							sheduled_order_cleaning_array.append(service_form_save)
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost*len(tendative_dates),discount=F('discount')+discount*len(tendative_dates),total_cost=F('total_cost')+total*len(tendative_dates),status='EVALUATED')
 						updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost*len(tendative_dates),discount=F('discount')+discount*len(tendative_dates),total_cost=F('total_cost')+total*len(tendative_dates))
@@ -669,9 +667,8 @@ class MakeQuatationPhase2(IsEvaluator,View):
 						start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
 						end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
 
-						order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,cleaning_policy='ONE TIME SERVICE'))
+						order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))
 						
-						sheduled_order_cleaning_array.append(service_form_save)
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED',evaluator=request.user)
 						updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)	
@@ -679,13 +676,7 @@ class MakeQuatationPhase2(IsEvaluator,View):
 			#bulk_create order schedules
 			now = timezone.now()
 			OrderScheduler.objects.bulk_create(order_schedule_array)
-			created_schedules = OrderScheduler.objects.filter(order=new_order[0],created__gte=now)
-			
-			#bulk create scheduled order cleanings
-			schedule_cleaning_save = []
-			for schedule,cleaning in zip(created_schedules,sheduled_order_cleaning_array):
-				schedule_cleaning_save.append(SheduledOrderCleanings(order_scheduler=schedule,order_scheduler_book=cleaning))
-			SheduledOrderCleanings.objects.bulk_create(schedule_cleaning_save)	
+			created_schedules = OrderScheduler.objects.filter(order=new_order[0],created__gte=now)	
 	
 
 			#To Save Media
@@ -776,7 +767,6 @@ class MakeAssignedQuatationPhase2(IsEvaluator,View):
 			new_order = Order.objects.get_or_create(evaluation=evaluation_details.evaluation,order_no=evaluation_details.evaluation.evaluation_id,)	
 				
 			order_schedule_array          = []
-			sheduled_order_cleaning_array = []
 			#Save Service Form
 			for service_form in service_formset:
 				
@@ -804,9 +794,8 @@ class MakeAssignedQuatationPhase2(IsEvaluator,View):
 							start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
 							end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours)) 
 							
-							order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address))	
+							order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))	
 							
-							sheduled_order_cleaning_array.append(service_form_save)
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost*len(tendative_dates),discount=F('discount')+discount*len(tendative_dates),total_cost=F('total_cost')+total*len(tendative_dates),status='EVALUATED')
 						updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost*len(tendative_dates),discount=F('discount')+discount*len(tendative_dates),total_cost=F('total_cost')+total*len(tendative_dates))
@@ -816,9 +805,8 @@ class MakeAssignedQuatationPhase2(IsEvaluator,View):
 						start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
 						end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
 
-						order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address))
+						order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))
 						
-						sheduled_order_cleaning_array.append(service_form_save)
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
 						updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)	
@@ -826,13 +814,7 @@ class MakeAssignedQuatationPhase2(IsEvaluator,View):
 			#bulk_create order schedules
 			now = timezone.now()
 			OrderScheduler.objects.bulk_create(order_schedule_array)
-			created_schedules = OrderScheduler.objects.filter(order=new_order[0],created__gte=now)
-			
-			#bulk create scheduled order cleanings
-			schedule_cleaning_save = []
-			for schedule,cleaning in zip(created_schedules,sheduled_order_cleaning_array):
-				schedule_cleaning_save.append(SheduledOrderCleanings(order_scheduler=schedule,order_scheduler_book=cleaning))
-			SheduledOrderCleanings.objects.bulk_create(schedule_cleaning_save)	
+			created_schedules = OrderScheduler.objects.filter(order=new_order[0],created__gte=now)	
 	
 
 			#To Save Media
@@ -853,3 +835,54 @@ class MakeAssignedQuatationPhase2(IsEvaluator,View):
 			return render(request,'evaluator/enquiry/assignedquatationphase2.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,})	
 
 		return redirect('evaluator:evaluator-makeassignedquatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)		
+
+
+class InvestigationTask(View):
+	def get(self,request,investigation_id):
+		
+		try:
+			investigation_details = Investigation.objects.select_related('order_schedule__customer_address__area','order_schedule__order_scheduler_book__service_type','investigator','order__evaluation__customer').get(id=investigation_id)
+		except:
+			investigation_details = None
+
+		#save checkin_time
+		investigation_details.check_in = timezone.now()
+		investigation_details.save()
+
+		return render(request,'evaluator/ticket/investigation.html',{'investigation_details':investigation_details})
+
+	def post(self,request,investigation_id):
+		follow_up_approved = request.POST.get('isapproved')
+
+		try:
+			investigation = Investigation.objects.select_related('order_schedule__customer_address').get(id=investigation_id)
+		except:
+			investigation = None	
+		
+		if follow_up_approved == 'yes':
+			no_of_cleaners = request.POST.get('no_of_cleaners')
+			cleaning_hours = request.POST.get('cleaning_hours')
+			
+			tendative_date = request.POST.get('tendative_date')
+			tendative_time = request.POST.get('tendative_time')
+			start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+			end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
+
+			Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True,check_out=timezone.now(),notes=request.POST.get('notes'))
+			follow_up = FollowUp.objects.create(investigation_id=investigation_id,status='INVESTIGATOR_APPROVED',no_of_cleaners=no_of_cleaners,cleaning_hours=cleaning_hours)
+			follow_up_scheduler = FollowUpScheduler.objects.create(follow_up=follow_up,start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
+		
+		else:
+			Investigation.objects.filter(id=investigation_id).update(is_followup_approved=False,check_out=timezone.now(),notes=request.POST.get('notes'))
+
+		#To Save Media
+			medias = request.FILES.getlist('media')
+			if not medias==['']:
+				for media in medias:
+					InvestigationMedia.objects.create(
+					        investigation_id=investigation_id,
+					        media=media,
+					        )
+
+		messages.success(request,"Investigation Form submitted succesfully")	
+		return redirect('evaluator:evaluatordash-board')
