@@ -724,8 +724,13 @@ class AssignEvaluator(IsAgent,View):
 
 				for evaluation_form in evaluation_formset:
 					if evaluation_form.is_valid():
-						evaluation_form_save            = evaluation_form.save(commit=False)
-						evaluation_form_save.evaluation = new_evaluation
+						evaluation_form_save              = evaluation_form.save(commit=False)
+						
+						proposed_time                     = evaluation_form.cleaned_data['proposed_time']
+						converted_proposed_time           = datetime.strptime(proposed_time,'%d/%m/%Y %I:%M %p')
+						
+						evaluation_form_save.proposed_time= converted_proposed_time
+						evaluation_form_save.evaluation   = new_evaluation
 						evaluation_form_save.save()
 
 				messages.success(request,"Evaluation Details Succesfully Completed")
