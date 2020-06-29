@@ -19,7 +19,7 @@
                 <div class="column-left"><img src="{% static 'files/images/card-aproved-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
               	<!--  <h1>Evaluations</h1>-->
-            	<h2 class="blue-text"><label>Approved<span>{{approved_orders_count}}</span></label> </h2>
+            	<h2 class="blue-text"><label>Approved<span>{{approved_orders_count|default_if_none:''}}</span></label> </h2>
             	<!--<p><label>This Week <span>42</span></label></p>-->
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
@@ -29,7 +29,7 @@
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-pending-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
-            	<h2 class="green-text"><label>Pending<span>{{pending_orders_count}}</span></label>  </h2>
+            	<h2 class="green-text"><label>Pending<span>{{pending_orders_count|default_if_none:''}}</span></label>  </h2>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->

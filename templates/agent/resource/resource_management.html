@@ -17,8 +17,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-workers-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Workers</h1>
-            	<h2 class="blue-text"><label>Active<span>{{total_active_workers}}</span></label> </h2>
-            	<p><label>Total <span>{{total_workers}}</span></label></p>
+            	<h2 class="blue-text"><label>Active<span>{{total_active_workers|default_if_none:''}}</span></label> </h2>
+            	<p><label>Total <span>{{total_workers|default_if_none:''}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -50,8 +50,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-active-team-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Active Team</h1>
-            	<h2 class="red-text"><label>Today<span>{{today_active_teams_count}}</span></label> </h2>
-            	<p><label>This Week <span>{{week_active_teams_count}}</span></label></p>
+            	<h2 class="red-text"><label>Today<span>{{today_active_teams_count|default_if_none:''}}</span></label> </h2>
+            	<p><label>This Week <span>{{week_active_teams_count|default_if_none:''}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -260,11 +260,23 @@
 
         $("#today_man_hour").html(total_today_hours.toFixed(2));
         $("#week_man_hour").html(total_week_hours.toFixed(2));
-        $("#today_avg_man_hour").html(average_today_hours.toFixed(2));
-        $("#week_avg_man_hour").html(average_week_hours.toFixed(2));
 
-
-
+        if (Number.isNaN(average_today_hours))
+        {
+            $("#today_avg_man_hour").html('0.00');
+        }
+        else
+        {
+            $("#today_avg_man_hour").html(average_today_hours.toFixed(2));   
+        }
+        if (Number.isNaN(average_week_hours))
+        {
+            $("#week_avg_man_hour").html('0.00');
+        }
+        else
+        {
+            $("#week_avg_man_hour").html(average_week_hours.toFixed(2));   
+        }
 
 
 

@@ -29,7 +29,7 @@ class TlHome(IsTeamLeader,View):
 		except:
 			cleaning_job    = None
 
-		today_cleaning_job_count = cleaning_job.filter(start_at__date=timezone.now().date()).count() 
+		today_cleaning_job_count = cleaning_job.filter(start_at__contains=timezone.now().date()).count() 
 		week_cleaning_job_count  = cleaning_job.filter(start_at__gte=timezone.now().date()-timedelta(6)).count()		
 
 		#Investigation Count
@@ -38,7 +38,7 @@ class TlHome(IsTeamLeader,View):
 		except:
 			investigation = None	
 
-		today_investigation_count = investigation.filter(sheduled_at__date=timezone.now().date()).count()
+		today_investigation_count = investigation.filter(sheduled_at__contains=timezone.now().date()).count()
 		week_investigation_count   = investigation.filter(sheduled_at__gte=timezone.now().date()-timedelta(6)).count()	
 
 		##To find average and total hour  team leader 
@@ -51,8 +51,8 @@ class TlHome(IsTeamLeader,View):
 		except:
 			follow_up_teams = None
 
-		today_cleaning_active_teams  = cleaning_teams.filter(Q(Q(start_at__date=timezone.now().date())|Q(end_at__date=timezone.now().date())))
-		today_followup_active_teams  = follow_up_teams.filter(Q(Q(start_at__date=timezone.now().date())|Q(end_at__date=timezone.now().date())))
+		today_cleaning_active_teams  = cleaning_teams.filter(Q(Q(start_at__contains=timezone.now().date())|Q(end_at__contains=timezone.now().date())))
+		today_followup_active_teams  = follow_up_teams.filter(Q(Q(start_at__contains=timezone.now().date())|Q(end_at__contains=timezone.now().date())))
 		week_cleaning_active_teams   = cleaning_teams.filter(Q(Q(start_at__gte=timezone.now().date()-timedelta(6))|Q(end_at__gte=timezone.now().date()-timedelta(6))))
 		week_followup_active_teams   = follow_up_teams.filter(Q(Q(start_at__gte=timezone.now().date()-timedelta(6))|Q(end_at__gte=timezone.now().date()-timedelta(6))))
 		
@@ -68,7 +68,7 @@ class TlHome(IsTeamLeader,View):
 		except:
 			investigation_date = timezone.now()
 		try:	
-			investigations  = Investigation.objects.filter(is_active=True,sheduled_at__date=investigation_date.date(),investigator=request.user,check_out=None).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'))
+			investigations  = Investigation.objects.filter(is_active=True,sheduled_at__contains=investigation_date.date(),investigator=request.user,check_out=None).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'))
 		except:
 			investigations  = 	None
 
@@ -86,17 +86,17 @@ class TlHome(IsTeamLeader,View):
 			calendar_order_cleaning = None
 
 		try:
-			calendar_followup_cleaning = FollowUpTeam.objects.filter(Q(Q(Q(start_at__date=cleaning_date.date())&Q(end_at__date=cleaning_date.date()))&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__customer_address')
+			calendar_followup_cleaning = FollowUpTeam.objects.filter(Q(Q(Q(start_at__contains=cleaning_date.date())&Q(end_at__contains=cleaning_date.date()))&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__customer_address')
 		except:
 			calendar_followup_cleaning = None
 	
 		try:
-			sp_calendar_order_cleaning = CleaningTeam.objects.filter(Q(Q(Q(start_at__date=cleaning_date.date())&~Q(end_at__date=cleaning_date.date()))&Q(team_leader=request.user))).select_related('order_scheduler__order__evaluation__customer','order_scheduler__customer_address')
+			sp_calendar_order_cleaning = CleaningTeam.objects.filter(Q(Q(Q(start_at__contains=cleaning_date.date())&~Q(end_at__contains=cleaning_date.date()))&Q(team_leader=request.user))).select_related('order_scheduler__order__evaluation__customer','order_scheduler__customer_address')
 		except:
 			sp_calendar_order_cleaning = None
 
 		try:
-			sp_calendar_followup_cleaning = FollowUpTeam.objects.filter(Q(Q(Q(start_at__date=cleaning_date.date())&~Q(end_at__date=cleaning_date.date()))&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__customer_address')
+			sp_calendar_followup_cleaning = FollowUpTeam.objects.filter(Q(Q(Q(start_at__contains=cleaning_date.date())&~Q(end_at__contains=cleaning_date.date()))&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__customer_address')
 		except:
 			sp_calendar_followup_cleaning = None
 

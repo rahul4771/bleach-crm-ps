@@ -17,8 +17,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-today-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
             	<h1>Evaluations</h1>
-                <h2 class="blue-text"><label>Today<span>{{today_enquiry_count}}</span></label> </h2>
-            	<p><label>This Week <span>{{week_enquiry_count}}</span></label></p>
+                <h2 class="blue-text"><label>Today<span>{{today_enquiry_count|default_if_none:''}}</span></label> </h2>
+            	<p><label>This Week <span>{{week_enquiry_count|default_if_none:''}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -28,8 +28,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-cleaning-job-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Cleaning Jobs</h1>
-            	<h2 class="green-text"><label>Today<span>{{today_cleaning_job_count}}</span></label>  </h2>
-            	<p><label>This Week<span>{{week_cleaning_job_count}}</span></label></p>
+            	<h2 class="green-text"><label>Today<span>{{today_cleaning_job_count|default_if_none:''}}</span></label>  </h2>
+            	<p><label>This Week<span>{{week_cleaning_job_count|default_if_none:''}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -39,8 +39,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-followup-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Follow-up</h1>
-            	<h2 class="orange-text"><label>Today<span>{{today_follow_up_job_count}}</span></label> </h2>
-            	<p><label>This Week <span>{{week_follow_up_job_count}}</span></label></p>
+            	<h2 class="orange-text"><label>Today<span>{{today_follow_up_job_count|default_if_none:''}}</span></label> </h2>
+            	<p><label>This Week <span>{{week_follow_up_job_count|default_if_none:''}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -50,8 +50,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-rating-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Rating</h1>
-            	<h2 class="red-text"><label>Today<span>{{today_average_feedback|floatformat:1}}</span></label> </h2>
-            	<p><label>This Week <span>{{week_average_feedback|floatformat:1}}</span></label></p>
+            	<h2 class="red-text"><label>Today<span>{{today_average_feedback|floatformat:1|default_if_none:''}}</span></label> </h2>
+            	<p><label>This Week <span>{{week_average_feedback|floatformat:1|default_if_none:''}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
