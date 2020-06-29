@@ -4,10 +4,10 @@ from user.models import UserProfile,Address
 
 #Evaluator assignment form
 class EvaluationDetailsForm(forms.ModelForm):
-	proposed_time = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M %p'],widget=forms.TextInput(attrs={'required':'required'}))
+	proposed_time = forms.CharField(widget=forms.TextInput(attrs={'required':'required'}))
 	class Meta:
 		model  = EvaluationDetails
-		fields = ('evaluator','proposed_time','address')	
+		fields = ('evaluator','address')	
 	
 	def __init__(self,*args,enquiry_user_id,**kwargs):
 		self.enquiry_user_id = kwargs.pop('enquiry_user_id', None)
