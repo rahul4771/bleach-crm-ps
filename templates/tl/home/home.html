@@ -304,8 +304,23 @@
 
         $("#today_man_hour").html(total_today_hours.toFixed(2));
         $("#week_man_hour").html(total_week_hours.toFixed(2));
-        $("#today_avg_man_hour").html(average_today_hours.toFixed(2));
-        $("#week_avg_man_hour").html(average_week_hours.toFixed(2));
+        
+        if (Number.isNaN(average_today_hours))
+        {
+            $("#today_avg_man_hour").html('0.00');
+        }
+        else
+        {
+            $("#today_avg_man_hour").html(average_today_hours.toFixed(2));   
+        }
+        if (Number.isNaN(average_week_hours))
+        {
+            $("#week_avg_man_hour").html('0.00');
+        }
+        else
+        {
+            $("#week_avg_man_hour").html(average_week_hours.toFixed(2));   
+        }
 
 
 
