@@ -66,7 +66,7 @@
 <th>Name</th>
 <th data-hide="phone,tablet">Area</th>
 <th data-hide="phone,tablet">Email</th>
-<th>Company</th>
+<th>Customer Type</th>
 <th data-hide="phone">Contact</th>
 <th class="align-center" data-hide="phone">Status</th>
 </tr>
@@ -85,7 +85,7 @@
         {% endfor %}
     </td>
     <td>{{client.email}}</td>
-    <td>{{client.company}}</td>
+    <td>{{client.customer_type}}</td>
     <td>{{client.mobile_number}}</td>
     <td>
         {% if client.active_status == True %}
