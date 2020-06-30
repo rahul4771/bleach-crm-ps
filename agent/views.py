@@ -451,8 +451,16 @@ class FeedbackDetails(IsAgent,View):
 
 		average_feedback    		  = feedbacks.aggregate(Avg('rating'))['rating__avg']
 		total_feedbacks               = feedbacks.count()
-		starring_percentages          = feedbacks.values('rating').annotate(percentage=Cast(Count('rating')/float(total_feedbacks)*100,FloatField())).order_by('rating')
-		
+		starring_percentages          = list(feedbacks.values('rating').annotate(percentage=Cast(Count('rating')/float(total_feedbacks)*100,FloatField())).order_by('rating'))
+
+		#append not done rating to default 0
+		for i in range(1,5):
+			new_rating = {}
+			if not any(starring['rating'] == i for starring in starring_percentages):
+				new_rating['rating']     = i
+				new_rating['percentage'] = 0
+				starring_percentages.append(new_rating)	
+
 		#order wise feedback
 		if search:
 			try:
