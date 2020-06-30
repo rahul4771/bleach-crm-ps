@@ -461,6 +461,10 @@ class FeedbackDetails(IsAgent,View):
 				new_rating['percentage'] = 0
 				starring_percentages.append(new_rating)	
 
+		starring_percentages = sorted(starring_percentages, key = lambda i: i['rating'])		
+
+
+
 		#order wise feedback
 		if search:
 			try:
