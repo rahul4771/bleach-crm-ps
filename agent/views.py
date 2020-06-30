@@ -454,7 +454,7 @@ class FeedbackDetails(IsAgent,View):
 		starring_percentages          = list(feedbacks.values('rating').annotate(percentage=Cast(Count('rating')/float(total_feedbacks)*100,FloatField())).order_by('rating'))
 
 		#append not done rating to default 0
-		for i in range(1,5):
+		for i in range(1,6):
 			new_rating = {}
 			if not any(starring['rating'] == i for starring in starring_percentages):
 				new_rating['rating']     = i
