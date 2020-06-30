@@ -41,6 +41,23 @@ def generate_random_username(size=10, chars=string.ascii_uppercase + string.digi
     except UserProfile.DoesNotExist:
         return username
 
+def UpdateAddressStatus(request):
+	address_id     = request.GET.get('address_id')
+	address_status = request.GET.get('status')
+
+	if address_status == 'true':
+		Address.objects.filter(id=address_id).update(currently_active=True)
+	else:
+		Address.objects.filter(id=address_id).update(currently_active=False)
+		
+	data = {}
+
+	data['address_id']     = address_id
+	data['address_status'] = address_status
+
+	return JsonResponse(data)
+
+
 #Ajax for governorates Area
 def GetArea(request):
 	
@@ -434,7 +451,7 @@ class FeedbackDetails(IsAgent,View):
 
 		average_feedback    		  = feedbacks.aggregate(Avg('rating'))['rating__avg']
 		total_feedbacks               = feedbacks.count()
-		starring_percentages          = feedbacks.values('rating').annotate(percentage=Cast(Count('rating')/float(total_feedbacks)*100,FloatField())).order_by('rating')
+		starring_percentages          = feedbacks.values('rating').annotate(percentage=Cast(Count('rating')/float(total_feedbacks)*100 or 0,FloatField())).order_by('rating')
 		
 		#order wise feedback
 		if search:
@@ -609,8 +626,8 @@ class NewEnquiry(IsAgent,View):
 
 			for address_form in address_formset:
 				if address_form.is_valid():
-					address_form_save = address_form.save(commit=False)
-					address_form_save.customer = enquiry_form_save
+					address_form_save                   = address_form.save(commit=False)
+					address_form_save.customer          = enquiry_form_save
 					address_form.save()
 			messages.success(request,"Customer Details Succesfully Added")
 
@@ -633,12 +650,11 @@ class NewEnquiry(IsAgent,View):
 
 
 class ExistingEnquiry(IsAgent,View):
-	address_formset_define    			= modelformset_factory(Address,form=AddressForm,extra=0,can_delete=True)
-	address_formset_Empty_define        = formset_factory(AddressForm,extra=1)
 	
 	def get(self,request,enquiry_id):
 		
-		enquiry_user    = UserProfile.objects.get(id=enquiry_id)
+		enquiry_user    = UserProfile.objects.get(id=enquiry_id) 
+
 
 		try:
 			addresses   = Address.objects.filter(customer__id=enquiry_id)
@@ -647,41 +663,48 @@ class ExistingEnquiry(IsAgent,View):
 
 
 		enquiry_form    = UserProfileForm(request.FILES or None,instance=enquiry_user)	
+		address_form    = AddressForm()	
 
-		if addresses:
-			address_formset = self.address_formset_define(queryset=addresses)
-		else:
-			address_formset = self.address_formset_Empty_define()	
-
-		return render(request,'agent/enquiry/existing_enquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'enquiryid':enquiry_id,'addresses':addresses,})
+		return render(request,'agent/enquiry/existing_enquiry.html',{'enquiry_form':enquiry_form,"address_form":address_form,'enquiryid':enquiry_id,'addresses':addresses,})
 
 	def post(self,request,enquiry_id):
 
 		enquiry_user    = UserProfile.objects.get(id=enquiry_id)
 		
-		enquiry_form    = UserProfileForm(request.POST,request.FILES or None,instance=enquiry_user)
-		
-		address_formset  = self.address_formset_define(request.POST)
+		action_mode 	= request.POST.get('action_type')
 
+		if action_mode == 'update_customer_details':
+			enquiry_form    = UserProfileForm(request.POST,request.FILES or None,instance=enquiry_user)
 
-		if enquiry_form.is_valid() and address_formset.is_valid(): 
-			enquiry_form_save            = enquiry_form.save(commit=False)	
-			enquiry_form_save.save()
+			if enquiry_form.is_valid(): 
+				enquiry_form_save            = enquiry_form.save(commit=False)	
+				enquiry_form_save.save()
 
-			for address_form in address_formset:
-				if address_form.is_valid():
-					address_form_save          = address_form.save(commit=False)
-					address_form_save.customer = enquiry_user
-					address_form_save.save()
-			messages.success(request,"Customer Details Succesfully Updated")
+				messages.success(request,"Customer Details Succesfully updated")
 
-		else:
-			if not enquiry_form.is_valid():
+			else:
 				messages.error(request,get_error(enquiry_form))
-			if not address_formset.is_valid():
-				messages.error(request,"An Error Occured")
+				
+				address_form = AddressForm()
 
-			return render(request,'agent/enquiry/existing_enquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'enquiryid':enquiry_id,})					
+				return render(request,'agent/enquiry/existing_enquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})
+
+		if action_mode == 'add_address':
+			address_form = AddressForm(request.POST)
+
+			if address_form.is_valid():
+				address_form_save          = address_form.save(commit=False)
+				address_form_save.customer = enquiry_user
+				address_form_save.save()
+				
+				messages.success(request,"New Address Succesfully Added")
+
+			else:
+				messages.error(request,get_error(address_form))					
+
+				enquiry_form = UserProfileForm(request.FILES or None,instance=enquiry_user)
+
+				return render(request,'agent/enquiry/existing_enquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})
 
 		return redirect('agent:agent-existingenquiry',enquiry_id)
 

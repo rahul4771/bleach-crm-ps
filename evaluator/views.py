@@ -435,8 +435,6 @@ class NewEnquiry(IsEvaluator,View):
 
 
 class ExistingEnquiry(IsEvaluator,View):
-	address_formset_define    			= modelformset_factory(Address,form=AddressForm,extra=0,can_delete=True)
-	address_formset_Empty_define        = formset_factory(AddressForm,extra=1)
 	
 	def get(self,request,enquiry_id):
 		
@@ -449,41 +447,49 @@ class ExistingEnquiry(IsEvaluator,View):
 
 
 		enquiry_form    = UserProfileForm(request.FILES or None,instance=enquiry_user)	
+		address_form    = AddressForm()	
 
-		if addresses:
-			address_formset = self.address_formset_define(queryset=addresses)
-		else:
-			address_formset = self.address_formset_Empty_define()	
-
-		return render(request,'evaluator/enquiry/existing_enquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'enquiryid':enquiry_id,'addresses':addresses,})
+		return render(request,'evaluator/enquiry/existing_enquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,'addresses':addresses,})
 
 	def post(self,request,enquiry_id):
 
 		enquiry_user    = UserProfile.objects.get(id=enquiry_id)
 		
-		enquiry_form    = UserProfileForm(request.POST,request.FILES or None,instance=enquiry_user)
-		
-		address_formset  = self.address_formset_define(request.POST)
+		action_mode 	= request.POST.get('action_type')
 
 
-		if enquiry_form.is_valid() and address_formset.is_valid(): 
-			enquiry_form_save            = enquiry_form.save(commit=False)	
-			enquiry_form_save.save()
+		if action_mode == 'update_customer_details': 
+			enquiry_form    = UserProfileForm(request.POST,request.FILES or None,instance=enquiry_user)
 
-			for address_form in address_formset:
-				if address_form.is_valid():
-					address_form_save          = address_form.save(commit=False)
-					address_form_save.customer = enquiry_user
-					address_form_save.save()
-			messages.success(request,"Customer Details Succesfully Updated")
+			if enquiry_form.is_valid(): 
+				enquiry_form_save            = enquiry_form.save(commit=False)	
+				enquiry_form_save.save()
+				messages.success(request,"Customer Details Succesfully updated")
 
-		else:
-			if not enquiry_form.is_valid():
+			else:
 				messages.error(request,get_error(enquiry_form))
-			if not address_formset.is_valid():
-				messages.error(request,"An Error Occured")
+				
+				address_form = AddressForm()	
 
-			return render(request,'evaluator/enquiry/existing_enquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'enquiryid':enquiry_id,})					
+				return render(request,'evaluator/enquiry/existing_enquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})			
+
+
+		if action_mode == 'add_address':
+			address_form = AddressForm(request.POST)
+
+			if address_form.is_valid():
+				address_form_save          = address_form.save(commit=False)
+				address_form_save.customer = enquiry_user
+				address_form_save.save()
+				
+				messages.success(request,"New Address Succesfully Added")
+
+			else:
+				messages.error(request,get_error(address_form))					
+
+				enquiry_form = UserProfileForm(request.FILES or None,instance=enquiry_user)
+
+				return render(request,'evaluator/enquiry/existing_enquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})					
 
 		return redirect('evaluator:evaluator-existingenquiry',enquiry_id)
 

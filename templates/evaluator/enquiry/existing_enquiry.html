@@ -16,12 +16,14 @@
             
 <div class="white-wrapper"><!--white-wrapper-->
 <div class="row">
-<div class="col-md-10"> 
-<h2 class="h2">Enquiry Form</h2>
+<div class="col-md-8"> 
 </div>
 <div class="col-md-2">
   <a class="a-btn back-btn" href="{% url 'evaluator:evaluator-newenquiry' %}">Back</a>
   </div>
+<div class="col-md-2">  
+  <button type="button" class="primary-btn add_address_button">Add Address</button>
+</div>  
 </div>  
   <div class="row">
 
@@ -33,7 +35,7 @@
 
          <div class="page-form-head">
 
-           <h1>Existing Enquiry</h1>
+           <h1 class="h2">Existing Enquiry</h1>
 
          </div>
 
@@ -54,45 +56,23 @@
           {% endfor %}
 
 
-         {{ address_formset.management_form }}
-
-         {% for form in address_formset %}
-
           <div class="div-section">
 
             <div class="div-section-head">
 
-              <h1>Customer Address</h1>  
+              <h1 class="h2">Please Select Customer Cleaning Addresses</h1>  
 
              </div>
-
-            <div class="link_formset">    
-
-              {% for field in form %}
-
-              <div class="page-col">
-
-                {{ field.errors }}    
-
-                {{ field.label_tag }} {{ field }}
-
-                {% if field.help_text %}
-
-                <p class="help">{{ field.help_text|safe }}</p>
-
-                {% endif %}
-
+             {% for address in addresses %}
+             <div class="address">
+              {{address.governorate}},{{address.area}},{{address.block}} Block,{{address.avenue}},{{address.building}} Building,{{address.street}} Street,{{address.floor}} Floor,{{address.apartment}}
              </div>
-
+             <input type="checkbox" name="active_addresses" class="active_address" {% if address.currently_active %}checked{% endif %} value="{{address.id}}">
+             <hr>
              {% endfor %}
 
           </div>
 
-        </div>
-
-      {% endfor %}
-
-</div>
 <div class="page-footer text-center">
 
             <button type="button" class="primary-btn" onclick="submitAnyForm(this);">Update</button>
@@ -114,6 +94,52 @@
       </div><!--main-content-holder-->
         </div><!--container-fluid space-->
     </section><!--content-->
+
+
+<!-- add_address_popup -->
+<div class="modal fade pop-up" id="add_address_popup" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form method="post" enctype= "multipart/form-data">{% csrf_token %}
+      <input type="hidden" name="action_type" value="add_address">
+      <div class="body pop-up-small">
+          <div class="modal-header">
+            <h1>Address</h1>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-12">
+         {% for field in address_form %}
+              <div class="page-col">
+
+                {{ field.errors }}    
+
+                {{ field.label_tag }} {{ field }}
+
+                {% if field.help_text %}
+
+                <p class="help">{{ field.help_text|safe }}</p>
+
+                {% endif %}
+
+             </div>
+
+             {% endfor %}
+
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="close-btn" data-dismiss="modal">Close</button>
+              <button type="button" class="primary-btn" onclick="submitAnyForm(this);">Add</button>
+          </div>
+        </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- /add_address_popup -->
+    
 {% include 'evaluator/common/footer.html' %}
 </div><!--wrapper-->
 {% endblock %}
@@ -121,61 +147,7 @@
 {% block javascript %}
 <script>
 
-{% if addresses %}
-var x = {{addresses.count}}-1;
-var old_count = {{addresses.count}}-1;
-{% else %}
-var x = 0;
-{% endif %}
-
-var ajax_ret_areas; 
-
 $('document').ready(function(){
-//formset
-    $('.link_formset').formset({
-
-        addText: 'Add Address',
-
-        deleteText: 'Remove Address', 
-
-        added: add_row,
-
-        removed: remove_row,
-
-    });
-
-
-function add_row()
-
-     {
-      x++;
-      if(old_count<x)
-      {
-      $("#id_form-"+x+"-area").empty();
-      $("#id_form-"+x+"-id").parents('.page-col').hide();
-      }
-      else
-      {
-        x--;
-      }
-
-    }
-
-
-function remove_row()
-
-     {
-
-        x--;
-        if(old_count<x)
-        {
-         console.log("hiiii");
-        }
-        else
-        {
-          x++;
-        }
-     }
 
 //HIDE AND SHOW WITH CUSTOMER TYPE initial
 customer_type = $("#id_customer_type").val();
@@ -191,25 +163,8 @@ $("#id_company").parents('.page-col').hide();
 $("#id_job_title").parents('.page-col').hide();
 }
 
-
-
-//Initial Case
-counter=0;
-{% if addresses %}
-{%  for address in addresses %}
-$("#id_form-"+counter+"-id").parents('.page-col').hide();
-
-$("#id_form-"+counter+"-area").empty();
-$("#id_form-"+counter+"-area").append($('<option>', {
-                 value: "{{address.area.id}}", 
-                 text: "{{address.area.name}}",
-                 selected:true,
-           }));
-counter++;
-{% endfor %}
-{% endif %}
-
-    
+//initial areas empty
+$("#id_area").empty();
 
 });
 
@@ -232,6 +187,11 @@ $("#id_job_title").val('');
 });
 
 
+//popup
+$(".add_address_button").click(function () {   
+    $('#add_address_popup').modal('show');        
+      });
+
 //Append area for governorate change
 
 $(".governorate").change(function(){ 
@@ -251,11 +211,11 @@ $(".governorate").change(function(){
 
           ajax_ret_areas = data;     
 
-   $("#id_form-"+x+"-area").empty();
+   $("#id_area").empty();
 
   
 
-          $("#id_form-"+x+"-area").append($('<option>', {
+          $("#id_area").append($('<option>', {
 
           value: "", 
 
@@ -265,7 +225,7 @@ $(".governorate").change(function(){
 
         $.each( ajax_ret_areas, function( key, values ) {
 
-              $("#id_form-"+x+"-area").append($('<option>', {        
+              $("#id_area").append($('<option>', {        
 
     value: key, 
 
@@ -282,5 +242,24 @@ $(".governorate").change(function(){
 
 });
 
+//update address status
+$(".active_address").change(function(){
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-updateaddress' %}",
+
+        data: {'address_id':this.value,'status':this.checked}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+
+          console.log(data);
+
+                                }
+          });                       
+
+ })
 </script>    
 {% endblock %}
