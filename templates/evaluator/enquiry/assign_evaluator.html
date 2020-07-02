@@ -49,7 +49,6 @@
 {% for evaluator in evaluation_details %}
 <tr id="evaluator{{evaluator.id}}">
 <th width="4.54%" bgcolor="#eee" class="fixed-side"><img {% if evaluator.profile_image %} src="{{evaluator.profile_image.url}}" {% else %} src="{% static 'files/images/profile-pic.jpg' %}" {% endif %} class="profile-avtar image-table-view"></th>
-<td width="4.54%"><button type="button" class="primary-btn assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">Add</button></td>
 </tr>
 {% endfor %}
 </tbody>
@@ -81,17 +80,9 @@
                 <div class="pop-up-col">
                         <label>Notes</label>
                         <textarea maxlength="1000" name="agent_notes" ></textarea>
-                </div>
+                </div>   
 
-         {{ evaluation_formset.management_form }}
-
-         {% for form in evaluation_formset %}
-
-          <div class="div-section">
-              
-            <div class="link_formset">    
-
-              {% for field in form %}
+              {% for field in evaluation_form %}
 
               <div class="page-col">
 
@@ -109,11 +100,6 @@
 
              {% endfor %}
 
-          </div>
-
-        </div>
-
-      {% endfor %}
               </div>
             </div>
           </div>
@@ -136,45 +122,15 @@
 
 {% block javascript %}
 <script type="text/javascript">
-  var x=0;
+
 $('document').ready(function(){  
-
-//formset
-    $('.link_formset').formset({
-
-        addText: 'Add Evaluation',
-
-        deleteText: 'Remove Address', 
-
-        added: add_row,
-
-        removed: remove_row,
-
-    });
-
-function add_row()
-{
-  x++;
-  //initialisation of datetime field
-  $(function () {
-  $("#id_form-"+x+"-proposed_time").datetimepicker({  
-    format: "DD/MM/YYYY hh:mm A",
-  });
-});
-}
-
-
-function remove_row()
-{
-x--; 
-}
-
 
 //initialisation of datetime field
   $(function () {
-  $("#id_form-"+x+"-proposed_time").datetimepicker({  
+  $("#id_proposed_time").datetimepicker({  
     format: "DD/MM/YYYY hh:mm A",
   });
+
 });
 
 
@@ -212,6 +168,11 @@ x--;
                               }  
                               
                             }
+
+                        {% if forloop.last or forloop.count == 1 %}
+                        
+                        $("#evaluator{{evaluator.id}} td:last").append('<br><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button>');
+                        {% endif %}    
                             
 
                         {% endfor %}
@@ -219,31 +180,41 @@ x--;
                     }
                     else
                     {
-                      $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">----</a></td>');  
+                      $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');  
                     }
                     $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
                 }    
             {% else %}
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
             {% endif %}
 
@@ -251,15 +222,16 @@ x--;
 
  });
 
-$(".assign_evaluator_button").click(function () { 	
+$('window').ready(function(){
+$(".assign_evaluator_button").click(function () {   
     $('#addevaluationdetails_popup').modal('show');  
-    $('#id_form-0-evaluator').val($(this).data('evaluator_id'));
-      
+    $('#id_evaluator').val($(this).data('evaluator_id'));    
       });
+});
 
  function set_params_go(args)
 {
-var url='{% url 'agent:agent-assignevaluator' enquiryid %}';
+var url='{% url 'evaluator:evaluator-assignevaluator' enquiryid evaluation_id %}';
 var params={evaluation_calendar_date:$('#evaluation_calendar').val(),
 };
 for(key in args) 

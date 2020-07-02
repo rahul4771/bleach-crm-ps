@@ -145,4 +145,4 @@ class Address(models.Model):
         return str(self.area.name)
 
     def __str__(self):
-        return self.area.name
+        return self.area.name+"-"+self.block+" Block"

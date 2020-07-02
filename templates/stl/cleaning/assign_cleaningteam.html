@@ -68,24 +68,8 @@
 
 				<div class="multi_field_wrapper multi-field-wrapper">
 		        <div class="multi-fields">
-
-		          	<div class="multi-field page-col">
-		        	    <label>Cleaner :</label>
-		           		<select name="assigned_cleaner">
-		           			{% for cleaner in cleaners %}
-		           			<option value="{{cleaner.id}}">{{cleaner.name}}</option>
-		           			{% endfor %}
-		           		</select>	
-		          		<button type="button" class="remove-field-btn" title="Remove field">
-		              	<i class="fa fa-minus-square-o" aria-hidden="true"></i>
-		          		</button>
-		          	</div>
 		        </div>
-
-		      <button type="button" class="add-field-btn" title="Add field">
-		        <i class="fa fa-plus-square-o" aria-hidden="true"></i>
-		      </button> 
-		    				</div>
+		    	</div>
 					
 
 					<div class="page-footer text-center">
@@ -128,7 +112,60 @@
 
         
         $("#id_no_of_cleaners").val({{order_schedule.order_scheduler_book.number_of_cleaners}});
+	
+
+
+    //Append cleaners by default select cleaners in order    
+    no_of_cleaners = {{order_schedule.order_scheduler_book.number_of_cleaners}};
+
+    for(i=1;i<=no_of_cleaners;i++)
+    {
+    	$('.multi-fields').append('<div class="multi-field page-col"><label>Cleaner :</label><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner">{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select>	</div>');
+
+    	$('#assigned_cleaner'+i+' :nth-child('+i+')').prop('selected',true);
+    }
+
+
 	});
+
+
+$('window').ready(function(){
+
+//to remove duplicate selection
+$(".assign_cleaner").change(function(){
+	selected_option = this.value;
+	selected_id     = this.id;
+
+	//to remove selected occur in any other option
+	$('.assign_cleaner').each(function(){
+		
+		if(this.id != selected_id)
+		{
+			if(selected_option == this.value)
+			{
+				$('option:selected',this).remove();
+			}
+		}
+	});
+	//cross checking
+	$('.assign_cleaner').each(function(){
+		cross_check_selected_option = this.value;
+		cross_check_id     			= this.id;
+		$('.assign_cleaner').each(function(){
+			if(cross_check_id != this.id)
+			{
+				if(cross_check_selected_option == this.value)
+				{
+					$('option:selected',this).remove();		
+				}
+			}
+		});
+	
+	});	
+
+});
+
+})
 
 </script>	
 {% endblock %}

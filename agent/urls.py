@@ -17,7 +17,12 @@ urlpatterns = [
 
 	url(r'^newenquiry/$',views.NewEnquiry.as_view(),name='agent-newenquiry'),
 	url(r'^existingenquiry/(?P<enquiry_id>[-\w]+)$',views.ExistingEnquiry.as_view(),name='agent-existingenquiry'),
-	url(r'^assignevaluator/(?P<enquiry_id>[-\w]+)$',views.AssignEvaluator.as_view(),name='agent-assignevaluator'),
+	
+
+	url(r'^makeevaluation/(?P<enquiry_id>[-\w]+)$',views.MakeEvaluation.as_view(),name='agent-makeevaluation'),
+	url(r'^assignevaluator/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.AssignEvaluator.as_view(),name='agent-assignevaluator'),
+	
+	
 	url(r'^makequatation/(?P<enquiry_id>[-\w]+)/$',views.MakeQuatationBase.as_view(),name='agent-makequatation'),
 	url(r'^makequatation/phase1/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1.as_view(),name='agent-makequatation1'),
 	url(r'^makequatation/phase2/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2.as_view(),name='agent-makequatation2'),

@@ -5,8 +5,11 @@ from user.models import UserProfile
 #Customer Details add form
 class CleaningTeamAssignForm(forms.ModelForm):
 	class Meta:
-		model  = CleaningTeam
-		fields = ('name','team_leader','no_of_cleaners','drop_off_driver','pick_up_driver')	
+		model   = CleaningTeam
+		fields  = ('team_leader','no_of_cleaners','drop_off_driver','pick_up_driver')	
+		widgets = {
+					'no_of_cleaners':forms.NumberInput(attrs={'readonly':'readonly',}),
+		}
 	
 	def __init__(self,*args,**kwargs):
 		super(CleaningTeamAssignForm, self).__init__(*args, **kwargs)
@@ -20,9 +23,12 @@ class CleaningTeamAssignForm(forms.ModelForm):
 #Customer Details add form
 class FollowupTeamAssignForm(forms.ModelForm):
 	class Meta:
-		model  = FollowUpTeam
-		fields = ('name','team_leader','no_of_cleaners','drop_off_driver','pick_up_driver')	
-	
+		model   = FollowUpTeam
+		fields  = ('team_leader','no_of_cleaners','drop_off_driver','pick_up_driver')	
+		widgets = {
+					'no_of_cleaners':forms.NumberInput(attrs={'readonly':'readonly',}),
+		}
+
 	def __init__(self,*args,**kwargs):
 		super(FollowupTeamAssignForm, self).__init__(*args, **kwargs)
 		self.fields['team_leader'] = forms.ModelChoiceField(

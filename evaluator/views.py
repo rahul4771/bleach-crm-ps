@@ -427,7 +427,7 @@ class NewEnquiry(IsEvaluator,View):
 		redirection = request.POST.get('redirect_to')	
 		
 		if redirection == 'assign_evaluator':
-			return redirect('evaluator:evaluator-assignevaluator',enquiry_form_save.id)	
+			return redirect('evaluator:evaluator-makeevaluation',enquiry_form_save.id)	
 		elif redirection == 'quatation':
 			return redirect('evaluator:evaluator-makequatation',enquiry_form_save.id)
 		else:
@@ -493,9 +493,23 @@ class ExistingEnquiry(IsEvaluator,View):
 
 		return redirect('evaluator:evaluator-existingenquiry',enquiry_id)
 
-class AssignEvaluator(IsEvaluator,View):
-	evaluation_formset_define    = formset_factory(MyEvaluationDetailsForm)
+
+class MakeEvaluation(IsEvaluator,View):
 	def get(self,request,enquiry_id):
+		
+		tracking_no    = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000
+		evaluation_no  = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+str(tracking_no+1)
+
+		#Create New Evaluation
+		new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=tracking_no+1,call_attender=request.user,customer_id=enquiry_id)
+		
+		return redirect('evaluator:evaluator-assignevaluator',enquiry_id,new_evaluation.id)
+
+
+class AssignEvaluator(IsEvaluator,View):
+	def get(self,request,enquiry_id,evaluation_id):
+
+		evaluation_form 		    = MyEvaluationDetailsForm(enquiry_user_id=enquiry_id,evaluation_id=evaluation_id,)
 				
 		#Evaluation details of each evaluator for evaluation table
 		evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
@@ -508,39 +522,38 @@ class AssignEvaluator(IsEvaluator,View):
 		evaluation_details		  = UserProfile.objects.filter(is_active=True,id=request.user.id).prefetch_related(Prefetch('evaluator_evaluation',queryset=EvaluationDetails.objects.filter(is_active=True,proposed_time__contains=evaluation_date.date()),to_attr='evaluation_details'))
 		
 
-		return render(request,'evaluator/enquiry/assign_evaluator.html',{'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'enquiryid':enquiry_id,'evaluation_formset':self.evaluation_formset_define(form_kwargs={'enquiry_user_id':enquiry_id}),})
+		return render(request,'evaluator/enquiry/assign_evaluator.html',{'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'enquiryid':enquiry_id,'evaluation_id':evaluation_id,'evaluation_form':evaluation_form,})
 
-	def post(self,request,enquiry_id):
-		evaluation_formset  = self.evaluation_formset_define(request.POST,form_kwargs={'enquiry_user_id':enquiry_id})
+	def post(self,request,enquiry_id,evaluation_id):
+		evaluation_form  = MyEvaluationDetailsForm(enquiry_user_id=enquiry_id,evaluation_id=evaluation_id,data=request.POST)		
 
-		action_mode    = request.POST.get('action_type')
+		action_mode      = request.POST.get('action_type')
 
 
 		if action_mode == 'add':
 
+			#update evaluation
 			agent_notes  = request.POST.get('agent_notes')
-			tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000
-			evaluation_no= 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+str(tracking_no+1)
-
-			#Create New Evaluation
-			new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=tracking_no+1,call_attender=request.user,attender_notes=agent_notes,customer_id=enquiry_id)	
+			Evaluation.objects.filter(id=evaluation_id).update(attender_notes=agent_notes)
 
 			#Save Evaluation Details
-			if evaluation_formset.is_valid(): 
-
-				for evaluation_form in evaluation_formset:
-					if evaluation_form.is_valid():
-						evaluation_form_save            = evaluation_form.save(commit=False)
-						evaluation_form_save.evaluation = new_evaluation
-						evaluation_form_save.evaluator  = request.user
-						evaluation_form_save.save()
+			if evaluation_form.is_valid():
+				evaluation_form_save              = evaluation_form.save(commit=False)
+				
+				proposed_time                     = evaluation_form.cleaned_data['proposed_time']
+				converted_proposed_time           = datetime.strptime(proposed_time,'%d/%m/%Y %I:%M %p')
+				print(converted_proposed_time)
+				evaluation_form_save.proposed_time   = converted_proposed_time
+				evaluation_form_save.evaluation_id   = evaluation_id
+				evaluation_form_save.evaluator       = request.user
+				evaluation_form_save.save()
 
 				messages.success(request,"Evaluation Details Succesfully Completed")
 
 			else:
-				messages.error(request,"An Error Occured")	
+				messages.error(request,get_error(evaluation_form))	
 		
-		return redirect('evaluator:evaluator-assignevaluator',enquiry_id)
+		return redirect('evaluator:evaluator-assignevaluator',enquiry_id,evaluation_id)
 
 
 class MakeQuatationBase(IsEvaluator,View):
