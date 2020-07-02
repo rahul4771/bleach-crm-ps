@@ -18,7 +18,6 @@ MEDIA_CHOICES = (
 class CleaningTeam(models.Model):
 	order_scheduler = models.ForeignKey(OrderScheduler,blank=True,null=True,related_name='cleaning_team_order_scheduler')
 	team_leader 	= models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaningteam_team_leader')
-	name			= models.CharField(max_length=50,blank=False,null=False)
 	start_at 		= models.DateTimeField(blank=True,null=True)
 	end_at 			= models.DateTimeField(blank=True,null=True)
 	check_in 		= models.DateTimeField(blank=True,null=True)
@@ -32,10 +31,10 @@ class CleaningTeam(models.Model):
 	updated         = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.name)
+		return str(self.team_leader.name)
 
 	def __str__(self):
-		return self.name
+		return self.team_leader.name
 
 #For Tracking Medias Uploaded by Team Leader on Site
 
@@ -49,10 +48,10 @@ class CleaningTeamMedia(models.Model):
 	updated           		 = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.team.name)
+		return str(self.team.team_leader.name)
 
 	def __str__(self):
-		return self.team.name
+		return self.team.team_leader.name
 
 #Tasks assigned to Cleaning Team
 
@@ -66,10 +65,10 @@ class CleaningTeamTask(models.Model):
 	created            = models.DateTimeField(auto_now_add=True)
 	updated            = models.DateTimeField(auto_now=True)
 	def __unicode__(self):
-		return str(self.cleaning_team.name)
+		return str(self.cleaning_team.team_leader.name)
 
 	def __str__(self):
-		return self.cleaning_team.name
+		return self.cleaning_team.team_leader.name
 
 #To Save Cleaning Team Members Details
 
@@ -108,10 +107,10 @@ class FollowUpTeam(models.Model):
 	updated            = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.name)
+		return str(self.team_leader.name)
 
 	def __str__(self):
-		return self.name
+		return self.team_leader.name
 
 #For Tracking Medias Uploaded by Followup Team Leader on Site
 
@@ -125,10 +124,10 @@ class FollowUpTeamMedia(models.Model):
 	updated           		 = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.team.name)
+		return str(self.team.team_leader.name)
 
 	def __str__(self):
-		return self.team.name
+		return self.team.team_leader.name
 
 #Tasks assigned to Followup Team
 
@@ -142,10 +141,10 @@ class FollowUpTeamTask(models.Model):
 	created            		 = models.DateTimeField(auto_now_add=True)
 	updated           		 = models.DateTimeField(auto_now=True)
 	def __unicode__(self):
-		return str(self.followup_team.name)
+		return str(self.followup_team.team_leader.name)
 
 	def __str__(self):
-		return self.followup_team.name
+		return self.followup_team.team_leader.name
 
 
 #To Save Followup Team Members Details
@@ -160,7 +159,7 @@ class FollowUpTeamMember(models.Model):
 	updated         = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.team.name)
+		return str(self.team.team_leader.name)
 
 	def __str__(self):
-		return str(self.team.name)		
+		return str(self.team.team_leader.name)		

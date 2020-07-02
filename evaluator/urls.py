@@ -12,7 +12,8 @@ urlpatterns = [
 	url(r'^newenquiry/$',views.NewEnquiry.as_view(),name='evaluator-newenquiry'),
 	url(r'^existingenquiry/(?P<enquiry_id>[-\w]+)$',views.ExistingEnquiry.as_view(),name='evaluator-existingenquiry'),
 	
-	url(r'^assignevaluator/(?P<enquiry_id>[-\w]+)$',views.AssignEvaluator.as_view(),name='evaluator-assignevaluator'),
+	url(r'^makeevaluation/(?P<enquiry_id>[-\w]+)$',views.MakeEvaluation.as_view(),name='evaluator-makeevaluation'),
+	url(r'^assignevaluator/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.AssignEvaluator.as_view(),name='evaluator-assignevaluator'),
 	
 	url(r'^makequatation/(?P<enquiry_id>[-\w]+)/$',views.MakeQuatationBase.as_view(),name='evaluator-makequatation'),
 	url(r'^makequatation/phase1/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1.as_view(),name='evaluator-makequatation1'),
