@@ -74,40 +74,27 @@
 
              {% endfor %} 
 
+        <div class="multi-field-wrapper">
+            <div class="multi-fields">
+              <div class="multi-field page-col">
+               <label>Upload Media :</label>
+               <input type="file" name="media"  class="mediaupload" maxlength="100"/>
+              <button type="button" class="remove-field-btn" title="Remove field">
+                  <i class="fa fa-minus-square-o" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+
+            <button type="button" class="add-field-btn" title="Add field">
+              <i class="fa fa-plus-square-o" aria-hidden="true"></i>
+            </button> 
+        </div>
+
           </div>
 
         </div>
 
       {% endfor %}
-
-      
-      <div class="multi_field_wrapper multi-field-wrapper">
-
-        <div class="multi-fields">
-
-          <div class="multi-field page-col">
-
-           <label>Upload Media :</label>
-
-           <input type="file" name="media" maxlength="100"/>
-
-          <button type="button" class="remove-field-btn" title="Remove field">
-
-              <i class="fa fa-minus-square-o" aria-hidden="true"></i>
-
-            </button>
-
-          </div>
-
-        </div>
-
-      <button type="button" class="add-field-btn" title="Add field">
-
-        <i class="fa fa-plus-square-o" aria-hidden="true"></i>
-
-      </button> 
-
-    </div>
 
 </div>
 
@@ -208,6 +195,27 @@ $(function () {
     format: 'hh:mm A',
   });
 });
+
+
+//add or remove image upload
+class_to_be_added = "copywrapper"+x
+$('.multi-field-wrapper').last().addClass(class_to_be_added);
+$('.mediaupload').last().attr('name','media'+x);
+
+// add-field and remove
+$('.'+class_to_be_added).each(function() {
+  var $wrapper = $('.multi-fields', this); 
+  $(".add-field-btn", $(this)).click(function(e) {
+    var filed = $('.multi-field:first-child', $wrapper).clone(true);
+      filed.appendTo($wrapper).find('input').val('').attr('name','media'+x).focus()
+});
+  $('.multi-field .remove-field-btn', $wrapper).click(function() {
+      if ($('.multi-field', $wrapper).length > 1)
+          $(this).parent('.multi-field').remove();
+  });
+});
+
+
 }    
 
 
@@ -273,6 +281,23 @@ $(function () {
   });
 });
 
+//add or remove image upload
+class_to_be_added = "copywrapper"+x
+$('.multi-field-wrapper').last().addClass(class_to_be_added);
+$('.mediaupload').last().attr('name','media'+x);
+
+// add-field and remove
+$('.'+class_to_be_added).each(function() {
+  var $wrapper = $('.multi-fields', this); 
+  $(".add-field-btn", $(this)).click(function(e) {
+    var filed = $('.multi-field:first-child', $wrapper).clone(true);
+      filed.appendTo($wrapper).find('input').val('').attr('name','media'+x).focus()
+});
+  $('.multi-field .remove-field-btn', $wrapper).click(function() {
+      if ($('.multi-field', $wrapper).length > 1)
+          $(this).parent('.multi-field').remove();
+  });
+});
 
 });
 

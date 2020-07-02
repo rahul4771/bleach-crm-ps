@@ -17,15 +17,22 @@ class EvaluationBookInline(admin.TabularInline):
 	model = EvaluationBook
 	extra = 1   
 
-class EvaluationDetailsAdmin(admin.ModelAdmin):
-	inlines = (EvaluationMediaInline,EvaluationBookInline)
+
+
+
 
 class EvaluationMediaAdmin(admin.ModelAdmin):
 	radio_fields = {"media_type":admin.HORIZONTAL,"taken_status":admin.HORIZONTAL}
 
+class EvaluationBookAdmin(admin.ModelAdmin):
+	inlines = (EvaluationMediaInline,)
+
+class EvaluationDetailsAdmin(admin.ModelAdmin):
+	inlines = (EvaluationBookInline,)
+
 admin.site.register(EvaluationDetails,EvaluationDetailsAdmin)
 admin.site.register(EvaluationMedia,EvaluationMediaAdmin)
-admin.site.register(EvaluationBook)
+admin.site.register(EvaluationBook,EvaluationBookAdmin)
 admin.site.register(PaymentTrack)
 
 #Django Panel Customisation

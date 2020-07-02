@@ -885,6 +885,15 @@ class MakeQuatationPhase2(IsAgent,View):
 					service_form_save.evaluation_details_id = evaluation_detail_id
 					service_form_save.save()
 
+					#To Save Media
+					medias = request.FILES.getlist('media'+str(form_count))
+					if not medias==['']:
+						for media in medias:
+							EvaluationMedia.objects.create(
+							        evaluation_book=service_form_save,
+							        media=media,
+							        )
+
 
 					#for updating cost details in evaluation details
 					cost     = int(request.POST.get('form-'+str(form_count)+'-estimated_cost')) 
@@ -925,22 +934,13 @@ class MakeQuatationPhase2(IsAgent,View):
 			now = timezone.now()
 			OrderScheduler.objects.bulk_create(order_schedule_array)
 			created_schedules = OrderScheduler.objects.filter(order=new_order[0],created__gte=now)	
-	
-
-			#To Save Media
-			medias = request.FILES.getlist('media')
-			if not medias==['']:
-				for media in medias:
-					EvaluationMedia.objects.create(
-					        evaluation_details_id=evaluation_detail_id,
-					        media=media,
-					        )
 
 			messages.success(request,"Services Succesfully Added")
 
 		else:
 			if not service_formset.is_valid():
 				messages.error(request,"An Error Occured")
+				print(service_formset)
 
 			return render(request,'agent/enquiry/quatationphase2.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,})	
 
