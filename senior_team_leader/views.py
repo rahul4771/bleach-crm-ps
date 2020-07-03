@@ -180,8 +180,12 @@ class TicketDetails(IsSeniorTeamLeader,View):
 			follow_up_cleaning_count = 0
 
 		#PAGINATION TICKETS		
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
 		page = request.GET.get('page',1) 
-		paginator=Paginator(tickets,10)
+		paginator=Paginator(tickets,no_of_entries)
 		try: 
 			tickets=paginator.page(page) 
 		except PageNotAnInteger:
@@ -201,7 +205,7 @@ class TicketDetails(IsSeniorTeamLeader,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(tickets.end_index())-(tickets.start_index())+1	
 
-		return render(request,'stl/ticket/tickets.html',{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})		
+		return render(request,'stl/ticket/tickets.html',{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})		
 		
 
 class AssigncleaningTeam(View):

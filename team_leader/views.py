@@ -72,6 +72,25 @@ class TlHome(IsTeamLeader,View):
 		except:
 			investigations  = 	None
 
+
+		#My cleanings	
+		my_cleaning_calendar_date	= request.GET.get('my_cleaning_calendar_date')
+		
+		try:
+			my_cleaning_date = datetime.strptime(my_cleaning_calendar_date,'%d-%m-%Y')
+		except:
+			my_cleaning_date = timezone.now()
+
+		try:	
+			my_cleanings  = CleaningTeam.objects.filter(Q(Q(start_at__contains=my_cleaning_date.date())&Q(team_leader=request.user))).select_related('order_scheduler__order_scheduler_book__service_type','order_scheduler__order__evaluation__customer','order_scheduler__customer_address')
+		except:
+			my_cleanings  = None
+		try:
+			my_followups  = FollowUpTeam.objects.filter(Q(Q(start_at__contains=my_cleaning_date.date())&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__customer_address')
+		except:
+			my_followups  = None	
+			
+
 		#cleaning schedule & followup schedule for cleaning calendar			
 		cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
 		
@@ -100,7 +119,7 @@ class TlHome(IsTeamLeader,View):
 		except:
 			sp_calendar_followup_cleaning = None
 
-		return render(request,'tl/home/home.html',{"today_cleaning_job_count":today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_cleaning_active_teams':today_cleaning_active_teams,'week_cleaning_active_teams':week_cleaning_active_teams,'today_followup_active_teams':today_followup_active_teams,'week_followup_active_teams':week_followup_active_teams,'today_date':today_date,'weekstart_date':weekstart_date,'investigation_date':investigation_date,'investigations':investigations,'calendar_order_cleaning':calendar_order_cleaning,'calendar_followup_cleaning':calendar_followup_cleaning,'sp_calendar_order_cleaning':sp_calendar_order_cleaning,'sp_calendar_followup_cleaning':sp_calendar_followup_cleaning,'cleaning_date':cleaning_date,'today_investigation_count':today_investigation_count,'week_investigation_count':week_investigation_count})
+		return render(request,'tl/home/home.html',{"today_cleaning_job_count":today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_cleaning_active_teams':today_cleaning_active_teams,'week_cleaning_active_teams':week_cleaning_active_teams,'today_followup_active_teams':today_followup_active_teams,'week_followup_active_teams':week_followup_active_teams,'today_date':today_date,'weekstart_date':weekstart_date,'investigation_date':investigation_date,'investigations':investigations,'calendar_order_cleaning':calendar_order_cleaning,'calendar_followup_cleaning':calendar_followup_cleaning,'sp_calendar_order_cleaning':sp_calendar_order_cleaning,'sp_calendar_followup_cleaning':sp_calendar_followup_cleaning,'cleaning_date':cleaning_date,'today_investigation_count':today_investigation_count,'week_investigation_count':week_investigation_count,'my_cleaning_date':my_cleaning_date,"my_cleanings":my_cleanings,"my_followups":my_followups,})
 
 class TicketDetails(IsTeamLeader,View):
 	def get(self,request):
@@ -130,8 +149,12 @@ class TicketDetails(IsTeamLeader,View):
 			follow_up_cleaning_count = 0
 		
 		#PAGINATION TICKETS		
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
 		page = request.GET.get('page',1) 
-		paginator=Paginator(tickets,10)
+		paginator=Paginator(tickets,no_of_entries)
 		try: 
 			tickets=paginator.page(page) 
 		except PageNotAnInteger:
@@ -151,7 +174,7 @@ class TicketDetails(IsTeamLeader,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(tickets.end_index())-(tickets.start_index())+1
 
-		return render(request,'tl/ticket/tickets.html',{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})		
+		return render(request,'tl/ticket/tickets.html',{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})		
 		
 class InvestigationTask(View):
 	def get(self,request,investigation_id):
@@ -207,7 +230,7 @@ class Cleaning(View):
 	def get(self,request,team_id):
 
 		try:
-			cleaning_team_detail = CleaningTeam.objects.select_related('team_leader','drop_off_driver','pick_up_driver','order_scheduler__order_scheduler_book__service_type','order_scheduler__order_scheduler_book__cleaning_method','order_scheduler__order_scheduler_book__cleaning_method','order_scheduler__order_scheduler_book__location_type','order_scheduler__order_scheduler_book','order_scheduler__customer_address').get(is_active=True,id=team_id)
+			cleaning_team_detail = CleaningTeam.objects.select_related('team_leader','drop_off_driver','pick_up_driver','order_scheduler__order_scheduler_book__service_type','order_scheduler__order_scheduler_book__cleaning_method','order_scheduler__order_scheduler_book__cleaning_method','order_scheduler__order_scheduler_book__location_type','order_scheduler__order_scheduler_book','order_scheduler__customer_address','order_scheduler__order__evaluation').get(is_active=True,id=team_id)
 		except:	
 			cleaning_team_detail = None
 
@@ -215,7 +238,7 @@ class Cleaning(View):
 		if cleaning_team_detail: 
 			if not cleaning_team_detail.check_in:
 				cleaning_team_detail.check_in                    = timezone.now()
-			cleaning_team_detail.order_scheduler.work_status = 'CLEANING_IN_PROGRESS'
+			cleaning_team_detail.order_scheduler.work_status     = 'CLEANING_IN_PROGRESS'
 			cleaning_team_detail.save()	
 			cleaning_team_detail.order_scheduler.save()
 		
@@ -238,13 +261,24 @@ class Cleaning(View):
 			cleaning_team_detail.order_scheduler.order.save()	
 
 		#To Save Media
-		medias = request.FILES.getlist('media')
+		medias = request.FILES.getlist('mediabefore')
 		if not medias==['']:
 			for media in medias:
 				CleaningTeamMedia.objects.create(
 				        team_id=team_id,
 				        media=media,
+				        taken_status='BEFORE_CLEANING'
 				        )
+
+		#To Save Media
+		medias = request.FILES.getlist('mediaafter')
+		if not medias==['']:
+			for media in medias:
+				CleaningTeamMedia.objects.create(
+				        team_id=team_id,
+				        media=media,
+				        taken_status='AFTER_CLEANING'
+				        )		
 
 		messages.success(request,"Checkout Succesfully")
 				
@@ -253,7 +287,7 @@ class Cleaning(View):
 class FollowupCleaning(View):
 	def get(self,request,team_id):
 
-		followup_team_detail = FollowUpTeam.objects.select_related('team_leader','drop_off_driver','pick_up_driver','followup_scheduler__follow_up__investigation__investigator','followup_scheduler__follow_up__investigation__order','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__cleaning_method','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__location_type','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book','followup_scheduler__customer_address').get(is_active=True,id=team_id)
+		followup_team_detail = FollowUpTeam.objects.select_related('team_leader','drop_off_driver','pick_up_driver','followup_scheduler__follow_up__investigation__investigator','followup_scheduler__follow_up__investigation__order__evaluation','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__cleaning_method','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__location_type','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book','followup_scheduler__customer_address').get(is_active=True,id=team_id)
 		
 
 		print(followup_team_detail)	
@@ -278,8 +312,8 @@ class FollowupCleaning(View):
 
 		#checkin save	
 		if followup_team_detail: 
-			followup_team_detail.check_out                         = timezone.now()
-			followup_team_detail.followup_scheduler.work_status    = 'FOLLOW_UP_CLEANING_FULFILLED'
+			followup_team_detail.check_out                          = timezone.now()
+			followup_team_detail.followup_scheduler.work_status     = 'FOLLOW_UP_CLEANING_FULFILLED'
 			followup_team_detail.followup_scheduler.follow_up.status= 'FOLLOWUP_IN_PROGRESS'
 
 			followup_team_detail.save()
@@ -287,13 +321,25 @@ class FollowupCleaning(View):
 			followup_team_detail.followup_scheduler.follow_up.save()	
 
 		#To Save Media
-		medias = request.FILES.getlist('media')
+		medias = request.FILES.getlist('mediabefore')
 		if not medias==['']:
 			for media in medias:
 				FollowUpTeamMedia.objects.create(
 				        team_id=team_id,
 				        media=media,
+				        taken_status='BEFORE_CLEANING'
 				        )
+
+		#To Save Media
+		medias = request.FILES.getlist('mediaafter')
+		if not medias==['']:
+			for media in medias:
+				FollowUpTeamMedia.objects.create(
+				        team_id=team_id,
+				        media=media,
+				        taken_status='AFTER_CLEANING'
+				        )
+
 
 		messages.success(request,"Checkout Succesfully")
 				

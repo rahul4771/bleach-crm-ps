@@ -59,6 +59,13 @@
             
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Order List</h2>
+<div class="no_of_entires">
+  <select name="no_of_entries" id="no_of_entries" onchange="set_params_go();">
+    <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+    <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+    <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+  </select>
+</div>
 <div class="page-entries">Show {{entry_per_page}} entries</div>
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
@@ -89,7 +96,7 @@
     <td>{% if evaluation.quatation_status == 'APPROVED' %}<span class="green-bg">Approved</span>
         {% elif evaluation.quatation_status == 'REJECTED' %}<span class="red-bg">Rejected</span>
         {% elif evaluation.quatation_status == 'PENDING' %}<span class="yellow-bg">Pending</span>
-        {% else %}<span class="orange-bg">Discount Asked</span>
+        {% else %}<span class="orange-bg">Expired</span>
         {%endif%}
     </td>
     <td><a href="#"><img src="{% static 'files/images/icon-download.svg' %}" align="absmiddle" class="download-icon"></a></td>
@@ -183,7 +190,7 @@ $('.footable').footable({
 function set_params_go(args)
 {
 var url='{% url 'agent:agent-orders' %}';
-var params={search:$('#search-bar').val(),
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val()
 };
 for(key in args) 
     params[key]=args[key];
