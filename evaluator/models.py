@@ -15,10 +15,10 @@ CLEANING_CHOICES=(
 
 
 QUATATION_CHOICES=(
-	('REJECTED','REJECTED'),
 	('APPROVED','APPROVED'),
-	('ASK_FOR_DISCOUNT','ASK_FOR_DISCOUNT'),
-	('PENDING','PENDING')
+	('PENDING','PENDING'),
+	('REJECTED','REJECTED'),
+	('EXPIRED','EXPIRED')
 	)
 
 DIRTLEVEL_CHOICES=(
@@ -66,6 +66,10 @@ BED_TYPE_CHOICES=(
 	('TYPE2','TYPE2'),
 	('TYPE3','TYPE3'))
 
+SPOT_STAIN_CHOICES=(
+	('SPOT','SPOT'),
+	('STAIN','STAIN')
+	)
 
 MEDIA_TAKEN_CHOICES = (
 	('CUSTOMER_SEND','CUSTOMER_SEND'),
@@ -240,7 +244,7 @@ class EvaluationBook(models.Model):
 		
 	size_of_carpet 		= models.CharField(max_length=100,blank=True,null=True)
 	fabric_type         = models.CharField(max_length=20,blank=True,null=True,choices=FABRIC_TYPE_CHOICES)
-	spot_stain_status	= models.BooleanField(blank=True,null=False)
+	spot_stain_status	= models.CharField(max_length=20,blank=True,null=True,choices=SPOT_STAIN_CHOICES)
 	
 	sanitization_type 	= models.CharField(max_length=20,blank=True,null=True,choices=SANITIZATION_TYPE_CHOICES)
 	size_to_be_sanitised= models.CharField(max_length=100,blank=True,null=True)

@@ -31,6 +31,10 @@
         <label>{{followup_team_detail.followup_scheduler.customer_address.street}} Street</label><br>
         <label>{{followup_team_detail.followup_scheduler.customer_address}}</label>
       </div>
+      <div class="evaluator_notes">
+        <label>Attender Notes:</label>{{followup_team_detail.followup_scheduler.follow_up.investigation.order.evaluation.attender_notes|default_if_none:''}}
+      </div>
+
       <hr>
       <div class="investigator">
         <label>Investigator: {{followup_team_detail.followup_scheduler.follow_up.investigation.investigator.name}}</label>
@@ -163,6 +167,11 @@
 
       {% endif %}
 
+      <div>
+        <label>Notes:</label>
+      {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.order_scheduler_book.evaluator_note|default_if_none:''}}
+      </div>
+
   <div class="row">
 
     <div class="col-12"> 
@@ -177,11 +186,27 @@
 
          </div>
 <div class="page-body">         
+              <h4>Before Cleaning</h4>
               <div class="multi_field_wrapper multi-field-wrapper">
                      <div class="multi-fields">
                         <div class="multi-field page-col">
                          <label>Media :</label>
-                         <input type="file" name="media" maxlength="100"/>
+                         <input type="file" name="mediabefore" maxlength="100"/>
+                         <button type="button" class="remove-field-btn" title="Remove field">
+                            <i class="fa fa-minus-square-o" aria-hidden="true"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <button type="button" class="add-field-btn" title="Add field">
+                      <i class="fa fa-plus-square-o" aria-hidden="true"></i>
+                      </button> 
+              </div>
+              <h4>After Cleaning</h4>
+              <div class="multi_field_wrapper multi-field-wrapper">
+                     <div class="multi-fields">
+                        <div class="multi-field page-col">
+                         <label>Media :</label>
+                         <input type="file" name="mediaafter" maxlength="100"/>
                          <button type="button" class="remove-field-btn" title="Remove field">
                             <i class="fa fa-minus-square-o" aria-hidden="true"></i>
                           </button>

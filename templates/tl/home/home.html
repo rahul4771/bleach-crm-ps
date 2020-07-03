@@ -60,7 +60,54 @@
 </div><!--main-card-->       
             
      <div class="main-content-holder"><!--main-content-holder-->            
-          
+      
+
+        <div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">My Cleanings</h2>
+<div>
+ <input type="text" id="my_cleaning_calendar" class="date_pick date-picker" value="{{my_cleaning_date|date:'d-m-Y'}}" onchange="set_params_go();">
+</div>
+<table class="main-table">
+<tbody>
+
+{% for cleaning in my_cleanings %}
+<tr class="{% if cleaning.order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %} blue-line{% else %}green-line{% endif %}">
+<td data-label="Order Name" ><a href="#">{{cleaning.order_scheduler.order.order_no}}</a></td>
+<td data-label="Order Name" ><a href="#">{{cleaning.start_at|time:"P"}}</a></td>
+<td data-label="Customenr Name"><a href="#">{{cleaning.order_scheduler.order.evaluation.customer.name}}</a> </td>
+<td class="hide-a" data-label=""><a href="#">{{cleaning.order_scheduler.customer_address.area.name}}</a></td>
+<td data-label="Contact Number"><a href="#">{{cleaning.order_scheduler.order.evaluation.customer.mobile_number}}</a></td>
+<td data-label="Service Type"><a href="#">{{cleaning.order_scheduler.order_scheduler_book.service_type}}</a></td>
+<td class="hide-a" data-label="">
+    <span class="blue-text">{{cleaning.order_scheduler.order_scheduler_book.cleaning_policy}}</span>
+</td>
+<td class="hide-a" data-label="">
+    <a href="{% url 'tl:cleaning' cleaning.id %}"><span>Checkin</span></a>
+</td>    
+</tr>
+{% endfor %}
+
+{% for followup in my_followups %}
+<tr class="yellow-line">
+<td data-label="Order Name" ><a href="#">{{followup.followup_scheduler.follow_up.investigation.order.order_no}}</a></td>
+<td data-label="Order Name" ><a href="#">{{followup.start_at|time:"P"}}</a></td>
+<td data-label="Customenr Name"><a href="#">{{followup.followup_scheduler.follow_up.investigation.order.evaluation.customer.name}}</a> </td>
+<td class="hide-a" data-label=""><a href="#">{{followup.followup_scheduler.customer_address.area.name}}</a></td>
+<td data-label="Contact Number"><a href="#">{{followup.followup_scheduler.follow_up.investigation.order.evaluation.customer.mobile_number}}</a></td>
+<td data-label="Service Type"><a href="#">{{followup.followup_scheduler.follow_up.investigation.order_schedule.order_scheduler_book.service_type.name}}</a></td>
+<td class="hide-a" data-label="">
+    <span class="blue-text">{{followup.followup_scheduler.follow_up.investigation.order_schedule.cleaning_policy}}</span>
+</td>
+<td class="hide-a" data-label="">
+    <a href="{% url 'tl:followupcleaning' followup.id %}"><span>Checkin</span></a>
+</td>    
+</tr>
+{% endfor %} 
+</tbody>
+</table>
+</div><!--white-wrapper-->   
+
+
       <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Investigation Task</h2>
 <div>
@@ -505,7 +552,7 @@
 function set_params_go(args)
 {
 var url='{% url 'tl:tldash-board' %}';
-var params={cleaning_calendar_date:$('#cleaning_calendar').val(),investigation_calendar_date:$('#investigation_calendar').val(),
+var params={cleaning_calendar_date:$('#cleaning_calendar').val(),investigation_calendar_date:$('#investigation_calendar').val(),my_cleaning_calendar_date:$('#my_cleaning_calendar').val(),
 };
 for(key in args) 
     params[key]=args[key];

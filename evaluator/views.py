@@ -186,8 +186,12 @@ class ClientDetails(IsEvaluator,View):
 		new_clients_count    = orders.filter(evaluation__created__date__gte=timezone.now().date()-timedelta(30),evaluation__customer__created__date__gte=timezone.now().date()-timedelta(30),).values_list('evaluation__customer').distinct().count()
 		
 		#PAGINATION CLIENTS		
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
 		page = request.GET.get('page',1) 
-		paginator=Paginator(client_details,10)
+		paginator=Paginator(client_details,no_of_entries)
 		try: 
 			client_details=paginator.page(page) 
 		except PageNotAnInteger:
@@ -207,7 +211,7 @@ class ClientDetails(IsEvaluator,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(client_details.end_index())-(client_details.start_index())+1
 
-		return render(request,'evaluator/client/clients.html',{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page})		
+		return render(request,'evaluator/client/clients.html',{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})		
 		
 
 class OrderDetails(IsEvaluator,View):
@@ -231,8 +235,12 @@ class OrderDetails(IsEvaluator,View):
 		pending_orders_count  =	evaluations.filter(Q(Q(quatation_status='ASK_FOR_DISCOUNT')|Q(quatation_status='PENDING'))).count()
 		
 		#PAGINATION ORDERS		
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
 		page = request.GET.get('page',1) 
-		paginator=Paginator(evaluations,10)
+		paginator=Paginator(evaluations,no_of_entries)
 		try: 
 			evaluations=paginator.page(page) 
 		except PageNotAnInteger:
@@ -252,7 +260,7 @@ class OrderDetails(IsEvaluator,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
 
-		return render(request,'evaluator/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})		
+		return render(request,'evaluator/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})		
 
 
 class ResourceManagement(IsEvaluator,View):
@@ -354,6 +362,10 @@ class TicketDetails(IsEvaluator,View):
 
 
 		#followup cleaning count	
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
 		try:
 			follow_up_cleaning_count = FollowUpScheduler.objects.filter(is_active=True,work_status='FOLLOW_UP_CLEANING_FULFILLED').count()
 		except:
@@ -361,7 +373,7 @@ class TicketDetails(IsEvaluator,View):
 
 		#PAGINATION TICKETS		
 		page = request.GET.get('page',1) 
-		paginator=Paginator(tickets,10)
+		paginator=Paginator(tickets,no_of_entries)
 		try: 
 			tickets=paginator.page(page) 
 		except PageNotAnInteger:
@@ -381,7 +393,7 @@ class TicketDetails(IsEvaluator,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(tickets.end_index())-(tickets.start_index())+1	
 
-		return render(request,'evaluator/ticket/tickets.html',{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})
+		return render(request,'evaluator/ticket/tickets.html',{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})
 
 
 class NewEnquiry(IsEvaluator,View):
@@ -610,9 +622,10 @@ class MakeQuatationPhase1(IsEvaluator,View):
 		payment_track_formset       = self.payment_track_formset_define(request.POST)
 		
 		payment_method = request.POST.get('payment_method')
+		attender_notes = request.POST.get('attender_notes')
 
 		#update payment method
-		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING')
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,attender_notes=attender_notes,quatation_status='PENDING')
 		#SAVE payment breakdown details
 		if payment_method == 'BREAKDOWN':
 			if payment_track_formset.is_valid():

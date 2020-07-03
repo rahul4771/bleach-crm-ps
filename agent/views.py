@@ -413,9 +413,13 @@ class OrderDetails(IsAgent,View):
 		approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
 		pending_orders_count  =	evaluations.filter(Q(Q(quatation_status='ASK_FOR_DISCOUNT')|Q(quatation_status='PENDING'))).count()
 		
-		#PAGINATION ORDERS		
+		#PAGINATION ORDERS
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20	
+
 		page = request.GET.get('page',1) 
-		paginator=Paginator(evaluations,10)
+		paginator=Paginator(evaluations,no_of_entries)
 		try: 
 			evaluations=paginator.page(page) 
 		except PageNotAnInteger:
@@ -435,7 +439,7 @@ class OrderDetails(IsAgent,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
 
-		return render(request,'agent/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})
+		return render(request,'agent/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})
 
 
 class FeedbackDetails(IsAgent,View):
@@ -479,8 +483,12 @@ class FeedbackDetails(IsAgent,View):
 				order_wise_feedbacks = None		
 				
 		#PAGINATION FEEDBACKS		
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
 		page = request.GET.get('page',1) 
-		paginator=Paginator(order_wise_feedbacks,10)
+		paginator=Paginator(order_wise_feedbacks,no_of_entries)
 		try: 
 			order_wise_feedbacks=paginator.page(page) 
 		except PageNotAnInteger:
@@ -500,7 +508,7 @@ class FeedbackDetails(IsAgent,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(order_wise_feedbacks.end_index())-(order_wise_feedbacks.start_index())+1
 
-		return render(request,'agent/feedback/feedbacks.html',{"feedbacks":feedbacks,"average_feedback":average_feedback,"total_feedbacks":total_feedbacks,"starring_percentages":starring_percentages,"order_wise_feedbacks":order_wise_feedbacks,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})
+		return render(request,'agent/feedback/feedbacks.html',{"feedbacks":feedbacks,"average_feedback":average_feedback,"total_feedbacks":total_feedbacks,"starring_percentages":starring_percentages,"order_wise_feedbacks":order_wise_feedbacks,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})
 		
 
 class TicketDetails(IsAgent,View):
@@ -531,9 +539,13 @@ class TicketDetails(IsAgent,View):
 		except:
 			follow_up_cleaning_count = 0
 
-		#PAGINATION TICKETS		
+		#PAGINATION TICKETS
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
 		page = request.GET.get('page',1) 
-		paginator=Paginator(tickets,10)
+		paginator=Paginator(tickets,no_of_entries)
 		try: 
 			tickets=paginator.page(page) 
 		except PageNotAnInteger:
@@ -553,7 +565,7 @@ class TicketDetails(IsAgent,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(tickets.end_index())-(tickets.start_index())+1
 
-		return render(request,"agent/ticket/tickets.html",{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})		
+		return render(request,"agent/ticket/tickets.html",{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})		
 
 
 class ClientDetails(IsAgent,View):
@@ -586,9 +598,13 @@ class ClientDetails(IsAgent,View):
 		active_clients_count = orders.filter(~Q(order_status='ORDER_CLOSED')).values_list('evaluation__customer').distinct().count()	
 		new_clients_count    = orders.filter(evaluation__created__date__gte=timezone.now().date()-timedelta(30),evaluation__customer__created__date__gte=timezone.now().date()-timedelta(30),).values_list('evaluation__customer').distinct().count()
 		
-		#PAGINATION CLIENTS		
+		#PAGINATION CLIENTS
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
 		page = request.GET.get('page',1) 
-		paginator=Paginator(client_details,10)
+		paginator=Paginator(client_details,no_of_entries)
 		try: 
 			client_details=paginator.page(page) 
 		except PageNotAnInteger:
@@ -608,7 +624,7 @@ class ClientDetails(IsAgent,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(client_details.end_index())-(client_details.start_index())+1
 		
-		return render(request,"agent/client/clients.html",{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page}) 
+		return render(request,"agent/client/clients.html",{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries}) 
 
 
 class NewEnquiry(IsAgent,View):
@@ -839,9 +855,10 @@ class MakeQuatationPhase1(IsAgent,View):
 		payment_track_formset       = self.payment_track_formset_define(request.POST)
 		
 		payment_method = request.POST.get('payment_method')
+		attender_notes = request.POST.get('attender_notes')
 
 		#update payment method
-		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING')
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,attender_notes=attender_notes,quatation_status='PENDING')
 		#SAVE payment breakdown details
 		if payment_method == 'BREAKDOWN':
 			if payment_track_formset.is_valid():
