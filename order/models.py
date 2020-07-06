@@ -150,7 +150,7 @@ class InvestigationMedia(models.Model):
 class FollowUp(models.Model): 
 	investigation   = models.ForeignKey('Investigation',blank=False,null=False) 
 	instructions    = models.CharField(max_length=500,blank=True,null=True)
-	status      	= models.CharField(max_length=20,blank=True,null=True,choices=FOLLOWUP_STATUS)
+	status      	= models.CharField(max_length=100,blank=True,null=True,choices=FOLLOWUP_STATUS)
 	no_of_cleaners  = models.IntegerField(blank=True,null=True)
 	cleaning_hours  = models.IntegerField(blank=True,null=True)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
