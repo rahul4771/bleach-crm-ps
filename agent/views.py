@@ -203,6 +203,9 @@ def GetCleaningMethodsInfo(request):
 class AgentHome(IsAgent,View):
 	def get(self,request):
 
+		#for taking today counts
+		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		count_today_end   = count_today_start+timedelta(1)
 
 		#Enquiry Details count
 		try:
@@ -210,8 +213,8 @@ class AgentHome(IsAgent,View):
 		except:
 			enquiry	= None
 
-		today_enquiry_count = enquiry.filter(proposed_time__contains=timezone.now().date()).count()
-		week_enquiry_count  = enquiry.filter(proposed_time__gte=timezone.now().date()-timedelta(6)).count()	
+		today_enquiry_count = enquiry.filter(proposed_time__gte=count_today_start,proposed_time__lt=count_today_end,).count()
+		week_enquiry_count  = enquiry.filter(proposed_time__gte=count_today_end-timedelta(6)).count()	
 
 		#Cleaning Jobs count
 		try:
@@ -219,8 +222,8 @@ class AgentHome(IsAgent,View):
 		except:
 			cleaning_job    = None
 
-		today_cleaning_job_count = cleaning_job.filter(start_at__contains=timezone.now().date()).count() 
-		week_cleaning_job_count  = cleaning_job.filter(start_at__gte=timezone.now().date()-timedelta(6)).count()		
+		today_cleaning_job_count = cleaning_job.filter(start_at__gte=count_today_start,end_at__lt=count_today_end).count() 
+		week_cleaning_job_count  = cleaning_job.filter(start_at__gte=count_today_end-timedelta(6)).count()		
 		
 		#Followup jobs count
 		try:
@@ -228,8 +231,8 @@ class AgentHome(IsAgent,View):
 		except:
 			follow_up_job	 = None
 
-		today_follow_up_job_count = follow_up_job.filter(start_at__contains=timezone.now().date()).count() 
-		week_follow_up_job_count  = follow_up_job.filter(start_at__gte=timezone.now().date()-timedelta(6)).count()		
+		today_follow_up_job_count = follow_up_job.filter(start_at__gte=count_today_start,end_at__lt=count_today_end).count() 
+		week_follow_up_job_count  = follow_up_job.filter(start_at__gte=count_today_end-timedelta(6)).count()		
 
 		#Feedback Staring count
 		try:
@@ -237,8 +240,8 @@ class AgentHome(IsAgent,View):
 		except:
 			feedbacks				  = None
 
-		today_average_feedback		  = feedbacks.filter(response_date__contains=timezone.now().date()).aggregate(Avg('rating'))['rating__avg']
-		week_average_feedback		  = feedbacks.filter(response_date__gte=timezone.now().date()-timedelta(6)).aggregate(Avg('rating'))['rating__avg']	
+		today_average_feedback		  = feedbacks.filter(response_date__gte=count_today_start,response_date__lt=count_today_end).aggregate(Avg('rating'))['rating__avg']
+		week_average_feedback		  = feedbacks.filter(response_date__gte=count_today_end-timedelta(6)).aggregate(Avg('rating'))['rating__avg']	
 		
 		#Evaluation details of each evaluator for evaluation table
 		evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
@@ -246,7 +249,7 @@ class AgentHome(IsAgent,View):
 		try:
 			evaluation_date = datetime.strptime(evaluation_calendar_date,'%d-%m-%Y')
 		except:
-			evaluation_date = timezone.now()	
+			evaluation_date = timezone.now().replace(tzinfo=None)	
 		
 		try:
 			evaluation_details		  = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').prefetch_related(Prefetch('evaluator_evaluation',queryset=EvaluationDetails.objects.filter(is_active=True,proposed_time__contains=evaluation_date.date()),to_attr='evaluation_details'))
@@ -255,13 +258,14 @@ class AgentHome(IsAgent,View):
 
 
 		#Order and Followup Schedules for date confirmation
+		confirm_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)+timedelta(3)
 		try:
-			order_schedules		  = OrderScheduler.objects.filter(is_active=True).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
+			order_schedules		  = OrderScheduler.objects.filter(is_active=True,start_at__lte=confirm_to_date).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
 		except:
 			order_schedules		  = None
 		
 		try:
-			follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+			follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lte=confirm_to_date).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
 		except:
 			follow_up_schedules	  = None		
 		
@@ -272,7 +276,7 @@ class AgentHome(IsAgent,View):
 		try:
 			schedule_date = datetime.strptime(cleaning_calendar_date,'%d-%m-%Y')
 		except:
-			schedule_date = timezone.now()
+			schedule_date = timezone.now().replace(tzinfo=None)
 
 		schedule_date_start = schedule_date.replace(hour=0,minute=0,second=0,microsecond=0)
 		schedule_date_end   = schedule_date_start+timedelta(1)		
@@ -306,13 +310,7 @@ class AgentHome(IsAgent,View):
 			spp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
 		except:
 			spp_calendar_followup_schedules = None
-
-		print(calendar_order_schedules)
-		print(sp_calendar_order_schedules)
-		print(spp_calendar_order_schedules)
 		
-
-
 		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_average_feedback':today_average_feedback,'week_average_feedback':week_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'order_schedules':order_schedules,'follow_up_schedules':follow_up_schedules,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,})
 
 
