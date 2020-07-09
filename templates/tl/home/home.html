@@ -232,17 +232,17 @@
         
         if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.end_at|date:'d'}}')))
                 {
-                        total_today_hours += ending_time*parseInt('{{cleaning_team.no_of_cleaners}}');
+                        total_today_hours += ending_time*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
                 }
 
                 else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.start_at|date:'d'}}')))
                     {
                     
-                    total_today_hours += (24-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');
+                    total_today_hours += (24-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
                     }
                 else
                 {
-                    total_today_hours += (ending_time-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');    
+                    total_today_hours += (ending_time-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);    
                 }
 
         {% endfor %}
@@ -258,19 +258,19 @@
 
         if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{followup_team.end_at|date:'d'}}')))
                 {
-                        total_today_hours += ending_time*parseInt('{{followup_team.no_of_cleaners}}')
+                        total_today_hours += ending_time*(parseInt('{{followup_team.no_of_cleaners}}')+1)
                 
                 }
 
         else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{followup_team.start_at|date:'d'}}')))
             {
             
-            total_today_hours += (24-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');
+            total_today_hours += (24-starting_time)*(parseInt('{{followup_team.no_of_cleaners}}')+1);
             
             }
         else
         {
-            total_today_hours += (ending_time-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');   
+            total_today_hours += (ending_time-starting_time)*(parseInt('{{followup_team.no_of_cleaners}}')+1);   
         }
 
         {% endfor %}
@@ -289,24 +289,24 @@
         
         if((ending_time<starting_time)&(parseInt('{{weekstart_date|date:'d'}}')==parseInt('{{cleaning_team.end_at|date:'d'}}')))
                 {
-                        total_week_hours += ending_time*parseInt('{{cleaning_team.no_of_cleaners}}');
+                        total_week_hours += ending_time*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
                     console.log(total_week_hours,"cleaning")
                 }
 
                 else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.start_at|date:'d'}}')))
                     {
                     
-                    total_week_hours += (24-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');
+                    total_week_hours += (24-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
                     console.log(total_week_hours,"cleaning")
                     }
                 else
                 {
                     if(ending_time<starting_time)
                         {
-                        total_week_hours += ((24-starting_time)+ending_time)*parseInt('{{cleaning_team.no_of_cleaners}}');        
+                        total_week_hours += ((24-starting_time)+ending_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);        
                         } 
                     else{
-                        total_week_hours += (ending_time-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');
+                        total_week_hours += (ending_time-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
                     } 
                     console.log(total_week_hours,"cleaning")   
                 }
@@ -324,23 +324,23 @@
 
         if((ending_time<starting_time)&(parseInt('{{weekstart_date|date:'d'}}')==parseInt('{{followup_team.end_at|date:'d'}}')))
                 {
-                        total_week_hours += ending_time*parseInt('{{followup_team.no_of_cleaners}}')
+                        total_week_hours += ending_time*(parseInt('{{followup_team.no_of_cleaners}}')+1)
                 console.log(total_week_hours,"followup")
                 }
 
         else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{followup_team.start_at|date:'d'}}')))
             {
             
-            total_week_hours += (24-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');
+            total_week_hours += (24-starting_time)*(parseInt('{{followup_team.no_of_cleaners}}')+1);
             console.log(total_week_hours,"followup")
             }
         else
         {   if(ending_time<starting_time)
                 {
-                total_week_hours += ((24-starting_time)+ending_time)*parseInt('{{followup_team.no_of_cleaners}}');        
+                total_week_hours += ((24-starting_time)+ending_time)*(parseInt('{{followup_team.no_of_cleaners}}')+1);        
                 } 
             else{
-                total_week_hours += (ending_time-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');
+                total_week_hours += (ending_time-starting_time)*(parseInt('{{followup_team.no_of_cleaners}}')+1);
             }    
             console.log(total_week_hours,"followup")   
         }
@@ -431,16 +431,31 @@
                         if(current_raw_timings.length==1)
                         {
                             left_percentage  = 100/24*starting_time
-                            width_percentage = 100/24*ending_time-100/24*starting_time;
-                            console.log(left_percentage)
-                            console.log(width_percentage)                
+                            
+                            if(ending_time == 0)
+                            {
+                              width_percentage = 100/24*24-100/24*starting_time;
+                            }
+                            else
+                            {
+                              width_percentage = 100/24*ending_time-100/24*starting_time;
+                            }
+                                            
                             $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaning_cleaning{{cleaning.id}}" {% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box"{% else %}class="green-box"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if cleaning.order_scheduler.evaluation_details.evaluator.profile_image %}src="{{cleaning.order_scheduler.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="image-table-view"></div><center><a href="{% url 'tl:cleaning' cleaning.id%}">{{cleaning.order_scheduler.customer_address.area}}</a></center> <div {% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{cleaning.no_of_cleaners}}</div></div></td></tr>')
                         }
                         //append td to the raw 
                         else
                         { 
                            left_percentage  = 100/24*starting_time
-                           width_percentage = 100/24*ending_time-100/24*starting_time; 
+                           
+                           if(ending_time == 0)
+                            {
+                              width_percentage = 100/24*24-100/24*starting_time;
+                            }
+                            else
+                            {
+                              width_percentage = 100/24*ending_time-100/24*starting_time;
+                            } 
                           
                             $('#cleaning_table tr:last td').append('<div id="cleaning_cleaning{{cleaning.id}}" {% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box"{% else %}class="green-box"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if cleaning.order_scheduler.evaluation_details.evaluator.profile_image %}src="{{cleaning.order_scheduler.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="image-table-view"></div><center><a href="{% url 'tl:cleaning' cleaning.id%}">{{cleaning.order_scheduler.customer_address.area}}</a></center> <div {% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{cleaning.no_of_cleaners}}</div></div>')      
                         }
@@ -467,8 +482,27 @@
 
 
        $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaning_cleaning{{sp_cleaning.id}}" {% if sp_cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-first"{% else %}class="sp-green-box-first"{% endif %} style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_cleaning.order_scheduler.evaluation_details.evaluator.profile_image %} src="{{sp_cleaning.order_scheduler.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="image-table-view"></div><center><a href="{% url 'tl:cleaning' cleaning.id%}">{{cleaning.order_scheduler.customer_address.area}}</a></center> </div></td></tr>')
+       
+       {% endfor %}
 
-       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaning_cleaning{{sp_cleaning.id}}" {% if sp_cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-second"{% else %}class="sp-green-box-second"{% endif %} style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div {% if sp_cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{sp_cleaning.no_of_cleaners}}</div></div></td></tr>')
+
+       //for special cases like 2 days cleaning
+       {% for spp_cleaning in spp_calendar_order_cleaning %}
+       starting_time_string      = '{{spp_cleaning.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{spp_cleaning.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaning_cleaning{{spp_cleaning.id}}" {% if spp_cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-second"{% else %}class="sp-green-box-second"{% endif %} style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div {% if spp_cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{spp_cleaning.no_of_cleaners}}</div></div></td></tr>')
        
        {% endfor %}
 
@@ -505,7 +539,15 @@
                         if(current_raw_timings.length==1)
                         {
                             left_percentage  = 100/24*starting_time
-                            width_percentage = 100/24*ending_time-100/24*starting_time;
+                            
+                            if(ending_time == 0)
+                            {
+                              width_percentage = 100/24*24-100/24*starting_time;
+                            }
+                            else
+                            {
+                              width_percentage = 100/24*ending_time-100/24*starting_time;
+                            }
                             
                             $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupcleaning{{cleaning.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if cleaning.followup_scheduler.follow_up.investigation.investigator.profile_image %}src="{{cleaning.followup_scheduler.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %} class="image-table-view"></div><center><a href="{% url 'tl:followupcleaning' cleaning.id%}">{{cleaning.followup_scheduler.customer_address.area}}</a></center> <div class="right-value yellow-text">{{cleaning.no_of_cleaners}}</div></div></td></tr>')
                         }
@@ -513,7 +555,15 @@
                         else
                         { 
                            left_percentage  = 100/24*starting_time
-                           width_percentage = 100/24*ending_time-100/24*starting_time; 
+                           
+                           if(ending_time == 0)
+                            {
+                              width_percentage = 100/24*24-100/24*starting_time;
+                            }
+                            else
+                            {
+                              width_percentage = 100/24*ending_time-100/24*starting_time;
+                            } 
                           
                             $('#cleaning_table tr:last td').append('<div id="followupcleaning{{cleaning.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if cleaning.followup_scheduler.follow_up.investigation.investigator.profile_image %}src="{{cleaning.followup_scheduler.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %} class="image-table-view"></div><center><a href="{% url 'tl:followupcleaning' cleaning.id%}">{{cleaning.followup_scheduler.customer_address.area}}</a></center> <div class="right-value yellow-text">{{cleaning.no_of_cleaners}}</div></div>')      
                         }
@@ -540,11 +590,28 @@
 
 
        $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupcleaning{{sp_cleaning.id}}" class="sp-yellow-box-first" style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_cleaning.followup_scheduler.follow_up.investigation.investigator.profile_image %}src="{{sp_cleaning.followup_scheduler.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %} class="image-table-view"></div><center><a href="{% url 'tl:followupcleaning' sp_cleaning.id%}">{{sp_cleaning.followup_scheduler.customer_address.area}}</a></center> </div></td></tr>')
-
-       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupcleaning{{sp_cleaning.id}}" class="sp-yellow-box-second" style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div class="right-value yellow-text">{{sp_cleaning.no_of_cleaners}}</div></div></td></tr>')
        
        {% endfor %}
 
+       //for special cases like 2 days fllowup cleaning
+       {% for spp_cleaning in spp_calendar_followup_cleaning %}
+       starting_time_string      = '{{spp_cleaning.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{spp_cleaning.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupcleaning{{spp_cleaning.id}}" class="sp-yellow-box-second" style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div class="right-value yellow-text">{{spp_cleaning.no_of_cleaners}}</div></div></td></tr>')
+       
+       {% endfor %}
 
 
     });

@@ -23,14 +23,20 @@ from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMemb
 
 class TlHome(IsTeamLeader,View):
 	def get(self,request):
+
+		#for taking today counts
+		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		count_today_end   = count_today_start+timedelta(1)
+
 		#Cleaning Jobs count
 		try:
 			cleaning_job	= CleaningTeam.objects.filter(is_active=True,team_leader=request.user)
 		except:
 			cleaning_job    = None
 
-		today_cleaning_job_count = cleaning_job.filter(start_at__contains=timezone.now().date()).count() 
-		week_cleaning_job_count  = cleaning_job.filter(start_at__gte=timezone.now().date()-timedelta(6)).count()		
+		today_cleaning_job_count = cleaning_job.filter(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))).count() 
+		week_cleaning_job_count  = cleaning_job.filter(Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end))).count()
+				
 
 		#Investigation Count
 		try:
@@ -38,8 +44,8 @@ class TlHome(IsTeamLeader,View):
 		except:
 			investigation = None	
 
-		today_investigation_count = investigation.filter(sheduled_at__contains=timezone.now().date()).count()
-		week_investigation_count   = investigation.filter(sheduled_at__gte=timezone.now().date()-timedelta(6)).count()	
+		today_investigation_count = investigation.filter(sheduled_at__gte=count_today_start,sheduled_at__lt=count_today_end).count()
+		week_investigation_count   = investigation.filter(sheduled_at__gte=count_today_end-timedelta(7),sheduled_at__lt=count_today_end).count()	
 
 		##To find average and total hour  team leader 
 		try:
@@ -51,14 +57,26 @@ class TlHome(IsTeamLeader,View):
 		except:
 			follow_up_teams = None
 
-		today_cleaning_active_teams  = cleaning_teams.filter(Q(Q(start_at__contains=timezone.now().date())|Q(end_at__contains=timezone.now().date())))
-		today_followup_active_teams  = follow_up_teams.filter(Q(Q(start_at__contains=timezone.now().date())|Q(end_at__contains=timezone.now().date())))
-		week_cleaning_active_teams   = cleaning_teams.filter(Q(Q(start_at__gte=timezone.now().date()-timedelta(6))|Q(end_at__gte=timezone.now().date()-timedelta(6))))
-		week_followup_active_teams   = follow_up_teams.filter(Q(Q(start_at__gte=timezone.now().date()-timedelta(6))|Q(end_at__gte=timezone.now().date()-timedelta(6))))
+		today_cleaning_active_teams  = cleaning_teams.filter(Q(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))))
+		today_followup_active_teams  = follow_up_teams.filter(Q(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))))
+		week_cleaning_active_teams   = cleaning_teams.filter(Q( Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end)) ))
+		week_followup_active_teams   = follow_up_teams.filter(Q( Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end)) ))
 		
 
 		today_date            = timezone.now()
 		weekstart_date        = timezone.now().date()-timedelta(6)
+
+
+		try:
+			today_total_team_mens = today_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_cleaning_active_teams.count() or 0+today_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_followup_active_teams.count() or 0
+		except:
+			today_total_team_mens = 0
+		try:	
+			week_total_team_mens  = week_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_cleaning_active_teams.count() or 0+week_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_followup_active_teams.count() or 0
+		except:	
+			week_total_team_mens  = 0
+
+
 
 		#Investigation tasks
 		investigation_calendar_date	= request.GET.get('investigation_calendar_date')
@@ -66,9 +84,13 @@ class TlHome(IsTeamLeader,View):
 		try:
 			investigation_date = datetime.strptime(investigation_calendar_date,'%d-%m-%Y')
 		except:
-			investigation_date = timezone.now()
+			investigation_date = timezone.now().replace(tzinfo=None)
+		
+		investigation_date_start = investigation_date.replace(hour=0,minute=0,second=0,microsecond=0)
+		investigation_date_end   = investigation_date_start+timedelta(1)	
+
 		try:	
-			investigations  = Investigation.objects.filter(is_active=True,sheduled_at__contains=investigation_date.date(),investigator=request.user,check_out=None).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'))
+			investigations  = Investigation.objects.filter(is_active=True,sheduled_at__gte=investigation_date_start,sheduled_at__lt=investigation_date_end,investigator=request.user,check_out=None).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'))
 		except:
 			investigations  = 	None
 
@@ -79,14 +101,18 @@ class TlHome(IsTeamLeader,View):
 		try:
 			my_cleaning_date = datetime.strptime(my_cleaning_calendar_date,'%d-%m-%Y')
 		except:
-			my_cleaning_date = timezone.now()
+			my_cleaning_date = timezone.now().replace(tzinfo=None)
+
+		my_cleaning_date_start = my_cleaning_date.replace(hour=0,minute=0,second=0,microsecond=0)
+		my_cleaning_date_end   = my_cleaning_date_start+timedelta(1)
+
 
 		try:	
-			my_cleanings  = CleaningTeam.objects.filter(Q(Q(start_at__contains=my_cleaning_date.date())&Q(team_leader=request.user))).select_related('order_scheduler__order_scheduler_book__service_type','order_scheduler__order__evaluation__customer','order_scheduler__customer_address')
+			my_cleanings  = CleaningTeam.objects.filter(Q(Q(Q(start_at__gte=my_cleaning_date_start)&Q(start_at__lt=my_cleaning_date_end))&Q(team_leader=request.user))).select_related('order_scheduler__order_scheduler_book__service_type','order_scheduler__order__evaluation__customer','order_scheduler__customer_address')
 		except:
 			my_cleanings  = None
 		try:
-			my_followups  = FollowUpTeam.objects.filter(Q(Q(start_at__contains=my_cleaning_date.date())&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__customer_address')
+			my_followups  = FollowUpTeam.objects.filter(Q(Q(Q(start_at__gte=my_cleaning_date_start)&Q(start_at__lt=my_cleaning_date_end))&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__customer_address')
 		except:
 			my_followups  = None	
 			
@@ -97,29 +123,42 @@ class TlHome(IsTeamLeader,View):
 		try:
 			cleaning_date = datetime.strptime(cleaning_calendar_date,'%d-%m-%Y')
 		except:
-			cleaning_date = timezone.now()
+			cleaning_date = timezone.now().replace(tzinfo=None)
+
+		cleaning_date_start = cleaning_date.replace(hour=0,minute=0,second=0,microsecond=0)
+		cleaning_date_end   = cleaning_date_start+timedelta(1)	
 
 		try:
-			calendar_order_cleaning = CleaningTeam.objects.filter(Q(Q(Q(start_at__contains=cleaning_date.date())&Q(end_at__contains=cleaning_date.date()))&Q(team_leader=request.user))).select_related('order_scheduler__order_scheduler_book','order_scheduler__order__evaluation__customer','order_scheduler__customer_address')
+			calendar_order_cleaning = CleaningTeam.objects.filter(Q(Q(Q(start_at__gte=cleaning_date_start)&Q(end_at__lte=cleaning_date_end))&Q(team_leader=request.user))).select_related('order_scheduler__order_scheduler_book','order_scheduler__order__evaluation__customer','order_scheduler__customer_address')
 		except:
 			calendar_order_cleaning = None
 
 		try:
-			calendar_followup_cleaning = FollowUpTeam.objects.filter(Q(Q(Q(start_at__contains=cleaning_date.date())&Q(end_at__contains=cleaning_date.date()))&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__customer_address')
+			calendar_followup_cleaning = FollowUpTeam.objects.filter(Q(Q(Q(start_at__gte=cleaning_date_start)&Q(end_at__lte=cleaning_date_end))&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__customer_address')
 		except:
 			calendar_followup_cleaning = None
 	
 		try:
-			sp_calendar_order_cleaning = CleaningTeam.objects.filter(Q(Q(Q(start_at__contains=cleaning_date.date())&~Q(end_at__contains=cleaning_date.date()))&Q(team_leader=request.user))).select_related('order_scheduler__order__evaluation__customer','order_scheduler__customer_address')
+			sp_calendar_order_cleaning = CleaningTeam.objects.filter(Q(Q(Q(start_at__gte=cleaning_date_start)&Q(start_at__lt=cleaning_date_end)&Q(end_at__gt=cleaning_date_end))&Q(team_leader=request.user))).select_related('order_scheduler__order__evaluation__customer','order_scheduler__customer_address')
 		except:
 			sp_calendar_order_cleaning = None
 
 		try:
-			sp_calendar_followup_cleaning = FollowUpTeam.objects.filter(Q(Q(Q(start_at__contains=cleaning_date.date())&~Q(end_at__contains=cleaning_date.date()))&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__customer_address')
+			sp_calendar_followup_cleaning = FollowUpTeam.objects.filter(Q(Q(Q(start_at__gte=cleaning_date_start)&Q(start_at__lt=cleaning_date_end)&Q(end_at__gt=cleaning_date_end))&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__customer_address')
 		except:
 			sp_calendar_followup_cleaning = None
 
-		return render(request,'tl/home/home.html',{"today_cleaning_job_count":today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_cleaning_active_teams':today_cleaning_active_teams,'week_cleaning_active_teams':week_cleaning_active_teams,'today_followup_active_teams':today_followup_active_teams,'week_followup_active_teams':week_followup_active_teams,'today_date':today_date,'weekstart_date':weekstart_date,'investigation_date':investigation_date,'investigations':investigations,'calendar_order_cleaning':calendar_order_cleaning,'calendar_followup_cleaning':calendar_followup_cleaning,'sp_calendar_order_cleaning':sp_calendar_order_cleaning,'sp_calendar_followup_cleaning':sp_calendar_followup_cleaning,'cleaning_date':cleaning_date,'today_investigation_count':today_investigation_count,'week_investigation_count':week_investigation_count,'my_cleaning_date':my_cleaning_date,"my_cleanings":my_cleanings,"my_followups":my_followups,})
+		try:
+			spp_calendar_order_cleaning = CleaningTeam.objects.filter(Q(Q(Q(end_at__gt=cleaning_date_start)&Q(end_at__lte=cleaning_date_end)&Q(start_at__lt=cleaning_date_start))&Q(team_leader=request.user))).select_related('order_scheduler__order__evaluation__customer','order_scheduler__customer_address')
+		except:
+			spp_calendar_order_cleaning = None
+
+		try:
+			spp_calendar_followup_cleaning = FollowUpTeam.objects.filter(Q(Q(Q(end_at__gt=cleaning_date_start)&Q(end_at__lte=cleaning_date_end)&Q(start_at__lt=cleaning_date_start))&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__customer_address')
+		except:
+			spp_calendar_followup_cleaning = None	
+
+		return render(request,'tl/home/home.html',{"today_cleaning_job_count":today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_cleaning_active_teams':today_cleaning_active_teams,'week_cleaning_active_teams':week_cleaning_active_teams,'today_followup_active_teams':today_followup_active_teams,'week_followup_active_teams':week_followup_active_teams,'today_date':today_date,'weekstart_date':weekstart_date,'investigation_date':investigation_date,'investigations':investigations,'calendar_order_cleaning':calendar_order_cleaning,'calendar_followup_cleaning':calendar_followup_cleaning,'sp_calendar_order_cleaning':sp_calendar_order_cleaning,'sp_calendar_followup_cleaning':sp_calendar_followup_cleaning,'cleaning_date':cleaning_date,'today_investigation_count':today_investigation_count,'week_investigation_count':week_investigation_count,'my_cleaning_date':my_cleaning_date,"my_cleanings":my_cleanings,"my_followups":my_followups,'today_total_team_mens':today_total_team_mens,'week_total_team_mens':week_total_team_mens,})
 
 class TicketDetails(IsTeamLeader,View):
 	def get(self,request):

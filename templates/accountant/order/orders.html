@@ -59,6 +59,13 @@
             
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Order List</h2>
+<div class="no_of_entires">
+  <select name="no_of_entries" id="no_of_entries" onchange="set_params_go();">
+    <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+    <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+    <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+  </select>
+</div>
 <div class="page-entries">Show {{entry_per_page}} entries</div>
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
@@ -184,7 +191,7 @@ $('.footable').footable({
 function set_params_go(args)
 {
 var url='{% url 'accountant:accountant-orders' %}';
-var params={search:$('#search-bar').val(),
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val()
 };
 for(key in args) 
     params[key]=args[key];

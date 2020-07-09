@@ -1,5 +1,5 @@
 from django.contrib import admin
-from evaluator.models import ServiceType,LocationType,CleaningType,CleaningMethod,Evaluation,EvaluationDetails,EvaluationMedia,EvaluationBook,PaymentTrack
+from evaluator.models import ServiceType,LocationType,CleaningType,CleaningMethod,Evaluation,EvaluationDetails,EvaluationMedia,EvaluationBook
 # Register your models here.
 
 admin.site.register(ServiceType)
@@ -33,7 +33,6 @@ class EvaluationDetailsAdmin(admin.ModelAdmin):
 admin.site.register(EvaluationDetails,EvaluationDetailsAdmin)
 admin.site.register(EvaluationMedia,EvaluationMediaAdmin)
 admin.site.register(EvaluationBook,EvaluationBookAdmin)
-admin.site.register(PaymentTrack)
 
 #Django Panel Customisation
 admin.site.site_header = "Bleach Kuwait"

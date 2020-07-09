@@ -141,17 +141,17 @@
         
         if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.end_at|date:'d'}}')))
                 {
-                        total_today_hours += ending_time*parseInt('{{cleaning_team.no_of_cleaners}}');
+                        total_today_hours += ending_time*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
                 }
 
                 else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.start_at|date:'d'}}')))
                     {
                     
-                    total_today_hours += (24-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');
+                    total_today_hours += (24-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
                     }
                 else
                 {
-                    total_today_hours += (ending_time-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');    
+                    total_today_hours += (ending_time-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);    
                 }
 
         {% endfor %}
@@ -167,19 +167,19 @@
 
         if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{followup_team.end_at|date:'d'}}')))
                 {
-                        total_today_hours += ending_time*parseInt('{{followup_team.no_of_cleaners}}')
+                        total_today_hours += ending_time*(parseInt('{{followup_team.no_of_cleaners}}')+1)
                 
                 }
 
         else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{followup_team.start_at|date:'d'}}')))
             {
             
-            total_today_hours += (24-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');
+            total_today_hours += (24-starting_time)*(parseInt('{{followup_team.no_of_cleaners}}')+1);
             
             }
         else
         {
-            total_today_hours += (ending_time-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');   
+            total_today_hours += (ending_time-starting_time)*(parseInt('{{followup_team.no_of_cleaners}}')+1);   
         }
 
         {% endfor %}
@@ -198,24 +198,24 @@
         
         if((ending_time<starting_time)&(parseInt('{{weekstart_date|date:'d'}}')==parseInt('{{cleaning_team.end_at|date:'d'}}')))
                 {
-                        total_week_hours += ending_time*parseInt('{{cleaning_team.no_of_cleaners}}');
+                        total_week_hours += ending_time*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
                     console.log(total_week_hours,"cleaning")
                 }
 
                 else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.start_at|date:'d'}}')))
                     {
                     
-                    total_week_hours += (24-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');
+                    total_week_hours += (24-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
                     console.log(total_week_hours,"cleaning")
                     }
                 else
                 {
                     if(ending_time<starting_time)
                         {
-                        total_week_hours += ((24-starting_time)+ending_time)*parseInt('{{cleaning_team.no_of_cleaners}}');        
+                        total_week_hours += ((24-starting_time)+ending_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);        
                         } 
                     else{
-                        total_week_hours += (ending_time-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');
+                        total_week_hours += (ending_time-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
                     } 
                     console.log(total_week_hours,"cleaning")   
                 }
@@ -233,28 +233,29 @@
 
         if((ending_time<starting_time)&(parseInt('{{weekstart_date|date:'d'}}')==parseInt('{{followup_team.end_at|date:'d'}}')))
                 {
-                        total_week_hours += ending_time*parseInt('{{followup_team.no_of_cleaners}}')
+                        total_week_hours += ending_time*(parseInt('{{followup_team.no_of_cleaners}}')+1)
                 console.log(total_week_hours,"followup")
                 }
 
         else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{followup_team.start_at|date:'d'}}')))
             {
             
-            total_week_hours += (24-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');
+            total_week_hours += (24-starting_time)*(parseInt('{{followup_team.no_of_cleaners}}')+1);
             console.log(total_week_hours,"followup")
             }
         else
         {   if(ending_time<starting_time)
                 {
-                total_week_hours += ((24-starting_time)+ending_time)*parseInt('{{followup_team.no_of_cleaners}}');        
+                total_week_hours += ((24-starting_time)+ending_time)*parseInt('{{followup_team.no_of_cleaners}}')+1;        
                 } 
             else{
-                total_week_hours += (ending_time-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');
+                total_week_hours += (ending_time-starting_time)*(parseInt('{{followup_team.no_of_cleaners}}')+1);
             }    
             console.log(total_week_hours,"followup")   
         }
 
         {% endfor %}
+
         average_week_hours = total_week_hours/parseInt('{{week_total_team_mens}}')
         
 
