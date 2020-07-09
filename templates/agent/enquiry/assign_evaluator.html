@@ -126,17 +126,6 @@
   
 $('document').ready(function(){  
 
-
-//initialisation of datetime field
-  $(function () {
-  $("#id_proposed_time").datetimepicker({  
-    format: "DD/MM/YYYY hh:mm A",
-  });
-});  
-  
-              
-
-
     //Evaluation Callender
         {% for evaluator in evaluation_details %}
             
@@ -174,7 +163,7 @@ $('document').ready(function(){
 
                         {% if forloop.last or forloop.count == 1 %}
                         
-                        $("#evaluator{{evaluator.id}} td:last").append('<br><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button>');
+                        $("#evaluator{{evaluator.id}} td:last").append('<br><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour='+i+'>+</button>');
                         {% endif %}    
                             
 
@@ -183,40 +172,40 @@ $('document').ready(function(){
                     }
                     else
                     {
-                      $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');  
+                      $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour='+i+'>+</button></td>');  
                     }
                     $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
                 }    
             {% else %}
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');    
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="8">+</button></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="9">+</button></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="10">+</button></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="11">+</button></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="12">+</button></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="13">+</button></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="14">+</button></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="15">+</button></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="16">+</button></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="17">+</button></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
             {% endif %}
@@ -243,8 +232,22 @@ window.location.href=url+query;
 
 $('window').ready(function(){
 $(".assign_evaluator_button").click(function () {   
+
+    hour = $(this).data('hour');
+    // var now = new Date("{{evaluation_date.year}}",{{evaluation_date.month}}-1,"{{evaluation_date.day}}",hour,0,0,0);
+
+    now_string = ({{evaluation_date.day}}<10 ? '0':'')+"{{evaluation_date.day}}/"+({{evaluation_date.month}}<10 ? '0':'')+"{{evaluation_date.month}}/"+"{{evaluation_date.year}} "+(hour<10 ? '0':'')+(hour>12 ? hour-12:hour)+":00 "+(hour>=12 ? 'PM':'AM')
+
+    $("#id_proposed_time").val(now_string);
+
+    $("#id_proposed_time").datetimepicker({  
+    format: "DD/MM/YYYY hh:mm A",
+    });
+
+
+
     $('#addevaluationdetails_popup').modal('show');  
-    $('#id_evaluator').val($(this).data('evaluator_id'));    
+    $('#id_evaluator').val($(this).data('evaluator_id'));
       });
 });
 </script>

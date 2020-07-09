@@ -1,60 +1,59 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-<div class="wrapper"><!--wrapper-->
-{% include "admin/common/header.html" %}
-    
+<div class="wrapper">
+{% include "admin/common/header.html" %} 
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
                 <h1 class="dashboard-head">Resources</h1>
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
-            </div><!--welcome-wrapper-->
-       
+            </div><!--welcome-wrapper--> 
+        
      <div class="main-card"><!--main-card-->
 <div class="card-row"><!--card-row-->
             <div class="card-column whitebg blue-border"><!--card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-workers-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Workers</h1>
-            	<h2 class="blue-text"><label>Active<span>{{total_active_workers}}</span></label> </h2>
-            	<p><label>Total <span>{{total_workers}}</span></label></p>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
+                <h2 class="blue-text"><label>Active<span>{{total_active_workers|default_if_none:''}}</span></label> </h2>
+                <p><label>Total <span>{{total_workers|default_if_none:''}}</span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
             </div><!--card-column-->
         
             <div class="card-column whitebg green-border"><!--card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-manhours-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Man Hours</h1>
-            	<h2 class="green-text"><label>Today<span id="today_man_hour"></span></label>  </h2>
-            	<p><label>This Week <span id="week_man_hour"></span></label></p>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
+                <h2 class="green-text"><label>Today<span id="today_man_hour"></span></label>  </h2>
+                <p><label>This Week <span id="week_man_hour"></span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
             </div><!--card-column-->
         
             <div class="card-column whitebg orange-border"><!--card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-man-average-hours-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Man Average Hours</h1>
-            	<h2 class="orange-text"><label>Today<span id="today_avg_man_hour"></span></label> </h2>
-            	<p><label>This Week <span id="week_avg_man_hour"></span></label></p>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
+                <h2 class="orange-text"><label>Today<span id="today_avg_man_hour"></span></label> </h2>
+                <p><label>This Week <span id="week_avg_man_hour"></span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
             </div><!--card-column-->
         
             <div class="card-column whitebg red-border"><!--card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-active-team-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Active Team</h1>
-            	<h2 class="red-text"><label>Today<span>{{today_active_teams_count}}</span></label> </h2>
-            	<p><label>This Week <span>{{week_active_teams_count}}</span></label></p>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
+                <h2 class="red-text"><label>Today<span>{{today_active_teams_count|default_if_none:''}}</span></label> </h2>
+                <p><label>This Week <span>{{week_active_teams_count|default_if_none:''}}</span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
             </div><!--card-column-->
    </div><!--card-row-->
 </div><!--main-card-->       
@@ -80,8 +79,6 @@
 
 
 
-
-
 <div id="resource-scroll" class="resource-scroll">
 <div class="table-wrap">
 <table class="resource-table" id="myTable" >
@@ -90,7 +87,7 @@
 <th colspan="2" class="fixed-side resource-graybg" scope="col">&nbsp;</th>
 <th onclick="sortTable(0)" class="resource-graybg align-left" width="200" scope="col">Name<div class="sort-icon"></div></th>
 <th onclick="sortTable(1)" class="resource-graybg align-center" width="90" scope="col">Working Time<div class="sort-icon"></div></th>
-	<th class="border-right" width="11"> </td>
+    <th class="border-right" width="11"> </td>
     <th class="border-right" width="58">2 AM</th>
     <th class="border-right" width="58">4 AM</th>
     <th class="border-right" width="58">6 AM</th>
@@ -105,8 +102,8 @@
     <th  width="25"></th>
 </tr>
 </thead>
-<tbody>
-{% for details in workers_details %}
+<tbody >
+    {% for details in workers_details %}
     <tr id="worker{{details.id}}">
     <th class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
     <th class="profile fixed-side"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} align="absmiddle"></th>
@@ -124,11 +121,10 @@
       </div><!--main-content-holder-->
         </div><!--container-fluid space-->
     </section><!--content-->
-{% include 'admin/common/footer.html' %}
+{% include 'admin/common/footer.html' %}    
 </div><!--wrapper-->
 {% endblock %}
 {% block javascript %}
-
 <script type="text/javascript">
     $('document').ready(function(){
         //To find total and avergae man hour weekly and today
@@ -145,17 +141,17 @@
         
         if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.end_at|date:'d'}}')))
                 {
-                        total_today_hours += ending_time*parseInt('{{cleaning_team.no_of_cleaners}}');
+                        total_today_hours += ending_time*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
                 }
 
                 else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.start_at|date:'d'}}')))
                     {
                     
-                    total_today_hours += (24-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');
+                    total_today_hours += (24-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
                     }
                 else
                 {
-                    total_today_hours += (ending_time-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');    
+                    total_today_hours += (ending_time-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);    
                 }
 
         {% endfor %}
@@ -171,19 +167,19 @@
 
         if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{followup_team.end_at|date:'d'}}')))
                 {
-                        total_today_hours += ending_time*parseInt('{{followup_team.no_of_cleaners}}')
+                        total_today_hours += ending_time*(parseInt('{{followup_team.no_of_cleaners}}')+1)
                 
                 }
 
         else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{followup_team.start_at|date:'d'}}')))
             {
             
-            total_today_hours += (24-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');
+            total_today_hours += (24-starting_time)*(parseInt('{{followup_team.no_of_cleaners}}')+1);
             
             }
         else
         {
-            total_today_hours += (ending_time-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');   
+            total_today_hours += (ending_time-starting_time)*(parseInt('{{followup_team.no_of_cleaners}}')+1);   
         }
 
         {% endfor %}
@@ -202,24 +198,24 @@
         
         if((ending_time<starting_time)&(parseInt('{{weekstart_date|date:'d'}}')==parseInt('{{cleaning_team.end_at|date:'d'}}')))
                 {
-                        total_week_hours += ending_time*parseInt('{{cleaning_team.no_of_cleaners}}');
+                        total_week_hours += ending_time*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
                     console.log(total_week_hours,"cleaning")
                 }
 
                 else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.start_at|date:'d'}}')))
                     {
                     
-                    total_week_hours += (24-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');
+                    total_week_hours += (24-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
                     console.log(total_week_hours,"cleaning")
                     }
                 else
                 {
                     if(ending_time<starting_time)
                         {
-                        total_week_hours += ((24-starting_time)+ending_time)*parseInt('{{cleaning_team.no_of_cleaners}}');        
+                        total_week_hours += ((24-starting_time)+ending_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);        
                         } 
                     else{
-                        total_week_hours += (ending_time-starting_time)*parseInt('{{cleaning_team.no_of_cleaners}}');
+                        total_week_hours += (ending_time-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
                     } 
                     console.log(total_week_hours,"cleaning")   
                 }
@@ -237,38 +233,51 @@
 
         if((ending_time<starting_time)&(parseInt('{{weekstart_date|date:'d'}}')==parseInt('{{followup_team.end_at|date:'d'}}')))
                 {
-                        total_week_hours += ending_time*parseInt('{{followup_team.no_of_cleaners}}')
+                        total_week_hours += ending_time*(parseInt('{{followup_team.no_of_cleaners}}')+1)
                 console.log(total_week_hours,"followup")
                 }
 
         else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{followup_team.start_at|date:'d'}}')))
             {
             
-            total_week_hours += (24-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');
+            total_week_hours += (24-starting_time)*(parseInt('{{followup_team.no_of_cleaners}}')+1);
             console.log(total_week_hours,"followup")
             }
         else
         {   if(ending_time<starting_time)
                 {
-                total_week_hours += ((24-starting_time)+ending_time)*parseInt('{{followup_team.no_of_cleaners}}');        
+                total_week_hours += ((24-starting_time)+ending_time)*parseInt('{{followup_team.no_of_cleaners}}')+1;        
                 } 
             else{
-                total_week_hours += (ending_time-starting_time)*parseInt('{{followup_team.no_of_cleaners}}');
+                total_week_hours += (ending_time-starting_time)*(parseInt('{{followup_team.no_of_cleaners}}')+1);
             }    
             console.log(total_week_hours,"followup")   
         }
 
         {% endfor %}
+
         average_week_hours = total_week_hours/parseInt('{{week_total_team_mens}}')
         
 
         $("#today_man_hour").html(total_today_hours.toFixed(2));
         $("#week_man_hour").html(total_week_hours.toFixed(2));
-        $("#today_avg_man_hour").html(average_today_hours.toFixed(2));
-        $("#week_avg_man_hour").html(average_week_hours.toFixed(2));
 
-
-
+        if (Number.isNaN(average_today_hours))
+        {
+            $("#today_avg_man_hour").html('0.00');
+        }
+        else
+        {
+            $("#today_avg_man_hour").html(average_today_hours.toFixed(2));   
+        }
+        if (Number.isNaN(average_week_hours))
+        {
+            $("#week_avg_man_hour").html('0.00');
+        }
+        else
+        {
+            $("#week_avg_man_hour").html(average_week_hours.toFixed(2));   
+        }
 
 
 
@@ -394,21 +403,21 @@
                     }
                     else
                     {
-                     $("#calendar{{details.id}}").append('<div {% if cleaning_details.team.order_scheduler.order.evaluation.cleaning_policy == "ONE TIME SERVICE" %} class="sp-blue-box-second" {% else %}class="sp-green-box-second" {% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{cleaning_details.team.order_scheduler.customer_address.area.name}}</center></div>');   
+                     $("#calendar{{details.id}}").append('<div {% if cleaning_details.team.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %} class="sp-blue-box-second" {% else %}class="sp-green-box-second" {% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{cleaning_details.team.order_scheduler.customer_address.area.name}}</center></div>');   
                     }
                 }
                 else if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{cleaning_details.start_at|date:'d'}}')))
                 {
                     left_percentage = 100/24*starting_time
                     width_percentage= 100-100/24*starting_time
-                    $("#calendar{{details.id}}").append('<div {% if cleaning_details.team.order_scheduler.order.evaluation.cleaning_policy == "ONE TIME SERVICE" %} class="sp-blue-box-first" {% else %}class="sp-green-box-first" {% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{cleaning_details.team.order_scheduler.customer_address.area.name}}</center></div>');
+                    $("#calendar{{details.id}}").append('<div {% if cleaning_details.team.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %} class="sp-blue-box-first" {% else %}class="sp-green-box-first" {% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{cleaning_details.team.order_scheduler.customer_address.area.name}}</center></div>');
                 }
                 else
                 {
                      left_percentage  = 100/24*starting_time;
                      width_percentage = 100/24*ending_time-100/24*starting_time
 
-                     $("#calendar{{details.id}}").append('<div {% if cleaning_details.team.order_scheduler.order.evaluation.cleaning_policy == "ONE TIME SERVICE" %} class="blue-box" {% else %}class="green-box" {% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{cleaning_details.team.order_scheduler.customer_address.area.name}}</center></div>');         
+                     $("#calendar{{details.id}}").append('<div {% if cleaning_details.team.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %} class="blue-box" {% else %}class="green-box" {% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{cleaning_details.team.order_scheduler.customer_address.area.name}}</center></div>');         
                   
                 }    
 
@@ -478,4 +487,4 @@ window.location.href=url+query;
 }
 
 </script>
-{% endblock %}
+{% endblock %}    

@@ -475,3 +475,24 @@
   margin-right: -5px;
 }
 /*# sourceMappingURL=bootstrap-datepicker.css.map */
+
+
+
+
+/*extra css */
+.datepicker table td,
+.datepicker table th {
+     text-align: center;
+     border-radius: 0px;
+     background-color:  #2B6D8D;
+     color:#fff;
+}
+
+
+.datepicker table td.day {
+     height: 20px;
+     line-height: 20px;
+     width: 20px;
+     background-color:  #CFA95F;
+     border-radius: 50%;
+}

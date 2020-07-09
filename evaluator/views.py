@@ -28,7 +28,7 @@ from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMemb
 from accountant.models import Invoice
 
 from agent.forms import UserProfileForm,AddressForm
-from evaluator.forms import MyEvaluationDetailsForm,QuatationServiceForm,PaymentTrackForm
+from evaluator.forms import MyEvaluationDetailsForm,QuatationServiceForm
 
 # Create your views here.
 
@@ -51,23 +51,28 @@ def generate_random_username(size=10, chars=string.ascii_uppercase + string.digi
 class EvaluatorHome(IsEvaluator,View):
 	def get(self,request):
 
-		#Cleaning Jobs count
-		try:
-			cleaning_job	= CleaningTeam.objects.filter(is_active=True)
-		except:
-			cleaning_job    = None
+		#for taking today counts
+		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		count_today_end   = count_today_start+timedelta(1)
 
-		today_cleaning_job_count = cleaning_job.filter(start_at__contains=timezone.now().date()).count() 
-		week_cleaning_job_count  = cleaning_job.filter(start_at__gte=timezone.now().date()-timedelta(6)).count()		
-		
 		#Enquiry Details count
 		try:
 			enquiry = EvaluationDetails.objects.filter(is_active=True)
 		except:
 			enquiry	= None
 
-		today_enquiry_count = enquiry.filter(proposed_time__contains=timezone.now().date()).count()
-		week_enquiry_count  = enquiry.filter(proposed_time__date__gte=timezone.now().date()-timedelta(6)).count()	
+		today_enquiry_count = enquiry.filter(proposed_time__gte=count_today_start,proposed_time__lt=count_today_end,evaluator=request.user).count()
+		week_enquiry_count  = enquiry.filter(proposed_time__gte=count_today_end-timedelta(7),proposed_time__lt=count_today_end,evaluator=request.user).count()
+
+		#Cleaning Jobs count
+		try:
+			cleaning_job	= CleaningTeam.objects.filter(is_active=True)
+		except:
+			cleaning_job    = None
+
+		today_cleaning_job_count = cleaning_job.filter(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))).count() 
+		week_cleaning_job_count  = cleaning_job.filter(Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end))).count()		
+			
 
 		#Followup jobs count
 		try:
@@ -75,8 +80,8 @@ class EvaluatorHome(IsEvaluator,View):
 		except:
 			follow_up_job	 = None
 
-		today_follow_up_job_count = follow_up_job.filter(start_at__contains=timezone.now().date()).count() 
-		week_follow_up_job_count  = follow_up_job.filter(start_at__gte=timezone.now().date()-timedelta(6)).count()		
+		today_follow_up_job_count = follow_up_job.filter(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))).count() 
+		week_follow_up_job_count  = follow_up_job.filter(Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end))).count()		
 
 		#Feedback Staring count
 		try:
@@ -84,8 +89,8 @@ class EvaluatorHome(IsEvaluator,View):
 		except:
 			feedbacks				  = None
 
-		today_average_feedback		  = feedbacks.filter(response_date__contains=timezone.now().date()).aggregate(Avg('rating'))['rating__avg']
-		week_average_feedback		  = feedbacks.filter(response_date__gte=timezone.now().date()-timedelta(6)).aggregate(Avg('rating'))['rating__avg']
+		today_average_feedback		  = feedbacks.filter(response_date__gte=count_today_start,response_date__lt=count_today_end).aggregate(Avg('rating'))['rating__avg']
+		week_average_feedback		  = feedbacks.filter(response_date__gte=count_today_end-timedelta(7),response_date__lt=count_today_end).aggregate(Avg('rating'))['rating__avg']
 
 
 
@@ -106,7 +111,7 @@ class EvaluatorHome(IsEvaluator,View):
 		try:
 			schedule_date = datetime.strptime(cleaning_calendar_date,'%d-%m-%Y')
 		except:
-			schedule_date = timezone.now()
+			schedule_date = timezone.now().replace(tzinfo=None)
 
 		schedule_date_start = schedule_date.replace(hour=0,minute=0,second=0,microsecond=0)
 		schedule_date_end   = schedule_date_start+timedelta(1)	
@@ -140,6 +145,7 @@ class EvaluatorHome(IsEvaluator,View):
 			spp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
 		except:
 			spp_calendar_followup_schedules = None
+	
 
 		#Investigation tasks
 		investigation_calendar_date	= request.GET.get('investigation_calendar_date')
@@ -147,9 +153,13 @@ class EvaluatorHome(IsEvaluator,View):
 		try:
 			investigation_date = datetime.strptime(investigation_calendar_date,'%d-%m-%Y')
 		except:
-			investigation_date = timezone.now()
+			investigation_date = timezone.now().replace(tzinfo=None)
+
+		investigation_date_start = investigation_date.replace(hour=0,minute=0,second=0,microsecond=0)
+		investigation_date_end   = investigation_date_start+timedelta(1) 	
+
 		try:	
-			investigations  = Investigation.objects.filter(is_active=True,sheduled_at__contains=investigation_date.date(),investigator=request.user,check_out=None).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'))
+			investigations  = Investigation.objects.filter(is_active=True,sheduled_at__gte=investigation_date_start,sheduled_at__lte=investigation_date_end,investigator=request.user,check_out=None).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'))
 		except:
 			investigations  = 	None	
 
@@ -159,10 +169,13 @@ class EvaluatorHome(IsEvaluator,View):
 		try:
 			evaluation_date = datetime.strptime(evaluation_calendar_date,'%d-%m-%Y')
 		except:
-			evaluation_date = timezone.now()
-			
+			evaluation_date = timezone.now().replace(tzinfo=None)
+		
+		evaluation_date_start     = evaluation_date.replace(hour=0,minute=0,second=0,microsecond=0)
+		evaluation_date_end       = evaluation_date_start+timedelta(1)
+
 		try:
-			my_evaluations = EvaluationDetails.objects.filter(is_active=True,proposed_time__contains=evaluation_date.date(),evaluator=request.user)
+			my_evaluations = EvaluationDetails.objects.filter(is_active=True,proposed_time__gte=evaluation_date_start,proposed_time__lte=evaluation_date_end,evaluator=request.user)
 		except:
 			my_evaluations = None	
 
@@ -278,6 +291,11 @@ class OrderDetails(IsEvaluator,View):
 
 class ResourceManagement(IsEvaluator,View):
 	def get(self,request):
+
+		#for taking today counts
+		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		count_today_end   = count_today_start+timedelta(1)
+
 		#total workers count
 		try:
 			total_workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))).count()
@@ -286,7 +304,7 @@ class ResourceManagement(IsEvaluator,View):
 		
 		#total active workers
 		try:
-			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__contains=timezone.now().date())|Q(end_at__contains=timezone.now().date())) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__contains=timezone.now().date())|Q(end_at__contains=timezone.now().date())) )).values_list('member',flat=True)).distinct().count()
+			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=count_today_start)&Q(end_at__gte=count_today_start)) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=timezone.now().replace(tzinfo=None))&Q(end_at__gte=timezone.now().replace(tzinfo=None)))) ).values_list('member',flat=True)).distinct().count()
 		except:
 			total_active_workers = 0	
 	
@@ -301,21 +319,23 @@ class ResourceManagement(IsEvaluator,View):
 		except:
 			follow_up_teams = None
 
-	
-		today_cleaning_active_teams  = cleaning_teams.filter(Q(Q(start_at__contains=timezone.now().date())|Q(end_at__contains=timezone.now().date())))
-		today_followup_active_teams  = follow_up_teams.filter(Q(Q(start_at__contains=timezone.now().date())|Q(end_at__contains=timezone.now().date())))
-		week_cleaning_active_teams   = cleaning_teams.filter(Q(Q(start_at__gte=timezone.now().date()-timedelta(6))|Q(end_at__gte=timezone.now().date()-timedelta(6))))
-		week_followup_active_teams   = follow_up_teams.filter(Q(Q(start_at__gte=timezone.now().date()-timedelta(6))|Q(end_at__gte=timezone.now().date()-timedelta(6))))
-		
+
+		today_cleaning_active_teams  = cleaning_teams.filter(Q(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))))
+		today_followup_active_teams  = follow_up_teams.filter(Q(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))))
+		week_cleaning_active_teams   = cleaning_teams.filter(Q( Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end)) ))
+		week_followup_active_teams   = follow_up_teams.filter(Q( Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end)) ))
+
+
 		today_date            = timezone.now()
 		weekstart_date        = timezone.now().date()-timedelta(6)
 
+		#for script
 		try:
-			today_total_team_mens = today_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0+today_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0
+			today_total_team_mens = today_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_cleaning_active_teams.count() or 0+today_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_followup_active_teams.count() or 0
 		except:
 			today_total_team_mens = 0
 		try:	
-			week_total_team_mens  = week_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0+week_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0
+			week_total_team_mens  = week_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_cleaning_active_teams.count() or 0+week_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_followup_active_teams.count() or 0
 		except:	
 			week_total_team_mens  = 0
 
@@ -325,7 +345,6 @@ class ResourceManagement(IsEvaluator,View):
 		today_active_teams_count = today_cleaning_active_teams.count()+today_followup_active_teams.count()
 		week_active_teams_count  = week_cleaning_active_teams.count()+week_followup_active_teams.count() 
 
-
 		#cleaning schedule & followup schedule for cleaning calendar			
 		workers_calendar_date	= request.GET.get('workers_calendar_date')
 		search                  = request.GET.get('search')
@@ -333,7 +352,10 @@ class ResourceManagement(IsEvaluator,View):
 		try:
 			workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
 		except:
-			workers_date = timezone.now()
+			workers_date = timezone.now().replace(tzinfo=None)
+
+		workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		workers_date_end   = workers_date_start+timedelta(1)
 
 		if search:
 			try:
@@ -347,7 +369,7 @@ class ResourceManagement(IsEvaluator,View):
 				workers =  None
  
 		try:		
-			workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__contains=workers_date.date())|Q(end_at__contains=workers_date.date())) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date.date())|Q(end_at__date=workers_date.date())) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
+			workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
 		except:
 			workers_details = None
 
@@ -606,7 +628,6 @@ class MakeQuatationBase(IsEvaluator,View):
 		return redirect('evaluator:evaluator-makequatation1',enquiry_id,evaluation.id)	
 
 class MakeQuatationPhase1(IsEvaluator,View):
-	payment_track_formset_define = formset_factory(PaymentTrackForm)
 
 	def get(self,request,enquiry_id,evaluation_id):
 		enquiry_user    	  = UserProfile.objects.get(id=enquiry_id)
@@ -629,27 +650,17 @@ class MakeQuatationPhase1(IsEvaluator,View):
 		else:
 			allow_submit = False				
 
-		return render(request,'evaluator/enquiry/quatationphase1.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,'payment_track_formset':self.payment_track_formset_define(),"allow_submit":allow_submit})	
+		return render(request,'evaluator/enquiry/quatationphase1.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit})	
 
 	def post(self,request,enquiry_id,evaluation_id):
-		payment_track_formset       = self.payment_track_formset_define(request.POST)
 		
 		payment_method = request.POST.get('payment_method')
 		attender_notes = request.POST.get('attender_notes')
+		before_cleaning_amount	= int(request.POST.get('before_cleaning_amount')or 0)
+		after_cleaning_amount	= int(request.POST.get('after_cleaning_amount')or 0)
 
 		#update payment method
-		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,attender_notes=attender_notes,quatation_status='PENDING')
-		#SAVE payment breakdown details
-		if payment_method == 'BREAKDOWN':
-			if payment_track_formset.is_valid():
-				for payment_track_form in payment_track_formset:
-					if payment_track_form.is_valid():
-						payment_track_form_save 			  = payment_track_form.save(commit=False)
-						payment_track_form_save.evaluation_id = evaluation_id
-						payment_track_form_save.save()
-			else:
-				messages.error(request,"An Error Occured")
-				return redirect('agent:agent-makequatation1',enquiry_id,evaluation_id)
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,attender_notes=attender_notes,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
 							
 		messages.success(request,"Quatation Submitted Succesfully")		
 		return redirect('evaluator:evaluatordash-board')
@@ -743,7 +754,6 @@ class MakeQuatationPhase2(IsEvaluator,View):
 
 
 class MakeAssignedQuatationPhase1(IsEvaluator,View):
-	payment_track_formset_define = formset_factory(PaymentTrackForm)
 
 	def get(self,request,enquiry_id,evaluation_id):
 		enquiry_user    	  = UserProfile.objects.get(id=enquiry_id)
@@ -766,26 +776,16 @@ class MakeAssignedQuatationPhase1(IsEvaluator,View):
 		else:
 			allow_submit = False				
 
-		return render(request,'evaluator/enquiry/assignedquatationphase1.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,'payment_track_formset':self.payment_track_formset_define(),"allow_submit":allow_submit})	
+		return render(request,'evaluator/enquiry/assignedquatationphase1.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit})	
 
 	def post(self,request,enquiry_id,evaluation_id):
-		payment_track_formset       = self.payment_track_formset_define(request.POST)
 		
 		payment_method = request.POST.get('payment_method')
-
+		before_cleaning_amount	= int(request.POST.get('before_cleaning_amount')or 0)
+		after_cleaning_amount	= int(request.POST.get('after_cleaning_amount')or 0)
+		
 		#update payment method
-		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING')
-		#SAVE payment breakdown details
-		if payment_method == 'BREAKDOWN':
-			if payment_track_formset.is_valid():
-				for payment_track_form in payment_track_formset:
-					if payment_track_form.is_valid():
-						payment_track_form_save 			  = payment_track_form.save(commit=False)
-						payment_track_form_save.evaluation_id = evaluation_id
-						payment_track_form_save.save()
-			else:
-				messages.error(request,"An Error Occured")
-				return redirect('evaluator:evaluator-assignedmakequatation1',enquiry_id,evaluation_id)
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
 							
 		messages.success(request,"Quatation Submitted Succesfully")		
 		return redirect('evaluator:evaluatordash-board')

@@ -1,5 +1,5 @@
 from django import forms
-from evaluator.models import EvaluationDetails,Evaluation,EvaluationBook,PaymentTrack
+from evaluator.models import EvaluationDetails,Evaluation,EvaluationBook
 from user.models import UserProfile,Address
 
 
@@ -69,14 +69,4 @@ class QuatationServiceForm(forms.ModelForm):
 	def __init__(self,*args,**kwargs):
 		super(QuatationServiceForm, self).__init__(*args, **kwargs)	
 		self.fields['cleaning_hours'].label = 'Cleaning Duration'
-
-class PaymentTrackForm(forms.ModelForm):
-
-	class Meta:
-		model  = PaymentTrack
-		fields = ('amount','due_date') 
 	
-	def __init__(self,*args,**kwargs):
-		super(PaymentTrackForm, self).__init__(*args, **kwargs)
-		self.fields['due_date']   =	forms.DateField(input_formats=['%d-%m-%Y'],required=False,widget=forms.TextInput())
-			

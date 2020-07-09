@@ -171,7 +171,9 @@ class Evaluation(models.Model):
 	quatation_status	= models.CharField(max_length=50,blank=True,null=True,choices=QUATATION_CHOICES)
 	quatation_approved_date = models.DateTimeField(blank=True,null=True)
 	
-	payment_method		= models.CharField(max_length=20,blank=True,null=True,choices=PAYMENT_CHOICES)
+	payment_method			= models.CharField(max_length=20,blank=True,null=True,choices=PAYMENT_CHOICES)
+	before_cleaning_amount	= models.FloatField(blank=True,null=True)
+	after_cleaning_amount	= models.FloatField(blank=True,null=True)
 
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)
@@ -181,18 +183,7 @@ class Evaluation(models.Model):
 		return str(self.evaluation_id)
 
 	def __str__(self):
-		return self.evaluation_id
-
-#Payment dead end details
-class PaymentTrack(models.Model):
-	evaluation 			= models.ForeignKey('Evaluation',blank=True,null=True,related_name='evaluation_payment_track')
-	amount              = models.FloatField(blank=True,null=True)
-	due_date	     	= models.DateField(blank=True,null=True)
-	def __unicode__(self):
-		return str(self.evaluation.evaluation_id)
-
-	def __str__(self):
-		return self.evaluation.evaluation_id	
+		return self.evaluation_id	
 
 #Store the Onsite Details by the Evaluator
 

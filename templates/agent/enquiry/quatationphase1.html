@@ -80,38 +80,20 @@
                     <option value="BREAKDOWN">Break-Down</option>        
             </select>
           </div>
-          {{ payment_track_formset.management_form }}
-
-         {% for form in payment_track_formset %}
 
           <div class="div-section payment_track">
 
-
-            <div class="link_formset">    
-
-              {% for field in form %}
-
               <div class="page-col">
-
-                {{ field.errors }}    
-
-                {{ field.label_tag }} {{ field }}
-
-                {% if field.help_text %}
-
-                <p class="help">{{ field.help_text|safe }}</p>
-
-                {% endif %}
-
+                <label>Before Cleaning Amount:</label>
+                <input type="number" name="before_cleaning_amount"></input>
              </div>
 
-             {% endfor %}
-
-          </div>
+             <div class="page-col">
+                <label>After Cleaning Amount:</label>
+                <input type="number" name="after_cleaning_amount"></input>
+             </div>
 
         </div>
-
-      {% endfor %}
         </div>
         <div class="page-footer text-center">
         <button type="button" class="primary-btn" onclick="submitAnyForm(this);">Save/Submit</button>
@@ -136,56 +118,9 @@
 var x=0; 
 
 $('document').ready(function(){
-//formset
-    $('.link_formset').formset({
-
-        addText: 'Add',
-
-        deleteText: 'Remove', 
-
-         added: add_row,
-
-        removed: remove_row,
-
-    });
-
-//Add raw function
-function add_row(){
-
-x++;
-
-$(function () {
-  $("#id_form-"+x+"-due_date").datetimepicker({ 
-    pickTime: false, 
-    format: "DD-MM-YYYY", 
-    //maxDate: 'now().date()', 
-  });
-});
-
-}    
-
-//delete raw function
-function remove_row(){
-  x--;
-  $(function () {
-  $("#id_form-"+x+"-due_date").datetimepicker({ 
-    pickTime: false, 
-    format: "DD-MM-YYYY", 
-    //maxDate: 'now().date()', 
-  });
-});
-  
-}
 
 //Initial Hiding of payment Breakdown
 $('.payment_track').hide();
-$(function () {
-  $("#id_form-"+x+"-due_date").datetimepicker({ 
-    pickTime: false, 
-    format: "DD-MM-YYYY", 
-    //maxDate: 'now().date()', 
-  });
-});
 
 });
 

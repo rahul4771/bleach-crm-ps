@@ -103,8 +103,12 @@ class ClientDetails(IsAccountant,View):
 		new_clients_count    = orders.filter(evaluation__created__date__gte=timezone.now().date()-timedelta(30),evaluation__customer__created__date__gte=timezone.now().date()-timedelta(30),).values_list('evaluation__customer').distinct().count()
 		
 		#PAGINATION CLIENTS		
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
 		page = request.GET.get('page',1) 
-		paginator=Paginator(client_details,10)
+		paginator=Paginator(client_details,no_of_entries)
 		try: 
 			client_details=paginator.page(page) 
 		except PageNotAnInteger:
@@ -124,7 +128,7 @@ class ClientDetails(IsAccountant,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(client_details.end_index())-(client_details.start_index())+1
 
-		return render(request,'accountant/client/clients.html',{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page})		
+		return render(request,'accountant/client/clients.html',{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})		
 		
 
 class OrderDetails(IsAccountant,View):
@@ -149,8 +153,12 @@ class OrderDetails(IsAccountant,View):
 		pending_orders_count  =	evaluations.filter(Q(Q(quatation_status='ASK_FOR_DISCOUNT')|Q(quatation_status='PENDING'))).count()
 		
 		#PAGINATION ORDERS		
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
 		page = request.GET.get('page',1) 
-		paginator=Paginator(evaluations,10)
+		paginator=Paginator(evaluations,no_of_entries)
 		try: 
 			evaluations=paginator.page(page) 
 		except PageNotAnInteger:
@@ -170,7 +178,7 @@ class OrderDetails(IsAccountant,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
 
-		return render(request,'accountant/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})		
+		return render(request,'accountant/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})		
 
 
 class PaymentDetails(IsAccountant,View):

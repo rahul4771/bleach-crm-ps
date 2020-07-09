@@ -26,14 +26,19 @@ from accountant.models import Invoice
 class AdminHome(IsAdmin,View):
 	def get(self,request):
 		
+
+		#for taking today counts
+		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		count_today_end   = count_today_start+timedelta(1)
+
 		#Enquiry Details count
 		try:
 			enquiry = EvaluationDetails.objects.filter(is_active=True)
 		except:
 			enquiry	= None
 
-		today_enquiry_count = enquiry.filter(proposed_time__date=timezone.now().date()).count()
-		week_enquiry_count  = enquiry.filter(proposed_time__date__gte=timezone.now().date()-timedelta(6)).count()	
+		today_enquiry_count = enquiry.filter(proposed_time__gte=count_today_start,proposed_time__lt=count_today_end,).count()
+		week_enquiry_count  = enquiry.filter(proposed_time__gte=count_today_end-timedelta(7),proposed_time__lt=count_today_end).count()	
 
 		#Cleaning Jobs count
 		try:
@@ -41,8 +46,8 @@ class AdminHome(IsAdmin,View):
 		except:
 			cleaning_job    = None
 
-		today_cleaning_job_count = cleaning_job.filter(start_at__date=timezone.now().date()).count() 
-		week_cleaning_job_count  = cleaning_job.filter(start_at__gte=timezone.now().date()-timedelta(6)).count()		
+		today_cleaning_job_count = cleaning_job.filter(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))).count() 
+		week_cleaning_job_count  = cleaning_job.filter(Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end))).count()		
 		
 		#Followup jobs count
 		try:
@@ -50,8 +55,8 @@ class AdminHome(IsAdmin,View):
 		except:
 			follow_up_job	 = None
 
-		today_follow_up_job_count = follow_up_job.filter(start_at__date=timezone.now().date()).count() 
-		week_follow_up_job_count  = follow_up_job.filter(start_at__gte=timezone.now().date()-timedelta(6)).count()		
+		today_follow_up_job_count = follow_up_job.filter(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))).count() 
+		week_follow_up_job_count  = follow_up_job.filter(Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end))).count()		
 
 		#Feedback Staring count
 		try:
@@ -59,8 +64,8 @@ class AdminHome(IsAdmin,View):
 		except:
 			feedbacks				  = None
 
-		today_average_feedback		  = feedbacks.filter(response_date__date=timezone.now().date()).aggregate(Avg('rating'))['rating__avg']
-		week_average_feedback		  = feedbacks.filter(response_date__gte=timezone.now().date()-timedelta(6)).aggregate(Avg('rating'))['rating__avg']	
+		today_average_feedback		  = feedbacks.filter(response_date__gte=count_today_start,response_date__lt=count_today_end).aggregate(Avg('rating'))['rating__avg']
+		week_average_feedback		  = feedbacks.filter(response_date__gte=count_today_end-timedelta(7),response_date__lt=count_today_end).aggregate(Avg('rating'))['rating__avg']	
 		
 
 		#Evaluation details of each evaluator for evaluation table
@@ -69,10 +74,13 @@ class AdminHome(IsAdmin,View):
 		try:
 			evaluation_date = datetime.strptime(evaluation_calendar_date,'%d-%m-%Y')
 		except:
-			evaluation_date = timezone.now()
+			evaluation_date = timezone.now().replace(tzinfo=None)	
+
+		evaluation_date_start  = evaluation_date.replace(hour=0,minute=0,second=0,microsecond=0)
+		evaluation_date_end    = evaluation_date_start+timedelta(1)	
 		
 		try:
-			evaluation_details		  = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').prefetch_related(Prefetch('evaluator_evaluation',queryset=EvaluationDetails.objects.filter(is_active=True,proposed_time__date=evaluation_date.date()),to_attr='evaluation_details'))
+			evaluation_details		  = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').prefetch_related(Prefetch('evaluator_evaluation',queryset=EvaluationDetails.objects.filter(is_active=True,proposed_time__gte=evaluation_date_start,proposed_time__lte=evaluation_date_end),to_attr='evaluation_details'))
 		except:
 			evaluation_details 		  = None
 
@@ -83,29 +91,42 @@ class AdminHome(IsAdmin,View):
 		try:
 			schedule_date = datetime.strptime(cleaning_calendar_date,'%d-%m-%Y')
 		except:
-			schedule_date = timezone.now()
+			schedule_date = timezone.now().replace(tzinfo=None)
+
+		schedule_date_start = schedule_date.replace(hour=0,minute=0,second=0,microsecond=0)
+		schedule_date_end   = schedule_date_start+timedelta(1)		
 
 		try:
-			calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__date=schedule_date.date())&Q(end_at__date=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address')
+			calendar_order_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
 		except:
-			calendar_order_schedules = None
+			calendar_order_schedules 	= None
 
 		try:
-			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__date=schedule_date.date())&Q(end_at__date=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
 		except:
 			calendar_followup_schedules = None
 	
 		try:
-			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__date=schedule_date.date())&~Q(end_at__date=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address')
+			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
 		except:
 			sp_calendar_order_schedules = None
 
 		try:
-			sp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__date=schedule_date.date())&~Q(end_at__date=schedule_date.date()))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+			sp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
 		except:
-			sp_calendar_followup_schedules = None
+			sp_calendar_followup_schedules = None							
 
-		return render(request,'admin/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_average_feedback':today_average_feedback,'week_average_feedback':week_average_feedback,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'schedule_date':schedule_date,})
+		try:
+			spp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
+		except:
+			spp_calendar_order_schedules = None
+
+		try:
+			spp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+		except:
+			spp_calendar_followup_schedules = None
+
+		return render(request,'admin/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_average_feedback':today_average_feedback,'week_average_feedback':week_average_feedback,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,})
 
 class ClientDetails(IsAdmin,View):
 	def get(self,request):
@@ -138,8 +159,12 @@ class ClientDetails(IsAdmin,View):
 		new_clients_count    = orders.filter(evaluation__created__date__gte=timezone.now().date()-timedelta(30),evaluation__customer__created__date__gte=timezone.now().date()-timedelta(30),).values_list('evaluation__customer').distinct().count()
 		
 		#PAGINATION CLIENTS		
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
 		page = request.GET.get('page',1) 
-		paginator=Paginator(client_details,10)
+		paginator=Paginator(client_details,no_of_entries)
 		try: 
 			client_details=paginator.page(page) 
 		except PageNotAnInteger:
@@ -160,7 +185,7 @@ class ClientDetails(IsAdmin,View):
 		entry_per_page=(client_details.end_index())-(client_details.start_index())+1
 
 
-		return render(request,'admin/client/clients.html',{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page})		
+		return render(request,'admin/client/clients.html',{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})		
 
 class TicketDetails(IsAdmin,View):
 	def get(self,request):
@@ -191,8 +216,12 @@ class TicketDetails(IsAdmin,View):
 			follow_up_cleaning_count = 0
 
 		#PAGINATION TICKETS		
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
 		page = request.GET.get('page',1) 
-		paginator=Paginator(tickets,10)
+		paginator=Paginator(tickets,no_of_entries)
 		try: 
 			tickets=paginator.page(page) 
 		except PageNotAnInteger:
@@ -212,7 +241,7 @@ class TicketDetails(IsAdmin,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(tickets.end_index())-(tickets.start_index())+1
 
-		return render(request,'admin/ticket/tickets.html',{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})		
+		return render(request,'admin/ticket/tickets.html',{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries})		
 
 class OrderDetails(IsAdmin,View):
 	def get(self,request):
@@ -273,24 +302,40 @@ class FeedbackDetails(IsAdmin,View):
 
 		average_feedback    		  = feedbacks.aggregate(Avg('rating'))['rating__avg']
 		total_feedbacks               = feedbacks.count()
-		starring_percentages          = feedbacks.values('rating').annotate(percentage=Cast(Count('rating')/float(total_feedbacks)*100,FloatField())).order_by('rating')
-		
+		starring_percentages          = list(feedbacks.values('rating').annotate(percentage=Cast(Count('rating')/float(total_feedbacks)*100,FloatField())).order_by('rating'))
+
+		#append not done rating to default 0
+		for i in range(1,6):
+			new_rating = {}
+			if not any(starring['rating'] == i for starring in starring_percentages):
+				new_rating['rating']     = i
+				new_rating['percentage'] = 0
+				starring_percentages.append(new_rating)	
+
+		starring_percentages = sorted(starring_percentages, key = lambda i: i['rating'])		
+
+
+
 		#order wise feedback
 		if search:
 			try:
-				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,evaluation__customer__name__icontains=search).prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('cleaning_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))		
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,evaluation__customer__name__icontains=search).prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))		
 			except:
 				order_wise_feedbacks = None
 
 		else:
 			try:
-				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True).prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('cleaning_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))						
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True).prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))						
 			except:	
-				order_wise_feedbacks = None
-
+				order_wise_feedbacks = None		
+				
 		#PAGINATION FEEDBACKS		
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
 		page = request.GET.get('page',1) 
-		paginator=Paginator(order_wise_feedbacks,10)
+		paginator=Paginator(order_wise_feedbacks,no_of_entries)
 		try: 
 			order_wise_feedbacks=paginator.page(page) 
 		except PageNotAnInteger:
@@ -310,11 +355,16 @@ class FeedbackDetails(IsAdmin,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(order_wise_feedbacks.end_index())-(order_wise_feedbacks.start_index())+1
 
-		return render(request,'admin/feedback/feedbacks.html',{"feedbacks":feedbacks,"average_feedback":average_feedback,"total_feedbacks":total_feedbacks,"starring_percentages":starring_percentages,"order_wise_feedbacks":order_wise_feedbacks,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})
+		return render(request,'admin/feedback/feedbacks.html',{"feedbacks":feedbacks,"average_feedback":average_feedback,"total_feedbacks":total_feedbacks,"starring_percentages":starring_percentages,"order_wise_feedbacks":order_wise_feedbacks,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})
 
 class ResourceManagement(IsAdmin,View):
 	def get(self,request):
 		
+		#for taking today counts
+		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		count_today_end   = count_today_start+timedelta(1)
+
+
 		#total workers count
 		try:
 			total_workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))).count()
@@ -323,7 +373,7 @@ class ResourceManagement(IsAdmin,View):
 		
 		#total active workers
 		try:
-			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=timezone.now().date())|Q(end_at__date=timezone.now().date())) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=timezone.now().date())|Q(end_at__date=timezone.now().date())) )).values_list('member',flat=True)).distinct().count()
+			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=count_today_start)&Q(end_at__gte=count_today_start)) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=timezone.now().replace(tzinfo=None))&Q(end_at__gte=timezone.now().replace(tzinfo=None)))) ).values_list('member',flat=True)).distinct().count()
 		except:
 			total_active_workers = 0	
 	
@@ -338,21 +388,23 @@ class ResourceManagement(IsAdmin,View):
 		except:
 			follow_up_teams = None
 
-	
-		today_cleaning_active_teams  = cleaning_teams.filter(Q(Q(start_at__date=timezone.now().date())|Q(end_at__date=timezone.now().date())))
-		today_followup_active_teams  = follow_up_teams.filter(Q(Q(start_at__date=timezone.now().date())|Q(end_at__date=timezone.now().date())))
-		week_cleaning_active_teams   = cleaning_teams.filter(Q(Q(start_at__gte=timezone.now().date()-timedelta(6))|Q(end_at__gte=timezone.now().date()-timedelta(6))))
-		week_followup_active_teams   = follow_up_teams.filter(Q(Q(start_at__gte=timezone.now().date()-timedelta(6))|Q(end_at__gte=timezone.now().date()-timedelta(6))))
+
+		today_cleaning_active_teams  = cleaning_teams.filter(Q(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))))
+		today_followup_active_teams  = follow_up_teams.filter(Q(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))))
+		week_cleaning_active_teams   = cleaning_teams.filter(Q( Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end)) ))
+		week_followup_active_teams   = follow_up_teams.filter(Q( Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end)) ))
 		
+
 		today_date            = timezone.now()
-		weekstart_date        = timezone.now().date()-timedelta(6)
+		weekstart_date        = timezone.now()-timedelta(6)
+
 
 		try:
-			today_total_team_mens = today_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0+today_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0
+			today_total_team_mens = today_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_cleaning_active_teams.count() or 0+today_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_followup_active_teams.count() or 0
 		except:
 			today_total_team_mens = 0
 		try:	
-			week_total_team_mens  = week_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0+week_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum'] or 0
+			week_total_team_mens  = week_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_cleaning_active_teams.count() or 0+week_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_followup_active_teams.count() or 0
 		except:	
 			week_total_team_mens  = 0
 
@@ -370,7 +422,10 @@ class ResourceManagement(IsAdmin,View):
 		try:
 			workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
 		except:
-			workers_date = timezone.now()
+			workers_date = timezone.now().replace(tzinfo=None)
+
+		workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		workers_date_end   = workers_date_start+timedelta(1)		
 
 		if search:
 			try:
@@ -384,7 +439,7 @@ class ResourceManagement(IsAdmin,View):
 				workers =  None
  
 		try:		
-			workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date.date())|Q(end_at__date=workers_date.date())) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date.date())|Q(end_at__date=workers_date.date())) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
+			workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
 		except:
 			workers_details = None
 
