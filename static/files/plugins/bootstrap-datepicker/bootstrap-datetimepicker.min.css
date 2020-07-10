@@ -8,7 +8,7 @@
 .bootstrap-datetimepicker-widget table th {
      text-align: center;
      border-radius: 0px;
-     background-color:  #2B6D8D;
+     background-color:  #00BFFF;
      color:#fff;
 }
 
@@ -17,10 +17,9 @@
      height: 20px;
      line-height: 20px;
      width: 20px;
-     background-color:  #CFA95F;
+     background-color:  #800000;
      border-radius: 50%;
 }
-
 
 
 
