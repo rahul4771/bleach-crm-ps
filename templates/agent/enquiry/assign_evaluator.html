@@ -240,10 +240,13 @@ $(".assign_evaluator_button").click(function () {
 
     $("#id_proposed_time").val(now_string);
 
-    $("#id_proposed_time").datetimepicker({  
-    format: "DD/MM/YYYY hh:mm A",
-    });
-
+    tail.DateTime("#id_proposed_time", {
+      dateFormat: "dd/mm/YYYY",
+      time12h: true,
+      timeFormat: "GG:ii:ss A",
+      position: "right",
+      closeButton: false,
+      });
 
 
     $('#addevaluationdetails_popup').modal('show');  
