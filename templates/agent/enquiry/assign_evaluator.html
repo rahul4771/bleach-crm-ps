@@ -238,8 +238,6 @@ $(".assign_evaluator_button").click(function () {
 
     now_string = ({{evaluation_date.day}}<10 ? '0':'')+"{{evaluation_date.day}}/"+({{evaluation_date.month}}<10 ? '0':'')+"{{evaluation_date.month}}/"+"{{evaluation_date.year}} "+(hour<10 ? '0':'')+(hour>12 ? hour-12:hour)+":00 "+(hour>=12 ? 'PM':'AM')
 
-    $("#id_proposed_time").val(now_string);
-
     tail.DateTime("#id_proposed_time", {
       dateFormat: "dd/mm/YYYY",
       time12h: true,
@@ -247,6 +245,8 @@ $(".assign_evaluator_button").click(function () {
       position: "right",
       closeButton: false,
       });
+    
+    $("#id_proposed_time").val(now_string);
 
 
     $('#addevaluationdetails_popup').modal('show');  
