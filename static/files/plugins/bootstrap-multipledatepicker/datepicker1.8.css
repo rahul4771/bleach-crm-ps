@@ -484,7 +484,7 @@
 .datepicker table th {
      text-align: center;
      border-radius: 0px;
-     background-color:  #00BFFF;
+     background-color:  #2E4E85;
      color:#fff;
 }
 
@@ -493,6 +493,10 @@
      height: 20px;
      line-height: 20px;
      width: 20px;
-     background-color:  #800000;
+     background-color:  #FFFFFF;
      border-radius: 50%;
+}
+
+.datepicker table td {
+    color: #333333;
 }
