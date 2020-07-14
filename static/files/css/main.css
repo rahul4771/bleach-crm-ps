@@ -2226,3 +2226,50 @@ a.back-btn:hover,
   color: #2791cf;
   text-shadow: none;
 }
+
+
+
+
+
+
+/*params filter */
+.params_filter:not(.active) .expand-body {
+  display: none;}  
+
+.params_filter .expand-body {
+  background: #fff;
+  box-shadow: #ececec 0 0 5px;
+  border: 1px solid #d4d4d4;
+  position: absolute;
+  right: 0;
+  z-index: 10;
+  margin-top: 3px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  width:50%;
+}  
+
+/* left, right */
+@media (min-width: 992px) {
+.params_filter .expand-body .left,
+.params_filter .expand-body .right {
+  float: left;
+  width: 50%;}
+}
+
+/* head */
+.params_filter .expand-body .head {
+  display: table;
+  width: 100%;
+  margin-bottom: 15px;}
+.params_filter .expand-body .head h1 {
+  font-size: 20px;}
+/* body */
+.params_filter .expand-body .body {
+  display: table;
+  width: 100%;}
+/* foot */
+.params_filter .expand-body .foot {
+  display: table;
+  width: 100%;
+  margin-top: 20px;}

@@ -21,7 +21,7 @@ from django.db.models import Prefetch
 from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod,ServiceType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 
@@ -321,13 +321,33 @@ class AgentHome(IsAgent,View):
 	def post(self,request):
 		action_mode = request.POST.get('action_type')
 
-		if action_mode =='delete_followupchedule':
+		if action_mode =='confirm_followupchedule':
 			followupscheduler_id = request.POST.get('followupscheduler')
-			FollowUpScheduler.objects.filter(id=followupscheduler_id).update(status='CONFIRMED')
-		
-		elif action_mode =='delete_orderschedule':	
+			confirm_status       = request.POST.get('confirm')
+
+			if confirm_status:
+				FollowUpScheduler.objects.filter(id=followupscheduler_id).update(status='CONFIRMED')
+				messages.success(request,"Followup Cleaning Date Succesfully Confirmed")
+
+		elif action_mode =='confirm_orderschedule':	
 			orderscheduler_id = request.POST.get('orderscheduler')
-			OrderScheduler.objects.filter(id=orderscheduler_id).update(status='CONFIRMED')
+			confirm_status    = request.POST.get('confirm')
+			
+			if confirm_status:
+				OrderScheduler.objects.filter(id=orderscheduler_id).update(status='CONFIRMED')
+				messages.success(request,"Cleaning Date Succesfully Confirmed")
+
+		elif action_mode =='edit_evaluation':
+			evaluation_detail_id 			  = request.POST.get('evaluation_id')
+
+			new_proposed_date                 = request.POST.get('proposed_date')
+			new_proposed_time                 = request.POST.get('proposed_time')
+
+			converted_proposed_datetime       = datetime.strptime(new_proposed_date+' '+new_proposed_time,'%d-%m-%Y %I:%M %p')
+
+			#update evaluation time
+			EvaluationDetails.objects.filter(id=evaluation_detail_id).update(proposed_time=converted_proposed_datetime)	
+			messages.success(request,"Evaluation Edited Succesfully")
 
 		return redirect('agent:agentdash-board')	
 
@@ -425,24 +445,92 @@ class ResourceManagement(IsAgent,View):
 class OrderDetails(IsAgent,View):
 	def get(self,request):
 
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
+		try:
+			service_types = ServiceType.objects.filter(is_active=True) 
+		except:
+			service_types =	None	
+
+		#Prefetch filters
+		fil_governorate       = request.GET.get('governorate')
+		fil_area			  = request.GET.get('area')
+		fil_cleaning_policy   = request.GET.get('cleaning_policy')
+		fil_service_type      = request.GET.get('service_type')
+
+
+		customer_address_filter = [] 
+		if fil_governorate: 
+		    case1 = Q(address__governorate_id=fil_governorate)
+		    customer_address_filter.append(case1)
+		if fil_area:
+		    case2 = Q(address__area_id=fil_area)
+		    customer_address_filter.append(case2)
+
+		if fil_governorate or fil_area: 
+		    customer_address_prefetch_filter     = functools.reduce(operator.and_,customer_address_filter)
+		else:
+		    customer_address_prefetch_filter     = None
+		
+
+		evaluation_book_filter = []
+		if fil_cleaning_policy:
+			case1 = Q(cleaning_policy=fil_cleaning_policy)
+			evaluation_book_filter.append(case1)
+		if fil_service_type:     
+			case2 = Q(service_type_id=fil_service_type)
+			evaluation_book_filter.append(case2)
+
+		if fil_cleaning_policy or fil_service_type:
+			evaluation_book_prefetch_filter     = functools.reduce(operator.and_,evaluation_book_filter)
+		else:
+			evaluation_book_prefetch_filter     = None			 			
+
+			
 		#Evaluation Details
 		search                  = request.GET.get('search')
-		
+
 		if search:
-			try:
-				evaluations = Evaluation.objects.select_related('customer').filter(is_active=True,customer__name__icontains=search).prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))
-			except:
-				evaluations = None 
-		 
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(is_active=True,customer__name__icontains=search)
 		else:
-			try:
-				evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))
-			except:
-				evaluations = None 
-			
-		approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
-		pending_orders_count  =	evaluations.filter(Q(Q(quatation_status='ASK_FOR_DISCOUNT')|Q(quatation_status='PENDING'))).count()
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer')
+
+		if evaluation_book_prefetch_filter and customer_address_prefetch_filter: 
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation'))		 
+			print("both")
+		elif evaluation_book_prefetch_filter and not customer_address_prefetch_filter:
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation'))
+			print("book ony")
+		elif not evaluation_book_prefetch_filter and customer_address_prefetch_filter:
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))
+			print("address only") 
+		else:
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))		
+			print("not at all")
+
+		if evaluations:
+			approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
+			pending_orders_count  =	evaluations.filter(Q(quatation_status='PENDING')).count()
+		else:
+			approved_orders_count = 0
+			pending_orders_count  = 0
+	
 		
+		fil_status = request.GET.get('status')
+		#filters 	
+		filters=[] 
+		if fil_status: 
+		    case1 = Q(quatation_status=fil_status)
+		    filters.append(case1)
+	
+		if fil_status: 
+		    filters     = functools.reduce(operator.and_,filters)
+		    evaluations = evaluations.filter(filters)
+		    
+
 		#PAGINATION ORDERS
 		no_of_entries = request.GET.get('no_of_entries')		
 		if not no_of_entries:
@@ -469,7 +557,7 @@ class OrderDetails(IsAgent,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
 
-		return render(request,'agent/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})
+		return render(request,'agent/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_status":fil_status,"fil_cleaning_policy":fil_cleaning_policy,"fil_service_type":fil_service_type,})
 
 
 class FeedbackDetails(IsAgent,View):
