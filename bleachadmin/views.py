@@ -14,7 +14,7 @@ from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWr
 from django.db.models.functions import Cast 
 from django.db.models import Prefetch
 
-from user.models import UserProfile,Address
+from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
@@ -190,19 +190,29 @@ class ClientDetails(IsAdmin,View):
 class TicketDetails(IsAdmin,View):
 	def get(self,request):
 
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
+		try:
+			investigators = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='SENIORTEAMLEADER')|Q(user_type='TEAMLEADER')|Q(user_type='EVALUATOR'))))	
+		except:
+			investigators = None
+
 		search                  = request.GET.get('search')
 		
 		#Followup details
 		if search:
 			try:
-				tickets 	             = FollowUp.objects.select_related('investigation__order_schedule__order__evaluation__customer').filter(is_active=True,investigation__order_schedule__order__evaluation__customer__name__icontains=search).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))
+				tickets 	             = FollowUp.objects.select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').filter(is_active=True,investigation__order_schedule__order__evaluation__customer__name__icontains=search).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))
 				follow_ups_count         = tickets.count()
 			except:
 				tickets          = None
 				follow_ups_count = 0
 		else:
 			try:
-				tickets 	             = FollowUp.objects.filter(is_active=True).select_related('investigation__order_schedule__order__evaluation__customer').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))
+				tickets 	             = FollowUp.objects.filter(is_active=True).select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))
 				follow_ups_count         = tickets.count()
 			except:
 				tickets          = None
@@ -214,6 +224,50 @@ class TicketDetails(IsAdmin,View):
 			follow_up_cleaning_count = FollowUpScheduler.objects.filter(is_active=True,work_status='FOLLOW_UP_CLEANING_FULFILLED').count()
 		except:
 			follow_up_cleaning_count = 0
+
+
+
+		#FILTER	
+		try:
+			fil_governorate     = int(request.GET.get('governorate')) 
+			areas               = Area.objects.filter(is_active=True,governorate_id=fil_governorate)
+		except:
+			fil_governorate     = None
+			areas               = None
+
+		try:	
+			fil_area            = int(request.GET.get('area'))
+		except:
+			fil_area            = None
+		
+		fil_status              = request.GET.get('status')
+		
+		try:
+			fil_investigator    = int(request.GET.get('investigator'))
+		except:
+			fil_investigator    = None
+
+		#filters
+		filters=[] 
+		if fil_governorate: 
+		    case1 = Q(investigation__order_schedule__customer_address__governorate_id=fil_governorate)
+		    filters.append(case1)
+		if fil_area: 
+		    case2 = Q(investigation__order_schedule__customer_address__area_id=fil_area)
+		    filters.append(case2)
+		if fil_status: 
+		    case3 = Q(status=fil_status)
+		    filters.append(case3)
+		if fil_investigator: 
+		    case4 = Q(investigation__investigator_id=fil_investigator)
+		    filters.append(case4)            
+	
+		if fil_governorate or fil_area or fil_status or fil_investigator: 
+		    filters     = functools.reduce(operator.and_,filters)
+		    tickets = tickets.filter(filters)
+
+
+
 
 		#PAGINATION TICKETS		
 		no_of_entries = request.GET.get('no_of_entries')		
@@ -241,7 +295,7 @@ class TicketDetails(IsAdmin,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(tickets.end_index())-(tickets.start_index())+1
 
-		return render(request,'admin/ticket/tickets.html',{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries})		
+		return render(request,'admin/ticket/tickets.html',{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"investigators":investigators,"fil_governorate":fil_governorate,'fil_area':fil_area,"fil_investigator":fil_investigator,"fil_status":fil_status,})		
 
 class OrderDetails(IsAdmin,View):
 	def get(self,request):
