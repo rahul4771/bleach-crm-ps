@@ -195,7 +195,7 @@
   <ul class="pagination">
      {% if tickets.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ tickets.previous_page_number }}&search={{request.GET.search}}" aria-label="Previous">
+      <a class="page-link" href="?page={{ tickets.previous_page_number }}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&investigator={{request.GET.investigator}}" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
@@ -212,12 +212,12 @@
     {% if vus.number == pg %}
             <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&investigator={{request.GET.investigator}}">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
     {% if tickets.has_next %}        
     <li class="page-item">
-      <a class="page-link" href="?page={{ tickets.next_page_number}}&search={{request.GET.search}}" aria-label="Next">
+      <a class="page-link" href="?page={{ tickets.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&investigator={{request.GET.investigator}}" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
