@@ -72,7 +72,10 @@
             </div>
             <div class="body">
               <select name="area_filter" id="area_filter_id">
-                <option value=''>---SELECT---</option>                
+                <option value=''>---SELECT---</option> 
+                {% for area in areas %}
+                <option value='{{area.id}}' {% if fil_area == area.id %}selected{% endif %}>{{area.name}}</option>
+                {% endfor %}               
               </select>
             </div>
           </div>
@@ -158,7 +161,7 @@
 <tbody>
     {% for evaluation in evaluations %}
     <tr>
-    <td {% if evaluation.quatation_status == 'APPROVED' %}class="green-line"{% elif evaluation.quatation_status == 'REJECTED' %}class="red-line"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line"{%else%}class="orange-line"{%endif%}>{{evaluation.evaluation_id}}</td>    
+    <td {% if evaluation.quatation_status == 'APPROVED' %}class="green-line"{% elif evaluation.quatation_status == 'REJECTED' %}class="red-line"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line"{%else%}class="orange-line"{%endif%}>{{evaluation.evaluation_id}} {{evaluation.address_count}} {{evaluation.book_count}} {{evaluation.address_book_count}}</td>    
     <td>{{evaluation.customer.name|default_if_none:''}}</td>
     <td>{% for evaluation_detail in evaluation.details_evaluation %}{{evaluation_detail.address.area.name}}<br>{% endfor %}</td>
     <td>{% for evaluation_detail in evaluation.details_evaluation %}

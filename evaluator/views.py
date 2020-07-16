@@ -22,7 +22,7 @@ from django.contrib import messages
 from dateutil.relativedelta import relativedelta
 
 from user.models import UserProfile,Address,Governorate,Area
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod,ServiceType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Investigation,InvestigationMedia
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 from accountant.models import Invoice
@@ -184,16 +184,26 @@ class EvaluatorHome(IsEvaluator,View):
 class ClientDetails(IsEvaluator,View):
 	def get(self,request):
 
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
+		
 		search                  = request.GET.get('search')
 
 		if search:
 			try:
-				client_details = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True,name__icontains=search).prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area'),to_attr='customer_address'),Prefetch('customer_evaluation',queryset=Evaluation.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True,order_status='ORDER_CLOSED'),to_attr='order_evaluation')),to_attr='customer_evaluations'))
+				client_details = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True,name__icontains=search).prefetch_related(Prefetch('customer_evaluation',queryset=Evaluation.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True,order_status='ORDER_IN_PROGRESS'),to_attr='order_evaluation')),to_attr='customer_evaluations'))
 			except:
 				client_details = None
 		else:
-			client_details = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True).prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area'),to_attr='customer_address'),Prefetch('customer_evaluation',queryset=Evaluation.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True,order_status='ORDER_CLOSED'),to_attr='order_evaluation')),to_attr='customer_evaluations'))			
+			client_details = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True).prefetch_related(Prefetch('customer_evaluation',queryset=Evaluation.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True,order_status='ORDER_IN_PROGRESS'),to_attr='order_evaluation')),to_attr='customer_evaluations'))			
 
+
+
+		fil_status                = request.GET.get('status')			
+				
 		#code must change for optimisation	
 		for detail in client_details:
 			detail.active_status = False
@@ -210,6 +220,66 @@ class ClientDetails(IsEvaluator,View):
 
 		active_clients_count = orders.filter(~Q(order_status='ORDER_CLOSED')).values_list('evaluation__customer').distinct().count()	
 		new_clients_count    = orders.filter(evaluation__created__date__gte=timezone.now().date()-timedelta(30),evaluation__customer__created__date__gte=timezone.now().date()-timedelta(30),).values_list('evaluation__customer').distinct().count()
+		
+
+		#Prefetch filters
+		try:
+			fil_governorate       = int(request.GET.get('governorate'))
+			areas                 = Area.objects.filter(governorate_id=fil_governorate) 
+		except:
+			fil_governorate       = None
+			areas                 = None
+
+		try:	
+			fil_area			  = int(request.GET.get('area'))
+		except:
+			fil_area              = None	
+
+
+
+		customer_address_filter       = []
+		count_customer_address_filter = [] 
+		if fil_governorate: 
+		    case1       = Q(is_active=True,governorate_id=fil_governorate)
+		    count_case1 = Q(address_customer__governorate_id=fil_governorate)
+		    customer_address_filter.append(case1)
+		    count_customer_address_filter.append(count_case1)
+		
+		if fil_area:
+		    case2 		= Q(is_active=True,area_id=fil_area)
+		    count_case2 = Q(address_customer__area_id=fil_area)
+		    customer_address_filter.append(case2)
+		    count_customer_address_filter.append(count_case2)
+
+		if fil_governorate or fil_area: 
+			customer_address_prefetch_filter              = functools.reduce(operator.and_,customer_address_filter)
+			count_customer_address_prefetch_filter        = functools.reduce(operator.and_,count_customer_address_filter)
+		else:
+			customer_address_prefetch_filter              = None
+			count_customer_address_prefetch_filter        = None	
+
+		#Apply prefetch filter
+		if customer_address_prefetch_filter:
+			
+			client_details = client_details.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(customer_address_prefetch_filter).select_related('area'),to_attr='customer_address')).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)	
+
+		else:
+			client_details = client_details.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area'),to_attr='customer_address'))		
+
+
+		#FILTER	
+		fil_customertype          = request.GET.get('customertype')
+		fil_status                = request.GET.get('status')
+
+		filters = []
+		if fil_customertype: 
+		    case1 = Q(customer_type=fil_customertype)
+		    filters.append(case1)
+		
+
+		if fil_customertype: 
+		    filters            = functools.reduce(operator.and_,filters)
+		    client_details     = client_details.filter(filters)
 		
 		#PAGINATION CLIENTS		
 		no_of_entries = request.GET.get('no_of_entries')		
@@ -237,28 +307,127 @@ class ClientDetails(IsEvaluator,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(client_details.end_index())-(client_details.start_index())+1
 
-		return render(request,'evaluator/client/clients.html',{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})		
+		return render(request,'evaluator/client/clients.html',{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_customertype":fil_customertype,"fil_status":fil_status})		
 		
 
 class OrderDetails(IsEvaluator,View):
 	def get(self,request):
+
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
+		try:
+			service_types = ServiceType.objects.filter(is_active=True) 
+		except:
+			service_types =	None
+
 		#Evaluation Details
 		search                  = request.GET.get('search')
-		
+
 		if search:
-			try:
-				evaluations = Evaluation.objects.select_related('customer').filter(is_active=True,customer__name__icontains=search).prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_book')).select_related('service_type'),to_attr='details_evaluation'))
-			except:
-				evaluations = None 
-		 
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(is_active=True,customer__name__icontains=search)
 		else:
-			try:
-				evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))
-			except:
-				evaluations = None 
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer')
+
+		if evaluations:
+			approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
+			pending_orders_count  =	evaluations.filter(Q(quatation_status='PENDING')).count()
+		else:
+			approved_orders_count = 0
+			pending_orders_count  = 0	
+
+
+
+		#Prefetch filters
+		try:
+			fil_governorate       = int(request.GET.get('governorate'))
+			areas                 = Area.objects.filter(governorate_id=fil_governorate) 
+		except:
+			fil_governorate       = None
+			areas                 = None
+
+		try:	
+			fil_area			  = int(request.GET.get('area'))
+		except:
+			fil_area              = None
+
+		fil_cleaning_policy       = request.GET.get('cleaning_policy')
+		
+		try:
+			fil_service_type      = int(request.GET.get('service_type'))
+		except:
+			fil_service_type      = None
 			
-		approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
-		pending_orders_count  =	evaluations.filter(Q(Q(quatation_status='ASK_FOR_DISCOUNT')|Q(quatation_status='PENDING'))).count()
+
+		customer_address_filter       = []
+		count_customer_address_filter = [] 
+		if fil_governorate: 
+		    case1       = Q(address__governorate_id=fil_governorate)
+		    count_case1 = Q(evaluation_details__address__governorate_id=fil_governorate)
+		    customer_address_filter.append(case1)
+		    count_customer_address_filter.append(count_case1)
+		
+		if fil_area:
+		    case2 		= Q(address__area_id=fil_area)
+		    count_case2 = Q(evaluation_details__address__area_id=fil_area)
+		    customer_address_filter.append(case2)
+		    count_customer_address_filter.append(count_case2)
+
+		if fil_governorate or fil_area: 
+			customer_address_prefetch_filter              = functools.reduce(operator.and_,customer_address_filter)
+			count_customer_address_prefetch_filter        = functools.reduce(operator.and_,count_customer_address_filter)
+		else:
+			customer_address_prefetch_filter              = None
+			count_customer_address_prefetch_filter        = None
+
+		
+		evaluation_book_filter       = []
+		count_evaluation_book_filter = []
+		if fil_cleaning_policy:
+			case1       = Q(cleaning_policy=fil_cleaning_policy)
+			count_case1 = Q(evaluation_details__evaluation_book_evaluation_details__cleaning_policy=fil_cleaning_policy)
+			evaluation_book_filter.append(case1)
+			count_evaluation_book_filter.append(count_case1)
+		if fil_service_type:     
+			case2       = Q(service_type_id=fil_service_type)
+			count_case2 = Q(evaluation_details__evaluation_book_evaluation_details__service_type_id=fil_service_type)
+			evaluation_book_filter.append(case2)              
+			count_evaluation_book_filter.append(count_case2)
+
+		if fil_cleaning_policy or fil_service_type:
+			evaluation_book_prefetch_filter              = functools.reduce(operator.and_,evaluation_book_filter)
+			count_evaluation_book_prefetch_filter        = functools.reduce(operator.and_,count_evaluation_book_filter)
+		else:
+			evaluation_book_prefetch_filter              = None	
+			count_evaluation_book_prefetch_filter        = None
+
+		#Apply prefetch filter
+		if evaluation_book_prefetch_filter and customer_address_prefetch_filter: 
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter & count_customer_address_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)		 
+			print("both")
+		elif evaluation_book_prefetch_filter and not customer_address_prefetch_filter:
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(book_count=Count(Case(When( count_evaluation_book_prefetch_filter,then=1),output_field=IntegerField()))).filter(book_count__gt=0)
+			print("book only")
+		elif not evaluation_book_prefetch_filter and customer_address_prefetch_filter:
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)
+			print("address only") 
+		else:
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))		
+			print("not at all")
+		
+		
+		fil_status = request.GET.get('status')
+		#filters 	
+		filters=[] 
+		if fil_status: 
+		    case1 = Q(quatation_status=fil_status)
+		    filters.append(case1)
+	
+		if fil_status: 
+		    filters     = functools.reduce(operator.and_,filters)
+		    evaluations = evaluations.filter(filters)
 		
 		#PAGINATION ORDERS		
 		no_of_entries = request.GET.get('no_of_entries')		
@@ -286,7 +455,7 @@ class OrderDetails(IsEvaluator,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
 
-		return render(request,'evaluator/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})		
+		return render(request,'evaluator/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_status":fil_status,"fil_cleaning_policy":fil_cleaning_policy,"fil_service_type":fil_service_type,})		
 
 
 class ResourceManagement(IsEvaluator,View):
