@@ -101,8 +101,93 @@
      <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
           <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
      </div><!--left-box leftbox-item1-->
-     <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
-     <input name="filter" type="button" value="Filter" id="filter" class="blue-button"> 
+     <div class="left-box leftbox-item2 params_filter"><!--right-box leftbox-item1-->
+     <input name="filter" type="button" value="Filter" id="filter" class="blue-button filter-btn">
+        <div class="expand-body">
+          
+          <div class="left">
+            <div class="head">
+              <h1>Governorate</h1>
+            </div>
+            <div class="body">
+              <select name="governorate_filter" id="governorate_filter_id">
+                <option value=''>---SELECT---</option>
+                {% for governorate in governorates %}
+          <option value='{{governorate.id}}' {% if governorate.id == fil_governorate %}selected{%endif%}>{{governorate.name}}</option>
+                {% endfor %}                
+              </select>
+            </div>
+          </div>
+
+          <div class="right">
+            <div class="head">
+              <h1>Area</h1>
+            </div>
+            <div class="body">
+              <select name="area_filter" id="area_filter_id">
+                <option value=''>---SELECT---</option> 
+                {% for area in areas %}
+                <option value='{{area.id}}' {% if fil_area == area.id %}selected{% endif %}>{{area.name}}</option>
+                {% endfor %}               
+              </select>
+            </div>
+          </div>
+          
+          <div class="left">
+            <div class="head">
+              <h1>Minimum Starring</h1>
+            </div>
+            <div class="body">
+              <select name="minimumstarring_filter" id="minimumstarring_filter_id">
+                <option value=''>---SELECT---</option>
+                <option value="0" {% if fil_minimumstarring == '0' %}selected{% endif %}>0</option>
+                <option value="1" {% if fil_minimumstarring == '1' %}selected{% endif %}>1</option>
+                <option value="2" {% if fil_minimumstarring == '2' %}selected{% endif %}>2</option>
+                <option value="3" {% if fil_minimumstarring == '3' %}selected{% endif %}>3</option>
+                <option value="4" {% if fil_minimumstarring == '4' %}selected{% endif %}>4</option>
+                <option value="4" {% if fil_minimumstarring == '5' %}selected{% endif %}>5</option>                
+              </select>
+            </div>
+          </div>
+
+          <div class="right">
+            <div class="head">
+              <h1>Maximum Starring</h1>
+            </div>
+            <div class="body">
+              <select name="maximumstarring_filter" id="maximumstarring_filter_id">
+                <option value=''>---SELECT---</option>
+                <option value="0" {% if fil_maximumstarring == '0' %}selected{% endif %}>0</option>
+                <option value="1" {% if fil_maximumstarring == '1' %}selected{% endif %}>1</option>
+                <option value="2" {% if fil_maximumstarring == '2' %}selected{% endif %}>2</option>
+                <option value="3" {% if fil_maximumstarring == '3' %}selected{% endif %}>3</option>
+                <option value="4" {% if fil_maximumstarring == '4' %}selected{% endif %}>4</option>
+                <option value="4" {% if fil_maximumstarring == '5' %}selected{% endif %}>5</option>                
+              </select>
+            </div>
+          </div>
+
+
+          <div class="left">
+            <div class="head">
+              <h1>Service Type</h1>
+            </div>
+            <div class="body">
+              <select name="service_type_filter" id="service_type_filter_id">
+                <option value=''>---SELECT---</option>
+                {% for service_type in service_types %}
+                <option value="{{service_type.id}}" {% if service_type.id == fil_service_type %}selected{% endif %}>{{service_type.name}}</option>
+                {% endfor %}                
+              </select>
+            </div>
+          </div>  
+           
+          <div class="foot">
+            <button type="button" class="red-btn" onclick="set_params_go({});">Submit</button>
+            <button type="button" class="close-btn green-btn">Cancel</button>
+          </div>
+
+        </div>
      </div><!--right-box leftbox-item1-->     
      
      
@@ -210,7 +295,7 @@
   <ul class="pagination">
      {% if order_wise_feedbacks.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ order_wise_feedbacks.previous_page_number }}&search={{request.GET.search}}" aria-label="Previous">
+      <a class="page-link" href="?page={{ order_wise_feedbacks.previous_page_number }}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&service_type={{request.GET.service_type}}&minimumstarring={{request.GET.minimumstarring}}&maximumstarring={{request.GET.maximumstarring}}" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
@@ -225,14 +310,14 @@
     {% endif %}
     {% for pg in page_range %}
     {% if vus.number == pg %}
-            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&service_type={{request.GET.service_type}}&minimumstarring={{request.GET.minimumstarring}}&maximumstarring={{request.GET.maximumstarring}}">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&service_type={{request.GET.service_type}}&minimumstarring={{request.GET.minimumstarring}}&maximumstarring={{request.GET.maximumstarring}}">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
     {% if order_wise_feedbacks.has_next %}        
     <li class="page-item">
-      <a class="page-link" href="?page={{ order_wise_feedbacks.next_page_number}}&search={{request.GET.search}}" aria-label="Next">
+      <a class="page-link" href="?page={{ order_wise_feedbacks.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&service_type={{request.GET.service_type}}&minimumstarring={{request.GET.minimumstarring}}&maximumstarring={{request.GET.maximumstarring}}" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
@@ -273,10 +358,53 @@ $('.footable').footable({
     </script>
 
 <script>
+
+$("#governorate_filter_id").change(function(){  
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getarea' %}",
+
+        data: {'governorate_id':this.value}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+
+          ajax_ret_areas = data;     
+
+       $("#area_filter_id").empty();
+
+       $("#area_filter_id").append($('<option>', {
+
+            value: "", 
+
+           text: "---SELECT---"
+
+        })); 
+
+        $.each( ajax_ret_areas, function( key, values ) {
+
+              $("#area_filter_id").append($('<option>', {        
+
+              value: key, 
+
+              text: values   
+
+            }));   
+        });
+
+                                  }  
+
+      }); 
+
+});
+
+
 function set_params_go(args)
 {
 var url='{% url 'bleach_admin:admin-feedbacks' %}';
-var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val()
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),service_type:$('#service_type_filter_id').val(),minimumstarring:$('#minimumstarring_filter_id').val(),maximumstarring:$('#maximumstarring_filter_id').val(),
 };
 for(key in args) 
     params[key]=args[key];
