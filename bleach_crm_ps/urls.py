@@ -17,13 +17,14 @@ from django.conf.urls import url,include
 from django.contrib import admin
 from django.conf.urls.static import static  
 from django.conf import settings
-from user.views import Signin,logout
+from user.views import Signin,logout,adddata
 
 urlpatterns = [
     
     url(r'^admin/', admin.site.urls),
     url(r'^$',Signin.as_view(),name='login'),
     url(r'^logout/$',logout.as_view(),name='logout'),
+    url(r'^add_data/$',adddata,name='add_data'),
 
     url(r'^bleach_admin/',include('bleachadmin.urls',namespace='bleach_admin')),
     url(r'^agent/',include('agent.urls',namespace='agent')),
@@ -31,5 +32,6 @@ urlpatterns = [
     url(r'^stl/',include('senior_team_leader.urls',namespace='stl')),
     url(r'^tl/',include('team_leader.urls',namespace='tl')),
     url(r'^accountant/',include('accountant.urls',namespace='accountant')),
+    url(r'^order-data/',include('order.urls',namespace='order_data')),
 
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

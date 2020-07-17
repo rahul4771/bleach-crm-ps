@@ -35,7 +35,8 @@
             </div><!--card-column-->
         </div><!--clients-card-column clients-column-left-->
 		  <div class="clients-card-column clients-column-right whitebg"><!--lients-card-column clients-column-right-->
-            <img src="{% static 'files/images/orders-chart.jpg' %}">
+            <!-- <img src="{% static 'files/images/orders-chart.jpg' %}"> -->
+            <div id="chart_div"></div>
             <div class="chart-btnWrapper"><input name="thismonth" type="button" class="blue-button" value="This Month" id="thismonth"></div>
           </div><!--lients-card-column clients-column-right-->
         </div><!--clients-card-wrapper-->
@@ -175,7 +176,8 @@
 {% endblock %}
 
 {% block javascript %}
-<script src='js/footable.js'></script> 
+<script src='js/footable.js'></script>
+<script src="{% static 'files/js/order-chart.js' %}"></script> 
 <script id="rendered-js">
 $('.footable').footable({
   calculateWidthOverride: function () {
