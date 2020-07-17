@@ -49,8 +49,86 @@
      <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
           <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
      </div><!--left-box leftbox-item1-->
-     <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
-     <input name="filter" type="button" value="Filter" id="filter" class="blue-button"> 
+     <div class="left-box leftbox-item2 params_filter"><!--right-box leftbox-item1-->
+     <input name="filter" type="button" value="Filter" id="filter" class="blue-button filter-btn">
+        <div class="expand-body">
+          
+          <div class="left">
+            <div class="head">
+              <h1>Governorate</h1>
+            </div>
+            <div class="body">
+              <select name="governorate_filter" id="governorate_filter_id">
+                <option value=''>---SELECT---</option>
+                {% for governorate in governorates %}
+          <option value='{{governorate.id}}' {% if governorate.id == fil_governorate %}selected{%endif%}>{{governorate.name}}</option>
+                {% endfor %}                
+              </select>
+            </div>
+          </div>
+
+          <div class="right">
+            <div class="head">
+              <h1>Area</h1>
+            </div>
+            <div class="body">
+              <select name="area_filter" id="area_filter_id">
+                <option value=''>---SELECT---</option> 
+                {% for area in areas %}
+                <option value='{{area.id}}' {% if fil_area == area.id %}selected{% endif %}>{{area.name}}</option>
+                {% endfor %}               
+              </select>
+            </div>
+          </div>
+          
+          <div class="left">
+            <div class="head">
+              <h1>Cleaning Policy</h1>
+            </div>
+            <div class="body">
+              <select name="cleaning_policy_filter" id="cleaning_policy_filter_id">
+                <option value=''>---SELECT---</option>
+                <option value="ONE TIME SERVICE" {% if fil_cleaning_policy == 'ONE TIME SERVICE' %}selected{%endif%}>ONE TIME SERVICE</option>
+                <option value="SUBSCRIPTION" {% if fil_cleaning_policy == 'SUBSCRIPTION' %}selected{%endif%}>SUBSCRIPTION</option>                
+              </select>
+            </div>
+          </div>
+          
+          <div class="right">
+            <div class="head">
+              <h1>Status</h1>
+            </div>
+            <div class="body">
+              <select name="status_filter" id="status_filter_id">
+                <option value=''>---SELECT---</option>
+                <option value="APPROVED" {% if fil_status == 'APPROVED' %}selected{% endif %}>APPROVED</option>
+                <option value="PENDING" {% if fil_status == 'PENDING' %}selected{% endif %}>PENDING</option>
+                <option value="REJECTED" {% if fil_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
+                <option value="EXPIRED" {% if fil_status == 'EXPIRED' %}selected{% endif %}>EXPIRED</option>                
+              </select>
+            </div>
+          </div>
+
+          <div class="left">
+            <div class="head">
+              <h1>Service Type</h1>
+            </div>
+            <div class="body">
+              <select name="service_type_filter" id="service_type_filter_id">
+                <option value=''>---SELECT---</option>
+                {% for service_type in service_types %}
+                <option value="{{service_type.id}}" {% if service_type.id == fil_service_type %}selected{% endif %}>{{service_type.name}}</option>
+                {% endfor %}                
+              </select>
+            </div>
+          </div>  
+           
+          <div class="foot">
+            <button type="button" class="red-btn" onclick="set_params_go({});">Submit</button>
+            <button type="button" class="close-btn green-btn">Cancel</button>
+          </div>
+
+        </div>
      </div><!--right-box leftbox-item1-->     
      
      
@@ -84,7 +162,7 @@
 <tbody>
     {% for evaluation in evaluations %}
     <tr>
-    <td {% if evaluation.quatation_status == 'APPROVED' %}class="green-line"{% elif evaluation.quatation_status == 'REJECTED' %}class="red-line"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line"{%else%}class="orange-line"{%endif%}>{{evaluation.evaluation_id}}</td>    
+    <td {% if evaluation.quatation_status == 'APPROVED' %}class="green-line"{% elif evaluation.quatation_status == 'REJECTED' %}class="red-line"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line"{%else%}class="orange-line"{%endif%}>{{evaluation.evaluation_id}} {{evaluation.address_count}} {{evaluation.book_count}} {{evaluation.address_book_count}}</td>    
     <td>{{evaluation.customer.name|default_if_none:''}}</td>
     <td>{% for evaluation_detail in evaluation.details_evaluation %}{{evaluation_detail.address.area.name}}<br>{% endfor %}</td>
     <td>{% for evaluation_detail in evaluation.details_evaluation %}
@@ -122,7 +200,7 @@
   <ul class="pagination">
      {% if evaluations.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}" aria-label="Previous">
+      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
@@ -139,12 +217,12 @@
     {% if vus.number == pg %}
             <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
     {% if evaluations.has_next %}        
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}" aria-label="Next">
+      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
@@ -187,12 +265,55 @@ $('.footable').footable({
 // See:
 // http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
 //# sourceURL=pen.js
-    </script>
+</script>
 <script>
+
+$("#governorate_filter_id").change(function(){  
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getarea' %}",
+
+        data: {'governorate_id':this.value}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+
+          ajax_ret_areas = data;     
+
+       $("#area_filter_id").empty();
+
+       $("#area_filter_id").append($('<option>', {
+
+            value: "", 
+
+           text: "---SELECT---"
+
+        })); 
+
+        $.each( ajax_ret_areas, function( key, values ) {
+
+              $("#area_filter_id").append($('<option>', {        
+
+              value: key, 
+
+              text: values   
+
+            }));   
+        });
+
+                                  }  
+
+      }); 
+
+});
+
+
 function set_params_go(args)
 {
 var url='{% url 'agent:agent-orders' %}';
-var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val()
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),
 };
 for(key in args) 
     params[key]=args[key];

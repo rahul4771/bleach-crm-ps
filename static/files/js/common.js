@@ -73,3 +73,18 @@ $('.multi_field_wrapper').each(function() {
           $(this).parent('.multi-field').remove();
   });
 });
+
+
+
+// filter
+$(document).ready(function() {
+
+$(".params_filter .filter-btn").on("click", function(){
+    $(this).parent(".params_filter").toggleClass("active");
+});
+$(".close-btn").on("click", function(){
+    $('.params_filter').removeClass('active');
+});
+
+});
+

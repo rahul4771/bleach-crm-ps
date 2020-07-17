@@ -47,8 +47,75 @@
      <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
           <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()" ><a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
      </div><!--left-box leftbox-item1-->
-     <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
-     <input name="filter" type="button" value="Filter" id="filter" class="blue-button"> 
+     <div class="left-box leftbox-item2 params_filter"><!--right-box leftbox-item1-->
+     <input name="filter" type="button" value="Filter" id="filter" class="blue-button filter-btn">
+        <div class="expand-body">
+          
+          <div class="left">
+            <div class="head">
+              <h1>Governorate</h1>
+            </div>
+            <div class="body">
+              <select name="governorate_filter" id="governorate_filter_id">
+                <option value=''>---SELECT---</option>
+                {% for governorate in governorates %}
+          <option value='{{governorate.id}}' {% if governorate.id == fil_governorate %}selected{%endif%}>{{governorate.name}}</option>
+                {% endfor %}                
+              </select>
+            </div>
+          </div>
+
+          <div class="right">
+            <div class="head">
+              <h1>Area</h1>
+            </div>
+            <div class="body">
+              <select name="area_filter" id="area_filter_id">
+                <option value=''>---SELECT---</option>   
+                {% for area in areas %}
+                <option value='{{area.id}}' {% if fil_area == area.id %}selected{% endif %}>{{area.name}}</option>
+                {% endfor %}             
+              </select>
+            </div>
+          </div>
+          
+          <div class="left">
+            <div class="head">
+              <h1>Investigator</h1>
+            </div>
+            <div class="body">
+              <select name="investigator_filter" id="investigator_filter_id">
+                <option value=''>---SELECT---</option>   
+                {% for investigator in investigators %}
+                <option value='{{investigator.id}}' {% if fil_investigator == investigator.id %}selected{% endif %}>{{investigator.name}}</option>
+                {% endfor %}             
+              </select>
+            </div>
+          </div>
+
+
+
+          <div class="right">
+            <div class="head">
+              <h1>Status</h1>
+            </div>
+            <div class="body">
+              <select name="status_filter" id="status_filter_id">
+                <option value=''>---SELECT---</option>
+                <option value="INVESTIGATOR_APPROVED" {% if fil_status == 'INVESTIGATOR_APPROVED' %}selected{%endif%}>Open</option>
+                <option value="FOLLOWUP_IN_PROGRESS" {% if fil_status == 'FOLLOWUP_IN_PROGRESS' %}selected{%endif%}>Cleaning</option>
+                <option value="FOLLOWUP_CLOSED" {% if fil_status == 'FOLLOWUP_CLOSED' %}selected{%endif%}>Closed</option>
+                <option value="FOLLOWUP_CANCELLED" {% if fil_status == 'FOLLOWUP_CANCELLED' %}selected{%endif%}>Cancelled</option>                
+              </select>
+            </div>
+          </div>  
+           
+          <div class="foot">
+            <button type="button" class="red-btn" onclick="set_params_go({});">Submit</button>
+            <button type="button" class="close-btn green-btn">Cancel</button>
+          </div>
+
+        </div>
      </div><!--right-box leftbox-item1-->     
      
      
@@ -82,9 +149,7 @@
 {% for ticket in tickets %}
     <tr>
     <td 
-    {% if ticket.status == 'APPROVED_BY_CLIENT' %}
-    class="blue-line"
-    {% elif ticket.status == 'INVESTIGATOR_ASSIGNED' or ticket.status == 'INVESTIGATOR_APPROVED' %}
+    {% if ticket.status == 'INVESTIGATOR_APPROVED' %}
     class="orange-line"
     {% elif ticket.status == 'FOLLOWUP_IN_PROGRESS' %}
     class="yellow-line"
@@ -96,23 +161,18 @@
     >{{ticket.investigation.order.order_no}}</td>
     <td>{{ticket.investigation.order_schedule.order.evaluation.customer.name}}</td>
     <td>
-    {% for scheduler_details in ticket.follow_up_scheduler_details %}
-    {{scheduler_details.customer_address.area.name}}
-    <br>
-    {% endfor %}
+      {{ticket.investigation.order_schedule.customer_address.area.name}}
     </td>
     <td>{{ticket.investigation.investigator.name}}</td>
     <td>{{ticket.investigation.order_schedule.order.evaluation.customer.mobile_number}}</td>
-    {% if ticket.status == 'APPROVED_BY_CLIENT' %}
-    <td><span class="blue-bg">Open</span></td> 
-    {% elif ticket.status == 'INVESTIGATOR_ASSIGNED' or ticket.status == 'INVESTIGATOR_APPROVED' %}
+    {% if ticket.status == 'INVESTIGATOR_APPROVED' %}
     <td><span class="orange-bg">Open</span></td>
     {% elif ticket.status == 'FOLLOWUP_IN_PROGRESS' %}
     <td><span class="yellow-bg">Cleaning</span></td>     
     {% elif ticket.status == 'FOLLOWUP_CLOSED' %}
     <td><span class="green-bg">Closed</span></td>
     {% else %}
-    <td><span class="red-bg">Closed</span></td>
+    <td><span class="red-bg">Cancelled</span></td>
     {% endif %}
     </tr> 
     {% endfor %}
@@ -135,7 +195,7 @@
   <ul class="pagination">
      {% if tickets.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ tickets.previous_page_number }}&search={{request.GET.search}}" aria-label="Previous">
+      <a class="page-link" href="?page={{ tickets.previous_page_number }}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&investigator={{request.GET.investigator}}" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
@@ -152,12 +212,12 @@
     {% if vus.number == pg %}
             <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&investigator={{request.GET.investigator}}">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
     {% if tickets.has_next %}        
     <li class="page-item">
-      <a class="page-link" href="?page={{ tickets.next_page_number}}&search={{request.GET.search}}" aria-label="Next">
+      <a class="page-link" href="?page={{ tickets.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&investigator={{request.GET.investigator}}" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
@@ -203,10 +263,53 @@ $('.footable').footable({
 //# sourceURL=pen.js
     </script>
 <script>
+
+$("#governorate_filter_id").change(function(){  
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getarea' %}",
+
+        data: {'governorate_id':this.value}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+
+          ajax_ret_areas = data;     
+
+       $("#area_filter_id").empty();
+
+       $("#area_filter_id").append($('<option>', {
+
+            value: "", 
+
+           text: "---SELECT---"
+
+        })); 
+
+        $.each( ajax_ret_areas, function( key, values ) {
+
+              $("#area_filter_id").append($('<option>', {        
+
+              value: key, 
+
+              text: values   
+
+            }));   
+        });
+
+                                  }  
+
+      }); 
+
+});
+
+
 function set_params_go(args)
 {
 var url='{% url 'tl:tl-tickets' %}';
-var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),investigator:$('#investigator_filter_id').val(),
 };
 for(key in args) 
     params[key]=args[key];
