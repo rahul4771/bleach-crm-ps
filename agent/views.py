@@ -7,6 +7,7 @@ from django.conf import settings
 from bleach_crm_ps.permissions import IsAgent
 from bleach_crm_ps.utils import get_error
 
+import pandas as pd
 
 import random
 import string
@@ -924,7 +925,6 @@ class TicketDetails(IsAgent,View):
 class ClientDetails(IsAgent,View):
 	def get(self,request):
 
-
 		try:
 			governorates = Governorate.objects.filter(is_active=True)
 		except:
@@ -939,19 +939,17 @@ class ClientDetails(IsAgent,View):
 			except:
 				client_details = None
 		else:
-			client_details = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True).prefetch_related(Prefetch('customer_evaluation',queryset=Evaluation.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True,order_status='ORDER_IN_PROGRESS'),to_attr='order_evaluation')),to_attr='customer_evaluations'))			
+			client_details = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True).prefetch_related(Prefetch('customer_evaluation',queryset=Evaluation.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True,order_status='ORDER_IN_PROGRESS'),to_attr='order_evaluation')),to_attr='customer_evaluations'))
 
-
-
-		fil_status                = request.GET.get('status')			
-				
+		fil_status                = request.GET.get('status')
+  		
 		#code must change for optimisation	
-		for detail in client_details:
-			detail.active_status = False
-			if detail.customer_evaluations:
-				for evaluation in detail.customer_evaluations:
-					if evaluation.order_evaluation:
-						detail.active_status = True	
+		# for detail in client_details:
+		# 	detail.active_status = False
+		# 	if detail.customer_evaluations:
+		# 		for evaluation in detail.customer_evaluations:
+		# 			if evaluation.order_evaluation:
+		# 				detail.active_status = True	
 
 		#To Find active and new client
 		try:
@@ -1480,3 +1478,152 @@ class TicketRegistration(IsAgent,View):
 			messages.error(request,get_error(investigation_form))
 
 		return redirect('agent:agent-ticketregister')		
+
+#ajax for client chart
+def ClientData(request):
+    print("lol")
+    data = []
+    prevdate = request.GET.get('fromdate',None)
+    todate  = request.GET.get('todate', None)
+    print(prevdate,todate,"bhu")  
+    try:
+    	prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+    	todate = datetime.strptime(todate, '%Y-%m-%d')
+    except:
+        todate = date.today() - timedelta(days=1)
+        prevdate = todate - timedelta(days=30)
+    print(prevdate,todate,"bhoot")
+    try:
+        print("jn")
+        governorates = Governorate.objects.filter(is_active=True)
+        for governorate in governorates:
+            #change date field from evaluation date to order created date
+            client_count = Order.objects.filter(evaluation__customer__address_customer__governorate__id=governorate.id, evaluation__quatation_approved_date__range=(prevdate,todate)).values_list('evaluation__customer').distinct().count()
+            print(client_count,"red")
+            data.append({
+                "governorate" : governorate.name,
+                "clients"	: client_count,
+                })
+        print(data,"rgn")
+    except:
+        governorates = None
+        
+    return JsonResponse(data,safe=False)
+
+#ajax for ticket chart
+def TicketData(request):
+    data = []
+    dom = request.GET.get('dom', None)
+    prevdate  = request.GET.get('fromdate', None)
+    todate  = request.GET.get('todate', None)
+    print(dom,prevdate,todate,"pop")
+    if dom == 'Month':
+        print("kabir")
+        month,year = prevdate.split()
+        month2,year2 = todate.split()
+        
+        datetime_object1 = datetime.strptime(month, "%B")
+        month_a = datetime_object1.month
+        print(month_a)
+        datetime_object2 = datetime.strptime(month2, "%B")
+        month_b = datetime_object2.month
+        print(month_b,"mko")
+        tickets = FollowUp.objects.filter(investigation__order__evaluation__quatation_approved_date__year__gte=year, 
+                              investigation__order__evaluation__quatation_approved_date__month__gte=month_a,
+                              investigation__order__evaluation__quatation_approved_date__year__lte=year2,
+                              investigation__order__evaluation__quatation_approved_date__month__lte=month_b).values('investigation__order__evaluation__quatation_approved_date').distinct().order_by('investigation__order__evaluation__quatation_approved_date')
+        print(tickets,"po")
+        for tkt in tickets:
+            total_tickets = FollowUp.objects.filter(investigation__order__evaluation__quatation_approved_date=tkt['investigation__order__evaluation__quatation_approved_date']).count()
+            followup_tickets = FollowUp.objects.filter(status='FOLLOWUP_CLOSED',investigation__order__evaluation__quatation_approved_date=tkt['investigation__order__evaluation__quatation_approved_date']).count()
+            print(total_tickets,followup_tickets,"huy")
+            tkt_dict = {
+            "date" : tkt['investigation__order__evaluation__quatation_approved_date'],
+            "total" : total_tickets,
+            "followup" : followup_tickets
+            }
+            data.append(tkt_dict)
+    else:
+        print("kab")
+        try:
+            prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+            todate = datetime.strptime(todate, '%Y-%m-%d')
+        except:
+            todate = date.today() - timedelta(days=1)
+            prevdate = todate - timedelta(days=30)
+        print(prevdate,todate,"testdt")
+        daterange = pd.date_range(prevdate, todate)
+    
+        for single_date in daterange:
+            sdate = single_date.strftime("%Y-%m-%d")
+            total_tickets = FollowUp.objects.filter(investigation__order__evaluation__quatation_approved_date=sdate).count()
+            followup_tickets = FollowUp.objects.filter(status='FOLLOWUP_CLOSED',investigation__order__evaluation__quatation_approved_date=sdate).count()
+            print(sdate,total_tickets,followup_tickets,"qtc")
+            tkt_dict = {
+            "date" : sdate,
+            "total" : total_tickets,
+            "followup" : followup_tickets
+            }
+            data.append(tkt_dict)
+    return JsonResponse(data,safe=False)
+
+#ajax for feedback chart
+def FeedBackData(request):
+    data = []
+    dom = request.GET.get('dom', None)
+    prevdate  = request.GET.get('fromdate', None)
+    todate  = request.GET.get('todate', None)
+    print(dom,prevdate,todate,"pop")
+    if dom == 'Month':
+        print("kabir")
+        month,year = prevdate.split()
+        month2,year2 = todate.split()
+        
+        datetime_object1 = datetime.strptime(month, "%B")
+        month_a = datetime_object1.month
+        print(month_a,year,"yr1")
+        datetime_object2 = datetime.strptime(month2, "%B")
+        month_b = datetime_object2.month
+        print(month_b,year2,"mko")
+        feedbacks = FeedBack.objects.filter(response_date__year__gte=year, 
+								response_date__month__gte=month_a,
+								response_date__year__lte=year2,
+								response_date__month__lte=month_b).values('response_date').distinct().order_by('-response_date')
+        print(feedbacks,"huh")
+        for fb in feedbacks:
+            print(fb['response_date'].strftime("%Y-%m-%d"),"fb")
+            total_feedbacks = FeedBack.objects.filter(response_date=fb['response_date']).count()
+            
+            fb_dict = {
+            "date" : fb['response_date'],
+            "total" : total_feedbacks,
+            # "rating" : fb.rating
+            }
+            data.append(fb_dict)
+    else:
+        print("kab")
+        try:
+            prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+            todate = datetime.strptime(todate, '%Y-%m-%d')
+        except:
+            todate = date.today() - timedelta(days=1)
+            prevdate = todate - timedelta(days=30)
+        print(prevdate,todate,"testdt")
+        daterange = pd.date_range(prevdate, todate)
+    
+        for single_date in daterange:
+            sdate = single_date.strftime("%Y-%m-%d")
+            fback = FeedBack.objects.filter(response_date=sdate)
+            total_feedbacks = fback.count()
+            
+            print(sdate,total_feedbacks,"qtc")
+            
+            for fb in fback:
+                fb_dict = {
+				"date" : sdate,
+				"total" : total_feedbacks,
+				"rating" : fb.rating
+				}
+                data.append(fb_dict)
+    return JsonResponse(data,safe=False)
+

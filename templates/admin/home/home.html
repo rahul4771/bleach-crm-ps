@@ -66,19 +66,29 @@
             
             <div class="three-column column-one"><!--three-column column-one-->
             <h4>Sales on Types of locations</h4>
-            <img src="{% static 'files/images/sales-location-chart.jpg' %}">
-            <div class="chart-btnWrapper"><input name="thisweek" type="button" class="blue-button" value="This Week" id="thismonth"></div>
+            <!-- <img src="{% static 'files/images/sales-location-chart.jpg' %}"> -->
+                
+                    <h4>Clients : <b id="clint2"></b></h4>
+                      <input id="pfrom" class="date_pick date-picker set1" />
+                    
+                      <input id="pto" class="date_pick date-picker set1"/>
+
+                
+                <div id="donutchart1"></div>
+            <div class="chart-btnWrapper"><input name="thismonth" type="button" class="blue-button" value="This Month" id="reset"></div>
             </div><!--three-column column-one-->
             
             <div class="three-column column-two"><!--three-column column-two-->
             <h4>Sales on Types of Cleaning</h4>
-            <img src="{% static 'files/images/sales-types-chart.jpg' %}">
+            <!-- <img src="{% static 'files/images/sales-types-chart.jpg' %}"> -->
+            <div id="donutchart2"></div>
             <div class="chart-btnWrapper"><input name="thisweek" type="button" class="blue-button" value="This Week" id="thismonth"></div>
             </div><!--three-column column-two-->
             
             <div class="three-column column-three"><!--three-column column-three-->
             <h4>Sales on Governerates</h4>
-            <img src="{% static 'files/images/sales-govermerates-chart.jpg' %}">
+            <!-- <img src="{% static 'files/images/sales-govermerates-chart.jpg' %}"> -->
+            <div id="donutchart3"></div>
             <div class="chart-btnWrapper"><input name="thisweek" type="button" class="blue-button" value="This Week" id="thismonth"></div>
             </div><!--three-column column-three-->
           
@@ -313,7 +323,7 @@
 {% endblock %}
 
 {% block javascript %}
-
+<script src="{% static 'files/js/sales-pie-charts.js' %}"></script>
 <script type="text/javascript">
 $('document').ready(function(){
     //Evaluation Callender

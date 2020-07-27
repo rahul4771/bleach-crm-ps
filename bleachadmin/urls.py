@@ -10,5 +10,7 @@ urlpatterns = [
 	url(r'^tickets/$',views.TicketDetails.as_view(),name='admin-tickets'),
 	url(r'^clients/$',views.ClientDetails.as_view(),name='admin-clients'),
 	url(r'^payments/$',views.PaymentDetails.as_view(),name='admin-payments'),
-
+	url(r'^ajax/sales-data/',views.SalesLocationData,name='sales-data'),
+	url(r'^ajax/sales-data2/',views.SalesCleaningTypeData,name='sales-data2'),
+	url(r'^ajax/sales-data3/',views.SalesGovernorateData,name='sales-data3'),
 ]
