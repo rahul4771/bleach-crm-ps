@@ -71,9 +71,13 @@
         <div class="filter-right"><!--filter-right-->
        <input type="text" id="working_calendar" class="date_pick date-picker-resource" value={{workers_date|date:"d-m-Y"}} onchange="set_params_go();">
        <!-- <div class="day-month-togggle-button"><a href="#">Date/Month Toggle Button</a></div> -->
-       
+       <div class="ui calendar" id="example7" hidden>
+        <div class="ui input left icon">
+          <input type="text" id="month" value="{{mfrom}}">
+        </div>
+      </div>
        <label class="switch">
-        <input type="checkbox" checked>
+        <input type="checkbox" id="daymonthtoggle" checked>
         <span class="slider"></span>
       </label><br><br>
        
@@ -131,6 +135,32 @@
 {% endblock %}
 {% block javascript %}
 <script type="text/javascript">
+    $('#example7').calendar({
+        type: 'month'
+    });
+
+
+    var months = [ "January", "February", "March", "April", "May", "June", 
+               "July", "August", "September", "October", "November", "December" ];
+
+    var date1 = new Date();
+    var month = date1.getMonth();
+    var selectedMonthName = months[month];
+    
+    console.log(selectedMonthName,"lp")
+    var datestring = selectedMonthName + " " + date1.getFullYear();
+    $('#month').val(datestring);
+
+    $('#daymonthtoggle').click(function(){
+        if($(this).is(':checked')){
+            $('#example7').attr("hidden",true);
+            $('#working_calendar').attr("hidden",false);
+        }else{
+            $('#example7').attr("hidden",false);
+            $('#working_calendar').attr("hidden",true);
+        }
+    });
+
     $('document').ready(function(){
         //To find total and avergae man hour weekly and today
         //to find today man hour
