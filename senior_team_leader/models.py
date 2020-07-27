@@ -39,7 +39,7 @@ class CleaningTeam(models.Model):
 #For Tracking Medias Uploaded by Team Leader on Site
 
 class CleaningTeamMedia(models.Model):
-	team 					 = models.ForeignKey('CleaningTeam',blank=False,null=False,)
+	team 					 = models.ForeignKey('CleaningTeam',blank=False,null=False,related_name='media_cleaningteam')
 	media                    = models.FileField(upload_to='cleaning/',blank=True,null=True)
 	media_type 				 = models.CharField(max_length=20,blank=True,null=True,choices=MEDIA_CHOICES)
 	taken_status 			 = models.CharField(max_length=20,blank=True,null=True,choices=MEDIA_TAKEN_CHOICES)
@@ -91,7 +91,7 @@ class CleaningTeamMember(models.Model):
 #Followup team for different Followup Schedules
 
 class FollowUpTeam(models.Model):
-	followup_scheduler = models.ForeignKey(FollowUpScheduler,blank=True,null=True)
+	followup_scheduler = models.ForeignKey(FollowUpScheduler,blank=True,null=True,related_name='followupteam_followupschedule')
 	team_leader 	   = models.ForeignKey(UserProfile,blank=True,null=True,related_name='followupteam_team_leader')
 	name			   = models.CharField(max_length=50,blank=False,null=False)
 	start_at 		   = models.DateTimeField(blank=True,null=True)

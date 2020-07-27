@@ -2241,13 +2241,20 @@ a.back-btn:hover,
   box-shadow: #ececec 0 0 5px;
   border: 1px solid #d4d4d4;
   position: absolute;
-  right: 0;
   z-index: 10;
   margin-top: 3px;
   border-radius: 5px;
   margin-bottom: 15px;
   width:50%;
 }  
+
+.params_filter .left-expand-body {
+left:15;
+}
+
+.params_filter .right-expand-body {
+right:0;
+}
 
 /* left, right */
 @media (min-width: 992px) {

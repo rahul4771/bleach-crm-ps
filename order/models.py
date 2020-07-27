@@ -35,6 +35,7 @@ FOLLOWUP_SHEDULER_STATUS = (
 
 PAYMENT_STATUS = (
 	('PENDING','PENDING'),
+	('ON_HOLD','ON_HOLD'),
 	('COMPLETED','COMPLETED')
 	)
 
@@ -64,8 +65,10 @@ class Order(models.Model):
 	evaluation 		= models.ForeignKey(Evaluation,blank=False,null=False,related_name='evaluation_order')
 	order_no   		= models.CharField(max_length=20,blank=False,null=False)
 	order_status 	= models.CharField(max_length=50,blank=True,null=True,choices=ORDER_STATUS)
-	payment_status  = models.CharField(max_length=50,blank=True,null=True,choices=PAYMENT_STATUS)
-	payment_completed_date= models.DateTimeField(blank=True,null=True)
+
+	payment_status         = models.CharField(max_length=50,blank=True,null=True,choices=PAYMENT_STATUS)
+	payment_completed_date = models.DateTimeField(blank=True,null=True)
+	
 	instructions	= models.CharField(max_length=500,blank=True,null=True)
 	
 	feedback_notes  = models.CharField(max_length=500,blank=True,null=True)
@@ -112,7 +115,7 @@ class OrderScheduler(models.Model):
 
 class Investigation(models.Model):
 	order 				 = models.ForeignKey('Order',blank=False,null=False)
-	order_schedule		 = models.ForeignKey('OrderScheduler',blank=False,null=False)	
+	order_schedule		 = models.ForeignKey('OrderScheduler',blank=False,null=False,related_name='investigations_orderschedule')	
 	notes            	 = models.CharField(max_length=500,blank=True,null=True)
 	investigator    	 = models.ForeignKey(UserProfile,blank=True,null=True)
 	assigned_by          = models.ForeignKey(UserProfile,blank=True,null=True,related_name='investigation_assigned_by')
@@ -148,7 +151,7 @@ class InvestigationMedia(models.Model):
 #Followup details for followup order.Followup granded by Investigator
 
 class FollowUp(models.Model): 
-	investigation   = models.ForeignKey('Investigation',blank=False,null=False) 
+	investigation   = models.ForeignKey('Investigation',blank=False,null=False,related_name='followup_investigation') 
 	instructions    = models.CharField(max_length=500,blank=True,null=True)
 	status      	= models.CharField(max_length=100,blank=True,null=True,choices=FOLLOWUP_STATUS)
 	no_of_cleaners  = models.IntegerField(blank=True,null=True)

@@ -8,4 +8,6 @@ urlpatterns = [
 	url(r'^orders/$',views.OrderDetails.as_view(),name='accountant-orders'),
 	url(r'^clients/$',views.ClientDetails.as_view(),name='accountant-clients'),
 
+	url(r'^generate/link/$',views.PaymentLinkGeneration.as_view(),name='accountant-paymentlink'),
+
 ]

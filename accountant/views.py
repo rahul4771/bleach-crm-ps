@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.views import View
 
 from django.conf import settings
@@ -21,6 +21,8 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,Service
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 from accountant.models import Invoice
+
+import requests
 
 class AccountantHome(IsAccountant,View):
 	def get(self,request):
@@ -403,3 +405,92 @@ class PaymentDetails(IsAccountant,View):
 
 		return render(request,'accountant/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})
 
+class PaymentLinkGeneration(View):
+	baseURL = "https://apitest.myfatoorah.com"
+	token = '7Fs7eBv21F5xAocdPvvJ-sCqEyNHq4cygJrQUFvFiWEexBUPs4AkeLQxH4pzsUrY3Rays7GVA6SojFCz2DMLXSJVqk8NG-plK-cZJetwWjgwLPub_9tQQohWLgJ0q2invJ5C5Imt2ket_-JAlBYLLcnqp_WmOfZkBEWuURsBVirpNQecvpedgeCx4VaFae4qWDI_uKRV1829KCBEH84u6LYUxh8W_BYqkzXJYt99OlHTXHegd91PLT-tawBwuIly46nwbAs5Nt7HFOozxkyPp8BW9URlQW1fE4R_40BXzEuVkzK3WAOdpR92IkV94K_rDZCPltGSvWXtqJbnCpUB6iUIn1V-Ki15FAwh_nsfSmt_NQZ3rQuvyQ9B3yLCQ1ZO_MGSYDYVO26dyXbElspKxQwuNRot9hi3FIbXylV3iN40-nCPH4YQzKjo5p_fuaKhvRh7H8oFjRXtPtLQQUIDxk-jMbOp7gXIsdz02DrCfQIihT4evZuWA6YShl6g8fnAqCy8qRBf_eLDnA9w-nBh4Bq53b1kdhnExz0CMyUjQ43UO3uhMkBomJTXbmfAAHP8dZZao6W8a34OktNQmPTbOHXrtxf6DS-oKOu3l79uX_ihbL8ELT40VjIW3MJeZ_-auCPOjpE3Ax4dzUkSDLCljitmzMagH2X8jN8-AYLl46KcfkBV'
+
+	
+	def get(self,request):
+
+		#send link
+		url 	= self.baseURL + "/v2/SendPayment"
+		payload = "{\"CustomerName\": \"Ahmed\",\"NotificationOption\": \"ALL\",\"MobileCountryCode\": \"+965\"," \
+              "\"CustomerMobile\": \"92249465\",\"CustomerEmail\": \"aramadan@myfatoorah.com\",\"InvoiceValue\": 100," \
+              "\"DisplayCurrencyIso\": \"KWD\",\"CallBackUrl\": \"https://google.com\",\"ErrorUrl\": " \
+              "\"https://google.com\",\"Language\": \"en\",\"CustomerReference\": \"ref 1\",\"CustomerCivilId\": " \
+              "12345678,\"UserDefinedField\": \"Custom field\",\"ExpireDate\": \"\",\"CustomerAddress\": {\"Block\": " \
+              "\"\",\"Street\": \"\",\"HouseBuildingNo\": \"\",\"Address\": \"\",\"AddressInstructions\": \"\"}," \
+              "\"InvoiceItems\": [{\"ItemName\": \"Product 01\",\"Quantity\": 1,\"UnitPrice\": 100}]} "
+		headers = {'Content-Type': "application/json", 'Authorization': "Bearer " + self.token}
+		response = requests.request("POST", url, data=payload, headers=headers)
+
+		print("send link response")
+		print(response)
+		print(response.json())
+
+		#initiate execute payment
+
+		####### Initiate Payment ######
+		url 		= self.baseURL + "/v2/InitiatePayment"
+		payload 	= "{\"InvoiceAmount\":100,\"CurrencyIso\":\"KWD\"}"
+		headers 	= {'Content-Type': "application/json", 'Authorization': "Bearer " + self.token}
+		response 	= requests.request("POST", url, data=payload, headers=headers)
+		
+		print("Initiate Payment Response")
+		print(response)
+		print(response.json())
+
+		####### Execute Payment ######
+		url 	= self.baseURL + "/v2/ExecutePayment"
+		payload = "{\"CustomerName\": \"Ahmed\",\"MobileCountryCode\": \"+965\"," \
+		              "\"CustomerMobile\": \"92249465\",\"CustomerEmail\": \"aramadan@myfatoorah.com\",\"InvoiceValue\": 100," \
+		              "\"DisplayCurrencyIso\": \"KWD\",\"CallBackUrl\": \"https://google.com\",\"ErrorUrl\": " \
+		              "\"https://google.com\",\"Language\": \"en\",\"CustomerReference\": \"ref 1\",\"CustomerCivilId\": " \
+		              "12345678,\"UserDefinedField\": \"Custom field\",\"ExpireDate\": \"\",\"CustomerAddress\": {\"Block\": " \
+		              "\"\",\"Street\": \"\",\"HouseBuildingNo\": \"\",\"Address\": \"\",\"AddressInstructions\": \"\"}," \
+		              "\"InvoiceItems\": [{\"ItemName\": \"Product 01\",\"Quantity\": 1,\"UnitPrice\": 100}]}"
+		headers = {'Content-Type': "application/json", 'Authorization': "Bearer " + self.token}
+		response = requests.request("POST", url, data=payload, headers=headers)
+		
+		print("Execute Payment Response")
+		print(response)
+		print(response.json())
+
+
+		####### Direct Payment ######
+		
+		#initialize payment
+		url     = self.baseURL + "/v2/ExecutePayment"
+		payload = "{\"PaymentMethodId\":2,\"CustomerName\": \"Ahmed\",\"MobileCountryCode\": \"+965\"," \
+	              "\"CustomerMobile\": \"92249465\",\"CustomerEmail\": \"aramadan@myfatoorah.com\",\"InvoiceValue\": 100," \
+	              "\"DisplayCurrencyIso\": \"KWD\",\"CallBackUrl\": \"https://google.com\",\"ErrorUrl\": " \
+	              "\"https://google.com\",\"Language\": \"en\",\"CustomerReference\": \"ref 1\",\"CustomerCivilId\": " \
+	              "12345678,\"UserDefinedField\": \"Custom field\",\"ExpireDate\": \"\",\"CustomerAddress\": {\"Block\": " \
+	              "\"\",\"Street\": \"\",\"HouseBuildingNo\": \"\",\"Address\": \"\",\"AddressInstructions\": \"\"}," \
+	              "\"InvoiceItems\": [{\"ItemName\": \"Product 01\",\"Quantity\": 1,\"UnitPrice\": 100}]}"
+
+		headers = {'Content-Type': "application/json", 'Authorization': "Bearer " + self.token}
+		response = requests.request("POST", url, data=payload, headers=headers)
+		print("Initiate direct Payment Response")
+		print(response)
+		print(response.json())	    
+
+
+		#direct payment
+		data        = response.json()['Data']
+		payment_url = data['PaymentURL']
+
+		print("PaymentURL  Response:\n" + payment_url)
+	    # after getting the payment url call it as a post API and pass card info to it
+	    # if you saved the card info before you can pass the token for the api
+
+		payload = "{\"paymentType\": \"card\",\"card\": {\"Number\":\"5123450000000008\",\"expiryMonth\":\"05\","\
+		          "\"expiryYear\":\"21\",\"securityCode\":\"100\"},\"saveToken\": false} "
+		headers = {'Content-Type': "application/json", 'Authorization': "Bearer " + self.token}
+		response = requests.request("POST", payment_url, data=payload, headers=headers)
+
+		print("Direct Payment Response")
+		print(response)
+
+
+		return redirect('accountant:accountantdash-board')

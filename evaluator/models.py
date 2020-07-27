@@ -159,6 +159,7 @@ class CleaningMethod(models.Model):
 class Evaluation(models.Model):
 	evaluation_id		= models.CharField(max_length=100,blank=False,null=False)
 	tracking_no         = models.IntegerField(blank=False,null=False)
+
 	call_attender 		= models.ForeignKey(UserProfile,blank=False,null=False,related_name='attender_evaluation')
 	attender_notes 		= models.CharField(max_length=500,blank=True,null=True)
 	customer			= models.ForeignKey(UserProfile,blank=False,null=False,related_name='customer_evaluation')
@@ -166,9 +167,8 @@ class Evaluation(models.Model):
 	estimated_cost		= models.FloatField(blank=True,null=True,default=0)
 	discount			= models.FloatField(blank=True,null=True,default=0)
 	total_cost          = models.FloatField(blank=True,null=True,default=0)
-	preffered_gender 	= models.CharField(max_length=20,blank=True,null=True,choices=GENDER_CHOICES)
 
-	quatation_status	= models.CharField(max_length=50,blank=True,null=True,choices=QUATATION_CHOICES)
+	quatation_status		= models.CharField(max_length=50,blank=True,null=True,choices=QUATATION_CHOICES)
 	quatation_approved_date = models.DateTimeField(blank=True,null=True)
 	
 	payment_method			= models.CharField(max_length=20,blank=True,null=True,choices=PAYMENT_CHOICES)

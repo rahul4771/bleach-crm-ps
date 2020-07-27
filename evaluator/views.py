@@ -461,9 +461,16 @@ class OrderDetails(IsEvaluator,View):
 class ResourceManagement(IsEvaluator,View):
 	def get(self,request):
 
+		try:
+			staffs = UserProfile.objects.filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
+		except:
+			staffs = None	
+
+
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		count_today_end   = count_today_start+timedelta(1)
+
 
 		#total workers count
 		try:
@@ -493,12 +500,12 @@ class ResourceManagement(IsEvaluator,View):
 		today_followup_active_teams  = follow_up_teams.filter(Q(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))))
 		week_cleaning_active_teams   = cleaning_teams.filter(Q( Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end)) ))
 		week_followup_active_teams   = follow_up_teams.filter(Q( Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end)) ))
-
+		
 
 		today_date            = timezone.now()
-		weekstart_date        = timezone.now().date()-timedelta(6)
+		weekstart_date        = timezone.now()-timedelta(6)
 
-		#for script
+
 		try:
 			today_total_team_mens = today_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_cleaning_active_teams.count() or 0+today_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_followup_active_teams.count() or 0
 		except:
@@ -514,6 +521,7 @@ class ResourceManagement(IsEvaluator,View):
 		today_active_teams_count = today_cleaning_active_teams.count()+today_followup_active_teams.count()
 		week_active_teams_count  = week_cleaning_active_teams.count()+week_followup_active_teams.count() 
 
+
 		#cleaning schedule & followup schedule for cleaning calendar			
 		workers_calendar_date	= request.GET.get('workers_calendar_date')
 		search                  = request.GET.get('search')
@@ -524,7 +532,7 @@ class ResourceManagement(IsEvaluator,View):
 			workers_date = timezone.now().replace(tzinfo=None)
 
 		workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
-		workers_date_end   = workers_date_start+timedelta(1)
+		workers_date_end   = workers_date_start+timedelta(1)		
 
 		if search:
 			try:
@@ -542,7 +550,39 @@ class ResourceManagement(IsEvaluator,View):
 		except:
 			workers_details = None
 
-		return render(request,'evaluator/resource/resources.html',{"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams})
+		#Filter
+		try:
+			fil_staff = int(request.GET.get('staff'))
+		except:
+			fil_staff = ''
+
+		try:
+			fil_minhours       = int(request.GET.get('minhours'))
+		except:
+			fil_minhours       = None
+
+		try:
+			fil_maxhours       = int(request.GET.get('maxhours'))	
+		except:
+			fil_maxhours	   = None
+
+		if 	fil_minhours and fil_maxhours:
+			if fil_minhours>=fil_maxhours:
+				messages.error(request,"Minimum Duration should be less than Maximum Duration")
+				fil_minhours = None
+				fil_maxhours = None
+				
+		#filters 	
+		filters=[] 
+		if fil_staff: 
+		    case1 = Q(id=fil_staff)
+		    filters.append(case1)
+	
+		if fil_staff: 
+		    filters         = functools.reduce(operator.and_,filters)
+		    workers_details = workers_details.filter(filters)
+
+		return render(request,'evaluator/resource/resources.html',{"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"staffs":staffs,"fil_staff":fil_staff,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,})
 
 class TicketDetails(IsEvaluator,View):
 	def get(self,request):
