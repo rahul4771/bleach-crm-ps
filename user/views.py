@@ -6,12 +6,13 @@ from django.contrib import messages
 from django.contrib.auth import authenticate,login
 from django.contrib.auth import logout as auth_logout
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,ServiceType,LocationType,CleaningType,CleaningMethod
-from order.models import Order
+from order.models import Order, OrderScheduler, Investigation, FollowUp, FollowUpScheduler, Question, FeedBack
 from user.models import UserProfile, Address, Governorate, Area #for creating data
 from datetime import datetime, date, timedelta
 import pandas as pd
 from django.utils import timezone
 from django.db.models import Max
+from django import db
 # Create your views here.
 
 #Login in Page
@@ -60,57 +61,63 @@ def list_function(list):
     return list_data
 
 def adddata(request):
-	startdate = pd.to_datetime('16-07-2019')
-	daterange = pd.date_range(startdate, periods=365) 
-	usr = UserProfile.objects.get(username='agent1')
+	# startdate = pd.to_datetime('04-20-2020')
+	# daterange = pd.date_range(startdate, periods=70)
 
-	evaluations=[]
-	saved_evaluations=[]
-	eval_details = []
-	eval_book = []
-	customers = []
-	address = []
-	agents = []
-	evaluators = []
-	dated = []
-	stype = []
-	ltype = []
-	cltype = []
-	clmethod = []
+	# print(daterange,"drg")
+	# for dt in daterange:
+	# 	print(dt,"ert")
+	# 	print(dt.strftime("%Y-%m-%d"),"str")
+
+	# usr = UserProfile.objects.get(username='bleachagent1')
+
+	# evaluations=[]
+	# saved_evaluations=[]
+	# eval_details = []
+	# eval_book = []
+	# customers = []
+	# address = []
+	# agents = []
+	# evaluators = []
+	# dated = []
+	# stype = []
+	# ltype = []
+	# cltype = []
+	# clmethod = []
 	
-	serv_type = ServiceType.objects.all()
-	for ser in serv_type:
-		stype.append(ser)
+	# serv_type = ServiceType.objects.all()
+	# for ser in serv_type:
+	# 	stype.append(ser)
   
-	loc_type = LocationType.objects.all()
-	for loc in loc_type:
-		ltype.append(loc)
+	# loc_type = LocationType.objects.all()
+	# for loc in loc_type:
+	# 	ltype.append(loc)
   
-	clean_type = CleaningType.objects.all()
-	for cln in clean_type:
-		cltype.append(cln)
+	# clean_type = CleaningType.objects.all()
+	# for cln in clean_type:
+	# 	cltype.append(cln)
 	
-	clean_method = CleaningMethod.objects.all()
-	for clm in clean_method:
-		clmethod.append(clm)
+	# clean_method = CleaningMethod.objects.all()
+	# for clm in clean_method:
+	# 	clmethod.append(clm)
  
-	gender = ["MALE","FEMALE"]
-	payment = ['PREPAID','POSTPAID','BREAKDOWN']
-	customer_types = ['INDIVIDUAL','RETAIL','CORPORATE']
-	cleaning_choices = ['ONE_TIME_SERVICE','SUBSCRIPTION']
-	dirtlevel_choices =['LOW','MEDIUM','HIGH']
-	floor_choices =['CERAMIC','WOOD','CONCRETE']
-	set_size_choices =['SMALL_SET','MEDIUM_SET','LARGE_SET']
-	set_type_choices =['TYPE1','TYPE2','TYPE3']
-	fabric_type_choices =['SYNTHETIC','NATURAL']
-	sanitization_type_choices =['SANITIZATION','DISINFECTION','STERILIZATION']
-	bed_size_choices =['SINGLE_BED','DOUBLE_BED','QUEEN_BED','KIND_BED']
-	bed_type_choices =['TYPE1','TYPE2','TYPE3']
-	spot_stain_choices =['SPOT','STAIN']
-	order_status = ['APPROVED_BY_CLIENT','ORDER_IN_PROGRESS','ORDER_CANCELLED','ORDER_CLOSED']
-	payment_status = ['PENDING','COMPLETED']
+	# gender = ["MALE","FEMALE"]
+	# payment = ['PREPAID','POSTPAID','BREAKDOWN']
+	# customer_types = ['INDIVIDUAL','RETAIL','CORPORATE']
+	# cleaning_choices = ['ONE_TIME_SERVICE','SUBSCRIPTION']
+	# dirtlevel_choices =['LOW','MEDIUM','HIGH']
+	# floor_choices =['CERAMIC','WOOD','CONCRETE']
+	# set_size_choices =['SMALL_SET','MEDIUM_SET','LARGE_SET']
+	# set_type_choices =['TYPE1','TYPE2','TYPE3']
+	# fabric_type_choices =['SYNTHETIC','NATURAL']
+	# sanitization_type_choices =['SANITIZATION','DISINFECTION','STERILIZATION']
+	# bed_size_choices =['SINGLE_BED','DOUBLE_BED','QUEEN_BED','KIND_BED']
+	# bed_type_choices =['TYPE1','TYPE2','TYPE3']
+	# spot_stain_choices =['SPOT','STAIN']
+	# order_status = ['APPROVED_BY_CLIENT','ORDER_IN_PROGRESS','ORDER_CANCELLED','ORDER_CLOSED']
+	# payment_status = ['PENDING','COMPLETED']
 
-	# for i in range(4,8):
+	# for i in range(1,8):
 	# 	random_gender = list_function(gender)
 	# 	random_cust_type = list_function(customer_types)
 	# 	customers.append(UserProfile(
@@ -171,7 +178,7 @@ def adddata(request):
 	# 	gar[g] = gov_areas
 	# 	areas.append(gar)
 
-	# for i in range(1,300):
+	# for i in range(1,200):
 	# 	random_gender = list_function(gender)
 	# 	random_cust_type = list_function(customer_types)
 	# 	customers.append(UserProfile(
@@ -205,61 +212,63 @@ def adddata(request):
  
 	# tracking_no = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000
 	# for date in  daterange:
-	# 	customer = UserProfile.objects.filter(user_type="CUSTOMER",is_active=True)
-	# 	agent = UserProfile.objects.filter(user_type="AGENT",is_active=True)
-	# 	for cus in  customer:
-	# 		customers.append(cus)
-	# 	for ag in agent:
-	# 		agents.append(ag)
-	# 	agt = list_function(agents)
-	# 	cst = list_function(customers)
-	# 	gen = list_function(gender)
-	# 	pay = list_function(payment)
-	# 	tracking_no += 1 #Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000		
-	# 	evaluation_id  = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+str(tracking_no+1)
-	# 	call_attender = agt
-	# 	customer = cst
-	# 	estimated_cost = random.randint(5000,20000)
-	# 	discount = random.randint(500,1000)
-	# 	total_cost = int(estimated_cost-discount)
-	# 	preffered_gender = gen
-	# 	quatation_status = 'REJECTED'
-	# 	quatation_approved_date = date.strftime("%Y-%m-%d")
-	# 	payment_method = pay
-	# 	is_active = True
-	# 	if pay == 'BREAKDOWN':
-	# 		before_cleaning_amount = random.randint(500,total_cost)
-	# 		after_cleaning_amount = int(total_cost - before_cleaning_amount)	
-	# 	else:
-	# 		before_cleaning_amount = None
-	# 		after_cleaning_amount = None
+	# 	for i in range(random.randint(1,4),random.randint(7,10)):
+	# 		print(i,"eye")
+	# 		customer = UserProfile.objects.filter(user_type="CUSTOMER",is_active=True)
+	# 		agent = UserProfile.objects.filter(user_type="AGENT",is_active=True)
+	# 		for cus in  customer:
+	# 			customers.append(cus)
+	# 		for ag in agent:
+	# 			agents.append(ag)
+	# 		agt = list_function(agents)
+	# 		cst = list_function(customers)
+	# 		gen = list_function(gender)
+	# 		pay = list_function(payment)
+	# 		tracking_no += 1 #Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000		
+	# 		evaluation_id  = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+str(tracking_no+1)
+	# 		call_attender = agt
+	# 		customer = cst
+	# 		estimated_cost = random.randint(5000,20000)
+	# 		discount = random.randint(500,1000)
+	# 		total_cost = int(estimated_cost-discount)
+	# 		preffered_gender = gen
+	# 		quatation_status = 'APPROVED'
+	# 		quatation_approved_date = date.strftime("%Y-%m-%d")
+	# 		payment_method = pay
+	# 		is_active = True
+	# 		if pay == 'BREAKDOWN':
+	# 			before_cleaning_amount = random.randint(500,total_cost)
+	# 			after_cleaning_amount = int(total_cost - before_cleaning_amount)	
+	# 		else:
+	# 			before_cleaning_amount = None
+	# 			after_cleaning_amount = None
 
-	# 	evaluations.append(Evaluation(
-	# 			tracking_no=tracking_no,evaluation_id=evaluation_id,call_attender=call_attender,
-	# 			customer=customer,estimated_cost=estimated_cost,discount=discount,total_cost=total_cost,
-	# 			preffered_gender=preffered_gender,quatation_status=quatation_status,
-	# 			quatation_approved_date=quatation_approved_date,payment_method=payment_method,is_active=is_active,
-	# 			before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount))
-	# print(evaluations)
-	# Evaluation.objects.bulk_create(evaluations)
-	
-	# evals = Evaluation.objects.filter(quatation_status = 'REJECTED',is_active=True)
-	# print(evals,"evs")
+	# 		evaluations.append(Evaluation(
+	# 				tracking_no=tracking_no,evaluation_id=evaluation_id,call_attender=call_attender,
+	# 				customer=customer,estimated_cost=estimated_cost,discount=discount,total_cost=total_cost,
+	# 				preffered_gender=preffered_gender,quatation_status=quatation_status,
+	# 				quatation_approved_date=quatation_approved_date,payment_method=payment_method,is_active=is_active,
+	# 				before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount))
+	# 	# print(evaluations)
+	# 	Evaluation.objects.bulk_create(evaluations)
+		
+	# evals = Evaluation.objects.filter(quatation_status = 'APPROVED',is_active=True)
+	# # print(evals,"evs")
 	# for ev in evals:
 		
-		# evaluator = UserProfile.objects.filter(user_type="EVALUATOR",is_active=True)
-		# for eval in evaluator:
-		# 	evaluators.append(eval)
+	# 	evaluator = UserProfile.objects.filter(user_type="EVALUATOR",is_active=True)
+	# 	for eval in evaluator:
+	# 		evaluators.append(eval)
 	# 	evr = list_function(evaluators)
 
 	# 	eval_details.append(EvaluationDetails(
 	# 			evaluation=ev,evaluator=evr,
-    # 			estimated_cost=ev.estimated_cost,discount=ev.discount,total_cost=ev.total_cost,
+	# 			estimated_cost=ev.estimated_cost,discount=ev.discount,total_cost=ev.total_cost,
 	# 			status="EVALUATED",is_active=True))
 	# EvaluationDetails.objects.bulk_create(eval_details)
 	
 	# ev_details = EvaluationDetails.objects.filter(is_active=True)
- 
+
 	# for evd in ev_details:
 	# 	rand_clean_choices = list_function(cleaning_choices)
 	# 	rand_dirt = list_function(dirtlevel_choices)
@@ -275,8 +284,8 @@ def adddata(request):
 	# 	rand_bed_size_choices = list_function(bed_size_choices)
 	# 	rand_bed_type_choices = list_function(bed_type_choices)
 	# 	rand_spot_stain_choices = list_function(spot_stain_choices)
-	# 	print(rand_ser_type,type(rand_clean_choices),"dat")
-  
+	# 	# print(rand_ser_type,type(rand_clean_choices),"dat")
+
 	# 	if rand_ser_type.name == "Upholstery Cleaning" :
 	# 		set_type = rand_set_type_choices
 	# 		set_size = rand_set_size_choices
@@ -286,7 +295,7 @@ def adddata(request):
 	# 		sofa_fabric_type = rand_fabric_type_choices
 	# 		size_of_carpet = None
 	# 		fabric_type = None
-	# 		print("dro")
+	# 		# print("dro")
 	# 	else:
 	# 		set_type = None
 	# 		set_size = None
@@ -296,8 +305,8 @@ def adddata(request):
 	# 		sofa_fabric_type = None
 	# 		size_of_carpet = random.randint(100,800)
 	# 		fabric_type = rand_fabric_type_choices
-	# 		print("drone")
-   
+	# 		# print("drone")
+
 	# 	eval_book.append(EvaluationBook(
 	# 		evaluation_details = evd, cleaning_policy = rand_clean_choices, dirt_level = rand_dirt, location_type = rand_location_type,
 	# 		service_type = rand_ser_type, cleaning_type = rand_clean_type, cleaning_method = rand_clean_method, floor_type = rand_floor_choice,
@@ -309,7 +318,7 @@ def adddata(request):
 	# 		total_cost = evd.total_cost, is_active = True
 	# 	))
 	# EvaluationBook.objects.bulk_create(eval_book)
- 
+
 	# for ev in evals:
 	# 	rand_ord_status = list_function(order_status)
 	# 	rand_payment_status = list_function(payment_status)
@@ -322,4 +331,58 @@ def adddata(request):
 	# 		payment_status = rand_payment_status, created_by = rand_evaluators
 	# 	))
 	# Order.objects.bulk_create(orders)
+
+	# ords = Order.objects.filter(evaluation__quatation_status='APPROVED')
+	# orderschedules = []
+	# for ord in ords:
+	# 	orderschedules.append(OrderScheduler(
+	# 		order = ord, is_active=True
+	# 	))
+	# OrderScheduler.objects.bulk_create(orderschedules)
+ 
+	# followup_apprv = ["True","False"]
+	# ordscheds = OrderScheduler.objects.all()
+	# inv = []
+	# for ordsched in ordscheds:
+	# 	rand_followup_approve = list_function(followup_apprv)
+	# 	inv.append(Investigation(
+	# 		order = ordsched.order, order_schedule = ordsched, is_followup_approved = rand_followup_approve, is_active = True
+	# 	))
+	# Investigation.objects.bulk_create(inv)
+ 
+	# FOLLOWUP_STATUS = ['FOLLOWUP_CANCELLED','FOLLOWUP_CLOSED']
+	# followups = []
+	# investigations = Investigation.objects.filter(is_followup_approved=True)
+	# for invest in investigations:
+	# 	random_followup_status = list_function(FOLLOWUP_STATUS)
+	# 	followups.append(FollowUp(
+	# 		investigation = invest, status = random_followup_status, is_active = True
+	# 	))
+	# FollowUp.objects.bulk_create(followups)
+ 
+	# questions = []
+	# for i in range(1,10):
+	# 	questions.append(Question(
+	# 		question = ''.join(random.sample(string.ascii_lowercase, k=20)), is_active = True
+	# 	))
+	# Question.objects.bulk_create(questions)
+	
+	# qstns = []
+	# qsts = Question.objects.all()
+	# for qst in qsts:
+	# 	qstns.append(qst)
+  
+	# feedbacks = []
+	# for ord in ords:
+	# 	feedbacks.append(FeedBack(
+	# 		order = ord, question = list_function(qstns), rating = random.randint(1,5),
+   	# 		response_date = ord.evaluation.quatation_approved_date, is_active = True
+	# 	))
+	# FeedBack.objects.bulk_create(feedbacks)
+	# todate = date.today() - timedelta(days=40)
+	# prevdate = date.today() - timedelta(days=50)
+	# tickets = FollowUp.objects.filter(investigation__order__evaluation__quatation_approved_date__month__lte=6)
+	# for t in tickets:
+	# 	print(t.investigation.order.evaluation.quatation_approved_date,"pl")
+
 	return render(request,"createdata.html")

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views import View
-
+from django.http import JsonResponse
 from django.conf import settings
 from bleach_crm_ps.permissions import IsAdmin
 from dateutil.relativedelta import relativedelta
@@ -15,7 +15,7 @@ from django.db.models.functions import Cast
 from django.db.models import Prefetch
 
 from user.models import UserProfile,Address,Governorate,Area
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,ServiceType
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,ServiceType,LocationType,CleaningType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 from accountant.models import Invoice
@@ -835,3 +835,90 @@ class PaymentDetails(IsAdmin,View):
 		entry_per_page=(invoices.end_index())-(invoices.start_index())+1	
 
 		return render(request,'admin/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})		
+
+#ajax for sales charts
+def SalesLocationData(request):
+	data = []
+	
+	prevdate  = request.GET.get('fromdate', None)
+	todate  = request.GET.get('todate', None)
+	print(prevdate,todate,"pop")
+
+	try:
+		prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+		todate = datetime.strptime(todate, '%Y-%m-%d')
+	except:
+		todate = date.today() - timedelta(days=1)
+		prevdate = todate - timedelta(days=30)
+	print(prevdate,todate,"testdt")
+
+	location_types = LocationType.objects.all()
+	for location in location_types:
+		sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate,todate),evaluation__evaluation_details__evaluation_book_evaluation_details__location_type=location).count()
+		
+		location_dict = {
+		"location" : location.name,
+		"count" : sales_location_count,
+		}
+		data.append(location_dict)
+	print(data)
+ 
+	return JsonResponse(data,safe=False)
+
+#ajax for sales charts
+def SalesCleaningTypeData(request):
+	print("ram")
+	data = []
+	
+	prevdate  = request.GET.get('fromdate', None)
+	todate  = request.GET.get('todate', None)
+	print(prevdate,todate,"pop")
+
+	try:
+		prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+		todate = datetime.strptime(todate, '%Y-%m-%d')
+	except:
+		todate = date.today() - timedelta(days=1)
+		prevdate = todate - timedelta(days=30)
+	print(prevdate,todate,"testdt")
+ 
+	cleaning_types = CleaningType.objects.all()
+	for clean in cleaning_types:
+		sales_cleaningtype_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate,todate),evaluation__evaluation_details__evaluation_book_evaluation_details__cleaning_type=clean).count()
+		
+		clean_dict = {
+		"cleaning_type" : clean.name,
+		"count" : sales_cleaningtype_count,
+		}
+		data.append(clean_dict)
+	print(data)
+	return JsonResponse(data,safe=False)
+
+#ajax for sales charts
+def SalesGovernorateData(request):
+	data = []
+	
+	prevdate  = request.GET.get('fromdate', None)
+	todate  = request.GET.get('todate', None)
+	print(prevdate,todate,"pop")
+
+	try:
+		prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+		todate = datetime.strptime(todate, '%Y-%m-%d')
+	except:
+		todate = date.today() - timedelta(days=1)
+		prevdate = todate - timedelta(days=60)
+	print(prevdate,todate,"testdt")
+ 
+	governorates = Governorate.objects.all()
+	for gov in governorates:
+		sales_governorate_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate,todate),evaluation__evaluation_details__address__governorate=gov).count()
+		
+		print(sales_governorate_count,"sgc")		
+		gov_dict = {
+		"governorate" : gov.name,
+		"count" : sales_governorate_count,
+		}
+		data.append(gov_dict)
+	print(data)
+	return JsonResponse(data,safe=False)

@@ -1,10 +1,10 @@
 google.charts.load('current',{
 callback: function () {
-  drawChart();
-  $(window).resize(drawChart);
+    drawChart();
+    $(window).resize(drawChart);
 },
 'packages':['corechart']});
-google.charts.setOnLoadCallback(drawChart);
+// google.charts.setOnLoadCallback(drawChart);
 
 //googlechart
 function drawChart() {
@@ -20,7 +20,7 @@ function drawChart() {
         var dom = 'Date' ;
         var fromd = $('#ord_fromdate').val();
         var to = $('#ord_todate').val();
-  
+    
         var fromdate= fromd.split("-").reverse().join("-");
         var todate= to.split("-").reverse().join("-");
         console.log(fromdate,todate,'pp')
@@ -31,7 +31,7 @@ function drawChart() {
     var apps = [];
 
     $.ajax({
-        url: '/order-data/quotation_data',
+        url: "/agent/ajax/feedbackdata/",
         data: {
         'fromdate': fromdate,'todate':todate,'dom':dom
         },
@@ -41,9 +41,8 @@ function drawChart() {
         
         success: function(data) {
         console.log('lp')
-        var quotes = [['Date', 'Submitted', 'Approved']];
-        var sub_sum = 0;
-        var app_sum = 0;
+        var quotes = [['Date', 'Rating']];
+        var tot_ratings = 0;
 
         $.each(data,function(key,value){
             var vals = value.date.split('-');
@@ -51,17 +50,14 @@ function drawChart() {
             var month = parseInt (vals[1]);
             var day = parseInt (vals[2]);
             // console.log(year,month,day)
-        quotes.push([new Date(year,month-1,day),value.sub_qt,value.app_qt]);
-            sub_sum += parseInt(value.sub_qt);
-            app_sum += parseInt(value.app_qt);
+        quotes.push([new Date(year,month-1,day),value.total]);
+            tot_ratings += parseInt(value.total);
             dates.push(new Date(value.date));
-            subs.push(value.sub_qt);
-            apps.push(value.app_qt);
+            subs.push(value.total);
         });
         
-        console.log(sub_sum,app_sum,"war ");
-        $('#total_submitted').text(sub_sum);
-        $('#total_approved').text(app_sum);
+        console.log(tot_ratings,"war ");
+        $('#total_submitted').text(tot_ratings);
 
         var quotations = google.visualization.arrayToDataTable(quotes);
 
@@ -84,7 +80,7 @@ function drawChart() {
 }
 
 var months = [ "January", "February", "March", "April", "May", "June", 
-               "July", "August", "September", "October", "November", "December" ];
+                "July", "August", "September", "October", "November", "December" ];
 
 var date1 = new Date();
 var month = date1.getMonth();
@@ -143,15 +139,15 @@ $("#month2").change(function(){
 
 $("#reset").click(function(){
     var date1 = new Date();
-    var datestring = date1.getDate()  + "/" + (date1.getMonth()+1) + "/" + date1.getFullYear();
+    var datestring = date1.getDate()-1  + "-" + (date1.getMonth()+1) + "-" + date1.getFullYear();
 
     var date2 = new Date();
     date2.setDate(date2.getDate()-30);
-    var datestring2 = date2.getDate()  + "/" + (date2.getMonth()+1) + "/" + date2.getFullYear();
+    var datestring2 = date2.getDate()  + "-" + (date2.getMonth()+1) + "-" + date2.getFullYear();
     console.log(datestring,datestring2)
 
-    $('#from').val(datestring2);
-    $('#to').val(datestring);
+    $('#ord_fromdate').val(datestring2);
+    $('#ord_todate').val(datestring);
 
     drawChart();
 })
