@@ -70,13 +70,18 @@
 
         <div class="filter-right"><!--filter-right-->
        <input type="text" id="working_calendar" class="date_pick date-picker-resource" value={{workers_date|date:"d-m-Y"}} onchange="set_params_go();">
-       <div class="day-month-togggle-button"><a href="#">Date/Month Toggle Button</a></div>
+       <!-- <div class="day-month-togggle-button"><a href="#">Date/Month Toggle Button</a></div> -->
+       
+       <label class="switch">
+        <input type="checkbox" checked>
+        <span class="slider"></span>
+      </label><br><br>
+       
+       
         </div><!--filter-right-->
 
 
 </div><!--toolbar-div-->
-
-
 
 
 <div id="resource-scroll" class="resource-scroll">
