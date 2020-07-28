@@ -71,9 +71,9 @@
         <div class="filter-right"><!--filter-right-->
        <input type="text" id="working_calendar" class="date_pick date-picker-resource" value={{workers_date|date:"d-m-Y"}} onchange="set_params_go();">
        <!-- <div class="day-month-togggle-button"><a href="#">Date/Month Toggle Button</a></div> -->
-       <div class="ui calendar" id="example7" hidden>
+       <div class="ui calendar" id="working_calendar_month" hidden>
         <div class="ui input left icon">
-          <input type="text" id="month" value="{{mfrom}}">
+          <input type="text" id="month" oninput="load_workers_data();">
         </div>
       </div>
        <label class="switch">
@@ -89,7 +89,7 @@
 
 
 <div id="resource-scroll" class="resource-scroll">
-<div class="table-wrap">
+<div class="table-wrap" id="table_date">
 <table class="resource-table" id="myTable" >
 <thead>
 <tr class="resource-graybg">
@@ -122,8 +122,26 @@
  </tbody>
 </table>
 </div>
-</div>
 
+<div class="table-wrap" id="table_month" hidden>
+<table class="resource-table" id="myTable2">
+<thead>
+<tr>
+<th class="align-left">Staff</th>
+<th class="align-center" data-hide="phone">Ratings</th>
+<th class="align-center" data-hide="tablet">Worked Days</th>
+<th class="align-center" data-hide="tablet">Man Hours</th>
+<th class="align-center" data-hide="tablet">Mang Avg Hours</th>
+
+</tr>
+</thead>
+    <tbody>
+        {% include 'agent/resource/resource-month.html' %}
+    </tbody>
+</table>
+
+</div>
+</div>
 
 </div><!--white-wrapper-->            
             
@@ -135,11 +153,11 @@
 {% endblock %}
 {% block javascript %}
 <script type="text/javascript">
-    $('#example7').calendar({
+    $('#working_calendar_month').calendar({
         type: 'month'
     });
 
-
+    //for loading default month and year
     var months = [ "January", "February", "March", "April", "May", "June", 
                "July", "August", "September", "October", "November", "December" ];
 
@@ -151,13 +169,41 @@
     var datestring = selectedMonthName + " " + date1.getFullYear();
     $('#month').val(datestring);
 
+    //load monthly workers data on toggle
+    function load_workers_data(){
+        console.log("pop")
+        var month_year = datestring
+        
+        $.ajax({
+                url: '/agent/ajax/resourcestoggle/',
+                data: {
+                'month_year': month_year
+                
+                },
+                dataType: 'json',
+            
+                success: function(data) { 
+
+                console.log(data.html_workers_list);
+                $("#myTable2 tbody ").html(data.html_workers_list);
+
+                }
+            })
+        }
+
     $('#daymonthtoggle').click(function(){
         if($(this).is(':checked')){
-            $('#example7').attr("hidden",true);
+            $('#working_calendar_month').attr("hidden",true);
             $('#working_calendar').attr("hidden",false);
+            $('#table_month').attr("hidden",true);
+            $('#table_date').attr("hidden",false);
         }else{
-            $('#example7').attr("hidden",false);
+            $('#working_calendar_month').attr("hidden",false);
             $('#working_calendar').attr("hidden",true);
+            $('#table_month').attr("hidden",false);
+            $('#table_date').attr("hidden",true);
+            load_workers_data();
+
         }
     });
 

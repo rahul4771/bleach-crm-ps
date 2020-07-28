@@ -1,4 +1,5 @@
 from django.shortcuts import render,redirect
+from django.template.loader import render_to_string
 from django.views import View
 from django.forms import formset_factory,modelformset_factory
 from django.http import HttpResponse,JsonResponse
@@ -1560,4 +1561,25 @@ def FeedBackData(request):
 				}
                 data.append(fb_dict)
     return JsonResponse(data,safe=False)
+
+def ResourcesToggle(request):
+    data = dict()
+    month_year = request.GET.get('month_year',None)
+    month,year = month_year.split()
+    
+    monthnumber = datetime.strptime(month,"%B").month
+    print(monthnumber,"mon")
+    
+    try:
+     	workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
+    except:
+        workers =  None
+    print(workers,"lp")
+    # try:
+    workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__year__gte=year,start_at__month__gte=monthnumber)&Q(start_at__year__lte=year,start_at__month__lte=monthnumber))|Q(Q(end_at__year__gte=year,end_at__month__gte=monthnumber)&Q(end_at__year__lte=year,end_at__month__lte=monthnumber))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__year__gte=year,start_at__month__gte=monthnumber)&Q(start_at__year__lte=year,start_at__month__lte=monthnumber))|Q(Q(end_at__year__gte=year,end_at__month__gte=monthnumber)&Q(end_at__year__lte=year,end_at__month__lte=monthnumber))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
+    # except:
+    #     workers_details = None
+    print(workers_details,"wok")   
+    data['html_workers_list'] = render_to_string('agent/resource/resource-month.html', {'workers_details_month':workers_details})
+    return JsonResponse(data)
 
