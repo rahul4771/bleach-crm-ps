@@ -115,7 +115,7 @@ class FollowUpTeam(models.Model):
 #For Tracking Medias Uploaded by Followup Team Leader on Site
 
 class FollowUpTeamMedia(models.Model):
-	team 					 = models.ForeignKey('FollowUpTeam',blank=False,null=False)
+	team 					 = models.ForeignKey('FollowUpTeam',blank=False,null=False,related_name='followup_media')
 	media                    = models.FileField(upload_to='followup/',blank=True,null=True)
 	media_type 				 = models.CharField(max_length=20,blank=True,null=True,choices=MEDIA_CHOICES)
 	taken_status 			 = models.CharField(max_length=20,blank=True,null=True,choices=MEDIA_TAKEN_CHOICES)

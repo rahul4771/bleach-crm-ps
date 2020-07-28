@@ -50,9 +50,9 @@
                     {% endif %}
 
                     {% for evaluation_detail in order.evaluation.evaluationdetails %}
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{evaluation_detail.address.area.name}}</div>
+                    <div class="area-bold">{{evaluation_detail.address.area.name}}</div>
                     {% for evaluation_book in evaluation_detail.evaluationbooks %}
-                    <div class="common-green-text align-left"><i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i> {{evaluation_book.service_type.name}}</div>
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{evaluation_book.service_type.name}}</div>
                     {% endfor %}
                     {% endfor %}
             	
@@ -61,9 +61,13 @@
                 <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
                     <div class="common-gray-text align-left">{{order.evaluation.created}}</div>
                     <div class="common-gray-text align-left yellow-text lg-text">{{order.evaluation.total_cost|default_if_none:'0.00'|floatformat:'2'}} KD</div>
-                	<!-- <div class="common-gray-text align-left sm-text gray-text">100 Cleaners</div> -->
+                	<div class="common-gray-text align-left sm-text gray-text">{{order.total_cleaners}} Cleaners</div>
                     
-                    <!-- <div class="profile-pic-line"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div><div class="profile-pic-line"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div><div class="profile-pic-line"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div> -->
+                    {% if order.evaluation.call_attender.profile_image %}
+                    <div class="profile-pic-line"><img src="{{order.evaluation.call_attender.profile_image.url}}"></div>
+                    {% else %}
+                    <div class="profile-pic-line"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
+                    {% endif %}
             	</div><!--cleaning-column-widget cleaning-column-widget-column2-->
             </div><!--cleaning-column-wrapper-->
         	
@@ -142,8 +146,8 @@
                 <div class="column-left"><img src="{% static 'files/order-client-page/images/card-orders-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Orders</h1>
-            	<h2 class="red-text"><label>Active<span>2</span></label> </h2>
-            	<p><label>Total<span>5</span></label></p>
+            	<h2 class="red-text"><label>Active<span>{{active_orders_count|default_if_none:'0'}}</span></label> </h2>
+            	<p><label>Total<span>{{orders.count|default_if_none:'0'}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--order-card-column-->

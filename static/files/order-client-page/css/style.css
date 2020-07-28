@@ -1,6 +1,6 @@
 
 #container {
-	max-width: 970px;
+    max-width: 970px;
 }
 
 ::selection {color: white; background: #1a1a1a; text-shadow: none;}
@@ -8,32 +8,32 @@
 ::-webkit-selection {color: white; background: #1a1a1a; text-shadow: none;}
 
 header > .logo{
-	font-size: 72px;
-	padding: 20px;
+    font-size: 72px;
+    padding: 20px;
 }
 header > .logo > i{
-	color: red;
-	font-style: normal;
+    color: red;
+    font-style: normal;
 }
 header > .logo > .description {
-	border-left: 2px solid;
+    border-left: 2px solid;
     font-size: 42px;
-	margin: 0 0 0 20px;
+    margin: 0 0 0 20px;
     padding: 0 0 0 20px;
-	vertical-align: middle;
+    vertical-align: middle;
 }
 
 body{
-	background-color: #c1c1c1;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
+    background-color: #c1c1c1;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 section{
-	background-color: white;
-	margin: 0 0 0px 0;
-	padding:0  0px 0 0;
+    background-color: white;
+    margin: 0 0 0px 0;
+    padding:0  0px 0 0;
 }
 
 footer {

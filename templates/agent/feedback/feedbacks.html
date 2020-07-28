@@ -240,7 +240,7 @@
 </thead>
 <tbody>
   {% for order in order_wise_feedbacks %}
-    <tr>
+    <tr class="clickable-row" data-href="{% url 'agent:agent-feedbackadvanced' %}">
     <td class="yellow-line">{{order.evaluation.evaluation_id}}</td>
     <td>{{order.evaluation.customer.name}}</td>
     <td>

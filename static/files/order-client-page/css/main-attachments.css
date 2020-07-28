@@ -1,0 +1,7 @@
+.yellow-bg-lg{background:#cfcc08; padding:4px 5px; margin:0 5px 10px 0;  border-radius:3px; text-align:center; color:#fff; font-size:13px; width:80px; display:inline-block;}
+
+.yellow-button{ background:#cfcc08; color:#fff; padding:4px 25px; border:none; font-size:15px; margin:15px 0 0px 0; border-radius:3px;transition: .4s; }
+.yellow-button:hover{ background:#cfcc08;}
+
+.red-button{ background:#ff0000; color:#fff; padding:4px 25px; border:none; font-size:15px; margin:15px 0 0px 0; border-radius:3px;transition: .4s; }
+.red-button:hover{ background:#ff0000;}

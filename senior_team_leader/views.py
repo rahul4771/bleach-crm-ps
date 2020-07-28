@@ -380,11 +380,20 @@ class AssignFollowupTeam(View):
 		followup_schedule = FollowUpScheduler.objects.select_related('follow_up__investigation__order','follow_up__investigation__order_schedule__order_scheduler_book__service_type','customer_address').get(is_active=True,id=scheduler_id)
 	
 		follow_up_team_assign_form = FollowupTeamAssignForm()
-		assigned_cleaners          = request.POST.getlist('assigned_cleaner')
+		
 
-		active_cleaner1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at))|Q(Q(end_at__gte=followup_schedule.start_at)&Q(end_at__lte=followup_schedule.end_at))|Q(Q(start_at__lte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__gte=followup_schedule.end_at))|Q(Q(start_at__gte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__lte=followup_schedule.end_at)))).values_list('member',flat=True)
+		active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at))|Q(Q(end_at__gte=followup_schedule.start_at)&Q(end_at__lte=followup_schedule.end_at))|Q(Q(start_at__lte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__gte=followup_schedule.end_at))|Q(Q(start_at__gte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__lte=followup_schedule.end_at)))).values_list('member',flat=True)
 		active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at))|Q(Q(end_at__gte=followup_schedule.start_at)&Q(end_at__lte=followup_schedule.end_at))|Q(Q(start_at__lte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__gte=followup_schedule.end_at))|Q(Q(start_at__gte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__lte=followup_schedule.end_at)))).values_list('member',flat=True)
-		active_cleaners     = active_cleaner1.union(active_cleaners2)
+
+		if active_cleaners1 and active_cleaners2:
+			active_cleaners     = active_cleaners1.union(active_cleaners2)		
+		else:
+			if active_cleaners1:
+				active_cleaners = active_cleaners1
+			elif active_cleaners2:
+				active_cleaners = active_cleaners2
+			else:
+				active_cleaners = []
 
 		leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').filter(~Q(id__in=active_cleaners))
 		cleaners            = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(~Q(id__in=active_cleaners))
@@ -398,12 +407,21 @@ class AssignFollowupTeam(View):
 		followup_schedule = FollowUpScheduler.objects.select_related('follow_up__investigation__order','follow_up__investigation__order_schedule__order_scheduler_book__service_type','customer_address').get(is_active=True,id=scheduler_id)	
 
 		follow_up_team_assign_form = FollowupTeamAssignForm(request.POST)
+		assigned_cleaners          = request.POST.getlist('assigned_cleaner')
 
 
-
-		active_cleaner1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at))|Q(Q(end_at__gte=followup_schedule.start_at)&Q(end_at__lte=followup_schedule.end_at))|Q(Q(start_at__lte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__gte=followup_schedule.end_at))|Q(Q(start_at__gte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__lte=followup_schedule.end_at)))).values_list('member',flat=True)
+		active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at))|Q(Q(end_at__gte=followup_schedule.start_at)&Q(end_at__lte=followup_schedule.end_at))|Q(Q(start_at__lte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__gte=followup_schedule.end_at))|Q(Q(start_at__gte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__lte=followup_schedule.end_at)))).values_list('member',flat=True)
 		active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at))|Q(Q(end_at__gte=followup_schedule.start_at)&Q(end_at__lte=followup_schedule.end_at))|Q(Q(start_at__lte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__gte=followup_schedule.end_at))|Q(Q(start_at__gte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__lte=followup_schedule.end_at)))).values_list('member',flat=True)
-		active_cleaners     = active_cleaner1.union(active_cleaners2)
+		
+		if active_cleaners1 and active_cleaners2:
+			active_cleaners     = active_cleaners1.union(active_cleaners2)		
+		else:
+			if active_cleaners1:
+				active_cleaners = active_cleaners1
+			elif active_cleaners2:
+				active_cleaners = active_cleaners2
+			else:
+				active_cleaners = []
 	
 		leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').filter(~Q(id__in=active_cleaners))
 		cleaners            = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(~Q(id__in=active_cleaners))
@@ -426,7 +444,6 @@ class AssignFollowupTeam(View):
 			assigned_cleaners_list   = []
 			for cleaner in assigned_cleaners:
 				assigned_cleaners_list.append(FollowUpTeamMember(team=follow_up_team_assign_form_save,member_id=cleaner,start_at=followup_schedule.start_at,end_at=followup_schedule.end_at))
-			assigned_cleaners_list.append(FollowUpTeamMember(team=follow_up_team_assign_form_save,member=follow_up_team_assign_form_save.team_leader,start_at=followup_schedule.start_at,end_at=followup_schedule.end_at))
 			#bulk create
 			FollowUpTeamMember.objects.bulk_create(assigned_cleaners_list)	
 
@@ -488,13 +505,13 @@ class InvestigationTask(View):
 			Investigation.objects.filter(id=investigation_id).update(is_followup_approved=False,check_out=timezone.now(),notes=request.POST.get('notes'))
 
 		#To Save Media
-			medias = request.FILES.getlist('media')
-			if not medias==['']:
-				for media in medias:
-					InvestigationMedia.objects.create(
-					        investigation_id=investigation_id,
-					        media=media,
-					        )
+		medias = request.FILES.getlist('media')
+		if not medias==['']:
+			for media in medias:
+				InvestigationMedia.objects.create(
+				        investigation_id=investigation_id,
+				        media=media,
+				        )
 
 		messages.success(request,"Investigation Form submitted succesfully")	
 		return redirect('stl:stldash-board')		

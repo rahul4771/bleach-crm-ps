@@ -146,7 +146,7 @@
 <tbody>
 {% for client in client_details %}
 
-    <tr>
+    <tr class="clickable-row" data-href="{% url 'bleach_admin:admin-client-orders' client.id %}">
     <td {% if client.active_status == True  %} 
         class="green-line"
         {% else%}

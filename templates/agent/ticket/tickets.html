@@ -168,7 +168,7 @@
 </thead>
 <tbody>
     {% for ticket in tickets %}
-	<tr>
+	<tr class="clickable-row" data-href="{% url 'agent:agent-ticketadvanced' %}">
     <td 
     {% if ticket.status == 'INVESTIGATOR_APPROVED' %}
     class="orange-line"

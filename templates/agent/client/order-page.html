@@ -8,7 +8,13 @@
 	<div class="container-fluid space topspace"><!--container-fluid space topspace-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
             <h1 class="dashboard-head">Order {{order.evaluation.evaluation_id}}</h1>
+            {% if order.payment_status == 'COMPLETED' %}
             <p><input name="paid" type="button" class="green-button" value="Paid" id="paid"></p>    
+            {% elif order.payment_status == 'PENDING' %}
+            <p><input name="paid" type="button" class="yellow-button" value="Pending" id="paid"></p>    
+            {% else %}
+            <p><input name="paid" type="button" class="red-button" value="Holding" id="paid"></p>    
+            {% endif %}
             </div><!--welcome-wrapper-->
         
         
@@ -70,8 +76,8 @@
                 <div class="column-left"><img src="{% static 'files/order-client-page/images/card-orders-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Orders</h1>
-            	<h2 class="red-text"><label>Active<span>2</span></label> </h2>
-            	<p><label>Total<span>5</span></label></p>
+            	<h2 class="red-text"><label>Active<span>{{active_orders_count|default_if_none:'0'}}</span></label> </h2>
+            	<p><label>Total<span>{{total_orders_count|default_if_none:'0'}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--order-card-column-->
@@ -94,7 +100,7 @@
                 {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
                 <div class="blue-bg-sm">ONE TIME</div>
                 {% else %}
-                <div class="green-bg-sm">SUBSCRIPTION</div>
+                <div class="green-bg-sm">SUBSCRIBED</div>
                 {% endif %}
         
 
@@ -177,8 +183,12 @@
         <div class="order-admin-wrapper"><!--order-admin-wrapper-->
        
         	<div class="order-admin-widget-column1"><!--order-admin-widget-column1-->
+                {% if orderschedule.evaluation_details.evaluator.%}
+                <div class="profile-pic"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}">{{orderschedule.evaluation_details.evaluator.profile_image.url}}</div>
+                {% else %}
             	<div class="profile-pic"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
-    			<div class="client-name">{{orderschedule.evaluation_details.evaluator.name}}<div class="common-gray-text">Evaluator</div></div>
+    			{% endif %}
+                <div class="client-name">{{orderschedule.evaluation_details.evaluator.name}}<div class="common-gray-text">Evaluator</div></div>
             </div><!--order-admin-widget-column1-->
             
             <div class="order-admin-widget-column2"><!--order-admin-widget-column2-->
@@ -190,6 +200,7 @@
 <hr class="divider" > 
 
 
+{% if orderschedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}
 <div class="details-sub-head align-left">Subscription Status</div>
 <div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
@@ -203,43 +214,16 @@
 </thead>
 <tbody>
 
+    {% for subscription_schedule in order.orderschedules %}
+    {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
 	<tr>
-    <td class="red-line">Cleaning One</td>
-    <td>11-07-2020,  11:30 AM</td>
-    <td><span class="red-bg">Not Started</span></td> 
-    </tr> 
-    
-    <tr>
-    <td class="yellow-line">Cleaning Two</td>
-    <td>11-07-2020,  11:30 AM</td>
-    <td><span class="yellow-bg">Cleaning Progress</span></td>
+    <td class="red-line">Cleaning {{forloop.counter}}</td>
+    <td>{{subscription_schedule.start_at}}</td>
+    <td><span class="red-bg">{{subscription_schedule.work_status}}</span></td> 
     </tr>
-    
-    <tr>
-    <td class="yellow-line">Cleaning Three</td>
-    <td>11-07-2020,  11:30 AM</td>
-    <td><span class="yellow-bg">Cleaning Progress</span></td>
-    </tr>
-     
-    
-	<tr>
-    <td class="red-line">Completed</td>
-    <td>11-07-2020,  11:30 AM</td>
-    <td><span class="red-bg">Not Started</span></td> 
-    </tr> 
+    {% endif %}
+    {% endfor %} 
 
-	<tr>
-    <td class="red-line">Cleaning Five</td>
-    <td>11-07-2020,  11:30 AM</td>
-    <td><span class="red-bg">Not Started</span></td> 
-    </tr> 
- 
-    
-    <tr>
-    <td class="green-line">Cleaning Siz</td>
-    <td>11-07-2020,  11:30 AM</td>
-    <td><span class="green-bg">Completed</span></td>
-    </tr>
 </tbody>
 <tfoot>
  
@@ -247,6 +231,8 @@
 </table>
 
 </div><!--order-clean-outer-wrapper-->
+
+{% endif %}
         
     
  {% if  orderschedule.cleaning_team %}
@@ -324,7 +310,13 @@
 <div class="details-sub-head align-left">Investigation</div>     
 <div class="investigation-columns"><!--investigation-columns-->
     	<div class="investigation-columns-left"><!--investigation-columns-left-->
-			<div class="profile-pic"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
+            
+            {% if investigation.investigator.profile_image %}
+			<div class="profile-pic"><img src="{{investigation.investigator.profile_image.url}}"></div>
+            {% else %}
+            <div class="profile-pic"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
+            {% endif %}
+
             <div class="client-name">{{investigation.investigator.name}}<div class="common-gray-text">Investigator</div></div>
     	</div><!--investigation-columns-left-->
 
@@ -344,7 +336,6 @@
 {% for team in follow_up_scheduler.followupteams %}
 
 {% if team.followupmembers %}
-{% for member in team.followupmembers %}
 <div class="details-sub-head align-left">Follow-up Cleaning</div>
     <div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
         <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
@@ -373,10 +364,12 @@
             
             <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
                 <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                    {% for member in team.followupmembers %}
                     <div class="order-clean-inColumn"><!--order-clean-inColumn-->
                         <div class="team-Name">{{member.member.name}}</div>
                         <div class="team-profile">Team Member</div>
                     </div><!--order-clean-inColumn-->
+                    {% endfor %}
                 </div><!--order-clean-team-inside-wrapper-->     
             </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
         </div><!--order-clean-team-wrapper-->
@@ -403,7 +396,6 @@
         </div><!--order-clean-team-wrapper-->
         
     </div><!--order-clean-outer-wrapper-->
-{% endfor %}
 {% endif %}
 {% endfor %}
 {% endfor %}
@@ -475,7 +467,7 @@
 	<div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
     <div class="media-heading align-left">Evaluation</div>
     <section>
-        <div data-pn="1"></div>
+        <div data-pn="{{forloop.counter}}" data-src="{% for media in orderschedule.order_scheduler_book.evaluationmedia %}{{media.media.url}},{% endfor %}"></div>
     </section>
   
     </div><!--gallery-widget-column-column1-->
@@ -483,7 +475,7 @@
 	<div class="gallery-widget-column-column2"><!--gallery-widget-column-column2-->
     <div class="media-heading align-left">Investigation</div>
         <section>
-        <div data-pn="1"></div>
+        <div data-pn="2" data-src="{% for investigation in orderschedule.investigations %}{% for media in investigation.investigationmedias %}{{media.media.url}},{% endfor %}{% endfor %}"></div>
     </section>
     
     </div><!--gallery-widget-column-column2-->    
@@ -494,7 +486,7 @@
     <br>
     <div class="media-heading align-left">Cleaning (Before)</div>
     <section>
-        <div data-pn="1"></div>
+        <div data-pn="3" data-src="{% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'BEFORE_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}"></div>
     </section>
         
     </div><!--gallery-widget-column-column2-->     
@@ -503,7 +495,7 @@
     <br>
     <div class="media-heading align-left">Cleaning (After)</div>
     <section>
-        <div data-pn="1"></div>
+        <div data-pn="4" data-src="{% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'AFTER_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}"></div>
     </section>
         
     </div><!--gallery-widget-column-column4-->      
@@ -515,7 +507,7 @@
  </div><!--more-details -->
 
 <br>
- <div class="moreless-button moreless-button{{orderschedule.id}}"><a href="#">Show More</a></div>
+ <div class="moreless-button moreless-button{{orderschedule.id}}">Show More</div>
 
 <hr class="bar">  
 <br>
@@ -526,15 +518,15 @@
     <div class="order-payment-wrapper"><!--order-payment-wrapper-->
     
         <div class="order-payment-widget order-payment-widget-column"><!--order-payment-widget order-payment-widget-column-->
-            <div class="payment-text"><div>Total Amount</div> : {{order.evaluation.estimated_cost}} KD</div>
-            <div class="payment-text"><div>Discount</div> : {{order.evaluation.discount}} KD</div>
+            <div class="payment-text"><div>Total Amount</div> : {{order.evaluation.estimated_cost|default_if_none:'0.00'|floatformat:'2'}} KD</div>
+            <div class="payment-text"><div>Discount</div> : {{order.evaluation.discount|default_if_none:'0.00'|floatformat:'2'}} KD</div>
             <br>
-            <div class="payment-text bold-text red-text"><div>Final Amount</div> : {{order.evaluation.total_cost}} KD</div>
+            <div class="payment-text bold-text red-text"><div>Final Amount</div> : {{order.evaluation.total_cost|default_if_none:'0.00'|floatformat:'2'}} KD</div>
             <hr class="bar"> 
-            <div class="payment-text"><div>Types of Payment</div> : Debit Card</div>
-            <div class="payment-text"><div>Date</div> : May5, 2020 at 10:00 AM</div>
-            <div class="payment-text"><div>Paid</div> : 400 KD</div>
-            <div class="payment-text"><div>Balance</div> : 0 KD</div>
+            <div class="payment-text"><div>Types of Payments</div> : {% if order.paymenthistory %}{% for history in order.paymenthistory %}{{history.payment_mode}}{% endfor %}{% endif %}</div>
+            <div class="payment-text"><div>Closed Date</div> : {{order.payment_completed_date|default_if_none:''}}</div>
+            <div class="payment-text"><div>Paid</div> : {{order.amount_paid|default_if_none:'0.00'|floatformat:'2'}} KD</div>
+            <div class="payment-text"><div>Balance</div> : {{order.remining_amount|default_if_none:'0.00'|floatformat:'2'}} KD</div>
         
         </div><!--order-payment-widget order-payment-widget-column-->
         <div class="order-payment-widget order-payment-widget-column"><!--order-payment-widget order-payment-widget-column-->

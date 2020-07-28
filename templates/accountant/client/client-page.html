@@ -1,80 +1,8 @@
-
-<!DOCTYPE html>
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="Author" content="Bleach Kuwait">
-<meta name="Email" content="contact@bleach-kw.com">
-<meta name="Copyright" content="http://bleach-kw.com">
-<meta name="Distribution" content="Global">
-<meta name="Rating" content="General">
-<meta name="Language" content="en">
-<meta name="Description" content="Home - Bleach Housekeepin">
-<meta name="Keywords" content="We at Bleach always strive to meet our customers need for exceptional housecleaning and housekeeping services in their homes, apartments and offices">
-<meta name="Robots" content="index, follow">
-<title>Bleach - KW | Admin Feedback</title>
-<link href="css/main.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
-<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
- 
-</head>
-<body>
+{% extends "page-base.html" %}
+{% block content %}
+{% load static %}
 <div class="wrapper"><!--wrapper-->
-	<header class="header">
-        <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container-fluid top-bg"><!--container-fluid top-bg-->
-            <div class="navbar-header"><!--navbar-header-->
-            <a class="navbar-brand" href="#"><div class="logo"><img  src="images/logo.svg"></div><span class="logo-text">Bleach-Kw</span></a>
-            </div><!--navbar-header-->
-                <div class="three">
-                <ul class="nav navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="#" role="button" data-toggle-sidebar><i class="fa fa-fw fa-bars three-line"></i><span class="sr-only">Toggle navigation</span></a></li>
-                </ul>
-                </div>
-            <div class="">
-            <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown">
-            <a href="#" class="dropdown-toggle  white-text" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user  white-text"></i> <span class="white-text">Profile</span> 
-            <span class="caret  white-text"></span></a>
-            <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">Sign out</a></li>
-            </ul>
-            </li>
-            <li><a href="#"><i class="fa fa-bell-o white-text"></i><span class="sr-only">Notifications</span></a></li>
-            </ul>
-            </div>
-        </div><!--container-fluid top-bg-->
-        </nav>
-    </header>    
-
-     	<aside class="main-sidebar">
-        <section>
-        	<div class="user-type-wrapper"><!--user-type-wrapper-->
-        	<br>
-                <ul id="accordion" class="">
-                <li class="profile-avatar"><img src="images/usertype-avtar.svg"></li>
-                <li class="profile-name">Johndoe<br><span>Agent</span></li>
-                </ul>
-            </div><!--user-type-wrapper-->
-            <br><br>
-            <ul id="accordion" class="nav">
-                <li class="active lhs-home"><a href="dashboard-agent.html" title="My Dashboard"><span>My Dashboard</span></a> </li>
-                <li class="lhs-orders"><a href="orders.html" title="Orders"><span>Orders</span></a></li>
-                <li class="lhs-clients"><a href="clients.html" title="Clients"><span>Clients</span></a></li>
-                <li class="lhs-tickets"><a href="tickets.html" title="Tickets"><span>Tickets</span></a></li>
-                <li class="lhs-feedbacks"><a href="feedback.html" title="Feedbacks"><span>Feedbacks</span></a><div class="active-right"></div></li>
-                <li class="lhs-payments"><a href="payments.html" title="Payments"><span>Payments</span></a></li>
-                <li class="lhs-resources border"><a href="resource-management.html" title="Resources"><span>Resources</span></a></li>
-            </ul>
-        </section>
-    </aside>
+{% include "accountant/common/header.html" %}
     
 <section class="content"><!--content-->
 <div class="container-fluid space topspace"><!--container-fluid space topspace-->
@@ -84,76 +12,114 @@
             
         
 <div class="order-top-wrapper"><!--order-top-wrapper-->
-	<div class="cleaning-Order-wrapper"><!--cleaning-Order-wrapper-->
-    	<div class="cleaning--left-stretch"><!--cleaning--left-stretch-->
-        	
+    <div class="cleaning-Order-wrapper"><!--cleaning-Order-wrapper-->
+        <div class="cleaning--left-stretch"><!--cleaning--left-stretch-->
+            
+            {% for order in orders %}
             <div class="cleaning-column-wrapper"><!--cleaning-column-wrapper-->
-            	<div class="cleaning-column-widget cleaning-column-widget-column"><!--cleaning-column-widget cleaning-column-widget-column-->
-               		<div class="cleaning-img"><img src="images/cleaning2.jpg"></div>
-            	</div><!--cleaning-column-widget cleaning-column-widget-column-->
+                <div class="cleaning-column-widget cleaning-column-widget-column"><!--cleaning-column-widget cleaning-column-widget-column-->
+                    <div class="cleaning-img"><img src="{% static 'files/order-client-page/images/cleaning2.jpg' %}"></div>
+                </div><!--cleaning-column-widget cleaning-column-widget-column-->
+
+                <div class="cleaning-column-widget cleaning-column-widget-column1"><!--
                 
-                <div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
-                	<div class="details-head align-left">BLC 29304894</div>
-                	<div class="green-bg-lg">Paid</div><div class="blue-bg-lg">On-going</div>
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Types of Cleaning</div>
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Types of Area</div>
-            	</div><!--cleaning-column-widget cleaning-column-widget-column1-->
+                cleaning-column-widget cleaning-column-widget-column1-->
+                    <div class="details-head align-left"><a href="{% url 'accountant:accountant-client-orderdetails' order.id %}">{{order.evaluation.evaluation_id}}</a></div>
+                    
+                    {% if order.payment_status == 'COMPLETED' %}
+                    <div class="green-bg-lg">Paid</div>
+                    {% elif order.payment_status == 'PENDING' %}
+                    <div class="yellow-bg-lg">Pending</div>
+                    {% elif order.payment_status == 'ON_HOLD' %}
+                    <div class="red-bg-lg">On Hold</div>
+                    {% else %}
+                    <div class="yellow-bg-lg">Waiting</div>
+                    {% endif %}
+
+
+                    {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+                    <div class="blue-bg-lg">Approved</div>
+                    {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
+                    <div class="yellow-bg-lg">On-going</div>
+                    {% elif order.order_status == 'ORDER_CANCELLED' %}
+                    <div class="red-bg-lg">Cancelled</div>
+                    {% elif order.order_status == 'ORDER_CLOSED' %}
+                    <div class="green-bg-lg">Closed</div>
+                    {% else %}
+                    <div class="yellow-bg-lg">Waiting</div>
+                    {% endif %}
+
+                    {% for evaluation_detail in order.evaluation.evaluationdetails %}
+                    <div class="area-bold">{{evaluation_detail.address.area.name}}</div>
+                    {% for evaluation_book in evaluation_detail.evaluationbooks %}
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{evaluation_book.service_type.name}}</div>
+                    {% endfor %}
+                    {% endfor %}
+                
+                </div><!--cleaning-column-widget cleaning-column-widget-column1-->
                 
                 <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
-                    <div class="common-gray-text align-left">May 20, 2020 at 11:40 AM</div>
-                    <div class="common-gray-text align-left yellow-text lg-text">150 KD</div>
-                	<div class="common-gray-text align-left sm-text gray-text">2 Cleaners</div>
+                    <div class="common-gray-text align-left">{{order.evaluation.created}}</div>
+                    <div class="common-gray-text align-left yellow-text lg-text">{{order.evaluation.total_cost|default_if_none:'0.00'|floatformat:'2'}} KD</div>
+                    <div class="common-gray-text align-left sm-text gray-text">{{order.total_cleaners}} Cleaners</div>
                     
-                    <div class="profile-pic-line"><img src="images/profile-pic.png"></div><div class="profile-pic-line"><img src="images/profile-pic.png"></div><div class="profile-pic-line"><img src="images/profile-pic.png"></div>
-            	</div><!--cleaning-column-widget cleaning-column-widget-column2-->
+                    {% if order.evaluation.call_attender.profile_image %}
+                    <div class="profile-pic-line"><img src="{{order.evaluation.call_attender.profile_image.url}}"></div>
+                    {% else %}
+                    <div class="profile-pic-line"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
+                    {% endif %}
+                </div><!--cleaning-column-widget cleaning-column-widget-column2-->
             </div><!--cleaning-column-wrapper-->
-        	
+            
             <hr class="div">
+            {% endfor %}
         
-        	<div class="cleaning-column-wrapper"><!--cleaning-column-wrapper-->
-            	<div class="cleaning-column-widget cleaning-column-widget-column"><!--cleaning-column-widget cleaning-column-widget-column-->
-               		<div class="cleaning-img"><img src="images/cleaning3.jpg"></div>
-            	</div><!--cleaning-column-widget cleaning-column-widget-column-->
+        {% comment %}
+            <div class="cleaning-column-wrapper"><!--cleaning-column-wrapper-->
+                <div class="cleaning-column-widget cleaning-column-widget-column"><!--cleaning-column-widget cleaning-column-widget-column-->
+                    <div class="cleaning-img"><img src="{% static 'files/order-client-page/images/cleaning3.jpg' %}"></div>
+                </div><!--cleaning-column-widget cleaning-column-widget-column-->
                 
                 <div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column11-->
-                	<div class="details-head align-left">BLC 29304894</div>
-                	<div class="green-bg-lg">Paid</div><div class="blue-bg-lg">On-going</div>
+                    <div class="details-head align-left">BLC 29304894</div>
+                    <div class="green-bg-lg">Paid</div><div class="blue-bg-lg">On-going</div>
                     <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Types of Cleaning</div>
                     <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Types of Area</div>
-            	</div><!--cleaning-column-widget cleaning-column-widget-column-->
+                </div><!--cleaning-column-widget cleaning-column-widget-column-->
                 
                 <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
                     <div class="common-gray-text align-left">May 20, 2020 at 11:40 AM</div>
                     <div class="common-gray-text align-left yellow-text lg-text">150 KD</div>
-                	<div class="common-gray-text align-left sm-text gray-text">2 Cleaners</div>
+                    <div class="common-gray-text align-left sm-text gray-text">2 Cleaners</div>
                     
-                    <div class="profile-pic-line"><img src="images/profile-pic.png"></div><div class="profile-pic-line"><img src="images/profile-pic.png"></div><div class="profile-pic-line"><img src="images/profile-pic.png"></div>
-            	</div><!--cleaning-column-widget cleaning-column-widget-column2-->
+                    <div class="profile-pic-line"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div><div class="profile-pic-line"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div><div class="profile-pic-line"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
+                </div><!--cleaning-column-widget cleaning-column-widget-column2-->
             </div><!--cleaning-column-wrapper-->        
         
         <hr class="div">
         
-        	<div class="cleaning-column-wrapper"><!--cleaning-column-wrapper-->
-            	<div class="cleaning-column-widget cleaning-column-widget-column"><!--cleaning-column-widget cleaning-column-widget-column-->
-               		<div class="cleaning-img"><img src="images/cleaning4.jpg"></div>
-            	</div><!--cleaning-column-widget cleaning-column-widget-column-->
+            <div class="cleaning-column-wrapper"><!--cleaning-column-wrapper-->
+                <div class="cleaning-column-widget cleaning-column-widget-column"><!--cleaning-column-widget cleaning-column-widget-column-->
+                    <div class="cleaning-img"><img src="{% static 'files/order-client-page/images/cleaning4.jpg' %}"></div>
+                </div><!--cleaning-column-widget cleaning-column-widget-column-->
                 
                 <div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
-                	<div class="details-head align-left">BLC 29304894</div>
-                	<div class="green-bg-lg">Paid</div><div class="red-bg-lg">Closed</div>
+                    <div class="details-head align-left">BLC 29304894</div>
+                    <div class="green-bg-lg">Paid</div><div class="red-bg-lg">Closed</div>
                     <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Types of Cleaning</div>
                     <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Types of Area</div>
-            	</div><!--cleaning-column-widget cleaning-column-widget-column1-->
+                </div><!--cleaning-column-widget cleaning-column-widget-column1-->
                 
                 <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
                     <div class="common-gray-text align-left">May 20, 2020 at 11:40 AM</div>
                     <div class="common-gray-text align-left yellow-text lg-text">150 KD</div>
-                	<div class="common-gray-text align-left sm-text gray-text">2 Cleaners</div>
+                    <div class="common-gray-text align-left sm-text gray-text">2 Cleaners</div>
                     
-                    <div class="profile-pic-line"><img src="images/profile-pic.png"></div><div class="profile-pic-line"><img src="images/profile-pic.png"></div><div class="profile-pic-line"><img src="images/profile-pic.png"></div>
-            	</div><!--cleaning-column-widget cleaning-column-widget-column2-->
+                    <div class="profile-pic-line"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div><div class="profile-pic-line"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div><div class="profile-pic-line"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
+                </div><!--cleaning-column-widget cleaning-column-widget-column2-->
             </div><!--cleaning-column-wrapper--> 
         
+        {% endcomment %}
         
         
         
@@ -172,44 +138,39 @@
         
         
         
-        
-        
-		</div><!--cleaning--left-stretch-->  
+        </div><!--cleaning--left-stretch-->  
         
         <div class="cleaning--right-fixed"><!--cleaning--right-fixed-->
-        	<div class="order-card-column whitebg red-border"><!--order-card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="images/card-orders-icon.svg"></div>
+            <div class="order-card-column whitebg red-border"><!--order-card-column-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/order-client-page/images/card-orders-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Orders</h1>
-            	<h2 class="red-text"><label>Active<span>2</span></label> </h2>
-            	<p><label>Total<span>5</span></label></p>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
+                <h2 class="red-text"><label>Active<span>{{active_orders_count|default_if_none:'0'}}</span></label> </h2>
+                <p><label>Total<span>{{orders.count|default_if_none:'0'}}</span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
             </div><!--order-card-column-->
         <div class="right-bgwrapper"><!--right-bgwrapper-->    
-            <div class="profile-pic"><img src="images/profile-pic.png"></div>
-            <div class="client-name">Mr. John Doe</div>
-            <div class="common-gray-text">+965 123 4564</div>
-            <div class="common-gray-text">johndoe@gmail.com</div>
+            <div class="profile-pic"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
+            <div class="client-name">{{client_details.name}}</div>
+            <div class="common-gray-text">{{client_details.mobile_number}}</div>
+            <div class="common-gray-text">{{client_details.email}}</div>
             <br>
             <hr class="hr">
-            <div class="common-gray-text">Comapany Name : <span class="bold-text">Megadigit</span></div>
-            <div class="common-gray-text">Nationality : <span class="bold-text">Kuwaity</span></div>
-            <div class="common-gray-text">Other Contact : <span class="bold-text">+965 554666</span></div>
+            <div class="common-gray-text">Comapany Name : <span class="bold-text">{{client_details.company}}</span></div>
+            <div class="common-gray-text">Nationality : <span class="bold-text">{{client_details.nationality}}</span></div>
+            <div class="common-gray-text">Other Contact : <span class="bold-text">{{client_details.phone_number}}</span></div>
             <hr class="hr">
             <br>
-            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address 1: Appartment</div>
-            <div class="address">Building Name and, Number Street Name and Number, Area, Governerate</div>
+            {% for address in client_details.customer_addresses %}
+            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address {{forloop.counter}}: {{address.apartment}}</div>
+            <div class="address">{{address.building}}, {{address.street}}, {{address.area.name}}, {{address.governorate.name}}</div>
             <br>
-            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address 2: Appartment</div>
-            <div class="address">Building Name and, Number Street Name and Number, Area, Governerate</div>
-            <br>        
-            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address 3: Appartment</div>
-            <div class="address">Building Name and, Number Street Name and Number, Area, Governerate</div> 
+            {% endfor %}
         </div><!--right-bgwrapper-->     
         </div><!--cleaning--right-fixed-->  
-	</div><!--cleaning-Order-wrapper-->
+    </div><!--cleaning-Order-wrapper-->
 </div><!--order-top-wrapper-->  
             
             
@@ -220,16 +181,6 @@
 </section><!--content-->
     
     
+{% include 'accountant/common/footer.html' %} 
 </div><!--wrapper-->
-
-<script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-157cd5b220a5c80d4ff8e0e70ac069bffd87a61252088146915e8726e5d9f147.js"></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
-<script src='js/toggle-menu.js'></script> 
-<script src='js/hyperlink.js'></script> 
-<script src='js/footable.js'></script> 
-
-
-
-</body>
-</html>
+{% endblock %}

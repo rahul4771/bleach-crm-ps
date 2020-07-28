@@ -89,56 +89,135 @@ var timer;
 		},
 	};
 	/* Список всех фотографий с параметрами */
-	var json = {
-		1 : [
+	var json = {};
+	$('[data-pn]').each(function(index, item){
+		var $item 	 = $(item);
+		var data_pn  = $item.data('pn');
+
+		var data_src = $item.data('src');
+		var image_paths       = data_src.split(",");
+		image_paths 		  = image_paths.filter(function(e){return e});
+
+		image_paths_main_array = [];
+		for(i=1;i<=image_paths.length;i++)
+		{
+			image_path_style_dict = {};
+			
+			image_path_style_dict['id'] 		= image_paths[i-1];
+			image_path_style_dict['duration']   = 1;
+
+			if(i%3 == 1 )
 			{
-				id : 1,
-				duration : 1,
-				effect : 'spin',
-			},
+				image_path_style_dict['effect']     = 'spin';
+			}
+			else if(i%3 == 2)
 			{
-				id : 2,
-				duration : 1,
-				effect : 'spin',
-			},
+				image_path_style_dict['effect']     = 'perspective';
+			}
+			else
 			{
-				id : 3,
-				duration : 1,
-				effect : 'perspective',
-			},
-			{
-				id : 4,
-				duration : 3,
-				effect : 'smooth',
-			},
-			5,
-			{
-				id : 6,
-				duration : 3,
-				effect : 'slideRight',
-			},
-			7,
-			8,
-			9,
-			10,
-			11,
-			12
-		],
-		2 : [
-			13,
-			14,
-			15,
-			16,
-			17,
-			18,
-			19,
-			20,
-			21,
-			22,
-			23,
-			24,
-		]
-	};
+				image_path_style_dict['effect']     = 'smooth';
+			}
+			
+
+			image_paths_main_array.push(image_path_style_dict);
+		}
+
+		json[data_pn]  = image_paths_main_array;
+		
+	});
+
+
+	// var json = {
+	// 	1 : [
+	// 		{
+	// 			id : 1,
+	// 			duration : 1,
+	// 			effect : 'spin',
+	// 		},
+	// 		{
+	// 			id : 1,
+	// 			duration : 1,
+	// 			effect : 'spin',
+	// 		},
+	// 		{
+	// 			id : 1,
+	// 			duration : 1,
+	// 			effect : 'perspective',
+	// 		},
+	// 		{
+	// 			id : 1,
+	// 			duration : 3,
+	// 			effect : 'smooth',
+	// 		},
+	// 	],
+	// 	2 : [
+	// 		{
+	// 			id : 2,
+	// 			duration : 1,
+	// 			effect : 'spin',
+	// 		},
+	// 		{
+	// 			id : 2,
+	// 			duration : 1,
+	// 			effect : 'spin',
+	// 		},
+	// 		{
+	// 			id : 2,
+	// 			duration : 1,
+	// 			effect : 'perspective',
+	// 		},
+	// 		{
+	// 			id : 2,
+	// 			duration : 3,
+	// 			effect : 'smooth',
+	// 		},
+	// 	],
+	// 	3 : [
+	// 		{
+	// 			id : 3,
+	// 			duration : 1,
+	// 			effect : 'spin',
+	// 		},
+	// 		{
+	// 			id : 3,
+	// 			duration : 1,
+	// 			effect : 'spin',
+	// 		},
+	// 		{
+	// 			id : 3,
+	// 			duration : 1,
+	// 			effect : 'perspective',
+	// 		},
+	// 		{
+	// 			id : 3,
+	// 			duration : 3,
+	// 			effect : 'smooth',
+	// 		},
+	// 	],
+	// 	4 : [
+	// 		{
+	// 			id : 4,
+	// 			duration : 1,
+	// 			effect : 'spin',
+	// 		},
+	// 		{
+	// 			id : 4,
+	// 			duration : 1,
+	// 			effect : 'spin',
+	// 		},
+	// 		{
+	// 			id : 4,
+	// 			duration : 1,
+	// 			effect : 'perspective',
+	// 		},
+	// 		{
+	// 			id : 4,
+	// 			duration : 3,
+	// 			effect : 'smooth',
+	// 		},
+	// 	],
+	// };
 
 	/* Инициализация галерей */
 	var $all = {};
@@ -177,7 +256,7 @@ var timer;
 				var c = this.find('.pn-current');
 				this.find('.pn-temp').remove();
 				c.clone().removeClass('pn-current').addClass('pn-temp').insertAfter(c);
-				c.css('background-image','url(images/presentation/'+json[data.pn][index].id+'.jpg)')
+				c.css('background-image','url('+json[data.pn][index].id+')')
 				effects[(json[data.pn][index].effect && effects[json[data.pn][index].effect]) ? json[data.pn][index].effect : 'smooth'](c);
 				this.current = index;
 			}
@@ -222,7 +301,7 @@ var timer;
 		});
 
 		for(var i = 0; i < json[data.pn].length; i++){
-			lis += '<li style="background-image:url(images/presentation/'+(typeof(json[data.pn][i]) == 'number' ? json[data.pn][i] : json[data.pn][i].id)+'.jpg)"></li>';
+			lis += '<li style="background-image:url('+json[data.pn][i].id+')"></li>';
 		}
 		$item.find('.pn-train').html(lis).css('width',$item.find('.pn-train').children('li').length * 92 + 'px').children('li').click(function(e){
 			$(this).parent().children('li').removeClass('active');
@@ -234,8 +313,9 @@ var timer;
 
 	/* Подгрузка изображений */
 	var loadImage = function(i, j){
+		console.log(json[i][j].id)
 		var img = new Image;
-		img.src = 'images/presentation/'+json[i][j].id+'.jpg';
+		img.src = json[i][j].id;
 		json[i][j].loading = true;
 		img.onload = function(){
 			delete json[i][j].loading;

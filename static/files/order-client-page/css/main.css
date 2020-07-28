@@ -1,4 +1,5 @@
-@import url('style.css');   
+@import url('style.css');
+@import url('main-attachments.css');   
 @import url('https://fonts.googleapis.com/css?family=Catamaran:100,200,300400,500,600,800&display=swap');
 html { }
 body{ margin:0; padding:0; font-size:14px; font-family: 'Catamaran'; color:#666; overflow-x: hidden; background:#eeeeee !important; }
@@ -92,7 +93,8 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .user-type-wrapper ul{ margin:0; padding:0; position:relative;  }
 .user-type-wrapper ul li{ list-style:none; margin:0; padding:0; display:inline-block;font-size:17px; line-height:18px; margin:0; padding:0; color:#333;}
 .user-type-wrapper ul li span{font-size:12px; line-height:16px; margin:0; padding:0; color:#666;}
-.profile-avatar{ width:40px; height:40px; margin :10px 0 0 15px !important; }
+.profile-avatar{ width:40px; height:40px; margin :10px 0 0 15px !important; border-radius:100px; }
+.profile-avatar img{ width:40px; height:40px;border-radius:100px; }
 .profile-name{ position:absolute; left:72px; top:10px; }
 
 .clients-top-card-wrapper{ position:relative; margin:0 10px 0 0; padding:10px 20px;  position:relative; top:-75px; }
@@ -391,7 +393,7 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
   transition: width 0.3s, left 0.3s;
   overflow-x: hidden;
 }
-.white-text{ color:#fff;}
+.white-text{ color:#fff !important;}
 .white-text a{ color:#fff !important; text-decoration:none;}
 .dropdown-toggle{ background:#2e4e85 !important;}
 .dropdown-toggle :hover{ background:#2e4e85 !important;}
@@ -547,7 +549,8 @@ hr.div{ border: 0; margin:35px 0 35px 0; padding:0; border-bottom: 1px solid #cb
 .details-sub-head{ font-size:20px; margin:60px 0 6px 0; padding:0; color:#255cae; font-weight:normal; position:relative;}
 .order-date{font-size:12px; margin:0px 0 0 0; padding:0; color:#777676; font-weight:normal; position:absolute; right:0; top:6px;}
 .order-common-date{font-size:12px; margin:0px 0 0 0; padding:0; color:#777676; font-weight:normal; position:absolute; right:30px; top:30px;}
- 
+.right-date{font-size:12px; margin:0px 0 0 0; padding:0; color:#777676; font-weight:normal; position:absolute; right:30px; top:5px;}
+ .details-notes{ font-size:17px; margin:20px 0 6px 0; padding:0; color:#255cae; font-weight:normal; position:relative;}
 .moreless-button{text-align:right; cursor:pointer; color:#2f8bc6;  }
 .moreless-button a{ text-decoration:none; padding:5px 10px; color:#2f8bc6; font-size:13px;}
 .moreless-button a:hover{text-decoration:none; color:#666;}
@@ -618,8 +621,8 @@ hr.div{ border: 0; margin:35px 0 35px 0; padding:0; border-bottom: 1px solid #cb
 .blue-bg-lg{background:#528ce6; padding:4px 5px; margin:0 0 10px 0px;  border-radius:3px; text-align:center; color:#fff; font-size:13px; width:80px; display:inline-block;}
 .green-bg-lg{background:#5fab11; padding:4px 5px; margin:0 5px 10px 0;  border-radius:3px; text-align:center; color:#fff; font-size:13px; width:80px; display:inline-block;}
 .red-bg-lg{background:#ff0000; padding:4px 5px; margin:0 5px 10px 0;  border-radius:3px; text-align:center; color:#fff; font-size:13px; width:80px; display:inline-block;}
-.yellow-bg-lg{background:#f2ba1e; padding:4px 5px; margin:0 5px 10px 0;  border-radius:3px; text-align:center; color:#fff; font-size:13px; width:80px; display:inline-block;}
 .lg-text{ font-size:20px; font-weight:100;}
+.xtralrg-text{ font-size:30px; font-weight:100;}
 .sm-text{ font-size:17px; font-weight:100;}
 .profile-pic-line{ border-radius:100px; margin:10px 5px 10px 0px; width:50px; height:50px; text-align:center;  display:inline-block; }
 .profile-pic-line img{border-radius:100px; object-fit:cover;width:50px; height:50px; object-position: center center;}
@@ -636,15 +639,16 @@ hr.div{ border: 0; margin:35px 0 35px 0; padding:0; border-bottom: 1px solid #cb
 .gallery-widget-column-column3 {flex: 1; margin:0 0px 0 0; padding:0 0px; }
 .gallery-widget-column-column4 {flex: 1; margin:0 0px 0 25px; padding:0 0px; }
 .media-heading{ font-size:20px; margin:0px 0 6px 0; padding:0; color:#255cae; font-weight:normal; position:relative;}
-.resource-table{ width:100%; margin:0; padding:0;border:1px solid #ccc;  table-layout: fixed;}
-.resource-table tr { margin:0; padding:0; border:none !important; transition: .4s;}
-.resource-table tr:hover { background:#ececec !important;}
-.resource-table th{ margin:0; padding:6px 6px; background:#ececec;  border-bottom:1px solid #ccc;}
-.resource-table td{ margin:0; padding:6px 10px; border-bottom:1px solid #ccc; }
-
-
-
-
+.resource-table-new{ width:100%; margin:0; padding:0;border:1px solid #ccc; border-bottom:none !important; table-layout: fixed;}
+.resource-table-new tr { margin:0; padding:0; border:none !important; transition: .4s;}
+.resource-table-new tr:hover { background:#ececec !important;}
+.resource-table-new th{ margin:0; padding:15px 15px !important; background:#ececec;  border:none !important;}
+.resource-table-new td{ margin:0; padding:10px !important; border:none !important; border-bottom:1px solid #ccc !important; vertical-align: middle !important; top:50%; }
+.profile-pic-inline{ border-radius:100px; width:40px; height:40px; text-align:center; display:inline-block;  margin:0px 10px  0 auto; }
+.profile-pic-inline img{border-radius:100px; object-fit:cover;width:40px; height:40px; object-position: center center;}
+.client-name-inline{ font-weight:bold; font-size:13px; color:#2586be; text-align:left; vertical-align:middle; margin:0; padding:0; display:inline-block;  }
+.top-space{ padding-top:115px !important;}
+.area-bold{ font-weight:bold; font-size:15px; color:#666; margin: 5px 0 5px 0;}
 
 
 
@@ -884,16 +888,4 @@ hr.div{ border: 0; margin:35px 0 35px 0; padding:0; border-bottom: 1px solid #cb
   100% {
     overflow-x: visible;
   }
-}
-
-/*Ansab styling*/
-.image-profile-sidebar-avatar{ width:70px; height:70px; margin :10px 0 0 15px !important; }
-.image-profile-sidebar {
-  height: 40px;
-  -webkit-transition: all 0.35s ease-in-out;
-  -moz-transition: all 0.35s ease-in-out;
-  transition: all 0.35s ease-in-out;
-  cursor: -webkit-pointer;
-  cursor: -moz-pointer;
-  cursor: pointer;
 }

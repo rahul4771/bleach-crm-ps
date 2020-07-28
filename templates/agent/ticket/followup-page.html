@@ -1,0 +1,304 @@
+{% extends "page-base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "agent/common/header.html" %}
+    
+<section class="content"><!--content-->
+	<div class="container-fluid space topspace"><!--container-fluid space topspace-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+            <h1 class="dashboard-head">Order # BLC201010101</h1>
+            <p><input name="open" type="button" class="green-button" value="Open" id="open"></p>    
+            </div><!--welcome-wrapper-->
+        
+        
+        
+        
+        
+<div class="order-top-wrapper"><!--order-top-wrapper-->
+    <div class="order-steps-wrapper"><!--order-steps-wrapper-->
+            <div class="order-left-stretch"><!--order-left-stretch-->
+ 
+                <div class="order-bar-container"><!--order-bar-container-->
+                    <div class="order-loaderbar"><!--order-loaderbar-->
+                    	<div class="bar-loader"></div>
+                    </div><!--order-loaderbar-->
+                </div><!--order-bar-container-->
+ 				
+                <div class="order-progress-wrapper"><!--order-progress-wrapper-->
+                
+                    <div class="order-progress-widget order-progress-widget-column1"><!--order-progress-widget order-progress-widget-column1-->
+                    	<div class="evaluation">Tickets</div>
+                    	<div class="evaluation-icon"><img src="images/tickets-yellow.svg" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                    </div><!--order-progress-widget order-progress-widget-column1-->
+                   
+                    <div class="order-progress-widget order-progress-widget-column2"><!--order-progress-widget order-progress-widget-column2-->
+                        <div class="evaluation">Investigation</div>
+                    	<div class="evaluation-icon"><img src="images/investigation-yellow.svg" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                    </div><!--order-progress-widget order-progress-widget-column2-->                  
+                    
+                    <div class="order-progress-widget order-progress-widget-column5"><!--order-progress-widget order-progress-widget-column5-->
+                        <div class="evaluation">Cleaning</div>
+                    	<div class="evaluation-icon"><img src="images/order-cleaning.svg" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                    </div><!--order-progress-widget order-progress-widget-column5-->                      
+                    
+                    <div class="order-progress-widget order-progress-widget-column6"><!--order-progress-widget order-progress-widget-column6-->
+                        <div class="evaluation">Closed</div>
+                    	<div class="evaluation-icon"><img src="images/closed-gray.svg" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                    </div><!--order-progress-widget order-progress-widget-column6-->                      
+ 				</div><!--order-progress-wrapper-->
+            </div><!--order-left-stretch-->
+            
+        <div class="order-right-fixed"><!--order-right-fixed-->
+			<div class="order-card-column whitebg red-border"><!--order-card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="images/card-orders-icon.svg"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Orders</h1>
+            	<h2 class="red-text"><label>Active<span>2</span></label> </h2>
+            	<p><label>Total<span>5</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--order-card-column-->
+		</div><!--order-right-fixed-->
+    </div><!--order-steps-wrapper-->
+    
+    
+<div class="order-details-wrapper"><!--order-details-wrapper--> 
+	<div class="order-details-left-stretch"><!--order-details-left-stretch-->
+	
+    	<div class="details-head">Details <div class="order-date">April 28,2020 at 11:40 AM</div></div>	
+     	<hr class="style-three" > 
+		<div class="order-clean-Details-wrapper"><!--order-clean-Details-wrapper-->
+        	<div class="order-clean-Details-widget order-clean-Details-widget-column1"><!--order-clean-Details-widget order-clean-Details-widget-column1-->
+			<div class="cleaning-img"><img src="images/cleaning.jpg"></div>
+            </div><!--order-clean-Details-widget order-clean-Details-widget-column1-->
+            
+        	<div class="order-clean-Details-widget order-clean-Details-widget-column2"><!--order-clean-Details-widget order-clean-Details-widget-column2-->
+                <div class="details-head align-left">Carpet Cleaning</div>
+                <div class="green-bg-sm">Subscription</div>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Post Construction Cleaning</div>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Villa</div>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Red-Dirtlevel</div>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> 5 Rooms</div>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> 4 Bathrooms</div>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> 1 Kitchen</div>
+            </div><!--order-clean-Details-widget order-clean-Details-widget-column2-->            
+            
+        	<div class="order-clean-Details-widget order-clean-Details-widget-column3"><!--order-clean-Details-widget order-clean-Details-widget-column3-->
+            <br>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> May 20, 2020 at 11:40 AM</div>
+                <br>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> Building Name, Number Street Namaem Number, Area, Governerate</div>
+                <br>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> 5 Cleaners</div>
+                <br>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-credit-card orange-text" aria-hidden="true"></i> 256 KD</div>
+            </div><!--order-clean-Details-widget order-clean-Details-widget-column3-->                        
+        </div><!--order-clean-Details-wrapper--> 
+         
+        
+        
+        
+<div class="details-sub-head align-left">Investigation</div>     
+<div class="investigation-columns"><!--investigation-columns-->
+    	<div class="investigation-columns-left"><!--investigation-columns-left-->
+			<div class="profile-pic"><img src="images/profile-pic.png"></div>
+            <div class="client-name">Mr. John Doe<div class="common-gray-text">Evaluator</div></div>
+    	</div><!--investigation-columns-left-->
+
+        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
+        <div class="order-invest-date">April 28,2020 at 11:40 AM</div>
+            <div class="notes">Notes</div>
+            <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary,</p>
+        </div><!--investigation-columns-middle-->
+
+        <div class="investigation-columns-right"><!--investigation-columns-right-->
+        	<div class=" "><img src="images/cleaning1.jpg"></div>
+        </div><!--investigation-columns-right-->
+</div><!--investigation-columns-->
+            
+
+<div class="details-sub-head align-left">Cleaning Team</div>
+    <div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
+        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+            <div class="order-common-date">April 28,2020 at 11:40 AM</div>
+                    <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                        <div class="team-profile-pic"><img src="images/team-leader.svg"></div>
+                    </div><!--order-clean-team-widget order-clean-team-widget-column1-->
+                    
+                <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                    <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                        <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                            <div class="team-Name">John Doe</div>
+                            <div class="team-profile">Team Leader</div>
+                        </div><!--order-clean-inColumn-->
+                            <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                                <div class="team-Name">John Doe</div>
+                                <div class="team-profile">Team Leader</div>
+                            </div><!--order-clean-inColumn-->                    
+                    </div> <!--order-clean-team-inside-wrapper-->
+                </div><!--order-clean-team-widget order-clean-team-widget-column2-->
+        </div><!--order-clean-team-wrapper-->
+        
+<hr class="bar">
+        
+        
+        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+            <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
+            	<div class="team-profile-pic"><img src="images/team-member.svg"></div>
+            </div><!--order-clean-team-widget order-clean-team-widget-column1-->
+            
+            <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
+                <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">John Doe</div>
+                        <div class="team-profile">Team Member</div>
+                    </div><!--order-clean-inColumn-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">John Doe</div>
+                        <div class="team-profile">Team Member</div>
+                    </div><!--order-clean-inColumn-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">John Doe</div>
+                        <div class="team-profile">Team Member</div>
+                    </div><!--order-clean-inColumn-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">John Doe</div>
+                        <div class="team-profile">Team Member</div>
+                    </div><!--order-clean-inColumn-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">John Doe</div>
+                        <div class="team-profile">Team Member</div>
+                    </div><!--order-clean-inColumn-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">John Doe</div>
+                        <div class="team-profile">Team Member</div>
+                    </div><!--order-clean-inColumn-->                    
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">John Doe</div>
+                        <div class="team-profile">Team Member</div>
+                    </div><!--order-clean-inColumn-->
+                </div><!--order-clean-team-inside-wrapper-->     
+            </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
+        </div><!--order-clean-team-wrapper-->
+        
+<hr class="bar">        
+
+        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+            <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
+            	<div class="team-profile-pic"><img src="images/driver.svg"></div>
+            </div><!--order-clean-team-widget order-clean-team-widget-column1-->
+            
+            <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
+                <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">John Doe</div>
+                        <div class="team-profile">Driver</div>
+                    </div><!--order-clean-inColumn-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">John Doe</div>
+                        <div class="team-profile">Driver</div>
+                    </div><!--order-clean-inColumn-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">John Doe</div>
+                        <div class="team-profile">Driver</div>
+                    </div><!--order-clean-inColumn-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">John Doe</div>
+                        <div class="team-profile">Driver</div>
+                    </div><!--order-clean-inColumn-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">John Doe</div>
+                        <div class="team-profile">Driver</div>
+                    </div><!--order-clean-inColumn-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">John Doe</div>
+                        <div class="team-profile">Driver</div>
+                    </div><!--order-clean-inColumn-->                    
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">John Doe</div>
+                        <div class="team-profile">Driver</div>
+                    </div><!--order-clean-inColumn-->
+                </div><!--order-clean-team-inside-wrapper-->     
+            </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
+        </div><!--order-clean-team-wrapper-->
+        
+    </div><!--order-clean-outer-wrapper-->
+
+
+ <div class="details-sub-head align-left">Media</div>
+<div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
+<div class="gallery-wrapper"><!--gallery-wrapper-->
+	<div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
+    <div class="media-heading align-left">Investigation</div>
+    <section>
+        <div data-pn="1"></div>
+    </section>
+  
+    </div><!--gallery-widget-column-column1-->
+    
+	<div class="gallery-widget-column-column2"><!--gallery-widget-column-column2-->
+    <div class="media-heading align-left">From Customer</div>
+        <section>
+        <div data-pn="1"></div>
+    </section>
+    
+    </div><!--gallery-widget-column-column2-->    
+</div><!--gallery-wrapper-->
+
+ 
+</div><!--order-clean-outer-wrapper-->
+
+ 
+ 
+       
+       
+	</div><!--order-details-left-stretch-->
+
+	<div class="order-details-right-fixed"><!--order-details-right-fixed-->
+  		<div class="profile-pic"><img src="images/profile-pic.png"></div>
+    	<div class="client-name">Mr. John Doe</div>
+        <div class="common-gray-text">+965 123 4564</div>
+        <div class="common-gray-text">johndoe@gmail.com</div>
+        <br>
+        <hr class="hr">
+        <div class="common-gray-text">Comapany Name : <span class="bold-text">Megadigit</span></div>
+        <div class="common-gray-text">Nationality : <span class="bold-text">Kuwaity</span></div>
+        <div class="common-gray-text">Other Contact : <span class="bold-text">+965 554666</span></div>
+        <hr class="hr">
+        <br>
+        <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address 1: Appartment</div>
+        <div class="address">Building Name and, Number Street Name and Number, Area, Governerate</div>
+        <br>
+        <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address 2: Appartment</div>
+        <div class="address">Building Name and, Number Street Name and Number, Area, Governerate</div>
+        <br>        
+        <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address 3: Appartment</div>
+        <div class="address">Building Name and, Number Street Name and Number, Area, Governerate</div> 
+    </div><!--order-details-right-fixed-->
+
+
+
+
+
+
+
+
+</div><!--order-details-wrapper-->    
+</div><!--order-top-wrapper-->  
+            
+            
+            
+            
+                 
+	</div><!--container-fluid space topspace-->
+</section><!--content-->
+    
+{% include 'agent/common/footer.html' %} 
+</div><!--wrapper-->
+{% endblock %}
