@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.conf import settings
 from bleach_crm_ps.permissions import IsAdmin
 from dateutil.relativedelta import relativedelta
-
+import pandas as pd
 import functools
 import operator
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -921,4 +921,58 @@ def SalesGovernorateData(request):
 		}
 		data.append(gov_dict)
 	print(data)
+	return JsonResponse(data,safe=False)
+
+#ajax for sales charts
+def SalesData(request):
+	data = []
+	dom = request.GET.get('dom', None)
+	prevdate  = request.GET.get('fromdate', None)
+	todate  = request.GET.get('todate', None)
+	print(dom,prevdate,todate,"pop")
+	if dom == 'Month':
+		print("derr")
+		month,year = prevdate.split()
+		month2,year2 = todate.split()
+
+		datetime_object1 = datetime.strptime(month, "%B")
+		month_a = datetime_object1.month
+		print(month_a)
+		datetime_object2 = datetime.strptime(month2, "%B")
+		month_b = datetime_object2.month
+		print(month_b,"mko")
+		sales = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__year__range=(year,year2),
+							evaluation__quatation_approved_date__month__range=(month_a,month_b)).values('evaluation__quatation_approved_date').distinct().order_by('evaluation__quatation_approved_date')
+
+		print(sales,"po")
+		for sale in sales:
+			sdate = sale['evaluation__quatation_approved_date'].strftime("%Y-%m-%d")
+			total_sales = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date=sdate).aggregate(ts=Sum('evaluation__total_cost'))['ts']
+			print(total_sales,"huy")
+			sales_dict = {
+			"date" : sdate,
+			"amount" : total_sales,
+			}
+			data.append(sales_dict)
+	else:
+		print("njk")
+		try:
+			prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+			todate = datetime.strptime(todate, '%Y-%m-%d')
+		except:
+			todate = date.today() - timedelta(days=1)
+			prevdate = todate - timedelta(days=30)
+		print(prevdate,todate,"testdt")
+		daterange = pd.date_range(prevdate, todate)
+
+		for single_date in daterange:
+			sdate = single_date.strftime("%Y-%m-%d")
+			total_sales = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date=sdate).aggregate(ts=Sum('evaluation__total_cost'))['ts']
+
+			print(sdate,total_sales,"qtc")
+			sale_dict = {
+			"date" : sdate,
+			"amount" : total_sales,
+			}
+			data.append(sale_dict)
 	return JsonResponse(data,safe=False)
