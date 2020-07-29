@@ -42,5 +42,6 @@ urlpatterns = [
 	url(r'^ajax/clientdata/',views.ClientData,name='get-clientData'),
 	url(r'^ajax/ticketdata/',views.TicketData,name='get-TicketData'),
 	url(r'^ajax/feedbackdata/',views.FeedBackData,name='get-FeedBackData'),
+	url(r'^ajax/resourcestoggle/',views.ResourcesToggle,name='resource-toggle'),
 
 ]
