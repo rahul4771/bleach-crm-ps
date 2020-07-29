@@ -35,6 +35,7 @@ FOLLOWUP_SHEDULER_STATUS = (
 
 PAYMENT_STATUS = (
 	('PENDING','PENDING'),
+	('ON_HOLD','ON_HOLD'),
 	('COMPLETED','COMPLETED')
 	)
 
@@ -64,8 +65,13 @@ class Order(models.Model):
 	evaluation 		= models.ForeignKey(Evaluation,blank=False,null=False,related_name='evaluation_order')
 	order_no   		= models.CharField(max_length=20,blank=False,null=False)
 	order_status 	= models.CharField(max_length=50,blank=True,null=True,choices=ORDER_STATUS)
-	payment_status  = models.CharField(max_length=50,blank=True,null=True,choices=PAYMENT_STATUS)
-	payment_completed_date= models.DateTimeField(blank=True,null=True)
+
+	payment_status         = models.CharField(max_length=50,blank=True,null=True,default='PENDING',choices=PAYMENT_STATUS)
+	payment_completed_date = models.DateTimeField(blank=True,null=True)
+	total_amount           = models.IntegerField(blank=True,null=True,default=0)
+	amount_paid            = models.IntegerField(blank=True,null=True)
+	remining_amount        = models.IntegerField(blank=True,null=True)
+	
 	instructions	= models.CharField(max_length=500,blank=True,null=True)
 	
 	feedback_notes  = models.CharField(max_length=500,blank=True,null=True)
@@ -112,7 +118,7 @@ class OrderScheduler(models.Model):
 
 class Investigation(models.Model):
 	order 				 = models.ForeignKey('Order',blank=False,null=False)
-	order_schedule		 = models.ForeignKey('OrderScheduler',blank=False,null=False)	
+	order_schedule		 = models.ForeignKey('OrderScheduler',blank=False,null=False,related_name='investigations_orderschedule')	
 	notes            	 = models.CharField(max_length=500,blank=True,null=True)
 	investigator    	 = models.ForeignKey(UserProfile,blank=True,null=True)
 	assigned_by          = models.ForeignKey(UserProfile,blank=True,null=True,related_name='investigation_assigned_by')
@@ -134,11 +140,11 @@ class Investigation(models.Model):
 #For Tracking Medias Uploaded by Investigator on Site
 
 class InvestigationMedia(models.Model):
-	investigation 			 = models.ForeignKey('Investigation',blank=False,null=False)
+	investigation 			 = models.ForeignKey('Investigation',blank=False,null=False,related_name='investigation_media')
 	media                    = models.FileField(upload_to='investigation/',blank=True,null=True)
 	media_type 				 = models.CharField(max_length=20,blank=True,null=True,choices=MEDIA_CHOICES)
 	taken_status 			 = models.CharField(max_length=20,blank=True,null=True,choices=MEDIA_TAKEN_CHOICES)
-
+	is_active            	 = models.BooleanField(null=False,blank=True,default=True)
 	def __unicode__(self):
 		return str(self.investigation.id)
 
@@ -148,7 +154,7 @@ class InvestigationMedia(models.Model):
 #Followup details for followup order.Followup granded by Investigator
 
 class FollowUp(models.Model): 
-	investigation   = models.ForeignKey('Investigation',blank=False,null=False) 
+	investigation   = models.ForeignKey('Investigation',blank=False,null=False,related_name='followup_investigation') 
 	instructions    = models.CharField(max_length=500,blank=True,null=True)
 	status      	= models.CharField(max_length=100,blank=True,null=True,choices=FOLLOWUP_STATUS)
 	no_of_cleaners  = models.IntegerField(blank=True,null=True)

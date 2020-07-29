@@ -307,13 +307,13 @@ class InvestigationTask(View):
 			Investigation.objects.filter(id=investigation_id).update(is_followup_approved=False,check_out=timezone.now(),notes=request.POST.get('notes'))
 
 		#To Save Media
-			medias = request.FILES.getlist('media')
-			if not medias==['']:
-				for media in medias:
-					InvestigationMedia.objects.create(
-					        investigation_id=investigation_id,
-					        media=media,
-					        )
+		medias = request.FILES.getlist('media')
+		if not medias==['']:
+			for media in medias:
+				InvestigationMedia.objects.create(
+				        investigation_id=investigation_id,
+				        media=media,
+				        )
 
 		messages.success(request,"Investigation Form submitted succesfully")	
 		return redirect('tl:tldash-board')	

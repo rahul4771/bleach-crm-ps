@@ -8,12 +8,16 @@ urlpatterns = [
 	url(r'^orders/$',views.OrderDetails.as_view(),name='agent-orders'),
 
 	url(r'^feedbacks/$',views.FeedbackDetails.as_view(),name='agent-feedbacks'),
+	url(r'^feedback/details$',views.FeedbackAdvanced.as_view(),name='agent-feedbackadvanced'),	
 	url(r'^newfeedback/$',views.AddFeedBack.as_view(),name='new-feedback'),
 
 	url(r'^tickets/$',views.TicketDetails.as_view(),name='agent-tickets'),
+	url(r'^ticket/details$',views.TicketAdvanced.as_view(),name='agent-ticketadvanced'),
 	url(r'^tickets/register/$',views.TicketRegistration.as_view(),name='agent-ticketregister'),
 
 	url(r'^clients/$',views.ClientDetails.as_view(),name='agent-clients'),
+	url(r'^client/orders/(?P<client_id>[-\w]+)$',views.ClientOrders.as_view(),name='agent-client-orders'),
+	url(r'^client/order/details/(?P<order_id>[-\w]+)$',views.ClientOrderDetails.as_view(),name='agent-client-orderdetails'),
 
 	url(r'^newenquiry/$',views.NewEnquiry.as_view(),name='agent-newenquiry'),
 	url(r'^existingenquiry/(?P<enquiry_id>[-\w]+)$',views.ExistingEnquiry.as_view(),name='agent-existingenquiry'),

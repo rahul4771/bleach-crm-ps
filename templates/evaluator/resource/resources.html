@@ -63,16 +63,67 @@
 <div class="white-wrapper"><!--white-wrapper-->
 <div class="toolbar-div"><!--toolbar-div-->
 
-<div class="search-middle"><!--search-middle-->
-<div class="filter-button"><a href="#">Filter</a></div>  <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()">
+<div class="search-middle"><!--left-->
+<div class="filter-button">
+    <!--filter left -->
+    <div class="left-box leftbox-item2 params_filter">
+     <input name="filter" type="button" value="Filter" id="filter" class="blue-button filter-btn">
+        <div class="expand-body left-expand-body">
+          
+          <div class="left">
+            <div class="head">
+              <h1>Cleaning Staff</h1>
+            </div>
+            <div class="body">
+              <select name="staff_filter" id="staff_filter_id">
+                <option value=''>---SELECT---</option>
+                {% for staff in staffs %}
+          <option value='{{staff.id}}' {% if staff.id == fil_staff %}selected{%endif%}>{{staff.name}}</option>
+                {% endfor %}                
+              </select>
+            </div>
+          </div>
+
+          <div class="right">
+            <div class="head">
+              <h1>Minimum Cleaning Hours</h1>
+            </div>
+            <div class="body">
+              <input type="number" name="minimumhour_filter" id="minimumhour_filter_id" max='24' min='0' value="{{fil_minhours|default_if_none:''}}">
+            </div>
+          </div>
+
+          <div class="left">
+            <div class="head">
+              <h1>Maximum Cleaning Hours</h1>
+            </div>
+            <div class="body">
+              <input type="number" name="maximumhour_filter" id="maximumhour_filter_id" max='24' min='0' value="{{fil_maxhours|default_if_none:''}}">
+            </div>
+          </div>
+           
+          <div class="foot">
+            <button type="button" class="red-btn" onclick="set_params_go({});">Submit</button>
+            <button type="button" class="close-btn green-btn">Cancel</button>
+          </div>
+
+        </div>
+     </div>
+  </div>
+  <!--filter left -->
+
+  <!--search left -->
+  <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()">
 <a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
-</div><!--search-middle-->
+<!--search left -->
 
-        <div class="filter-right"><!--filter-right-->
-       <input type="text" id="working_calendar" class="date_pick date-picker-resource" value={{workers_date|date:"d-m-Y"}} onchange="set_params_go();">
-       <div class="day-month-togggle-button"><a href="#">Date/Month Toggle Button</a></div>
-        </div><!--filter-right-->
+</div><!--left -->
 
+
+<div class="filter-right"><!--filter-right-->
+<input type="text" id="working_calendar" class="date_pick date-picker-resource" value={{workers_date|date:"d-m-Y"}} onchange="set_params_go();">
+<div class="day-month-togggle-button"><a href="#">Date/Month Toggle Button</a></div>
+</div><!--filter-right-->
 
 </div><!--toolbar-div-->
 
@@ -107,7 +158,7 @@
 <tbody>
     {% for details in workers_details %}
     <tr id="worker{{details.id}}">
-    <th class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
+    <th class="fixed-side dot-image"><img src="{% static 'files/images/green-dot.png' %}"></th>
     <th class="profile fixed-side"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} align="absmiddle"></th>
     <td><div class="name-bold">{{details.name}}<div class="position">{{details.user_type}}</div></div></td>
     </tr>
@@ -362,8 +413,65 @@
             {
                 minutes = 0;
             }
-            //append total hours to working table
-            $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
+            //append gray dot
+            if(total_duration == 0)
+            {
+                $("#worker{{details.id}} .dot-image img").attr("src","{% static 'files/images/gray-dot.png' %}");
+            }
+
+            None = null;
+            min_duration = {{fil_minhours}}
+            max_duration = {{fil_maxhours}}
+
+
+            if(min_duration && max_duration)
+            {
+                if(min_duration <= total_duration && max_duration >= total_duration)
+                {
+                    //append total hours to working table
+                    $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
+                 }
+
+                else
+                {
+                    $("#worker{{details.id}}").remove();
+                }
+
+            } 
+
+            else if(min_duration)
+            {
+                if(min_duration <= total_duration)
+                {
+                    //append total hours to working table
+                    $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
+                 }
+
+                else
+                {
+                    $("#worker{{details.id}}").remove();
+                }                
+            }
+
+            else if(max_duration)
+            {
+                if(max_duration >= total_duration)
+                {
+                    //append total hours to working table
+                    $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
+                 }
+
+                else
+                {
+                    $("#worker{{details.id}}").remove();
+                }   
+            }
+
+            else
+            {
+                //append total hours to working table
+                $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
+            }
 
         {% endfor %}
 
@@ -392,21 +500,21 @@
                     }
                     else
                     {
-                     $("#calendar{{details.id}}").append('<div {% if cleaning_details.team.order_scheduler.cleaning_policy == "ONE TIME SERVICE" %} class="sp-blue-box-second" {% else %}class="sp-green-box-second" {% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{cleaning_details.team.order_scheduler.customer_address.area.name}}</center></div>');   
+                     $("#calendar{{details.id}}").append('<div {% if cleaning_details.team.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %} class="sp-blue-box-second" {% else %}class="sp-green-box-second" {% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{cleaning_details.team.order_scheduler.customer_address.area.name}}</center></div>');   
                     }
                 }
                 else if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{cleaning_details.start_at|date:'d'}}')))
                 {
                     left_percentage = 100/24*starting_time
                     width_percentage= 100-100/24*starting_time
-                    $("#calendar{{details.id}}").append('<div {% if cleaning_details.team.order_scheduler.cleaning_policy == "ONE TIME SERVICE" %} class="sp-blue-box-first" {% else %}class="sp-green-box-first" {% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{cleaning_details.team.order_scheduler.customer_address.area.name}}</center></div>');
+                    $("#calendar{{details.id}}").append('<div {% if cleaning_details.team.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %} class="sp-blue-box-first" {% else %}class="sp-green-box-first" {% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{cleaning_details.team.order_scheduler.customer_address.area.name}}</center></div>');
                 }
                 else
                 {
                      left_percentage  = 100/24*starting_time;
                      width_percentage = 100/24*ending_time-100/24*starting_time
 
-                     $("#calendar{{details.id}}").append('<div {% if cleaning_details.team.order_scheduler.cleaning_policy == "ONE TIME SERVICE" %} class="blue-box" {% else %}class="green-box" {% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{cleaning_details.team.order_scheduler.customer_address.area.name}}</center></div>');         
+                     $("#calendar{{details.id}}").append('<div {% if cleaning_details.team.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %} class="blue-box" {% else %}class="green-box" {% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{cleaning_details.team.order_scheduler.customer_address.area.name}}</center></div>');         
                   
                 }    
 
@@ -463,7 +571,7 @@
 function set_params_go(args)
 {
 var url='{% url 'evaluator:resource-management' %}';
-var params={workers_calendar_date:$('#working_calendar').val(),search:$('#search-bar').val(),
+var params={workers_calendar_date:$('#working_calendar').val(),search:$('#search-bar').val(),staff:$('#staff_filter_id').val(),minhours:$('#minimumhour_filter_id').val(),maxhours:$('#maximumhour_filter_id').val(),
 };
 for(key in args) 
     params[key]=args[key];
