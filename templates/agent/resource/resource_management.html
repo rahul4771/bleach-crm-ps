@@ -61,26 +61,86 @@
      <div class="main-content-holder"><!--main-content-holder-->            
             
 <div class="white-wrapper"><!--white-wrapper-->
+
 <div class="toolbar-div"><!--toolbar-div-->
 
-<div class="search-middle"><!--search-middle-->
-<div class="filter-button"><a href="#">Filter</a></div>  <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()">
+<div class="search-middle"><!--left-->
+<div class="filter-button">
+    <!--filter left -->
+    <div class="left-box leftbox-item2 params_filter">
+     <input name="filter" type="button" value="Filter" id="filter" class="blue-button filter-btn">
+        <div class="expand-body left-expand-body">
+          
+          <div class="left">
+            <div class="head">
+              <h1>Cleaning Staff</h1>
+            </div>
+            <div class="body">
+              <select name="staff_filter" id="staff_filter_id">
+                <option value=''>---SELECT---</option>
+                {% for staff in staffs %}
+          <option value='{{staff.id}}' {% if staff.id == fil_staff %}selected{%endif%}>{{staff.name}}</option>
+                {% endfor %}                
+              </select>
+            </div>
+          </div>
+
+          <div class="right">
+            <div class="head">
+              <h1>Minimum Cleaning Hours</h1>
+            </div>
+            <div class="body">
+              <input type="number" name="minimumhour_filter" id="minimumhour_filter_id" max='24' min='0' value="{{fil_minhours|default_if_none:''}}">
+            </div>
+          </div>
+
+          <div class="left">
+            <div class="head">
+              <h1>Maximum Cleaning Hours</h1>
+            </div>
+            <div class="body">
+              <input type="number" name="maximumhour_filter" id="maximumhour_filter_id" max='24' min='0' value="{{fil_maxhours|default_if_none:''}}">
+            </div>
+          </div>
+           
+          <div class="foot">
+            <button type="button" class="red-btn" onclick="set_params_go({});">Submit</button>
+            <button type="button" class="close-btn green-btn">Cancel</button>
+          </div>
+
+        </div>
+     </div>
+  </div>
+  <!--filter left -->
+
+  <!--search left -->
+  <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()">
 <a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
-</div><!--search-middle-->
+<!--search left -->
+
+</div><!--left -->
 
         <div class="filter-right"><!--filter-right-->
        <input type="text" id="working_calendar" class="date_pick date-picker-resource" value={{workers_date|date:"d-m-Y"}} onchange="set_params_go();">
-       <div class="day-month-togggle-button"><a href="#">Date/Month Toggle Button</a></div>
+       
+       <div class="ui calendar" id="working_calendar_month" hidden>
+        <div class="ui input left icon" >
+          <input type="text" id="month">
+        </div>
+      </div>
+       <label class="switch">
+        <input type="checkbox" id="daymonthtoggle" checked>
+        <span class="slider"></span>
+      </label><br><br>
+       
+       
         </div><!--filter-right-->
-
 
 </div><!--toolbar-div-->
 
 
-
-
 <div id="resource-scroll" class="resource-scroll">
-<div class="table-wrap">
+<div class="table-wrap" id="table_date">
 <table class="resource-table" id="myTable" >
 <thead>
 <tr class="resource-graybg">
@@ -105,16 +165,39 @@
 <tbody >
     {% for details in workers_details %}
     <tr id="worker{{details.id}}">
-    <th class="fixed-side"><img src="{% static 'files/images/green-dot.png' %}"></th>
+<<<<<<< HEAD
+    <th class="fixed-side togglehide"><img src="{% static 'files/images/green-dot.png' %}"></th>
+    <th class="profile fixed-side togglehide"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} align="absmiddle"></th>
+=======
+    <th class="fixed-side dot-image"><img src="{% static 'files/images/green-dot.png' %}"></th>
     <th class="profile fixed-side"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} align="absmiddle"></th>
+>>>>>>> 031947364d536e8504fe8bf89222dae8c6f14e6b
     <td><div class="name-bold">{{details.name}}<div class="position">{{details.user_type}}</div></div></td>
     </tr>
     {% endfor %}
  </tbody>
 </table>
 </div>
-</div>
 
+<div class="table-wrap" id="table_month" hidden>
+<table class="resource-table" id="myTable2">
+<thead>
+<tr>
+<th class="align-left">Staff</th>
+<th class="align-center" data-hide="phone">Ratings</th>
+<th class="align-center" data-hide="tablet">Worked Days</th>
+<th class="align-center" data-hide="tablet">Man Hours</th>
+<th class="align-center" data-hide="tablet">Mang Avg Hours</th>
+
+</tr>
+</thead>
+    <tbody>
+        {% include 'agent/resource/resource-month.html' %}
+    </tbody>
+</table>
+
+</div>
+</div>
 
 </div><!--white-wrapper-->            
             
@@ -126,6 +209,84 @@
 {% endblock %}
 {% block javascript %}
 <script type="text/javascript">
+    $('#working_calendar_month').calendar({
+        type: 'month',
+    });
+
+    // $('#month').Monthpicker({
+
+    // // default values
+    // // format: mm/yyyy
+    // minYear: null,
+    // maxYear: null,
+    // minValue: null,
+    // maxValue: null,
+
+    // // i18n
+    // monthLabels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+
+    // // Callback events
+    // onSelect: function() { 
+    //     console.log($('#month').val(),"tree")
+    //     load_workers_data();
+    //  },
+    // onClose: function() { return; }
+
+    // });
+    
+
+    //for loading default month and year
+    var months = [ "January", "February", "March", "April", "May", "June", 
+               "July", "August", "September", "October", "November", "December" ];
+
+    var date1 = new Date();
+    var month = date1.getMonth();
+    var selectedMonthName = months[month];
+    
+    console.log(selectedMonthName,"lp")
+    var datestring = selectedMonthName + " " + date1.getFullYear();
+    $('#month').val(datestring);
+
+    //load monthly workers data on toggle
+    function load_workers_data(){
+        console.log("pop")
+        var month_year = datestring
+        
+        $.ajax({
+                url: '/agent/ajax/resourcestoggle/',
+                data: {
+                'month_year': month_year
+                
+                },
+                dataType: 'json',
+            
+                success: function(data) { 
+
+                console.log(data.html_workers_list);
+                $("#myTable2 tbody ").html(data.html_workers_list);
+
+                }
+            })
+        }
+
+    $('#daymonthtoggle').click(function(){
+        if($(this).is(':checked')){
+            $('#working_calendar_month').attr("hidden",true);
+            $('#working_calendar').attr("hidden",false);
+            $('#table_month').attr("hidden",true);
+            $('#table_date').attr("hidden",false);
+            $('.togglehide').attr("hidden",false);
+        }else{
+            $('#working_calendar_month').attr("hidden",false);
+            $('#working_calendar').attr("hidden",true);
+            $('#table_month').attr("hidden",false);
+            $('#table_date').attr("hidden",true);
+            $('.togglehide').attr("hidden",true);
+            load_workers_data();
+
+        }
+    });
+
     $('document').ready(function(){
         //To find total and avergae man hour weekly and today
         //to find today man hour
@@ -281,9 +442,6 @@
 
 
 
-
-
-
         //To Find Total working Hours of each user
         {% for details in workers_details %}
 
@@ -365,8 +523,66 @@
             {
                 minutes = 0;
             }
-            //append total hours to working table
-            $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
+
+            //append gray dot
+            if(total_duration == 0)
+            {
+                $("#worker{{details.id}} .dot-image img").attr("src","{% static 'files/images/gray-dot.png' %}");
+            }
+
+            None = null;
+            min_duration = {{fil_minhours}}
+            max_duration = {{fil_maxhours}}
+
+
+            if(min_duration && max_duration)
+            {
+                if(min_duration <= total_duration && max_duration >= total_duration)
+                {
+                    //append total hours to working table
+                    $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
+                 }
+
+                else
+                {
+                    $("#worker{{details.id}}").remove();
+                }
+
+            } 
+
+            else if(min_duration)
+            {
+                if(min_duration <= total_duration)
+                {
+                    //append total hours to working table
+                    $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
+                 }
+
+                else
+                {
+                    $("#worker{{details.id}}").remove();
+                }                
+            }
+
+            else if(max_duration)
+            {
+                if(max_duration >= total_duration)
+                {
+                    //append total hours to working table
+                    $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
+                 }
+
+                else
+                {
+                    $("#worker{{details.id}}").remove();
+                }   
+            }
+
+            else
+            {
+                //append total hours to working table
+                $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
+            }
 
         {% endfor %}
 
@@ -474,7 +690,7 @@
 function set_params_go(args)
 {
 var url='{% url 'agent:resource-management' %}';
-var params={workers_calendar_date:$('#working_calendar').val(),search:$('#search-bar').val(),
+var params={workers_calendar_date:$('#working_calendar').val(),search:$('#search-bar').val(),staff:$('#staff_filter_id').val(),minhours:$('#minimumhour_filter_id').val(),maxhours:$('#maximumhour_filter_id').val(),
 };
 for(key in args) 
     params[key]=args[key];

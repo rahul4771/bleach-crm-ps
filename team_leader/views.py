@@ -267,8 +267,32 @@ class TicketDetails(IsTeamLeader,View):
 		entry_per_page=(tickets.end_index())-(tickets.start_index())+1
 
 		return render(request,'tl/ticket/tickets.html',{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"investigators":investigators,"fil_governorate":fil_governorate,'fil_area':fil_area,"fil_investigator":fil_investigator,"fil_status":fil_status,})		
+	
+class TicketAdvanced(IsTeamLeader,View):
+	def get(self,request,client_id,followup_id):
+
+		#client info
+		try:
+			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=client_id)
+		except:
+			client_details = None
+
+		#followup info
 		
-class InvestigationTask(View):
+		followup_details = FollowUp.objects.select_related('investigation__investigator','investigation__order','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate','investigation__order_schedule__order_scheduler_book').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules'),Prefetch('investigation__investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),).get(is_active=True,id=followup_id)
+			
+			
+
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=client_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()
+
+		return render(request,'tl/ticket/followup-page.html',{"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"followup_details":followup_details,})		
+
+
+
+class InvestigationTask(IsTeamLeader,View):
 	def get(self,request,investigation_id):
 		
 		try:
@@ -307,18 +331,18 @@ class InvestigationTask(View):
 			Investigation.objects.filter(id=investigation_id).update(is_followup_approved=False,check_out=timezone.now(),notes=request.POST.get('notes'))
 
 		#To Save Media
-			medias = request.FILES.getlist('media')
-			if not medias==['']:
-				for media in medias:
-					InvestigationMedia.objects.create(
-					        investigation_id=investigation_id,
-					        media=media,
-					        )
+		medias = request.FILES.getlist('media')
+		if not medias==['']:
+			for media in medias:
+				InvestigationMedia.objects.create(
+				        investigation_id=investigation_id,
+				        media=media,
+				        )
 
 		messages.success(request,"Investigation Form submitted succesfully")	
 		return redirect('tl:tldash-board')	
 
-class Cleaning(View):
+class Cleaning(IsTeamLeader,View):
 	def get(self,request,team_id):
 
 		try:
@@ -376,7 +400,7 @@ class Cleaning(View):
 				
 		return redirect('tl:tldash-board')
 
-class FollowupCleaning(View):
+class FollowupCleaning(IsTeamLeader,View):
 	def get(self,request,team_id):
 
 		followup_team_detail = FollowUpTeam.objects.select_related('team_leader','drop_off_driver','pick_up_driver','followup_scheduler__follow_up__investigation__investigator','followup_scheduler__follow_up__investigation__order__evaluation','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__cleaning_method','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__location_type','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book','followup_scheduler__customer_address').get(is_active=True,id=team_id)

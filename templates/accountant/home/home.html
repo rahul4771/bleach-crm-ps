@@ -18,8 +18,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-pending-payment-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Pending Payments</h1>
-            	<h2 class="blue-text"><label>Orders<span>{{total_pending_orders|default_if_none:'0'}}</span></label> </h2>
-            	<p><label>Amount <span>{{total_pending_amount|default_if_none:'0'}}</span></label></p>
+            	<h2 class="blue-text"><label>Orders<span>{{total_pending_orders|default_if_none:'0.00'|floatformat:'2'}}</span></label> </h2>
+            	<p><label>Amount <span>{{total_pending_amount|default_if_none:'0.00'|floatformat:'2'}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -29,8 +29,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-week-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Week</h1>
-            	<h2 class="green-text"><label>Current<span>{{this_week_sales|default_if_none:'0'}}KD</span></label>  </h2>
-            	<p><label>Last Week <span>{{last_week_sales|default_if_none:'0'}}KD</span></label></p>
+            	<h2 class="green-text"><label>Current<span>{{this_week_sales|default_if_none:'0.00'|floatformat:'2'}}KD</span></label>  </h2>
+            	<p><label>Last Week <span>{{last_week_sales|default_if_none:'0.00'|floatformat:'2'}}KD</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -40,8 +40,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-month-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Month</h1>
-            	<h2 class="orange-text"><label>Current<span>{{this_month_sales|default_if_none:'0'}}KD</span></label> </h2>
-            	<p><label>Last Month <span>{{last_month_sales|default_if_none:'0'}}KD</span></label></p>
+            	<h2 class="orange-text"><label>Current<span>{{this_month_sales|default_if_none:'0.00'|floatformat:'2'}}KD</span></label> </h2>
+            	<p><label>Last Month <span>{{last_month_sales|default_if_none:'0.00'|floatformat:'2'}}KD</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -51,8 +51,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-quarter-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Quarter</h1>
-            	<h2 class="red-text"><label>Current<span>{{this_quarter_sales|default_if_none:'0'}}KD</span></label> </h2>
-            	<p><label>Last Quarter <span>{{last_quarter_sales|default_if_none:'0'}}KD</span></label></p>
+            	<h2 class="red-text"><label>Current<span>{{this_quarter_sales|default_if_none:'0.00'|floatformat:'2'}}KD</span></label> </h2>
+            	<p><label>Last Quarter <span>{{last_quarter_sales|default_if_none:'0.00'|floatformat:'2'}}KD</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -85,22 +85,22 @@
         class="red-line"
         {% else %}
         class="yellow-line"
-        {% endif %}>{{invoice.order.evaluation.evaluation_id}}</td>
-    <td>{{invoice.order.evaluation.customer.name}}</td>
+        {% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+    <td>{{invoice.evaluation.customer.name}}</td>
     <td>
-    {% for evaluation_details in invoice.order.evaluation.invoice_evaluation_details %}
+    {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
     {{evaluation_details.address.area.name}}<br>
     {% endfor %}
     </td>
-    <td>{{invoice.order.evaluation.customer.mobile_number}}</td>
+    <td>{{invoice.evaluation.customer.mobile_number}}</td>
     <td><span 
-        {% if invoice.status == 'PENDING' %}
+        {% if invoice.payment_status == 'PENDING' %}
         class="red-bg"
         {% else %}
         class="yellow-bg"
         {% endif %}
-        >{{invoice.status}}</span></td>
-    <td>{{invoice.total_amount}}KD</td>
+        >{{invoice.payment_status|default_if_none:''}}</span></td>
+    <td>{{invoice.total_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
     </tr>
     {% endfor %}
 </tbody>

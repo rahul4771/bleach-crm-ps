@@ -76,7 +76,7 @@ class UserProfile(AbstractUser):
     nationality		= CountryField(null=True,blank=True)
     company 		= models.CharField(max_length=100,blank=True,null=True)
     job_title 		= models.CharField(max_length=100,blank=True,null=True)
-    mobile_number 	= models.CharField(max_length=10,blank=False,null=False,unique=True)
+    mobile_number 	= models.CharField(max_length=10,blank=True,null=True,unique=True)
     phone_number 	= models.CharField(max_length=10,blank=True,null=True)
     profile_image	= models.ImageField(upload_to='profile_photo/',blank=True,null=True,validators=[FileExtensionValidator(allowed_extensions=['jpg','jpeg','png']),validate_image],)
     customer_type   = models.CharField(max_length=20,blank=True,null=True,choices=CUSTOMER_TYPE_CHOICES)
@@ -119,7 +119,7 @@ class Area(models.Model):
     updated         = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return str(self.name)
+        return u"%s" % str(self.name)
 
     def __str__(self):
         return self.name
@@ -145,4 +145,5 @@ class Address(models.Model):
         return str(self.area.name)
 
     def __str__(self):
-        return self.area.name+"-"+self.block+" Block"
+        return self.area.name
+    # +"-"+self.block+" Block"

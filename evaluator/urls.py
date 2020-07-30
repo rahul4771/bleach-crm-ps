@@ -6,8 +6,14 @@ urlpatterns = [
 	url(r'^dashboard/$',views.EvaluatorHome.as_view(),name='evaluatordash-board'),
 	url(r'^resources/$',views.ResourceManagement.as_view(),name='resource-management'),
 	url(r'^orders/$',views.OrderDetails.as_view(),name='evaluator-orders'),
+	
+
 	url(r'^clients/$',views.ClientDetails.as_view(),name='evaluator-clients'),
+	url(r'^client/orders/(?P<client_id>[-\w]+)$',views.ClientOrders.as_view(),name='evaluator-client-orders'),
+	url(r'^client/order/details/(?P<order_id>[-\w]+)$',views.ClientOrderDetails.as_view(),name='evaluator-client-orderdetails'),
+
 	url(r'^tickets/$',views.TicketDetails.as_view(),name='evaluator-tickets'),
+	url(r'^ticket/details/(?P<client_id>[-\w]+)/(?P<followup_id>[-\w]+)/$',views.TicketAdvanced.as_view(),name='evaluator-ticketadvanced'),
 
 	url(r'^newenquiry/$',views.NewEnquiry.as_view(),name='evaluator-newenquiry'),
 	url(r'^existingenquiry/(?P<enquiry_id>[-\w]+)$',views.ExistingEnquiry.as_view(),name='evaluator-existingenquiry'),

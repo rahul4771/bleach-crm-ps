@@ -35,8 +35,30 @@
             </div><!--card-column-->
         </div><!--clients-card-column clients-column-left-->
 		  <div class="clients-card-column clients-column-right whitebg"><!--lients-card-column clients-column-right-->
-            <img src="{% static 'files/images/orders-chart.jpg' %}">
-            <div class="chart-btnWrapper"><input name="thismonth" type="button" class="blue-button" value="This Month" id="thismonth"></div>
+            <!-- <img src="{% static 'files/images/orders-chart.jpg' %}"> -->
+            <h5 class="count_div">Submitted : <b id="total_submitted"></b></h5>
+            <h5 class="count_div">Approved : <b id="total_approved"></b></h5>
+            <select id="daym">
+              <option value="day" >Day</option>
+              <option value="month" selected>Month</option>
+            </select>
+            <input type="text" id="ord_fromdate" class="date_pick date-picker set1" value={{investigation_date|date:"d-m-Y"}} >
+            <input type="text" id="ord_todate" class="date_pick date-picker set1" value={{investigation_date|date:"d-m-Y"}} >
+            <div class="ui calendar set2" id="example7" >
+              <div class="ui input left icon">
+                <input type="text" id="month1" class="set2" value="{{mfrom}}">
+              </div>
+            </div>
+      
+            <div class="ui calendar set2" id="example8" >
+              <div class="ui input left icon">
+                <input type="text" id="month2" class="set2" value="{{mto}}">
+              </div>
+            </div>
+            <button type="button" id="mnt_btn" class="set2" >Update</button>
+            <div id="chart_div"></div>
+            <button id="reset" class="blue-button">This Month</button>
+            
           </div><!--lients-card-column clients-column-right-->
         </div><!--clients-card-wrapper-->
 
@@ -50,7 +72,7 @@
      </div><!--left-box leftbox-item1-->
      <div class="left-box leftbox-item2 params_filter"><!--right-box leftbox-item1-->
      <input name="filter" type="button" value="Filter" id="filter" class="blue-button filter-btn">
-        <div class="expand-body">
+        <div class="expand-body right-expand-body">
           
           <div class="left">
             <div class="head">
@@ -253,7 +275,8 @@
 {% endblock %}
 
 {% block javascript %}
-<script src='js/footable.js'></script> 
+<script src='js/footable.js'></script>
+<script src="{% static 'files/js/order-chart.js' %}"></script> 
 <script id="rendered-js">
 $('.footable').footable({
   calculateWidthOverride: function () {

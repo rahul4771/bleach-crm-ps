@@ -49,7 +49,7 @@
      </div><!--left-box leftbox-item1-->
      <div class="left-box leftbox-item2 params_filter"><!--right-box leftbox-item1-->
      <input name="filter" type="button" value="Filter" id="filter" class="blue-button filter-btn">
-        <div class="expand-body">
+        <div class="expand-body right-expand-body">
           
           <div class="left">
             <div class="head">
@@ -147,7 +147,7 @@
 </thead>
 <tbody>
 {% for ticket in tickets %}
-    <tr>
+    <tr class="clickable-row" data-href="{% url 'tl:tl-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">
     <td 
     {% if ticket.status == 'INVESTIGATOR_APPROVED' %}
     class="orange-line"
