@@ -8,11 +8,11 @@ urlpatterns = [
 	url(r'^orders/$',views.OrderDetails.as_view(),name='agent-orders'),
 
 	url(r'^feedbacks/$',views.FeedbackDetails.as_view(),name='agent-feedbacks'),
-	url(r'^feedback/details$',views.FeedbackAdvanced.as_view(),name='agent-feedbackadvanced'),	
+	url(r'^feedback/details/(?P<client_id>[-\w]+)/(?P<order_id>[-\w]+)/$',views.FeedbackAdvanced.as_view(),name='agent-feedbackadvanced'),	
 	url(r'^newfeedback/$',views.AddFeedBack.as_view(),name='new-feedback'),
 
 	url(r'^tickets/$',views.TicketDetails.as_view(),name='agent-tickets'),
-	url(r'^ticket/details$',views.TicketAdvanced.as_view(),name='agent-ticketadvanced'),
+	url(r'^ticket/details/(?P<client_id>[-\w]+)/(?P<followup_id>[-\w]+)/$',views.TicketAdvanced.as_view(),name='agent-ticketadvanced'),
 	url(r'^tickets/register/$',views.TicketRegistration.as_view(),name='agent-ticketregister'),
 
 	url(r'^clients/$',views.ClientDetails.as_view(),name='agent-clients'),

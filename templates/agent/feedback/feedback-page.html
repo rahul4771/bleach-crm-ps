@@ -7,8 +7,46 @@
 <section class="content"><!--content-->
 <div class="container-fluid space topspace"><!--container-fluid space topspace-->
     <div class="welcome-wrapper"><!--welcome-wrapper-->
-        <h1 class="dashboard-head">Orders # BLC 201010101</h1>
-        <div class="align-left"><span class="xtralrg-text white-text"> 4.2 </span><span class="fa  fa-2x fa-star yellow-text checked"></span><span class="fa  fa-2x fa-star checked yellow-text"></span><span class="fa  fa-2x fa-star checked yellow-text"></span><span class="fa  fa-2x fa-star white-text"></span> </div>
+        <h1 class="dashboard-head">Order {{feedback_details.order_no}}</h1>
+        <div class="align-left"><span class="xtralrg-text white-text"> {{average_feedback|default_if_none:'0.0'|floatformat:'1'}}</span>
+        {% if average_feedback == 5 %}
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span> 
+        {% elif average_feedback < 5 and average_feedback >= 4 %}   
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        {% elif average_feedback < 4 and average_feedback >= 3 %}
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        {% elif average_feedback < 3 and average_feedback >= 2 %}
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        {% elif average_feedback < 2 and average_feedback >= 1 %}
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        {% else %}
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        {% endif %} 
+         </div>
     </div><!--welcome-wrapper-->
             
         
@@ -21,22 +59,58 @@
 <div class="investigation-columns"><!--investigation-columns-->
 
         <div class="investigation-columns-middle"><!--investigation-columns-middle-->
-        <div class="right-date">April 28,2020 at 11:40 AM</div>
+        <div class="right-date">{{feedback_details.feedback_marked_date|default_if_none:''}}</div>
         <br>
         <div class="feedback-list"><!--feedback-list-->
         <ul>
-        <li>There are many variations of passages of Lorem Ipsum available, but the majority have suffered  ?</li>
-        <div class="feedback-ratings"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </div>
-        <li>There are many variations of passages of Lorem Ipsum available ?</li>
-        <div class="feedback-ratings"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </div>        
-        <li>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form  ?</li>
-        <div class="feedback-ratings"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </div>        
+        {% for feedback in feedback_details.feedbacks %}    
+        <li>{{feedback.question.question}}  ?</li>
+        <div class="feedback-ratings">
+        {% if feedback.rating == 5 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        {% elif feedback.rating == 4 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        {% elif feedback.rating == 3 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% elif feedback.rating == 2 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% elif feedback.rating == 1 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% else %}
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% endif %}
+        </div>
+        {% endfor %}        
         </ul>
         </div><!--feedback-list-->
          
  
             <div class="details-notes align-left">Notes</div>
-            <p class="thrt-size">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary,</p>
+            <p class="thrt-size">{{feedback_details.feedback_notes|default_if_none:''}}</p>
         </div><!--investigation-columns-middle-->
  
 </div><!--investigation-columns-->
@@ -54,47 +128,61 @@
 </tr>
 </thead>
 <tbody>
-    <tr>
-    <td class="yellow-line">BLC20200405</td>
-    <td>Sura</td>
-    <td>General Cleaning</td>
-    <td class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td>
+    {% for other_feedback in other_feedbacks %}
+    <tr class="clickable-row" data-href="{% url 'agent:agent-feedbackadvanced' other_feedback.evaluation.customer.id other_feedback.id %}">
+    <td class="yellow-line">{{other_feedback.evaluation.evaluation_id}}</td>
+    <td>
+    {% for evaluation_detail in other_feedback.evaluation.order_evaluation_details %}
+    {{evaluation_detail.address.area.name}}
+    {% endfor %}
+    </td>
+    <td>
+    {% for evaluation_detail in other_feedback.evaluation.order_evaluation_details %}     
+    {% for evaluation_book in evaluation_detail.evaluation_book %}
+    {{evaluation_book.service_type.name}}
+    {% endfor %}
+    </br>
+    {% endfor %}
+    </td>
+    <td class="align-center">{% if other_feedback.avg_starring == 5 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        {% elif other_feedback.avg_starring < 5 and other_feedback.avg_starring >= 4 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        {% elif other_feedback.avg_starring < 4 and other_feedback.avg_starring >= 3 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% elif other_feedback.avg_starring < 3 and other_feedback.avg_starring >= 2 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% elif other_feedback.avg_starring < 2 and other_feedback.avg_starring >= 1 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% else %}
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% endif %} </td>
     </tr>
-    
-    <tr>
-    <td class="yellow-line">BLC20200402</td>
-    <td>Qurtuba</td>
-    <td>General Cleaning</td>
-    <td class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td>
-    </tr>
-    
-    <tr>
-    <td class="yellow-line">BLC20200403</td>
-    <td>Sulaibikhat</td>
-    <td>Part Time Service</td>
-    <td class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td>
-    </tr>
-     
-    <tr>
-    <td class="yellow-line">BLC20200404</td>
-    <td>Doha</td>
-    <td>Part Time Service</td>
-    <td class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td>
-        </tr>  
-
-	<tr>
-    <td class="yellow-line">BLC20200405</td>
-    <td>Rawda</td>
-    <td>General Cleaning</td>
-    <td class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td> 
-    </tr> 
- 
-	<tr>
-    <td class="yellow-line">BLC20200407</td>
-    <td>Kaifan</td>
-    <td>Uppostry Cleaning</td>
-    <td class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td>
-    </tr> 
+    {% endfor %} 
 </tbody>
 <tfoot>
  
@@ -123,34 +211,31 @@
         <div class="cleaning--right-fixed"><!--cleaning--right-fixed-->
         	<div class="order-card-column whitebg red-border"><!--order-card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="images/card-orders-icon.svg"></div>
+                <div class="column-left"><img src="{% static 'files/order-client-page/images/card-orders-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Orders</h1>
-            	<h2 class="red-text"><label>Active<span>2</span></label> </h2>
-            	<p><label>Total<span>5</span></label></p>
+            	<h2 class="red-text"><label>Active<span>{{active_orders_count}}</span></label> </h2>
+            	<p><label>Total<span>{{total_orders_count}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--order-card-column-->
         <div class="right-bgwrapper"><!--right-bgwrapper-->    
-            <div class="profile-pic"><img src="images/profile-pic.png"></div>
-            <div class="client-name">Mr. John Doe</div>
-            <div class="common-gray-text">+965 123 4564</div>
-            <div class="common-gray-text">johndoe@gmail.com</div>
+            <div class="profile-pic"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
+            <div class="client-name">{{client_details.name}}</div>
+            <div class="common-gray-text">{{client_details.mobile_number}}</div>
+            <div class="common-gray-text">{{client_details.email}}</div>
             <br>
             <hr class="hr">
-            <div class="common-gray-text">Comapany Name : <span class="bold-text">Megadigit</span></div>
-            <div class="common-gray-text">Nationality : <span class="bold-text">Kuwaity</span></div>
-            <div class="common-gray-text">Other Contact : <span class="bold-text">+965 554666</span></div>
+            <div class="common-gray-text">Comapany Name : <span class="bold-text">{{client_details.company}}</span></div>
+            <div class="common-gray-text">Nationality : <span class="bold-text">{{client_details.nationality}}</span></div>
+            <div class="common-gray-text">Other Contact : <span class="bold-text">{{client_details.phone_number}}</span></div>
             <hr class="hr">
             <br>
-            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address 1: Appartment</div>
-            <div class="address">Building Name and, Number Street Name and Number, Area, Governerate</div>
+            {% for address in client_details.customer_addresses %}
+            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address {{forloop.counter}}: {{address.apartment}}</div>
+            <div class="address">{{address.building}}, {{address.street}}, {{address.area.name}}, {{address.governorate.name}}</div>
             <br>
-            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address 2: Appartment</div>
-            <div class="address">Building Name and, Number Street Name and Number, Area, Governerate</div>
-            <br>        
-            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address 3: Appartment</div>
-            <div class="address">Building Name and, Number Street Name and Number, Area, Governerate</div> 
+            {% endfor %} 
         </div><!--right-bgwrapper-->     
         </div><!--cleaning--right-fixed-->  
 	</div><!--cleaning-Order-wrapper-->
