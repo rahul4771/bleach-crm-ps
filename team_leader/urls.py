@@ -4,7 +4,9 @@ from team_leader import views
 urlpatterns = [
 
 	url(r'^dashboard/$',views.TlHome.as_view(),name='tldash-board'),
+
 	url(r'^tickets/$',views.TicketDetails.as_view(),name='tl-tickets'),
+	url(r'^ticket/details/(?P<client_id>[-\w]+)/(?P<followup_id>[-\w]+)/$',views.TicketAdvanced.as_view(),name='tl-ticketadvanced'),
 
 	url(r'^investigation/(?P<investigation_id>[-\w]+)/$',views.InvestigationTask.as_view(),name='investigation'),
 

@@ -148,7 +148,7 @@
 </thead>
 <tbody>
 {% for ticket in tickets %}
-    <tr>
+    <tr class="clickable-row" data-href="{% url 'stl:stl-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">
     <td 
     {% if ticket.status == 'INVESTIGATOR_APPROVED' %}
     class="orange-line"

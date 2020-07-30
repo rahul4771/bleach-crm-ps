@@ -4,7 +4,9 @@ from senior_team_leader import views
 urlpatterns = [
 
 	url(r'^dashboard/$',views.StlHome.as_view(),name='stldash-board'),
+
 	url(r'^tickets/$',views.TicketDetails.as_view(),name='stl-tickets'),
+	url(r'^ticket/details/(?P<client_id>[-\w]+)/(?P<followup_id>[-\w]+)/$',views.TicketAdvanced.as_view(),name='stl-ticketadvanced'),
 	
 	url(r'^assigncleaning/team/(?P<scheduler_id>[-\w]+)/$',views.AssigncleaningTeam.as_view(),name='assign-cleaningteam'),
 	url(r'^assignfollowup/team/(?P<scheduler_id>[-\w]+)/$',views.AssignFollowupTeam.as_view(),name='assign-followupteam'),
