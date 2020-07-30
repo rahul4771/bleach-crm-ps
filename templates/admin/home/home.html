@@ -234,8 +234,36 @@
         <div class="chart-btnWrapper"><input name="today" type="button" class="blue-button" value="Today" id="today"></div>
         </div><!--two-column-items two-column-left-items-->
         <div class="two-column-items two-column-right-items"><!--two-column-items two-column-right-items-->
-        <img src="{% static 'files/images/sales-chart.jpg' %}">
-        <div class="chart-btnWrapper"><input name="thisyear" type="button" class="blue-button" value="This Year" id="thisyear"></div>
+        <!-- <img src="{% static 'files/images/sales-chart.jpg' %}"> -->
+        <select id="daym">
+            <option value="day" >Day</option>
+            <option value="month" selected>Month</option>
+        </select>
+          <input id="from" class="date_pick date-picker set1" hidden="true"/>
+          <input id="to" class="date_pick date-picker set1" hidden="true"/>
+    
+          <div class="ui calendar" id="example7" >
+            <div class="ui input left icon">
+              <i class="time icon"></i>
+              <input type="text" id="month1" class="set2" value="{{mfrom}}">
+            </div>
+          </div>
+    
+          <div class="ui calendar" id="example8" >
+            <div class="ui input left icon">
+              <i class="time icon"></i>
+              <input type="text" id="month2" class="set2" value="{{mto}}">
+            </div>
+          </div>
+    
+          <button type="button" id="mnt_btn" class="set2" >Update</button>
+          <!-- <input type="text" id="month" name="month" class="monthPicker set2" />
+          <input type="text" id="month2" name="month2" class="monthPicker set2" /> -->
+    
+          <button id="reset" class="blue-button">This Month</button>
+          <h3>Sales Total : <b id="total_sales"></b></h3> 
+    
+          <div id="curve_chart"></div>
         </div><!--two-column-items two-column-right-items-->
      
      

@@ -17,4 +17,5 @@ urlpatterns = [
 	url(r'^ajax/sales-data/',views.SalesLocationData,name='sales-data'),
 	url(r'^ajax/sales-data2/',views.SalesCleaningTypeData,name='sales-data2'),
 	url(r'^ajax/sales-data3/',views.SalesGovernorateData,name='sales-data3'),
+	url(r'^ajax/sales-curve-data/',views.SalesData,name='sales-curve-data'),
 ]

@@ -122,10 +122,10 @@
 
         <div class="filter-right"><!--filter-right-->
        <input type="text" id="working_calendar" class="date_pick date-picker-resource" value={{workers_date|date:"d-m-Y"}} onchange="set_params_go();">
-       <!-- <div class="day-month-togggle-button"><a href="#">Date/Month Toggle Button</a></div> -->
+       
        <div class="ui calendar" id="working_calendar_month" hidden>
-        <div class="ui input left icon">
-          <input type="text" id="month" oninput="load_workers_data();">
+        <div class="ui input left icon" >
+          <input type="text" id="month">
         </div>
       </div>
        <label class="switch">
@@ -165,8 +165,13 @@
 <tbody >
     {% for details in workers_details %}
     <tr id="worker{{details.id}}">
+<<<<<<< HEAD
+    <th class="fixed-side togglehide"><img src="{% static 'files/images/green-dot.png' %}"></th>
+    <th class="profile fixed-side togglehide"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} align="absmiddle"></th>
+=======
     <th class="fixed-side dot-image"><img src="{% static 'files/images/green-dot.png' %}"></th>
     <th class="profile fixed-side"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} align="absmiddle"></th>
+>>>>>>> 031947364d536e8504fe8bf89222dae8c6f14e6b
     <td><div class="name-bold">{{details.name}}<div class="position">{{details.user_type}}</div></div></td>
     </tr>
     {% endfor %}
@@ -205,8 +210,30 @@
 {% block javascript %}
 <script type="text/javascript">
     $('#working_calendar_month').calendar({
-        type: 'month'
+        type: 'month',
     });
+
+    // $('#month').Monthpicker({
+
+    // // default values
+    // // format: mm/yyyy
+    // minYear: null,
+    // maxYear: null,
+    // minValue: null,
+    // maxValue: null,
+
+    // // i18n
+    // monthLabels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+
+    // // Callback events
+    // onSelect: function() { 
+    //     console.log($('#month').val(),"tree")
+    //     load_workers_data();
+    //  },
+    // onClose: function() { return; }
+
+    // });
+    
 
     //for loading default month and year
     var months = [ "January", "February", "March", "April", "May", "June", 
@@ -248,11 +275,13 @@
             $('#working_calendar').attr("hidden",false);
             $('#table_month').attr("hidden",true);
             $('#table_date').attr("hidden",false);
+            $('.togglehide').attr("hidden",false);
         }else{
             $('#working_calendar_month').attr("hidden",false);
             $('#working_calendar').attr("hidden",true);
             $('#table_month').attr("hidden",false);
             $('#table_date').attr("hidden",true);
+            $('.togglehide').attr("hidden",true);
             load_workers_data();
 
         }
