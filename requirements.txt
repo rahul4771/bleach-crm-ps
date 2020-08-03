@@ -3,3 +3,4 @@ django-countries==6.1.2
 tzlocal
 pillow
 python-dateutil
+pandas

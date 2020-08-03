@@ -17,7 +17,7 @@ from django.conf.urls import url,include
 from django.contrib import admin
 from django.conf.urls.static import static  
 from django.conf import settings
-from user.views import Signin,logout,adddata
+from user.views import Signin,logout,adddata,testcalendar
 
 urlpatterns = [
     
@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^$',Signin.as_view(),name='login'),
     url(r'^logout/$',logout.as_view(),name='logout'),
     url(r'^add_data/$',adddata,name='add_data'),
+    url(r'^test_data/$',testcalendar,name='test_data'),
 
     url(r'^bleach_admin/',include('bleachadmin.urls',namespace='bleach_admin')),
     url(r'^agent/',include('agent.urls',namespace='agent')),

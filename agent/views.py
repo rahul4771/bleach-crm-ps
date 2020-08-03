@@ -367,7 +367,7 @@ class ResourceManagement(IsAgent,View):
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		count_today_end   = count_today_start+timedelta(1)
-
+		print(count_today_end,count_today_start,"lpo")
 
 		#total workers count
 		try:
@@ -378,6 +378,7 @@ class ResourceManagement(IsAgent,View):
 		#total active workers
 		try:
 			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=count_today_start)&Q(end_at__gte=count_today_start)) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=timezone.now().replace(tzinfo=None))&Q(end_at__gte=timezone.now().replace(tzinfo=None)))) ).values_list('member',flat=True)).distinct().count()
+			print(total_active_workers,"taw")
 		except:
 			total_active_workers = 0	
 	
@@ -449,7 +450,7 @@ class ResourceManagement(IsAgent,View):
 
 		#Filter
 		try:
-			fil_staff = int(request.GET.get('staff'))
+			fil_staff = request.GET.get('staff')
 		except:
 			fil_staff = ''
 
@@ -472,14 +473,14 @@ class ResourceManagement(IsAgent,View):
 		#filters 	
 		filters=[] 
 		if fil_staff: 
-		    case1 = Q(id=fil_staff)
+		    case1 = Q(user_type=fil_staff)
 		    filters.append(case1)
 	
 		if fil_staff: 
 		    filters         = functools.reduce(operator.and_,filters)
-		    workers_details = workers_details.filter(filters)	
+		    workers_details = workers_details.filter(filters)
 			
-		return render(request,'agent/resource/resource_management.html',{"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"staffs":staffs,"fil_staff":fil_staff,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,})		
+		return render(request,'agent/resource/resource_management.html',{"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"staffs":staffs,"fil_staff":fil_staff,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,"staff_type":fil_staff})		
 
 
 class OrderDetails(IsAgent,View):
@@ -1650,11 +1651,19 @@ def ResourcesToggle(request):
     month_year = request.GET.get('month_year',None)
     month,year = month_year.split()
     
+    staff_type = request.GET.get('staff_type',None)
+    print(staff_type)
     monthnumber = datetime.strptime(month,"%B").month
     print(monthnumber,"mon")
+    search = request.GET.get('search',None)
     
     try:
-     	workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
+        if staff_type:
+            workers =  UserProfile.objects.filter(is_active=True).filter(user_type=staff_type)
+        elif search:
+            workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))&Q(name__icontains=search))
+        else:
+            workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
     except:
         workers =  None
     print(workers,"lp")
@@ -1665,4 +1674,14 @@ def ResourcesToggle(request):
     print(workers_details,"wok")   
     data['html_workers_list'] = render_to_string('agent/resource/resource-month.html', {'workers_details_month':workers_details})
     return JsonResponse(data)
+
+def ResourcesFilter(request):
+    staff_type = request.GET.get('')
+    try:
+     	workers =  UserProfile.objects.filter(is_active=True).filter(user_type=staff_type)
+    except:
+        workers =  None
+	
+	
+    return JsonResponse()
 
