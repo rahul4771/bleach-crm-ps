@@ -207,7 +207,6 @@
  
 <thead>
 <tr>
-<th>Cleaning</th>
 <th data-hide="phone,tablet">Date and Time</th>
 <th class="align-center" data-hide="phone,tablet">Status</th>
 </tr>
@@ -217,7 +216,6 @@
     {% for subscription_schedule in order.orderschedules %}
     {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
 	<tr>
-    <td class="red-line">Cleaning {{forloop.counter}}</td>
     <td>{{subscription_schedule.start_at}}</td>
     <td><span class="red-bg">{{subscription_schedule.work_status}}</span></td> 
     </tr>
@@ -408,57 +406,59 @@
 {% if order.feedbacks %}
 <div class="details-sub-head align-left">Feedback</div>    
 <div class="investigation-columns"><!--investigation-columns-->
-    	<div class="investigation-columns-left"><!--investigation-columns-left-->
-			<div class="profile-pic"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
-            <div class="client-name lg-text"><div class="common-gray-text">Customer</div>4.2</div>
-            <div class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </div>
-    	</div><!--investigation-columns-left-->
+        <div class="investigation-columns-left"><!--investigation-columns-left-->
+            <div class="profile-pic"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
+            <div class="client-name lg-text"><div class="common-gray-text">{{client_details.name}}</div>{{average_feedback|default_if_none:'0.0'|floatformat:1}}</div>
+        {% if average_feedback < 2 and average_feedback >= 1 %}
+        <div class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> </div>
+        {% elif average_feedback < 3 and average_feedback >= 2 %}
+        <div class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> </div>
+        {% elif average_feedback < 4 and average_feedback >= 3 %}
+        <div class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> </div>
+        {% elif average_feedback < 5 and average_feedback >= 4 %}
+        <div class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </div>
+        {% elif average_feedback == 5 %}
+        <div class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span> </div>
+        {% else %}
+        <div class="align-center"><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> </div>
+        {% endif %}
+        </div><!--investigation-columns-left-->
 
         <div class="investigation-columns-middle"><!--investigation-columns-middle-->
-        <div class="order-invest-date">April 28,2020 at 11:40 AM</div>
+        <div class="order-invest-date">{{order.feedback_marked_date|default_if_none:''}}</div>
         <br>
         <div class="feedback-list"><!--feedback-list-->
         <ul>
-        {% for feedback in order.feedbacks %}    
+        {% for feedback in order.feedbacks %}
         <li>{{feedback.question.question}}  ?</li>
-         
         {% if feedback.rating == 1 %}
-        <div class="feedback-ratings">
-            <span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> 
-        </div>
+        <div class="feedback-ratings"><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> </div>
         {% elif feedback.rating == 2 %}
-        <div class="feedback-ratings">
-            <span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> 
-        </div>
+        <div class="feedback-ratings"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> </div>
         {% elif feedback.rating == 3 %}
-        <div class="feedback-ratings">
-            <span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> 
-        </div>
+        <div class="feedback-ratings"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> </div>
         {% elif feedback.rating == 4 %}
-        <div class="feedback-ratings">
-            <span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> 
-        </div>
+        <div class="feedback-ratings"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </div>
         {% elif feedback.rating == 5 %}
-        <div class="feedback-ratings">
-            <span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span> 
-        </div>
+        <div class="feedback-ratings"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span> </div>
         {% else %}
-        <div class="feedback-ratings">
-            <span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> 
-        </div>
+        <div class="feedback-ratings"><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> </div>
         {% endif %}
-
-        {% endfor %}       
+        {% endfor %}        
         </ul>
         </div><!--feedback-list-->
          
  
             <div class="notes">Notes</div>
-            <p class="thrt-size">{{order.feedback_notes}}</p>
+            <p class="thrt-size">{{order.feedback_notes}} ,</p>
         </div><!--investigation-columns-middle-->
  
 </div><!--investigation-columns-->
 {% endif %}
+
+
+
+
 
 
 <div class="details-sub-head align-left">Media</div>

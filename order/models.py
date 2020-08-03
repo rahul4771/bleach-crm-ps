@@ -74,8 +74,10 @@ class Order(models.Model):
 	
 	instructions	= models.CharField(max_length=500,blank=True,null=True)
 	
-	feedback_notes  = models.CharField(max_length=500,blank=True,null=True)
-	is_feedback_marked= models.BooleanField(null=False,blank=True,default=False)
+	feedback_notes  	= models.CharField(max_length=500,blank=True,null=True)
+	is_feedback_marked	= models.BooleanField(null=False,blank=True,default=False)
+	feedback_marked_date= models.DateTimeField(blank=True,null=True)
+
 	created_by      = models.ForeignKey(UserProfile,blank=True,null=True)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)

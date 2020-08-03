@@ -761,9 +761,6 @@ class FeedbackDetails(IsAgent,View):
 				filters              = functools.reduce(operator.and_,filters)
 				order_wise_feedbacks = order_wise_feedbacks.filter(filters)	    
 
-
-
-
 		#Feedback Staring count total
 		try:
 			feedbacks                 = FeedBack.objects.filter(is_active=True)
@@ -814,8 +811,41 @@ class FeedbackDetails(IsAgent,View):
 		return render(request,'agent/feedback/feedbacks.html',{"feedbacks":feedbacks,"average_feedback":average_feedback,"total_feedbacks":total_feedbacks,"starring_percentages":starring_percentages,"order_wise_feedbacks":order_wise_feedbacks,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_minimumstarring":fil_minimumstarring,"fil_maximumstarring":fil_maximumstarring,"fil_service_type":fil_service_type,})
 		
 class FeedbackAdvanced(IsAgent,View):
-	def get(self,request):
-		return render(request,'agent/feedback/feedback-page.html',{})
+	def get(self,request,client_id,order_id):
+		
+		#client info
+		try:
+			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=client_id)
+		except:
+			client_details = None
+
+		#feedback_info
+		try:
+			feedback_details   = Order.objects.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks')).get(id=order_id)		
+		except:
+			feedback_details   = None
+
+		#total feedback
+		try:
+			feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,evaluation__customer_id=client_id).prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))		
+		except:
+			feedbacks = None
+
+		#total_feedback_rating
+		average_feedback  = feedbacks.aggregate(Avg('feed_backs_order__rating'))['feed_backs_order__rating__avg']
+		
+		#other feedbacks
+		try:
+			other_feedbacks = feedbacks.exclude(id=order_id)
+		except:	
+			other_feedbacks = None
+
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=client_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()	
+
+		return render(request,'agent/feedback/feedback-page.html',{"client_details":client_details,"feedback_details":feedback_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"other_feedbacks":other_feedbacks,"average_feedback":average_feedback,})
 
 
 class TicketDetails(IsAgent,View):
@@ -929,8 +959,26 @@ class TicketDetails(IsAgent,View):
 
 
 class TicketAdvanced(IsAgent,View):
-	def get(self,request):
-		return render(request,'agent/ticket/followup-page.html',{})
+	def get(self,request,client_id,followup_id):
+
+		#client info
+		try:
+			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=client_id)
+		except:
+			client_details = None
+
+		#followup info
+		
+		followup_details = FollowUp.objects.select_related('investigation__investigator','investigation__order','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate','investigation__order_schedule__order_scheduler_book').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules'),Prefetch('investigation__investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),).get(is_active=True,id=followup_id)
+			
+			
+
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=client_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()
+
+		return render(request,'agent/ticket/followup-page.html',{"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"followup_details":followup_details,})
 
 
 
@@ -1089,12 +1137,15 @@ class ClientOrderDetails(IsAgent,View):
 			client_details = None
 
 		#orders count
-		orders = Order.objects.filter(is_active=True,evaluation__customer_id=order.evaluation.customer_id)
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=order.evaluation.customer_id)
 		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
 		total_orders_count  = orders.count()
+
+		#average feedbacks
+		average_feedback 	= order.feed_backs_order.aggregate(Avg('rating'))['rating__avg']
 					
 				
-		return render(request,"agent/client/order-page.html",{"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count})
+		return render(request,"agent/client/order-page.html",{"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,})
 
 class NewEnquiry(IsAgent,View):
 	address_formset_define    = formset_factory(AddressForm)
@@ -1382,13 +1433,12 @@ class MakeQuatationPhase2(IsAgent,View):
 					start_time      = request.POST.get('form-'+str(form_count)+'-start_time')
 					cleaning_hours  = request.POST.get('form-'+str(form_count)+'-cleaning_hours')
 
+					print(cleaning_policy)
 					if cleaning_policy == 'SUBSCRIPTION':
 						tendative_dates = request.POST.get('form-'+str(form_count)+'-tendative_dates').split(',')
-						
 						for date in tendative_dates:
 							start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
 							end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours)) 
-							
 							order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))	
 							
 
@@ -1399,13 +1449,13 @@ class MakeQuatationPhase2(IsAgent,View):
 						
 						start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
 						end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
-
 						order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))
 						
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
 						updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)	
-			
+					
+					form_count = form_count+1
 			#bulk_create order schedules
 			now = timezone.now()
 			OrderScheduler.objects.bulk_create(order_schedule_array)
