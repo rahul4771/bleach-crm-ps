@@ -1,4 +1,4 @@
-{% extends "page-base.html" %}
+{% extends "base.html" %}
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
@@ -37,25 +37,25 @@
                 
                     <div class="order-progress-widget order-progress-widget-column1"><!--order-progress-widget order-progress-widget-column1-->
                     	<div class="evaluation">Tickets</div>
-                    	<div class="evaluation-icon"><img src="{% static 'files/order-client-page/images/tickets-yellow.svg' %}" class="orderEval-icon"></div>
+                    	<div class="evaluation-icon"><img src="{% static 'files/images/tickets-yellow.svg' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
                     </div><!--order-progress-widget order-progress-widget-column1-->
                    
                     <div class="order-progress-widget order-progress-widget-column2"><!--order-progress-widget order-progress-widget-column2-->
                         <div class="evaluation">Investigation</div>
-                    	<div class="evaluation-icon"><img src="{% static 'files/order-client-page/images/investigation-yellow.svg' %}" class="orderEval-icon %}"></div>
+                    	<div class="evaluation-icon"><img src="{% static 'files/images/investigation-yellow.svg' %}" class="orderEval-icon %}"></div>
                         <div class="evaluation-status">Completed</div>
                     </div><!--order-progress-widget order-progress-widget-column2-->                  
                     
                     <div class="order-progress-widget order-progress-widget-column5"><!--order-progress-widget order-progress-widget-column5-->
                         <div class="evaluation">Cleaning</div>
-                    	<div class="evaluation-icon"><img src="{% static 'files/order-client-page/images/order-cleaning.svg' %}" class="orderEval-icon"></div>
+                    	<div class="evaluation-icon"><img src="{% static 'files/images/order-cleaning.svg' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
                     </div><!--order-progress-widget order-progress-widget-column5-->                      
                     
                     <div class="order-progress-widget order-progress-widget-column6"><!--order-progress-widget order-progress-widget-column6-->
                         <div class="evaluation">Closed</div>
-                    	<div class="evaluation-icon"><img src="{% static 'files/order-client-page/images/closed-gray.svg' %}" class="orderEval-icon"></div>
+                    	<div class="evaluation-icon"><img src="{% static 'files/images/closed-gray.svg' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
                     </div><!--order-progress-widget order-progress-widget-column6-->                      
  				</div><!--order-progress-wrapper-->
@@ -64,7 +64,7 @@
         <div class="order-right-fixed"><!--order-right-fixed-->
 			<div class="order-card-column whitebg red-border"><!--order-card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/order-client-page/images/card-orders-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-orders-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Orders</h1>
             	<h2 class="red-text"><label>Active<span>{{active_orders_count}}</span></label> </h2>
@@ -83,7 +83,7 @@
      	<hr class="style-three" > 
 		<div class="order-clean-Details-wrapper"><!--order-clean-Details-wrapper-->
         	<div class="order-clean-Details-widget order-clean-Details-widget-column1"><!--order-clean-Details-widget order-clean-Details-widget-column1-->
-			<div class="cleaning-img"><img src="{% static 'files/order-client-page/images/cleaning.jpg' %}"></div>
+			<div class="cleaning-img"><img src="{% static 'files/images/cleaning.jpg' %}"></div>
             </div><!--order-clean-Details-widget order-clean-Details-widget-column1-->
             
         	<div class="order-clean-Details-widget order-clean-Details-widget-column2"><!--order-clean-Details-widget order-clean-Details-widget-column2-->
@@ -193,7 +193,7 @@
             {% if followup_details.investigation.investigator.profile_image %}
 			<div class="profile-pic"><img src="{{followup_details.investigation.investigator.profile_image.url}}"></div>
             {% else %}
-            <div class="profile-pic"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>            
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>            
             {% endif %}
             <div class="client-name">{{followup_details.investigation.investigator.name}}<div class="common-gray-text">{{followup_details.investigation.investigator.user_type}}</div></div>
     	</div><!--investigation-columns-left-->
@@ -205,7 +205,7 @@
         </div><!--investigation-columns-middle-->
 
         <div class="investigation-columns-right"><!--investigation-columns-right-->
-        	<div class=" "><img src="{% static 'files/order-client-page/images/cleaning1.jpg' %}"></div>
+        	<div class=" "><img src="{% static 'files/images/cleaning1.jpg' %}"></div>
         </div><!--investigation-columns-right-->
 </div><!--investigation-columns-->
             
@@ -218,7 +218,7 @@
         <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
             <div class="order-common-date">{{follow_up_scheduler.start_at}}</div>
                     <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-                        <div class="team-profile-pic"><img src="{% static 'files/order-client-page/images/team-leader.svg' %}"></div>
+                        <div class="team-profile-pic"><img src="{% static 'files/images/team-leader.svg' %}"></div>
                     </div><!--order-clean-team-widget order-clean-team-widget-column1-->
                     
                 <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column1-->
@@ -236,7 +236,7 @@
         
         <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
             <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-            	<div class="team-profile-pic"><img src="{% static 'files/order-client-page/images/team-member.svg' %}"></div>
+            	<div class="team-profile-pic"><img src="{% static 'files/images/team-member.svg' %}"></div>
             </div><!--order-clean-team-widget order-clean-team-widget-column1-->
             
             <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
@@ -255,7 +255,7 @@
 
         <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
             <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-            	<div class="team-profile-pic"><img src="{% static 'files/order-client-page/images/driver.svg' %}"></div>
+            	<div class="team-profile-pic"><img src="{% static 'files/images/driver.svg' %}"></div>
             </div><!--order-clean-team-widget order-clean-team-widget-column1-->
             
             <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
@@ -317,7 +317,7 @@
 	</div><!--order-details-left-stretch-->
 
 	<div class="order-details-right-fixed"><!--order-details-right-fixed-->
-  		<div class="profile-pic"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
+  		<div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
     	<div class="client-name">{{client_details.name}}</div>
         <div class="common-gray-text">{{client_details.mobile_number}}</div>
         <div class="common-gray-text">{{client_details.email}}</div>

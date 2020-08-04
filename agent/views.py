@@ -1440,7 +1440,7 @@ class MakeQuatationPhase2(IsAgent,View):
 
 	def post(self,request,evaluation_detail_id):
 
-		service_formset       = self.service_formset_define(request.POST)
+		service_formset       = self.service_formset_define(request.POST)		
 		evaluation_details    = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
 		if service_formset.is_valid() : 
 

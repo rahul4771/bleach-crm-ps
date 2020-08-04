@@ -1,4 +1,4 @@
-{% extends "page-base.html" %}
+{% extends "base.html" %}
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
@@ -211,7 +211,7 @@
         <div class="cleaning--right-fixed"><!--cleaning--right-fixed-->
         	<div class="order-card-column whitebg red-border"><!--order-card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/order-client-page/images/card-orders-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-orders-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Orders</h1>
             	<h2 class="red-text"><label>Active<span>{{active_orders_count}}</span></label> </h2>
@@ -220,7 +220,7 @@
             	</div><!--card-innerwrapper-->
             </div><!--order-card-column-->
         <div class="right-bgwrapper"><!--right-bgwrapper-->    
-            <div class="profile-pic"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
             <div class="client-name">{{client_details.name}}</div>
             <div class="common-gray-text">{{client_details.mobile_number}}</div>
             <div class="common-gray-text">{{client_details.email}}</div>
