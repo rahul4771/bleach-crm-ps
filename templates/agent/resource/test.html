@@ -1,169 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
 {% load static %}
-<html>
-    <head>
-    <!-- Jquery -->
-    <script src="{% static 'files/js/jquery-3.3.1.min.js' %}"></script>
-    <script src="{% static 'files/js/jquery.formset.js' %}"></script>
-    <!-- Jquery -->
-        <style>
-            /* CSS rules are kept repetitive so that you can get CSS rules for each button easily :) */
-
-#app-cover
-{
-    display: table;
-    width: 600px;
-    margin: 80px auto;
-    counter-reset: button-counter;
-}
-
-.row
-{
-    display: table-row;
-}
-
-.toggle-button-cover
-{
-    display: table-cell;
-    position: relative;
-    width: 200px;
-    height: 140px;
-    box-sizing: border-box;
-}
-
-.button-dm
-{
-    position: relative;
-    top: 50%;
-    width: 74px;
-    height: 36px;
-    margin: -20px auto 0 auto;
-    overflow: hidden;
-}
-
-.button.b2
-{
-    border-radius: 2px;
-}
-
-.checkbox
-{
-    position: relative;
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    margin: 0;
-    opacity: 0;
-    cursor: pointer;
-    z-index: 3;
-}
-
-.knobs
-{
-    z-index: 2;
-}
-
-.layer
-{
-    width: 100%;
-    background-color: #ebf7fc;
-    transition: 0.3s ease all;
-    z-index: 1;
-}
-
-/* Button 10 */
-#button-10 .knobs:before, #button-10 .knobs:after, #button-10 .knobs span
-{
-    position: absolute;
-    top: 4px;
-    width: 20px;
-    height: 10px;
-    font-size: 10px;
-    font-weight: bold;
-    text-align: center;
-    line-height: 1;
-    padding: 9px 4px;
-    border-radius: 2px;
-    transition: 0.3s ease all;
-}
-
-#button-10 .knobs:before
-{
-    content: '';
-    left: 8px;
-    background-color: #03A9F4;
-}
-
-#button-10 .knobs:after
-{
-    content: 'MONTH';
-    right: 8px;
-    color: #4e4e4e;
-}
-
-#button-10 .knobs span
-{
-    display: inline-block;
-    left: 4px;
-    color: #fff;
-    z-index: 1;
-}
-
-#button-10 .checkbox:checked + .knobs span
-{
-    color: #4e4e4e;
-}
-
-#button-10 .checkbox:checked + .knobs:before
-{
-    left: 42px;
-    background-color: #F44336;
-}
-
-#button-10 .checkbox:checked + .knobs:after
-{
-    color: #fff;
-}
-
-#button-10 .checkbox:checked ~ .layer
-{
-    background-color: #fcebeb;
-}
-
-        </style>
-    <script type="text/javascript">
-        $('.checkbox').click(function(){
-            console.log('rom')
-            if($(this).is(':checked')){
-                $('#tx1').attr("hidden",true);
-                $('#tx2').attr("hidden",false);
-            }
-            else{
-                $('#tx1').attr("hidden",false);
-                $('#tx2').attr("hidden",true);
-            }
-        })
-    </script>
-    </head>
-    <body>
-        <div id="app-cover">
-            <div class="row">
-              <div class="toggle-button-cover">
-                <div class="button-cover">
-                  <div class="button-dm b2" id="button-10">
-                    <input type="checkbox" class="checkbox">
-                    <div class="knobs">
-                      <span>DATE</span>
-                    </div>
-                    <div class="layer"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-          </div>
-    <div class="row">
-        <a id="tx1">war</a>
-        <a id="tx2">war22</a>
-    </div>
-    </body>
-</html>
+{% block javascript %}
+    <script>
+        $(document).ready(function(){
+        $('#datepicker').val(moment().format('MM/DD/YYYY'));
+            $('#datepicker').datepicker();
+           $('.next-day').on('click', function () {
+               var date = $('#datepicker').datepicker('getDate');
+               date.setDate(date.getDate() +1)
+               $('#datepicker').datepicker('setDate', date);
+           });
+           $('.prev-day').on('click', function () {
+               var date = $('#datepicker').datepicker('getDate');
+               date.setDate(date.getDate() -1)
+               $('#datepicker').datepicker('setDate', date);
+           });
+           $('.today-date').on('click', function () {
+               var date = moment().format('MM/DD/YYYY');
+               $('#datepicker').datepicker('setDate', date);
+           });
+           });
+           </script>
+{% endblock %}
+          <button class="prev-day btn btn-outline-secondary"><i class="fa fa-angle-left" aria-hidden='true'></i></button>
+          <input type='text' id='datepicker' name='datepicker'>
+          <button class='next-day btn btn-outline-secondary' ><i class='fa fa-angle-right' aria-hidden='true'></i></button>
+          <button class='today-date btn btn-outline-secondary'>Today</button>
+{% endblock %}   
