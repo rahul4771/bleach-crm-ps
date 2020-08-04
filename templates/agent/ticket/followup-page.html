@@ -37,13 +37,13 @@
                 
                     <div class="order-progress-widget order-progress-widget-column1"><!--order-progress-widget order-progress-widget-column1-->
                     	<div class="evaluation">Tickets</div>
-                    	<div class="evaluation-icon"><img src="{% static 'files/order-client-page/images/tickets-yellow.svg' %}" class="orderEval-icon"></div>
+                    	<div class="evaluation-icon"><img src="{% static 'files/order-client-page/images/tickets-green.svg' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
                     </div><!--order-progress-widget order-progress-widget-column1-->
                    
                     <div class="order-progress-widget order-progress-widget-column2"><!--order-progress-widget order-progress-widget-column2-->
                         <div class="evaluation">Investigation</div>
-                    	<div class="evaluation-icon"><img src="{% static 'files/order-client-page/images/investigation-yellow.svg' %}" class="orderEval-icon %}"></div>
+                    	<div class="evaluation-icon"><img src="{% static 'files/order-client-page/images/investigation-green.svg' %}" class="orderEval-icon %}"></div>
                         <div class="evaluation-status">Completed</div>
                     </div><!--order-progress-widget order-progress-widget-column2-->                  
                     
@@ -55,8 +55,18 @@
                     
                     <div class="order-progress-widget order-progress-widget-column6"><!--order-progress-widget order-progress-widget-column6-->
                         <div class="evaluation">Closed</div>
-                    	<div class="evaluation-icon"><img src="{% static 'files/order-client-page/images/closed-gray.svg' %}" class="orderEval-icon"></div>
+                    	
+                        {% if followup_details.status == 'FOLLOWUP_CLOSED' %}
+                        <div class="evaluation-icon"><img src="{% static 'files/order-client-page/images/closed-green.svg' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
+                        {% elif followup_details.status == 'FOLLOWUP_CANCELLED' %}
+                        <div class="evaluation-icon"><img src="{% static 'files/order-client-page/images/closed-gray.svg' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Cancelled</div>
+                        {% else %}
+                        <div class="evaluation-icon"><img src="{% static 'files/order-client-page/images/closed-yellow.svg' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Waiting</div>
+                        {% endif %}
+
                     </div><!--order-progress-widget order-progress-widget-column6-->                      
  				</div><!--order-progress-wrapper-->
             </div><!--order-left-stretch-->

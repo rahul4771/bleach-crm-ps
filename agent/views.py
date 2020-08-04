@@ -79,6 +79,7 @@ def GetArea(request):
 
 	return JsonResponse(dropdown_areas)
 
+from django.core import serializers
 #Ajax for get feedback Order Information
 def GetFeedbackOrderInfo(request):
 
@@ -86,28 +87,72 @@ def GetFeedbackOrderInfo(request):
 
 		order_id            = request.GET.get('order_id')
 
-		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('customer_address__area','customer_address'),to_attr='order_secheduler_feedback')).get(id=order_id,is_active=True)
-		
+		order = Order.objects.select_related('evaluation__customer','evaluation__call_attender').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('customer_address__area','customer_address','order_scheduler_book__service_type'),to_attr='order_secheduler_feedback')).annotate(total_cleaners=Sum('order_scheduler_order__order_scheduler_book__number_of_cleaners')).get(id=order_id,is_active=True)		
+		dropdown_order_info['order_id']      = order.id
+
+		##order information
 		dropdown_order_info['name']          = order.evaluation.customer.name
 		dropdown_order_info['mobile_number'] = order.evaluation.customer.mobile_number
-		dropdown_order_info['order_id']      = order.id 		
-		dropdown_order_info['address']       = []
+		dropdown_order_info['total_cost']    = order.evaluation.total_cost
+		dropdown_order_info['date']          = order.evaluation.created.strftime('%b %d %Y,%I:%M %p')
+		dropdown_order_info['order_status']  = order.order_status
+		dropdown_order_info['payment_status']= order.payment_status
+		dropdown_order_info['agent_image_url']= order.evaluation.call_attender.profile_image.url
+		dropdown_order_info['total_cleaners']=order.total_cleaners
 
-		#for multiple addresses
+		#for multiple order addresses
+		dropdown_order_info['order_address']   = []
 		for scheduler in order.order_secheduler_feedback:
+			customer_order_address = []
+
+			customer_order_address.append(scheduler.customer_address.area.name) 
+			customer_order_address.append(scheduler.order_scheduler_book.service_type.name)
+			
+			dropdown_order_info['order_address'].append(customer_order_address)	
+
+		
+		##customer information
+		customer_information = {}
+		try:
+			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=order.evaluation.customer_id)
+		except:
+			client_details = None
+
+		customer_information['name']          = client_details.name
+		customer_information['email']         = client_details.email
+		customer_information['mobile']        = client_details.mobile_number
+		customer_information['other_number']  = client_details.phone_number
+		customer_information['nationality']   = client_details.nationality.code
+		customer_information['company']       = client_details.company
+		
+		#for multiple customer addresses
+		customer_information['customer_address']   = []
+		for address in client_details.customer_addresses:
 			customer_address = {}
 
-			customer_address['governorate'] 	= scheduler.customer_address.governorate.name
-			customer_address['area'] 			= scheduler.customer_address.area.name
-			customer_address['block'] 		= scheduler.customer_address.block
-			customer_address['avenue'] 		= scheduler.customer_address.avenue
-			customer_address['building'] 		= scheduler.customer_address.building
-			customer_address['street'] 		= scheduler.customer_address.street
-			customer_address['floor'] 		= scheduler.customer_address.floor
-			customer_address['apartment'] 	= scheduler.customer_address.apartment
+			customer_address['governorate'] 	= address.governorate.name
+			customer_address['area'] 			= address.area.name
+			customer_address['block'] 			= address.block
+			customer_address['avenue'] 			= address.avenue
+			customer_address['building'] 		= address.building
+			customer_address['street'] 			= address.street
+			customer_address['floor'] 			= address.floor
+			customer_address['apartment'] 		= address.apartment
 
-			dropdown_order_info['address'].append(customer_address)			
+			customer_information['customer_address'].append(customer_address)
 
+		dropdown_order_info['customer_details'] = customer_information	
+		
+		##previous order informations
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=order.evaluation.customer_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()
+		dropdown_order_info['active_orders_count'] = active_orders_count 
+		dropdown_order_info['total_orders_count']  = total_orders_count		
+
+
+		print(dropdown_order_info)	
 		return JsonResponse(dropdown_order_info)
 
 #Ajax for getticket ordershedules address Information
@@ -1487,7 +1532,7 @@ class AddFeedBack(IsAgent,View):
 		except:
 			questions = None		
 			
-		return render(request,'agent/feedback/feedback_form.html',{'orders':orders,"questions":questions})
+		return render(request,'agent/feedback/add-feedback.html',{'orders':orders,"questions":questions})
 
 	def post(self,request):
 		order_id        = request.POST.get('order_id')
