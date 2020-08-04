@@ -126,15 +126,15 @@
 
 {% for team_detail in investigation.order_schedule.cleaning_team_details %}
 {% if team_detail.team_leader.profile_image %}
-<img src="{{team_detail.team_leader.profile_image.url}}" class="profile-avtar profile-avatar">
+<img src="{{team_detail.team_leader.profile_image.url}}" class="profile-avtar">
 {% else %}
-<img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar profile-avatar">
+<img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar">
 {% endif %}
 {% endfor %}
 {% if investigation.assigned_by.profile_image %}
-<img src="{{investigation.assigned_by.profile_image.url}}" class="profile-avtar profile-avatar">
+<img src="{{investigation.assigned_by.profile_image.url}}" class="profile-avtar">
 {% else %}
-<img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar profile-avatar">
+<img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar">
 {% endif %}
 </td>
 <td class="hide-a" data-label="">
@@ -441,7 +441,7 @@
                               width_percentage = 100/24*ending_time-100/24*starting_time;
                             }
                                             
-                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaning_cleaning{{cleaning.id}}" {% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box"{% else %}class="green-box"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if cleaning.order_scheduler.evaluation_details.evaluator.profile_image %}src="{{cleaning.order_scheduler.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="profile-avatar"></div><center><a href="{% url 'tl:cleaning' cleaning.id%}">{{cleaning.order_scheduler.customer_address.area}}</a></center> <div {% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{cleaning.no_of_cleaners}}</div></div></td></tr>')
+                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaning_cleaning{{cleaning.id}}" {% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box"{% else %}class="green-box"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if cleaning.order_scheduler.evaluation_details.evaluator.profile_image %}src="{{cleaning.order_scheduler.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %}></div><center><a href="{% url 'tl:cleaning' cleaning.id%}">{{cleaning.order_scheduler.customer_address.area}}</a></center> <div {% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{cleaning.no_of_cleaners}}</div></div></td></tr>')
                         }
                         //append td to the raw 
                         else
@@ -457,7 +457,7 @@
                               width_percentage = 100/24*ending_time-100/24*starting_time;
                             } 
                           
-                            $('#cleaning_table tr:last td').append('<div id="cleaning_cleaning{{cleaning.id}}" {% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box"{% else %}class="green-box"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if cleaning.order_scheduler.evaluation_details.evaluator.profile_image %}src="{{cleaning.order_scheduler.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="profile-avatar"></div><center><a href="{% url 'tl:cleaning' cleaning.id%}">{{cleaning.order_scheduler.customer_address.area}}</a></center> <div {% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{cleaning.no_of_cleaners}}</div></div>')      
+                            $('#cleaning_table tr:last td').append('<div id="cleaning_cleaning{{cleaning.id}}" {% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box"{% else %}class="green-box"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if cleaning.order_scheduler.evaluation_details.evaluator.profile_image %}src="{{cleaning.order_scheduler.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %}></div><center><a href="{% url 'tl:cleaning' cleaning.id%}">{{cleaning.order_scheduler.customer_address.area}}</a></center> <div {% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{cleaning.no_of_cleaners}}</div></div>')      
                         }
                     }
                 }
@@ -481,7 +481,7 @@
        second_raw_width_percentage = 100/24*ending_time;
 
 
-       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaning_cleaning{{sp_cleaning.id}}" {% if sp_cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-first"{% else %}class="sp-green-box-first"{% endif %} style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_cleaning.order_scheduler.evaluation_details.evaluator.profile_image %} src="{{sp_cleaning.order_scheduler.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="profile-avatar"></div><center><a href="{% url 'tl:cleaning' cleaning.id%}">{{cleaning.order_scheduler.customer_address.area}}</a></center> </div></td></tr>')
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaning_cleaning{{sp_cleaning.id}}" {% if sp_cleaning.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-first"{% else %}class="sp-green-box-first"{% endif %} style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_cleaning.order_scheduler.evaluation_details.evaluator.profile_image %} src="{{sp_cleaning.order_scheduler.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %}></div><center><a href="{% url 'tl:cleaning' cleaning.id%}">{{cleaning.order_scheduler.customer_address.area}}</a></center> </div></td></tr>')
        
        {% endfor %}
 
@@ -549,7 +549,7 @@
                               width_percentage = 100/24*ending_time-100/24*starting_time;
                             }
                             
-                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupcleaning{{cleaning.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if cleaning.followup_scheduler.follow_up.investigation.investigator.profile_image %}src="{{cleaning.followup_scheduler.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %} class="profile-avatar"></div><center><a href="{% url 'tl:followupcleaning' cleaning.id%}">{{cleaning.followup_scheduler.customer_address.area}}</a></center> <div class="right-value yellow-text">{{cleaning.no_of_cleaners}}</div></div></td></tr>')
+                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupcleaning{{cleaning.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if cleaning.followup_scheduler.follow_up.investigation.investigator.profile_image %}src="{{cleaning.followup_scheduler.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %}></div><center><a href="{% url 'tl:followupcleaning' cleaning.id%}">{{cleaning.followup_scheduler.customer_address.area}}</a></center> <div class="right-value yellow-text">{{cleaning.no_of_cleaners}}</div></div></td></tr>')
                         }
                         //append td to the raw 
                         else
@@ -565,7 +565,7 @@
                               width_percentage = 100/24*ending_time-100/24*starting_time;
                             } 
                           
-                            $('#cleaning_table tr:last td').append('<div id="followupcleaning{{cleaning.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if cleaning.followup_scheduler.follow_up.investigation.investigator.profile_image %}src="{{cleaning.followup_scheduler.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %} class="profile-avatar"></div><center><a href="{% url 'tl:followupcleaning' cleaning.id%}">{{cleaning.followup_scheduler.customer_address.area}}</a></center> <div class="right-value yellow-text">{{cleaning.no_of_cleaners}}</div></div>')      
+                            $('#cleaning_table tr:last td').append('<div id="followupcleaning{{cleaning.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if cleaning.followup_scheduler.follow_up.investigation.investigator.profile_image %}src="{{cleaning.followup_scheduler.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %}></div><center><a href="{% url 'tl:followupcleaning' cleaning.id%}">{{cleaning.followup_scheduler.customer_address.area}}</a></center> <div class="right-value yellow-text">{{cleaning.no_of_cleaners}}</div></div>')      
                         }
                     }
                 }
@@ -589,7 +589,7 @@
        second_raw_width_percentage = 100/24*ending_time;
 
 
-       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupcleaning{{sp_cleaning.id}}" class="sp-yellow-box-first" style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_cleaning.followup_scheduler.follow_up.investigation.investigator.profile_image %}src="{{sp_cleaning.followup_scheduler.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %} class="profile-avatar"></div><center><a href="{% url 'tl:followupcleaning' sp_cleaning.id%}">{{sp_cleaning.followup_scheduler.customer_address.area}}</a></center> </div></td></tr>')
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupcleaning{{sp_cleaning.id}}" class="sp-yellow-box-first" style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_cleaning.followup_scheduler.follow_up.investigation.investigator.profile_image %}src="{{sp_cleaning.followup_scheduler.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %}></div><center><a href="{% url 'tl:followupcleaning' sp_cleaning.id%}">{{sp_cleaning.followup_scheduler.customer_address.area}}</a></center> </div></td></tr>')
        
        {% endfor %}
 
