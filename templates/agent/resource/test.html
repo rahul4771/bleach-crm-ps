@@ -4,7 +4,7 @@
 {% block javascript %}
     <script>
         $(document).ready(function(){
-        $('#datepicker').val(moment().format('MM/DD/YYYY'));
+        $('#datepicker').val(moment().format('DD/MM/YYYY'));
             $('#datepicker').datepicker();
            $('.next-day').on('click', function () {
                var date = $('#datepicker').datepicker('getDate');
@@ -17,7 +17,7 @@
                $('#datepicker').datepicker('setDate', date);
            });
            $('.today-date').on('click', function () {
-               var date = moment().format('MM/DD/YYYY');
+               var date = moment().format('DD/MM/YYYY');
                $('#datepicker').datepicker('setDate', date);
            });
            });
