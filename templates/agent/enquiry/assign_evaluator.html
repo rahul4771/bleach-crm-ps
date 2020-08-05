@@ -47,7 +47,7 @@
 <th class="theadbg" width="4.54%" scope="col">06 PM</th>
 </tr>
 </thead>
-<tbody>
+<tbody>    
 {% for evaluator in evaluation_details %}
 <tr class="clickable-row" data-href='#' id="evaluator{{evaluator.id}}">
 <th bgcolor="#eee" width="4.54%" class="fixed-side"><img {% if evaluator.profile_image %} src="{{evaluator.profile_image.url}}" {% else %} src="{% static 'files/images/profile-pic.jpg' %}" {% endif %} class="profile-avtar"></th>
@@ -168,7 +168,7 @@ $('document').ready(function(){
                               same_slote_count += 1
                               if(same_slote_count == 1)
                               {
-                                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour='+i+'><div class="name">{{evaluation.address.area.name}}</div></a></td>');
+                                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour='+i+' href="#addevaluationdetails_popup"><div class="name">{{evaluation.address.area.name}}</div></a></td>');
                               }
                               else
                               {
@@ -188,9 +188,9 @@ $('document').ready(function(){
                     }
                     else
                     {
-                      $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour='+i+'>+</a></td>');  
+                      $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour='+i+' href="#addevaluationdetails_popup">+</a></td>');  
                     }
-                    $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+                    $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#addevaluationdetails_popup">&nbsp;</a></td>');
                 }    
             {% else %}
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');    
@@ -259,8 +259,7 @@ $(".assign_evaluator_button").click(function () {
     $('.id_proposed_date').val(now_date);
     $('.id_proposed_time').val(now_time);
     $('.id_evaluator').val($(this).data('evaluator_id'));
-
-    //$('#addevaluationdetails_popup').modal('show');  
+  
       });
 });
 </script>
