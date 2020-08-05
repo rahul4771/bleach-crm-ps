@@ -2,32 +2,6 @@ from django import forms
 from evaluator.models import EvaluationDetails,Evaluation,EvaluationBook
 from user.models import UserProfile,Address
 
-
-# def FindReminingAddress(enquiry_user_id,evaluation_id):
-
-# 	assigned_addresses = EvaluationDetails.objects.filter(is_active=True,evaluation_id=evaluation_id).values_list('address')
-# 	active_addresses   = Address.objects.filter(is_active=True,customer_id=enquiry_user_id,currently_active=True).exclude(id__in=assigned_addresses)
-
-# 	return(active_addresses)
-
-#Evaluator assignment form
-# class EvaluationDetailsForm(forms.ModelForm):
-# 	proposed_time = forms.CharField(widget=forms.TextInput(attrs={'required':'required'}))
-# 	class Meta:
-# 		model  = EvaluationDetails
-# 		fields = ('evaluator','address')	
-	
-# 	def __init__(self,*args,enquiry_user_id,evaluation_id,**kwargs):
-# 		self.enquiry_user_id = kwargs.pop('enquiry_user_id', None)
-# 		self.evaluation_id   = kwargs.pop('evaluation_id',None)
-		
-# 		super(EvaluationDetailsForm, self).__init__(*args, **kwargs)
-
-# 		self.fields['evaluator'] = forms.ModelChoiceField(
-# 		    queryset=UserProfile.objects.filter(is_active=True,user_type='EVALUATOR'),required=True,widget=forms.Select(attrs={'class':'evaluator','required':'required'}))
-# 		self.fields['address'] = forms.ModelChoiceField(
-# 		    queryset=FindReminingAddress(enquiry_user_id,evaluation_id),required=True,widget=forms.Select(attrs={'class':'customer_address','required':'required'}))
-
 class EvaluationDetailsForm(forms.ModelForm):
 	proposed_time = forms.CharField(widget=forms.TextInput(attrs={'required':'required'}))
 	class Meta:
