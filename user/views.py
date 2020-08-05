@@ -62,8 +62,9 @@ def list_function(list):
     return list_data
 
 def adddata(request):
-	# startdate = pd.to_datetime('04-20-2020')
-	# daterange = pd.date_range(startdate, periods=70)
+	startdate = pd.to_datetime('06-01-2020')
+	daterange = pd.date_range(startdate, periods=40)
+	print("rt")
 
 	# print(daterange,"drg")
 	# for dt in daterange:
@@ -72,51 +73,51 @@ def adddata(request):
 
 	# usr = UserProfile.objects.get(username='bleachagent1')
 
-	# evaluations=[]
-	# saved_evaluations=[]
-	# eval_details = []
-	# eval_book = []
-	# customers = []
-	# address = []
-	# agents = []
-	# evaluators = []
-	# dated = []
-	# stype = []
-	# ltype = []
-	# cltype = []
-	# clmethod = []
+	evaluations=[]
+	saved_evaluations=[]
+	eval_details = []
+	eval_book = []
+	customers = []
+	address = []
+	agents = []
+	evaluators = []
+	dated = []
+	stype = []
+	ltype = []
+	cltype = []
+	clmethod = []
 	
-	# serv_type = ServiceType.objects.all()
-	# for ser in serv_type:
-	# 	stype.append(ser)
+	serv_type = ServiceType.objects.all()
+	for ser in serv_type:
+		stype.append(ser)
   
-	# loc_type = LocationType.objects.all()
-	# for loc in loc_type:
-	# 	ltype.append(loc)
+	loc_type = LocationType.objects.all()
+	for loc in loc_type:
+		ltype.append(loc)
   
-	# clean_type = CleaningType.objects.all()
-	# for cln in clean_type:
-	# 	cltype.append(cln)
+	clean_type = CleaningType.objects.all()
+	for cln in clean_type:
+		cltype.append(cln)
 	
-	# clean_method = CleaningMethod.objects.all()
-	# for clm in clean_method:
-	# 	clmethod.append(clm)
+	clean_method = CleaningMethod.objects.all()
+	for clm in clean_method:
+		clmethod.append(clm)
  
-	# gender = ["MALE","FEMALE"]
-	# payment = ['PREPAID','POSTPAID','BREAKDOWN']
-	# customer_types = ['INDIVIDUAL','RETAIL','CORPORATE']
-	# cleaning_choices = ['ONE_TIME_SERVICE','SUBSCRIPTION']
-	# dirtlevel_choices =['LOW','MEDIUM','HIGH']
-	# floor_choices =['CERAMIC','WOOD','CONCRETE']
-	# set_size_choices =['SMALL_SET','MEDIUM_SET','LARGE_SET']
-	# set_type_choices =['TYPE1','TYPE2','TYPE3']
-	# fabric_type_choices =['SYNTHETIC','NATURAL']
-	# sanitization_type_choices =['SANITIZATION','DISINFECTION','STERILIZATION']
-	# bed_size_choices =['SINGLE_BED','DOUBLE_BED','QUEEN_BED','KIND_BED']
-	# bed_type_choices =['TYPE1','TYPE2','TYPE3']
-	# spot_stain_choices =['SPOT','STAIN']
-	# order_status = ['APPROVED_BY_CLIENT','ORDER_IN_PROGRESS','ORDER_CANCELLED','ORDER_CLOSED']
-	# payment_status = ['PENDING','COMPLETED']
+	gender = ["MALE","FEMALE"]
+	payment = ['PREPAID','POSTPAID','BREAKDOWN']
+	customer_types = ['INDIVIDUAL','RETAIL','CORPORATE']
+	cleaning_choices = ['ONE_TIME_SERVICE','SUBSCRIPTION']
+	dirtlevel_choices =['LOW','MEDIUM','HIGH']
+	floor_choices =['CERAMIC','WOOD','CONCRETE']
+	set_size_choices =['SMALL_SET','MEDIUM_SET','LARGE_SET']
+	set_type_choices =['TYPE1','TYPE2','TYPE3']
+	fabric_type_choices =['SYNTHETIC','NATURAL']
+	sanitization_type_choices =['SANITIZATION','DISINFECTION','STERILIZATION']
+	bed_size_choices =['SINGLE_BED','DOUBLE_BED','QUEEN_BED','KIND_BED']
+	bed_type_choices =['TYPE1','TYPE2','TYPE3']
+	spot_stain_choices =['SPOT','STAIN']
+	order_status = ['APPROVED_BY_CLIENT','ORDER_IN_PROGRESS','ORDER_CANCELLED','ORDER_CLOSED']
+	payment_status = ['PENDING','COMPLETED']
 
 	# for i in range(1,8):
 	# 	random_gender = list_function(gender)
@@ -178,18 +179,18 @@ def adddata(request):
 	# 	mobile_number = random.randint(6111111111,9999999999)
 	# 	))
 
-	# tracking_no=0
-	# governorates = []
-	# areas = []
-	# orders = []
-	# gar = {}
+	tracking_no=0
+	governorates = []
+	areas = []
+	orders = []
+	gar = {}
  
-	# gov = Governorate.objects.all()
-	# for g in gov:
-	# 	gov_areas = Area.objects.filter(governorate=g)
-	# 	governorates.append(g)
-	# 	gar[g] = gov_areas
-	# 	areas.append(gar)
+	gov = Governorate.objects.all()
+	for g in gov:
+		gov_areas = Area.objects.filter(governorate=g)
+		governorates.append(g)
+		gar[g] = gov_areas
+		areas.append(gar)
 
 	# for i in range(1,200):
 	# 	random_gender = list_function(gender)
@@ -225,7 +226,7 @@ def adddata(request):
  
 	# tracking_no = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000
 	# for date in  daterange:
-	# 	for i in range(random.randint(1,4),random.randint(7,10)):
+	# 	for i in range(random.randint(1,3),random.randint(6,8)):
 	# 		print(i,"eye")
 	# 		customer = UserProfile.objects.filter(user_type="CUSTOMER",is_active=True)
 	# 		agent = UserProfile.objects.filter(user_type="AGENT",is_active=True)
@@ -259,9 +260,8 @@ def adddata(request):
 	# 		evaluations.append(Evaluation(
 	# 				tracking_no=tracking_no,evaluation_id=evaluation_id,call_attender=call_attender,
 	# 				customer=customer,estimated_cost=estimated_cost,discount=discount,total_cost=total_cost,
-	# 				preffered_gender=preffered_gender,quatation_status=quatation_status,
-	# 				quatation_approved_date=quatation_approved_date,payment_method=payment_method,is_active=is_active,
-	# 				before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount))
+	# 				quatation_status=quatation_status,quatation_approved_date=quatation_approved_date,payment_method=payment_method,
+    #  				is_active=is_active,before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount))
 	# 	# print(evaluations)
 	# 	Evaluation.objects.bulk_create(evaluations)
 		
@@ -373,12 +373,12 @@ def adddata(request):
 	# 	))
 	# FollowUp.objects.bulk_create(followups)
  
-	# questions = []
-	# for i in range(1,10):
-	# 	questions.append(Question(
-	# 		question = ''.join(random.sample(string.ascii_lowercase, k=20)), is_active = True
-	# 	))
-	# Question.objects.bulk_create(questions)
+	# # questions = []
+	# # for i in range(1,10):
+	# # 	questions.append(Question(
+	# # 		question = ''.join(random.sample(string.ascii_lowercase, k=20)), is_active = True
+	# # 	))
+	# # Question.objects.bulk_create(questions)
 	
 	# qstns = []
 	# qsts = Question.objects.all()
@@ -411,21 +411,26 @@ def adddata(request):
 	# 	))
 	# CleaningTeam.objects.bulk_create(cleanteam)
 	
-	cleaningteams = CleaningTeam.objects.filter(is_active=True)
-	cleanerslist = []
-	cleanteammembers = []
-	cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER')
-	for cleaner in cleaners:
-		cleanerslist.append(cleaner)
-	# start_at=str(random.randint(8,11))+":00:00"
-	# print(start_at,"lp")
-	for cl in cleaningteams:
-		cln_date = datetime.strftime(cl.order_scheduler.order.evaluation.quatation_approved_date,"%Y-%m-%d")
-		for i in range(1,3):
-			cleanteammembers.append(CleaningTeamMember(
-				team = cl, member=list_function(cleanerslist),start_at= timezone.now().replace(hour=random.randint(10,12),minute=0,second=0,microsecond=0,tzinfo=None),
-				end_at=timezone.now().replace(hour=random.randint(13,18),minute=0,second=0,microsecond=0,tzinfo=None)
+	# cleaningteams = CleaningTeam.objects.filter(is_active=True)
+	# cleanerslist = []
+	# cleanteammembers = []
+	# cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER')
+	# for cleaner in cleaners:
+	# 	cleanerslist.append(cleaner)
+	# # start_at=str(random.randint(8,11))+":00:00"
+	# # print(start_at,"lp")
+	# for cl in cleaningteams:
+	# 	cln_date = cl.order_scheduler.order.evaluation.quatation_approved_date + timedelta(days=7)
+
+	# 	for i in range(1,3):
+	# 		cleanteammembers.append(CleaningTeamMember(
+	# 			team = cl, member=list_function(cleanerslist),start_at= timezone.now().replace(year=cln_date.year,month=cln_date.month,day=cln_date.day, hour=random.randint(10,12),minute=0,second=0,microsecond=0,tzinfo=None),
+	# 			end_at=timezone.now().replace(year=cln_date.year,month=cln_date.month,day=cln_date.day,hour=random.randint(13,18),minute=0,second=0,microsecond=0,tzinfo=None)
     
-			))
-	CleaningTeamMember.objects.bulk_create(cleanteammembers)
+	# 		))
+	# CleaningTeamMember.objects.bulk_create(cleanteammembers)
+	
 	return render(request,"createdata.html")
+
+def testcalendar(request):
+    return render(request,"agent/resource/test.html")

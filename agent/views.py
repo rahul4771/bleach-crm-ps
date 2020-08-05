@@ -79,6 +79,7 @@ def GetArea(request):
 
 	return JsonResponse(dropdown_areas)
 
+from django.core import serializers
 #Ajax for get feedback Order Information
 def GetFeedbackOrderInfo(request):
 
@@ -86,28 +87,72 @@ def GetFeedbackOrderInfo(request):
 
 		order_id            = request.GET.get('order_id')
 
-		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('customer_address__area','customer_address'),to_attr='order_secheduler_feedback')).get(id=order_id,is_active=True)
-		
+		order = Order.objects.select_related('evaluation__customer','evaluation__call_attender').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('customer_address__area','customer_address','order_scheduler_book__service_type'),to_attr='order_secheduler_feedback')).annotate(total_cleaners=Sum('order_scheduler_order__order_scheduler_book__number_of_cleaners')).get(id=order_id,is_active=True)		
+		dropdown_order_info['order_id']      = order.id
+
+		##order information
 		dropdown_order_info['name']          = order.evaluation.customer.name
 		dropdown_order_info['mobile_number'] = order.evaluation.customer.mobile_number
-		dropdown_order_info['order_id']      = order.id 		
-		dropdown_order_info['address']       = []
+		dropdown_order_info['total_cost']    = order.evaluation.total_cost
+		dropdown_order_info['date']          = order.evaluation.created.strftime('%b %d %Y,%I:%M %p')
+		dropdown_order_info['order_status']  = order.order_status
+		dropdown_order_info['payment_status']= order.payment_status
+		dropdown_order_info['agent_image_url']= order.evaluation.call_attender.profile_image.url
+		dropdown_order_info['total_cleaners']=order.total_cleaners
 
-		#for multiple addresses
+		#for multiple order addresses
+		dropdown_order_info['order_address']   = []
 		for scheduler in order.order_secheduler_feedback:
+			customer_order_address = []
+
+			customer_order_address.append(scheduler.customer_address.area.name) 
+			customer_order_address.append(scheduler.order_scheduler_book.service_type.name)
+			
+			dropdown_order_info['order_address'].append(customer_order_address)	
+
+		
+		##customer information
+		customer_information = {}
+		try:
+			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=order.evaluation.customer_id)
+		except:
+			client_details = None
+
+		customer_information['name']          = client_details.name
+		customer_information['email']         = client_details.email
+		customer_information['mobile']        = client_details.mobile_number
+		customer_information['other_number']  = client_details.phone_number
+		customer_information['nationality']   = client_details.nationality.code
+		customer_information['company']       = client_details.company
+		
+		#for multiple customer addresses
+		customer_information['customer_address']   = []
+		for address in client_details.customer_addresses:
 			customer_address = {}
 
-			customer_address['governorate'] 	= scheduler.customer_address.governorate.name
-			customer_address['area'] 			= scheduler.customer_address.area.name
-			customer_address['block'] 		= scheduler.customer_address.block
-			customer_address['avenue'] 		= scheduler.customer_address.avenue
-			customer_address['building'] 		= scheduler.customer_address.building
-			customer_address['street'] 		= scheduler.customer_address.street
-			customer_address['floor'] 		= scheduler.customer_address.floor
-			customer_address['apartment'] 	= scheduler.customer_address.apartment
+			customer_address['governorate'] 	= address.governorate.name
+			customer_address['area'] 			= address.area.name
+			customer_address['block'] 			= address.block
+			customer_address['avenue'] 			= address.avenue
+			customer_address['building'] 		= address.building
+			customer_address['street'] 			= address.street
+			customer_address['floor'] 			= address.floor
+			customer_address['apartment'] 		= address.apartment
 
-			dropdown_order_info['address'].append(customer_address)			
+			customer_information['customer_address'].append(customer_address)
 
+		dropdown_order_info['customer_details'] = customer_information	
+		
+		##previous order informations
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=order.evaluation.customer_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()
+		dropdown_order_info['active_orders_count'] = active_orders_count 
+		dropdown_order_info['total_orders_count']  = total_orders_count		
+
+
+		print(dropdown_order_info)	
 		return JsonResponse(dropdown_order_info)
 
 #Ajax for getticket ordershedules address Information
@@ -367,7 +412,7 @@ class ResourceManagement(IsAgent,View):
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		count_today_end   = count_today_start+timedelta(1)
-
+		print(count_today_end,count_today_start,"lpo")
 
 		#total workers count
 		try:
@@ -378,6 +423,7 @@ class ResourceManagement(IsAgent,View):
 		#total active workers
 		try:
 			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=count_today_start)&Q(end_at__gte=count_today_start)) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=timezone.now().replace(tzinfo=None))&Q(end_at__gte=timezone.now().replace(tzinfo=None)))) ).values_list('member',flat=True)).distinct().count()
+			print(total_active_workers,"taw")
 		except:
 			total_active_workers = 0	
 	
@@ -449,7 +495,7 @@ class ResourceManagement(IsAgent,View):
 
 		#Filter
 		try:
-			fil_staff = int(request.GET.get('staff'))
+			fil_staff = request.GET.get('staff')
 		except:
 			fil_staff = ''
 
@@ -472,14 +518,14 @@ class ResourceManagement(IsAgent,View):
 		#filters 	
 		filters=[] 
 		if fil_staff: 
-		    case1 = Q(id=fil_staff)
+		    case1 = Q(user_type=fil_staff)
 		    filters.append(case1)
 	
 		if fil_staff: 
 		    filters         = functools.reduce(operator.and_,filters)
-		    workers_details = workers_details.filter(filters)	
+		    workers_details = workers_details.filter(filters)
 			
-		return render(request,'agent/resource/resource_management.html',{"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"staffs":staffs,"fil_staff":fil_staff,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,})		
+		return render(request,'agent/resource/resource_management.html',{"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"staffs":staffs,"fil_staff":fil_staff,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,"staff_type":fil_staff})		
 
 
 class OrderDetails(IsAgent,View):
@@ -1287,7 +1333,12 @@ class AssignEvaluator(IsAgent,View):
 		except:
 			evaluation_details 		  = None
 
-		return render(request,'agent/enquiry/assign_evaluator.html',{'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'enquiryid':enquiry_id,'evaluation_id':evaluation_id,'evaluation_form':evaluation_form,})
+		assigned_addresses = EvaluationDetails.objects.filter(is_active=True,evaluation_id=evaluation_id).values_list('address')
+		active_addresses   = Address.objects.filter(is_active=True,customer_id=enquiry_id,currently_active=True).exclude(id__in=assigned_addresses)
+		
+		evaluators 		   = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
+
+		return render(request,'agent/enquiry/assign_evaluator.html',{'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'enquiryid':enquiry_id,'evaluation_id':evaluation_id,'evaluation_form':evaluation_form,"active_addresses":active_addresses,"evaluators":evaluators,})
 
 	def post(self,request,enquiry_id,evaluation_id):
 		evaluation_form  = EvaluationDetailsForm(enquiry_user_id=enquiry_id,evaluation_id=evaluation_id,data=request.POST)
@@ -1305,8 +1356,9 @@ class AssignEvaluator(IsAgent,View):
 			if evaluation_form.is_valid():
 				evaluation_form_save              = evaluation_form.save(commit=False)
 				
-				proposed_time                     = evaluation_form.cleaned_data['proposed_time']
-				converted_proposed_time           = datetime.strptime(proposed_time,'%d/%m/%Y %I:%M %p')
+				proposed_date                     = request.POST.get('proposed_date')
+				proposed_time                     = request.POST.get('proposed_time')
+				converted_proposed_time           = datetime.strptime(proposed_date+" "+proposed_time,'%d/%m/%Y %I:%M %p')
 				
 				evaluation_form_save.proposed_time   = converted_proposed_time
 				evaluation_form_save.evaluation_id   = evaluation_id
@@ -1394,7 +1446,7 @@ class MakeQuatationPhase2(IsAgent,View):
 
 	def post(self,request,evaluation_detail_id):
 
-		service_formset       = self.service_formset_define(request.POST)
+		service_formset       = self.service_formset_define(request.POST)		
 		evaluation_details    = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
 		if service_formset.is_valid() : 
 
@@ -1486,7 +1538,7 @@ class AddFeedBack(IsAgent,View):
 		except:
 			questions = None		
 			
-		return render(request,'agent/feedback/feedback_form.html',{'orders':orders,"questions":questions})
+		return render(request,'agent/feedback/add-feedback.html',{'orders':orders,"questions":questions})
 
 	def post(self,request):
 		order_id        = request.POST.get('order_id')
@@ -1700,11 +1752,19 @@ def ResourcesToggle(request):
     month_year = request.GET.get('month_year',None)
     month,year = month_year.split()
     
+    staff_type = request.GET.get('staff_type',None)
+    print(staff_type)
     monthnumber = datetime.strptime(month,"%B").month
     print(monthnumber,"mon")
+    search = request.GET.get('search',None)
     
     try:
-     	workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
+        if staff_type:
+            workers =  UserProfile.objects.filter(is_active=True).filter(user_type=staff_type)
+        elif search:
+            workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))&Q(name__icontains=search))
+        else:
+            workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
     except:
         workers =  None
     print(workers,"lp")
@@ -1715,4 +1775,14 @@ def ResourcesToggle(request):
     print(workers_details,"wok")   
     data['html_workers_list'] = render_to_string('agent/resource/resource-month.html', {'workers_details_month':workers_details})
     return JsonResponse(data)
+
+def ResourcesFilter(request):
+    staff_type = request.GET.get('')
+    try:
+     	workers =  UserProfile.objects.filter(is_active=True).filter(user_type=staff_type)
+    except:
+        workers =  None
+	
+	
+    return JsonResponse()
 

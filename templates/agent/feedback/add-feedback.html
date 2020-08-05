@@ -1,0 +1,333 @@
+{% extends "page-base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "agent/common/header.html" %}
+    
+<section class="content"><!--content-->
+<div class="container-fluid space topspace"><!--container-fluid space topspace-->
+    <div class="welcome-wrapper"><!--welcome-wrapper-->
+        <h1 class="dashboard-head">Add Feedback</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>
+    </div><!--welcome-wrapper-->
+            
+        
+<div class="order-top-wrapper"><!--order-top-wrapper-->
+	<div class="cleaning-Order-wrapper"><!--cleaning-Order-wrapper-->
+    
+    	<div class="cleaning--left-stretch"><!--cleaning--left-stretch-->
+        <div class="center-formDiv"><!--center-formDiv-->
+        	<form>
+            <div class="order-Number bold-text"> <label>Order Number</label></div>
+                <label for="favcity">
+                <select id="favcity" name="select">
+                <option value="">Choose your Order Number</option>
+                {% for order in orders %}
+                <option value="{{order.id}}">{{order.evaluation}}</option> {% endfor %}
+                </select>
+                </label>
+            </form>
+            <hr class="div">
+           
+             <div class="common-sub-head align-left order-details-head">Customer Details</div> 
+ 			 
+                  <div class="cleaning-column-wrapper ltyellow-border order-details"><!--cleaning-column-wrapper-->
+					<div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
+                	<div class="inside-head align-left order_customer_name"></div>
+                    <p class="paragraph order_customer_mobile"></p>
+                    <div class="order_payment_status">
+                    </div>
+                    <div class="order_addresses">
+                    </div>
+            	</div><!--cleaning-column-widget cleaning-column-widget-column1-->
+                
+                <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
+                    <div class="common-gray-text align-left order_date"></div>
+                    <div class="common-gray-text align-left yellow-text lg-text order_cost"></div>
+                	<div class="common-gray-text align-left sm-text gray-text order_total_cleaners"></div>
+                    
+                     <div class="profile-pic-line"><img class="agent_image" src="{% static 'files/images/profile-pic.png' %}"></div>
+            	</div><!--cleaning-column-widget cleaning-column-widget-column2-->
+            </div><!--cleaning-column-wrapper-->
+            
+            <br><br>
+
+<div class="common-sub-head align-left feedback-form-head">Feedback Form</div> 
+<form method="post" action="">
+    {%csrf_token%}
+<input type="hidden" name="order_id" id="order_id_hidden">    
+<div class="investigation-columns  ltyellow-border feedback-form"><!--investigation-columns-->
+
+        <div class="feedback-columns-middle"><!--feedback-columns-middle-->
+        <div class="right-date-fix order_date"></div>
+               
+        <div class="feedback-list"><!--feedback-list-->
+        <ul>
+        {% for question in questions %}
+            
+        <li>{{question.question}}  ?</li>
+                <section class='rating-widget'><!--rating-widget-->
+                    <div class='rating-stars text-center'>
+                        <ul id='stars'>
+                            <li class='star' title='Poor' data-value='1'> <i class='fa fa-star fa-fw'></i> </li>
+                            <li class='star' title='Fair' data-value='2'> <i class='fa fa-star fa-fw'></i> </li>
+                            <li class='star' title='Good' data-value='3'> <i class='fa fa-star fa-fw'></i> </li>
+                            <li class='star' title='Excellent' data-value='4'> <i class='fa fa-star fa-fw'></i> </li>
+                            <li class='star' title='WOW!!!' data-value='5'><i class='fa fa-star fa-fw'></i></li>
+                            <input type="hidden" name="rating{{question.id}}" value="0">
+                        </ul>
+                    </div>
+                    <div class='success-box'>
+                        <div class='clearfix'></div>
+                        <div class='text-message'></div>
+                    </div>
+                </section><!--rating-widget-->
+                <hr class="hr-dashed">
+        {% endfor %}        
+        </ul>
+        </div><!--feedback-list-->
+        
+            <div class="details-notes align-left">Notes</div>
+                 <textarea name="notes" cols="" rows="4" class="textArea"></textarea>
+        </div><!--feedback-columns-middle-->
+
+</div><!--investigation-columns-->
+ <div class="feedback-form-button" align="center"><input class="assignButton" name="submit" type="submit" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div> </form>    	
+<br> <br>
+        
+            
+        </div><!--center-formDiv-->
+		</div><!--cleaning--left-stretch-->  
+        
+        <div class="cleaning--right-fixed"><!--cleaning--right-fixed-->
+        	<div class="order-card-column whitebg red-border"><!--order-card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-orders-icon.svg' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Orders</h1>
+            	<h2 class="red-text"><label>Active<span class="active_orders_count"></span></label> </h2>
+            	<p><label>Total<span class="total_orders_count"></span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--order-card-column-->
+        <div class="right-bgwrapper"><!--right-bgwrapper-->    
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+            <div class="client-name"></div>
+            <div class="common-gray-text client-mobile"></div>
+            <div class="common-gray-text client-email"></div>
+            <br>
+            <hr class="hr">
+            <div class="common-gray-text">Comapany Name : <span class="bold-text client-company"></span></div>
+            <div class="common-gray-text">Nationality : <span class="bold-text client-nationality"></span></div>
+            <div class="common-gray-text">Other Contact : <span class="bold-text client-other_contact"></span></div>
+            <hr class="hr"> 
+            <div class="customer_addresses">
+            </div>    
+        </div><!--right-bgwrapper-->     
+        </div><!--cleaning--right-fixed-->  
+	</div><!--cleaning-Order-wrapper-->
+</div><!--order-top-wrapper-->  
+            
+            
+            
+            
+                 
+</div><!--container-fluid space topspace-->
+</section><!--content-->
+    
+    
+{% include 'agent/common/footer.html' %} 
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script id="rendered-js">
+$('.footable').footable({
+  calculateWidthOverride: function () {
+    return { width: $(window).width() };
+  } });
+
+
+// See:
+// http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
+//# sourceURL=pen.js
+    </script>
+<script>
+
+    $('.order-details-head').hide();
+    $('.order-details').hide();
+    $('.feedback-form-head').hide();
+    $('.feedback-form').hide();
+    $('.feedback-form-button').hide();
+    $('.right-bgwrapper').hide();    
+    $('.order-card-column').hide();
+
+    $('#favcity').change(function()
+    {
+        order_id=this.value;
+        
+        $.ajax({
+
+        url: "{% url 'agent:get-feedbackorderinfo' %}",
+
+        data: {'order_id':order_id}, 
+
+        dataType: 'json',
+
+        success: function (data) {
+
+            ajax_ret_orders = data;
+            $("#order_id_hidden").val(data['order_id']);
+
+            //to add order info
+            $('.order_customer_name').html(data['name'])
+            $('.order_customer_mobile').html(data['mobile_number']);
+            $('.order_cost').html(+data['total_cost']+' KD');
+            $('.order_total_cleaners').html(+data['total_cleaners']+' Cleaners');
+            $('.order_date').html(data['date']);
+            $('.agent_image').prop('src',data['agent_image_url']);
+
+            order_status   = data['order_status']
+            payment_status = data['payment_status']
+
+            $('.order_payment_status').empty();
+            if(payment_status == 'COMPLETED')
+            {
+                $('.order_payment_status').append('<div class="green-bg-lg payment_status">Paid</div>');
+            }
+            else if(payment_status == 'PENDING')
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg payment_status">Pending</div>');
+            }
+            else if(payment_status == 'ON_HOLD')
+            {
+                $('.order_payment_status').append('<div class="red-bg-lg payment_status">On Hold</div>');
+            }
+            else
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg payment_atatus">Waiting</div>');
+            }    
+
+
+            if(order_status == 'APPROVED_BY_CLIENT')
+            {
+                $('.order_payment_status').append('<div class="blue-bg-lg">Approved</div>');
+            }
+            else if(order_status == 'ORDER_IN_PROGRESS')
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg">On-going</div>');
+            }
+            else if(order_status == 'ORDER_CANCELLED')
+            {
+                $('.order_payment_status').append('<div class="red-bg-lg">Cancelled</div>');   
+            }
+            else if(order_status == 'ORDER_CLOSED')
+            {
+                $('.order_payment_status').append('<div class="green-bg-lg">Closed</div>');
+            }
+            else
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg">Waiting</div>');
+            }    
+
+
+            addresses = data['order_address'];
+            
+            $(".order_addresses").empty();
+            for(i=0;i<addresses.length;++i)
+            {
+                $(".order_addresses").append('<div class="area-bold">'+addresses[i][0]+'</div><div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> '+addresses[i][1]+'</div>');
+                console.log('hiiiiii');
+            }
+
+            //to add customer details
+            $('.client-name').html(data['customer_details'].name);
+            $('.client-company').html(data['customer_details'].company);
+            $('.client-email').html(data['customer_details'].email);
+            $('.client-mobile').html(data['customer_details'].mobile);
+            $('.client-nationality').html(data['customer_details'].nationality);
+            $('.client-other_number').html(data['customer_details'].other_contact);
+            
+            $('.right-bgwrapper .customer_addresses').empty();
+            customer_addresses = data['customer_details'].customer_address
+            for(i=0;i<customer_addresses.length;++i)
+            {
+                $('.right-bgwrapper .customer_addresses').append('<br><div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address '+(i+1)+': '+customer_addresses[i].street+'</div><div class="address">'+customer_addresses[i].building+', '+customer_addresses[i].street+', '+customer_addresses[i].area+', '+customer_addresses[i].governorate+'</div> ');
+            }
+
+            //to add previous orders
+            $('.active_orders_count').html(data['active_orders_count']);
+            $('.total_orders_count').html(data['total_orders_count']);
+
+            //to show
+            $('.order-details-head').show();
+            $('.order-details').show();
+            $('.feedback-form-head').show();
+            $('.feedback-form').show();
+            $('.feedback-form-button').show();
+            $('.right-bgwrapper').show();
+            $('.order-card-column').show();
+        }
+
+    });
+    });
+</script>    
+
+<script id="rendered-js">
+$(document).ready(function () {
+
+  /* 1. Visualizing things on Hover - See next part for action on click */
+  $('#stars li').on('mouseover', function () {
+    var onStar = parseInt($(this).data('value'), 10); // The star currently mouse on
+
+    // Now highlight all the stars that's not after the current hovered star
+    $(this).parent().children('li.star').each(function (e) {
+      if (e < onStar) {
+        $(this).addClass('hover');
+      } else
+      {
+        $(this).removeClass('hover');
+      }
+    });
+
+  }).on('mouseout', function () {
+    $(this).parent().children('li.star').each(function (e) {
+      $(this).removeClass('hover');
+    });
+  });
+
+
+  /* 2. Action to perform on click */
+  $('#stars li').on('click', function () {
+    var onStar = parseInt($(this).data('value'), 10); // The star currently selected
+    var stars = $(this).parent().children('li.star');
+
+    for (i = 0; i < stars.length; i++) {if (window.CP.shouldStopExecution(0)) break;
+      $(stars[i]).removeClass('selected');
+    }window.CP.exitedLoop(0);
+
+    for (i = 0; i < onStar; i++) {if (window.CP.shouldStopExecution(1)) break;
+      $(stars[i]).addClass('selected');
+    }
+
+    // JUST RESPONSE (Not needed)
+    window.CP.exitedLoop(1);var ratingValue = parseInt($('#stars li.selected').last().data('value'), 10);
+    var msg = "";
+    if (ratingValue > 1) {
+      msg = "Thanks! You rated this " + ratingValue + " stars.";
+    } else
+    {
+      msg = "We will improve ourselves. You rated this " + ratingValue + " stars.";
+    }
+    //responseMessage(msg);
+    $(this).parent().children('input').val(ratingValue);
+
+    $(this).parent().parent().parent().children('div.success-box').fadeIn(200);
+    $(this).parent().parent().parent().children('div.success-box').children('div.text-message').html("<span>" + msg + "</span>");
+  });
+
+
+});
+
+    </script>
+{% endblock %}

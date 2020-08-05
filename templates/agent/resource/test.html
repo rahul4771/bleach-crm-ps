@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% block javascript %}
+    <script>
+        $(document).ready(function(){
+        $('#datepicker').val(moment().format('MM/DD/YYYY'));
+            $('#datepicker').datepicker();
+           $('.next-day').on('click', function () {
+               var date = $('#datepicker').datepicker('getDate');
+               date.setDate(date.getDate() +1)
+               $('#datepicker').datepicker('setDate', date);
+           });
+           $('.prev-day').on('click', function () {
+               var date = $('#datepicker').datepicker('getDate');
+               date.setDate(date.getDate() -1)
+               $('#datepicker').datepicker('setDate', date);
+           });
+           $('.today-date').on('click', function () {
+               var date = moment().format('MM/DD/YYYY');
+               $('#datepicker').datepicker('setDate', date);
+           });
+           });
+           </script>
+{% endblock %}
+          <button class="prev-day btn btn-outline-secondary"><i class="fa fa-angle-left" aria-hidden='true'></i></button>
+          <input type='text' id='datepicker' name='datepicker'>
+          <button class='next-day btn btn-outline-secondary' ><i class='fa fa-angle-right' aria-hidden='true'></i></button>
+          <button class='today-date btn btn-outline-secondary'>Today</button>
+{% endblock %}   
