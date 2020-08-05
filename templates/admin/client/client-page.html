@@ -18,7 +18,7 @@
             {% for order in orders %}
             <div class="cleaning-column-wrapper"><!--cleaning-column-wrapper-->
                 <div class="cleaning-column-widget cleaning-column-widget-column"><!--cleaning-column-widget cleaning-column-widget-column-->
-                    <div class="cleaning-img"><img src="{% static 'files/order-client-page/images/cleaning2.jpg' %}"></div>
+                    <div class="cleaning-img"><img src="{% static 'files/images/cleaning2.jpg' %}"></div>
                 </div><!--cleaning-column-widget cleaning-column-widget-column-->
 
                 <div class="cleaning-column-widget cleaning-column-widget-column1"><!--
@@ -66,7 +66,7 @@
                     {% if order.evaluation.call_attender.profile_image %}
                     <div class="profile-pic-line"><img src="{{order.evaluation.call_attender.profile_image.url}}"></div>
                     {% else %}
-                    <div class="profile-pic-line"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
+                    <div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div>
                     {% endif %}
                 </div><!--cleaning-column-widget cleaning-column-widget-column2-->
             </div><!--cleaning-column-wrapper-->
@@ -77,7 +77,7 @@
         {% comment %}
             <div class="cleaning-column-wrapper"><!--cleaning-column-wrapper-->
                 <div class="cleaning-column-widget cleaning-column-widget-column"><!--cleaning-column-widget cleaning-column-widget-column-->
-                    <div class="cleaning-img"><img src="{% static 'files/order-client-page/images/cleaning3.jpg' %}"></div>
+                    <div class="cleaning-img"><img src="{% static 'files/images/cleaning3.jpg' %}"></div>
                 </div><!--cleaning-column-widget cleaning-column-widget-column-->
                 
                 <div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column11-->
@@ -92,7 +92,7 @@
                     <div class="common-gray-text align-left yellow-text lg-text">150 KD</div>
                     <div class="common-gray-text align-left sm-text gray-text">2 Cleaners</div>
                     
-                    <div class="profile-pic-line"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div><div class="profile-pic-line"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div><div class="profile-pic-line"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
+                    <div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div><div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div><div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div>
                 </div><!--cleaning-column-widget cleaning-column-widget-column2-->
             </div><!--cleaning-column-wrapper-->        
         
@@ -100,7 +100,7 @@
         
             <div class="cleaning-column-wrapper"><!--cleaning-column-wrapper-->
                 <div class="cleaning-column-widget cleaning-column-widget-column"><!--cleaning-column-widget cleaning-column-widget-column-->
-                    <div class="cleaning-img"><img src="{% static 'files/order-client-page/images/cleaning4.jpg' %}"></div>
+                    <div class="cleaning-img"><img src="{% static 'files/images/cleaning4.jpg' %}"></div>
                 </div><!--cleaning-column-widget cleaning-column-widget-column-->
                 
                 <div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
@@ -115,7 +115,7 @@
                     <div class="common-gray-text align-left yellow-text lg-text">150 KD</div>
                     <div class="common-gray-text align-left sm-text gray-text">2 Cleaners</div>
                     
-                    <div class="profile-pic-line"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div><div class="profile-pic-line"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div><div class="profile-pic-line"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
+                    <div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div><div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div><div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div>
                 </div><!--cleaning-column-widget cleaning-column-widget-column2-->
             </div><!--cleaning-column-wrapper--> 
         
@@ -143,7 +143,7 @@
         <div class="cleaning--right-fixed"><!--cleaning--right-fixed-->
             <div class="order-card-column whitebg red-border"><!--order-card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/order-client-page/images/card-orders-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-orders-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Orders</h1>
                 <h2 class="red-text"><label>Active<span>{{active_orders_count|default_if_none:'0'}}</span></label> </h2>
@@ -152,7 +152,7 @@
                 </div><!--card-innerwrapper-->
             </div><!--order-card-column-->
         <div class="right-bgwrapper"><!--right-bgwrapper-->    
-            <div class="profile-pic"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
             <div class="client-name">{{client_details.name}}</div>
             <div class="common-gray-text">{{client_details.mobile_number}}</div>
             <div class="common-gray-text">{{client_details.email}}</div>

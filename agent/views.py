@@ -1333,7 +1333,12 @@ class AssignEvaluator(IsAgent,View):
 		except:
 			evaluation_details 		  = None
 
-		return render(request,'agent/enquiry/assign_evaluator.html',{'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'enquiryid':enquiry_id,'evaluation_id':evaluation_id,'evaluation_form':evaluation_form,})
+		assigned_addresses = EvaluationDetails.objects.filter(is_active=True,evaluation_id=evaluation_id).values_list('address')
+		active_addresses   = Address.objects.filter(is_active=True,customer_id=enquiry_id,currently_active=True).exclude(id__in=assigned_addresses)
+		
+		evaluators 		   = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
+
+		return render(request,'agent/enquiry/assign_evaluator.html',{'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'enquiryid':enquiry_id,'evaluation_id':evaluation_id,'evaluation_form':evaluation_form,"active_addresses":active_addresses,"evaluators":evaluators,})
 
 	def post(self,request,enquiry_id,evaluation_id):
 		evaluation_form  = EvaluationDetailsForm(enquiry_user_id=enquiry_id,evaluation_id=evaluation_id,data=request.POST)
@@ -1351,8 +1356,9 @@ class AssignEvaluator(IsAgent,View):
 			if evaluation_form.is_valid():
 				evaluation_form_save              = evaluation_form.save(commit=False)
 				
-				proposed_time                     = evaluation_form.cleaned_data['proposed_time']
-				converted_proposed_time           = datetime.strptime(proposed_time,'%d/%m/%Y %I:%M %p')
+				proposed_date                     = request.POST.get('proposed_date')
+				proposed_time                     = request.POST.get('proposed_time')
+				converted_proposed_time           = datetime.strptime(proposed_date+" "+proposed_time,'%d/%m/%Y %I:%M %p')
 				
 				evaluation_form_save.proposed_time   = converted_proposed_time
 				evaluation_form_save.evaluation_id   = evaluation_id
@@ -1440,7 +1446,7 @@ class MakeQuatationPhase2(IsAgent,View):
 
 	def post(self,request,evaluation_detail_id):
 
-		service_formset       = self.service_formset_define(request.POST)
+		service_formset       = self.service_formset_define(request.POST)		
 		evaluation_details    = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
 		if service_formset.is_valid() : 
 
