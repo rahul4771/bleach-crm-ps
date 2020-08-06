@@ -1247,6 +1247,12 @@ class ExistingEnquiry(IsAgent,View):
 	
 	def get(self,request,enquiry_id):
 		
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
+
 		enquiry_user    = UserProfile.objects.get(id=enquiry_id) 
 
 
@@ -1259,7 +1265,12 @@ class ExistingEnquiry(IsAgent,View):
 		enquiry_form    = UserProfileForm(request.FILES or None,instance=enquiry_user)	
 		address_form    = AddressForm()	
 
-		return render(request,'agent/enquiry/existing_enquiry.html',{'enquiry_form':enquiry_form,"address_form":address_form,'enquiryid':enquiry_id,'addresses':addresses,})
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()
+
+		return render(request,'agent/enquiry/existingenquiry.html',{'enquiry_user':enquiry_user,'enquiry_form':enquiry_form,"address_form":address_form,'enquiryid':enquiry_id,'addresses':addresses,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"governorates":governorates,})
 
 	def post(self,request,enquiry_id):
 
@@ -1287,8 +1298,9 @@ class ExistingEnquiry(IsAgent,View):
 			address_form = AddressForm(request.POST)
 
 			if address_form.is_valid():
-				address_form_save          = address_form.save(commit=False)
-				address_form_save.customer = enquiry_user
+				address_form_save                  = address_form.save(commit=False)
+				address_form_save.customer         = enquiry_user
+				address_form_save.currently_active = True
 				address_form_save.save()
 				
 				messages.success(request,"New Address Succesfully Added")
