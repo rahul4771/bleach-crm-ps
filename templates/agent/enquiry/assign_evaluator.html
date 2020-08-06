@@ -17,7 +17,7 @@
 <div class="white-wrapper"><!--white-wrapper-->    
 <h2 class="h2">Evaluation Callender</h2>
 <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" class="date_pick date-picker" onchange="set_params_go();">
-<a class="a-btn back-btn" href="{% url 'evaluator:evaluator-existingenquiry' enquiryid %}">Back</a>
+<a class="a-btn back-btn" href="{% url 'agent:agent-existingenquiry' enquiryid %}">Back</a>
 <div id="table-scroll" class="table-scroll"><!--table-scroll-->
 <div class="table-wrap"><!--table-wrap-->
 <table class="eval-table">
@@ -47,7 +47,7 @@
 <th class="theadbg" width="4.54%" scope="col">06 PM</th>
 </tr>
 </thead>
-<tbody>
+<tbody>    
 {% for evaluator in evaluation_details %}
 <tr class="clickable-row" data-href='#' id="evaluator{{evaluator.id}}">
 <th bgcolor="#eee" width="4.54%" class="fixed-side"><img {% if evaluator.profile_image %} src="{{evaluator.profile_image.url}}" {% else %} src="{% static 'files/images/profile-pic.jpg' %}" {% endif %} class="profile-avtar"></th>
@@ -65,7 +65,7 @@
         </div><!--container-fluid space-->
     </section><!--content-->
 
-<!-- new popup -->
+<!-- assign evaluator popup -->
 <div id="addevaluationdetails_popup" class="overlay"><!--overlay-->
     <div class="popup-assign-eval"><!--popup-assign-eval-->
         <a class="close" href="#">&times;</a>
@@ -130,7 +130,7 @@
             </div><!--content-->
     </div><!--popup-assign-eval-->
 </div><!--overlay-->
-<!-- new popup -->
+<!-- assign evaluator popup -->
 
 
 {% include 'agent/common/footer.html' %}
@@ -168,7 +168,7 @@ $('document').ready(function(){
                               same_slote_count += 1
                               if(same_slote_count == 1)
                               {
-                                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour='+i+'><div class="name">{{evaluation.address.area.name}}</div></a></td>');
+                                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour='+i+' href="#addevaluationdetails_popup"><div class="name">{{evaluation.address.area.name}}</div></a></td>');
                               }
                               else
                               {
@@ -188,9 +188,9 @@ $('document').ready(function(){
                     }
                     else
                     {
-                      $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour='+i+'>+</a></td>');  
+                      $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour='+i+' href="#addevaluationdetails_popup">+</a></td>');  
                     }
-                    $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+                    $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#addevaluationdetails_popup">&nbsp;</a></td>');
                 }    
             {% else %}
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');    
@@ -259,8 +259,7 @@ $(".assign_evaluator_button").click(function () {
     $('.id_proposed_date').val(now_date);
     $('.id_proposed_time').val(now_time);
     $('.id_evaluator').val($(this).data('evaluator_id'));
-
-    //$('#addevaluationdetails_popup').modal('show');  
+  
       });
 });
 </script>

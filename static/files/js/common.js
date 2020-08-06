@@ -2,11 +2,12 @@ $(window).ready(function() {
   
   // active link 
   for (var i = 0; i < document.links.length; i++) {
-   if (document.links[i].href == document.URL) {
-   $(document.links[i]).parent().addClass('active').first().append('<div class="active-right"></div>');
- }}
-  
+    if (document.links[i].href == document.URL) {
+                $(document.links[i]).parent().addClass('active').first().append('<div class="active-right"></div>');
+                                            } 
+                              }
 });
+
 
 // date_pick   
 $(function () {
