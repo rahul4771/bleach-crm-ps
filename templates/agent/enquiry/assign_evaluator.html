@@ -17,7 +17,7 @@
 <div class="white-wrapper"><!--white-wrapper-->    
 <h2 class="h2">Evaluation Callender</h2>
 <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" class="date_pick date-picker" onchange="set_params_go();">
-<a class="a-btn back-btn" href="{% url 'evaluator:evaluator-existingenquiry' enquiryid %}">Back</a>
+<a class="a-btn back-btn" href="{% url 'agent:agent-existingenquiry' enquiryid %}">Back</a>
 <div id="table-scroll" class="table-scroll"><!--table-scroll-->
 <div class="table-wrap"><!--table-wrap-->
 <table class="eval-table">
@@ -65,7 +65,7 @@
         </div><!--container-fluid space-->
     </section><!--content-->
 
-<!-- new popup -->
+<!-- assign evaluator popup -->
 <div id="addevaluationdetails_popup" class="overlay"><!--overlay-->
     <div class="popup-assign-eval"><!--popup-assign-eval-->
         <a class="close" href="#">&times;</a>
@@ -130,7 +130,7 @@
             </div><!--content-->
     </div><!--popup-assign-eval-->
 </div><!--overlay-->
-<!-- new popup -->
+<!-- assign evaluator popup -->
 
 
 {% include 'agent/common/footer.html' %}
