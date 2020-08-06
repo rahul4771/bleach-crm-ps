@@ -208,7 +208,7 @@
 </div>
 
 </div><!--white-wrapper-->            
-            
+          
       </div><!--main-content-holder-->
         </div><!--container-fluid space-->
     </section><!--content-->
@@ -316,7 +316,7 @@
 
         starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
         ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
-
+        console.log(starting_time,ending_time,"tdt");
         
         if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.end_at|date:'d'}}')))
                 {
@@ -378,14 +378,14 @@
         if((ending_time<starting_time)&(parseInt('{{weekstart_date|date:'d'}}')==parseInt('{{cleaning_team.end_at|date:'d'}}')))
                 {
                         total_week_hours += ending_time*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
-                    console.log(total_week_hours,"cleaning")
+                    console.log('{{cleaning_team.no_of_cleaners}}',"cl")
                 }
 
                 else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.start_at|date:'d'}}')))
                     {
                     
                     total_week_hours += (24-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
-                    console.log(total_week_hours,"cleaning")
+
                     }
                 else
                 {
@@ -395,8 +395,7 @@
                         } 
                     else{
                         total_week_hours += (ending_time-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
-                    } 
-                    console.log(total_week_hours,"cleaning")   
+                    }    
                 }
 
         {% endfor %}
@@ -549,9 +548,8 @@
             }
 
             None = null;
-            min_duration = {{fil_minhours}}
+            min_duration = {{fil_minhours}} 
             max_duration = {{fil_maxhours}}
-
 
             if(min_duration && max_duration)
             {
