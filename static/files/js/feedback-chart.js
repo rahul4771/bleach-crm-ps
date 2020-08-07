@@ -9,21 +9,21 @@ callback: function () {
 //googlechart
 function drawChart() {
     
-    if ($('#daym').val() == 'month') {
+    if ($('#daym').is(':checked')) {
+        var dom = 'Date' ;
+        var fromd = $('#ord_fromdate_fb').val();
+        var to = $('#ord_todate_fb').val();
+    
+        var fromdate= fromd.split("-").reverse().join("-");
+        var todate= to.split("-").reverse().join("-");
+        console.log(fromdate,todate,'pp')
+    }else{
         var dom = 'Month' ;
         var from_my = $('#month1').val();
         var to_my = $('#month2').val();
         var fromdate= from_my;
         var todate= to_my;
         console.log(from_my, to_my, "monthd")
-    }else{
-        var dom = 'Date' ;
-        var fromd = $('#ord_fromdate').val();
-        var to = $('#ord_todate').val();
-    
-        var fromdate= fromd.split("-").reverse().join("-");
-        var todate= to.split("-").reverse().join("-");
-        console.log(fromdate,todate,'pp')
     }
     
     var dates = [];
@@ -62,18 +62,20 @@ function drawChart() {
         var quotations = google.visualization.arrayToDataTable(quotes);
 
         var options = {
-            chartArea : {height: '80%',},
-            width:500,
+            chartArea : {height: '75%',},
+            width:650,
+            height:300,
             animation: {
             duration: 2000,
             easing: 'linear',
             startup:true
             },
             vAxis: {minValue: 0},
-            legend: 'none'
+            legend: 'none',
+            interpolateNulls: true
         };
 
-        var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+        var chart = new google.visualization.AreaChart(document.getElementById('feedback_chart_div'));
         chart.draw(quotations, options);
         }
     });
@@ -93,31 +95,31 @@ var datestring2 = selectedMonthName2 + " " + date1.getFullYear();
 $('#month1').val(datestring2);
 $('#month2').val(datestring);
 
-$('#example7').calendar({
+$('#monthpicker1_fb').calendar({
     type: 'month'
 });
 
-$('#example8').calendar({
+$('#monthpicker2_fb').calendar({
     type: 'month'
 });
 
-if ($('#daym').val() == 'month'){
+if ($('#daym').is(':checked')){
     console.log("runn")
-    $('.set1').attr("hidden",true);
-    $('.set2').attr("hidden",false);
-}
-else{
-    console.log("runnon")
     $('.set1').attr("hidden",false);
     $('.set2').attr("hidden",true);
 }
+else{
+    console.log("runnon")
+    $('.set1').attr("hidden",true);
+    $('.set2').attr("hidden",false);
+}
 
-$("#ord_fromdate").change(function(){
+$("#ord_fromdate_fb").change(function(){
     console.log('room');
     drawChart();   
 });
 
-$("#ord_todate").change(function(){
+$("#ord_todate_fb").change(function(){
     console.log('room');
     drawChart();   
 });
@@ -137,7 +139,7 @@ $("#month2").change(function(){
     console.log('room');
 });
 
-$("#reset").click(function(){
+$("#reset_feedbacks").click(function(){
     var date1 = new Date();
     var datestring = date1.getDate()-1  + "-" + (date1.getMonth()+1) + "-" + date1.getFullYear();
 
@@ -146,22 +148,14 @@ $("#reset").click(function(){
     var datestring2 = date2.getDate()  + "-" + (date2.getMonth()+1) + "-" + date2.getFullYear();
     console.log(datestring,datestring2)
 
-    $('#ord_fromdate').val(datestring2);
-    $('#ord_todate').val(datestring);
+    $('#ord_fromdate_fb').val(datestring2);
+    $('#ord_todate_fb').val(datestring);
 
     drawChart();
 })
 
-$("#daym").change(function(){
-    if ($(this).val() == 'month'){
-        $('.set1').attr("hidden",true);
-        $('.set2').attr("hidden",false);
-
-        // $('#month1').val(datestring2);
-        // $('#month2').val(datestring);
-        drawChart();
-    }
-    else{
+$("#daym").click(function(){
+    if ($('#daym').is(':checked')){
         $('.set1').attr("hidden",false);
         $('.set2').attr("hidden",true);
         var date1 = new Date();
@@ -169,9 +163,16 @@ $("#daym").change(function(){
 
         var datestring2 = date1.getDate()-1  + "-" + (date1.getMonth()+1) + "-" + date1.getFullYear();
 
-        $('#ord_fromdate').val(datestring2);
-        $('#ord_todate').val(datestring);
-        drawChart();
+        $('#ord_fromdate_fb').val(datestring2);
+        $('#ord_todate_fb').val(datestring);
+        drawChart();    
+    }
+    else{
+        $('.set1').attr("hidden",true);
+        $('.set2').attr("hidden",false);
 
+        // $('#month1').val(datestring2);
+        // $('#month2').val(datestring);
+        drawChart();
     }
 })
