@@ -755,6 +755,11 @@ class NewEnquiry(IsEvaluator,View):
 	address_formset_define    = formset_factory(AddressForm)
 	def get(self,request):
 		
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
 		enquiry_form    = UserProfileForm()	
 
 		try:
@@ -762,7 +767,7 @@ class NewEnquiry(IsEvaluator,View):
 		except:	
 			customer_info = None
 
-		return render(request,'evaluator/enquiry/new_enquiry.html',{'enquiry_form':enquiry_form,'address_formset':self.address_formset_define(),'customer_info':customer_info})
+		return render(request,'evaluator/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':self.address_formset_define(),'customer_info':customer_info,'governorates':governorates,})
 
 	def post(self,request):
 		enquiry_form     = UserProfileForm(request.POST,request.FILES or None)
@@ -789,7 +794,7 @@ class NewEnquiry(IsEvaluator,View):
 			if not address_formset.is_valid():
 				messages.error(request,"An Error Occured")
 
-			return render(request,'evaluator/enquiry/new_enquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset})					
+			return render(request,'evaluator/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset})					
 
 		redirection = request.POST.get('redirect_to')	
 		
@@ -804,7 +809,13 @@ class NewEnquiry(IsEvaluator,View):
 class ExistingEnquiry(IsEvaluator,View):
 	
 	def get(self,request,enquiry_id):
+
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
 		
+
 		enquiry_user    = UserProfile.objects.get(id=enquiry_id)
 
 		try:
@@ -816,7 +827,12 @@ class ExistingEnquiry(IsEvaluator,View):
 		enquiry_form    = UserProfileForm(request.FILES or None,instance=enquiry_user)	
 		address_form    = AddressForm()	
 
-		return render(request,'evaluator/enquiry/existing_enquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,'addresses':addresses,})
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()
+		
+		return render(request,'evaluator/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,'addresses':addresses,'enquiry_user':enquiry_user,'governorates':governorates,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,})
 
 	def post(self,request,enquiry_id):
 
@@ -838,7 +854,7 @@ class ExistingEnquiry(IsEvaluator,View):
 				
 				address_form = AddressForm()	
 
-				return render(request,'evaluator/enquiry/existing_enquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})			
+				return render(request,'evaluator/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})			
 
 
 		if action_mode == 'add_address':
@@ -847,6 +863,7 @@ class ExistingEnquiry(IsEvaluator,View):
 			if address_form.is_valid():
 				address_form_save          = address_form.save(commit=False)
 				address_form_save.customer = enquiry_user
+				address_form_save.currently_active = True
 				address_form_save.save()
 				
 				messages.success(request,"New Address Succesfully Added")
@@ -856,7 +873,7 @@ class ExistingEnquiry(IsEvaluator,View):
 
 				enquiry_form = UserProfileForm(request.FILES or None,instance=enquiry_user)
 
-				return render(request,'evaluator/enquiry/existing_enquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})					
+				return render(request,'evaluator/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})					
 
 		return redirect('evaluator:evaluator-existingenquiry',enquiry_id)
 
@@ -888,8 +905,10 @@ class AssignEvaluator(IsEvaluator,View):
 		
 		evaluation_details		  = UserProfile.objects.filter(is_active=True,id=request.user.id).prefetch_related(Prefetch('evaluator_evaluation',queryset=EvaluationDetails.objects.filter(is_active=True,proposed_time__contains=evaluation_date.date()),to_attr='evaluation_details'))
 		
+		assigned_addresses = EvaluationDetails.objects.filter(is_active=True,evaluation_id=evaluation_id).values_list('address')
+		active_addresses   = Address.objects.filter(is_active=True,customer_id=enquiry_id,currently_active=True).exclude(id__in=assigned_addresses)
 
-		return render(request,'evaluator/enquiry/assign_evaluator.html',{'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'enquiryid':enquiry_id,'evaluation_id':evaluation_id,'evaluation_form':evaluation_form,})
+		return render(request,'evaluator/enquiry/assign_evaluator.html',{'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'enquiryid':enquiry_id,'evaluation_id':evaluation_id,'evaluation_form':evaluation_form,"active_addresses":active_addresses,})
 
 	def post(self,request,enquiry_id,evaluation_id):
 		evaluation_form  = MyEvaluationDetailsForm(enquiry_user_id=enquiry_id,evaluation_id=evaluation_id,data=request.POST)		
@@ -907,9 +926,10 @@ class AssignEvaluator(IsEvaluator,View):
 			if evaluation_form.is_valid():
 				evaluation_form_save              = evaluation_form.save(commit=False)
 				
-				proposed_time                     = evaluation_form.cleaned_data['proposed_time']
-				converted_proposed_time           = datetime.strptime(proposed_time,'%d/%m/%Y %I:%M %p')
-				print(converted_proposed_time)
+				proposed_date                     = request.POST.get('proposed_date')
+				proposed_time                     = request.POST.get('proposed_time')
+				converted_proposed_time           = datetime.strptime(proposed_date+" "+proposed_time,'%d/%m/%Y %I:%M %p')
+				
 				evaluation_form_save.proposed_time   = converted_proposed_time
 				evaluation_form_save.evaluation_id   = evaluation_id
 				evaluation_form_save.evaluator       = request.user

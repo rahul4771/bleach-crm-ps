@@ -1193,6 +1193,11 @@ class NewEnquiry(IsAgent,View):
 	address_formset_define    = formset_factory(AddressForm)
 	def get(self,request):
 		
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
 		enquiry_form    = UserProfileForm()	
 
 		try:
@@ -1200,7 +1205,7 @@ class NewEnquiry(IsAgent,View):
 		except:	
 			customer_info = None
 
-		return render(request,'agent/enquiry/new_enquiry.html',{'enquiry_form':enquiry_form,'address_formset':self.address_formset_define(),'customer_info':customer_info})
+		return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':self.address_formset_define(),'customer_info':customer_info,'governorates':governorates,})
 
 	def post(self,request):
 		enquiry_form     = UserProfileForm(request.POST,request.FILES or None)
@@ -1228,7 +1233,7 @@ class NewEnquiry(IsAgent,View):
 			if not address_formset.is_valid():
 				messages.error(request,"An Error Occured")
 
-			return render(request,'agent/enquiry/new_enquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset})					
+			return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset})					
 
 		redirection = request.POST.get('redirect_to')	
 		
@@ -1237,7 +1242,7 @@ class NewEnquiry(IsAgent,View):
 		elif redirection == 'quatation':
 			return redirect('agent:agent-makequatation',enquiry_form_save.id)
 		else:
-			return redirect('agent-existingenquiry',enquiry_form_save.id)
+			return redirect('agent:existingenquiry',enquiry_form_save.id)
 
 
 class ExistingEnquiry(IsAgent,View):
@@ -1289,7 +1294,7 @@ class ExistingEnquiry(IsAgent,View):
 				
 				address_form = AddressForm()
 
-				return render(request,'agent/enquiry/existing_enquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})
+				return render(request,'agent/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})
 
 		if action_mode == 'add_address':
 			address_form = AddressForm(request.POST)
