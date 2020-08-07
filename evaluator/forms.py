@@ -28,9 +28,6 @@ class MyEvaluationDetailsForm(forms.ModelForm):
 
 		super(MyEvaluationDetailsForm, self).__init__(*args, **kwargs)
 
-		self.fields['address'] = forms.ModelChoiceField(
-		    queryset=FindReminingAddress(enquiry_user_id,evaluation_id),required=True,widget=forms.Select(attrs={'class':'customer_address','required':'required'}))
-
 
 
 class QuatationServiceForm(forms.ModelForm):

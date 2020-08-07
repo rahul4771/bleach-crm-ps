@@ -3,14 +3,17 @@
 {% load static %}
 <div class="wrapper"><!--wrapper-->
 {% include "evaluator/common/header.html" %}
-
-<section class="content"><!--content-->
+    <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
-                <h1 class="dashboard-head">Assign Evaluator</h1>
+                <h1 class="dashboard-head">Welcome to Dashboard</h1>
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
-            </div><!--welcome-wrapper-->       
+            </div><!--welcome-wrapper-->
+             
             
+     <div class="main-content-holder"><!--main-content-holder-->            
+         
+             
 <div class="white-wrapper"><!--white-wrapper-->    
 <h2 class="h2">Evaluation Callender</h2>
 <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" class="date_pick date-picker" onchange="set_params_go();">
@@ -20,8 +23,7 @@
 <table class="eval-table">
 <thead>
 <tr>
-<th bgcolor="#eee" width="4.54%" class="fixed-side padding" scope="col">&nbsp;</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
+<th  bgcolor="#eee"  width="4.54%" class="fixed-side padding" scope="col">&nbsp;</th>
 <th class="theadbg" width="4.54%" scope="col">08 AM</th>
 <th class="theadbg" width="4.54%">&nbsp;</th>
 <th class="theadbg" width="4.54%" scope="col">09 AM</th>
@@ -45,10 +47,10 @@
 <th class="theadbg" width="4.54%" scope="col">06 PM</th>
 </tr>
 </thead>
-<tbody>
+<tbody>    
 {% for evaluator in evaluation_details %}
-<tr id="evaluator{{evaluator.id}}">
-<th width="4.54%" bgcolor="#eee" class="fixed-side"><img {% if evaluator.profile_image %} src="{{evaluator.profile_image.url}}" {% else %} src="{% static 'files/images/profile-pic.jpg' %}" {% endif %} class="profile-avtar profile-avatar"></th>
+<tr class="clickable-row" data-href='#' id="evaluator{{evaluator.id}}">
+<th bgcolor="#eee" width="4.54%" class="fixed-side"><img {% if evaluator.profile_image %} src="{{evaluator.profile_image.url}}" {% else %} src="{% static 'files/images/profile-pic.jpg' %}" {% endif %} class="profile-avtar"></th>
 </tr>
 {% endfor %}
 </tbody>
@@ -57,63 +59,64 @@
 </div><!--table-scroll-->
 </div><!--white-wrapper-->
 
-
-
-     </div><!--main-content-holder-->
+         
+            
+      </div><!--main-content-holder-->
         </div><!--container-fluid space-->
     </section><!--content-->
 
+<!-- assign evaluator popup -->
+<div id="addevaluationdetails_popup" class="overlay"><!--overlay-->
+    <div class="popup-assign-eval"><!--popup-assign-eval-->
+        <a class="close" href="#">&times;</a>
+            <div class="content"><!--content-->
+            
+<form method="post" enctype= "multipart/form-data">{% csrf_token %}                      
+<input type="hidden" name="action_type" value="add">
+            <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
+  
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class="bold-text common-label"> <label >Address</label></div>
+        <label for="favcity">
+                <select id="favcity" name="address" required>
+                <option value="">Choose your Address</option>
+                {% for address in active_addresses %}
+                <option value="{{address.id}}">{{address.area.name}}</option>
+                {% endfor %}
+                </select>
+                </label>
+  </div><!--ticket-form-left--> 
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">   
+          
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Appointment Date</label></div>
+        <input type="text" name="proposed_date" class="textBox id_proposed_date" required>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Appointment Time</label></div>
+                <input type="text" name="proposed_time" class="textBox id_proposed_time" required>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+ 
+<hr class="hr-dashedpad">     
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+      <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class="bold-text common-label"> <label>Notes</label></div>
+                 <textarea name="agent_notes" cols="" rows="4" class="textArea"></textarea>
+      </div><!--ticket-form-left--> 
+        
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->  
+<div align="center"> <input class="assignButton" name="assing" type="button" value="Assign" onclick="submitAnyForm(this);"></div> 
 
-<!-- add_evaluation_popup -->
-<div class="modal fade pop-up" id="addevaluationdetails_popup" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <form method="post" enctype= "multipart/form-data">{% csrf_token %}
-      <input type="hidden" name="action_type" value="add">
-      <div class="body pop-up-small">
-          <div class="modal-header">
-            <h1>Evaluation Details</h1>
-          </div>
-          <div class="modal-body">
-            <div class="row">
-              <div class="col-12">
-                <div class="pop-up-col">
-                        <label>Notes</label>
-                        <textarea maxlength="1000" name="agent_notes" ></textarea>
-                </div>   
-
-              {% for field in evaluation_form %}
-
-              <div class="page-col">
-
-                {{ field.errors }}    
-
-                {{ field.label_tag }} {{ field }}
-
-                {% if field.help_text %}
-
-                <p class="help">{{ field.help_text|safe }}</p>
-
-                {% endif %}
-
-             </div>
-
-             {% endfor %}
-
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-              <button type="button" class="close-btn" data-dismiss="modal">Close</button>
-              <button type="button" class="primary-btn" onclick="submitAnyForm(this);">Add</button>
-          </div>
-        </div>
-    </form>
-    </div>
-  </div>
-</div>
-<!-- /add_evaluation_popup -->
-
+</div><!--ticket-wrapper-full-->             
+</form>
+            </div><!--content-->
+    </div><!--popup-assign-eval-->
+</div><!--overlay-->
+<!-- assign evaluator popup -->
 
 
 {% include 'evaluator/common/footer.html' %}
@@ -122,17 +125,8 @@
 
 {% block javascript %}
 <script type="text/javascript">
-
+  
 $('document').ready(function(){  
-
-//initialisation of datetime field
-  $(function () {
-  $("#id_proposed_time").datetimepicker({  
-    format: "DD/MM/YYYY hh:mm A",
-  });
-
-});
-
 
     //Evaluation Callender
         {% for evaluator in evaluation_details %}
@@ -160,18 +154,18 @@ $('document').ready(function(){
                               same_slote_count += 1
                               if(same_slote_count == 1)
                               {
-                                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">{{evaluation.address.area.name}}</a></td>');
+                                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour='+i+' href="#addevaluationdetails_popup"><div class="name">{{evaluation.address.area.name}}</div></a></td>');
                               }
                               else
                               {
-                                $("#evaluator{{evaluator.id}} td:last").append('<br><a href="#">{{evaluation.address.area.name}}</a>');
+                                $("#evaluator{{evaluator.id}} td:last a").append('<div class="name">{{evaluation.address.area.name}}</div>');
                               }  
                               
                             }
 
                         {% if forloop.last or forloop.count == 1 %}
                         
-                        $("#evaluator{{evaluator.id}} td:last").append('<br><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour='+i+'>+</button>');
+                        $("#evaluator{{evaluator.id}} td:last a").append('+');
                         {% endif %}    
                             
 
@@ -180,40 +174,40 @@ $('document').ready(function(){
                     }
                     else
                     {
-                      $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour='+i+'>+</button></td>');  
+                      $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour='+i+' href="#addevaluationdetails_popup">+</a></td>');  
                     }
-                    $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+                    $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#addevaluationdetails_popup">&nbsp;</a></td>');
                 }    
             {% else %}
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="8">+</button></td>');
-
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="9">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');    
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="8" href="#addevaluationdetails_popup">+</a></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="10">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="9" href="#addevaluationdetails_popup">+</a></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="11">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="10" href="#addevaluationdetails_popup">+</a></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="12">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="11" href="#addevaluationdetails_popup">+</a></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="13">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="12" href="#addevaluationdetails_popup">+</a></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="14">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="13" href="#addevaluationdetails_popup">+</a></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="15">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="14" href="#addevaluationdetails_popup">+</a></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="16">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="15" href="#addevaluationdetails_popup">+</a></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><button type="button" class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="17">+</button></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="16" href="#addevaluationdetails_popup">+</button></a>');
+            
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button" data-evaluator_id="{{evaluator.id}}" data-hour="17" href="#addevaluationdetails_popup">+</a></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
             {% endif %}
@@ -222,21 +216,10 @@ $('document').ready(function(){
 
  });
 
-$('window').ready(function(){
-$(".assign_evaluator_button").click(function () {  
-    hour = $(this).data('hour');
-    // var now = new Date("{{evaluation_date.year}}",{{evaluation_date.month}}-1,"{{evaluation_date.day}}",hour,0,0,0);
-    now_string = ({{evaluation_date.day}}<10 ? '0':'')+"{{evaluation_date.day}}/"+({{evaluation_date.month}}<10 ? '0':'')+"{{evaluation_date.month}}/"+"{{evaluation_date.year}} "+(hour<10 ? '0':'')+(hour>12 ? hour-12:hour)+":00 "+(hour>=12 ? 'PM':'AM')
-    $("#id_proposed_time").val(now_string);
-
-    $('#addevaluationdetails_popup').modal('show');  
-    $('#id_evaluator').val($(this).data('evaluator_id'));    
-      });
-});
 
  function set_params_go(args)
 {
-var url='{% url 'evaluator:evaluator-assignevaluator' enquiryid evaluation_id %}';
+var url='{% url 'agent:agent-assignevaluator' enquiryid evaluation_id %}';
 var params={evaluation_calendar_date:$('#evaluation_calendar').val(),
 };
 for(key in args) 
@@ -248,5 +231,22 @@ for(key in params)
 query=query.replace('&','?');
 window.location.href=url+query;  
 }       
+
+$('window').ready(function(){
+$(".assign_evaluator_button").click(function () {   
+
+    hour = $(this).data('hour');
+    // var now = new Date("{{evaluation_date.year}}",{{evaluation_date.month}}-1,"{{evaluation_date.day}}",hour,0,0,0);
+
+    now_date = ({{evaluation_date.day}}<10 ? '0':'')+"{{evaluation_date.day}}/"+({{evaluation_date.month}}<10 ? '0':'')+"{{evaluation_date.month}}/"+"{{evaluation_date.year}}"
+    
+    now_time   = (hour<10 ? '0':'')+(hour>12 ? hour-12:hour)+":00 "+(hour>=12 ? 'PM':'AM')
+    
+    $('.id_proposed_date').val(now_date);
+    $('.id_proposed_time').val(now_time);
+    $('.id_evaluator').val($(this).data('evaluator_id'));
+  
+      });
+});
 </script>
-{% endblock %}     	
+{% endblock %}

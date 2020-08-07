@@ -138,9 +138,20 @@
 
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Cleaning Callender</h2>
-<div>
+
+<!-- <div>
 <input type="text" id="cleaning_calendar" value="{{schedule_date|date:"d-m-Y"}}" class="date_pick date-picker" onchange="set_params_go();">
-</div>
+</div> -->
+
+<div class="date-wrapper"><!--date-wrapper-->
+<div class="date-wrapper-inner"><!--date-wrapper-inner-->
+<button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+<input type='text' id='cleaning_calendar' value="{{schedule_date|date:"d-m-Y"}}" class="date-box date_pick">
+<button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+<button class='today-date current-date'>Today</button>
+</div><!--date-wrapper-inner-->
+</div><!--date-wrapper-->
+
 <div class="cleaning-container">
 <div class="scrollable">
 <div>

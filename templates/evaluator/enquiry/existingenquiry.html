@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
-{% include "agent/common/header.html" %}
+{% include "evaluator/common/header.html" %}
 
 <section class="content"><!--content-->
 <div class="container-fluid space topspace"><!--container-fluid space topspace-->
@@ -184,7 +184,7 @@
 <div class="add-address"><a href="#addnewaddress_popup">Add New Address</a></div>
 
 <br>
-<div align="center"><input class="cancel-Button" name="addevaluator" type="button" value="Update" onclick="submitAnyForm(this);"> <a href="{% url 'agent:agent-makeevaluation' enquiryid %}"><input class="assignButton" name="addevaluator" type="button" value="Add Evaluator"></a> <a href="{% url 'agent:agent-makequatation' enquiryid %}"><input class="assignButton" name="addevaluator" type="button" value="Make Quatation"></a>
+<div align="center"><input class="cancel-Button" name="addevaluator" type="button" value="Update" onclick="submitAnyForm(this);"> <a href="{% url 'evaluator:evaluator-makeevaluation' enquiryid %}"><input class="assignButton" name="addevaluator" type="button" value="Add to My Callendar"></a> <a href="{% url 'evaluator:evaluator-makequatation' enquiryid %}"><input class="assignButton" name="addevaluator" type="button" value="Make Quatation"></a>
 </div>    
 <br><br>
         
@@ -308,7 +308,7 @@
     </div><!--popup-assign-eval-->
 </div><!--overlay-->
 <!-- new address popup -->   
-{% include 'agent/common/footer.html' %}
+{% include 'evaluator/common/footer.html' %}
 </div><!--wrapper-->
 {% endblock %}
 
