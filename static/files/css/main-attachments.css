@@ -693,6 +693,7 @@ a.a-btn.primary-btn:hover {
   border-color: #ccc;}
 .page-form .page-body .dynamic-form:not(:first-of-type) {
   margin-top: 10px;}
+
 .page-form .page-body .add-row,
 .page-form .page-body .delete-row {
   font-size: 12px;
@@ -709,6 +710,23 @@ a.a-btn.primary-btn:hover {
   right: 0;
   top: 0;}  
 
+
+.customer-address-multiple .add-row,
+.customer-address-multiple .delete-row {
+    font-size: 12px;
+    padding: 5px 10px;
+    background: transparent;
+    border: 1px solid #e6e6e6;
+}  
+
+.customer-address-multiple .add-row {
+  color: #2da979;
+  display: inline-block;}
+.customer-address-multiple .delete-row {
+  color: #ff6c6c;
+  margin-left:582px;
+  right: 0;
+  top: 0;}
 
   /* auto-complete-results */
 .auto-complete-results {

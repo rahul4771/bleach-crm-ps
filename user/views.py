@@ -8,7 +8,7 @@ from django.contrib.auth import logout as auth_logout
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,ServiceType,LocationType,CleaningType,CleaningMethod
 from order.models import Order, OrderScheduler, Investigation, FollowUp, FollowUpScheduler, Question, FeedBack
 from user.models import UserProfile, Address, Governorate, Area #for creating data
-from senior_team_leader.models import CleaningTeam, CleaningTeamMember, FollowUpTeam, FollowUpTeamMember
+from senior_team_leader.models import CleaningTeam, CleaningTeamMember, FollowUpTeam, FollowUpTeamMember, CleaningTeamTask
 from datetime import datetime, date, timedelta
 import pandas as pd
 from django.utils import timezone
@@ -354,7 +354,7 @@ def adddata(request):
 	# OrderScheduler.objects.bulk_create(orderschedules)
  
 	# followup_apprv = ["True","False"]
-	# ordscheds = OrderScheduler.objects.all()
+	ordscheds = OrderScheduler.objects.all()
 	# inv = []
 	# for ordsched in ordscheds:
 	# 	rand_followup_approve = list_function(followup_apprv)
@@ -404,32 +404,42 @@ def adddata(request):
 	# 	teamleaders.append(t)
 	
 	# for ordsch in ordscheds:
+	# 	print(ordsch.order,ordsch.order.evaluation.quatation_approved_date,"dt")
+	# 	cln_date = ordsch.order.evaluation.quatation_approved_date + timedelta(days=7)
+	# 	begin = timezone.now().replace(year=cln_date.year,month=cln_date.month,day=cln_date.day,hour=random.randint(10,12),minute=0,second=0,microsecond=0,tzinfo=None)
+	# 	end = timezone.now().replace(year=cln_date.year,month=cln_date.month,day=cln_date.day,hour=random.randint(13,18),minute=0,second=0,microsecond=0,tzinfo=None)
 	# 	cleanteam.append(CleaningTeam(
 	# 		order_scheduler = ordsch,
 	# 		team_leader = list_function(teamleaders),
+   	# 		start_at = begin,
+	# 		end_at = end,
+	# 		check_in = begin,
+	# 		check_out = end,
 	# 		is_active = True
 	# 	))
 	# CleaningTeam.objects.bulk_create(cleanteam)
 	
 	# cleaningteams = CleaningTeam.objects.filter(is_active=True)
+	
 	# cleanerslist = []
 	# cleanteammembers = []
 	# cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER')
 	# for cleaner in cleaners:
 	# 	cleanerslist.append(cleaner)
-	# # start_at=str(random.randint(8,11))+":00:00"
-	# # print(start_at,"lp")
+	
 	# for cl in cleaningteams:
-	# 	cln_date = cl.order_scheduler.order.evaluation.quatation_approved_date + timedelta(days=7)
 
 	# 	for i in range(1,3):
 	# 		cleanteammembers.append(CleaningTeamMember(
-	# 			team = cl, member=list_function(cleanerslist),start_at= timezone.now().replace(year=cln_date.year,month=cln_date.month,day=cln_date.day, hour=random.randint(10,12),minute=0,second=0,microsecond=0,tzinfo=None),
-	# 			end_at=timezone.now().replace(year=cln_date.year,month=cln_date.month,day=cln_date.day,hour=random.randint(13,18),minute=0,second=0,microsecond=0,tzinfo=None)
-    
-	# 		))
+	# 			team = cl, member=list_function(cleanerslist),start_at= cl.start_at,end_at=cl.end_at))
 	# CleaningTeamMember.objects.bulk_create(cleanteammembers)
 	
+	# cleantasks=[]
+	# for cln in cleaningteams:
+	# 	cleantasks.append(CleaningTeamTask(
+	# 		cleaning_team = cln, is_completed = True, start_time = cln.start_at, end_time = cln.end_at, is_active = True
+	# 	))
+	# CleaningTeamTask.objects.bulk_create(cleantasks)
 	return render(request,"createdata.html")
 
 def testcalendar(request):

@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "agent/common/header.html" %}
+    
+<section class="content"><!--content-->
+<div class="container-fluid space topspace"><!--container-fluid space topspace-->
+    <div class="welcome-wrapper"><!--welcome-wrapper-->
+        <h1 class="dashboard-head">Enquiry Form</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>
+    </div><!--welcome-wrapper-->
+            
+        
+<div class="order-top-wrapper"><!--order-top-wrapper-->
+	<div class="cleaning-Order-wrapper"><!--cleaning-Order-wrapper-->
+    	<div class="cleaning--left-stretch"><!--cleaning--left-stretch-->
+         <div class="center-formDiv"><!--center-formDiv-->	    
+        
+<br><br>
+ 				<div class="order-Number bold-text"> <label>Existing Clients</label></div>
+                <div id="search_box">
+                <input name="time" type="text" id="search_box" class="textBox auto-complete-input" placeholder="Search here existing clients..." data-min-size="2" data-pattern="[a-zA-Z0-9\s]" data-result-onclick="select_existing_enquiry" data-auto-suggest-url="{% url 'agent:get-customerInfo' %}">
+                </div>
+                <hr class="div">
+	<div class="common-sub-head align-left">New Client</div> 
+    <br>
+<form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+<input type="hidden" name="redirect_to" id="redirect_to_id">               
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Name</label></div>
+                <input name="name" id="id_name" type="text" class="textBox" placeholder=" " required>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label"> <label>Gender</label></div>
+                <label for="favcity">
+                <select id="favcity" name="gender" required>
+                <option value="">Choose Gender</option>
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
+                </select>
+                </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Email</label></div>
+                <input name="email" type="text" class="textBox" placeholder=" " required>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label"> <label>Phone</label></div>
+				<input name="mobile_number" type="text" class="textBox" placeholder=" " required>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Nationality</label></div>
+                <label for="favcity">
+                {% load countries %}
+                {% get_countries as countries %} 
+                <select id="favcity" name="nationality">
+                <option value="">Choose Country</option> 
+                {% for country in countries %}
+                <option value="{{country.code}}">{{country.name}}</option>
+                {% endfor %}
+                </select>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label"> <label>Customer Type</label></div>
+                <label for="favcity">
+                <select id="favcity" name="customer_type">
+                <option value="">Choose Customer Type</option>
+                <option value="INDIVIDUAL">INDIVIDUAL</option>
+                <option value="RETAIL">RETAIL</option>
+                <option value="CORPORATE">CORPORATE</option>
+                </select>
+                </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Company</label></div>
+                <input name="Company" id="id_company" type="text" class="textBox" placeholder=" "  >
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label"> <label>Job Title</label></div>
+				<input name="job_title" id="id_job_title" type="text" class="textBox" placeholder=" "  >
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Civil ID</label></div>
+                <input name="civil_id_number" id="id_civil_id_number" type="text" class="textBox" placeholder=" "  >
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label"> <label>Other Mobile</label></div>
+				<input name="phone_number" id="id_phone_number" class="textBox" placeholder=" "  >
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>SMS Language</label></div>
+                <label for="favcity">
+                <select id="favcity" name="sms_preference">
+                <option value="">Choose Languages</option>
+                <option value="ENGLISH">ENGLISH</option>
+                <option value="ARABIC">ARABIC</option>
+                </select>
+                </label>
+  </div><!--ticket-form-left-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad"> 
+<div class="common-sub-head align-left">Client Address</div>
+
+{{ address_formset.management_form }}
+
+<div class="customer-address-multiple">
+<div class="link_formset">
+{% for form in address_formset %}
+<div class="common-sub-head align-left"></div> 
+<div class="address-FullWrapper"><!--address-FullWrapper-->
+<div class="close-div"><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>
+<div class="address3-wrapper-row address3-forms-boxes"><!--address3-wrapper-row address3-forms-boxes-->
+    <div class="address3-form-left"><!--address3-form-left-->
+        <div class=" bold-text common-label"> <label>Appartment</label></div>
+        <input name="form-0-apartment" type="text" class="textBox" placeholder=" "  >
+    </div><!--address3-form-left-->
+    
+    <div class="address3-form-right"><!--address3-form-right-->
+        <div class=" bold-text common-label"> <label>Floor</label></div>
+        <input name="form-0-floor" type="text" class="textBox" placeholder=" "  >
+    	</div><!--address3-form-right-->    
+</div><!--address3-wrapper-row address3-forms-boxes-->
+<hr class="hr-dashedpad">
+<div class="address3-wrapper-row address3-forms-boxes"><!--address3-wrapper-row address3-forms-boxes-->
+	<div class="address3-form-left"><!--address3-form-left-->
+        <div class=" bold-text common-label"> <label>Building</label></div>
+        <input name="form-0-building" type="text" class="textBox" placeholder=" "  >
+    </div><!--address3-form-left-->
+    
+    <div class="address3-form-right"><!--address3-form-right-->
+        <div class=" bold-text common-label"> <label>Block</label></div>
+        <input name="form-0-block" type="text" class="textBox" placeholder=" "  >
+    	</div><!--address3-form-right-->
+</div><!--address3-wrapper-row address3-forms-boxes-->
+<hr class="hr-dashedpad">
+<div class="address3-wrapper-row address3-forms-boxes"><!--address3-wrapper-row address3-forms-boxes-->
+	<div class="address3-form-left"><!--address3-form-left-->
+        <div class=" bold-text common-label"> <label>Street</label></div>
+        <input name="form-0-street" type="text" class="textBox" placeholder=" "  >
+    </div><!--address3-form-left-->
+    
+    <div class="address3-form-right"><!--address3-form-right-->
+        <div class=" bold-text common-label"> <label>Avenue</label></div>
+        <input name="form-0-avenue" type="text" class="textBox" placeholder=" "  >
+    	</div><!--address3-form-right-->
+</div><!--address3-wrapper-row address3-forms-boxes-->
+<hr class="hr-dashedpad">
+<div class="address3-wrapper-row address3-forms-boxes"><!--address3-wrapper-row address3-forms-boxes-->
+	<div class="address3-form-left"><!--address3-form-left-->
+  				<div class=" bold-text common-label"> <label>Governerate</label></div>
+                <label for="favcity">
+                <select id="id_form-0-governorate" name="form-0-governorate" class="governorate" required>
+                <option value="">Choose Governorate</option>
+                {% for governorate in governorates %}
+                <option value="{{governorate.id}}">{{governorate.name}}</option>
+                {% endfor %}
+                </select>
+                </label>
+    </div><!--address3-form-left-->
+    
+    <div class="address3-form-right"><!--address3-form-right-->
+  				<div class=" bold-text common-label"> <label>Area</label></div>
+                <label for="favcity">
+                <select id="id_form-0-area" name="form-0-area" required>
+                <option value="">Choose Area</option>
+                </select>
+                </label>
+    	</div><!--address3-form-right-->
+</div><!--address3-wrapper-row address3-forms-boxes-->
+</div><!--address-FullWrapper-->
+{% endfor %}
+</div>
+</div>
+
+<br>
+<div align="center"><input class="assignButton" name="addevaluator" type="button" value="Add Evaluator" onclick="submitAnyForm(this);" onmouseover="submitbuttontype('assign_evaluator')"> <input class="cancel-Button" name="makequotation" type="button" value="Make Quatation" onclick="submitAnyForm(this);" onmouseover="submitbuttontype('quatation')"></div>
+<br><br>
+
+        </div> <!--center-formDiv-->
+		</div><!--cleaning--left-stretch-->   
+	</div><!--cleaning-Order-wrapper-->
+</div><!--order-top-wrapper-->  
+            
+                             
+</div><!--container-fluid space topspace-->
+</section><!--content-->
+    
+    
+{% include 'agent/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script>
+var x=0;
+var ajax_ret_areas; 
+
+$('document').ready(function(){
+//formset
+    $('.link_formset').formset({
+
+        addText: 'Add Address',
+
+        deleteText: 'Remove Address', 
+
+        added: add_row,
+
+        removed: remove_row,
+
+    });
+
+
+function add_row()
+
+     {
+
+      x++;
+      $("#id_form-"+x+"-area").empty();
+    }
+
+
+function remove_row()
+
+     {
+
+       x--;
+
+     }
+
+$("#id_company").parents('.page-col').hide();
+$("#id_job_title").parents('.page-col').hide();
+
+$("#id_form-"+x+"-area").empty();    
+
+});
+
+//Append area for governorate change
+
+$(".governorate").change(function(){ 
+
+  id=this.id.match(/\d+/); 
+  console.log(id);
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getarea' %}",
+
+        data: {'governorate_id':this.value}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+
+          ajax_ret_areas = data;     
+
+   $("#id_form-"+x+"-area").empty();
+
+  
+
+          $("#id_form-"+x+"-area").append($('<option>', {
+
+          value: "", 
+
+         text: "Choose Area"
+
+      })); 
+
+        $.each( ajax_ret_areas, function( key, values ) {
+
+              $("#id_form-"+x+"-area").append($('<option>', {        
+
+    value: key, 
+
+    text: values   
+
+  }));   
+
+      });
+
+
+        }  
+
+      }); 
+
+});
+
+
+function submitbuttontype(type)
+{
+  $("#redirect_to_id").val(type);
+}
+
+</script>    
+
+
+<script>
+  //  auto complete search
+
+$(window).ready(function(){
+
+  $('.auto-complete-input').attr('autocomplete','off').keyup(search_live).focusout(autoSuggestionOnFocusOut
+      ).after($('<div/>',{class:'auto-complete-results'})).parent().css('position','relative',);
+      
+      //Initial case
+      $(".auto-complete-results").css('display','none');
+
+    
+});
+
+//Dont Know
+$(window).ready(function(){
+    $('.goto-url').click(function(){window.location.href=$(this).data('url');});
+}); 
+
+
+
+function autoSuggestionOnFocusOut(event)
+{
+  
+    setTimeout(function(){
+
+      $(event.target).siblings('.auto-complete-results').first().hide();
+      },1000);
+
+}
+
+
+function select_existing_enquiry(event,src){
+          var client_id=$(src).attr('data-id');
+          if(client_id!=0)
+          {
+              window.location="{% url 'agent:agent-existingenquiry' enquiry_id=123 %}".replace(/123/,client_id.toString());
+          }
+          
+}
+
+
+
+
+function autoSuggestionOnSelect(event){
+    eval($(this).data('select-result'))(event,$(this));
+    $(this).parents('.auto-complete-results').first().hide().siblings('.auto-complete-input').val('');
+}
+
+
+//Keyup condition
+function search_live(event){
+    var src=$(this);
+    var min_size=src.data('min-size');
+
+    var test_pattern=src.data('pattern');
+    if(test_pattern)
+        {
+        test_pattern=RegExp(test_pattern);
+        var inp = String.fromCharCode(event.keyCode);
+        if (! test_pattern.test(inp)) return;
+        }
+        var val=src.val();
+    if(min_size)
+        {
+        if(val.length<min_size) return;
+        }
+    var fetch_params_fn_name=eval(src.data('fetch-params'));
+    var data={};
+    if(fetch_params_fn_name)
+        data=fetch_params_fn_name();
+    data['keyword']=val;//typed key words
+    var url=src.data('auto-suggest-url');//list fetching url
+    var on_result_click=src.data('result-onclick');//after result url
+
+
+    var ajax={type:'get',url:url,data:data,
+  
+    success:function (data){
+      var listOfObjects = [];
+        if( data['customer_details'])
+            {
+
+            $res=src.siblings('.auto-complete-results').first();
+            $res.contents().remove();
+            
+
+
+            $.each( data['customer_details'],(i,v)=>{
+              $('<div/>',{class:'auto-complete-result-item','data-id':i,
+                text:v}).appendTo($res).
+                on('click',autoSuggestionOnSelect).
+                data('select-result',on_result_click).
+                attr('tabindex',-1);
+            });
+            $res.css('position','absolute');
+            $res.outerWidth(src.outerWidth());
+            $res.css('top',(src.position().top+src.outerHeight()).toString()+'px');
+          
+                $res.show();
+            }
+          if(data['status'] == 'false'){
+            $res=src.siblings('.auto-complete-results').first();
+            $res.contents().remove();
+          
+            $('<div/>',{class:'auto-complete-result-item','data-id':0,
+                text:"No result Found"}).appendTo($res).
+                on('click',autoSuggestionOnSelect).
+                data('select-result',on_result_click).
+                attr('tabindex',-1);
+            $res.outerWidth(src.outerWidth());
+            $res.css('top',(src.position().top+src.outerHeight()).toString()+'px');
+          
+                $res.show();
+          }
+          }
+        };
+        $.ajax(ajax);
+}
+
+</script>
+{% endblock %}
