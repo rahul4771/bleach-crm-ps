@@ -47,9 +47,7 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .white-wrapper-pagination{ background:#fff; padding:0px 0px !important; margin:0 !important; position:relative; }
 .white-wrapper-search{ background:#fff; padding:20px 25px 15px 25px; margin-bottom:5px; position:relative; display:flex;}
 .date-picker{ border:1px solid #ccc; border-radius:120px; height:40px; line-height:40px; width:200px; text-align:center; position:absolute; right:25px; top:25px; bottom:0;}
-/* chart datep */ 
-#ord_fromdate{ border:1px solid #ccc; border-radius:0px; height:20px; line-height:20px; width:150px; text-align:center; position:absolute; left:25px; top:75px; bottom:0;}
-#ord_todate{ border:1px solid #ccc; border-radius:0px; height:20px; line-height:20px; width:150px; text-align:center; position:absolute; left:25px; top:115px; bottom:0;}
+
 .navbar-fixed-top{ border :none !important;  border:1px solid #F00; }
 .navbar-header{ color:#fff;}
 .three-line{ color:#fff !important; font-size:25px !important; }
@@ -498,7 +496,7 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .leftbox-item2{flex-shrink:0; align-self:center;}
 
 
-.date-picker-resource{ border:1px solid #ccc; border-radius:120px; height:35px; line-height:35px; width:100px; text-align:center; display:inline-block; /*position:absolute; right:0px; top:18px; bottom:0;*/}
+.date-picker-resource{ border:1px solid #ccc; border-radius:120px; height:35px; line-height:35px; width:120px; text-align:center; display:inline-block; /*position:absolute; right:0px; top:18px; bottom:0;*/}
 .day-month-togggle-button{ border:1px solid #ccc; border-radius:120px; height:35px; line-height:35px; width:200px; font-size:13px; text-align:center;  display:inline-block;}
 .sort-icon{ background:url(../images/sort-icon.svg) no-repeat; width:8px; height:8px; display:block; position:absolute; right:6px; top:16px; cursor:pointer; } 
 

@@ -91,26 +91,23 @@
 		  <div class="feedback-card-column feedback-column-right whitebg"><!--lients-card-column feedback-column-right-->
         <h5 class="count_div">Total Ratings : <b id="total_submitted"></b></h5>
         
-        <select id="daym">
-          <option value="day" >Day</option>
-          <option value="month" selected>Month</option>
-        </select>
-        <input type="text" id="ord_fromdate" class="date_pick date-picker set1" value={{investigation_date|date:"d-m-Y"}} >
-        <input type="text" id="ord_todate" class="date_pick date-picker set1" value={{investigation_date|date:"d-m-Y"}} >
-        <div class="ui calendar set2" id="example7" >
+        <label class="switch_fb"><input type="checkbox" id="daym"><div class="slider round"></div></label>
+        <input type="text" id="ord_fromdate_fb" class="date_pick date-picker set1" value={{investigation_date|date:"d-m-Y"}} >
+        <input type="text" id="ord_todate_fb" class="date_pick date-picker set1" value={{investigation_date|date:"d-m-Y"}} >
+        <div class="ui calendar set2" id="monthpicker1_fb" >
           <div class="ui input left icon">
-            <input type="text" id="month1" class="set2" value="{{mfrom}}">
+            <input type="text" id="month1" class="set2" >
           </div>
         </div>
   
-        <div class="ui calendar set2" id="example8" >
+        <div class="ui calendar set2" id="monthpicker2_fb" >
           <div class="ui input left icon">
-            <input type="text" id="month2" class="set2" value="{{mto}}">
+            <input type="text" id="month2" class="set2" >
           </div>
         </div>
-        <button type="button" id="mnt_btn" class="set2" >Update</button>
-        <div id="chart_div"></div>
-        <button id="reset" class="blue-button">This Month</button>
+        <!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
+        <div id="feedback_chart_div"></div>
+        <button id="reset_feedbacks" class="blue-button">Reset</button>
         </div><!--lients-card-column feedback-column-right-->
       </div><!--feedback-card-wrapper -->
 

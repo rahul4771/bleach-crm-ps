@@ -9,14 +9,7 @@ google.charts.setOnLoadCallback(drawChart);
 //googlechart
 function drawChart() {
     
-    if ($('#daym').val() == 'month') {
-        var dom = 'Month' ;
-        var from_my = $('#month1').val();
-        var to_my = $('#month2').val();
-        var fromdate= from_my;
-        var todate= to_my;
-        console.log(from_my, to_my, "monthd")
-    }else{
+    if ($('#daym').is(':checked')) {
         var dom = 'Date' ;
         var fromd = $('#ord_fromdate').val();
         var to = $('#ord_todate').val();
@@ -24,6 +17,13 @@ function drawChart() {
         var fromdate= fromd.split("-").reverse().join("-");
         var todate= to.split("-").reverse().join("-");
         console.log(fromdate,todate,'pp')
+    }else{
+        var dom = 'Month' ;
+        var from_my = $('#month1').val();
+        var to_my = $('#month2').val();
+        var fromdate= from_my;
+        var todate= to_my;
+        console.log(from_my, to_my, "monthd")
     }
     
     var dates = [];
@@ -74,7 +74,8 @@ function drawChart() {
             startup:true
             },
             vAxis: {minValue: 0},
-            legend: 'none'
+            legend: 'none',
+            interpolateNulls: true
         };
 
         var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
@@ -97,23 +98,23 @@ var datestring2 = selectedMonthName2 + " " + date1.getFullYear();
 $('#month1').val(datestring2);
 $('#month2').val(datestring);
 
-$('#example7').calendar({
+$('#monthpicker1').calendar({
     type: 'month'
 });
 
-$('#example8').calendar({
+$('#monthpicker2').calendar({
     type: 'month'
 });
 
-if ($('#daym').val() == 'month'){
-    console.log("runn")
-    $('.set1').attr("hidden",true);
-    $('.set2').attr("hidden",false);
-}
-else{
+if ($('#daym').is(':checked')) {
     console.log("runnon")
     $('.set1').attr("hidden",false);
     $('.set2').attr("hidden",true);
+}
+else{
+    console.log("runn")
+    $('.set1').attr("hidden",true);
+    $('.set2').attr("hidden",false);
 }
 
 $("#ord_fromdate").change(function(){
@@ -131,17 +132,17 @@ $("#mnt_btn").on("click",function(){
     drawChart();   
 });
 
-$("#month1").oninput(function(){
-    drawChart();
-    console.log('room');
-});
+// $("#month1").oninput(function(){
+//     drawChart();
+//     console.log('room');
+// });
 
-$("#month2").oninput(function(){
-    drawChart();
-    console.log('room');
-});
+// $("#month2").oninput(function(){
+//     drawChart();
+//     console.log('room');
+// });
 
-$("#reset").click(function(){
+$("#reset_tickets").click(function(){
     var date1 = new Date();
     var datestring = date1.getDate()-1  + "-" + (date1.getMonth()+1) + "-" + date1.getFullYear();
 
@@ -156,16 +157,8 @@ $("#reset").click(function(){
     drawChart();
 })
 
-$("#daym").change(function(){
-    if ($(this).val() == 'month'){
-        $('.set1').attr("hidden",true);
-        $('.set2').attr("hidden",false);
-
-        // $('#month1').val(datestring2);
-        // $('#month2').val(datestring);
-        drawChart();
-    }
-    else{
+$("#daym").click(function(){
+    if ($(this).is(':checked')){
         $('.set1').attr("hidden",false);
         $('.set2').attr("hidden",true);
         var date1 = new Date();
@@ -175,6 +168,14 @@ $("#daym").change(function(){
 
         $('#ord_fromdate').val(datestring2);
         $('#ord_todate').val(datestring);
+        drawChart();
+    }
+    else{
+        $('.set1').attr("hidden",true);
+        $('.set2').attr("hidden",false);
+
+        // $('#month1').val(datestring2);
+        // $('#month2').val(datestring);
         drawChart();
 
     }

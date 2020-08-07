@@ -79,7 +79,7 @@ $("#client_todate").change(function(){
     console.log('room');
 });
 
-$("#reset").click(function(){
+$("#reset_clients").click(function(){
     var date1 = new Date();
     date1.setDate(date1.getDate()-1);
     var datestring = date1.getDate()  + "-" + (date1.getMonth()+1) + "-" + date1.getFullYear();

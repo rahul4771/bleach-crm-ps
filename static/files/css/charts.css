@@ -2,16 +2,14 @@
 float: right;
 }
 
+#feedback_chart_div{
+    position: absolute;
+    top:80px;
+    height:auto;
+}
+
 .set1 {
 float:left;
-}
-
-#example7 {
-float:left;width:80px; text-align:center; position:absolute; left:25px; top:75px; bottom:0;
-}
-
-#example8 {
-float:left;width:80px; text-align:center; position:absolute; left:25px; top:125px; bottom:0;
 }
 
 #client_fromdate {
@@ -31,57 +29,91 @@ float:left;width:150px;height:30px; text-align:center; position: relative;; left
 }
 
 .count_div {
-float:left; left:25px; top:25px; bottom:0;
+    position: absolute;
+    left: 15px;
+    width: 150px;
 }
 
-/* Toggle Button */
-.switch {
-position: relative;
-display: inline-block;
-width: 60px;
-height: 34px;
+/* #daym {
+    position: relative;
+    top:100px;
+    left: 0px;
+    width: 94px;
+    height: 30px;
+    padding: 5px;
+} */
+
+#monthpicker1 {
+    position: absolute;
+    top:140px;
+    left: 15px;
+    width: 50px;
 }
 
-.switch input { 
-opacity: 0;
-width: 0;
-height: 0;
+#monthpicker2 {
+    position: absolute;
+    top:180px;
+    left: 15px;
+    width: 50px;
 }
 
-.slider {
-position: absolute;
-cursor: pointer;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-background-color: #ccc;
--webkit-transition: .4s;
-transition: .4s;
+#monthpicker1_fb {
+    position: absolute;
+    top:28px;
+    left: 320px;
+    width: 50px;
 }
 
-.slider:before {
-position: absolute;
-content: "";
-height: 26px;
-width: 26px;
-left: 4px;
-bottom: 4px;
-background-color: white;
--webkit-transition: .4s;
-transition: .4s;
+#monthpicker2_fb {
+    position: absolute;
+    top:28px;
+    left: 450px;
+    width: 50px;
 }
 
-input:checked + .slider {
-background-color: #2196F3;
+#reset_orders{
+    position: absolute;
+    top:90px;
+    left: 120px;
+    width: 50px;
 }
 
-input:focus + .slider {
-box-shadow: 0 0 1px #2196F3;
+#reset_tickets{
+    position: absolute;
+    top:90px;
+    left: 120px;
+    width: 50px;
 }
 
-input:checked + .slider:before {
--webkit-transform: translateX(26px);
--ms-transform: translateX(26px);
-transform: translateX(26px);
+#reset_feedbacks{
+    position: absolute;
+    top:28px;
+    right: 30px;
+    width: 50px;
+}
+
+#reset_clients{
+    position: absolute;
+    top:60px;
+    left: 50px;
+    width: 100px;
+}
+
+#ord_fromdate{ border:1px solid #ccc; border-radius:0px; height:30px; line-height:20px; width:160px; text-align:center; position:absolute; left:25px; top:140px; bottom:0;}
+#ord_todate{ border:1px solid #ccc; border-radius:0px; height:30px; line-height:20px; width:160px; text-align:center; position:absolute; left:25px; top:180px; bottom:0;}
+
+#ord_fromdate_fb{ border:1px solid #ccc; border-radius:0px; height:30px; line-height:20px; width:120px; text-align:center; position:absolute; left:320px; top:28px; bottom:0;}
+#ord_todate_fb{ border:1px solid #ccc; border-radius:0px; height:30px; line-height:20px; width:120px; text-align:center; position:absolute; left:450px; top:28px; bottom:0;}
+
+#month1 {
+    width: 120px; height: 30px; text-align: left; font-size: small;
+}
+
+#month2 {
+    width: 120px; height: 30px; text-align: left; font-size: small;
+}
+
+#resource_month {
+    width: 180px; height: 35px; text-align: center; font-size: small; border:1px solid #ccc; border-radius:120px;
+    line-height:35px; display:inline-block;
 }
