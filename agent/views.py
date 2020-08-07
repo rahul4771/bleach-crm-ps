@@ -408,6 +408,17 @@ class ResourceManagement(IsAgent,View):
 		except:
 			staffs = None	
 
+		#cleaning schedule & followup schedule for cleaning calendar			
+		workers_calendar_date	= request.GET.get('workers_calendar_date')
+		search                  = request.GET.get('search')
+
+		try:
+			workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
+		except:
+			workers_date = timezone.now().replace(tzinfo=None)
+
+		workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		workers_date_end   = workers_date_start+timedelta(1)
 
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
@@ -422,7 +433,7 @@ class ResourceManagement(IsAgent,View):
 		
 		#total active workers
 		try:
-			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=count_today_start)&Q(end_at__gte=count_today_start)) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=timezone.now().replace(tzinfo=None))&Q(end_at__gte=timezone.now().replace(tzinfo=None)))) ).values_list('member',flat=True)).distinct().count()
+			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=workers_date_start)&Q(end_at__gte=workers_date_start)) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=timezone.now().replace(tzinfo=None))&Q(end_at__gte=timezone.now().replace(tzinfo=None)))) ).values_list('member',flat=True)).distinct().count()
 			print(total_active_workers,"taw")
 		except:
 			total_active_workers = 0	
@@ -439,12 +450,11 @@ class ResourceManagement(IsAgent,View):
 			follow_up_teams = None
 
 
-		today_cleaning_active_teams  = cleaning_teams.filter(Q(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))))
-		today_followup_active_teams  = follow_up_teams.filter(Q(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))))
-		week_cleaning_active_teams   = cleaning_teams.filter(Q( Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end)) ))
-		week_followup_active_teams   = follow_up_teams.filter(Q( Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end)) ))
+		today_cleaning_active_teams  = cleaning_teams.filter(Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lt=workers_date_end))))
+		today_followup_active_teams  = follow_up_teams.filter(Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lt=workers_date_end))))
+		week_cleaning_active_teams   = cleaning_teams.filter(Q( Q(Q(start_at__gte=workers_date_end-timedelta(7))&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_end-timedelta(7))&Q(end_at__lt=workers_date_end)) ))
+		week_followup_active_teams   = follow_up_teams.filter(Q( Q(Q(start_at__gte=workers_date_end-timedelta(7))&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_end-timedelta(7))&Q(end_at__lt=workers_date_end)) ))
 		
-
 		today_date            = timezone.now()
 		weekstart_date        = timezone.now()-timedelta(6)
 
@@ -462,20 +472,7 @@ class ResourceManagement(IsAgent,View):
 
 		#today and weekly active team count
 		today_active_teams_count = today_cleaning_active_teams.count()+today_followup_active_teams.count()
-		week_active_teams_count  = week_cleaning_active_teams.count()+week_followup_active_teams.count() 
-
-
-		#cleaning schedule & followup schedule for cleaning calendar			
-		workers_calendar_date	= request.GET.get('workers_calendar_date')
-		search                  = request.GET.get('search')
-		
-		try:
-			workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
-		except:
-			workers_date = timezone.now().replace(tzinfo=None)
-
-		workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
-		workers_date_end   = workers_date_start+timedelta(1)		
+		week_active_teams_count  = week_cleaning_active_teams.count()+week_followup_active_teams.count() 		
 
 		if search:
 			try:
@@ -492,7 +489,7 @@ class ResourceManagement(IsAgent,View):
 			workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
 		except:
 			workers_details = None
-
+		print(workers_details,"wok")
 		#Filter
 		try:
 			fil_staff = request.GET.get('staff')
