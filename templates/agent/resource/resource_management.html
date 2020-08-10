@@ -127,26 +127,13 @@
        
        <div class="ui calendar" id="working_calendar_month" hidden>
         <div class="ui input left icon" >
-          <input type="text" id="month">
+          <input type="text" id="resource_month">
         </div>
       </div>
        
       <!-- date month toggle -->
-      <!-- <div id="app-cover">
-        <div class="row"> -->
-          <div class="toggle-button-cover">
-            <div class="button-cover">
-              <div class="button-dm b2" id="button-10">
-                <input type="checkbox" class="checkbox" id="daymonthtoggle">
-                <div class="knobs">
-                  <span>DATE</span>
-                </div>
-                <div class="layer"></div>
-              </div>
-            </div>
-          </div>
-        <!-- </div>
-      </div> -->
+      <label class="switch_resource"><input type="checkbox" id="daymonthtoggle"><div class="slider round"></div></label>
+      <!-- date month toggle -->
        
        
         </div><!--filter-right-->
@@ -253,7 +240,7 @@
     
     console.log(selectedMonthName,"lp")
     var datestring = selectedMonthName + " " + date1.getFullYear();
-    $('#month').val(datestring);
+    $('#resource_month').val(datestring);
 
     //load monthly workers data on toggle
     function load_workers_data(){
