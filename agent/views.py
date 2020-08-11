@@ -1413,7 +1413,7 @@ class MakeQuatationBase(IsAgent,View):
 class MakeQuatationPhase1(IsAgent,View):
 
 	def get(self,request,enquiry_id,evaluation_id):
-		enquiry_user    	  = UserProfile.objects.get(id=enquiry_id)
+		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
 		
 		try:
 			evaluation = Evaluation.objects.get(id=evaluation_id)
@@ -1431,9 +1431,14 @@ class MakeQuatationPhase1(IsAgent,View):
 		if evaluation_details_count==evaluation_details_completed_count:
 			allow_submit = True
 		else:
-			allow_submit = False				
+			allow_submit = False	
 
-		return render(request,'agent/enquiry/quatationphase1.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit})	
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()				
+
+		return render(request,'agent/enquiry/phase1quatation.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,})	
 
 	def post(self,request,enquiry_id,evaluation_id):
 		
@@ -1456,7 +1461,7 @@ class MakeQuatationPhase2(IsAgent,View):
 
 		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
 
-		return render(request,'agent/enquiry/quatationphase2.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,})
+		return render(request,'agent/enquiry/phase2quatation.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,})
 
 	def post(self,request,evaluation_detail_id):
 
@@ -1533,7 +1538,7 @@ class MakeQuatationPhase2(IsAgent,View):
 				messages.error(request,"An Error Occured")
 				print(service_formset)
 
-			return render(request,'agent/enquiry/newEnquiryForm.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,})	
+			return render(request,'agent/enquiry/phase2quatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,})	
 
 		return redirect('agent:agent-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
 		
