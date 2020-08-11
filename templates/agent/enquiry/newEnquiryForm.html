@@ -105,10 +105,12 @@
                             </label> 
                     	</div><!--enquiry-child-left-->
                     	<div class="enquiry-child-right"><!--enquiry-child-right-->
-                    	<input name="add" type="button" value="Add" class="add-button">
+                    	<input name="add" type="button" value="Add" class="add-button" onclick="addSection('service1_sections');">
                     	</div><!--enquiry-child-right-->
                     </div><!--parent equiry-parent-->
-                
+                    <div id="service1_sections">
+                    
+                    </div>  
 			</div><!--enquiry-form-left-->
             	<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->
 				&nbsp;
@@ -196,7 +198,7 @@
 	</div><!--enquiry-FullWrapper enquiry-boxes-->
     </div>
     <br>
- <input name="add" type="button" value="Add Service" class="add-button1" onclick="addInput('duplicater');">
+ <input name="add" type="button" value="Add Service" class="add-button1" onclick="addService('duplicater');">
  <br> 
  <div align="center"><input class="assignButton" name="submit" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>
  
@@ -273,7 +275,7 @@ var counter = 1;
 
 var limit = 5;
 
-function addInput(divName){
+function addService(divName){
 
 if (counter == limit)  {
 
@@ -461,5 +463,26 @@ else {
 }
 
 }
+
+section_counter = 1;
+section_limit = 5;
+
+function addSection(divName){
+   if (section_counter == section_limit)  {
+
+    alert("You have reached the limit of adding " + section_counter + " inputs");
+
+    }
+
+    else {
+
+        var newdiv = document.createElement('div');
+
+        newdiv.innerHTML = 
+
+        document.getElementById(divName).appendChild(newdiv);
+
+        counter++;
+    }
 </script>
 {% endblock %}
