@@ -1413,7 +1413,7 @@ class MakeQuatationBase(IsAgent,View):
 class MakeQuatationPhase1(IsAgent,View):
 
 	def get(self,request,enquiry_id,evaluation_id):
-		enquiry_user    	  = UserProfile.objects.get(id=enquiry_id)
+		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
 		
 		try:
 			evaluation = Evaluation.objects.get(id=evaluation_id)
@@ -1431,9 +1431,14 @@ class MakeQuatationPhase1(IsAgent,View):
 		if evaluation_details_count==evaluation_details_completed_count:
 			allow_submit = True
 		else:
-			allow_submit = False				
+			allow_submit = False	
 
-		return render(request,'agent/enquiry/quatationphase1.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit})	
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()				
+
+		return render(request,'agent/enquiry/phase1quatation.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,})	
 
 	def post(self,request,enquiry_id,evaluation_id):
 		
