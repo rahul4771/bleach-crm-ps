@@ -1461,7 +1461,7 @@ class MakeQuatationPhase2(IsAgent,View):
 
 		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
 
-		return render(request,'agent/enquiry/quatationphase2.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,})
+		return render(request,'agent/enquiry/phase2quatation.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,})
 
 	def post(self,request,evaluation_detail_id):
 
@@ -1538,7 +1538,7 @@ class MakeQuatationPhase2(IsAgent,View):
 				messages.error(request,"An Error Occured")
 				print(service_formset)
 
-			return render(request,'agent/enquiry/newEnquiryForm.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,})	
+			return render(request,'agent/enquiry/phase2quatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,})	
 
 		return redirect('agent:agent-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
 		

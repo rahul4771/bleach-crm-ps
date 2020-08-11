@@ -1,0 +1,1010 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "agent/common/header.html" %}
+    
+<section class="content"><!--content-->
+<div class="container-fluid space topspace"><!--container-fluid space topspace-->
+    <div class="welcome-wrapper"><!--welcome-wrapper-->
+        <h1 class="dashboard-head">Quotation Details</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>
+    </div><!--welcome-wrapper-->
+            
+        
+<div class="order-top-wrapper"><!--order-top-wrapper-->
+            
+<div class="white-wrapper"><!--white-wrapper-->
+<div class="center-formDiv"><!--center-formDiv-->
+ 
+ 
+ 			<div class="blc-number-big">BLC 123945849</div>             
+        	<div class="customer-name"><i class="fa blue-text fa-user-circle-o" aria-hidden="true"></i> Reliance Infotech</div>
+        	<div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;  9895689549</div>
+        	<div class="email"><i class="fa orange-text fa-lg fa-envelope-o" aria-hidden="true"></i> &nbsp;  johndoe@gmail.com</div>
+            <div class="mobile-number"><i class="fa red-text fa-lg fa-home" aria-hidden="true"></i> &nbsp;  Appartment, 3rd Floor, Building 4, Block 5, Street Name, Avenue, Area Govermerate</div>
+        	<hr class="div">
+
+{{ service_formset.management_form }}
+<div class="link_formset">
+{% for form in service_formset %}        	
+            <div class="common-sub-head align-left" id="id_form-0-service">Service 1</div> 
+	<div class="enquiry-FullWrapper"><!--enquiry-FullWrapper-->       
+                <div class="close-div close-div-service"></div>     
+		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class=" bold-text common-label"> <label>Service Type</label></div>
+                <label for="favcity">
+                <select id="id_form-0-service_type" name="form-0-service_type">
+                <option value="">Choose Service Type</option>
+                <option value="1">23423434</option>
+                <option value="2">45454545</option>
+                <option value="3">45454545</option>
+                <option value="4">86765676</option>
+                <option value="5">23545677</option>
+                </select>
+                </label>
+                </div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                <div class=" bold-text common-label"> <label>Cleaning Method</label></div>
+                <label for="favcity">
+                <select id="id_form-0-cleaning_method" name="form-0-cleaning_method">
+                <option value="">Choose Cleaning method</option>
+                <option value="1">23423434</option>
+                <option value="2">45454545</option>
+                <option value="3">45454545</option>
+                <option value="4">86765676</option>
+                <option value="5">23545677</option>
+                </select>
+                </label>
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes-->               
+                <hr class="hr-dashedpad">
+                
+        <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class=" bold-text common-label"> <label>Area Type</label></div>
+                <label for="favcity">
+                <select id="id_form-0-area_type" name="form-0-area_type">
+                <option value="">Choose Area Type</option>
+                <option value="1">23423434</option>
+                <option value="2">45454545</option>
+                <option value="3">45454545</option>
+                <option value="4">86765676</option>
+                <option value="5">23545677</option>
+                </select>
+                </label>
+                </div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                <div class=" bold-text common-label"> <label>Location Type</label></div>
+                <label for="favcity">
+                <select id="id_form-0-location_type" name="form-0-location_type">
+                <option value="">Choose Location Type</option>
+                <option value="1">23423434</option>
+                <option value="2">45454545</option>
+                <option value="3">45454545</option>
+                <option value="4">86765676</option>
+                <option value="5">23545677</option>
+                </select>
+                </label>
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes-->               
+                <hr class="hr-dashedpad">
+        <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+				<div class="enquiry-form-left"><!--enquiry-form-left-->
+                	<div class=" bold-text common-label"> <label>Sections</label></div>
+                    <div class="parent equiry-parent"><!--parent equiry-parent-->            
+                    	<div class="enquiry-child-left"><!--enquiry-child-left-->
+                            <label for="favcity">
+                            <select id="id_form-0-section" name="form-0-section">
+                            <option value="">Choose Section</option>
+                            <option value="1">23423434</option>
+                            <option value="2">45454545</option>
+                            <option value="3">45454545</option>
+                            <option value="4">86765676</option>
+                            <option value="5">23545677</option>
+                            </select>
+                            </label> 
+                    	</div><!--enquiry-child-left-->
+                    	<div class="enquiry-child-right"><!--enquiry-child-right-->
+                    	<input name="add" type="button" value="Add" class="add-button">
+                    	</div><!--enquiry-child-right-->
+                    </div><!--parent equiry-parent-->
+                
+			</div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->
+				&nbsp;
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+        
+        <div class="enquiry-child-wrapper-Full"><!--enquiry-child-wrapper-Full-->
+        <div class="close-div"><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>
+        
+                <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class=" bold-text common-label"> <label>Section 1 (General)</label></div>
+                 <input name="time" type="text" class="textBox" placeholder=" ">
+                </div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->
+				&nbsp;	
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+        <hr class="hr-dashedpad">
+        <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+				<div class="enquiry-form-left"><!--enquiry-form-left-->
+                	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Category</label></div>
+                            <label for="favcity">
+                            <select id="favcity" name="select">
+                            <option value="0">Choose your Order Number</option>
+                            <option value="1">23423434</option>
+                            <option value="2">45454545</option>
+                            <option value="3">45454545</option>
+                            <option value="4">86765676</option>
+                            <option value="5">23545677</option>
+                            </select>
+                            </label> 
+                        </div><!--enquiry-two-col-->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Dirt Level</label></div>
+                            <label for="favcity">
+                            <select id="favcity" name="select">
+                            <option value="0">Choose your Order Number</option>
+                            <option value="1">23423434</option>
+                            <option value="2">45454545</option>
+                            <option value="3">45454545</option>
+                            <option value="4">86765676</option>
+                            <option value="5">23545677</option>
+                            </select>
+                            </label> 
+                        </div><!--enquiry-two-col-->
+                    </div><!--enquiry-Two-column-wrapp-->
+				</div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Size</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" "> 
+                        </div><!--enquiry-two-col-->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Unit</label></div>
+                            <label for="favcity">
+                            <select id="favcity" name="select">
+                            <option value="0">Choose your Order Number</option>
+                            <option value="1">23423434</option>
+                            <option value="2">45454545</option>
+                            <option value="3">45454545</option>
+                            <option value="4">86765676</option>
+                            <option value="5">23545677</option>
+                            </select>
+                            </label> 
+                        </div><!--enquiry-two-col-->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Floor</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" "> 
+                        </div><!--enquiry-two-col-->
+                    </div><!--enquiry-Two-column-wrapp-->	
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes-->          
+
+        <hr class="hr-dashedpad">
+        <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+				<div class="enquiry-form-left"><!--enquiry-form-left-->
+                	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Appartments</label></div>
+   							<input name="time" type="text" class="textBox" placeholder=" "> 
+                        </div><!--enquiry-two-col-->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Room</label></div>
+   							<input name="time" type="text" class="textBox" placeholder=" "> 
+                        </div><!--enquiry-two-col-->
+                    </div><!--enquiry-Two-column-wrapp-->
+				</div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+							<div class=" bold-text common-label"> <label>Wall Type</label></div>
+                            <label for="favcity">
+                            <select id="favcity" name="select">
+                            <option value="0">Choose your Order Number</option>
+                            <option value="1">23423434</option>
+                            <option value="2">45454545</option>
+                            <option value="3">45454545</option>
+                            <option value="4">86765676</option>
+                            <option value="5">23545677</option>
+                            </select>
+                            </label> 
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes-->  
+		
+        <hr class="hr-dashedpad">
+
+        <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+				<div class="enquiry-form-left"><!--enquiry-form-left-->
+							<div class=" bold-text common-label"> <label>Ceiling Type</label></div>
+                            <label for="favcity">
+                            <select id="favcity" name="select">
+                            <option value="0">Choose your Order Number</option>
+                            <option value="1">23423434</option>
+                            <option value="2">45454545</option>
+                            <option value="3">45454545</option>
+                            <option value="4">86765676</option>
+                            <option value="5">23545677</option>
+                            </select>
+                            </label> 
+				</div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+							<div class=" bold-text common-label"> <label>Floor Type</label></div>
+                            <label for="favcity">
+                            <select id="favcity" name="select">
+                            <option value="0">Choose your Order Number</option>
+                            <option value="1">23423434</option>
+                            <option value="2">45454545</option>
+                            <option value="3">45454545</option>
+                            <option value="4">86765676</option>
+                            <option value="5">23545677</option>
+                            </select>
+                            </label> 
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes-->  
+		<br><br>
+		<div class="common-sub-head align-left">Keynotes</div>
+        
+        	<div class="keynotes-wrapper-Full"><!--keynotes-wrapper-Full--> 
+            
+            <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+				<div class="enquiry-form-left"><!--enquiry-form-left-->
+                	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Sub Area</label></div>
+                            <label for="favcity">
+                            <select id="favcity" name="select">
+                            <option value="0">Choose your Order Number</option>
+                            <option value="1">23423434</option>
+                            <option value="2">45454545</option>
+                            <option value="3">45454545</option>
+                            <option value="4">86765676</option>
+                            <option value="5">23545677</option>
+                            </select>
+                            </label> 
+                        </div><!--enquiry-two-col-->
+                    </div><!--enquiry-Two-column-wrapp-->
+				</div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Quantity</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" "> 
+                        </div><!--enquiry-two-col-->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label hide-m"> <label>&nbsp;</label></div>
+							<input name="add" type="button" value="Add" class="add-button ">
+                        </div><!--enquiry-two-col-->
+  
+                    </div><!--enquiry-Two-column-wrapp-->	
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+                 
+<hr class="hr-dashedpad">
+         
+				<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper-->
+                	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                     
+                        <table width="100%" border="0" class="keynots-tble">
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">112</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">13</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">13</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">3</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">3</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                        </table>
+                    </div><!--enquiry-form-left-->
+                    <div class="enquiry-form-right"><!--enquiry-form-right-->
+                                    <table width="100%" border="0" class="keynots-tble">
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">112</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">13</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">13</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">3</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                        </table>
+                    </div><!--enquiry-form-right-->
+                </div><!--enquiry-form-Wrapper-->
+			</div><!--keynotes-wrapper-Full--> 
+	</div><!--enquiry-child-wrapper-Full-->
+    
+    <div class="enquiry-child-wrapper-Full"><!--enquiry-child-wrapper-Full-->
+    <div class="close-div"><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>
+<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class=" bold-text common-label"> <label>Kitchen</label></div>
+                 <input name="time" type="text" class="textBox" placeholder=" ">
+                </div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right  hide-m"><!--enquiry-form-right-->
+				&nbsp;	
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+        <hr class="hr-dashedpad">
+        <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+				<div class="enquiry-form-left"><!--enquiry-form-left-->
+                	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Category</label></div>
+                            <label for="favcity">
+                            <select id="favcity" name="select">
+                            <option value="0">Choose your Order Number</option>
+                            <option value="1">23423434</option>
+                            <option value="2">45454545</option>
+                            <option value="3">45454545</option>
+                            <option value="4">86765676</option>
+                            <option value="5">23545677</option>
+                            </select>
+                            </label> 
+                        </div><!--enquiry-two-col-->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Dirt Level</label></div>
+                            <label for="favcity">
+                            <select id="favcity" name="select">
+                            <option value="0">Choose your Order Number</option>
+                            <option value="1">23423434</option>
+                            <option value="2">45454545</option>
+                            <option value="3">45454545</option>
+                            <option value="4">86765676</option>
+                            <option value="5">23545677</option>
+                            </select>
+                            </label> 
+                        </div><!--enquiry-two-col-->
+                    </div><!--enquiry-Two-column-wrapp-->
+				</div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Rooms</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" "> 
+                        </div><!--enquiry-two-col-->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Size</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" "> 
+                        </div><!--enquiry-two-col-->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label  hide-m"> <label>&nbsp;</label></div>
+							<input name="uni" type="button" value="Unit" class="unit-button "> 
+                        </div><!--enquiry-two-col-->
+                    </div><!--enquiry-Two-column-wrapp-->	
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+    <br> <br>   
+<div class="common-sub-head align-left">Keynotes</div>
+        
+        	<div class="keynotes-wrapper-Full"><!--keynotes-wrapper-Full--> 
+            
+            <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+				<div class="enquiry-form-left"><!--enquiry-form-left-->
+                	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Sub Area</label></div>
+                            <label for="favcity">
+                            <select id="favcity" name="select">
+                            <option value="0">Choose your Order Number</option>
+                            <option value="1">23423434</option>
+                            <option value="2">45454545</option>
+                            <option value="3">45454545</option>
+                            <option value="4">86765676</option>
+                            <option value="5">23545677</option>
+                            </select>
+                            </label> 
+                        </div><!--enquiry-two-col-->
+                    </div><!--enquiry-Two-column-wrapp-->
+				</div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Quantity</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" "> 
+                        </div><!--enquiry-two-col-->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label hide-m"> <label>&nbsp;</label></div>
+							<input name="add" type="button" value="Agvdd" class="add-button">
+                        </div><!--enquiry-two-col-->
+                    </div><!--enquiry-Two-column-wrapp-->	
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+                 
+<hr class="hr-dashedpad">
+         
+				<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper-->
+                	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                     
+                        <table width="100%" border="0" class="keynots-tble">
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">112</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">13</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">13</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">3</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">3</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                        </table>
+                    </div><!--enquiry-form-left-->
+                    <div class="enquiry-form-right"><!--enquiry-form-right-->
+                                    <table width="100%" border="0" class="keynots-tble">
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">112</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">13</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">13</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">3</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                        </table>
+                    </div><!--enquiry-form-right-->
+                </div><!--enquiry-form-Wrapper-->
+			</div><!--keynotes-wrapper-Full-->      
+        
+    </div><!--enquiry-child-wrapper-Full-->    
+    
+    <div class="enquiry-child-wrapper-Full"><!--enquiry-child-wrapper-Full-->
+    <div class="close-div"><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>
+<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class=" bold-text common-label"> <label>Carpet</label></div>
+                 <input name="time" type="text" class="textBox" placeholder=" ">
+                </div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->
+				&nbsp;	
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+        <hr class="hr-dashedpad">
+        <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+				<div class="enquiry-form-left"><!--enquiry-form-left-->
+                	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Dirt Level</label></div>
+                            <label for="favcity">
+                            <select id="favcity" name="select">
+                            <option value="0">Choose your Order Number</option>
+                            <option value="1">23423434</option>
+                            <option value="2">45454545</option>
+                            <option value="3">45454545</option>
+                            <option value="4">86765676</option>
+                            <option value="5">23545677</option>
+                            </select>
+                            </label> 
+                        </div><!--enquiry-two-col-->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Age</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" ">
+                        </div><!--enquiry-two-col-->
+                    </div><!--enquiry-Two-column-wrapp-->
+				</div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Quantity</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" "> 
+                        </div><!--enquiry-two-col-->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Size</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" "> 
+                        </div><!--enquiry-two-col-->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label hide-m"> <label>&nbsp;</label></div>
+							<input name="uni" type="button" value="Unit" class="unit-button"> 
+                        </div><!--enquiry-two-col-->
+                    </div><!--enquiry-Two-column-wrapp-->	
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+    
+    <hr class="hr-dashedpad">
+    
+<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+				<div class="enquiry-form-left"><!--enquiry-form-left-->
+							<div class=" bold-text common-label"> <label>Material</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" ">
+				</div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+							<div class=" bold-text common-label"> <label>Colour</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" ">
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes-->        
+    
+    <hr class="hr-dashedpad">
+    
+<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+				<div class="enquiry-form-left"><!--enquiry-form-left-->
+							<div class=" bold-text common-label"> <label>Cause of Stain</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" ">
+				</div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->
+				&nbsp;
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes-->         
+    </div><!--enquiry-child-wrapper-Full-->
+
+    <div class="enquiry-child-wrapper-Full"><!--enquiry-child-wrapper-Full-->
+    <div class="close-div"><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>
+<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class=" bold-text common-label"> <label>Uppostry</label></div>
+                 <input name="time" type="text" class="textBox" placeholder=" ">
+                </div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->
+				&nbsp;	
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+        <hr class="hr-dashedpad">
+        <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+				<div class="enquiry-form-left"><!--enquiry-form-left-->
+                	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Dirt Level</label></div>
+                            <label for="favcity">
+                            <select id="favcity" name="select">
+                            <option value="0">Choose your Order Number</option>
+                            <option value="1">23423434</option>
+                            <option value="2">45454545</option>
+                            <option value="3">45454545</option>
+                            <option value="4">86765676</option>
+                            <option value="5">23545677</option>
+                            </select>
+                            </label> 
+                        </div><!--enquiry-two-col-->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Age</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" ">
+                        </div><!--enquiry-two-col-->
+                    </div><!--enquiry-Two-column-wrapp-->
+				</div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Quantity</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" "> 
+                        </div><!--enquiry-two-col-->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+						<div class=" bold-text common-label"> <label>Size</label></div>
+                            <label for="favcity">
+                            <select id="favcity" name="select">
+                            <option value="0">Choose your Order Number</option>
+                            <option value="1">23423434</option>
+                            <option value="2">45454545</option>
+                            <option value="3">45454545</option>
+                            <option value="4">86765676</option>
+                            <option value="5">23545677</option>
+                            </select>
+                            </label> 
+                        </div><!--enquiry-two-col-->
+                    </div><!--enquiry-Two-column-wrapp-->	
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+    
+    <hr class="hr-dashedpad">
+    
+<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+				<div class="enquiry-form-left"><!--enquiry-form-left-->
+							<div class=" bold-text common-label"> <label>Material</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" ">
+				</div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+							<div class=" bold-text common-label"> <label>Colour</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" ">
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes-->        
+    
+    <hr class="hr-dashedpad">
+    
+<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+				<div class="enquiry-form-left"><!--enquiry-form-left-->
+							<div class=" bold-text common-label"> <label>Cause of Stain</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" ">
+				</div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->
+				&nbsp;
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes-->         
+    </div><!--enquiry-child-wrapper-Full-->
+
+
+    <div class="enquiry-child-wrapper-Full"><!--enquiry-child-wrapper-Full-->
+    <div class="close-div"><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>
+<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                <br>
+               <!-- <div class=" bold-text common-label"> <label>Kitchen</label></div>-->
+                 <input name="time" type="text" class="textBox" placeholder=" ">
+                </div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->
+				&nbsp;	
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+        <hr class="hr-dashedpad">
+        <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+				<div class="enquiry-form-left"><!--enquiry-form-left-->
+							<div class=" bold-text common-label"> <label>Section Name</label></div>
+                            <input name="time" type="text" class="textBox" placeholder=" ">
+				</div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Size</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" "> 
+                        </div><!--enquiry-two-col-->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label hide-m"> <label>&nbsp;</label></div>
+							<input name="uni" type="button" value="Unit" class="unit-button"> 
+                        </div><!--enquiry-two-col-->
+                    </div><!--enquiry-Two-column-wrapp-->	
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+        
+        <hr class="hr-dashedpad">
+        
+        <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+				<div class="enquiry-form-left"><!--enquiry-form-left-->
+							<div class=" bold-text common-label"> <label>Number of Floors</label></div>
+                            <input name="time" type="text" class="textBox" placeholder=" ">
+				</div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Number of Rooms</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" "> 
+                        </div><!--enquiry-two-col-->
+                    </div><!--enquiry-Two-column-wrapp-->	
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+        
+        
+    <br> <br>   
+<div class="common-sub-head align-left">Keynotes</div>
+        
+        	<div class="keynotes-wrapper-Full"><!--keynotes-wrapper-Full--> 
+            
+            <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+				<div class="enquiry-form-left"><!--enquiry-form-left-->
+                	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Sub Area</label></div>
+                            <label for="favcity">
+                            <select id="favcity" name="select">
+                            <option value="0">Choose your Order Number</option>
+                            <option value="1">23423434</option>
+                            <option value="2">45454545</option>
+                            <option value="3">45454545</option>
+                            <option value="4">86765676</option>
+                            <option value="5">23545677</option>
+                            </select>
+                            </label> 
+                        </div><!--enquiry-two-col-->
+                    </div><!--enquiry-Two-column-wrapp-->
+				</div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label"> <label>Quantity</label></div>
+							<input name="time" type="text" class="textBox" placeholder=" "> 
+                        </div><!--enquiry-two-col-->
+                    	<div class="enquiry-two-col"><!--enquiry-two-col-->
+							<div class=" bold-text common-label hide-m"> <label>&nbsp;</label></div>
+							<input name="add" type="button" value="Add" class="add-button">
+                        </div><!--enquiry-two-col-->
+                    </div><!--enquiry-Two-column-wrapp-->	
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+                 
+<hr class="hr-dashedpad">
+         
+				<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper-->
+                	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                     
+                        <table width="100%" border="0" class="keynots-tble">
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">112</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">13</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">13</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">3</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">3</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                        </table>
+                    </div><!--enquiry-form-left-->
+                    <div class="enquiry-form-right"><!--enquiry-form-right-->
+                                    <table width="100%" border="0" class="keynots-tble">
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">112</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">13</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">13</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                            <tr>
+                                <td align="left">Bathroom</td>
+                                <td width="50px" align="center">3</td>
+                                <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
+                            </tr>
+                        </table>
+                    </div><!--enquiry-form-right-->
+                </div><!--enquiry-form-Wrapper-->
+			</div><!--keynotes-wrapper-Full-->      
+        
+    </div><!--enquiry-child-wrapper-Full-->    
+
+<br><br>
+		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class=" bold-text common-label"> <label>Sections</label></div>
+                    <div class="parent equiry-parent"><!--parent equiry-parent-->            
+                    	<div class="enquiry-child-left"><!--enquiry-child-left-->
+                            <label for="favcity">
+                            <select id="favcity" name="select">
+                            <option value="0">Choose your Order Number</option>
+                            <option value="1">23423434</option>
+                            <option value="2">45454545</option>
+                            <option value="3">45454545</option>
+                            <option value="4">86765676</option>
+                            <option value="5">23545677</option>
+                            </select>
+                            </label> 
+                    	</div><!--enquiry-child-left-->
+                    	<div class="enquiry-child-right"><!--enquiry-child-right-->
+                    	<input name="add" type="button" value="Add" class="add-button">
+                    	</div><!--enquiry-child-right-->
+                    </div><!--parent equiry-parent-->
+                </div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->
+				&nbsp;
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes-->               
+                <hr class="hr-dashedpad">
+    
+ 		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class=" bold-text common-label"> <label>Number of Cleaners</label></div>
+                <input name="time" type="text" class="textBox" placeholder=" "> 
+                </div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                <div class=" bold-text common-label"> <label>Cleaning Method</label></div>
+                <input name="time" type="text" class="textBox" placeholder=" "> 
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+                      
+                <hr class="hr-dashedpad">   
+                
+ 		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class=" bold-text common-label"> <label>Estimated Cost</label></div>
+                <input name="time" type="text" class="textBox" placeholder=" "> 
+                </div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                <div class=" bold-text common-label"> <label>Discount</label></div>
+                <input name="time" type="text" class="textBox" placeholder=" "> 
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes-->  
+                     
+                <hr class="hr-dashedpad">
+ 
+  		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class=" bold-text common-label"> <label>Final Cost</label></div>
+                <input name="time" type="text" class="textBox" placeholder=" "> 
+                </div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                <div class=" bold-text common-label"> <label>Cleaning Policy</label></div>
+                <label for="favcity">
+                <select id="favcity" name="select">
+                <option value="0">Choose your Order Number</option>
+                <option value="1">23423434</option>
+                <option value="2">45454545</option>
+                <option value="3">45454545</option>
+                <option value="4">86765676</option>
+                <option value="5">23545677</option>
+                </select>
+                </label>  
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes-->  
+                     
+                <hr class="hr-dashedpad">    
+                
+ 		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class=" bold-text common-label"> <label>Tendative Date(S)</label></div>
+                <input name="time" type="text" class="textBox" placeholder=" "> 
+                </div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                <div class=" bold-text common-label"> <label>Tendative Time</label></div>
+                <input name="time" type="text" class="textBox" placeholder=" "> 
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes-->
+        
+        <br><br><br>
+        
+  				<div class=" bold-text common-label"> <label>Notes</label></div>
+                <textarea name="notes" class="textArea" cols="" rows=""></textarea>
+                
+<div class="details-notes align-left">Media</div>        
+<div class="row"><!--row-->
+    <div class="col-sm-2 imgUp"><!--col-sm-2 imgUp-->
+        <div class="imagePreview"></div>
+        <label class="btn btn-primary">Upload<input type="file" class="uploadFile img" value="Upload Photo" style="width: 0px;height: 0px;overflow: hidden;"></label>
+        </div><!--col-sm-2 imgUp-->
+    	<i class="fa fa-plus imgAdd"></i>
+</div><!--row-->                  
+                
+                
+                
+	</div><!--enquiry-FullWrapper enquiry-boxes-->
+<br>
+{% endfor %}
+<br>
+</div><!-- link formset end -->
+ <div align="center"><input class="assignButton" name="submit" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+</div><!--center-formDiv-->
+</div><!--white-wrapper-->
+ 
+</div><!--order-top-wrapper-->  
+            
+            
+            
+            
+                 
+</div><!--container-fluid space topspace-->
+</section><!--content-->
+    
+    
+{% include 'agent/common/footer.html' %}    
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %} 
+<script></script>
+<script>
+$('document').ready(function(){
+//formset
+    $('.link_formset').formset({
+
+        addText: 'Add Service',
+
+        deleteText: 'Remove Service', 
+
+    });
+});
+</script>
+
+<script src="{% static 'files/js/custom formset/customformset.js' %}"></script>
+
+<script id="rendered-js">
+$('.footable').footable({
+  calculateWidthOverride: function () {
+    return { width: $(window).width() };
+  } });
+
+
+// See:
+// http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
+//# sourceURL=pen.js
+    </script>
+<script id="rendered-js">
+$(".imgAdd").click(function () {
+  $(this).closest(".row").find('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" value="Upload Photo" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
+});
+$(document).on("click", "i.del", function () {
+  $(this).parent().remove();
+});
+$(function () {
+  $(document).on("change", ".uploadFile", function ()
+  {
+    var uploadFile = $(this);
+    var files = !!this.files ? this.files : [];
+    if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+
+    if (/^image/.test(files[0].type)) {// only image file
+      var reader = new FileReader(); // instance of the FileReader
+      reader.readAsDataURL(files[0]); // read the local file
+
+      reader.onloadend = function () {// set image data as background of div
+        //alert(uploadFile.closest(".upimage").find('.imagePreview').length);
+        uploadFile.closest(".imgUp").find('.imagePreview').css("background-image", "url(" + this.result + ")");
+      };
+    }
+
+  });
+});
+//# sourceURL=pen.js
+    </script>
+{% endblock %}
