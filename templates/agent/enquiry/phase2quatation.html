@@ -107,7 +107,7 @@
                             </label> 
                     	</div><!--enquiry-child-left-->
                     	<div class="enquiry-child-right"><!--enquiry-child-right-->
-                    	<input name="add" type="button" value="Add" class="add-button">
+                    	<input name="add" type="button" value="Add" class="add-button" onclick="addSection();">
                     	</div><!--enquiry-child-right-->
                     </div><!--parent equiry-parent-->
                 
@@ -117,13 +117,14 @@
                 </div><!--enquiry-form-right-->
 		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
         
-        <div class="enquiry-child-wrapper-Full"><!--enquiry-child-wrapper-Full-->
+        <div id="section-container">
+        <div class="enquiry-child-wrapper-Full form_section" id="form0_section0" hidden><!--enquiry-child-wrapper-Full-->
         <div class="close-div"><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>
-        
-                <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+
+                <div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes-->
             	<div class="enquiry-form-left"><!--enquiry-form-left-->
-                <div class=" bold-text common-label"> <label>Section 1 (General)</label></div>
-                 <input name="time" type="text" class="textBox" placeholder=" ">
+                <div class=" bold-text common-label"> <label class="section_label">Section 1 (General)</label></div>
+                 <input name="time" type="text" class="textBox section_time" placeholder=" ">
                 </div><!--enquiry-form-left-->
             	<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->
 				&nbsp;	
@@ -136,7 +137,7 @@
                     	<div class="enquiry-two-col"><!--enquiry-two-col-->
 							<div class=" bold-text common-label"> <label>Category</label></div>
                             <label for="favcity">
-                            <select id="favcity" name="select">
+                            <select id="favcity" name="form-0-section-1-select">
                             <option value="0">Choose your Order Number</option>
                             <option value="1">23423434</option>
                             <option value="2">45454545</option>
@@ -149,7 +150,7 @@
                     	<div class="enquiry-two-col"><!--enquiry-two-col-->
 							<div class=" bold-text common-label"> <label>Dirt Level</label></div>
                             <label for="favcity">
-                            <select id="favcity" name="select">
+                            <select id="favcity" name="form-0-section-1-select">
                             <option value="0">Choose your Order Number</option>
                             <option value="1">23423434</option>
                             <option value="2">45454545</option>
@@ -165,7 +166,7 @@
                 	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
                     	<div class="enquiry-two-col"><!--enquiry-two-col-->
 							<div class=" bold-text common-label"> <label>Size</label></div>
-							<input name="time" type="text" class="textBox" placeholder=" "> 
+							<input name="form-0-section-1-time" type="text" class="textBox" placeholder=" "> 
                         </div><!--enquiry-two-col-->
                     	<div class="enquiry-two-col"><!--enquiry-two-col-->
 							<div class=" bold-text common-label"> <label>Unit</label></div>
@@ -182,7 +183,7 @@
                         </div><!--enquiry-two-col-->
                     	<div class="enquiry-two-col"><!--enquiry-two-col-->
 							<div class=" bold-text common-label"> <label>Floor</label></div>
-							<input name="time" type="text" class="textBox" placeholder=" "> 
+							<input name="form-0-section-1-time" type="text" class="textBox" placeholder=" "> 
                         </div><!--enquiry-two-col-->
                     </div><!--enquiry-Two-column-wrapp-->	
                 </div><!--enquiry-form-right-->
@@ -194,18 +195,18 @@
                 	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
                     	<div class="enquiry-two-col"><!--enquiry-two-col-->
 							<div class=" bold-text common-label"> <label>Appartments</label></div>
-   							<input name="time" type="text" class="textBox" placeholder=" "> 
+   							<input name="form-0-section-1-time" type="text" class="textBox" placeholder=" "> 
                         </div><!--enquiry-two-col-->
                     	<div class="enquiry-two-col"><!--enquiry-two-col-->
 							<div class=" bold-text common-label"> <label>Room</label></div>
-   							<input name="time" type="text" class="textBox" placeholder=" "> 
+   							<input name="form-0-section-1-time" type="text" class="textBox" placeholder=" "> 
                         </div><!--enquiry-two-col-->
                     </div><!--enquiry-Two-column-wrapp-->
 				</div><!--enquiry-form-left-->
             	<div class="enquiry-form-right"><!--enquiry-form-right-->
 							<div class=" bold-text common-label"> <label>Wall Type</label></div>
                             <label for="favcity">
-                            <select id="favcity" name="select">
+                            <select id="favcity" name="form-0-section-1-select">
                             <option value="0">Choose your Order Number</option>
                             <option value="1">23423434</option>
                             <option value="2">45454545</option>
@@ -223,7 +224,7 @@
 				<div class="enquiry-form-left"><!--enquiry-form-left-->
 							<div class=" bold-text common-label"> <label>Ceiling Type</label></div>
                             <label for="favcity">
-                            <select id="favcity" name="select">
+                            <select id="favcity" name="form-0-section-1-select">
                             <option value="0">Choose your Order Number</option>
                             <option value="1">23423434</option>
                             <option value="2">45454545</option>
@@ -236,7 +237,7 @@
             	<div class="enquiry-form-right"><!--enquiry-form-right-->
 							<div class=" bold-text common-label"> <label>Floor Type</label></div>
                             <label for="favcity">
-                            <select id="favcity" name="select">
+                            <select id="favcity" name="form-0-section-1-select">
                             <option value="0">Choose your Order Number</option>
                             <option value="1">23423434</option>
                             <option value="2">45454545</option>
@@ -345,8 +346,9 @@
                 </div><!--enquiry-form-Wrapper-->
 			</div><!--keynotes-wrapper-Full--> 
 	</div><!--enquiry-child-wrapper-Full-->
-    
-    <div class="enquiry-child-wrapper-Full"><!--enquiry-child-wrapper-Full-->
+    </div><!--section-container-->
+
+    {% comment %} <div class="enquiry-child-wrapper-Full"><!--enquiry-child-wrapper-Full-->
     <div class="close-div"><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>
 <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
             	<div class="enquiry-form-left"><!--enquiry-form-left-->
@@ -814,7 +816,7 @@
                 </div><!--enquiry-form-Wrapper-->
 			</div><!--keynotes-wrapper-Full-->      
         
-    </div><!--enquiry-child-wrapper-Full-->    
+    </div><!--enquiry-child-wrapper-Full-->     {% endcomment %}
 
 <br><br>
 		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
@@ -954,6 +956,30 @@
 {% block javascript %} 
 <script></script>
 <script>
+section_counter = 1;
+
+function addSection(){
+    console.log($('.form_section:last').attr('id'))
+    $('.form_section:last').attr('hidden',false);
+    
+    var prevoius_div_id = $('.form_section:last').attr('id');
+    var formcount = parseInt(prevoius_div_id.match(/\d+/g)[0]);
+    var sectioncount = parseInt(prevoius_div_id.match(/\d+/g)[1]);
+    if (sectioncount !== 0){
+        $('#'+prevoius_div_id+'').clone().appendTo('#section-container');
+        $('.form_section:last').attr('id',"form"+formcount+"_section"+(sectioncount+1)+"")
+        
+        $('.section_label:last').text('Section '+(sectioncount+1)+' (General)');
+        
+        $('.form_section:last').find('input[name="form-'+formcount+'-section-'+sectioncount+'-time"]').attr("name","form-"+formcount+"-section-"+(sectioncount+1)+"-time");    
+    }else{
+        $('#'+prevoius_div_id+'').attr('id',"form"+formcount+"_section"+ (sectioncount+1) +"");
+        $("#form"+formcount+"_section"+(sectioncount+1)+"").find('input[name="time"]').attr("name","form-"+formcount+"-section-"+(sectioncount+1)+"-time");     
+        console.log("first section")
+    }
+    
+}
+
 $('document').ready(function(){
 //formset
     $('.link_formset').formset({
