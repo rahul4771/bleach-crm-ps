@@ -590,32 +590,6 @@
     </div><!--enquiry-child-wrapper-Full-->     {% endcomment %}
 
 <br><br>
-		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
-            	<div class="enquiry-form-left"><!--enquiry-form-left-->
-                <div class=" bold-text common-label"> <label>Sections</label></div>
-                    <div class="parent equiry-parent"><!--parent equiry-parent-->            
-                    	<div class="enquiry-child-left"><!--enquiry-child-left-->
-                            <label for="favcity">
-                            <select id="favcity" name="select">
-                            <option value="0">Choose your Order Number</option>
-                            <option value="1">23423434</option>
-                            <option value="2">45454545</option>
-                            <option value="3">45454545</option>
-                            <option value="4">86765676</option>
-                            <option value="5">23545677</option>
-                            </select>
-                            </label> 
-                    	</div><!--enquiry-child-left-->
-                    	<div class="enquiry-child-right"><!--enquiry-child-right-->
-                    	<input name="add" type="button" value="Add" class="add-button">
-                    	</div><!--enquiry-child-right-->
-                    </div><!--parent equiry-parent-->
-                </div><!--enquiry-form-left-->
-            	<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->
-				&nbsp;
-                </div><!--enquiry-form-right-->
-		</div> <!--enquiry-form-Wrapper enquiry-boxes-->               
-                <hr class="hr-dashedpad">
     
  		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
             	<div class="enquiry-form-left"><!--enquiry-form-left-->
@@ -725,61 +699,7 @@
 {% endblock %}
 
 {% block javascript %} 
-<script></script>
 <script>
-
-function addSection(){
-    console.log($('.form_section:last').attr('id'))
-    $('.form_section:last').attr('hidden',false);
-    
-    var prevoius_div_id = $('.form_section:last').attr('id');
-    var formcount = parseInt(prevoius_div_id.match(/\d+/g)[0]);
-    var sectioncount = parseInt(prevoius_div_id.match(/\d+/g)[1]);
-    if (sectioncount !== 0){
-        $('#'+prevoius_div_id+'').clone().appendTo('#section-container');
-        $('.form_section:last').attr('id',"form"+formcount+"_section"+(sectioncount+1)+"")
-        
-        $('.section_label:last').text('Section '+(sectioncount+1)+' (General)');
-        
-        $('.form_section:last').find('input[name="form-'+formcount+'-section-'+sectioncount+'-time"]').attr("name","form-"+formcount+"-section-"+(sectioncount+1)+"-time");
-        $("#form"+formcount+"_section"+(sectioncount+1)+"").find('input[name="keynote_quantity"]').attr("name","form-"+formcount+"-section-"+(sectioncount+1)+"-keynote_quantity");             
-    }else{
-        $('#'+prevoius_div_id+'').attr('id',"form"+formcount+"_section"+ (sectioncount+1) +"");
-        $("#form"+formcount+"_section"+(sectioncount+1)+"").find('input[name="time"]').attr("name","form-"+formcount+"-section-"+(sectioncount+1)+"-time");
-        $("#form"+formcount+"_section"+(sectioncount+1)+"").find('input[name="keynote_quantity"]').attr("id","form-"+formcount+"-section-"+(sectioncount+1)+"-keynote_quantity");          
-        console.log("first section")
-    }
-    
-};
-
-function addKeynote(){
-    console.log($('.keynote_class:last').attr('id'));
-    $('.keynote_class:last').attr('hidden',false);
-    var previous_keynote_id = $('.keynote_class:last').attr('id');
-    var formcount = parseInt(previous_keynote_id.match(/\d+/g)[0]);
-    var sectioncount = parseInt(previous_keynote_id.match(/\d+/g)[1]);
-    var keynotecount = parseInt(previous_keynote_id.match(/\d+/g)[2]);
-
-    if (keynotecount !== 0){
-        var quantity = $("#keynote_quantity").val();
-        console.log($("#keynote_quantity").val());
-        var new_keynote = $('#'+previous_keynote_id+'').clone() //.appendTo('#form'+formcount+'_section'+sectioncount+'_keynote_table');
-        $('.keynote_class:last').after(new_keynote);
-        $('.keynote_class:last').attr('id',"form"+formcount+"_section"+sectioncount+"_keynote"+(keynotecount+1)+"")
-        $('#form'+formcount+'_section'+sectioncount+'_keynote'+(keynotecount+1)+'').find('.keynot_quantity').text(quantity);
-        $("#keynote_quantity").val('');
-    }else{
-        var quantity = $("#keynote_quantity").val();
-        console.log($("#keynote_quantity").val());
-        $('#'+previous_keynote_id+'').attr('id',"form"+formcount+"_section"+sectioncount+"_keynote"+(keynotecount+1)+"");
-        $('#form'+formcount+'_section'+sectioncount+'_keynote'+(keynotecount+1)+'').find('.keynot_quantity').text(quantity);
-        $("#keynote_quantity").val('');
-        console.log("first section")
-    }
-};
-
-
-
 function addSectionNew(form_identifier){
 
     var formcount = parseInt(form_identifier.id.match(/\d+/g)[0]);
