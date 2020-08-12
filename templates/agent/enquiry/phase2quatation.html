@@ -37,11 +37,9 @@
                 <label for="favcity">
                 <select id="id_form-0-service_type" name="form-0-service_type">
                 <option value="">Choose Service Type</option>
-                <option value="1">23423434</option>
-                <option value="2">45454545</option>
-                <option value="3">45454545</option>
-                <option value="4">86765676</option>
-                <option value="5">23545677</option>
+                {% for service_type in service_types %}
+                <option value="{{service_type.id}}">{{service_type.name}}</option>
+                {% endfor %}
                 </select>
                 </label>
                 </div><!--enquiry-form-left-->
@@ -50,11 +48,9 @@
                 <label for="favcity">
                 <select id="id_form-0-cleaning_method" name="form-0-cleaning_method">
                 <option value="">Choose Cleaning method</option>
-                <option value="1">23423434</option>
-                <option value="2">45454545</option>
-                <option value="3">45454545</option>
-                <option value="4">86765676</option>
-                <option value="5">23545677</option>
+                <option value="1">Method1</option>
+                <option value="2">Method2</option>
+                <option value="3">Method3</option>
                 </select>
                 </label>
                 </div><!--enquiry-form-right-->
@@ -67,11 +63,9 @@
                 <label for="favcity">
                 <select id="id_form-0-area_type" name="form-0-area_type">
                 <option value="">Choose Area Type</option>
-                <option value="1">23423434</option>
-                <option value="2">45454545</option>
-                <option value="3">45454545</option>
-                <option value="4">86765676</option>
-                <option value="5">23545677</option>
+                {% for area_type in area_types %}
+                <option value="{{area_type.name}}">{{area_type.name}}</option>
+                {% endfor %}
                 </select>
                 </label>
                 </div><!--enquiry-form-left-->
@@ -80,11 +74,9 @@
                 <label for="favcity">
                 <select id="id_form-0-location_type" name="form-0-location_type">
                 <option value="">Choose Location Type</option>
-                <option value="1">23423434</option>
-                <option value="2">45454545</option>
-                <option value="3">45454545</option>
-                <option value="4">86765676</option>
-                <option value="5">23545677</option>
+                <option value="1">Post Construction</option>
+                <option value="2">Post Renovation</option>
+                <option value="3">Fully Furnished</option>
                 </select>
                 </label>
                 </div><!--enquiry-form-right-->
@@ -98,11 +90,6 @@
                             <label for="favcity">
                             <select id="id_form-0-section" name="form-0-section">
                             <option value="">Choose Section</option>
-                            <option value="1">23423434</option>
-                            <option value="2">45454545</option>
-                            <option value="3">45454545</option>
-                            <option value="4">86765676</option>
-                            <option value="5">23545677</option>
                             </select>
                             </label> 
                     	</div><!--enquiry-child-left-->

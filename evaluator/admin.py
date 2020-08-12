@@ -1,11 +1,13 @@
 from django.contrib import admin
-from evaluator.models import ServiceType,LocationType,CleaningType,CleaningMethod,Evaluation,EvaluationDetails,EvaluationMedia,EvaluationBook
+from evaluator.models import ServiceType,LocationType,CleaningType,CleaningMethod,AreaType,CleaningSection,Evaluation,EvaluationDetails,EvaluationMedia,EvaluationBook
 # Register your models here.
 
 admin.site.register(ServiceType)
 admin.site.register(LocationType)
 admin.site.register(CleaningType)
 admin.site.register(CleaningMethod)
+admin.site.register(AreaType)
+admin.site.register(CleaningSection)
 admin.site.register(Evaluation)
 
 

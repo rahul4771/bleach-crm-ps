@@ -154,6 +154,32 @@ class CleaningMethod(models.Model):
 	def __str__(self):
 		return self.name
 
+class AreaType(models.Model):	
+	name 				= models.CharField(max_length=100,blank=False,null=False)
+	
+	is_active       	= models.BooleanField(null=False,blank=True,default=True)
+	created         	= models.DateTimeField(auto_now_add=True)
+	updated         	= models.DateTimeField(auto_now=True)
+
+	def __unicode__(self):
+		return str(self.name)
+
+	def __str__(self):
+		return self.name		
+
+class CleaningSection(models.Model):	
+	name 				= models.CharField(max_length=100,blank=False,null=False)
+	service_type 		= models.ForeignKey('ServiceType',blank=True,null=True)
+	
+	is_active       	= models.BooleanField(null=False,blank=True,default=True)
+	created         	= models.DateTimeField(auto_now_add=True)
+	updated         	= models.DateTimeField(auto_now=True)
+
+	def __unicode__(self):
+		return str(self.name)
+
+	def __str__(self):
+		return self.name
 #Store the Customer Enquiry Details and Assigned Evaluator Details.
 
 class Evaluation(models.Model):
