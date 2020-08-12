@@ -28,7 +28,7 @@
 {{ service_formset.management_form }}
 <div class="link_formset">
 {% for form in service_formset %}        	
-            <div class="common-sub-head align-left" id="id_form-0-service">Service 1</div> 
+            <div class="common-sub-head align-left service_form" id="id_form-0-service">Service 1</div> 
 	<div class="enquiry-FullWrapper"><!--enquiry-FullWrapper-->       
                 <div class="close-div close-div-service"></div>     
 		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
@@ -275,11 +275,11 @@
                 	<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
                     	<div class="enquiry-two-col"><!--enquiry-two-col-->
 							<div class=" bold-text common-label"> <label>Quantity</label></div>
-							<input name="time" type="text" class="textBox" placeholder=" "> 
+							<input name="keyn_quantity" id="keynote_quantity" type="text" class="textBox" value="" placeholder=""> 
                         </div><!--enquiry-two-col-->
                     	<div class="enquiry-two-col"><!--enquiry-two-col-->
 							<div class=" bold-text common-label hide-m"> <label>&nbsp;</label></div>
-							<input name="add" type="button" value="Add" class="add-button ">
+							<input name="add" type="button" value="Add" class="add-button " onclick="addKeynote();">
                         </div><!--enquiry-two-col-->
   
                     </div><!--enquiry-Two-column-wrapp-->	
@@ -291,13 +291,13 @@
 				<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper-->
                 	<div class="enquiry-form-left"><!--enquiry-form-left-->
                      
-                        <table width="100%" border="0" class="keynots-tble">
-                            <tr>
+                        <table width="100%" border="0" class="keynots-tble form0_section0_keynote_table">
+                            <tr class="keynote_class" id="form0_section0_keynote0" hidden>
                                 <td align="left">Bathroom</td>
-                                <td width="50px" align="center">112</td>
+                                <td width="50px" align="center" class="keynot_quantity"></td>
                                 <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
                             </tr>
-                            <tr>
+                            {% comment %} <tr>
                                 <td align="left">Bathroom</td>
                                 <td width="50px" align="center">13</td>
                                 <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
@@ -316,7 +316,7 @@
                                 <td align="left">Bathroom</td>
                                 <td width="50px" align="center">3</td>
                                 <td width="30px" align="center"><input name="delete" type="button" class="delete-button"></td>
-                            </tr>
+                            </tr>{% endcomment %}
                         </table>
                     </div><!--enquiry-form-left-->
                     <div class="enquiry-form-right"><!--enquiry-form-right-->
@@ -956,7 +956,6 @@
 {% block javascript %} 
 <script></script>
 <script>
-section_counter = 1;
 
 function addSection(){
     console.log($('.form_section:last').attr('id'))
@@ -971,14 +970,42 @@ function addSection(){
         
         $('.section_label:last').text('Section '+(sectioncount+1)+' (General)');
         
-        $('.form_section:last').find('input[name="form-'+formcount+'-section-'+sectioncount+'-time"]').attr("name","form-"+formcount+"-section-"+(sectioncount+1)+"-time");    
+        $('.form_section:last').find('input[name="form-'+formcount+'-section-'+sectioncount+'-time"]').attr("name","form-"+formcount+"-section-"+(sectioncount+1)+"-time");
+        $("#form"+formcount+"_section"+(sectioncount+1)+"").find('input[name="keynote_quantity"]').attr("name","form-"+formcount+"-section-"+(sectioncount+1)+"-keynote_quantity");             
     }else{
         $('#'+prevoius_div_id+'').attr('id',"form"+formcount+"_section"+ (sectioncount+1) +"");
-        $("#form"+formcount+"_section"+(sectioncount+1)+"").find('input[name="time"]').attr("name","form-"+formcount+"-section-"+(sectioncount+1)+"-time");     
+        $("#form"+formcount+"_section"+(sectioncount+1)+"").find('input[name="time"]').attr("name","form-"+formcount+"-section-"+(sectioncount+1)+"-time");
+        $("#form"+formcount+"_section"+(sectioncount+1)+"").find('input[name="keynote_quantity"]').attr("id","form-"+formcount+"-section-"+(sectioncount+1)+"-keynote_quantity");          
         console.log("first section")
     }
     
-}
+};
+
+function addKeynote(){
+    console.log($('.keynote_class:last').attr('id'));
+    $('.keynote_class:last').attr('hidden',false);
+    var previous_keynote_id = $('.keynote_class:last').attr('id');
+    var formcount = parseInt(previous_keynote_id.match(/\d+/g)[0]);
+    var sectioncount = parseInt(previous_keynote_id.match(/\d+/g)[1]);
+    var keynotecount = parseInt(previous_keynote_id.match(/\d+/g)[2]);
+
+    if (keynotecount !== 0){
+        var quantity = $("#keynote_quantity").val();
+        console.log($("#keynote_quantity").val());
+        var new_keynote = $('#'+previous_keynote_id+'').clone() //.appendTo('#form'+formcount+'_section'+sectioncount+'_keynote_table');
+        $('.keynote_class:last').after(new_keynote);
+        $('.keynote_class:last').attr('id',"form"+formcount+"_section"+sectioncount+"_keynote"+(keynotecount+1)+"")
+        $('#form'+formcount+'_section'+sectioncount+'_keynote'+(keynotecount+1)+'').find('.keynot_quantity').text(quantity);
+        $("#keynote_quantity").val('');
+    }else{
+        var quantity = $("#keynote_quantity").val();
+        console.log($("#keynote_quantity").val());
+        $('#'+previous_keynote_id+'').attr('id',"form"+formcount+"_section"+sectioncount+"_keynote"+(keynotecount+1)+"");
+        $('#form'+formcount+'_section'+sectioncount+'_keynote'+(keynotecount+1)+'').find('.keynot_quantity').text(quantity);
+        $("#keynote_quantity").val('');
+        console.log("first section")
+    }
+};
 
 $('document').ready(function(){
 //formset
