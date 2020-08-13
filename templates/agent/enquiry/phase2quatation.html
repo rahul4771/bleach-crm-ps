@@ -33,17 +33,17 @@
                 <div class="close-div close-div-service"></div>     
 		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
             	<div class="enquiry-form-left"><!--enquiry-form-left-->
-                <div class=" bold-text common-label"> <label>Service Type</label></div>
-                <label for="favcity">
-                <select id="id_form-0-service_type" name="form-0-service_type">
-                <option value="">Choose Service Type</option>
-                <option value="1">23423434</option>
-                <option value="2">45454545</option>
-                <option value="3">45454545</option>
-                <option value="4">86765676</option>
-                <option value="5">23545677</option>
-                </select>
-                </label>
+                    <div class=" bold-text common-label"> <label>Service Type</label></div>
+                    <label for="favcity">
+                    <select id="id_form-0-service_type" name="form-0-service_type">
+                    <option value="">Choose Service Type</option>
+                    <option value="1">23423434</option>
+                    <option value="2">45454545</option>
+                    <option value="3">45454545</option>
+                    <option value="4">86765676</option>
+                    <option value="5">23545677</option>
+                    </select>
+                    </label>
                 </div><!--enquiry-form-left-->
             	<div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Cleaning Method</label></div>
@@ -700,6 +700,13 @@
 
 {% block javascript %} 
 <script>
+
+$(function() {
+  $('.ui.multiple.dropdown').dropdown({
+		maxSelections: 4
+	});
+});
+
 function addSectionNew(form_identifier){
 
     var formcount = parseInt(form_identifier.id.match(/\d+/g)[0]);
