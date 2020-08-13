@@ -23,7 +23,7 @@ from django.db.models import Prefetch
 from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod,ServiceType,AreaType,CleaningSection
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod,CleaningSection,ServiceType,AreaType,CleaningSection
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
@@ -244,6 +244,22 @@ def GetCleaningMethodsInfo(request):
 	
 	return JsonResponse(dropdown_methods)
 
+#Ajax for getting Cleaning Types
+def GetCleaningSectionInfo(request):
+	
+	dropdown_methods = {}
+	service_type_id = request.GET.get('service_type_id')
+	
+	try:
+		cleaning_sections = CleaningSection.objects.filter(is_active=True,service_type_id=service_type_id) 
+	except:
+		cleaning_sections = None	
+
+	if cleaning_sections:
+		for cleaning_section in cleaning_sections:
+			dropdown_methods[cleaning_section.id] = cleaning_section.name	
+	
+	return JsonResponse(dropdown_methods)
 
 
 

@@ -35,6 +35,7 @@ urlpatterns = [
 	url(r'^ajax/address/status/$',views.UpdateAddressStatus,name='ajax-updateaddress'),
 	url(r'^ajax/getarea/$',views.GetArea,name='ajax-getarea'),
 	url(r'^ajax/getcleaningmethods/$',views.GetCleaningMethodsInfo,name='ajax-getcleaningmethod'),
+	url(r'^ajax/getcleaningsections/$',views.GetCleaningSectionInfo,name='ajax-getcleaningsection'),
 	url(r'^ajax/feedback/order/info/$',views.GetFeedbackOrderInfo,name='get-feedbackorderinfo'),
 	url(r'^ajax/ticket/orderscheduler/info/$',views.GetOrderScheduleTicketInfo,name='get-orderscheduleticketInfo'),
 	url(r'^ajax/ticket/cleaning/info/$',views.GetCleaningTicketInfo,name='get-cleaningticketInfo'),
