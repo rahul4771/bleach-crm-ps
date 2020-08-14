@@ -127,11 +127,11 @@
  		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
             	<div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Estimated Cost</label></div>
-                <input name="form-0-estimated_cost" type="text" class="textBox" placeholder=" "> 
+                <input name="form-0-estimated_cost" id="id_form-0-estimated_cost" type="text" class="textBox estimated_cost" placeholder=" "> 
                 </div><!--enquiry-form-left-->
             	<div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Discount</label></div>
-                <input name="form-0-discount" type="text" class="textBox" placeholder=" "> 
+                <input name="form-0-discount" id="id_form-0-discount" type="text" class="textBox discount" placeholder=" " value="0"> 
                 </div><!--enquiry-form-right-->
 		</div> <!--enquiry-form-Wrapper enquiry-boxes-->  
                      
@@ -140,7 +140,7 @@
   		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
             	<div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Final Cost</label></div>
-                <input name="form-0-total_cost" type="text" class="textBox" placeholder=" "> 
+                <input name="form-0-total_cost" id="id_form-0-total_cost" type="text" class="textBox" placeholder=" " readonly> 
                 </div><!--enquiry-form-left-->
             	<div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Cleaning Policy</label></div>
@@ -489,6 +489,19 @@ $("#id_form-"+id+"-tendative_time").val('');
 }
 
 });
+
+//Total cost based on discount
+$('.estimated_cost').keyup(findtotal);
+$('.discount').keyup(findtotal);
+
+function findtotal(event)
+{
+  id = $(this).attr('id').match(/\d+/);
+  estimated_cost = $("#id_form-"+id+"-estimated_cost").val();
+  discount       = $("#id_form-"+id+"-discount").val();
+  total          = estimated_cost-discount
+  $("#id_form-"+id+"-total_cost").val(total);
+}
 
 });
 </script>
