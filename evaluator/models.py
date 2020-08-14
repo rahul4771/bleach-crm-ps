@@ -154,6 +154,32 @@ class CleaningMethod(models.Model):
 	def __str__(self):
 		return self.name
 
+class AreaType(models.Model):	
+	name 				= models.CharField(max_length=100,blank=False,null=False)
+	
+	is_active       	= models.BooleanField(null=False,blank=True,default=True)
+	created         	= models.DateTimeField(auto_now_add=True)
+	updated         	= models.DateTimeField(auto_now=True)
+
+	def __unicode__(self):
+		return str(self.name)
+
+	def __str__(self):
+		return self.name		
+
+class CleaningSection(models.Model):	
+	name 				= models.CharField(max_length=100,blank=False,null=False)
+	service_type 		= models.ForeignKey('ServiceType',blank=True,null=True)
+	
+	is_active       	= models.BooleanField(null=False,blank=True,default=True)
+	created         	= models.DateTimeField(auto_now_add=True)
+	updated         	= models.DateTimeField(auto_now=True)
+
+	def __unicode__(self):
+		return str(self.name)
+
+	def __str__(self):
+		return self.name
 #Store the Customer Enquiry Details and Assigned Evaluator Details.
 
 class Evaluation(models.Model):
@@ -216,39 +242,20 @@ class EvaluationDetails(models.Model):
 #For Multiple Cleaning evaluation details
 class EvaluationBook(models.Model):
 	evaluation_details 	= models.ForeignKey('EvaluationDetails',blank=True,null=True,related_name='evaluation_book_evaluation_details')	
+	
 	cleaning_policy		= models.CharField(max_length=20,blank=True,null=True,choices=CLEANING_CHOICES)
-	dirt_level          = models.CharField(max_length=20,blank=True,null=True,choices=DIRTLEVEL_CHOICES)
-	location_type		= models.ForeignKey('LocationType',blank=True,null=True,related_name='evaluation_book_location_type')
 	service_type		= models.ForeignKey('ServiceType',blank=True,null=True,related_name='evaluation_details_service_type')
-	cleaning_type 		= models.ForeignKey('CleaningType',blank=True,null=True,related_name='evaluation_book_details_cleaning_type')
-	cleaning_method 	= models.ForeignKey('CleaningMethod',blank=True,null=True,related_name='evaluation_book_cleaning_method')
-	floor_type          = models.CharField(max_length=100,blank=True,null=True,choices=FLOOR_CHOICES)
-	number_of_floors    = models.IntegerField(blank=True,null=True)
-	number_of_rooms     = models.IntegerField(blank=True,null=True)
-	
-	set_type 			= models.CharField(max_length=20,blank=True,null=True,choices=SET_TYPE_CHOICES)
-	set_size            = models.CharField(max_length=20,blank=True,null=True,choices=SET_SIZE_CHOICES)
-	piece_of_chairs 	= models.IntegerField(blank=True,null=True)
-	chair_fabric_type 	= models.CharField(max_length=20,blank=True,null=True,choices=FABRIC_TYPE_CHOICES)
-	piece_of_sofas 	    = models.IntegerField(blank=True,null=True)
-	sofa_fabric_type 	= models.CharField(max_length=20,blank=True,null=True,choices=FABRIC_TYPE_CHOICES)
-		
-	size_of_carpet 		= models.CharField(max_length=100,blank=True,null=True)
-	fabric_type         = models.CharField(max_length=20,blank=True,null=True,choices=FABRIC_TYPE_CHOICES)
-	spot_stain_status	= models.CharField(max_length=20,blank=True,null=True,choices=SPOT_STAIN_CHOICES)
-	
-	sanitization_type 	= models.CharField(max_length=20,blank=True,null=True,choices=SANITIZATION_TYPE_CHOICES)
-	size_to_be_sanitised= models.CharField(max_length=100,blank=True,null=True)
-	
-	bed_size 			= models.CharField(max_length=20,blank=True,null=True,choices=BED_SIZE_CHOICES)
-	bed_type            = models.CharField(max_length=20,blank=True,null=True,choices=BED_TYPE_CHOICES)
+	area_type	 		= models.CharField(max_length=100,blank=True,null=True)
+	cleaning_method 	= models.CharField(max_length=100,blank=True,null=True)
+	area_type           = models.CharField(max_length=100,blank=True,null=True)
+	location_type		= models.CharField(max_length=100,blank=True,null=True)
 
 	number_of_cleaners  = models.IntegerField(blank=True,null=True)
-	evaluator_note		= models.CharField(max_length=500,blank=True,null=True)
 	estimated_cost      = models.FloatField(blank=True,null=True)
 	discount            = models.FloatField(blank=True,null=True,default=0)
 	total_cost          = models.FloatField(blank=True,null=True)
 	cleaning_hours 		= models.FloatField(blank=True,null=True)
+	evaluator_note		= models.CharField(max_length=500,blank=True,null=True)
 	
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)
@@ -276,3 +283,43 @@ class EvaluationMedia(models.Model):
 
 	def __str__(self):
 		return str(self.evaluation_book.id)		
+
+class EvaluationBookSection(models.Model):
+	evaluation_book = models.ForeignKey('EvaluationBook',blank=False,null=False)
+	section_name 	= models.CharField(max_length=100,blank=False,null=False)
+	category		= models.CharField(max_length=100,blank=True,null=True)
+	dirt_level		= models.CharField(max_length=100,blank=True,null=True)
+
+	quantity    	= models.CharField(max_length=100,blank=True,null=True)
+	size        	= models.CharField(max_length=100,blank=True,null=True)
+	unit        	= models.CharField(max_length=100,blank=True,null=True)
+	age         	= models.CharField(max_length=100,blank=True,null=True)
+	
+	floor       	= models.CharField(max_length=100,blank=True,null=True)
+	apartment   	= models.CharField(max_length=100,blank=True,null=True)
+	room        	= models.CharField(max_length=100,blank=True,null=True)
+	
+	wall_type   	= models.CharField(max_length=100,blank=True,null=True)
+	ceiling_type	= models.CharField(max_length=100,blank=True,null=True)
+	floor_type  	= models.CharField(max_length=100,blank=True,null=True)
+	material    	= models.CharField(max_length=100,blank=True,null=True)
+	colour      	= models.CharField(max_length=100,blank=True,null=True)
+	cause_of_stain	= models.CharField(max_length=100,blank=True,null=True)
+
+	def __unicode__(self):
+		return str(self.id)
+
+	def __str__(self):
+		return str(self.id)	
+
+
+class EvaluationSectionKeynote(models.Model):
+	evaluation_section = models.ForeignKey('EvaluationBookSection',blank=False,null=False)
+	sub_area = models.CharField(max_length=100,blank=True,null=True)
+	quantity = models.CharField(max_length=100,blank=True,null=True)
+
+	def __unicode__(self):
+		return str(self.id)
+
+	def __str__(self):
+		return str(self.id)

@@ -23,7 +23,7 @@ from django.db.models import Prefetch
 from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod,ServiceType
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType,CleaningSection
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
@@ -244,6 +244,22 @@ def GetCleaningMethodsInfo(request):
 	
 	return JsonResponse(dropdown_methods)
 
+#Ajax for getting Cleaning Types
+def GetCleaningSectionInfo(request):
+	
+	dropdown_methods = {}
+	service_type_id = request.GET.get('service_type_id')
+	
+	try:
+		cleaning_sections = CleaningSection.objects.filter(is_active=True,service_type_id=service_type_id) 
+	except:
+		cleaning_sections = None	
+
+	if cleaning_sections:
+		for cleaning_section in cleaning_sections:
+			dropdown_methods[cleaning_section.id] = cleaning_section.name	
+	
+	return JsonResponse(dropdown_methods)
 
 
 
@@ -1413,7 +1429,7 @@ class MakeQuatationBase(IsAgent,View):
 class MakeQuatationPhase1(IsAgent,View):
 
 	def get(self,request,enquiry_id,evaluation_id):
-		enquiry_user    	  = UserProfile.objects.get(id=enquiry_id)
+		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
 		
 		try:
 			evaluation = Evaluation.objects.get(id=evaluation_id)
@@ -1431,9 +1447,14 @@ class MakeQuatationPhase1(IsAgent,View):
 		if evaluation_details_count==evaluation_details_completed_count:
 			allow_submit = True
 		else:
-			allow_submit = False				
+			allow_submit = False	
 
-		return render(request,'agent/enquiry/quatationphase1.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit})	
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()				
+
+		return render(request,'agent/enquiry/phase1quatation.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,})	
 
 	def post(self,request,enquiry_id,evaluation_id):
 		
@@ -1456,14 +1477,25 @@ class MakeQuatationPhase2(IsAgent,View):
 
 		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
 
-		return render(request,'agent/enquiry/quatationphase2.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,})
+		try:
+			service_types = ServiceType.objects.filter(is_active=True)
+		except:	
+			service_types = None
+
+		try:
+			area_types = AreaType.objects.filter(is_active=True)
+		except:
+			area_types = None
+
+		return render(request,'agent/enquiry/phase2quatation.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,})
 
 	def post(self,request,evaluation_detail_id):
 
 		service_formset       = self.service_formset_define(request.POST)		
 		evaluation_details    = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
-		if service_formset.is_valid() : 
+		
 
+		if service_formset.is_valid() : 
 			form_count = 0
 			#create order					
 			new_order = Order.objects.get_or_create(evaluation=evaluation_details.evaluation,order_no=evaluation_details.evaluation.evaluation_id,total_amount=evaluation_details.evaluation.total_cost,remining_amount=evaluation_details.evaluation.total_cost,order_status='APPROVED_BY_CLIENT')	
@@ -1477,15 +1509,15 @@ class MakeQuatationPhase2(IsAgent,View):
 					service_form_save.evaluation_details_id = evaluation_detail_id
 					service_form_save.save()
 
+
 					#To Save Media
-					medias = request.FILES.getlist('media'+str(form_count))
+					medias = request.FILES.getlist('form-'+str(form_count)+'-media')
 					if not medias==['']:
 						for media in medias:
 							EvaluationMedia.objects.create(
 							        evaluation_book=service_form_save,
 							        media=media,
 							        )
-
 
 					#for updating cost details in evaluation details
 					cost     = int(request.POST.get('form-'+str(form_count)+'-estimated_cost')) 
@@ -1495,10 +1527,9 @@ class MakeQuatationPhase2(IsAgent,View):
 					#for creating cleaning schedules and corresponding cleanings
 
 					cleaning_policy = request.POST.get('form-'+str(form_count)+'-cleaning_policy')
-					start_time      = request.POST.get('form-'+str(form_count)+'-start_time')
+					start_time      = request.POST.get('form-'+str(form_count)+'-tendative_time')
 					cleaning_hours  = request.POST.get('form-'+str(form_count)+'-cleaning_hours')
 
-					print(cleaning_policy)
 					if cleaning_policy == 'SUBSCRIPTION':
 						tendative_dates = request.POST.get('form-'+str(form_count)+'-tendative_dates').split(',')
 						for date in tendative_dates:
@@ -1520,11 +1551,45 @@ class MakeQuatationPhase2(IsAgent,View):
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
 						updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)	
 					
+					#to save sections
+					no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))
+					section_array          = []
+					for i in range(no_of_sections):
+						section_name  = request.POST.get('form'+str(form_count)+'_section'+str(i))
+						category      = request.POST.get('form'+str(form_count)+'_category'+str(i))
+						dirt_level    = request.POST.get('form'+str(form_count)+'_dirt_level'+str(i))
+						quantity      = request.POST.get('form'+str(form_count)+'_quantity'+str(i))
+						size          = request.POST.get('form'+str(form_count)+'_size'+str(i))
+						unit          = request.POST.get('form'+str(form_count)+'_unit'+str(i))
+						age           = request.POST.get('form'+str(form_count)+'_age'+str(i))
+						floor         = request.POST.get('form'+str(form_count)+'_floor'+str(i))
+						apartment     = request.POST.get('form'+str(form_count)+'_apartment'+str(i))
+						room          = request.POST.get('form'+str(form_count)+'_room'+str(i))
+						wall_type     = request.POST.get('form'+str(form_count)+'_wall_type'+str(i))
+						ceiling_type  = request.POST.get('form'+str(form_count)+'_ceiling_type'+str(i))
+						floor_type    = request.POST.get('form'+str(form_count)+'_floor_type'+str(i))
+						material      = request.POST.get('form'+str(form_count)+'_material'+str(i))
+						colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
+						cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
+
+						#save section
+						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
+
+						#to save keynotes
+						no_of_keynotes = int(request.POST.get('form'+str(form_count)+'_section'+str(i)+'-keynote_counter'))
+						keynote_array = []
+						for j in range(no_of_keynotes):
+							keynote = request.POST.get('form'+str(form_count)+'_section'+str(i)+'_keynote'+str(j))
+							quantity= request.POST.get('form'+str(form_count)+'_section'+str(i)+'_quantity'+str(j))
+							keynote_array.append(EvaluationSectionKeynote(evaluation_section=section,sub_area=keynote,quantity=quantity))
+						#bulk_create keynote
+						EvaluationSectionKeynote.objects.bulk_create(keynote_array)	
+					
 					form_count = form_count+1
 			#bulk_create order schedules
 			now = timezone.now()
 			OrderScheduler.objects.bulk_create(order_schedule_array)
-			created_schedules = OrderScheduler.objects.filter(order=new_order[0],created__gte=now)	
+
 
 			messages.success(request,"Services Succesfully Added")
 
@@ -1533,7 +1598,7 @@ class MakeQuatationPhase2(IsAgent,View):
 				messages.error(request,"An Error Occured")
 				print(service_formset)
 
-			return render(request,'agent/enquiry/quatationphase2.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,})	
+			return render(request,'agent/enquiry/phase2quatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,})	
 
 		return redirect('agent:agent-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
 		
