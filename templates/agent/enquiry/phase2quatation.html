@@ -24,29 +24,18 @@
         	<div class="email"><i class="fa orange-text fa-lg fa-envelope-o" aria-hidden="true"></i> &nbsp;  johndoe@gmail.com</div>
             <div class="mobile-number"><i class="fa red-text fa-lg fa-home" aria-hidden="true"></i> &nbsp;  Appartment, 3rd Floor, Building 4, Block 5, Street Name, Avenue, Area Govermerate</div>
         	<hr class="div">
+<form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
 
 {{ service_formset.management_form }}
 <div class="link_formset">
-{% for form in service_formset %}        	
+{% for form in service_formset %}  
+<input type="hidden" id="form-0-section_counter" value="0">      	
             <div class="common-sub-head align-left service_form" id="id_form-0-service">Service 1</div> 
 	<div class="enquiry-FullWrapper"><!--enquiry-FullWrapper-->       
                 <div class="close-div close-div-service"></div>     
 		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
             	<div class="enquiry-form-left"><!--enquiry-form-left-->
-                <div class=" bold-text common-label"><label>Wall Type</label></div>
-                    <div class="ui fluid multiple search selection dropdown">
-                        <input type="hidden" name="tags">
-                        <i class="dropdown icon"></i>
-                        <input class="search" tabindex="0" id="favcity" name="form'+formcount+'_walltype'+section_count+'">
-                        <div class="default text">--Select Wall</div>
-                        <div class="menu" tabindex="-1">
-                        <div class="item" data-value="html">HTML</div>
-                        <div class="item" data-value="css">CSS</div>
-                        <div class="item" data-value="design">Graphic Design</div>
-                        <div class="item" data-value="javascript">Javascript</div>
-                        </div>
-                    </div>
-                {% comment %} <div class=" bold-text common-label"> <label>Service Type</label></div>
+                <div class=" bold-text common-label"> <label>Service Type</label></div>
                 <label for="favcity">
                 <select id="id_form-0-service_type" name="form-0-service_type" class="service-selector">
                 <option value="">Choose Service Type</option>
@@ -54,7 +43,7 @@
                 <option value="{{service_type.id}}">{{service_type.name}}</option>
                 {% endfor %}
                 </select>
-                </label>{% endcomment %}
+                </label>
                 </div><!--enquiry-form-left-->
             	<div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Cleaning Method</label></div>
@@ -156,7 +145,7 @@
             	<div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Cleaning Policy</label></div>
                 <label for="favcity">
-                <select id="favcity" name="form-0-cleaning_policy">
+                <select id="id_form-0-cleaning_policy" name="form-0-cleaning_policy" class="cleaning_policy">
                 <option value="">Choose Policy</option>
                 <option value="ONE TIME SERVICE">ONE TIME SERVICE</option>
                 <option value="SUBSCRIPTION">SUBSCRIPTION</option>
@@ -172,6 +161,10 @@
                 <div class=" bold-text common-label"> <label>Tendative Date(S)</label></div>
                 <input name="form-0-tendative_dates" id='id_form-0-tendative_dates' type="text" class="textBox" placeholder=" "> 
                 </div><!--enquiry-form-left-->
+                <div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class=" bold-text common-label"> <label>Tendative Date</label></div>
+                <input name="form-0-tendative_date" id='id_form-0-tendative_date' type="text" class="textBox" placeholder=" "> 
+                </div><!--enquiry-form-left-->
             	<div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tendative Time</label></div>
                 <input name="form-0-tendative_time" id='id_form-0-tendative_time' type="text" class="textBox" placeholder=" "> 
@@ -184,7 +177,7 @@
                 <textarea name="form-0-evaluator_note" class="textArea" cols="" rows=""></textarea>
                 
 <div class="details-notes align-left">Media</div>        
-<div class="row"><!--row-->
+<div class="row" id="id_form-0-media"><!--row-->
     <div class="col-sm-2 imgUp"><!--col-sm-2 imgUp-->
         <div class="imagePreview"></div>
         <label class="btn btn-primary">Upload<input type="file" name="form-0-media" class="uploadFile img" value="Upload Photo" style="width: 0px;height: 0px;overflow: hidden;"></label>
@@ -199,9 +192,8 @@
 {% endfor %}
 <br>
 </div><!-- link formset end -->
- <div align="center"><input class="assignButton" name="submit" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>
- 
- 
+ <div align="center" onclick="submitAnyForm(this);"><input class="assignButton" name="submit" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>
+</form> 
  
  
  
@@ -412,11 +404,83 @@ $('document').ready(function(){
             format: 'hh:mm A',
           });
         });
+
+
+        //Initial hiding of cleaning policy
+        $("#id_form-"+x+"-tendative_date").parents('.enquiry-form-left').css("display", "none");
+        $("#id_form-"+x+"-tendative_dates").parents('.enquiry-form-left').css("display", "none");
+        $("#id_form-"+x+"-tendative_time").parents('.enquiry-form-right').css("display", "none");
+        $("#id_form-"+x+"-tendative_date").val('');
+        $("#id_form-"+x+"-tendative_dates").val('');
+        $("#id_form-"+x+"-tendative_time").val('');
     }
 
     function remove_row(){
         x--;
     }
+
+//tendative date initial
+$(function () {
+  $("#id_form-"+x+"-tendative_date").datetimepicker({ 
+    pickTime: false, 
+    format: "DD-MM-YYYY",
+  });
+});
+//tendative dates initial
+$(function () {
+  $("#id_form-"+x+"-tendative_dates").datepicker({ 
+    multidate: true,
+    closeOnDateSelect: true,
+    format: "dd-mm-yyyy",
+  });
+});
+//tendative time initial
+$(function () {
+  $("#id_form-"+x+"-tendative_time").datetimepicker({
+    pickDate:false,
+    format: 'hh:mm A',
+  });
+});
+
+
+//Initial hiding of cleaning policy
+$("#id_form-"+x+"-tendative_date").parents('.enquiry-form-left').css("display", "none");
+$("#id_form-"+x+"-tendative_dates").parents('.enquiry-form-left').css("display", "none");
+$("#id_form-"+x+"-tendative_time").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+x+"-tendative_date").val('');
+$("#id_form-"+x+"-tendative_dates").val('');
+$("#id_form-"+x+"-tendative_time").val('');
+
+//Trick based on Cleaning Policy
+$(".cleaning_policy").change(function (){  
+id              = this.id.match(/\d+/);
+cleaning_policy = this.value;
+if(cleaning_policy=="SUBSCRIPTION")
+{
+$("#id_form-"+id+"-tendative_date").val('');
+$("#id_form-"+id+"-tendative_dates").val('');
+$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-left').css("display", "none");
+$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-left').css("display", "block");
+$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-right').css("display", "block");
+}
+else if(cleaning_policy=="ONE TIME SERVICE")
+{
+$("#id_form-"+id+"-tendative_date").val('');
+$("#id_form-"+id+"-tendative_dates").val('');
+$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-left').css("display", "block");
+$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-right').css("display", "block");
+$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-left').css("display", "none");
+}
+else{
+$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-left').css("display", "none");
+$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-left').css("display", "none");
+$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+id+"-tendative_date").val('');
+$("#id_form-"+id+"-tendative_dates").val('');
+$("#id_form-"+id+"-tendative_time").val('');
+}
+
+});
 
 });
 </script>
@@ -436,7 +500,9 @@ $('.footable').footable({
     </script>
 <script id="rendered-js">
 $(".imgAdd").click(function () {
-  $(this).closest(".row").find('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" value="Upload Photo" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
+  id=$(this).parents('.row').attr('id').match(/\d+/);
+
+  $(this).closest(".row").find('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="form-'+id+'-media" value="Upload Photo" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
 });
 $(document).on("click", "i.del", function () {
   $(this).parent().remove();
