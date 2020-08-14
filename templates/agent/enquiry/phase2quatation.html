@@ -321,29 +321,31 @@ function addKeynote(form_identifier){
     var quantity = $('#id_form-'+formcount+'-section-'+section_count+'-quantity').val();
     var keynote  = $('#id_form-'+formcount+'-section-'+section_count+'-keynote').val();
     console.log(keynote,"kn")
+    
     try {
-        last_keynote = $('#id_form-'+formcount+'-section-'+(section_count+1)+'-keynote-table-left .form_section_keynote:last').attr('id');
-        keynote_count        = parseInt(last_keynote.match(/\d+/g)[2])+1;
-        console.log(keynote_count)
+        last_keynote = $('.form'+formcount+'_section'+section_count+'_keynote:last').attr('id');
+        keynote_count = parseInt(last_keynote.match(/\d+/g)[2])+1;
+        console.log(keynote_count,"count")
     }
     catch(err) {
-        keynote_count = 0;   
+        keynote_count = 0;
+        console.log(keynote_count,"count2")   
     }
 
-    var keynoteleft = $('.form-'+formcount+'-section-'+section_count+'-keynote-left').length;
-    var keynoteright = $('.form-'+formcount+'-section-'+section_count+'-keynote-right').length;
-
+    var keynoteleft = $('#id_form-'+formcount+'-section-'+section_count+'-keynote-table-left .keynote-left').length;
+    var keynoteright = $('#id_form-'+formcount+'-section-'+section_count+'-keynote-table-right .keynote-right').length;
+    console.log(keynoteleft,keynoteright)
     //appending keynotes to left and right
     if (keynoteleft <= keynoteright){
         console.log("plo");
-        append_keynote_left = '<tr class="form-'+formcount+'-section-'+section_count+'-keynote-left" ><td align="left">'+keynote+'</td><td width="50px" align="center" class="keynote_qty"></td><td width="30px" align="center" class="btn-remove"><input name="delete" type="button" class="delete-button"></td></tr>'
+
+        append_keynote_left = '<tr id="id_form-'+formcount+'-section-'+section_count+'-keynote-'+keynote_count+'" class="form'+formcount+'_section'+section_count+'_keynote keynote-left" ><input type="hidden" name="form-'+formcount+'-section-'+section_count+'-keynote-'+keynote_count+'-keynote" value="'+keynote+'" /><input type="hidden" name="form-'+formcount+'-section-'+section_count+'-keynote-'+keynote_count+'-quantity" value="'+quantity+'" /><td align="left">'+keynote+'</td><td width="50px" align="center" class="keynote_qty">'+quantity+'</td><td width="30px" align="center" class="btn-remove"><input name="delete" type="button" class="delete-button"></td></tr>'
         $('#id_form-'+formcount+'-section-'+section_count+'-keynote-table-left').append(append_keynote_left);
-        $('#id_form-'+formcount+'-section-'+section_count+'-keynote-table-left').find('.keynote_qty:last').text(quantity);
     }else{
         console.log("plo2");
-        append_keynote_right = '<tr class="form-'+formcount+'-section-'+section_count+'-keynote-right" ><td align="left">'+keynote+'</td><td width="50px" align="center" class="keynote_qty"></td><td width="30px" align="center" class="btn-remove"><input name="delete" type="button" class="delete-button"></td></tr>'
+
+        append_keynote_right = '<tr id="id_form-'+formcount+'-section-'+section_count+'-keynote-'+keynote_count+'" class="form'+formcount+'_section'+section_count+'_keynote keynote-right" ><input type="hidden" name="form-'+formcount+'-section-'+section_count+'-keynote-'+keynote_count+'-keynote" value="'+keynote+'" /><input type="hidden" name="form-'+formcount+'-section-'+section_count+'-keynote-'+keynote_count+'-quantity" value="'+quantity+'" /><td align="left">'+keynote+'</td><td width="50px" align="center" class="keynote_qty">'+quantity+'</td><td width="30px" align="center" class="btn-remove"><input name="delete" type="button" class="delete-button"></td></tr>'
         $('#id_form-'+formcount+'-section-'+section_count+'-keynote-table-right').append(append_keynote_right);
-        $('#id_form-'+formcount+'-section-'+section_count+'-keynote-table-right').find('.keynote_qty:last').text(quantity);
     }
     
     //clearing keynote and quantity value
