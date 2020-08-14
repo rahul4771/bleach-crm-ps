@@ -1576,7 +1576,7 @@ class MakeQuatationPhase2(IsAgent,View):
 						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
 
 						#to save keynotes
-						no_of_keynotes = request.POST.get('form'+str(form_count)+'_section'+str(i)+'-keynote_counter')
+						no_of_keynotes = int(request.POST.get('form'+str(form_count)+'_section'+str(i)+'-keynote_counter'))
 						keynote_array = []
 						for j in range(no_of_keynotes):
 							keynote = request.POST.get('form'+str(form_count)+'_section'+str(i)+'_keynote'+str(j))
