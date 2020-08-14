@@ -23,7 +23,7 @@ from django.db.models import Prefetch
 from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod,CleaningSection,ServiceType,AreaType,CleaningSection
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,CleaningMethod,CleaningSection,ServiceType,AreaType,CleaningSection
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
@@ -1494,74 +1494,113 @@ class MakeQuatationPhase2(IsAgent,View):
 		service_formset       = self.service_formset_define(request.POST)		
 		evaluation_details    = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
 		
-		form_count = 0
+
 		if service_formset.is_valid() : 
-			for form in service_formset:
-				if form.is_valid():
-					count += 1
-
-
-			# form_count = 0
-			# #create order					
-			# new_order = Order.objects.get_or_create(evaluation=evaluation_details.evaluation,order_no=evaluation_details.evaluation.evaluation_id,total_amount=evaluation_details.evaluation.total_cost,remining_amount=evaluation_details.evaluation.total_cost,order_status='APPROVED_BY_CLIENT')	
+			form_count = 0
+			#create order					
+			new_order = Order.objects.get_or_create(evaluation=evaluation_details.evaluation,order_no=evaluation_details.evaluation.evaluation_id,total_amount=evaluation_details.evaluation.total_cost,remining_amount=evaluation_details.evaluation.total_cost,order_status='APPROVED_BY_CLIENT')	
 				
-			# order_schedule_array          = []
-			# #Save Service Form
-			# for service_form in service_formset:
+			order_schedule_array          = []
+			#Save Service Form
+			for service_form in service_formset:
 				
-			# 	if service_form.is_valid():
-			# 		service_form_save 					    = service_form.save(commit=False)
-			# 		service_form_save.evaluation_details_id = evaluation_detail_id
-			# 		service_form_save.save()
-
-			# 		#To Save Media
-			# 		medias = request.FILES.getlist('media'+str(form_count))
-			# 		if not medias==['']:
-			# 			for media in medias:
-			# 				EvaluationMedia.objects.create(
-			# 				        evaluation_book=service_form_save,
-			# 				        media=media,
-			# 				        )
+				if service_form.is_valid():
+					service_form_save 					    = service_form.save(commit=False)
+					service_form_save.evaluation_details_id = evaluation_detail_id
+					service_form_save.save()
 
 
-			# 		#for updating cost details in evaluation details
-			# 		cost     = int(request.POST.get('form-'+str(form_count)+'-estimated_cost')) 
-			# 		discount = int(request.POST.get('form-'+str(form_count)+'-discount'))
-			# 		total    = int(request.POST.get('form-'+str(form_count)+'-total_cost'))
+					#To Save Media
+					medias = request.FILES.getlist('form-'+str(form_count)+'-media')
+					if not medias==['']:
+						for media in medias:
+							EvaluationMedia.objects.create(
+							        evaluation_book=service_form_save,
+							        media=media,
+							        )
 
-			# 		#for creating cleaning schedules and corresponding cleanings
+					#for updating cost details in evaluation details
+					cost     = int(request.POST.get('form-'+str(form_count)+'-estimated_cost')) 
+					discount = int(request.POST.get('form-'+str(form_count)+'-discount'))
+					total    = int(request.POST.get('form-'+str(form_count)+'-total_cost'))
 
-			# 		cleaning_policy = request.POST.get('form-'+str(form_count)+'-cleaning_policy')
-			# 		start_time      = request.POST.get('form-'+str(form_count)+'-start_time')
-			# 		cleaning_hours  = request.POST.get('form-'+str(form_count)+'-cleaning_hours')
+					#for creating cleaning schedules and corresponding cleanings
 
-			# 		print(cleaning_policy)
-			# 		if cleaning_policy == 'SUBSCRIPTION':
-			# 			tendative_dates = request.POST.get('form-'+str(form_count)+'-tendative_dates').split(',')
-			# 			for date in tendative_dates:
-			# 				start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
-			# 				end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours)) 
-			# 				order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))	
+					cleaning_policy = request.POST.get('form-'+str(form_count)+'-cleaning_policy')
+					start_time      = request.POST.get('form-'+str(form_count)+'-tendative_time')
+					cleaning_hours  = request.POST.get('form-'+str(form_count)+'-cleaning_hours')
+
+					if cleaning_policy == 'SUBSCRIPTION':
+						tendative_dates = request.POST.get('form-'+str(form_count)+'-tendative_dates').split(',')
+						for date in tendative_dates:
+							start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
+							end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours)) 
+							order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))	
 							
 
-			# 			updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost*len(tendative_dates),discount=F('discount')+discount*len(tendative_dates),total_cost=F('total_cost')+total*len(tendative_dates),status='EVALUATED')
-			# 			updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost*len(tendative_dates),discount=F('discount')+discount*len(tendative_dates),total_cost=F('total_cost')+total*len(tendative_dates))
-			# 		else:
-			# 			tendative_date  = request.POST.get('form-'+str(form_count)+'-tendative_date')	
+						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost*len(tendative_dates),discount=F('discount')+discount*len(tendative_dates),total_cost=F('total_cost')+total*len(tendative_dates),status='EVALUATED')
+						updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost*len(tendative_dates),discount=F('discount')+discount*len(tendative_dates),total_cost=F('total_cost')+total*len(tendative_dates))
+					else:
+						tendative_date  = request.POST.get('form-'+str(form_count)+'-tendative_date')	
 						
-			# 			start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
-			# 			end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
-			# 			order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))
+						start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
+						end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
+						order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))
 						
 
-			# 			updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
-			# 			updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)	
+						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
+						updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)	
 					
-			# 		form_count = form_count+1
-			# #bulk_create order schedules
-			# now = timezone.now()
-			# OrderScheduler.objects.bulk_create(order_schedule_array)
-			# created_schedules = OrderScheduler.objects.filter(order=new_order[0],created__gte=now)	
+					#to save sections
+					no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))
+					section_array          = []
+					for i in range(no_of_sections):
+						print(i,"i")
+						section_name  = request.POST.get('form'+str(form_count)+'_section'+str(i))
+						category      = request.POST.get('form'+str(form_count)+'_category'+str(i))
+						dirt_level    = request.POST.get('form'+str(form_count)+'_dirt_level'+str(i))
+						quantity      = request.POST.get('form'+str(form_count)+'_quantity'+str(i))
+						size          = request.POST.get('form'+str(form_count)+'_size'+str(i))
+						unit          = request.POST.get('form'+str(form_count)+'_unit'+str(i))
+						age           = request.POST.get('form'+str(form_count)+'_age'+str(i))
+						floor         = request.POST.get('form'+str(form_count)+'_floor'+str(i))
+						apartment     = request.POST.get('form'+str(form_count)+'_apartment'+str(i))
+						room          = request.POST.get('form'+str(form_count)+'_room'+str(i))
+						wall_type     = request.POST.get('form'+str(form_count)+'_wall_type'+str(i))
+						ceiling_type  = request.POST.get('form'+str(form_count)+'_ceiling_type'+str(i))
+						floor_type    = request.POST.get('form'+str(form_count)+'_floor_type'+str(i))
+						material      = request.POST.get('form'+str(form_count)+'_material'+str(i))
+						colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
+						cause_of_stain=request.POST.get('form'+str(form_count)+'_cause_of_stain'+str(i))
+
+						section_array.append(EvaluationBookSection(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain))
+
+						print(section_name,"section_name")
+						print(category,"category")
+						print(dirt_level,"dirt_level")
+						print(quantity,"quantity")
+						print(size,"size")
+						print(unit,"unit")
+						print(age,"age")
+						print(apartment,"apartment")
+						print(floor,"floor")
+						print(room,"room")
+						
+						
+						print(wall_type,"wall_type")
+						print(ceiling_type,"ceiling_type")
+						print(floor_type,"floor_type")
+						print(material,"material")
+						print(colour,"colour")
+						print(cause_of_stain,"cause_of_stain")
+
+					form_count = form_count+1
+			#bulk_create order schedules
+			now = timezone.now()
+			OrderScheduler.objects.bulk_create(order_schedule_array)
+
+			#bulk_create sections	
+			EvaluationBookSection.objects.bulk_create(section_array)
 
 			messages.success(request,"Services Succesfully Added")
 

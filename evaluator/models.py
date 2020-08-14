@@ -286,25 +286,25 @@ class EvaluationMedia(models.Model):
 
 class EvaluationBookSection(models.Model):
 	evaluation_book = models.ForeignKey('EvaluationBook',blank=False,null=False)
-	name 		= models.CharField(max_length=100,blank=False,null=False)
-	category	= models.CharField(max_length=100,blank=True,null=True)
-	dirt_level	= models.CharField(max_length=100,blank=True,null=True)
+	section_name 	= models.CharField(max_length=100,blank=False,null=False)
+	category		= models.CharField(max_length=100,blank=True,null=True)
+	dirt_level		= models.CharField(max_length=100,blank=True,null=True)
 
-	quantity    = models.CharField(max_length=100,blank=True,null=True)
-	size        = models.CharField(max_length=100,blank=True,null=True)
-	unit        = models.CharField(max_length=100,blank=True,null=True)
-	age         = models.CharField(max_length=100,blank=True,null=True)
+	quantity    	= models.CharField(max_length=100,blank=True,null=True)
+	size        	= models.CharField(max_length=100,blank=True,null=True)
+	unit        	= models.CharField(max_length=100,blank=True,null=True)
+	age         	= models.CharField(max_length=100,blank=True,null=True)
 	
-	floor       = models.CharField(max_length=100,blank=True,null=True)
-	apartment   = models.CharField(max_length=100,blank=True,null=True)
-	room        = models.CharField(max_length=100,blank=True,null=True)
+	floor       	= models.CharField(max_length=100,blank=True,null=True)
+	apartment   	= models.CharField(max_length=100,blank=True,null=True)
+	room        	= models.CharField(max_length=100,blank=True,null=True)
 	
-	wall_type   = models.CharField(max_length=100,blank=True,null=True)
-	ceiling_type= models.CharField(max_length=100,blank=True,null=True)
-	floor_type  = models.CharField(max_length=100,blank=True,null=True)
-	material    = models.CharField(max_length=100,blank=True,null=True)
-	colour      = models.CharField(max_length=100,blank=True,null=True)
-	cause_of_stain= models.CharField(max_length=100,blank=True,null=True)
+	wall_type   	= models.CharField(max_length=100,blank=True,null=True)
+	ceiling_type	= models.CharField(max_length=100,blank=True,null=True)
+	floor_type  	= models.CharField(max_length=100,blank=True,null=True)
+	material    	= models.CharField(max_length=100,blank=True,null=True)
+	colour      	= models.CharField(max_length=100,blank=True,null=True)
+	cause_of_stain	= models.CharField(max_length=100,blank=True,null=True)
 
 	def __unicode__(self):
 		return str(self.id)
