@@ -33,23 +33,22 @@ class MyEvaluationDetailsForm(forms.ModelForm):
 class QuatationServiceForm(forms.ModelForm):
 	tendative_date = forms.CharField(required=False)
 	tendative_dates= forms.CharField(required=False)
-	start_time     = forms.CharField(required=True)
-
+	tendative_time = forms.CharField(required=True)
+	section_counter= forms.CharField()
 
 	class Meta:
 		model = EvaluationBook
-		fields = ('service_type','cleaning_method','cleaning_type','dirt_level','location_type','floor_type','number_of_floors','number_of_rooms','set_type','set_size','piece_of_chairs','chair_fabric_type','piece_of_sofas','sofa_fabric_type','size_of_carpet','spot_stain_status','fabric_type','sanitization_type','size_to_be_sanitised','bed_size','bed_type','number_of_cleaners','cleaning_hours','estimated_cost','discount','total_cost','cleaning_policy','evaluator_note')
-		widgets={
-				'service_type':forms.Select(attrs={'class':'service_type','required':'required',}),
-				'cleaning_policy':forms.Select(attrs={'class':'cleaning_policy','required':'required',}),
-				'total_cost':forms.NumberInput(attrs={'required':'required','min':0,'readonly':True}),
-				'estimated_cost':forms.NumberInput(attrs={'required':'required','class':'estimated_cost','min':0}),
-				'discount':forms.NumberInput(attrs={'class':'discount','min':0,}),
-				'cleaning_hours':forms.NumberInput(attrs={'required':'required'}),
-				'number_of_cleaners':forms.NumberInput(attrs={'required':'required'}),
-				'evaluator_note':forms.Textarea(),
-		}
+		fields = ('service_type','cleaning_method','area_type','location_type','number_of_cleaners','cleaning_hours','estimated_cost','discount','total_cost','cleaning_policy','evaluator_note')
+	
 	def __init__(self,*args,**kwargs):
 		super(QuatationServiceForm, self).__init__(*args, **kwargs)	
-		self.fields['cleaning_hours'].label = 'Cleaning Duration'
-	
+		self.fields['service_type'].required    	= True
+		self.fields['cleaning_method'].required 	= True
+		self.fields['area_type'].required 			= True
+		self.fields['area_type'].required 			= True
+		self.fields['cleaning_policy'].required 	= True
+
+		self.fields['number_of_cleaners'].required  = True
+		self.fields['cleaning_hours'].required 		= True
+		self.fields['estimated_cost'].required 		= True
+		self.fields['total_cost'].required      	= True
