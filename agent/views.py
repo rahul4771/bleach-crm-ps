@@ -23,7 +23,7 @@ from django.db.models import Prefetch
 from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,CleaningMethod,CleaningSection,ServiceType,AreaType,CleaningSection
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType,CleaningSection
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
@@ -1555,7 +1555,6 @@ class MakeQuatationPhase2(IsAgent,View):
 					no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))
 					section_array          = []
 					for i in range(no_of_sections):
-						print(i,"i")
 						section_name  = request.POST.get('form'+str(form_count)+'_section'+str(i))
 						category      = request.POST.get('form'+str(form_count)+'_category'+str(i))
 						dirt_level    = request.POST.get('form'+str(form_count)+'_dirt_level'+str(i))
@@ -1571,36 +1570,26 @@ class MakeQuatationPhase2(IsAgent,View):
 						floor_type    = request.POST.get('form'+str(form_count)+'_floor_type'+str(i))
 						material      = request.POST.get('form'+str(form_count)+'_material'+str(i))
 						colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
-						cause_of_stain=request.POST.get('form'+str(form_count)+'_cause_of_stain'+str(i))
+						cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
 
-						section_array.append(EvaluationBookSection(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain))
+						#save section
+						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
 
-						print(section_name,"section_name")
-						print(category,"category")
-						print(dirt_level,"dirt_level")
-						print(quantity,"quantity")
-						print(size,"size")
-						print(unit,"unit")
-						print(age,"age")
-						print(apartment,"apartment")
-						print(floor,"floor")
-						print(room,"room")
-						
-						
-						print(wall_type,"wall_type")
-						print(ceiling_type,"ceiling_type")
-						print(floor_type,"floor_type")
-						print(material,"material")
-						print(colour,"colour")
-						print(cause_of_stain,"cause_of_stain")
-
+						#to save keynotes
+						no_of_keynotes = int(request.POST.get('form'+str(form_count)+'_section'+str(i)+'-keynote_counter'))
+						keynote_array = []
+						for j in range(no_of_keynotes):
+							keynote = request.POST.get('form'+str(form_count)+'_section'+str(i)+'_keynote'+str(j))
+							quantity= request.POST.get('form'+str(form_count)+'_section'+str(i)+'_quantity'+str(j))
+							keynote_array.append(EvaluationSectionKeynote(evaluation_section=section,sub_area=keynote,quantity=quantity))
+						#bulk_create keynote
+						EvaluationSectionKeynote.objects.bulk_create(keynote_array)	
+					
 					form_count = form_count+1
 			#bulk_create order schedules
 			now = timezone.now()
 			OrderScheduler.objects.bulk_create(order_schedule_array)
 
-			#bulk_create sections	
-			EvaluationBookSection.objects.bulk_create(section_array)
 
 			messages.success(request,"Services Succesfully Added")
 
