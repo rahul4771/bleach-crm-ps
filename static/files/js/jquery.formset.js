@@ -66,7 +66,8 @@
                 } else {
                     // Otherwise, just insert the remove button as the
                     // last child element of the form's container:
-                    row.append('<a class="' + options.deleteCssClass + '" href="javascript:void(0)">' + options.deleteText +'</a>');
+                    row.find('.close-div-address').append('<a class="' + options.deleteCssClass + '" href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a>');
+                    //row.append('<a class="' + options.deleteCssClass + '" href="javascript:void(0)">' + options.deleteText +'</a>');
                 }
                 // Check if we're under the minimum number of forms - not to display delete link at rendering
                 if (!showDeleteLinks()){
@@ -221,7 +222,7 @@
         addText: 'add another',          // Text for the add link
         deleteText: 'remove',            // Text for the delete link
         addCssClass: 'a-btn add-row',          // CSS class applied to the add link
-        deleteCssClass: 'a-btn delete-row',    // CSS class applied to the delete link
+        deleteCssClass: 'delete-address',    // CSS class applied to the delete link
         formCssClass: 'dynamic-form',    // CSS class applied to each form in a formset
         extraClasses: [],                // Additional CSS classes, which will be applied to each form in turn
         keepFieldValues: '',             // jQuery selector for fields whose values should be kept when the form is cloned

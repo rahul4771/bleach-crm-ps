@@ -135,7 +135,7 @@
 {% for form in address_formset %}
 <div class="common-sub-head align-left"></div> 
 <div class="address-FullWrapper"><!--address-FullWrapper-->
-<div class="close-div"><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>
+<div class="close-div close-div-address"></div>
 <div class="address3-wrapper-row address3-forms-boxes"><!--address3-wrapper-row address3-forms-boxes-->
     <div class="address3-form-left"><!--address3-form-left-->
         <div class=" bold-text common-label"> <label>Appartment</label></div>
@@ -218,6 +218,7 @@
 {% endblock %}
 
 {% block javascript %}
+<script src="{% static 'files/js/custom formset/customformset.js' %}"></script>
 <script>
 var x=0;
 var ajax_ret_areas; 
