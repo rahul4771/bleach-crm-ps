@@ -79,7 +79,7 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label"> <label>Customer Type</label></div>
                 <label for="favcity">
-                <select id="favcity" name="customer_type">
+                <select id="id_customer_type" name="customer_type">
                 <option value="">Choose Customer Type</option>
                 <option value="INDIVIDUAL" {% if enquiry_user.customer_type == 'INDIVIDUAL' %}selected{% endif %}>INDIVIDUAL</option>
                 <option value="RETAIL" {% if enquiry_user.customer_type == 'RETAIL' %}selected{% endif %}>RETAIL</option>
@@ -89,6 +89,7 @@
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
+<div id="id_customer_type_expand">
 <hr class="hr-dashedpad"> 
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
@@ -101,6 +102,7 @@
 				<input name="job_title" id="id_job_title" type="text" class="textBox" placeholder=" " value="{{enquiry_user.job_title|default_if_none:''}}">
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div>
 
 <hr class="hr-dashedpad"> 
 
@@ -143,10 +145,7 @@
         <p class="bold-text">Address {{forloop.counter}}</p>
         <p>{{address.apartment}}, {{address.floor}}, {{address.building}}, {{address.block}}, {{address.governorate}}, {{address.avenue}}, {{address.area.name}} {{address.governorate.name}}</p>
         </div><!--address-col-middle-->
-        
-        <div class="address-col-right"><!--address-col-right-->
-        <div class="delete-icon"><a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a></div>
-        </div><!--address-col-right-->
+      
     </div><!--address-wrapper-->
     </div><!--address-form-right-->    
 </div><!--address-wrapper-row address-forms-boxes-->
@@ -170,9 +169,6 @@
     <p>{{address.apartment}}, {{address.floor}}, {{address.building}}, {{address.block}}, {{address.governorate}}, {{address.avenue}}, {{address.area.name}} {{address.governorate.name}}</p>
     </div><!--address-col-middle-->
     
-    <div class="address-col-right"><!--address-col-right-->
-    <div class="delete-icon"><a href="#"><i class="fa fa-1x fa-trash-o" aria-hidden="true"></i></a></div>
-    </div><!--address-col-right-->
 </div><!--address-wrapper-->
 </div><!--address-form-left-->
 {% if forloop.last %}
@@ -314,6 +310,29 @@
 
 {% block javascript %}
 <script>
+
+$('document').ready(function(){
+  //HIDE AND SHOW WITH CUSTOMER TYPE
+$("#id_customer_type").change(function(){
+customer_type=this.value;
+
+if(customer_type=='CORPORATE')
+{
+$("#id_customer_type_expand").css('display','block');  
+$("#id_company").parents('.page-col').show();
+$("#id_job_title").parents('.page-col').show();
+}
+else
+{
+$("#id_customer_type_expand").css('display','none');
+$("#id_company").parents('.page-col').hide();
+$("#id_job_title").parents('.page-col').hide();
+$("#id_company").val('');
+$("#id_job_title").val('');
+}
+    });
+})
+
 //Append area for governorate change
 
 $(".governorate").change(function(){ 

@@ -76,7 +76,7 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label"> <label>Customer Type</label></div>
                 <label for="favcity">
-                <select id="favcity" name="customer_type">
+                <select id="id_customer_type" name="customer_type">
                 <option value="">Choose Customer Type</option>
                 <option value="INDIVIDUAL">INDIVIDUAL</option>
                 <option value="RETAIL">RETAIL</option>
@@ -86,6 +86,7 @@
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
+<div id="id_customer_type_expand">
 <hr class="hr-dashedpad"> 
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
@@ -98,6 +99,7 @@
 				<input name="job_title" id="id_job_title" type="text" class="textBox" placeholder=" "  >
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div>
 
 <hr class="hr-dashedpad"> 
 
@@ -218,7 +220,7 @@
 {% endblock %}
 
 {% block javascript %}
-<script src="{% static 'files/js/custom formset/customformset.js' %}"></script>
+<script src="{% static 'files/js/jquery.formset.js' %}"></script>
 <script>
 var x=0;
 var ajax_ret_areas; 
@@ -259,7 +261,28 @@ $("#id_company").parents('.page-col').hide();
 $("#id_job_title").parents('.page-col').hide();
 
 $("#id_form-"+x+"-area").empty();    
+$("#id_customer_type_expand").css('display','block');
+});
 
+
+//HIDE AND SHOW WITH CUSTOMER TYPE
+$("#id_customer_type").change(function(){
+customer_type=this.value;
+
+if(customer_type=='CORPORATE')
+{
+$("#id_customer_type_expand").css('display','block');  
+$("#id_company").parents('.page-col').show();
+$("#id_job_title").parents('.page-col').show();
+}
+else
+{
+$("#id_customer_type_expand").css('display','none');
+$("#id_company").parents('.page-col').hide();
+$("#id_job_title").parents('.page-col').hide();
+$("#id_company").val('');
+$("#id_job_title").val('');
+}
 });
 
 //Append area for governorate change
