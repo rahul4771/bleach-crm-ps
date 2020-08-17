@@ -1,0 +1,79 @@
+#chart_div {
+    float: right; background:none;  width:100% !important;height:34vh; padding:0; margin:0;    }
+ 
+/*Praveen*/
+.chart_boxDiv { display: flex;flex-direction: row; column-gap: 2rem;}
+.chart_box_Left { flex: 1; position:relative; margin:0 !important; padding:0 !important; }
+.chart_box_Right {flex: 1; position:relative; margin:0 !important; padding:0 !important; }
+.chart_box_Right svg {  }
+ 
+.Button_wrapperChart{margin:30px 0 0px 0; position:relative; }
+.green-button-chart{ background:#37b79a; border:none; border-radius:50px; width:90px !important; padding:7px 10px 8px 10px !important; color:#fff; position:absolute; left:100px; top:0;}
+ .date_pick{ margin-top:20px !important; position:absolute; left:0;width:120px !important;  }
+ .legend-wrapper{ margin:20px 0 0 0; padding:8px 15px; border:1px solid #dad898; background:#fbfad1; border-radius:5px;}
+ .legend-result-red{ font-size:15px; font-weight:normal !important; display:inline-block; color:#fff; background:#eb7896; margin:0 0 0 5px; padding:3px 8px; vertical-align:middle; }
+ .legend-result-blue{ font-size:15px; font-weight:normal !important; display:inline-block; color:#fff; background:#6bb3f7; margin:0 0 0 5px; padding:3px 8px; vertical-align:middle; } 
+ .legend-label{ width:80px; }
+ .hover{ }
+.hover:hover{ box-shadow: 3px 6px 22px #d2d2d2;}
+@media screen and (max-width: 1300px) {
+.chart_boxDiv {	 flex-direction: column; width:auto; padding-bottom:30px;  }
+.legend-wrapper{ margin:-10px 0 10px 0; }
+.Button_wrapperChart{margin:10px 0 0px 0;} 
+}
+
+
+@media screen and (max-width: 1024px) {
+.chart_boxDiv {	 flex-direction: column; width:auto; }
+}
+
+
+
+
+
+
+
+
+ 
+ 
+/*Praveen*/ 
+
+.set1 {float:left; }
+ 
+#ord_fromdate{ border:1px solid #ccc; border-radius:0px; height:30px; line-height:20px; width:160px; text-align:center; /*position:absolute; left:25px; top:140px; bottom:0;*/ }
+#ord_todate{ border:1px solid #ccc; border-radius:0px; height:30px; line-height:20px; width:160px; text-align:center; /*position:absolute; left:25px; top:180px; bottom:0;*/}
+
+#monthpicker1 { 
+position: absolute;
+    botttom:0px;
+    left: 125px; 
+    width: 120px !important; display:inline-block !important; margin:0; padding:0;
+}
+
+#monthpicker2 { 
+position: absolute;
+    bottom:10;
+    left: 0;
+    width: 120px !important; display:inline-block !important; margin:0; padding:0;
+}
+
+#reset_orders{
+/*    position: absolute;
+    top:90px;
+    left: 120px;*/
+    width: 50px;
+}
+
+#month1 {
+    width: 45% !important; height: 30px; margin:0; padding:0 5px !important; text-align: left; font-size: small;  box-sizing:border-box;
+}
+
+#month2 {
+    width: 45% !important; height: 30px; margin:0; padding:0 5px !important; text-align: left; font-size: small; box-sizing:border-box;
+}
+
+.count_div {
+/*    position: absolute;
+    left: 15px;*/
+    width: auto; margin:0; padding:7px 0; 
+}

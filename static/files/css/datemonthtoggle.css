@@ -1,132 +1,10 @@
-/* #app-cover
-{
-    display: table;
-    width: 600px;
-    margin: 80px auto;
-    counter-reset: button-counter;
-}
-
-.row
-{
-    display: table-row;
-}
-
-.toggle-button-cover
-{
-    display: table-cell;
-    position: relative;
-    width: 200px;
-    height: 140px;
-    box-sizing: border-box;
-}
-
-.button-dm
-{
-    position: relative;
-    top: 50%;
-    width: 74px;
-    height: 36px;
-    margin: -20px auto 0 auto;
-    overflow: hidden;
-}
-
-.button.b2
-{
-    border-radius: 2px;
-}
-
-.checkbox
-{
-    position: relative;
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    margin: 0;
-    opacity: 0;
-    cursor: pointer;
-    z-index: 3;
-}
-
-.knobs
-{
-    z-index: 2;
-}
-
-.layer
-{
-    width: 100%;
-    background-color: #ebf7fc;
-    transition: 0.3s ease all;
-    z-index: 1;
-}
-
-/* Button 10 */
-/*
-#button-10 .knobs:before, #button-10 .knobs:after, #button-10 .knobs span
-{
-    position: absolute;
-    top: 4px;
-    width: 20px;
-    height: 10px;
-    font-size: 10px;
-    font-weight: bold;
-    text-align: center;
-    line-height: 1;
-    padding: 9px 4px;
-    border-radius: 2px;
-    transition: 0.3s ease all;
-}
-
-#button-10 .knobs:before
-{
-    content: '';
-    left: 8px;
-    background-color: #03A9F4;
-}
-
-#button-10 .knobs:after
-{
-    content: 'MONTH';
-    right: 8px;
-    color: #4e4e4e;
-}
-
-#button-10 .knobs span
-{
-    display: inline-block;
-    left: 4px;
-    color: #fff;
-    z-index: 1;
-}
-
-#button-10 .checkbox:checked + .knobs span
-{
-    color: #4e4e4e;
-}
-
-#button-10 .checkbox:checked + .knobs:before
-{
-    left: 42px;
-    background-color: #F44336;
-}
-
-#button-10 .checkbox:checked + .knobs:after
-{
-    color: #fff;
-}
-
-#button-10 .checkbox:checked ~ .layer
-{
-    background-color: #fcebeb;
-}
-*/
 
 .switch {
     position: relative;
-    top: 70px;
+    top: 0px;
     display: inline-block;
     width: 90px;
-    height: 34px;
+    height: 34px; 
 }
   
 .switch input {display:none;}
@@ -146,21 +24,21 @@
 /*feedback chart toggle*/
 .switch_resource {
     position: absolute;
-    top: 26px;
+    top: 0px;
     display: inline-block;
     width: 90px;
     height: 34px;
-    right:200px;
+    right:0px;
 }
 
 .switch_resource input {display:none;}
 
 
-.slider {
-position: absolute;
+.slider { 
+position: absolute; 
 cursor: pointer;
 top: 0;
-left: 0;
+left: 0px;
 right: 0;
 bottom: 0;
 background-color: #4385f5;
@@ -223,14 +101,14 @@ color: white;
 display: block;
 position: absolute;
 transform: translate(-50%,-50%);
-top: 50%;
-left: 60%;
+top: 0;
+left: 0;
 font-size: 10px;
 font-family: Verdana, sans-serif;
 }
 
 .switch_resource input:checked + .slider:after
 {  
-content:'MONTH';
+content:'MONTH'; 
 left:40%
 }
