@@ -97,7 +97,7 @@ def GetFeedbackOrderInfo(request):
 		dropdown_order_info['date']          = order.evaluation.created.strftime('%b %d %Y,%I:%M %p')
 		dropdown_order_info['order_status']  = order.order_status
 		dropdown_order_info['payment_status']= order.payment_status
-		dropdown_order_info['agent_image_url']= order.evaluation.call_attender.profile_image.url
+		dropdown_order_info['agent_image_url']= order.evaluation.call_attender.profile_image.url or None
 		dropdown_order_info['total_cleaners']=order.total_cleaners
 
 		#for multiple order addresses
