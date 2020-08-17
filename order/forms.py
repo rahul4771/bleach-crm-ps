@@ -11,11 +11,11 @@ class InvestigationForm(forms.ModelForm):
 	class Meta:
 		model  = Investigation
 		fields = ('order_schedule','investigator','sheduled_at','notes')
-
+		
 	def __init__(self,*args,**kwargs):
 		super(InvestigationForm, self).__init__(*args, **kwargs)
 
 		self.fields['order_schedule'] = forms.ModelChoiceField(
-		    queryset=OrderScheduler.objects.filter(is_active=True),label='Address and Cleaning',required=True,widget=forms.Select(attrs={'class':'order_schedule'}))
+		    queryset=OrderScheduler.objects.filter(is_active=True),label='Cleaning Job',required=True,widget=forms.Select(attrs={'class':'order_schedule'}))
 		self.fields['investigator'] = forms.ModelChoiceField(
-			queryset=UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='EVALUATOR')|Q(user_type='SENIORTEAMLEADER')|Q(user_type='TEAMLEADER')))),required=True,widget=forms.Select(attrs={'class':'userprofile'}))				
+			queryset=UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='EVALUATOR')|Q(user_type='SENIORTEAMLEADER')|Q(user_type='TEAMLEADER')))),required=True,widget=forms.Select(attrs={'class':'userprofile'}))
