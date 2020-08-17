@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-<div class="kw-login-full-wrapper"><!--kw-login-full-wrapper-->
+{% comment %} <div class="kw-login-full-wrapper"><!--kw-login-full-wrapper-->
  
 <div class="kw-login-midwrapper shadow-effect"><!--kw-login-midwrapper fixed-->
 <div class="kw-left-area"><!--kw-left-area-->
@@ -25,6 +25,38 @@
 </div><!--kw-login-midwrapper fixed-->
  
 
-</div><!--kw-login-full-wrapper-->
+</div><!--kw-login-full-wrapper--> {% endcomment %}
+
+<section class="section-new-login">
+
+
+<div class="login-new-container"><!--login-new-container-->
+	<div class="center-item-login"><!--center-item-login-->
+    	<div class="login-inner-wrapper login-inner-boxes"><!--login-inner-wrapper login-inner-boxes-->
+        	<div class="login-inner-left"><!--login-inner-left-->
+            <div class="login-logo"><img src="{% static 'files/images/logo.svg' %}"></div>
+            <h1>Lorem Ipsum</h1>
+            <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. </p>
+            </div><!--login-inner-left-->
+            <div class="login-inner-right"><!--login-inner-right-->
+            	<form class="newlogin-form" method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                	<h1>Welcome to Aboard</h1>
+                    <div><input class="textBox" name="username" type="text" class="login-username" placeholder="User Name" id="username"></div>
+                    <div class="pwd"><input class="textBox" name="password" id="password_field" type="password" class="login-password" placeholder="Password" autocomplete="off"><div class="login-eye"><a href="#"><img src="{% static 'files/images/login-eye.svg' %}"></a></div></div>
+                    <p><input name="" type="checkbox" value=""> Remember password</p>
+                    <div><input name="Sign in" type="submit" class="sign-button" value="Login">&nbsp;<input name="cancel" type="button" class="reset-button" value="Cancel"></div>
+                    
+                </form>
+            </div><!--login-inner-right-->
+        </div><!--login-inner-wrapper login-inner-boxes-->
+    </div><!--ccenter-item-login-->
+</div><!--login-new-container-->
+
+
+</section>
+
 {% endblock %}
+ 
+
 
