@@ -185,7 +185,7 @@
                 addButton = buttonRow.find('a');
             } else {
                 // Otherwise, insert it immediately after the last form:
-                $$.filter(':last').after('<a class="' + options.addCssClass + '" href="javascript:void(0)">' + options.addText + '</a>');
+                $$.filter(':last').after('<div class="' + options.addCssClass + '"><a href="javascript:void(0)">' + options.addText + '</a></div>');
                 addButton = $$.filter(':last').next();
                 if (hideAddButton) addButton.hide();
             }
@@ -221,7 +221,7 @@
         formTemplate: null,              // The jQuery selection cloned to generate new form instances
         addText: 'add another',          // Text for the add link
         deleteText: 'remove',            // Text for the delete link
-        addCssClass: 'a-btn add-row',          // CSS class applied to the add link
+        addCssClass: 'add-address',          // CSS class applied to the add link
         deleteCssClass: 'delete-address',    // CSS class applied to the delete link
         formCssClass: 'dynamic-form',    // CSS class applied to each form in a formset
         extraClasses: [],                // Additional CSS classes, which will be applied to each form in turn
