@@ -24,17 +24,16 @@
 .right-value{width:22px; height:22px; position:absolute; background:#fff; right:1px; top:1px; border-radius:50px; text-align:center; }
 
 
-.green-line{ border-left:4px solid #3cbbb1; }
-.blue-line{ border-left:4px solid #528ce6;}
-.orange-line{ border-left:4px solid #ff8c56;}
-.red-line{ border-left:4px solid #ec6262;}
-.yellow-line{ border-left:4px solid #f2ba1e;}
-
-.green-bg{ background:#3cbbb1; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
-.yellow-bg{background:#f2ba1e; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
-.red-bg{background:#ec6262; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
 .orange-bg{background:#ff8c56; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
-.blue-bg{background:#528ce6; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
+
+
+.yellow-bg-lg{background:#cfcc08; padding:4px 5px; margin:0 5px 10px 0;  border-radius:3px; text-align:center; color:#fff; font-size:13px; width:80px; display:inline-block;}
+
+.yellow-button{ background:#cfcc08; color:#fff; padding:4px 25px; border:none; font-size:15px; margin:15px 0 0px 0; border-radius:3px;transition: .4s; }
+.yellow-button:hover{ background:#cfcc08;}
+
+.red-button{ background:#ff0000; color:#fff; padding:4px 25px; border:none; font-size:15px; margin:15px 0 0px 0; border-radius:3px;transition: .4s; }
+.red-button:hover{ background:#ff0000;}
 
 /* Individual bars */
 .bar-n {height: 18px;}
