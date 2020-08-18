@@ -302,16 +302,17 @@ $(document).ready(function () {
     var onStar = parseInt($(this).data('value'), 10); // The star currently selected
     var stars = $(this).parent().children('li.star');
 
-    for (i = 0; i < stars.length; i++) {if (window.CP.shouldStopExecution(0)) break;
+    for (i = 0; i < stars.length; i++) {//if (window.CP.shouldStopExecution(0)) break;
       $(stars[i]).removeClass('selected');
-    }window.CP.exitedLoop(0);
+    }//window.CP.exitedLoop(0);
 
-    for (i = 0; i < onStar; i++) {if (window.CP.shouldStopExecution(1)) break;
+    for (i = 0; i < onStar; i++) {//if (window.CP.shouldStopExecution(1)) break;
       $(stars[i]).addClass('selected');
     }
 
     // JUST RESPONSE (Not needed)
-    window.CP.exitedLoop(1);var ratingValue = parseInt($('#stars li.selected').last().data('value'), 10);
+    //window.CP.exitedLoop(1);
+    var ratingValue = parseInt($('#stars li.selected').last().data('value'), 10);
     var msg = "";
     if (ratingValue > 1) {
       msg = "Thanks! You rated this " + ratingValue + " stars.";

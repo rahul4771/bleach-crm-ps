@@ -1664,15 +1664,26 @@ class TicketRegistration(IsAgent,View):
 
 	def post(self,request):
 		order_id           = request.POST.get('order_id')
+		investigation_medias = request.FILES.getlist('investigation_media')
+		print(investigation_medias,"ims")
 		investigation_form = InvestigationForm(request.POST)
 
 		if investigation_form.is_valid(): 
 			investigation_form_save            = investigation_form.save(commit=False)	
 			investigation_form_save.assigned_by= request.user
 			investigation_form_save.order_id   = order_id
-			investigation_form_save.save()	
+			investigation_form_save.save()
+				
+			if not investigation_medias == ['']:
+				for image in investigation_medias:
+					InvestigationMedia.objects.create(
+						investigation = investigation_form_save,
+						media = image,
+						media_type = 'PHOTO',
+						is_active = True
+					)
 
-			messages.success(request,"Ticket Succesfully Rised")
+			messages.success(request,"Ticket Raised Succesfully!")
 		else:
 			messages.error(request,get_error(investigation_form))
 
