@@ -4,67 +4,6 @@
 <div class="wrapper"><!--wrapper-->
 {% include "agent/common/header.html" %}
 
-{% comment %} <section class="content"><!--content-->
-        <div class="container-fluid space topspace"><!--container-fluid space-->
-            <div class="welcome-wrapper"><!--welcome-wrapper-->
-                <h1 class="dashboard-head">Ticket Registration</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
-            </div><!--welcome-wrapper-->
-		</div><!--container-fluid space-->
-<div class="main-content-holder"><!--main-content-holder-->
-
-<div class="white-wrapper"><!--white-wrapper-->
-	<div class="orders">
-        <label>Select BLC Number</label>
-          <select name="order" class="chosen-select" id="order_id">
-                <option value="">-- select --</option>
-                {% for order in orders %}
-                <option value="{{order.id}}">{{order.evaluation}}</option> {% endfor %}
-          </select> 
-   </div>
-   <div class="name">
-   	<label>Name:</label>
-   	<input class="form-control" type="text" name="name" id="name_id" readonly="true">
-   </div>
-   <div class="mobile_number">
-   	<label>Mobile Number:</label>
-   	<input class="form-control" type="text" name="mobile_number" id="mobile_no_id" readonly="true">
-   </div>
-
-   <div class="row">  
-    <div class="col-12">
-      <div class="page-form">
-        <form method="post" action="">{%csrf_token%}
-          <div class="page-body">
-          	<div class="div-section">
-              <div class="page-form-head">
-                <h1>Ticket Rising Form</h1>  
-              </div>
-              <input type="hidden" name="order_id" id="order_id_hidden">
-              	{% for field in investigation_form %} 
-			    <div class="page-col">
-					{{ field.errors }} 
-					{{ field.label_tag }} {{ field }}
-					<p class="help">{{ field.help_text|safe }}</p>
-          	    </div>
-          		{% endfor %}
-          	</div>
-          	</div>	
-            <div class="page-footer text-center">
-            <button type="submit" class="primary-btn">Rise Ticket</button>
-            </div>
-       </form>
-      </div>
-    </div>
-  </div>
-</div><!--white-wrapper-->      
-    
-
-</div><!--main-content-holder-->	
-
-</div><!--container-fluid space-->
- </section><!--content--> {% endcomment %}
-
 <div class="wrapper"><!--wrapper-->
    
 <section class="content"><!--content-->
@@ -121,47 +60,50 @@
 <div class="common-sub-head align-left ticket-form-head">Ticket Form</div> 
 	<form method="post" action="{% url 'agent:agent-ticketregister' %}" enctype="multipart/form-data">{% csrf_token %}
 	<input type="hidden" name="order_id" id="order_id_hidden">
-	{{ investigation_form.non_field_errors }}
 
-	{{ investigation_form.source.errors }}
-	{{ investigation_form.source }}
 <div class="ticket-wrapper-full ltyellow-border ticket-form"><!--ticket-wrapper-full-->
-	<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-	<div class="ticket-form-left"><!--ticket-form-left-->
-				<div class=" bold-text common-label"> <label>{{ investigation_form.order_schedule.label_tag }}</label></div>
-				{{investigation_form.order_schedule}}
-				{{investigation_form.order_schedule.errors}}
-	</div><!--ticket-form-left-->
-	<div class="ticket-form-right"><!--ticket-form-right-->
-				<div class=" bold-text common-label"> <label>{{ investigation_form.investigator.label_tag }}</label></div>
-				{{investigation_form.investigator}}
-				{{investigation_form.investigator.errors}}
-	</div><!--ticket-form-right-->
-	</div><!--ticket-wrapper-row ticket-forms-boxes-->
-	<hr class="hr-dashedpad">      
-	<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-	<div class="ticket-form-left"><!--ticket-form-left-->
-				<div class="bold-text common-label"> <label>{{ investigation_form.sheduled_at.label_tag }}</label></div>
-				{{investigation_form.sheduled_at}}
-				{{investigation_form.sheduled_at.errors}}
-	</div><!--ticket-form-left--> 
-	</div><!--ticket-wrapper-row ticket-forms-boxes-->  
-	<hr class="hr-dashedpad">
-				<div class="bold-text common-label"> <label>{{ investigation_form.notes.label_tag }}</label></div>
-					{{investigation_form.notes}}
-					{{investigation_form.notes.errors}}
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Cleaning Job</label></div>
+                <label for="favcity">
+                <select id="id_order_schedule" name="order_schedule" required>
+                </select>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label"> <label>Investigator</label></div>
+                <label for="favcity">
+                <select id="id_investigator" name="investigator" required>
+                <option value="">--Choose Investigator--</option>
+				{% for investigator in investigators %}
+                <option value="{{investigator.id}}">{{investigator.name}}</option>
+                {% endfor %}
+                </select>
+                </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">      
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class="bold-text common-label"> <label>Schedule Date and Time</label></div>
+                <input name="sheduled_at" type="text" class="textBox date_time_pick" placeholder="" required readonly>
+  </div><!--ticket-form-left--> 
+</div><!--ticket-wrapper-row ticket-forms-boxes-->  
+<hr class="hr-dashedpad">
+				<div class="bold-text common-label"> <label>Notes</label></div>
+                 <textarea name="notes" cols="" rows="4" class="textArea"></textarea>
 
 
-	<div class="details-notes align-left">Media</div>        
-	<div class="row"><!--row-->
-	<div class="col-sm-2 imgUp"><!--col-sm-2 imgUp-->
-		<div class="imagePreview"></div>
-		<label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="investigation_media" value="Upload Photo" style="width: 0px;height: 0px;overflow: hidden;"></label>
-		</div><!--col-sm-2 imgUp-->
-		<i class="fa fa-plus imgAdd"></i>
-	</div><!--row-->  
+<div class="details-notes align-left">Media</div>        
+<div class="row"><!--row-->
+    <div class="col-sm-2 imgUp"><!--col-sm-2 imgUp-->
+        <div class="imagePreview"></div>
+        <label class="btn btn-primary">Upload<input type="file" name="investigation_media" class="uploadFile img" value="Upload Photo" style="width: 0px;height: 0px;overflow: hidden;"></label>
+        </div><!--col-sm-2 imgUp-->
+    	<i class="fa fa-plus imgAdd"></i>
+</div><!--row-->  
 
-</div><!--ticket-wrapper-full-->
+</div><!--ticket-wrapper-full--> 
 
 <div align="center" class="ticket-form-button"><input class="assignButton" name="submit" type="submit" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>   	
 </form>
@@ -211,50 +153,7 @@ $('document').ready(function(){
 
 });
 
-	{% comment %} $('#order_id').change(function()
-	{
-		order_id=this.value;
-		
-		$.ajax({
-
-        url: "{% url 'agent:get-orderscheduleticketInfo' %}",
-
-        data: {'order_id':order_id}, 
-
-        dataType: 'json',
-
-        success: function (data) {
-
-        	$('#name_id').val(data['name'])
-        	$('#mobile_no_id').val(data['mobile_number']);
-        	$("#order_id_hidden").val(data['order_id']);
-        	
-        	order_schedules = data['schedules'];
-        	$('#id_order_schedule').empty();
-        	$("#id_order_schedule").append($('<option>', {
-
-          			value: "", 
-
-         			text: "-------------"
-
-      							}));
-        	$.each( order_schedules, function( key, values ) {
-
-              $("#id_order_schedule").append($('<option>', {        
-
-   				 value: key, 
-
-    			text: values   
-
- 										 }));   
-
-      			});
-        }
-
-    });
-	}); {% endcomment %}
-
-
+//order id select function--display customer tab and form
 	$('#order_id').change(function()
     {
         order_id=this.value;
@@ -344,7 +243,7 @@ $('document').ready(function(){
 
     });
 
-//order schedule dropdown 
+	//order schedule dropdown 
 		$.ajax({
 
 			url: "{% url 'agent:get-orderscheduleticketInfo' %}",
