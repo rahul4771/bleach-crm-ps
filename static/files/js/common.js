@@ -85,6 +85,7 @@ $(document).ready(function() {
 
 $(".params_filter .filter-btn").on("click", function(){
     $(this).parent(".params_filter").toggleClass("active");
+    console.log("hiii");
 });
 $(".close-btn").on("click", function(){
     $('.params_filter').removeClass('active');
