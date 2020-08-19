@@ -890,10 +890,8 @@ class FeedbackAdvanced(IsAgent,View):
 			feedbacks = None
 
 		#total_feedback_rating	
-		try:
-			average_feedback  = round(feedbacks.filter(id=order_id).aggregate(Avg('feed_backs_order__rating'))['feed_backs_order__rating__avg'])
-		except:
-			average_feedback = 0.0
+		average_feedback  = round(feedbacks.filter(id=order_id).aggregate(Avg('feed_backs_order__rating'))['feed_backs_order__rating__avg'])
+		
 		#other feedbacks
 		try:
 			other_feedbacks = feedbacks.exclude(id=order_id)
