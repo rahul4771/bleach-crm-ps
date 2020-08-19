@@ -9,31 +9,31 @@
     <div class="welcome-wrapper"><!--welcome-wrapper-->
         <h1 class="dashboard-head">Order {{feedback_details.order_no}}</h1>
         <div class="align-left"><span class="xtralrg-text white-text"> {{average_feedback|default_if_none:'0.0'|floatformat:'1'}}</span>
-        {% if average_feedback == 5 %}
+        {% if average_feedback >= 4.5 %}
         <span class="fa  fa-2x fa-star checked yellow-text"></span>
         <span class="fa  fa-2x fa-star checked yellow-text"></span>
         <span class="fa  fa-2x fa-star checked yellow-text"></span>
         <span class="fa  fa-2x fa-star checked yellow-text"></span>
         <span class="fa  fa-2x fa-star checked yellow-text"></span> 
-        {% elif average_feedback < 5 and average_feedback >= 4 %}   
+        {% elif average_feedback >= 3.5 and average_feedback < 4.5 %}   
         <span class="fa  fa-2x fa-star checked yellow-text"></span>
         <span class="fa  fa-2x fa-star checked yellow-text"></span>
         <span class="fa  fa-2x fa-star checked yellow-text"></span>
         <span class="fa  fa-2x fa-star checked yellow-text"></span>
         <span class="fa  fa-2x fa-star white-text"></span>
-        {% elif average_feedback < 4 and average_feedback >= 3 %}
+        {% elif average_feedback >= 2.5 and average_feedback < 3.5 %}
         <span class="fa  fa-2x fa-star checked yellow-text"></span>
         <span class="fa  fa-2x fa-star checked yellow-text"></span>
         <span class="fa  fa-2x fa-star checked yellow-text"></span>
         <span class="fa  fa-2x fa-star white-text"></span>
         <span class="fa  fa-2x fa-star white-text"></span>
-        {% elif average_feedback < 3 and average_feedback >= 2 %}
+        {% elif average_feedback >= 1.5 and average_feedback < 2.5 %}
         <span class="fa  fa-2x fa-star checked yellow-text"></span>
         <span class="fa  fa-2x fa-star checked yellow-text"></span>
         <span class="fa  fa-2x fa-star white-text"></span>
         <span class="fa  fa-2x fa-star white-text"></span>
         <span class="fa  fa-2x fa-star white-text"></span>
-        {% elif average_feedback < 2 and average_feedback >= 1 %}
+        {% elif average_feedback >= .5 and average_feedback < 1.5 %}
         <span class="fa  fa-2x fa-star checked yellow-text"></span>
         <span class="fa  fa-2x fa-star white-text"></span>
         <span class="fa  fa-2x fa-star white-text"></span>
@@ -175,11 +175,7 @@
         <span class="fa fa-star"></span>
         <span class="fa fa-star"></span>
         {% else %}
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
+        <span>Not Rated</span>
         {% endif %} </td>
     </tr>
     {% endfor %} 
