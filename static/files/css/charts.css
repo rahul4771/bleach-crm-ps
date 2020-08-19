@@ -112,8 +112,3 @@ float:left;width:150px;height:30px; text-align:center; position: relative;; left
 #month2 {
     width: 120px; height: 30px; text-align: left; font-size: small;
 }
-
-#resource_month {
-    width: 180px; height: 35px; text-align: center; font-size: small; border:1px solid #ccc; border-radius:120px;
-    line-height:35px; display:inline-block;
-}

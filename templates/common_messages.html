@@ -14,6 +14,10 @@
 		 {% autoescape off %}{{ message }}{% endautoescape %}</h3>
         </div>
 	</div>
+    {% comment %} <div class="success message">
+    <h2>Information</h2>
+        <p>{% autoescape off %}{{ message }}{% endautoescape %}</p>
+    </div> {% endcomment %}
 	{% endif %}
 	{% endfor %}
     <script>

@@ -1843,12 +1843,11 @@ def FeedBackData(request):
 def ResourcesToggle(request):
     data = dict()
     month_year = request.GET.get('month_year',None)
-    month,year = month_year.split()
-    
+    month,year = month_year.split("/")
+    print(month,year,"moyr")
     staff_type = request.GET.get('staff_type',None)
     print(staff_type)
-    monthnumber = datetime.strptime(month,"%B").month
-    print(monthnumber,"mon")
+    
     search = request.GET.get('search',None)
     
     try:
@@ -1862,7 +1861,7 @@ def ResourcesToggle(request):
         workers =  None
     print(workers,"lp")
     # try:
-    workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__year__gte=year,start_at__month__gte=monthnumber)&Q(start_at__year__lte=year,start_at__month__lte=monthnumber))|Q(Q(end_at__year__gte=year,end_at__month__gte=monthnumber)&Q(end_at__year__lte=year,end_at__month__lte=monthnumber))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__year__gte=year,start_at__month__gte=monthnumber)&Q(start_at__year__lte=year,start_at__month__lte=monthnumber))|Q(Q(end_at__year__gte=year,end_at__month__gte=monthnumber)&Q(end_at__year__lte=year,end_at__month__lte=monthnumber))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
+    workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__year__gte=year,start_at__month__gte=month)&Q(start_at__year__lte=year,start_at__month__lte=month))|Q(Q(end_at__year__gte=year,end_at__month__gte=month)&Q(end_at__year__lte=year,end_at__month__lte=month))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__year__gte=year,start_at__month__gte=month)&Q(start_at__year__lte=year,start_at__month__lte=month))|Q(Q(end_at__year__gte=year,end_at__month__gte=month)&Q(end_at__year__lte=year,end_at__month__lte=month))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
     # except:
     #     workers_details = None
     print(workers_details,"wok")   

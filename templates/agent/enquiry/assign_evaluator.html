@@ -68,7 +68,7 @@
 <!-- assign evaluator popup -->
 <div id="addevaluationdetails_popup" class="overlay"><!--overlay-->
     <div class="popup-assign-eval"><!--popup-assign-eval-->
-        <a class="close" href="#">&times;</a>
+        <a class="close" href="#" data-dismiss="overlay">&times;</a>
             <div class="content"><!--content-->
             
 <form method="post" enctype= "multipart/form-data">{% csrf_token %}                      
@@ -139,7 +139,7 @@
 
 {% block javascript %}
 <script type="text/javascript">
-  
+
 $('document').ready(function(){  
 
     //Evaluation Callender
