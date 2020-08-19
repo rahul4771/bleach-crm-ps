@@ -157,14 +157,16 @@
             
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Order List</h2>
-<div class="no_of_entires">
-  <select name="no_of_entries" id="no_of_entries" onchange="set_params_go();">
-    <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
-    <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
-    <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
-  </select>
-</div>
 <div class="page-entries">Show {{entry_per_page}} entries</div>
+
+<label for="favcity" style="width:20%;"> 
+<select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
+<option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+<option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+<option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+</select>
+</label>
+
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
 <thead>
@@ -180,7 +182,7 @@
 </thead>
 <tbody>
     {% for evaluation in evaluations %}
-    <tr>
+    <tr class="clickable-row-list" {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %}>
     <td {% if evaluation.quatation_status == 'APPROVED' %}class="green-line"{% elif evaluation.quatation_status == 'REJECTED' %}class="red-line"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line"{%else%}class="orange-line"{%endif%}>{{evaluation.evaluation_id}} {{evaluation.address_count}} {{evaluation.book_count}} {{evaluation.address_book_count}}</td>    
     <td>{{evaluation.customer.name|default_if_none:''}}</td>
     <td>{% for evaluation_detail in evaluation.details_evaluation %}{{evaluation_detail.address.area.name}}<br>{% endfor %}</td>
