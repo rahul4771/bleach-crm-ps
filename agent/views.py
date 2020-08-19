@@ -885,13 +885,16 @@ class FeedbackAdvanced(IsAgent,View):
 
 		#total feedback
 		try:
-			feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,evaluation__customer_id=client_id).prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))		
+			feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,evaluation__customer_id=client_id).prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField())).annotate(average_rating=Avg('feed_backs_order__rating'))		
 		except:
 			feedbacks = None
-
+	
 		#total_feedback_rating	
-		average_feedback  = round(feedbacks.filter(id=order_id).aggregate(Avg('feed_backs_order__rating'))['feed_backs_order__rating__avg'])
-		
+		try:
+			average_feedback  = round(feedbacks.filter(id=order_id).aggregate(Sum('average_rating'))['average_rating__sum'])
+		except:
+			average_feedback = 0.0
+
 		#other feedbacks
 		try:
 			other_feedbacks = feedbacks.exclude(id=order_id)
