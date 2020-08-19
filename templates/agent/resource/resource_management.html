@@ -65,42 +65,42 @@
 <div class="toolbar-div"><!--toolbar-div-->
 
 <div class="search-middle"><!--search-middle-->
-<div class="filter-button params_filter" id="filter">
-<a href="#">Filter</a>
+<div class="filter-button params_filter">
+<input name="filter" type="button" value="Filter" id="filter" class="blue-button filter-btn">
 
-    <div class="expand-body left-expand-body" hidden>
+    <div class="expand-body left-expand-body">
           
-        <div class="left">
-        <div class="head">
-            <h1>Type of Staff</h1>
-        </div>
-        <div class="body">
-            <select name="staff_filter" id="staff_type_filter">
-            <option value=''>---SELECT---</option>
-            <option value='TEAMLEADER' {% if staff_type == 'TEAMLEADER' %}selected{% endif %}>TEAMLEADER</option>
-            <option value='CLEANER' {% if staff_type == 'CLEANER' %}selected{% endif %}>CLEANER</option>
-                            
-            </select>
-        </div>
-        </div>
+          <div class="left">
+            <div class="head">
+              <h1>Type of Staff</h1>
+            </div>
+            <div class="body">
+              <select name="staff_filter" id="staff_type_filter">
+                <option value=''>---SELECT---</option>
+                <option value='TEAMLEADER' {% if staff_type == 'TEAMLEADER' %}selected{% endif %}>TEAMLEADER</option>
+                <option value='CLEANER' {% if staff_type == 'CLEANER' %}selected{% endif %}>CLEANER</option>
+                             
+              </select>
+            </div>
+          </div>
 
-        <div class="right">
-        <div class="head">
-            <h1>Minimum Cleaning Hours</h1>
-        </div>
-        <div class="body">
-            <input type="number" name="minimumhour_filter" id="minimumhour_filter_id" max='24' min='0' value="{{fil_minhours|default_if_none:''}}">
-        </div>
-        </div>
+          <div class="right">
+            <div class="head">
+              <h1>Minimum Cleaning Hours</h1>
+            </div>
+            <div class="body">
+              <input type="number" name="minimumhour_filter" id="minimumhour_filter_id" max='24' min='0' value="{{fil_minhours|default_if_none:''}}">
+            </div>
+          </div>
 
-        <div class="left">
-        <div class="head">
-            <h1>Maximum Cleaning Hours</h1>
-        </div>
-        <div class="body">
-            <input type="number" name="maximumhour_filter" id="maximumhour_filter_id" max='24' min='0' value="{{fil_maxhours|default_if_none:''}}">
-        </div>
-        </div>
+          <div class="left">
+            <div class="head">
+              <h1>Maximum Cleaning Hours</h1>
+            </div>
+            <div class="body">
+              <input type="number" name="maximumhour_filter" id="maximumhour_filter_id" max='24' min='0' value="{{fil_maxhours|default_if_none:''}}">
+            </div>
+          </div>
         
         <div class="foot">
         <button type="button" class="red-btn" onclick="set_params_go({});">Submit</button>

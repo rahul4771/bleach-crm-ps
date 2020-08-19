@@ -384,21 +384,33 @@ class AgentHome(IsAgent,View):
 
 	def post(self,request):
 		action_mode = request.POST.get('action_type')
-		print(action_mode,"action mode")
+		
 		if action_mode =='confirm_followupchedule':
 			followupscheduler_id = request.POST.get('followupscheduler')
+			followup_scheduler   = FollowUpScheduler.objects.get(id=followupscheduler_id)
 			confirm_status       = request.POST.get('confirm')
 
+			confirm_date 	 = request.POST.get('followup_schedule_date')
+			confirm_time 	 = request.POST.get('followup_schedule_time')
+			start_at         = datetime.strptime(confirm_date+' '+confirm_time,'%d-%m-%Y %I:%M %p')
+			end_at           = start_at + timedelta(hours=followup_scheduler.follow_up.cleaning_hours)
+
 			if confirm_status:
-				FollowUpScheduler.objects.filter(id=followupscheduler_id).update(status='CONFIRMED')
+				FollowUpScheduler.objects.filter(id=followupscheduler_id).update(status='CONFIRMED',start_at=start_at,end_at=end_at)
 				messages.success(request,"Followup Cleaning Date Succesfully Confirmed")
 
 		elif action_mode =='confirm_orderschedule':	
-			orderscheduler_id = request.POST.get('orderscheduler')
-			confirm_status    = request.POST.get('confirm')
+			orderscheduler_id    = request.POST.get('orderscheduler')
+			order_scheduler      = OrderScheduler.objects.get(id=orderscheduler_id)
+			confirm_status       = request.POST.get('confirm')
+
+			confirm_date 	 = request.POST.get('order_schedule_date')
+			confirm_time 	 = request.POST.get('order_schedule_time')
+			start_at         = datetime.strptime(confirm_date+' '+confirm_time,'%d-%m-%Y %I:%M %p')
+			end_at           = start_at + timedelta(hours=order_scheduler.order_scheduler_book.cleaning_hours)		
 			
 			if confirm_status:
-				OrderScheduler.objects.filter(id=orderscheduler_id).update(status='CONFIRMED')
+				OrderScheduler.objects.filter(id=orderscheduler_id).update(status='CONFIRMED',start_at=start_at,end_at=end_at)
 				messages.success(request,"Cleaning Date Succesfully Confirmed")
 
 		elif action_mode =='edit_evaluation':
@@ -439,7 +451,6 @@ class ResourceManagement(IsAgent,View):
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		count_today_end   = count_today_start+timedelta(1)
-		print(count_today_end,count_today_start,"lpo")
 
 		#total workers count
 		try:
@@ -560,9 +571,9 @@ class OrderDetails(IsAgent,View):
 		search                  = request.GET.get('search')
 
 		if search:
-			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(is_active=True,customer__name__icontains=search)
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(is_active=True,customer__name__icontains=search).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
 		else:
-			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer')
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
 
 		if evaluations:
 			approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
@@ -819,25 +830,14 @@ class FeedbackDetails(IsAgent,View):
 				filters              = functools.reduce(operator.and_,filters)
 				order_wise_feedbacks = order_wise_feedbacks.filter(filters)	    
 
-		#Feedback Staring count total
+		#to find starring caluculations in whole system
 		try:
 			feedbacks                 = FeedBack.objects.filter(is_active=True)
 		except:
 			feedbacks				  = None
 
-		average_feedback    		  = feedbacks.aggregate(Avg('rating'))['rating__avg']
-		total_feedbacks               = feedbacks.count()
-		starring_percentages          = list(feedbacks.values('rating').annotate(percentage=Cast(Count('rating')/float(total_feedbacks)*100,FloatField())).order_by('rating'))
-
-		#append not done rating to default 0
-		for i in range(1,6):
-			new_rating = {}
-			if not any(starring['rating'] == i for starring in starring_percentages):
-				new_rating['rating']     = i
-				new_rating['percentage'] = 0
-				starring_percentages.append(new_rating)	
-
-		starring_percentages = sorted(starring_percentages, key = lambda i: i['rating'])		
+		total_feedbacks               = feedbacks.values('order').distinct().count()
+		full_order_wise_feedbacks     = order_wise_feedbacks		
 
 				
 		#PAGINATION FEEDBACKS		
@@ -866,7 +866,7 @@ class FeedbackDetails(IsAgent,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(order_wise_feedbacks.end_index())-(order_wise_feedbacks.start_index())+1
 
-		return render(request,'agent/feedback/feedbacks.html',{"feedbacks":feedbacks,"average_feedback":average_feedback,"total_feedbacks":total_feedbacks,"starring_percentages":starring_percentages,"order_wise_feedbacks":order_wise_feedbacks,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_minimumstarring":fil_minimumstarring,"fil_maximumstarring":fil_maximumstarring,"fil_service_type":fil_service_type,})
+		return render(request,'agent/feedback/feedbacks.html',{"feedbacks":feedbacks,"total_feedbacks":total_feedbacks,"order_wise_feedbacks":order_wise_feedbacks,"full_order_wise_feedbacks":full_order_wise_feedbacks,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_minimumstarring":fil_minimumstarring,"fil_maximumstarring":fil_maximumstarring,"fil_service_type":fil_service_type,})
 		
 class FeedbackAdvanced(IsAgent,View):
 	def get(self,request,client_id,order_id):
@@ -885,13 +885,16 @@ class FeedbackAdvanced(IsAgent,View):
 
 		#total feedback
 		try:
-			feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,evaluation__customer_id=client_id).prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))		
+			feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,evaluation__customer_id=client_id).prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField())).annotate(average_rating=Avg('feed_backs_order__rating'))		
 		except:
 			feedbacks = None
+	
+		#total_feedback_rating	
+		try:
+			average_feedback  = round(feedbacks.filter(id=order_id).aggregate(Sum('average_rating'))['average_rating__sum'])
+		except:
+			average_feedback = 0.0
 
-		#total_feedback_rating
-		average_feedback  = feedbacks.aggregate(Avg('feed_backs_order__rating'))['feed_backs_order__rating__avg']
-		
 		#other feedbacks
 		try:
 			other_feedbacks = feedbacks.exclude(id=order_id)
