@@ -826,6 +826,7 @@ class FeedbackDetails(IsAgent,View):
 			feedbacks				  = None
 
 		average_feedback    		  = feedbacks.aggregate(Avg('rating'))['rating__avg']
+
 		total_feedbacks               = feedbacks.count()
 		starring_percentages          = list(feedbacks.values('rating').annotate(percentage=Cast(Count('rating')/float(total_feedbacks)*100,FloatField())).order_by('rating'))
 
@@ -890,8 +891,10 @@ class FeedbackAdvanced(IsAgent,View):
 			feedbacks = None
 
 		#total_feedback_rating
-		average_feedback  = feedbacks.aggregate(Avg('feed_backs_order__rating'))['feed_backs_order__rating__avg']
-		
+		try:
+			average_feedback  = feedbacks.aggregate(Avg('feed_backs_order__rating'))['feed_backs_order__rating__avg']
+		except:
+			average_feedback  = 0
 		#other feedbacks
 		try:
 			other_feedbacks = feedbacks.exclude(id=order_id)
