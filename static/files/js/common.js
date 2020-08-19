@@ -37,11 +37,14 @@ $(function () {
  // toggle-password
  $(".toggle-password").click(function() {
   //$(this).toggleClass("fa-eye fa-eye-slash");
-  var input = $($(this).attr("toggle"));
+  console.log($(this).prev('input').attr('type'),'ro');
+  var input = $(this).prev('input');
   if (input.attr("type") == "password") {
-    input.attr("type", "text");
+    input.attr("type","text");
+    console.log(input,"red")
   } else {
-    input.attr("type", "password");
+    input.attr("type","password");
+    console.log(input,"rog")
   }
   });
 
@@ -82,6 +85,7 @@ $(document).ready(function() {
 
 $(".params_filter .filter-btn").on("click", function(){
     $(this).parent(".params_filter").toggleClass("active");
+    console.log("hiii");
 });
 $(".close-btn").on("click", function(){
     $('.params_filter').removeClass('active');

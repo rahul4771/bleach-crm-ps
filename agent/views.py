@@ -560,9 +560,9 @@ class OrderDetails(IsAgent,View):
 		search                  = request.GET.get('search')
 
 		if search:
-			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(is_active=True,customer__name__icontains=search)
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(is_active=True,customer__name__icontains=search).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
 		else:
-			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer')
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
 
 		if evaluations:
 			approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
@@ -826,6 +826,7 @@ class FeedbackDetails(IsAgent,View):
 			feedbacks				  = None
 
 		average_feedback    		  = feedbacks.aggregate(Avg('rating'))['rating__avg']
+
 		total_feedbacks               = feedbacks.count()
 		starring_percentages          = list(feedbacks.values('rating').annotate(percentage=Cast(Count('rating')/float(total_feedbacks)*100,FloatField())).order_by('rating'))
 
@@ -890,8 +891,10 @@ class FeedbackAdvanced(IsAgent,View):
 			feedbacks = None
 
 		#total_feedback_rating
-		average_feedback  = feedbacks.aggregate(Avg('feed_backs_order__rating'))['feed_backs_order__rating__avg']
-		
+		try:
+			average_feedback  = feedbacks.aggregate(Avg('feed_backs_order__rating'))['feed_backs_order__rating__avg']
+		except:
+			average_feedback  = 0
 		#other feedbacks
 		try:
 			other_feedbacks = feedbacks.exclude(id=order_id)
@@ -1658,16 +1661,19 @@ class TicketRegistration(IsAgent,View):
 		except:
 			orders = None
 
-		investigation_form = InvestigationForm()
+		investigators = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='EVALUATOR')|Q(user_type='SENIORTEAMLEADER')|Q(user_type='TEAMLEADER'))))
 		
-		return render(request,'agent/ticket/ticket_registration.html',{'investigation_form':investigation_form,'orders':orders,})		
+		return render(request,'agent/ticket/ticket_registration.html',{'orders':orders,'investigators':investigators})		
 
 	def post(self,request):
 		order_id           = request.POST.get('order_id')
+		# order_schedule		=	request.POST.get('order_schedule')
+		# investigator		=	request.POST.get('investigator')
+		# scheduled_at		=	request.POST.get('scheduled_at')
 		investigation_medias = request.FILES.getlist('investigation_media')
 		print(investigation_medias,"ims")
 		investigation_form = InvestigationForm(request.POST)
-
+		
 		if investigation_form.is_valid(): 
 			investigation_form_save            = investigation_form.save(commit=False)	
 			investigation_form_save.assigned_by= request.user
