@@ -210,11 +210,11 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Cleaning Date</label></div>
-        <input id="order_schedule_date_id" type="text" class="textBox" readonly>
+        <input id="order_schedule_date_id" name="order_schedule_date" type="text" class="textBox">
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Cleaning Time</label></div>
-                <input id="order_schedule_time_id" type="text" class="textBox" readonly>
+                <input id="order_schedule_time_id" name="order_schedule_time" type="text" class="textBox">
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <br>
@@ -268,11 +268,11 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Cleaning Date</label></div>
-        <input id="followup_schedule_date_id" type="text" class="textBox" readonly>
+        <input id="followup_schedule_date_id" name="followup_schedule_date" type="text" class="textBox">
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Cleaning Time</label></div>
-                <input id="followup_schedule_time_id" type="text" class="textBox" readonly>
+                <input id="followup_schedule_time_id" name="followup_schedule_time" type="text" class="textBox">
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <br>
@@ -670,6 +670,17 @@ $(".order_schedule").click(function(){
     $("#order_schedule_service_type_id").html($(this).data('service_type'));
 
     $('#order_schedule_id').val($(this).data('id'));
+    //date picker setup for conirm 
+    $('#order_schedule_date_id').datetimepicker({
+          pickTime: false,
+          format: "DD-MM-YYYY",
+        });
+
+    //time picker setup for confirm
+    $('#order_schedule_time_id').datetimepicker({
+          pickDate:false,
+          format: 'hh:mm A'
+        });
     
 })
 

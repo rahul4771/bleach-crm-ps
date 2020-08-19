@@ -17,73 +17,13 @@
 
 <div class="rating-containter"><!--rating-containter-->
 	<div class="rating-column column-left-rating"><!--column-left-rating-->
-        <p class="rating-range">{{average_feedback|floatformat:2|default_if_none:'0.0'}}</p>
-        {% if average_feedback == 5 %}
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        {% elif average_feedback < 5 and average_feedback >= 4 %}
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star"></span>
-        {% elif average_feedback < 4 and average_feedback >= 3 %}
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        {% elif average_feedback < 3 and average_feedback >= 2 %}
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        {% elif average_feedback < 2 and average_feedback >= 1 %}
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        {% else %}
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        {% endif %}
+        <p class="rating-range"></p>
+        <div class="rating-star">
+        </div>
         <p><span class="fa fa-user"></span>{{total_feedbacks}} total </p>
      </div><!--column-left-rating-->
      <div class="rating-column column-right-rating"><!--column-right-rating-->
             <div class="row">
-              {% for percentage in starring_percentages %}
-              <div class="side">
-                <div><span class="fa fa-star"></span> {{percentage.rating}}</div>
-              </div>
-              <div class="middle">
-                <div class="bar-container">
-                  <div class="bar-n"
-                  {% if forloop.counter == 1 %}
-                  style="width:{{percentage.percentage|floatformat:1}}%;background-color: #4CAF50;"
-                  {% elif forloop.counter == 2 %}
-                  style="width:{{percentage.percentage|floatformat:1}}%;background-color: #ff9800;"
-                  {% elif forloop.counter == 3 %}
-                  style="width:{{percentage.percentage|floatformat:1}}%;background-color: #00bcd4;"
-                  {% elif forloop.counter == 4 %}
-                  style="width:{{percentage.percentage|floatformat:1}}%;background-color: #2196F3;"
-                  {% else %}
-                  style="width:{{percentage.percentage|floatformat:1}}%;background-color: #f44336"
-                  {% endif %}
-                  ></div>
-                </div>
-              </div>
-              <div class="side right">
-                <div>{{percentage.percentage|floatformat:1}}%</div>
-              </div>
-              {% endfor %}
             </div>
         </div><!--column-right-rating-->
 </div><!--rating-containter-->
@@ -287,11 +227,7 @@
         <span class="fa fa-star"></span>
         <span class="fa fa-star"></span>
         {% else %}
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
+        <span>Not Rated</span>
         {% endif %}
     </td>
     </tr>
@@ -385,6 +321,69 @@ $('.footable').footable({
     </script>
 
 <script>
+$(document).ready(function(){
+//whole starring calculations  
+total_no_feedbacks = {{total_feedbacks}};
+
+starring_count = [0,0,0,0,0];
+{% for order in full_order_wise_feedbacks %}
+
+{% if order.avg_starring >= 4.5 %}
+starring_count[4] += 1;
+{% elif order.avg_starring >= 3.5 and order.avg_starring < 4.5 %}
+starring_count[3] += 1;
+{% elif order.avg_starring >= 2.5 and order.avg_starring < 3.5 %}
+starring_count[2] += 1;
+{% elif order.avg_starring >= 1.5 and order.avg_starring < 2.5 %}
+starring_count[1] += 1;
+{% elif order.avg_starring >= .5 and order.avg_starring < 1.5 %}
+starring_count[0] +=1;
+{% endif %}
+
+{% endfor %}
+
+for(i=starring_count.length-1;i>=0;i--)
+{
+
+$('.row').append('<div class="side"><div><span class="fa fa-star"></span>'+(i+1)+'</div></div><div class="middle"><div class="bar-container"><div class="bar-n" style="width:'+(starring_count[i]/total_no_feedbacks*100)+'%;background-color:'+(i == 0 ? '#f44336':i == 1 ? '#2196F3':i == 2 ? '#00bcd4':i == 3 ? '#ff9800':i == 4 ? '#4CAF50':'')+';"></div></div></div><div class="side right"><div>'+(Math.round((starring_count[i]/total_no_feedbacks*100)*10)/10)+'%</div></div>');
+}
+
+average_total_feedback = (Math.round((starring_count[0]*1+starring_count[1]*2+starring_count[2]*3+starring_count[3]*4+starring_count[4]*5)/total_no_feedbacks*100)/100);
+
+if(average_total_feedback >= 4.5)
+{
+$('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span>');
+  $('.rating-range').html('5.00');
+}
+else if(average_total_feedback >= 3.5 && average_total_feedback < 4.5)
+{
+$('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span>');
+$('.rating-range').html('4.00');
+}
+else if(average_total_feedback >= 2.5 && average_total_feedback < 3.5)
+{
+$('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span>');
+$('.rating-range').html('3.00');
+}
+else if(average_total_feedback >= 1.5 && average_total_feedback < 2.5)
+{
+$('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span>');
+$('.rating-range').html('2.00');
+}
+else if(average_total_feedback >= 0.5 && average_total_feedback < 1.5 )
+{
+$('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span>');
+  $('.rating-range').html('1.00');
+}
+else
+{
+$('.rating-star').append('<span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span>');
+$('.rating-range').html('0.00');
+}
+
+
+});
+
 
 $("#governorate_filter_id").change(function(){  
 
