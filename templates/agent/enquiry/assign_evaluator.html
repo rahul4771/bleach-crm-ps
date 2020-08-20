@@ -17,7 +17,6 @@
 <div class="white-wrapper"><!--white-wrapper-->    
 <h2 class="h2">Evaluation Callender</h2>
 <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" class="date_pick date-picker" onchange="set_params_go();">
-<a class="a-btn back-btn" href="{% url 'agent:agent-existingenquiry' enquiryid %}">Back</a>
 <div id="table-scroll" class="table-scroll"><!--table-scroll-->
 <div class="table-wrap"><!--table-wrap-->
 <table class="eval-table">
@@ -57,6 +56,10 @@
 </table>
 </div><!--table-wrap-->
 </div><!--table-scroll-->
+
+<br>
+<div align="right"><input class="assignButton" id="assign_evaluator_id" name="submit" type="button" value="Done"></div>
+
 </div><!--white-wrapper-->
 
          
@@ -71,7 +74,7 @@
         <a id="close_add_evaluator" class="close" href="#">&times;</a>
             <div class="content"><!--content-->
             
-<form method="post" enctype= "multipart/form-data">{% csrf_token %}                      
+<form method="post" enctype="multipart/form-data">{% csrf_token %}                      
 <input type="hidden" name="action_type" value="add">
             <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
             <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
@@ -273,6 +276,15 @@ $(".assign_evaluator_button").click(function () {
     $('.id_evaluator').val($(this).data('evaluator_id'));
   
       });
+
+$("#assign_evaluator_id").click(function(){
+  {% if active_addresses %}
+  alert('{{active_addresses.count}} Address remining');
+  {% else %}
+  window.location = "{% url 'agent:agentdash-board' %}"
+  {% endif %}
+})
+
 });
 </script>
 {% endblock %}
