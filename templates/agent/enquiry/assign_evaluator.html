@@ -71,7 +71,7 @@
 <!-- assign evaluator popup -->
 <div id="addevaluationdetails_popup" class="overlay"><!--overlay-->
     <div class="popup-assign-eval"><!--popup-assign-eval-->
-        <a class="close" href="#" data-dismiss="overlay">&times;</a>
+        <a id="close_add_evaluator" class="close" href="#">&times;</a>
             <div class="content"><!--content-->
             
 <form method="post" enctype= "multipart/form-data">{% csrf_token %}                      
@@ -126,7 +126,7 @@
       </div><!--ticket-form-left--> 
         
   </div><!--ticket-wrapper-row ticket-forms-boxes-->  
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Assign" onclick="submitAnyForm(this);"></div> 
+<div align="center"> <input class="assignButton" name="assing" type="button" value="Assign" onclick="submitAnyForm(this);"></div>  
 
 </div><!--ticket-wrapper-full-->             
 </form>
@@ -144,7 +144,6 @@
 <script type="text/javascript">
 
 $('document').ready(function(){  
-
     //Evaluation Callender
         {% for evaluator in evaluation_details %}
             
