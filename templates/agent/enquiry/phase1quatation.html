@@ -41,29 +41,15 @@
 				<a href="{% url 'agent:agent-makequatation2' detail.id %}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
   		</div><!--checkin-form-right-->               
 </div><!--checkin-wrapper-row checkin-forms-boxes-->
-{% endfor %} 
-
-{% comment %}       
-<div class="checkin-wrapper-row checkin-forms-boxes"><!--checkin-wrapper-row checkin-forms-boxes-->
-  		<div class="checkin-form-left"><!--checkin-form-left-->
-				Appartment, 3rd Floor, Building 4, Block 5, Street Name, Avenue, Area Govermerate
-  		</div><!--checkin-form-left-->
-  		<div class="checkin-form-left align-center"><!--checkin-form-left-->
-        		<!-- <i class="fa fa-3x gray-text fa-hourglass-o" aria-hidden="true"></i> -->
-				<div class="lg-text yellow-text">Evaluation Pending</div>
-  		</div><!--checkin-form-left-->
-  		<div class="checkin-form-right align-right"><!--checkin-form-right-->
-				<div><input name="view" type="button" value="Check-in" class="checkonButton"></div>
-  		</div><!--checkin-form-right-->               
-</div><!--checkin-wrapper-row checkin-forms-boxes-->        
-{% endcomment %}
-        
+{% endfor %}         
 <div class="checkin-wrapper-row checkin-forms-boxes ltblue-bg"><!--checkin-wrapper-row checkin-forms-boxes-->
   		<div class="checkin-form-left align-right"><!--checkin-form-left-->
 				<div class="total-text">Total Amount</div>
+        <br>
   		</div><!--checkin-form-left-->
   		<div class="checkin-form-right align-left"><!--checkin-form-right-->
 				<div class="total-Amount">{{evaluation.total_cost}} KD</div>
+        <br>
   		</div><!--checkin-form-right-->               
 </div><!--checkin-wrapper-row checkin-forms-boxes-->         
         
