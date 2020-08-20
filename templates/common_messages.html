@@ -5,21 +5,12 @@
     {% if messages %}
 	{% for message in messages %}
 	{% if forloop.counter0 == 0 %}
-    <div class="message_wrapper">
-        <div class="message_common {{ message.tags }}">
-		 <i class="fa fa-times" aria-hidden="true" onclick="close_message();" title="Close"></i>
-         <h3>
-		 <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-		 <i class="fa fa-check" aria-hidden="true"></i>
-		 {% autoescape off %}{{ message }}{% endautoescape %}</h3>
-        </div>
-	</div>
-    {% comment %} <div class="success message">
-    <h2>Information</h2>
-        <p>{% autoescape off %}{{ message }}{% endautoescape %}</p>
-    </div> {% endcomment %}
+    <div class="message_wrapper {{ message.tags }}" onclick="close_message();">
+    <h2>{% autoescape off %}{{ message }}{% endautoescape %}</h2>
+    </div>
 	{% endif %}
 	{% endfor %}
+    {% endif %}
     <script>
     function close_message()
         {
@@ -27,7 +18,7 @@
         }
 	$(window).ready(function(){
          $('.message_wrapper').addClass('display_class');
-         AutoCloseDialogBox(3000);
+         AutoCloseDialogBox(5000);
             return false;
      }); 
      function AutoCloseDialogBox(WaitSeconds) {
@@ -38,4 +29,3 @@
                 }, WaitSeconds);
         }
     </script>
-    {% endif %}

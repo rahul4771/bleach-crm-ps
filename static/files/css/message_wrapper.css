@@ -1,44 +1,5 @@
 /* message_wrapper */
-.message_wrapper {
-   width: 640px;
-    text-align: center;
-    z-index: 999;
-    position: fixed;
-    top: 35px;
-    margin: 0 auto;
-    left: 0;
-    right: 0;}
-.message_wrapper .message_common {
-  border-radius: 5px;
-  background: #fff;
-  border: 1px solid #f7f2f2;}
-.message_common.success .fa-exclamation-triangle,
-.message_common.error .fa-check {
-  display: none;} 
-.message_wrapper .message_common .fa-times {
-  cursor: pointer;
-  color: #ff2626;
-  padding: 10px;
-  position: absolute;
-  right: 0;
-  top: 0;
-  background: #fff;
-  border: 1px solid #ffabab;
-  border-top-right-radius: 7px;}
-/*
-.message_wrapper .message_common .fa-times:not() {
-    color: #ff3c3c;}*/
-.message_wrapper .message_common h3 {
-    font-size: 17px;
-    padding: 15px 10px;}
-.message_wrapper .message_common h3 .fa {
-  margin-right: 8px;
-  font-size: 20px;} 
-/**/  
-.message_common.error {
-  color: #e67eb7;}
-.message_common.success {
-  color: #8a8a8a;}     
+     
 @media screen and (max-width: 767px) {
 .message_wrapper {
   width: 90%;}
@@ -50,16 +11,22 @@
 
 h2{
   font-weight: 100;
-  font-size: 30pt;
-  line-height: 1.3em;
+  font-size: 22pt;
+  line-height: 2em;
   margin: 15px 0;
 }
 
-div.message {
-  position: relative;
+.message_wrapper {
   padding: 10px;
   padding-left: 35px;
-  margin: 30px 10px;
+  width:95%;
+  text-align: center;
+  z-index: 999;
+  position: fixed;
+  top: 100px;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
   box-shadow:0 2px 5px rgba(0,0,0,.3);
   background: #BBB;
   color: #FFF;
@@ -70,12 +37,13 @@ div.message {
        -o-transition: all .5s ease;
           transition: all .5s ease;
 }
-div.message:hover{
+
+.message_wrapper:hover{
   box-shadow: 0 15px 20px rgba(10,0,10,.3);
   -webkit-filter: brightness(110%);
 }
 
-div.message:before{
+.message_wrapper:before{
   content: '';
   font-family: FontAwesome;
   position: absolute;
@@ -89,6 +57,7 @@ div.message:before{
   width: 24px;
   padding:10px;
   background: inherit;
+  box-sizing: initial;
   box-shadow:0 5px 10px rgba(0,0,0,.25);
   color: rgba(255,255,255,.75);
   border-radius:50%;
@@ -96,14 +65,14 @@ div.message:before{
   z-index: 2;
 }
 
-div.message.info:before{content:'\f129';}
-div.message.debug:before{content:'\f0f3';}
-div.message.success:before{content:'\f00c';}
-div.message.warning:before{content:'\f12a';}
-div.message.error:before{content:'\f00d';}
+.message_wrapper.info:before{content:'\f129';}
+.message_wrapper.debug:before{content:'\f0f3';}
+.message_wrapper.success:before{content:'\f00c';}
+.message_wrapper.warning:before{content:'\f12a';}
+.message_wrapper.error:before{content:'\f00d';}
 
-div.message.info{background: #39B;}
-div.message.warning{background: #E74;}
-div.message.success{background: #5A6;}
-div.message.debug{background: #EA0;}
-div.message.error{background: #C43;}
+.message_wrapper.info{background: #39B;}
+.message_wrapper.warning{background: #E74;}
+.message_wrapper.success{background: #5A6;}
+.message_wrapper.debug{background: #EA0;}
+.message_wrapper.error{background: #C43;}
