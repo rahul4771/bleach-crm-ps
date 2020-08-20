@@ -74,7 +74,7 @@
         <a id="close_add_evaluator" class="close" href="#">&times;</a>
             <div class="content"><!--content-->
             
-<form method="post" enctype= "multipart/form-data">{% csrf_token %}                      
+<form method="post" enctype="multipart/form-data">{% csrf_token %}                      
 <input type="hidden" name="action_type" value="add">
             <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
             <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
@@ -268,7 +268,7 @@ $("#assign_evaluator_id").click(function(){
   {% if active_addresses %}
   alert('{{active_addresses.count}} Address remining');
   {% else %}
-  window.location = "{% url 'agent:agentdash-board' enquiryid %}"
+  window.location = "{% url 'agent:agentdash-board' %}"
   {% endif %}
 })
 
