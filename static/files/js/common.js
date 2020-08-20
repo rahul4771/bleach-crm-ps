@@ -41,9 +41,11 @@ $(function () {
   var input = $(this).prev('input');
   if (input.attr("type") == "password") {
     input.attr("type","text");
+    $('.fa').addClass("fa-eye").removeClass("fa-eye-slash");
     console.log(input,"red")
   } else {
     input.attr("type","password");
+    $('.fa').addClass("fa-eye-slash").removeClass("fa-eye");
     console.log(input,"rog")
   }
   });
