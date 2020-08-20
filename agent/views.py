@@ -1579,14 +1579,19 @@ class MakeQuatationPhase2(IsAgent,View):
 						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
 
 						#to save keynotes
-						no_of_keynotes = int(request.POST.get('form'+str(form_count)+'_section'+str(i)+'-keynote_counter'))
+						try:
+							no_of_keynotes = int(request.POST.get('form'+str(form_count)+'_section'+str(i)+'-keynote_counter'))
+						except:
+							no_of_keynotes = None
+							
 						keynote_array = []
-						for j in range(no_of_keynotes):
-							keynote = request.POST.get('form'+str(form_count)+'_section'+str(i)+'_keynote'+str(j))
-							quantity= request.POST.get('form'+str(form_count)+'_section'+str(i)+'_quantity'+str(j))
-							keynote_array.append(EvaluationSectionKeynote(evaluation_section=section,sub_area=keynote,quantity=quantity))
-						#bulk_create keynote
-						EvaluationSectionKeynote.objects.bulk_create(keynote_array)	
+						if no_of_keynotes:
+							for j in range(no_of_keynotes):
+								keynote = request.POST.get('form'+str(form_count)+'_section'+str(i)+'_keynote'+str(j))
+								quantity= request.POST.get('form'+str(form_count)+'_section'+str(i)+'_quantity'+str(j))
+								keynote_array.append(EvaluationSectionKeynote(evaluation_section=section,sub_area=keynote,quantity=quantity))
+							#bulk_create keynote
+							EvaluationSectionKeynote.objects.bulk_create(keynote_array)	
 					
 					form_count = form_count+1
 			#bulk_create order schedules
@@ -1846,12 +1851,11 @@ def FeedBackData(request):
 def ResourcesToggle(request):
     data = dict()
     month_year = request.GET.get('month_year',None)
-    month,year = month_year.split()
-    
+    month,year = month_year.split("/")
+    print(month,year,"moyr")
     staff_type = request.GET.get('staff_type',None)
     print(staff_type)
-    monthnumber = datetime.strptime(month,"%B").month
-    print(monthnumber,"mon")
+    
     search = request.GET.get('search',None)
     
     try:
@@ -1865,7 +1869,7 @@ def ResourcesToggle(request):
         workers =  None
     print(workers,"lp")
     # try:
-    workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__year__gte=year,start_at__month__gte=monthnumber)&Q(start_at__year__lte=year,start_at__month__lte=monthnumber))|Q(Q(end_at__year__gte=year,end_at__month__gte=monthnumber)&Q(end_at__year__lte=year,end_at__month__lte=monthnumber))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__year__gte=year,start_at__month__gte=monthnumber)&Q(start_at__year__lte=year,start_at__month__lte=monthnumber))|Q(Q(end_at__year__gte=year,end_at__month__gte=monthnumber)&Q(end_at__year__lte=year,end_at__month__lte=monthnumber))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
+    workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__year__gte=year,start_at__month__gte=month)&Q(start_at__year__lte=year,start_at__month__lte=month))|Q(Q(end_at__year__gte=year,end_at__month__gte=month)&Q(end_at__year__lte=year,end_at__month__lte=month))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__year__gte=year,start_at__month__gte=month)&Q(start_at__year__lte=year,start_at__month__lte=month))|Q(Q(end_at__year__gte=year,end_at__month__gte=month)&Q(end_at__year__lte=year,end_at__month__lte=month))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
     # except:
     #     workers_details = None
     print(workers_details,"wok")   
