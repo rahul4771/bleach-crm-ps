@@ -500,3 +500,7 @@
 .datepicker table td {
     color: #333333;
 }
+
+.datepicker th.prev:hover,.datepicker th.next:hover,.datepicker th.datepicker-switch:hover{
+     color:  black;
+}

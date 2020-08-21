@@ -250,15 +250,12 @@ def GetCleaningSectionInfo(request):
 	dropdown_methods = {}
 	service_type_id = request.GET.get('service_type_id')
 	
-	try:
-		cleaning_sections = CleaningSection.objects.filter(is_active=True,service_type_id=service_type_id) 
-	except:
-		cleaning_sections = None	
+	cleaning_sections = CleaningSection.objects.filter(is_active=True,service_type_id=service_type_id) 	
 
 	if cleaning_sections:
 		for cleaning_section in cleaning_sections:
 			dropdown_methods[cleaning_section.id] = cleaning_section.name	
-	
+		
 	return JsonResponse(dropdown_methods)
 
 

@@ -65,7 +65,7 @@
 <table class="main-table">
 <tbody>
 {% for order_schedule in order_schedules %}
-<tr class="green-line clickable-row order_schedule" data-href="#orderschedule_dateconfirm_popup" data-confirmdate="{{order_schedule.start_at|date:'d-m-Y'}}" data-confirmtime="{{order_schedule.start_at|date:'h:i A'}}" data-duration="{{order_schedule.order_scheduler_book.cleaning_hours}}" data-blcno="{{order_schedule.order.evaluation.evaluation_id}}" data-customer_name="{{order_schedule.order.evaluation.customer.name}}" data-mobile_no="{{order_schedule.order.evaluation.customer.mobile_number}}" data-area="{{order_schedule.customer_address.area.name}}" data-service_type="{{order_schedule.order_scheduler_book.service_type.name}}" data-id="{{order_schedule.id}}">
+<tr class="green-line clickable-row-cursor order_schedule" data-confirmdate="{{order_schedule.start_at|date:'d-m-Y'}}" data-confirmtime="{{order_schedule.start_at|date:'h:i A'}}" data-duration="{{order_schedule.order_scheduler_book.cleaning_hours}}" data-blcno="{{order_schedule.order.evaluation.evaluation_id}}" data-customer_name="{{order_schedule.order.evaluation.customer.name}}" data-mobile_no="{{order_schedule.order.evaluation.customer.mobile_number}}" data-area="{{order_schedule.customer_address.area.name}}" data-service_type="{{order_schedule.order_scheduler_book.service_type.name}}" data-id="{{order_schedule.id}}">
 <td data-label="Lorem" ><a>{{order_schedule.order.evaluation.evaluation_id}}</a></td>
 <td data-label="Lorem"><a>{{order_schedule.order.evaluation.customer.name}}</a> </td>
 <td data-label="Lorem"><a>{{order_schedule.customer_address.area}}</a></td>
@@ -76,7 +76,7 @@
 </tr>
 {% endfor %}
 {% for follow_up_schedule in follow_up_schedules %}
-<tr class="green-line followup_schedule clickable-row" data-href="#followup_dateconfirm_popup" data-confirmdate="{{follow_up_schedule.start_at|date:'d-m-Y'}}" data-confirmtime="{{follow_up_schedule.start_at|date:'h:i A'}}" data-duration="{{follow_up_schedule.follow_up.cleaning_hours}}" data-blcno="{{follow_up_schedule.follow_up.investigation.order.order_no}}" data-customer_name="{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.name}}" data-mobile_no="{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.mobile_number}}" data-area="{{follow_up_schedule.follow_up.investigation.order_schedule.customer_address.area.name}}" data-service_type="{{follow_up_schedule.follow_up.investigation.order_schedule.order_scheduler_book.service_type.name}}" data-id="{{follow_up_schedule.id}}">
+<tr class="green-line followup_schedule clickable-row-cursor" data-confirmdate="{{follow_up_schedule.start_at|date:'d-m-Y'}}" data-confirmtime="{{follow_up_schedule.start_at|date:'h:i A'}}" data-duration="{{follow_up_schedule.follow_up.cleaning_hours}}" data-blcno="{{follow_up_schedule.follow_up.investigation.order.order_no}}" data-customer_name="{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.name}}" data-mobile_no="{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.mobile_number}}" data-area="{{follow_up_schedule.follow_up.investigation.order_schedule.customer_address.area.name}}" data-service_type="{{follow_up_schedule.follow_up.investigation.order_schedule.order_scheduler_book.service_type.name}}" data-id="{{follow_up_schedule.id}}">
 <td data-label="Lorem" ><a>{{follow_up_schedule.follow_up.investigation.order.order_no}}</a></td>
 <td data-label="Lorem"><a>{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.name}}</a> </td>
 <td data-label="Lorem"><a>{{follow_up_schedule.customer_address.area}}</a></td>
@@ -180,7 +180,7 @@
 <!-- order_scheduler confirm_popup -->
 <div id="orderschedule_dateconfirm_popup" class="overlay"><!--overlay-->
     <div class="popup-assign-eval"><!--popup-assign-eval-->
-        <a class="close" href="#">&times;</a>
+        <a class="close" id="orderschedule_dateconfirm_popup_close">&times;</a>
             <div class="content"><!--content-->
             
                         
@@ -238,7 +238,7 @@
 <!-- followup_scheduler confirm_popup -->
 <div id="followup_dateconfirm_popup" class="overlay"><!--overlay-->
     <div class="popup-assign-eval"><!--popup-assign-eval-->
-        <a class="close" href="#">&times;</a>
+        <a class="close" id="followup_dateconfirm_popup_close">&times;</a>
             <div class="content"><!--content-->
             
                         
@@ -682,8 +682,17 @@ $(".order_schedule").click(function(){
           pickDate:false,
           format: 'hh:mm A'
         });
+
+    $("#orderschedule_dateconfirm_popup").css({'visibility':'visible','opacity':1,});
     
 })
+
+$("#orderschedule_dateconfirm_popup_close").click(function(){
+
+    $("#orderschedule_dateconfirm_popup").css({'visibility':'hidden','opacity':0,});
+
+});
+
 
 $(".followup_schedule").click(function(){
     $("#followup_schedule_blc_id").html($(this).data('blcno'));
@@ -695,7 +704,27 @@ $(".followup_schedule").click(function(){
     $("#followup_schedule_service_type_id").html($(this).data('service_type'));
 
     $('#followup_schedule_id').val($(this).data('id'));
+    //date picker setup for conirm 
+    $('#followup_schedule_date_id').datetimepicker({
+          pickTime: false,
+          format: "DD-MM-YYYY",
+        });
+
+    //time picker setup for confirm
+    $('#followup_schedule_time_id').datetimepicker({
+          pickDate:false,
+          format: 'hh:mm A'
+        });
+
+
+    $("#followupschedule_dateconfirm_popup").css({'visibility':'visible','opacity':1,});
 })
+
+$("#followupschedule_dateconfirm_popup_close").click(function(){
+
+    $("#followupschedule_dateconfirm_popup").css({'visibility':'hidden','opacity':0,});
+
+});
 
 
 
