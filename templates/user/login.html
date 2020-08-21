@@ -18,7 +18,7 @@
                     {% csrf_token %}
                 	<h1>Welcome to Aboard</h1>
                     <div><input class="textBox" name="username" type="text" class="login-username" placeholder="User Name" id="username"></div>
-                    <div class="pwd"><input class="textBox" name="password" id="password_field" type="password" class="login-password" placeholder="Password" autocomplete="off"><div class="login-eye toggle-password"><img src="{% static 'files/images/login-eye.svg' %}"></div></div>
+                    <div class="pwd"><input class="textBox" name="password" id="password_field" type="password" class="login-password" placeholder="Password" autocomplete="off"><div class="login-eye toggle-password"><i class="fa fa-eye-slash"></i></div></div>
                     <p><input name="" type="checkbox" value=""> Remember password</p>
                     <div><input name="Sign in" type="submit" class="sign-button" value="Login">&nbsp;<input name="cancel" type="button" class="reset-button" value="Cancel"></div>
                     
