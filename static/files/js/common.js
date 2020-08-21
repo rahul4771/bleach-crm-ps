@@ -18,6 +18,15 @@ $(function () {
   });
 });
 
+// date_pick   
+$(function () {
+  $('.resource_date_pick').datetimepicker({ 
+    pickTime: false, 
+    format: "DD-MM-YYYY", 
+    //maxDate: 'now().date()', 
+  });
+});
+
 //time pick
 //tendative time initial
 $(function () {

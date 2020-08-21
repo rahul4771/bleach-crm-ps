@@ -118,12 +118,10 @@
 </div><!--search-middle-->
 
 <div class="filter-right"><!--filter-right-->
-<input type="text" id="working_calendar" class="date_pick date-picker-resource" value={{workers_date|date:"d-m-Y"}} onchange="set_params_go();">
+<input type="text" id="working_calendar" class="resource_date_pick date-picker-resource" value={{workers_date|date:"d-m-Y"}} onchange="set_params_go();">
 <input type="text" id="resource_month" class="dpick date-picker-resource" hidden>
 
-<div class="day-month-togggle-button">
-<label class="switch_resource"><input type="checkbox" id="daymonthtoggle"><div class="slider round day-month-togggle-button"><span class="on">MONTH</span><span class="off">DATE</span></div></label>
-</div>
+<label class="switch"><input type="checkbox" id="daymonthtoggle"><div class="slider round day-month-togggle-button"><span class="on">MONTH</span><span class="off">DATE</span></div></label>
 
 </div><!--filter-right-->
 

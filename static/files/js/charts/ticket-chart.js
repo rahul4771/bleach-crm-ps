@@ -67,7 +67,7 @@ function drawChart() {
 
         var options = {
             chartArea : {height: '80%',},
-            width:500,
+            width:'100%',
             animation: {
             duration: 2000,
             easing: 'linear',
@@ -95,8 +95,8 @@ var selectedMonthName2 = months[month2];
 console.log(selectedMonthName,"lp")
 var datestring = selectedMonthName + " " + date1.getFullYear();
 var datestring2 = selectedMonthName2 + " " + date1.getFullYear();
-$('#month1').val(datestring2);
-$('#month2').val(datestring);
+$('#month1').val(datestring);
+$('#month2').val(datestring2);
 
 $('#monthpicker1').calendar({
     type: 'month'

@@ -1,6 +1,6 @@
  /*@import url('image-zoom.css');*/ 
 @import url('https://fonts.googleapis.com/css?family=Catamaran:100,200,300400,500,600,800&display=swap');
-@import url('charts.css');
+@import url('chart.css');
 @import url('main-attachments.css');
 @import url('style.css');
 @import url('datemonthtoggle.css');
@@ -135,7 +135,7 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .lhs-collection{background:url(../images/lhs-collections.svg) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
 .green-line{ border-left:4px solid #3cbbb1 !important; }
 .blue-line{ border-left:4px solid #528ce6;}
-.orange-line{ border-left:4px solid #ff8c56;}
+.orange-line{ border-left:45px solid #ff8c56;}
 .red-line{ border-left:4px solid #ec6262;}
 .yellow-line{ border-left:4px solid #f2ba1e;}
 .green-bg{ background:#3cbbb1; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }

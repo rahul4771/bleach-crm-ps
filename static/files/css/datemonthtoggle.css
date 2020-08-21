@@ -22,16 +22,6 @@
 .switch_fb input {display:none;} */
 
 /*feedback chart toggle*/
-.switch_resource {
-    position: absolute;
-    top: 0px;
-    display: inline-block;
-    width: 150px;
-    height: 34px;
-    right:0px;
-}
-
-.switch_resource input {display:none;}
 
 
 .slider { 

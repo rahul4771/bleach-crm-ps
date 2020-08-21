@@ -89,8 +89,8 @@ $("#reset_clients").click(function(){
     var datestring2 = date2.getDate()  + "-" + (date2.getMonth()+1) + "-" + date2.getFullYear();
     console.log(datestring,datestring2)
 
-    $('#from').val(datestring2);
-    $('#to').val(datestring);
+    $('#client_fromdate').val(datestring2);
+    $('#client_todate').val(datestring);
 
     drawBasic();
   })
