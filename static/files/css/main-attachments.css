@@ -37,6 +37,8 @@
 
 .clickable-row-list{ cursor: pointer; }
 
+.clickable-cursor{ cursor: pointer; }
+
 /* Individual bars */
 .bar-n {height: 18px;}
 
