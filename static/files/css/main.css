@@ -280,7 +280,7 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .leftbox-item1{flex-grow:2; align-self:center;}
 .leftbox-item2{flex-shrink:0; align-self:center;}
 .date-picker-resource{ border:1px solid #ccc; border-radius:120px; height:35px; line-height:35px; width:100px; text-align:center; display:inline-block; /*position:absolute; right:0px; top:18px; bottom:0;*/}
-.day-month-togggle-button{ border:1px solid #ccc; border-radius:120px; height:35px; line-height:35px; width:200px; font-size:13px; text-align:center;  display:inline-block;}
+.day-month-togggle-button{ border:1px solid #ccc; border-radius:120px; height:35px; line-height:35px; width:90px; font-size:13px; text-align:center;  display:inline-block;}
 .sort-icon{ background:url(../images/sort-icon.svg) no-repeat; width:8px; height:8px; display:block; position:absolute; right:6px; top:16px; cursor:pointer; } 
 .resource-scroll {position:relative; width:100%;overflow:hidden;  margin:0 auto;}
 .table-wrap {width:100%;overflow:auto;}

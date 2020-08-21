@@ -143,7 +143,20 @@
 {% block javascript %}
 <script type="text/javascript">
 
-$('document').ready(function(){  
+$('document').ready(function(){ 
+    //datepicker and timepicker for popup
+    $(document).on("click", ".content", function () {
+       $('.id_proposed_date').datetimepicker({ 
+            pickTime: false, 
+            format: "DD-MM-YYYY", 
+            //maxDate: 'now().date()', 
+        });
+
+        $(".id_proposed_time").datetimepicker({
+            pickDate:false,
+            format: 'hh:mm A',
+        });
+        });
     //Evaluation Callender
         {% for evaluator in evaluation_details %}
             
