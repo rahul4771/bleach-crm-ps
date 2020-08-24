@@ -18,7 +18,7 @@ $(function () {
   });
 });
 
-// date_pick   
+//resource date_pick   
 $(function () {
   $('.resource_date_pick').datetimepicker({ 
     pickTime: false, 
@@ -42,6 +42,14 @@ $(function () {
     format: "DD/MM/YYYY hh:mm A",
   });
 });
+
+//month pick
+$('.month_pick').datepicker({
+  format: "mm/yyyy",
+  startView: "year", 
+  minViewMode: "months"
+}
+);
 
  // toggle-password
  $(".toggle-password").click(function() {
