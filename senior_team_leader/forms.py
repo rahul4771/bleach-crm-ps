@@ -6,7 +6,7 @@ from user.models import UserProfile
 class CleaningTeamAssignForm(forms.ModelForm):
 	class Meta:
 		model   = CleaningTeam
-		fields  = ('team_leader','no_of_cleaners','drop_off_driver','pick_up_driver')	
+		fields  = ('team_leader','no_of_cleaners','drop_off_driver','pick_up_driver','vehicle_number_drop_off','vehicle_number_pick_up')	
 		widgets = {
 					'no_of_cleaners':forms.NumberInput(attrs={'readonly':'readonly',}),
 		}
@@ -24,7 +24,7 @@ class CleaningTeamAssignForm(forms.ModelForm):
 class FollowupTeamAssignForm(forms.ModelForm):
 	class Meta:
 		model   = FollowUpTeam
-		fields  = ('team_leader','no_of_cleaners','drop_off_driver','pick_up_driver')	
+		fields  = ('team_leader','no_of_cleaners','drop_off_driver','pick_up_driver','vehicle_number_drop_off','vehicle_number_pick_up')	
 		widgets = {
 					'no_of_cleaners':forms.NumberInput(attrs={'readonly':'readonly',}),
 		}

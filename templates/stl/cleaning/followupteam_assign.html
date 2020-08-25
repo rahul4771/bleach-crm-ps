@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "stl/common/header.html" %}
+
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+        <h1 class="dashboard-head">Assign Followup Team</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>   
+            </div><!--welcome-wrapper-->
+       
+           
+            
+     <div class="main-content-holder"><!--main-content-holder-->            
+     
+      
+            
+<div class="white-wrapper"><!--white-wrapper-->
+<div class="center-formDiv"><!--center-formDiv-->
+
+             <div class="common-sub-head align-left">Details</div> 
+ 			 
+                  <div class="cleaning-column-wrapper ltyellow-border"><!--cleaning-column-wrapper-->
+					<div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
+                	<div class="blc-number-big">{{followup_schedule.follow_up.investigation.order.order_no}}</div>
+                  <br>
+                	<div class="green-bg-lg">One-Time</div><div class="blue-bg-lg">Paid</div>
+                    <div class="area-bold">{{followup_schedule.follow_up.investigation.order_schedule.order_scheduler_book.service_type.name}}</div>
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_schedule.start_at|date:'d-m-Y'}}</div>
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_schedule.start_at|date:'h:i A'}}</div>
+            	</div><!--cleaning-column-widget cleaning-column-widget-column1-->
+                
+                <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
+                    <div class="common-gray-text align-left">{{followup_schedule.customer_address.apartment}}, {{followup_schedule.customer_address.floor}}, {{followup_schedule.customer_address.building}}, {{followup_schedule.customer_address.block}}, {{followup_schedule.customer_address.street}},  {{followup_schedule.customer_address.avenue}} {{followup_schedule.customer_address.governorate.name}}</div>
+                    <br>
+                    <div class="common-gray-text align-left">{{followup_schedule.follow_up.no_of_cleaners}} Cleaners</div>
+                    <div class="common-gray-text align-left">{{followup_schedule.follow_up.cleaning_hours}} hrs</div>
+            	</div><!--cleaning-column-widget cleaning-column-widget-column2-->
+            </div><!--cleaning-column-wrapper-->
+            
+            <br><br>
+ 
+ 
+<form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+ <input type="hidden" name="no_of_cleaners" value="{{followup_schedule.follow_up.no_of_cleaners}}">
+
+ <div class="common-sub-head align-left">Assign Followup Team</div> 
+    <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Team Leader</label></div>
+                <label for="favcity">
+                <select id="favcity" name="team_leader" required=>
+                <option value="">Choose Leader</option>  
+                {% for leader in leaders %}  
+                <option value="{{leader.id}}">{{leader.name}}</option>
+                {% endfor %}
+                </select>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right hide-m"><!--ticket-form-right-->
+&nbsp;
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">
+<br>
+<div class="details-notes align-left">Team Members</div> 
+<br>
+
+<div class="team_members">
+</div>
+
+<div class="details-notes align-left">Transportation</div>
+<br>  
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Driver Pick-up</label></div>
+                <label for="favcity">
+                <select id="favcity" name="pick_up_driver">
+                <option value="">Choose Driver</option>
+                {% for driver in drivers %}
+                <option value="{{driver.id}}">{{driver.name}}</option>
+                {% endfor %}
+                </select>
+                </label> 
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label hide-m"> <label>Vehicle Number pick-up</label></div>
+                <input name="vehicle_number_pick_up" type="text" class="textBox" placeholder="">
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">  
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Driver Drop-off</label></div>
+                <label for="favcity">
+                <select id="favcity" name="drop_off_driver">
+                <option value="">Choose Driver</option>
+                {% for driver in drivers %}
+                <option value="{{driver.id}}">{{driver.name}}</option>
+                {% endfor %}
+                </select>
+                </label> 
+  </div><!--ticket-form-left-->
+
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label hide-m"><label>Vehicle Number Drop-off</label></div>
+                <input name="vehicle_number_drop_off" type="text" class="textBox" placeholder="">
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+
+</div><!--commnDiv-border--> 
+
+<br> 
+ <div align="center"><input class="assignButton" name="addevaluator" type="button" value="Assign" onclick="submitAnyForm(this);"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>     	
+<br> <br>
+</form>      
+        
+        </div><!--center-formDiv-->
+</div><!--white-wrapper-->      
+             
+            
+            
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+{% include 'stl/common/footer.html' %} 
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script>
+  $('document').ready(function(){
+    //Append cleaners by default select cleaners in order    
+    no_of_cleaners = {{followup_schedule.follow_up.no_of_cleaners}};
+
+    for(i=1;i<=no_of_cleaners;i++)
+    {
+
+    if(i%2 == 1)  
+    {
+        $('.team_members').append('<div class="ticket-wrapper-row ticket-forms-boxes box'+i+'"><!--ticket-wrapper-row ticket-forms-boxes--><div class="ticket-form-left"><!--ticket-form-left--><div class=" bold-text common-label"> <label>Cleaner '+i+'</label></div><label for="favcity"><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner">{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select></label> </div><!--ticket-form-left--></div><!--ticket-wrapper-row ticket-forms-boxes--><hr class="hr-dashedpad">');
+
+        if(i == no_of_cleaners)
+        {
+          $('.box'+i+'').append('<div class="ticket-form-right hide-m"><!--ticket-form-right-->&nbsp;</div><!--ticket-form-right-->')
+        }
+    }
+    else
+    {
+        $('.box'+(i-1)+'').append('<div class="ticket-form-right"><!--ticket-form-right--><div class=" bold-text common-label"> <label>Cleaner '+i+'</label></div><label for="favcity"><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner">{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select></label></div><!--ticket-form-right-->');
+
+    }
+    
+    //design allignment
+    if(i == no_of_cleaners)
+        {
+          $('.team_members').append('<br>')
+        }
+
+    //random selection    
+    $('#assigned_cleaner'+i+' :nth-child('+i+')').prop('selected',true);
+    }
+
+  });
+
+
+$('window').ready(function(){
+
+//to remove duplicate selection
+$(".assign_cleaner").change(function(){
+  selected_option = this.value;
+  selected_id     = this.id;
+
+  //to remove selected occur in any other option
+  $('.assign_cleaner').each(function(){
+    
+    if(this.id != selected_id)
+    {
+      if(selected_option == this.value)
+      {
+        $('option:selected',this).remove();
+      }
+    }
+  });
+  //cross checking
+  $('.assign_cleaner').each(function(){
+    cross_check_selected_option = this.value;
+    cross_check_id          = this.id;
+    $('.assign_cleaner').each(function(){
+      if(cross_check_id != this.id)
+      {
+        if(cross_check_selected_option == this.value)
+        {
+          $('option:selected',this).remove();   
+        }
+      }
+    });
+  
+  }); 
+
+});
+
+})
+
+</script>
+{% endblock %}

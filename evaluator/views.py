@@ -1363,7 +1363,7 @@ class InvestigationTask(View):
 		except:
 			investigation = None	
 		
-		if follow_up_approved == 'yes':
+		if follow_up_approved == 'APPROVED':
 			no_of_cleaners = request.POST.get('no_of_cleaners')
 			cleaning_hours = request.POST.get('cleaning_hours')
 			
