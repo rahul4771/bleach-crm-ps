@@ -366,7 +366,7 @@ starring_count[0] +=1;
 for(i=starring_count.length-1;i>=0;i--)
 {
 
-$('.row').append('<div class="side"><div><span class="fa fa-star"></span>'+(i+1)+'</div></div><div class="middle"><div class="bar-container"><div class="bar-n" style="width:'+(starring_count[i]/total_no_feedbacks*100)+'%;background-color:'+(i == 0 ? '#f44336':i == 1 ? '#2196F3':i == 2 ? '#00bcd4':i == 3 ? '#ff9800':i == 4 ? '#4CAF50':'')+';"></div></div></div><div class="side right"><div>'+(Math.round((starring_count[i]/total_no_feedbacks*100)*10)/10)+'%</div></div>');
+$('.row').append('<div class="side"><div><span class="fa fa-star"></span>'+(i+1)+'</div></div><div class="middle"><div class="bar-container"><div class="bar-n" style="width:'+(starring_count[i]/total_no_feedbacks*100)+'%;background-color:'+(i == 0 ? '#f44336':i == 1 ? '#2196F3':i == 2 ? '#00bcd4':i == 3 ? '#ff9800':i == 4 ? '#4CAF50':'')+';"></div></div></div><div class="side right"><div>'+(Math.round((starring_count[i]/total_no_feedbacks*100)*10)/10 || '0.0')+'%</div></div>');
 }
 
 average_total_feedback = (Math.round((starring_count[0]*1+starring_count[1]*2+starring_count[2]*3+starring_count[3]*4+starring_count[4]*5)/total_no_feedbacks*100)/100);

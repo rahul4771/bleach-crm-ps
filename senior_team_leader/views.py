@@ -309,8 +309,6 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 
 		#shceduled order details
 		order_schedule = OrderScheduler.objects.select_related('evaluation_details__evaluation','order_scheduler_book__service_type').get(is_active=True,id=scheduler_id)
-	
-		cleaning_team_assign_form = CleaningTeamAssignForm()
 
 		active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
 		active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
@@ -329,9 +327,9 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 
 		leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').filter(~Q(id__in=active_cleaners))
 		cleaners            = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(~Q(id__in=active_cleaners))
+		drivers             = UserProfile.objects.filter(is_active=True,user_type='DRIVER')
 
-
-		return render(request,'stl/cleaning/assign_cleaningteam.html',{'cleaning_team_assign_form':cleaning_team_assign_form,'order_schedule':order_schedule,'cleaners':cleaners,'leaders':leaders,})
+		return render(request,'stl/cleaning/cleaningteam_assign.html',{'order_schedule':order_schedule,'cleaners':cleaners,'leaders':leaders,'drivers':drivers,})
 
 	def post(self,request,scheduler_id):
 		
@@ -359,7 +357,7 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 
 		leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').filter(~Q(id__in=active_cleaners))
 		cleaners            = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(~Q(id__in=active_cleaners))
-
+		drivers             = UserProfile.objects.filter(is_active=True,user_type='DRIVER')
 	    #validation
 		check_cleaners_assigned = UserProfile.objects.filter(is_active=True,user_type='CLEANER',id__in=assigned_cleaners).filter(Q(id__in=active_cleaners))
 		check_tl_assigned       = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER',id__in=active_cleaners).filter(id=request.POST.get('team_leader'))
@@ -388,7 +386,7 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 			else:	
 				messages.error(request,get_error(cleaning_team_assign_form))
 
-			return render(request,'stl/cleaning/assign_cleaningteam.html',{'cleaning_team_assign_form':cleaning_team_assign_form,'order_schedule':order_schedule,'cleaners':cleaners,'leaders':leaders,})	
+			return render(request,'stl/cleaning/cleaningteam_assign.html',{'cleaning_team_assign_form':cleaning_team_assign_form,'order_schedule':order_schedule,'cleaners':cleaners,'leaders':leaders,'drivers':drivers,})	
 
 		messages.success(request,"Cleaning Team Succesfully Assigned")
 
@@ -418,9 +416,9 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 
 		leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').filter(~Q(id__in=active_cleaners))
 		cleaners            = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(~Q(id__in=active_cleaners))
+		drivers             = UserProfile.objects.filter(is_active=True,user_type='DRIVER')
 
-
-		return render(request,'stl/cleaning/assign_followupteam.html',{'follow_up_team_assign_form':follow_up_team_assign_form,'followup_schedule':followup_schedule,'cleaners':cleaners,'leaders':leaders,})
+		return render(request,'stl/cleaning/followupteam_assign.html',{'follow_up_team_assign_form':follow_up_team_assign_form,'followup_schedule':followup_schedule,'cleaners':cleaners,'leaders':leaders,'drivers':drivers,})
 
 	def post(self,request,scheduler_id):
 	
@@ -446,6 +444,7 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 	
 		leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').filter(~Q(id__in=active_cleaners))
 		cleaners            = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(~Q(id__in=active_cleaners))
+		drivers             = UserProfile.objects.filter(is_active=True,user_type='DRIVER')
 
 		#validation
 		check_cleaners_assigned = UserProfile.objects.filter(is_active=True,user_type='CLEANER',id__in=assigned_cleaners).filter(Q(id__in=active_cleaners))
@@ -476,7 +475,7 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 			else:	
 				messages.error(request,get_error(follow_up_team_assign_form))
 
-			return render(request,'stl/cleaning/assign_followupteam.html',{'follow_up_team_assign_form':follow_up_team_assign_form,'followup_schedule':followup_schedule,'cleaners':cleaners,'leaders':leaders,})	
+			return render(request,'stl/cleaning/followupteam_assign.html',{'follow_up_team_assign_form':follow_up_team_assign_form,'followup_schedule':followup_schedule,'cleaners':cleaners,'leaders':leaders,'drivers':drivers,})	
 
 		messages.success(request,"FollowupTeam Team Succesfully Assigned")
 
@@ -504,7 +503,7 @@ class InvestigationTask(IsSeniorTeamLeader,View):
 		except:
 			investigation = None	
 		
-		if follow_up_approved == 'yes':
+		if follow_up_approved == 'APPROVED':
 			no_of_cleaners = request.POST.get('no_of_cleaners')
 			cleaning_hours = request.POST.get('cleaning_hours')
 			

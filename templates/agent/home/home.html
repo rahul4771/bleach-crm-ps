@@ -236,9 +236,9 @@
 
 
 <!-- followup_scheduler confirm_popup -->
-<div id="followup_dateconfirm_popup" class="overlay"><!--overlay-->
+<div id="followupschedule_dateconfirm_popup" class="overlay"><!--overlay-->
     <div class="popup-assign-eval"><!--popup-assign-eval-->
-        <a class="close" id="followup_dateconfirm_popup_close">&times;</a>
+        <a class="close" id="followupschedule_dateconfirm_popup_close">&times;</a>
             <div class="content"><!--content-->
             
                         
@@ -684,7 +684,6 @@ $(".order_schedule").click(function(){
         });
 
     $("#orderschedule_dateconfirm_popup").css({'visibility':'visible','opacity':1,});
-    
 })
 
 $("#orderschedule_dateconfirm_popup_close").click(function(){
@@ -695,6 +694,7 @@ $("#orderschedule_dateconfirm_popup_close").click(function(){
 
 
 $(".followup_schedule").click(function(){
+  console.log("followwww up");
     $("#followup_schedule_blc_id").html($(this).data('blcno'));
     $("#followup_schedule_customer_id").html($(this).data('customer_name'));
     $("#followup_schedule_mobile_id").html($(this).data('mobile_no'));
