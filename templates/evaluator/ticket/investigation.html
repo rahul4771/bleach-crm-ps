@@ -6,151 +6,192 @@
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
-                <h1 class="dashboard-head">Investigation</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+        <h1 class="dashboard-head">Investigation Form</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>   
             </div><!--welcome-wrapper-->
-<div class="main-content-holder"><!--main-content-holder-->
+       
+           
+            
+     <div class="main-content-holder"><!--main-content-holder-->            
+     
+      
+            
 <div class="white-wrapper"><!--white-wrapper-->
-    <div class="row">
-        <div class="col-md-10"> 
-        <h2 class="h2">Followup Details</h2>
-        </div>
-        <div class="col-md-2">
-          <a class="a-btn back-btn" href="{% url 'tl:tldash-board' %}">Back</a>
-          </div>
-    </div>
-    <div class="blc_no">
-        <label>{{investigation_details.order.evaluation.evaluation_id}}</label>
-    </div>  
-    <div class="name">
-        <label>{{investigation_details.order.evaluation.customer.name}}</label>
-    </div>
-   
-   <div class="address">
-        <label>{{investigation_details.order_schedule.customer_address.block}} Block</label><br> 
-        <label>{{investigation_details.order_schedule.customer_address.building}} Building</label><br>
-        <label>{{investigation_details.order_schedule.customer_address.street}} Street</label><br>
-        <label>{{investigation_details.order_schedule.customer_address.area.name}}</label>
-   </div>
-   
-   <div class="service_type">
-        <label>Service Type:{{investigation_details.order_schedule.order_scheduler_book.service_type.name}}</label>
-   </div>
+<div class="center-formDiv"><!--center-formDiv-->
 
-   <div class="service_type">
-        <label>Investigator:{{investigation_details.investigator.name}}</label>
-   </div>
-
-
-   <div class="row">
-
-        <div class="col-12"> 
-
-            <div class="page-form">
-
-            <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
-
-                <div class="page-form-head">
-                    <h1>Investigation Form</h1>
-                </div>
+             <div class="common-sub-head align-left">Details</div> 
+             
+                  <div class="cleaning-column-wrapper ltyellow-border"><!--cleaning-column-wrapper-->
+                    <div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
+                    <div class="blc-number-big">{{investigation_details.order.evaluation.evaluation_id}}</div>
+                    <div class="customer-name"><i class="fa blue-text fa-user-circle-o" aria-hidden="true"></i> {{investigation_details.order.evaluation.customer.name}}</div>
+                    <div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;  {{investigation_details.order.evaluation.customer.mobile_number}}</div>
+                    <div class="email"><i class="fa orange-text fa-lg fa-envelope-o" aria-hidden="true"></i> &nbsp;  {{investigation_details.order.evaluation.customer.email}}</div>
+                </div><!--cleaning-column-widget cleaning-column-widget-column1-->
                 
-                <div class="page-body">
-                    <div class="page-col">
-                        <div>
-                        <label>Followup Approved:</label>
-                        </div>
-                        <div>
-                        <span>Yes</span><input type="radio" name="isapproved" value="yes">
-                        <span>No</span><input type="radio" name="isapproved" value="no">   
-                        </div>
-                    </div>
-                    <div class="page-col">
-                        <label>Tendative Date:</label>
-                        <input type="text" name="tendative_date" class="date_pick" id="tendative_date">
-                    </div>
-                    <div class="page-col">
-                        <label>Tendative Time:</label>
-                        <input type="text" name="tendative_time" class="time_pick" id="tendative_time">
-                    </div>
-                    <div class="page-col">
-                        <label>Number of Cleaners:</label>
-                        <input type="number" name="no_of_cleaners" id="no_of_cleaners">
-                    </div>
-                    <div class="page-col">
-                        <label>Cleaning Hours:</label>
-                         <input type="number" name="cleaning_hours" id="cleaning_hours" min="1">
-                    </div>
-                    <div class="page-col">
-                        <label>Investigator Notes:</label>
-                        <textarea maxlength="1000" name="notes" ></textarea>
-                    </div>
+                <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
+                    <div class="common-gray-text align-left">{{investigation_details.order_schedule.customer_address.apartment}}, {{investigation_details.order_schedule.customer_address.floor}}, {{investigation_details.order_schedule.customer_address.building}}, {{investigation_details.order_schedule.customer_address.block}}, {{investigation_details.order_schedule.customer_address.street}}, Avenue, {{investigation_details.order_schedule.customer_address.area.name}} {{investigation_details.order_schedule.customer_address.governorate.name}}</div>
+                    <div class="common-gray-text align-left">{{investigation_details.order_schedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
+                </div><!--cleaning-column-widget cleaning-column-widget-column2-->
+            </div><!--cleaning-column-wrapper-->
+            
+            <br><br>
+ 
+<form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
 
-                <div class="multi_field_wrapper multi-field-wrapper">
-                    <div class="multi-fields">
-                    <div class="multi-field page-col">
-                       <label>Upload Media :</label>
-                       <input type="file" name="media" maxlength="100"/>
-                       <button type="button" class="remove-field-btn" title="Remove field">
-                            <i class="fa fa-minus-square-o" aria-hidden="true"></i>
-                       </button>
-                    </div>
-                    </div>
-                    <button type="button" class="add-field-btn" title="Add field">
-                        <i class="fa fa-plus-square-o" aria-hidden="true"></i>
-                    </button> 
-                </div>
-</div>
-                <div class="page-footer text-center">
-                        <button type="button" class="primary-btn" onclick="submitAnyForm(this);">Checkout/Submit</button>
-                </div>
+    <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+                <div class=" bold-text common-label"> <label>Notes</label></div>
+                <textarea name="notes" class="textArea" cols="" rows=""></textarea>
+  </div><!--ticket-form-left-->
+ 
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
 
-            </form>
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left--> 
+  <div class="details-notes align-left">Media</div>        
+        <div class="row"><!--row-->
+            <div class="col-sm-2 imgUp"><!--col-sm-2 imgUp-->
+                <div class="imagePreview"></div>
+                <label class="btn btn-primary paddding">Upload<input type="file" name="media" class="uploadFile img" value="Upload Photo" style="width: 0px;height: 0px;overflow: hidden;"></label>
+                </div><!--col-sm-2 imgUp-->
+                <i class="fa fa-plus imgAdd"></i>
+        </div><!--row-->          
+  </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
-            </div>
-        </div>
-    </div>              
+
+<hr class="hr-dashedpad">
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+                <div class=" bold-text common-label"> <label>Followup Cleaning</label></div>
+                <label for="favcity">
+                <select id="approval_status_id" name="isapproved">
+                <option value="">Choose</option>
+                <option value="APPROVED">APPROVED</option>
+                <option value="NOT APPROVED">NOT APPROVED</option>
+                </select>
+                </label> 
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right hide-m"><!--ticket-form-right-->
+  &nbsp;
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">           
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  <div class=" bold-text common-label"> <label>Tendative Date</label></div>
+    <input name="tendative_date" id="tendative_date_id" type="text" class="textBox date_pick" placeholder=" ">
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  <div class=" bold-text common-label"> <label>Tendative Time</label></div>
+  <input name="tendative_time" id="tendative_time_id" type="text" class="textBox time_pick" placeholder=" ">
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">  
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  <div class=" bold-text common-label"> <label>Cleaning Hours</label></div>
+                <input name="cleaning_hours" id="cleaning_hours_id" type="text" class="textBox" placeholder=" ">
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  <div class=" bold-text common-label"> <label>Number of Cleaners</label></div>
+                <input name="no_of_cleaners" id="no_of_cleaners_id" type="number" class="textBox" placeholder=" ">
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+ </div><!--commnDiv-border--> 
+<br>
+ 
+ <div align="center"><input class="assignButton" name="addevaluator" type="button" value="Submit" onclick="submitAnyForm(this);"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>        
+<br> <br>
+</form>      
+        
+        </div><!--center-formDiv-->
 </div><!--white-wrapper-->      
              
             
-</div><!--main-content-holder-->
-</div><!--container-fluid space-->
-</section><!--content-->
+            
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
 {% include 'evaluator/common/footer.html' %} 
 </div><!--wrapper-->
 {% endblock %}
 
-{% block javascript %}
+{% block javascript %} 
 <script>
 
     $('document').ready(function(){
         //Initial hiding
-        $('#tendative_date').parents('.page-col').hide();
-        $('#tendative_time').parents('.page-col').hide();
-        $('#no_of_cleaners').parents('.page-col').hide();
-        $('#cleaning_hours').parents('.page-col').hide();
+        $("#tendative_date_id").parents('.ticket-form-left').css("display", "none");
+        $("#tendative_time_id").parents('.ticket-form-right').css("display", "none");
+        $("#no_of_cleaners_id").parents('.ticket-form-right').css("display", "none");
+        $("#cleaning_hours_id").parents('.ticket-form-left').css("display", "none");
     });
 
     //hide and show tendative date & time
-    $('input[name="isapproved"]').change(function(){
+    $('#approval_status_id').change(function(){
         follow_up_approved =this.value;
-        if(follow_up_approved=='yes')
+
+        if(follow_up_approved=='APPROVED')
         {
-            $('#tendative_date').parents('.page-col').show();
-            $('#tendative_time').parents('.page-col').show();
-            $('#no_of_cleaners').parents('.page-col').show();
-            $('#cleaning_hours').parents('.page-col').show();
+          //Initial hiding
+        $("#tendative_date_id").parents('.ticket-form-left').css("display", "block");
+        $("#tendative_time_id").parents('.ticket-form-right').css("display", "block");
+        $("#no_of_cleaners_id").parents('.ticket-form-right').css("display", "block");
+        $("#cleaning_hours_id").parents('.ticket-form-left').css("display", "block");
+        $("#tendative_date_id").val('');
+        $("#tendative_time_id").val('');
+        $("#no_of_cleaners_id").val('');
+        $("#cleaning_hours_id").val('');
         }    
         else
         {
-            $('#tendative_date').parents('.page-col').hide();
-            $('#tendative_time').parents('.page-col').hide();
-            $('#no_of_cleaners').parents('.page-col').hide();
-            $('#cleaning_hours').parents('.page-col').hide();
-            $('#tendative_date').val('');
-            $('#tendative_time').val('');
-            $('#no_of_cleaners').val('');
-            $('#cleaning_hours').val('');
+          $("#tendative_date_id").parents('.ticket-form-left').css("display", "none");
+          $("#tendative_time_id").parents('.ticket-form-right').css("display", "none");
+          $("#no_of_cleaners_id").parents('.ticket-form-right').css("display", "none");
+          $("#cleaning_hours_id").parents('.ticket-form-left').css("display", "none");
+          $("#tendative_date_id").val('');
+          $("#tendative_time_id").val('');
+          $("#no_of_cleaners_id").val('');
+          $("#cleaning_hours_id").val('');
         }
     });
-</script>    
-{% endblock %}            
+
+
+//multiple image add and delete
+$(".imgAdd").click(function () {
+  $(this).closest(".row").find('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="media" value="Upload Photo" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
+});
+$(document).on("click", "i.del", function () {
+  $(this).parent().remove();
+});
+$(function () {
+  $(document).on("change", ".uploadFile", function ()
+  {
+    var uploadFile = $(this);
+    var files = !!this.files ? this.files : [];
+    if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+
+    if (/^image/.test(files[0].type)) {// only image file
+      var reader = new FileReader(); // instance of the FileReader
+      reader.readAsDataURL(files[0]); // read the local file
+
+      reader.onloadend = function () {// set image data as background of div
+        //alert(uploadFile.closest(".upimage").find('.imagePreview').length);
+        uploadFile.closest(".imgUp").find('.imagePreview').css("background-image", "url(" + this.result + ")");
+      };
+    }
+
+  });
+});
+
+</script>
+{% endblock %}

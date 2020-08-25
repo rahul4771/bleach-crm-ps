@@ -118,13 +118,12 @@
 </div><!--search-middle-->
 
 <div class="filter-right"><!--filter-right-->
-<input type="text" id="working_calendar" class="date_pick date-picker-resource" value={{workers_date|date:"d-m-Y"}} onchange="set_params_go();">
-<input type="text" id="resource_month" class="dpick date-picker-resource" hidden>
+<input type="text" id="working_calendar" class="resource_date_pick date-picker-resource" value={{workers_date|date:"d-m-Y"}} onchange="set_params_go();">
+<input type="text" id="resource_month" class="month_pick date-picker-resource" hidden>
 
 <div class="day-month-togggle-button">
-<label class="switch_resource"><input type="checkbox" id="daymonthtoggle"><div class="slider round day-month-togggle-button"><span class="on">MONTH</span><span class="off">DATE</span></div></label>
+<label class="switch"><input type="checkbox" id="daymonthtoggle"><div class="slider round"><span class="on">MONTH</span><span class="off">DATE</span></div></label>
 </div>
-
 </div><!--filter-right-->
 
 </div><!--toolbar-div-->
@@ -195,12 +194,6 @@
 {% endblock %}
 {% block javascript %}
 <script type="text/javascript">
-    $('.dpick').datepicker({
-        format: "mm/yyyy",
-        startView: "year", 
-        minViewMode: "months"
-    }
-    );
 
     var date1 = new Date();
     var previous_month = ("0" + (date1.getMonth())).slice(-2);

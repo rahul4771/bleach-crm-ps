@@ -22,7 +22,7 @@ from django.contrib import messages
 from dateutil.relativedelta import relativedelta
 
 from user.models import UserProfile,Address,Governorate,Area
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod,ServiceType
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
@@ -970,7 +970,7 @@ class MakeQuatationBase(IsEvaluator,View):
 class MakeQuatationPhase1(IsEvaluator,View):
 
 	def get(self,request,enquiry_id,evaluation_id):
-		enquiry_user    	  = UserProfile.objects.get(id=enquiry_id)
+		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
 		
 		try:
 			evaluation = Evaluation.objects.get(id=evaluation_id)
@@ -990,7 +990,7 @@ class MakeQuatationPhase1(IsEvaluator,View):
 		else:
 			allow_submit = False				
 
-		return render(request,'evaluator/enquiry/quatationphase1.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit})	
+		return render(request,'evaluator/enquiry/phase1quatation.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit})	
 
 	def post(self,request,enquiry_id,evaluation_id):
 		
@@ -1012,12 +1012,23 @@ class MakeQuatationPhase2(IsEvaluator,View):
 
 		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
 
-		return render(request,'agent/enquiry/quatationphase2.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,})
+		try:
+			service_types = ServiceType.objects.filter(is_active=True)
+		except:	
+			service_types = None
+
+		try:
+			area_types = AreaType.objects.filter(is_active=True)
+		except:
+			area_types = None
+
+		return render(request,'agent/enquiry/phase2quatation.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,})
 
 	def post(self,request,evaluation_detail_id):
 
 		service_formset       = self.service_formset_define(request.POST)
 		evaluation_details    = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
+		
 		if service_formset.is_valid() : 
 
 			form_count = 0
@@ -1050,7 +1061,7 @@ class MakeQuatationPhase2(IsEvaluator,View):
 					#for creating cleaning schedules and corresponding cleanings
 
 					cleaning_policy = request.POST.get('form-'+str(form_count)+'-cleaning_policy')
-					start_time      = request.POST.get('form-'+str(form_count)+'-start_time')
+					start_time      = request.POST.get('form-'+str(form_count)+'-tendative_time')
 					cleaning_hours  = request.POST.get('form-'+str(form_count)+'-cleaning_hours')
 
 					if cleaning_policy == 'SUBSCRIPTION':
@@ -1067,7 +1078,7 @@ class MakeQuatationPhase2(IsEvaluator,View):
 						updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost*len(tendative_dates),discount=F('discount')+discount*len(tendative_dates),total_cost=F('total_cost')+total*len(tendative_dates))
 					else:
 						tendative_date  = request.POST.get('form-'+str(form_count)+'-tendative_date')	
-						
+
 						start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
 						end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
 
@@ -1076,11 +1087,50 @@ class MakeQuatationPhase2(IsEvaluator,View):
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED',evaluator=request.user)
 						updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)	
+				
+					#to save sections
+					no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))
+					section_array          = []
+					for i in range(no_of_sections):
+						section_name  = request.POST.get('form'+str(form_count)+'_section'+str(i))
+						category      = request.POST.get('form'+str(form_count)+'_category'+str(i))
+						dirt_level    = request.POST.get('form'+str(form_count)+'_dirt_level'+str(i))
+						quantity      = request.POST.get('form'+str(form_count)+'_quantity'+str(i))
+						size          = request.POST.get('form'+str(form_count)+'_size'+str(i))
+						unit          = request.POST.get('form'+str(form_count)+'_unit'+str(i))
+						age           = request.POST.get('form'+str(form_count)+'_age'+str(i))
+						floor         = request.POST.get('form'+str(form_count)+'_floor'+str(i))
+						apartment     = request.POST.get('form'+str(form_count)+'_apartment'+str(i))
+						room          = request.POST.get('form'+str(form_count)+'_room'+str(i))
+						wall_type     = request.POST.get('form'+str(form_count)+'_wall_type'+str(i))
+						ceiling_type  = request.POST.get('form'+str(form_count)+'_ceiling_type'+str(i))
+						floor_type    = request.POST.get('form'+str(form_count)+'_floor_type'+str(i))
+						material      = request.POST.get('form'+str(form_count)+'_material'+str(i))
+						colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
+						cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
+
+						#save section
+						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
+
+						#to save keynotes
+						try:
+							no_of_keynotes = int(request.POST.get('form'+str(form_count)+'_section'+str(i)+'-keynote_counter'))
+						except:
+							no_of_keynotes = None
+							
+						keynote_array = []
+						if no_of_keynotes:
+							for j in range(no_of_keynotes):
+								keynote = request.POST.get('form'+str(form_count)+'_section'+str(i)+'_keynote'+str(j))
+								quantity= request.POST.get('form'+str(form_count)+'_section'+str(i)+'_quantity'+str(j))
+								keynote_array.append(EvaluationSectionKeynote(evaluation_section=section,sub_area=keynote,quantity=quantity))
+							#bulk_create keynote
+							EvaluationSectionKeynote.objects.bulk_create(keynote_array)
+
 				form_count = form_count+1
 			#bulk_create order schedules
 			now = timezone.now()
-			OrderScheduler.objects.bulk_create(order_schedule_array)
-			created_schedules = OrderScheduler.objects.filter(order=new_order[0],created__gte=now)	
+			OrderScheduler.objects.bulk_create(order_schedule_array)	
 
 			messages.success(request,"Services Succesfully Added")
 
@@ -1088,7 +1138,17 @@ class MakeQuatationPhase2(IsEvaluator,View):
 			if not service_formset.is_valid():
 				messages.error(request,"An Error Occured")
 
-			return render(request,'evaluator/enquiry/quatationphase2.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,})	
+			try:
+				service_types = ServiceType.objects.filter(is_active=True)
+			except:	
+				service_types = None
+
+			try:
+				area_types = AreaType.objects.filter(is_active=True)
+			except:
+				area_types = None
+
+			return render(request,'evaluator/enquiry/phase2quatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,})	
 
 		return redirect('evaluator:evaluator-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
 
@@ -1116,7 +1176,7 @@ class MakeAssignedQuatationPhase1(IsEvaluator,View):
 		else:
 			allow_submit = False				
 
-		return render(request,'evaluator/enquiry/assignedquatationphase1.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit})	
+		return render(request,'evaluator/enquiry/phase1assignedquatation.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit})	
 
 	def post(self,request,enquiry_id,evaluation_id):
 		
@@ -1137,12 +1197,24 @@ class MakeAssignedQuatationPhase2(IsEvaluator,View):
 
 		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
 
-		return render(request,'evaluator/enquiry/assignedquatationphase2.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,})
+		try:
+			service_types = ServiceType.objects.filter(is_active=True)
+		except:	
+			service_types = None
+
+		try:
+			area_types = AreaType.objects.filter(is_active=True)
+		except:
+			area_types = None
+
+		return render(request,'evaluator/enquiry/phase2assignedquatation.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,})
 
 	def post(self,request,evaluation_detail_id):
 
 		service_formset       = self.service_formset_define(request.POST)
 		evaluation_details    = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
+		
+
 		if service_formset.is_valid() : 
 
 			form_count = 0
@@ -1176,7 +1248,7 @@ class MakeAssignedQuatationPhase2(IsEvaluator,View):
 					#for creating cleaning schedules and corresponding cleanings
 
 					cleaning_policy = request.POST.get('form-'+str(form_count)+'-cleaning_policy')
-					start_time      = request.POST.get('form-'+str(form_count)+'-start_time')
+					start_time      = request.POST.get('form-'+str(form_count)+'-tendative_time')
 					cleaning_hours  = request.POST.get('form-'+str(form_count)+'-cleaning_hours')
 
 					if cleaning_policy == 'SUBSCRIPTION':
@@ -1203,21 +1275,68 @@ class MakeAssignedQuatationPhase2(IsEvaluator,View):
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
 						updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)	
 					
-					form_count = form_count+1		
+					#to save sections
+					no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))
+					section_array          = []
+					for i in range(no_of_sections):
+						section_name  = request.POST.get('form'+str(form_count)+'_section'+str(i))
+						category      = request.POST.get('form'+str(form_count)+'_category'+str(i))
+						dirt_level    = request.POST.get('form'+str(form_count)+'_dirt_level'+str(i))
+						quantity      = request.POST.get('form'+str(form_count)+'_quantity'+str(i))
+						size          = request.POST.get('form'+str(form_count)+'_size'+str(i))
+						unit          = request.POST.get('form'+str(form_count)+'_unit'+str(i))
+						age           = request.POST.get('form'+str(form_count)+'_age'+str(i))
+						floor         = request.POST.get('form'+str(form_count)+'_floor'+str(i))
+						apartment     = request.POST.get('form'+str(form_count)+'_apartment'+str(i))
+						room          = request.POST.get('form'+str(form_count)+'_room'+str(i))
+						wall_type     = request.POST.get('form'+str(form_count)+'_wall_type'+str(i))
+						ceiling_type  = request.POST.get('form'+str(form_count)+'_ceiling_type'+str(i))
+						floor_type    = request.POST.get('form'+str(form_count)+'_floor_type'+str(i))
+						material      = request.POST.get('form'+str(form_count)+'_material'+str(i))
+						colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
+						cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
+
+						#save section
+						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
+
+						#to save keynotes
+						try:
+							no_of_keynotes = int(request.POST.get('form'+str(form_count)+'_section'+str(i)+'-keynote_counter'))
+						except:
+							no_of_keynotes = None
+							
+						keynote_array = []
+						if no_of_keynotes:
+							for j in range(no_of_keynotes):
+								keynote = request.POST.get('form'+str(form_count)+'_section'+str(i)+'_keynote'+str(j))
+								quantity= request.POST.get('form'+str(form_count)+'_section'+str(i)+'_quantity'+str(j))
+								keynote_array.append(EvaluationSectionKeynote(evaluation_section=section,sub_area=keynote,quantity=quantity))
+							#bulk_create keynote
+							EvaluationSectionKeynote.objects.bulk_create(keynote_array)
+					
+				form_count = form_count+1		
 	
 			#bulk_create order schedules
 			now = timezone.now()
-			OrderScheduler.objects.bulk_create(order_schedule_array)
-			created_schedules = OrderScheduler.objects.filter(order=new_order[0],created__gte=now)	
-	
+			OrderScheduler.objects.bulk_create(order_schedule_array)	
 
 			messages.success(request,"Services Succesfully Added")
 
 		else:
 			if not service_formset.is_valid():
 				messages.error(request,"An Error Occured")
+			
+			try:
+				service_types = ServiceType.objects.filter(is_active=True)
+			except:	
+				service_types = None
 
-			return render(request,'evaluator/enquiry/assignedquatationphase2.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,})	
+			try:
+				area_types = AreaType.objects.filter(is_active=True)
+			except:
+				area_types = None	
+			
+			return render(request,'evaluator/enquiry/phase2assignedquatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,})	
 
 		return redirect('evaluator:evaluator-makeassignedquatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)		
 
@@ -1244,7 +1363,7 @@ class InvestigationTask(View):
 		except:
 			investigation = None	
 		
-		if follow_up_approved == 'yes':
+		if follow_up_approved == 'APPROVED':
 			no_of_cleaners = request.POST.get('no_of_cleaners')
 			cleaning_hours = request.POST.get('cleaning_hours')
 			

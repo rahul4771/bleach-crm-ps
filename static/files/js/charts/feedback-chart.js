@@ -62,9 +62,8 @@ function drawChart() {
         var quotations = google.visualization.arrayToDataTable(quotes);
 
         var options = {
-            chartArea : {height: '75%',},
-            width:650,
-            height:300,
+            chartArea : {height: '80%',},
+            width:'100%',
             animation: {
             duration: 2000,
             easing: 'linear',
@@ -92,8 +91,8 @@ var selectedMonthName2 = months[month2];
 console.log(selectedMonthName,"lp")
 var datestring = selectedMonthName + " " + date1.getFullYear();
 var datestring2 = selectedMonthName2 + " " + date1.getFullYear();
-$('#month1').val(datestring2);
-$('#month2').val(datestring);
+$('#month1').val(datestring);
+$('#month2').val(datestring2);
 
 $('#monthpicker1_fb').calendar({
     type: 'month'

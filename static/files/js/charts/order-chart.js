@@ -67,7 +67,7 @@ function drawChart() {
 
         var options = {
             chartArea : {height: '80%',},
-            width:500,
+            width:'100%',
             animation: {
             duration: 2000,
             easing: 'linear',
@@ -95,8 +95,8 @@ var selectedMonthName2 = months[month2];
 console.log(selectedMonthName,"lp")
 var datestring = selectedMonthName + " " + date1.getFullYear();
 var datestring2 = selectedMonthName2 + " " + date1.getFullYear();
-$('#month1').val(datestring2);
-$('#month2').val(datestring);
+$('#month1').val(datestring);
+$('#month2').val(datestring2);
 
 $('#monthpicker1').calendar({
     type: 'month'
@@ -144,15 +144,15 @@ $("#month2").change(function(){
 
 $("#reset_orders").click(function(){
     var date1 = new Date();
-    var datestring = date1.getDate()  + "/" + (date1.getMonth()+1) + "/" + date1.getFullYear();
+    var datestring = date1.getDate()-1  + "-" + (date1.getMonth()+1) + "-" + date1.getFullYear();
 
     var date2 = new Date();
     date2.setDate(date2.getDate()-30);
-    var datestring2 = date2.getDate()  + "/" + (date2.getMonth()+1) + "/" + date2.getFullYear();
+    var datestring2 = date2.getDate()  + "-" + (date2.getMonth()+1) + "-" + date2.getFullYear();
     console.log(datestring,datestring2)
 
-    $('#from').val(datestring2);
-    $('#to').val(datestring);
+    $('#ord_fromdate').val(datestring2);
+    $('#ord_todate').val(datestring);
 
     drawChart();
 })
