@@ -216,7 +216,7 @@
 </div><!--menu-filter-left ltgreen-border-->
 
  <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here...">
-<a href="#"><img class="search-icon" src="images/search-icon.png"></a></span>
+<a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
         
         
         </div><!--filter-column-boxes filter-columns-left-->
@@ -232,9 +232,6 @@
             <div class="date-togglewrapper"><!--date-togglewrapper-->
             <div class="Button_wrapperChart">
             <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daym"><div class="slider round"></div></label></div>
-   <!--         <input type="text" id="ord_fromdate" class="date_pick date-picker set1 date-pick-left" value={{investigation_date|date:"d-m-Y"}} >
-            <input type="text" id="ord_todate" class="date_pick date-picker set1 date-pick-right" value={{investigation_date|date:"d-m-Y"}} >-->
-    
             </div>
             </div><!--date-togglewrapper-->
             </div><!--date-wrapper-->
@@ -777,5 +774,9 @@ query=query.replace('&','?');
 window.location.href=url+query;  
 }
 
+$(".arrow-left").on('click', function (e) {
+  $(".arrow-left").toggleClass("cross-left");
+  $(".menu-filter-left").slideToggle("");
+});
 </script>
 {% endblock %}    
