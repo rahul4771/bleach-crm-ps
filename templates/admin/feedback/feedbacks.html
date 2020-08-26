@@ -14,83 +14,66 @@
      <div class="clients-top-card-wrapper"><!--clients-top-card-wrapper-->
      	<div class="feedback-card-wrapper "><!--feedback-card-wrapper -->
        	<div class="feedback-card-column feedback-column-left whitebg"><!--feedback-card-column feedback-column-left-->
-<div class="rating-containter"><!--rating-containter-->
-	<div class="rating-column column-left-rating"><!--column-left-rating-->
-        <p class="rating-range">{{average_feedback|floatformat:2|default_if_none:'0.0'}}</p>
-        {% if average_feedback == 5 %}
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        {% elif average_feedback < 5 and average_feedback >= 4 %}
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star"></span>
-        {% elif average_feedback < 4 and average_feedback >= 3 %}
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        {% elif average_feedback < 3 and average_feedback >= 2 %}
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        {% elif average_feedback < 2 and average_feedback >= 1 %}
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        {% else %}
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        {% endif %}
-        <p><span class="fa fa-user"></span>{{total_feedbacks}} total </p>
-     </div><!--column-left-rating-->
-     <div class="rating-column column-right-rating"><!--column-right-rating-->
-            <div class="row">
-              {% for percentage in starring_percentages %}
-              <div class="side">
-                <div><span class="fa fa-star"></span> {{percentage.rating}}</div>
-              </div>
-              <div class="middle">
-                <div class="bar-container">
-                  <div class="bar-n"
-                  {% if forloop.counter == 1 %}
-                  style="width:{{percentage.percentage|floatformat:1}}%;background-color: #4CAF50;"
-                  {% elif forloop.counter == 2 %}
-                  style="width:{{percentage.percentage|floatformat:1}}%;background-color: #ff9800;"
-                  {% elif forloop.counter == 3 %}
-                  style="width:{{percentage.percentage|floatformat:1}}%;background-color: #00bcd4;"
-                  {% elif forloop.counter == 4 %}
-                  style="width:{{percentage.percentage|floatformat:1}}%;background-color: #2196F3;"
-                  {% else %}
-                  style="width:{{percentage.percentage|floatformat:1}}%;background-color: #f44336"
-                  {% endif %}
-                  ></div>
-                </div>
-              </div>
-              <div class="side right">
-                <div>{{percentage.percentage|floatformat:1}}%</div>
-              </div>
-              {% endfor %}
+
+    <div class="rating-containter"><!--rating-containter-->
+      <div class="rating-column column-left-rating"><!--column-left-rating-->
+            <p class="rating-range"></p>
+            <div class="rating-star">
             </div>
-        </div><!--column-right-rating-->
-</div><!--rating-containter-->
+            <p><span class="fa fa-user"></span>{{total_feedbacks}} total </p>
+        </div><!--column-left-rating-->
+        <div class="rating-column column-right-rating"><!--column-right-rating-->
+                <div class="row">
+                </div>
+            </div><!--column-right-rating-->
+    </div><!--rating-containter-->
+
         </div><!--feedback-card-column feedback-column-left-->
-		  <div class="feedback-card-column feedback-column-right whitebg"><!--lients-card-column feedback-column-right-->
+		  {% comment %} <div class="feedback-card-column feedback-column-right whitebg"><!--lients-card-column feedback-column-right-->
             <img src="{% static 'files/images/feedback-chart.jpg' %}">
             <div class="chart-btnWrapper"><input name="thismonth" type="button" class="blue-button" value="This Month" id="thismonth"></div>
-          </div><!--lients-card-column feedback-column-right-->
+          </div><!--lients-card-column feedback-column-right--> {% endcomment %}
+
+          <div class="clients-card-column clients-column-right whitebg hover ltyellow-border"><!--clients-card-column clients-column-right-->
+                 
+		<div class="chart_boxDiv"><!--chart_boxDiv-->
+  			<div class="chart_box_Right"><!--chart_box_Right-->
+ 				<!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
+            	<div id="feedback_chart_div" ></div>
+  			</div><!--chart_box_Right-->
+		</div><!--chart_boxDiv-->   
+            
+        <div class="chart_boxDiv"><!--chart_boxDiv-->    
+        
+         <div class="chart_box_Left"><!--chart_box_Left-->
+         <div class="legend-wrapper"><!--legend-wrapper--> 
+            <div class="legend-result count_div"><label class="legend-label">Total Ratings </label> <b class="legend-result-blue" id="total_submitted"></b></div>
+
+         </div><!--legend-wrapper-->
+  		</div><!--chart_box_Left-->
+        <div class="chart_box_Left"><!--chart_box_Left-->        
+        <div class="Button_wrapperChart">
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daym"><div class="slider round"><span class="on">DATE</span><span class="off">MONTH</span></div></label></div>
+            <input type="text" id="ord_fromdate_fb" class="date_pick date_pick2 date-picker set1 date-pick-left" value={{investigation_date|date:"d-m-Y"}} >
+            <input type="text" id="ord_todate_fb" class="date_pick date_pick2 date-picker set1 date-pick-right" value={{investigation_date|date:"d-m-Y"}} >
+            <div><button id="reset_feedbacks" class="green-button-chart">Reset</button></div>
+            </div>
+            <div class="ui calendar set2" id="monthpicker1" >
+              <div class="ui input left icon">
+                <input type="text" id="month1" class="set2" >
+              </div>
+            </div>
+
+            <div class="ui calendar set2" id="monthpicker2"  >
+              <div class="ui input left icon">
+                <input type="text" id="month2" class="set2" >
+              </div>
+            </div>	           
+        </div><!--chart_box_Left-->
+            
+        </div><!--chart_boxDiv-->    
+            
+        </div><!--lients-card-column clients-column-right-->
         </div><!--feedback-card-wrapper -->
 
 </div><!--clients-top-card-wrapper-->       
@@ -349,6 +332,7 @@
 {% endblock %}
 
 {% block javascript %}
+<script src="{% static 'files/js/charts/feedback-chart.js' %}"></script>
 <script id="rendered-js">
 $('.footable').footable({
   calculateWidthOverride: function () {
