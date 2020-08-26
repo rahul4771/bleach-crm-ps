@@ -247,7 +247,6 @@ class EvaluationBook(models.Model):
 	service_type		= models.ForeignKey('ServiceType',blank=True,null=True,related_name='evaluation_details_service_type')
 	area_type	 		= models.CharField(max_length=100,blank=True,null=True)
 	cleaning_method 	= models.CharField(max_length=100,blank=True,null=True)
-	area_type           = models.CharField(max_length=100,blank=True,null=True)
 	location_type		= models.CharField(max_length=100,blank=True,null=True)
 
 	number_of_cleaners  = models.IntegerField(blank=True,null=True)
@@ -285,7 +284,7 @@ class EvaluationMedia(models.Model):
 		return str(self.evaluation_book.id)		
 
 class EvaluationBookSection(models.Model):
-	evaluation_book = models.ForeignKey('EvaluationBook',blank=False,null=False)
+	evaluation_book = models.ForeignKey('EvaluationBook',blank=False,null=False,related_name='evaluationsection_book')
 	section_name 	= models.CharField(max_length=100,blank=False,null=False)
 	category		= models.CharField(max_length=100,blank=True,null=True)
 	dirt_level		= models.CharField(max_length=100,blank=True,null=True)
@@ -306,6 +305,10 @@ class EvaluationBookSection(models.Model):
 	colour      	= models.CharField(max_length=100,blank=True,null=True)
 	cause_of_stain	= models.CharField(max_length=100,blank=True,null=True)
 
+	is_active            = models.BooleanField(null=False,blank=True,default=True)
+	created              = models.DateTimeField(auto_now_add=True)
+	updated              = models.DateTimeField(auto_now=True)
+
 	def __unicode__(self):
 		return str(self.id)
 
@@ -314,10 +317,13 @@ class EvaluationBookSection(models.Model):
 
 
 class EvaluationSectionKeynote(models.Model):
-	evaluation_section = models.ForeignKey('EvaluationBookSection',blank=False,null=False)
+	evaluation_section = models.ForeignKey('EvaluationBookSection',blank=False,null=False,related_name='keynotesections')
 	sub_area = models.CharField(max_length=100,blank=True,null=True)
 	quantity = models.CharField(max_length=100,blank=True,null=True)
 
+	is_active            = models.BooleanField(null=False,blank=True,default=True)
+	created              = models.DateTimeField(auto_now_add=True)
+	updated              = models.DateTimeField(auto_now=True)
 	def __unicode__(self):
 		return str(self.id)
 

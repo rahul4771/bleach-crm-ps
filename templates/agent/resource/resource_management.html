@@ -62,6 +62,7 @@
             
 <div class="white-wrapper"><!--white-wrapper-->
 
+{% comment %}
 <div class="toolbar-div"><!--toolbar-div-->
 
 <div class="search-middle"><!--search-middle-->
@@ -127,6 +128,122 @@
 </div><!--filter-right-->
 
 </div><!--toolbar-div-->
+{% endcomment %}
+
+<div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
+        <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->        
+        <div class="filter-button arrow-left"><a href="#">Filter</a></div> 
+<div class="menu-filter-left ltgreen-border" style="display:none;"><!--menu-filter-left ltgreen-border-->
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+                <div class=" bold-text common-label"> <label>Governorate</label></div>
+                <label for="favcity">
+                <select id="favcity" name="select">
+                <option value="0">Choose your Order Number</option>
+                <option value="1">23423434</option>
+                <option value="2">45454545</option>
+                <option value="3">45454545</option>
+                <option value="4">86765676</option>
+                <option value="5">23545677</option>
+                </select>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+                <div class=" bold-text common-label"> <label>Area</label></div>
+                <label for="favcity">
+                <select id="favcity" name="select">
+                <option value="0">Choose your Order Number</option>
+                <option value="1">23423434</option>
+                <option value="2">45454545</option>
+                <option value="3">45454545</option>
+                <option value="4">86765676</option>
+                <option value="5">23545677</option>
+                </select>
+                </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<hr class="hr-dashedpad"> 
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+                <div class=" bold-text common-label"> <label>Minimum Starring</label></div>
+                <label for="favcity">
+                <select id="favcity" name="select">
+                <option value="0">Choose your Order Number</option>
+                <option value="1">23423434</option>
+                <option value="2">45454545</option>
+                <option value="3">45454545</option>
+                <option value="4">86765676</option>
+                <option value="5">23545677</option>
+                </select>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+                <div class=" bold-text common-label"> <label>Maximum Staring</label></div>
+                <label for="favcity">
+                <select id="favcity" name="select">
+                <option value="0">Choose your Order Number</option>
+                <option value="1">23423434</option>
+                <option value="2">45454545</option>
+                <option value="3">45454545</option>
+                <option value="4">86765676</option>
+                <option value="5">23545677</option>
+                </select>
+                </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<hr class="hr-dashedpad"> 
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+                <div class=" bold-text common-label"> <label>Service Type</label></div>
+                <label for="favcity">
+                <select id="favcity" name="select">
+                <option value="0">Choose your Order Number</option>
+                <option value="1">23423434</option>
+                <option value="2">45454545</option>
+                <option value="3">45454545</option>
+                <option value="4">86765676</option>
+                <option value="5">23545677</option>
+                </select>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right hide-m"><!--ticket-form-right-->
+                 
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+
+<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>
+</div><!--menu-filter-left ltgreen-border-->
+
+ <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here...">
+<a href="#"><img class="search-icon" src="images/search-icon.png"></a></span>
+        
+        
+        </div><!--filter-column-boxes filter-columns-left-->
+        <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+        
+            <div class="date-wrapper"><!--date-wrapper-->
+            <div class="date-wrapper-inner"><!--date-wrapper-inner-->
+            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type='text' id='datepicker'  name='datepicker' class="date-box">
+            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='today-date current-date'>Today</button>
+            </div><!--date-wrapper-inner-->
+            <div class="date-togglewrapper"><!--date-togglewrapper-->
+            <div class="Button_wrapperChart">
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daym"><div class="slider round"></div></label></div>
+   <!--         <input type="text" id="ord_fromdate" class="date_pick date-picker set1 date-pick-left" value={{investigation_date|date:"d-m-Y"}} >
+            <input type="text" id="ord_todate" class="date_pick date-picker set1 date-pick-right" value={{investigation_date|date:"d-m-Y"}} >-->
+    
+            </div>
+            </div><!--date-togglewrapper-->
+            </div><!--date-wrapper-->
+        
+        
+        </div><!--filter-column-boxes filter-columns-right-->        
+    </div><!--filter-columns-wrapper-->
+
+
 
 <div id="resource-scroll" class="resource-scroll">
 <div class="table-wrap" id="table_date">

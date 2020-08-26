@@ -123,13 +123,13 @@
             
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Client List</h2>
-<div class="no_of_entires">
-  <select name="no_of_entries" id="no_of_entries" onchange="set_params_go();">
-    <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
-    <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
-    <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
-  </select>
-</div>
+<label for="favcity" style="width:20%;"> 
+<select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
+<option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+<option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+<option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+</select>
+</label>
 <div class="page-entries">Show {{entry_per_page}} entries</div>
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
@@ -146,7 +146,7 @@
 <tbody>
 {% for client in client_details %}
 
-    <tr class="clickable-row" data-href="{% url 'accountant:accountant-client-orders' client.id %}">
+    <tr class="clickable-row-list" data-href="{% url 'accountant:accountant-client-orders' client.id %}">
     <td {% if client.active_status == True  %} 
         class="green-line"
         {% else%}
