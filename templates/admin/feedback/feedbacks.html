@@ -53,20 +53,20 @@
   		</div><!--chart_box_Left-->
         <div class="chart_box_Left"><!--chart_box_Left-->        
         <div class="Button_wrapperChart">
-            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daym"><div class="slider round"><span class="on">DATE</span><span class="off">MONTH</span></div></label></div>
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonthtoggle"><div class="slider round"><span class="on">DATE</span><span class="off">MONTH</span></div></label></div>
             <input type="text" id="ord_fromdate_fb" class="date_pick date_pick2 date-picker set1 date-pick-left" value={{investigation_date|date:"d-m-Y"}} >
             <input type="text" id="ord_todate_fb" class="date_pick date_pick2 date-picker set1 date-pick-right" value={{investigation_date|date:"d-m-Y"}} >
             <div><button id="reset_feedbacks" class="green-button-chart">Reset</button></div>
             </div>
             <div class="ui calendar set2" id="monthpicker1" >
               <div class="ui input left icon">
-                <input type="text" id="month1" class="set2" >
+                <input type="text" id="month1" class="month_pick set2" >
               </div>
             </div>
 
             <div class="ui calendar set2" id="monthpicker2"  >
               <div class="ui input left icon">
-                <input type="text" id="month2" class="set2" >
+                <input type="text" id="month2" class="month_pick set2" >
               </div>
             </div>	           
         </div><!--chart_box_Left-->
@@ -79,49 +79,47 @@
 </div><!--clients-top-card-wrapper-->       
             
      <div class="main-content-holder"><!--main-content-holder-->            
-     
+
+
      <div class="white-wrapper-search"><!--white-wrapper-search-->
      <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
-          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
      </div><!--left-box leftbox-item1-->
-     <div class="left-box leftbox-item2 params_filter"><!--right-box leftbox-item1-->
-     <input name="filter" type="button" value="Filter" id="filter" class="blue-button filter-btn">
-        <div class="expand-body right-expand-body">
-          
-          <div class="left">
-            <div class="head">
-              <h1>Governorate</h1>
-            </div>
-            <div class="body">
-              <select name="governorate_filter" id="governorate_filter_id">
+     <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
+     <input name="filter" type="button" value="Filter" id="filter" class="blue-button arrow"> 
+     <div class="menu-filter ltgreen-border" style="display:none;"><!--menu-filter ltgreen-border-->
+     
+    
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Governorate</label></div>
+                <label for="favcity">
+                <select name="governorate_filter" id="governorate_filter_id">
                 <option value=''>---SELECT---</option>
                 {% for governorate in governorates %}
           <option value='{{governorate.id}}' {% if governorate.id == fil_governorate %}selected{%endif%}>{{governorate.name}}</option>
                 {% endfor %}                
               </select>
-            </div>
-          </div>
-
-          <div class="right">
-            <div class="head">
-              <h1>Area</h1>
-            </div>
-            <div class="body">
-              <select name="area_filter" id="area_filter_id">
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label"> <label>Area</label></div>
+                <label for="favcity">
+                <select name="area_filter" id="area_filter_id">
                 <option value=''>---SELECT---</option> 
                 {% for area in areas %}
                 <option value='{{area.id}}' {% if fil_area == area.id %}selected{% endif %}>{{area.name}}</option>
                 {% endfor %}               
               </select>
-            </div>
-          </div>
-          
-          <div class="left">
-            <div class="head">
-              <h1>Minimum Starring</h1>
-            </div>
-            <div class="body">
-              <select name="minimumstarring_filter" id="minimumstarring_filter_id">
+                </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<hr class="hr-dashedpad"> 
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Minimum Starring</label></div>
+				<label for="favcity">
+                <select name="minimumstarring_filter" id="minimumstarring_filter_id">
                 <option value=''>---SELECT---</option>
                 <option value="0" {% if fil_minimumstarring == '0' %}selected{% endif %}>0</option>
                 <option value="1" {% if fil_minimumstarring == '1' %}selected{% endif %}>1</option>
@@ -130,15 +128,12 @@
                 <option value="4" {% if fil_minimumstarring == '4' %}selected{% endif %}>4</option>
                 <option value="4" {% if fil_minimumstarring == '5' %}selected{% endif %}>5</option>                
               </select>
-            </div>
-          </div>
-
-          <div class="right">
-            <div class="head">
-              <h1>Maximum Starring</h1>
-            </div>
-            <div class="body">
-              <select name="maximumstarring_filter" id="maximumstarring_filter_id">
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label"> <label>Maximum Starring</label></div>
+                <label for="favcity">
+                <select name="maximumstarring_filter" id="maximumstarring_filter_id">
                 <option value=''>---SELECT---</option>
                 <option value="0" {% if fil_maximumstarring == '0' %}selected{% endif %}>0</option>
                 <option value="1" {% if fil_maximumstarring == '1' %}selected{% endif %}>1</option>
@@ -147,30 +142,30 @@
                 <option value="4" {% if fil_maximumstarring == '4' %}selected{% endif %}>4</option>
                 <option value="4" {% if fil_maximumstarring == '5' %}selected{% endif %}>5</option>                
               </select>
-            </div>
-          </div>
-
-
-          <div class="left">
-            <div class="head">
-              <h1>Service Type</h1>
-            </div>
-            <div class="body">
-              <select name="service_type_filter" id="service_type_filter_id">
+                </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<hr class="hr-dashedpad"> 
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Service Type</label></div>
+				<label for="favcity">
+                <select name="service_type_filter" id="service_type_filter_id">
                 <option value=''>---SELECT---</option>
                 {% for service_type in service_types %}
                 <option value="{{service_type.id}}" {% if service_type.id == fil_service_type %}selected{% endif %}>{{service_type.name}}</option>
                 {% endfor %}                
               </select>
-            </div>
-          </div>  
-           
-          <div class="foot">
-            <button type="button" class="red-btn" onclick="set_params_go({});">Submit</button>
-            <button type="button" class="close-btn green-btn">Cancel</button>
-          </div>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right hide-m"><!--ticket-form-right-->
+  				 
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<div align="center"> <input class="assignButton" name="assing" type="button" onclick="set_params_go({});" value="Submit"> <input class="cancel-Button close-btn" name="cancel" type="button" value="Cancel"></div>
 
-        </div>
+     
+     </div><!--menu-filter ltgreen-border-->
      </div><!--right-box leftbox-item1-->     
      
      
