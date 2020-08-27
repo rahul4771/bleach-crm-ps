@@ -122,7 +122,7 @@
 <input type="text" id="resource_month" class="month_pick date-picker-resource" hidden>
 
 <div class="day-month-togggle-button">
-<label class="switch"><input type="checkbox" id="daymonthtoggle"><div class="slider round"><span class="on">MONTH</span><span class="off">DATE</span></div></label>
+<label class="switch"><input type="checkbox" id="daymonthtoggle_resource"><div class="slider round"><span class="on">MONTH</span><span class="off">DATE</span></div></label>
 </div>
 </div><!--filter-right-->
 
@@ -229,31 +229,6 @@
 
     $("#resource_month").on("change", function(){
         load_workers_data();
-    });
-
-    $('#daymonthtoggle').click(function(){
-        if($(this).is(':checked')){
-            $('#resource_month').attr("hidden",false);
-            $('#working_calendar').attr("hidden",true);
-            $('#table_month').attr("hidden",false);
-            $('#table_date').attr("hidden",true);
-            $('.togglehide').attr("hidden",true);
-            $('.red-btn').attr("hidden",true);
-            $('.red-btn2').attr("hidden",false);
-            $('#resource_search').attr("hidden",true);
-            $('#resource_search2').attr("hidden",false);
-            load_workers_data();
-        }else{
-            $('#resource_month').attr("hidden",true);
-            $('#working_calendar').attr("hidden",false);
-            $('#table_month').attr("hidden",true);
-            $('#table_date').attr("hidden",false);
-            $('.togglehide').attr("hidden",false);
-            $('.red-btn').attr("hidden",false);
-            $('.red-btn2').attr("hidden",true);
-            $('#resource_search').attr("hidden",false);
-            $('#resource_search2').attr("hidden",true);
-        }
     });
 
     $('document').ready(function(){

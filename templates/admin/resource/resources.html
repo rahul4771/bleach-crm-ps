@@ -59,136 +59,82 @@
 </div><!--main-card-->       
             
      <div class="main-content-holder"><!--main-content-holder-->            
-            
+
 <div class="white-wrapper"><!--white-wrapper-->
-<div class="toolbar-div"><!--toolbar-div-->
+<div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
+		<div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->
+        
+        
+        <div class="filter-button arrow-left"><a href="#">Filter</a></div> 
+<div class="menu-filter-left ltgreen-border" style="display:none;"><!--menu-filter-left ltgreen-border-->
 
-{% comment %} <div class="search-middle"><!--left-->
-<div class="filter-button">
-    <!--filter left -->
-    <div class="left-box leftbox-item2 params_filter">
-     <input name="filter" type="button" value="Filter" id="filter" class="blue-button filter-btn">
-        <div class="expand-body left-expand-body">
-          
-          <div class="left">
-            <div class="head">
-              <h1>Cleaning Staff</h1>
-            </div>
-            <div class="body">
-              <select name="staff_filter" id="staff_filter_id">
-                <option value=''>---SELECT---</option>
-                {% for staff in staffs %}
-          <option value='{{staff.id}}' {% if staff.id == fil_staff %}selected{%endif%}>{{staff.name}}</option>
-                {% endfor %}                
-              </select>
-            </div>
-          </div>
-
-          <div class="right">
-            <div class="head">
-              <h1>Minimum Cleaning Hours</h1>
-            </div>
-            <div class="body">
-              <input type="number" name="minimumhour_filter" id="minimumhour_filter_id" max='24' min='0' value="{{fil_minhours|default_if_none:''}}">
-            </div>
-          </div>
-
-          <div class="left">
-            <div class="head">
-              <h1>Maximum Cleaning Hours</h1>
-            </div>
-            <div class="body">
-              <input type="number" name="maximumhour_filter" id="maximumhour_filter_id" max='24' min='0' value="{{fil_maxhours|default_if_none:''}}">
-            </div>
-          </div>
-           
-          <div class="foot">
-            <button type="button" class="red-btn" onclick="set_params_go({});">Submit</button>
-            <button type="button" class="close-btn green-btn">Cancel</button>
-          </div>
-
-        </div>
-     </div>
-  </div>
-  <!--filter left -->
-
-  <!--search left -->
-  <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()">
-<a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
-<!--search left -->
-
-</div><!--left --> {% endcomment %}
-
-<div class="search-middle"><!--search-middle-->
-<div class="filter-button params_filter">
-<input name="filter" type="button" value="Filter" id="filter" class="blue-button filter-btn">
-
-    <div class="expand-body left-expand-body">
-          
-          <div class="left">
-            <div class="head">
-              <h1>Type of Staff</h1>
-            </div>
-            <div class="body">
-              <select name="staff_filter" id="staff_type_filter">
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Type of Staff</label></div>
+				<label for="favcity">
+                <select name="staff_filter" id="staff_type_filter">
                 <option value=''>---SELECT---</option>
                 <option value='TEAMLEADER' {% if staff_type == 'TEAMLEADER' %}selected{% endif %}>TEAMLEADER</option>
                 <option value='CLEANER' {% if staff_type == 'CLEANER' %}selected{% endif %}>CLEANER</option>
-                             
-              </select>
-            </div>
-          </div>
+                </select>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<hr class="hr-dashedpad"> 
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Minimum Cleaning Hours</label></div>
+                <input type="number" name="minimumhour_filter" id="minimumhour_filter_id" max='24' min='0' value="{{fil_minhours|default_if_none:''}}">
+                
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label"> <label>Maximum Cleaning Hours</label></div>
+                <input type="number" name="maximumhour_filter" id="maximumhour_filter_id" max='24' min='0' value="{{fil_maxhours|default_if_none:''}}">
 
-          <div class="right">
-            <div class="head">
-              <h1>Minimum Cleaning Hours</h1>
-            </div>
-            <div class="body">
-              <input type="number" name="minimumhour_filter" id="minimumhour_filter_id" max='24' min='0' value="{{fil_minhours|default_if_none:''}}">
-            </div>
-          </div>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
 
-          <div class="left">
-            <div class="head">
-              <h1>Maximum Cleaning Hours</h1>
-            </div>
-            <div class="body">
-              <input type="number" name="maximumhour_filter" id="maximumhour_filter_id" max='24' min='0' value="{{fil_maxhours|default_if_none:''}}">
-            </div>
-          </div>
-        
-        <div class="foot">
-        <button type="button" class="red-btn" onclick="set_params_go({});">Submit</button>
-        <button type="button" class="red-btn2" onclick="load_workers_data();" hidden>Submit</button>
-        <button type="button" class="close-btn green-btn">Cancel</button>
-        </div>
-
-    </div>
-
+<div align="center"> 
+<button type="button" class="red-btn assignButton" onclick="set_params_go({});">Submit</button> 
+<button type="button" class="red-btn2 assignButton" onclick="load_workers_data();" hidden>Submit</button>
+<button type="button" class="cancel-Button">Cancel</button>
 </div>
-<span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}">
+</div><!--menu-filter-left ltgreen-border-->
+
+ <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}">
 <a href="#" id="resource_search" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a>
 <a id="resource_search2" onclick="load_workers_data();" hidden><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a>
 </span>
-</div><!--search-middle-->
-
-{% comment %} <div class="filter-right"><!--filter-right-->
-<input type="text" id="working_calendar" class="date_pick date-picker-resource" value={{workers_date|date:"d-m-Y"}} onchange="set_params_go();">
-<div class="day-month-togggle-button"><a href="#">Date/Month Toggle Button</a></div>
-</div><!--filter-right--> {% endcomment %}
-
-<div class="filter-right"><!--filter-right-->
-<input type="text" id="working_calendar" class="resource_date_pick date-picker-resource" value={{workers_date|date:"d-m-Y"}} onchange="set_params_go();">
-<input type="text" id="resource_month" class="month_pick date-picker-resource" hidden>
-
-<div class="day-month-togggle-button">
-<label class="switch"><input type="checkbox" id="daymonthtoggle"><div class="slider round"><span class="on">MONTH</span><span class="off">DATE</span></div></label>
-</div>
-</div><!--filter-right-->
-
-</div><!--toolbar-div-->
-
-
+        
+        
+        </div><!--filter-column-boxes filter-columns-left-->
+		<div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+        
+            <div class="date-wrapper"><!--date-wrapper-->
+            <div class="date-wrapper-inner"><!--date-wrapper-inner-->
+            <div id="working_calendar">
+            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type='text' id='datepicker'  name='datepicker' class="date-box">
+            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='today-date current-date'>Today</button>
+            </div>
+            <input type="text" id="resource_month" class="month_pick date-picker-resource" hidden>
+            </div><!--date-wrapper-inner-->
+            
+            <div class="date-togglewrapper"><!--date-togglewrapper-->
+            <div class="Button_wrapperChart">
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonthtoggle_resource"><div class="slider round"><span class="on">MONTH</span><span class="off">DATE</span></div></label></div>
+    
+            </div>
+            </div><!--date-togglewrapper-->
+            </div><!--date-wrapper-->
+        
+        
+        </div><!--filter-column-boxes filter-columns-right-->        
+	</div><!--filter-columns-wrapper-->
 
 
 <div id="resource-scroll" class="resource-scroll">
@@ -724,7 +670,7 @@
 function set_params_go(args)
 {
 var url='{% url 'bleach_admin:resource-management' %}';
-var params={workers_calendar_date:$('#working_calendar').val(),search:$('#search-bar').val(),staff:$('#staff_filter_id').val(),minhours:$('#minimumhour_filter_id').val(),maxhours:$('#maximumhour_filter_id').val(),
+var params={workers_calendar_date:$('#working_calendar').val(),search:$('#search-bar').val(),staff:$('#staff_type_filter').val(),minhours:$('#minimumhour_filter_id').val(),maxhours:$('#maximumhour_filter_id').val(),
 };
 for(key in args) 
     params[key]=args[key];

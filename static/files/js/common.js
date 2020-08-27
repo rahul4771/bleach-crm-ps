@@ -112,3 +112,73 @@ $(".close-btn").on("click", function(){
 
 });
 
+// prev next datepicker
+$('.datepicker').datetimepicker({ 
+  pickTime: false, 
+  format: "DD-MM-YYYY",
+  defaultDate: new Date(),  
+});
+
+  // $('#datepicker').datetimepicker();
+
+ $('.next-day').on('click', function () {
+
+     $selectedDay            = $('#datepicker').data("DateTimePicker").getDate();
+     var $tmpSelectedDay     = new Date($selectedDay) 
+     $tmpSelectedDay.setDate($tmpSelectedDay.getDate() + 1);
+     $('#datepicker').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+         
+  });
+
+
+ $('.prev-day').on('click', function () {
+
+     $selectedDay            = $('#datepicker').data("DateTimePicker").getDate();
+     var $tmpSelectedDay     = new Date($selectedDay) 
+     $tmpSelectedDay.setDate($tmpSelectedDay.getDate() - 1);
+     $('#datepicker').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+ 
+ });
+
+ $('.today-date').on('click', function () {
+     var $tmpSelectedDay     = new Date();
+     $('#datepicker').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+ });
+
+ //filter popup toggle
+ $(".arrow").on('click', function (e) {
+  $(".arrow").toggleClass("cross");
+  $(".menu-filter").slideToggle("");
+});
+
+$(".arrow-left").on('click', function (e) {
+  $(".arrow-left").toggleClass("cross-left");
+  $(".menu-filter-left").slideToggle("");
+});
+
+// toggle month/date resources
+$('#daymonthtoggle_resource').click(function(){
+  if($(this).is(':checked')){
+      $('#resource_month').attr("hidden",false);
+      $('#working_calendar').attr("hidden",true);
+      $('#table_month').attr("hidden",false);
+      $('#table_date').attr("hidden",true);
+      $('.togglehide').attr("hidden",true);
+      $('.red-btn').attr("hidden",true);
+      $('.red-btn2').attr("hidden",false);
+      $('#resource_search').attr("hidden",true);
+      $('#resource_search2').attr("hidden",false);
+      load_workers_data();
+  }else{
+      $('#resource_month').attr("hidden",true);
+      $('#working_calendar').attr("hidden",false);
+      $('#table_month').attr("hidden",true);
+      $('#table_date').attr("hidden",false);
+      $('.togglehide').attr("hidden",false);
+      $('.red-btn').attr("hidden",false);
+      $('.red-btn2').attr("hidden",true);
+      $('#resource_search').attr("hidden",false);
+      $('#resource_search2').attr("hidden",true);
+  }
+});
+

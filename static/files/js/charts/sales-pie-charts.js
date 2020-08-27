@@ -388,11 +388,11 @@ var date_b = date1.getDate()-1  + "-" + date1.getMonth() + "-" + date1.getFullYe
 $('#from').val(date_b);
 $('#to').val(date_a);
 
-$('#example7').calendar({
+$('#monthpicker1').calendar({
     type: 'month'
 });
 
-$('#example8').calendar({
+$('#monthpicker2').calendar({
     type: 'month'
 });
 
@@ -453,8 +453,8 @@ $("#daym").change(function(){
             var datestring2 = date2.getDate()  + "/" + (date2.getMonth()+1) + "/" + date2.getFullYear();
             console.log(datestring,datestring2)
 
-            $('#pfrom').val(datestring2);
-            $('#pto').val(datestring);
+            $('#from').val(datestring2);
+            $('#to').val(datestring);
             drawsalescurvechart();
         }
         else{
@@ -465,8 +465,8 @@ $("#daym").change(function(){
 
             var datestring2 = date1.getDate()  + "/" + (date1.getMonth()+1) + "/" + date1.getFullYear();
 
-            $('#pfrom').val(datestring2);
-            $('#pto').val(datestring);
+            $('#from').val(datestring2);
+            $('#to').val(datestring);
             drawsalescurvechart();
 
         }
