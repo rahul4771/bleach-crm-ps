@@ -25,8 +25,9 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   	<div class="ticket-form-left"><!--ticket-form-left-->
  		<div class="blc-number-big">{{cleaning_team_detail.order_scheduler.order.order_no}}</div>
-    <br>
-        <div class="green-bg-lg">{% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}One-Time{% endif %}</div><div class="blue-bg-lg">Paid</div>
+    <br>        
+        <div class="green-bg-lg">{% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}One-Time{% else %}Subscription{% endif %}</div><div class="blue-bg-lg">{% if cleaning_team_detail.order_scheduler.order.payment_status == 'COMPLETED' %}Paid{% elif cleaning_team_detail.order_scheduler.order.payment_status == 'ON_HOLD' %}ON HOLD<{% else %}Pending{% endif %}</div>
+
         <div class="customer-name"> {{cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name}}</div>
         <div class="email"> {{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_method}}</div>
         <div class="email"> {{cleaning_team_detail.order_scheduler.order_scheduler_book.area_type}}</div>
