@@ -21,6 +21,26 @@ from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMemb
 
 # Create your views here.
 
+
+def UpdateKeynoteStatus(request):
+	keynote_id     = request.GET.get('keynote_id')
+	keynote_status = request.GET.get('status')
+
+	if keynote_status == 'true':
+		EvaluationSectionKeynote.objects.filter(id=keynote_id).update(completion_status=True)
+	else:
+		EvaluationSectionKeynote.objects.filter(id=keynote_id).update(completion_status=False)
+		
+	data = {}
+
+	data['keynote_id']     = keynote_id
+	data['keynote_status'] = keynote_status
+
+	return JsonResponse(data)
+
+
+
+
 class TlHome(IsTeamLeader,View):
 	def get(self,request):
 
@@ -355,7 +375,7 @@ class Cleaning(IsTeamLeader,View):
 			cleaning_team_detail.save()	
 			cleaning_team_detail.order_scheduler.save()
 		
-		return render(request,'tl/cleaning/newcleaning.html',{"cleaning_team_detail":cleaning_team_detail,})
+		return render(request,'tl/cleaning/cleaning.html',{"cleaning_team_detail":cleaning_team_detail,})
 	def post(self,request,team_id):
 		
 		#checkout save
@@ -366,8 +386,8 @@ class Cleaning(IsTeamLeader,View):
 
 		#checkin save	
 		if cleaning_team_detail: 
-			cleaning_team_detail.check_out                    = timezone.now()
-			cleaning_team_detail.order_scheduler.work_status  = 'CLEANING_FULFILLED'
+			cleaning_team_detail.check_out                    		= timezone.now()
+			cleaning_team_detail.order_scheduler.work_status  		= 'CLEANING_FULFILLED'
 			cleaning_team_detail.order_scheduler.order.order_status = 'ORDER_IN_PROGRESS'
 			cleaning_team_detail.save()
 			cleaning_team_detail.order_scheduler.save()
@@ -400,10 +420,8 @@ class Cleaning(IsTeamLeader,View):
 class FollowupCleaning(IsTeamLeader,View):
 	def get(self,request,team_id):
 
-		followup_team_detail = FollowUpTeam.objects.select_related('team_leader','drop_off_driver','pick_up_driver','followup_scheduler__follow_up__investigation__investigator','followup_scheduler__follow_up__investigation__order__evaluation','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book','followup_scheduler__customer_address').get(is_active=True,id=team_id)
-		
-
-		print(followup_team_detail)	
+		followup_team_detail = FollowUpTeam.objects.select_related('team_leader','drop_off_driver','pick_up_driver','followup_scheduler__follow_up__investigation__investigator','followup_scheduler__follow_up__investigation__order__evaluation','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book','followup_scheduler__customer_address').prefetch_related(Prefetch('followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections')).get(is_active=True,id=team_id)
+			
 
 		#checkin save	
 		if followup_team_detail: 

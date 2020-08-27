@@ -7,7 +7,7 @@
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
-        <h1 class="dashboard-head">Cleaning Form</h1>
+        <h1 class="dashboard-head">Followup Cleaning Form</h1>
         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>   
             </div><!--welcome-wrapper-->
        
@@ -24,26 +24,26 @@
     <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   	<div class="ticket-form-left"><!--ticket-form-left-->
- 		<div class="blc-number-big">{{cleaning_team_detail.order_scheduler.order.order_no}}</div>
+ 		<div class="blc-number-big">{{followup_team_detail.followup_scheduler.follow_up.investigation.order}}</div>
     <br>
-        <div class="green-bg-lg">{% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}One-Time{% endif %}</div><div class="blue-bg-lg">Paid</div>
-        <div class="customer-name"> {{cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name}}</div>
-        <div class="email"> {{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_method}}</div>
-        <div class="email"> {{cleaning_team_detail.order_scheduler.order_scheduler_book.area_type}}</div>
-        <div class="email"> {{cleaning_team_detail.order_scheduler.order_scheduler_book.location_type}}</div>
+        <div class="green-bg-lg">{% if followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}One-Time{% endif %}</div><div class="blue-bg-lg">Paid</div>
+        <div class="customer-name"> {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.order_scheduler_book.service_type.name}}</div>
+        <div class="email"> {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.order_scheduler_book.cleaning_method}}</div>
+        <div class="email"> {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.order_scheduler_book.area_type}}</div>
+        <div class="email"> {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.order_scheduler_book.location_type}}</div>
   	</div><!--ticket-form-left-->
 	<div class="ticket-form-right"><!--ticket-form-right-->
-  		<div class="common-gray-text align-left">{{cleaning_team_detail.order_scheduler.customer_address.apartment}}, {{cleaning_team_detail.order_scheduler.customer_address.floor}}, {{cleaning_team_detail.order_scheduler.customer_address.block}},  {{cleaning_team_detail.order_scheduler.customer_address.street}}, {{cleaning_team_detail.order_scheduler.customer_address.avenue}}, {{cleaning_team_detail.order_scheduler.customer_address.address.area.name}} {{cleaning_team_detail.order_scheduler.customer_address.address.governorate.name}}</div>
-        <div class="common-gray-text align-left">{{cleaning_team_detail.order_scheduler.order_scheduler_book.number_of_cleaners}} Cleaners</div>
-        <div class="common-gray-text align-left">{{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_hours}} Hours</div>
-        <div class="common-gray-text align-left">{{cleaning_team_detail.order_scheduler.start_at|date:'d-m-Y'}}</div>
-        <div class="common-gray-text align-left">{{cleaning_team_detail.order_scheduler.start_at|date:'h:i A'}}</div>
+  		<div class="common-gray-text align-left">{{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.apartment}}, {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.floor}}, {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.block}},  {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.street}}, {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.avenue}}, {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.address.area.name}} {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.address.governorate.name}}</div>
+        <div class="common-gray-text align-left">{{followup_team_detail.no_of_cleaners}} Cleaners</div>
+        <div class="common-gray-text align-left">{{followup_team_detail.followup_scheduler.follow_up.cleaning_hours}} Hours</div>
+        <div class="common-gray-text align-left">{{followup_team_detail.start_at|date:'d-m-Y'}}</div>
+        <div class="common-gray-text align-left">{{followup_team_detail.start_at|date:'h:i A'}}</div>
 	</div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
 <hr class="hr-dashedpad">
 
-{% for section in  cleaning_team_detail.order_scheduler.order_scheduler_book.sections %}
+{% for section in followup_team_detail.followup_scheduler.follow_up.investigation__order_schedule.order_scheduler_book.sections %}
 <div class="narrow-head align-left">Section {{forloop.counter}} : {{section.section_name}}</div>
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -108,38 +108,13 @@
 </div><!--eval-note-columns-->
 
  </div><!--commnDiv-border--> 
-<div align="center"><input class="assignButton" name="submit" type="button" value="Check-in"> </div>
+<div align="center"><input class="assignButton expandbutton" name="submit" type="button" value="Check-in"> </div>
 
     <br><br>
-
-{% if cleaning_team_detail.order_scheduler.order_scheduler_book.sections %} 
-<div class="common-sub-head align-left">Check List</div> 
-    <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
-
-{% for section in  cleaning_team_detail.order_scheduler.order_scheduler_book.sections %} 
-<div class="narrow-head align-left">Section {{forloop.counter}} : {{section.section_name}}</div>
-<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-  <div class="ticket-form-left"><!--ticket-form-left-->
-  {% for keynote in section.keynotes %}  
-  {% if not forloop.counter|divisibleby:2 %}
-  <div class="narrow-label"><input name="" type="checkbox" value=""> {{keynote.sub_area}} {{keynote.quantity}}</div>
-  {% endif %}
-  {% endfor %}
-  </div><!--ticket-form-left-->
-  <div class="ticket-form-right"><!--ticket-form-right-->
-  {% for keynote in section.keynotes %}  
-  {% if forloop.counter|divisibleby:2 %}
-  <div class="narrow-label"><input name="" type="checkbox" value=""> 
-  {{keynote.sub_area}} {{keynote.quantity}}</div>
-  {% endif %}
-  {% endfor %}
-  </div><!--ticket-form-right-->
-</div><!--ticket-wrapper-row ticket-forms-boxes-->
-
-<hr class="hr-dashedpad">
-{% endfor %}
-
-{% endif %}
+<form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+<div class="checklist">
+<div class="common-sub-head align-left">Followup Media</div> 
+<div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->  
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left--> 
@@ -169,15 +144,14 @@
  
 </div><!--order-clean-outer-wrapper-->
 
-
+</div>
 
 
  </div><!--commnDiv-border--> 
 <br>
  
- <div align="center"><input class="assignButton" name="submit" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>     	
-<br> <br>
-      
+ <div align="center"><input class="assignButton" name="addevaluator" type="submit" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div> </form>    	
+<br> <br>      
         
         </div><!--center-formDiv-->
 </div><!--white-wrapper-->      
@@ -192,18 +166,21 @@
 {% endblock %}
 
 {% block javascript %} 
-<script id="rendered-js">
-$('.footable').footable({
-  calculateWidthOverride: function () {
-    return { width: $(window).width() };
-  } });
+
+<script>
+$(document).ready(function(){
+
+  $('.checklist').css('display','none');
+
+  $('.expandbutton').click(function(){
+    $('.checklist').css('display','block');  
+  });
+
+})
 
 
-// See:
-// http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
-//# sourceURL=pen.js
-    </script>
-    <script id="rendered-js">
+
+
 $(".imgAdd").click(function () {
   name=$(this).data('name');
   console.log(name)

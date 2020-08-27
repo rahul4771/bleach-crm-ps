@@ -318,8 +318,9 @@ class EvaluationBookSection(models.Model):
 
 class EvaluationSectionKeynote(models.Model):
 	evaluation_section = models.ForeignKey('EvaluationBookSection',blank=False,null=False,related_name='keynotesections')
-	sub_area = models.CharField(max_length=100,blank=True,null=True)
-	quantity = models.CharField(max_length=100,blank=True,null=True)
+	sub_area 		   = models.CharField(max_length=100,blank=True,null=True)
+	quantity 		   = models.CharField(max_length=100,blank=True,null=True)
+	completion_status  = models.BooleanField(null=False,blank=True,default=False)
 
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)
