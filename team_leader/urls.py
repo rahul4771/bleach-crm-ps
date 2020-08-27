@@ -12,4 +12,6 @@ urlpatterns = [
 
 	url(r'^cleaning/(?P<team_id>[-\w]+)/$',views.Cleaning.as_view(),name='cleaning'),
 	url(r'^followupcleaning/(?P<team_id>[-\w]+)/$',views.FollowupCleaning.as_view(),name='followupcleaning'),
+
+	url(r'^ajax/keynote/status/$',views.UpdateKeynoteStatus,name='ajax-updatekeynote'),
 ]

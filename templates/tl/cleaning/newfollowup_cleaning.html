@@ -23,22 +23,22 @@
              <div class="common-sub-head align-left">Details</div> 
     <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-    <div class="ticket-form-left"><!--ticket-form-left-->
-    <div class="blc-number-big">{{followup_team_detail.followup_scheduler.follow_up.investigation.order}}</div>
+  	<div class="ticket-form-left"><!--ticket-form-left-->
+ 		<div class="blc-number-big">{{followup_team_detail.followup_scheduler.follow_up.investigation.order}}</div>
     <br>
         <div class="green-bg-lg">{% if followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}One-Time{% endif %}</div><div class="blue-bg-lg">Paid</div>
         <div class="customer-name"> {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.order_scheduler_book.service_type.name}}</div>
         <div class="email"> {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.order_scheduler_book.cleaning_method}}</div>
         <div class="email"> {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.order_scheduler_book.area_type}}</div>
         <div class="email"> {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.order_scheduler_book.location_type}}</div>
-    </div><!--ticket-form-left-->
-  <div class="ticket-form-right"><!--ticket-form-right-->
-      <div class="common-gray-text align-left">{{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.apartment}}, {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.floor}}, {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.block}},  {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.street}}, {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.avenue}}, {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.address.area.name}} {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.address.governorate.name}}</div>
+  	</div><!--ticket-form-left-->
+	<div class="ticket-form-right"><!--ticket-form-right-->
+  		<div class="common-gray-text align-left">{{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.apartment}}, {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.floor}}, {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.block}},  {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.street}}, {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.avenue}}, {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.address.area.name}} {{followup_team_detail.followup_scheduler.follow_up.investigation.order_schedule.customer_address.address.governorate.name}}</div>
         <div class="common-gray-text align-left">{{followup_team_detail.no_of_cleaners}} Cleaners</div>
         <div class="common-gray-text align-left">{{followup_team_detail.followup_scheduler.follow_up.cleaning_hours}} Hours</div>
         <div class="common-gray-text align-left">{{followup_team_detail.start_at|date:'d-m-Y'}}</div>
         <div class="common-gray-text align-left">{{followup_team_detail.start_at|date:'h:i A'}}</div>
-  </div><!--ticket-form-right-->
+	</div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
 <hr class="hr-dashedpad">
@@ -49,7 +49,7 @@
 
   <div class="ticket-form-left"><!--ticket-form-left-->
     {% if section.category %}
-    <div class="common-gray-text align-left"><label class="common-labels">Category</label> :<strong> {{section.category}}</strong></div>
+  	<div class="common-gray-text align-left"><label class="common-labels">Category</label> :<strong> {{section.category}}</strong></div>
     {% endif %}
     {% if section.dirt_level %}
     <div class="common-gray-text align-left"><label class="common-labels">Dirt Level</label> : <strong>{{section.dirt_level}}</strong></div>
@@ -66,7 +66,7 @@
     {% endif %}
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-  {% if section.wall_type %}
+	{% if section.wall_type %}
   <div class="common-gray-text align-left"><label class="common-labels">Wall Type</label> : <strong>{{section.wall_type}}</strong></div>
   {% endif %}
   {% if section.ceiling_type %}
@@ -96,10 +96,10 @@
 {% endfor %}
    
 <div class="eval-note-columns border"><!--eval-note-columns-->
-      <div class="eval-note-columns-left"><!--eval-note-columns-left-->
-      <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+    	<div class="eval-note-columns-left"><!--eval-note-columns-left-->
+			<div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
             <div class="client-name">{{cleaning_team_detail.order_scheduler.evaluation_details.evaluator.name}}<div class="common-gray-text">Evaluator</div></div>
-      </div><!--eval-note-columns-left-->
+    	</div><!--eval-note-columns-left-->
 
         <div class="eval-note-columns-middle"><!--eval-note-columns-middle-->
             <div class="notes">Evaluation Notes</div>
@@ -150,7 +150,7 @@
  </div><!--commnDiv-border--> 
 <br>
  
- <div align="center"><input class="assignButton" name="addevaluator" type="submit" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div> </form>     
+ <div align="center"><input class="assignButton" name="addevaluator" type="submit" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div> </form>    	
 <br> <br>      
         
         </div><!--center-formDiv-->
