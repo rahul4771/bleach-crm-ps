@@ -3,6 +3,7 @@
 {% load static %}
 <div class="wrapper">
 {% include "agent/common/header.html" %} 
+
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
@@ -225,7 +226,7 @@
             <div class="date-wrapper"><!--date-wrapper-->
             <div class="date-wrapper-inner"><!--date-wrapper-inner-->
             <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type='text' id='datepicker'  name='datepicker' class="date-box">
+            <input type="text" id="working_calendar" value={{workers_date|date:"d-m-Y"}} onchange="set_params_go();" class="date-box date_pick">
             <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
             <button class='today-date current-date'>Today</button>
             </div><!--date-wrapper-inner-->
@@ -757,6 +758,7 @@
             {% endif %}
 
     {% endfor %}        
+
     });
 
 function set_params_go(args)
@@ -778,5 +780,6 @@ $(".arrow-left").on('click', function (e) {
   $(".arrow-left").toggleClass("cross-left");
   $(".menu-filter-left").slideToggle("");
 });
+
 </script>
 {% endblock %}    

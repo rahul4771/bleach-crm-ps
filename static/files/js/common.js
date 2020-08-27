@@ -51,6 +51,32 @@ $('.month_pick').datepicker({
 }
 );
 
+//New Date picker
+   $('.next-day').on('click', function () {
+
+       $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
+       var $tmpSelectedDay     = new Date($selectedDay) 
+       $tmpSelectedDay.setDate($tmpSelectedDay.getDate() + 1);
+       $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+           
+    });
+
+
+   $('.prev-day').on('click', function () {
+
+       $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
+       var $tmpSelectedDay     = new Date($selectedDay) 
+       $tmpSelectedDay.setDate($tmpSelectedDay.getDate() - 1);
+       $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+   
+   });
+
+   $('.today-date').on('click', function () {
+       var $tmpSelectedDay     = new Date();
+       $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+   });
+
+
  // toggle-password
  $(".toggle-password").click(function() {
   //$(this).toggleClass("fa-eye fa-eye-slash");
