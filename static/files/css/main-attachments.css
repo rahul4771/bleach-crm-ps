@@ -1047,8 +1047,8 @@ input[type="submit"] {
   font-size: 14px;
   text-transform: capitalize;
   border: none;
-  border-radius: 5px;
-  min-width: 65px;
+/*  border-radius: 5px;
+  min-width: 65px;*/
   text-align: center;}
 button:not(:disabled),
 .a-btn,

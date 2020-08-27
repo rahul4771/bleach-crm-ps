@@ -226,13 +226,13 @@
             <div class="date-wrapper"><!--date-wrapper-->
             <div class="date-wrapper-inner"><!--date-wrapper-inner-->
             <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type="text" id="working_calendar" value={{workers_date|date:"d-m-Y"}} onchange="set_params_go();" class="date-box date_pick">
+            <input type="text" id="working_calendar" value="{{workers_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
             <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
             <button class='today-date current-date'>Today</button>
             </div><!--date-wrapper-inner-->
             <div class="date-togglewrapper"><!--date-togglewrapper-->
             <div class="Button_wrapperChart">
-            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daym"><div class="slider round"></div></label></div>
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonthtoggle"><div class="slider round"></div></label></div>
             </div>
             </div><!--date-togglewrapper-->
             </div><!--date-wrapper-->

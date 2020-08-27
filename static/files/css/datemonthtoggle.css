@@ -1,10 +1,10 @@
 
 .switch {
     position: relative;
-    top: 0px;
+    top: 0px; 
     display: inline-block;
     width: 90px;
-    height: 34px; 
+    height: 34px;  
 }
   
 .switch input {display:none;}
@@ -19,16 +19,16 @@
     left:200px;
 }
 
-.switch_fb input {display:none;} */
+.switch_fb input {display:none;}
 
 /*feedback chart toggle*/
 .switch_resource {
-  position: absolute;
-  top: 0px;
-  display: inline-block;
-  width: 90px;
-  height: 34px;
-  right:0px;
+    position: absolute;
+    top: 0px;
+    display: inline-block;
+    width: 90px;
+    height: 34px;
+    right:0px;
 }
 
 .switch_resource input {display:none;}
@@ -38,7 +38,7 @@
 position: absolute; 
 cursor: pointer;
 top: 0;
-left: 0px;
+left: 0px; 
 right: 0;
 bottom: 0;
 background-color: #4385f5;
@@ -75,37 +75,40 @@ transform: translateX(55px);
 }
 
 /*------ ADDED CSS ---------*/
-
-.on
+.slider:after
 {
-  display: none;
+content:'MONTH';
+color: white;
+display: block;
+position: absolute;
+transform: translate(-50%,-50%);
+top: 50%;
+left: 60%;
+font-size: 10px;
+font-family: Verdana, sans-serif;
 }
 
-.on
-{
-  color: white;
-  
-  position: absolute;
-  transform: translate(-50%,-50%);
-  top: 50%;
-  left: 40%;
-  font-size: 10px;
-  font-family: Verdana, sans-serif;
+input:checked + .slider:after
+{  
+content:'DATE';
+left:40%
 }
 
-.off
+.switch_resource .slider:after
 {
-  color: white;
-  position: absolute;
-  transform: translate(-50%,-50%);
-  top: 50%;
-  left: 60%;
-  font-size: 10px;
-  font-family: Verdana, sans-serif;
+content:'DATE';
+color: white;
+display: block;
+position: absolute;
+transform: translate(-50%,-50%);
+top: 0;
+left: 0;
+font-size: 10px;
+font-family: Verdana, sans-serif;
 }
 
-input:checked+ .slider .on
-{display: block;}
-
-input:checked + .slider .off
-{display: none;}
+.switch_resource input:checked + .slider:after
+{  
+content:'MONTH'; 
+left:40%
+}
