@@ -75,40 +75,37 @@ transform: translateX(55px);
 }
 
 /*------ ADDED CSS ---------*/
-.slider:after
+
+.on
 {
-content:'MONTH';
-color: white;
-display: block;
-position: absolute;
-transform: translate(-50%,-50%);
-top: 50%;
-left: 60%;
-font-size: 10px;
-font-family: Verdana, sans-serif;
+  display: none;
 }
 
-input:checked + .slider:after
-{  
-content:'DATE';
-left:40%
-}
-
-.switch_resource .slider:after
+.on
 {
-content:'DATE';
-color: white;
-display: block;
-position: absolute;
-transform: translate(-50%,-50%);
-top: 0;
-left: 0;
-font-size: 10px;
-font-family: Verdana, sans-serif;
+  color: white;
+  
+  position: absolute;
+  transform: translate(-50%,-50%);
+  top: 50%;
+  left: 40%;
+  font-size: 10px;
+  font-family: Verdana, sans-serif;
 }
 
-.switch_resource input:checked + .slider:after
-{  
-content:'MONTH'; 
-left:40%
+.off
+{
+  color: white;
+  position: absolute;
+  transform: translate(-50%,-50%);
+  top: 50%;
+  left: 60%;
+  font-size: 10px;
+  font-family: Verdana, sans-serif;
 }
+
+input:checked+ .slider .on
+{display: block;}
+
+input:checked + .slider .off
+{display: none;}

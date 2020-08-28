@@ -13,19 +13,13 @@ def quotation_data(request):
     print(dom,prevdate,todate,"pop")
     if dom == 'Month':
         print("kabir")
-        month,year = prevdate.split()
-        month2,year2 = todate.split()
+        month,year = prevdate.split("/")
+        month2,year2 = todate.split("/")
         
-        datetime_object1 = datetime.strptime(month, "%B")
-        month_a = datetime_object1.month
-        print(month_a)
-        datetime_object2 = datetime.strptime(month2, "%B")
-        month_b = datetime_object2.month
-        print(month_b,"mko")
         quotations = Order.objects.filter(evaluation__quatation_approved_date__year__gte=year, 
-                              evaluation__quatation_approved_date__month__gte=month_a,
+                              evaluation__quatation_approved_date__month__gte=month,
                               evaluation__quatation_approved_date__year__lte=year2,
-                              evaluation__quatation_approved_date__month__lte=month_b).values('evaluation__quatation_approved_date').distinct().order_by('evaluation__quatation_approved_date')
+                              evaluation__quatation_approved_date__month__lte=month2).values('evaluation__quatation_approved_date').distinct().order_by('evaluation__quatation_approved_date')
         
         for qt in quotations:
             submitted_qtns = Order.objects.filter(evaluation__quatation_approved_date=qt['evaluation__quatation_approved_date']).count()
