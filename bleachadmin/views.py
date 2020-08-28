@@ -951,9 +951,13 @@ class PaymentDetails(IsAdmin,View):
 			total_pending_amount = 0
 			total_pending_orders = 0
 
-		#PAGINATION INVOICE		
+		#PAGINATION INVOICE	
+		no_of_entries = request.GET.get('no_of_entries')	
+		if not no_of_entries:
+			no_of_entries = 20
+
 		page = request.GET.get('page',1) 
-		paginator=Paginator(invoices,10)
+		paginator=Paginator(invoices,no_of_entries)
 		try: 
 			invoices=paginator.page(page) 
 		except PageNotAnInteger:
@@ -973,7 +977,7 @@ class PaymentDetails(IsAdmin,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(invoices.end_index())-(invoices.start_index())+1	
 
-		return render(request,'admin/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})		
+		return render(request,'admin/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,'no_of_entries':no_of_entries,})		
 
 #ajax for sales charts
 def SalesLocationData(request):

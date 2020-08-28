@@ -152,10 +152,18 @@ $('document').ready(function(){
             //maxDate: 'now().date()', 
         });
 
-        $(".id_proposed_time").datetimepicker({
-            pickDate:false,
-            format: 'hh:mm A',
-        });
+        //tendative time
+        $(".id_proposed_time").timepicker({
+                timeFormat: 'h:mm p',
+                interval: 60,
+                minTime: '12:00am',
+                maxTime: '11:00pm',
+                defaultTime: '11',
+                startTime: '12:00am',
+                dynamic: false,
+                dropdown: true,
+                scrollbar: true
+            });
         });
     //Evaluation Callender
         {% for evaluator in evaluation_details %}

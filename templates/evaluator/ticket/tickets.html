@@ -33,10 +33,52 @@
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
         </div><!--clients-card-column clients-column-left-->
-		  <div class="clients-card-column clients-column-right whitebg"><!--lients-card-column clients-column-right-->
+		  {% comment %} <div class="clients-card-column clients-column-right whitebg"><!--lients-card-column clients-column-right-->
             <img src="{% static 'files/images/tickets-chart.jpg' %}">
             <div class="chart-btnWrapper"><input name="thismonth" type="button" class="blue-button" value="This Month" id="thismonth"></div>
-          </div><!--lients-card-column clients-column-right-->
+          </div><!--lients-card-column clients-column-right--> {% endcomment %}
+
+        <div class="clients-card-column clients-column-right whitebg hover ltyellow-border"><!--clients-card-column clients-column-right-->
+                 
+		<div class="chart_boxDiv"><!--chart_boxDiv-->
+  			<div class="chart_box_Right"><!--chart_box_Right-->
+ 				<!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
+            	<div id="chart_div" ></div>
+  			</div><!--chart_box_Right-->
+		</div><!--chart_boxDiv-->   
+            
+        <div class="chart_boxDiv"><!--chart_boxDiv-->    
+        
+         <div class="chart_box_Left"><!--chart_box_Left-->
+         <div class="legend-wrapper"><!--legend-wrapper--> 
+            <div class="legend-result count_div"><label class="legend-label">TOTAL TICKETS </label> <b class="legend-result-blue" id="total_submitted"></b></div>
+            <div class="legend-result count_div"><label class="legend-label">FOLLOWUPS </label> <b class="legend-result-red" id="total_approved"></b></div>
+         </div><!--legend-wrapper-->
+  		</div><!--chart_box_Left-->
+        <div class="chart_box_Left"><!--chart_box_Left-->        
+        <div class="Button_wrapperChart">
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daym"><div class="slider round"><span class="on">DATE</span><span class="off">MONTH</span></div></label></div>
+            <input type="text" id="ord_fromdate" class="date_pick date_pick2 date-picker set1 date-pick-left" value={{investigation_date|date:"d-m-Y"}} >
+            <input type="text" id="ord_todate" class="date_pick date_pick2 date-picker set1 date-pick-right" value={{investigation_date|date:"d-m-Y"}} >
+            <div><button id="reset_tickets" class="green-button-chart">Reset</button></div>
+            </div>
+            <div class="ui calendar set2" id="monthpicker1" >
+              <div class="ui input left icon">
+                <input type="text" id="month1" class="month_pick set2" >
+              </div>
+            </div>
+
+            <div class="ui calendar set2" id="monthpicker2"  >
+              <div class="ui input left icon">
+                <input type="text" id="month2" class="month_pick set2" >
+              </div>
+            </div>	           
+        </div><!--chart_box_Left-->
+            
+        </div><!--chart_boxDiv-->    
+            
+        </div><!--lients-card-column clients-column-right-->
+
         </div><!--clients-card-wrapper-->
 
 </div><!--clients-top-card-wrapper-->       
@@ -45,77 +87,68 @@
      
      <div class="white-wrapper-search"><!--white-wrapper-search-->
      <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
-          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
      </div><!--left-box leftbox-item1-->
-     <div class="left-box leftbox-item2 params_filter"><!--right-box leftbox-item1-->
-     <input name="filter" type="button" value="Filter" id="filter" class="blue-button filter-btn">
-        <div class="expand-body right-expand-body">
-          
-          <div class="left">
-            <div class="head">
-              <h1>Governorate</h1>
-            </div>
-            <div class="body">
-              <select name="governorate_filter" id="governorate_filter_id">
+     <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
+     <input name="filter" type="button" value="Filter" id="filter" class="blue-button arrow"> 
+     <div class="menu-filter ltgreen-border" style="display:none;"><!--menu-filter ltgreen-border-->
+     
+    
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Governorate</label></div>
+                <label for="favcity">
+                <select name="governorate_filter" id="governorate_filter_id">
                 <option value=''>---SELECT---</option>
                 {% for governorate in governorates %}
           <option value='{{governorate.id}}' {% if governorate.id == fil_governorate %}selected{%endif%}>{{governorate.name}}</option>
                 {% endfor %}                
               </select>
-            </div>
-          </div>
-
-          <div class="right">
-            <div class="head">
-              <h1>Area</h1>
-            </div>
-            <div class="body">
-              <select name="area_filter" id="area_filter_id">
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label"> <label>Area</label></div>
+                <label for="favcity">
+                <select name="area_filter" id="area_filter_id">
                 <option value=''>---SELECT---</option> 
                 {% for area in areas %}
                 <option value='{{area.id}}' {% if fil_area == area.id %}selected{% endif %}>{{area.name}}</option>
                 {% endfor %}               
               </select>
-            </div>
-          </div>
-          
-          <div class="left">
-            <div class="head">
-              <h1>Investigator</h1>
-            </div>
-            <div class="body">
-              <select name="investigator_filter" id="investigator_filter_id">
+                </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<hr class="hr-dashedpad"> 
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Investigator</label></div>
+				<label for="favcity">
+                <select name="investigator_filter" id="investigator_filter_id">
                 <option value=''>---SELECT---</option>   
                 {% for investigator in investigators %}
                 <option value='{{investigator.id}}' {% if fil_investigator == investigator.id %}selected{% endif %}>{{investigator.name}}</option>
                 {% endfor %}             
               </select>
-            </div>
-          </div>
-
-
-
-          <div class="right">
-            <div class="head">
-              <h1>Status</h1>
-            </div>
-            <div class="body">
-              <select name="status_filter" id="status_filter_id">
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label"> <label>Status</label></div>
+                <label for="favcity">
+                <select name="status_filter" id="status_filter_id">
                 <option value=''>---SELECT---</option>
                 <option value="INVESTIGATOR_APPROVED" {% if fil_status == 'INVESTIGATOR_APPROVED' %}selected{%endif%}>Open</option>
                 <option value="FOLLOWUP_IN_PROGRESS" {% if fil_status == 'FOLLOWUP_IN_PROGRESS' %}selected{%endif%}>Cleaning</option>
                 <option value="FOLLOWUP_CLOSED" {% if fil_status == 'FOLLOWUP_CLOSED' %}selected{%endif%}>Closed</option>
                 <option value="FOLLOWUP_CANCELLED" {% if fil_status == 'FOLLOWUP_CANCELLED' %}selected{%endif%}>Cancelled</option>                
               </select>
-            </div>
-          </div>  
-           
-          <div class="foot">
-            <button type="button" class="red-btn" onclick="set_params_go({});">Submit</button>
-            <button type="button" class="close-btn green-btn">Cancel</button>
-          </div>
+                </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+ 
+<div align="center"> <input class="assignButton" name="assing" type="button" onclick="set_params_go({});" value="Submit"> <input class="cancel-Button close-btn" name="cancel" type="button" value="Cancel"></div>
 
-        </div>
+     
+     </div><!--menu-filter ltgreen-border-->
      </div><!--right-box leftbox-item1-->     
      
      
@@ -250,7 +283,8 @@
 {% endblock %}
 
 {% block javascript %}
-<script src='js/footable.js'></script> 
+<script src='js/footable.js'></script>
+<script src="{% static 'files/js/charts/ticket-chart.js' %}"></script>  
 <script id="rendered-js">
 $('.footable').footable({
   calculateWidthOverride: function () {

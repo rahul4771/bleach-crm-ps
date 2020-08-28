@@ -84,27 +84,14 @@ function drawChart() {
     });
 }
 
-var months = [ "January", "February", "March", "April", "May", "June", 
-               "July", "August", "September", "October", "November", "December" ];
-
 var date1 = new Date();
-var month = date1.getMonth();
-var month2 = date1.getMonth()-1;
-var selectedMonthName = months[month];
-var selectedMonthName2 = months[month2];
-console.log(selectedMonthName,"lp")
-var datestring = selectedMonthName + " " + date1.getFullYear();
-var datestring2 = selectedMonthName2 + " " + date1.getFullYear();
-$('#month1').val(datestring);
-$('#month2').val(datestring2);
-
-$('#monthpicker1').calendar({
-    type: 'month'
-});
-
-$('#monthpicker2').calendar({
-    type: 'month'
-});
+var month = ("0" + (date1.getMonth()-1)).slice(-2);
+var month2 = ("0" + (date1.getMonth())).slice(-2);
+console.log(month,"lp")
+var datestring = month + "/" + date1.getFullYear();
+var datestring2 = month2 + "/" + date1.getFullYear();
+$('#month1').val(datestring2);
+$('#month2').val(datestring);
 
 if ($('#daym').is(':checked')) {
     console.log("runnon")
@@ -124,11 +111,6 @@ $("#ord_fromdate").change(function(){
 
 $("#ord_todate").change(function(){
     console.log('room');
-    drawChart();   
-});
-
-$("#mnt_btn").on("click",function(){
-    console.log($("#month1").val(),$("#month2").val(),'room');
     drawChart();   
 });
 

@@ -59,6 +59,13 @@
             
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Payment List</h2>
+<label for="favcity" style="width:20%;"> 
+<select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
+<option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+<option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+<option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+</select>
+</label>
 <div class="page-entries">Show {{entry_per_page}} entries</div>
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
@@ -68,8 +75,8 @@
 <th data-hide="phone,tablet">Client Name</th>
 <th data-hide="phone">Area</th>
 <th>Contact</th>
-<th data-hide="phone,tablet">Status</th>
 <th data-hide="phone,tablet">Amount</th>
+<th class="align-center" data-hide="phone">Status</th>
 </tr>
 </thead>
 <tbody>
@@ -89,6 +96,7 @@
     {% endfor %}
     </td>
     <td>{{invoice.evaluation.customer.mobile_number}}</td>
+    <td>{{invoice.total_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
     <td><span 
         {% if invoice.payment_status == 'PENDING' %}
         class="red-bg"
@@ -98,7 +106,6 @@
         class="yellow-bg"
         {% endif %}
         >{{invoice.payment_status|default_if_none:''}}</span></td>
-    <td>{{invoice.total_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
     </tr>
     {% endfor %}
 

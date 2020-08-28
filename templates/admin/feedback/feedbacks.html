@@ -14,131 +14,112 @@
      <div class="clients-top-card-wrapper"><!--clients-top-card-wrapper-->
      	<div class="feedback-card-wrapper "><!--feedback-card-wrapper -->
        	<div class="feedback-card-column feedback-column-left whitebg"><!--feedback-card-column feedback-column-left-->
-<div class="rating-containter"><!--rating-containter-->
-	<div class="rating-column column-left-rating"><!--column-left-rating-->
-        <p class="rating-range">{{average_feedback|floatformat:2|default_if_none:'0.0'}}</p>
-        {% if average_feedback == 5 %}
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        {% elif average_feedback < 5 and average_feedback >= 4 %}
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star"></span>
-        {% elif average_feedback < 4 and average_feedback >= 3 %}
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        {% elif average_feedback < 3 and average_feedback >= 2 %}
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        {% elif average_feedback < 2 and average_feedback >= 1 %}
-        <span class="fa fa-star checked"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        {% else %}
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        {% endif %}
-        <p><span class="fa fa-user"></span>{{total_feedbacks}} total </p>
-     </div><!--column-left-rating-->
-     <div class="rating-column column-right-rating"><!--column-right-rating-->
-            <div class="row">
-              {% for percentage in starring_percentages %}
-              <div class="side">
-                <div><span class="fa fa-star"></span> {{percentage.rating}}</div>
-              </div>
-              <div class="middle">
-                <div class="bar-container">
-                  <div class="bar-n"
-                  {% if forloop.counter == 1 %}
-                  style="width:{{percentage.percentage|floatformat:1}}%;background-color: #4CAF50;"
-                  {% elif forloop.counter == 2 %}
-                  style="width:{{percentage.percentage|floatformat:1}}%;background-color: #ff9800;"
-                  {% elif forloop.counter == 3 %}
-                  style="width:{{percentage.percentage|floatformat:1}}%;background-color: #00bcd4;"
-                  {% elif forloop.counter == 4 %}
-                  style="width:{{percentage.percentage|floatformat:1}}%;background-color: #2196F3;"
-                  {% else %}
-                  style="width:{{percentage.percentage|floatformat:1}}%;background-color: #f44336"
-                  {% endif %}
-                  ></div>
-                </div>
-              </div>
-              <div class="side right">
-                <div>{{percentage.percentage|floatformat:1}}%</div>
-              </div>
-              {% endfor %}
+
+    <div class="rating-containter"><!--rating-containter-->
+      <div class="rating-column column-left-rating"><!--column-left-rating-->
+            <p class="rating-range"></p>
+            <div class="rating-star">
             </div>
-        </div><!--column-right-rating-->
-</div><!--rating-containter-->
+            <p><span class="fa fa-user"></span>{{total_feedbacks}} total </p>
+        </div><!--column-left-rating-->
+        <div class="rating-column column-right-rating"><!--column-right-rating-->
+                <div class="row">
+                </div>
+            </div><!--column-right-rating-->
+    </div><!--rating-containter-->
+
         </div><!--feedback-card-column feedback-column-left-->
-		  <div class="feedback-card-column feedback-column-right whitebg"><!--lients-card-column feedback-column-right-->
+		  {% comment %} <div class="feedback-card-column feedback-column-right whitebg"><!--lients-card-column feedback-column-right-->
             <img src="{% static 'files/images/feedback-chart.jpg' %}">
             <div class="chart-btnWrapper"><input name="thismonth" type="button" class="blue-button" value="This Month" id="thismonth"></div>
-          </div><!--lients-card-column feedback-column-right-->
+          </div><!--lients-card-column feedback-column-right--> {% endcomment %}
+
+          <div class="clients-card-column clients-column-right whitebg hover ltyellow-border"><!--clients-card-column clients-column-right-->
+                 
+		<div class="chart_boxDiv"><!--chart_boxDiv-->
+  			<div class="chart_box_Right"><!--chart_box_Right-->
+ 				<!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
+            	<div id="feedback_chart_div" ></div>
+  			</div><!--chart_box_Right-->
+		</div><!--chart_boxDiv-->   
+            
+        <div class="chart_boxDiv"><!--chart_boxDiv-->    
+        
+         <div class="chart_box_Left"><!--chart_box_Left-->
+         <div class="legend-wrapper"><!--legend-wrapper--> 
+            <div class="legend-result count_div"><label class="legend-label">Total Ratings </label> <b class="legend-result-blue" id="total_submitted"></b></div>
+
+         </div><!--legend-wrapper-->
+  		</div><!--chart_box_Left-->
+        <div class="chart_box_Left"><!--chart_box_Left-->        
+        <div class="Button_wrapperChart">
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonthtoggle"><div class="slider round"><span class="on">DATE</span><span class="off">MONTH</span></div></label></div>
+            <input type="text" id="ord_fromdate_fb" class="date_pick date_pick2 date-picker set1 date-pick-left" value={{investigation_date|date:"d-m-Y"}} >
+            <input type="text" id="ord_todate_fb" class="date_pick date_pick2 date-picker set1 date-pick-right" value={{investigation_date|date:"d-m-Y"}} >
+            <div><button id="reset_feedbacks" class="green-button-chart">Reset</button></div>
+            </div>
+            <div class="ui calendar set2" id="monthpicker1" >
+              <div class="ui input left icon">
+                <input type="text" id="month1" class="month_pick set2" >
+              </div>
+            </div>
+
+            <div class="ui calendar set2" id="monthpicker2"  >
+              <div class="ui input left icon">
+                <input type="text" id="month2" class="month_pick set2" >
+              </div>
+            </div>	           
+        </div><!--chart_box_Left-->
+            
+        </div><!--chart_boxDiv-->    
+            
+        </div><!--lients-card-column clients-column-right-->
         </div><!--feedback-card-wrapper -->
 
 </div><!--clients-top-card-wrapper-->       
             
      <div class="main-content-holder"><!--main-content-holder-->            
-     
+
+
      <div class="white-wrapper-search"><!--white-wrapper-search-->
      <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
-          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
      </div><!--left-box leftbox-item1-->
-     <div class="left-box leftbox-item2 params_filter"><!--right-box leftbox-item1-->
-     <input name="filter" type="button" value="Filter" id="filter" class="blue-button filter-btn">
-        <div class="expand-body right-expand-body">
-          
-          <div class="left">
-            <div class="head">
-              <h1>Governorate</h1>
-            </div>
-            <div class="body">
-              <select name="governorate_filter" id="governorate_filter_id">
+     <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
+     <input name="filter" type="button" value="Filter" id="filter" class="blue-button arrow"> 
+     <div class="menu-filter ltgreen-border" style="display:none;"><!--menu-filter ltgreen-border-->
+     
+    
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Governorate</label></div>
+                <label for="favcity">
+                <select name="governorate_filter" id="governorate_filter_id">
                 <option value=''>---SELECT---</option>
                 {% for governorate in governorates %}
           <option value='{{governorate.id}}' {% if governorate.id == fil_governorate %}selected{%endif%}>{{governorate.name}}</option>
                 {% endfor %}                
               </select>
-            </div>
-          </div>
-
-          <div class="right">
-            <div class="head">
-              <h1>Area</h1>
-            </div>
-            <div class="body">
-              <select name="area_filter" id="area_filter_id">
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label"> <label>Area</label></div>
+                <label for="favcity">
+                <select name="area_filter" id="area_filter_id">
                 <option value=''>---SELECT---</option> 
                 {% for area in areas %}
                 <option value='{{area.id}}' {% if fil_area == area.id %}selected{% endif %}>{{area.name}}</option>
                 {% endfor %}               
               </select>
-            </div>
-          </div>
-          
-          <div class="left">
-            <div class="head">
-              <h1>Minimum Starring</h1>
-            </div>
-            <div class="body">
-              <select name="minimumstarring_filter" id="minimumstarring_filter_id">
+                </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<hr class="hr-dashedpad"> 
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Minimum Starring</label></div>
+				<label for="favcity">
+                <select name="minimumstarring_filter" id="minimumstarring_filter_id">
                 <option value=''>---SELECT---</option>
                 <option value="0" {% if fil_minimumstarring == '0' %}selected{% endif %}>0</option>
                 <option value="1" {% if fil_minimumstarring == '1' %}selected{% endif %}>1</option>
@@ -147,15 +128,12 @@
                 <option value="4" {% if fil_minimumstarring == '4' %}selected{% endif %}>4</option>
                 <option value="4" {% if fil_minimumstarring == '5' %}selected{% endif %}>5</option>                
               </select>
-            </div>
-          </div>
-
-          <div class="right">
-            <div class="head">
-              <h1>Maximum Starring</h1>
-            </div>
-            <div class="body">
-              <select name="maximumstarring_filter" id="maximumstarring_filter_id">
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label"> <label>Maximum Starring</label></div>
+                <label for="favcity">
+                <select name="maximumstarring_filter" id="maximumstarring_filter_id">
                 <option value=''>---SELECT---</option>
                 <option value="0" {% if fil_maximumstarring == '0' %}selected{% endif %}>0</option>
                 <option value="1" {% if fil_maximumstarring == '1' %}selected{% endif %}>1</option>
@@ -164,30 +142,30 @@
                 <option value="4" {% if fil_maximumstarring == '4' %}selected{% endif %}>4</option>
                 <option value="4" {% if fil_maximumstarring == '5' %}selected{% endif %}>5</option>                
               </select>
-            </div>
-          </div>
-
-
-          <div class="left">
-            <div class="head">
-              <h1>Service Type</h1>
-            </div>
-            <div class="body">
-              <select name="service_type_filter" id="service_type_filter_id">
+                </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<hr class="hr-dashedpad"> 
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Service Type</label></div>
+				<label for="favcity">
+                <select name="service_type_filter" id="service_type_filter_id">
                 <option value=''>---SELECT---</option>
                 {% for service_type in service_types %}
                 <option value="{{service_type.id}}" {% if service_type.id == fil_service_type %}selected{% endif %}>{{service_type.name}}</option>
                 {% endfor %}                
               </select>
-            </div>
-          </div>  
-           
-          <div class="foot">
-            <button type="button" class="red-btn" onclick="set_params_go({});">Submit</button>
-            <button type="button" class="close-btn green-btn">Cancel</button>
-          </div>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right hide-m"><!--ticket-form-right-->
+  				 
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<div align="center"> <input class="assignButton" name="assing" type="button" onclick="set_params_go({});" value="Submit"> <input class="cancel-Button close-btn" name="cancel" type="button" value="Cancel"></div>
 
-        </div>
+     
+     </div><!--menu-filter ltgreen-border-->
      </div><!--right-box leftbox-item1-->     
      
      
@@ -197,14 +175,14 @@
             
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Feedback List</h2>
-<div class="no_of_entires">
-  <select name="no_of_entries" id="no_of_entries" onchange="set_params_go();">
-    <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
-    <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
-    <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
-  </select>
-</div>
 <div class="page-entries">Show {{entry_per_page}} entries</div>
+<label for="favcity" style="width:20%;"> 
+<select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
+<option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+<option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+<option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+</select>
+</label>
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
 <thead>
@@ -220,7 +198,7 @@
 <tbody>
 
   {% for order in order_wise_feedbacks %}
-    <tr class="clickable-row" data-href="{% url 'bleach_admin:admin-feedbackadvanced' order.evaluation.customer.id order.id %}">
+    <tr class="clickable-row-list" data-href="{% url 'bleach_admin:admin-feedbackadvanced' order.evaluation.customer.id order.id %}">
     <td class="yellow-line">{{order.evaluation.evaluation_id}}</td>
     <td>{{order.evaluation.customer.name}}</td>
     <td>
@@ -349,6 +327,7 @@
 {% endblock %}
 
 {% block javascript %}
+<script src="{% static 'files/js/charts/feedback-chart.js' %}"></script>
 <script id="rendered-js">
 $('.footable').footable({
   calculateWidthOverride: function () {

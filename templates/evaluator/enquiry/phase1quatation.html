@@ -3,7 +3,7 @@
 {% load static %}
 <div class="wrapper"><!--wrapper-->
 {% include "evaluator/common/header.html" %}
-
+    
 <section class="content"><!--content-->
 <div class="container-fluid space topspace"><!--container-fluid space topspace-->
     <div class="welcome-wrapper"><!--welcome-wrapper-->
@@ -13,53 +13,59 @@
             
         
 <div class="order-top-wrapper"><!--order-top-wrapper-->
-	<div class="cleaning-Order-wrapper"><!--cleaning-Order-wrapper-->
-    	<div class="cleaning--left-stretch"><!--cleaning--left-stretch-->
-        	<br>
- 			<div class="blc-number-big">{{evaluation.evaluation_id}}</div>             
-        	<div class="customer-name"><i class="fa blue-text fa-user-circle-o" aria-hidden="true"></i> {{enquiry_user.name}}</div>
-        	<div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;  {{enquiry_user.mobile_number}}</div>
-        	<div class="email"><i class="fa orange-text fa-lg fa-envelope-o" aria-hidden="true"></i> &nbsp;  {{enquiry_user.email}}</div>
-        	<hr class="div">
-        	
+            
+<div class="white-wrapper"><!--white-wrapper-->
+<div class="center-formDiv"><!--center-formDiv-->
+ 
+ 
+      <div class="blc-number-big">{{evaluation.evaluation_id}}</div>             
+          <div class="customer-name"><i class="fa blue-text fa-user-circle-o" aria-hidden="true"></i> {{enquiry_user.name}}</div>
+          <div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;  {{enquiry_user.mobile_number}}</div>
+          <div class="email"><i class="fa orange-text fa-lg fa-envelope-o" aria-hidden="true"></i> &nbsp;  {{enquiry_user.email}}</div>
+          <hr class="div">
+          
             <div class="common-sub-head align-left">Details</div> 
  
 {% for detail in evaluation_details %} 
 <div class="checkin-wrapper-row checkin-forms-boxes"><!--checkin-wrapper-row checkin-forms-boxes-->
-  		<div class="checkin-form-left"><!--checkin-form-left-->
-				{{detail.address.block}}st Block,{{detail.address.building}},{{detail.address.street}} Street,{{detail.address.area.name}}
-  		</div><!--checkin-form-left-->
-  		<div class="checkin-form-left align-center"><!--checkin-form-left-->
-        		<!-- <i class="fa fa-3x gray-text fa-money" aria-hidden="true"></i> -->
+      <div class="checkin-form-left"><!--checkin-form-left-->
+        {{detail.address.block}}st Block,{{detail.address.building}},{{detail.address.street}} Street,{{detail.address.area.name}}
+      </div><!--checkin-form-left-->
+      <div class="checkin-form-left align-center"><!--checkin-form-left-->
         {% if detail.total_cost == 0.0 %}
-          <div class="lg-text yellow-text">Evaluation Pending</div>
-        {% else %} 
-          <div class="lg-text blue-text">{{detail.total_cost}} KD</div>
-        {% endif %}    
-  		</div><!--checkin-form-left-->
-  		<div class="checkin-form-right align-right"><!--checkin-form-right-->
-				<a href="{% url 'evaluator:evaluator-makequatation2' detail.id %}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
-  		</div><!--checkin-form-right-->               
+        <div class="check-in-icons"><img src="{% static 'files/images/evaluation-pending-icon.svg' %}"></div>
+        <div class="lg-text yellow-text">Evaluation Pending</div>
+        {% else %}
+        <div class="check-in-icons"><img src="{% static 'files/images/price-icon.svg' %}"></div>
+        <div class="lg-text blue-text">{{detail.total_cost}} KD</div>
+        {% endif %}
+      </div><!--checkin-form-left-->
+      <div class="checkin-form-right align-right"><!--checkin-form-right-->
+
+        <a href="{% url 'evaluator:evaluator-makequatation2' detail.id %}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
+      
+      </div><!--checkin-form-right-->               
 </div><!--checkin-wrapper-row checkin-forms-boxes-->
-{% endfor %}         
+{% endfor %}        
+        
 <div class="checkin-wrapper-row checkin-forms-boxes ltblue-bg"><!--checkin-wrapper-row checkin-forms-boxes-->
-  		<div class="checkin-form-left align-right"><!--checkin-form-left-->
-				<div class="total-text">Total Amount</div>
+      <div class="checkin-form-left align-right"><!--checkin-form-left-->
+        <div class="total-text">Total Amount</div>
         <br>
-  		</div><!--checkin-form-left-->
-  		<div class="checkin-form-right align-left"><!--checkin-form-right-->
-				<div class="total-Amount">{{evaluation.total_cost}} KD</div>
+      </div><!--checkin-form-left-->
+      <div class="checkin-form-right align-left"><!--checkin-form-right-->
+        <div class="total-Amount">{{evaluation.total_cost}} KD</div>
         <br>
-  		</div><!--checkin-form-right-->               
+      </div><!--checkin-form-right-->               
 </div><!--checkin-wrapper-row checkin-forms-boxes-->         
         
-<br><br>
-
+<br><br><br><br>
+ 
 {% if allow_submit %} 
-<form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+<form method="post" action="" enctype= "multipart/form-data">{% csrf_token %} 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>Payment Policy</label></div>
+          <div class=" bold-text common-label"> <label>Payment Policy</label></div>
                 <label for="favcity">
                 <select id="favcity" name="payment_method" class="payment_method" required>
                 <option value="">Choose Payment Method</option>
@@ -69,70 +75,25 @@
                 </select>
                 </label>
   </div><!--ticket-form-left-->
-  
-
   <div class="ticket-form-right payment_track"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Before Cleaning Amount</label></div>
                 <input name="before_cleaning_amount" type="text" class="textBox" placeholder=" "  >
   </div><!--ticket-form-right-->
-
-  <div class="ticket-form-right payment_track"><!--ticket-form-right-->
-  				<div class=" bold-text common-label"> <label>After Cleaning Amount</label></div>
+    <div class="ticket-form-right payment_track"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>After Cleaning Amount</label></div>
                 <input name="after_cleaning_amount" type="text" class="textBox" placeholder=" "  >
   </div><!--ticket-form-right-->
-
-
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <br>
-<div align="center" onclick="submitAnyForm(this);"><input class="assignButton" name="submit" type="button" value="Submit"> <!-- <input class="cancel-Button" name="cancel" type="button" value="Cancel"> --></div>
+<div align="center" onclick="submitAnyForm(this);"><input class="assignButton" name="submit" type="button" value="Submit">
 <br><br>
 </form>
 {% endif %}
 
+</div><!--center-formDiv-->
+</div><!--white-wrapper-->
 
-
-
-
-
-
-
-
-
-        
-        
-		</div><!--cleaning--left-stretch-->  
-        
-        <div class="cleaning--right-fixed"><!--cleaning--right-fixed-->
-        	<div class="order-card-column whitebg red-border"><!--order-card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/order-client-page/images/card-orders-icon.svg' %}"></div>
-                <div class="column-right"><!--column-right-->
-                <h1>Orders</h1>
-            	<h2 class="red-text"><label>Active<span>{{active_orders_count}}</span></label> </h2>
-            	<p><label>Total<span>{{total_orders_count}}</span></label></p>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
-            </div><!--order-card-column-->
-        <div class="right-bgwrapper"><!--right-bgwrapper-->    
-            <div class="profile-pic"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
-            <div class="client-name">{{enquiry_user.name}}</div>
-            <div class="common-gray-text">{{enquiry_user.mobile_number}}</div>
-            <div class="common-gray-text">{{enquiry_user.email}}</div>
-            <br>
-            <hr class="hr">
-            <div class="common-gray-text">Comapany Name : <span class="bold-text">{{enquiry_user.company}}</span></div>
-            <div class="common-gray-text">Nationality : <span class="bold-text">{{enquiry_user.nationality.name}}</span></div>
-            <div class="common-gray-text">Other Contact : <span class="bold-text">{{enquiry_user.phone_number}}</span></div>
-            <hr class="hr">
-            <br>
-            {% for address in enquiry_user.customer_addresses %}
-            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address {{forloop.counter}}: Appartment</div>
-            <div class="address">{{address.building}}, {{address.street}}, {{address.area.name}}, {{address.governorate.name}}</div>
-            <br>
-            {% endfor %} 
-        </div><!--right-bgwrapper-->     
-        </div><!--cleaning--right-fixed-->  
-	</div><!--cleaning-Order-wrapper-->
+ 
 </div><!--order-top-wrapper-->  
             
             
@@ -142,8 +103,7 @@
 </div><!--container-fluid space topspace-->
 </section><!--content-->
     
-    
-{% include 'agent/common/footer.html' %}
+{% include 'evaluator/common/footer.html' %}
 </div><!--wrapper-->
 {% endblock %}
 
