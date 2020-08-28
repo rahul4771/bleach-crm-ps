@@ -416,12 +416,17 @@ $('document').ready(function(){
           });
         });
         //tendative time initial
-        $(function () {
-          $("#id_form-"+x+"-tendative_time").datetimepicker({
-            pickDate:false,
-            format: 'hh:mm A',
-          });
-        });
+        $("#id_form-"+x+"-tendative_time").timepicker({
+                timeFormat: 'h:mm p',
+                interval: 60,
+                minTime: '12:00am',
+                maxTime: '11:00pm',
+                defaultTime: '11',
+                startTime: '12:00am',
+                dynamic: false,
+                dropdown: true,
+                scrollbar: true
+            });
 
 
         //Initial hiding of cleaning policy
@@ -456,12 +461,17 @@ $(function () {
   });
 });
 //tendative time initial
-$(function () {
-  $("#id_form-"+x+"-tendative_time").datetimepicker({
-    pickDate:false,
-    format: 'hh:mm A',
-  });
-});
+$("#id_form-"+x+"-tendative_time").timepicker({
+        timeFormat: 'h:mm p',
+        interval: 60,
+        minTime: '12:00am',
+        maxTime: '11:00pm',
+        defaultTime: '11',
+        startTime: '12:00am',
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true
+    });
 
 
 //Initial hiding of cleaning policy
