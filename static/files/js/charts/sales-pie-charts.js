@@ -51,7 +51,7 @@ function drawChart() {
 
         var options = {
             chartArea : {height: '80%',},
-            width:300,
+            width:'100%',
             title: "",
             pieHole: 0.4,
             animation: {
@@ -149,7 +149,7 @@ function drawChart2() {
 
         var options = {
             chartArea : {height: '80%',},
-            width:300,
+            width:'100%',
             title: "",
             pieHole: 0.4,
             animation: {
@@ -247,7 +247,7 @@ function drawChart3() {
 
         var options = {
             chartArea : {height: '80%',},
-            width:300,
+            width:'100%',
             title: "",
             pieHole: 0.4,
             animation: {

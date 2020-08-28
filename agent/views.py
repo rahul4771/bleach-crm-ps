@@ -1736,19 +1736,14 @@ def TicketData(request):
     print(dom,prevdate,todate,"pop")
     if dom == 'Month':
         print("kabir")
-        month,year = prevdate.split()
-        month2,year2 = todate.split()
+        month,year = prevdate.split("/")
+        month2,year2 = todate.split("/")
         
-        datetime_object1 = datetime.strptime(month, "%B")
-        month_a = datetime_object1.month
-        print(month_a)
-        datetime_object2 = datetime.strptime(month2, "%B")
-        month_b = datetime_object2.month
-        print(month_b,"mko")
+        print(month,year,month2,year2,"mko")
         tickets = FollowUp.objects.filter(investigation__order__evaluation__quatation_approved_date__year__gte=year, 
-                              investigation__order__evaluation__quatation_approved_date__month__gte=month_a,
+                              investigation__order__evaluation__quatation_approved_date__month__gte=month,
                               investigation__order__evaluation__quatation_approved_date__year__lte=year2,
-                              investigation__order__evaluation__quatation_approved_date__month__lte=month_b).values('investigation__order__evaluation__quatation_approved_date').distinct().order_by('investigation__order__evaluation__quatation_approved_date')
+                              investigation__order__evaluation__quatation_approved_date__month__lte=month2).values('investigation__order__evaluation__quatation_approved_date').distinct().order_by('investigation__order__evaluation__quatation_approved_date')
         print(tickets,"po")
         for tkt in tickets:
             total_tickets = FollowUp.objects.filter(investigation__order__evaluation__quatation_approved_date=tkt['investigation__order__evaluation__quatation_approved_date']).count()
@@ -1793,19 +1788,14 @@ def FeedBackData(request):
     print(dom,prevdate,todate,"pop")
     if dom == 'Month':
         print("kabir")
-        month,year = prevdate.split()
-        month2,year2 = todate.split()
+        month,year = prevdate.split("/")
+        month2,year2 = todate.split("/")
         
-        datetime_object1 = datetime.strptime(month, "%B")
-        month_a = datetime_object1.month
-        print(month_a,year,"yr1")
-        datetime_object2 = datetime.strptime(month2, "%B")
-        month_b = datetime_object2.month
-        print(month_b,year2,"mko")
+        print(month2,year2,"mko")
         feedbacks = FeedBack.objects.filter(response_date__year__gte=year, 
-								response_date__month__gte=month_a,
+								response_date__month__gte=month,
 								response_date__year__lte=year2,
-								response_date__month__lte=month_b).values('response_date').distinct().order_by('-response_date')
+								response_date__month__lte=month2).values('response_date').distinct().order_by('-response_date')
         print(feedbacks,"huh")
         for fb in feedbacks:
             print(fb['response_date'].strftime("%Y-%m-%d"),"fb")
@@ -1848,7 +1838,7 @@ def ResourcesToggle(request):
     data = dict()
     month_year = request.GET.get('month_year',None)
     month,year = month_year.split("/")
-    print(month,year,"moyr")
+    print(month,year,"monthyr")
     staff_type = request.GET.get('staff_type',None)
     print(staff_type)
     
