@@ -90,8 +90,8 @@ var month2 = ("0" + (date1.getMonth())).slice(-2);
 console.log(month,"lp")
 var datestring = month + "/" + date1.getFullYear();
 var datestring2 = month2 + "/" + date1.getFullYear();
-$('#month1').val(datestring2);
-$('#month2').val(datestring);
+$('#month1').val(datestring);
+$('#month2').val(datestring2);
 
 if ($('#daym').is(':checked')) {
     console.log("runnon")
