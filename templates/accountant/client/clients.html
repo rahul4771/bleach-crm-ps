@@ -158,8 +158,8 @@
 <th>Name</th>
 <th data-hide="phone,tablet">Area</th>
 <th data-hide="phone,tablet">Email</th>
-<th>Customer Type</th>
-<th data-hide="phone">Contact</th>
+<th data-hide="phone">Customer Type</th>
+<th>Contact</th>
 <th class="align-center" data-hide="phone">Status</th>
 </tr>
 </thead>
@@ -187,7 +187,8 @@
         {% endif %}
     </td>
     </tr>
-
+{% empty %}
+    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>
 {% endfor %}
 </tbody>
 <tfoot>

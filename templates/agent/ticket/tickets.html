@@ -200,6 +200,8 @@
     <td><span class="red-bg">Cancelled</span></td>
     {% endif %}
     </tr> 
+    {% empty %}
+    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>    
     {% endfor %}
 </tbody>
 <tfoot>
@@ -276,18 +278,6 @@
 
 {% block javascript %}
 <script src="{% static 'files/js/charts/ticket-chart.js' %}"></script> 
-<script id="rendered-js">
-$('.footable').footable({
-  calculateWidthOverride: function () {
-    return { width: $(window).width() };
-  } });
-
-
-// See:
-// http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
-//# sourceURL=pen.js
-    </script>
-
 <script>
 
 $("#governorate_filter_id").change(function(){  

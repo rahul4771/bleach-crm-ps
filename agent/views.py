@@ -226,6 +226,28 @@ def GetCustomerInfo(request):
 	
 	return JsonResponse(data)	
 
+def GetCustomerOrderInfo(request):
+	data               = {}
+	order_info_dict = {}
+
+	query       =   request.GET.get('keyword')
+
+	orders = Order.objects.filter(is_active=True,is_feedback_marked=False,).select_related('evaluation__customer').filter(Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)))
+	
+	if orders:
+		for order in orders:
+			order_info_dict[order.id] = order.evaluation.evaluation_id+'-'+order.evaluation.customer.name 	
+	
+	data['order_details'] = order_info_dict
+
+
+	data['status']     = 'true'
+
+	if order_info_dict == {}: 
+		data['status'] = 'false'	
+	
+	return JsonResponse(data)	
+
 
 #Ajax for getting Cleaning Types
 def GetCleaningMethodsInfo(request):

@@ -196,6 +196,8 @@
     <td><span class="red-bg">Cancelled</span></td>
     {% endif %}
     </tr> 
+    {% empty %}
+    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>
     {% endfor %}
 </tbody>
 <tfoot>

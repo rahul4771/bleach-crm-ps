@@ -161,8 +161,8 @@
 <th>Name</th>
 <th data-hide="phone,tablet">Area</th>
 <th data-hide="phone,tablet">Email</th>
-<th>Customer Type</th>
-<th data-hide="phone">Contact</th>
+<th data-hide="phone">Customer Type</th>
+<th>Contact</th>
 <th class="align-center" data-hide="phone">Status</th>
 </tr>
 </thead>
@@ -178,6 +178,8 @@
     <td>{{client.mobile_number}}</td>
     <td>{% if client.active_status == True %}<span class="green-bg">Active</span>{% else %}<span class="red-bg">Not Active</span>{% endif %}</td>
     </tr>
+{% empty %}
+    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>    
 {% endfor %}
 </tbody>
 <tfoot>
@@ -250,22 +252,9 @@
 </div><!--wrapper-->
 {% endblock %}
 
-{% block javascript %}
-<script src='js/footable.js'></script> 
+{% block javascript %} 
 <script src="{% static 'files/js/charts/client-bar-chart.js' %}"></script>
-<script id="rendered-js">
-$('.footable').footable({
-  calculateWidthOverride: function () {
-    return { width: $(window).width() };
-  } });
-
-// See:
-// http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
-//# sourceURL=pen.js
-    </script>
 <script>
-
-
 $("#governorate_filter_id").change(function(){  
 
   $.ajax({

@@ -65,7 +65,14 @@
         <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">My Cleanings</h2>
 <div>
- <input type="text" id="my_cleaning_calendar" class="date_pick date-picker" value="{{my_cleaning_date|date:'d-m-Y'}}" onchange="set_params_go();">
+ <div class="date-wrapper"><!--date-wrapper-->
+            <div class="date-wrapper-inner"><!--date-wrapper-inner-->
+            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type="text" id="my_cleaning_calendar" value="{{my_cleaning_date|date:'d-m-Y'}}" onchange="set_params_go();" class="date-box date_pick">
+            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='today-date current-date'>Today</button>
+            </div><!--date-wrapper-inner-->
+</div><!--date-wrapper-->
 </div>
 <table class="main-table">
 <tbody>
@@ -110,18 +117,23 @@
 
       <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Investigation Task</h2>
-<div>
- <input type="text" id="investigation_calendar" class="date_pick date-picker" value={{investigation_date|date:"d-m-Y"}} onchange="set_params_go();">
-</div>
+<div class="date-wrapper"><!--date-wrapper-->
+            <div class="date-wrapper-inner"><!--date-wrapper-inner-->
+            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type="text" id="investigation_calendar" value="{{investigation_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='today-date current-date'>Today</button>
+            </div><!--date-wrapper-inner-->
+</div><!--date-wrapper-->
 <table class="main-table">
 <tbody>
 
 {% for investigation in investigations %}
 <tr class="{% if investigation.order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %} blue-line{% else %}green-line{% endif %}">
-<td data-label="Order Name" ><a href="#">{{investigation.order.evaluation.evaluation_id}}</a></td>
-<td data-label="Customenr Name"><a href="#">{{investigation.order.evaluation.customer.name}}</a> </td>
+<td data-label="BLC Number" ><a href="#">{{investigation.order.evaluation.evaluation_id}}</a></td>
+<td data-label="Customer"><a href="#">{{investigation.order.evaluation.customer.name}}</a> </td>
 <td class="hide-a" data-label=""><a href="#">{{investigation.order_schedule.customer_address.area.name}}</a></td>
-<td data-label="Contact Number"><a href="#">{{investigation.order.evaluation.customer.mobile_number}}</a></td>
+<td data-label="Mobile Number"><a href="#">{{investigation.order.evaluation.customer.mobile_number}}</a></td>
 <td class="hide-a" data-label="">
 
 {% for team_detail in investigation.order_schedule.cleaning_team_details %}
@@ -140,7 +152,7 @@
 <td class="hide-a" data-label="">
     <span class="blue-text">{{investigation.order_schedule.order_scheduler_book.cleaning_policy}}</span>
 </td>
-<td class="hide-a" data-label="">
+<td data-label="">
     <a href="{% url 'tl:investigation' investigation.id %}"><span>Checkin</span></a>
 </td>    
 </tr>
@@ -153,7 +165,14 @@
 
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Cleaning Callender</h2>
-<div><input type="text" id="cleaning_calendar" value="{{cleaning_date|date:"d-m-Y"}}" class="date_pick date-picker" onchange="set_params_go();"></div>
+<div class="date-wrapper"><!--date-wrapper-->
+            <div class="date-wrapper-inner"><!--date-wrapper-inner-->
+            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type="text" id="cleaning_calendar" value="{{cleaning_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='today-date current-date'>Today</button>
+            </div><!--date-wrapper-inner-->
+</div><!--date-wrapper-->
 <div class="cleaning-container"><!--cleaning-container-->
 <div class="scrollable"><!--scrollable-->
 <div>
