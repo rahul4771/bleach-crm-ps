@@ -110,10 +110,15 @@
 <script src="{% static 'files/js/hor-scroll.js' %}"></script>
 <script src="{% static 'files/js/date-conf-task-scroll.js' %}"></script>
 <script src="{% static 'files/js/evaluation-tableScroll.js' %}"></script>
-<script src="{% static 'files/js/sort.js' %}"></script>  
-<script src="{% static 'files/js/footable.js' %}"></script> 
+<script src="{% static 'files/js/sort.js' %}"></script>   
 <script src="{% static 'files/js/presentation.js' %}"></script>
-
+<script src="{% static 'files/js/footable.js' %}"></script>
+<script id="rendered-js">
+$('.footable').footable({
+  calculateWidthOverride: function () {
+    return { width: $(window).width() };
+  } });
+</script>
 {% block javascript %}
 {% endblock %}
 {% include 'common_messages.html' %}
