@@ -10,6 +10,12 @@ jQuery(function ($) {
 
 
     var settings = $.extend(true, defaults, args);
+    
+    //Initial Collapse
+    if (window.innerWidth < settings.width)
+        {
+          collapseSidebar();
+        }
 
     init();
 
@@ -24,12 +30,14 @@ jQuery(function ($) {
         toggleFixed();
       });
 
-      $(window).bind("load resize", function () {
-        width = window.innerWidth;
+      // $(window).bind("load resize", function () {
+      //   width = window.innerWidth;
 
-        if (width < settings.width)
-        collapseSidebar();
-      });
+      //   if (width < settings.width)
+      //   {
+      //     collapseSidebar();
+      //   }
+      // });
     };
 
     function toggleSidebar() {
@@ -52,6 +60,7 @@ jQuery(function ($) {
 
     function toggleFixed() {
       $('body').toggleClass(settings.sidebar.fixedClass);
+      alert("Toggle fixed")
     }
   };
 });
