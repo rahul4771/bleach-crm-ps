@@ -106,6 +106,8 @@
         >{{invoice.payment_status|default_if_none:''}}</span></td>
     <td>{{invoice.total_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
     </tr>
+    {% empty %}
+    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>
     {% endfor %}
 </tbody>
 <tfoot>

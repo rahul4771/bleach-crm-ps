@@ -188,7 +188,9 @@
     </td>
     </tr>
 
-{% endfor %}
+{% empty %}
+    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>
+    {% endfor %}
 </tbody>
 <tfoot>
  
