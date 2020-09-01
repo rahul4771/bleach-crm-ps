@@ -21,16 +21,10 @@
 		
 <div class="white-wrapper"><!--white-wrapper-->
 <div class="center-formDiv"><!--center-formDiv-->
-		<form>
 		<div class="order-Number bold-text"> <label>Order Number</label></div>
-			<label for="favcity">
-			<select name="order" id="order_id">
-                <option value="">-- select --</option>
-                {% for order in orders %}
-                <option value="{{order.id}}">{{order.evaluation}}</option> {% endfor %}
-          	</select> 
-			</label>
-		</form>
+    <div id="search_box">
+                <input name="time" type="text" id="search_box" class="textBox auto-complete-input" placeholder="Search here existing clients or BLC Number..." data-min-size="2" data-pattern="[a-zA-Z0-9\s]" data-result-onclick="select_existing_user" data-auto-suggest-url="{% url 'agent:get-customerorderInfo' %}">
+    </div>
 		<hr class="div">
 		
 			<div class="common-sub-head align-left order-details-head">Customer Details</div> 
@@ -134,16 +128,7 @@ $('.ticket-form-button').hide();
 
 $('document').ready(function(){
 	$('#id_order_schedule').empty();
-	$('#id_scheduled_cleaning').empty();
 	$("#id_order_schedule").append($('<option>', {
-
-          value: "", 
-
-         text: "-------------"
-
-      }));
-
-	$("#id_scheduled_cleaning").append($('<option>', {
 
           value: "", 
 
@@ -153,12 +138,74 @@ $('document').ready(function(){
 
 });
 
-//order id select function--display customer tab and form
-	$('#order_id').change(function()
-    {
-        order_id=this.value;
-        
-        $.ajax({
+
+//multiple image add and delete
+$(".imgAdd").click(function () {
+  $(this).closest(".row").find('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="investigation_media" value="Upload Photo" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
+});
+$(document).on("click", "i.del", function () {
+  $(this).parent().remove();
+});
+$(function () {
+  $(document).on("change", ".uploadFile", function ()
+  {
+    var uploadFile = $(this);
+    var files = !!this.files ? this.files : [];
+    if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+
+    if (/^image/.test(files[0].type)) {// only image file
+      var reader = new FileReader(); // instance of the FileReader
+      reader.readAsDataURL(files[0]); // read the local file
+
+      reader.onloadend = function () {// set image data as background of div
+        //alert(uploadFile.closest(".upimage").find('.imagePreview').length);
+        uploadFile.closest(".imgUp").find('.imagePreview').css("background-image", "url(" + this.result + ")");
+      };
+    }
+
+  });
+});
+</script>
+
+
+
+<script>
+  //  auto complete search
+
+$(window).ready(function(){
+
+  $('.auto-complete-input').attr('autocomplete','off').keyup(search_live).focusout(autoSuggestionOnFocusOut
+      ).after($('<div/>',{class:'auto-complete-results'})).parent().css('position','relative',);
+      
+      //Initial case
+      $(".auto-complete-results").css('display','none');
+
+    
+});
+
+//Dont Know
+$(window).ready(function(){
+    $('.goto-url').click(function(){window.location.href=$(this).data('url');});
+}); 
+
+
+
+function autoSuggestionOnFocusOut(event)
+{
+  
+    setTimeout(function(){
+
+      $(event.target).siblings('.auto-complete-results').first().hide();
+      },1000);
+
+}
+
+
+function select_existing_user(event,src){
+          var order_id=$(src).attr('data-id');
+          if(order_id!=0)
+          {
+              $.ajax({
 
         url: "{% url 'agent:get-feedbackorderinfo' %}",
 
@@ -238,115 +285,128 @@ $('document').ready(function(){
             $('.ticket-form-head').show();
             $('.ticket-form').show();
             $('.ticket-form-button').show();
-
+            
         }
 
     });
 
-	//order schedule dropdown 
-		$.ajax({
+    //order schedule dropdown 
+    $.ajax({
 
-			url: "{% url 'agent:get-orderscheduleticketInfo' %}",
+      url: "{% url 'agent:get-orderscheduleticketInfo' %}",
 
-			data: {'order_id':order_id}, 
+      data: {'order_id':order_id}, 
 
-			dataType: 'json',
+      dataType: 'json',
 
-			success: function (data) {
-				
-				order_schedules = data['schedules'];
-				$('#id_order_schedule').empty();
-				$("#id_order_schedule").append($('<option>', {
+      success: function (data) {
+        
+        order_schedules = data['schedules'];
+        $('#id_order_schedule').empty();
+        $("#id_order_schedule").append($('<option>', {
 
-						value: "", 
+            value: "", 
 
-						text: "-------------"
+            text: "-------------"
 
-									}));
-				$.each( order_schedules, function( key, values ) {
+                  }));
+        $.each( order_schedules, function( key, values ) {
 
-				$("#id_order_schedule").append($('<option>', {        
+        $("#id_order_schedule").append($('<option>', {        
 
-					value: key, 
+          value: key, 
 
-					text: values   
+          text: values   
 
-											}));   
+                      }));   
 
-					});
-			}
+          });
+      }
 
-		});
+    });          
 
-    });
-
-
-	$('#id_order_schedule').change(function()
-	{
-		scheduler_id=this.value;
-		
-		$.ajax({
-
-        url: "{% url 'agent:get-cleaningticketInfo' %}",
-
-        data: {'scheduler_id':scheduler_id}, 
-
-        dataType: 'json',
-
-        success: function (data) {
+          }
+          
+}
 
 
-        	order_cleanings = data['cleaning_info'];
-        	
-        	$('#id_scheduled_cleaning').empty();
-        	$("#id_scheduled_cleaning").append($('<option>', {
 
-          			value: "", 
 
-         			text: "-------------"
+function autoSuggestionOnSelect(event){
+    eval($(this).data('select-result'))(event,$(this));
+    $(this).parents('.auto-complete-results').first().hide().siblings('.auto-complete-input').val('');
+}
 
-      							}));
-        	$.each( order_cleanings, function( key, values ) {
 
-              $("#id_scheduled_cleaning").append($('<option>', {        
+//Keyup condition
+function search_live(event){
+    var src=$(this);
+    var min_size=src.data('min-size');
 
-   				 value: key, 
-
-    			text: values   
-
- 										 }));   
-
-      			});
+    var test_pattern=src.data('pattern');
+    if(test_pattern)
+        {
+        test_pattern=RegExp(test_pattern);
+        var inp = String.fromCharCode(event.keyCode);
+        if (! test_pattern.test(inp)) return;
         }
+        var val=src.val();
+    if(min_size)
+        {
+        if(val.length<min_size) return;
+        }
+    var fetch_params_fn_name=eval(src.data('fetch-params'));
+    var data={};
+    if(fetch_params_fn_name)
+        data=fetch_params_fn_name();
+    data['keyword']=val;//typed key words
+    var url=src.data('auto-suggest-url');//list fetching url
+    var on_result_click=src.data('result-onclick');//after result url
 
-    });
-	});
 
-//multiple image add and delete
-$(".imgAdd").click(function () {
-  $(this).closest(".row").find('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="investigation_media" value="Upload Photo" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
-});
-$(document).on("click", "i.del", function () {
-  $(this).parent().remove();
-});
-$(function () {
-  $(document).on("change", ".uploadFile", function ()
-  {
-    var uploadFile = $(this);
-    var files = !!this.files ? this.files : [];
-    if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+    var ajax={type:'get',url:url,data:data,
+  
+    success:function (data){
+      var listOfObjects = [];
+        if( data['order_details'])
+            {
 
-    if (/^image/.test(files[0].type)) {// only image file
-      var reader = new FileReader(); // instance of the FileReader
-      reader.readAsDataURL(files[0]); // read the local file
+            $res=src.siblings('.auto-complete-results').first();
+            $res.contents().remove();
+            
 
-      reader.onloadend = function () {// set image data as background of div
-        //alert(uploadFile.closest(".upimage").find('.imagePreview').length);
-        uploadFile.closest(".imgUp").find('.imagePreview').css("background-image", "url(" + this.result + ")");
-      };
-    }
 
-  });
-});
+            $.each( data['order_details'],(i,v)=>{
+              $('<div/>',{class:'auto-complete-result-item','data-id':i,
+                text:v}).appendTo($res).
+                on('click',autoSuggestionOnSelect).
+                data('select-result',on_result_click).
+                attr('tabindex',-1);
+            });
+            $res.css('position','absolute');
+            $res.outerWidth(src.outerWidth());
+            $res.css('top',(src.position().top+src.outerHeight()).toString()+'px');
+          
+                $res.show();
+            }
+          if(data['status'] == 'false'){
+            $res=src.siblings('.auto-complete-results').first();
+            $res.contents().remove();
+          
+            $('<div/>',{class:'auto-complete-result-item','data-id':0,
+                text:"No result Found"}).appendTo($res).
+                on('click',autoSuggestionOnSelect).
+                data('select-result',on_result_click).
+                attr('tabindex',-1);
+            $res.outerWidth(src.outerWidth());
+            $res.css('top',(src.position().top+src.outerHeight()).toString()+'px');
+          
+                $res.show();
+          }
+          }
+        };
+        $.ajax(ajax);
+}
+
 </script>
 {% endblock %}	
