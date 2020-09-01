@@ -64,9 +64,14 @@
           
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Investigation Task</h2>
-<div>
- <input type="text" id="investigation_calendar" class="date_pick date-picker" value={{investigation_date|date:"d-m-Y"}} onchange="set_params_go();">
-</div>
+<div class="date-wrapper"><!--date-wrapper-->
+            <div class="date-wrapper-inner"><!--date-wrapper-inner-->
+            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type="text" id="investigation_calendar" value="{{investigation_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='today-date current-date'>Today</button>
+            </div><!--date-wrapper-inner-->
+</div><!--date-wrapper-->
 <table class="main-table">
 <tbody>
 
@@ -105,11 +110,16 @@
 </div><!--white-wrapper-->   
              
 
- <div class="plain-wrapper"><!--plain-wrapper-->
- <div class="two-column-fixed-right"><!--two-column-fixed-right-->
-    <div class="two-column-fixed-items two-column-fixed-left-items"><!--two-column-fixed-items two-column-fixed-left-items-->
+ <div class="white-wrapper"><!--white-wrapper-->
     <h2 class="h2">My Evaluation</h2>
- <div><input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" class="date_pick date-picker" onchange="set_params_go();"></div>
+ <div class="date-wrapper"><!--date-wrapper-->
+            <div class="date-wrapper-inner"><!--date-wrapper-inner-->
+            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='today-date current-date'>Today</button>
+            </div><!--date-wrapper-inner-->
+</div><!--date-wrapper-->
 
 <div id="table-scroll" class="table-scroll"><!--table-scroll-->
 <div class="table-wrap"><!--table-wrap-->
@@ -152,20 +162,19 @@
 </div><!--table-scroll-->
 
 
-
-    </div><!--two-column-fixed-items two-column-fixed-left-items-->
-    
-    <div class="two-column-fixed-items two-column-fixed-right-items"><!--two-column-fixed-itemss two-column-fixed-right-items-->
-    <img src="{% static 'files/images/daily-target-chart.jpg' %}">
-    </div><!--two-column-fixed-items two-column-fixed-right-items-->
- </div><!--two-column-fixed-right-->
-
-</div><!--plain-wrapper-->  
+</div><!--white-wrapper-->  
  
 
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Cleaning Callender</h2>
-<input type="text" id="cleaning_calendar" value="{{schedule_date|date:"d-m-Y"}}" class="date_pick date-picker" onchange="set_params_go();">
+<div class="date-wrapper"><!--date-wrapper-->
+            <div class="date-wrapper-inner"><!--date-wrapper-inner-->
+            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type="text" id="cleaning_calendar" value="{{schedule_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='today-date current-date'>Today</button>
+            </div><!--date-wrapper-inner-->
+</div><!--date-wrapper-->
 <div class="cleaning-container"><!--cleaning-container-->
 <div class="scrollable"><!--scrollable-->
 <div>
