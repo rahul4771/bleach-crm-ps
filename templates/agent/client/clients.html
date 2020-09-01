@@ -178,6 +178,8 @@
     <td>{{client.mobile_number}}</td>
     <td>{% if client.active_status == True %}<span class="green-bg">Active</span>{% else %}<span class="red-bg">Not Active</span>{% endif %}</td>
     </tr>
+{% empty %}
+    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>    
 {% endfor %}
 </tbody>
 <tfoot>

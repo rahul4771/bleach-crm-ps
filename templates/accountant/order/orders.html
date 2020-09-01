@@ -204,6 +204,8 @@
     </td>
     <td><a href="#"><img src="{% static 'files/images/icon-download.svg' %}" align="absmiddle" class="download-icon"></a></td>
     </tr>    
+    {% empty %}
+    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td></tr>
     {% endfor %}
 </tbody>
 <tfoot>

@@ -130,10 +130,10 @@
 
 {% for investigation in investigations %}
 <tr class="{% if investigation.order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %} blue-line{% else %}green-line{% endif %}">
-<td data-label="Order Name" ><a href="#">{{investigation.order.evaluation.evaluation_id}}</a></td>
-<td data-label="Customenr Name"><a href="#">{{investigation.order.evaluation.customer.name}}</a> </td>
+<td data-label="BLC Number" ><a href="#">{{investigation.order.evaluation.evaluation_id}}</a></td>
+<td data-label="Customer"><a href="#">{{investigation.order.evaluation.customer.name}}</a> </td>
 <td class="hide-a" data-label=""><a href="#">{{investigation.order_schedule.customer_address.area.name}}</a></td>
-<td data-label="Contact Number"><a href="#">{{investigation.order.evaluation.customer.mobile_number}}</a></td>
+<td data-label="Mobile Number"><a href="#">{{investigation.order.evaluation.customer.mobile_number}}</a></td>
 <td class="hide-a" data-label="">
 
 {% for team_detail in investigation.order_schedule.cleaning_team_details %}
@@ -152,7 +152,7 @@
 <td class="hide-a" data-label="">
     <span class="blue-text">{{investigation.order_schedule.order_scheduler_book.cleaning_policy}}</span>
 </td>
-<td class="hide-a" data-label="">
+<td data-label="">
     <a href="{% url 'tl:investigation' investigation.id %}"><span>Checkin</span></a>
 </td>    
 </tr>
