@@ -40,7 +40,7 @@ function drawChart() {
         contentType: "application/json;charset=utf-8",
         
         success: function(data) {
-        console.log('lp')
+        console.log(data.length,'lpqs')
         var quotes = [['Date', 'Tickets', 'Follow-up Cleaning']];
         var tkt_tot = 0;
         var foll_tkt = 0;
@@ -50,7 +50,7 @@ function drawChart() {
             var year = parseInt(vals[0]);
             var month = parseInt (vals[1]);
             var day = parseInt (vals[2]);
-            // console.log(year,month,day)
+            console.log(year,month,day,value.total,value.followup,"ter")
         quotes.push([new Date(year,month-1,day),value.total,value.followup]);
             tkt_tot += parseInt(value.total);
             foll_tkt += parseInt(value.followup);
