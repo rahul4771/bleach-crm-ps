@@ -513,7 +513,13 @@ class InvestigationTask(IsSeniorTeamLeader,View):
 			end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
 
 			Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True,check_out=timezone.now(),notes=request.POST.get('notes'))
-			follow_up = FollowUp.objects.create(investigation_id=investigation_id,status='INVESTIGATOR_APPROVED',no_of_cleaners=no_of_cleaners,cleaning_hours=cleaning_hours)
+			
+			follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+			follow_up.status         = 'INVESTIGATOR_APPROVED'
+			follow_up.no_of_cleaners = no_of_cleaners
+			follow_up.cleaning_hours = cleaning_hours
+			follow_up.save()
+			
 			follow_up_scheduler = FollowUpScheduler.objects.create(follow_up=follow_up,start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
 		
 		else:

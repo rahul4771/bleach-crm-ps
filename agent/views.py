@@ -1860,11 +1860,9 @@ class TicketRegistration(IsAgent,View):
 
 	def post(self,request):
 		order_id           = request.POST.get('order_id')
-		# order_schedule		=	request.POST.get('order_schedule')
-		# investigator		=	request.POST.get('investigator')
-		# scheduled_at		=	request.POST.get('scheduled_at')
+
 		investigation_medias = request.FILES.getlist('investigation_media')
-		print(investigation_medias,"ims")
+
 		investigation_form = InvestigationForm(request.POST)
 		
 		if investigation_form.is_valid(): 
@@ -1882,6 +1880,8 @@ class TicketRegistration(IsAgent,View):
 						is_active = True
 					)
 
+			FollowUp.objects.create(investigation=investigation_form_save,status='TICKET_RISED')
+					
 			messages.success(request,"Ticket Raised Succesfully!")
 		else:
 			messages.error(request,get_error(investigation_form))

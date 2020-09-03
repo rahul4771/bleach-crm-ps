@@ -176,6 +176,8 @@
     class="yellow-line"
     {% elif ticket.status == 'FOLLOWUP_CLOSED' %}
     class="green-line"
+    {% elif ticket.status == 'TICKET_RISED' %}
+    class="blue-line"
     {% else %}
     class="red-line"
     {% endif %}
@@ -192,6 +194,8 @@
     <td><span class="yellow-bg">Cleaning</span></td>     
     {% elif ticket.status == 'FOLLOWUP_CLOSED' %}
     <td><span class="green-bg">Closed</span></td>
+    {% elif ticket.status == 'TICKET_RISED' %}
+    <td><span class="blue-bg">Ticket Rised</span></td>
     {% else %}
     <td><span class="red-bg">Cancelled</span></td>
     {% endif %}
