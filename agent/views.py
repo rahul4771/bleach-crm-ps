@@ -79,7 +79,6 @@ def GetArea(request):
 
 	return JsonResponse(dropdown_areas)
 
-from django.core import serializers
 #Ajax for get feedback Order Information
 def GetFeedbackOrderInfo(request):
 
@@ -151,9 +150,76 @@ def GetFeedbackOrderInfo(request):
 		dropdown_order_info['active_orders_count'] = active_orders_count 
 		dropdown_order_info['total_orders_count']  = total_orders_count		
 
-
-		print(dropdown_order_info)	
+	
 		return JsonResponse(dropdown_order_info)
+
+def GetCleaningInfo(request):
+	cleaning_dict = {}
+
+	scheduler_id  = request.GET.get('schedule_id')
+	
+	schedule  = OrderScheduler.objects.select_related('order_scheduler_book','customer_address__customer','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_member')),to_attr='cleaning_team')).get(id=scheduler_id,is_active=True)
+	
+
+	cleaning_dict['order_no'] 		 = schedule.order.order_no
+	cleaning_dict['address']  		 = schedule.customer_address.apartment+', '+schedule.customer_address.block+', '+schedule.customer_address.street+', '+schedule.customer_address.avenue+', '+schedule.customer_address.building+', '+schedule.customer_address.area.name+', '+schedule.customer_address.governorate.name
+	cleaning_dict['customer'] 		 = schedule.customer_address.customer.name
+	cleaning_dict['customer_mobile'] = schedule.customer_address.customer.mobile_number	
+	cleaning_dict['start_at_date']   = (schedule.start_at+timedelta(hours=3)).strftime('%d-%m-%Y')
+	cleaning_dict['start_at_time']   = (schedule.start_at+timedelta(hours=3)).strftime('%I:%M %p')
+	cleaning_dict['duration']		 = schedule.order_scheduler_book.cleaning_hours
+
+	#cleaners and team leader
+	cleaners_info ={}
+
+	cleaners_info['cleaners']   = []
+	for team in schedule.cleaning_team:
+		cleaning_dict['team_leader'] 	= team.team_leader.name
+		cleaning_dict['team_leader_id'] = team.team_leader.id
+		for cleaner in team.cleaning_member:
+			cleaner_dict = {}
+
+			cleaner_dict["member_name"] 	= cleaner.member.name
+			cleaner_dict["member_id"] 		= cleaner.member.id
+
+			cleaners_info['cleaners'].append(cleaner_dict)
+
+	cleaning_dict['cleanersinfo'] =	cleaners_info		
+	return JsonResponse(cleaning_dict)
+
+def GetFollowupInfo(request):
+	cleaning_dict = {}
+
+	scheduler_id  = request.GET.get('schedule_id')
+	
+	schedule  = FollowUpScheduler.objects.select_related('customer_address__customer','follow_up__investigation__order').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_member')),to_attr='cleaning_team')).get(id=scheduler_id)
+
+	cleaning_dict['order_no'] 		 = schedule.follow_up.investigation.order.order_no
+	cleaning_dict['address']  		 = schedule.customer_address.apartment+', '+schedule.customer_address.block+', '+schedule.customer_address.street+', '+schedule.customer_address.avenue+', '+schedule.customer_address.building+', '+schedule.customer_address.area.name+', '+schedule.customer_address.governorate.name
+	cleaning_dict['customer'] 		 = schedule.customer_address.customer.name
+	cleaning_dict['customer_mobile'] = schedule.customer_address.customer.mobile_number	
+	cleaning_dict['start_at_date']   = (schedule.start_at+timedelta(hours=3)).strftime('%d-%m-%Y')
+	cleaning_dict['start_at_time']   = (schedule.start_at+timedelta(hours=3)).strftime('%I:%M %p')
+	cleaning_dict['duration']		 = schedule.follow_up.cleaning_hours
+
+	#cleaners and team leader
+	cleaners_info ={}
+
+	cleaners_info['cleaners']   = []
+	for team in schedule.cleaning_team:
+		cleaning_dict['team_leader'] 	= team.team_leader.name
+		cleaning_dict['team_leader_id'] = team.team_leader.id
+		for cleaner in team.cleaning_member:
+			cleaner_dict = {}
+
+			cleaner_dict["member_name"] 	= cleaner.member.name
+			cleaner_dict["member_id"] 		= cleaner.member.id
+
+			cleaners_info['cleaners'].append(cleaner_dict)
+
+	cleaning_dict['cleanersinfo'] =	cleaners_info		
+	return JsonResponse(cleaning_dict)
+
 
 #Ajax for getticket ordershedules address Information
 def GetOrderScheduleTicketInfo(request):
@@ -225,6 +291,34 @@ def GetCustomerInfo(request):
 		data['status'] = 'false'	
 	
 	return JsonResponse(data)	
+
+#aJAX for customer address
+def GetCustomerAddress(request):
+
+	data               	  = {}
+	customer_address_dict = {}
+
+	customer_id       	  =   request.GET.get('customer_id')
+
+
+	customer_address = Address.objects.filter(is_active=True,customer__id=customer_id,currently_active=True).select_related('area')
+
+
+	if customer_address:
+		for address in customer_address:
+			customer_address_dict[address.id] = address.area.name+'-'+address.building 	
+	
+	data['customer_address'] = customer_address_dict
+
+
+	data['status']     = 'true'
+
+	if customer_address_dict == {}: 
+		data['status'] = 'false'	
+	
+	return JsonResponse(data)
+
+
 
 def GetCustomerOrderInfo(request):
 	data               = {}
@@ -398,7 +492,14 @@ class AgentHome(IsAgent,View):
 		except:
 			spp_calendar_followup_schedules = None
 		
-		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_average_feedback':today_average_feedback,'week_average_feedback':week_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'order_schedules':order_schedules,'follow_up_schedules':follow_up_schedules,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,})
+
+		#for edit popup
+		try:
+			workers = UserProfile.objects.filter(is_active=True)
+		except:
+			workers = None
+
+		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_average_feedback':today_average_feedback,'week_average_feedback':week_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'order_schedules':order_schedules,'follow_up_schedules':follow_up_schedules,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'workers':workers,})
 
 
 	def post(self,request):
@@ -432,18 +533,87 @@ class AgentHome(IsAgent,View):
 				OrderScheduler.objects.filter(id=orderscheduler_id).update(status='CONFIRMED',start_at=start_at,end_at=end_at)
 				messages.success(request,"Cleaning Date Succesfully Confirmed")
 
-		elif action_mode =='edit_evaluation':
+		elif action_mode == 'edit_evaluation':
 			evaluation_detail_id 			  = request.POST.get('evaluation_id')
 
 			new_proposed_date                 = request.POST.get('proposed_date')
 			new_proposed_time                 = request.POST.get('proposed_time')
-
 			converted_proposed_datetime       = datetime.strptime(new_proposed_date+' '+new_proposed_time,'%d-%m-%Y %I:%M %p')
 
+			evaluator_id                      = request.POST.get('evaluator')
+			address_id                        = request.POST.get('address')
+			evaluator_notes                   = request.POST.get('notes')
 			#update evaluation time
-			EvaluationDetails.objects.filter(id=evaluation_detail_id).update(proposed_time=converted_proposed_datetime)	
+			EvaluationDetails.objects.filter(id=evaluation_detail_id).update(proposed_time=converted_proposed_datetime,evaluator_id=evaluator_id,address_id=address_id,evaluator_note=evaluator_notes)	
 			messages.success(request,"Evaluation Edited Succesfully")
 
+		elif action_mode == 'edit_cleaning':
+			schedule_id                       = request.POST.get('cleaning_id')
+
+			cleaning_date 	= request.POST.get('cleaning_date')
+			cleaning_time   = request.POST.get('cleaning_time')
+			cleaning_hours 	= int(request.POST.get('cleaning_hours'))
+			
+			start_at         = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
+			end_at           = start_at + timedelta(hours=cleaning_hours)
+
+			team_leader_id   = request.POST.get('team_leader')
+
+			#update schedule
+			order_scheduler  = OrderScheduler.objects.select_related('order_scheduler_book').get(id=schedule_id)
+			order_scheduler.start_at 							= start_at
+			order_scheduler.end_at   							= end_at
+			order_scheduler.order_scheduler_book.cleaning_hours = cleaning_hours
+
+			order_scheduler.save()
+			order_scheduler.order_scheduler_book.save() 
+
+			#update cleaning team
+			CleaningTeam.objects.filter(order_scheduler=order_scheduler).update(start_at=start_at,end_at=end_at,team_leader_id=team_leader_id)
+
+			#update Cleaning team members
+			cleaners              = request.POST.getlist('team_member')
+			cleaning_team_members = CleaningTeamMember.objects.filter(is_active=True,team__order_scheduler=order_scheduler,member__user_type='CLEANER')
+			if not cleaners==['']:
+				for cleaner,cleaner_db in zip(cleaners,cleaning_team_members):
+					cleaner_db.member_id = cleaner 
+					cleaner_db.save()
+
+			messages.success(request,"Cleaning Edited Succesfully")
+
+		elif action_mode == 'edit_followup':
+			schedule_id                       = request.POST.get('followup_id')
+
+			cleaning_date 	= request.POST.get('cleaning_date')
+			cleaning_time   = request.POST.get('cleaning_time')
+			cleaning_hours 	= int(request.POST.get('cleaning_hours'))
+			
+			start_at         = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
+			end_at           = start_at + timedelta(hours=cleaning_hours)
+
+			team_leader_id   = request.POST.get('team_leader')
+
+			#update schedule
+			followup_scheduler  = FollowUpScheduler.objects.select_related('follow_up').get(id=schedule_id)
+			followup_scheduler.start_at 							= start_at
+			followup_scheduler.end_at   							= end_at
+			followup_scheduler.follow_up.cleaning_hours 			= cleaning_hours
+
+			followup_scheduler.save()
+			followup_scheduler.follow_up.save() 
+
+			#update cleaning team
+			FollowUpTeam.objects.filter(followup_scheduler=followup_scheduler).update(start_at=start_at,end_at=end_at,team_leader_id=team_leader_id)
+
+			#update Cleaning team members
+			cleaners              = request.POST.getlist('team_member')
+			followup_team_members = FollowUpTeamMember.objects.filter(is_active=True,team__followup_scheduler=followup_scheduler,member__user_type='CLEANER')
+			if not cleaners==['']:
+				for cleaner,cleaner_db in zip(cleaners,followup_team_members):
+					cleaner_db.member_id = cleaner 
+					cleaner_db.save()
+
+			messages.success(request,"Followup Cleaning Edited Succesfully")	
 		return redirect('agent:agentdash-board')	
 
 
@@ -1690,11 +1860,9 @@ class TicketRegistration(IsAgent,View):
 
 	def post(self,request):
 		order_id           = request.POST.get('order_id')
-		# order_schedule		=	request.POST.get('order_schedule')
-		# investigator		=	request.POST.get('investigator')
-		# scheduled_at		=	request.POST.get('scheduled_at')
+
 		investigation_medias = request.FILES.getlist('investigation_media')
-		print(investigation_medias,"ims")
+
 		investigation_form = InvestigationForm(request.POST)
 		
 		if investigation_form.is_valid(): 
@@ -1712,6 +1880,8 @@ class TicketRegistration(IsAgent,View):
 						is_active = True
 					)
 
+			FollowUp.objects.create(investigation=investigation_form_save,status='TICKET_RISED')
+					
 			messages.success(request,"Ticket Raised Succesfully!")
 		else:
 			messages.error(request,get_error(investigation_form))

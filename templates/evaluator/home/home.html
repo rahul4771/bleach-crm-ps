@@ -384,7 +384,7 @@ $('document').ready(function(){
                             }
 
 
-                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{schedule.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.follow_up.investigation.investigator.profile_image %}src="{{schedule.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %}></div><center>{{schedule.customer_address.area}}</center> <div class="right-value yellow-text">{{schedule.follow_up.investigation.order_schedule.order_scheduler_book.number_of_cleaners}}</div></div></td></tr>')
+                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{schedule.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.follow_up.investigation.investigator.profile_image %}src="{{schedule.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %}></div><center>{{schedule.customer_address.area}}</center> <div class="right-value yellow-text">{{schedule.follow_up.no_of_cleaners}}</div></div></td></tr>')
                         }
                         //append td to the raw 
                         else
@@ -401,7 +401,7 @@ $('document').ready(function(){
                             }
 
 
-                            $('#cleaning_table tr:last td').append('<div id="followupschedule{{schedule.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.follow_up.investigation.investigator.profile_image %}src="{{schedule.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %}></div><center>{{schedule.customer_address.area}}</center> <div class="right-value yellow-text">{{schedule.follow_up.investigation.order_schedule.order_scheduler_book.number_of_cleaners}}</div></div>')      
+                            $('#cleaning_table tr:last td').append('<div id="followupschedule{{schedule.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.follow_up.investigation.investigator.profile_image %}src="{{schedule.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %}></div><center>{{schedule.customer_address.area}}</center> <div class="right-value yellow-text">{{schedule.follow_up.no_of_cleaners}}</div></div>')      
                         }
                     }
                 }
@@ -445,7 +445,7 @@ $('document').ready(function(){
        second_raw_width_percentage = 100/24*ending_time;
 
 
-       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{spp_schedule.id}}" class="sp-yellow-box-second" style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div class="right-value yellow-text">{{spp_schedule.follow_up.investigation.order_schedule.order_scheduler_book.number_of_cleaners}}</div></div></td></tr>')
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{spp_schedule.id}}" class="sp-yellow-box-second" style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div class="right-value yellow-text">{{spp_schedule.follow_up.no_of_cleaners}}</div></div></td></tr>')
        
        {% endfor %}
 
