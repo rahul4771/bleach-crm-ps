@@ -52,7 +52,7 @@ function drawBasic() {
                 hAxis: {
                 minValue: 0
                 },
-                width:500,
+                width:'100%',
                 height:200,
                 animation:{
                     duration:1000,

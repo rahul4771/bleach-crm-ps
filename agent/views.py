@@ -1932,20 +1932,25 @@ def TicketData(request):
         month2,year2 = todate.split("/")
         
         print(month,year,month2,year2,"mko")
-        tickets = FollowUp.objects.filter(investigation__order__evaluation__quatation_approved_date__year__gte=year, 
-                              investigation__order__evaluation__quatation_approved_date__month__gte=month,
-                              investigation__order__evaluation__quatation_approved_date__year__lte=year2,
-                              investigation__order__evaluation__quatation_approved_date__month__lte=month2).values('investigation__order__evaluation__quatation_approved_date').distinct().order_by('investigation__order__evaluation__quatation_approved_date')
+
+        try:
+	        tickets = FollowUp.objects.filter(investigation__order__evaluation__quatation_approved_date__year__gte=year, 
+	                              investigation__order__evaluation__quatation_approved_date__month__gte=month,
+	                              investigation__order__evaluation__quatation_approved_date__year__lte=year2,
+	                              investigation__order__evaluation__quatation_approved_date__month__lte=month2).values('investigation__order__evaluation__quatation_approved_date').distinct().order_by('investigation__order__evaluation__quatation_approved_date')
+        except:
+        	tickets = [{'investigation__order__evaluation__quatation_approved_date':datetime.datetime(year,month,'01')}]
+
         print(tickets,"po")
         for tkt in tickets:
             total_tickets = FollowUp.objects.filter(investigation__order__evaluation__quatation_approved_date=tkt['investigation__order__evaluation__quatation_approved_date']).count()
             followup_tickets = FollowUp.objects.filter(status='FOLLOWUP_CLOSED',investigation__order__evaluation__quatation_approved_date=tkt['investigation__order__evaluation__quatation_approved_date']).count()
             print(total_tickets,followup_tickets,"huy")
             tkt_dict = {
-            "date" : tkt['investigation__order__evaluation__quatation_approved_date'],
-            "total" : total_tickets,
-            "followup" : followup_tickets
-            }
+			"date" : tkt['investigation__order__evaluation__quatation_approved_date'],
+			"total" : total_tickets,
+			"followup" : followup_tickets
+			}
             data.append(tkt_dict)
     else:
         print("kab")
