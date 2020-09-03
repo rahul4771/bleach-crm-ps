@@ -1763,13 +1763,10 @@ def TicketData(request):
         
         print(month,year,month2,year2,"mko")
 
-        try:
-	        tickets = FollowUp.objects.filter(investigation__order__evaluation__quatation_approved_date__year__gte=year, 
-	                              investigation__order__evaluation__quatation_approved_date__month__gte=month,
-	                              investigation__order__evaluation__quatation_approved_date__year__lte=year2,
-	                              investigation__order__evaluation__quatation_approved_date__month__lte=month2).values('investigation__order__evaluation__quatation_approved_date').distinct().order_by('investigation__order__evaluation__quatation_approved_date')
-        except:
-        	tickets = [{'investigation__order__evaluation__quatation_approved_date':datetime.datetime(year,month,'01')}]
+        tickets = FollowUp.objects.filter(investigation__order__evaluation__quatation_approved_date__year__gte=year, 
+								investigation__order__evaluation__quatation_approved_date__month__gte=month,
+								investigation__order__evaluation__quatation_approved_date__year__lte=year2,
+								investigation__order__evaluation__quatation_approved_date__month__lte=month2).values('investigation__order__evaluation__quatation_approved_date').distinct().order_by('investigation__order__evaluation__quatation_approved_date')
 
         print(tickets,"po")
         for tkt in tickets:

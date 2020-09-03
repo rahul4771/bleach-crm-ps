@@ -30,7 +30,7 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>Name</label></div>
-                <input name="name" id="id_name" type="text" class="textBox" placeholder=" " required>
+                <input name="name" id="id_name" type="text" class="textBox OnlyText" placeholder=" " required>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label"> <label>Gender</label></div>
@@ -49,11 +49,13 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>Email</label></div>
-                <input name="email" type="text" class="textBox" placeholder=" " required>
+                <input name="email" type="text" class="textBox" placeholder=" " oninput="ValidateEmail(this);" required>
+                <p class="email_alert" style="color:Red;"></p>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label"> <label>Phone</label></div>
-				<input name="mobile_number" type="text" class="textBox" placeholder=" " required>
+				<input name="mobile_number" type="text" id="id_mobile" class="textBox OnlyNumber" placeholder=" " oninput="phonenumber(this);" maxlength="8" required>
+        <p class="mobile_alert" style="color:Red;"></p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -96,7 +98,7 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label"> <label>Job Title</label></div>
-				<input name="job_title" id="id_job_title" type="text" class="textBox" placeholder=" "  >
+				<input name="job_title" id="id_job_title" type="text" class="textBox OnlyText" placeholder=" "  >
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 </div>
@@ -110,7 +112,8 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label"> <label>Other Mobile</label></div>
-				<input name="phone_number" id="id_phone_number" class="textBox" placeholder=" "  >
+				<input name="phone_number" id="id_phone_number" class="textBox OnlyNumber" placeholder=" " oninput="phonenumber(this);" maxlength="8" >
+        <p class="mobile_alert" style="color:Red;"></p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">
@@ -140,13 +143,13 @@
 <div class="close-div close-div-address"></div>
 <div class="address3-wrapper-row address3-forms-boxes"><!--address3-wrapper-row address3-forms-boxes-->
     <div class="address3-form-left"><!--address3-form-left-->
-        <div class=" bold-text common-label"> <label>Appartment</label></div>
+        <div class=" bold-text common-label"> <label>Apartment</label></div>
         <input name="form-0-apartment" type="text" class="textBox" placeholder=" "  >
     </div><!--address3-form-left-->
     
     <div class="address3-form-right"><!--address3-form-right-->
         <div class=" bold-text common-label"> <label>Floor</label></div>
-        <input name="form-0-floor" type="text" class="textBox" placeholder=" "  >
+        <input name="form-0-floor" type="text" class="textBox OnlyNumber" maxlength="3" placeholder=" "  >
     	</div><!--address3-form-right-->    
 </div><!--address3-wrapper-row address3-forms-boxes-->
 <hr class="hr-dashedpad">

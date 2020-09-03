@@ -40,11 +40,10 @@ function drawChart() {
         contentType: "application/json;charset=utf-8",
         
         success: function(data) {
-        console.log(data.length,'lpqs')
         var quotes = [['Date', 'Tickets', 'Follow-up Cleaning']];
         var tkt_tot = 0;
         var foll_tkt = 0;
-
+        if(data.length > 0){
         $.each(data,function(key,value){
             var vals = value.date.split('-');
             var year = parseInt(vals[0]);
@@ -58,7 +57,13 @@ function drawChart() {
             subs.push(value.total);
             apps.push(value.followup);
         });
-        
+        }else{
+            var vals = from_my.split('/');
+            var year = parseInt(vals[1]);
+            var month = parseInt (vals[0]);
+            var day = parseInt (01);
+            quotes.push([new Date(year,month-1,day),0,0]);
+        }
         console.log(tkt_tot,foll_tkt,"war ");
         $('#total_submitted').text(tkt_tot);
         $('#total_approved').text(foll_tkt);

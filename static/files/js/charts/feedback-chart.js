@@ -44,6 +44,7 @@ function drawChart() {
         var quotes = [['Date', 'Rating']];
         var tot_ratings = 0;
 
+        if(data.length > 0){
         $.each(data,function(key,value){
             var vals = value.date.split('-');
             var year = parseInt(vals[0]);
@@ -55,7 +56,13 @@ function drawChart() {
             dates.push(new Date(value.date));
             subs.push(value.total);
         });
-        
+        }else{
+            var vals = from_my.split('/');
+            var year = parseInt(vals[1]);
+            var month = parseInt (vals[0]);
+            var day = parseInt (01);
+            quotes.push([new Date(year,month-1,day),0]);
+        }
         console.log(tot_ratings,"war ");
         $('#total_submitted').text(tot_ratings);
 
