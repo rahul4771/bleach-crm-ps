@@ -729,7 +729,8 @@ label[for=favcity] select:focus {outline: 1px dotted #A9A9A9;}
 .keynots-tble tr{ margin:0;  border:1px solid #ccc;}
 .keynots-tble tr td{ margin:10px 0;  border:1px solid #ccc; padding:10px 15px;}
 .date-wrapper{ width:auto; margin:0; position:relative; font-size:14px; background:#fff; height: 60px; outline:none; }
-.date-wrapper-inner{ position:absolute; right:90px; height: 40px; width:205px; }
+.date-wrapper-inner{ position:absolute; right:0px; height: 40px; width:205px; display: inline-block; }
+.date-wrapper-inner-resource{ position:absolute; right:90px; height: 40px; width:205px; }
 .date-togglewrapper{ position: absolute; right:0; top:-30px; }
 .date-wrapper .previous-button{ border:1px solid #ccc; border-right:none; margin:0 !important; padding:5px 6px 6px 13px;  background:#fff; position:absolute; left:0; border-top-left-radius:25px; border-bottom-left-radius:25px;  outline:none; cursor:pointer; font-size:20px;}
 .date-wrapper .date-box{ border:1px solid #ccc; margin:0 !important;border-right:none; border-left:none; padding:9px 5px; width:88px !important; border-radius:0px; background:#fff; position:absolute; left:27px;  outline:none;  cursor:pointer; font-size:15px; }
@@ -801,7 +802,29 @@ label[for=favcity] select:focus {outline: 1px dotted #A9A9A9;}
 .filter-column-boxes > div { flex: 1; } 
 .filter-columns-left { padding:0 0px 0 0; width:100%; text-align: left; position:relative; }
 .filter-columns-right {padding:0 0px 0 0; width:100%; text-align: left; position:relative; }
+
  
+.modal-popup-wrapper { position: fixed; z-index: 100000000 !important; top: 0 !important; left: 0; right:0; visibility: hidden;  width: 100%; height: 100%; background: rgba(0, 0, 0, .7);}
+.modal-popup-wrapper.is-visible { visibility: visible;}
+.modal-popup-wrapper-overlay { position: fixed; z-index: 10; top: 0; left: 0; width: 100%; height: 100%; background: hsla(0, 0%, 0%, 0.5); visibility: hidden; opacity: 0; -webkit-transition: visibility 0s linear 0.3s, opacity 0.3s;
+  transition: visibility 0s linear 0.3s, opacity 0.3s;}
+.modal-popup-wrapper.is-visible .modal-overlay { opacity: 1; visibility: visible; -webkit-transition-delay: 0s; transition-delay: 0s;}
+.modal-wrapper { position: absolute; z-index: 9999;left:0; top:15%; right:0; width:700px; margin:0 auto;  min-height:auto !important;  background-color: #fff;  }
+.modal-transition { -webkit-transition: all 0.3s 0.12s; transition: all 0.3s 0.12s; -webkit-transform: translateY(-10%); transform: translateY(-10%); opacity: 0;}
+.modal-popup-wrapper.is-visible .modal-transition { -webkit-transform: translateY(0); transform: translateY(0); opacity: 1;}
+.modal-header,
+.modal-content { padding: 1em;box-shadow:none !important;border:none !important;}
+.modal-header { position: relative;  background-color: #fff; border:none !important; /* box-shadow: 0 1px 2px hsla(0, 0%, 0%, 0.06);  border-bottom: 1px solid #e8e8e8;*/}
+.modal-close { position: absolute;  top: 15px;  right: 15px;   width:25px; height:25px;  color: #000; border:1px solid #666 !important; border-radius:100px;  background: none;  border: 0;}
+.modal-close:hover { color: #777;}
+.modal-heading { font-size: 1.125em;  margin: 0;  -webkit-font-smoothing: antialiased;  -moz-osx-font-smoothing: grayscale;}
+.modal-content > *:first-child {  margin-top: 0;}
+.modal-content > *:last-child {  margin-bottom: 0;}
+.popup-collapse { margin-top:20px;  padding:0 5px;  display: none; }
+.edit-collapse{ position:absolute; top:15px; right:25px; width:24px; height:24px; margin:10px 0;} 
+.dblock{ display:block !important; float:left; width:100% !important; }
+
+
 
 /*16-07-2020*/
 
@@ -826,6 +849,7 @@ label[for=favcity] select:focus {outline: 1px dotted #A9A9A9;}
 .order-clean-Details-widget-column3 { border-left:none; padding:0 0 0 5px;}
 .order-clean-Details-widget-column1, .order-clean-Details-widget-column2 { margin:0 0 15px 0; }
 .order-admin-widget-column2 { margin:0 0 0 0; padding:0px 0px;}
+.modal-wrapper { max-height: 400px; overflow: auto; }
 /*16-07-2020*/
 }
 
@@ -851,6 +875,7 @@ label[for=favcity] select:focus {outline: 1px dotted #A9A9A9;}
 .cleaning-column-widget-column1 { margin:0 0 20px 0; padding:0 5px; width:45%; vertical-align:top; display:inline-block; }
 .cleaning-column-widget-column2 { margin:0 0 0px 0; padding:0 5px; width:45%; vertical-align:top; display:inline-block;  } 
 .center-formDiv{ width:auto;}
+
 /*16-07-2020*/
 }
 
@@ -1051,7 +1076,7 @@ hr.hr-dashedpad { border: 0; margin:8px 0 5px 0; padding:0; border-bottom: 1px d
 /*16-07-2020*/
 .order-payment-wrapper{ flex-direction: column;}
 .order-payment-widget { margin:0 0 20px 0; }
-
+.modal-wrapper { width:94%;}  
 /*16-07-2020*/
 }
 

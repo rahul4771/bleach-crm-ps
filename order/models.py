@@ -72,7 +72,7 @@ class Order(models.Model):
 	amount_paid            = models.IntegerField(blank=True,null=True)
 	remining_amount        = models.IntegerField(blank=True,null=True)
 	
-	instructions	= models.CharField(max_length=500,blank=True,null=True)
+	instructions		   = models.CharField(max_length=500,blank=True,null=True)
 	
 	feedback_notes  	= models.CharField(max_length=500,blank=True,null=True)
 	is_feedback_marked	= models.BooleanField(null=False,blank=True,default=False)
