@@ -551,6 +551,9 @@ hr.div{ border: 0; margin:35px 0 35px 0; padding:0; border-bottom: 1px solid #cb
 .slider img.active { opacity: 1;}
 .slider span {position: absolute; z-index: 1; top: 50%; transform: translateY(-50%); background: rgba(0, 0, 0, 0.3); padding: 10px; color: #fff; }
 .slider span.next { right: 0;}*/
+
+.red-border-input{border: 1px solid red;}
+
 .gallery-wrapper { display: flex; flex-direction: row;/* align-items: center;*/ }
 .gallery-column-widget {width: 100%; padding:0px 5px; }
 .gallery-widget-column-column1 {flex: 1; margin:0 25px 0 0; padding:0 0px; }

@@ -1,7 +1,7 @@
 function ValidateEmail(mail) 
 {
-    console.log(mail)
- if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
+    console.log(mail.value,"tre")
+ if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail.value) || mail.value == "")
   {
     $('.email_alert').text("");
     return (true)
@@ -13,23 +13,26 @@ function ValidateEmail(mail)
 
 function phonenumber(inputtxt)
 {
-    console.log(inputtxt.value);
+    console.log($(inputtxt).attr('id'));
+    mobile_id = $(inputtxt).attr('id');
   var phoneno = /^\d{8}$/;
-  if((inputtxt.value.match(phoneno)))
+  if((inputtxt.value.match(phoneno)) || (inputtxt.value == ""))
         {
         $('.mobile_alert').text("")
         return true;
         }
       else
         {
-        $('.mobile_alert').text("You have entered an invalid phone number!")
+        $('#'+mobile_id+'').siblings('p').text("You have entered an invalid phone number!")
         return false;
         }
 }
 
 $(document).ready(function(){
-    $('.OnlyNumber').keypress(validateNumber);});
-    function validateNumber(event){  
+    $('.OnlyNumber').keypress(validateNumber);
+    $('.OnlyText').keypress(validateText);});
+
+  function validateNumber(event){  
     //var e = event || window.event;  input[type="number"]
 	var charCode = (event.which) ? event.which : event.keyCode
     if (charCode != 46 && charCode > 31 
@@ -37,3 +40,13 @@ $(document).ready(function(){
         return false;
         return true;
    }
+
+  function validateText(evt) {
+    evt = (evt) ? evt : event;
+    var charCode = (evt.charCode) ? evt.charCode : ((evt.keyCode) ? evt.keyCode :
+       ((evt.which) ? evt.which : 0));
+    if (charCode > 31 && (charCode < 65 || charCode > 90) &&
+       (charCode < 97 || charCode > 122)) 
+        return false;
+        return true;
+  }

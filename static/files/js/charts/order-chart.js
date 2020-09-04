@@ -45,6 +45,7 @@ function drawChart() {
         var sub_sum = 0;
         var app_sum = 0;
 
+        if(data.length > 0){
         $.each(data,function(key,value){
             var vals = value.date.split('-');
             var year = parseInt(vals[0]);
@@ -58,7 +59,14 @@ function drawChart() {
             subs.push(value.sub_qt);
             apps.push(value.app_qt);
         });
-        
+        }else{
+            var vals = from_my.split('/');
+            var year = parseInt(vals[1]);
+            var month = parseInt (vals[0]);
+            var day = parseInt (01);
+            quotes.push([new Date(year,month-1,day),0,0]);
+        }
+
         console.log(sub_sum,app_sum,"war ");
         $('#total_submitted').text(sub_sum);
         $('#total_approved').text(app_sum);
