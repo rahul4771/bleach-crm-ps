@@ -8,8 +8,10 @@
 .bootstrap-datetimepicker-widget table th {
      text-align: center;
      border-radius: 0px;
-     background-color:  #2E4E85;
-     color:#fff;
+     background-color:  #d8101a;
+     /* background-color:  #2E4E85; */
+     color:rgb(17, 233, 28);
+     /* color:#fff; */
 }
 
 
@@ -17,16 +19,19 @@
      height: 20px;
      line-height: 20px;
      width: 20px;
-     background-color: #FFFFFF;
+     background-color: #d1df12;
+     /* background-color: #FFFFFF; */
      border-radius: 50%;
 }
 
 .bootstrap-datetimepicker-widget table td {
-    color: #333333;
+    color: #e718cc;
+    /* color: #333333; */
 }
 
 .bootstrap-datetimepicker-widget th.prev:hover,.bootstrap-datetimepicker-widget th.next:hover,.bootstrap-datetimepicker-widget th.picker-switch:hover{
-     color:  black;
+     /* color:  black; */
+     color: #2E4E85;
 }
 
 
