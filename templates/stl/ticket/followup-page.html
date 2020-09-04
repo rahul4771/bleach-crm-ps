@@ -14,6 +14,8 @@
             <p><input name="open" type="button" class="yellow-button" value="Open" id="open"></p>
             {% elif followup_details.status == 'FOLLOWUP_CLOSED' %}
             <p><input name="open" type="button" class="red-button" value="Closed" id="closed"></p>
+            {% elif followup_details.status == 'TICKET_RISED' %}
+            <p><input name="open" type="button" class="blue-button" value="Ticket Rised" id="closed"></p>
             {% else %}
             <p><input name="open" type="button" class="red-button" value="Cancelled" id="cancelled"></p> 
             {% endif %}
