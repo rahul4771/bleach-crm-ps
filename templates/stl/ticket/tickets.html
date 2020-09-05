@@ -170,7 +170,7 @@
 </thead>
 <tbody>
 {% for ticket in tickets %}
-    <tr class="clickable-row-list" data-href="{% url 'stl:stl-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">
+    <tr>
     <td 
     {% if ticket.status == 'INVESTIGATOR_APPROVED' %}
     class="orange-line"
@@ -190,17 +190,19 @@
     </td>
     <td>{{ticket.investigation.investigator.name}}</td>
     <td>{{ticket.investigation.order_schedule.order.evaluation.customer.mobile_number}}</td>
+    <td>
     {% if ticket.status == 'INVESTIGATOR_APPROVED' %}
-    <td><span class="orange-bg">Open</span></td>
+    <span class="clickable-row orange-bg" data-href="{% url 'stl:stl-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Open</span>
     {% elif ticket.status == 'FOLLOWUP_IN_PROGRESS' %}
-    <td><span class="yellow-bg">Cleaning</span></td>     
+    <span class="clickable-row yellow-bg" data-href="{% url 'stl:stl-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Cleaning</span>     
     {% elif ticket.status == 'FOLLOWUP_CLOSED' %}
-    <td><span class="green-bg">Closed</span></td>
+    <span class="clickable-row green-bg" data-href="{% url 'stl:stl-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Closed</span>
     {% elif ticket.status == 'TICKET_RISED' %}
-    <td><span class="blue-bg">Ticket Rised</span></td>
+    <span class="clickable-row blue-bg" data-href="{% url 'stl:stl-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Ticket Rised</span>
     {% else %}
-    <td><span class="red-bg">Cancelled</span></td>
+    <span class="clickable-row red-bg" data-href="{% url 'stl:stl-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Cancelled</span>
     {% endif %}
+    </td>
     </tr> 
     {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>

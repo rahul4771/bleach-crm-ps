@@ -256,9 +256,9 @@ class OrderDetails(IsAccountant,View):
 		search                  = request.GET.get('search')
 
 		if search:
-			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(is_active=True,customer__name__icontains=search)
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(is_active=True,customer__name__icontains=search).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
 		else:
-			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer')
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
 
 		if evaluations:
 			approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()

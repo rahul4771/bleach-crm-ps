@@ -166,7 +166,7 @@
 <tbody>
 {% for client in client_details %}
 
-    <tr class="clickable-row-list" data-href="{% url 'accountant:accountant-client-orders' client.id %}">
+    <tr>
     <td {% if client.active_status == True  %} 
         class="green-line"
         {% else%}
@@ -181,9 +181,9 @@
     <td>{{client.mobile_number}}</td>
     <td>
         {% if client.active_status == True %}
-        <span class="green-bg">Active</span>
+        <span class="clickable-row green-bg" data-href="{% url 'accountant:accountant-client-orders' client.id %}">Active</span>
         {% else %}
-        <span class="red-bg">Not Active</span>        
+        <span class="clickable-row red-bg" data-href="{% url 'accountant:accountant-client-orders' client.id %}">Not Active</span>        
         {% endif %}
     </td>
     </tr>
