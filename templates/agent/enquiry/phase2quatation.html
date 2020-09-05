@@ -223,6 +223,22 @@
 
 {% block javascript %}
 <script>
+//section add button validation
+$(document).ready(function(){
+    if ($('#id_form-0-section').val() === ""){
+        $('#id_form-0-sectionbutton').attr("disabled",true);
+    }else{
+        $('#id_form-0-sectionbutton').attr("disabled",false);
+    }
+
+    $('#id_form-0-section').change(function(){
+        if ($('#id_form-0-section').val() === ""){
+        $('#id_form-0-sectionbutton').attr("disabled",true);
+        }else{
+        $('#id_form-0-sectionbutton').attr("disabled",false);
+    }
+    })
+});
 
 $(".service-selector").change(function (){  
 id=this.id.match(/\d+/); 

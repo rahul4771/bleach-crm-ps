@@ -649,6 +649,7 @@ hr.div{ border: 0; margin:35px 0 35px 0; padding:0; border-bottom: 1px solid #cb
 .name{ font-size:12px;}
 .order-Number{ font-size:18px;}
 .common-label{ margin-bottom:6px !important;}
+.visible {visibility: hidden;}
 select { -webkit-appearance: none; -moz-appearance: none; appearance: none; border-radius: 0; }
 label[for=favcity] { position: relative; display: block; width: 100%; overflow: hidden; cursor: pointer;}
 label[for=favcity]::after { content: ' '; position: absolute; right: 0; top: 0; width: 40px; height: 100%; display: block; pointer-events: none; 
