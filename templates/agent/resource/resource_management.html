@@ -88,12 +88,12 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>Minimum Cleaning Hours</label></div>
-                <input type="number" name="minimumhour_filter" id="minimumhour_filter_id" max='24' min='0' value="{{fil_minhours|default_if_none:''}}">
+                <input type="number" name="minimumhour_filter" id="minimumhour_filter_id" max='24' min='0' value="{{fil_minhours|default_if_none:''}}" style="width:160px;">
                 
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label"> <label>Maximum Cleaning Hours</label></div>
-                <input type="number" name="maximumhour_filter" id="maximumhour_filter_id" max='24' min='0' value="{{fil_maxhours|default_if_none:''}}">
+                <input type="number" name="maximumhour_filter" id="maximumhour_filter_id" max='24' min='0' value="{{fil_maxhours|default_if_none:''}}" style="width:160px;">
 
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 

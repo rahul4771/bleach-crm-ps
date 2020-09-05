@@ -484,8 +484,10 @@
 .datepicker table th {
      text-align: center;
      border-radius: 0px;
-     background-color:  #2E4E85;
-     color:#fff;
+     /* background-color:  #2E4E85; */
+     background-color:  #dadada;
+     /* color:#fff; */
+     color: #2E4E85;
 }
 
 
@@ -493,14 +495,17 @@
      height: 20px;
      line-height: 20px;
      width: 20px;
-     background-color:  #FFFFFF;
+     /* background-color:  #FFFFFF; */
+     background-color: #ffffff;
      border-radius: 50%;
 }
 
 .datepicker table td {
-    color: #333333;
+    /* color: #333333; */
+    color: #2e2d2e;
 }
 
 .datepicker th.prev:hover,.datepicker th.next:hover,.datepicker th.datepicker-switch:hover{
-     color:  black;
+     /* color:  black; */
+     color: #2E4E85;
 }
