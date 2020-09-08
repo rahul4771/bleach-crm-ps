@@ -102,71 +102,19 @@
                 {% else %}
                 <div class="green-bg-sm">SUBSCRIBED</div>
                 {% endif %}
-        
-
-                {% if orderschedule.order_scheduler_book.cleaning_type %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.cleaning_type.name}} Cleaning</div>
-                {% endif %}
                 
                 {% if orderschedule.order_scheduler_book.cleaning_method %}
                 <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.cleaning_method.name}} Method</div>
                 {% endif %}
                 
-                {% if orderschedule.order_scheduler_book.dirt_level %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.dirt_level}}-Dirt Level</div>
+                {% if orderschedule.order_scheduler_book.area_type %}
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.area_type}}</div>
                 {% endif %}
                 
                 {% if orderschedule.order_scheduler_book.location_type %}
                 <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.location_type.name}}</div>
                 {% endif %}
                 
-                {% if orderschedule.order_scheduler_book.floor_type %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.floor_type}}</div>
-                {% endif %}
-                
-                {% if orderschedule.order_scheduler_book.number_of_floors %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.number_of_floors}} Floors</div>
-                {% endif %}
-                
-                {% if orderschedule.order_scheduler_book.number_of_rooms %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.number_of_rooms}} Rooms</div>
-                {% endif %}
-                
-                {% if orderschedule.order_scheduler_book.set_type %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.set_type}}</div>
-                {% endif %}
-                
-                {% if orderschedule.order_scheduler_book.set_size %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.set_size}}</div>
-                {% endif %}
-                
-                {% if orderschedule.order_scheduler_book.piece_of_chairs %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.piece_of_chairs}} Chairs</div>
-                {% endif %}
-                
-                {% if orderschedule.order_scheduler_book.chair_fabric_type %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.chair_fabric_type}}</div>
-                {% endif %}
-                
-                {% if orderschedule.order_scheduler_book.spot_stain_status %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.spot_stain_status}}</div>
-                {% endif %}
-                
-                {% if orderschedule.order_scheduler_book.sanitization_type %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.sanitization_type}} Cleaning</div>
-                {% endif %}
-
-                {% if orderschedule.order_scheduler_book.size_to_be_sanitised %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.size_to_be_sanitised}} Size</div>
-                {% endif %}
-
-                {% if orderschedule.order_scheduler_book.bed_size %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.bed_size}} Size</div>
-                {% endif %}
-
-                {% if orderschedule.order_scheduler_book.bed_type %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.bed_type}} Bed</div>
-                {% endif %}
             </div><!--order-clean-Details-widget order-clean-Details-widget-column2-->            
             
         	<div class="order-clean-Details-widget order-clean-Details-widget-column3"><!--order-clean-Details-widget order-clean-Details-widget-column3-->
@@ -199,6 +147,34 @@
         <div class="more-details more-details{{orderschedule.id}}"><!--more-details--> 
 <hr class="divider" > 
 
+{% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
+<div class="details-sub-head align-left">Section 1 : {{section.section_name}}</div>
+<br>
+<div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
+		<div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
+ 		<div class="category-cleaning"><span class="labelcategory">Category</span> : {{section.category}}</div>
+        <div class="category-cleaning"><span class="labelcategory">Dirt Level</span> : {{section.dirt_level}}</div>
+        <div class="category-cleaning"><span class="labelcategory">Size</span> : {{section.size}} {{section.unit}}</div>
+        <div class="category-cleaning"><span class="labelcategory">Floors</span> : {{section.floor}}</div>
+        <div class="category-cleaning"><span class="labelcategory">Apartments</span> : {{section.apartment}}</div>
+        <div class="category-cleaning"><span class="labelcategory">Rooms</span> : {{section.room}}</div>
+        </div><!--filter-column-boxes filter-columns-left-->
+		<div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+        <div class="category-cleaning"><span class="labelcategory">Wall Type</span>  : {{section.wall_type}}</div>
+        <div class="category-cleaning"><span class="labelcategory">Celing Type</span>  : {{section.ceiling_type}}</div>
+        <div class="category-cleaning"><span class="labelcategory">Floor Type</span>  : {{section.floor_type}}</div>
+        </div><!--filter-column-boxes filter-columns-right-->      
+        </div><!--filter-columns-wrapper--> 
+<br> 
+<div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
+		<div class="evaluation-card"><!--evaluation-card-->
+        <div class="evaluation-section"><label>Bathroom</label>5</div> 
+        </div><!--evaluation-card-->        
+
+</div><!--evaluation-card-wrapper-->
+<br><br>
+<hr class="hr-dashedpad">
+{% endfor %}
 
 {% if orderschedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}
 <div class="details-sub-head align-left">Subscription Status</div>
