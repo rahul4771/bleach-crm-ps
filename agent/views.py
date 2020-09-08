@@ -1684,8 +1684,7 @@ class MakeQuatationPhase2(IsAgent,View):
 	def post(self,request,evaluation_detail_id):
 
 		service_formset       = self.service_formset_define(request.POST)		
-		evaluation_details    = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
-		
+		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)		
 
 		if service_formset.is_valid() : 
 			form_count = 0
@@ -1749,7 +1748,7 @@ class MakeQuatationPhase2(IsAgent,View):
 					for i in range(no_of_sections):
 						section_name  = request.POST.get('form'+str(form_count)+'_section'+str(i))
 						category      = request.POST.get('form'+str(form_count)+'_category'+str(i))
-						dirt_level    = request.POST.get('form'+str(form_count)+'_dirt_level'+str(i))
+						dirt_level    = request.POST.get('form'+str(form_count)+'_dirtlevel'+str(i))
 						quantity      = request.POST.get('form'+str(form_count)+'_quantity'+str(i))
 						size          = request.POST.get('form'+str(form_count)+'_size'+str(i))
 						unit          = request.POST.get('form'+str(form_count)+'_unit'+str(i))
@@ -1757,13 +1756,13 @@ class MakeQuatationPhase2(IsAgent,View):
 						floor         = request.POST.get('form'+str(form_count)+'_floor'+str(i))
 						apartment     = request.POST.get('form'+str(form_count)+'_apartment'+str(i))
 						room          = request.POST.get('form'+str(form_count)+'_room'+str(i))
-						wall_type     = request.POST.get('form'+str(form_count)+'_wall_type'+str(i))
-						ceiling_type  = request.POST.get('form'+str(form_count)+'_ceiling_type'+str(i))
-						floor_type    = request.POST.get('form'+str(form_count)+'_floor_type'+str(i))
+						wall_type     = request.POST.get('form'+str(form_count)+'_walltype'+str(i))
+						ceiling_type  = request.POST.get('form'+str(form_count)+'_ceilingtype'+str(i))
+						floor_type    = request.POST.get('form'+str(form_count)+'_floortype'+str(i))
 						material      = request.POST.get('form'+str(form_count)+'_material'+str(i))
 						colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
 						cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
-
+						
 						#save section
 						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
 
@@ -1794,10 +1793,41 @@ class MakeQuatationPhase2(IsAgent,View):
 			if not service_formset.is_valid():
 				messages.error(request,"An Error Occured")
 
-			return render(request,'agent/enquiry/phase2quatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,})	
+			try:
+				service_types = ServiceType.objects.filter(is_active=True)
+			except:	
+				service_types = None
+
+			try:
+				area_types = AreaType.objects.filter(is_active=True)
+			except:
+				area_types = None
+
+			return render(request,'agent/enquiry/phase2quatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,'area_types':area_types,'service_types':service_types,})	
 
 		return redirect('agent:agent-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
 		
+
+class MakeQuatationPhase2Edit(IsAgent,View):
+	service_formset_define    = formset_factory(QuatationServiceForm)
+	def get(self,request,evaluation_detail_id):
+
+		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('order_scheduler_book_details',OrderScheduler.objects.filter(is_active=True),'orderschedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')).get(is_active=True,id=evaluation_detail_id)
+		
+		try:
+			service_types = ServiceType.objects.filter(is_active=True)
+		except:	
+			service_types = None
+
+		try:
+			area_types = AreaType.objects.filter(is_active=True)
+		except:
+			area_types = None
+
+		return render(request,'agent/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,})
+
+
+
 
 
 class AddFeedBack(IsAgent,View):

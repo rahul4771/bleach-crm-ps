@@ -196,10 +196,10 @@
      <br> 
      {% endfor %}</td>
     <td>{{evaluation.customer.mobile_number|default_if_none:''}}</td>
-    <td>{% if evaluation.quatation_status == 'APPROVED' %}<span class="green-bg">Approved</span>
-        {% elif evaluation.quatation_status == 'REJECTED' %}<span class="red-bg">Rejected</span>
-        {% elif evaluation.quatation_status == 'PENDING' %}<span class="yellow-bg">Pending</span>
-        {% else %}<span class="orange-bg">Discount Asked</span>
+    <td>{% if evaluation.quatation_status == 'APPROVED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'accountant:accountant-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="green-bg clickable-row">Approved</span>
+        {% elif evaluation.quatation_status == 'REJECTED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'accountant:accountant-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Rejected</span>
+        {% elif evaluation.quatation_status == 'PENDING' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'accountant:accountant-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="yellow-bg clickable-row">Pending</span>
+        {% else %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'accountant:accountant-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="orange-bg clickable-row">Expired</span>
         {%endif%}
     </td>
     <td><a href="#"><img src="{% static 'files/images/icon-download.svg' %}" align="absmiddle" class="download-icon"></a></td>

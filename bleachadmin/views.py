@@ -445,9 +445,9 @@ class OrderDetails(IsAdmin,View):
 		search                  = request.GET.get('search')
 
 		if search:
-			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(is_active=True,customer__name__icontains=search)
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(is_active=True,customer__name__icontains=search).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
 		else:
-			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer')
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
 
 		if evaluations:
 			approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
@@ -705,25 +705,15 @@ class FeedbackDetails(IsAdmin,View):
 
 
 
-		#Feedback Staring count total
+		#to find starring caluculations in whole system
 		try:
 			feedbacks                 = FeedBack.objects.filter(is_active=True)
 		except:
 			feedbacks				  = None
 
-		average_feedback    		  = feedbacks.aggregate(Avg('rating'))['rating__avg']
-		total_feedbacks               = feedbacks.count()
-		starring_percentages          = list(feedbacks.values('rating').annotate(percentage=Cast(Count('rating')/float(total_feedbacks)*100,FloatField())).order_by('rating'))
-
-		#append not done rating to default 0
-		for i in range(1,6):
-			new_rating = {}
-			if not any(starring['rating'] == i for starring in starring_percentages):
-				new_rating['rating']     = i
-				new_rating['percentage'] = 0
-				starring_percentages.append(new_rating)	
-
-		starring_percentages = sorted(starring_percentages, key = lambda i: i['rating'])		
+		total_feedbacks               = feedbacks.values('order').distinct().count()
+		full_order_wise_feedbacks     = order_wise_feedbacks
+				
 				
 		#PAGINATION FEEDBACKS		
 		no_of_entries = request.GET.get('no_of_entries')		
@@ -751,7 +741,7 @@ class FeedbackDetails(IsAdmin,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(order_wise_feedbacks.end_index())-(order_wise_feedbacks.start_index())+1
 
-		return render(request,'admin/feedback/feedbacks.html',{"feedbacks":feedbacks,"average_feedback":average_feedback,"total_feedbacks":total_feedbacks,"starring_percentages":starring_percentages,"order_wise_feedbacks":order_wise_feedbacks,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_minimumstarring":fil_minimumstarring,"fil_maximumstarring":fil_maximumstarring,"fil_service_type":fil_service_type,})
+		return render(request,'admin/feedback/feedbacks.html',{"feedbacks":feedbacks,"total_feedbacks":total_feedbacks,"order_wise_feedbacks":order_wise_feedbacks,"full_order_wise_feedbacks":full_order_wise_feedbacks,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_minimumstarring":fil_minimumstarring,"fil_maximumstarring":fil_maximumstarring,"fil_service_type":fil_service_type,})
 
 class FeedbackAdvanced(IsAdmin,View):
 	def get(self,request,client_id,order_id):

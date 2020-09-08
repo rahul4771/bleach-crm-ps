@@ -195,7 +195,7 @@
 </thead>
 <tbody>
 {% for client in client_details %}
-    <tr class="clickable-row-list" data-href="{% url 'agent:agent-client-orders' client.id %}">
+    <tr>
     <td {% if client.active_status == True  %}class="green-line"{% else%}class="red-line"{% endif %}>{{client.name}}</td>
     <td>{% for address in client.customer_address %}
         {{address.area.name}}<br>
@@ -203,7 +203,13 @@
     <td>{{client.email}}</td>
     <td>{{client.customer_type}}</td>
     <td>{{client.mobile_number}}</td>
-    <td>{% if client.active_status == True %}<span class="green-bg">Active</span>{% else %}<span class="red-bg">Not Active</span>{% endif %}</td>
+    <td>
+        {% if client.active_status == True %}
+        <span class="clickable-row green-bg" data-href="{% url 'agent:agent-client-orders' client.id %}">Active</span>
+        {% else %}
+        <span class="clickable-row red-bg" data-href="{% url 'agent:agent-client-orders' client.id %}">Not Active</span>        
+        {% endif %}
+    </td>
     </tr>
 {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>    
