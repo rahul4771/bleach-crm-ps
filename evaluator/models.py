@@ -261,10 +261,10 @@ class EvaluationBook(models.Model):
 	updated              = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.evaluation_details.id)
+		return str(self.id)
 
 	def __str__(self):
-		return str(self.evaluation_details.id)
+		return str(self.id)
 #For Tracking Medias Uploaded by Evaluator on Site
 
 class EvaluationMedia(models.Model):
