@@ -1,3 +1,4 @@
+from django.core.mail import send_mail
 from django.shortcuts import render,redirect
 from django.template.loader import render_to_string
 from django.views import View
@@ -2095,4 +2096,10 @@ def ResourcesFilter(request):
 	
 	
     return JsonResponse()
+
+# def emailview(request):
+# 	send_mail('Using SparkPost with Django', 'This is a message from Django using SparkPost!', 'django-sparkpost@sparkpostbox.com',
+#     ['rangeenkmr043@gmail.com'], fail_silently=False)
+	
+# 	return redirect('agent:agentdash-board')
 
