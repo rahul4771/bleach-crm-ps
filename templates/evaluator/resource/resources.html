@@ -167,8 +167,8 @@
 <tbody>
     {% for details in workers_details %}
     <tr id="worker{{details.id}}">
-    <th class="fixed-side dot-image"><img src="{% static 'files/images/green-dot.png' %}"></th>
-    <th class="profile fixed-side"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} align="absmiddle"></th>
+    <th width="25" class="fixed-side togglehide"><img src="{% static 'files/images/green-dot.png' %}"></th>
+    <th width="40" class="profile fixed-side togglehide"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} align="absmiddle"></th>
     <td><div class="name-bold">{{details.name}}<div class="position">{{details.user_type}}</div></div></td>
     </tr>
     {% endfor %}
