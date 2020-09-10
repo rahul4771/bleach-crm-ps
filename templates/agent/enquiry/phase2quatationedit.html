@@ -198,10 +198,6 @@
                 
 <div class="details-notes align-left">Media</div>        
 <div class="row" id="id_form-{{forloop.counter0}}-media"><!--row-->
-    <div class="col-sm-2 imgUp"><!--col-sm-2 imgUp-->
-        <div class="imagePreview"></div>
-        <label class="btn btn-primary">Upload<input type="file" name="form-{{forloop.counter0}}-media" class="uploadFile img" value="Upload Photo" style="width: 0px;height: 0px;overflow: hidden;"></label>
-        </div><!--col-sm-2 imgUp-->
     	<i class="fa fa-plus imgAdd"></i>
 </div><!--row-->                  
                 
@@ -529,6 +525,14 @@ $("#id_form-{{forloop.counter0}}-tendative_time").datetimepicker({
     format: 'hh:mm A',
 });
 
+{% for media in book.evaluationbookmedias %}
+
+  $('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview" style="background-image:url({{media.media.url}})"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="form-{{forloop.parentloop.counter0}}-media" value="{{media.media.url}}" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del" data-mediaid="{{media.id}}"></i></div>');
+{% empty %}
+$('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="form-{{forloop.parentloop.counter0}}-media" value="File Upload" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
+{% endfor %}
+
+
   {% endfor %}
 
 
@@ -598,10 +602,32 @@ $('.footable').footable({
 $(".imgAdd").click(function () {
   id=$(this).parents('.row').attr('id').match(/\d+/);
 
-  $(this).closest(".row").find('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="form-'+id+'-media" value="Upload Photo" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
+  $(this).closest(".row").find('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="newform-'+id+'-media" value="Upload Photo" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
 });
 $(document).on("click", "i.del", function () {
-  $(this).parent().remove();
+  media_id = $(this).data('mediaid');
+  if(media_id)
+        {
+            $.ajax({
+
+                    url: "{% url 'agent:removeevaluationmedia' %}",
+
+                    data: {'media_id':media_id}, 
+
+                    dataType: 'json',
+
+                    success: function (data) { 
+                            if(data['success'] == true)
+                            {
+                                alert("Evaluation Media Deleted Permanantlly");
+                            }
+
+                            }  
+                    });
+        
+            }
+
+  $(this).parent().remove();  
 });
 $(function () {
   $(document).on("change", ".uploadFile", function ()

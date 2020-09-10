@@ -51,5 +51,6 @@ urlpatterns = [
 	url(r'^ajax/resourcestoggle/',views.ResourcesToggle,name='resource-toggle'),
 	url(r'^ajax/removesection/',views.RemoveSection,name='removebooksection'),
 	url(r'^ajax/removekeynote/',views.RemoveKeynote,name='removekeynote'),
+	url(r'^ajax/removeevaluationmedia/',views.RemoveEvaluationMedia,name='removeevaluationmedia'),
 
 ]

@@ -1,5 +1,7 @@
 from django.db import models
 from user.models import UserProfile,Address
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 # Create your models here.
 
 GENDER_CHOICES=(
@@ -281,7 +283,13 @@ class EvaluationMedia(models.Model):
 		return str(self.evaluation_book.id)
 
 	def __str__(self):
-		return str(self.evaluation_book.id)		
+		return str(self.evaluation_book.id)	
+
+@receiver(post_delete, sender=EvaluationMedia)
+def submission_delete(sender, instance, **kwargs):
+    instance.media.delete(False) 		
+
+    
 
 class EvaluationBookSection(models.Model):
 	evaluation_book = models.ForeignKey('EvaluationBook',blank=False,null=False,related_name='evaluationsection_book')

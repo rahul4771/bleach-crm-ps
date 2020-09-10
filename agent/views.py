@@ -404,6 +404,19 @@ def RemoveKeynote(request):
 
 	return JsonResponse(data)	
 
+def RemoveEvaluationMedia(request):
+	
+	data ={}
+	
+	media_id = request.GET.get('media_id')
+
+	try:
+		EvaluationMedia.objects.filter(id=media_id).delete()
+		data['success'] = True
+	except:
+		data['success'] = False
+
+	return JsonResponse(data)
 
 # Create your views here. 
 class AgentHome(IsAgent,View):
@@ -1839,10 +1852,10 @@ class MakeQuatationPhase2(IsAgent,View):
 
 class MakeQuatationPhase2Edit(IsAgent,View):
 	service_formset_define    = formset_factory(QuatationServiceForm)
-	service_formset_store     = modelformset_factory(EvaluationBook,form=QuatationServiceForm)
+	service_formset_store     = modelformset_factory(EvaluationBook,QuatationServiceForm)
 	def get(self,request,evaluation_detail_id):
 
-		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('order_scheduler_book_details',OrderScheduler.objects.filter(is_active=True),'orderschedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')).get(is_active=True,id=evaluation_detail_id)
+		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationbookmedias'),Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')).get(is_active=True,id=evaluation_detail_id)
 		
 		try:
 			service_types = ServiceType.objects.filter(is_active=True)
@@ -1859,8 +1872,9 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 
 	def post(self,request,evaluation_detail_id):
 		
-		evaluation_details 	  = EvaluationDetails.objects.select_related('evaluation__customer','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('order_scheduler_book_details',OrderScheduler.objects.filter(is_active=True),'orderschedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')).get(is_active=True,id=evaluation_detail_id)		
+		evaluation_details 	  = EvaluationDetails.objects.select_related('evaluation__customer','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationbookmedias'),Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')).get(is_active=True,id=evaluation_detail_id)		
 		service_formset       = self.service_formset_store(request.POST)
+		
 		if service_formset.is_valid() : 
 			form_count = 0
 			#old order update					
@@ -1878,6 +1892,15 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 						#update book
 						EvaluationBook.objects.filter(id=service_form['id'].value()).update(cleaning_policy=service_form['cleaning_policy'].value(),service_type=service_form['service_type'].value(),area_type=service_form['area_type'].value(),cleaning_method=service_form['cleaning_method'].value(),location_type=service_form['location_type'].value(),number_of_cleaners=service_form['number_of_cleaners'].value(),estimated_cost=service_form['estimated_cost'].value(),discount=service_form['discount'].value(),total_cost=service_form['total_cost'].value(),cleaning_hours=service_form['cleaning_hours'].value(),evaluator_note=service_form['evaluator_note'].value())
 						
+						#To Save Media
+						medias = request.FILES.getlist('newform-'+str(form_count)+'-media')
+						if not medias==['']:
+							for media in medias:
+								EvaluationMedia.objects.create(
+								        evaluation_book_id=old_form_id,
+								        media=media,
+								        )
+
 						#for updating cost details in evaluation details and evaluation
 						cost     = float(request.POST.get('form-'+str(form_count)+'-estimated_cost')) 
 						discount = float(request.POST.get('form-'+str(form_count)+'-discount'))
