@@ -293,7 +293,7 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .left-box{ width:auto;margin:10px;}
 .leftbox-item1{flex-grow:2; align-self:center;}
 .leftbox-item2{flex-shrink:0; align-self:center;}
-.date-picker-resource{ border:1px solid #ccc; border-radius:120px; height:35px; line-height:35px; width:100px; text-align:center; display:inline-block; /*position:absolute; right:0px; top:18px; bottom:0;*/}
+.date-picker-resource{ border:1px solid #ccc; border-radius:120px; height:40px; line-height:35px; width:190px; text-align:center; display:inline-block; /*position:absolute; right:0px; top:18px; bottom:0;*/}
 .day-month-togggle-button{ border:1px solid #ccc; border-radius:120px; height:35px; line-height:35px; width:200px; font-size:13px; text-align:center;  display:inline-block;}
 .sort-icon{ background:url(../images/sort-icon.svg) no-repeat; width:8px; height:8px; display:block; position:absolute; right:6px; top:16px; cursor:pointer; } 
 .resource-scroll {position:relative; width:100%;overflow:hidden;  margin:0 auto;}
@@ -736,7 +736,8 @@ label[for=favcity] select:focus {outline: 1px dotted #A9A9A9;}
 .keynots-tble tr{ margin:0;  border:1px solid #ccc;}
 .keynots-tble tr td{ margin:10px 0;  border:1px solid #ccc; padding:10px 15px;}
 .date-wrapper{ width:auto; margin:0; position:relative; font-size:14px; background:#fff; height: 60px; outline:none; }
-.date-wrapper-inner{ position:absolute; right:90px; height: 40px; width:205px; }
+.date-wrapper-inner{ position:absolute; right:0px; height: 40px; width:205px; }
+.date-wrapper-inner-resource{ position:absolute; right:90px; height: 40px; width:205px; }
 .date-togglewrapper{ position: absolute; right:0; top:-30px; }
 .date-wrapper .previous-button{ border:1px solid #ccc; border-right:none; margin:0 !important; padding:5px 6px 6px 13px;  background:#fff; position:absolute; left:0; border-top-left-radius:25px; border-bottom-left-radius:25px;  outline:none; cursor:pointer; font-size:20px;}
 .date-wrapper .date-box{ border:1px solid #ccc; margin:0 !important;border-right:none; border-left:none; padding:9px 5px; width:88px !important; border-radius:0px; background:#fff; position:absolute; left:27px;  outline:none;  cursor:pointer; font-size:15px; }
