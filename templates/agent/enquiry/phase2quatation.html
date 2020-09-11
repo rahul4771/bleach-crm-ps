@@ -248,7 +248,7 @@ $.ajax({
             
           $.each( ajax_ret_areas, function( key, values ) {
               $("#id_form-"+id+"-section").append($('<option>', {        
-                value: key, 
+                value: values, 
                 text: values   
                                 }));   
                                     
@@ -271,10 +271,14 @@ function addSectionNew(form_identifier){
         section_count = 0;   
     }
     //for counter for backend
+    selected_section = $("#id_form-"+formcount+"-section option:selected").val();
+
+    //if selected section continue else message
+    if(selected_section)
+    {
+
     $('#id_form-'+formcount+'-section_counter').val(section_count+1);
 
-
-    selected_section = $("#id_form-"+formcount+"-section option:selected").text();
 
     if(service_type == 'General Cleaning' || service_type == 'Deep Cleaning')
     {
@@ -307,6 +311,12 @@ function addSectionNew(form_identifier){
             }              
     //append section
     $('#id_form-'+formcount+'-sectioncontainer').prepend(appendhtml);
+            }
+
+    else
+    {
+        alert("Please select a Section")
+    }        
 
     //assigning multiple dropdown
     $('.ui.multiple.dropdown').dropdown({
@@ -347,8 +357,9 @@ function addKeynote(form_identifier){
     
     var quantity = $('#id_form-'+formcount+'-section-'+sectioncount+'-quantity').val();
     var keynote  = $('#id_form-'+formcount+'-section-'+sectioncount+'-keynote').val();
-    console.log(keynote,"kn")
 
+    if(keynote && quantity)
+    {
     var keynoteleft = $('#id_form-'+formcount+'-section-'+sectioncount+'-keynote-table-left .keynote-left').length;
     var keynoteright = $('#id_form-'+formcount+'-section-'+sectioncount+'-keynote-table-right .keynote-right').length;
     //appending keynotes to left and right
@@ -387,7 +398,12 @@ function addKeynote(form_identifier){
     //clearing keynote and quantity value
     $('#id_form-'+formcount+'-section-'+sectioncount+'-quantity').val('');
     $('#id_form-'+formcount+'-section-'+sectioncount+'-keynote').val('');
-    
+    }
+
+    else
+    {
+        alert("Please Insert Keynote and Quantity")
+    }    
 };
 
 //close/remove div
@@ -443,16 +459,9 @@ $('document').ready(function(){
           });
         });
         //tendative time
-        $("#id_form-"+x+"-tendative_time").timepicker({
-                timeFormat: 'h:mm p',
-                interval: 60,
-                minTime: '12:00am',
-                maxTime: '11:00pm',
-                defaultTime: '11',
-                startTime: '12:00am',
-                dynamic: false,
-                dropdown: true,
-                scrollbar: true
+        $("#id_form-"+x+"-tendative_time").datetimepicker({
+                pickDate:false,
+                format: 'hh:mm A',
             });
 
 
@@ -489,16 +498,9 @@ $(function () {
 });
 
 //initial time
-$("#id_form-"+x+"-tendative_time").timepicker({
-    timeFormat: 'h:mm p',
-    interval: 60,
-    minTime: '12:00am',
-    maxTime: '11:00pm',
-    defaultTime: '11',
-    startTime: '12:00am',
-    dynamic: false,
-    dropdown: true,
-    scrollbar: true
+$("#id_form-"+x+"-tendative_time").datetimepicker({
+    pickDate:false,
+    format: 'hh:mm A',
 });
 
 

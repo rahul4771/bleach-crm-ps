@@ -6,11 +6,12 @@
 .chart_box_Left { flex: 1; position:relative; margin:0 !important; padding:0 !important; }
 .chart_box_Right {flex: 1; position:relative; margin:0 !important; padding:0 !important; }
 .chart_box_Right svg {  }
+#curve_chart{ width:100% !important; height:35vh; text-align:center; margin:0 auto !important; padding:0 !important; border:5px solid #FDF899;}
  
 .Button_wrapperChart{margin:30px 0 0px 0; position:relative; }
 .green-button-chart{ background:#37b79a; border:none; border-radius:50px; width:90px !important; padding:7px 10px 8px 10px !important; color:#fff; position:absolute; left:100px; top:0;}
 .blue-sliderbutton{  }
-.date_pick2{ margin-top:20px !important; position:absolute; left:0;width:120px !important;  }
+ .date_pick{ margin-top:20px !important; position:absolute; left:0; width:120px !important;  }
  .legend-wrapper{ margin:20px 0 0 0; padding:8px 15px; border:1px solid #dad898; background:#fbfad1; border-radius:5px;}
  .legend-result-red{ font-size:15px; font-weight:normal !important; display:inline-block; color:#fff; background:#eb7896; margin:0 0 0 5px; padding:3px 8px; vertical-align:middle; }
  .legend-result-blue{ font-size:15px; font-weight:normal !important; display:inline-block; color:#fff; background:#6bb3f7; margin:0 0 0 5px; padding:3px 8px; vertical-align:middle; } 
@@ -19,18 +20,20 @@
  .hover{ }
 .hover:hover{ box-shadow: 3px 6px 22px #d2d2d2;}
 @media screen and (max-width: 1300px) {
-.chart_boxDiv {	 flex-direction: column; width:auto; padding-bottom:30px;  }
+.chart_boxDiv {  flex-direction: column; width:auto; padding-bottom:30px;  }
 .legend-wrapper{ margin:-10px 0 10px 0; }
 .Button_wrapperChart{margin:10px 0 0px 0;} 
 }
 
 
 @media screen and (max-width: 1024px) {
-.chart_boxDiv {	 flex-direction: column; width:auto; }
+.chart_boxDiv {  flex-direction: column; width:auto; }
 }
 @media screen and (max-width: 768px) {
 .date-pick-left{ top:45px !important; position:absolute; right:0 !important; left:0px !important; margin:0 !important; padding:0 !important;} 
-.date-pick-right{ top:45px !important; position:absolute; right:0 !important; left:125px !important; margin:0 !important; padding:0 !important; }  
+.date-pick-right{ top:45px !important; position:absolute; right:0 !important; left:125px !important; margin:0 !important; padding:0 !important; }
+#curve_chart{ position: relative; width:100% !important;}
+ #curve_chart svg{ background:#F00; transform: scale(1.6, 1) !important; position:absolute !important; right:-112px !important; background:none !important; margin:0 auto !important; padding:0 !important; }   
 }
 
 
@@ -47,12 +50,6 @@
  
 #ord_fromdate{ border:1px solid #ccc; border-radius:0px; height:30px; line-height:20px; width:160px; text-align:center;  position:absolute; left:0px; top:25px; }
 #ord_todate{ border:1px solid #ccc; border-radius:0px; height:30px; line-height:20px; width:160px; text-align:center;  position:absolute; left:125px; top:25px; }
-
-#ord_fromdate_fb{ border:1px solid #ccc; border-radius:0px; height:30px; line-height:20px; width:160px; text-align:center;  position:absolute; left:0px; top:25px; }
-#ord_todate_fb{ border:1px solid #ccc; border-radius:0px; height:30px; line-height:20px; width:160px; text-align:center;  position:absolute; left:125px; top:25px; }
-
-#client_fromdate{ border:1px solid #ccc; border-radius:0px; height:30px; line-height:20px; width:160px; text-align:center;  position:absolute; left:0px; top:25px; }
-#client_todate{ border:1px solid #ccc; border-radius:0px; height:30px; line-height:20px; width:160px; text-align:center;  position:absolute; left:125px; top:25px; }
 
 #monthpicker1 { 
 position: absolute;

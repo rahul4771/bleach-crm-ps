@@ -50,7 +50,7 @@ function drawChart() {
         var data = google.visualization.arrayToDataTable(location_sales);
 
         var options = {
-            chartArea : {height: '80%',},
+            chartArea : {height: '80%',left:'0%',right:'70%'},
             width:'100%',
             title: "",
             pieHole: 0.4,
@@ -148,7 +148,7 @@ function drawChart2() {
         var data = google.visualization.arrayToDataTable(cleaningtype_sales);
 
         var options = {
-            chartArea : {height: '80%',},
+            chartArea : {height: '80%',left:'0%',right:'70%'},
             width:'100%',
             title: "",
             pieHole: 0.4,
@@ -246,7 +246,7 @@ function drawChart3() {
         var data = google.visualization.arrayToDataTable(governorate_sales);
 
         var options = {
-            chartArea : {height: '80%',},
+            chartArea : {height: '80%',left:'0%',right:'70%'},
             width:'100%',
             title: "",
             pieHole: 0.4,
@@ -346,7 +346,7 @@ $.ajax({
     var saleslist = google.visualization.arrayToDataTable(sales);
 
     var options = {
-        chartArea : {height: '100%',},
+        chartArea : {height: '80%',},
         width:500,
         title: 'sales',
         curveType: 'function',
@@ -471,3 +471,6 @@ $("#daym").change(function(){
 
         }
     })
+
+
+

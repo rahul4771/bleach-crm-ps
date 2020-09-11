@@ -237,15 +237,6 @@
 
 {% block javascript %}
 <script>
-//section add button validation
-$(document).ready(function(){  
-  //assigning multiple dropdown
-    $('.ui.multiple.dropdown').dropdown({
-    });
-});
-
-
-
 $(".service-selector").change(function (){  
 id=this.id.match(/\d+/); 
 
@@ -270,7 +261,7 @@ $.ajax({
             
           $.each( ajax_ret_areas, function( key, values ) {
               $("#id_form-"+id+"-section").append($('<option>', {        
-                value: key, 
+                value: values, 
                 text: values   
                                 }));   
                                     
@@ -293,11 +284,14 @@ function addSectionNew(form_identifier){
     catch(err) {
         section_count = 0;   
     }
-    //for counter for backend
+
+    selected_section = $("#id_form-"+formcount+"-section option:selected").val();
+    
+    if(selected_section)
+    {
+
+    //for counter backend
     $('#id_form-'+formcount+'-section_counter').val(section_count+1);
-
-
-    selected_section = $("#id_form-"+formcount+"-section option:selected").text();
 
     if(service_type == 'General Cleaning' || service_type == 'Deep Cleaning')
     {
@@ -335,6 +329,13 @@ function addSectionNew(form_identifier){
     $('.ui.multiple.dropdown').dropdown({
 	});
 
+    }
+
+    else
+    {
+        alert("Please select a section");
+    }
+
     //input number and text validation
     $('.OnlyNumber').keypress(validateNumber);
     $('.OnlyText').keypress(validateText);
@@ -365,6 +366,7 @@ function addSectionNew(form_identifier){
 
 
 //keynote add
+
 function addKeynote(form_identifier){
 
     var formcount    = parseInt(form_identifier.id.match(/\d+/g)[0]);
@@ -373,7 +375,9 @@ function addKeynote(form_identifier){
     var quantity = $('#id_form-'+formcount+'-section-'+sectioncount+'-quantity').val();
     var keynote  = $('#id_form-'+formcount+'-section-'+sectioncount+'-keynote').val();
     console.log(keynote,"kn")
-
+    
+    if(keynote && quantity)
+    {
     var keynoteleft = $('#id_form-'+formcount+'-section-'+sectioncount+'-keynote-table-left .keynote-left').length;
     var keynoteright = $('#id_form-'+formcount+'-section-'+sectioncount+'-keynote-table-right .keynote-right').length;
     //appending keynotes to left and right
@@ -412,7 +416,12 @@ function addKeynote(form_identifier){
     //clearing keynote and quantity value
     $('#id_form-'+formcount+'-section-'+sectioncount+'-quantity').val('');
     $('#id_form-'+formcount+'-section-'+sectioncount+'-keynote').val('');
-    
+    }
+
+    else
+    {
+        alert("Please Insert Keynote and Quantity")
+    }
 };
 
 
@@ -532,12 +541,13 @@ $("#id_form-{{forloop.counter0}}-tendative_time").datetimepicker({
 $('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="form-{{forloop.parentloop.counter0}}-media" value="File Upload" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
 {% endfor %}
 
+$('.ui.multiple.dropdown').dropdown({
+    });
 
   {% endfor %}
 
 
 });
-
 
 
 //Total cost based on discount
