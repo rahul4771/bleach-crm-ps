@@ -33,6 +33,12 @@
                 if (elem.attr("for")) elem.attr("for", elem.attr("for").replace(idRegex, replacement));                
                 if (elem.attr('id')) elem.attr('id', elem.attr('id').replace(idRegex, replacement));
                 if (elem.attr('name')) elem.attr('name', elem.attr('name').replace(idRegex, replacement));
+                
+                //Special Cases in edit form
+                var spidRegex     = new RegExp('editform' + '(\\d+)'),
+                    spreplacement = 'editform' + ndx ;  
+                if (elem.attr('name')) elem.attr('name', elem.attr('name').replace(spidRegex, spreplacement));
+                
             },
 
             hasChildElements = function(row) {

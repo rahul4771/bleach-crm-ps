@@ -49,6 +49,8 @@ urlpatterns = [
 	url(r'^ajax/ticketdata/',views.TicketData,name='get-TicketData'),
 	url(r'^ajax/feedbackdata/',views.FeedBackData,name='get-FeedBackData'),
 	url(r'^ajax/resourcestoggle/',views.ResourcesToggle,name='resource-toggle'),
-	# url(r'^emailview/',views.emailview,name='email-view'),
+	url(r'^ajax/removesection/',views.RemoveSection,name='removebooksection'),
+	url(r'^ajax/removekeynote/',views.RemoveKeynote,name='removekeynote'),
+	url(r'^ajax/removeevaluationmedia/',views.RemoveEvaluationMedia,name='removeevaluationmedia'),
 
 ]
