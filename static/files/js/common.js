@@ -217,3 +217,42 @@ document.addEventListener("DOMContentLoaded", function(event) {
 window.onbeforeunload = function(e) {
     localStorage.setItem('scrollpos', window.scrollY);
 };
+
+//evaluation calendar refresh
+function evaluationrefresh(){
+  eval_date = $('#evaluation_calendar').val();
+  $.ajax({
+        url: "/bleach_admin/ajax/evaluation-calendar-date/",
+        data: {
+        'evaluation_calendar_date': eval_date
+        },
+        dataType: "json",
+        type: "GET",
+        contentType: "application/json;charset=utf-8",
+        
+        success: function(data) {
+          console.log(data.evaluationdetails);
+          $(".eval-table tbody").html(data.evaluationdetails);
+        }
+  })
+};
+
+//cleaning calendar refresh
+function cleaningrefresh(){
+  console.log("refr")
+  cleaning_date = $('#cleaning_calendar').val();
+  $.ajax({
+        url: "/bleach_admin/ajax/cleaning-calendar-date/",
+        data: {
+        'cleaning_calendar_date': cleaning_date
+        },
+        dataType: "json",
+        type: "GET",
+        contentType: "application/json;charset=utf-8",
+        
+        success: function(data) {
+          console.log(data.cleaningdetails);
+          $("#cleaning_table tbody").html(data.cleaningdetails);
+        }
+  })
+};

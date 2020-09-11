@@ -100,7 +100,7 @@
 <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
 
 <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
-<h2 class="h2">Evaluation Callender</h2>
+<h2 class="h2">Evaluation Calender</h2>
 {% comment %} <a href='{% url 'agent:email-view'%}'>sendmail</a> {% endcomment %}
 </div>
 
@@ -108,7 +108,7 @@
 <div class="date-wrapper"><!--date-wrapper-->
             <div class="date-wrapper-inner"><!--date-wrapper-inner-->
             <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+            <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" onchange="evaluationrefresh();" class="date-box date_pick">
             <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
             <button class='today-date current-date'>Today</button>
             </div><!--date-wrapper-inner-->
@@ -172,7 +172,7 @@
 <div class="date-wrapper"><!--date-wrapper-->
             <div class="date-wrapper-inner"><!--date-wrapper-inner-->
             <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type="text" id="cleaning_calendar" value="{{schedule_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+            <input type="text" id="cleaning_calendar" value="{{schedule_date|date:"d-m-Y"}}" onchange="cleaningrefresh();" class="date-box date_pick">
             <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
             <button class='today-date current-date'>Today</button>
             </div><!--date-wrapper-inner-->

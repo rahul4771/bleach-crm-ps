@@ -6,6 +6,7 @@
 .chart_box_Left { flex: 1; position:relative; margin:0 !important; padding:0 !important; }
 .chart_box_Right {flex: 1; position:relative; margin:0 !important; padding:0 !important; }
 .chart_box_Right svg {  }
+#curve_chart{ width:100% !important; height:35vh; text-align:center; margin:0 auto !important; padding:0 !important; border:5px solid #FDF899;}
  
 .Button_wrapperChart{margin:30px 0 0px 0; position:relative; }
 .green-button-chart{ background:#37b79a; border:none; border-radius:50px; width:90px !important; padding:7px 10px 8px 10px !important; color:#fff; position:absolute; left:100px; top:0;}
@@ -30,7 +31,9 @@
 }
 @media screen and (max-width: 768px) {
 .date-pick-left{ top:45px !important; position:absolute; right:0 !important; left:0px !important; margin:0 !important; padding:0 !important;} 
-.date-pick-right{ top:45px !important; position:absolute; right:0 !important; left:125px !important; margin:0 !important; padding:0 !important; }  
+.date-pick-right{ top:45px !important; position:absolute; right:0 !important; left:125px !important; margin:0 !important; padding:0 !important; }
+#curve_chart{ position: relative; width:100% !important;}
+ #curve_chart svg{ background:#F00; transform: scale(1.6, 1) !important; position:absolute !important; right:-112px !important; background:none !important; margin:0 auto !important; padding:0 !important; } 
 }
 
 

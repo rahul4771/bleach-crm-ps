@@ -15,322 +15,460 @@
      <div class="main-card"><!--main-card-->
 <div class="card-row"><!--card-row-->
             <div class="card-column whitebg blue-border"><!--card-column-->
-                <div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-today-icon.svg' %}"></div>
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="images/card-today-icon.svg"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Evaluations</h1>
-                <h2 class="blue-text"><label>Today<span>{{today_enquiry_count}}</span></label> </h2>
-                <p><label>This Week <span>{{week_enquiry_count}}</span></label></p>
-                </div><!--column-right-->
-                </div><!--card-innerwrapper-->
+            	<h2 class="blue-text"><label>Today<span>20</span></label> </h2>
+            	<p><label>This Week <span>42</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
             </div><!--card-column-->
         
             <div class="card-column whitebg green-border"><!--card-column-->
-                <div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-cleaning-job-icon.svg' %}"></div>
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="images/card-cleaning-job-icon.svg"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Cleaning Jobs</h1>
-                <h2 class="green-text"><label>Today<span>{{today_cleaning_job_count}}</span></label>  </h2>
-                <p><label>This Week <span>{{week_cleaning_job_count}}</span></label></p>
-                </div><!--column-right-->
-                </div><!--card-innerwrapper-->
+            	<h2 class="green-text"><label>Today<span>20</span></label>  </h2>
+            	<p><label>This Week <span>42</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
             </div><!--card-column-->
         
             <div class="card-column whitebg orange-border"><!--card-column-->
-                <div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-followup-icon.svg' %}"></div>
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="images/card-followup-icon.svg"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Follow-up</h1>
-                <h2 class="orange-text"><label>Today<span>{{today_follow_up_job_count}}</span></label> </h2>
-                <p><label>This Week <span>{{week_follow_up_job_count}}</span></label></p>
-                </div><!--column-right-->
-                </div><!--card-innerwrapper-->
+            	<h2 class="orange-text"><label>Today<span>20</span></label> </h2>
+            	<p><label>This Week <span>42</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
             </div><!--card-column-->
         
             <div class="card-column whitebg red-border"><!--card-column-->
-                <div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-rating-icon.svg' %}"></div>
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="images/card-rating-icon.svg"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Rating</h1>
-                <h2 class="red-text"><label>Today<span>{{today_average_feedback|floatformat:1}}</span></label> </h2>
-                <p><label>This Week <span>{{week_average_feedback|floatformat:1}}</span></label></p>
-                </div><!--column-right-->
-                </div><!--card-innerwrapper-->
+            	<h2 class="red-text"><label>Today<span>20</span></label> </h2>
+            	<p><label>This Week <span>4.2</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
             </div><!--card-column-->
    </div><!--card-row-->
 </div><!--main-card-->       
             
      <div class="main-content-holder"><!--main-content-holder-->            
           
-     <div class="three-column-wrapper"><!--three-column-wrapper-->
-            
-            <div class="three-column column-one"><!--three-column column-one-->
+     <div class="three-col-fluid-wrapper"><!--three-col-fluid-wrapper-->
+          	
+            <div class="three-fluid-column three-fluid-one"><!--three-fluid-column three-fluid-one-->
             <h4>Sales on Types of locations</h4>
-            <!-- <img src="{% static 'files/images/sales-location-chart.jpg' %}"> -->
-                
-                    <h4>Clients : <b id="clint2"></b></h4>
-                      <input id="pfrom" class="date_pick date-picker set1" />
-                    
-                      <input id="pto" class="date_pick date-picker set1"/>
-
-                
-                <div id="donutchart1"></div>
-            <div class="chart-btnWrapper"><input name="thismonth" type="button" class="blue-button" value="This Month" id="reset"></div>
-            </div><!--three-column column-one-->
+ 
+            <div id="donutchart1"></div>
+            <div class="right-legend-chart"><!--right-legend-chart-->
+            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Appartment</div><span class="chart-red-stat">19.2%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">House</div><span class="chart-blue-stat">11.2%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-orange-spot" aria-hidden="true"></i> <div class="chart-stat">Villa</div><span class="chart-orange-stat">69.22%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-green-spot" aria-hidden="true"></i> <div class="chart-stat">Chalet</div><span class="chart-green-stat">69.22%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-cyan-spot" aria-hidden="true"></i> <div class="chart-stat">Shop</div><span class="chart-cyan-stat">69.22%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Restaurent</div><span class="chart-red-stat">19.2%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">Other</div><span class="chart-blue-stat">11.2%</span></div>
+            </div><!--right-legend-chart-->
+            <div class="chart-btnWrapper chart-menudot"><a class="chart-toggle1" href="#example1">...</a></div>
+            <div class="toggle-content" id="example1" style="display:none;"><!--toggle-content-->
+ 
+ 
+ <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+          <div class="ticket-form-left"><!--ticket-form-left-->
+                        <div class=" bold-text common-label"> <label>Governorate</label></div>
+                        <label for="favcity">
+                        <select id="favcity" name="select">
+                        <option value="0">Choose your Order Number</option>
+                        <option value="1">23423434</option>
+                        <option value="2">45454545</option>
+                        <option value="3">45454545</option>
+                        <option value="4">86765676</option>
+                        <option value="5">23545677</option>
+                        </select>
+                        </label>
+          </div><!--ticket-form-left-->
+        </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+        <hr class="hr-dashedpad"> 
+        <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+          <div class="ticket-form-left"><!--ticket-form-left-->
+                        <div class=" bold-text common-label"> <label>Minimum Starring</label></div>
+                        <input name="time" type="text" class="textBox">
+          </div><!--ticket-form-left-->
+        </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+        <hr class="hr-dashedpad"> 
+        <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+          <div class="ticket-form-left"><!--ticket-form-left-->
+                        <div class=" bold-text common-label"> <label>Service Type</label></div>
+                        <input name="time" type="text" class="textBox">
+          </div><!--ticket-form-left-->
+        </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+        <div align="center"> <input class="assignButton" name="assing" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Reset"></div>   
+			</div><!--toggle-content-->
+  
             
-            <div class="three-column column-two"><!--three-column column-two-->
+            </div><!--three-fluid-column three-fluid-one-->
+            
+            <div class="three-fluid-column three-fluid-two"><!--three-fluid-column three-fluid-two-->
             <h4>Sales on Types of Cleaning</h4>
-            <!-- <img src="{% static 'files/images/sales-types-chart.jpg' %}"> -->
             <div id="donutchart2"></div>
-            <div class="chart-btnWrapper"><input name="thisweek" type="button" class="blue-button" value="This Week" id="thismonth"></div>
-            </div><!--three-column column-two-->
+            <div class="right-legend-chart"><!--right-legend-chart-->
+            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Appartment</div><span class="chart-red-stat">19.2%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">House</div><span class="chart-blue-stat">11.2%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-orange-spot" aria-hidden="true"></i> <div class="chart-stat">Villa</div><span class="chart-orange-stat">69.22%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-green-spot" aria-hidden="true"></i> <div class="chart-stat">Chalet</div><span class="chart-green-stat">69.22%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-cyan-spot" aria-hidden="true"></i> <div class="chart-stat">Shop</div><span class="chart-cyan-stat">69.22%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Restaurent</div><span class="chart-red-stat">19.2%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">Other</div><span class="chart-blue-stat">11.2%</span></div>
+            </div><!--right-legend-chart-->
+            <div class="chart-btnWrapper chart-menudot"><a class="chart-toggle1" href="#example2">...</a></div>
+            <div class="toggle-content" id="example2" style="display:none;"><!--toggle-content-->
+ 
+ 
+ <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+          <div class="ticket-form-left"><!--ticket-form-left-->
+                        <div class=" bold-text common-label"> <label>Governorate</label></div>
+                        <label for="favcity">
+                        <select id="favcity" name="select">
+                        <option value="0">Choose your Order Number</option>
+                        <option value="1">23423434</option>
+                        <option value="2">45454545</option>
+                        <option value="3">45454545</option>
+                        <option value="4">86765676</option>
+                        <option value="5">23545677</option>
+                        </select>
+                        </label>
+          </div><!--ticket-form-left-->
+        </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+        <hr class="hr-dashedpad"> 
+        <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+          <div class="ticket-form-left"><!--ticket-form-left-->
+                        <div class=" bold-text common-label"> <label>Minimum Starring</label></div>
+                        <input name="time" type="text" class="textBox">
+          </div><!--ticket-form-left-->
+        </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+        <hr class="hr-dashedpad"> 
+        <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+          <div class="ticket-form-left"><!--ticket-form-left-->
+                        <div class=" bold-text common-label"> <label>Service Type</label></div>
+                        <input name="time" type="text" class="textBox">
+          </div><!--ticket-form-left-->
+        </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+        <div align="center"> <input class="assignButton" name="assing" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Reset"></div>   
+			</div><!--toggle-content-->
+            </div><!--three-fluid-column three-fluid-two-->
             
-            <div class="three-column column-three"><!--three-column column-three-->
+            <div class="three-fluid-column three-fluid-three"><!--three-fluid-column three-fluid-three-->
             <h4>Sales on Governerates</h4>
-            <!-- <img src="{% static 'files/images/sales-govermerates-chart.jpg' %}"> -->
             <div id="donutchart3"></div>
-            <div class="chart-btnWrapper"><input name="thisweek" type="button" class="blue-button" value="This Week" id="thismonth"></div>
-            </div><!--three-column column-three-->
+            <div class="right-legend-chart"><!--right-legend-chart-->
+            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Appartment</div><span class="chart-red-stat">19.2%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">House</div><span class="chart-blue-stat">11.2%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-orange-spot" aria-hidden="true"></i> <div class="chart-stat">Villa</div><span class="chart-orange-stat">69.22%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-green-spot" aria-hidden="true"></i> <div class="chart-stat">Chalet</div><span class="chart-green-stat">69.22%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-cyan-spot" aria-hidden="true"></i> <div class="chart-stat">Shop</div><span class="chart-cyan-stat">69.22%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Restaurent</div><span class="chart-red-stat">19.2%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">Other</div><span class="chart-blue-stat">11.2%</span></div>
+            </div><!--right-legend-chart-->
+            <div class="chart-btnWrapper chart-menudot"><a class="chart-toggle1" href="#example3">...</a></div>
+            <div class="toggle-content" id="example3" style="display:none;"><!--toggle-content-->
+ 
+ 
+ <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+          <div class="ticket-form-left"><!--ticket-form-left-->
+                        <div class=" bold-text common-label"> <label>Governorate</label></div>
+                        <label for="favcity">
+                        <select id="favcity" name="select">
+                        <option value="0">Choose your Order Number</option>
+                        <option value="1">23423434</option>
+                        <option value="2">45454545</option>
+                        <option value="3">45454545</option>
+                        <option value="4">86765676</option>
+                        <option value="5">23545677</option>
+                        </select>
+                        </label>
+          </div><!--ticket-form-left-->
+        </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+        <hr class="hr-dashedpad"> 
+        <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+          <div class="ticket-form-left"><!--ticket-form-left-->
+                        <div class=" bold-text common-label"> <label>Minimum Starring</label></div>
+                        <input name="time" type="text" class="textBox">
+          </div><!--ticket-form-left-->
+        </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+        <hr class="hr-dashedpad"> 
+        <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+          <div class="ticket-form-left"><!--ticket-form-left-->
+                        <div class=" bold-text common-label"> <label>Service Type</label></div>
+                        <input name="time" type="text" class="textBox">
+          </div><!--ticket-form-left-->
+        </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+        <div align="center"> <input class="assignButton" name="assing" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Reset"></div>   
+			</div><!--toggle-content-->
+            </div><!--three-fluid-column three-fluid-three-->
           
-     </div><!--three-column-wrapper-->
-     
-     <div class="two-column-wrapper"><!--two-column-wrapper-->
-        <div class="two-column-items two-column-left-items"><!--two-column-items two-column-left-items-->
-        <h2 class="h2">Sales targets</h2>
+     </div><!--three-col-fluid-wrapper-->
+ 
+ 
+ <div class="two-col-fluid-wrapper"><!--two-col-fluid-wrapper-->
+	<div class="two-col-fluid-left two-col-fluid-boxes"><!--two-col-fluid-left two-col-fluid-boxes-->
+     	<div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
+		<div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
+ 		<h2 class="h2">Sales targets</h2>
+        </div><!--filter-column-boxes filter-columns-left-->
+		<div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
         
-            <div class="bar-chart"><!--bar-chart-->
-            
-                <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
-                </div><!--bar-chart-items chart-column-one-->
-                
-                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
-                    <div class="evaluator-name">Anna Strong</div>
-                    <div class="designation">Evaluator</div>
-                </div><!--bar-chart-items chart-column-two-->
-                
-                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-                <div class="evaluator-name">80%</div>
-                    <div class="bar-chart-graybg"><div class="chart-bluebg"></div></div>
-                </div><!--bar-chart-items chart-column-three-->
-                
-                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
-                     <input name="Follow" type="button" class="follow" value="follow"> 
-                </div><!--bar-chart-items chart-column-four-->
-                
-            </div><!--bar-chart-->
-        
-            <div class="bar-chart"><!--bar-chart-->
-            
-                <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
-                </div><!--bar-chart-items chart-column-one-->
-                
-                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
-                    <div class="evaluator-name">Anna Strong</div>
-                    <div class="designation">Evaluator</div>
-                </div><!--bar-chart-items chart-column-two-->
-                
-                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-                <div class="evaluator-name">60%</div>
-                    <div class="bar-chart-graybg"><div class="chart-yellobg"></div></div>
-                </div><!--bar-chart-items chart-column-three-->
-                
-                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
-                     <input name="Follow" type="button" class="follow" value="follow"> 
-                </div><!--bar-chart-items chart-column-four-->
-                
-            </div><!--bar-chart-->
-        
-            <div class="bar-chart"><!--bar-chart-->
-            
-                <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
-                </div><!--bar-chart-items chart-column-one-->
-                
-                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
-                    <div class="evaluator-name">Anna Strong</div>
-                    <div class="designation">Evaluator</div>
-                </div><!--bar-chart-items chart-column-two-->
-                
-                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-                <div class="evaluator-name">90%</div>
-                    <div class="bar-chart-graybg"><div class="chart-pinkbg"></div></div>
-                </div><!--bar-chart-items chart-column-three-->
-                
-                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
-                     <input name="Follow" type="button" class="follow" value="follow"> 
-                </div><!--bar-chart-items chart-column-four-->
-                
-            </div><!--bar-chart-->        
-        
-            <div class="bar-chart"><!--bar-chart-->
-            
-                <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
-                </div><!--bar-chart-items chart-column-one-->
-                
-                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
-                    <div class="evaluator-name">Anna Strong</div>
-                    <div class="designation">Evaluator</div>
-                </div><!--bar-chart-items chart-column-two-->
-                
-                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-                <div class="evaluator-name">80%</div>
-                    <div class="bar-chart-graybg"><div class="chart-bluebg"></div></div>
-                </div><!--bar-chart-items chart-column-three-->
-                
-                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
-                     <input name="Follow" type="button" class="follow" value="follow"> 
-                </div><!--bar-chart-items chart-column-four-->
-                
-            </div><!--bar-chart-->
-        
-            <div class="bar-chart"><!--bar-chart-->
-            
-                <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
-                </div><!--bar-chart-items chart-column-one-->
-                
-                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
-                    <div class="evaluator-name">Anna Strong</div>
-                    <div class="designation">Evaluator</div>
-                </div><!--bar-chart-items chart-column-two-->
-                
-                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-                <div class="evaluator-name">60%</div>
-                    <div class="bar-chart-graybg"><div class="chart-yellobg"></div></div>
-                </div><!--bar-chart-items chart-column-three-->
-                
-                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
-                     <input name="Follow" type="button" class="follow" value="follow"> 
-                </div><!--bar-chart-items chart-column-four-->
-                
-            </div><!--bar-chart-->
-        
-            <div class="bar-chart"><!--bar-chart-->
-            
-                <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
-                </div><!--bar-chart-items chart-column-one-->
-                
-                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
-                    <div class="evaluator-name">Anna Strong</div>
-                    <div class="designation">Evaluator</div>
-                </div><!--bar-chart-items chart-column-two-->
-                
-                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-                <div class="evaluator-name">90%</div>
-                    <div class="bar-chart-graybg"><div class="chart-pinkbg"></div></div>
-                </div><!--bar-chart-items chart-column-three-->
-                
-                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
-                     <input name="Follow" type="button" class="follow" value="follow"> 
-                </div><!--bar-chart-items chart-column-four-->
-                
-            </div><!--bar-chart-->   
-        
-        
-        <div class="chart-btnWrapper"><input name="today" type="button" class="blue-button" value="Today" id="today"></div>
-        </div><!--two-column-items two-column-left-items-->
-        {% comment %} <div class="two-column-items two-column-right-items"><!--two-column-items two-column-right-items-->
-        <!-- <img src="{% static 'files/images/sales-chart.jpg' %}"> -->
-        <select id="daym">
-            <option value="day" >Day</option>
-            <option value="month" selected>Month</option>
-        </select>
-          <input id="from" class="date_pick date-picker set1" hidden="true"/>
-          <input id="to" class="date_pick date-picker set1" hidden="true"/>
-    
-          <div class="ui calendar" id="example7" >
-            <div class="ui input left icon">
-              <i class="time icon"></i>
-              <input type="text" id="month1" class="set2" value="{{mfrom}}">
-            </div>
-          </div>
-    
-          <div class="ui calendar" id="example8" >
-            <div class="ui input left icon">
-              <i class="time icon"></i>
-              <input type="text" id="month2" class="set2" value="{{mto}}">
-            </div>
-          </div>
-    
-          <button type="button" id="mnt_btn" class="set2" >Update</button>
-          <!-- <input type="text" id="month" name="month" class="monthPicker set2" />
-          <input type="text" id="month2" name="month2" class="monthPicker set2" /> -->
-    
-          <button id="reset" class="blue-button">This Month</button>
-          <h3>Sales Total : <b id="total_sales"></b></h3> 
-    
-          <div id="curve_chart"></div>
-        </div><!--two-column-items two-column-right-items--> {% endcomment %}
-
-
-        <div class="clients-card-column clients-column-right whitebg hover ltyellow-border"><!--clients-card-column clients-column-right-->
-                 
-		<div class="chart_boxDiv"><!--chart_boxDiv-->
-  			<div class="chart_box_Right"><!--chart_box_Right-->
- 				<!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
-            	<div id="curve_chart" ></div>
-  			</div><!--chart_box_Right-->
-		</div><!--chart_boxDiv-->   
-            
-        <div class="chart_boxDiv"><!--chart_boxDiv-->    
-        
-         <div class="chart_box_Left"><!--chart_box_Left-->
-         <div class="legend-wrapper"><!--legend-wrapper--> 
-            <div class="legend-result count_div"><label class="legend-label">Submitted </label> <b class="legend-result-blue" id="total_submitted"></b></div>
-            <div class="legend-result count_div"><label class="legend-label">Approved </label> <b class="legend-result-red" id="total_approved"></b></div>
-         </div><!--legend-wrapper-->
-  		</div><!--chart_box_Left-->
-        <div class="chart_box_Left"><!--chart_box_Left-->        
-        <div class="Button_wrapperChart">
-            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daym"><div class="slider round"><span class="on">DATE</span><span class="off">MONTH</span></div></label></div>
-            <input type="text" id="from" class="date_pick date_pick2 date-picker set1 date-pick-left" value={{investigation_date|date:"d-m-Y"}} >
-            <input type="text" id="to" class="date_pick date_pick2 date-picker set1 date-pick-right" value={{investigation_date|date:"d-m-Y"}} >
-            <div><button id="reset" class="green-button-chart">Reset</button></div>
-            </div>
-            <div class="ui calendar set2" id="monthpicker1" >
-              <div class="ui input left icon">
-                <input type="text" id="month1" class="set2" >
-              </div>
-            </div>
-
-            <div class="ui calendar set2" id="monthpicker2"  >
-              <div class="ui input left icon">
-                <input type="text" id="month2" class="set2" >
-              </div>
-            </div>	           
-        </div><!--chart_box_Left-->
-            
-        </div><!--chart_boxDiv-->    
-            
-        </div><!--lients-card-column clients-column-right-->
-     
-     
-     </div><!--two-column-wrapper-->    
-
-{% if evaluation_details %}             
-<div class="white-wrapper"><!--white-wrapper-->
-<div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
-
-<div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->    
-<h2 class="h2">Evaluation Callender</h2>
-</div>
-
-<div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
-<div class="date-wrapper"><!--date-wrapper-->
-            <div class="date-wrapper-inner"><!--date-wrapper-inner-->
+            <div class="date-wrapper"><!--date-wrapper-->
+            <div class="date-wrapper-inner right-p"><!--date-wrapper-inner-->
             <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+            <input type='text' id='datepicker'  name='datepicker' class="date-box">
             <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
             <button class='today-date current-date'>Today</button>
             </div><!--date-wrapper-inner-->
-</div><!--date-wrapper-->
-</div>
+            <div class="date-togglewrapper"><!--date-togglewrapper-->
+            <div class="Button_wrapperChart">
+            <!-- <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daym"><div class="slider round"></div></label></div>
+           <input type="text" id="ord_fromdate" class="date_pick date-picker set1 date-pick-left" value={{investigation_date|date:"d-m-Y"}} >
+            <input type="text" id="ord_todate" class="date_pick date-picker set1 date-pick-right" value={{investigation_date|date:"d-m-Y"}} >-->
+    
+            </div>
+            </div><!--date-togglewrapper-->
+            </div><!--date-wrapper-->
+        
+        
+        </div><!--filter-column-boxes filter-columns-right-->        
+	</div><!--filter-columns-wrapper-->
+    
+    
+    
+    
+    
+    
+    
+    
+        
+			<div class="bar-chart"><!--bar-chart-->
+            
+            	<div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
+                	<img src="images/profile.jpg" class="sals-team-profile">
+                </div><!--bar-chart-items chart-column-one-->
+                
+                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
+                	<div class="evaluator-name">Anna Strong</div>
+                    <div class="designation">Evaluator</div>
+                </div><!--bar-chart-items chart-column-two-->
+        		
+                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
+                <div class="evaluator-name">80%</div>
+                	<div class="bar-chart-graybg"><div class="chart-bluebg"></div></div>
+                </div><!--bar-chart-items chart-column-three-->
+                
+                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
+                	<a href="#" class="modal-toggle"><input name="Follow" type="button" class="follow" value="Follow"> </a>
+                </div><!--bar-chart-items chart-column-four-->
+     			
+			</div><!--bar-chart-->
+        
+        	<div class="bar-chart"><!--bar-chart-->
+            
+            	<div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
+                	<img src="images/profile.jpg" class="sals-team-profile">
+                </div><!--bar-chart-items chart-column-one-->
+                
+                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
+                	<div class="evaluator-name">Anna Strong</div>
+                    <div class="designation">Evaluator</div>
+                </div><!--bar-chart-items chart-column-two-->
+        		
+                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
+                <div class="evaluator-name">60%</div>
+                	<div class="bar-chart-graybg"><div class="chart-yellobg"></div></div>
+                </div><!--bar-chart-items chart-column-three-->
+                
+                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
+                	 <a href="#" class="modal-toggle"><input name="Follow" type="button" class="follow" value="Follow"> </a> 
+                </div><!--bar-chart-items chart-column-four-->
+     			
+			</div><!--bar-chart-->
+        
+        	<div class="bar-chart"><!--bar-chart-->
+            
+            	<div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
+                	<img src="images/profile.jpg" class="sals-team-profile">
+                </div><!--bar-chart-items chart-column-one-->
+                
+                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
+                	<div class="evaluator-name">Anna Strong</div>
+                    <div class="designation">Evaluator</div>
+                </div><!--bar-chart-items chart-column-two-->
+        		
+                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
+                <div class="evaluator-name">90%</div>
+                	<div class="bar-chart-graybg"><div class="chart-pinkbg"></div></div>
+                </div><!--bar-chart-items chart-column-three-->
+                
+                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
+                	 <a href="#" class="modal-toggle"><input name="Follow" type="button" class="follow" value="Follow"> </a> 
+                </div><!--bar-chart-items chart-column-four-->
+     			
+			</div><!--bar-chart-->        
+        
+        	<div class="bar-chart"><!--bar-chart-->
+            
+            	<div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
+                	<img src="images/profile.jpg" class="sals-team-profile">
+                </div><!--bar-chart-items chart-column-one-->
+                
+                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
+                	<div class="evaluator-name">Anna Strong</div>
+                    <div class="designation">Evaluator</div>
+                </div><!--bar-chart-items chart-column-two-->
+        		
+                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
+                <div class="evaluator-name">80%</div>
+                	<div class="bar-chart-graybg"><div class="chart-bluebg"></div></div>
+                </div><!--bar-chart-items chart-column-three-->
+                
+                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
+                	 <a href="#" class="modal-toggle"><input name="Follow" type="button" class="follow" value="Follow"> </a>
+                </div><!--bar-chart-items chart-column-four-->
+     			
+			</div><!--bar-chart-->
+        
+        	<div class="bar-chart"><!--bar-chart-->
+            
+            	<div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
+                	<img src="images/profile.jpg" class="sals-team-profile">
+                </div><!--bar-chart-items chart-column-one-->
+                
+                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
+                	<div class="evaluator-name">Anna Strong</div>
+                    <div class="designation">Evaluator</div>
+                </div><!--bar-chart-items chart-column-two-->
+        		
+                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
+                <div class="evaluator-name">60%</div>
+                	<div class="bar-chart-graybg"><div class="chart-yellobg"></div></div>
+                </div><!--bar-chart-items chart-column-three-->
+                
+                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
+                	 <a href="#" class="modal-toggle"><input name="Follow" type="button" class="follow" value="Follow"> </a> 
+                </div><!--bar-chart-items chart-column-four-->
+     			
+			</div><!--bar-chart-->
+        
+        	<div class="bar-chart"><!--bar-chart-->
+            
+            	<div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
+                	<img src="images/profile.jpg" class="sals-team-profile">
+                </div><!--bar-chart-items chart-column-one-->
+                
+                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
+                	<div class="evaluator-name">Anna Strong</div>
+                    <div class="designation">Evaluator</div>
+                </div><!--bar-chart-items chart-column-two-->
+        		
+                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
+                <div class="evaluator-name">90%</div>
+                	<div class="bar-chart-graybg"><div class="chart-pinkbg"></div></div>
+                </div><!--bar-chart-items chart-column-three-->
+                
+                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
+                	 <a href="#" class="modal-toggle"><input name="Follow" type="button" class="follow" value="Follow"> </a> 
+                </div><!--bar-chart-items chart-column-four-->
+     			
+			</div><!--bar-chart-->
+    </div><!--two-col-fluid-left two-col-fluid-boxes--> 
+    <div class="two-col-fluid-right two-col-fluid-boxes"><!--two-col-fluid-right two-col-fluid-boxes-->
+     	<div class="chart_boxDiv"><!--chart_boxDiv-->
+        <div class="chart_box_Right"><!--chart_box_Right-->
+ 				<!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
+            	<div id="curve_chart" ></div>
+  			</div><!--chart_box_Right-->
+        </div><!--chart_boxDiv--> 
+              
+              <div class="chart_boxDiv"><!--chart_boxDiv-->    
+        
+         <div class="chart_box_Left"><!--chart_box_Left-->
+         <div class="legend-wrapper"><!--legend-wrapper--> 
+            <div class="legend-result count_div"><label class="legend-label">SALES </label> <b class="legend-result-blue" id="total_submitted"></b></div>
+            <div class="legend-result count_div"><label class="legend-label">ORDERS </label> <b class="legend-result-red" id="total_approved"></b></div>
+         </div><!--legend-wrapper-->
+  		</div><!--chart_box_Left-->
+        
+        <div class="chart_box_Left"><!--chart_box_Left-->        
+        <div class="Button_wrapperChart">
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daym"><div class="slider round"><span class="on"> </span><span class="off"> </span></div></label></div>
+            <input name="" class="txt-box" type="text">&nbsp;<input name="" class="txt-box" type="text">
+          <!--  <input type="text" id="from" class="date_pick date_pick2 date-picker set1 date-pick-left" value={{investigation_date|date:"d-m-Y"}} >
+            <input type="text" id="to" class="date_pick date_pick2 date-picker set1 date-pick-right" value={{investigation_date|date:"d-m-Y"}} >-->
+            <div><button id="reset" class="green-button-chart">Reset</button></div>
+            
+            </div>
+                     
+        </div><!--chart_box_Left-->
+        </div><!--chart_boxDiv-->  
+    </div><!--two-col-fluid-right two-col-fluid-boxes-->  
+    
+    
+</div><!--two-col-fluid-wrapper-->
 
-</div>
+<div class="modal-popup-wrapper"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+       <div class="full-wrapp-pop">  <!--full-wrapp-pop-->
+        <div class="close-popup modal-close modal-toggle">X</div>
+        
+        <div class="modal-body no-padding"><!--modal-body-->        
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+                <div class="clients-card-column clients-column-right"><!--clients-card-column clients-column-right-->
+                    <div class="chart_boxDiv"><!--chart_boxDiv-->
+                        <div class="chart_box_Right"><!--chart_box_Right-->
+                        	<!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
+                        	<div id="chart_div" ></div>
+                        </div><!--chart_box_Right-->
+                    </div><!--chart_boxDiv-->   
+                
+                    <div class="chart_boxDiv"><!--chart_boxDiv-->    
+                        <div class="chart_box_Left"><!--chart_box_Left-->
+                                <div class="legend-wrapper"><!--legend-wrapper--> 
+                                	<div class="legend-result count_div"><label class="legend-label">Submitted </label> <b class="legend-result-blue" id="total_submitted"></b></div>
+                                	<div class="legend-result count_div"><label class="legend-label">Approved </label> <b class="legend-result-red" id="total_approved"></b></div>
+                                </div><!--legend-wrapper-->
+                            </div><!--chart_box_Left-->
+                            
+        <div class="chart_box_Left"><!--chart_box_Left-->        
+        <div class="Button_wrapperChart">
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daym"><div class="slider round"></div></label></div>
+<!--            <input type="text" id="ord_fromdate" class="date_pick date-picker set1 date-pick-left" value={{investigation_date|date:"d-m-Y"}} >
+            <input type="text" id="ord_todate" class="date_pick date-picker set1 date-pick-right" value={{investigation_date|date:"d-m-Y"}} >-->
+            <input name="" class="txt-box" type="text">&nbsp;<input name="" class="txt-box" type="text">
+            <div><button id="reset_orders" class="green-button-chart">Reset</button></div>
+              
+            </div>
+                       
+        </div><!--chart_box_Left-->           
+                    </div><!--chart_boxDiv-->                
+                </div> <!--clients-card-column clients-column-right-->                                   
+            </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+            <div class="popup-btn-wrap" align="center"> <input class="pop-assignButton" name="assing" type="button" value="Submit"> <input class="pop-cancel-Button" name="cancel" type="button" value="Reset"></div>
+        </div><!--modal-body-->
+        </div>  <!--full-wrapp-pop-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--modal-popup-wrapper--> 
+
+<br><br>
+
+<div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Evaluation Callender</h2>
+<div class="date-picker">Date Picker</div>
 <div id="table-scroll" class="table-scroll"><!--table-scroll-->
 <div class="table-wrap"><!--table-wrap-->
 <table class="eval-table">
@@ -371,31 +509,14 @@
 </div><!--table-wrap-->
 </div><!--table-scroll-->
 </div><!--white-wrapper-->
-{% endif %}
-
+ 
 <div class="white-wrapper"><!--white-wrapper-->
-<div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
-
-<div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->
 <h2 class="h2">Cleaning Callender</h2>
-</div>
-
-<div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
-<div class="date-wrapper"><!--date-wrapper-->
-            <div class="date-wrapper-inner"><!--date-wrapper-inner-->
-            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type="text" id="cleaning_calendar" value="{{schedule_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
-            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
-            <button class='today-date current-date'>Today</button>
-            </div><!--date-wrapper-inner-->
-</div><!--date-wrapper-->
-</div>
-
-</div>
+<div class="date-picker">Date Picker</div>
 <div class="cleaning-container"><!--cleaning-container-->
 <div class="scrollable"><!--scrollable-->
 <div>
-  <table id="cleaning_table" cellpadding="1" cellspacing="1" class="cleaning-table">
+  <table cellpadding="1" cellspacing="1" class="cleaning-table">
   <tr>
   <th width="4.166%" colspan="2"> </th>
     <th width="8.333%" colspan="2">2 AM</th>
@@ -411,12 +532,38 @@
     <th width="8.333%" colspan="2">10 PM</th>
     <th width="4.166%" colspan="2"></th>
   </tr>
+  <tr>
+    <td colspan="26"><div class="red-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center>  <div class="right-value red-text">4</div></div> 
+    <div class="green-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center> <div class="right-value green-text">4</div></div></td>
+    </tr>
+  <tr>
+    <td colspan="26"><div class="yellow-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center>  <div class="right-value yellow-text">4</div></div>
+    <div class="green-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center> <div class="right-value green-text">4</div></div></td>
+    </tr>
+  <tr>
+    <td colspan="26"><div class="yellow-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center>  <div class="right-value yellow-text">4</div></div></td>
+    </tr>
+      <tr>
+    <td colspan="26"><div class="blue-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center>  <div class="right-value blue-text">4</div></div></td>
+    </tr>
+    <tr>
+    <td colspan="26"><div class="red-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center>  <div class="right-value red-text">4</div></div></td>
+    </tr>
+  <tr>
+    <td colspan="26"><div class="green-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center> <div class="right-value green-text">4</div></div></td>
+    </tr>
+  <tr>
+    <td colspan="26"><div class="yellow-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center>  <div class="right-value yellow-text">4</div></div></td>
+    </tr>
+      <tr>
+    <td colspan="26"><div class="blue-box"><div class="left-avatar"><img src="images/profile-pic.jpg"></div><center>AREA</center>  <div class="right-value blue-text">4</div></div></td>
+    </tr>
   </table>
 </div>
 </div><!--scrollable-->
 </div><!--cleaning-container-->
-</div><!--white-wrapper-->            
-            
+</div><!--white-wrapper-->              
+             
       </div><!--main-content-holder-->
         </div><!--container-fluid space-->
     </section><!--content-->
