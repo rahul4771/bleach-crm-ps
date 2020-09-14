@@ -16,7 +16,7 @@ from django.db.models.functions import Cast
 from django.db.models import Prefetch
 
 from user.models import UserProfile,Address,Governorate,Area
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod,ServiceType,EvaluationBookSection,EvaluationSectionKeynote
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod,ServiceType,EvaluationBookSection,EvaluationSectionKeynote,LocationType,CleaningType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
@@ -26,8 +26,9 @@ from accountant.models import PaymentHistory
 
 class AdminHome(IsAdmin,View):
 	def get(self,request):
-		
-
+		#evaluators
+		evaluators_sales_target = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
+		print(evaluators_sales_target,"evs")
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		count_today_end   = count_today_start+timedelta(1)
@@ -127,7 +128,7 @@ class AdminHome(IsAdmin,View):
 		except:
 			spp_calendar_followup_schedules = None
 
-		return render(request,'admin/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_average_feedback':today_average_feedback,'week_average_feedback':week_average_feedback,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,})
+		return render(request,'admin/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_average_feedback':today_average_feedback,'week_average_feedback':week_average_feedback,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'evaluators_sales_targets':evaluators_sales_target})
 
 class ClientDetails(IsAdmin,View):
 	def get(self,request):
@@ -974,27 +975,44 @@ class PaymentDetails(IsAdmin,View):
 def SalesLocationData(request):
 	data = []
 	
+	dom = request.GET.get('dom', None)
 	prevdate  = request.GET.get('fromdate', None)
 	todate  = request.GET.get('todate', None)
-	print(prevdate,todate,"pop")
+	print(dom,prevdate,todate,"pop")
+	location_types = AreaType.objects.all()
+	if dom == 'Month':
+		print("derr")
+		month,year = prevdate.split("/")
+		month2,year2 = todate.split("/")
 
-	try:
-		prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
-		todate = datetime.strptime(todate, '%Y-%m-%d')
-	except:
-		todate = date.today() - timedelta(days=1)
-		prevdate = todate - timedelta(days=30)
-	print(prevdate,todate,"testdt")
+		for location in location_types:
+			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__year__range=(year,year2),evaluation__quatation_approved_date__month__range=(month,month2),evaluation__evaluation_details__evaluation_book_evaluation_details__evaluationsection_book__category=location).count()
+			if not sales_location_count:
+				sales_location_count = 0
 
-	location_types = LocationType.objects.all()
-	for location in location_types:
-		sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate,todate),evaluation__evaluation_details__evaluation_book_evaluation_details__location_type=location).count()
-		
-		location_dict = {
-		"location" : location.name,
-		"count" : sales_location_count,
-		}
-		data.append(location_dict)
+			location_dict = {
+			"location" : location.name,
+			"count" : sales_location_count,
+			}
+			data.append(location_dict)
+	else:
+		print("war")
+		try:
+			prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+			todate = datetime.strptime(todate, '%Y-%m-%d')
+		except:
+			todate = date.today() - timedelta(days=1)
+			prevdate = todate - timedelta(days=30)
+		print(prevdate,todate,"testdt")
+
+		for location in location_types:
+			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate,todate),evaluation__evaluation_details__evaluation_book_evaluation_details__evaluationsection_book__category=location).count()
+			
+			location_dict = {
+			"location" : location.name,
+			"count" : sales_location_count,
+			}
+			data.append(location_dict)
 	print(data)
  
 	return JsonResponse(data,safe=False)
@@ -1003,58 +1021,85 @@ def SalesLocationData(request):
 def SalesCleaningTypeData(request):
 	print("ram")
 	data = []
-	
+	dom = request.GET.get('dom',None)
 	prevdate  = request.GET.get('fromdate', None)
 	todate  = request.GET.get('todate', None)
 	print(prevdate,todate,"pop")
+	cleaning_types = ServiceType.objects.all()
+	if dom == 'Month':
+		print("derr")
+		month,year = prevdate.split("/")
+		month2,year2 = todate.split("/")
 
-	try:
-		prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
-		todate = datetime.strptime(todate, '%Y-%m-%d')
-	except:
-		todate = date.today() - timedelta(days=1)
-		prevdate = todate - timedelta(days=30)
-	print(prevdate,todate,"testdt")
- 
-	cleaning_types = CleaningType.objects.all()
-	for clean in cleaning_types:
-		sales_cleaningtype_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate,todate),evaluation__evaluation_details__evaluation_book_evaluation_details__cleaning_type=clean).count()
-		
-		clean_dict = {
-		"cleaning_type" : clean.name,
-		"count" : sales_cleaningtype_count,
-		}
-		data.append(clean_dict)
-	print(data)
+		for clean in cleaning_types:
+			sales_cleaningtype_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__year__range=(year,year2),evaluation__quatation_approved_date__month__range=(month,month2),evaluation__evaluation_details__evaluation_book_evaluation_details__service_type=clean).count()
+			
+			clean_dict = {
+			"cleaning_type" : clean.name,
+			"count" : sales_cleaningtype_count,
+			}
+			data.append(clean_dict)
+	else:
+		try:
+			prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+			todate = datetime.strptime(todate, '%Y-%m-%d')
+		except:
+			todate = date.today() - timedelta(days=1)
+			prevdate = todate - timedelta(days=30)
+		print(prevdate,todate,"testdt")
+	
+		for clean in cleaning_types:
+			sales_cleaningtype_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate,todate),evaluation__evaluation_details__evaluation_book_evaluation_details__service_type=clean).count()
+			
+			clean_dict = {
+			"cleaning_type" : clean.name,
+			"count" : sales_cleaningtype_count,
+			}
+			data.append(clean_dict)
+		print(data)
 	return JsonResponse(data,safe=False)
 
 #ajax for sales charts
 def SalesGovernorateData(request):
 	data = []
-	
+	dom = request.GET.get('dom',None)
 	prevdate  = request.GET.get('fromdate', None)
 	todate  = request.GET.get('todate', None)
 	print(prevdate,todate,"pop")
-
-	try:
-		prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
-		todate = datetime.strptime(todate, '%Y-%m-%d')
-	except:
-		todate = date.today() - timedelta(days=1)
-		prevdate = todate - timedelta(days=60)
-	print(prevdate,todate,"testdt")
- 
 	governorates = Governorate.objects.all()
-	for gov in governorates:
-		sales_governorate_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate,todate),evaluation__evaluation_details__address__governorate=gov).count()
-		
-		print(sales_governorate_count,"sgc")		
-		gov_dict = {
-		"governorate" : gov.name,
-		"count" : sales_governorate_count,
-		}
-		data.append(gov_dict)
-	print(data)
+	if dom == 'Month':
+		print("derr")
+		month,year = prevdate.split("/")
+		month2,year2 = todate.split("/")
+
+		for gov in governorates:
+			sales_governorate_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__year__range=(year,year2),evaluation__quatation_approved_date__month__range=(month,month2),evaluation__evaluation_details__address__governorate=gov).count()
+			
+			gov_dict = {
+			"governorate" : gov.name,
+			"count" : sales_governorate_count,
+			}
+			data.append(gov_dict)
+	else:
+
+		try:
+			prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+			todate = datetime.strptime(todate, '%Y-%m-%d')
+		except:
+			todate = date.today() - timedelta(days=1)
+			prevdate = todate - timedelta(days=60)
+		print(prevdate,todate,"testdt")
+	
+		for gov in governorates:
+			sales_governorate_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate,todate),evaluation__evaluation_details__address__governorate=gov).count()
+			
+			print(sales_governorate_count,"sgc")		
+			gov_dict = {
+			"governorate" : gov.name,
+			"count" : sales_governorate_count,
+			}
+			data.append(gov_dict)
+		print(data)
 	return JsonResponse(data,safe=False)
 
 #ajax for sales charts
@@ -1064,28 +1109,31 @@ def SalesData(request):
 	prevdate  = request.GET.get('fromdate', None)
 	todate  = request.GET.get('todate', None)
 	print(dom,prevdate,todate,"pop")
+	sales_dict = dict()
+
 	if dom == 'Month':
 		print("derr")
-		month,year = prevdate.split()
-		month2,year2 = todate.split()
+		month,year = prevdate.split("/")
+		month2,year2 = todate.split("/")
 
-		datetime_object1 = datetime.strptime(month, "%B")
-		month_a = datetime_object1.month
-		print(month_a)
-		datetime_object2 = datetime.strptime(month2, "%B")
-		month_b = datetime_object2.month
-		print(month_b,"mko")
 		sales = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__year__range=(year,year2),
-							evaluation__quatation_approved_date__month__range=(month_a,month_b)).values('evaluation__quatation_approved_date').distinct().order_by('evaluation__quatation_approved_date')
+							evaluation__quatation_approved_date__month__range=(month,month2)).values('evaluation__quatation_approved_date').distinct().order_by('evaluation__quatation_approved_date')
 
 		print(sales,"po")
 		for sale in sales:
 			sdate = sale['evaluation__quatation_approved_date'].strftime("%Y-%m-%d")
-			total_sales = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date=sdate).aggregate(ts=Sum('evaluation__total_cost'))['ts']
-			print(total_sales,"huy")
+			total_sales = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date=sdate).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)	
+			if not total_sales:
+				total_sales = 0.0
+
+			total_orders = Order.objects.filter(evaluation__quatation_approved_date=sdate).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+			if not total_orders:
+				total_orders = 0.0
+
 			sales_dict = {
 			"date" : sdate,
 			"amount" : total_sales,
+			"total" : total_orders,
 			}
 			data.append(sales_dict)
 	else:
@@ -1101,14 +1149,22 @@ def SalesData(request):
 
 		for single_date in daterange:
 			sdate = single_date.strftime("%Y-%m-%d")
-			total_sales = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date=sdate).aggregate(ts=Sum('evaluation__total_cost'))['ts']
+			total_sales = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date=sdate).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+			if not total_sales:
+				total_sales = 0.0
+
+			total_orders = Order.objects.filter(evaluation__quatation_approved_date=sdate).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+			if not total_orders:
+				total_orders = 0.0
 
 			print(sdate,total_sales,"qtc")
-			sale_dict = {
+			sales_dict = {
 			"date" : sdate,
 			"amount" : total_sales,
+			"total" : total_orders,
 			}
-			data.append(sale_dict)
+			data.append(sales_dict)
+	print(data,"sdt")
 	return JsonResponse(data,safe=False)
 
 def cleaningcalendardate(request):
