@@ -41,8 +41,11 @@
         {% endif %}
       </div><!--checkin-form-left-->
       <div class="checkin-form-right align-right"><!--checkin-form-right-->
-
+        {% if detail.status == 'EVALUATED' %}
+        <a href="{% url 'evaluator:evaluator-makequatation2edit' detail.id %}"><div><input name="view" type="button" value="View" class="checkonButton"></div></a>
+        {% else %}
         <a href="{% url 'evaluator:evaluator-makequatation2' detail.id %}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
+        {% endif %}
       
       </div><!--checkin-form-right-->               
 </div><!--checkin-wrapper-row checkin-forms-boxes-->

@@ -15,8 +15,31 @@
          
              
 <div class="white-wrapper"><!--white-wrapper-->    
-<h2 class="h2">Evaluation Callender</h2>
-<input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" class="date_pick date-picker" onchange="set_params_go();">
+
+<div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
+        <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
+        <h2 class="h2">Evaluation Callender</h2>
+        </div><!--filter-column-boxes filter-columns-left-->
+        <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+        
+            <div class="date-wrapper"><!--date-wrapper-->
+            <div class="date-wrapper-inner right-p"><!--date-wrapper-inner-->
+            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" class="date-box date_pick" onchange="set_params_go();">
+            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='today-date current-date'>Today</button>
+            </div><!--date-wrapper-inner-->
+            <div class="date-togglewrapper"><!--date-togglewrapper-->
+            <div class="Button_wrapperChart">
+    
+            </div>
+            </div><!--date-togglewrapper-->
+            </div><!--date-wrapper-->
+        
+        
+        </div><!--filter-column-boxes filter-columns-right-->        
+</div><!--filter-columns-wrapper-->
+
 <div id="table-scroll" class="table-scroll"><!--table-scroll-->
 <div class="table-wrap"><!--table-wrap-->
 <table class="eval-table">
@@ -128,7 +151,18 @@
 <script type="text/javascript">
   
 $('document').ready(function(){  
+    // //datepicker and timepicker for popup
+       $('.id_proposed_date').datetimepicker({ 
+            pickTime: false, 
+            format: "DD-MM-YYYY", 
+            //maxDate: 'now().date()', 
+        });
 
+        //tendative time
+        $(".id_proposed_time").datetimepicker({
+                pickDate:false,
+                format: 'hh:mm A',
+            });
     //Evaluation Callender
         {% for evaluator in evaluation_details %}
             
@@ -239,7 +273,7 @@ $(".assign_evaluator_button").click(function () {
     hour = $(this).data('hour');
     // var now = new Date("{{evaluation_date.year}}",{{evaluation_date.month}}-1,"{{evaluation_date.day}}",hour,0,0,0);
 
-    now_date = ({{evaluation_date.day}}<10 ? '0':'')+"{{evaluation_date.day}}/"+({{evaluation_date.month}}<10 ? '0':'')+"{{evaluation_date.month}}/"+"{{evaluation_date.year}}"
+    now_date = ({{evaluation_date.day}}<10 ? '0':'')+"{{evaluation_date.day}}-"+({{evaluation_date.month}}<10 ? '0':'')+"{{evaluation_date.month}}-"+"{{evaluation_date.year}}"
     
     now_time   = (hour<10 ? '0':'')+(hour>12 ? hour-12:hour)+":00 "+(hour>=12 ? 'PM':'AM')
     

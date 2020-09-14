@@ -411,7 +411,7 @@
                 <textarea name="notes" class="textArea" cols="" rows="" id="notes"></textarea>
   </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
+<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"> &nbsp<input class="cancel-Button close-btn" name="delete" type="button" value="Delete"></div>
 </form>
  </div><!--popup-collapse-->
 </div><!--ticket-wrapper-full--> 
@@ -506,7 +506,7 @@
           <div class=" bold-text common-label" id="team_members"> <label>Team Members</label></div>
   </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
+<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"> &nbsp<input class="cancel-Button close-btn" name="delete" type="button" value="Delete"></div>
 </form>
  </div><!--popup-collapse-->
 </div><!--ticket-wrapper-full--> 
@@ -946,9 +946,9 @@ $(".order_schedule").click(function(){
 
     $('#order_schedule_id').val($(this).data('id'));
     //date picker setup for conirm 
-    $('#order_schedule_date_id').datetimepicker({
-          pickTime: false,
-          format: "DD-MM-YYYY",
+    $('#order_schedule_date_id').datepicker({
+          pickTime: false, 
+          format: "dd-mm-yyyy",
         });
 
     //time picker setup for confirm
@@ -978,9 +978,9 @@ $(".followup_schedule").click(function(){
 
     $('#followup_schedule_id').val($(this).data('id'));
     //date picker setup for conirm 
-    $('#followup_schedule_date_id').datetimepicker({
-          pickTime: false,
-          format: "DD-MM-YYYY",
+    $('#followup_schedule_date_id').datepicker({
+          pickTime: false, 
+          format: "dd-mm-yyyy",
         });
 
     //time picker setup for confirm

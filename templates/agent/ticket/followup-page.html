@@ -107,81 +107,20 @@
                 <div class="green-bg-sm">SUBSCRIBED</div>
                 {% endif %}
 
-                {% if followup_details.investigation.order_schedule.order_scheduler_book.cleaning_type %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.cleaning_type.name}}</div>
+                
+                {% if followup_details.investigation.order_schedule.order_scheduler_book.cleaning_method %}
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.cleaning_method}} Method</div>
                 {% endif %}
 
-                {% if followup_details.investigation.order_schedule.order_scheduler_book.cleaning_method %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.cleaning_method.name}}</div>
+
+                {% if followup_details.investigation.order_schedule.order_scheduler_book.area_type %}
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.area_type}}</div>
                 {% endif %}
-                
-                {% if followup_details.investigation.order_schedule.order_scheduler_book.dirt_level %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.dirt_level}}-Dirt Level</div>
-                {% endif %}
-                
 
                 {% if followup_details.investigation.order_schedule.order_scheduler_book.location_type %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.location_type.name}}</div>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.location_type}}</div>
                 {% endif %}
 
-                
-                {% if followup_details.investigation.order_schedule.order_scheduler_book.floor_type %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.floor_type}}</div>
-                {% endif %}
-
-
-                {% if followup_details.investigation.order_schedule.order_scheduler_book.number_of_floors %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.number_of_floors}} Floors</div>
-                {% endif %}
-
-
-                {% if followup_details.investigation.order_schedule.order_scheduler_book.number_of_rooms %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.number_of_rooms}} Rooms</div>
-                {% endif %}
-
-                
-                {% if followup_details.investigation.order_schedule.order_scheduler_book.set_type %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.set_type}}</div>
-                {% endif %}
-
-
-                {% if followup_details.investigation.order_schedule.order_scheduler_book.set_size %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.set_size}}</div>
-                {% endif %}
-                
-
-                {% if followup_details.investigation.order_schedule.order_scheduler_book.piece_of_chairs %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.piece_of_chairs}} Chairs</div>
-                {% endif %}
-                
-
-                {% if followup_details.investigation.order_schedule.order_scheduler_book.chair_fabric_type %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.chair_fabric_type}}</div>
-                {% endif %}
-
-                
-                {% if followup_details.investigation.order_schedule.order_scheduler_book.spot_stain_status %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.spot_stain_status}}</div>
-                {% endif %}
-
-
-                {% if followup_details.investigation.order_schedule.order_scheduler_book.sanitization_type %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.sanitization_type}} Cleaning</div>
-                {% endif %}
-                
-
-                {% if followup_details.investigation.order_schedule.order_scheduler_book.size_to_be_sanitised %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.size_to_be_sanitised}} Size</div>
-                {% endif %}
-
-
-                {% if followup_details.investigation.order_schedule.order_scheduler_book.bed_size %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.bed_size}} Size</div>
-                {% endif %}
-                
-                {% if followup_details.investigation.order_schedule.order_scheduler_book.bed_type %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.bed_type}} Bed</div>
-                {% endif %}
             </div><!--order-clean-Details-widget order-clean-Details-widget-column2-->            
             
         	<div class="order-clean-Details-widget order-clean-Details-widget-column3"><!--order-clean-Details-widget order-clean-Details-widget-column3-->
