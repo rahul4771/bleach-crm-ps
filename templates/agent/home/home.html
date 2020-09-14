@@ -2,421 +2,64 @@
 {% block content %}
 {% load static %}
 <div class="wrapper">
-{% include "agent/common/header.html" %}    
-    <section class="content"><!--content-->
-        <div class="container-fluid space topspace"><!--container-fluid space-->
-            <div class="welcome-wrapper"><!--welcome-wrapper-->
-                <h1 class="dashboard-head">Welcome to Dashboard</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
-            </div><!--welcome-wrapper-->
-       
+{% include "agent/common/header.html" %}
+
+<section class="content"> 
+<div class="container-fluid space topspace"><!--container-fluid space-->
+    <div class="welcome-wrapper"><!--welcome-wrapper-->
+    <h1 class="dashboard-head">Welcome to Dashboard</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+    </div><!--welcome-wrapper-->
+    
 <div class="main-card"><!--main-card-->
-    <div class="card-row"><!--card-row-->
+	<div class="card-row"><!--card-row-->
             <div class="card-column whitebg blue-border"><!--card-column-->
-                <div class="card-innerwrapper"><!--card-innerwrapper-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-today-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
-                <h1>Evaluations</h1>
+            	<h1>Evaluations</h1>
                 <h2 class="blue-text"><label>Today<span>{{today_enquiry_count|default_if_none:''}}</span></label> </h2>
-                <p><label>This Week <span>{{week_enquiry_count|default_if_none:''}}</span></label></p>
-                </div><!--column-right-->
-                </div><!--card-innerwrapper-->
+            	<p><label>This Week <span>{{week_enquiry_count|default_if_none:''}}</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
             </div><!--card-column-->
         
             <div class="card-column whitebg green-border"><!--card-column-->
-                <div class="card-innerwrapper"><!--card-innerwrapper-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-cleaning-job-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Cleaning Jobs</h1>
-                <h2 class="green-text"><label>Today<span>{{today_cleaning_job_count|default_if_none:''}}</span></label>  </h2>
-                <p><label>This Week<span>{{week_cleaning_job_count|default_if_none:''}}</span></label></p>
-                </div><!--column-right-->
-                </div><!--card-innerwrapper-->
+            	<h2 class="green-text"><label>Today<span>{{today_cleaning_job_count|default_if_none:''}}</span></label>  </h2>
+            	<p><label>This Week<span>{{week_cleaning_job_count|default_if_none:''}}</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
             </div><!--card-column-->
         
             <div class="card-column whitebg orange-border"><!--card-column-->
-                <div class="card-innerwrapper"><!--card-innerwrapper-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-followup-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Follow-up</h1>
-                <h2 class="orange-text"><label>Today<span>{{today_follow_up_job_count|default_if_none:''}}</span></label> </h2>
-                <p><label>This Week <span>{{week_follow_up_job_count|default_if_none:''}}</span></label></p>
-                </div><!--column-right-->
-                </div><!--card-innerwrapper-->
+            	<h2 class="orange-text"><label>Today<span>{{today_follow_up_job_count|default_if_none:''}}</span></label> </h2>
+            	<p><label>This Week <span>{{week_follow_up_job_count|default_if_none:''}}</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
             </div><!--card-column-->
         
             <div class="card-column whitebg red-border"><!--card-column-->
-                <div class="card-innerwrapper"><!--card-innerwrapper-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-rating-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Rating</h1>
-                <h2 class="red-text"><label>Today<span>{{today_average_feedback|default_if_none:'0.0'|floatformat:1}}</span></label> </h2>
-                <p><label>This Week <span>{{week_average_feedback|default_if_none:'0.0'|floatformat:1}}</span></label></p>
-                </div><!--column-right-->
-                </div><!--card-innerwrapper-->
+            	<h2 class="red-text"><label>Today<span>{{today_average_feedback|default_if_none:'0.0'|floatformat:1}}</span></label> </h2>
+            	<p><label>This Week <span>{{week_average_feedback|default_if_none:'0.0'|floatformat:1}}</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
             </div><!--card-column-->
    </div><!--card-row-->
-</div><!--main-card-->       
-            
-     <div class="main-content-holder"><!--main-content-holder-->            
-          
-     <div class="three-col-fluid-wrapper"><!--three-col-fluid-wrapper-->
-            
-            <div class="three-fluid-column three-fluid-one"><!--three-fluid-column three-fluid-one-->
-            <h4>Sales on Types of locations</h4>
- 
-            <div id="donutchart1"></div>
-            <div class="right-legend-chart"><!--right-legend-chart-->
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Appartment</div><span class="chart-gray-stat">19.2%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">House</div><span class="chart-gray-stat">11.2%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-orange-spot" aria-hidden="true"></i> <div class="chart-stat">Villa</div><span class="chart-gray-stat">69.22%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-green-spot" aria-hidden="true"></i> <div class="chart-stat">Chalet</div><span class="chart-gray-stat">69.22%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-cyan-spot" aria-hidden="true"></i> <div class="chart-stat">Shop</div><span class="chart-gray-stat">69.22%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Restaurent</div><span class="chart-gray-stat">19.2%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">Other</div><span class="chart-gray-stat">11.2%</span></div>
-            </div><!--right-legend-chart-->
-            <div class="chart-btnWrapper chart-menudot"><span class="chart-toggle1">...</span></div>
-            <div class="toggle-content" id="example1" style="display:none;"><!--toggle-content-->
- 
- 
- <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-          <div class="ticket-form-left"><!--ticket-form-left-->
-                        <div class=" bold-text common-label"> <label>Governorate</label></div>
-                        <label for="favcity">
-                        <select id="favcity" name="select">
-                        <option value="0">Choose your Order Number</option>
-                        <option value="1">23423434</option>
-                        <option value="2">45454545</option>
-                        <option value="3">45454545</option>
-                        <option value="4">86765676</option>
-                        <option value="5">23545677</option>
-                        </select>
-                        </label>
-          </div><!--ticket-form-left-->
-        </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-        <hr class="hr-dashedpad"> 
-        <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-          <div class="ticket-form-left"><!--ticket-form-left-->
-                        <div class=" bold-text common-label"> <label>Minimum Starring</label></div>
-                        <input name="time" type="text" class="textBox">
-          </div><!--ticket-form-left-->
-        </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-        <hr class="hr-dashedpad"> 
-        <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-          <div class="ticket-form-left"><!--ticket-form-left-->
-                        <div class=" bold-text common-label"> <label>Service Type</label></div>
-                        <input name="time" type="text" class="textBox">
-          </div><!--ticket-form-left-->
-        </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-        <div align="center"> <input class="assignButton" name="assing" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Reset"></div>   
-            </div><!--toggle-content-->
-  
-            
-            </div><!--three-fluid-column three-fluid-one-->
-            
-            <div class="three-fluid-column three-fluid-two"><!--three-fluid-column three-fluid-two-->
-            <h4>Sales on Types of Cleaning</h4>
-            <div id="donutchart2"></div>
-            <div class="right-legend-chart"><!--right-legend-chart-->
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Appartment</div><span class="chart-gray-stat">19.2%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">House</div><span class="chart-gray-stat">11.2%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-orange-spot" aria-hidden="true"></i> <div class="chart-stat">Villa</div><span class="chart-gray-stat">69.22%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-green-spot" aria-hidden="true"></i> <div class="chart-stat">Chalet</div><span class="chart-gray-stat">69.22%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-cyan-spot" aria-hidden="true"></i> <div class="chart-stat">Shop</div><span class="chart-gray-stat">69.22%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Restaurent</div><span class="chart-gray-stat">19.2%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">Other</div><span class="chart-gray-stat">11.2%</span></div>
-            </div><!--right-legend-chart-->
-            <div class="chart-btnWrapper chart-menudot"><span class="chart-toggle2" href="#example2">...</span></div>
-            <div class="toggle-content" id="example2" style="display:none;"><!--toggle-content-->
- 
- 
- <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-          <div class="ticket-form-left"><!--ticket-form-left-->
-                        <div class=" bold-text common-label"> <label>Governorate</label></div>
-                        <label for="favcity">
-                        <select id="favcity" name="select">
-                        <option value="0">Choose your Order Number</option>
-                        <option value="1">23423434</option>
-                        <option value="2">45454545</option>
-                        <option value="3">45454545</option>
-                        <option value="4">86765676</option>
-                        <option value="5">23545677</option>
-                        </select>
-                        </label>
-          </div><!--ticket-form-left-->
-        </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-        <hr class="hr-dashedpad"> 
-        <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-          <div class="ticket-form-left"><!--ticket-form-left-->
-                        <div class=" bold-text common-label"> <label>Minimum Starring</label></div>
-                        <input name="time" type="text" class="textBox">
-          </div><!--ticket-form-left-->
-        </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-        <hr class="hr-dashedpad"> 
-        <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-          <div class="ticket-form-left"><!--ticket-form-left-->
-                        <div class=" bold-text common-label"> <label>Service Type</label></div>
-                        <input name="time" type="text" class="textBox">
-          </div><!--ticket-form-left-->
-        </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-        <div align="center"> <input class="assignButton" name="assing" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Reset"></div>   
-            </div><!--toggle-content-->
-            </div><!--three-fluid-column three-fluid-two-->
-            
-            <div class="three-fluid-column three-fluid-three"><!--three-fluid-column three-fluid-three-->
-            <h4>Sales on Governerates</h4>
-            <div id="donutchart3"></div>
-            <div class="right-legend-chart"><!--right-legend-chart-->
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Appartment</div><span class="chart-gray-stat">19.2%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">House</div><span class="chart-gray-stat">11.2%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-orange-spot" aria-hidden="true"></i> <div class="chart-stat">Villa</div><span class="chart-gray-stat">69.22%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-green-spot" aria-hidden="true"></i> <div class="chart-stat">Chalet</div><span class="chart-gray-stat">69.22%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-cyan-spot" aria-hidden="true"></i> <div class="chart-stat">Shop</div><span class="chart-gray-stat">69.22%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Restaurent</div><span class="chart-gray-stat">19.2%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">Other</div><span class="chart-gray-stat">11.2%</span></div>
-            </div><!--right-legend-chart-->
-            <div class="chart-btnWrapper chart-menudot"><span class="chart-toggle3" href="#example3">...</span></div>
-            <div class="toggle-content" id="example3" style="display:none;"><!--toggle-content-->
- 
- 
- <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-          <div class="ticket-form-left"><!--ticket-form-left-->
-                        <div class=" bold-text common-label"> <label>Governorate</label></div>
-                        <label for="favcity">
-                        <select id="favcity" name="select">
-                        <option value="0">Choose your Order Number</option>
-                        <option value="1">23423434</option>
-                        <option value="2">45454545</option>
-                        <option value="3">45454545</option>
-                        <option value="4">86765676</option>
-                        <option value="5">23545677</option>
-                        </select>
-                        </label>
-          </div><!--ticket-form-left-->
-        </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-        <hr class="hr-dashedpad"> 
-        <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-          <div class="ticket-form-left"><!--ticket-form-left-->
-                        <div class=" bold-text common-label"> <label>Minimum Starring</label></div>
-                        <input name="time" type="text" class="textBox">
-          </div><!--ticket-form-left-->
-        </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-        <hr class="hr-dashedpad"> 
-        <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-          <div class="ticket-form-left"><!--ticket-form-left-->
-                        <div class=" bold-text common-label"> <label>Service Type</label></div>
-                        <input name="time" type="text" class="textBox">
-          </div><!--ticket-form-left-->
-        </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-        <div align="center"> <input class="assignButton" name="assing" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Reset"></div>   
-            </div><!--toggle-content-->
-            </div><!--three-fluid-column three-fluid-three-->
-          
-     </div><!--three-col-fluid-wrapper-->
- 
- 
- <div class="two-col-fluid-wrapper"><!--two-col-fluid-wrapper-->
-    <div class="two-col-fluid-left two-col-fluid-boxes"><!--two-col-fluid-left two-col-fluid-boxes-->
-        <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
-        <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
-        <h2 class="h2">Sales targets</h2>
-        </div><!--filter-column-boxes filter-columns-left-->
-        <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
-        
-            <div class="date-wrapper"><!--date-wrapper-->
-            <div class="date-wrapper-inner right-p"><!--date-wrapper-inner-->
-            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type='text' id='datepicker'  name='datepicker' class="date-box date_pick">
-            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
-            <button class='today-date current-date'>Today</button>
-            </div><!--date-wrapper-inner-->
-            <div class="date-togglewrapper"><!--date-togglewrapper-->
-            <div class="Button_wrapperChart">
-    
-            </div>
-            </div><!--date-togglewrapper-->
-            </div><!--date-wrapper-->
-        
-        
-        </div><!--filter-column-boxes filter-columns-right-->        
-    </div><!--filter-columns-wrapper-->
-    
-    
-    
-    
-    
-    
-    
-    
-        
-            <div class="bar-chart"><!--bar-chart-->
-            
-                <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
-                </div><!--bar-chart-items chart-column-one-->
-                
-                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
-                    <div class="evaluator-name">Anna Strong</div>
-                    <div class="designation">Evaluator</div>
-                </div><!--bar-chart-items chart-column-two-->
-                
-                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-                <div class="evaluator-name">80%</div>
-                    <div class="bar-chart-graybg"><div class="chart-bluebg"></div></div>
-                </div><!--bar-chart-items chart-column-three-->
-                
-                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
-                    <a class="followup_graph"><input name="Follow" type="button" class="follow" value="Follow"> </a>
-                </div><!--bar-chart-items chart-column-four-->
-                
-            </div><!--bar-chart-->
-        
-            <div class="bar-chart"><!--bar-chart-->
-            
-                <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
-                </div><!--bar-chart-items chart-column-one-->
-                
-                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
-                    <div class="evaluator-name">Anna Strong</div>
-                    <div class="designation">Evaluator</div>
-                </div><!--bar-chart-items chart-column-two-->
-                
-                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-                <div class="evaluator-name">60%</div>
-                    <div class="bar-chart-graybg"><div class="chart-yellobg"></div></div>
-                </div><!--bar-chart-items chart-column-three-->
-                
-                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
-                     <a class="followup_graph"><input name="Follow" type="button" class="follow" value="Follow"> </a> 
-                </div><!--bar-chart-items chart-column-four-->
-                
-            </div><!--bar-chart-->
-        
-            <div class="bar-chart"><!--bar-chart-->
-            
-                <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
-                </div><!--bar-chart-items chart-column-one-->
-                
-                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
-                    <div class="evaluator-name">Anna Strong</div>
-                    <div class="designation">Evaluator</div>
-                </div><!--bar-chart-items chart-column-two-->
-                
-                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-                <div class="evaluator-name">90%</div>
-                    <div class="bar-chart-graybg"><div class="chart-pinkbg"></div></div>
-                </div><!--bar-chart-items chart-column-three-->
-                
-                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
-                     <a class="followup_graph"><input name="Follow" type="button" class="follow" value="Follow"> </a> 
-                </div><!--bar-chart-items chart-column-four-->
-                
-            </div><!--bar-chart-->        
-        
-            <div class="bar-chart"><!--bar-chart-->
-            
-                <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
-                </div><!--bar-chart-items chart-column-one-->
-                
-                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
-                    <div class="evaluator-name">Anna Strong</div>
-                    <div class="designation">Evaluator</div>
-                </div><!--bar-chart-items chart-column-two-->
-                
-                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-                <div class="evaluator-name">80%</div>
-                    <div class="bar-chart-graybg"><div class="chart-bluebg"></div></div>
-                </div><!--bar-chart-items chart-column-three-->
-                
-                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
-                     <a class="followup_graph"><input name="Follow" type="button" class="follow" value="Follow"> </a>
-                </div><!--bar-chart-items chart-column-four-->
-                
-            </div><!--bar-chart-->
-        
-            <div class="bar-chart"><!--bar-chart-->
-            
-                <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
-                </div><!--bar-chart-items chart-column-one-->
-                
-                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
-                    <div class="evaluator-name">Anna Strong</div>
-                    <div class="designation">Evaluator</div>
-                </div><!--bar-chart-items chart-column-two-->
-                
-                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-                <div class="evaluator-name">60%</div>
-                    <div class="bar-chart-graybg"><div class="chart-yellobg"></div></div>
-                </div><!--bar-chart-items chart-column-three-->
-                
-                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
-                     <a class="followup_graph"><input name="Follow" type="button" class="follow" value="Follow"> </a> 
-                </div><!--bar-chart-items chart-column-four-->
-                
-            </div><!--bar-chart-->
-        
-            <div class="bar-chart"><!--bar-chart-->
-            
-                <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
-                </div><!--bar-chart-items chart-column-one-->
-                
-                <div class="bar-chart-items chart-column-two followup_graph"><!--bar-chart-items chart-column-two-->
-                    <div class="evaluator-name">Anna Strong</div>
-                    <div class="designation">Evaluator</div>
-                </div><!--bar-chart-items chart-column-two-->
-                
-                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-                <div class="evaluator-name">90%</div>
-                    <div class="bar-chart-graybg"><div class="chart-pinkbg"></div></div>
-                </div><!--bar-chart-items chart-column-three-->
-                
-                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
-                     <a class="followup_graph"><input name="Follow" type="button" class="follow" value="Follow"> </a> 
-                </div><!--bar-chart-items chart-column-four-->
-                
-            </div><!--bar-chart-->
-    </div><!--two-col-fluid-left two-col-fluid-boxes--> 
-    <div class="two-col-fluid-right two-col-fluid-boxes"><!--two-col-fluid-right two-col-fluid-boxes-->
-        <div class="chart_boxDiv"><!--chart_boxDiv-->
-        <div class="chart_box_Right"><!--chart_box_Right-->
-                <!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
-                <div id="curve_chart" ></div>
-            </div><!--chart_box_Right-->
-        </div><!--chart_boxDiv--> 
-              
-              <div class="chart_boxDiv"><!--chart_boxDiv-->    
-        
-         <div class="chart_box_Left"><!--chart_box_Left-->
-         <div class="legend-wrapper"><!--legend-wrapper--> 
-            <div class="legend-result count_div"><label class="legend-label">SALES </label> <b class="legend-result-blue" id="total_submitted"></b></div>
-            <div class="legend-result count_div"><label class="legend-label">ORDERS </label> <b class="legend-result-red" id="total_approved"></b></div>
-         </div><!--legend-wrapper-->
-        </div><!--chart_box_Left-->
-        
-        <div class="chart_box_Left"><!--chart_box_Left-->        
-        <div class="Button_wrapperChart">
-            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daym"><div class="slider round"><span class="on"> </span><span class="off"> </span></div></label></div>
-            <input name="" class="txt-box" type="text">&nbsp;<input name="" class="txt-box" type="text">
-          <!--  <input type="text" id="from" class="date_pick date_pick2 date-picker set1 date-pick-left" value={{investigation_date|date:"d-m-Y"}} >
-            <input type="text" id="to" class="date_pick date_pick2 date-picker set1 date-pick-right" value={{investigation_date|date:"d-m-Y"}} >-->
-            <div><button id="reset" class="green-button-chart">Reset</button></div>
-            
-            </div>
-                     
-        </div><!--chart_box_Left-->
-        </div><!--chart_boxDiv-->  
-    </div><!--two-col-fluid-right two-col-fluid-boxes-->  
-    
-    
-</div><!--two-col-fluid-wrapper--> 
+</div><!--main-card-->
 
-<br><br>
-
+<div class="main-content-holder"><!--main-content-holder-->
 
 {% if order_schedules or follow_up_schedules %}  
 <div class="white-wrapper"><!--white-wrapper-->
@@ -457,7 +100,7 @@
 <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
 
 <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
-<h2 class="h2">Evaluation Callender</h2>
+<h2 class="h2">Evaluation Calender</h2>
 {% comment %} <a href='{% url 'agent:email-view'%}'>sendmail</a> {% endcomment %}
 </div>
 
@@ -465,7 +108,7 @@
 <div class="date-wrapper"><!--date-wrapper-->
             <div class="date-wrapper-inner"><!--date-wrapper-inner-->
             <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+            <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" onchange="evaluationrefresh();" class="date-box date_pick">
             <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
             <button class='today-date current-date'>Today</button>
             </div><!--date-wrapper-inner-->
@@ -515,7 +158,8 @@
 </div><!--table-scroll-->
 </div><!--white-wrapper-->
 {% endif %}
- 
+
+
 <div class="white-wrapper"><!--white-wrapper-->
 
 <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
@@ -528,7 +172,7 @@
 <div class="date-wrapper"><!--date-wrapper-->
             <div class="date-wrapper-inner"><!--date-wrapper-inner-->
             <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type="text" id="cleaning_calendar" value="{{schedule_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+            <input type="text" id="cleaning_calendar" value="{{schedule_date|date:"d-m-Y"}}" onchange="cleaningrefresh();" class="date-box date_pick">
             <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
             <button class='today-date current-date'>Today</button>
             </div><!--date-wrapper-inner-->
@@ -560,61 +204,15 @@
 </div>
 </div>
 </div>
-</div><!--white-wrapper-->              
-             
-      </div><!--main-content-holder-->
-        </div><!--container-fluid space-->
-    </section><!--content-->
+</div><!--white-wrapper-->
 
+
+</div><!--main-content-holder-->
+</div><!--container-fluid space-->
+ 
+</section>
 {% include 'agent/common/footer.html' %}
-</div><!--wrapper-->
-
-
-<!-- followup graph_popup -->
-<div class="modal-popup-wrappergraph"><!--modal-popup-wrapper-->
-    <div class="modal-overlay modal-toggle"></div>
-    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
-       <div class="full-wrapp-pop">  <!--full-wrapp-pop-->
-        <div class="close-popup modal-close modal-toggle followup_graph">X</div>
-        
-        <div class="modal-body no-padding"><!--modal-body-->        
-            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-                <div class="clients-card-column clients-column-right"><!--clients-card-column clients-column-right-->
-                    <div class="chart_boxDiv"><!--chart_boxDiv-->
-                        <div class="chart_box_Right"><!--chart_box_Right-->
-                            <!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
-                            <div id="chart_div" ></div>
-                        </div><!--chart_box_Right-->
-                    </div><!--chart_boxDiv-->   
-                
-                    <div class="chart_boxDiv"><!--chart_boxDiv-->    
-                        <div class="chart_box_Left"><!--chart_box_Left-->
-                                <div class="legend-wrapper"><!--legend-wrapper--> 
-                                    <div class="legend-result count_div"><label class="legend-label">Submitted </label> <b class="legend-result-blue" id="total_submitted"></b></div>
-                                    <div class="legend-result count_div"><label class="legend-label">Approved </label> <b class="legend-result-red" id="total_approved"></b></div>
-                                </div><!--legend-wrapper-->
-                            </div><!--chart_box_Left-->
-                            
-        <div class="chart_box_Left"><!--chart_box_Left-->        
-        <div class="Button_wrapperChart">
-            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daym"><div class="slider round"></div></label></div>
-<!--            <input type="text" id="ord_fromdate" class="date_pick date-picker set1 date-pick-left" value={{investigation_date|date:"d-m-Y"}} >
-            <input type="text" id="ord_todate" class="date_pick date-picker set1 date-pick-right" value={{investigation_date|date:"d-m-Y"}} >-->
-            <input name="" class="txt-box" type="text">&nbsp;<input name="" class="txt-box" type="text">
-            <div><button id="reset_orders" class="green-button-chart">Reset</button></div>
-              
-            </div>
-                       
-        </div><!--chart_box_Left-->           
-                    </div><!--chart_boxDiv-->                
-                </div> <!--clients-card-column clients-column-right-->                                   
-            </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-            <div class="popup-btn-wrap" align="center"> <input class="pop-assignButton" name="assing" type="button" value="Submit"> <input class="pop-cancel-Button" name="cancel" type="button" value="Reset"></div>
-        </div><!--modal-body-->
-        </div>  <!--full-wrapp-pop-->
-    </div><!--modal-wrapper modal-transition-->
-</div><!--followup graph popup-->
-
+</div>
 
 <!-- order_scheduler confirm_popup -->
 <div id="orderschedule_dateconfirm_popup" class="overlay"><!--overlay-->
@@ -761,7 +359,7 @@
       </div><!--ticket-form-left--> 
   </div><!--ticket-wrapper-row ticket-forms-boxes-->
      
-    <div class="edit-collapse collapsible"><a href="#collapsible" ><img src="{% static 'files/images/edit.svg' %}"></a></div>  
+    <div class="edit-collapse collapsible"><a href="#" ><img src="{% static 'files/images/edit.svg' %}"></a></div>  
     <div class="popup-collapse"><!--popup-collapse--> 
     <form method="post" enctype= "multipart/form-data">
     {%csrf_token%}  
@@ -813,7 +411,7 @@
                 <textarea name="notes" class="textArea" cols="" rows="" id="notes"></textarea>
   </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
+<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"> &nbsp<input class="cancel-Button close-btn" name="delete" type="button" value="Delete"></div>
 </form>
  </div><!--popup-collapse-->
 </div><!--ticket-wrapper-full--> 
@@ -861,7 +459,7 @@
       </div><!--ticket-form-left--> 
   </div><!--ticket-wrapper-row ticket-forms-boxes-->
      
-    <div class="edit-collapse collapsible1"><a href="#collapsible1" ><img src="{% static 'files/images/edit.svg' %}"></a></div>  
+    <div class="edit-collapse collapsible1"><a href="#" ><img src="{% static 'files/images/edit.svg' %}"></a></div>  
     <div class="popup-collapse"><!--popup-collapse--> 
     <form method="post" enctype= "multipart/form-data">
     {%csrf_token%}  
@@ -908,7 +506,7 @@
           <div class=" bold-text common-label" id="team_members"> <label>Team Members</label></div>
   </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
+<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"> &nbsp<input class="cancel-Button close-btn" name="delete" type="button" value="Delete"></div>
 </form>
  </div><!--popup-collapse-->
 </div><!--ticket-wrapper-full--> 
@@ -954,7 +552,7 @@
       </div><!--ticket-form-left--> 
   </div><!--ticket-wrapper-row ticket-forms-boxes-->
      
-    <div class="edit-collapse collapsible2"><a href="#collapsible2" ><img src="{% static 'files/images/edit.svg' %}"></a></div>  
+    <div class="edit-collapse collapsible2"><a href="#" ><img src="{% static 'files/images/edit.svg' %}"></a></div>  
     <div class="popup-collapse"><!--popup-collapse--> 
     <form method="post" enctype= "multipart/form-data">
     {%csrf_token%}  
@@ -1014,11 +612,8 @@
 
 {% endblock %}
 {% block javascript %}
-<script src="{% static 'files/js/charts/sales-pie-charts.js' %}"></script>
-<script src="{% static 'files/js/charts/order-chart.js' %}"></script>
 <script type="text/javascript">
 $('document').ready(function(){
-
     //Evaluation Callender
         {% for evaluator in evaluation_details %}
             
@@ -1351,9 +946,9 @@ $(".order_schedule").click(function(){
 
     $('#order_schedule_id').val($(this).data('id'));
     //date picker setup for conirm 
-    $('#order_schedule_date_id').datetimepicker({
-          pickTime: false,
-          format: "DD-MM-YYYY",
+    $('#order_schedule_date_id').datepicker({
+          pickTime: false, 
+          format: "dd-mm-yyyy",
         });
 
     //time picker setup for confirm
@@ -1383,9 +978,9 @@ $(".followup_schedule").click(function(){
 
     $('#followup_schedule_id').val($(this).data('id'));
     //date picker setup for conirm 
-    $('#followup_schedule_date_id').datetimepicker({
-          pickTime: false,
-          format: "DD-MM-YYYY",
+    $('#followup_schedule_date_id').datepicker({
+          pickTime: false, 
+          format: "dd-mm-yyyy",
         });
 
     //time picker setup for confirm
@@ -1423,15 +1018,6 @@ window.location.href=url+query;
 
 $('document').ready(function(){
   
-  //Followup graph popup
-  $('.followup_graph').on('click', function (e) {
-      e.preventDefault();
-      console.log("hiiiiii");
-      $('.modal-popup-wrappergraph').toggleClass('is-visible');
-    });  
-
-
-
   // Evaluation Edit
     $('.edit_evaluation').on('click', function (e) {
       e.preventDefault();
@@ -1627,46 +1213,5 @@ for (i = 0; i < coll.length; i++) {
 
 });
 
-
-//Chart Filers
-$('.chart-toggle1').click(function(){
-        status = $('#example1').css("display");
-        if(status == 'block')
-        {
-            $('#example1').css("display","none");
-        }
-        else
-        {
-            $('#example1').css("display","block");   
-        }
-    });
-
-$('.chart-toggle2').click(function(){
-    status = $('#example2').css("display");
-    if(status == 'block')
-    {
-        $('#example2').css("display","none");
-    }
-    else
-    {
-        $('#example2').css("display","block");   
-    }
-});
-
-$('.chart-toggle3').click(function(){
-    status = $('#example3').css("display");
-    if(status == 'block')
-    {
-        $('#example3').css("display","none");
-    }
-    else
-    {
-        $('#example3').css("display","block");   
-    }
-});
-
 </script>
-
-//# sourceURL=pen.js
-    </script>
 {% endblock %}

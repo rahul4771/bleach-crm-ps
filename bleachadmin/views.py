@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.template.loader import render_to_string
 from django.views import View
 from django.http import JsonResponse
 from django.conf import settings
@@ -1109,3 +1110,70 @@ def SalesData(request):
 			}
 			data.append(sale_dict)
 	return JsonResponse(data,safe=False)
+
+def cleaningcalendardate(request):
+	data = dict()
+	cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
+		
+	try:
+		schedule_date = datetime.strptime(cleaning_calendar_date,'%d-%m-%Y')
+	except:
+		schedule_date = timezone.now().replace(tzinfo=None)
+
+	schedule_date_start = schedule_date.replace(hour=0,minute=0,second=0,microsecond=0)
+	schedule_date_end   = schedule_date_start+timedelta(1)		
+
+	try:
+		calendar_order_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
+	except:
+		calendar_order_schedules 	= None
+
+	try:
+		calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+	except:
+		calendar_followup_schedules = None
+
+	try:
+		sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
+	except:
+		sp_calendar_order_schedules = None
+
+	try:
+		sp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+	except:
+		sp_calendar_followup_schedules = None							
+
+	try:
+		spp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
+	except:
+		spp_calendar_order_schedules = None
+
+	try:
+		spp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+	except:
+		spp_calendar_followup_schedules = None
+
+	context = {'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules}
+	data['cleaningdetails'] = render_to_string('admin/home/cleaning-calendar-snippet.html',context)	
+	return JsonResponse(data)
+
+def evaluationcalendardate(request):
+	data = dict()
+	evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
+		
+	try:
+		evaluation_date = datetime.strptime(evaluation_calendar_date,'%d-%m-%Y')
+	except:
+		evaluation_date = timezone.now().replace(tzinfo=None)	
+
+	evaluation_date_start  = evaluation_date.replace(hour=0,minute=0,second=0,microsecond=0)
+	evaluation_date_end    = evaluation_date_start+timedelta(1)	
+	
+	try:
+		evaluation_details		  = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').prefetch_related(Prefetch('evaluator_evaluation',queryset=EvaluationDetails.objects.filter(is_active=True,proposed_time__gte=evaluation_date_start,proposed_time__lte=evaluation_date_end),to_attr='evaluation_details'))
+	except:
+		evaluation_details 		  = None
+
+	context = {'evaluation_details':evaluation_details}
+	data['evaluationdetails'] = render_to_string('admin/home/evaluation-calendar-snippet.html',context)
+	return JsonResponse(data)

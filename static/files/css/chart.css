@@ -11,7 +11,7 @@
 .Button_wrapperChart{margin:30px 0 0px 0; position:relative; }
 .green-button-chart{ background:#37b79a; border:none; border-radius:50px; width:90px !important; padding:7px 10px 8px 10px !important; color:#fff; position:absolute; left:100px; top:0;}
 .blue-sliderbutton{  }
- .date_pick{ margin-top:20px !important; position:absolute; left:0; width:120px !important;  }
+ .date_pick2{ margin-top:20px !important; position:absolute; left:0; width:120px !important;  }
  .legend-wrapper{ margin:20px 0 0 0; padding:8px 15px; border:1px solid #dad898; background:#fbfad1; border-radius:5px;}
  .legend-result-red{ font-size:15px; font-weight:normal !important; display:inline-block; color:#fff; background:#eb7896; margin:0 0 0 5px; padding:3px 8px; vertical-align:middle; }
  .legend-result-blue{ font-size:15px; font-weight:normal !important; display:inline-block; color:#fff; background:#6bb3f7; margin:0 0 0 5px; padding:3px 8px; vertical-align:middle; } 

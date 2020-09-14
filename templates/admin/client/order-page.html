@@ -88,6 +88,7 @@
 <div class="order-details-wrapper"><!--order-details-wrapper--> 
     <div class="order-details-left-stretch"><!--order-details-left-stretch-->
        {% for orderschedule in order.orderschedules %}
+       <div id="details{{orderschedule.id}}">
         <div class="details-head">Details <div class="order-date">{{orderschedule.start_at}}</div></div>    
         <hr class="style-three" > 
         <div class="order-clean-Details-wrapper"><!--order-clean-Details-wrapper-->
@@ -102,9 +103,9 @@
                 {% else %}
                 <div class="green-bg-sm">SUBSCRIBED</div>
                 {% endif %}
-        
+                
                 {% if orderschedule.order_scheduler_book.cleaning_method %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.cleaning_method.name}} Method</div>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.cleaning_method}} Method</div>
                 {% endif %}
                 
                 {% if orderschedule.order_scheduler_book.area_type %}
@@ -114,7 +115,7 @@
                 {% if orderschedule.order_scheduler_book.location_type %}
                 <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.location_type}}</div>
                 {% endif %}
-
+                
             </div><!--order-clean-Details-widget order-clean-Details-widget-column2-->            
             
             <div class="order-clean-Details-widget order-clean-Details-widget-column3"><!--order-clean-Details-widget order-clean-Details-widget-column3-->
@@ -151,9 +152,9 @@
 <div class="details-sub-head align-left">Section {{forloop.counter}} : {{section.section_name}}</div>
 <br>
 <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
-		<div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left--> 
+        <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left--> 
         {% if section.category %}  
- 		<div class="category-cleaning"><span class="labelcategory">Category</span> : {{section.category}}</div>
+        <div class="category-cleaning"><span class="labelcategory">Category</span> : {{section.category}}</div>
         {% endif %}
         <div class="category-cleaning"><span class="labelcategory">Dirt Level</span> : {{section.dirt_level}}</div>
         {% if section.age %}
@@ -170,7 +171,7 @@
         <div class="category-cleaning"><span class="labelcategory">Rooms</span> : {{section.room}}</div>
         {% endif %}
         </div><!--filter-column-boxes filter-columns-left-->
-		<div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+        <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
         {% if section.wall_type %}
         <div class="category-cleaning"><span class="labelcategory">Wall Type</span>  : {{section.wall_type}}</div>
         {% endif %}
@@ -195,7 +196,7 @@
 <div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
 {% if section.sectionkeynotes %}
 {% for keynote in section.sectionkeynotes %}
-		<div class="evaluation-card"><!--evaluation-card-->
+        <div class="evaluation-card"><!--evaluation-card-->
         <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
         </div><!--evaluation-card-->        
 {% endfor %}
@@ -206,38 +207,210 @@
 {% endfor %}
 
 {% if orderschedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}
+
 <div class="details-sub-head align-left">Subscription Status</div>
-<div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
-<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+<div class="order-clean-outer-wrapper cream"><!--order-clean-outer-wrapper-->
+<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table whitebg">
  
 <thead>
 <tr>
+<th>Cleaning</th>
 <th data-hide="phone,tablet">Date and Time</th>
 <th class="align-center" data-hide="phone,tablet">Status</th>
 </tr>
 </thead>
 <tbody>
-
     {% for subscription_schedule in order.orderschedules %}
     {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
     <tr>
+    <td class="red-line">Cleaning {{forloop.counter}}</td>
     <td>{{subscription_schedule.start_at}}</td>
-    <td><span class="red-bg">{{subscription_schedule.work_status}}</span></td> 
-    </tr>
+    <td><span class="red-bg">{{subscription_schedule.work_status|default_if_none:'Not Started'}}</span></td> 
+    </tr> 
     {% endif %}
-    {% endfor %} 
-
+    {% endfor %}     
 </tbody>
 <tfoot>
  
 </tfoot>
 </table>
 
+
+{% if  orderschedule.cleaning_team %}
+ {% for cleaning_team in orderschedule.cleaning_team %}       
+<div class="details-sub-head align-left small-head">Cleaning Team</div>
+    <div class="order-clean-outer-wrapper whitebg"><!--order-clean-outer-wrapper-->
+        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+            <div class="order-common-date">{{orderschedule.start_at}}</div>
+                    <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                        <div class="team-profile-pic"><img src="{% static 'files/images/team-leader.svg' %}"></div>
+                    </div><!--order-clean-team-widget order-clean-team-widget-column1-->
+                    
+                <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                    <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                        
+                        <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                            <div class="team-Name">{{cleaning_team.team_leader.name}}</div>
+                            <div class="team-profile">Team Leader</div>
+                        </div><!--order-clean-inColumn-->
+                                            
+                    </div> <!--order-clean-team-inside-wrapper-->
+                </div><!--order-clean-team-widget order-clean-team-widget-column2-->
+        </div><!--order-clean-team-wrapper-->
+        
+<hr class="bar">
+        
+        
+        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+            <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                <div class="team-profile-pic"><img src="{% static 'files/images/team-member.svg' %}"></div>
+            </div><!--order-clean-team-widget order-clean-team-widget-column1-->
+            
+            <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
+                <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                    {% for team_member in cleaning_team.cleaning_team_members %}
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">{{team_member.member.name}}</div>
+                        <div class="team-profile">Team Member</div>
+                    </div><!--order-clean-inColumn-->
+                    {% endfor %}
+                </div><!--order-clean-team-inside-wrapper-->     
+            </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
+        </div><!--order-clean-team-wrapper-->
+        
+<hr class="bar">        
+
+        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+            <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                <div class="team-profile-pic"><img src="{% static 'files/images/driver.svg' %}"></div>
+            </div><!--order-clean-team-widget order-clean-team-widget-column1-->
+            
+            <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
+                <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">{{cleaning_team.drop_off_driver.name}}</div>
+                        <div class="team-profile">Dropoff Driver</div>
+                    </div><!--order-clean-inColumn-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">{{cleaning_team.pick_up_driver.name}}</div>
+                        <div class="team-profile">Pickup Driver</div>
+                    </div><!--order-clean-inColumn-->
+                </div><!--order-clean-team-inside-wrapper-->     
+            </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
+        </div><!--order-clean-team-wrapper-->
+        
+    </div><!--order-clean-outer-wrapper-->
+{% endfor %}    
+{% endif %}
+
+
+
+{% if orderschedule.investigations %}
+{% for investigation in orderschedule.investigations %}
+<div class="details-sub-head align-left">Investigation</div>     
+<div class="investigation-columns whitebg"><!--investigation-columns-->
+        <div class="investigation-columns-left"><!--investigation-columns-left-->
+            
+            {% if investigation.investigator.profile_image %}
+            <div class="profile-pic"><img src="{{investigation.investigator.profile_image.url}}"></div>
+            {% else %}
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+            {% endif %}
+
+            <div class="client-name">{{investigation.investigator.name}}<div class="common-gray-text">Investigator</div></div>
+        </div><!--investigation-columns-left-->
+
+        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
+        <div class="order-invest-date">{{investigation.sheduled_at}}</div>
+            <div class="notes">Notes</div>
+            <p>{{investigation.notes}}</p>
+        </div><!--investigation-columns-middle-->
+
+        <div class="investigation-columns-right"><!--investigation-columns-right-->
+            <div class=" "><img src="{% static 'files/images/cleaning1.jpg' %}"></div>
+        </div><!--investigation-columns-right-->
+</div><!--investigation-columns-->            
+
+    
+{% for followup in investigation.followups %}
+{% for follow_up_scheduler in followup.follow_up_schedules %}
+{% for team in follow_up_scheduler.followupteams %}
+
+{% if team.followupmembers %}
+<div class="details-sub-head align-left small-head">Follow-up Cleaning</div>
+    <div class="order-clean-outer-wrapper whitebg"><!--order-clean-outer-wrapper-->
+        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+            <div class="order-common-date">{{follow_up_scheduler.start_at}}</div>
+                    <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                        <div class="team-profile-pic"><img src="{% static 'files/images/team-leader.svg' %}"></div>
+                    </div><!--order-clean-team-widget order-clean-team-widget-column1-->
+                    
+                <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                    <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                        <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                            <div class="team-Name">{{team.team_leader}}</div>
+                            <div class="team-profile">Team Leader</div>
+                        </div><!--order-clean-inColumn-->                    
+                    </div> <!--order-clean-team-inside-wrapper-->
+                </div><!--order-clean-team-widget order-clean-team-widget-column2-->
+        </div><!--order-clean-team-wrapper-->
+        
+<hr class="bar">
+        
+        
+        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+            <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                <div class="team-profile-pic"><img src="{% static 'files/images/team-member.svg' %}"></div>
+            </div><!--order-clean-team-widget order-clean-team-widget-column1-->
+            
+            <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
+                <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                    {% for member in team.followupmembers %}
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">{{member.member.name}}</div>
+                        <div class="team-profile">Team Member</div>
+                    </div><!--order-clean-inColumn-->
+                    {% endfor %}
+                </div><!--order-clean-team-inside-wrapper-->     
+            </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
+        </div><!--order-clean-team-wrapper-->
+        
+<hr class="bar">        
+
+        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+            <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                <div class="team-profile-pic"><img src="{% static 'files/images/driver.svg' %}"></div>
+            </div><!--order-clean-team-widget order-clean-team-widget-column1-->
+            
+            <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
+                <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">{{team.drop_off_driver.name}}</div>
+                        <div class="team-profile">Dropoff Driver</div>
+                    </div><!--order-clean-inColumn-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">{{team.pick_up_driver.name}}</div>
+                        <div class="team-profile">Pickup Driver</div>
+                    </div><!--order-clean-inColumn-->
+                </div><!--order-clean-team-inside-wrapper-->     
+            </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
+        </div><!--order-clean-team-wrapper-->
+        
+    </div><!--order-clean-outer-wrapper-->
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endfor %}
+
+{% endfor %}
+{% endif %}
 </div><!--order-clean-outer-wrapper-->
 
-{% endif %}
-        
-    
+
+
+
+{% else %}  
+
  {% if  orderschedule.cleaning_team %}
  {% for cleaning_team in orderschedule.cleaning_team %}       
 <div class="details-sub-head align-left">Cleaning Team</div>
@@ -407,61 +580,63 @@
 {% endfor %}
 {% endif %}
 
-
+{% endif %}
 {% if order.feedbacks %}
 <div class="details-sub-head align-left">Feedback</div>    
 <div class="investigation-columns"><!--investigation-columns-->
         <div class="investigation-columns-left"><!--investigation-columns-left-->
             <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
-            <div class="client-name lg-text"><div class="common-gray-text">Customer</div>4.2</div>
-            <div class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </div>
+            <div class="client-name lg-text"><div class="common-gray-text">{{client_details.name}}</div>{{average_feedback|default_if_none:'0.0'|floatformat:1}}</div>
+        {% if average_feedback < 2 and average_feedback >= 1 %}
+        <div class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> </div>
+        {% elif average_feedback < 3 and average_feedback >= 2 %}
+        <div class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> </div>
+        {% elif average_feedback < 4 and average_feedback >= 3 %}
+        <div class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> </div>
+        {% elif average_feedback < 5 and average_feedback >= 4 %}
+        <div class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </div>
+        {% elif average_feedback == 5 %}
+        <div class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span> </div>
+        {% else %}
+        <div class="align-center"><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> </div>
+        {% endif %}
         </div><!--investigation-columns-left-->
 
         <div class="investigation-columns-middle"><!--investigation-columns-middle-->
-        <div class="order-invest-date">April 28,2020 at 11:40 AM</div>
+        <div class="order-invest-date">{{order.feedback_marked_date|default_if_none:''}}</div>
         <br>
         <div class="feedback-list"><!--feedback-list-->
         <ul>
-        {% for feedback in order.feedbacks %}    
+        {% for feedback in order.feedbacks %}
         <li>{{feedback.question.question}}  ?</li>
-         
         {% if feedback.rating == 1 %}
-        <div class="feedback-ratings">
-            <span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> 
-        </div>
+        <div class="feedback-ratings"><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> </div>
         {% elif feedback.rating == 2 %}
-        <div class="feedback-ratings">
-            <span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> 
-        </div>
+        <div class="feedback-ratings"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> </div>
         {% elif feedback.rating == 3 %}
-        <div class="feedback-ratings">
-            <span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> 
-        </div>
+        <div class="feedback-ratings"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> </div>
         {% elif feedback.rating == 4 %}
-        <div class="feedback-ratings">
-            <span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> 
-        </div>
+        <div class="feedback-ratings"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </div>
         {% elif feedback.rating == 5 %}
-        <div class="feedback-ratings">
-            <span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span> 
-        </div>
+        <div class="feedback-ratings"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span> </div>
         {% else %}
-        <div class="feedback-ratings">
-            <span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> 
-        </div>
+        <div class="feedback-ratings"><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span> </div>
         {% endif %}
-
-        {% endfor %}       
+        {% endfor %}        
         </ul>
         </div><!--feedback-list-->
          
  
             <div class="notes">Notes</div>
-            <p class="thrt-size">{{order.feedback_notes}}</p>
+            <p class="thrt-size">{{order.feedback_notes}} ,</p>
         </div><!--investigation-columns-middle-->
  
 </div><!--investigation-columns-->
 {% endif %}
+
+
+
+
 
 
 <div class="details-sub-head align-left">Media</div>
@@ -514,6 +689,7 @@
 
 <hr class="bar">  
 <br>
+</div>
 {% endfor %} 
  
                         
@@ -571,6 +747,26 @@
 </div><!--wrapper-->
 {% endblock %}
 {% block javascript %}
+<script>
+    $(document).ready(function(){
+        
+        //Remove Duplicate details
+        duplicates_array = []
+        {% for orderschedule in order.orderschedules %}
+        book_id = "{{orderschedule.order_scheduler_book.id}}"
+        
+        if(duplicates_array.includes(book_id))
+        {
+            $("#details{{orderschedule.id}}").remove();
+        }
+        else
+        {
+            duplicates_array.push("{{orderschedule.order_scheduler_book.id}}");
+        }
+        {% endfor %}
+
+    })
+</script>
 <script id="rendered-js">
 $('.footable').footable({
   calculateWidthOverride: function () {

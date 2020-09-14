@@ -7,7 +7,7 @@
 <section class="content"><!--content-->
 	<div class="container-fluid space topspace"><!--container-fluid space topspace-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
-            <h1 class="dashboard-head">Order {{order.evaluation.evaluation_id}}</h1>
+            <h1 class="dashboard-head">1Order {{order.evaluation.evaluation_id}}</h1>
             {% if order.payment_status == 'COMPLETED' %}
             <p><input name="paid" type="button" class="green-button" value="Paid" id="paid"></p>    
             {% elif order.payment_status == 'PENDING' %}
@@ -105,7 +105,7 @@
                 {% endif %}
                 
                 {% if orderschedule.order_scheduler_book.cleaning_method %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.cleaning_method.name}} Method</div>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.cleaning_method}} Method</div>
                 {% endif %}
                 
                 {% if orderschedule.order_scheduler_book.area_type %}

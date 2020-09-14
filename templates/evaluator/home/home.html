@@ -144,11 +144,9 @@
 </div>
 
 <table class="main-table">
-<thead>
 <tbody>
 {% for evaluation in my_evaluations %}
-<tr class="clickable-row-list red-line" data-href='{% url 'evaluator:evaluator-makeassignedquatation1' evaluation.evaluation.customer.id evaluation.evaluation.id%}'>
-<td {% if evaluation.status == 'EVALUATING' %}
+<tr {% if evaluation.status == 'EVALUATING' %}
     class="yellow-line"
     {% elif evaluation.status == 'EVALUATED'  %}
     class="green-line"
@@ -156,12 +154,14 @@
     class="red-line"
     {% else %}
     class="orange-line"
-    {% endif %}
- data-label="BLC Number" ><a href="#">{{evaluation.proposed_time|time:"P"}}</a></td>
+    {% endif %}>
+<td data-label="BLC Number">{{evaluation.evaluation.evaluation_id}}</td>    
+<td
+ data-label="Proposed Time" ><a href="#">{{evaluation.proposed_time|time:"P"}}</a></td>
 <td data-label="Customer"><a href="#">{{evaluation.evaluation.customer.name}}</a> </td>
 <td class="hide-a" data-label=""><a href="#">{{evaluation.address.area.name}} </a></td>
 <td data-label="Mobile Number"><a href="#">{{evaluation.evaluation.customer.mobile_number}}</a></td>
-<td class="hide-a" data-label="">
+<td class="clickable-row-list" data-label=""  data-href='{% url 'evaluator:evaluator-makeassignedquatation1' evaluation.evaluation.customer.id evaluation.evaluation.id%}'>
     {% if evaluation.status == 'EVALUATING' %}
     <span class="yellow-bg">Evaluating</span>
     {% elif evaluation.status == 'EVALUATED'  %}
@@ -172,7 +172,6 @@
     <span class="orange-bg">On Hold</span>    
     {% endif %}   
 </td>
-</tr>
 </tr>
 {% endfor %} 
 </tbody>
