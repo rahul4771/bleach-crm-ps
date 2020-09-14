@@ -1622,7 +1622,7 @@ class AssignEvaluator(IsAgent,View):
 				
 				proposed_date                     = request.POST.get('proposed_date')
 				proposed_time                     = request.POST.get('proposed_time')
-				converted_proposed_time           = datetime.strptime(proposed_date+" "+proposed_time,'%d/%m/%Y %I:%M %p')
+				converted_proposed_time           = datetime.strptime(proposed_date+" "+proposed_time,'%d-%m-%Y %I:%M %p')
 				
 				evaluation_form_save.proposed_time   = converted_proposed_time
 				evaluation_form_save.evaluation_id   = evaluation_id
@@ -1867,8 +1867,12 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 		except:
 			area_types = None
 
+		try:
+			cleaning_sections = CleaningSection.objects.filter(is_active=True)
+		except:
+			cleaning_sections = None
 
-		return render(request,'agent/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,})
+		return render(request,'agent/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
 
 	def post(self,request,evaluation_detail_id):
 		
@@ -2012,7 +2016,12 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 			except:
 				area_types = None
 
-			return render(request,'agent/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,})	
+			try:
+				cleaning_sections = CleaningSection.objects.filter(is_active=True)
+			except:
+				cleaning_sections = None
+			
+			return render(request,'agent/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})	
 
 		return redirect('agent:agent-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
 

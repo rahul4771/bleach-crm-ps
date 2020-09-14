@@ -24,9 +24,11 @@ urlpatterns = [
 	url(r'^makequatation/(?P<enquiry_id>[-\w]+)/$',views.MakeQuatationBase.as_view(),name='evaluator-makequatation'),
 	url(r'^makequatation/phase1/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1.as_view(),name='evaluator-makequatation1'),
 	url(r'^makequatation/phase2/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2.as_view(),name='evaluator-makequatation2'),
+	url(r'^makequatation/phase2/edit/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2Edit.as_view(),name='evaluator-makequatation2edit'),
 
 	url(r'^makequatation/assigned/phase1/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeAssignedQuatationPhase1.as_view(),name='evaluator-makeassignedquatation1'),
 	url(r'^makequatation/assigned/phase2/(?P<evaluation_detail_id>[-\w]+)$',views.MakeAssignedQuatationPhase2.as_view(),name='evaluator-makeassignedquatation2'),
+	url(r'^makequatation/assigned/phase2/edit/(?P<evaluation_detail_id>[-\w]+)$',views.MakeAssignedQuatationPhase2Edit.as_view(),name='evaluator-makeassignedquatation2edit'),
 
 	url(r'^investigation/(?P<investigation_id>[-\w]+)/$',views.InvestigationTask.as_view(),name='investigation'),
 ]

@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="https://semantic-ui.com/dist/semantic.min.css">
 {% endblock %}
 <div class="wrapper"><!--wrapper-->
-{% include "agent/common/header.html" %}
+{% include "evaluator/common/header.html" %}
     
 <section class="content"><!--content-->
 <div class="container-fluid space topspace"><!--container-fluid space topspace-->
@@ -21,12 +21,12 @@
 <div class="center-formDiv"><!--center-formDiv-->
  
  
- 			<div class="blc-number-big">{{evaluation_details.evaluation.evaluation_id}}</div>             
-        	<div class="customer-name"><i class="fa blue-text fa-user-circle-o" aria-hidden="true"></i> {{evaluation_details.evaluation.customer.name}}</div>
-        	<div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;  {{evaluation_details.evaluation.customer.mobile_number}}</div>
-        	<div class="email"><i class="fa orange-text fa-lg fa-envelope-o" aria-hidden="true"></i> &nbsp;  {{evaluation_details.evaluation.customer.email}}</div>
+            <div class="blc-number-big">{{evaluation_details.evaluation.evaluation_id}}</div>             
+            <div class="customer-name"><i class="fa blue-text fa-user-circle-o" aria-hidden="true"></i> {{evaluation_details.evaluation.customer.name}}</div>
+            <div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;  {{evaluation_details.evaluation.customer.mobile_number}}</div>
+            <div class="email"><i class="fa orange-text fa-lg fa-envelope-o" aria-hidden="true"></i> &nbsp;  {{evaluation_details.evaluation.customer.email}}</div>
             <div class="mobile-number"><i class="fa red-text fa-lg fa-home" aria-hidden="true"></i> &nbsp;  Appartment, 3rd Floor, {{evaluation_details.address.building}} Building, {{evaluation_details.address.block}} Block, {{evaluation_details.address.street}} Street, {{evaluation_details.address.avenue}} Avenue, {{evaluation_details.address.area.name}} {{evaluation_details.address.governorate.name}}</div>
-        	<hr class="div">
+            <hr class="div">
 <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
 
 {{ service_formset.management_form }}
@@ -35,12 +35,12 @@
 {% for book in evaluation_details.evaluationbooks %}
 <input type="hidden" name="form-{{forloop.counter0}}-id" value="{{book.id}}" id="id_form-{{forloop.counter0}}-id" />
 <input type="hidden" name="form-{{forloop.counter0}}-section_counter" id="id_form-{{forloop.counter0}}-section_counter" value="{{book.booksections|length}}">
-<input type="hidden" name="editform{{forloop.counter0}}" value="{{book.id}}">      	
+<input type="hidden" name="editform{{forloop.counter0}}" value="{{book.id}}">       
             <div class="common-sub-head align-left service_form" id="id_form-{{forloop.counter0}}-service">Service {{forloop.counter}}</div> 
-	<div class="enquiry-FullWrapper"><!--enquiry-FullWrapper-->       
+    <div class="enquiry-FullWrapper"><!--enquiry-FullWrapper-->       
                 <div class="close-div close-div-service"></div>     
-		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
-            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+        <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+                <div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Service Type</label></div>
                 <label for="favcity">
                 <select id="id_form-{{forloop.counter0}}-service_type" name="form-{{forloop.counter0}}-service_type" class="service-selector">
@@ -51,7 +51,7 @@
                 </select>
                 </label>
                 </div><!--enquiry-form-left-->
-            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Cleaning Method</label></div>
                 <label for="favcity">
                 <select id="id_form-{{forloop.counter0}}-cleaning_method" name="form-{{forloop.counter0}}-cleaning_method">
@@ -62,11 +62,11 @@
                 </select>
                 </label>
                 </div><!--enquiry-form-right-->
-		</div> <!--enquiry-form-Wrapper enquiry-boxes-->               
+        </div> <!--enquiry-form-Wrapper enquiry-boxes-->               
                 <hr class="hr-dashedpad">
                 
         <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
-            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Area Type</label></div>
                 <label for="favcity">
                 <select id="id_form-{{forloop.counter0}}-area_type" name="form-{{forloop.counter0}}-area_type">
@@ -77,7 +77,7 @@
                 </select>
                 </label>
                 </div><!--enquiry-form-left-->
-            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Location Type</label></div>
                 <label for="favcity">
                 <select id="id_form-{{forloop.counter0}}-location_type" name="form-{{forloop.counter0}}-location_type">
@@ -88,13 +88,13 @@
                 </select>
                 </label>
                 </div><!--enquiry-form-right-->
-		</div> <!--enquiry-form-Wrapper enquiry-boxes-->               
+        </div> <!--enquiry-form-Wrapper enquiry-boxes-->               
                 <hr class="hr-dashedpad">
         <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
-				<div class="enquiry-form-left"><!--enquiry-form-left-->
-                	<div class=" bold-text common-label"> <label>Sections</label></div>
+                <div class="enquiry-form-left"><!--enquiry-form-left-->
+                    <div class=" bold-text common-label"> <label>Sections</label></div>
                     <div class="parent equiry-parent"><!--parent equiry-parent-->            
-                    	<div class="enquiry-child-left"><!--enquiry-child-left-->
+                        <div class="enquiry-child-left"><!--enquiry-child-left-->
                             <label for="favcity">
                             <select id="id_form-{{forloop.counter0}}-section" name="form-{{forloop.counter0}}-section">
                             <option value="">Choose Section</option>
@@ -105,55 +105,55 @@
                             {% endfor %}
                             </select>
                             </label> 
-                    	</div><!--enquiry-child-left-->
-                    	<div class="enquiry-child-right"><!--enquiry-child-right-->
-                    	<input name="add" type="button" value="Add" id="id_form-{{forloop.counter0}}-sectionbutton" class="add-button" onclick="addSectionNew(this);">
-                    	</div><!--enquiry-child-right-->
+                        </div><!--enquiry-child-left-->
+                        <div class="enquiry-child-right"><!--enquiry-child-right-->
+                        <input name="add" type="button" value="Add" id="id_form-{{forloop.counter0}}-sectionbutton" class="add-button" onclick="addSectionNew(this);">
+                        </div><!--enquiry-child-right-->
                     </div><!--parent equiry-parent-->
                 
-			</div><!--enquiry-form-left-->
-            	<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->
-				&nbsp;
+            </div><!--enquiry-form-left-->
+                <div class="enquiry-form-right hide-m"><!--enquiry-form-right-->
+                &nbsp;
                 </div><!--enquiry-form-right-->
-		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+        </div> <!--enquiry-form-Wrapper enquiry-boxes--> 
         
         <div id="id_form-{{forloop.counter0}}-sectioncontainer">
         </div><!--section-container-->
 
 <br><br>
     
- 		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
-            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+        <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+                <div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Number of Cleaners</label></div>
                 <input name="form-{{forloop.counter0}}-number_of_cleaners" type="text" class="textBox OnlyNumber" maxlength="2" placeholder=" " value="{{book.number_of_cleaners}}"> 
                 </div><!--enquiry-form-left-->
-            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Cleaning Hours</label></div>
                 <input name="form-{{forloop.counter0}}-cleaning_hours" type="text" class="textBox OnlyNumber" maxlength="2" placeholder=" " value="{{book.cleaning_hours}}"> 
                 </div><!--enquiry-form-right-->
-		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+        </div> <!--enquiry-form-Wrapper enquiry-boxes--> 
                       
                 <hr class="hr-dashedpad">   
                 
- 		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
-            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+        <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+                <div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Estimated Cost</label></div>
                 <input name="form-{{forloop.counter0}}-estimated_cost" id="id_form-{{forloop.counter0}}-estimated_cost" type="text" class="textBox estimated_cost OnlyNumber" maxlength="10" placeholder=" " value="{{book.estimated_cost|floatformat:'2'}}"> 
                 </div><!--enquiry-form-left-->
-            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Discount</label></div>
                 <input name="form-{{forloop.counter0}}-discount" id="id_form-{{forloop.counter0}}-discount" type="text" class="textBox discount OnlyNumber" maxlength="10" placeholder=" " value="{{book.discount|floatformat:'2'}}"> 
                 </div><!--enquiry-form-right-->
-		</div> <!--enquiry-form-Wrapper enquiry-boxes-->  
+        </div> <!--enquiry-form-Wrapper enquiry-boxes-->  
                      
                 <hr class="hr-dashedpad">
  
-  		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
-            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+        <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+                <div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Final Cost</label></div>
                 <input name="form-{{forloop.counter0}}-total_cost" id="id_form-{{forloop.counter0}}-total_cost" type="text" class="textBox OnlyNumber" maxlength="10" placeholder=" " readonly value="{{book.total_cost|floatformat:'2'}}"> 
                 </div><!--enquiry-form-left-->
-            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Cleaning Policy</label></div>
                 <label for="favcity">
                 <select id="id_form-{{forloop.counter0}}-cleaning_policy" name="form-{{forloop.counter0}}-cleaning_policy" class="cleaning_policy">
@@ -163,12 +163,12 @@
                 </select>
                 </label>  
                 </div><!--enquiry-form-right-->
-		</div> <!--enquiry-form-Wrapper enquiry-boxes-->  
+        </div> <!--enquiry-form-Wrapper enquiry-boxes-->  
                      
                 <hr class="hr-dashedpad">    
                 
- 		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
-            	
+        <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+                
                 {% if book.cleaning_policy == 'ONE TIME SERVICE' %}
                 <div class="enquiry-form-left" style="display:none"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Tendative Date(S)</label></div>
@@ -194,21 +194,21 @@
                 <input name="form-{{forloop.counter0}}-tendative_time" id='id_form-{{forloop.counter0}}-tendative_time' type="text" class="textBox" placeholder=" " value="{% for orderschedule in book.orderschedules %}{%  if forloop.first %}{{orderschedule.start_at|date:'h:i A'}}{% endif %}{% endfor %}"> 
                 </div><!--enquiry-form-right-->
 
-		</div> <!--enquiry-form-Wrapper enquiry-boxes-->
+        </div> <!--enquiry-form-Wrapper enquiry-boxes-->
         
         <br><br><br>
         
-  				<div class=" bold-text common-label"> <label>Notes</label></div>
+                <div class=" bold-text common-label"> <label>Notes</label></div>
                 <textarea name="form-{{forloop.counter0}}-evaluator_note" class="textArea" cols="" rows="">{{book.evaluator_note|default_if_none:''}}</textarea>
                 
 <div class="details-notes align-left">Media</div>        
 <div class="row" id="id_form-{{forloop.counter0}}-media"><!--row-->
-    	<i class="fa fa-plus imgAdd"></i>
+        <i class="fa fa-plus imgAdd"></i>
 </div><!--row-->                  
                 
                 
                 
-	</div><!--enquiry-FullWrapper enquiry-boxes-->
+    </div><!--enquiry-FullWrapper enquiry-boxes-->
 <br>
 {% endfor %}
 {% endfor %}
@@ -236,7 +236,7 @@
 </section><!--content-->
     
     
-{% include 'agent/common/footer.html' %}    
+{% include 'evaluator/common/footer.html' %}    
 </div><!--wrapper-->
 {% endblock %}
 
@@ -332,7 +332,7 @@ function addSectionNew(form_identifier){
 
     //assigning multiple dropdown
     $('.ui.multiple.dropdown').dropdown({
-	});
+    });
 
     }
 
