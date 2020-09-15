@@ -373,7 +373,6 @@
           <div class=" bold-text common-label"> <label>Address</label></div>
         <label for="favcity">
                 <select name="address" id="address">
-                <option value="">Choose Address</option>
                 </select>
         </label>
   </div><!--ticket-form-left-->
@@ -411,7 +410,7 @@
                 <textarea name="notes" class="textArea" cols="" rows="" id="notes"></textarea>
   </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"> &nbsp<input class="cancel-Button close-btn" name="delete" type="button" value="Delete"></div>
+<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"> &nbsp<input class="cancel-Button close-btn delete_evaluation" name="delete" type="button" value="Delete"></div>
 </form>
  </div><!--popup-collapse-->
 </div><!--ticket-wrapper-full--> 
@@ -421,8 +420,6 @@
     </div><!--modal-wrapper modal-transition-->
 </div><!--modal-popup-wrapper-->
 <!-- /edit_evaluation_popup -->
-
-
 
 
 <!-- edit_cleaning_popup -->
@@ -609,6 +606,42 @@
     </div><!--modal-wrapper modal-transition-->
 </div><!--modal-popup-wrapper-->
 <!--edit followup popup -->
+
+
+
+<!-- delete_evaluation_popup -->
+<div class="modal-popup-wrapper3"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+        <div class="modal-header"><!--modal-header-->
+        <button class="modal-close delete_evaluation">X</button>
+        </div><!--modal-header-->
+    <div class="modal-body"><!--modal-body-->
+    <div class="modal-content"><!--modal-content-->
+    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">  
+                <tr>
+                    <td valign="center"><div class="blc-number" id="blcno_evaluation_id"></div><span id="address_evaluation_id"></span></td>
+                    <td align="center"><div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div></td>
+                    <td><div class="bold-text" id="customername_evaluation_id"></div><div id="mobileno_evaluation_id"></div></td>
+                </tr>
+ 
+            <tr>
+            <td colspan="3">Evaluation Date:<strong><span class="blue-text" id="proposed_date_evaluation_id"></span></strong> &nbsp;Evaluation Time:<strong><span class="blue-text" id="proposed_time_evaluation_id"></span></strong> &nbsp;Evaluator:<strong><span class="blue-text" id="evaluator_name_evaluation_id"></span></strong></td>
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->  
+</div><!--ticket-wrapper-full--> 
+        
+    </div><!--modal-content-->
+    </div><!--modal-body-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--modal-popup-wrapper-->
+<!-- /delete_evaluation_popup -->
 
 {% endblock %}
 {% block javascript %}
@@ -1039,35 +1072,17 @@ $('document').ready(function(){
 
       customer_id         = $(this).data('customer_id'); 
 
-  $.ajax({
+    //append address in popup
+    {% for address in customer_addresses %}
+    if(customer_id == "{{address.customer.id}}")
+    {
+        $('#address').append('<option value="{{address.id}}">{{address.area.name}}-{{address.building}}</option>');
+    }
+    {% endfor %}
 
-        url: "{% url 'agent:ajax-getaddress' %}",
-
-        data: {'customer_id':customer_id}, 
-
-        dataType: 'json',
-
-        success: function (data) { 
-
-          ajax_ret_address = data['customer_address'];      
-
-        $.each( ajax_ret_address, function( key, values ) {
-
-              $("#address").append($('<option>', {        
-
-                              value: key, 
-
-                              text: values   
-
-                            }));           
-
-              });
-                                  }  
-      });
-
+        //select evaluator
         $('#evaluator').val($(this).data('evaluator_id'));
         $('#address').val($(this).data('address_id'));
-
 });
 
 var coll = document.getElementsByClassName("collapsible");
@@ -1081,11 +1096,8 @@ for (i = 0; i < coll.length; i++) {
     } else {
       content.style.display = "block";
     }
-  });
+  });  
   }
-
-
-
 
 
 
@@ -1209,6 +1221,14 @@ for (i = 0; i < coll.length; i++) {
     }
   });
   }
+
+
+// Evaluation Edit
+    $('.delete_evaluation').on('click', function (e) {
+      e.preventDefault();
+      $('.modal-popup-wrapper3').toggleClass('is-visible');
+  });
+
 
 
 });
