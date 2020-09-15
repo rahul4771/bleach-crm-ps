@@ -80,15 +80,15 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right payment_track"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Before Cleaning Amount</label></div>
-                <input name="before_cleaning_amount" type="text" class="textBox" placeholder=" "  >
+                <input name="before_cleaning_amount" id="before_cleaning_amount_id" type="text" class="textBox" placeholder=" "  >
   </div><!--ticket-form-right-->
     <div class="ticket-form-right payment_track"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>After Cleaning Amount</label></div>
-                <input name="after_cleaning_amount" type="text" class="textBox" placeholder=" "  >
+                <input name="after_cleaning_amount" id="after_cleaning_amount_id" type="text" class="textBox" placeholder=" "  >
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <br>
-<div align="center" onclick="submitAnyForm(this);"><input class="assignButton" name="submit" type="button" value="Submit">
+<div align="center" onclick="CheckForm(this);"><input class="assignButton" name="submit" type="button" value="Submit">
 <br><br>
 </form>
 {% endif %}
@@ -148,5 +148,29 @@ $('.payment_method').change(function(){
   }
 
   });
+
+//Check Breakdown Amounts
+function CheckForm(params1){
+  params = params1;
+  if($('.payment_method').val() == 'BREAKDOWN')
+  {
+        before_cleaning_amount = $("#before_cleaning_amount_id").val();
+        after_cleaning_amount  = $("#after_cleaning_amount_id").val();
+        manual_total           = parseInt(before_cleaning_amount)+parseInt(after_cleaning_amount)
+        total                  = $("#total_amount_id").val();
+        if(total == manual_total)
+        {
+          submitAnyForm(params);
+        }
+        else
+        {
+          alert("Please Enter the Breakdown Amount Correctlly")
+        }
+  }
+  else
+  {
+    submitAnyForm(params);
+  }
+}
 </script>
 {% endblock %}
