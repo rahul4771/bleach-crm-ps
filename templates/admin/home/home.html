@@ -67,13 +67,13 @@
  
             <div id="donutchart1"></div>
             <div class="right-legend-chart"><!--right-legend-chart-->
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Appartment</div><span class="chart-gray-stat">19.2%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">House</div><span class="chart-gray-stat">11.2%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-orange-spot" aria-hidden="true"></i> <div class="chart-stat">Villa</div><span class="chart-gray-stat">69.22%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-green-spot" aria-hidden="true"></i> <div class="chart-stat">Chalet</div><span class="chart-gray-stat">69.22%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-cyan-spot" aria-hidden="true"></i> <div class="chart-stat">Shop</div><span class="chart-gray-stat">69.22%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Restaurent</div><span class="chart-gray-stat">19.2%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">Other</div><span class="chart-gray-stat">11.2%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Apartment</div><span id="loc1"></span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">House</div><span id="loc2"></span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-orange-spot" aria-hidden="true"></i> <div class="chart-stat">Villa</div><span id="loc3"></span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-green-spot" aria-hidden="true"></i> <div class="chart-stat">Office</div><span id="loc4"></span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-cyan-spot" aria-hidden="true"></i> <div class="chart-stat">Gym</div><span id="loc5"></span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Restaurant</div><span id="loc6"></span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">Coffee Shop</div><span id="loc7"></span></div>
             </div><!--right-legend-chart-->
             <div class="chart-btnWrapper chart-menudot"><span class="chart-toggle1">...</span></div>
             <div class="toggle-content" id="example1" style="display:none;"><!--toggle-content-->
@@ -98,7 +98,7 @@
                         <input type="text" id="location_pie_month2" class="month_pick set2 textBox" >
           </div><!--ticket-form-left-->
         </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-        <div align="center"> <input class="assignButton" name="assing" id="location_pie_data" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Reset"></div>   
+        <div align="center"> <input class="assignButton" name="assing" id="location_pie_data" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" id="reset_locations" value="Reset"></div>   
             </div><!--toggle-content-->
   
             
@@ -108,13 +108,12 @@
             <h4>Sales on Types of Cleaning</h4>
             <div id="donutchart2"></div>
             <div class="right-legend-chart"><!--right-legend-chart-->
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Appartment</div><span class="chart-gray-stat" id="c1">%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">House</div><span class="chart-gray-stat" id="c2">%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-orange-spot" aria-hidden="true"></i> <div class="chart-stat">Villa</div><span class="chart-gray-stat" id="c3">%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-green-spot" aria-hidden="true"></i> <div class="chart-stat">Chalet</div><span class="chart-gray-stat" id="c4"></span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-cyan-spot" aria-hidden="true"></i> <div class="chart-stat">Shop</div><span class="chart-gray-stat" id="c5"></span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Restaurent</div><span class="chart-gray-stat" id="c6"></span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">Other</div><span class="chart-gray-stat"></span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">General Cleaning</div><span id="c1">%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Upholstery Cleaning</div><span id="c2">%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-orange-spot" aria-hidden="true"></i> <div class="chart-stat">Carpet Cleaning</div><span id="c3">%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-green-spot" aria-hidden="true"></i> <div class="chart-stat">Sanitization Services</div><span id="c4"></span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-cyan-spot" aria-hidden="true"></i> <div class="chart-stat">Mattress</div><span id="c5"></span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Deep Cleaning</div><span id="c6"></span></div>
             </div><!--right-legend-chart-->
             <div class="chart-btnWrapper chart-menudot"><span class="chart-toggle2" href="#example2">...</span></div>
             <div class="toggle-content" id="example2" style="display:none;"><!--toggle-content-->
@@ -128,18 +127,18 @@
         <hr class="hr-dashedpad"> 
         <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
           <div class="ticket-form-left"><!--ticket-form-left-->
-                        <input type="text" id="cleaningtype_pie_date1" class="date_pick set1 textBox" />
-                        <input type="text" id="cleaningtype_pie_month1" class="month_pick set2 textBox" >
+                        <input type="text" id="cleaningtype_pie_date1" class="date_pick clnset1 textBox" />
+                        <input type="text" id="cleaningtype_pie_month1" class="month_pick clnset2 textBox" >
           </div><!--ticket-form-left-->
         </div><!--ticket-wrapper-row ticket-forms-boxes--> 
         <hr class="hr-dashedpad"> 
         <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
           <div class="ticket-form-left"><!--ticket-form-left-->
-                        <input type="text" id="cleaningtype_pie_date2" class="date_pick set1 textBox" />
-                        <input type="text" id="cleaningtype_pie_month2" class="month_pick set2 textBox" >
+                        <input type="text" id="cleaningtype_pie_date2" class="date_pick clnset1 textBox" />
+                        <input type="text" id="cleaningtype_pie_month2" class="month_pick clnset2 textBox" >
           </div><!--ticket-form-left-->
         </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-        <div align="center"> <input class="assignButton" name="assing" id="cleaningtype_pie_data" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Reset"></div>   
+        <div align="center"> <input class="assignButton" name="assing" id="cleaningtype_pie_data" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" id="reset_cleaningtypes" value="Reset"></div>   
             </div><!--toggle-content-->
             </div><!--three-fluid-column three-fluid-two-->
             
@@ -147,13 +146,12 @@
             <h4>Sales on Governerates</h4>
             <div id="donutchart3"></div>
             <div class="right-legend-chart"><!--right-legend-chart-->
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Appartment</div><span class="chart-gray-stat">19.2%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">House</div><span class="chart-gray-stat">11.2%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-orange-spot" aria-hidden="true"></i> <div class="chart-stat">Villa</div><span class="chart-gray-stat">69.22%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-green-spot" aria-hidden="true"></i> <div class="chart-stat">Chalet</div><span class="chart-gray-stat">69.22%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-cyan-spot" aria-hidden="true"></i> <div class="chart-stat">Shop</div><span class="chart-gray-stat">69.22%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Restaurent</div><span class="chart-gray-stat">19.2%</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">Other</div><span class="chart-gray-stat">11.2%</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Al Asimah</div><span id="gov1"></span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">Hawalli</div><span id="gov2"></span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-orange-spot" aria-hidden="true"></i> <div class="chart-stat">Farwaniya</div><span id="gov3"></span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-green-spot" aria-hidden="true"></i> <div class="chart-stat">Mubarak Al-Kabeer</div><span id="gov4"></span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-cyan-spot" aria-hidden="true"></i> <div class="chart-stat">Ahmadi</div><span ></span id="gov5"></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Jahra</div><span ></span id="gov6"></div>
             </div><!--right-legend-chart-->
             <div class="chart-btnWrapper chart-menudot"><span class="chart-toggle3" href="#example3">...</span></div>
             <div class="toggle-content" id="example3" style="display:none;"><!--toggle-content-->
@@ -161,24 +159,24 @@
  
  <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
           <div class="ticket-form-left"><!--ticket-form-left-->
-                        <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonth_cleaningtype"><div class="slider round"><span class="on">DATE</span><span class="off">MONTH</span></div></label></div>
+                        <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonth_governorate"><div class="slider round"><span class="on">DATE</span><span class="off">MONTH</span></div></label></div>
           </div><!--ticket-form-left-->
         </div><!--ticket-wrapper-row ticket-forms-boxes--> 
         <hr class="hr-dashedpad"> 
         <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
           <div class="ticket-form-left"><!--ticket-form-left-->
-                        <input type="text" id="governorate_pie_date1" class="date_pick set1 textBox" />
-                        <input type="text" id="governorate_pie_month1" class="month_pick set2 textBox" >
+                        <input type="text" id="governorate_pie_date1" class="date_pick govset1 textBox" />
+                        <input type="text" id="governorate_pie_month1" class="month_pick govset2 textBox" >
           </div><!--ticket-form-left-->
         </div><!--ticket-wrapper-row ticket-forms-boxes--> 
         <hr class="hr-dashedpad"> 
         <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
           <div class="ticket-form-left"><!--ticket-form-left-->
-                        <input type="text" id="governorate_pie_date2" class="date_pick set1 textBox" />
-                        <input type="text" id="governorate_pie_month2" class="month_pick set2 textBox" >
+                        <input type="text" id="governorate_pie_date2" class="date_pick govset1 textBox" />
+                        <input type="text" id="governorate_pie_month2" class="month_pick govset2 textBox" >
           </div><!--ticket-form-left-->
         </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-        <div align="center"> <input class="assignButton" name="assing" id="governorate_pie_data" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Reset"></div>   
+        <div align="center"> <input class="assignButton" name="assing" id="governorate_pie_data" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" id="reset_governorates" value="Reset"></div>   
             </div><!--toggle-content-->
             </div><!--three-fluid-column three-fluid-three-->
           
@@ -196,7 +194,7 @@
             <div class="date-wrapper"><!--date-wrapper-->
             <div class="date-wrapper-inner right-p"><!--date-wrapper-inner-->
             <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type='text' id='datepicker'  name='datepicker' class="date-box date_pick">
+            <input type='text' id='sales_target_datepicker' value="{{evaluation_date|date:"d-m-Y"}}" class="date-box date_pick">
             <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
             <button class='today-date current-date'>Today</button>
             </div><!--date-wrapper-inner-->
@@ -236,7 +234,7 @@
                 </div><!--bar-chart-items chart-column-three-->
                 
                 <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
-                     <a class="followup_graph"><input name="Follow" type="button" class="follow" value="Follow"> </a> 
+                     <a class="followup_graph"><input name="Follow" type="button" class="follow" onclick="salestarget({{evaluator.id}});" value="Follow"> </a> 
                 </div><!--bar-chart-items chart-column-four-->
                 
             </div><!--bar-chart-->        
@@ -264,11 +262,11 @@
         <div class="Button_wrapperChart">
             <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonth_sales"><div class="slider round"><span class="on">DATE</span><span class="off">MONTH</span></div></label></div>
 
-            <input type="text" id="sales_curve_date1" class="date_pick txt-box set1" >
-            <input type="text" id="sales_curve_date2" class="date_pick txt-box set1" >
+            <input type="text" id="sales_curve_date1" class="date_pick txt-box saleset1" >
+            <input type="text" id="sales_curve_date2" class="date_pick txt-box saleset1" >
 
-            <input type="text" id="sales_curve_month1" class="month_pick txt-box set2" >
-            <input type="text" id="sales_curve_month2" class="month_pick txt-box set2" >
+            <input type="text" id="sales_curve_month1" class="month_pick txt-box saleset2" >
+            <input type="text" id="sales_curve_month2" class="month_pick txt-box saleset2" >
             <div><button id="reset_sales_curve" class="green-button-chart">Reset</button></div>
             
             </div>
@@ -455,17 +453,18 @@
                     <div class="chart_boxDiv"><!--chart_boxDiv-->    
                         <div class="chart_box_Left"><!--chart_box_Left-->
                                 <div class="legend-wrapper"><!--legend-wrapper--> 
-                                    <div class="legend-result count_div"><label class="legend-label">Submitted </label> <b class="legend-result-blue" id="total_submitted"></b></div>
-                                    <div class="legend-result count_div"><label class="legend-label">Approved </label> <b class="legend-result-red" id="total_approved"></b></div>
+                                    <div class="legend-result count_div"><label class="legend-label">Submitted </label> <b class="legend-result-blue" id="total_sales2"></b></div>
+                                    <div class="legend-result count_div"><label class="legend-label">Approved </label> <b class="legend-result-red" id="total_orders2"></b></div>
                                 </div><!--legend-wrapper-->
                             </div><!--chart_box_Left-->
                             
         <div class="chart_box_Left"><!--chart_box_Left-->        
         <div class="Button_wrapperChart">
-            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daym"><div class="slider round"></div></label></div>
-<!--            <input type="text" id="ord_fromdate" class="date_pick date-picker set1 date-pick-left" value={{investigation_date|date:"d-m-Y"}} >
-            <input type="text" id="ord_todate" class="date_pick date-picker set1 date-pick-right" value={{investigation_date|date:"d-m-Y"}} >-->
-            <input name="" class="txt-box" type="text">&nbsp;<input name="" class="txt-box" type="text">
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonth_sales_target"><div class="slider round"><span class="on">DATE</span><span class="off">MONTH</span></div></label></div>
+            <input type="text" id="sales_target_date1" class="date_pick targetset1 txt-box" >&nbsp;
+            <input type="text" id="sales_target_date2" class="date_pick targetset1 txt-box" >
+            <input type="text" id="sales_target_month1" class="month_pick targetset2 txt-box" >&nbsp;
+            <input type="text" id="sales_target_month2" class="month_pick targetset2 txt-box" >
             <div><button id="reset_orders" class="green-button-chart">Reset</button></div>
               
             </div>

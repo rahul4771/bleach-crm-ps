@@ -1168,6 +1168,72 @@ def SalesData(request):
 	print(data,"sdt")
 	return JsonResponse(data,safe=False)
 
+#ajax for sales target charts
+def SalesTargetData(request):
+	data = []
+	dom = request.GET.get('dom', None)
+	evaluator_id = request.GET.get('evaluator',None)
+	prevdate  = request.GET.get('fromdate', None)
+	todate  = request.GET.get('todate', None)
+	print(dom,prevdate,todate,evaluator_id,"pop333")
+	sales_dict = dict()
+
+	if dom == 'Month':
+		print("derr")
+		month,year = prevdate.split("/")
+		month2,year2 = todate.split("/")
+
+		sales = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__year__range=(year,year2),
+							evaluation__quatation_approved_date__month__range=(month,month2)).values('evaluation__quatation_approved_date').distinct().order_by('evaluation__quatation_approved_date')
+
+		print(sales,"po")
+		for sale in sales:
+			sdate = sale['evaluation__quatation_approved_date'].strftime("%Y-%m-%d")
+			total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date=sdate).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)	
+			if not total_sales:
+				total_sales = 0.0
+
+			total_orders = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_approved_date=sdate).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+			if not total_orders:
+				total_orders = 0.0
+
+			sales_dict = {
+			"date" : sdate,
+			"amount" : total_sales,
+			"total" : total_orders,
+			}
+			data.append(sales_dict)
+	else:
+		print("njk")
+		try:
+			prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+			todate = datetime.strptime(todate, '%Y-%m-%d')
+		except:
+			todate = date.today() - timedelta(days=1)
+			prevdate = todate - timedelta(days=30)
+		print(prevdate,todate,"testdt")
+		daterange = pd.date_range(prevdate, todate)
+
+		for single_date in daterange:
+			sdate = single_date.strftime("%Y-%m-%d")
+			total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date=sdate).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+			if not total_sales:
+				total_sales = 0.0
+
+			total_orders = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_approved_date=sdate).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+			if not total_orders:
+				total_orders = 0.0
+
+			print(sdate,total_sales,"qtc")
+			sales_dict = {
+			"date" : sdate,
+			"amount" : total_sales,
+			"total" : total_orders,
+			}
+			data.append(sales_dict)
+	print(data,"sdt")
+	return JsonResponse(data,safe=False)
+
 def cleaningcalendardate(request):
 	data = dict()
 	cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
