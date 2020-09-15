@@ -48,7 +48,7 @@ function drawlocationChart() {
         var data = google.visualization.arrayToDataTable(location_sales);
 
         var options = {
-            chartArea : {height: '80%',left:'0%',right:'70%'},
+            chartArea : {height: '80%',left:'0%',right:'50%'},
             width:'100%',
             title: "",
             pieHole: 0.4,
@@ -175,7 +175,7 @@ function drawcleaningtypeChart() {
         var data = google.visualization.arrayToDataTable(cleaningtype_sales);
 
         var options = {
-            chartArea : {height: '80%',left:'0%',right:'70%'},
+            chartArea : {height: '80%',left:'0%',right:'50%'},
             width:'100%',
             title: "",
             pieHole: 0.4,
@@ -302,7 +302,7 @@ function drawgovernorateChart() {
         var data = google.visualization.arrayToDataTable(governorate_sales);
 
         var options = {
-            chartArea : {height: '80%',left:'0%',right:'70%'},
+            chartArea : {height: '80%',left:'0%',right:'50%'},
             width:'100%',
             title: "",
             pieHole: 0.4,

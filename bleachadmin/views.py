@@ -986,7 +986,7 @@ def SalesLocationData(request):
 		month2,year2 = todate.split("/")
 
 		for location in location_types:
-			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__year__range=(year,year2),evaluation__quatation_approved_date__month__range=(month,month2),evaluation__evaluation_details__evaluation_book_evaluation_details__evaluationsection_book__category=location).count()
+			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__year__range=(year,year2),evaluation__quatation_approved_date__month__range=(month,month2),evaluation__evaluation_details__evaluation_book_evaluation_details__area_type=location.name).count()
 			if not sales_location_count:
 				sales_location_count = 0
 
@@ -1006,7 +1006,7 @@ def SalesLocationData(request):
 		print(prevdate,todate,"testdt")
 
 		for location in location_types:
-			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate,todate),evaluation__evaluation_details__evaluation_book_evaluation_details__evaluationsection_book__category=location).count()
+			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate,todate),evaluation__evaluation_details__evaluation_book_evaluation_details__area_type=location.name).count()
 			
 			location_dict = {
 			"location" : location.name,
@@ -1073,7 +1073,8 @@ def SalesGovernorateData(request):
 		month2,year2 = todate.split("/")
 
 		for gov in governorates:
-			sales_governorate_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__year__range=(year,year2),evaluation__quatation_approved_date__month__range=(month,month2),evaluation__evaluation_details__address__governorate=gov).count()
+			print(gov,"govrt")
+			sales_governorate_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__year__range=(year,year2),evaluation__quatation_approved_date__month__range=(month,month2),evaluation__customer__address_customer__governorate=gov).count()
 			
 			gov_dict = {
 			"governorate" : gov.name,
@@ -1091,7 +1092,7 @@ def SalesGovernorateData(request):
 		print(prevdate,todate,"testdt")
 	
 		for gov in governorates:
-			sales_governorate_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate,todate),evaluation__evaluation_details__address__governorate=gov).count()
+			sales_governorate_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate,todate),evaluation__customer__address_customer__governorate=gov).count()
 			
 			print(sales_governorate_count,"sgc")		
 			gov_dict = {
