@@ -657,8 +657,30 @@ class AgentHome(IsAgent,View):
 				for cleaner,cleaner_db in zip(cleaners,followup_team_members):
 					cleaner_db.member_id = cleaner 
 					cleaner_db.save()
+			messages.success(request,"Followup Cleaning Edited Succesfully")
 
-			messages.success(request,"Followup Cleaning Edited Succesfully")	
+		elif action_mode == 'delete_evaluation':
+			evaluation_id = request.POST.get('delete_evaluation_id')
+			
+			#Delete Evaluation Details
+			EvaluationDetails.objects.filter(id=evaluation_id).delete()
+
+			messages.success(request,"Evaluation Deleted Succesfully")			
+
+		elif action_mode == 'delete_cleaning':
+			cleaning_id = request.POST.get('delete_cleaning_id')
+			#Delete Cleaning Schedule
+			OrderScheduler.objects.filter(id=cleaning_id).delete()
+
+			messages.success(request,"Cleaning Deleted Succesfully")			
+		
+		elif action_mode == 'delete_followup':
+			followup_id = request.POST.get('delete_followup_id')
+			#Delete Followup Schedule
+			FollowUpScheduler.objects.filter(id=followup_id).delete()
+
+			messages.success(request,"Followup Deleted Succesfully")
+		
 		return redirect('agent:agentdash-board')	
 
 

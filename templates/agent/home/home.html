@@ -67,25 +67,25 @@
 <table class="main-table">
 <tbody>
 {% for order_schedule in order_schedules %}
-<tr class="green-line clickable-row-cursor order_schedule" data-confirmdate="{{order_schedule.start_at|date:'d-m-Y'}}" data-confirmtime="{{order_schedule.start_at|date:'h:i A'}}" data-duration="{{order_schedule.order_scheduler_book.cleaning_hours}}" data-blcno="{{order_schedule.order.evaluation.evaluation_id}}" data-customer_name="{{order_schedule.order.evaluation.customer.name}}" data-mobile_no="{{order_schedule.order.evaluation.customer.mobile_number}}" data-area="{{order_schedule.customer_address.area.name}}" data-service_type="{{order_schedule.order_scheduler_book.service_type.name}}" data-id="{{order_schedule.id}}">
+<tr class="green-line">
 <td data-label="BLC Number" ><a>{{order_schedule.order.evaluation.evaluation_id}}</a></td>
 <td data-label="Customer"><a>{{order_schedule.order.evaluation.customer.name}}</a> </td>
 <td data-label="Area"><a>{{order_schedule.customer_address.area}}</a></td>
 <td data-label="Mobile Number"><a>{{order_schedule.order.evaluation.customer.mobile_number}}</a></td>
 <td class="hide-a" data-label=""><img {% if order_schedule.order.evaluation.customer.profile_image %}src="{{order_schedule.order.evaluation.customer.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="profile-avatar"></td>
 <td data-label="Cleaning Policy"><span class="blue-text">{{order_schedule.order_scheduler_book.cleaning_policy}}</span></td>
-<td class="hide-b" data-label=""><span {% if order_schedule.order_scheduler_book.cleaning_policy == "SUBSCRIPTION" %}class="green-bg"{%else%}class="blue-bg"{% endif %}>{{order_schedule.status}}</span></td>
+<td class="hide-b order_schedule clickable-row-cursor" data-label="" data-confirmdate="{{order_schedule.start_at|date:'d-m-Y'}}" data-confirmtime="{{order_schedule.start_at|date:'h:i A'}}" data-duration="{{order_schedule.order_scheduler_book.cleaning_hours}}" data-blcno="{{order_schedule.order.evaluation.evaluation_id}}" data-customer_name="{{order_schedule.order.evaluation.customer.name}}" data-mobile_no="{{order_schedule.order.evaluation.customer.mobile_number}}" data-area="{{order_schedule.customer_address.area.name}}" data-service_type="{{order_schedule.order_scheduler_book.service_type.name}}" data-id="{{order_schedule.id}}"><span {% if order_schedule.order_scheduler_book.cleaning_policy == "SUBSCRIPTION" %}class="green-bg"{%else%}class="blue-bg"{% endif %}>{{order_schedule.status}}</span></td>
 </tr>
 {% endfor %}
 {% for follow_up_schedule in follow_up_schedules %}
-<tr class="green-line followup_schedule clickable-row-cursor" data-confirmdate="{{follow_up_schedule.start_at|date:'d-m-Y'}}" data-confirmtime="{{follow_up_schedule.start_at|date:'h:i A'}}" data-duration="{{follow_up_schedule.follow_up.cleaning_hours}}" data-blcno="{{follow_up_schedule.follow_up.investigation.order.order_no}}" data-customer_name="{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.name}}" data-mobile_no="{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.mobile_number}}" data-area="{{follow_up_schedule.follow_up.investigation.order_schedule.customer_address.area.name}}" data-service_type="{{follow_up_schedule.follow_up.investigation.order_schedule.order_scheduler_book.service_type.name}}" data-id="{{follow_up_schedule.id}}">
+<tr class="green-line">
 <td data-label="BLC Number" ><a>{{follow_up_schedule.follow_up.investigation.order.order_no}}</a></td>
 <td data-label="Customer"><a>{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.name}}</a> </td>
 <td data-label="Area"><a>{{follow_up_schedule.customer_address.area}}</a></td>
 <td data-label="Mobile Number"><a>{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.mobile_number}}</a></td>
 <td class="hide-a" data-label=""><img {% if follow_up_schedule.follow_up.investigation.order.evaluation.customer.profile_image %}src="{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} class="profile-avatar"></td>
 <td data-label="cleaning policy"><span class="blue-text">FOLLOW UP</span></td>
-<td data-label=""><span class="yellow-bg">{{follow_up_schedule.status}}</span></td>
+<td data-label="" class="followup_schedule clickable-row-cursor" data-confirmdate="{{follow_up_schedule.start_at|date:'d-m-Y'}}" data-confirmtime="{{follow_up_schedule.start_at|date:'h:i A'}}" data-duration="{{follow_up_schedule.follow_up.cleaning_hours}}" data-blcno="{{follow_up_schedule.follow_up.investigation.order.order_no}}" data-customer_name="{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.name}}" data-mobile_no="{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.mobile_number}}" data-area="{{follow_up_schedule.follow_up.investigation.order_schedule.customer_address.area.name}}" data-service_type="{{follow_up_schedule.follow_up.investigation.order_schedule.order_scheduler_book.service_type.name}}" data-id="{{follow_up_schedule.id}}"><span class="yellow-bg">{{follow_up_schedule.status}}</span></td>
 </tr>
 {% endfor %}
 </tbody>
@@ -503,7 +503,7 @@
           <div class=" bold-text common-label" id="team_members"> <label>Team Members</label></div>
   </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"> &nbsp<input class="cancel-Button close-btn" name="delete" type="button" value="Delete"></div>
+<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"> &nbsp<input class="cancel-Button close-btn delete_cleaning" name="delete" type="button" value="Delete"></div>
 </form>
  </div><!--popup-collapse-->
 </div><!--ticket-wrapper-full--> 
@@ -596,7 +596,7 @@
           <div class=" bold-text common-label" id="followup_members"> <label>Team Members</label></div>
   </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
+<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);">  &nbsp<input class="cancel-Button close-btn delete_followup" name="delete" type="button" value="Delete"></div>
 </form>
  </div><!--popup-collapse-->
 </div><!--ticket-wrapper-full--> 
@@ -624,17 +624,29 @@
     
     <table width="100%" border="0" class="popup-tble1">  
                 <tr>
-                    <td valign="center"><div class="blc-number" id="blcno_evaluation_id"></div><span id="address_evaluation_id"></span></td>
+                    <td valign="center"><div class="blc-number" id="delete_blcno_evaluation_id"></div><span id="delete_address_evaluation_id"></span></td>
                     <td align="center"><div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div></td>
-                    <td><div class="bold-text" id="customername_evaluation_id"></div><div id="mobileno_evaluation_id"></div></td>
+                    <td><div class="bold-text" id="delete_customername_evaluation_id"></div><div id="delete_mobileno_evaluation_id"></div></td>
                 </tr>
  
             <tr>
-            <td colspan="3">Evaluation Date:<strong><span class="blue-text" id="proposed_date_evaluation_id"></span></strong> &nbsp;Evaluation Time:<strong><span class="blue-text" id="proposed_time_evaluation_id"></span></strong> &nbsp;Evaluator:<strong><span class="blue-text" id="evaluator_name_evaluation_id"></span></strong></td>
+            <td colspan="3">Evaluation Date:<strong><span class="blue-text" id="delete_proposed_date_evaluation_id"></span></strong> &nbsp;Evaluation Time:<strong><span class="blue-text" id="delete_proposed_time_evaluation_id"></span></strong> &nbsp;Evaluator:<strong><span class="blue-text" id="delete_evaluator_name_evaluation_id"></span></strong></td>
             </table>
     
       </div><!--ticket-form-left--> 
   </div><!--ticket-wrapper-row ticket-forms-boxes-->  
+  <hr class="hr-dashedpad">
+  <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    <div align="center"><h3>Are you Sure? You want to Delete this Evaluation?</h3></div>
+    <form method="post" enctype= "multipart/form-data">
+    {%csrf_token%}  
+    <input type="hidden" name="action_type" value="delete_evaluation">
+    <input type="hidden" name="delete_evaluation_id" id="delete_evaluation_id" value="">
+    <div align="right"><input class="cancel-Button close-btn delete_evaluation" name="delete" type="button" value="Yes" onclick="submitAnyForm(this);"></div>
+    </form>
+  </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
 </div><!--ticket-wrapper-full--> 
         
     </div><!--modal-content-->
@@ -642,6 +654,115 @@
     </div><!--modal-wrapper modal-transition-->
 </div><!--modal-popup-wrapper-->
 <!-- /delete_evaluation_popup -->
+
+
+<!-- delete_cleaning_popup -->
+<div class="modal-popup-wrapper4"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+        <div class="modal-header"><!--modal-header-->
+        <button class="modal-close delete_cleaning">X</button>
+        </div><!--modal-header-->
+    <div class="modal-body"><!--modal-body-->
+    <div class="modal-content"><!--modal-content-->
+    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">  
+                <tr>
+                    <td valign="center"><div class="blc-number" id="delete_blcno_cleaning_id"></div><span id="delete_address_cleaning_id"></span></td>
+                    <td align="center"><div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div></td>
+                    <td><div class="bold-text" id="delete_customername_cleaning_id"></div><div id="delete_mobileno_cleaning_id"></div></td>
+                </tr>
+ 
+            <tr>
+            <td colspan="3">Cleaning Date:<strong><span class="blue-text" id="delete_starting_date_cleaning_id"></span></strong> &nbsp;Starting Time:<strong><span class="blue-text" id="delete_starting_time_cleaning_id"></span></strong> &nbsp;Duration:<strong><span class="blue-text" id="delete_duration_cleaning_id"></span></strong></td>
+            </tr>
+            <tr>
+              <td colspan="3">Team Leader:<strong><span class="blue-text" id="delete_team_leader_cleaning_id"></span></strong> &nbsp;</td>
+            </tr>
+            <tr>
+              <td colspan="3">Team Member:<strong><span class="blue-text" id="delete_team_member_cleaning_id"></span></strong> &nbsp;</td>
+            </tr>  
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->  
+  <hr class="hr-dashedpad">
+  <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    <div align="center"><h3>Are you Sure? You want to Delete this Cleaning?</h3></div>
+    <form method="post" enctype= "multipart/form-data">
+    {%csrf_token%}  
+    <input type="hidden" name="action_type" value="delete_cleaning">
+    <input type="hidden" name="delete_cleaning_id" id="delete_cleaning_id" value="">
+    <div align="right"><input class="cancel-Button close-btn delete_cleaning" name="delete" type="button" value="Yes" onclick="submitAnyForm(this);"></div>
+    </form>
+  </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div><!--ticket-wrapper-full--> 
+        
+    </div><!--modal-content-->
+    </div><!--modal-body-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--modal-popup-wrapper-->
+<!-- /delete_cleaning_popup -->
+
+
+<!-- delete_followup_popup -->
+<div class="modal-popup-wrapper5"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+        <div class="modal-header"><!--modal-header-->
+        <button class="modal-close delete_followup">X</button>
+        </div><!--modal-header-->
+    <div class="modal-body"><!--modal-body-->
+    <div class="modal-content"><!--modal-content-->
+    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+           <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">  
+                <tr>
+                    <td valign="center"><div class="blc-number" id="delete_blcno_followup_id"></div><span id="address_cleaning_id"></span></td>
+                    <td align="center"><div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div></td>
+                    <td><div class="bold-text" id="delete_customername_followup_id"></div><div id="delete_mobileno_followup_id"></div></td>
+                </tr>
+ 
+            <tr>
+            <td colspan="3">Cleaning Date:<strong><span class="blue-text" id="delete_starting_date_followup_id"></span></strong> &nbsp;Starting Time:<strong><span class="blue-text" id="delete_starting_time_followup_id"></span></strong> &nbsp;Duration:<strong><span class="blue-text" id="delete_duration_followup_id"></span></strong></td>
+            </tr>
+            <tr>
+              <td colspan="3">Team Leader:<strong><span class="blue-text" id="delete_team_leader_followup_id"></span></strong> &nbsp;</td>
+            </tr>
+            <tr>
+              <td colspan="3">Team Member:<strong><span class="blue-text" id="delete_team_member_followup_id"></span></strong> &nbsp;</td>
+            </tr>  
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->   
+  <hr class="hr-dashedpad">
+  <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    <div align="center"><h3>Are you Sure? You want to Delete this Followup?</h3></div>
+    <form method="post" enctype= "multipart/form-data">
+    {%csrf_token%}  
+    <input type="hidden" name="action_type" value="delete_followup">
+    <input type="hidden" name="delete_followup_id" id="delete_followup_id" value="">
+    <div align="right"><input class="cancel-Button close-btn delete_followup" name="delete" type="button" value="Yes" onclick="submitAnyForm(this);"></div>
+    </form>
+  </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div><!--ticket-wrapper-full--> 
+        
+    </div><!--modal-content-->
+    </div><!--modal-body-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--modal-popup-wrapper-->
+<!-- /delete_followup_popup -->
+
 
 {% endblock %}
 {% block javascript %}
@@ -1223,12 +1344,61 @@ for (i = 0; i < coll.length; i++) {
   }
 
 
-// Evaluation Edit
+// Evaluation Delete
     $('.delete_evaluation').on('click', function (e) {
       e.preventDefault();
       $('.modal-popup-wrapper3').toggleClass('is-visible');
+
+      $('#delete_blcno_evaluation_id').html($('#blcno_evaluation_id').html());
+      $('#delete_address_evaluation_id').html($('#address_evaluation_id').html());
+      $('#delete_proposed_date_evaluation_id').html($('#proposed_date_evaluation_id').html());
+      $('#delete_proposed_time_evaluation_id').html($('#proposed_time_evaluation_id').html());
+      $('#delete_customername_evaluation_id').html($('#customername_evaluation_id').html());
+      $('#delete_mobileno_evaluation_id').html($('#mobileno_evaluation_id').html());
+      $('#delete_evaluator_name_evaluation_id').html($('#evaluator_name_evaluation_id').html());
+
+      //form data
+      $('#delete_evaluation_id').val($('#evaluation_id').val());
   });
 
+
+// Delete Cleaning
+$('.delete_cleaning').on('click', function (e) {
+      e.preventDefault();
+      $('.modal-popup-wrapper4').toggleClass('is-visible');
+
+      $('#delete_blcno_cleaning_id').html($('#blcno_cleaning_id').html());
+      $('#delete_address_cleaning_id').html($('#address_cleaning_id').html());
+      $('#delete_customername_cleaning_id').html($('#customername_cleaning_id').html());
+      $('#delete_mobileno_cleaning_id').html($('#mobileno_cleaning_id').html());  
+      $('#delete_starting_date_cleaning_id').html($('#starting_date_cleaning_id').html());
+      $('#delete_starting_time_cleaning_id').html($('#starting_time_cleaning_id').html());
+      $('#delete_duration_cleaning_id').html($('#duration_cleaning_id').html());
+      $('#delete_team_leader_cleaning_id').html($('#team_leader_cleaning_id').html()); 
+      $('#delete_team_member_cleaning_id').html($('#team_member_cleaning_id').html());
+      //form data
+      $('#delete_cleaning_id').val($('#cleaning_id').val());
+  });
+
+
+// Delete Followup
+$('.delete_followup').on('click', function (e) {
+      e.preventDefault();
+      $('.modal-popup-wrapper5').toggleClass('is-visible');
+
+      $('#delete_blcno_followup_id').html($('#blcno_followup_id').html());
+      $('#delete_address_followup_id').html($('#address_followup_id').html());
+      $('#delete_customername_followup_id').html($('#customername_followup_id').html());
+      $('#delete_mobileno_followup_id').html($('#mobileno_followup_id').html());  
+      $('#delete_starting_date_followup_id').html($('#starting_date_followup_id').html());
+      $('#delete_starting_time_followup_id').html($('#starting_time_followup_id').html());
+      $('#delete_duration_followup_id').html($('#duration_followup_id').html());
+      $('#delete_team_leader_followup_id').html($('#team_leader_followup_id').html());
+
+      $('#delete_team_member_followup_id').html($('#team_member_followup_id').html());
+      //form data
+      $('#delete_followup_id').val($('#followup_id').val());
+  });
 
 
 });
