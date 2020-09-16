@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
+{% block css_links %}
+<link rel="stylesheet" href="https://semantic-ui.com/dist/semantic.min.css">
+{% endblock %}
 <div class="wrapper"><!--wrapper-->
 {% include "agent/common/header.html" %}
 
@@ -128,6 +131,11 @@
                 </select>
                 </label>
   </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Contact Platform</label></div>
+                <div class="ui fluid multiple search selection dropdown"><input type="hidden" name="contact_platform" value="{% if enquiry_user.is_sms %}SMS{% endif %}{% if enquiry_user.is_email%},Email{% endif %}{% if enquiry_user.is_whatsapp%},Whatsapp{% endif %}"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">Select Platform</div><div class="menu" tabindex="-1"><div class="item" data-value="SMS">SMS</div><div class="item" data-value="Whatsapp">Whatsapp</div><div class="item" data-value="Email">Email</div></div>
+                </div>
+  </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
 <hr class="hr-dashedpad"> 
@@ -314,6 +322,10 @@
 <script>
 
 $('document').ready(function(){
+  
+$('.ui.multiple.dropdown').dropdown({
+  });
+
   //HIDE AND SHOW WITH CUSTOMER TYPE
 $("#id_customer_type").change(function(){
 customer_type=this.value;

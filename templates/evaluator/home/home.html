@@ -76,7 +76,7 @@
 <tbody>
 
 {% for investigation in investigations %}
-<tr class="{% if investigation.order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %} blue-line{% else %}green-line{% endif %}">
+<tr class="green-line">
 <td data-label="BLC Number" >{{investigation.order.evaluation.evaluation_id}}</td>
 <td data-label="Proposed Time">{{investigation.sheduled_at|date:"d/m/Y h:m A"}}</td>
 <td data-label="Customer">{{investigation.order.evaluation.customer.name}}</td>
@@ -101,7 +101,7 @@
     <span class="blue-text">{{investigation.order_schedule.order_scheduler_book.cleaning_policy}}</span>
 </td>
 <td data-label="">
-<span class="{% if investigation.order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}blue-bg{% else %}green-bg{% endif %} clickable-row-list" data-href="{% url 'evaluator:investigation' investigation.id %}">Checkin</span>
+<span class="{% if investigation.color_status == 'green' %}green-bg{% elif investigation.color_status == 'yellow' %}yellow-bg{%else%}red-bg{% endif %} clickable-row-list" data-href="{% url 'evaluator:investigation' investigation.id %}">Checkin</span>
 </td>
 </tr>
 {% endfor %}
