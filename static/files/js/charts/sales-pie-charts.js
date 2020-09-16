@@ -42,7 +42,7 @@ function drawlocationChart() {
 
         $.each(data,function(key,value){
            var percent = ((parseInt(value.count)*parseInt(100))/parseInt(total_sales));
-           $('#loc'+ cid++ +'').text(parseFloat(percent).toFixed(2));
+           $('#loc'+ cid++ +'').text(parseFloat(percent).toFixed(1));
         })
 
         var data = google.visualization.arrayToDataTable(location_sales);
@@ -78,7 +78,7 @@ function drawlocationChart() {
         //         // stop the loop
         //         clearInterval(handler);
         // }, 30);
-
+            $('.donut1').attr("hidden",false);
             }
     })
 }
@@ -229,7 +229,7 @@ function drawcleaningtypeChart() {
         //         // stop the loop
         //         clearInterval(handler);
         // }, 30);
-
+        $('.donut2').attr("hidden",false);
             }
     })
 }
@@ -344,7 +344,7 @@ function drawgovernorateChart() {
 
         $.each(data,function(key,value){
            var percent = ((parseInt(value.count)*parseInt(100))/parseInt(total_governorate_sales));
-           $('#gov'+ gov_id++ +'').text(parseFloat(percent).toFixed(2));
+           $('#g'+ gov_id++ +'').text(parseFloat(percent).toFixed(2));
         })
 
         var data = google.visualization.arrayToDataTable(governorate_sales);
@@ -380,7 +380,7 @@ function drawgovernorateChart() {
         //         // stop the loop
         //         clearInterval(handler);
         // }, 30);
-
+        $('.donut3').attr("hidden",false);
             }
     })
 }
@@ -450,9 +450,9 @@ $("#reset_governorates").click(function(){
 
 //sales curve chart
 google.charts.load('current', {'packages':['corechart']});
-google.charts.setOnLoadCallback(drawsalescurvechart);
+google.charts.setOnLoadCallback(drawsalescurveChart);
 
-function drawsalescurvechart() {
+function drawsalescurveChart() {
     if ($('#daymonth_sales').is(':checked')) {
         var dom = 'Date' ;
         var fromd = $('#sales_curve_date1').val();
@@ -573,19 +573,19 @@ $("#daymonth_sales").click(function(){
 })
 
 $('#sales_curve_month1').change(function(){
-    drawsalescurvechart();
+    drawsalescurveChart();
 });
 
 $('#sales_curve_month2').change(function(){
-    drawsalescurvechart();
+    drawsalescurveChart();
 });
 
 $('#sales_curve_date1').change(function(){
-    drawsalescurvechart();
+    drawsalescurveChart();
 });
 
 $('#sales_curve_date2').change(function(){
-    drawsalescurvechart();
+    drawsalescurveChart();
 })
 
 $("#reset_sales_curve").click(function(){
@@ -609,7 +609,7 @@ $("#reset_sales_curve").click(function(){
 
     $('#sales_curve_month1').val(monthstring);
     $('#sales_curve_month2').val(monthstring2);
-    drawsalescurvechart();
+    drawsalescurveChart();
 })
 
 $("#daym").change(function(){
@@ -627,7 +627,7 @@ $("#daym").change(function(){
 
             $('#from').val(datestring2);
             $('#to').val(datestring);
-            drawsalescurvechart();
+            drawsalescurveChart();
         }
         else{
             $('.saleset1').attr("hidden",false);
@@ -639,7 +639,7 @@ $("#daym").change(function(){
 
             $('#from').val(datestring2);
             $('#to').val(datestring);
-            drawsalescurvechart();
+            drawsalescurveChart();
 
         }
     })

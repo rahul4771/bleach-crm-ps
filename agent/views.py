@@ -1322,12 +1322,12 @@ class ClientDetails(IsAgent,View):
 		fil_status                = request.GET.get('status')
   		
 		#code must change for optimisation	
-		# for detail in client_details:
-		# 	detail.active_status = False
-		# 	if detail.customer_evaluations:
-		# 		for evaluation in detail.customer_evaluations:
-		# 			if evaluation.order_evaluation:
-		# 				detail.active_status = True	
+		for detail in client_details:
+			detail.active_status = False
+			if detail.customer_evaluations:
+				for evaluation in detail.customer_evaluations:
+					if evaluation.order_evaluation:
+						detail.active_status = True	
 
 		#To Find active and new client
 		try:
@@ -2143,34 +2143,54 @@ class TicketRegistration(IsAgent,View):
 
 #ajax for client chart
 def ClientData(request):
-    print("lol")
-    data = []
-    prevdate = request.GET.get('fromdate',None)
-    todate  = request.GET.get('todate', None)
-    print(prevdate,todate,"bhu")  
-    try:
-    	prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
-    	todate = datetime.strptime(todate, '%Y-%m-%d')
-    except:
-        todate = date.today() - timedelta(days=1)
-        prevdate = todate - timedelta(days=30)
-    print(prevdate,todate,"bhoot")
-    try:
-        print("jn")
-        governorates = Governorate.objects.filter(is_active=True)
-        for governorate in governorates:
-            #change date field from evaluation date to order created date
-            client_count = Order.objects.filter(evaluation__customer__address_customer__governorate__id=governorate.id, evaluation__quatation_approved_date__range=(prevdate,todate)).values_list('evaluation__customer').distinct().count()
-            print(client_count,"red")
-            data.append({
-                "governorate" : governorate.name,
-                "clients"	: client_count,
-                })
-        print(data,"rgn")
-    except:
-        governorates = None
-        
-    return JsonResponse(data,safe=False)
+	print("lol")
+	data = []
+	dom = request.GET.get('dom',None)
+	prevdate = request.GET.get('fromdate',None)
+	todate  = request.GET.get('todate', None)
+	print(prevdate,todate,"bhu") 
+	governorates = Governorate.objects.filter(is_active=True)
+
+	if dom == 'Month':
+		print("kabir")
+		month,year = prevdate.split("/")
+		month2,year2 = todate.split("/")
+		print(month,year,month2,year2,"mko")
+		
+		try:
+			for governorate in governorates:
+				#change date field from evaluation date to order created date
+				client_count = Order.objects.filter(evaluation__customer__address_customer__governorate__id=governorate.id, evaluation__quatation_approved_date__year__range=(year,year2), evaluation__quatation_approved_date__month__range=(month,month2)).values_list('evaluation__customer').distinct().count()
+				
+				data.append({
+					"governorate" : governorate.name,
+					"clients"	: client_count,
+					})
+		except:
+			governorates = None
+	else:
+		try:
+			prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+			todate = datetime.strptime(todate, '%Y-%m-%d')
+		except:
+			todate = date.today() - timedelta(days=1)
+			prevdate = todate - timedelta(days=30)
+		print(prevdate,todate,"bhoot")
+		try:
+			print("jn")
+			for governorate in governorates:
+				#change date field from evaluation date to order created date
+				client_count = Order.objects.filter(evaluation__customer__address_customer__governorate__id=governorate.id, evaluation__quatation_approved_date__range=(prevdate,todate)).values_list('evaluation__customer').distinct().count()
+				print(client_count,"red")
+				data.append({
+					"governorate" : governorate.name,
+					"clients"	: client_count,
+					})
+			print(data,"rgn")
+		except:
+			governorates = None
+		
+	return JsonResponse(data,safe=False)
 
 #ajax for ticket chart
 def TicketData(request):

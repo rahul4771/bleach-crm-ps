@@ -147,29 +147,28 @@ $('.datepicker').datetimepicker({
 
   // $('#datepicker').datetimepicker();
 
- $('.next-day').on('click', function () {
-
-     $selectedDay            = $('#datepicker').data("DateTimePicker").getDate();
-     var $tmpSelectedDay     = new Date($selectedDay) 
-     $tmpSelectedDay.setDate($tmpSelectedDay.getDate() + 1);
-     $('#datepicker').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+//  $('.next-day').on('click', function () {
+//      $selectedDay            = $('#datepicker').data("DateTimePicker").getDate();
+//      var $tmpSelectedDay     = new Date($selectedDay) 
+//      $tmpSelectedDay.setDate($tmpSelectedDay.getDate() + 1);
+//      $('#datepicker').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
          
-  });
+//   });
 
 
- $('.prev-day').on('click', function () {
+//  $('.prev-day').on('click', function () {
 
-     $selectedDay            = $('#datepicker').data("DateTimePicker").getDate();
-     var $tmpSelectedDay     = new Date($selectedDay) 
-     $tmpSelectedDay.setDate($tmpSelectedDay.getDate() - 1);
-     $('#datepicker').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+//      $selectedDay            = $('#datepicker').data("DateTimePicker").getDate();
+//      var $tmpSelectedDay     = new Date($selectedDay) 
+//      $tmpSelectedDay.setDate($tmpSelectedDay.getDate() - 1);
+//      $('#datepicker').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
  
- });
+//  });
 
- $('.today-date').on('click', function () {
-     var $tmpSelectedDay     = new Date();
-     $('#datepicker').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
- });
+//  $('.today-date').on('click', function () {
+//      var $tmpSelectedDay     = new Date();
+//      $('#datepicker').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+//  });
 
  //filter popup toggle
  $(".arrow").on('click', function (e) {

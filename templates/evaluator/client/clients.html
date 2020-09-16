@@ -33,10 +33,6 @@
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
         </div><!--clients-card-column clients-column-left-->
-		  {% comment %} <div class="clients-card-column clients-column-right whitebg"><!--lients-card-column clients-column-right-->
-            <img src="{% static 'files/images/clients-chart.jpg' %}">
-            <div class="chart-btnWrapper"><input name="thismonth" type="button" class="blue-button" value="This Month" id="thismonth"></div>
-          </div><!--lients-card-column clients-column-right--> {% endcomment %}
 
         <div class="clients-card-column clients-column-right whitebg hover ltyellow-border"><!--clients-card-column clients-column-right-->
                  
@@ -57,10 +53,12 @@
 
         <div class="chart_box_Left"><!--chart_box_Left-->        
         <div class="Button_wrapperChart">
-            <div class="blue-sliderbutton"><label class="switch"><div></div></label></div>
-            <input type="text" id="client_fromdate" class="date_pick date_pick2 date-picker date-pick-left" value={{investigation_date|date:"d-m-Y"}} >
-            <input type="text" id="client_todate" class="date_pick date_pick2 date-picker date-pick-right" value={{investigation_date|date:"d-m-Y"}} >
-             <div><button id="reset_clients" class="green-button-chart">Reset</button></div>
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daym"><div class="slider round"><span class="on">DATE</span><span class="off">MONTH</span></div></label></div>
+            <input type="text" id="client_fromdate" class="date_pick set1 txt-box" >&nbsp;&nbsp;
+            <input type="text" id="client_todate" class="date_pick set1 txt-box" >
+            <input type="text" id="client_month1" class="month_pick set2 txt-box" >&nbsp;
+            <input type="text" id="client_month2" class="month_pick set2 txt-box" >
+            <div><button id="reset_clients" class="green-button-chart">Reset</button></div>
             </div>
 	           
         </div><!--chart_box_Left-->

@@ -66,7 +66,7 @@ function drawBasic() {
             var data = google.visualization.arrayToDataTable(clients);
 
             var options = {
-                chartArea:{height:'85%'},
+                chartArea:{height:'80%'},
                 hAxis: {
                 minValue: 0
                 },
@@ -120,6 +120,14 @@ $("#reset_clients").click(function(){
     $('#client_fromdate').val(datestring2);
     $('#client_todate').val(datestring);
 
+    var month = ("0" + (date1.getMonth())).slice(-2);
+    var month2 = ("0" + (date1.getMonth()+1)).slice(-2);
+    console.log(month,"lp")
+    var datestring = month + "/" + date1.getFullYear();
+    var datestring2 = month2 + "/" + date1.getFullYear();
+    
+    $('#client_month1').val(datestring);
+    $('#client_month2').val(datestring2);
     drawBasic();
   })
 
@@ -145,15 +153,22 @@ $("#reset_clients").click(function(){
 
         $('#client_fromdate').val(datestring2);
         $('#client_todate').val(datestring);
-        drawChart();
+        drawBasic();
     }
     else{
         $('.set1').attr("hidden",true);
         $('.set2').attr("hidden",false);
 
-        // $('#month1').val(datestring2);
-        // $('#month2').val(datestring);
-        drawChart();
+        var date1 = new Date();
+        var month = ("0" + (date1.getMonth())).slice(-2);
+        var month2 = ("0" + (date1.getMonth()+1)).slice(-2);
+        console.log(month,"lp")
+        var datestring = month + "/" + date1.getFullYear();
+        var datestring2 = month2 + "/" + date1.getFullYear();
+
+        $('#client_month1').val(datestring);
+        $('#client_month2').val(datestring2);
+        drawBasic();
 
     }
 })
