@@ -9,7 +9,7 @@ import operator
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone 
 from datetime import timedelta,date,datetime
-from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField
+from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField
 from django.db.models.functions import Cast 
 from django.db.models import Prefetch
 from django.contrib import messages
@@ -98,10 +98,13 @@ class TlHome(IsTeamLeader,View):
 
 
 		#Investigation tasks
-		investigation_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)+timedelta(3) 	
+		investigation_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)+timedelta(4) 	
 
 		try:	
-			investigations  = Investigation.objects.filter(is_active=True,sheduled_at__lte=investigation_to_date,investigator=request.user,check_out=None).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'))
+			investigations  = Investigation.objects.filter(is_active=True,sheduled_at__lt=investigation_to_date,investigator=request.user,check_out=None).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details')).annotate(color_status=Case(When(Q(Q(sheduled_at__lte=investigation_to_date) & Q(sheduled_at__gte=investigation_to_date-timedelta(1))), then=Value('green')),
+	                  When(Q(Q(sheduled_at__lt=investigation_to_date-timedelta(1))&Q(sheduled_at__gte=investigation_to_date-timedelta(3))), then=Value('yellow')),
+	                  default=Value('red'),
+	                  output_field=CharField(),))
 		except:
 			investigations  = 	None
 

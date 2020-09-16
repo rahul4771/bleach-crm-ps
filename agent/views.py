@@ -569,6 +569,9 @@ class AgentHome(IsAgent,View):
 			if confirm_status:
 				FollowUpScheduler.objects.filter(id=followupscheduler_id).update(status='CONFIRMED',start_at=start_at,end_at=end_at)
 				messages.success(request,"Followup Cleaning Date Succesfully Confirmed")
+			else:
+				FollowUpScheduler.objects.filter(id=followupscheduler_id).update(start_at=start_at,end_at=end_at)
+				messages.success(request,"Followup Cleaning Date Not Confirmed")
 
 		elif action_mode =='confirm_orderschedule':	
 			orderscheduler_id    = request.POST.get('orderscheduler')
@@ -583,6 +586,9 @@ class AgentHome(IsAgent,View):
 			if confirm_status:
 				OrderScheduler.objects.filter(id=orderscheduler_id).update(status='CONFIRMED',start_at=start_at,end_at=end_at)
 				messages.success(request,"Cleaning Date Succesfully Confirmed")
+			else:	
+				OrderScheduler.objects.filter(id=orderscheduler_id).update(start_at=start_at,end_at=end_at)
+				messages.success(request,"Cleaning Date Not Confirmed")
 
 		elif action_mode == 'edit_evaluation':
 			evaluation_detail_id 			  = request.POST.get('evaluation_id')
@@ -1498,6 +1504,19 @@ class NewEnquiry(IsAgent,View):
 			enquiry_form_save.username   = generate_random_username()
 			enquiry_form_save.created_by = request.user
 			enquiry_form_save.user_type  = 'CUSTOMER'
+			
+			#To Save Contact Platform
+			contact_platforms 			 = request.POST.get('contact_platform')
+			contact_platform_list 		 = contact_platforms.split(",")			
+			if contact_platform_list:
+				for contact_platform in contact_platform_list:
+					if contact_platform == 'Whatsapp':
+						enquiry_form_save.is_whatsapp = True
+					elif contact_platform == 'Email':
+						enquiry_form_save.is_email    = True
+					else:
+						enquiry_form_save.is_sms      = True
+
 			enquiry_form_save.save()
 
 			for address_form in address_formset:
@@ -1506,6 +1525,7 @@ class NewEnquiry(IsAgent,View):
 					address_form_save.customer          = enquiry_form_save
 					address_form_save.currently_active  = True
 					address_form_save.save()
+					
 			messages.success(request,"Customer Details Succesfully Added")
 
 		else:
@@ -1566,8 +1586,27 @@ class ExistingEnquiry(IsAgent,View):
 
 			if enquiry_form.is_valid(): 
 				enquiry_form_save            = enquiry_form.save(commit=False)	
-				enquiry_form_save.save()
 
+				#To Save Contact Platform
+				contact_platforms 			 = request.POST.get('contact_platform')
+				contact_platform_list 		 = contact_platforms.split(",")			
+
+				if 'Whatsapp' in contact_platform_list:
+					enquiry_form_save.is_whatsapp = True
+				else:
+					enquiry_form_save.is_whatsapp = False
+
+				if 'Email' in contact_platform_list:
+					enquiry_form_save.is_email    = True
+				else:
+					enquiry_form_save.is_email    = False
+
+				if 'SMS' in contact_platform_list:
+					enquiry_form_save.is_sms      = True
+				else:
+					enquiry_form_save.is_sms      = False
+
+				enquiry_form_save.save()			
 				messages.success(request,"Customer Details Succesfully updated")
 
 			else:
