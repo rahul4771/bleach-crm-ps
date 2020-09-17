@@ -1317,6 +1317,11 @@ def evaluationcalendardate(request):
 	except:
 		evaluation_details 		  = None
 
-	context = {'evaluation_details':evaluation_details}
+	try:
+		workers = UserProfile.objects.filter(is_active=True)
+	except:
+		workers = None
+
+	context = {'evaluation_details':evaluation_details,"workers":workers}
 	data['evaluationdetails'] = render_to_string('admin/home/evaluation-calendar-snippet.html',context)
 	return JsonResponse(data)

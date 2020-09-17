@@ -41,8 +41,15 @@ function drawlocationChart() {
         });
 
         $.each(data,function(key,value){
-           var percent = ((parseInt(value.count)*parseInt(100))/parseInt(total_sales));
-           $('#loc'+ cid++ +'').text(parseFloat(percent).toFixed(1));
+            var percent = ((parseInt(value.count)*parseInt(100))/parseInt(total_sales)) ;
+           
+            if (total_sales == 0){
+                console.log("red")
+                $('#loc'+ cid++ +'').text('0.0');
+            }else{
+                console.log("blue")
+                $('#loc'+ cid++ +'').text(parseFloat(percent).toFixed(1));
+            }
         })
 
         var data = google.visualization.arrayToDataTable(location_sales);
@@ -193,7 +200,11 @@ function drawcleaningtypeChart() {
 
         $.each(data,function(key,value){
            var percentage = ((parseInt(value.count)*parseInt(100))/(parseInt(total_cleaningtype_sales)));
-           $('#c'+ clean_id++ +'').text(parseFloat(percentage).toFixed(2));
+           if (total_cleaningtype_sales == 0){
+            $('#c'+ clean_id++ +'').text('0.0');
+           }else{
+            $('#c'+ clean_id++ +'').text(parseFloat(percentage).toFixed(1));
+           }
         })
 
         var data = google.visualization.arrayToDataTable(cleaningtype_sales);
@@ -344,7 +355,11 @@ function drawgovernorateChart() {
 
         $.each(data,function(key,value){
            var percent = ((parseInt(value.count)*parseInt(100))/parseInt(total_governorate_sales));
-           $('#g'+ gov_id++ +'').text(parseFloat(percent).toFixed(2));
+           if (total_governorate_sales == 0){
+            $('#gov'+ gov_id++ +'').text('0.0');
+           }else{
+            $('#gov'+ gov_id++ +'').text(parseFloat(percent).toFixed(1));
+           }
         })
 
         var data = google.visualization.arrayToDataTable(governorate_sales);
