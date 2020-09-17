@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'agent',
     'accountant',
     'bleachadmin',
+    'Api',
 ]
 
 MIDDLEWARE = [
