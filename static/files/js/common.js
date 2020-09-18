@@ -229,7 +229,7 @@ window.onbeforeunload = function(e) {
 
 //evaluation calendar refresh
 function evaluationrefresh(){
-  eval_date = $('#evaluation_calendar').val();
+      eval_date = $('#evaluation_calendar').val();
   $.ajax({
         url: "/bleach_admin/ajax/evaluation-calendar-date/",
         data: {
@@ -241,6 +241,7 @@ function evaluationrefresh(){
         
         success: function(data) {
           console.log(data.evaluationdetails);
+          
           $(".eval-table tbody").html(data.evaluationdetails);
         }
   })

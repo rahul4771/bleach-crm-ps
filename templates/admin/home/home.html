@@ -146,12 +146,12 @@
             <h4>Sales on Governerates</h4>
             <div id="donutchart3"></div>
             <div class="right-legend-chart donut3" hidden><!--right-legend-chart-->
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Al Asimah</div><span id="g1">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">Hawalli</div><span id="g2">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-orange-spot" aria-hidden="true"></i> <div class="chart-stat">Farwaniya</div><span id="g3">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-green-spot" aria-hidden="true"></i> <div class="chart-stat">Mubarak Al-Kabeer</div><span id="g4">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-cyan-spot" aria-hidden="true"></i> <div class="chart-stat">Ahmadi</div><span ></span id="g5">0</div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Jahra</div><span ></span id="g6">0</div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Al Asimah</div><span id="gov1">0</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">Hawalli</div><span id="gov2">0</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-orange-spot" aria-hidden="true"></i> <div class="chart-stat">Farwaniya</div><span id="gov3">0</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-green-spot" aria-hidden="true"></i> <div class="chart-stat">Mubarak Al-Kabeer</div><span id="gov4">0</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-cyan-spot" aria-hidden="true"></i> <div class="chart-stat">Ahmadi</div><span ><span id="gov5">0</span></div>
+            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Jahra</div><span ><span id="gov6">0</span></div>
             </div><!--right-legend-chart-->
             <div class="chart-btnWrapper chart-menudot"><span class="chart-toggle3" href="#example3">...</span></div>
             <div class="toggle-content" id="example3" style="display:none;"><!--toggle-content-->
@@ -229,7 +229,7 @@
                 </div><!--bar-chart-items chart-column-two-->
                 
                 <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-                <div class="evaluator-name" id="evaluatorid{{evaluator.id}}">90%</div>
+                <div class="evaluator-name" id="evaluatorid{{evaluator.id}}">0.0%</div>
                     <div class="bar-chart-graybg color"><div id="color{{evaluator.id}}"></div></div>
                 </div><!--bar-chart-items chart-column-three-->
                 
@@ -328,7 +328,7 @@
 <div class="date-wrapper"><!--date-wrapper-->
             <div class="date-wrapper-inner"><!--date-wrapper-inner-->
             <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" onchange="evaluationrefresh();" class="date-box date_pick">
+            <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
             <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
             <button class='today-date current-date'>Today</button>
             </div><!--date-wrapper-inner-->
@@ -391,7 +391,7 @@
 <div class="date-wrapper"><!--date-wrapper-->
             <div class="date-wrapper-inner"><!--date-wrapper-inner-->
             <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type="text" id="cleaning_calendar" value="{{schedule_date|date:"d-m-Y"}}" onchange="cleaningrefresh();" class="date-box date_pick">
+            <input type="text" id="cleaning_calendar" value="{{schedule_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
             <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
             <button class='today-date current-date'>Today</button>
             </div><!--date-wrapper-inner-->
@@ -461,10 +461,10 @@
         <div class="chart_box_Left"><!--chart_box_Left-->        
         <div class="Button_wrapperChart">
             <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonth_sales_target"><div class="slider round"><span class="on">DATE</span><span class="off">MONTH</span></div></label></div>
-            <input type="text" id="sales_target_date1" class="date_pick targetset1 txt-box" >&nbsp;
-            <input type="text" id="sales_target_date2" class="date_pick targetset1 txt-box" >
-            <input type="text" id="sales_target_month1" class="month_pick targetset2 txt-box" >&nbsp;
-            <input type="text" id="sales_target_month2" class="month_pick targetset2 txt-box" >
+            <input type="text" id="sales_target_date1" class="followup_date targetset1 txt-box" >&nbsp;
+            <input type="text" id="sales_target_date2" class="followup_date targetset1 txt-box" >
+            <input type="text" id="sales_target_month1" class="followup_month targetset2 txt-box" >&nbsp;
+            <input type="text" id="sales_target_month2" class="followup_month targetset2 txt-box" >
             <div><button id="reset_orders" class="green-button-chart">Reset</button></div>
               
             </div>
@@ -899,13 +899,16 @@
             success: function(data) {
               $.each(data,function(key,value){
                 var percent = ((parseInt(value.amount)*parseInt(100))/parseInt(999999));
+              
                 $('#evaluatorid'+value.evaluator_id+'').text(parseFloat(percent).toFixed(2));
                 
+                $('#color'+value.evaluator_id+'').attr("style",'width:'+parseFloat(percent).toFixed(2)+'%;');
+
                 var color = colors++ ;
                 if(color % 2 == 0) {
                 $('#color'+value.evaluator_id+'').addClass('chart-bluebg');
                 }else{
-                $('#color'+value.evaluator_id+'').addClass('chart-pinkbg'); 
+                $('#color'+value.evaluator_id+'').addClass('chart-pinkbg');
                 }
                 console.log(percent,"per")
               });
@@ -1304,7 +1307,7 @@ $("#followupschedule_dateconfirm_popup_close").click(function(){
 
 function set_params_go(args)
 {
-var url='{% url 'agent:agentdash-board' %}';
+var url='{% url 'bleach_admin:admindash-board' %}';
 var params={cleaning_calendar_date:$('#cleaning_calendar').val(),evaluation_calendar_date:$('#evaluation_calendar').val(),
 };
 for(key in args) 
@@ -1321,6 +1324,18 @@ $('document').ready(function(){
   
   //Followup graph popup
   $('.followup_graph').on('click', function (e) {
+      $('.followup_date').datetimepicker({ 
+          pickTime: false, 
+          format: "DD-MM-YYYY", 
+          //maxDate: 'now().date()', 
+      });
+
+      $(".followup_month").datepicker({
+          format: "mm/yyyy",
+          startView: "year", 
+          minViewMode: "months"
+      });
+
       e.preventDefault();
       console.log("hiiiiii");
       $('.modal-popup-wrappergraph').toggleClass('is-visible');
