@@ -235,7 +235,7 @@ def GetOrderScheduleTicketInfo(request):
 
 	order_schedule = {}
 	for schedule in ordershedules:
-		order_schedule[schedule.id] = schedule.customer_address.area.name+'-'+schedule.order_scheduler_book.service_type.name or ''
+		order_schedule[schedule.id] = schedule.customer_address.area.name+'-'+schedule.order_scheduler_book.service_type.name+'/'+datetime.strftime((schedule.start_at+timedelta(hours=3)),'%d-%m-%Y %I:%M %p') or ''
 
 		dropdown_orderschedule_info['name']          = schedule.customer_address.customer.name 
 		dropdown_orderschedule_info['mobile_number'] = schedule.customer_address.customer.mobile_number
