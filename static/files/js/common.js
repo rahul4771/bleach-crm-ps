@@ -2,7 +2,17 @@ $(window).ready(function() {
   
   // active link 
   for (var i = 0; i < document.links.length; i++) {
-    if (document.links[i].href == document.URL) {
+    
+    lastchar_of_currentlink= (document.URL).slice(-1)
+    if(lastchar_of_currentlink == '#')
+      {
+        current_link = (document.URL).slice(0,-1);
+      }
+    else{
+        current_link = document.URL
+    }  
+    
+    if (document.links[i].href == current_link) {
                 $(document.links[i]).parent().addClass('active').first().append('<div class="active-right"></div>');
                                             } 
                               }

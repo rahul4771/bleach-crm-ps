@@ -90,11 +90,12 @@ var timer;
 	};
 	/* Список всех фотографий с параметрами */
 	var json = {};
-	$('[data-pn]').each(function(index, item){
+	$('[data-pn]').each(function(index, item){	
 		var $item 	 = $(item);
 		var data_pn  = $item.data('pn');
 
 		var data_src = $item.data('src');
+		console.log(data_src);
 		var image_paths       = data_src.split(",");
 		image_paths 		  = image_paths.filter(function(e){return e});
 
@@ -126,99 +127,7 @@ var timer;
 		json[data_pn]  = image_paths_main_array;
 		
 	});
-
-
-	// var json = {
-	// 	1 : [
-	// 		{
-	// 			id : 1,
-	// 			duration : 1,
-	// 			effect : 'spin',
-	// 		},
-	// 		{
-	// 			id : 1,
-	// 			duration : 1,
-	// 			effect : 'spin',
-	// 		},
-	// 		{
-	// 			id : 1,
-	// 			duration : 1,
-	// 			effect : 'perspective',
-	// 		},
-	// 		{
-	// 			id : 1,
-	// 			duration : 3,
-	// 			effect : 'smooth',
-	// 		},
-	// 	],
-	// 	2 : [
-	// 		{
-	// 			id : 2,
-	// 			duration : 1,
-	// 			effect : 'spin',
-	// 		},
-	// 		{
-	// 			id : 2,
-	// 			duration : 1,
-	// 			effect : 'spin',
-	// 		},
-	// 		{
-	// 			id : 2,
-	// 			duration : 1,
-	// 			effect : 'perspective',
-	// 		},
-	// 		{
-	// 			id : 2,
-	// 			duration : 3,
-	// 			effect : 'smooth',
-	// 		},
-	// 	],
-	// 	3 : [
-	// 		{
-	// 			id : 3,
-	// 			duration : 1,
-	// 			effect : 'spin',
-	// 		},
-	// 		{
-	// 			id : 3,
-	// 			duration : 1,
-	// 			effect : 'spin',
-	// 		},
-	// 		{
-	// 			id : 3,
-	// 			duration : 1,
-	// 			effect : 'perspective',
-	// 		},
-	// 		{
-	// 			id : 3,
-	// 			duration : 3,
-	// 			effect : 'smooth',
-	// 		},
-	// 	],
-	// 	4 : [
-	// 		{
-	// 			id : 4,
-	// 			duration : 1,
-	// 			effect : 'spin',
-	// 		},
-	// 		{
-	// 			id : 4,
-	// 			duration : 1,
-	// 			effect : 'spin',
-	// 		},
-	// 		{
-	// 			id : 4,
-	// 			duration : 1,
-	// 			effect : 'perspective',
-	// 		},
-	// 		{
-	// 			id : 4,
-	// 			duration : 3,
-	// 			effect : 'smooth',
-	// 		},
-	// 	],
-	// };
-
+	console.log(json);
 	/* Инициализация галерей */
 	var $all = {};
 	$('[data-pn]').each(function(index, item){
@@ -239,6 +148,7 @@ var timer;
 				clearTimeout(this.timeout);
 				$(this).find('.pn-play').removeClass('active');
 			}
+
 			if(this.current != index || loop !== true){
 				if(e !== undefined){
 					var ribbon = this.find('.pn-ribbon');
@@ -313,7 +223,6 @@ var timer;
 
 	/* Подгрузка изображений */
 	var loadImage = function(i, j){
-		console.log(json[i][j].id)
 		var img = new Image;
 		img.src = json[i][j].id;
 		json[i][j].loading = true;
@@ -326,9 +235,12 @@ var timer;
 		img = null;
 	}
 	for(var i = 1; i < Object.size(json)+1; i++){
-		for(var j = 0; j < json[i].length; j++){
+		if(json[i])//to adjust counts
+		{
+			for(var j = 0; j < json[i].length; j++){
 			if(typeof(json[i][j]) == 'number'){ json[i][j] = { id : json[i][j] }; }
-			loadImage(i, j);
+			loadImage(i, j)
+		}
 		}
 	}
 })();
