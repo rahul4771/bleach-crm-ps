@@ -3,7 +3,7 @@ from django.shortcuts import render
 from evaluator.models import Evaluation,EvaluationDetails
 from user.models import UserProfile
 
-from Api.serializers import UserProfileSerializer
+from Api.serializers import UserProfileSerializer, EvaluationSerializer
 from agent.views import generate_random_username
 
 from django.utils import timezone 
@@ -87,4 +87,21 @@ class ApiBasicDetails(APIView):
 		    response_dict['Error']=key +':'+ error[0]
 		    response_dict['Error_List'] = serializer.errors
 
+		return Response(response_dict,HTTP_200_OK)
+
+class EvaluationBooking(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {"success":False}
+
+		evaluation_id = request.GET.get('evaluation_id')
+		try:
+			evaluation = Evaluation.objects.get(evaluation_id=evaluation_id)
+		except:
+			evaluation = None
+
+		evaluation_serializer = EvaluationSerializer(evaluation,many=True).data
+		response_dict["evaluations"]=evaluation_serializer
 		return Response(response_dict,HTTP_200_OK)
