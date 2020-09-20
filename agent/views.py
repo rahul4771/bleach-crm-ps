@@ -1632,7 +1632,7 @@ class ExistingEnquiry(IsAgent,View):
 
 				enquiry_form = UserProfileForm(request.FILES or None,instance=enquiry_user)
 
-				return render(request,'agent/enquiry/existing_enquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})
+				return render(request,'agent/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})
 
 		return redirect('agent:agent-existingenquiry',enquiry_id)
 
