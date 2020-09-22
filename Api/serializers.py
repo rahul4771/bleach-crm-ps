@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from user.models import UserProfile,Address,Governorate,Area 
+from user.models import UserProfile,Address,Governorate,Area
+from evaluator.models import Evaluation
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,5 +33,10 @@ class AddressSerializer(serializers.ModelSerializer):
     area            = AreaSerializer(read_only=True)
     class Meta: 
         model  = Address 
-        fields = ('governorate','area','block','avenue','building','street','floor','apartment',)  
+        fields = ('governorate','area','block','avenue','building','street','floor','apartment',) 
+
+class EvaluationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Evaluation
+        fields = ('evaluation_id','customer__mobile','evaluation_details__evaluator','evaluation_details__proposed_time','evaluation_details__address')
   

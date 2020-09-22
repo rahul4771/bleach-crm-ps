@@ -255,7 +255,7 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Floor</label></div>
-                <input type="text" name="floor" class="textBox">
+                <input type="text" name="floor" class="textBox" required>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">
@@ -263,11 +263,11 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Building</label></div>
-        <input type="text" name="building" class="textBox">
+        <input type="text" name="building" class="textBox" required>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Block</label></div>
-                <input type="text" name="block" class="textBox">
+                <input type="text" name="block" class="textBox" required>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">
@@ -275,11 +275,11 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Street</label></div>
-        <input type="text" name="street" class="textBox">
+        <input type="text" name="street" class="textBox" required>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Avenue</label></div>
-                <input type="text" name="avenue" class="textBox">
+                <input type="text" name="avenue" class="textBox" required>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">
@@ -288,7 +288,7 @@
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Governorate</label></div>
         <label for="favcity">
-                <select id="favcity" name="governorate" class="governorate">
+                <select id="favcity" name="governorate" class="governorate" required>
                 <option value="">Choose Governorate</option>
                 {% for governorate in governorates %}
                 <option value="{{governorate.id}}">{{governorate.name}}</option>
@@ -299,7 +299,7 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Area</label></div>
           <label for="favcity">
-                <select id="id_area" name="area">
+                <select id="id_area" name="area" required>
                 </select>
           </label>
   </div><!--ticket-form-right-->
