@@ -511,22 +511,22 @@ class AgentHome(IsAgent,View):
 		schedule_date_end   = schedule_date_start+timedelta(1)		
 
 		try:
-			calendar_order_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
+			calendar_order_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams'))
 		except:
 			calendar_order_schedules 	= None
 
 		try:
-			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_teams'))
 		except:
 			calendar_followup_schedules = None
 	
 		try:
-			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
+			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams'))
 		except:
 			sp_calendar_order_schedules = None
 
 		try:
-			sp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+			sp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_teams'))
 		except:
 			sp_calendar_followup_schedules = None							
 
@@ -614,7 +614,6 @@ class AgentHome(IsAgent,View):
 			start_at         = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
 			end_at           = start_at + timedelta(hours=cleaning_hours)
 
-			team_leader_id   = request.POST.get('team_leader')
 
 			#update schedule
 			order_scheduler  = OrderScheduler.objects.select_related('order_scheduler_book').get(id=schedule_id)
@@ -626,15 +625,16 @@ class AgentHome(IsAgent,View):
 			order_scheduler.order_scheduler_book.save() 
 
 			#update cleaning team
-			CleaningTeam.objects.filter(order_scheduler=order_scheduler).update(start_at=start_at,end_at=end_at,team_leader_id=team_leader_id)
+			try:
+				cleaning_team_update = CleaningTeam.objects.filter(order_scheduler=order_scheduler).update(start_at=start_at,end_at=end_at,)
+			except:
+				cleaning_team_update = None
 
-			#update Cleaning team members
-			cleaners              = request.POST.getlist('team_member')
-			cleaning_team_members = CleaningTeamMember.objects.filter(is_active=True,team__order_scheduler=order_scheduler,member__user_type='CLEANER')
-			if not cleaners==['']:
-				for cleaner,cleaner_db in zip(cleaners,cleaning_team_members):
-					cleaner_db.member_id = cleaner 
-					cleaner_db.save()
+			#update cleaning team member
+			try:
+				cleaner_update 		 =	CleaningTeamMember.objects.filter(team__order_scheduler=order_scheduler).update(start_at=start_at,end_at=end_at,)	
+			except:
+				cleaner_update       =	None
 
 			messages.success(request,"Cleaning Edited Succesfully")
 
@@ -648,8 +648,6 @@ class AgentHome(IsAgent,View):
 			start_at         = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
 			end_at           = start_at + timedelta(hours=cleaning_hours)
 
-			team_leader_id   = request.POST.get('team_leader')
-
 			#update schedule
 			followup_scheduler  = FollowUpScheduler.objects.select_related('follow_up').get(id=schedule_id)
 			followup_scheduler.start_at 							= start_at
@@ -659,16 +657,18 @@ class AgentHome(IsAgent,View):
 			followup_scheduler.save()
 			followup_scheduler.follow_up.save() 
 
-			#update cleaning team
-			FollowUpTeam.objects.filter(followup_scheduler=followup_scheduler).update(start_at=start_at,end_at=end_at,team_leader_id=team_leader_id)
+			#update followup team
+			try:
+				followup_team = FollowUpTeam.objects.filter(followup_scheduler=followup_scheduler).update(start_at=start_at,end_at=end_at)
+			except:
+				followup_team = None
 
-			#update Cleaning team members
-			cleaners              = request.POST.getlist('team_member')
-			followup_team_members = FollowUpTeamMember.objects.filter(is_active=True,team__followup_scheduler=followup_scheduler,member__user_type='CLEANER')
-			if not cleaners==['']:
-				for cleaner,cleaner_db in zip(cleaners,followup_team_members):
-					cleaner_db.member_id = cleaner 
-					cleaner_db.save()
+			#update followup team members
+			try:
+				followup_team_members = FollowUpTeamMember.objects.filter(is_active=True,team__followup_scheduler=followup_scheduler,member__user_type='CLEANER').update(start_at=start_at,end_at=end_at)
+			except:
+				followup_team_members = None
+
 			messages.success(request,"Followup Cleaning Edited Succesfully")
 
 		elif action_mode == 'delete_evaluation':

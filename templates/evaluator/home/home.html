@@ -78,7 +78,7 @@
 {% for investigation in investigations %}
 <tr class="green-line">
 <td data-label="BLC Number" >{{investigation.order.evaluation.evaluation_id}}</td>
-<td data-label="Proposed Time">{{investigation.sheduled_at|date:"d/m/Y h:m A"}}</td>
+<td data-label="Proposed Time">{{investigation.sheduled_at|date:"d/m/Y h:i A"}}</td>
 <td data-label="Customer">{{investigation.order.evaluation.customer.name}}</td>
 <td class="hide-a" data-label="">{{investigation.order_schedule.customer_address.area.name}}</td>
 <td data-label="Mobile Number">{{investigation.order.evaluation.customer.mobile_number}}</td>
