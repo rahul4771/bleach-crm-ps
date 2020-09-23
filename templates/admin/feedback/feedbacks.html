@@ -8,7 +8,7 @@
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
                 <h1 class="dashboard-head">Feedback</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+                <p>Bleach CRM-PS Version 0.1 (Beta) developed and owned by Bleach-Kw</p>    
             </div><!--welcome-wrapper-->
        
      <div class="clients-top-card-wrapper"><!--clients-top-card-wrapper-->
@@ -70,7 +70,7 @@
      
      <div class="white-wrapper-search"><!--white-wrapper-search-->
      <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
-          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search BLC Number & Customer Name Here" value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
      </div><!--left-box leftbox-item1-->
      <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
      <input name="filter" type="button" value="Filter" id="filter" class="blue-button arrow"> 
@@ -113,7 +113,7 @@
                 <option value="2" {% if fil_minimumstarring == '2' %}selected{% endif %}>2</option>
                 <option value="3" {% if fil_minimumstarring == '3' %}selected{% endif %}>3</option>
                 <option value="4" {% if fil_minimumstarring == '4' %}selected{% endif %}>4</option>
-                <option value="4" {% if fil_minimumstarring == '5' %}selected{% endif %}>5</option>                
+                <option value="5" {% if fil_minimumstarring == '5' %}selected{% endif %}>5</option>                
               </select>
                 </label>
   </div><!--ticket-form-left-->
@@ -127,7 +127,7 @@
                 <option value="2" {% if fil_maximumstarring == '2' %}selected{% endif %}>2</option>
                 <option value="3" {% if fil_maximumstarring == '3' %}selected{% endif %}>3</option>
                 <option value="4" {% if fil_maximumstarring == '4' %}selected{% endif %}>4</option>
-                <option value="4" {% if fil_maximumstarring == '5' %}selected{% endif %}>5</option>                
+                <option value="5" {% if fil_maximumstarring == '5' %}selected{% endif %}>5</option>                
               </select>
                 </label>
   </div><!--ticket-form-right-->
@@ -149,7 +149,7 @@
            
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-<div align="center"> <input class="assignButton" name="assing" type="button" onclick="set_params_go({});" value="Submit"> <input class="cancel-Button close-btn" name="cancel" type="button" value="Cancel"></div>
+<div align="center"> <input class="assignButton" name="assing" type="button" onclick="set_params_go({});" value="Submit"> <input class="cancel-Button close-btn arrow-close" name="cancel" type="button" value="Reset"></div>
 
      
      </div><!--menu-filter ltgreen-border-->
@@ -351,27 +351,27 @@ average_total_feedback = (Math.round((starring_count[0]*1+starring_count[1]*2+st
 if(average_total_feedback >= 4.5)
 {
 $('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span>');
-  $('.rating-range').html('5.00');
+  $('.rating-range').html(average_total_feedback);
 }
 else if(average_total_feedback >= 3.5 && average_total_feedback < 4.5)
 {
 $('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span>');
-$('.rating-range').html('4.00');
+$('.rating-range').html(average_total_feedback);
 }
 else if(average_total_feedback >= 2.5 && average_total_feedback < 3.5)
 {
 $('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span>');
-$('.rating-range').html('3.00');
+$('.rating-range').html(average_total_feedback);
 }
 else if(average_total_feedback >= 1.5 && average_total_feedback < 2.5)
 {
 $('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span>');
-$('.rating-range').html('2.00');
+$('.rating-range').html(average_total_feedback);
 }
 else if(average_total_feedback >= 0.5 && average_total_feedback < 1.5 )
 {
 $('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span>');
-  $('.rating-range').html('1.00');
+  $('.rating-range').html(average_total_feedback);
 }
 else
 {

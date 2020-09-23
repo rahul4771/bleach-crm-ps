@@ -7,7 +7,7 @@
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
                 <h1 class="dashboard-head">Orders</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+                <p>Bleach CRM-PS Version 0.1 (Beta) developed and owned by Bleach-Kw</p>    
             </div><!--welcome-wrapper-->
        
      <div class="clients-top-card-wrapper"><!--clients-top-card-wrapper-->
@@ -78,7 +78,7 @@
      
      <div class="white-wrapper-search"><!--white-wrapper-search-->
      <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
-          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search BLC Number & Customer Name Here" value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
      </div><!--left-box leftbox-item1-->
      <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
      <input name="filter" type="button" value="Filter" id="filter" class="blue-button arrow"> 
@@ -151,7 +151,7 @@
   				 
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-<div align="center"> <input class="assignButton" name="assing" type="button" onclick="set_params_go({});" value="Submit"> <input class="cancel-Button close-btn" name="cancel" type="button" value="Cancel"></div>
+<div align="center"> <input class="assignButton" name="assing" type="button" onclick="set_params_go({});" value="Submit"> <input class="cancel-Button close-btn arrow-close" name="cancel" type="button" value="Reset"></div>
 
      
      </div><!--menu-filter ltgreen-border-->
@@ -208,7 +208,7 @@
         <span data-href="#" class="blue-bg clickable-row">Evaluating</span>
         {%endif%}
     </td>
-    <td><a href="#"><img src="{% static 'files/images/icon-download.svg' %}" align="absmiddle" class="download-icon"></a></td>
+    <td class="align-center"><a href="#"><img src="{% static 'files/images/icon-download.svg' %}" align="absmiddle" class="download-icon"></a></td>
     </tr>    
     {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td></tr>
