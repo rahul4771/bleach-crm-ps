@@ -62,7 +62,7 @@ def list_function(list):
     return list_data
 
 def adddata(request):
-	startdate = pd.to_datetime('07-01-2020')
+	startdate = pd.to_datetime('12-12-2020')
 	daterange = pd.date_range(startdate, periods=100)
 	print("rt")
 
