@@ -321,13 +321,37 @@ def GetCustomerAddress(request):
 
 
 
+def GetCustomerOrderInfoFeedback(request):
+	data               = {}
+	order_info_dict = {}
+
+	query       =   request.GET.get('keyword')
+
+	orders = Order.objects.filter(is_active=True,is_feedback_marked=False,payment_status='COMPLETED').select_related('evaluation__customer').filter(Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query))).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True))).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'))
+	
+
+	if orders:
+		for order in orders: 
+			order_info_dict[order.id] = order.evaluation.evaluation_id+'-'+order.evaluation.customer.name 	
+	
+	data['order_details'] = order_info_dict
+
+
+	data['status']     = 'true'
+
+	if order_info_dict == {}: 
+		data['status'] = 'false'	
+	
+	return JsonResponse(data)	
+
 def GetCustomerOrderInfo(request):
 	data               = {}
 	order_info_dict = {}
 
 	query       =   request.GET.get('keyword')
 
-	orders = Order.objects.filter(is_active=True,is_feedback_marked=False,).select_related('evaluation__customer').filter(Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)))
+	orders = Order.objects.filter(is_active=True).select_related('evaluation__customer').filter(Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)))
+	
 	
 	if orders:
 		for order in orders:
@@ -341,8 +365,7 @@ def GetCustomerOrderInfo(request):
 	if order_info_dict == {}: 
 		data['status'] = 'false'	
 	
-	return JsonResponse(data)	
-
+	return JsonResponse(data)
 
 #Ajax for getting Cleaning Types
 def GetCleaningMethodsInfo(request):
@@ -992,13 +1015,13 @@ class FeedbackDetails(IsAgent,View):
 		#order wise feedback
 		if search:
 			try:
-				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True).filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id=search)))		
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,is_feedback_marked=True).filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id=search)))		
 			except:
-				order_wise_feedbacks = None
+				order_wise_feedbacks = None		
 
 		else:
 			try:
-				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True)						
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,is_feedback_marked=True)						
 			except:	
 				order_wise_feedbacks = None
 
@@ -1165,7 +1188,7 @@ class FeedbackAdvanced(IsAgent,View):
 
 		#other feedbacks
 		try:
-			other_feedbacks = feedbacks.exclude(id=order_id)
+			other_feedbacks = feedbacks.exclude(id=order_id).filter(is_feedback_marked=True)
 		except:	
 			other_feedbacks = None
 
@@ -1518,13 +1541,18 @@ class NewEnquiry(IsAgent,View):
 					
 			messages.success(request,"Customer Details Succesfully Added")
 
-		else:
+		else:	
 			if not enquiry_form.is_valid():
 				messages.error(request,get_error(enquiry_form))
 			if not address_formset.is_valid():
 				messages.error(request,"An Error Occured")
 
-			return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset})					
+			try:
+				governorates = Governorate.objects.filter(is_active=True)
+			except:
+				governorates = None	
+			
+			return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'governorates':governorates})					
 
 		redirection = request.POST.get('redirect_to')	
 		
@@ -1604,7 +1632,12 @@ class ExistingEnquiry(IsAgent,View):
 				
 				address_form = AddressForm()
 
-				return render(request,'agent/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})
+				try:
+					governorates = Governorate.objects.filter(is_active=True)
+				except:
+					governorates = None
+
+				return render(request,'agent/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,'governorates':governorates})
 
 		if action_mode == 'add_address':
 			address_form = AddressForm(request.POST)
@@ -2138,7 +2171,7 @@ class AddFeedBack(IsAgent,View):
 	def get(self,request):
 		
 		try:
-			orders = Order.objects.filter(is_active=True,is_feedback_marked=False,)
+			orders = Order.objects.filter(is_active=True,is_feedback_marked=False,payment_status='COMPLETED')
 		except:
 			orders = None
 
@@ -2157,6 +2190,7 @@ class AddFeedBack(IsAgent,View):
 			order                    = Order.objects.get(id=order_id)
 			order.feedback_notes     = feedback_remark
 			order.is_feedback_marked = True
+			order.order_status       = 'ORDER_CLOSED'
 			order.save()
 		except:
 			order = 	None

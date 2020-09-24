@@ -116,10 +116,10 @@
             <div class="date-wrapper"><!--date-wrapper-->
             <div class="date-wrapper-inner-resource"><!--date-wrapper-inner-->
             <div id="working_calendar">
-            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type='text' id='datepicker'  name='datepicker' class="date-box" value="{{workers_date|date:"d-m-Y"}}">
-            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
-            <button class='today-date current-date'>Today</button>
+            <button class="prev-day-resource previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type="text" id="working_calendar_date" value="{{workers_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box resource_date_pick">
+            <button class='next-day-resource next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='today-date-resource current-date'>Today</button>
             </div>
             <input type="text" id="resource_month" class="month_pick date-picker-resource" hidden>
             </div><!--date-wrapper-inner-->
@@ -661,7 +661,7 @@ var date1 = new Date();
 function set_params_go(args)
 {
 var url='{% url 'evaluator:resource-management' %}';
-var params={workers_calendar_date:$('#working_calendar').val(),search:$('#search-bar').val(),staff:$('#staff_filter_id').val(),minhours:$('#minimumhour_filter_id').val(),maxhours:$('#maximumhour_filter_id').val(),
+var params={workers_calendar_date:$('#working_calendar_date').val(),search:$('#search-bar').val(),staff:$('#staff_filter_id').val(),minhours:$('#minimumhour_filter_id').val(),maxhours:$('#maximumhour_filter_id').val(),
 };
 for(key in args) 
     params[key]=args[key];

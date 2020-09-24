@@ -117,22 +117,22 @@ class EvaluatorHome(IsEvaluator,View):
 		schedule_date_end   = schedule_date_start+timedelta(1)	
 
 		try:
-			calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
+			calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams'))
 		except:
 			calendar_order_schedules = None
 
 		try:
-			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_teams'))
 		except:
 			calendar_followup_schedules = None
 	
 		try:
-			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
+			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams'))
 		except:
 			sp_calendar_order_schedules = None
 
 		try:
-			sp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+			sp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_teams'))
 		except:
 			sp_calendar_followup_schedules = None							
 
@@ -793,8 +793,12 @@ class NewEnquiry(IsEvaluator,View):
 				messages.error(request,get_error(enquiry_form))
 			if not address_formset.is_valid():
 				messages.error(request,"An Error Occured")
+			try:
+				governorates = Governorate.objects.filter(is_active=True)
+			except:
+				governorates = None
 
-			return render(request,'evaluator/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset})					
+			return render(request,'evaluator/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'governorates':governorates})					
 
 		redirection = request.POST.get('redirect_to')	
 		
@@ -874,7 +878,12 @@ class ExistingEnquiry(IsEvaluator,View):
 				
 				address_form = AddressForm()	
 
-				return render(request,'evaluator/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})			
+				try:
+					governorates = Governorate.objects.filter(is_active=True)
+				except:
+					governorates = None
+				
+				return render(request,'evaluator/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,'governorates':governorates})			
 
 
 		if action_mode == 'add_address':
@@ -948,7 +957,7 @@ class AssignEvaluator(IsEvaluator,View):
 				
 				proposed_date                     = request.POST.get('proposed_date')
 				proposed_time                     = request.POST.get('proposed_time')
-				converted_proposed_time           = datetime.strptime(proposed_date+" "+proposed_time,'%d/%m/%Y %I:%M %p')
+				converted_proposed_time           = datetime.strptime(proposed_date+" "+proposed_time,'%d-%m-%Y %I:%M %p')
 				
 				evaluation_form_save.proposed_time   = converted_proposed_time
 				evaluation_form_save.evaluation_id   = evaluation_id

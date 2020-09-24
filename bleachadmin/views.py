@@ -590,13 +590,13 @@ class FeedbackDetails(IsAdmin,View):
 		#order wise feedback
 		if search:
 			try:
-				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,evaluation__customer__name__icontains=search)		
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,is_feedback_marked=True).filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id=search)))		
 			except:
 				order_wise_feedbacks = None
 
 		else:
 			try:
-				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True)						
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,is_feedback_marked=True)						
 			except:	
 				order_wise_feedbacks = None
 
@@ -759,11 +759,11 @@ class FeedbackAdvanced(IsAdmin,View):
 			feedbacks = None
 
 		#total_feedback_rating
-		average_feedback  = feedbacks.aggregate(Avg('feed_backs_order__rating'))['feed_backs_order__rating__avg']
+		average_feedback  = round(feedbacks.filter(id=order_id).aggregate(Sum('avg_starring'))['avg_starring__sum'])
 		
 		#other feedbacks
 		try:
-			other_feedbacks = feedbacks.exclude(id=order_id)
+			other_feedbacks = feedbacks.exclude(id=order_id).filter(is_feedback_marked=True)
 		except:	
 			other_feedbacks = None
 

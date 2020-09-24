@@ -204,31 +204,31 @@
     <td>{{order.evaluation.customer.mobile_number}}</td>
     <td>
       <div class="clickable-row-list" data-href="{% url 'bleach_admin:admin-feedbackadvanced' order.evaluation.customer.id order.id %}"> 
-      {% if order.avg_starring == 5 %}
+      {% if order.avg_starring <= 5 and order.avg_starring >= 4.5 %}
         <span class="fa fa-star checked"></span>
         <span class="fa fa-star checked"></span>
         <span class="fa fa-star checked"></span>
         <span class="fa fa-star checked"></span>
         <span class="fa fa-star checked"></span>
-        {% elif order.avg_starring < 5 and order.avg_starring >= 4 %}
+        {% elif order.avg_starring < 4.5 and order.avg_starring >= 3.5 %}
         <span class="fa fa-star checked"></span>
         <span class="fa fa-star checked"></span>
         <span class="fa fa-star checked"></span>
         <span class="fa fa-star checked"></span>
         <span class="fa fa-star"></span>
-        {% elif order.avg_starring < 4 and order.avg_starring >= 3 %}
+        {% elif order.avg_starring < 3.5 and order.avg_starring >= 2.5 %}
         <span class="fa fa-star checked"></span>
         <span class="fa fa-star checked"></span>
         <span class="fa fa-star checked"></span>
         <span class="fa fa-star"></span>
         <span class="fa fa-star"></span>
-        {% elif order.avg_starring < 3 and order.avg_starring >= 2 %}
+        {% elif order.avg_starring < 2.5 and order.avg_starring >= 1.5 %}
         <span class="fa fa-star checked"></span>
         <span class="fa fa-star checked"></span>
         <span class="fa fa-star"></span>
         <span class="fa fa-star"></span>
         <span class="fa fa-star"></span>
-        {% elif order.avg_starring < 2 and order.avg_starring >= 1 %}
+        {% elif order.avg_starring < 1.5 and order.avg_starring >= .5 %}
         <span class="fa fa-star checked"></span>
         <span class="fa fa-star"></span>
         <span class="fa fa-star"></span>
@@ -241,7 +241,7 @@
     </td>
     </tr>
   {% empty %}
-    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td></tr>    
+    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>    
   {% endfor %}  
      
 </tbody>
@@ -351,27 +351,27 @@ average_total_feedback = (Math.round((starring_count[0]*1+starring_count[1]*2+st
 if(average_total_feedback >= 4.5)
 {
 $('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span>');
-  $('.rating-range').html(average_total_feedback);
+  $('.rating-range').html(parseFloat(average_total_feedback).toFixed(2));
 }
 else if(average_total_feedback >= 3.5 && average_total_feedback < 4.5)
 {
 $('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span>');
-$('.rating-range').html(average_total_feedback);
+$('.rating-range').html(parseFloat(average_total_feedback).toFixed(2));
 }
 else if(average_total_feedback >= 2.5 && average_total_feedback < 3.5)
 {
 $('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span>');
-$('.rating-range').html(average_total_feedback);
+$('.rating-range').html(parseFloat(average_total_feedback).toFixed(2));
 }
 else if(average_total_feedback >= 1.5 && average_total_feedback < 2.5)
 {
 $('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span>');
-$('.rating-range').html(average_total_feedback);
+$('.rating-range').html(parseFloat(average_total_feedback).toFixed(2));
 }
 else if(average_total_feedback >= 0.5 && average_total_feedback < 1.5 )
 {
 $('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span>');
-  $('.rating-range').html(average_total_feedback);
+  $('.rating-range').html(parseFloat(average_total_feedback).toFixed(2));
 }
 else
 {

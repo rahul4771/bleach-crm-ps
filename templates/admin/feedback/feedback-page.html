@@ -115,7 +115,7 @@
  
 </div><!--investigation-columns-->
      	
-<div class="details-sub-head align-left">Other Feedback</div> 
+<div class="details-sub-head align-left">Other Feedbacks</div> 
 <br>       
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
@@ -129,7 +129,7 @@
 </thead>
 <tbody>
     {% for other_feedback in other_feedbacks %}
-    <tr class="clickable-row" data-href="{% url 'agent:agent-feedbackadvanced' other_feedback.evaluation.customer.id other_feedback.id %}">
+    <tr class="clickable-row" data-href="{% url 'bleach_admin:admin-feedbackadvanced' other_feedback.evaluation.customer.id other_feedback.id %}">
     <td class="yellow-line">{{other_feedback.evaluation.evaluation_id}}</td>
     <td>
     {% for evaluation_detail in other_feedback.evaluation.order_evaluation_details %}

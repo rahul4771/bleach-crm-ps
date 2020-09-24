@@ -47,6 +47,7 @@ urlpatterns = [
 	url(r'^ajax/ticket/cleaning/info/$',views.GetCleaningTicketInfo,name='get-cleaningticketInfo'),
 	url(r'^ajax/customer/info/$',views.GetCustomerInfo,name='get-customerInfo'),
 	url(r'^ajax/customer/order/info/$',views.GetCustomerOrderInfo,name='get-customerorderInfo'),
+	url(r'^ajax/customer/order/info/feedback/$',views.GetCustomerOrderInfoFeedback,name='get-customerorderInfofeedback'),
 	url(r'^ajax/clientdata/',views.ClientData,name='get-clientData'),
 	url(r'^ajax/ticketdata/',views.TicketData,name='get-TicketData'),
 	url(r'^ajax/feedbackdata/',views.FeedBackData,name='get-FeedBackData'),

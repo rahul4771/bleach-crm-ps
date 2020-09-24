@@ -57,7 +57,7 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label"> <label>Phone</label></div>
 				<input name="mobile_number" type="text" class="textBox OnlyNumber" id="id_mobile" placeholder=" " oninput="phonenumber(this);" maxlength="8" required>
-        <p class="mobile_alert" style="color:Red;"></p>
+        <p class="phone_alert" style="color:Red;"></p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -69,10 +69,10 @@
                 <label for="favcity">
                 {% load countries %}
                 {% get_countries as countries %} 
-                <select name="nationality">
+                <select name="nationality" required>
                 <option value="">Choose Country</option> 
                 {% for country in countries %}
-                <option value="{{country.code}}">{{country.name}}</option>
+                <option value="{{country.code}}" {% if country.code == 'KW' %}selected{% endif %}>{{country.name}}</option>
                 {% endfor %}
                 </select>
                 </label>
@@ -80,7 +80,7 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label"> <label>Customer Type</label></div>
                 <label for="favcity">
-                <select name="customer_type" id="id_customer_type">
+                <select name="customer_type" id="id_customer_type" required>
                 <option value="">Choose Customer Type</option>
                 <option value="INDIVIDUAL">INDIVIDUAL</option>
                 <option value="RETAIL">RETAIL</option>
@@ -114,7 +114,7 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label"> <label>Other Mobile</label></div>
-				<input name="phone_number" id="id_phone_number" class="textBox OnlyNumber" placeholder=" " oninput="phonenumber(this);" maxlength="8" >
+				<input name="phone_number" id="id_phone_number" class="textBox OnlyNumber" placeholder=" " oninput="mobilenumber(this);" maxlength="8" >
         <p class="mobile_alert" style="color:Red;"></p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
@@ -123,7 +123,7 @@
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>SMS Language</label></div>
                 <label for="favcity">
-                <select name="sms_preference">
+                <select name="sms_preference" required>
                 <option value="">Choose Languages</option>
                 <option value="ENGLISH">ENGLISH</option>
                 <option value="ARABIC">ARABIC</option>
@@ -151,36 +151,36 @@
 <div class="address3-wrapper-row address3-forms-boxes"><!--address3-wrapper-row address3-forms-boxes-->
     <div class="address3-form-left"><!--address3-form-left-->
         <div class=" bold-text common-label"> <label>Apartment</label></div>
-        <input name="form-0-apartment" type="text" class="textBox" placeholder=" "  >
+        <input name="form-0-apartment" type="text" class="textBox" placeholder=" " required>
     </div><!--address3-form-left-->
     
     <div class="address3-form-right"><!--address3-form-right-->
         <div class=" bold-text common-label"> <label>Floor</label></div>
-        <input name="form-0-floor" type="text" class="textBox OnlyNumber" placeholder=" " maxlength="3" >
+        <input name="form-0-floor" type="text" class="textBox" placeholder=" " required>
     	</div><!--address3-form-right-->    
 </div><!--address3-wrapper-row address3-forms-boxes-->
 <hr class="hr-dashedpad">
 <div class="address3-wrapper-row address3-forms-boxes"><!--address3-wrapper-row address3-forms-boxes-->
 	<div class="address3-form-left"><!--address3-form-left-->
         <div class=" bold-text common-label"> <label>Building</label></div>
-        <input name="form-0-building" type="text" class="textBox" placeholder=" "  >
+        <input name="form-0-building" type="text" class="textBox" placeholder=" " required>
     </div><!--address3-form-left-->
     
     <div class="address3-form-right"><!--address3-form-right-->
         <div class=" bold-text common-label"> <label>Block</label></div>
-        <input name="form-0-block" type="text" class="textBox" placeholder=" "  >
+        <input name="form-0-block" type="text" class="textBox" placeholder=" "  required>
     	</div><!--address3-form-right-->
 </div><!--address3-wrapper-row address3-forms-boxes-->
 <hr class="hr-dashedpad">
 <div class="address3-wrapper-row address3-forms-boxes"><!--address3-wrapper-row address3-forms-boxes-->
 	<div class="address3-form-left"><!--address3-form-left-->
         <div class=" bold-text common-label"> <label>Street</label></div>
-        <input name="form-0-street" type="text" class="textBox" placeholder=" "  >
+        <input name="form-0-street" type="text" class="textBox" placeholder=" "  required>
     </div><!--address3-form-left-->
     
     <div class="address3-form-right"><!--address3-form-right-->
         <div class=" bold-text common-label"> <label>Avenue</label></div>
-        <input name="form-0-avenue" type="text" class="textBox" placeholder=" "  >
+        <input name="form-0-avenue" type="text" class="textBox" placeholder=" "  required>
     	</div><!--address3-form-right-->
 </div><!--address3-wrapper-row address3-forms-boxes-->
 <hr class="hr-dashedpad">
