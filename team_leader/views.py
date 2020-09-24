@@ -128,51 +128,9 @@ class TlHome(IsTeamLeader,View):
 		try:
 			my_followups  = FollowUpTeam.objects.filter(Q(Q(Q(start_at__gte=my_cleaning_date_start)&Q(start_at__lt=my_cleaning_date_end))&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__customer_address')
 		except:
-			my_followups  = None	
-			
+			my_followups  = None		
 
-		#cleaning schedule & followup schedule for cleaning calendar			
-		cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
-		
-		try:
-			cleaning_date = datetime.strptime(cleaning_calendar_date,'%d-%m-%Y')
-		except:
-			cleaning_date = timezone.now().replace(tzinfo=None)
-
-		cleaning_date_start = cleaning_date.replace(hour=0,minute=0,second=0,microsecond=0)
-		cleaning_date_end   = cleaning_date_start+timedelta(1)	
-
-		try:
-			calendar_order_cleaning = CleaningTeam.objects.filter(Q(Q(Q(start_at__gte=cleaning_date_start)&Q(end_at__lte=cleaning_date_end))&Q(team_leader=request.user))).select_related('order_scheduler__order_scheduler_book','order_scheduler__order__evaluation__customer','order_scheduler__customer_address')
-		except:
-			calendar_order_cleaning = None
-
-		try:
-			calendar_followup_cleaning = FollowUpTeam.objects.filter(Q(Q(Q(start_at__gte=cleaning_date_start)&Q(end_at__lte=cleaning_date_end))&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__customer_address')
-		except:
-			calendar_followup_cleaning = None
-	
-		try:
-			sp_calendar_order_cleaning = CleaningTeam.objects.filter(Q(Q(Q(start_at__gte=cleaning_date_start)&Q(start_at__lt=cleaning_date_end)&Q(end_at__gt=cleaning_date_end))&Q(team_leader=request.user))).select_related('order_scheduler__order__evaluation__customer','order_scheduler__customer_address')
-		except:
-			sp_calendar_order_cleaning = None
-
-		try:
-			sp_calendar_followup_cleaning = FollowUpTeam.objects.filter(Q(Q(Q(start_at__gte=cleaning_date_start)&Q(start_at__lt=cleaning_date_end)&Q(end_at__gt=cleaning_date_end))&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__customer_address')
-		except:
-			sp_calendar_followup_cleaning = None
-
-		try:
-			spp_calendar_order_cleaning = CleaningTeam.objects.filter(Q(Q(Q(end_at__gt=cleaning_date_start)&Q(end_at__lte=cleaning_date_end)&Q(start_at__lt=cleaning_date_start))&Q(team_leader=request.user))).select_related('order_scheduler__order__evaluation__customer','order_scheduler__customer_address')
-		except:
-			spp_calendar_order_cleaning = None
-
-		try:
-			spp_calendar_followup_cleaning = FollowUpTeam.objects.filter(Q(Q(Q(end_at__gt=cleaning_date_start)&Q(end_at__lte=cleaning_date_end)&Q(start_at__lt=cleaning_date_start))&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__customer_address')
-		except:
-			spp_calendar_followup_cleaning = None	
-
-		return render(request,'tl/home/home.html',{"today_cleaning_job_count":today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_cleaning_active_teams':today_cleaning_active_teams,'week_cleaning_active_teams':week_cleaning_active_teams,'today_followup_active_teams':today_followup_active_teams,'week_followup_active_teams':week_followup_active_teams,'today_date':today_date,'weekstart_date':weekstart_date,'investigations':investigations,'calendar_order_cleaning':calendar_order_cleaning,'calendar_followup_cleaning':calendar_followup_cleaning,'sp_calendar_order_cleaning':sp_calendar_order_cleaning,'sp_calendar_followup_cleaning':sp_calendar_followup_cleaning,'cleaning_date':cleaning_date,'today_investigation_count':today_investigation_count,'week_investigation_count':week_investigation_count,'my_cleaning_date':my_cleaning_date,"my_cleanings":my_cleanings,"my_followups":my_followups,'today_total_team_mens':today_total_team_mens,'week_total_team_mens':week_total_team_mens,})
+		return render(request,'tl/home/home.html',{"today_cleaning_job_count":today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_cleaning_active_teams':today_cleaning_active_teams,'week_cleaning_active_teams':week_cleaning_active_teams,'today_followup_active_teams':today_followup_active_teams,'week_followup_active_teams':week_followup_active_teams,'today_date':today_date,'weekstart_date':weekstart_date,'investigations':investigations,'today_investigation_count':today_investigation_count,'week_investigation_count':week_investigation_count,'my_cleaning_date':my_cleaning_date,"my_cleanings":my_cleanings,"my_followups":my_followups,'today_total_team_mens':today_total_team_mens,'week_total_team_mens':week_total_team_mens,})
 
 class TicketDetails(IsTeamLeader,View):
 	def get(self,request):
@@ -191,19 +149,11 @@ class TicketDetails(IsTeamLeader,View):
 		
 		#Followup details
 		if search:
-			try:
-				tickets 	             = FollowUp.objects.select_related('investigation__order_schedule__order__evaluation__customer').filter(is_active=True,investigation__order_schedule__order__evaluation__customer__name__icontains=search).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))
-				follow_ups_count         = tickets.count()
-			except:
-				tickets          = None
-				follow_ups_count = 0
+			tickets 	             = FollowUp.objects.select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').filter(is_active=True).filter(Q(Q(investigation__order_schedule__order__evaluation__customer__name__icontains=search)|Q(investigation__order_schedule__order__evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))				
 		else:
-			try:
-				tickets 	             = FollowUp.objects.select_related('investigation__order_schedule__order__evaluation__customer').filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))
-				follow_ups_count         = tickets.count()
-			except:
-				tickets          = None
-				follow_ups_count = 0
+			tickets 	             = FollowUp.objects.filter(is_active=True).select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))		
+
+		follow_ups_count = FollowUp.objects.filter(is_active=True).count()
 
 
 		#followup cleaning count	

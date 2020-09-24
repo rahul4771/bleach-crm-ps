@@ -18,6 +18,7 @@ FOLLOWUP_STATUS = (
 	('FOLLOWUP_CLOSED','FOLLOWUP_CLOSED')
 	)
  
+#remove last 3 options 
 ORDER_SHEDULER_STATUS = ( 
 	('CLEANING_TEAM_ASSIGNED','CLEANING_TEAM_ASSIGNED'),
 	('CLEANING_IN_PROGRESS','CLEANING_IN_PROGRESS'),
@@ -98,12 +99,12 @@ class OrderScheduler(models.Model):
 	evaluation_details   = models.ForeignKey(EvaluationDetails,blank=True,null=True)
 	order_scheduler_book = models.ForeignKey(EvaluationBook,blank=True,null=True,related_name='order_scheduler_book_details')
 	
-	start_at		   = models.DateTimeField(blank=True,null=True)
-	end_at			   = models.DateTimeField(blank=True,null=True)
+	start_at		   	 = models.DateTimeField(blank=True,null=True)
+	end_at			   	 = models.DateTimeField(blank=True,null=True)
 	#cleaning_type & other details foreign key connection
-	customer_address= models.ForeignKey(Address,blank=True,null=True)
-	work_status 	= models.CharField(max_length=50,blank=True,null=True,choices=ORDER_SHEDULER_STATUS)
-	status      	= models.CharField(max_length=20,blank=True,null=True,default='WAITING',choices=SCHEDULER_CHOICES)
+	customer_address	 = models.ForeignKey(Address,blank=True,null=True)
+	work_status 		 = models.CharField(max_length=50,blank=True,null=True,choices=ORDER_SHEDULER_STATUS)
+	status      		 = models.CharField(max_length=20,blank=True,null=True,default='WAITING',choices=SCHEDULER_CHOICES)
 
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)

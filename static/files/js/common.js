@@ -28,14 +28,6 @@ $(function () {
   });
 });
 
-//resource date_pick   
-$(function () {
-  $('.resource_date_pick').datetimepicker({ 
-    pickTime: false, 
-    format: "DD-MM-YYYY", 
-    //maxDate: 'now().date()', 
-  });
-});
 
 //time pick
 //tendative time initial
@@ -85,6 +77,42 @@ $('.month_pick').datepicker({
        var $tmpSelectedDay     = new Date();
        $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
    });
+
+
+//resource date_pick   
+$(function () {
+  $('.resource_date_pick').datetimepicker({ 
+    pickTime: false, 
+    format: "DD-MM-YYYY", 
+    //maxDate: 'now().date()', 
+  });
+});
+
+//New Date picker
+   $('.next-day-resource').on('click', function () {
+
+       console.log($(this).parent('.date-wrapper-inner-resource'));
+       $selectedDay            = $(this).parent('#working_calendar').children('.resource_date_pick').data("DateTimePicker").getDate();
+       var $tmpSelectedDay     = new Date($selectedDay) 
+       $tmpSelectedDay.setDate($tmpSelectedDay.getDate() + 1);
+       $(this).parent('#working_calendar').children('.resource_date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+           
+    });
+
+
+   $('.prev-day-resource').on('click', function () {
+
+       $selectedDay            = $(this).parent('#working_calendar').children('.resource_date_pick').data("DateTimePicker").getDate();
+       var $tmpSelectedDay     = new Date($selectedDay) 
+       $tmpSelectedDay.setDate($tmpSelectedDay.getDate() - 1);
+       $(this).parent('#working_calendar').children('.resource_date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+   
+   });
+
+   $('.today-date-resource').on('click', function () {
+       var $tmpSelectedDay     = new Date();
+       $(this).parent('#working_calendar').children('.resource_date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+   });   
 
 
  // toggle-password
@@ -144,6 +172,7 @@ $(".params_filter .filter-btn").on("click", function(){
 });
 $(".close-btn").on("click", function(){
     $('.params_filter').removeClass('active');
+    console.log("hellooo")
 });
 
 });
@@ -186,9 +215,67 @@ $('.datepicker').datetimepicker({
   $(".menu-filter").slideToggle("");
 });
 
+$(".arrow-close").on('click', function (e) {
+  $(".arrow").toggleClass("cross");
+  $(".menu-filter").slideToggle("");
+  
+  //clear all
+  $(".menu-filter").find(':input').each(function() {
+    switch(this.type) {
+        case 'password':
+        case 'text':
+        case 'textarea':
+        case 'file':
+        case 'select-one':
+        case 'select-multiple':
+        case 'date':
+        case 'number':
+        case 'tel':
+        case 'email':
+            $(this).val('');
+            break;
+        case 'checkbox':
+        case 'radio':
+            this.checked = false;
+            break;
+    }
+  });
+
+});
+
+
+
 $(".arrow-left").on('click', function (e) {
   $(".arrow-left").toggleClass("cross-left");
   $(".menu-filter-left").slideToggle("");
+});
+
+$(".arrow-left-close").on('click', function (e) {
+  $(".arrow-left").toggleClass("cross-left");
+  $(".menu-filter-left").slideToggle("");
+  
+  //clear all
+  $(".menu-filter-left").find(':input').each(function() {
+    switch(this.type) {
+        case 'password':
+        case 'text':
+        case 'textarea':
+        case 'file':
+        case 'select-one':
+        case 'select-multiple':
+        case 'date':
+        case 'number':
+        case 'tel':
+        case 'email':
+            $(this).val('');
+            break;
+        case 'checkbox':
+        case 'radio':
+            this.checked = false;
+            break;
+    }
+  });
+
 });
 
 // toggle month/date resources

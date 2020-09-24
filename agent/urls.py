@@ -30,6 +30,7 @@ urlpatterns = [
 	
 	url(r'^makequatation/(?P<enquiry_id>[-\w]+)/$',views.MakeQuatationBase.as_view(),name='agent-makequatation'),
 	url(r'^makequatation/phase1/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1.as_view(),name='agent-makequatation1'),
+	url(r'^makequatation/phase1/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1Edit.as_view(),name='agent-makequatation1edit'),
 	url(r'^makequatation/phase2/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2.as_view(),name='agent-makequatation2'),
 	url(r'^makequatation/phase2/edit/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2Edit.as_view(),name='agent-makequatation2edit'),
 
@@ -46,6 +47,7 @@ urlpatterns = [
 	url(r'^ajax/ticket/cleaning/info/$',views.GetCleaningTicketInfo,name='get-cleaningticketInfo'),
 	url(r'^ajax/customer/info/$',views.GetCustomerInfo,name='get-customerInfo'),
 	url(r'^ajax/customer/order/info/$',views.GetCustomerOrderInfo,name='get-customerorderInfo'),
+	url(r'^ajax/customer/order/info/feedback/$',views.GetCustomerOrderInfoFeedback,name='get-customerorderInfofeedback'),
 	url(r'^ajax/clientdata/',views.ClientData,name='get-clientData'),
 	url(r'^ajax/ticketdata/',views.TicketData,name='get-TicketData'),
 	url(r'^ajax/feedbackdata/',views.FeedBackData,name='get-FeedBackData'),

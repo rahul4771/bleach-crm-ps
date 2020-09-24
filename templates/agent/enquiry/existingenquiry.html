@@ -11,7 +11,7 @@
 <div class="container-fluid space topspace"><!--container-fluid space topspace-->
     <div class="welcome-wrapper"><!--welcome-wrapper-->
         <h1 class="dashboard-head">Enquiry Form</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>
+        <p>Bleach CRM-PS Version 0.1 (Beta) developed and owned by Bleach-Kw</p>
     </div><!--welcome-wrapper-->
             
         
@@ -36,7 +36,7 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>Name</label></div>
-                <input name="name" id="id_name" type="text" class="textBox" placeholder=" " required value="{{enquiry_user.name}}">
+                <input name="name" id="id_name" type="text" class="textBox OnlyText" placeholder=" " required value="{{enquiry_user.name}}">
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label"> <label>Gender</label></div>
@@ -55,11 +55,13 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>Email</label></div>
-                <input name="email" id="id_email" type="text" class="textBox" placeholder=" " required value="{{enquiry_user.email}}">
+                <input name="email" id="id_email" type="text" class="textBox" placeholder=" " value="{{enquiry_user.email}}" oninput="ValidateEmail(this);" required>
+                <p class="email_alert" style="color:Red;"></p>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label"> <label>Phone</label></div>
-				<input name="mobile_number" id="id_mobile_number" type="text" class="textBox" placeholder=" " value="{{enquiry_user.mobile_number}}">
+				<input name="mobile_number" id="id_mobile_number" type="text" class="textBox OnlyNumber" placeholder=" " value="{{enquiry_user.mobile_number}}" oninput="phonenumber(this);" maxlength="8" required>
+        <p class="phone_alert" style="color:Red;"></p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -71,7 +73,7 @@
                 <label for="favcity">   
                 {% load countries %}
                 {% get_countries as countries %} 
-                <select id="favcity" name="nationality">
+                <select id="favcity" name="nationality" required>
                 <option value="">Choose Country</option> 
                 {% for country in countries %}
                 <option value="{{country.code}}" {% if country.code == enquiry_user.nationality %}selected{% endif %}>{{country.name}}</option>
@@ -82,7 +84,7 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label"> <label>Customer Type</label></div>
                 <label for="favcity">
-                <select id="id_customer_type" name="customer_type">
+                <select id="id_customer_type" name="customer_type" required>
                 <option value="">Choose Customer Type</option>
                 <option value="INDIVIDUAL" {% if enquiry_user.customer_type == 'INDIVIDUAL' %}selected{% endif %}>INDIVIDUAL</option>
                 <option value="RETAIL" {% if enquiry_user.customer_type == 'RETAIL' %}selected{% endif %}>RETAIL</option>
@@ -115,8 +117,9 @@
                 <input name="civil_id_number" id="id_civil_id_number" type="text" class="textBox" placeholder=" " value="{{enquiry_user.civil_id_number|default_if_none:''}}">
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-  				<div class=" bold-text common-label"> <label>Other Mobile</label></div>
-				<input name="phone_number" id="id_phone_number" type="text" class="textBox" placeholder=" " value="{{enquiry_user.phone_number|default_if_none:''}}">
+        <div class=" bold-text common-label"> <label>Other Mobile</label></div>
+        <input name="phone_number" id="id_phone_number" class="textBox OnlyNumber" placeholder=" " value="{{enquiry_user.phone_number|default_if_none:''}}" oninput="mobilenumber(this);" maxlength="8" >
+        <p class="mobile_alert" style="color:Red;"></p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">
@@ -124,7 +127,7 @@
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>SMS Language</label></div>
                 <label for="favcity">
-                <select id="favcity" name="sms_preference">
+                <select name="sms_preference" required>
                 <option value="">Choose Language</option>
                 <option value="ENGLISH" {% if enquiry_user.sms_preference == 'ENGLISH' %}selected{% endif %}>ENGLISH</option>
                 <option value="ARABIC" {% if enquiry_user.sms_preference == 'ARABIC' %}selected{% endif %}>ARABIC</option>
@@ -251,7 +254,7 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Appartment</label></div>
-        <input type="text" name="apartment" class="textBox">
+        <input type="text" name="apartment" class="textBox" required>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Floor</label></div>

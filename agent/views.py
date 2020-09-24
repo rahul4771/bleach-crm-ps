@@ -234,7 +234,7 @@ def GetOrderScheduleTicketInfo(request):
 	order_id            = request.GET.get('order_id')
 
 	try:
-		ordershedules   = OrderScheduler.objects.filter(order_id=order_id,is_active=True).select_related('customer_address__area','order_scheduler_book')
+		ordershedules   = OrderScheduler.objects.filter(order_id=order_id,is_active=True,work_status='CLEANING_FULFILLED').select_related('customer_address__area','order_scheduler_book')
 	except:
 		ordershedules   = None
 
@@ -326,18 +326,19 @@ def GetCustomerAddress(request):
 
 
 
-def GetCustomerOrderInfo(request):
+def GetCustomerOrderInfoFeedback(request):
 	data               = {}
 	order_info_dict = {}
 
 	query       =   request.GET.get('keyword')
 
-	orders = Order.objects.filter(is_active=True,is_feedback_marked=False,).select_related('evaluation__customer').filter(Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)))
+	orders = Order.objects.filter(is_active=True,is_feedback_marked=False,payment_status='COMPLETED').select_related('evaluation__customer').filter(Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query))).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True))).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'))
+	
 
 	if orders:
-		for order in orders:
-			order_info_dict[order.id] = order.evaluation.evaluation_id+'-'+order.evaluation.customer.name
-
+		for order in orders: 
+			order_info_dict[order.id] = order.evaluation.evaluation_id+'-'+order.evaluation.customer.name 	
+	
 	data['order_details'] = order_info_dict
 
 
@@ -348,6 +349,28 @@ def GetCustomerOrderInfo(request):
 
 	return JsonResponse(data)
 
+def GetCustomerOrderInfo(request):
+	data               = {}
+	order_info_dict = {}
+
+	query       =   request.GET.get('keyword')
+
+	orders = Order.objects.filter(is_active=True).select_related('evaluation__customer').filter(Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)))
+	
+	
+	if orders:
+		for order in orders:
+			order_info_dict[order.id] = order.evaluation.evaluation_id+'-'+order.evaluation.customer.name 	
+	
+	data['order_details'] = order_info_dict
+
+
+	data['status']     = 'true'
+
+	if order_info_dict == {}: 
+		data['status'] = 'false'	
+	
+	return JsonResponse(data)
 
 #Ajax for getting Cleaning Types
 def GetCleaningMethodsInfo(request):
@@ -516,22 +539,22 @@ class AgentHome(IsAgent,View):
 		schedule_date_end   = schedule_date_start+timedelta(1)
 
 		try:
-			calendar_order_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
+			calendar_order_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams'))
 		except:
 			calendar_order_schedules 	= None
 
 		try:
-			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_teams'))
 		except:
 			calendar_followup_schedules = None
 
 		try:
-			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
+			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams'))
 		except:
 			sp_calendar_order_schedules = None
 
 		try:
-			sp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+			sp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_teams'))
 		except:
 			sp_calendar_followup_schedules = None
 
@@ -619,7 +642,6 @@ class AgentHome(IsAgent,View):
 			start_at         = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
 			end_at           = start_at + timedelta(hours=cleaning_hours)
 
-			team_leader_id   = request.POST.get('team_leader')
 
 			#update schedule
 			order_scheduler  = OrderScheduler.objects.select_related('order_scheduler_book').get(id=schedule_id)
@@ -631,15 +653,16 @@ class AgentHome(IsAgent,View):
 			order_scheduler.order_scheduler_book.save()
 
 			#update cleaning team
-			CleaningTeam.objects.filter(order_scheduler=order_scheduler).update(start_at=start_at,end_at=end_at,team_leader_id=team_leader_id)
+			try:
+				cleaning_team_update = CleaningTeam.objects.filter(order_scheduler=order_scheduler).update(start_at=start_at,end_at=end_at,)
+			except:
+				cleaning_team_update = None
 
-			#update Cleaning team members
-			cleaners              = request.POST.getlist('team_member')
-			cleaning_team_members = CleaningTeamMember.objects.filter(is_active=True,team__order_scheduler=order_scheduler,member__user_type='CLEANER')
-			if not cleaners==['']:
-				for cleaner,cleaner_db in zip(cleaners,cleaning_team_members):
-					cleaner_db.member_id = cleaner
-					cleaner_db.save()
+			#update cleaning team member
+			try:
+				cleaner_update 		 =	CleaningTeamMember.objects.filter(team__order_scheduler=order_scheduler).update(start_at=start_at,end_at=end_at,)	
+			except:
+				cleaner_update       =	None
 
 			messages.success(request,"Cleaning Edited Succesfully")
 
@@ -653,8 +676,6 @@ class AgentHome(IsAgent,View):
 			start_at         = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
 			end_at           = start_at + timedelta(hours=cleaning_hours)
 
-			team_leader_id   = request.POST.get('team_leader')
-
 			#update schedule
 			followup_scheduler  = FollowUpScheduler.objects.select_related('follow_up').get(id=schedule_id)
 			followup_scheduler.start_at 							= start_at
@@ -664,16 +685,18 @@ class AgentHome(IsAgent,View):
 			followup_scheduler.save()
 			followup_scheduler.follow_up.save()
 
-			#update cleaning team
-			FollowUpTeam.objects.filter(followup_scheduler=followup_scheduler).update(start_at=start_at,end_at=end_at,team_leader_id=team_leader_id)
+			#update followup team
+			try:
+				followup_team = FollowUpTeam.objects.filter(followup_scheduler=followup_scheduler).update(start_at=start_at,end_at=end_at)
+			except:
+				followup_team = None
 
-			#update Cleaning team members
-			cleaners              = request.POST.getlist('team_member')
-			followup_team_members = FollowUpTeamMember.objects.filter(is_active=True,team__followup_scheduler=followup_scheduler,member__user_type='CLEANER')
-			if not cleaners==['']:
-				for cleaner,cleaner_db in zip(cleaners,followup_team_members):
-					cleaner_db.member_id = cleaner
-					cleaner_db.save()
+			#update followup team members
+			try:
+				followup_team_members = FollowUpTeamMember.objects.filter(is_active=True,team__followup_scheduler=followup_scheduler,member__user_type='CLEANER').update(start_at=start_at,end_at=end_at)
+			except:
+				followup_team_members = None
+
 			messages.success(request,"Followup Cleaning Edited Succesfully")
 
 		elif action_mode == 'delete_evaluation':
@@ -789,7 +812,7 @@ class ResourceManagement(IsAgent,View):
 			workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
 		except:
 			workers_details = None
-		print(workers_details,"wok")
+
 		#Filter
 		try:
 			fil_staff = request.GET.get('staff')
@@ -844,16 +867,16 @@ class OrderDetails(IsAgent,View):
 		search                  = request.GET.get('search')
 
 		if search:
-			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(is_active=True,customer__name__icontains=search).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
+			evaluations = Evaluation.objects.filter(is_active=True,quatation_status__isnull=False).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(evaluation_id__icontains=search))).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
 		else:
-			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
+			evaluations = Evaluation.objects.filter(is_active=True,quatation_status__isnull=False).select_related('customer').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
 
-		# if evaluations:
-		# 	approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
-		# 	pending_orders_count  =	evaluations.filter(Q(quatation_status='PENDING')).count()
-		# else:
-		approved_orders_count = 0
-		pending_orders_count  = 0
+		if evaluations:
+			approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
+			pending_orders_count  =	evaluations.filter(Q(quatation_status='PENDING')).count()
+		else:
+			approved_orders_count = 0
+			pending_orders_count  = 0
 
 
 
@@ -997,14 +1020,14 @@ class FeedbackDetails(IsAgent,View):
 		#order wise feedback
 		if search:
 			try:
-				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,evaluation__customer__name__icontains=search)
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,is_feedback_marked=True).filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id=search)))		
 			except:
-				order_wise_feedbacks = None
+				order_wise_feedbacks = None		
 
 		else:
 			try:
-				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True)
-			except:
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,is_feedback_marked=True)						
+			except:	
 				order_wise_feedbacks = None
 
 		#Prefetch filters
@@ -1066,18 +1089,18 @@ class FeedbackDetails(IsAgent,View):
 
 
 		#Apply prefetch filter
-		# if evaluation_book_prefetch_filter and customer_address_prefetch_filter:
-		# 	order_wise_feedbacks = order_wise_feedbacks.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField())).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter & count_customer_address_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)
-		# 	print("both")
-		# elif evaluation_book_prefetch_filter and not customer_address_prefetch_filter:
-		# 	order_wise_feedbacks = order_wise_feedbacks.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField())).annotate(book_count=Count(Case(When( count_evaluation_book_prefetch_filter,then=1),output_field=IntegerField()))).filter(book_count__gt=0)
-		# 	print("book only")
-		# elif not evaluation_book_prefetch_filter and customer_address_prefetch_filter:
-		# 	order_wise_feedbacks = order_wise_feedbacks.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField())).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)
-		# 	print("address only")
-		# else:
-		# 	order_wise_feedbacks = order_wise_feedbacks.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))
-		# 	print("not at all")
+		if evaluation_book_prefetch_filter and customer_address_prefetch_filter:
+			order_wise_feedbacks = order_wise_feedbacks.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField())).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter & count_customer_address_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)
+			print("both")
+		elif evaluation_book_prefetch_filter and not customer_address_prefetch_filter:
+			order_wise_feedbacks = order_wise_feedbacks.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField())).annotate(book_count=Count(Case(When( count_evaluation_book_prefetch_filter,then=1),output_field=IntegerField()))).filter(book_count__gt=0)
+			print("book only")
+		elif not evaluation_book_prefetch_filter and customer_address_prefetch_filter:
+			order_wise_feedbacks = order_wise_feedbacks.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField())).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)
+			print("address only")
+		else:
+			order_wise_feedbacks = order_wise_feedbacks.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))
+			print("not at all")
 
 		#FILTER
 		fil_minimumstarring       		  = request.GET.get('minimumstarring')
@@ -1170,8 +1193,8 @@ class FeedbackAdvanced(IsAgent,View):
 
 		#other feedbacks
 		try:
-			other_feedbacks = feedbacks.exclude(id=order_id)
-		except:
+			other_feedbacks = feedbacks.exclude(id=order_id).filter(is_feedback_marked=True)
+		except:	
 			other_feedbacks = None
 
 		#orders count
@@ -1199,22 +1222,13 @@ class TicketDetails(IsAgent,View):
 
 		#Followup details
 		if search:
-			try:
-				tickets 	             = FollowUp.objects.select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').filter(is_active=True,investigation__order_schedule__order__evaluation__customer__name__icontains=search).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))
-				follow_ups_count         = tickets.count()
-			except:
-				tickets          = None
-				follow_ups_count = 0
+			tickets 	             = FollowUp.objects.select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').filter(is_active=True).filter(Q(Q(investigation__order_schedule__order__evaluation__customer__name__icontains=search)|Q(investigation__order_schedule__order__evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))				
 		else:
-			try:
-				tickets 	             = FollowUp.objects.filter(is_active=True).select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))
-				follow_ups_count         = tickets.count()
-			except:
-				tickets          = None
-				follow_ups_count = 0
+			tickets 	             = FollowUp.objects.filter(is_active=True).select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))		
 
-
-		#followup cleaning count
+		follow_ups_count = FollowUp.objects.filter(is_active=True).count()
+		
+		#followup cleaning count	
 		try:
 			follow_up_cleaning_count = FollowUpScheduler.objects.filter(is_active=True,work_status='FOLLOW_UP_CLEANING_FULFILLED').count()
 		except:
@@ -1275,7 +1289,7 @@ class TicketDetails(IsAgent,View):
 		except PageNotAnInteger:
 			tickets=paginator.page(1)
 		except EmptyPage:
-			tickets = paginator.page(paginator.num_pages)
+			tickets = paginator.page(paginator.num_pages) 	
 
 		# Get the index of the current page
 		index = tickets.number - 1  # edited to something easier without index
@@ -1337,14 +1351,13 @@ class ClientDetails(IsAgent,View):
 			client_details = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True).prefetch_related(Prefetch('customer_evaluation',queryset=Evaluation.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True,order_status='ORDER_IN_PROGRESS'),to_attr='order_evaluation')),to_attr='customer_evaluations'))
 
 		fil_status                = request.GET.get('status')
-
-		#code must change for optimisation
-		# for detail in client_details:
-		# 	detail.active_status = False
-		# 	if detail.customer_evaluations:
-		# 		for evaluation in detail.customer_evaluations:
-		# 			if evaluation.order_evaluation:
-		# 				detail.active_status = True
+  		
+		#code must change for optimisation	
+		for detail in client_details:
+			if detail.customer_evaluations:
+				for evaluation in detail.customer_evaluations:
+					if evaluation.order_evaluation:
+						detail.active_status = True
 
 		#To Find active and new client
 		try:
@@ -1352,9 +1365,9 @@ class ClientDetails(IsAgent,View):
 		except:
 			orders = None
 
-		active_clients_count = orders.filter(~Q(order_status='ORDER_CLOSED')).values_list('evaluation__customer').distinct().count()
-		new_clients_count    = orders.filter(evaluation__created__date__gte=timezone.now().date()-timedelta(30),evaluation__customer__created__date__gte=timezone.now().date()-timedelta(30),).values_list('evaluation__customer').distinct().count()
-
+		active_clients_count = orders.filter(~Q(order_status='ORDER_CLOSED')).values_list('evaluation__customer').distinct().count()	
+		new_clients_count    = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True,created__date__gte=timezone.now().date()-timedelta(30)).count()
+		
 
 		#Prefetch filters
 		try:
@@ -1420,28 +1433,28 @@ class ClientDetails(IsAgent,View):
 		if not no_of_entries:
 			no_of_entries = 20
 
-		# page = request.GET.get('page',1)
-		# paginator=Paginator(client_details,no_of_entries)
-		# try:
-		# 	client_details=paginator.page(page)
-		# except PageNotAnInteger:
-		# 	client_details=paginator.page(1)
-		# except EmptyPage:
-		# 	client_details = paginator.page(paginator.num_pages)
+		page = request.GET.get('page',1)
+		paginator=Paginator(client_details,no_of_entries)
+		try:
+			client_details=paginator.page(page)
+		except PageNotAnInteger:
+			client_details=paginator.page(1)
+		except EmptyPage:
+			client_details = paginator.page(paginator.num_pages)
 
-		# # Get the index of the current page
-		# index = client_details.number - 1  # edited to something easier without index
-		# # This value is maximum index of your pages, so the last page - 1
-		# max_index = len(paginator.page_range)
-		# # You want a range of 7, so lets calculate where to slice the list
-		# start_index = index - 3 if index >= 3 else 0
-		# end_index = index + 3 if index <= max_index - 3 else max_index
-		# # Get our new page range. In the latest versions of Django page_range returns
-		# # an iterator. Thus pass it to list, to make our slice possible again.
-		# page_range = list(paginator.page_range)[start_index:end_index]
-		# entry_per_page=(client_details.end_index())-(client_details.start_index())+1
+		# Get the index of the current page
+		index = client_details.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]
+		entry_per_page=(client_details.end_index())-(client_details.start_index())+1
 
-		return render(request,"agent/client/clients.html",{"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"governorates":governorates,"areas":areas,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_customertype":fil_customertype,"fil_status":fil_status})
+		return render(request,"agent/client/clients.html",{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_customertype":fil_customertype,"fil_status":fil_status})
 
 
 class ClientOrders(IsAgent,View):
@@ -1533,15 +1546,18 @@ class NewEnquiry(IsAgent,View):
 
 			messages.success(request,"Customer Details Succesfully Added")
 
-		else:
+		else:	
 			if not enquiry_form.is_valid():
 				messages.error(request,get_error(enquiry_form))
 			if not address_formset.is_valid():
 				messages.error(request,"An Error Occured")
 
-			return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset})
-
-		redirection = request.POST.get('redirect_to')
+			try:
+				governorates = Governorate.objects.filter(is_active=True)
+			except:
+				governorates = None	
+			
+			return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'governorates':governorates})					
 
 		if redirection == 'assign_evaluator':
 			return redirect('agent:agent-makeevaluation',enquiry_form_save.id)
@@ -1619,7 +1635,12 @@ class ExistingEnquiry(IsAgent,View):
 
 				address_form = AddressForm()
 
-				return render(request,'agent/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})
+				try:
+					governorates = Governorate.objects.filter(is_active=True)
+				except:
+					governorates = None
+
+				return render(request,'agent/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,'governorates':governorates})
 
 		if action_mode == 'add_address':
 			address_form = AddressForm(request.POST)
@@ -1734,7 +1755,7 @@ class MakeQuatationBase(IsAgent,View):
 		evaluation_no= 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+str(tracking_no+1)
 
 		try:
-			evaluation = Evaluation.objects.create(tracking_no=tracking_no+1,evaluation_id=evaluation_no,customer_id=enquiry_id,call_attender=request.user,quatation_status='APPROVED')
+			evaluation = Evaluation.objects.create(tracking_no=tracking_no+1,evaluation_id=evaluation_no,customer_id=enquiry_id,call_attender=request.user)
 		except:
 			evaluation = None
 
@@ -1785,8 +1806,8 @@ class MakeQuatationPhase1(IsAgent,View):
 
 		payment_method 			= request.POST.get('payment_method')
 		attender_notes 			= request.POST.get('attender_notes')
-		before_cleaning_amount	= int(request.POST.get('before_cleaning_amount')or 0)
-		after_cleaning_amount	= int(request.POST.get('after_cleaning_amount')or 0)
+		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
+		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
 
 
 		#update payment method
@@ -1939,6 +1960,52 @@ class MakeQuatationPhase2(IsAgent,View):
 			return render(request,'agent/enquiry/phase2quatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,'area_types':area_types,'service_types':service_types,})
 
 		return redirect('agent:agent-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
+	
+class MakeQuatationPhase1Edit(IsAgent,View):	
+
+	def get(self,request,enquiry_id,evaluation_id):
+		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
+		
+		try:
+			evaluation = Evaluation.objects.get(id=evaluation_id)
+		except:
+			evaluation = None		
+	
+		try:
+			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation)
+		except:
+			evaluation_details = None
+
+		#allow submition	
+		evaluation_details_count         = evaluation_details.count()
+		evaluation_details_completed_count= evaluation_details.filter(status='EVALUATED').count()
+		if evaluation_details_count==evaluation_details_completed_count:
+			allow_submit = True
+		else:
+			allow_submit = False	
+
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()				
+
+		return render(request,'agent/enquiry/phase1quatationedit.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,})	
+
+	def post(self,request,enquiry_id,evaluation_id):
+		
+		payment_method 			= request.POST.get('payment_method')
+		attender_notes 			= request.POST.get('attender_notes')
+		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
+		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
+
+
+		#update payment method
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,attender_notes=attender_notes,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+							
+		messages.success(request,"Quatation Edited Succesfully")		
+		return redirect('agent:agentdash-board')
+
+
 
 
 class MakeQuatationPhase2Edit(IsAgent,View):
@@ -2123,7 +2190,7 @@ class AddFeedBack(IsAgent,View):
 	def get(self,request):
 
 		try:
-			orders = Order.objects.filter(is_active=True,is_feedback_marked=False,)
+			orders = Order.objects.filter(is_active=True,is_feedback_marked=False,payment_status='COMPLETED')
 		except:
 			orders = None
 
@@ -2142,6 +2209,7 @@ class AddFeedBack(IsAgent,View):
 			order                    = Order.objects.get(id=order_id)
 			order.feedback_notes     = feedback_remark
 			order.is_feedback_marked = True
+			order.order_status       = 'ORDER_CLOSED'
 			order.save()
 		except:
 			order = 	None

@@ -8,7 +8,7 @@
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
                 <h1 class="dashboard-head">Welcome to Dashboard</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+                <p>Bleach CRM-PS Version 0.1 (Beta) developed and owned by Bleach-Kw</p>    
             </div><!--welcome-wrapper-->
        
      <div class="main-card"><!--main-card-->
@@ -61,7 +61,7 @@
             
      <div class="main-content-holder"><!--main-content-holder-->            
  
-          
+{% if investigations %}          
 <div class="white-wrapper"><!--white-wrapper-->
 
 <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
@@ -81,19 +81,18 @@
 <td class="hide-a" data-label="">{{investigation.order_schedule.customer_address.area.name}}</td>
 <td data-label="Mobile Number">{{investigation.order.evaluation.customer.mobile_number}}</td>
 <td class="hide-a" data-label="">
-
+{% if investigation.investigator.profile_image %}
+<img src="{{investigation.investigator.profile_image.url}}" class="profile-avatar" title="{{investigation.investigator.name}}">
+{% else %}
+<img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avatar" title="{{investigation.investigator.name}}">
+{% endif %}
 {% for team_detail in investigation.order_schedule.cleaning_team_details %}
 {% if team_detail.team_leader.profile_image %}
-<img src="{{team_detail.team_leader.profile_image.url}}" class="profile-avtar">
+<img src="{{team_detail.team_leader.profile_image.url}}" class="profile-avatar" title="{{team_detail.team_leader.name}}">
 {% else %}
-<img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar">
+<img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avatar" title="{{team_detail.team_leader.name}}">
 {% endif %}
 {% endfor %}
-{% if investigation.assigned_by.profile_image %}
-<img src="{{investigation.assigned_by.profile_image.url}}" class="profile-avtar">
-{% else %}
-<img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avtar">
-{% endif %}
 </td>
 <td class="hide-a" data-label="">
     <span class="blue-text">{{investigation.order_schedule.order_scheduler_book.cleaning_policy}}</span>
@@ -106,7 +105,7 @@
 </tbody>
 </table>
 </div><!--white-wrapper-->   
-             
+{% endif %}             
  
 
 <div class="white-wrapper"><!--white-wrapper-->

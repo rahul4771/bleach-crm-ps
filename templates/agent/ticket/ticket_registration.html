@@ -10,7 +10,7 @@
 	<div class="container-fluid space topspace"><!--container-fluid space-->
 		<div class="welcome-wrapper"><!--welcome-wrapper-->
 	<h1 class="dashboard-head">Raise Ticket</h1>
-	<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>  
+	<p>Bleach CRM-PS Version 0.1 (Beta) developed and owned by Bleach-Kw</p>  
 		</div><!--welcome-wrapper-->
 	
 		
@@ -80,7 +80,7 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class="bold-text common-label"> <label>Schedule Date and Time</label></div>
-                <input name="sheduled_at" type="text" class="textBox date_time_pick" placeholder="" required readonly>
+                <input name="sheduled_at" type="text" class="textBox date_time_pick readonly" placeholder="Date and Time" required>
   </div><!--ticket-form-left--> 
 </div><!--ticket-wrapper-row ticket-forms-boxes-->  
 <hr class="hr-dashedpad">
@@ -407,5 +407,9 @@ function search_live(event){
         $.ajax(ajax);
 }
 
+//required readonly support
+$(".readonly").keydown(function(e){
+        e.preventDefault();
+    });
 </script>
 {% endblock %}	
