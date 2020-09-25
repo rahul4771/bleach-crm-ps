@@ -9,6 +9,8 @@ from django.conf import settings
 from bleach_crm_ps.permissions import IsAgent
 from bleach_crm_ps.utils import get_error
 
+import requests
+
 import pandas as pd
 
 import random
@@ -16,10 +18,10 @@ import string
 import functools
 import operator
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.utils import timezone 
+from django.utils import timezone
 from datetime import timedelta,date,datetime
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField
-from django.db.models.functions import Cast 
+from django.db.models.functions import Cast
 from django.db.models import Prefetch
 from django.contrib import messages
 
@@ -33,17 +35,20 @@ from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
 from order.forms import InvestigationForm
 
+from django.db.models.functions import TruncMonth as Month, TruncYear as Year
+from django.db.models import Count
+
 #Username Random Generation
 def generate_random_username(size=10, chars=string.ascii_uppercase + string.digits):
-    
-    username = ''.join(random.choice(chars) for n in range(size))
 
-    
-    try:
-        UserProfile.objects.get(username=username)
-        return generate_random_username(size=10, chars=string.ascii_uppercase + string.digits)
-    except UserProfile.DoesNotExist:
-        return username
+	username = ''.join(random.choice(chars) for n in range(size))
+
+
+	try:
+		UserProfile.objects.get(username=username)
+		return generate_random_username(size=10, chars=string.ascii_uppercase + string.digits)
+	except UserProfile.DoesNotExist:
+		return username
 
 def UpdateAddressStatus(request):
 	address_id     = request.GET.get('address_id')
@@ -53,7 +58,7 @@ def UpdateAddressStatus(request):
 		Address.objects.filter(id=address_id).update(currently_active=True)
 	else:
 		Address.objects.filter(id=address_id).update(currently_active=False)
-		
+
 	data = {}
 
 	data['address_id']     = address_id
@@ -64,14 +69,14 @@ def UpdateAddressStatus(request):
 
 #Ajax for governorates Area
 def GetArea(request):
-	
+
 	governorate_id        = request.GET.get('governorate_id')
-	
+
 	try:
 		areas = Area.objects.filter(is_active=True,governorate_id=governorate_id)
 	except:
-		areas = None	
-		
+		areas = None
+
 	dropdown_areas={}
 
 	if areas:
@@ -87,7 +92,7 @@ def GetFeedbackOrderInfo(request):
 
 		order_id            = request.GET.get('order_id')
 
-		order = Order.objects.select_related('evaluation__customer','evaluation__call_attender').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('customer_address__area','customer_address','order_scheduler_book__service_type'),to_attr='order_secheduler_feedback')).annotate(total_cleaners=Sum('order_scheduler_order__order_scheduler_book__number_of_cleaners')).get(id=order_id,is_active=True)		
+		order = Order.objects.select_related('evaluation__customer','evaluation__call_attender').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('customer_address__area','customer_address','order_scheduler_book__service_type'),to_attr='order_secheduler_feedback')).annotate(total_cleaners=Sum('order_scheduler_order__order_scheduler_book__number_of_cleaners')).get(id=order_id,is_active=True)
 		dropdown_order_info['order_id']      = order.id
 
 		##order information
@@ -105,12 +110,12 @@ def GetFeedbackOrderInfo(request):
 		for scheduler in order.order_secheduler_feedback:
 			customer_order_address = []
 
-			customer_order_address.append(scheduler.customer_address.area.name) 
+			customer_order_address.append(scheduler.customer_address.area.name)
 			customer_order_address.append(scheduler.order_scheduler_book.service_type.name)
-			
-			dropdown_order_info['order_address'].append(customer_order_address)	
 
-		
+			dropdown_order_info['order_address'].append(customer_order_address)
+
+
 		##customer information
 		customer_information = {}
 		try:
@@ -124,7 +129,7 @@ def GetFeedbackOrderInfo(request):
 		customer_information['other_number']  = client_details.phone_number
 		customer_information['nationality']   = client_details.nationality.code
 		customer_information['company']       = client_details.company
-		
+
 		#for multiple customer addresses
 		customer_information['customer_address']   = []
 		for address in client_details.customer_addresses:
@@ -141,31 +146,31 @@ def GetFeedbackOrderInfo(request):
 
 			customer_information['customer_address'].append(customer_address)
 
-		dropdown_order_info['customer_details'] = customer_information	
-		
+		dropdown_order_info['customer_details'] = customer_information
+
 		##previous order informations
 		#orders count
 		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=order.evaluation.customer_id)
 		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
 		total_orders_count  = orders.count()
-		dropdown_order_info['active_orders_count'] = active_orders_count 
-		dropdown_order_info['total_orders_count']  = total_orders_count		
+		dropdown_order_info['active_orders_count'] = active_orders_count
+		dropdown_order_info['total_orders_count']  = total_orders_count
 
-	
+
 		return JsonResponse(dropdown_order_info)
 
 def GetCleaningInfo(request):
 	cleaning_dict = {}
 
 	scheduler_id  = request.GET.get('schedule_id')
-	
+
 	schedule  = OrderScheduler.objects.select_related('order_scheduler_book','customer_address__customer','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_member')),to_attr='cleaning_team')).get(id=scheduler_id,is_active=True)
-	
+
 
 	cleaning_dict['order_no'] 		 = schedule.order.order_no
 	cleaning_dict['address']  		 = schedule.customer_address.apartment+', '+schedule.customer_address.block+', '+schedule.customer_address.street+', '+schedule.customer_address.avenue+', '+schedule.customer_address.building+', '+schedule.customer_address.area.name+', '+schedule.customer_address.governorate.name
 	cleaning_dict['customer'] 		 = schedule.customer_address.customer.name
-	cleaning_dict['customer_mobile'] = schedule.customer_address.customer.mobile_number	
+	cleaning_dict['customer_mobile'] = schedule.customer_address.customer.mobile_number
 	cleaning_dict['start_at_date']   = (schedule.start_at+timedelta(hours=3)).strftime('%d-%m-%Y')
 	cleaning_dict['start_at_time']   = (schedule.start_at+timedelta(hours=3)).strftime('%I:%M %p')
 	cleaning_dict['duration']		 = schedule.order_scheduler_book.cleaning_hours
@@ -185,20 +190,20 @@ def GetCleaningInfo(request):
 
 			cleaners_info['cleaners'].append(cleaner_dict)
 
-	cleaning_dict['cleanersinfo'] =	cleaners_info		
+	cleaning_dict['cleanersinfo'] =	cleaners_info
 	return JsonResponse(cleaning_dict)
 
 def GetFollowupInfo(request):
 	cleaning_dict = {}
 
 	scheduler_id  = request.GET.get('schedule_id')
-	
+
 	schedule  = FollowUpScheduler.objects.select_related('customer_address__customer','follow_up__investigation__order').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_member')),to_attr='cleaning_team')).get(id=scheduler_id)
 
 	cleaning_dict['order_no'] 		 = schedule.follow_up.investigation.order.order_no
 	cleaning_dict['address']  		 = schedule.customer_address.apartment+', '+schedule.customer_address.block+', '+schedule.customer_address.street+', '+schedule.customer_address.avenue+', '+schedule.customer_address.building+', '+schedule.customer_address.area.name+', '+schedule.customer_address.governorate.name
 	cleaning_dict['customer'] 		 = schedule.customer_address.customer.name
-	cleaning_dict['customer_mobile'] = schedule.customer_address.customer.mobile_number	
+	cleaning_dict['customer_mobile'] = schedule.customer_address.customer.mobile_number
 	cleaning_dict['start_at_date']   = (schedule.start_at+timedelta(hours=3)).strftime('%d-%m-%Y')
 	cleaning_dict['start_at_time']   = (schedule.start_at+timedelta(hours=3)).strftime('%I:%M %p')
 	cleaning_dict['duration']		 = schedule.follow_up.cleaning_hours
@@ -218,7 +223,7 @@ def GetFollowupInfo(request):
 
 			cleaners_info['cleaners'].append(cleaner_dict)
 
-	cleaning_dict['cleanersinfo'] =	cleaners_info		
+	cleaning_dict['cleanersinfo'] =	cleaners_info
 	return JsonResponse(cleaning_dict)
 
 
@@ -226,7 +231,7 @@ def GetFollowupInfo(request):
 def GetOrderScheduleTicketInfo(request):
 	dropdown_orderschedule_info = {}
 
-	order_id            = request.GET.get('order_id') 
+	order_id            = request.GET.get('order_id')
 
 	try:
 		ordershedules   = OrderScheduler.objects.filter(order_id=order_id,is_active=True,work_status='CLEANING_FULFILLED').select_related('customer_address__area','order_scheduler_book')
@@ -237,12 +242,12 @@ def GetOrderScheduleTicketInfo(request):
 	for schedule in ordershedules:
 		order_schedule[schedule.id] = schedule.customer_address.area.name+'-'+schedule.order_scheduler_book.service_type.name+'/'+datetime.strftime((schedule.start_at+timedelta(hours=3)),'%d-%m-%Y %I:%M %p') or ''
 
-		dropdown_orderschedule_info['name']          = schedule.customer_address.customer.name 
+		dropdown_orderschedule_info['name']          = schedule.customer_address.customer.name
 		dropdown_orderschedule_info['mobile_number'] = schedule.customer_address.customer.mobile_number
 
 	dropdown_orderschedule_info['schedules'] = order_schedule
-	dropdown_orderschedule_info['order_id']  = order_id 	
-		
+	dropdown_orderschedule_info['order_id']  = order_id
+
 
 	return JsonResponse(dropdown_orderschedule_info)
 
@@ -250,7 +255,7 @@ def GetOrderScheduleTicketInfo(request):
 def GetCleaningTicketInfo(request):
 	dropdown_cleaning_info = {}
 
-	scheduler_id            = request.GET.get('scheduler_id') 
+	scheduler_id            = request.GET.get('scheduler_id')
 
 	try:
 		scheduler_cleanings   = SheduledOrderCleanings.objects.filter(order_scheduler_id=scheduler_id,is_active=True).select_related('order_scheduler_book__cleaning_type')
@@ -261,7 +266,7 @@ def GetCleaningTicketInfo(request):
 	for cleaning in scheduler_cleanings:
 		cleanings[cleaning.id] = cleaning.order_scheduler_book.service_type.name
 
-	dropdown_cleaning_info['cleaning_info'] = cleanings	
+	dropdown_cleaning_info['cleaning_info'] = cleanings
 
 	return JsonResponse(dropdown_cleaning_info)
 
@@ -281,17 +286,17 @@ def GetCustomerInfo(request):
 
 	if customer_info:
 		for details in customer_info:
-			customer_info_dict[details.id] = details.name+'-'+details.mobile_number 	
-	
+			customer_info_dict[details.id] = details.name+'-'+details.mobile_number
+
 	data['customer_details'] = customer_info_dict
 
 
 	data['status']     = 'true'
 
-	if customer_info_dict == {}: 
-		data['status'] = 'false'	
-	
-	return JsonResponse(data)	
+	if customer_info_dict == {}:
+		data['status'] = 'false'
+
+	return JsonResponse(data)
 
 #aJAX for customer address
 def GetCustomerAddress(request):
@@ -307,16 +312,16 @@ def GetCustomerAddress(request):
 
 	if customer_address:
 		for address in customer_address:
-			customer_address_dict[address.id] = address.area.name+'-'+address.building 	
-	
+			customer_address_dict[address.id] = address.area.name+'-'+address.building
+
 	data['customer_address'] = customer_address_dict
 
 
 	data['status']     = 'true'
 
-	if customer_address_dict == {}: 
-		data['status'] = 'false'	
-	
+	if customer_address_dict == {}:
+		data['status'] = 'false'
+
 	return JsonResponse(data)
 
 
@@ -338,10 +343,10 @@ def GetCustomerOrderInfoFeedback(request):
 
 	data['status']     = 'true'
 
-	if order_info_dict == {}: 
-		data['status'] = 'false'	
-	
-	return JsonResponse(data)	
+	if order_info_dict == {}:
+		data['status'] = 'false'
+
+	return JsonResponse(data)
 
 def GetCustomerOrderInfo(request):
 	data               = {}
@@ -368,40 +373,40 @@ def GetCustomerOrderInfo(request):
 
 #Ajax for getting Cleaning Types
 def GetCleaningMethodsInfo(request):
-	
+
 	dropdown_methods = {}
 	service_type_id = request.GET.get('service_type_id')
-	
+
 	try:
-		cleaning_methods = CleaningMethod.objects.filter(is_active=True,service_type_id=service_type_id) 
+		cleaning_methods = CleaningMethod.objects.filter(is_active=True,service_type_id=service_type_id)
 	except:
-		cleaning_methods = None	
+		cleaning_methods = None
 
 	if cleaning_methods:
 		for method in cleaning_methods:
-			dropdown_methods[method.id] = method.name	
-	
+			dropdown_methods[method.id] = method.name
+
 	return JsonResponse(dropdown_methods)
 
 #Ajax for getting Cleaning Types
 def GetCleaningSectionInfo(request):
-	
+
 	dropdown_methods = {}
 	service_type_id = request.GET.get('service_type_id')
-	
-	cleaning_sections = CleaningSection.objects.filter(is_active=True,service_type_id=service_type_id) 	
+
+	cleaning_sections = CleaningSection.objects.filter(is_active=True,service_type_id=service_type_id)
 
 	if cleaning_sections:
 		for cleaning_section in cleaning_sections:
-			dropdown_methods[cleaning_section.id] = cleaning_section.name	
-		
+			dropdown_methods[cleaning_section.id] = cleaning_section.name
+
 	return JsonResponse(dropdown_methods)
 
 
 def RemoveSection(request):
-	
+
 	data ={}
-	
+
 	section_id = request.GET.get('section_id')
 
 	try:
@@ -413,9 +418,9 @@ def RemoveSection(request):
 	return JsonResponse(data)
 
 def RemoveKeynote(request):
-	
+
 	data ={}
-	
+
 	keynote_id = request.GET.get('keynote_id')
 
 	try:
@@ -424,12 +429,12 @@ def RemoveKeynote(request):
 	except:
 		data['success'] = False
 
-	return JsonResponse(data)	
+	return JsonResponse(data)
 
 def RemoveEvaluationMedia(request):
-	
+
 	data ={}
-	
+
 	media_id = request.GET.get('media_id')
 
 	try:
@@ -440,7 +445,7 @@ def RemoveEvaluationMedia(request):
 
 	return JsonResponse(data)
 
-# Create your views here. 
+# Create your views here.
 class AgentHome(IsAgent,View):
 	def get(self,request):
 
@@ -455,7 +460,7 @@ class AgentHome(IsAgent,View):
 			enquiry	= None
 
 		today_enquiry_count = enquiry.filter(proposed_time__gte=count_today_start,proposed_time__lt=count_today_end,).count()
-		week_enquiry_count  = enquiry.filter(proposed_time__gte=count_today_end-timedelta(7),proposed_time__lt=count_today_end).count()	
+		week_enquiry_count  = enquiry.filter(proposed_time__gte=count_today_end-timedelta(7),proposed_time__lt=count_today_end).count()
 
 		#Cleaning Jobs count
 		try:
@@ -463,17 +468,17 @@ class AgentHome(IsAgent,View):
 		except:
 			cleaning_job    = None
 
-		today_cleaning_job_count = cleaning_job.filter(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))).count() 
-		week_cleaning_job_count  = cleaning_job.filter(Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end))).count()		
-		
+		today_cleaning_job_count = cleaning_job.filter(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))).count()
+		week_cleaning_job_count  = cleaning_job.filter(Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end))).count()
+
 		#Followup jobs count
 		try:
 			follow_up_job    = FollowUpTeam.objects.filter(is_active=True)
 		except:
 			follow_up_job	 = None
 
-		today_follow_up_job_count = follow_up_job.filter(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))).count() 
-		week_follow_up_job_count  = follow_up_job.filter(Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end))).count()		
+		today_follow_up_job_count = follow_up_job.filter(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))).count()
+		week_follow_up_job_count  = follow_up_job.filter(Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end))).count()
 
 
 		#Feedback Staring count
@@ -487,15 +492,15 @@ class AgentHome(IsAgent,View):
 		
 		#Evaluation details of each evaluator for evaluation table
 		evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
-		
+
 		try:
 			evaluation_date = datetime.strptime(evaluation_calendar_date,'%d-%m-%Y')
 		except:
-			evaluation_date = timezone.now().replace(tzinfo=None)	
+			evaluation_date = timezone.now().replace(tzinfo=None)
 
 		evaluation_date_start  = evaluation_date.replace(hour=0,minute=0,second=0,microsecond=0)
-		evaluation_date_end    = evaluation_date_start+timedelta(1)	
-		
+		evaluation_date_end    = evaluation_date_start+timedelta(1)
+
 		try:
 			evaluation_details		  = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').prefetch_related(Prefetch('evaluator_evaluation',queryset=EvaluationDetails.objects.filter(is_active=True,proposed_time__gte=evaluation_date_start,proposed_time__lte=evaluation_date_end),to_attr='evaluation_details'))
 		except:
@@ -504,7 +509,7 @@ class AgentHome(IsAgent,View):
 
 		#Order and Followup Schedules for date confirmation
 		confirm_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)+timedelta(4)
-		
+
 		try:
 			order_schedules		  = OrderScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').annotate(color_status=Case(When(Q(Q(start_at__lte=confirm_to_date) & Q(start_at__gte=confirm_to_date-timedelta(1))), then=Value('green')),
 	                  When(Q(Q(start_at__lt=confirm_to_date-timedelta(1))&Q(start_at__gte=confirm_to_date-timedelta(3))), then=Value('yellow')),
@@ -515,23 +520,23 @@ class AgentHome(IsAgent,View):
 
 		try:
 			follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lte=confirm_to_date).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').annotate(color_status=Case(When(Q(Q(start_at__lte=confirm_to_date) & Q(start_at__gte=confirm_to_date-timedelta(1))), then=Value('green')),
-	                  When(Q(Q(start_at__lt=confirm_to_date-timedelta(1))&Q(start_at__gte=confirm_to_date-timedelta(2))), then=Value('yellow')),
-	                  default=Value('red'),
-	                  output_field=CharField(),))		
+					  When(Q(Q(start_at__lt=confirm_to_date-timedelta(1))&Q(start_at__gte=confirm_to_date-timedelta(2))), then=Value('yellow')),
+					  default=Value('red'),
+					  output_field=CharField(),))
 		except:
 			follow_up_schedules	  = None
 	
 
-		#cleaning schedule & followup schedule for cleaning calendar			
+		#cleaning schedule & followup schedule for cleaning calendar
 		cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
-		
+
 		try:
 			schedule_date = datetime.strptime(cleaning_calendar_date,'%d-%m-%Y')
 		except:
 			schedule_date = timezone.now().replace(tzinfo=None)
 
 		schedule_date_start = schedule_date.replace(hour=0,minute=0,second=0,microsecond=0)
-		schedule_date_end   = schedule_date_start+timedelta(1)		
+		schedule_date_end   = schedule_date_start+timedelta(1)
 
 		try:
 			calendar_order_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams'))
@@ -542,7 +547,7 @@ class AgentHome(IsAgent,View):
 			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_teams'))
 		except:
 			calendar_followup_schedules = None
-	
+
 		try:
 			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams'))
 		except:
@@ -551,7 +556,7 @@ class AgentHome(IsAgent,View):
 		try:
 			sp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_teams'))
 		except:
-			sp_calendar_followup_schedules = None							
+			sp_calendar_followup_schedules = None
 
 		try:
 			spp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
@@ -562,7 +567,7 @@ class AgentHome(IsAgent,View):
 			spp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
 		except:
 			spp_calendar_followup_schedules = None
-		
+
 
 		#for edit popup
 		try:
@@ -578,7 +583,7 @@ class AgentHome(IsAgent,View):
 
 	def post(self,request):
 		action_mode = request.POST.get('action_type')
-		
+
 		if action_mode =='confirm_followupchedule':
 			followupscheduler_id = request.POST.get('followupscheduler')
 			followup_scheduler   = FollowUpScheduler.objects.get(id=followupscheduler_id)
@@ -596,7 +601,7 @@ class AgentHome(IsAgent,View):
 				FollowUpScheduler.objects.filter(id=followupscheduler_id).update(start_at=start_at,end_at=end_at)
 				messages.success(request,"Followup Cleaning Date Not Confirmed")
 
-		elif action_mode =='confirm_orderschedule':	
+		elif action_mode =='confirm_orderschedule':
 			orderscheduler_id    = request.POST.get('orderscheduler')
 			order_scheduler      = OrderScheduler.objects.get(id=orderscheduler_id)
 			confirm_status       = request.POST.get('confirm')
@@ -604,12 +609,12 @@ class AgentHome(IsAgent,View):
 			confirm_date 	 = request.POST.get('order_schedule_date')
 			confirm_time 	 = request.POST.get('order_schedule_time')
 			start_at         = datetime.strptime(confirm_date+' '+confirm_time,'%d-%m-%Y %I:%M %p')
-			end_at           = start_at + timedelta(hours=order_scheduler.order_scheduler_book.cleaning_hours)		
-			
+			end_at           = start_at + timedelta(hours=order_scheduler.order_scheduler_book.cleaning_hours)
+
 			if confirm_status:
 				OrderScheduler.objects.filter(id=orderscheduler_id).update(status='CONFIRMED',start_at=start_at,end_at=end_at)
 				messages.success(request,"Cleaning Date Succesfully Confirmed")
-			else:	
+			else:
 				OrderScheduler.objects.filter(id=orderscheduler_id).update(start_at=start_at,end_at=end_at)
 				messages.success(request,"Cleaning Date Not Confirmed")
 
@@ -632,7 +637,7 @@ class AgentHome(IsAgent,View):
 			cleaning_date 	= request.POST.get('cleaning_date')
 			cleaning_time   = request.POST.get('cleaning_time')
 			cleaning_hours 	= int(request.POST.get('cleaning_hours'))
-			
+
 			start_at         = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
 			end_at           = start_at + timedelta(hours=cleaning_hours)
 
@@ -644,7 +649,7 @@ class AgentHome(IsAgent,View):
 			order_scheduler.order_scheduler_book.cleaning_hours = cleaning_hours
 
 			order_scheduler.save()
-			order_scheduler.order_scheduler_book.save() 
+			order_scheduler.order_scheduler_book.save()
 
 			#update cleaning team
 			try:
@@ -666,7 +671,7 @@ class AgentHome(IsAgent,View):
 			cleaning_date 	= request.POST.get('cleaning_date')
 			cleaning_time   = request.POST.get('cleaning_time')
 			cleaning_hours 	= int(request.POST.get('cleaning_hours'))
-			
+
 			start_at         = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
 			end_at           = start_at + timedelta(hours=cleaning_hours)
 
@@ -677,7 +682,7 @@ class AgentHome(IsAgent,View):
 			followup_scheduler.follow_up.cleaning_hours 			= cleaning_hours
 
 			followup_scheduler.save()
-			followup_scheduler.follow_up.save() 
+			followup_scheduler.follow_up.save()
 
 			#update followup team
 			try:
@@ -695,27 +700,27 @@ class AgentHome(IsAgent,View):
 
 		elif action_mode == 'delete_evaluation':
 			evaluation_id = request.POST.get('delete_evaluation_id')
-			
+
 			#Delete Evaluation Details
 			EvaluationDetails.objects.filter(id=evaluation_id).delete()
 
-			messages.success(request,"Evaluation Deleted Succesfully")			
+			messages.success(request,"Evaluation Deleted Succesfully")
 
 		elif action_mode == 'delete_cleaning':
 			cleaning_id = request.POST.get('delete_cleaning_id')
 			#Delete Cleaning Schedule
 			OrderScheduler.objects.filter(id=cleaning_id).delete()
 
-			messages.success(request,"Cleaning Deleted Succesfully")			
-		
+			messages.success(request,"Cleaning Deleted Succesfully")
+
 		elif action_mode == 'delete_followup':
 			followup_id = request.POST.get('delete_followup_id')
 			#Delete Followup Schedule
 			FollowUpScheduler.objects.filter(id=followup_id).delete()
 
 			messages.success(request,"Followup Deleted Succesfully")
-		
-		return redirect('agent:agentdash-board')	
+
+		return redirect('agent:agentdash-board')
 
 
 class ResourceManagement(IsAgent,View):
@@ -724,9 +729,9 @@ class ResourceManagement(IsAgent,View):
 		try:
 			staffs = UserProfile.objects.filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
 		except:
-			staffs = None	
+			staffs = None
 
-		#cleaning schedule & followup schedule for cleaning calendar			
+		#cleaning schedule & followup schedule for cleaning calendar
 		workers_calendar_date	= request.GET.get('workers_calendar_date')
 		search                  = request.GET.get('search')
 
@@ -747,15 +752,15 @@ class ResourceManagement(IsAgent,View):
 			total_workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))).count()
 		except:
 			total_workers = 0
-		
+
 		#total active workers
 		try:
 			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=workers_date_start)&Q(end_at__gte=workers_date_start)) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=timezone.now().replace(tzinfo=None))&Q(end_at__gte=timezone.now().replace(tzinfo=None)))) ).values_list('member',flat=True)).distinct().count()
 			print(total_active_workers,"taw")
 		except:
-			total_active_workers = 0	
-	
-	
+			total_active_workers = 0
+
+
 		##To find average and total men hour from script data
 		try:
 			cleaning_teams  = CleaningTeam.objects.filter(is_active=True)
@@ -771,7 +776,7 @@ class ResourceManagement(IsAgent,View):
 		today_followup_active_teams  = follow_up_teams.filter(Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lt=workers_date_end))))
 		week_cleaning_active_teams   = cleaning_teams.filter(Q( Q(Q(start_at__gte=workers_date_end-timedelta(7))&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_end-timedelta(7))&Q(end_at__lt=workers_date_end)) ))
 		week_followup_active_teams   = follow_up_teams.filter(Q( Q(Q(start_at__gte=workers_date_end-timedelta(7))&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_end-timedelta(7))&Q(end_at__lt=workers_date_end)) ))
-		
+
 		today_date            = timezone.now()
 		weekstart_date        = timezone.now()-timedelta(6)
 
@@ -780,16 +785,16 @@ class ResourceManagement(IsAgent,View):
 			today_total_team_mens = today_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_cleaning_active_teams.count() or 0+today_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_followup_active_teams.count() or 0
 		except:
 			today_total_team_mens = 0
-		try:	
+		try:
 			week_total_team_mens  = week_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_cleaning_active_teams.count() or 0+week_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_followup_active_teams.count() or 0
-		except:	
+		except:
 			week_total_team_mens  = 0
 
 
 
 		#today and weekly active team count
 		today_active_teams_count = today_cleaning_active_teams.count()+today_followup_active_teams.count()
-		week_active_teams_count  = week_cleaning_active_teams.count()+week_followup_active_teams.count() 		
+		week_active_teams_count  = week_cleaning_active_teams.count()+week_followup_active_teams.count()
 
 		if search:
 			try:
@@ -801,8 +806,8 @@ class ResourceManagement(IsAgent,View):
 				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
 			except:
 				workers =  None
- 
-		try:		
+
+		try:
 			workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
 		except:
 			workers_details = None
@@ -819,7 +824,7 @@ class ResourceManagement(IsAgent,View):
 			fil_minhours       = None
 
 		try:
-			fil_maxhours       = int(request.GET.get('maxhours'))	
+			fil_maxhours       = int(request.GET.get('maxhours'))
 		except:
 			fil_maxhours	   = None
 
@@ -828,18 +833,18 @@ class ResourceManagement(IsAgent,View):
 				messages.error(request,"Minimum Duration should be less than Maximum Duration")
 				fil_minhours = None
 				fil_maxhours = None
-				
-		#filters 	
-		filters=[] 
-		if fil_staff: 
-		    case1 = Q(user_type=fil_staff)
-		    filters.append(case1)
-	
-		if fil_staff: 
-		    filters         = functools.reduce(operator.and_,filters)
-		    workers_details = workers_details.filter(filters)
-			
-		return render(request,'agent/resource/resource_management.html',{"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"staffs":staffs,"fil_staff":fil_staff,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,"staff_type":fil_staff})		
+
+		#filters
+		filters=[]
+		if fil_staff:
+			case1 = Q(user_type=fil_staff)
+			filters.append(case1)
+
+		if fil_staff:
+			filters         = functools.reduce(operator.and_,filters)
+			workers_details = workers_details.filter(filters)
+
+		return render(request,'agent/resource/resource_management.html',{"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"staffs":staffs,"fil_staff":fil_staff,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,"staff_type":fil_staff})
 
 
 class OrderDetails(IsAgent,View):
@@ -851,12 +856,12 @@ class OrderDetails(IsAgent,View):
 			governorates = None
 
 		try:
-			service_types = ServiceType.objects.filter(is_active=True) 
+			service_types = ServiceType.objects.filter(is_active=True)
 		except:
-			service_types =	None	
-			 			
+			service_types =	None
 
-			
+
+
 		#Evaluation Details
 		search                  = request.GET.get('search')
 
@@ -870,53 +875,53 @@ class OrderDetails(IsAgent,View):
 			pending_orders_count  =	evaluations.filter(Q(quatation_status='PENDING')).count()
 		else:
 			approved_orders_count = 0
-			pending_orders_count  = 0	
+			pending_orders_count  = 0
 
 
 
 		#Prefetch filters
 		try:
 			fil_governorate       = int(request.GET.get('governorate'))
-			areas                 = Area.objects.filter(governorate_id=fil_governorate) 
+			areas                 = Area.objects.filter(governorate_id=fil_governorate)
 		except:
 			fil_governorate       = None
 			areas                 = None
 
-		try:	
+		try:
 			fil_area			  = int(request.GET.get('area'))
 		except:
 			fil_area              = None
 
 		fil_cleaning_policy       = request.GET.get('cleaning_policy')
-		
+
 		try:
 			fil_service_type      = int(request.GET.get('service_type'))
 		except:
 			fil_service_type      = None
-			
+
 
 		customer_address_filter       = []
-		count_customer_address_filter = [] 
-		if fil_governorate: 
-		    case1       = Q(address__governorate_id=fil_governorate)
-		    count_case1 = Q(evaluation_details__address__governorate_id=fil_governorate)
-		    customer_address_filter.append(case1)
-		    count_customer_address_filter.append(count_case1)
-		
-		if fil_area:
-		    case2 		= Q(address__area_id=fil_area)
-		    count_case2 = Q(evaluation_details__address__area_id=fil_area)
-		    customer_address_filter.append(case2)
-		    count_customer_address_filter.append(count_case2)
+		count_customer_address_filter = []
+		if fil_governorate:
+			case1       = Q(address__governorate_id=fil_governorate)
+			count_case1 = Q(evaluation_details__address__governorate_id=fil_governorate)
+			customer_address_filter.append(case1)
+			count_customer_address_filter.append(count_case1)
 
-		if fil_governorate or fil_area: 
+		if fil_area:
+			case2 		= Q(address__area_id=fil_area)
+			count_case2 = Q(evaluation_details__address__area_id=fil_area)
+			customer_address_filter.append(case2)
+			count_customer_address_filter.append(count_case2)
+
+		if fil_governorate or fil_area:
 			customer_address_prefetch_filter              = functools.reduce(operator.and_,customer_address_filter)
 			count_customer_address_prefetch_filter        = functools.reduce(operator.and_,count_customer_address_filter)
 		else:
 			customer_address_prefetch_filter              = None
 			count_customer_address_prefetch_filter        = None
 
-		
+
 		evaluation_book_filter       = []
 		count_evaluation_book_filter = []
 		if fil_cleaning_policy:
@@ -924,60 +929,60 @@ class OrderDetails(IsAgent,View):
 			count_case1 = Q(evaluation_details__evaluation_book_evaluation_details__cleaning_policy=fil_cleaning_policy)
 			evaluation_book_filter.append(case1)
 			count_evaluation_book_filter.append(count_case1)
-		if fil_service_type:     
+		if fil_service_type:
 			case2       = Q(service_type_id=fil_service_type)
 			count_case2 = Q(evaluation_details__evaluation_book_evaluation_details__service_type_id=fil_service_type)
-			evaluation_book_filter.append(case2)              
+			evaluation_book_filter.append(case2)
 			count_evaluation_book_filter.append(count_case2)
 
 		if fil_cleaning_policy or fil_service_type:
 			evaluation_book_prefetch_filter              = functools.reduce(operator.and_,evaluation_book_filter)
 			count_evaluation_book_prefetch_filter        = functools.reduce(operator.and_,count_evaluation_book_filter)
 		else:
-			evaluation_book_prefetch_filter              = None	
+			evaluation_book_prefetch_filter              = None
 			count_evaluation_book_prefetch_filter        = None
 
 		#Apply prefetch filter
-		if evaluation_book_prefetch_filter and customer_address_prefetch_filter: 
-			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter & count_customer_address_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)		 
+		if evaluation_book_prefetch_filter and customer_address_prefetch_filter:
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter & count_customer_address_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)
 			print("both")
 		elif evaluation_book_prefetch_filter and not customer_address_prefetch_filter:
 			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(book_count=Count(Case(When( count_evaluation_book_prefetch_filter,then=1),output_field=IntegerField()))).filter(book_count__gt=0)
 			print("book only")
 		elif not evaluation_book_prefetch_filter and customer_address_prefetch_filter:
 			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)
-			print("address only") 
+			print("address only")
 		else:
-			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))		
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))
 			print("not at all")
 
-		
-		
+
+
 		fil_status = request.GET.get('status')
-		#filters 	
-		filters=[] 
-		if fil_status: 
-		    case1 = Q(quatation_status=fil_status)
-		    filters.append(case1)
-	
-		if fil_status: 
-		    filters     = functools.reduce(operator.and_,filters)
-		    evaluations = evaluations.filter(filters)
-		    
+		#filters
+		filters=[]
+		if fil_status:
+			case1 = Q(quatation_status=fil_status)
+			filters.append(case1)
+
+		if fil_status:
+			filters     = functools.reduce(operator.and_,filters)
+			evaluations = evaluations.filter(filters)
+
 
 		#PAGINATION ORDERS
-		no_of_entries = request.GET.get('no_of_entries')		
+		no_of_entries = request.GET.get('no_of_entries')
 		if not no_of_entries:
-			no_of_entries = 20	
+			no_of_entries = 20
 
-		page = request.GET.get('page',1) 
+		page = request.GET.get('page',1)
 		paginator=Paginator(evaluations,no_of_entries)
-		try: 
-			evaluations=paginator.page(page) 
+		try:
+			evaluations=paginator.page(page)
 		except PageNotAnInteger:
 			evaluations=paginator.page(1)
 		except EmptyPage:
-			evaluations = paginator.page(paginator.num_pages) 
+			evaluations = paginator.page(paginator.num_pages)
 
 		# Get the index of the current page
 		index = evaluations.number - 1  # edited to something easier without index
@@ -986,9 +991,9 @@ class OrderDetails(IsAgent,View):
 		# You want a range of 7, so lets calculate where to slice the list
 		start_index = index - 3 if index >= 3 else 0
 		end_index = index + 3 if index <= max_index - 3 else max_index
-		# Get our new page range. In the latest versions of Django page_range returns 
+		# Get our new page range. In the latest versions of Django page_range returns
 		# an iterator. Thus pass it to list, to make our slice possible again.
-		page_range = list(paginator.page_range)[start_index:end_index]	
+		page_range = list(paginator.page_range)[start_index:end_index]
 		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
 
 		return render(request,'agent/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_status":fil_status,"fil_cleaning_policy":fil_cleaning_policy,"fil_service_type":fil_service_type,})
@@ -996,14 +1001,14 @@ class OrderDetails(IsAgent,View):
 
 class FeedbackDetails(IsAgent,View):
 	def get(self,request):
-		
+
 		try:
 			governorates = Governorate.objects.filter(is_active=True)
 		except:
 			governorates = None
 
 		try:
-			service_types = ServiceType.objects.filter(is_active=True) 
+			service_types = ServiceType.objects.filter(is_active=True)
 		except:
 			service_types =	None
 
@@ -1027,63 +1032,63 @@ class FeedbackDetails(IsAgent,View):
 		#Prefetch filters
 		try:
 			fil_governorate       = int(request.GET.get('governorate'))
-			areas                 = Area.objects.filter(governorate_id=fil_governorate) 
+			areas                 = Area.objects.filter(governorate_id=fil_governorate)
 		except:
 			fil_governorate       = None
 			areas                 = None
 
-		try:	
+		try:
 			fil_area			  = int(request.GET.get('area'))
 		except:
 			fil_area              = None
 
-		
+
 		try:
 			fil_service_type      = int(request.GET.get('service_type'))
 		except:
 			fil_service_type      = None
-		
+
 
 		customer_address_filter       = []
-		count_customer_address_filter = [] 
-		if fil_governorate: 
-		    case1       = Q(address__governorate_id=fil_governorate)
-		    count_case1 = Q(evaluation__evaluation_details__address__governorate_id=fil_governorate)
-		    customer_address_filter.append(case1)
-		    count_customer_address_filter.append(count_case1)
-		
-		if fil_area:
-		    case2 		= Q(address__area_id=fil_area)
-		    count_case2 = Q(evaluation__evaluation_details__address__area_id=fil_area)
-		    customer_address_filter.append(case2)
-		    count_customer_address_filter.append(count_case2)
+		count_customer_address_filter = []
+		if fil_governorate:
+			case1       = Q(address__governorate_id=fil_governorate)
+			count_case1 = Q(evaluation__evaluation_details__address__governorate_id=fil_governorate)
+			customer_address_filter.append(case1)
+			count_customer_address_filter.append(count_case1)
 
-		if fil_governorate or fil_area: 
+		if fil_area:
+			case2 		= Q(address__area_id=fil_area)
+			count_case2 = Q(evaluation__evaluation_details__address__area_id=fil_area)
+			customer_address_filter.append(case2)
+			count_customer_address_filter.append(count_case2)
+
+		if fil_governorate or fil_area:
 			customer_address_prefetch_filter              = functools.reduce(operator.and_,customer_address_filter)
 			count_customer_address_prefetch_filter        = functools.reduce(operator.and_,count_customer_address_filter)
 		else:
 			customer_address_prefetch_filter              = None
 			count_customer_address_prefetch_filter        = None
 
-		
+
 		evaluation_book_filter       = []
 		count_evaluation_book_filter = []
-		if fil_service_type:     
+		if fil_service_type:
 			case1       = Q(service_type_id=fil_service_type)
 			count_case1 = Q(evaluation__evaluation_details__evaluation_book_evaluation_details__service_type_id=fil_service_type)
-			evaluation_book_filter.append(case1)              
+			evaluation_book_filter.append(case1)
 			count_evaluation_book_filter.append(count_case1)
 
 		if fil_service_type:
 			evaluation_book_prefetch_filter              = functools.reduce(operator.and_,evaluation_book_filter)
 			count_evaluation_book_prefetch_filter        = functools.reduce(operator.and_,count_evaluation_book_filter)
 		else:
-			evaluation_book_prefetch_filter              = None	
-			count_evaluation_book_prefetch_filter        = None	
+			evaluation_book_prefetch_filter              = None
+			count_evaluation_book_prefetch_filter        = None
 
 
 		#Apply prefetch filter
-		if evaluation_book_prefetch_filter and customer_address_prefetch_filter: 
+		if evaluation_book_prefetch_filter and customer_address_prefetch_filter:
 			order_wise_feedbacks = order_wise_feedbacks.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField())).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter & count_customer_address_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)
 			print("both")
 		elif evaluation_book_prefetch_filter and not customer_address_prefetch_filter:
@@ -1091,34 +1096,34 @@ class FeedbackDetails(IsAgent,View):
 			print("book only")
 		elif not evaluation_book_prefetch_filter and customer_address_prefetch_filter:
 			order_wise_feedbacks = order_wise_feedbacks.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField())).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)
-			print("address only") 
+			print("address only")
 		else:
-			order_wise_feedbacks = order_wise_feedbacks.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))		
-			print("not at all")	
+			order_wise_feedbacks = order_wise_feedbacks.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))
+			print("not at all")
 
 		#FILTER
-		fil_minimumstarring       		  = request.GET.get('minimumstarring')	
+		fil_minimumstarring       		  = request.GET.get('minimumstarring')
 		fil_maximumstarring       		  = request.GET.get('maximumstarring')
-		#filters 	
-		filters=[] 
-		if fil_minimumstarring: 
-		    case1 = Q(avg_starring__gte=fil_minimumstarring)
-		    filters.append(case1)
-		
-		if fil_maximumstarring: 
-		    case2 = Q(avg_starring__lte=fil_maximumstarring)
-		    filters.append(case2)
+		#filters
+		filters=[]
+		if fil_minimumstarring:
+			case1 = Q(avg_starring__gte=fil_minimumstarring)
+			filters.append(case1)
 
-		if fil_minimumstarring or fil_maximumstarring: 
+		if fil_maximumstarring:
+			case2 = Q(avg_starring__lte=fil_maximumstarring)
+			filters.append(case2)
+
+		if fil_minimumstarring or fil_maximumstarring:
 			if fil_minimumstarring and fil_maximumstarring:
 				if fil_minimumstarring <= fil_maximumstarring:
 					filters              = functools.reduce(operator.and_,filters)
 					order_wise_feedbacks = order_wise_feedbacks.filter(filters)
 				else:
-					messages.error(request,"Minimum Starring Should be less than Maximum Starring")    
+					messages.error(request,"Minimum Starring Should be less than Maximum Starring")
 			else:
 				filters              = functools.reduce(operator.and_,filters)
-				order_wise_feedbacks = order_wise_feedbacks.filter(filters)	    
+				order_wise_feedbacks = order_wise_feedbacks.filter(filters)
 
 		#to find starring caluculations in whole system
 		try:
@@ -1127,22 +1132,22 @@ class FeedbackDetails(IsAgent,View):
 			feedbacks				  = None
 
 		total_feedbacks               = feedbacks.values('order').distinct().count()
-		full_order_wise_feedbacks     = order_wise_feedbacks		
+		full_order_wise_feedbacks     = order_wise_feedbacks
 
-				
-		#PAGINATION FEEDBACKS		
-		no_of_entries = request.GET.get('no_of_entries')		
+
+		#PAGINATION FEEDBACKS
+		no_of_entries = request.GET.get('no_of_entries')
 		if not no_of_entries:
 			no_of_entries = 20
 
-		page = request.GET.get('page',1) 
+		page = request.GET.get('page',1)
 		paginator=Paginator(order_wise_feedbacks,no_of_entries)
-		try: 
-			order_wise_feedbacks=paginator.page(page) 
+		try:
+			order_wise_feedbacks=paginator.page(page)
 		except PageNotAnInteger:
 			order_wise_feedbacks=paginator.page(1)
 		except EmptyPage:
-			order_wise_feedbacks = paginator.page(paginator.num_pages) 
+			order_wise_feedbacks = paginator.page(paginator.num_pages)
 
 		# Get the index of the current page
 		index = order_wise_feedbacks.number - 1  # edited to something easier without index
@@ -1151,16 +1156,16 @@ class FeedbackDetails(IsAgent,View):
 		# You want a range of 7, so lets calculate where to slice the list
 		start_index = index - 3 if index >= 3 else 0
 		end_index = index + 3 if index <= max_index - 3 else max_index
-		# Get our new page range. In the latest versions of Django page_range returns 
+		# Get our new page range. In the latest versions of Django page_range returns
 		# an iterator. Thus pass it to list, to make our slice possible again.
-		page_range = list(paginator.page_range)[start_index:end_index]	
+		page_range = list(paginator.page_range)[start_index:end_index]
 		entry_per_page=(order_wise_feedbacks.end_index())-(order_wise_feedbacks.start_index())+1
 
 		return render(request,'agent/feedback/feedbacks.html',{"feedbacks":feedbacks,"total_feedbacks":total_feedbacks,"order_wise_feedbacks":order_wise_feedbacks,"full_order_wise_feedbacks":full_order_wise_feedbacks,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_minimumstarring":fil_minimumstarring,"fil_maximumstarring":fil_maximumstarring,"fil_service_type":fil_service_type,})
-		
+
 class FeedbackAdvanced(IsAgent,View):
 	def get(self,request,client_id,order_id):
-		
+
 		#client info
 		try:
 			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=client_id)
@@ -1169,17 +1174,17 @@ class FeedbackAdvanced(IsAgent,View):
 
 		#feedback_info
 		try:
-			feedback_details   = Order.objects.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks')).get(id=order_id)		
+			feedback_details   = Order.objects.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks')).get(id=order_id)
 		except:
 			feedback_details   = None
 
 		#total feedback
 		try:
-			feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,evaluation__customer_id=client_id).prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField())).annotate(average_rating=Avg('feed_backs_order__rating'))		
+			feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,evaluation__customer_id=client_id).prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField())).annotate(average_rating=Avg('feed_backs_order__rating'))
 		except:
 			feedbacks = None
-	
-		#total_feedback_rating	
+
+		#total_feedback_rating
 		try:
 			average_feedback  = round(feedbacks.filter(id=order_id).aggregate(Sum('average_rating'))['average_rating__sum'])
 		except:
@@ -1194,26 +1199,26 @@ class FeedbackAdvanced(IsAgent,View):
 		#orders count
 		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=client_id)
 		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
-		total_orders_count  = orders.count()	
+		total_orders_count  = orders.count()
 
 		return render(request,'agent/feedback/feedback-page.html',{"client_details":client_details,"feedback_details":feedback_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"other_feedbacks":other_feedbacks,"average_feedback":average_feedback,})
 
 
 class TicketDetails(IsAgent,View):
 	def get(self,request):
-	
+
 		try:
 			governorates = Governorate.objects.filter(is_active=True)
 		except:
 			governorates = None
 
 		try:
-			investigators = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='SENIORTEAMLEADER')|Q(user_type='TEAMLEADER')|Q(user_type='EVALUATOR'))))	
+			investigators = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='SENIORTEAMLEADER')|Q(user_type='TEAMLEADER')|Q(user_type='EVALUATOR'))))
 		except:
-			investigators = None	
+			investigators = None
 
 		search                  = request.GET.get('search')
-		
+
 		#Followup details
 		if search:
 			tickets 	             = FollowUp.objects.select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').filter(is_active=True).filter(Q(Q(investigation__order_schedule__order__evaluation__customer__name__icontains=search)|Q(investigation__order_schedule__order__evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))				
@@ -1230,56 +1235,56 @@ class TicketDetails(IsAgent,View):
 
 
 
-		#FILTER	
+		#FILTER
 		try:
-			fil_governorate     = int(request.GET.get('governorate')) 
+			fil_governorate     = int(request.GET.get('governorate'))
 			areas               = Area.objects.filter(is_active=True,governorate_id=fil_governorate)
 		except:
 			fil_governorate     = None
 			areas               = None
 
-		try:	
+		try:
 			fil_area            = int(request.GET.get('area'))
 		except:
 			fil_area            = None
-		
+
 		fil_status              = request.GET.get('status')
-		
+
 		try:
 			fil_investigator    = int(request.GET.get('investigator'))
 		except:
 			fil_investigator    = None
 
 		#filters
-		filters=[] 
-		if fil_governorate: 
-		    case1 = Q(investigation__order_schedule__customer_address__governorate_id=fil_governorate)
-		    filters.append(case1)
-		if fil_area: 
-		    case2 = Q(investigation__order_schedule__customer_address__area_id=fil_area)
-		    filters.append(case2)
-		if fil_status: 
-		    case3 = Q(status=fil_status)
-		    filters.append(case3)
-		if fil_investigator: 
-		    case4 = Q(investigation__investigator_id=fil_investigator)
-		    filters.append(case4)            
-	
-		if fil_governorate or fil_area or fil_status or fil_investigator: 
-		    filters     = functools.reduce(operator.and_,filters)
-		    tickets = tickets.filter(filters)
-		
+		filters=[]
+		if fil_governorate:
+			case1 = Q(investigation__order_schedule__customer_address__governorate_id=fil_governorate)
+			filters.append(case1)
+		if fil_area:
+			case2 = Q(investigation__order_schedule__customer_address__area_id=fil_area)
+			filters.append(case2)
+		if fil_status:
+			case3 = Q(status=fil_status)
+			filters.append(case3)
+		if fil_investigator:
+			case4 = Q(investigation__investigator_id=fil_investigator)
+			filters.append(case4)
+
+		if fil_governorate or fil_area or fil_status or fil_investigator:
+			filters     = functools.reduce(operator.and_,filters)
+			tickets = tickets.filter(filters)
+
 
 
 		#PAGINATION TICKETS
-		no_of_entries = request.GET.get('no_of_entries')		
+		no_of_entries = request.GET.get('no_of_entries')
 		if not no_of_entries:
 			no_of_entries = 20
 
-		page = request.GET.get('page',1) 
+		page = request.GET.get('page',1)
 		paginator=Paginator(tickets,no_of_entries)
-		try: 
-			tickets=paginator.page(page) 
+		try:
+			tickets=paginator.page(page)
 		except PageNotAnInteger:
 			tickets=paginator.page(1)
 		except EmptyPage:
@@ -1292,12 +1297,12 @@ class TicketDetails(IsAgent,View):
 		# You want a range of 7, so lets calculate where to slice the list
 		start_index = index - 3 if index >= 3 else 0
 		end_index = index + 3 if index <= max_index - 3 else max_index
-		# Get our new page range. In the latest versions of Django page_range returns 
+		# Get our new page range. In the latest versions of Django page_range returns
 		# an iterator. Thus pass it to list, to make our slice possible again.
-		page_range = list(paginator.page_range)[start_index:end_index]	
+		page_range = list(paginator.page_range)[start_index:end_index]
 		entry_per_page=(tickets.end_index())-(tickets.start_index())+1
 
-		return render(request,"agent/ticket/tickets.html",{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"investigators":investigators,"fil_governorate":fil_governorate,'fil_area':fil_area,"fil_investigator":fil_investigator,"fil_status":fil_status,})		
+		return render(request,"agent/ticket/tickets.html",{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"investigators":investigators,"fil_governorate":fil_governorate,'fil_area':fil_area,"fil_investigator":fil_investigator,"fil_status":fil_status,})
 
 
 class TicketAdvanced(IsAgent,View):
@@ -1310,10 +1315,10 @@ class TicketAdvanced(IsAgent,View):
 			client_details = None
 
 		#followup info
-		
+
 		followup_details = FollowUp.objects.select_related('investigation__investigator','investigation__order','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate','investigation__order_schedule__order_scheduler_book').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules'),Prefetch('investigation__investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),).get(is_active=True,id=followup_id)
-			
-			
+
+
 
 		#orders count
 		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=client_id)
@@ -1333,7 +1338,7 @@ class ClientDetails(IsAgent,View):
 		except:
 			governorates = None
 
-		
+
 		search                  = request.GET.get('search')
 
 		if search:
@@ -1357,7 +1362,7 @@ class ClientDetails(IsAgent,View):
 		try:
 			orders = Order.objects.filter(is_active=True).select_related('evaluation__customer')
 		except:
-			orders = None	
+			orders = None
 
 		active_clients_count = orders.filter(~Q(order_status='ORDER_CLOSED')).values_list('evaluation__customer').distinct().count()	
 		new_clients_count    = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True,created__date__gte=timezone.now().date()-timedelta(30)).count()
@@ -1366,75 +1371,75 @@ class ClientDetails(IsAgent,View):
 		#Prefetch filters
 		try:
 			fil_governorate       = int(request.GET.get('governorate'))
-			areas                 = Area.objects.filter(governorate_id=fil_governorate) 
+			areas                 = Area.objects.filter(governorate_id=fil_governorate)
 		except:
 			fil_governorate       = None
 			areas                 = None
 
-		try:	
+		try:
 			fil_area			  = int(request.GET.get('area'))
 		except:
-			fil_area              = None	
+			fil_area              = None
 
 
 
 		customer_address_filter       = []
-		count_customer_address_filter = [] 
-		if fil_governorate: 
-		    case1       = Q(is_active=True,governorate_id=fil_governorate)
-		    count_case1 = Q(address_customer__governorate_id=fil_governorate)
-		    customer_address_filter.append(case1)
-		    count_customer_address_filter.append(count_case1)
-		
-		if fil_area:
-		    case2 		= Q(is_active=True,area_id=fil_area)
-		    count_case2 = Q(address_customer__area_id=fil_area)
-		    customer_address_filter.append(case2)
-		    count_customer_address_filter.append(count_case2)
+		count_customer_address_filter = []
+		if fil_governorate:
+			case1       = Q(is_active=True,governorate_id=fil_governorate)
+			count_case1 = Q(address_customer__governorate_id=fil_governorate)
+			customer_address_filter.append(case1)
+			count_customer_address_filter.append(count_case1)
 
-		if fil_governorate or fil_area: 
+		if fil_area:
+			case2 		= Q(is_active=True,area_id=fil_area)
+			count_case2 = Q(address_customer__area_id=fil_area)
+			customer_address_filter.append(case2)
+			count_customer_address_filter.append(count_case2)
+
+		if fil_governorate or fil_area:
 			customer_address_prefetch_filter              = functools.reduce(operator.and_,customer_address_filter)
 			count_customer_address_prefetch_filter        = functools.reduce(operator.and_,count_customer_address_filter)
 		else:
 			customer_address_prefetch_filter              = None
-			count_customer_address_prefetch_filter        = None	
+			count_customer_address_prefetch_filter        = None
 
 		#Apply prefetch filter
 		if customer_address_prefetch_filter:
-			
-			client_details = client_details.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(customer_address_prefetch_filter).select_related('area'),to_attr='customer_address')).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)	
+
+			client_details = client_details.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(customer_address_prefetch_filter).select_related('area'),to_attr='customer_address')).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)
 
 		else:
-			client_details = client_details.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area'),to_attr='customer_address'))		
+			client_details = client_details.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area'),to_attr='customer_address'))
 
 
-		#FILTER	
+		#FILTER
 		fil_customertype          = request.GET.get('customertype')
 		fil_status                = request.GET.get('status')
 
 		filters = []
-		if fil_customertype: 
-		    case1 = Q(customer_type=fil_customertype)
-		    filters.append(case1)
-		
+		if fil_customertype:
+			case1 = Q(customer_type=fil_customertype)
+			filters.append(case1)
 
-		if fil_customertype: 
-		    filters            = functools.reduce(operator.and_,filters)
-		    client_details     = client_details.filter(filters)	   
+
+		if fil_customertype:
+			filters            = functools.reduce(operator.and_,filters)
+			client_details     = client_details.filter(filters)
 
 		#PAGINATION CLIENTS
-		no_of_entries = request.GET.get('no_of_entries')		
+		no_of_entries = request.GET.get('no_of_entries')
 		if not no_of_entries:
 			no_of_entries = 20
 
-		page = request.GET.get('page',1) 
+		page = request.GET.get('page',1)
 		paginator=Paginator(client_details,no_of_entries)
-		try: 
-			client_details=paginator.page(page) 
+		try:
+			client_details=paginator.page(page)
 		except PageNotAnInteger:
 			client_details=paginator.page(1)
 		except EmptyPage:
-			client_details = paginator.page(paginator.num_pages) 
+			client_details = paginator.page(paginator.num_pages)
 
 		# Get the index of the current page
 		index = client_details.number - 1  # edited to something easier without index
@@ -1443,12 +1448,12 @@ class ClientDetails(IsAgent,View):
 		# You want a range of 7, so lets calculate where to slice the list
 		start_index = index - 3 if index >= 3 else 0
 		end_index = index + 3 if index <= max_index - 3 else max_index
-		# Get our new page range. In the latest versions of Django page_range returns 
+		# Get our new page range. In the latest versions of Django page_range returns
 		# an iterator. Thus pass it to list, to make our slice possible again.
-		page_range = list(paginator.page_range)[start_index:end_index]	
+		page_range = list(paginator.page_range)[start_index:end_index]
 		entry_per_page=(client_details.end_index())-(client_details.start_index())+1
-		
-		return render(request,"agent/client/clients.html",{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_customertype":fil_customertype,"fil_status":fil_status}) 
+
+		return render(request,"agent/client/clients.html",{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_customertype":fil_customertype,"fil_status":fil_status})
 
 
 class ClientOrders(IsAgent,View):
@@ -1458,10 +1463,10 @@ class ClientOrders(IsAgent,View):
 			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=client_id)
 		except:
 			client_details = None
-	
+
 		orders = Order.objects.filter(evaluation__customer_id=client_id).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(total_cleaners=Sum('evaluation__evaluation_details__evaluation_book_evaluation_details__number_of_cleaners'))
-					
-		#COUNT			
+
+		#COUNT
 		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
 
 		return render(request,"agent/client/client-page.html",{"client_details":client_details,"orders":orders,"active_orders_count":active_orders_count,})
@@ -1470,7 +1475,7 @@ class ClientOrderDetails(IsAgent,View):
 	def get(self,request,order_id):
 
 		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationmedia'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection'),Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_team_members')),to_attr='cleaning_team'),Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('followup_investigation',queryset = FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules')),to_attr='followups')),to_attr='investigations')),to_attr='orderschedules'),Prefetch('feed_backs_order',FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks')).get(is_active=True,id=order_id)
-			
+
 
 		try:
 			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=order.evaluation.customer_id)
@@ -1484,24 +1489,24 @@ class ClientOrderDetails(IsAgent,View):
 
 		#average feedbacks
 		average_feedback 	= order.feed_backs_order.aggregate(Avg('rating'))['rating__avg']
-					
-				
+
+
 		return render(request,"agent/client/order-page.html",{"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,})
 
 class NewEnquiry(IsAgent,View):
 	address_formset_define    = formset_factory(AddressForm)
 	def get(self,request):
-		
+
 		try:
 			governorates = Governorate.objects.filter(is_active=True)
 		except:
 			governorates = None
 
-		enquiry_form    = UserProfileForm()	
+		enquiry_form    = UserProfileForm()
 
 		try:
 			customer_info = UserProfile.objects.filter(is_active=True,user_type='CUSTOMER')
-		except:	
+		except:
 			customer_info = None
 
 		return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':self.address_formset_define(),'customer_info':customer_info,'governorates':governorates,})
@@ -1511,15 +1516,15 @@ class NewEnquiry(IsAgent,View):
 		address_formset  = self.address_formset_define(request.POST)
 
 
-		if enquiry_form.is_valid() and address_formset.is_valid(): 
-			enquiry_form_save            = enquiry_form.save(commit=False)	
+		if enquiry_form.is_valid() and address_formset.is_valid():
+			enquiry_form_save            = enquiry_form.save(commit=False)
 			enquiry_form_save.username   = generate_random_username()
 			enquiry_form_save.created_by = request.user
 			enquiry_form_save.user_type  = 'CUSTOMER'
-			
+
 			#To Save Contact Platform
 			contact_platforms 			 = request.POST.get('contact_platform')
-			contact_platform_list 		 = contact_platforms.split(",")			
+			contact_platform_list 		 = contact_platforms.split(",")
 			if contact_platform_list:
 				for contact_platform in contact_platform_list:
 					if contact_platform == 'Whatsapp':
@@ -1537,7 +1542,7 @@ class NewEnquiry(IsAgent,View):
 					address_form_save.customer          = enquiry_form_save
 					address_form_save.currently_active  = True
 					address_form_save.save()
-					
+
 			messages.success(request,"Customer Details Succesfully Added")
 
 		else:	
@@ -1553,10 +1558,8 @@ class NewEnquiry(IsAgent,View):
 			
 			return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'governorates':governorates})					
 
-		redirection = request.POST.get('redirect_to')	
-		
 		if redirection == 'assign_evaluator':
-			return redirect('agent:agent-makeevaluation',enquiry_form_save.id)	
+			return redirect('agent:agent-makeevaluation',enquiry_form_save.id)
 		elif redirection == 'quatation':
 			return redirect('agent:agent-makequatation',enquiry_form_save.id)
 		else:
@@ -1564,26 +1567,26 @@ class NewEnquiry(IsAgent,View):
 
 
 class ExistingEnquiry(IsAgent,View):
-	
+
 	def get(self,request,enquiry_id):
-		
+
 		try:
 			governorates = Governorate.objects.filter(is_active=True)
 		except:
 			governorates = None
 
 
-		enquiry_user    = UserProfile.objects.get(id=enquiry_id) 
+		enquiry_user    = UserProfile.objects.get(id=enquiry_id)
 
 
 		try:
 			addresses   = Address.objects.filter(customer__id=enquiry_id)
-		except:	
+		except:
 			addresses   = None
 
 
-		enquiry_form    = UserProfileForm(request.FILES or None,instance=enquiry_user)	
-		address_form    = AddressForm()	
+		enquiry_form    = UserProfileForm(request.FILES or None,instance=enquiry_user)
+		address_form    = AddressForm()
 
 		#orders count
 		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
@@ -1595,18 +1598,18 @@ class ExistingEnquiry(IsAgent,View):
 	def post(self,request,enquiry_id):
 
 		enquiry_user    = UserProfile.objects.get(id=enquiry_id)
-		
+
 		action_mode 	= request.POST.get('action_type')
 
 		if action_mode == 'update_customer_details':
 			enquiry_form    = UserProfileForm(request.POST,request.FILES or None,instance=enquiry_user)
 
-			if enquiry_form.is_valid(): 
-				enquiry_form_save            = enquiry_form.save(commit=False)	
+			if enquiry_form.is_valid():
+				enquiry_form_save            = enquiry_form.save(commit=False)
 
 				#To Save Contact Platform
 				contact_platforms 			 = request.POST.get('contact_platform')
-				contact_platform_list 		 = contact_platforms.split(",")			
+				contact_platform_list 		 = contact_platforms.split(",")
 
 				if 'Whatsapp' in contact_platform_list:
 					enquiry_form_save.is_whatsapp = True
@@ -1623,12 +1626,12 @@ class ExistingEnquiry(IsAgent,View):
 				else:
 					enquiry_form_save.is_sms      = False
 
-				enquiry_form_save.save()			
+				enquiry_form_save.save()
 				messages.success(request,"Customer Details Succesfully updated")
 
 			else:
 				messages.error(request,get_error(enquiry_form))
-				
+
 				address_form = AddressForm()
 
 				try:
@@ -1646,11 +1649,11 @@ class ExistingEnquiry(IsAgent,View):
 				address_form_save.customer         = enquiry_user
 				address_form_save.currently_active = True
 				address_form_save.save()
-				
+
 				messages.success(request,"New Address Succesfully Added")
 
 			else:
-				messages.error(request,get_error(address_form))					
+				messages.error(request,get_error(address_form))
 
 				enquiry_form = UserProfileForm(request.FILES or None,instance=enquiry_user)
 
@@ -1674,23 +1677,23 @@ class MakeEvaluation(IsAgent,View):
 
 		#Create New Evaluation
 		new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=tracking_no+1,call_attender=request.user,customer_id=enquiry_id)
-		
+
 		return redirect('agent:agent-assignevaluator',enquiry_id,new_evaluation.id)
 
 
 class AssignEvaluator(IsAgent,View):
 	def get(self,request,enquiry_id,evaluation_id):
-				
+
 		evaluation_form 		    = EvaluationDetailsForm(enquiry_user_id=enquiry_id,evaluation_id=evaluation_id,)
 
 		#Evaluation details of each evaluator for evaluation table
 		evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
-		
+
 		try:
 			evaluation_date = datetime.strptime(evaluation_calendar_date,'%d-%m-%Y')
 		except:
 			evaluation_date = timezone.now()
-		
+
 		try:
 			evaluation_details		  = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').prefetch_related(Prefetch('evaluator_evaluation',queryset=EvaluationDetails.objects.filter(is_active=True,proposed_time__contains=evaluation_date.date()),to_attr='evaluation_details'))
 		except:
@@ -1698,7 +1701,7 @@ class AssignEvaluator(IsAgent,View):
 
 		assigned_addresses = EvaluationDetails.objects.filter(is_active=True,evaluation_id=evaluation_id).values_list('address')
 		active_addresses   = Address.objects.filter(is_active=True,customer_id=enquiry_id,currently_active=True).exclude(id__in=assigned_addresses)
-		
+
 		evaluators 		   = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
 
 		return render(request,'agent/enquiry/assign_evaluator.html',{'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'enquiryid':enquiry_id,'evaluation_id':evaluation_id,'evaluation_form':evaluation_form,"active_addresses":active_addresses,"evaluators":evaluators,})
@@ -1718,20 +1721,36 @@ class AssignEvaluator(IsAgent,View):
 			#Save Evaluation Details
 			if evaluation_form.is_valid():
 				evaluation_form_save              = evaluation_form.save(commit=False)
-				
+
 				proposed_date                     = request.POST.get('proposed_date')
 				proposed_time                     = request.POST.get('proposed_time')
 				converted_proposed_time           = datetime.strptime(proposed_date+" "+proposed_time,'%d-%m-%Y %I:%M %p')
-				
+
 				evaluation_form_save.proposed_time   = converted_proposed_time
 				evaluation_form_save.evaluation_id   = evaluation_id
 				evaluation_form_save.save()
 
 				messages.success(request,"Evaluation Details Succesfully Completed")
 
+				url = "https://www.fast2sms.com/dev/bulk"
+
+				message = "Dear Customer , We have confirmed your Evaluation Appointment. [title] "+evaluation_form_save.evaluator.name+" will be visiting you on "+str(evaluation_form_save.proposed_time)+" at  "+evaluation_form_save.address.apartment+","+evaluation_form_save.address.floor+","+evaluation_form_save.address.street+","+evaluation_form_save.address.building+","+evaluation_form_save.address.avenue+","+evaluation_form_save.address.block+","+evaluation_form_save.address.area.name+","+evaluation_form_save.address.governorate.name+". For any assistance please contact us on 999898. Thank you for choosing Bleach Kuwait."
+
+				querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"9745429692,8075965943"}
+
+				headers = {
+					'cache-control': "no-cache"
+				}
+
+				response = requests.request("GET", url, headers=headers, params=querystring)
+
+				print(response.text,"respo")
+				print(str(evaluation_form_save.proposed_time))
+				print(evaluation_form_save.evaluation.customer.mobile_number,"mobile")
+
 			else:
-				messages.error(request,get_error(evaluation_form))	
-		
+				messages.error(request,get_error(evaluation_form))
+
 		return redirect('agent:agent-assignevaluator',enquiry_id,evaluation_id)
 
 
@@ -1759,45 +1778,45 @@ class MakeQuatationBase(IsAgent,View):
 		except:
 			addresses = None
 
-		evaluation_details_array = []	
+		evaluation_details_array = []
 		for address in addresses:
 			evaluation_details_array.append(EvaluationDetails(evaluation=evaluation,address=address))
-		EvaluationDetails.objects.bulk_create(evaluation_details_array)	
+		EvaluationDetails.objects.bulk_create(evaluation_details_array)
 
-		return redirect('agent:agent-makequatation1',enquiry_id,evaluation.id)	
+		return redirect('agent:agent-makequatation1',enquiry_id,evaluation.id)
 
 class MakeQuatationPhase1(IsAgent,View):
 
 	def get(self,request,enquiry_id,evaluation_id):
 		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
-		
+
 		try:
 			evaluation = Evaluation.objects.get(id=evaluation_id)
 		except:
-			evaluation = None		
-	
+			evaluation = None
+
 		try:
 			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation)
 		except:
 			evaluation_details = None
 
-		#allow submition	
+		#allow submition
 		evaluation_details_count         = evaluation_details.count()
 		evaluation_details_completed_count= evaluation_details.filter(status='EVALUATED').count()
 		if evaluation_details_count==evaluation_details_completed_count:
 			allow_submit = True
 		else:
-			allow_submit = False	
+			allow_submit = False
 
 		#orders count
 		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
 		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
-		total_orders_count  = orders.count()				
+		total_orders_count  = orders.count()
 
-		return render(request,'agent/enquiry/phase1quatation.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,})	
+		return render(request,'agent/enquiry/phase1quatation.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,})
 
 	def post(self,request,enquiry_id,evaluation_id):
-		
+
 		payment_method 			= request.POST.get('payment_method')
 		attender_notes 			= request.POST.get('attender_notes')
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
@@ -1806,11 +1825,11 @@ class MakeQuatationPhase1(IsAgent,View):
 
 		#update payment method
 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,attender_notes=attender_notes,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
-							
-		messages.success(request,"Quatation Submitted Succesfully")		
+
+		messages.success(request,"Quatation Submitted Succesfully")
 		return redirect('agent:agentdash-board')
 
-		
+
 class MakeQuatationPhase2(IsAgent,View):
 	service_formset_define    = formset_factory(QuatationServiceForm)
 	def get(self,request,evaluation_detail_id):
@@ -1819,7 +1838,7 @@ class MakeQuatationPhase2(IsAgent,View):
 
 		try:
 			service_types = ServiceType.objects.filter(is_active=True)
-		except:	
+		except:
 			service_types = None
 
 		try:
@@ -1831,18 +1850,18 @@ class MakeQuatationPhase2(IsAgent,View):
 
 	def post(self,request,evaluation_detail_id):
 
-		service_formset       = self.service_formset_define(request.POST)		
-		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)		
+		service_formset       = self.service_formset_define(request.POST)
+		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
 
-		if service_formset.is_valid() : 
+		if service_formset.is_valid() :
 			form_count = 0
-			#create order					
-			new_order = Order.objects.get_or_create(evaluation=evaluation_details.evaluation,order_no=evaluation_details.evaluation.evaluation_id,total_amount=evaluation_details.evaluation.total_cost,remining_amount=evaluation_details.evaluation.total_cost,order_status='APPROVED_BY_CLIENT')	
-				
+			#create order
+			new_order = Order.objects.get_or_create(evaluation=evaluation_details.evaluation,order_no=evaluation_details.evaluation.evaluation_id,total_amount=evaluation_details.evaluation.total_cost,remining_amount=evaluation_details.evaluation.total_cost,order_status='APPROVED_BY_CLIENT')
+
 			order_schedule_array          = []
 			#Save Service Form
 			for service_form in service_formset:
-				
+
 				if service_form.is_valid():
 					service_form_save 					    = service_form.save(commit=False)
 					service_form_save.evaluation_details_id = evaluation_detail_id
@@ -1854,12 +1873,12 @@ class MakeQuatationPhase2(IsAgent,View):
 					if not medias==['']:
 						for media in medias:
 							EvaluationMedia.objects.create(
-							        evaluation_book=service_form_save,
-							        media=media,
-							        )
+									evaluation_book=service_form_save,
+									media=media,
+									)
 
 					#for updating cost details in evaluation details
-					cost     = int(request.POST.get('form-'+str(form_count)+'-estimated_cost')) 
+					cost     = int(request.POST.get('form-'+str(form_count)+'-estimated_cost'))
 					discount = int(request.POST.get('form-'+str(form_count)+'-discount'))
 					total    = int(request.POST.get('form-'+str(form_count)+'-total_cost'))
 
@@ -1873,23 +1892,23 @@ class MakeQuatationPhase2(IsAgent,View):
 						tendative_dates = request.POST.get('form-'+str(form_count)+'-tendative_dates').split(',')
 						for date in tendative_dates:
 							start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
-							end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours)) 
-							order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))	
-							
+							end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
+							order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))
+
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
 						updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)
 					else:
-						tendative_date  = request.POST.get('form-'+str(form_count)+'-tendative_date')	
-						
+						tendative_date  = request.POST.get('form-'+str(form_count)+'-tendative_date')
+
 						start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
 						end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
 						order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))
-						
+
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
-						updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)	
-					
+						updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)
+
 					#to save sections
 					no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))
 					section_array          = []
@@ -1910,7 +1929,7 @@ class MakeQuatationPhase2(IsAgent,View):
 						material      = request.POST.get('form'+str(form_count)+'_material'+str(i))
 						colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
 						cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
-						
+
 						#save section
 						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
 
@@ -1919,7 +1938,7 @@ class MakeQuatationPhase2(IsAgent,View):
 							no_of_keynotes = int(request.POST.get('form'+str(form_count)+'_section'+str(i)+'-keynote_counter'))
 						except:
 							no_of_keynotes = None
-							
+
 						keynote_array = []
 						if no_of_keynotes:
 							for j in range(no_of_keynotes):
@@ -1927,8 +1946,8 @@ class MakeQuatationPhase2(IsAgent,View):
 								quantity= request.POST.get('form'+str(form_count)+'_section'+str(i)+'_quantity'+str(j))
 								keynote_array.append(EvaluationSectionKeynote(evaluation_section=section,sub_area=keynote,quantity=quantity))
 							#bulk_create keynote
-							EvaluationSectionKeynote.objects.bulk_create(keynote_array)	
-					
+							EvaluationSectionKeynote.objects.bulk_create(keynote_array)
+
 					form_count = form_count+1
 			#bulk_create order schedules
 			now = timezone.now()
@@ -1943,7 +1962,7 @@ class MakeQuatationPhase2(IsAgent,View):
 
 			try:
 				service_types = ServiceType.objects.filter(is_active=True)
-			except:	
+			except:
 				service_types = None
 
 			try:
@@ -1951,7 +1970,7 @@ class MakeQuatationPhase2(IsAgent,View):
 			except:
 				area_types = None
 
-			return render(request,'agent/enquiry/phase2quatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,'area_types':area_types,'service_types':service_types,})	
+			return render(request,'agent/enquiry/phase2quatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,'area_types':area_types,'service_types':service_types,})
 
 		return redirect('agent:agent-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
 	
@@ -2008,10 +2027,10 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 	def get(self,request,evaluation_detail_id):
 
 		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationbookmedias'),Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')).get(is_active=True,id=evaluation_detail_id)
-		
+
 		try:
 			service_types = ServiceType.objects.filter(is_active=True)
-		except:	
+		except:
 			service_types = None
 
 		try:
@@ -2027,15 +2046,15 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 		return render(request,'agent/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
 
 	def post(self,request,evaluation_detail_id):
-		
-		evaluation_details 	  = EvaluationDetails.objects.select_related('evaluation__customer','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationbookmedias'),Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')).get(is_active=True,id=evaluation_detail_id)		
+
+		evaluation_details 	  = EvaluationDetails.objects.select_related('evaluation__customer','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationbookmedias'),Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')).get(is_active=True,id=evaluation_detail_id)
 		service_formset       = self.service_formset_store(request.POST)
-		
-		if service_formset.is_valid() : 
+
+		if service_formset.is_valid() :
 			form_count = 0
-			#old order update					
-			old_order = Order.objects.get(evaluation=evaluation_details.evaluation)	
-				
+			#old order update
+			old_order = Order.objects.get(evaluation=evaluation_details.evaluation)
+
 			order_schedule_array          = []
 			#Save Service Form
 			for service_form in service_formset:
@@ -2043,22 +2062,22 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 					old_form_id                                 = request.POST.get('editform'+str(form_count))
 					if old_form_id:
 						old_form_id								= int(old_form_id)
-						very_old_book                           = EvaluationBook.objects.get(id=old_form_id)		                   
-						
+						very_old_book                           = EvaluationBook.objects.get(id=old_form_id)
+
 						#update book
 						EvaluationBook.objects.filter(id=service_form['id'].value()).update(cleaning_policy=service_form['cleaning_policy'].value(),service_type=service_form['service_type'].value(),area_type=service_form['area_type'].value(),cleaning_method=service_form['cleaning_method'].value(),location_type=service_form['location_type'].value(),number_of_cleaners=service_form['number_of_cleaners'].value(),estimated_cost=service_form['estimated_cost'].value(),discount=service_form['discount'].value(),total_cost=service_form['total_cost'].value(),cleaning_hours=service_form['cleaning_hours'].value(),evaluator_note=service_form['evaluator_note'].value())
-						
+
 						#To Save Media
 						medias = request.FILES.getlist('newform-'+str(form_count)+'-media')
 						if not medias==['']:
 							for media in medias:
 								EvaluationMedia.objects.create(
-								        evaluation_book_id=old_form_id,
-								        media=media,
-								        )
+										evaluation_book_id=old_form_id,
+										media=media,
+										)
 
 						#for updating cost details in evaluation details and evaluation
-						cost     = float(request.POST.get('form-'+str(form_count)+'-estimated_cost')) 
+						cost     = float(request.POST.get('form-'+str(form_count)+'-estimated_cost'))
 						discount = float(request.POST.get('form-'+str(form_count)+'-discount'))
 						total    = float(request.POST.get('form-'+str(form_count)+'-total_cost'))
 
@@ -2073,15 +2092,15 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 							tendative_dates = request.POST.get('form-'+str(form_count)+'-tendative_dates').split(',')
 							for date in tendative_dates:
 								start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
-								end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours)) 
-								order_schedule_array.append(OrderScheduler(order=old_order,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))	
-								
+								end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
+								order_schedule_array.append(OrderScheduler(order=old_order,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))
+
 
 							updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total,status='EVALUATED')
 							updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total)
 						else:
-							tendative_date  = request.POST.get('form-'+str(form_count)+'-tendative_date')	
-							
+							tendative_date  = request.POST.get('form-'+str(form_count)+'-tendative_date')
+
 							start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
 							end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
 							order_schedule_array.append(OrderScheduler(order=old_order,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))
@@ -2091,7 +2110,7 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 							updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total)
 
 						#to save and update sections
-						no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))		
+						no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))
 						section_array          = []
 						for i in range(no_of_sections):
 							section_name  = request.POST.get('form'+str(form_count)+'_section'+str(i))
@@ -2110,12 +2129,12 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 							material      = request.POST.get('form'+str(form_count)+'_material'+str(i))
 							colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
 							cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
-							
-							old_section_id=request.POST.get('editform'+str(form_count)+'_section'+str(i)) 
+
+							old_section_id=request.POST.get('editform'+str(form_count)+'_section'+str(i))
 							if old_section_id:
 								#edit section
 								section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
-							else: 
+							else:
 								#save section
 								section = EvaluationBookSection.objects.create(evaluation_book=old_book,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
 
@@ -2135,17 +2154,17 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 
 									if old_keynote_id:
 										EvaluationSectionKeynote.objects.filter(id=old_keynote_id).update(id=old_keynote_id,sub_area=keynote,quantity=quantity)
-									else:	
+									else:
 										if old_section_id and keynote and quantity:
 											old_section = EvaluationBookSection.objects.get(id=old_section_id)
 											keynote_array.append(EvaluationSectionKeynote(evaluation_section=old_section,sub_area=keynote,quantity=quantity))
 										elif keynote and quantity:
 											keynote_array.append(EvaluationSectionKeynote(evaluation_section=section,sub_area=keynote,quantity=quantity))
 								#bulk_create keynote
-								EvaluationSectionKeynote.objects.bulk_create(keynote_array)	
-						
+								EvaluationSectionKeynote.objects.bulk_create(keynote_array)
+
 				form_count = form_count+1
-			
+
 			#delete old order schedules
 			OrderScheduler.objects.filter(order=old_order).delete()
 
@@ -2160,7 +2179,7 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 
 			try:
 				service_types = ServiceType.objects.filter(is_active=True)
-			except:	
+			except:
 				service_types = None
 
 			try:
@@ -2172,8 +2191,8 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 				cleaning_sections = CleaningSection.objects.filter(is_active=True)
 			except:
 				cleaning_sections = None
-			
-			return render(request,'agent/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})	
+
+			return render(request,'agent/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
 
 		return redirect('agent:agent-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
 
@@ -2182,7 +2201,7 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 
 class AddFeedBack(IsAgent,View):
 	def get(self,request):
-		
+
 		try:
 			orders = Order.objects.filter(is_active=True,is_feedback_marked=False,payment_status='COMPLETED')
 		except:
@@ -2191,8 +2210,8 @@ class AddFeedBack(IsAgent,View):
 		try:
 			questions = Question.objects.filter(is_active=True).order_by('id')
 		except:
-			questions = None		
-			
+			questions = None
+
 		return render(request,'agent/feedback/add-feedback.html',{'orders':orders,"questions":questions})
 
 	def post(self,request):
@@ -2211,7 +2230,7 @@ class AddFeedBack(IsAgent,View):
 		try:
 			questions = Question.objects.filter(is_active=True).order_by('id')
 		except:
-			questions = None		
+			questions = None
 
 		create_feedbacks = []
 		if order:
@@ -2221,11 +2240,11 @@ class AddFeedBack(IsAgent,View):
 				create_feedbacks.append(FeedBack(order=order,question=question,rating=rating,response_date=timezone.now()))
 			FeedBack.objects.bulk_create(create_feedbacks)
 
-			messages.success(request,"Feedback Succesfully Submitted")		
+			messages.success(request,"Feedback Succesfully Submitted")
 		else:
 			messages.error(request,'Please Select a BLC Number')
 
-		return redirect('agent:new-feedback')	
+		return redirect('agent:new-feedback')
 
 class TicketRegistration(IsAgent,View):
 	def get(self,request):
@@ -2236,8 +2255,8 @@ class TicketRegistration(IsAgent,View):
 			orders = None
 
 		investigators = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='EVALUATOR')|Q(user_type='SENIORTEAMLEADER')|Q(user_type='TEAMLEADER'))))
-		
-		return render(request,'agent/ticket/ticket_registration.html',{'orders':orders,'investigators':investigators})		
+
+		return render(request,'agent/ticket/ticket_registration.html',{'orders':orders,'investigators':investigators})
 
 	def post(self,request):
 		order_id           = request.POST.get('order_id')
@@ -2245,13 +2264,13 @@ class TicketRegistration(IsAgent,View):
 		investigation_medias = request.FILES.getlist('investigation_media')
 
 		investigation_form = InvestigationForm(request.POST)
-		
-		if investigation_form.is_valid(): 
-			investigation_form_save            = investigation_form.save(commit=False)	
+
+		if investigation_form.is_valid():
+			investigation_form_save            = investigation_form.save(commit=False)
 			investigation_form_save.assigned_by= request.user
 			investigation_form_save.order_id   = order_id
 			investigation_form_save.save()
-				
+
 			if not investigation_medias == ['']:
 				for image in investigation_medias:
 					InvestigationMedia.objects.create(
@@ -2262,12 +2281,12 @@ class TicketRegistration(IsAgent,View):
 					)
 
 			FollowUp.objects.create(investigation=investigation_form_save,status='TICKET_RISED')
-					
+
 			messages.success(request,"Ticket Raised Succesfully!")
 		else:
 			messages.error(request,get_error(investigation_form))
 
-		return redirect('agent:agent-ticketregister')		
+		return redirect('agent:agent-ticketregister')
 
 #ajax for client chart
 def ClientData(request):
@@ -2276,7 +2295,7 @@ def ClientData(request):
 	dom = request.GET.get('dom',None)
 	prevdate = request.GET.get('fromdate',None)
 	todate  = request.GET.get('todate', None)
-	print(prevdate,todate,"bhu") 
+	print(prevdate,todate,"bhu")
 	governorates = Governorate.objects.filter(is_active=True)
 
 	if dom == 'Month':
@@ -2284,15 +2303,15 @@ def ClientData(request):
 		month,year = prevdate.split("/")
 		month2,year2 = todate.split("/")
 		print(month,year,month2,year2,"mko")
-		
+
 		try:
 			for governorate in governorates:
 				#change date field from evaluation date to order created date
-				client_count = Order.objects.filter(evaluation__customer__address_customer__governorate__id=governorate.id, evaluation__quatation_approved_date__year__range=(year,year2), evaluation__quatation_approved_date__month__range=(month,month2)).values_list('evaluation__customer').distinct().count()
-				
+				client_count = Order.objects.filter(is_active=True,evaluation__customer__address_customer__governorate__id=governorate.id, evaluation__quatation_approved_date__year__range=(year,year2), evaluation__quatation_approved_date__month__range=(month,month2)).values_list('evaluation__customer').distinct().count()
+
 				data.append({
 					"governorate" : governorate.name,
-					"clients"	: client_count,
+					"clients"	: client_count or 0,
 					})
 		except:
 			governorates = None
@@ -2308,7 +2327,7 @@ def ClientData(request):
 			print("jn")
 			for governorate in governorates:
 				#change date field from evaluation date to order created date
-				client_count = Order.objects.filter(evaluation__customer__address_customer__governorate__id=governorate.id, evaluation__quatation_approved_date__range=(prevdate,todate)).values_list('evaluation__customer').distinct().count()
+				client_count = Order.objects.filter(is_active=True,evaluation__customer__address_customer__governorate__id=governorate.id, evaluation__quatation_approved_date__range=(prevdate,todate)).values_list('evaluation__customer').distinct().count()
 				print(client_count,"red")
 				data.append({
 					"governorate" : governorate.name,
@@ -2317,159 +2336,164 @@ def ClientData(request):
 			print(data,"rgn")
 		except:
 			governorates = None
-		
+
 	return JsonResponse(data,safe=False)
 
 #ajax for ticket chart
 def TicketData(request):
-    data = []
-    dom = request.GET.get('dom', None)
-    prevdate  = request.GET.get('fromdate', None)
-    todate  = request.GET.get('todate', None)
-    print(dom,prevdate,todate,"pop")
-    if dom == 'Month':
-        print("kabir")
-        month,year = prevdate.split("/")
-        month2,year2 = todate.split("/")
-        
-        print(month,year,month2,year2,"mko")
+	data = []
+	dom = request.GET.get('dom', None)
+	prevdate  = request.GET.get('fromdate', None)
+	todate  = request.GET.get('todate', None)
+	print(dom,prevdate,todate,"pop")
+	if dom == 'Month':
+		print("kabir")
+		month,year = prevdate.split("/")
+		month2,year2 = todate.split("/")
 
-        tickets = FollowUp.objects.filter(investigation__order__evaluation__quatation_approved_date__year__gte=year, 
+		print(month,year,month2,year2,"mko")
+
+		tickets = FollowUp.objects.filter(is_active=True,investigation__order__evaluation__quatation_approved_date__year__gte=year,
 								investigation__order__evaluation__quatation_approved_date__month__gte=month,
 								investigation__order__evaluation__quatation_approved_date__year__lte=year2,
-								investigation__order__evaluation__quatation_approved_date__month__lte=month2).values('investigation__order__evaluation__quatation_approved_date').distinct().order_by('investigation__order__evaluation__quatation_approved_date')
+								investigation__order__evaluation__quatation_approved_date__month__lte=month2).values('investigation__order__evaluation__quatation_approved_date').annotate(month=Month('investigation__order__evaluation__quatation_approved_date'),).values('month').annotate(count=Count('pk'))
 
-        print(tickets,"po")
-        for tkt in tickets:
-            total_tickets = FollowUp.objects.filter(investigation__order__evaluation__quatation_approved_date=tkt['investigation__order__evaluation__quatation_approved_date']).count()
-            followup_tickets = FollowUp.objects.filter(status='FOLLOWUP_CLOSED',investigation__order__evaluation__quatation_approved_date=tkt['investigation__order__evaluation__quatation_approved_date']).count()
-            print(total_tickets,followup_tickets,"huy")
-            tkt_dict = {
-			"date" : tkt['investigation__order__evaluation__quatation_approved_date'],
+		print(tickets,"po")
+		for tkt in tickets:
+			followup_tickets = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_CLOSED',investigation__order__evaluation__quatation_approved_date__year__gte=year,
+								investigation__order__evaluation__quatation_approved_date__month__gte=month,
+								investigation__order__evaluation__quatation_approved_date__year__lte=year2,
+								investigation__order__evaluation__quatation_approved_date__month__lte=month2).values('investigation__order__evaluation__quatation_approved_date').annotate(month=Month('investigation__order__evaluation__quatation_approved_date'),).values('month').annotate(count=Count('pk'))
+			print(followup_tickets,"huy")
+
+			followup_count = 0
+			for followup in followup_tickets:
+				if followup['month'] == tkt['month']:
+					followup_count = followup['count']
+
+			tkt_dict = {
+			"date" : tkt['month'],
+			"total" : tkt['count'],
+			"followup" : followup_count
+			}
+			data.append(tkt_dict)
+	else:
+		print("kab")
+		try:
+			prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+			todate = datetime.strptime(todate, '%Y-%m-%d')
+		except:
+			todate = date.today() - timedelta(days=1)
+			prevdate = todate - timedelta(days=30)
+		print(prevdate,todate,"testdt")
+		daterange = pd.date_range(prevdate, todate)
+
+		for single_date in daterange:
+			sdate = single_date.strftime("%Y-%m-%d")
+			total_tickets = FollowUp.objects.filter(is_active=True,investigation__order__evaluation__quatation_approved_date=sdate).count()
+			followup_tickets = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_CLOSED',investigation__order__evaluation__quatation_approved_date=sdate).count()
+			print(sdate,total_tickets,followup_tickets,"qtc")
+			tkt_dict = {
+			"date" : sdate,
 			"total" : total_tickets,
 			"followup" : followup_tickets
 			}
-            data.append(tkt_dict)
-    else:
-        print("kab")
-        try:
-            prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
-            todate = datetime.strptime(todate, '%Y-%m-%d')
-        except:
-            todate = date.today() - timedelta(days=1)
-            prevdate = todate - timedelta(days=30)
-        print(prevdate,todate,"testdt")
-        daterange = pd.date_range(prevdate, todate)
-    
-        for single_date in daterange:
-            sdate = single_date.strftime("%Y-%m-%d")
-            total_tickets = FollowUp.objects.filter(investigation__order__evaluation__quatation_approved_date=sdate).count()
-            followup_tickets = FollowUp.objects.filter(status='FOLLOWUP_CLOSED',investigation__order__evaluation__quatation_approved_date=sdate).count()
-            print(sdate,total_tickets,followup_tickets,"qtc")
-            tkt_dict = {
-            "date" : sdate,
-            "total" : total_tickets,
-            "followup" : followup_tickets
-            }
-            data.append(tkt_dict)
-    return JsonResponse(data,safe=False)
+			data.append(tkt_dict)
+	return JsonResponse(data,safe=False)
 
 #ajax for feedback chart
 def FeedBackData(request):
-    data = []
-    dom = request.GET.get('dom', None)
-    prevdate  = request.GET.get('fromdate', None)
-    todate  = request.GET.get('todate', None)
-    print(dom,prevdate,todate,"pop")
-    if dom == 'Month':
-        print("kabir")
-        month,year = prevdate.split("/")
-        month2,year2 = todate.split("/")
-        
-        print(month2,year2,"mko")
-        feedbacks = FeedBack.objects.filter(response_date__year__gte=year, 
-								response_date__month__gte=month,
-								response_date__year__lte=year2,
-								response_date__month__lte=month2).values('response_date').distinct().order_by('-response_date')
-        print(feedbacks,"huh")
-        for fb in feedbacks:
-            print(fb['response_date'].strftime("%Y-%m-%d"),"fb")
-            total_feedbacks = FeedBack.objects.filter(response_date=fb['response_date']).count()
-            
-            fb_dict = {
-            "date" : fb['response_date'],
-            "total" : total_feedbacks,
-            # "rating" : fb.rating
-            }
-            data.append(fb_dict)
-    else:
-        print("kab")
-        try:
-            prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
-            todate = datetime.strptime(todate, '%Y-%m-%d')
-        except:
-            todate = date.today() - timedelta(days=1)
-            prevdate = todate - timedelta(days=30)
-        print(prevdate,todate,"testdt")
-        daterange = pd.date_range(prevdate, todate)
-    
-        for single_date in daterange:
-            sdate = single_date.strftime("%Y-%m-%d")
-            fback = FeedBack.objects.filter(response_date=sdate)
-            total_feedbacks = fback.count()
-            
-            print(sdate,total_feedbacks,"qtc")
-            
-            for fb in fback:
-                fb_dict = {
-				"date" : sdate,
-				"total" : total_feedbacks,
-				"rating" : fb.rating
-				}
-                data.append(fb_dict)
-    return JsonResponse(data,safe=False)
+	data = []
+	dom = request.GET.get('dom', None)
+	prevdate  = request.GET.get('fromdate', None)
+	todate  = request.GET.get('todate', None)
+	print(dom,prevdate,todate,"pop")
+	if dom == 'Month':
+		print("kabir")
+		month,year = prevdate.split("/")
+		month2,year2 = todate.split("/")
+
+		print(month2,year2,"mko")
+		feedbacks = FeedBack.objects.filter(is_active=True,order__evaluation__quatation_approved_date__year__gte=year,
+								order__evaluation__quatation_approved_date__month__gte=month,
+								order__evaluation__quatation_approved_date__year__lte=year2,
+								order__evaluation__quatation_approved_date__month__lte=month2).values('order__evaluation__quatation_approved_date').annotate(month=Month('order__evaluation__quatation_approved_date'),).values('month').annotate(avg_rating=Avg('rating'))
+		print(feedbacks,"huh")
+		
+		for fb in feedbacks:
+			print(fb['month'],fb['avg_rating'],"fb")
+
+			fb_dict = {
+			"date" : fb['month'],
+			"avg_rating" : fb['avg_rating'] or 0,
+			}
+			data.append(fb_dict)
+	else:
+		print("kab")
+		try:
+			prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+			todate = datetime.strptime(todate, '%Y-%m-%d')
+		except:
+			todate = date.today() - timedelta(days=1)
+			prevdate = todate - timedelta(days=30)
+		print(prevdate,todate,"testdt")
+		daterange = pd.date_range(prevdate, todate)
+
+		for single_date in daterange:
+			sdate = single_date.strftime("%Y-%m-%d")
+			feedback_date = FeedBack.objects.filter(is_active=True,order__evaluation__quatation_approved_date=sdate).aggregate(avg_rate=Avg('rating'))['avg_rate'] #use order date for final commit
+
+			print(sdate,feedback_date,"qtc")
+
+			fb_dict = {
+			"date" : sdate,
+			"avg_rating" : feedback_date or 0
+			}
+			data.append(fb_dict)
+		print(data,"touche")
+	return JsonResponse(data,safe=False)
 
 def ResourcesToggle(request):
-    data = dict()
-    month_year = request.GET.get('month_year',None)
-    month,year = month_year.split("/")
-    print(month,year,"monthyr")
-    staff_type = request.GET.get('staff_type',None)
-    print(staff_type)
-    
-    search = request.GET.get('search',None)
-    
-    try:
-        if staff_type:
-            workers =  UserProfile.objects.filter(is_active=True).filter(user_type=staff_type)
-        elif search:
-            workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))&Q(name__icontains=search))
-        else:
-            workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
-    except:
-        workers =  None
-    print(workers,"lp")
-    # try:
-    workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__year__gte=year,start_at__month__gte=month)&Q(start_at__year__lte=year,start_at__month__lte=month))|Q(Q(end_at__year__gte=year,end_at__month__gte=month)&Q(end_at__year__lte=year,end_at__month__lte=month))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__year__gte=year,start_at__month__gte=month)&Q(start_at__year__lte=year,start_at__month__lte=month))|Q(Q(end_at__year__gte=year,end_at__month__gte=month)&Q(end_at__year__lte=year,end_at__month__lte=month))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
-    # except:
-    #     workers_details = None
-    print(workers_details,"wok")   
-    data['html_workers_list'] = render_to_string('agent/resource/resource-month.html', {'workers_details_month':workers_details})
-    return JsonResponse(data)
+	data = dict()
+	month_year = request.GET.get('month_year',None)
+	month,year = month_year.split("/")
+	print(month,year,"monthyr")
+	staff_type = request.GET.get('staff_type',None)
+	print(staff_type)
+
+	search = request.GET.get('search',None)
+
+	try:
+		if staff_type:
+			workers =  UserProfile.objects.filter(is_active=True).filter(user_type=staff_type)
+		elif search:
+			workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))&Q(name__icontains=search))
+		else:
+			workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
+	except:
+		workers =  None
+	print(workers,"lp")
+	# try:
+	workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__year__gte=year,start_at__month__gte=month)&Q(start_at__year__lte=year,start_at__month__lte=month))|Q(Q(end_at__year__gte=year,end_at__month__gte=month)&Q(end_at__year__lte=year,end_at__month__lte=month))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__year__gte=year,start_at__month__gte=month)&Q(start_at__year__lte=year,start_at__month__lte=month))|Q(Q(end_at__year__gte=year,end_at__month__gte=month)&Q(end_at__year__lte=year,end_at__month__lte=month))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
+	# except:
+	#     workers_details = None
+	print(workers_details,"wok")
+	data['html_workers_list'] = render_to_string('agent/resource/resource-month.html', {'workers_details_month':workers_details})
+	return JsonResponse(data)
 
 def ResourcesFilter(request):
-    staff_type = request.GET.get('')
-    try:
-     	workers =  UserProfile.objects.filter(is_active=True).filter(user_type=staff_type)
-    except:
-        workers =  None
-	
-	
-    return JsonResponse()
+	staff_type = request.GET.get('')
+	try:
+	 	workers =  UserProfile.objects.filter(is_active=True).filter(user_type=staff_type)
+	except:
+		workers =  None
+
+
+	return JsonResponse()
 
 # def emailview(request):
 # 	send_mail('Using SparkPost with Django', 'This is a message from Django using SparkPost!', 'django-sparkpost@sparkpostbox.com',
 #     ['rangeenkmr043@gmail.com'], fail_silently=False)
-	
+
 # 	return redirect('agent:agentdash-board')
 

@@ -66,14 +66,9 @@
             <h4>Sales on Types of locations</h4>
  
             <div id="donutchart1"></div>
-            <div class="right-legend-chart donut1" hidden><!--right-legend-chart-->
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Apartment</div><span id="loc1">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">House</div><span id="loc2">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-orange-spot" aria-hidden="true"></i> <div class="chart-stat">Villa</div><span id="loc3">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-green-spot" aria-hidden="true"></i> <div class="chart-stat">Office</div><span id="loc4">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-cyan-spot" aria-hidden="true"></i> <div class="chart-stat">Gym</div><span id="loc5">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Restaurant</div><span id="loc6">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">Coffee Shop</div><span id="loc7">0</span></div>
+            <div class="loader" id="location_loader"></div>
+            <div class="right-legend-chart donut1" id="legend_location"><!--right-legend-chart-->
+            
             </div><!--right-legend-chart-->
             <div class="chart-btnWrapper chart-menudot"><span class="chart-toggle1">...</span></div>
             <div class="toggle-content" id="example1" style="display:none;"><!--toggle-content-->
@@ -107,13 +102,9 @@
             <div class="three-fluid-column three-fluid-two"><!--three-fluid-column three-fluid-two-->
             <h4>Sales on Types of Cleaning</h4>
             <div id="donutchart2"></div>
-            <div class="right-legend-chart donut2" hidden><!--right-legend-chart-->
-            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">General Cleaning</div><span id="c1">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Upholstery Cleaning</div><span id="c2">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-orange-spot" aria-hidden="true"></i> <div class="chart-stat">Carpet Cleaning</div><span id="c3">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-green-spot" aria-hidden="true"></i> <div class="chart-stat">Sanitization Services</div><span id="c4">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-cyan-spot" aria-hidden="true"></i> <div class="chart-stat">Mattress</div><span id="c5">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Deep Cleaning</div><span id="c6">0</span></div>
+            <div class="loader" id="cleaning_loader"></div>
+            <div class="right-legend-chart donut2" id="legend_cleaning"><!--right-legend-chart-->
+            
             </div><!--right-legend-chart-->
             <div class="chart-btnWrapper chart-menudot"><span class="chart-toggle2" href="#example2">...</span></div>
             <div class="toggle-content" id="example2" style="display:none;"><!--toggle-content-->
@@ -145,13 +136,9 @@
             <div class="three-fluid-column three-fluid-three"><!--three-fluid-column three-fluid-three-->
             <h4>Sales on Governerates</h4>
             <div id="donutchart3"></div>
-            <div class="right-legend-chart donut3" hidden><!--right-legend-chart-->
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Al Asimah</div><span id="gov1">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-blue-spot" aria-hidden="true"></i> <div class="chart-stat">Hawalli</div><span id="gov2">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-orange-spot" aria-hidden="true"></i> <div class="chart-stat">Farwaniya</div><span id="gov3">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-green-spot" aria-hidden="true"></i> <div class="chart-stat">Mubarak Al-Kabeer</div><span id="gov4">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-cyan-spot" aria-hidden="true"></i> <div class="chart-stat">Ahmadi</div><span ><span id="gov5">0</span></div>
-            <div class="donut-char-legend"><i class="fa fa-square chart-red-spot" aria-hidden="true"></i> <div class="chart-stat">Jahra</div><span ><span id="gov6">0</span></div>
+            <div class="loader" id="governorate_loader"></div>
+            <div class="right-legend-chart donut3" id="legend_governorate"><!--right-legend-chart-->
+            
             </div><!--right-legend-chart-->
             <div class="chart-btnWrapper chart-menudot"><span class="chart-toggle3" href="#example3">...</span></div>
             <div class="toggle-content" id="example3" style="display:none;"><!--toggle-content-->
@@ -200,9 +187,6 @@
             </div><!--date-wrapper-inner-->
             <div class="date-togglewrapper"><!--date-togglewrapper-->
             <div class="Button_wrapperChart">
-            <!-- <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daym"><div class="slider round"></div></label></div>
-           <input type="text" id="ord_fromdate" class="date_pick date-picker set1 date-pick-left" value={{investigation_date|date:"d-m-Y"}} >
-            <input type="text" id="ord_todate" class="date_pick date-picker set1 date-pick-right" value={{investigation_date|date:"d-m-Y"}} >-->
     
             </div>
             </div><!--date-togglewrapper-->
@@ -234,7 +218,7 @@
                 </div><!--bar-chart-items chart-column-three-->
                 
                 <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
-                     <a class="followup_graph"><input name="Follow" type="button" class="follow" onclick="salestarget({{evaluator.id}});" value="Follow"> </a> 
+                     <a class="followup_graph" data-evaluator="{{evaluator.name}}"><input name="Follow" type="button" class="follow" onclick="salestarget({{evaluator.id}});" value="Follow"> </a> 
                 </div><!--bar-chart-items chart-column-four-->
                 
             </div><!--bar-chart-->        
@@ -242,6 +226,9 @@
             
     </div><!--two-col-fluid-left two-col-fluid-boxes--> 
     <div class="two-col-fluid-right two-col-fluid-boxes"><!--two-col-fluid-right two-col-fluid-boxes-->
+        <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
+        <h2 class="h2">Overall Sales</h2>
+        </div>
         <div class="chart_boxDiv"><!--chart_boxDiv-->
         <div class="chart_box_Right"><!--chart_box_Right-->
                 <!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
@@ -253,8 +240,8 @@
         
          <div class="chart_box_Left"><!--chart_box_Left-->
          <div class="legend-wrapper"><!--legend-wrapper--> 
-            <div class="legend-result count_div"><label class="legend-label">SALES </label> <b class="legend-result-blue" id="total_sales"></b></div>
-            <div class="legend-result count_div"><label class="legend-label">ORDERS </label> <b class="legend-result-red" id="total_orders"></b></div>
+            <div class="legend-result count_div"><label class="legend-label">SALES </label> <b class="legend-result-blue" id="total_sales">0</b></div>
+            <div class="legend-result count_div"><label class="legend-label">ORDERS </label> <b class="legend-result-red" id="total_orders">0</b></div>
          </div><!--legend-wrapper-->
         </div><!--chart_box_Left-->
         
@@ -262,8 +249,8 @@
         <div class="Button_wrapperChart">
             <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonth_sales"><div class="slider round"><span class="on">DATE</span><span class="off">MONTH</span></div></label></div>
 
-            <input type="text" id="sales_curve_date1" class="date_pick txt-box saleset1" >
-            <input type="text" id="sales_curve_date2" class="date_pick txt-box saleset1" >
+            <input type="text" id="sales_curve_date1" class="date_pick txt-box saleset1" hidden>
+            <input type="text" id="sales_curve_date2" class="date_pick txt-box saleset1" hidden>
 
             <input type="text" id="sales_curve_month1" class="month_pick txt-box saleset2" >
             <input type="text" id="sales_curve_month2" class="month_pick txt-box saleset2" >
@@ -443,6 +430,9 @@
         <div class="modal-body no-padding"><!--modal-body-->        
             <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
                 <div class="clients-card-column clients-column-right"><!--clients-card-column clients-column-right-->
+                    <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
+                    <h2 class="h2"><b class="evaluatorname">runn</b></h2>
+                    </div>
                     <div class="chart_boxDiv"><!--chart_boxDiv-->
                         <div class="chart_box_Right"><!--chart_box_Right-->
                             <!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
@@ -453,8 +443,8 @@
                     <div class="chart_boxDiv"><!--chart_boxDiv-->    
                         <div class="chart_box_Left"><!--chart_box_Left-->
                                 <div class="legend-wrapper"><!--legend-wrapper--> 
-                                    <div class="legend-result count_div"><label class="legend-label">SALES </label> <b class="legend-result-blue" id="total_sales2"></b></div>
-                                    <div class="legend-result count_div"><label class="legend-label">ORDERS </label> <b class="legend-result-red" id="total_orders2"></b></div>
+                                    <div class="legend-result count_div"><label class="legend-label">SALES </label> <b class="legend-result-blue" id="total_sales2">0.00</b></div>
+                                    <div class="legend-result count_div"><label class="legend-label">ORDERS </label> <b class="legend-result-red" id="total_orders2">0.00</b></div>
                                 </div><!--legend-wrapper-->
                             </div><!--chart_box_Left-->
                             
@@ -465,7 +455,7 @@
             <input type="text" id="sales_target_date2" class="followup_date targetset1 txt-box" >
             <input type="text" id="sales_target_month1" class="followup_month targetset2 txt-box" >&nbsp;
             <input type="text" id="sales_target_month2" class="followup_month targetset2 txt-box" >
-            <div><button id="reset_orders" class="green-button-chart">Reset</button></div>
+            <div><button id="reset_sales_target" class="green-button-chart">Reset</button></div>
               
             </div>
                        
@@ -879,7 +869,8 @@
 {% endblock %}
 {% block javascript %}
 <script src="{% static 'files/js/charts/sales-pie-charts.js' %}"></script>
-{% comment %} <script src="{% static 'files/js/charts/order-chart.js' %}"></script> {% endcomment %}
+<script src="{% static 'files/js/charts/overall-sales-chart.js' %}"></script>
+<script src="{% static 'files/js/charts/sales-target-chart.js' %}"></script>
 <script type="text/javascript">
 
 // sales target calculation
@@ -1324,6 +1315,8 @@ $('document').ready(function(){
   
   //Followup graph popup
   $('.followup_graph').on('click', function (e) {
+    console.log($(this).data('evaluator'),"drt")
+      $('.evaluatorname').text($(this).data('evaluator'));
       $('.followup_date').datetimepicker({ 
           pickTime: false, 
           format: "DD-MM-YYYY", 

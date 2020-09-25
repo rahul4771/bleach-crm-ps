@@ -19,7 +19,7 @@ $(window).ready(function() {
 });
 
 
-// date_pick   
+//date_pick   
 $(function () {
   $('.date_pick').datetimepicker({ 
     pickTime: false, 
@@ -28,6 +28,26 @@ $(function () {
   });
 });
 
+$(function () {
+  var today = new Date();
+  $('.date_pick_today').datetimepicker({
+      pickTime: false, 
+      format: 'DD-MM-YYYY',
+      autoclose:true,
+      endDate: "today",
+      maxDate: today
+  }).on('changeDate', function (ev) {
+          $(this).datetimepicker('hide');
+      });
+
+
+  // $('.date_pick').keyup(function () {
+  //   console.log("runo")
+  //     if (this.value > now().date()) {
+  //         this.value = this.value.replace('');
+  //     }
+  // });
+});
 
 //time pick
 //tendative time initial
@@ -49,9 +69,11 @@ $(function () {
 $('.month_pick').datepicker({
   format: "mm/yyyy",
   startView: "year", 
-  minViewMode: "months"
-}
-);
+  minViewMode: "months",
+  autoclose:true,
+}).on('changeDate', function (ev) {
+  $(this).datepicker('hide');
+});
 
 //New Date picker
    $('.next-day').on('click', function () {

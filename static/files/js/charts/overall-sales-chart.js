@@ -8,7 +8,7 @@ google.setOnLoadCallback(initialize);
 function initialize() {
 
     var chart = new google.visualization.ChartWrapper({
-        containerId: 'chart_div'
+        containerId: 'curve_chart'
     });
 
     var data = [];
@@ -16,6 +16,7 @@ function initialize() {
     var options = {
         chartArea : {height: '80%',},
         width: '100%',
+        curveType: 'function',
         vAxis: {
             minValue: 0,
         },
@@ -23,15 +24,16 @@ function initialize() {
             duration: 1000,
             easing: 'out'
         },
-        legend:{position:'none'}
+        legend:{position:'none'},
+        lineWidth: 5,
     };
     
     chart.setOptions(options);
     
     function drawBars() {
         var dom2 = 'Month' ;
-        var month_1 = $('#month1').val();
-        var month_2 = $('#month2').val();
+        var month_1 = $('#sales_curve_month1').val();
+        var month_2 = $('#sales_curve_month2').val();
 
         console.log(month_1, month_2, "monthd2")
 
@@ -40,7 +42,7 @@ function initialize() {
         ];
 
         $.ajax({
-            url: "/order-data/quotation_data",
+            url: "/bleach_admin/ajax/sales-curve-data/",
             data: {
             'fromdate': month_1,'todate':month_2,'dom':dom2
             },
@@ -49,34 +51,33 @@ function initialize() {
             contentType: "application/json;charset=utf-8",
             
             success: function(data_month) {
-            var quotations = [['Month', 'Submitted', 'Approved']];
-            var submitted_total_month = 0;
-            var approved_total_month = 0;
+            var sales = [['Month', 'Amount']];
+            var sale_sum = 0;
+            var total_sum = 0;
 
             if(data_month.length > 0){
-            $.each(data_month,function(key,value){
-
-                var vals = value.date.split('-');
-                var year = parseInt(vals[0]);
-                var month = parseInt (vals[1]);
-                var day = parseInt (vals[2]);
-                console.log(year,month,day,value.submitted_qt,value.approved_qt,"ter")
-
-                const d2 = new Date(year,month-1,day)
-                quotations.push([monthNames[d2.getMonth()],value.submitted_qt,value.approved_qt]);
-                submitted_total_month += parseInt(value.submitted_qt);
-                approved_total_month += parseInt(value.approved_qt);
-            });
+                $.each(data_month,function(key,value){
+                    console.log(value.date,"uio")
+                    var vals = value.date.split('-');
+                    var year = parseInt(vals[0]);
+                    var month = parseInt (vals[1]);
+                    var day = parseInt (vals[2]);
+                    const d2 = new Date(year,month-1,day);
+                sales.push([monthNames[d2.getMonth()],value.amount]);
+                    sale_sum += parseInt(value.amount);
+                    total_sum += parseInt(value.total);
+                });
             }else{
-                quotations.push(['',0,0]);
+                sales.push(['',0]);
+                sale_sum = 0;
+                total_sum = 0;
             }
+            console.log(sales,"sls")
+            $('#total_sales').text(sale_sum);
+            $('#total_orders').text(total_sum);
 
-            console.log(submitted_total_month,approved_total_month,"war2 ");
-            $('#total_submitted').text(submitted_total_month);
-            $('#total_approved').text(approved_total_month);
 
-
-            data[0] = new google.visualization.arrayToDataTable(quotations);
+            data[0] = new google.visualization.arrayToDataTable(sales);
 
             chart.setChartType('ColumnChart');
             chart.setDataTable(data[0]);
@@ -88,15 +89,15 @@ function initialize() {
     function drawArea() {
 
         var dom = 'Date' ;
-        var fromd = $('#ord_fromdate').val();
-        var to = $('#ord_todate').val();
+        var fromd = $('#sales_curve_date1').val();
+        var to = $('#sales_curve_date2').val();
 
         var fromdate= fromd.split("-").reverse().join("-");
         var todate= to.split("-").reverse().join("-");
         console.log(fromdate,todate,'pp')
 
         $.ajax({
-            url: "/order-data/quotation_data",
+            url: "/bleach_admin/ajax/sales-curve-data/",
             data: {
             'fromdate': fromdate,'todate':todate,'dom':dom
             },
@@ -105,70 +106,72 @@ function initialize() {
             contentType: "application/json;charset=utf-8",
             
             success: function(data_date) {
-            var quotations = [['Date', 'Submitted', 'Approved']];
-            var submitted_total = 0;
-            var approved_total = 0;
-
+            var sales = [['Date', 'Amount']];
+            var sale_sum = 0;
+            var total_sum = 0;
+            
             if(data_date.length > 0){
-            $.each(data_date,function(key,value){
-                var vals = value.date.split('-');
-                var year = parseInt(vals[0]);
-                var month = parseInt (vals[1]);
-                var day = parseInt (vals[2]);
-                console.log(year,month,day,value.submitted_qt,value.approved_qt,"ter")
-
-            quotations.push([new Date(year,month-1,day),value.submitted_qt,value.approved_qt]);
-                submitted_total += parseInt(value.submitted_qt);
-                approved_total += parseInt(value.approved_qt);
-            });
+                $.each(data_date,function(key,value){
+                    console.log(value.date,"uio")
+                    var vals = value.date.split('-');
+                    var year = parseInt(vals[0]);
+                    var month = parseInt (vals[1]);
+                    var day = parseInt (vals[2]);
+                    // console.log(year,month,day)
+                sales.push([new Date(year,month-1,day),value.amount]);
+                    sale_sum += parseInt(value.amount);
+                    total_sum += parseInt(value.total);
+                });
             }else{
-                quotations.push(['',0,0]);
+                sales.push(['',0]);
+                sale_sum = 0;
+                total_sum = 0;
             }
-            console.log(submitted_total,approved_total,"war ");
-            $('#total_submitted').text(submitted_total);
-            $('#total_approved').text(approved_total);
+            console.log(sales,"sls")
+            $('#total_sales').text(sale_sum);
+            $('#total_orders').text(total_sum);
 
-            data[1] = new google.visualization.arrayToDataTable(quotations);
+            data[1] = new google.visualization.arrayToDataTable(sales);
 
-            chart.setChartType('AreaChart');
+            chart.setChartType('LineChart');
             chart.setDataTable(data[1]);
             chart.draw();
         }
         });
     }
     
-    $("#daymonthtoggle").click(function(){
+    $("#daymonth_sales").click(function(){
         if ($(this).is(':checked')){
             console.log("red")
             drawArea();
-            $('.set1').attr("hidden",false);
-            $('.set2').attr("hidden",true);
+            $('.saleset1').attr("hidden",false);
+            $('.saleset2').attr("hidden",true);
         }else{
-            $('.set1').attr("hidden",true);
-            $('.set2').attr("hidden",false);
+            $('.saleset1').attr("hidden",true);
+            $('.saleset2').attr("hidden",false);
             console.log("red2")
             drawBars();
         }
     });
 
-    $("#month1").on("change",(function(){
+    $("#sales_curve_month1").on("change",(function(){
         drawBars();
     }));
     
-    $("#month2").on("change",(function(){
+    $("#sales_curve_month2").on("change",(function(){
         drawBars();
     }));
 
-    $("#ord_fromdate").change(function(){
+    $("#sales_curve_date1").change(function(){
         drawArea();   
     });
     
-    $("#ord_todate").change(function(){
+    $("#sales_curve_date2").change(function(){
         drawArea();   
     });
 
-    $("#reset_orders").click(function(){
-        if ($("#daymonthtoggle").is(':checked')){
+    $("#reset_sales_curve").click(function(){
+        if ($("#daymonth_sales").is(':checked')){
         var date1 = new Date();
         var datestring = date1.getDate()-1  + "-" + (date1.getMonth()+1) + "-" + date1.getFullYear();
     
@@ -177,8 +180,8 @@ function initialize() {
         var datestring2 = date2.getDate()  + "-" + (date2.getMonth()+1) + "-" + date2.getFullYear();
         console.log(datestring,datestring2)
     
-        $('#ord_fromdate').val(datestring2);
-        $('#ord_todate').val(datestring);
+        $('#sales_curve_date1').val(datestring2);
+        $('#sales_curve_date2').val(datestring);
     
         drawArea();
     }else{
@@ -189,19 +192,19 @@ function initialize() {
         var datestring = month + "/" + date1.getFullYear();
         var datestring2 = month2 + "/" + date1.getFullYear();
 
-        $('#month1').val(datestring);
-        $('#month2').val(datestring2);
+        $('#sales_curve_month1').val(datestring);
+        $('#sales_curve_month2').val(datestring2);
         drawBars();
     }
     });
 
-    if ($("#daymonthtoggle").is(':checked')){
-        $('.set1').attr("hidden",false);
-        $('.set2').attr("hidden",true);
+    if ($("#daymonth_sales").is(':checked')){
+        $('.saleset1').attr("hidden",false);
+        $('.saleset2').attr("hidden",true);
         drawArea();
     }else{
-        $('.set1').attr("hidden",true);
-        $('.set2').attr("hidden",false);
+        $('.saleset1').attr("hidden",true);
+        $('.saleset2').attr("hidden",false);
         drawBars();
     };
     
@@ -214,8 +217,8 @@ console.log(month,"lp")
 var datestring = month + "/" + date1.getFullYear();
 var datestring2 = month2 + "/" + date1.getFullYear();
 
-$('#month1').val(datestring);
-$('#month2').val(datestring2);
+$('#sales_curve_month1').val(datestring);
+$('#sales_curve_month2').val(datestring2);
 
 var datestring = date1.getDate()-1  + "-" + (date1.getMonth()+1) + "-" + date1.getFullYear();
 
@@ -224,5 +227,5 @@ date2.setDate(date2.getDate()-30);
 var datestring2 = date2.getDate()  + "-" + (date2.getMonth()+1) + "-" + date2.getFullYear();
 console.log(datestring,datestring2)
 
-$('#ord_fromdate').val(datestring2);
-$('#ord_todate').val(datestring);
+$('#sales_curve_date1').val(datestring2);
+$('#sales_curve_date2').val(datestring);
