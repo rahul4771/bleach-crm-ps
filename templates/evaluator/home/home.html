@@ -51,8 +51,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-rating-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Rating</h1>
-                <h2 class="red-text"><label>Today<span>{{today_average_feedback|default_if_none:'0.0'|floatformat:1}}</span></label> </h2>
-                <p><label>This Week <span>{{week_average_feedback|default_if_none:'0.0'|floatformat:1}}</span></label></p>
+                <h2 class="red-text"><label>Month<span>{{month_average_feedback|default_if_none:'0.0'|floatformat:1}}</span></label> </h2>
+                <p><label>Last Month <span>{{lastmonth_average_feedback|default_if_none:'0.0'|floatformat:1}}</span></label></p>
                 </div><!--column-right-->
                 </div><!--card-innerwrapper-->
             </div><!--card-column-->

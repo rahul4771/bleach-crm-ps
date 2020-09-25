@@ -373,13 +373,15 @@ class FollowupCleaning(IsTeamLeader,View):
 		followup_team_detail = FollowUpTeam.objects.select_related('team_leader','drop_off_driver','pick_up_driver','followup_scheduler__follow_up__investigation__investigator','followup_scheduler__follow_up__investigation__order__evaluation','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book','followup_scheduler__customer_address').prefetch_related(Prefetch('followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections')).get(is_active=True,id=team_id)
 			
 
-		#checkin save	
+		#checkin save
 		if followup_team_detail: 
 			if not followup_team_detail.check_in:
 				followup_team_detail.check_in                       = timezone.now()
 			followup_team_detail.followup_scheduler.work_status     = 'FOLLOW_UP_CLEANING_IN_PROGRESS'
+			followup_team_detail.followup_scheduler.follow_up.status= 'FOLLOWUP_IN_PROGRESS'
 			followup_team_detail.save()	
 			followup_team_detail.followup_scheduler.save()
+			followup_team_detail.followup_scheduler.follow_up.save()
 		
 		return render(request,'tl/cleaning/followup_cleaning.html',{"followup_team_detail":followup_team_detail,})
 
@@ -395,7 +397,7 @@ class FollowupCleaning(IsTeamLeader,View):
 		if followup_team_detail: 
 			followup_team_detail.check_out                          = timezone.now()
 			followup_team_detail.followup_scheduler.work_status     = 'FOLLOW_UP_CLEANING_FULFILLED'
-			followup_team_detail.followup_scheduler.follow_up.status= 'FOLLOWUP_IN_PROGRESS'
+			followup_team_detail.followup_scheduler.follow_up.status= 'FOLLOWUP_CLOSED'
 
 			followup_team_detail.save()
 			followup_team_detail.followup_scheduler.save()

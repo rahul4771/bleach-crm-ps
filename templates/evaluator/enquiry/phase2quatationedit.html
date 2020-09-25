@@ -43,7 +43,7 @@
             	<div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Service Type</label></div>
                 <label for="favcity">
-                <select id="id_form-{{forloop.counter0}}-service_type" name="form-{{forloop.counter0}}-service_type" class="service-selector">
+                <select id="id_form-{{forloop.counter0}}-service_type" name="form-{{forloop.counter0}}-service_type" class="service-selector" required>
                 <option value="">Choose Service Type</option>
                 {% for service_type in service_types %}
                 <option value="{{service_type.id}}" {% if book.service_type == service_type %}selected{% endif %}>{{service_type.name}}</option>
@@ -54,7 +54,7 @@
             	<div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Cleaning Method</label></div>
                 <label for="favcity">
-                <select id="id_form-{{forloop.counter0}}-cleaning_method" name="form-{{forloop.counter0}}-cleaning_method">
+                <select id="id_form-{{forloop.counter0}}-cleaning_method" name="form-{{forloop.counter0}}-cleaning_method" required>
                 <option value="">Choose Cleaning method</option>
                 <option value="Method1" {% if book.cleaning_method == 'Method1' %}selected{% endif %}>Method1</option>
                 <option value="Method2" {% if book.cleaning_method == 'Method2' %}selected{% endif %}>Method2</option>
@@ -69,7 +69,7 @@
             	<div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Area Type</label></div>
                 <label for="favcity">
-                <select id="id_form-{{forloop.counter0}}-area_type" name="form-{{forloop.counter0}}-area_type">
+                <select id="id_form-{{forloop.counter0}}-area_type" name="form-{{forloop.counter0}}-area_type" required>
                 <option value="">Choose Area Type</option>
                 {% for area_type in area_types %}
                 <option value="{{area_type.name}}" {% if book.area_type == area_type.name %}selected{% endif %}>{{area_type.name}}</option>
@@ -80,7 +80,7 @@
             	<div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Location Type</label></div>
                 <label for="favcity">
-                <select id="id_form-{{forloop.counter0}}-location_type" name="form-{{forloop.counter0}}-location_type">
+                <select id="id_form-{{forloop.counter0}}-location_type" name="form-{{forloop.counter0}}-location_type" required>
                 <option value="">Choose Location Type</option>
                 <option value="Post Construction" {% if book.location_type == 'Post Construction' %}selected{% endif %}>Post Construction</option>
                 <option value="Post Renovation" {% if book.location_type == 'Post Renovation' %}selected{% endif %}>Post Renovation</option>
@@ -125,11 +125,11 @@
  		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
             	<div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Number of Cleaners</label></div>
-                <input name="form-{{forloop.counter0}}-number_of_cleaners" type="text" class="textBox OnlyNumber" maxlength="2" placeholder=" " value="{{book.number_of_cleaners}}"> 
+                <input name="form-{{forloop.counter0}}-number_of_cleaners" type="text" class="textBox OnlyNumber" maxlength="2" placeholder=" " value="{{book.number_of_cleaners}}" required> 
                 </div><!--enquiry-form-left-->
             	<div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Cleaning Hours</label></div>
-                <input name="form-{{forloop.counter0}}-cleaning_hours" type="text" class="textBox OnlyNumber" maxlength="2" placeholder=" " value="{{book.cleaning_hours}}"> 
+                <input name="form-{{forloop.counter0}}-cleaning_hours" type="text" class="textBox OnlyNumber" maxlength="2" placeholder=" " value="{{book.cleaning_hours}}" required> 
                 </div><!--enquiry-form-right-->
 		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
                       
@@ -138,11 +138,11 @@
  		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
             	<div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Estimated Cost</label></div>
-                <input name="form-{{forloop.counter0}}-estimated_cost" id="id_form-{{forloop.counter0}}-estimated_cost" type="text" class="textBox estimated_cost OnlyNumber" maxlength="10" placeholder=" " value="{{book.estimated_cost|floatformat:'2'}}"> 
+                <input name="form-{{forloop.counter0}}-estimated_cost" id="id_form-{{forloop.counter0}}-estimated_cost" type="text" class="textBox estimated_cost OnlyNumber" maxlength="10" placeholder=" " value="{{book.estimated_cost|floatformat:'2'}}" required> 
                 </div><!--enquiry-form-left-->
             	<div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Discount</label></div>
-                <input name="form-{{forloop.counter0}}-discount" id="id_form-{{forloop.counter0}}-discount" type="text" class="textBox discount OnlyNumber" maxlength="10" placeholder=" " value="{{book.discount|floatformat:'2'}}"> 
+                <input name="form-{{forloop.counter0}}-discount" id="id_form-{{forloop.counter0}}-discount" type="text" class="textBox discount OnlyNumber" maxlength="10" placeholder=" " value="{{book.discount|floatformat:'2'}}" required> 
                 </div><!--enquiry-form-right-->
 		</div> <!--enquiry-form-Wrapper enquiry-boxes-->  
                      
@@ -151,12 +151,12 @@
   		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
             	<div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Final Cost</label></div>
-                <input name="form-{{forloop.counter0}}-total_cost" id="id_form-{{forloop.counter0}}-total_cost" type="text" class="textBox OnlyNumber" maxlength="10" placeholder=" " readonly value="{{book.total_cost|floatformat:'2'}}"> 
+                <input name="form-{{forloop.counter0}}-total_cost" id="id_form-{{forloop.counter0}}-total_cost" type="text" class="textBox OnlyNumber readonly" maxlength="10" placeholder=" " value="{{book.total_cost|floatformat:'2'}}" required> 
                 </div><!--enquiry-form-left-->
             	<div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Cleaning Policy</label></div>
                 <label for="favcity">
-                <select id="id_form-{{forloop.counter0}}-cleaning_policy" name="form-{{forloop.counter0}}-cleaning_policy" class="cleaning_policy">
+                <select id="id_form-{{forloop.counter0}}-cleaning_policy" name="form-{{forloop.counter0}}-cleaning_policy" class="cleaning_policy" required>
                 <option value="">Choose Policy</option>
                 <option value="ONE TIME SERVICE" {% if book.cleaning_policy == 'ONE TIME SERVICE' %}selected{%endif%}>ONE TIME SERVICE</option>
                 <option value="SUBSCRIPTION" {% if book.cleaning_policy == 'SUBSCRIPTION' %}selected{%endif%}>SUBSCRIPTION</option>
@@ -172,26 +172,26 @@
                 {% if book.cleaning_policy == 'ONE TIME SERVICE' %}
                 <div class="enquiry-form-left" style="display:none"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Tendative Date(S)</label></div>
-                <input name="form-{{forloop.counter0}}-tendative_dates" id='id_form-{{forloop.counter0}}-tendative_dates' type="text" class="textBox" placeholder=" " value=""> 
+                <input name="form-{{forloop.counter0}}-tendative_dates" id='id_form-{{forloop.counter0}}-tendative_dates' type="text" class="textBox readonly" placeholder=" " value=""> 
                 </div><!--enquiry-form-left-->
                 <div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Tendative Date</label></div>
-                <input name="form-{{forloop.counter0}}-tendative_date" id='id_form-{{forloop.counter0}}-tendative_date' type="text" class="textBox" placeholder=" " value="{% for orderschedule in book.orderschedules %}{{orderschedule.start_at|date:'d-m-Y'}}{% endfor %}"> 
+                <input name="form-{{forloop.counter0}}-tendative_date" id='id_form-{{forloop.counter0}}-tendative_date' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{{orderschedule.start_at|date:'d-m-Y'}}{% endfor %}"> 
                 </div><!--enquiry-form-left-->
                 {% else %}
                 <div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Tendative Date(S)</label></div>
-                <input name="form-{{forloop.counter0}}-tendative_dates" id='id_form-{{forloop.counter0}}-tendative_dates' type="text" class="textBox" placeholder=" " value="{% for orderschedule in book.orderschedules %}{{orderschedule.start_at|date:'d-m-Y'}},{% endfor %}"> 
+                <input name="form-{{forloop.counter0}}-tendative_dates" id='id_form-{{forloop.counter0}}-tendative_dates' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{{orderschedule.start_at|date:'d-m-Y'}},{% endfor %}"> 
                 </div><!--enquiry-form-left-->
                 <div class="enquiry-form-left" style="display:none"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Tendative Date</label></div>
-                <input name="form-{{forloop.counter0}}-tendative_date" id='id_form-{{forloop.counter0}}-tendative_date' type="text" class="textBox" placeholder=" " value=""> 
+                <input name="form-{{forloop.counter0}}-tendative_date" id='id_form-{{forloop.counter0}}-tendative_date' type="text" class="textBox readonly" placeholder=" " value=""> 
                 </div><!--enquiry-form-left-->
                 {% endif %}
 
                 <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tendative Time</label></div>
-                <input name="form-{{forloop.counter0}}-tendative_time" id='id_form-{{forloop.counter0}}-tendative_time' type="text" class="textBox" placeholder=" " value="{% for orderschedule in book.orderschedules %}{%  if forloop.first %}{{orderschedule.start_at|date:'h:i A'}}{% endif %}{% endfor %}"> 
+                <input name="form-{{forloop.counter0}}-tendative_time" id='id_form-{{forloop.counter0}}-tendative_time' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{%  if forloop.first %}{{orderschedule.start_at|date:'h:i A'}}{% endif %}{% endfor %}" required> 
                 </div><!--enquiry-form-right-->
 
 		</div> <!--enquiry-form-Wrapper enquiry-boxes-->
@@ -579,6 +579,8 @@ $("#id_form-"+id+"-tendative_dates").val('');
 $("#id_form-"+id+"-tendative_date").parents('.enquiry-form-left').css("display", "none");
 $("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-left').css("display", "block");
 $("#id_form-"+id+"-tendative_time").parents('.enquiry-form-right').css("display", "block");
+$("#id_form-"+id+"-tendative_date").prop('required',false);
+$("#id_form-"+id+"-tendative_dates").prop('required',true);
 }
 else if(cleaning_policy=="ONE TIME SERVICE")
 {
@@ -587,6 +589,8 @@ $("#id_form-"+id+"-tendative_dates").val('');
 $("#id_form-"+id+"-tendative_date").parents('.enquiry-form-left').css("display", "block");
 $("#id_form-"+id+"-tendative_time").parents('.enquiry-form-right').css("display", "block");
 $("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-left').css("display", "none");
+$("#id_form-"+id+"-tendative_date").prop('required',true);
+$("#id_form-"+id+"-tendative_dates").prop('required',false);
 }
 else{
 $("#id_form-"+id+"-tendative_date").parents('.enquiry-form-left').css("display", "none");
@@ -595,6 +599,8 @@ $("#id_form-"+id+"-tendative_time").parents('.enquiry-form-right').css("display"
 $("#id_form-"+id+"-tendative_date").val('');
 $("#id_form-"+id+"-tendative_dates").val('');
 $("#id_form-"+id+"-tendative_time").val('');
+$("#id_form-"+id+"-tendative_date").prop('required',true);
+$("#id_form-"+id+"-tendative_dates").prop('required',true);
 }
 
 });

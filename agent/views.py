@@ -326,12 +326,11 @@ def GetCustomerOrderInfoFeedback(request):
 	order_info_dict = {}
 
 	query       =   request.GET.get('keyword')
-
-	orders = Order.objects.filter(is_active=True,is_feedback_marked=False,payment_status='COMPLETED').select_related('evaluation__customer').filter(Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query))).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True))).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'))
-	
-
+	orders = Order.objects.filter(is_active=True,is_feedback_marked=False,payment_status='COMPLETED').select_related('evaluation__customer').filter(Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query))).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
 	if orders:
 		for order in orders: 
+			print(order.followup_count)
+			print(order.completed_followup_count)
 			order_info_dict[order.id] = order.evaluation.evaluation_id+'-'+order.evaluation.customer.name 	
 	
 	data['order_details'] = order_info_dict
@@ -350,7 +349,7 @@ def GetCustomerOrderInfo(request):
 
 	query       =   request.GET.get('keyword')
 
-	orders = Order.objects.filter(is_active=True).select_related('evaluation__customer').filter(Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)))
+	orders = Order.objects.filter(is_active=True).select_related('evaluation__customer').filter(Q(evaluation__quatation_status='APPROVED') & Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)) & ~Q(Q(order_status='ORDER_CANCELLED')|Q(order_status='ORDER_CLOSED')))
 	
 	
 	if orders:
@@ -483,8 +482,8 @@ class AgentHome(IsAgent,View):
 		except:
 			feedbacks				  = None
 
-		today_average_feedback		  = feedbacks.filter(response_date__gte=count_today_start,response_date__lt=count_today_end).aggregate(Avg('rating'))['rating__avg']
-		week_average_feedback		  = feedbacks.filter(response_date__gte=count_today_end-timedelta(7),response_date__lt=count_today_end).aggregate(Avg('rating'))['rating__avg']	
+		month_average_feedback		  = feedbacks.filter(response_date__gte=count_today_end-timedelta(30)).aggregate(Avg('rating'))['rating__avg']
+		lastmonth_average_feedback		  = feedbacks.filter(response_date__gte=count_today_end-timedelta(60),response_date__lte=count_today_end-timedelta(30)).aggregate(Avg('rating'))['rating__avg']	
 		
 		#Evaluation details of each evaluator for evaluation table
 		evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
@@ -507,7 +506,7 @@ class AgentHome(IsAgent,View):
 		confirm_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)+timedelta(4)
 		
 		try:
-			order_schedules		  = OrderScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').annotate(color_status=Case(When(Q(Q(start_at__lte=confirm_to_date) & Q(start_at__gte=confirm_to_date-timedelta(1))), then=Value('green')),
+			order_schedules		  = OrderScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').annotate(color_status=Case(When(Q(Q(start_at__lte=confirm_to_date) & Q(start_at__gte=confirm_to_date-timedelta(1))), then=Value('green')),
 	                  When(Q(Q(start_at__lt=confirm_to_date-timedelta(1))&Q(start_at__gte=confirm_to_date-timedelta(3))), then=Value('yellow')),
 	                  default=Value('red'),
 	                  output_field=CharField(),))
@@ -521,6 +520,7 @@ class AgentHome(IsAgent,View):
 	                  output_field=CharField(),))		
 		except:
 			follow_up_schedules	  = None
+	
 
 		#cleaning schedule & followup schedule for cleaning calendar			
 		cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
@@ -573,7 +573,7 @@ class AgentHome(IsAgent,View):
 		#for popup
 		customer_addresses = Address.objects.filter(is_active=True,currently_active=True).select_related('area')
 				
-		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_average_feedback':today_average_feedback,'week_average_feedback':week_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'order_schedules':order_schedules,'follow_up_schedules':follow_up_schedules,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'workers':workers,"customer_addresses":customer_addresses,})
+		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'order_schedules':order_schedules,'follow_up_schedules':follow_up_schedules,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'workers':workers,"customer_addresses":customer_addresses,})
 
 
 	def post(self,request):
@@ -621,10 +621,9 @@ class AgentHome(IsAgent,View):
 			converted_proposed_datetime       = datetime.strptime(new_proposed_date+' '+new_proposed_time,'%d-%m-%Y %I:%M %p')
 
 			evaluator_id                      = request.POST.get('evaluator')
-			address_id                        = request.POST.get('address')
 			evaluator_notes                   = request.POST.get('notes')
 			#update evaluation time
-			EvaluationDetails.objects.filter(id=evaluation_detail_id).update(proposed_time=converted_proposed_datetime,evaluator_id=evaluator_id,address_id=address_id,evaluator_note=evaluator_notes)	
+			EvaluationDetails.objects.filter(id=evaluation_detail_id).update(proposed_time=converted_proposed_datetime,evaluator_id=evaluator_id,evaluator_note=evaluator_notes)	
 			messages.success(request,"Evaluation Edited Succesfully")
 
 		elif action_mode == 'edit_cleaning':
@@ -1663,8 +1662,15 @@ class ExistingEnquiry(IsAgent,View):
 class MakeEvaluation(IsAgent,View):
 	def get(self,request,enquiry_id):
 		
-		tracking_no    = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000
-		evaluation_no  = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+str(tracking_no+1)
+		tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+
+		current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
+		
+		if current_blc_starting == int(str(tracking_no)[:6]):
+			evaluation_no = 'BLC'+str(tracking_no+1)
+		else:
+			evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
+			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 
 		#Create New Evaluation
 		new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=tracking_no+1,call_attender=request.user,customer_id=enquiry_id)
@@ -1732,9 +1738,16 @@ class AssignEvaluator(IsAgent,View):
 class MakeQuatationBase(IsAgent,View):
 	def get(self,request,enquiry_id):
 		#create Main Evaluation
-		tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000
-		evaluation_no= 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+str(tracking_no+1)
+		tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 
+		current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
+		
+		if current_blc_starting == int(str(tracking_no)[:6]):
+			evaluation_no = 'BLC'+str(tracking_no+1)
+		else:
+			evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
+			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+	
 		try:
 			evaluation = Evaluation.objects.create(tracking_no=tracking_no+1,evaluation_id=evaluation_no,customer_id=enquiry_id,call_attender=request.user)
 		except:
