@@ -1001,7 +1001,9 @@ def SalesLocationData(request):
 
 		for location in location_types:
 			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate,todate),evaluation__evaluation_details__evaluation_book_evaluation_details__area_type=location.name).count()
-			
+			if not sales_location_count:
+				sales_location_count = 0
+				
 			location_dict = {
 			"location" : location.name,
 			"count" : sales_location_count,

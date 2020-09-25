@@ -7,7 +7,7 @@
 .chart_box_Right {flex: 1; position:relative; margin:0 !important; padding:0 !important; }
 .chart_box_Right svg {  }
 #curve_chart{ width:100% !important; height:35vh; text-align:center; margin:0 auto !important; padding:0 !important; border:5px solid #2e4e85;}
- 
+
 .Button_wrapperChart{margin:30px 0 0px 0; position:relative; }
 .green-button-chart{ background:#37b79a; border:none; border-radius:50px; width:90px !important; padding:7px 10px 8px 10px !important; color:#fff; position:absolute; left:100px; top:0;}
 .blue-sliderbutton{  }
@@ -35,6 +35,30 @@
 #curve_chart{ position: relative; width:100% !important;}
  #curve_chart svg{ background:#F00; transform: scale(1.6, 1) !important; position:absolute !important; right:-112px !important; background:none !important; margin:0 auto !important; padding:0 !important; }   
 }
+
+/* loading icons  */
+.loader {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #0099c6;
+    border-right: 16px solid green;
+    border-bottom: 16px solid red;
+    border-left: 16px solid #ffa00f;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+  }
+  
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 
 
 
