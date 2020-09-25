@@ -69,7 +69,7 @@ function drawlocationChart() {
         var legend = document.getElementById("legend_location");
         var legItem = [];
         
-        for (var i = 0; i < data.getNumberOfRows(); i++) {
+        for (var i = 0; i < 9; i++) {
             var label = data.getValue(i, 0);
             var value = data.getValue(i, 1);
             var percent = Number(100 * value / total).toFixed(1);
@@ -79,6 +79,7 @@ function drawlocationChart() {
             legItem[i] = document.createElement('div');
             legItem[i].className = 'donut-char-legend';
             legItem[i].id = 'legend_' + data.getValue(i, 0);
+
             legItem[i].innerHTML = '<i class="fa fa-square" style="color:'+colors[i]+'"></i> <div class="chart-stat">' + label + '</div><span>' + percent + ' %</span>';
 
             legend.appendChild(legItem[i]);
