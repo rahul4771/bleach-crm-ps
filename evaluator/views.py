@@ -915,7 +915,8 @@ class MakeEvaluation(IsEvaluator,View):
 		current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
 		
 		if current_blc_starting == int(str(tracking_no)[:6]):
-			evaluation_no = 'BLC'+str(tracking_no+1)
+			new_tracking_no = tracking_no+1
+			evaluation_no   = 'BLC'+str(new_tracking_no)
 		else:
 			evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
 			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
@@ -987,7 +988,8 @@ class MakeQuatationBase(IsEvaluator,View):
 		current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
 		
 		if current_blc_starting == int(str(tracking_no)[:6]):
-			evaluation_no = 'BLC'+str(tracking_no+1)
+			new_tracking_no = tracking_no+1
+			evaluation_no   = 'BLC'+str(new_tracking_no)
 		else:
 			evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
 			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
