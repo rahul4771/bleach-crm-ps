@@ -67,8 +67,8 @@ function salestarget(evaluator_id){
                         var day = parseInt (vals[2]);
                         const d2 = new Date(year,month-1,day);
                         sales.push([monthNames[d2.getMonth()],value.amount]);
-                        sale_sum += parseInt(value.amount);
-                        total_sum += parseInt(value.total);
+                        sale_sum += parseFloat(value.amount);
+                        total_sum += parseFloat(value.total);
                     });
                 }else{
                     sales.push(['',0]);

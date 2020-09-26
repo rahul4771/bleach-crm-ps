@@ -8,7 +8,7 @@ google.setOnLoadCallback(initialize);
 function initialize() {
 
     var chart = new google.visualization.ChartWrapper({
-        containerId: 'curve_chart'
+        containerId: 'chart_div2'
     });
 
     var data = [];
