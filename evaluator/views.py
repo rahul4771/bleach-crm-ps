@@ -89,8 +89,8 @@ class EvaluatorHome(IsEvaluator,View):
 		except:
 			feedbacks				  = None
 
-		today_average_feedback		  = feedbacks.filter(response_date__gte=count_today_start,response_date__lt=count_today_end).aggregate(Avg('rating'))['rating__avg']
-		week_average_feedback		  = feedbacks.filter(response_date__gte=count_today_end-timedelta(7),response_date__lt=count_today_end).aggregate(Avg('rating'))['rating__avg']
+		month_average_feedback		  = feedbacks.filter(response_date__gte=count_today_end-timedelta(30)).aggregate(Avg('rating'))['rating__avg']
+		lastmonth_average_feedback		  = feedbacks.filter(response_date__gte=count_today_end-timedelta(60),response_date__lte=count_today_end-timedelta(30)).aggregate(Avg('rating'))['rating__avg']
 
 
 
@@ -174,7 +174,7 @@ class EvaluatorHome(IsEvaluator,View):
 		except:
 			my_evaluations = None	
 
-		return render(request,'evaluator/home/home.html',{'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'today_average_feedback':today_average_feedback,'week_average_feedback':week_average_feedback,'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'investigations':investigations,'evaluation_date':evaluation_date,'my_evaluations':my_evaluations})
+		return render(request,'evaluator/home/home.html',{'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'investigations':investigations,'evaluation_date':evaluation_date,'my_evaluations':my_evaluations})
 
 class ClientDetails(IsEvaluator,View):
 	def get(self,request):
@@ -910,8 +910,15 @@ class ExistingEnquiry(IsEvaluator,View):
 class MakeEvaluation(IsEvaluator,View):
 	def get(self,request,enquiry_id):
 		
-		tracking_no    = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000
-		evaluation_no  = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+str(tracking_no+1)
+		tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+
+		current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
+		
+		if current_blc_starting == int(str(tracking_no)[:6]):
+			evaluation_no = 'BLC'+str(tracking_no+1)
+		else:
+			evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
+			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 
 		#Create New Evaluation
 		new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=tracking_no+1,call_attender=request.user,customer_id=enquiry_id)
@@ -975,8 +982,15 @@ class AssignEvaluator(IsEvaluator,View):
 class MakeQuatationBase(IsEvaluator,View):
 	def get(self,request,enquiry_id):
 		#create Main Evaluation
-		tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000
-		evaluation_no= 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+str(tracking_no+1)
+		tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+
+		current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
+		
+		if current_blc_starting == int(str(tracking_no)[:6]):
+			evaluation_no = 'BLC'+str(tracking_no+1)
+		else:
+			evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
+			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 
 		try:
 			evaluation = Evaluation.objects.create(tracking_no=tracking_no+1,evaluation_id=evaluation_no,customer_id=enquiry_id,call_attender=request.user,quatation_status='APPROVED')

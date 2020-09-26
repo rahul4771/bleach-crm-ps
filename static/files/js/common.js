@@ -375,3 +375,8 @@ function cleaningrefresh(){
         }
   })
 };
+
+//required readonly support
+$(".readonly").keydown(function(e){
+        e.preventDefault();
+    });

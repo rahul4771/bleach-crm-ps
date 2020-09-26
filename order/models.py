@@ -23,9 +23,6 @@ ORDER_SHEDULER_STATUS = (
 	('CLEANING_TEAM_ASSIGNED','CLEANING_TEAM_ASSIGNED'),
 	('CLEANING_IN_PROGRESS','CLEANING_IN_PROGRESS'),
 	('CLEANING_FULFILLED','CLEANING_FULFILLED'),
-	('INVESTIGATION_ASSIGNED','INVESTIGATION_ASSIGNED'),
-	('INVESTIGATION_IN_PROGRESS','INVESTIGATION_IN_PROGRESS'),
-	('INVESTIGATION_COMPLETED','INVESTIGATION_COMPLETED'),
 	)
 
 FOLLOWUP_SHEDULER_STATUS = (
@@ -121,7 +118,7 @@ class OrderScheduler(models.Model):
 #If the Customer is not Satisfied and reported a complaint. An Investigation team is assigned for Investigation
 
 class Investigation(models.Model):
-	order 				 = models.ForeignKey('Order',blank=False,null=False)
+	order 				 = models.ForeignKey('Order',blank=False,null=False,related_name='investigation_orders')
 	order_schedule		 = models.ForeignKey('OrderScheduler',blank=False,null=False,related_name='investigations_orderschedule')	
 	notes            	 = models.CharField(max_length=500,blank=True,null=True)
 	investigator    	 = models.ForeignKey(UserProfile,blank=True,null=True)

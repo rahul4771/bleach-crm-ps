@@ -51,8 +51,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-rating-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Rating</h1>
-            	<h2 class="red-text"><label>Today<span>{{today_average_feedback|default_if_none:'0.0'|floatformat:1}}</span></label> </h2>
-            	<p><label>This Week <span>{{week_average_feedback|default_if_none:'0.0'|floatformat:1}}</span></label></p>
+            	<h2 class="red-text"><label>Month<span>{{month_average_feedback|default_if_none:'0.0'|floatformat:1}}</span></label> </h2>
+            	<p><label>Last Month <span>{{lastmonth_average_feedback|default_if_none:'0.0'|floatformat:1}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -347,7 +347,7 @@
     
     <table width="100%" border="0" class="popup-tble1">  
                 <tr>
-                    <td valign="center"><div class="blc-number" id="blcno_evaluation_id"></div><span id="address_evaluation_id"></span></td>
+                    <td valign="center"><div class="blc-number" id="area_evaluation_id"></div><span id="address_evaluation_id"></span></td>
                     <td align="center"><div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div></td>
                     <td><div class="bold-text" id="customername_evaluation_id"></div><div id="mobileno_evaluation_id"></div></td>
                 </tr>
@@ -370,16 +370,9 @@
   <br>   
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-          <div class=" bold-text common-label"> <label>Address</label></div>
-        <label for="favcity">
-                <select name="address" id="address">
-                </select>
-        </label>
-  </div><!--ticket-form-left-->
-  <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Evaluator</label></div>
         <label for="favcity">
-                <select id="evaluator" name="evaluator">
+                <select id="evaluator" name="evaluator" required>
                 <option value="">Choose Evaluator</option>
                 {% for worker in workers %}
                 {% if worker.user_type == 'EVALUATOR' %}
@@ -388,18 +381,18 @@
                 {% endfor %}
                 </select>
         </label>
-  </div><!--ticket-form-right-->
+  </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
 <hr class="hr-dashedpad">  
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Appointment Date</label></div>
-        <input name="proposed_date" type="text" class="textBox" id="appointment_date">
+        <input name="proposed_date" type="text" class="textBox readonly" id="appointment_date" required>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Appointment Time</label></div>
-        <input name="proposed_time" type="text" class="textBox" id="appointment_time">
+        <input name="proposed_time" type="text" class="textBox readonly" id="appointment_time" required>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -437,7 +430,7 @@
     
     <table width="100%" border="0" class="popup-tble1">  
                 <tr>
-                    <td valign="center"><div class="blc-number" id="blcno_cleaning_id"></div><span id="address_cleaning_id"></span></td>
+                    <td><div class="blc-number" id="blcno_cleaning_id"></div><span id="address_cleaning_id"></span></td>
                     <td align="center"><div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div></td>
                     <td><div class="bold-text" id="customername_cleaning_id"></div><div id="mobileno_cleaning_id"></div></td>
                 </tr>
@@ -582,7 +575,7 @@
     
     <table width="100%" border="0" class="popup-tble1">  
                 <tr>
-                    <td valign="center"><div class="blc-number" id="delete_blcno_evaluation_id"></div><span id="delete_address_evaluation_id"></span></td>
+                    <td valign="center"><div class="blc-number" id="delete_area_evaluation_id"></div><span id="delete_address_evaluation_id"></span></td>
                     <td align="center"><div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div></td>
                     <td><div class="bold-text" id="delete_customername_evaluation_id"></div><div id="delete_mobileno_evaluation_id"></div></td>
                 </tr>
@@ -1132,6 +1125,7 @@ $('document').ready(function(){
       e.preventDefault();
       $('.modal-popup-wrapper').toggleClass('is-visible');
 
+      $('#area_evaluation_id').html($(this).data('area'));
       $('#address_evaluation_id').html($(this).data('street')+', '+$(this).data('apartment')+', '+$(this).data('block')+', '+$(this).data('avenue')+', '+$(this).data('building')+', '+$(this).data('area')+', '+$(this).data('governorate'));
       $('#proposed_date_evaluation_id').html($(this).data('proposed_date'));
       $('#proposed_time_evaluation_id').html($(this).data('proposed_time'));
@@ -1241,7 +1235,15 @@ for (i = 0; i < coll.length; i++) {
                     append_cleaners = '';
                     for(i=0;i<cleaners.length;++i)
                         {   
-                            append_cleaners += cleaners[i].member_name+',';
+                            if(i+1%5 == 0)
+                            {
+                                append_cleaners += cleaners[i].member_name+',<br>';
+                            }
+                            else
+                            {
+                                append_cleaners += cleaners[i].member_name+',';
+                            }
+                            
                         }
                     $('#team_member_cleaning_id td strong span').html(append_cleaners);    
                   }  
@@ -1325,9 +1327,16 @@ for (i = 0; i < coll.length; i++) {
                     $('#team_member_followup_id').html('<td colspan="3">Team Members:<strong><span class="blue-text"></span></strong> &nbsp;</td>');
 
                     append_cleaners = '';
-                    for(i=0;i<cleaners.length;++i)e
+                    for(i=0;i<cleaners.length;++i)
                         {   
-                            append_cleaners += cleaners[i].member_name+',';
+                            if(i+1%5 == 0)
+                            {
+                                append_cleaners += cleaners[i].member_name+',<br>';
+                            }
+                            else
+                            {
+                                append_cleaners += cleaners[i].member_name+',';
+                            }
                         }
                     $('#team_member_followup_id td strong span').html(append_cleaners);    
                   }
@@ -1362,6 +1371,7 @@ for (i = 0; i < coll.length; i++) {
       $('.modal-popup-wrapper3').toggleClass('is-visible');
 
       $('#delete_blcno_evaluation_id').html($('#blcno_evaluation_id').html());
+      $('#delete_area_evaluation_id').html($('#area_evaluation_id').html());
       $('#delete_address_evaluation_id').html($('#address_evaluation_id').html());
       $('#delete_proposed_date_evaluation_id').html($('#proposed_date_evaluation_id').html());
       $('#delete_proposed_time_evaluation_id').html($('#proposed_time_evaluation_id').html());

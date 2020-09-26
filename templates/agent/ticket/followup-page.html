@@ -45,14 +45,12 @@
                    
                     <div class="order-progress-widget order-progress-widget-column2"><!--order-progress-widget order-progress-widget-column2-->
                         <div class="evaluation">Investigation</div>
-                    	<div class="evaluation-icon"><img src="{% static 'files/images/investigation-green.svg' %}" class="orderEval-icon %}"></div>
-                        <div class="evaluation-status">Completed</div>
+                    	<div class="evaluation-icon">{% if followup_details.status == 'INVESTIGATOR_APPROVED' or followup_details.status == 'FOLLOWUP_IN_PROGRESS' or followup_details.status == 'FOLLOWUP_CLOSED' %}<img src="{% static 'files/images/investigation-green.svg' %}" class="orderEval-icon %}"><div class="evaluation-status">Completed</div>{% else %}<img src="{% static 'files/images/investigation-gray.svg' %}" class="orderEval-icon %}"><div class="evaluation-status">Waiting</div>{% endif %}</div>
                     </div><!--order-progress-widget order-progress-widget-column2-->                  
                     
                     <div class="order-progress-widget order-progress-widget-column5"><!--order-progress-widget order-progress-widget-column5-->
                         <div class="evaluation">Cleaning</div>
-                    	<div class="evaluation-icon"><img src="{% static 'files/images/order-cleaning.svg' %}" class="orderEval-icon"></div>
-                        <div class="evaluation-status">Completed</div>
+                    	<div class="evaluation-icon">{% if followup_details.status == 'FOLLOWUP_IN_PROGRESS' or followup_details.status == 'FOLLOWUP_CLOSED' %}<img src="{% static 'files/images/order-cleaning.svg' %}" class="orderEval-icon"><div class="evaluation-status">Completed</div>{% else %}<img src="{% static 'files/images/order-gray-cleaning.svg' %}" class="orderEval-icon"><div class="evaluation-status">Waiting</div>{% endif %}</div>
                     </div><!--order-progress-widget order-progress-widget-column5-->                      
                     
                     <div class="order-progress-widget order-progress-widget-column6"><!--order-progress-widget order-progress-widget-column6-->
@@ -61,11 +59,8 @@
                         {% if followup_details.status == 'FOLLOWUP_CLOSED' %}
                         <div class="evaluation-icon"><img src="{% static 'files/images/closed-green.svg' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
-                        {% elif followup_details.status == 'FOLLOWUP_CANCELLED' %}
-                        <div class="evaluation-icon"><img src="{% static 'files/images/closed-gray.svg' %}" class="orderEval-icon"></div>
-                        <div class="evaluation-status">Cancelled</div>
                         {% else %}
-                        <div class="evaluation-icon"><img src="{% static 'files/images/closed-yellow.svg' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-icon"><img src="{% static 'files/images/closed-gray.svg' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Waiting</div>
                         {% endif %}
 
@@ -305,4 +300,21 @@
     
 {% include 'agent/common/footer.html' %} 
 </div><!--wrapper-->
+{% endblock %}
+{% block javascript %}
+<script>
+ $('document').ready(function(){
+ 
+    {% if followup_details.status == 'INVESTIGATOR_APPROVED' %}
+    $('.bar-loader').css('width','50%');
+    {% elif followup_details.status == 'FOLLOWUP_IN_PROGRESS' %}
+    $('.bar-loader').css('width','75%');
+    {% elif followup_details.status == 'FOLLOWUP_CLOSED' %}
+    $('.bar-loader').css('width','100%');
+    {% else %}
+    $('.bar-loader').css('width','25%');
+    {% endif %}
+ 
+ });   
+</script>
 {% endblock %}
