@@ -821,7 +821,7 @@ $('document').ready(function(){
                 minutes = 0;
             }
             //append total hours to working table
-            $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
+            $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes.toFixed(2)+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
 
         {% endfor %}
 
