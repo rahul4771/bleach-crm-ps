@@ -162,10 +162,11 @@ def GetFeedbackOrderInfo(request):
 def GetCleaningInfo(request):
 	cleaning_dict = {}
 
-	scheduler_id  = request.GET.get('schedule_id')
-
+	scheduler_id  = int(request.GET.get('schedule_id'))
+	print(scheduler_id)
 	schedule  = OrderScheduler.objects.select_related('order_scheduler_book','customer_address__customer','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_member')),to_attr='cleaning_team')).get(id=scheduler_id,is_active=True)
 
+	print(schedule)
 
 	cleaning_dict['order_no'] 		 = schedule.order.order_no
 	cleaning_dict['address']  		 = schedule.customer_address.apartment+', '+schedule.customer_address.block+', '+schedule.customer_address.street+', '+schedule.customer_address.avenue+', '+schedule.customer_address.building+', '+schedule.customer_address.area.name+', '+schedule.customer_address.governorate.name
