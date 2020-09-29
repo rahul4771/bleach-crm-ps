@@ -1235,7 +1235,7 @@ for (i = 0; i < coll.length; i++) {
                     append_cleaners = '';
                     for(i=0;i<cleaners.length;++i)
                         {   
-                            if(i+1%5 == 0)
+                            if((i+1)%5 == 0)
                             {
                                 append_cleaners += cleaners[i].member_name+',<br>';
                             }
@@ -1245,7 +1245,8 @@ for (i = 0; i < coll.length; i++) {
                             }
                             
                         }
-                    $('#team_member_cleaning_id td strong span').html(append_cleaners);    
+                    $('#team_member_cleaning_id td strong span').html(append_cleaners);
+                     append_cleaners = null   
                   }  
 
                   //form
