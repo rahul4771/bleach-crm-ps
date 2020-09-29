@@ -70,6 +70,8 @@ class Order(models.Model):
 	total_amount           = models.IntegerField(blank=True,null=True,default=0)
 	amount_paid            = models.IntegerField(blank=True,null=True)
 	remining_amount        = models.IntegerField(blank=True,null=True)
+	preamount_paid		   = models.IntegerField(blank=True,null=True)
+	postamount_paid		   = models.IntegerField(blank=True,null=True)
 	
 	instructions		   = models.CharField(max_length=500,blank=True,null=True)
 	

@@ -354,7 +354,7 @@ def GetCustomerOrderInfo(request):
 
 	query       =   request.GET.get('keyword')
 
-	orders = Order.objects.filter(is_active=True).select_related('evaluation__customer').filter(Q(evaluation__quatation_status='APPROVED') & Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)) & ~Q(Q(order_status='ORDER_CANCELLED')|Q(order_status='ORDER_CLOSED')))
+	orders = Order.objects.filter(is_active=True).select_related('evaluation__customer').filter(Q(evaluation__quatation_status='APPROVED') & Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)) & ~Q(Q(order_status='ORDER_CANCELLED')))
 	
 	
 	if orders:

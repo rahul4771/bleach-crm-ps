@@ -1780,7 +1780,7 @@ class InvestigationTask(View):
 		
 		else:
 			Investigation.objects.filter(id=investigation_id).update(is_followup_approved=False,check_out=timezone.now(),notes=request.POST.get('notes'))
-
+			FollowUp.objects.filter(is_active=True,investigation_id=investigation_id).update(status='FOLLOWUP_CANCELLED')
 		#To Save Media
 		medias = request.FILES.getlist('media')
 		if not medias==['']:
