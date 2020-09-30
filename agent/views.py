@@ -66,6 +66,17 @@ def UpdateAddressStatus(request):
 
 	return JsonResponse(data)
 
+def MobileNumberValidate(request):
+	mobile_no = request.GET.get('mobile_number')
+	data 	  = {}
+
+	try:
+		existing_user = UserProfile.objects.get(mobile_number=mobile_no)
+		data['validation']= False
+	except:
+		data['validation']= True
+			
+	return JsonResponse(data)
 
 #Ajax for governorates Area
 def GetArea(request):
@@ -1554,6 +1565,8 @@ class NewEnquiry(IsAgent,View):
 			
 			return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'governorates':governorates})					
 
+		redirection = request.POST.get('redirect_to')	
+
 		if redirection == 'assign_evaluator':
 			return redirect('agent:agent-makeevaluation',enquiry_form_save.id)
 		elif redirection == 'quatation':
@@ -1853,8 +1866,8 @@ class MakeQuatationPhase2(IsAgent,View):
 
 		if service_formset.is_valid() :
 			form_count = 0
-			#create order
-			new_order = Order.objects.get_or_create(evaluation=evaluation_details.evaluation,order_no=evaluation_details.evaluation.evaluation_id,total_amount=evaluation_details.evaluation.total_cost,remining_amount=evaluation_details.evaluation.total_cost,order_status='APPROVED_BY_CLIENT')
+			#create order roughly
+			new_order = Order.objects.get_or_create(evaluation=evaluation_details.evaluation,order_no=evaluation_details.evaluation.evaluation_id,total_amount=evaluation_details.evaluation.total_cost,remining_amount=evaluation_details.evaluation.total_cost)
 
 			order_schedule_array          = []
 			#Save Service Form
@@ -1896,6 +1909,7 @@ class MakeQuatationPhase2(IsAgent,View):
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
 						updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)
+						update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')+total)
 					else:
 						tendative_date  = request.POST.get('form-'+str(form_count)+'-tendative_date')
 
@@ -1906,7 +1920,7 @@ class MakeQuatationPhase2(IsAgent,View):
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
 						updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)
-
+						update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')+total)
 					#to save sections
 					no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))
 					section_array          = []
@@ -2096,6 +2110,7 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 
 							updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total,status='EVALUATED')
 							updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total)
+							update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')-very_old_book.total_cost+total)							
 						else:
 							tendative_date  = request.POST.get('form-'+str(form_count)+'-tendative_date')
 
@@ -2103,10 +2118,9 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 							end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
 							order_schedule_array.append(OrderScheduler(order=old_order,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))
 
-							print(evaluation_detail_id,"evaluation detail id")
 							updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total,status='EVALUATED')
 							updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total)
-
+							update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')-very_old_book.total_cost+total)
 						#to save and update sections
 						no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))
 						section_array          = []

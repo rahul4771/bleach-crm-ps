@@ -57,7 +57,7 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label"> <label>Phone</label></div>
-				<input name="mobile_number" type="text" id="id_mobile" class="textBox OnlyNumber" placeholder=" " oninput="phonenumber(this);" maxlength="8" required>
+				<input name="mobile_number" type="text" id="id_mobile" class="textBox OnlyNumber" placeholder=" " oninput="phonenumber(this);remove_duplicate_mobile(this);" maxlength="8" required>
         <p class="phone_alert" style="color:Red;"></p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
@@ -283,12 +283,16 @@ customer_type=this.value;
 if(customer_type=='CORPORATE')
 {
 $("#id_customer_type_expand").css('display','block');  
+$("#id_company").attr('required',true);
+$("#id_job_title").attr('required',true);
 }
 else
 {
 $("#id_customer_type_expand").css('display','none');
 $("#id_company").val('');
 $("#id_job_title").val('');
+$("#id_company").attr('required',false);
+$("#id_job_title").attr('required',false);
 }
 });
 
@@ -469,6 +473,36 @@ function search_live(event){
           }
         };
         $.ajax(ajax);
+}
+
+//Remove registration using same mobile number
+function remove_duplicate_mobile(input_mobile)
+{
+  var mobileno_validator = /^\d{8}$/;
+
+  if((input_mobile.value.match(mobileno_validator)) || (inputtxt.value == ""))
+    {
+
+        $.ajax({
+
+                url: "{% url 'agent:mobilenumber-validate' %}",
+
+                data: {'mobile_number':input_mobile.value,}, 
+
+                dataType: 'json',
+
+                success: function (data) { 
+
+                  if(data['validation'] == false)
+                    { 
+                        $('.phone_alert').text("Mobile Number Allready Register...");
+                        $('#id_mobile').val('');
+                    }
+                }  
+
+              });
+            
+            }
 }
 
 </script>

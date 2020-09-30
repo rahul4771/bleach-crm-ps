@@ -26,6 +26,9 @@ import requests
 
 class AccountantHome(IsAccountant,View):
 	def get(self,request):
+		#Payment Details
+		search                  = request.GET.get('search')
+
 		#sales amount
 		try:
 			invoices         = Order.objects.filter(is_active=True).order_by('-id')
@@ -41,18 +44,30 @@ class AccountantHome(IsAccountant,View):
 		last_quarter_sales=invoices.filter(payment_status='COMPLETED',payment_completed_date__lt=(timezone.now().date()-relativedelta(months=3,day=1)),payment_completed_date__gte=(timezone.now().date()-relativedelta(months=6,day=1))).aggregate(total=Sum('amount_paid'))['total']	
 		
 		#Pending Payments
-		try:
-			pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='invoice_evaluation_details'))
-		except:
-			pending_payments = None
+		if search:
+			try:
+				pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).select_related('evaluation__customer').filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'))
+			except:
+				pending_payments = None
+		else:
+			try:
+				pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'))
+			except:
+				pending_payments = None		
 
 		#Pending Payment and Order Count	
 		total_pending_amount = pending_payments.aggregate(total=Sum(F('remining_amount')))['total']		
 		total_pending_orders = pending_payments.count()
 		
-		#PAGINATION PENDING PAYMENTS		
+		#PAGINATION PENDING PAYMENTS	
 		page = request.GET.get('page',1) 
-		paginator=Paginator(pending_payments,10)
+		no_of_entries = request.GET.get('no_of_entries')
+		if not no_of_entries:
+			no_of_entries = 20
+		
+
+		page = request.GET.get('page',1) 
+		paginator=Paginator(pending_payments,no_of_entries)
 		try: 
 			pending_payments=paginator.page(page) 
 		except PageNotAnInteger:
@@ -72,7 +87,7 @@ class AccountantHome(IsAccountant,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(pending_payments.end_index())-(pending_payments.start_index())+1
 
-		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders,"page_range":page_range,"entry_per_page":entry_per_page})
+		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"search_query":search,})
 
 class ClientDetails(IsAccountant,View):
 	def get(self,request):
@@ -394,7 +409,7 @@ class PaymentDetails(IsAccountant,View):
 		#sales amount
 		if search:
 			try:
-				invoices         = Order.objects.filter(is_active=True).order_by('-id').select_related('evaluation__customer').filter(evaluation__customer__name__icontains=search).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='invoice_evaluation_details'))
+				invoices         = Order.objects.filter(is_active=True).order_by('-id').select_related('evaluation__customer').filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='invoice_evaluation_details'))
 			except:
 				invoices         = None
 		else:
@@ -419,7 +434,13 @@ class PaymentDetails(IsAccountant,View):
 		
 		#PAGINATION INVOICE		
 		page = request.GET.get('page',1) 
-		paginator=Paginator(invoices,10)
+		no_of_entries = request.GET.get('no_of_entries')
+		if not no_of_entries:
+			no_of_entries = 20
+		
+		page = request.GET.get('page',1) 
+		paginator=Paginator(invoices,no_of_entries)
+			
 		try: 
 			invoices=paginator.page(page) 
 		except PageNotAnInteger:
@@ -439,7 +460,7 @@ class PaymentDetails(IsAccountant,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(invoices.end_index())-(invoices.start_index())+1
 
-		return render(request,'accountant/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page})
+		return render(request,'accountant/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})
 
 class PaymentLinkGeneration(View):
 	baseURL = "https://apitest.myfatoorah.com"

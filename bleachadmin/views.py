@@ -30,7 +30,6 @@ class AdminHome(IsAdmin,View):
 	def get(self,request):
 		#evaluators
 		evaluators_sales_target = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
-		print(evaluators_sales_target,"evs")
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		count_today_end   = count_today_start+timedelta(1)
@@ -914,7 +913,7 @@ class PaymentDetails(IsAdmin,View):
 		#sales amount
 		if search:
 			try:
-				invoices         = Order.objects.filter(is_active=True).order_by('-id').select_related('evaluation__customer').filter(evaluation__customer__name__icontains=search).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='invoice_evaluation_details'))
+				invoices         = Order.objects.filter(is_active=True).order_by('-id').select_related('evaluation__customer').filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='invoice_evaluation_details'))
 			except:
 				invoices         = None
 		else:
