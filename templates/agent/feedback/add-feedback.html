@@ -269,6 +269,123 @@ $('.footable').footable({
 
 
 <script id="rendered-js">
+//IN the case of not rated in feedback list redirection    
+feedback_order_id = parseInt("{{request.GET.feedback}}");
+
+if(feedback_order_id)
+{
+    order_id=feedback_order_id;
+        
+        $.ajax({
+
+        url: "{% url 'agent:get-feedbackorderinfo' %}",
+
+        data: {'order_id':order_id}, 
+
+        dataType: 'json',
+
+        success: function (data) {
+
+            ajax_ret_orders = data;
+            $("#order_id_hidden").val(data['order_id']);
+
+            //to add order info
+            $('.order_customer_name').html(data['name'])
+            $('.order_customer_mobile').html(data['mobile_number']);
+            $('.order_cost').html(+data['total_cost']+' KD');
+            $('.order_total_cleaners').html(+data['total_cleaners']+' Cleaners');
+            $('.order_date').html(data['date']);
+            $('.agent_image').prop('src',data['agent_image_url']);
+
+            order_status   = data['order_status']
+            payment_status = data['payment_status']
+
+            $('.order_payment_status').empty();
+            if(payment_status == 'COMPLETED')
+            {
+                $('.order_payment_status').append('<div class="green-bg-lg payment_status">Paid</div>');
+            }
+            else if(payment_status == 'PENDING')
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg payment_status">Pending</div>');
+            }
+            else if(payment_status == 'ON_HOLD')
+            {
+                $('.order_payment_status').append('<div class="red-bg-lg payment_status">On Hold</div>');
+            }
+            else
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg payment_atatus">Waiting</div>');
+            }    
+
+
+            if(order_status == 'APPROVED_BY_CLIENT')
+            {
+                $('.order_payment_status').append('<div class="blue-bg-lg">Approved</div>');
+            }
+            else if(order_status == 'ORDER_IN_PROGRESS')
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg">On-going</div>');
+            }
+            else if(order_status == 'ORDER_CANCELLED')
+            {
+                $('.order_payment_status').append('<div class="red-bg-lg">Cancelled</div>');   
+            }
+            else if(order_status == 'ORDER_CLOSED')
+            {
+                $('.order_payment_status').append('<div class="green-bg-lg">Closed</div>');
+            }
+            else
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg">Waiting</div>');
+            }    
+
+
+            addresses = data['order_address'];
+            
+            $(".order_addresses").empty();
+            for(i=0;i<addresses.length;++i)
+            {
+                $(".order_addresses").append('<div class="area-bold">'+addresses[i][0]+'</div><div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> '+addresses[i][1]+'</div>');
+                console.log('hiiiiii');
+            }
+
+            //to add customer details
+            $('.client-name').html(data['customer_details'].name);
+            $('.client-company').html(data['customer_details'].company);
+            $('.client-email').html(data['customer_details'].email);
+            $('.client-mobile').html(data['customer_details'].mobile);
+            $('.client-nationality').html(data['customer_details'].nationality);
+            $('.client-other_number').html(data['customer_details'].other_contact);
+            
+            $('.right-bgwrapper .customer_addresses').empty();
+            customer_addresses = data['customer_details'].customer_address
+            for(i=0;i<customer_addresses.length;++i)
+            {
+                $('.right-bgwrapper .customer_addresses').append('<br><div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address '+(i+1)+': '+customer_addresses[i].street+'</div><div class="address">'+customer_addresses[i].building+', '+customer_addresses[i].street+', '+customer_addresses[i].area+', '+customer_addresses[i].governorate+'</div> ');
+            }
+
+            //to add previous orders
+            $('.active_orders_count').html(data['active_orders_count']);
+            $('.total_orders_count').html(data['total_orders_count']);
+
+            //to show
+            $('.order-details-head').show();
+            $('.order-details').show();
+            $('.feedback-form-head').show();
+            $('.feedback-form').show();
+            $('.feedback-form-button').show();
+            $('.right-bgwrapper').show();
+            $('.order-card-column').show();
+        }
+
+    });
+}
+
+
+
+
+
 $(document).ready(function () {
 
   /* 1. Visualizing things on Hover - See next part for action on click */

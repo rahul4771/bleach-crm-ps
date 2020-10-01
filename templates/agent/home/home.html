@@ -1053,12 +1053,13 @@ $(".order_schedule").click(function(){
     $('#order_schedule_date_id').datepicker({
           pickTime: false, 
           format: "dd-mm-yyyy",
+          startDate: new Date(),
         });
 
     //time picker setup for confirm
     $('#order_schedule_time_id').datetimepicker({
           pickDate:false,
-          format: 'hh:mm A'
+          format: 'hh:mm A',
         });
 
     $("#orderschedule_dateconfirm_popup").css({'visibility':'visible','opacity':1,});
@@ -1085,6 +1086,7 @@ $(".followup_schedule").click(function(){
     $('#followup_schedule_date_id').datepicker({
           pickTime: false, 
           format: "dd-mm-yyyy",
+          startDate: new Date(),
         });
 
     //time picker setup for confirm
@@ -1145,6 +1147,7 @@ $('document').ready(function(){
         $('#appointment_date').datetimepicker({
               pickTime: false, 
               format: "DD-MM-YYYY",
+              minDate:1,
             });
         $('#appointment_time').datetimepicker({
               pickDate:false,
@@ -1206,6 +1209,7 @@ for (i = 0; i < coll.length; i++) {
         $('#cleaning_date').datetimepicker({
               pickTime: false, 
               format: "DD-MM-YYYY",
+              minDate: 1,
             });
 
         $('#cleaning_time').datetimepicker({
@@ -1303,6 +1307,7 @@ for (i = 0; i < coll.length; i++) {
         $('#followup_date').datetimepicker({
               pickTime: false, 
               format: "DD-MM-YYYY",
+              minDate: 1,
             });
 
         $('#followup_time').datetimepicker({

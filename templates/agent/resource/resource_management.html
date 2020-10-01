@@ -169,6 +169,8 @@
     <th width="40" class="profile fixed-side togglehide"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} align="absmiddle"></th>
     <td><div class="name-bold">{{details.name}}<div class="position">{{details.user_type}}</div></div></td>
     </tr>
+    {% empty %}
+    <tr><td></td><td></td><td></td><td>No Data</td></tr>
     {% endfor %}
     
  </tbody>

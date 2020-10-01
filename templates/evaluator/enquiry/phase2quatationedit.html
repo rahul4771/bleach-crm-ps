@@ -524,6 +524,7 @@ $("#id_form-TOTAL_FORMS").val("{{evaluation_details.evaluationbooks|length}}");
   $("#id_form-{{forloop.counter0}}-tendative_date").datetimepicker({ 
     pickTime: false, 
     format: "DD-MM-YYYY",
+    minDate: 1,
   });
 
 //tendative dates initial
@@ -531,6 +532,7 @@ $("#id_form-TOTAL_FORMS").val("{{evaluation_details.evaluationbooks|length}}");
     multidate: true,
     closeOnDateSelect: true,
     format: "dd-mm-yyyy",
+    startDate: new Date(),
   });
 
 //initial time

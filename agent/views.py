@@ -343,7 +343,7 @@ def GetCustomerOrderInfoFeedback(request):
 	order_info_dict = {}
 
 	query       =   request.GET.get('keyword')
-	orders = Order.objects.filter(is_active=True,is_feedback_marked=False,payment_status='COMPLETED')#.select_related('evaluation__customer').filter(Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query))).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+	orders = Order.objects.filter(is_active=True,is_feedback_marked=False,payment_status='COMPLETED').select_related('evaluation__customer').filter(Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query))).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
 
 	if orders:
 		for order in orders: 
@@ -1025,13 +1025,12 @@ class FeedbackDetails(IsAgent,View):
 		#order wise feedback
 		if search:
 			try:
-				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,is_feedback_marked=True).filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id=search)))		
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,payment_status='COMPLETED').filter(Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query))).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))		
 			except:
 				order_wise_feedbacks = None		
-
 		else:
 			try:
-				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,is_feedback_marked=True)						
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,payment_status='COMPLETED').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))						
 			except:	
 				order_wise_feedbacks = None
 
