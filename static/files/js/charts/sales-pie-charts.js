@@ -30,13 +30,13 @@ function drawlocationChart() {
         type: "GET",
         contentType: "application/json;charset=utf-8",
         
-        success: function(data) {
+        success: function(data_location) {
 
             var total_sales = 0;
             var cid = 1;
             var location_sales = [['Location', 'Sales']];
-        
-        $.each(data,function(key,value){
+            
+        $.each(data_location,function(key,value){
             console.log(value.location,parseInt(value.count),"gov")
             location_sales.push([value.location,value.count]);
             total_sales += parseInt(value.count)
@@ -69,7 +69,7 @@ function drawlocationChart() {
         var legend = document.getElementById("legend_location");
         var legItem = [];
         
-        for (var i = 0; i < 9; i++) {
+        for (var i = 0; i < 5; i++) {
             var label = data.getValue(i, 0);
             var value = data.getValue(i, 1);
             var percent = Number(100 * value / total).toFixed(1);
@@ -79,11 +79,23 @@ function drawlocationChart() {
             legItem[i] = document.createElement('div');
             legItem[i].className = 'donut-char-legend';
             legItem[i].id = 'legend_' + data.getValue(i, 0);
-
+            
             legItem[i].innerHTML = '<i class="fa fa-square" style="color:'+colors[i]+'"></i> <div class="chart-stat">' + label + '</div><span>' + percent + ' %</span>';
 
             legend.appendChild(legItem[i]);
         }
+
+        var others = 0;
+
+        for (var j = 5; j < data_location.length; j++){
+            
+            others += data.getValue(j, 1);
+            
+        }
+
+        var others_percent = Number(100 * others / total).toFixed(1);
+        console.log(others,others_percent,"otp")
+        $('#legend_location').append('<div class="donut-char-legend" ><i class="fa fa-square" style="color:#b82e2e"></i> <div class="chart-stat">Others</div><span>' + others_percent + ' %</span></div>')
         // // initial value
         // var percent = 0;
         // // start the animation loop

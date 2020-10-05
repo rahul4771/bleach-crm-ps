@@ -52,23 +52,23 @@ function initialize() {
             success: function(data_month) {
             var clients = [['Governorate', 'Clients',{ role: 'style' },{ role: 'annotation' }]];
             var total_clients = 0;
-            var count = 0;
+            //var count = 0;
 
             $.each(data_month,function(key,value){
-                count++ ;
-                if (count == 1){
-                    color = '#36c';
-                }else if(count == 2){
-                    color = '#dc3912';
-                }else if(count == 3){
-                    color = '#ffc056';
-                }else if(count == 4){
-                    color = '#109518';
-                }else if(count == 5){
-                    color = '#990099';
-                }else if(count == 6){
-                    color = '#099cc9';
-                }
+                //count++ ;
+                //if (count == 1){
+                //    color = '#36c';
+                //}else if(count == 2){
+                //    color = '#dc3912';
+                //}else if(count == 3){
+                color = '#ffc056';
+                //}else if(count == 4){
+                //    color = '#109518';
+                //}else if(count == 5){
+                //    color = '#990099';
+                //}else if(count == 6){
+                //    color = '#099cc9';
+                //}
 
                 clients.push([value.governorate,value.clients,color,value.governorate]);
                 total_clients += parseInt(value.clients)

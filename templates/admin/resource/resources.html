@@ -112,16 +112,24 @@
         
         </div><!--filter-column-boxes filter-columns-left-->
 		<div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
-        
+            <!-- datepicker -->
             <div class="date-wrapper"><!--date-wrapper-->
             <div class="date-wrapper-inner-resource"><!--date-wrapper-inner-->
             <div id="working_calendar">
             <button class="prev-day-resource previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type='text' id='working_calendar_date'  name='datepicker' class="date-box resource_date_pick" value="{{workers_date|date:"d-m-Y"}}" onchange="set_params_go()">
+            <input type='text' id='working_calendar_date'  name='datepicker' class="date-box resource_date_pick" value="{{workers_date|date:"d-m-Y"}}" onchange="set_params_go()" >
             <button class='next-day-resource next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
             <button class='today-date-resource current-date'>Today</button>
             </div>
-            <input type="text" id="resource_month" class="month_pick date-picker-resource" hidden>
+            
+            <!-- monthpicker -->
+            <div id="working_calendar2" hidden>
+            <button class="prev-month-resource previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type='text' id='working_calendar_month'  name='monthpicker' class="date-box month_pick" >
+            <button class='next-month-resource next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='this-month-resource current-date'>Month</button>
+            </div>
+            {% comment %} <input type="text" id="resource_month" class="month_pick date-picker-resource" hidden> {% endcomment %}
             </div><!--date-wrapper-inner-->
             
             <div class="date-togglewrapper"><!--date-togglewrapper-->
@@ -205,16 +213,16 @@
 <script type="text/javascript">
 
     var date1 = new Date();
-    var previous_month = ("0" + (date1.getMonth())).slice(-2);
+    var previous_month = ("0" + (date1.getMonth()+1)).slice(-2);
     
     console.log(previous_month,"lp")
     var datestring = previous_month + "/" + date1.getFullYear();
-    $('#resource_month').val(datestring);
+    $('#working_calendar_month').val(datestring);
 
     //load monthly workers data on toggle
     function load_workers_data(){
         console.log("pop")
-        var month_year = datestring
+        var month_year = $('#working_calendar_month').val();
         var staff_type = $('#staff_type_filter').val();
         console.log(staff_type,"stp");
         search = $('#search-bar').val();
@@ -236,13 +244,13 @@
             })
         }
 
-    $("#resource_month").on("change", function(){
+    $("#working_calendar_month").on("change", function(){
         load_workers_data();
     });
 
-    $('#daymonthtoggle').click(function(){
+    $('#daymonthtoggle_resource').click(function(){
         if($(this).is(':checked')){
-            $('#resource_month').attr("hidden",false);
+            $('#working_calendar2').attr("hidden",false);
             $('#working_calendar').attr("hidden",true);
             $('#table_month').attr("hidden",false);
             $('#table_date').attr("hidden",true);
@@ -253,7 +261,7 @@
             $('#resource_search2').attr("hidden",false);
             load_workers_data();
         }else{
-            $('#resource_month').attr("hidden",true);
+            $('#working_calendar2').attr("hidden",true);
             $('#working_calendar').attr("hidden",false);
             $('#table_month').attr("hidden",true);
             $('#table_date').attr("hidden",false);

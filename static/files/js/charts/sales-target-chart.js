@@ -227,7 +227,7 @@ function salestarget(evaluator_id){
     var datestring = date1.getDate()-1  + "-" + (date1.getMonth()+1) + "-" + date1.getFullYear();
 
     var date2 = new Date();
-    date2.setDate(date2.getDate()-30);
+    date2.setDate(date2.getDate()-60);
     var datestring2 = date2.getDate()  + "-" + (date2.getMonth()+1) + "-" + date2.getFullYear();
     console.log(datestring,datestring2)
 
