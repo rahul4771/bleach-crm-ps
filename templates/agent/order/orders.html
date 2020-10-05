@@ -205,7 +205,7 @@
         <span data-href="#" class="blue-bg clickable-row">Evaluating</span>
         {%endif%}
     </td>
-    <td class="align-center"><a href="#"><img src="{% static 'files/images/icon-download.svg' %}" align="absmiddle" class="download-icon"></a> &nbsp &nbsp &nbsp &nbsp<a href="{% url 'agent:agent-makequatation1edit' evaluation.customer.id evaluation.id %}"><img src="{% static 'files/images/edit.svg' %}" align="absmiddle" class="download-icon"></a></td>
+    <td class="align-center"><a href="#"><img src="{% static 'files/images/icon-download.svg' %}" align="absmiddle" class="download-icon"></a> &nbsp &nbsp &nbsp &nbsp{% if evaluation.quatation_status == 'APPROVED' %}<img src="{% static 'files/images/edit.svg' %}" align="absmiddle" class="download-icon">{% else %}<a href="{% url 'agent:agent-makequatation1edit' evaluation.customer.id evaluation.id %}"><img src="{% static 'files/images/edit.svg' %}" align="absmiddle" class="download-icon"></a>{% endif %}</td>
     </tr>    
     {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td></tr>    

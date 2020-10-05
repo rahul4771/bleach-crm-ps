@@ -66,6 +66,17 @@ def UpdateAddressStatus(request):
 
 	return JsonResponse(data)
 
+def MobileNumberValidate(request):
+	mobile_no = request.GET.get('mobile_number')
+	data 	  = {}
+
+	try:
+		existing_user = UserProfile.objects.get(mobile_number=mobile_no)
+		data['validation']= False
+	except:
+		data['validation']= True
+			
+	return JsonResponse(data)
 
 #Ajax for governorates Area
 def GetArea(request):
@@ -162,10 +173,11 @@ def GetFeedbackOrderInfo(request):
 def GetCleaningInfo(request):
 	cleaning_dict = {}
 
-	scheduler_id  = request.GET.get('schedule_id')
-
+	scheduler_id  = int(request.GET.get('schedule_id'))
+	print(scheduler_id)
 	schedule  = OrderScheduler.objects.select_related('order_scheduler_book','customer_address__customer','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_member')),to_attr='cleaning_team')).get(id=scheduler_id,is_active=True)
 
+	print(schedule)
 
 	cleaning_dict['order_no'] 		 = schedule.order.order_no
 	cleaning_dict['address']  		 = schedule.customer_address.apartment+', '+schedule.customer_address.block+', '+schedule.customer_address.street+', '+schedule.customer_address.avenue+', '+schedule.customer_address.building+', '+schedule.customer_address.area.name+', '+schedule.customer_address.governorate.name
@@ -332,10 +344,9 @@ def GetCustomerOrderInfoFeedback(request):
 
 	query       =   request.GET.get('keyword')
 	orders = Order.objects.filter(is_active=True,is_feedback_marked=False,payment_status='COMPLETED').select_related('evaluation__customer').filter(Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query))).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+
 	if orders:
 		for order in orders: 
-			print(order.followup_count)
-			print(order.completed_followup_count)
 			order_info_dict[order.id] = order.evaluation.evaluation_id+'-'+order.evaluation.customer.name 	
 	
 	data['order_details'] = order_info_dict
@@ -354,7 +365,7 @@ def GetCustomerOrderInfo(request):
 
 	query       =   request.GET.get('keyword')
 
-	orders = Order.objects.filter(is_active=True).select_related('evaluation__customer').filter(Q(evaluation__quatation_status='APPROVED') & Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)) & ~Q(Q(order_status='ORDER_CANCELLED')|Q(order_status='ORDER_CLOSED')))
+	orders = Order.objects.filter(is_active=True).select_related('evaluation__customer').filter(Q(evaluation__quatation_status='APPROVED') & Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)) & ~Q(Q(order_status='ORDER_CANCELLED')))
 	
 	
 	if orders:
@@ -509,22 +520,17 @@ class AgentHome(IsAgent,View):
 
 		#Order and Followup Schedules for date confirmation
 		confirm_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)+timedelta(4)
-
-		try:
-			order_schedules		  = OrderScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').annotate(color_status=Case(When(Q(Q(start_at__lte=confirm_to_date) & Q(start_at__gte=confirm_to_date-timedelta(1))), then=Value('green')),
-	                  When(Q(Q(start_at__lt=confirm_to_date-timedelta(1))&Q(start_at__gte=confirm_to_date-timedelta(3))), then=Value('yellow')),
-	                  default=Value('red'),
-	                  output_field=CharField(),))
-		except:
-			order_schedules		  = None
-
-		try:
-			follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lte=confirm_to_date).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').annotate(color_status=Case(When(Q(Q(start_at__lte=confirm_to_date) & Q(start_at__gte=confirm_to_date-timedelta(1))), then=Value('green')),
-					  When(Q(Q(start_at__lt=confirm_to_date-timedelta(1))&Q(start_at__gte=confirm_to_date-timedelta(2))), then=Value('yellow')),
-					  default=Value('red'),
-					  output_field=CharField(),))
-		except:
-			follow_up_schedules	  = None
+		
+		order_schedules		  = OrderScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').annotate(color_status=Case(When(Q(Q(start_at__lte=confirm_to_date) & Q(start_at__gte=confirm_to_date-timedelta(1))), then=Value('green')),
+                  When(Q(Q(start_at__lt=confirm_to_date-timedelta(1))&Q(start_at__gte=confirm_to_date-timedelta(3))), then=Value('yellow')),
+                  default=Value('red'),
+                  output_field=CharField(),))
+		
+		
+		follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lte=confirm_to_date).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').annotate(color_status=Case(When(Q(Q(start_at__lte=confirm_to_date) & Q(start_at__gte=confirm_to_date-timedelta(1))), then=Value('green')),
+				  When(Q(Q(start_at__lt=confirm_to_date-timedelta(1))&Q(start_at__gte=confirm_to_date-timedelta(2))), then=Value('yellow')),
+				  default=Value('red'),
+				  output_field=CharField(),))
 	
 
 		#cleaning schedule & followup schedule for cleaning calendar
@@ -756,7 +762,7 @@ class ResourceManagement(IsAgent,View):
 		#total active workers
 		try:
 			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=workers_date_start)&Q(end_at__gte=workers_date_start)) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=timezone.now().replace(tzinfo=None))&Q(end_at__gte=timezone.now().replace(tzinfo=None)))) ).values_list('member',flat=True)).distinct().count()
-			print(total_active_workers,"taw")
+			
 		except:
 			total_active_workers = 0
 
@@ -1019,13 +1025,12 @@ class FeedbackDetails(IsAgent,View):
 		#order wise feedback
 		if search:
 			try:
-				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,is_feedback_marked=True).filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id=search)))		
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,payment_status='COMPLETED').filter(Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query))).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))		
 			except:
 				order_wise_feedbacks = None		
-
 		else:
 			try:
-				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,is_feedback_marked=True)						
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,payment_status='COMPLETED').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))						
 			except:	
 				order_wise_feedbacks = None
 
@@ -1558,6 +1563,8 @@ class NewEnquiry(IsAgent,View):
 			
 			return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'governorates':governorates})					
 
+		redirection = request.POST.get('redirect_to')	
+
 		if redirection == 'assign_evaluator':
 			return redirect('agent:agent-makeevaluation',enquiry_form_save.id)
 		elif redirection == 'quatation':
@@ -1670,13 +1677,14 @@ class MakeEvaluation(IsAgent,View):
 		current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
 		
 		if current_blc_starting == int(str(tracking_no)[:6]):
-			evaluation_no = 'BLC'+str(tracking_no+1)
+			new_tracking_no = int(tracking_no)+1
+			evaluation_no   = 'BLC'+str(new_tracking_no)
 		else:
 			evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
 			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 
 		#Create New Evaluation
-		new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=tracking_no+1,call_attender=request.user,customer_id=enquiry_id)
+		new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,call_attender=request.user,customer_id=enquiry_id)
 
 		return redirect('agent:agent-assignevaluator',enquiry_id,new_evaluation.id)
 
@@ -1762,13 +1770,14 @@ class MakeQuatationBase(IsAgent,View):
 		current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
 		
 		if current_blc_starting == int(str(tracking_no)[:6]):
-			evaluation_no = 'BLC'+str(tracking_no+1)
+			new_tracking_no = int(tracking_no)+1
+			evaluation_no   = 'BLC'+str(new_tracking_no)
 		else:
 			evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
 			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
-	
+		
 		try:
-			evaluation = Evaluation.objects.create(tracking_no=tracking_no+1,evaluation_id=evaluation_no,customer_id=enquiry_id,call_attender=request.user)
+			evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer_id=enquiry_id,call_attender=request.user)
 		except:
 			evaluation = None
 
@@ -1855,8 +1864,8 @@ class MakeQuatationPhase2(IsAgent,View):
 
 		if service_formset.is_valid() :
 			form_count = 0
-			#create order
-			new_order = Order.objects.get_or_create(evaluation=evaluation_details.evaluation,order_no=evaluation_details.evaluation.evaluation_id,total_amount=evaluation_details.evaluation.total_cost,remining_amount=evaluation_details.evaluation.total_cost,order_status='APPROVED_BY_CLIENT')
+			#create order roughly
+			new_order = Order.objects.get_or_create(evaluation=evaluation_details.evaluation,order_no=evaluation_details.evaluation.evaluation_id,total_amount=evaluation_details.evaluation.total_cost,remining_amount=evaluation_details.evaluation.total_cost)
 
 			order_schedule_array          = []
 			#Save Service Form
@@ -1898,6 +1907,7 @@ class MakeQuatationPhase2(IsAgent,View):
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
 						updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)
+						update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')+total)
 					else:
 						tendative_date  = request.POST.get('form-'+str(form_count)+'-tendative_date')
 
@@ -1908,7 +1918,7 @@ class MakeQuatationPhase2(IsAgent,View):
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
 						updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)
-
+						update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')+total)
 					#to save sections
 					no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))
 					section_array          = []
@@ -2098,6 +2108,7 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 
 							updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total,status='EVALUATED')
 							updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total)
+							update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')-very_old_book.total_cost+total)							
 						else:
 							tendative_date  = request.POST.get('form-'+str(form_count)+'-tendative_date')
 
@@ -2105,10 +2116,9 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 							end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
 							order_schedule_array.append(OrderScheduler(order=old_order,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))
 
-							print(evaluation_detail_id,"evaluation detail id")
 							updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total,status='EVALUATED')
 							updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total)
-
+							update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')-very_old_book.total_cost+total)
 						#to save and update sections
 						no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))
 						section_array          = []

@@ -52,7 +52,7 @@
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>Team Leader</label></div>
                 <label for="favcity">
-                <select id="favcity" name="team_leader" required=>
+                <select id="favcity" name="team_leader" required>
                 <option value="">Choose Leader</option>  
                 {% for leader in leaders %}  
                 <option value="{{leader.id}}">{{leader.name}}</option>
@@ -80,7 +80,7 @@
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>Driver Pick-up</label></div>
                 <label for="favcity">
-                <select id="favcity" name="pick_up_driver">
+                <select id="favcity" name="pick_up_driver" required>
                 <option value="">Choose Driver</option>
                 {% for driver in drivers %}
                 <option value="{{driver.id}}">{{driver.name}}</option>
@@ -90,7 +90,7 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label hide-m"> <label>Vehicle Number pick-up</label></div>
-                <input name="vehicle_number_pick_up" type="text" class="textBox" placeholder="">
+                <input name="vehicle_number_pick_up" type="text" class="textBox" placeholder="" required>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -100,7 +100,7 @@
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>Driver Drop-off</label></div>
                 <label for="favcity">
-                <select id="favcity" name="drop_off_driver">
+                <select id="favcity" name="drop_off_driver" required>
                 <option value="">Choose Driver</option>  
                 {% for driver in drivers %}
                 <option value="{{driver.id}}">{{driver.name}}</option>
@@ -111,7 +111,7 @@
 
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label hide-m"><label>Vehicle Number Drop-off</label></div>
-                <input name="vehicle_number_drop_off" type="text" class="textBox" placeholder="">
+                <input name="vehicle_number_drop_off" type="text" class="textBox" placeholder="" required>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -146,7 +146,7 @@
 
     if(i%2 == 1)  
     {
-        $('.team_members').append('<div class="ticket-wrapper-row ticket-forms-boxes box'+i+'"><!--ticket-wrapper-row ticket-forms-boxes--><div class="ticket-form-left"><!--ticket-form-left--><div class=" bold-text common-label"> <label>Cleaner '+i+'</label></div><label for="favcity"><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner">{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select></label> </div><!--ticket-form-left--></div><!--ticket-wrapper-row ticket-forms-boxes--><hr class="hr-dashedpad">');
+        $('.team_members').append('<div class="ticket-wrapper-row ticket-forms-boxes box'+i+'"><!--ticket-wrapper-row ticket-forms-boxes--><div class="ticket-form-left"><!--ticket-form-left--><div class=" bold-text common-label"> <label>Cleaner '+i+'</label></div><label for="favcity"><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner" required>{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select></label> </div><!--ticket-form-left--></div><!--ticket-wrapper-row ticket-forms-boxes--><hr class="hr-dashedpad">');
 
         if(i == no_of_cleaners)
         {
@@ -155,7 +155,7 @@
     }
     else
     {
-        $('.box'+(i-1)+'').append('<div class="ticket-form-right"><!--ticket-form-right--><div class=" bold-text common-label"> <label>Cleaner '+i+'</label></div><label for="favcity"><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner">{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select></label></div><!--ticket-form-right-->');
+        $('.box'+(i-1)+'').append('<div class="ticket-form-right"><!--ticket-form-right--><div class=" bold-text common-label"> <label>Cleaner '+i+'</label></div><label for="favcity"><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner" required>{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select></label></div><!--ticket-form-right-->');
 
     }
     

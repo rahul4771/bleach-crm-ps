@@ -265,8 +265,6 @@ $('.datepicker').datetimepicker({
 });
 
 $(".arrow-close").on('click', function (e) {
-  $(".arrow").toggleClass("cross");
-  $(".menu-filter").slideToggle("");
   
   //clear all
   $(".menu-filter").find(':input').each(function() {
@@ -299,10 +297,7 @@ $(".arrow-left").on('click', function (e) {
   $(".menu-filter-left").slideToggle("");
 });
 
-$(".arrow-left-close").on('click', function (e) {
-  $(".arrow-left").toggleClass("cross-left");
-  $(".menu-filter-left").slideToggle("");
-  
+$(".arrow-left-close").on('click', function (e) {  
   //clear all
   $(".menu-filter-left").find(':input').each(function() {
     switch(this.type) {

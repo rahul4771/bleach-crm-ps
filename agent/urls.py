@@ -55,5 +55,6 @@ urlpatterns = [
 	url(r'^ajax/removesection/',views.RemoveSection,name='removebooksection'),
 	url(r'^ajax/removekeynote/',views.RemoveKeynote,name='removekeynote'),
 	url(r'^ajax/removeevaluationmedia/',views.RemoveEvaluationMedia,name='removeevaluationmedia'),
+	url(r'^ajax/mobile/validate/',views.MobileNumberValidate,name='mobilenumber-validate'),
 
 ]

@@ -94,6 +94,8 @@
 {% endif %}
 
 
+
+
 {% if evaluation_details %}
 <div class="white-wrapper"><!--white-wrapper-->
 
@@ -212,7 +214,7 @@
  
 </section>
 {% include 'agent/common/footer.html' %}
-</div>
+</div>     
 
 <!-- order_scheduler confirm_popup -->
 <div id="orderschedule_dateconfirm_popup" class="overlay"><!--overlay-->
@@ -743,11 +745,11 @@ $('document').ready(function(){
                               same_slote_count += 1
                               if(same_slote_count == 1)
                               {
-                                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="edit_evaluation clickable-cursor" data-blcno="{{evaluation.evaluation.evaluation_id}}" data-customer_name="{{evaluation.evaluation.customer.name}}" data-area="{{evaluation.address.area.name}}" data-governorate="{{evaluation.address.governorate.name}}" data-block="{{evaluation.address.block}}" data-apartment="{{evaluation.address.apartment}}" data-street="{{evaluation.address.street}}" data-building="{{evaluation.address.building}}" data-avenue="{{evaluation.address.avenue}}"  data-mobile_no="{{evaluation.evaluation.customer.mobile_number}}" data-proposed_date="{{evaluation.proposed_time|date:'d-m-Y'}}" data-proposed_time="{{evaluation.proposed_time|date:'h:i A'}}" data-evaluator_name="{{evaluation.evaluator.name}}" data-notes="{{evaluation.evaluator_note|default_if_none:''}}" data-customer_id="{{evaluation.evaluation.customer.id}}" data-evaluator_id="{{evaluation.evaluator.id}}" data-address_id="{{evaluation.address.id}}" data-id="{{evaluation.id}}">{{evaluation.address.area.name}}</a></td>');
+                                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="edit_evaluation clickable-cursor" data-blcno="{{evaluation.evaluation.evaluation_id}}" data-customer_name="{{evaluation.evaluation.customer.name}}" data-area="{{evaluation.address.area.name}}" data-governorate="{{evaluation.address.governorate.name}}" data-block="{{evaluation.address.block}}" data-apartment="{{evaluation.address.apartment}}" data-street="{{evaluation.address.street}}" data-building="{{evaluation.address.building}}" data-avenue="{{evaluation.address.avenue}}"  data-mobile_no="{{evaluation.evaluation.customer.mobile_number}}" data-proposed_date="{{evaluation.proposed_time|date:'d-m-Y'}}" data-proposed_time="{{evaluation.proposed_time|date:'h:i A'}}" data-evaluator_name="{{evaluation.evaluator.name}}" data-notes="{{evaluation.evaluator_note|default_if_none:''}}" data-customer_id="{{evaluation.evaluation.customer.id}}" data-evaluator_id="{{evaluation.evaluator.id}}" data-address_id="{{evaluation.address.id}}" data-evaluation_status="{{evaluation.status}}" data-id="{{evaluation.id}}">{{evaluation.address.area.name}}</a></td>');
                               }
                               else
                               {
-                                $("#evaluator{{evaluator.id}} td:last").append('<br><a class="edit_evaluation clickable-cursor" data-blcno="{{evaluation.evaluation.evaluation_id}}" data-customer_name="{{evaluation.evaluation.customer.name}}"  data-area="{{evaluation.address.area.name}}" data-governorate="{{evaluation.address.governorate.name}}" data-block="{{evaluation.address.block}}"  data-apartment="{{evaluation.address.apartment}}" data-street="{{evaluation.address.street}}" data-building="{{evaluation.address.building}}" data-avenue="{{evaluation.address.avenue}}" data-mobile_no="{{evaluation.evaluation.customer.mobile_number}}" data-proposed_date="{{evaluation.proposed_time|date:'d-m-Y'}}" data-proposed_time="{{evaluation.proposed_time|date:'h:i A'}}" data-evaluator_name="{{evaluation.evaluator.name}}" data-notes="{{evaluation.notes}}" data-customer_id="{{evaluation.evaluation.customer.id}}" data-evaluator_id="{{evaluation.evaluator.id}}" data-address_id="{{evaluation.address.id}}" data-id="{{evaluation.id}}">{{evaluation.address.area.name}}</a>');
+                                $("#evaluator{{evaluator.id}} td:last").append('<br><a class="edit_evaluation clickable-cursor" data-blcno="{{evaluation.evaluation.evaluation_id}}" data-customer_name="{{evaluation.evaluation.customer.name}}"  data-area="{{evaluation.address.area.name}}" data-governorate="{{evaluation.address.governorate.name}}" data-block="{{evaluation.address.block}}"  data-apartment="{{evaluation.address.apartment}}" data-street="{{evaluation.address.street}}" data-building="{{evaluation.address.building}}" data-avenue="{{evaluation.address.avenue}}" data-mobile_no="{{evaluation.evaluation.customer.mobile_number}}" data-proposed_date="{{evaluation.proposed_time|date:'d-m-Y'}}" data-proposed_time="{{evaluation.proposed_time|date:'h:i A'}}" data-evaluator_name="{{evaluation.evaluator.name}}" data-notes="{{evaluation.notes}}" data-customer_id="{{evaluation.evaluation.customer.id}}" data-evaluator_id="{{evaluation.evaluator.id}}" data-address_id="{{evaluation.address.id}}" data-evaluation_status="{{evaluation.status}}" data-id="{{evaluation.id}}">{{evaluation.address.area.name}}</a>');
                               }  
                               
                             }
@@ -901,7 +903,7 @@ $('document').ready(function(){
        second_raw_width_percentage = 100/24*ending_time;
 
 
-       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{sp_schedule.id}}" data-id="{{schedule.id}}" {% if sp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-first edit_cleaning"{% else %}class="sp-green-box-first edit_cleaning"{% endif %} style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_schedule.cleaning_teams %}{% for team in sp_schedule.cleaning_teams %}{% if team.team_leader.profile_image %}src="{{team.team_leader.profile_image.url}}" title="{{team.team_leader.name}}"{%else%}src="{% static 'files/images/profile-pic.jpg' %}" title="{{team.team_leader.name}}"{% endif %}{% endfor %}{% endif %}></div><center>{{sp_schedule.customer_address.area}}</center> </div></td></tr>')
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{sp_schedule.id}}" data-id="{{sp_schedule.id}}" {% if sp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-first edit_cleaning"{% else %}class="sp-green-box-first edit_cleaning"{% endif %} style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_schedule.cleaning_teams %}{% for team in sp_schedule.cleaning_teams %}{% if team.team_leader.profile_image %}src="{{team.team_leader.profile_image.url}}" title="{{team.team_leader.name}}"{%else%}src="{% static 'files/images/profile-pic.jpg' %}" title="{{team.team_leader.name}}"{% endif %}{% endfor %}{% endif %}></div><center>{{sp_schedule.customer_address.area}}</center> </div></td></tr>')
        
        {% endfor %}
 
@@ -921,7 +923,7 @@ $('document').ready(function(){
        second_raw_width_percentage = 100/24*ending_time;
 
 
-       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{spp_schedule.id}}" data-id="{{schedule.id}}" {% if spp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-second edit_cleaning"{% else %}class="sp-green-box-second edit_cleaning"{% endif %} style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div {% if spp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text edit_cleaning"{% else %}class="right-value green-text edit_cleaning"{% endif %}>{{spp_schedule.order_scheduler_book.number_of_cleaners}}</div></div></td></tr>')
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{spp_schedule.id}}" data-id="{{spp_schedule.id}}" {% if spp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-second edit_cleaning"{% else %}class="sp-green-box-second edit_cleaning"{% endif %} style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div {% if spp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text edit_cleaning"{% else %}class="right-value green-text edit_cleaning"{% endif %}>{{spp_schedule.order_scheduler_book.number_of_cleaners}}</div></div></td></tr>')
        
        {% endfor %}
 
@@ -1009,7 +1011,7 @@ $('document').ready(function(){
        second_raw_width_percentage = 100/24*ending_time;
 
 
-       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{sp_schedule.id}}" data-id="{{schedule.id}}" class="sp-yellow-box-first edit_followup" style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_schedule.followup_teams %}{% for team in sp_schedule.followup_teams %}{% if team.team_leader.profile_image %}src="{{team.team_leader.profile_image.url}}" title="{{team.team_leader.name}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %} title="{{team.team_leader.name}}"{% endif %}{% endfor %}{% else %}{% endif %}></div><center>{{sp_schedule.customer_address.area}}</center> </div></td></tr>')
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{sp_schedule.id}}" data-id="{{sp_schedule.id}}" class="sp-yellow-box-first edit_followup" style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_schedule.followup_teams %}{% for team in sp_schedule.followup_teams %}{% if team.team_leader.profile_image %}src="{{team.team_leader.profile_image.url}}" title="{{team.team_leader.name}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %} title="{{team.team_leader.name}}"{% endif %}{% endfor %}{% else %}{% endif %}></div><center>{{sp_schedule.customer_address.area}}</center> </div></td></tr>')
        
        {% endfor %}
 
@@ -1029,7 +1031,7 @@ $('document').ready(function(){
        second_raw_width_percentage = 100/24*ending_time;
 
 
-       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{spp_schedule.id}}" data-id="{{schedule.id}}" class="sp-yellow-box-second edit_followup" style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div class="right-value yellow-text">{{spp_schedule.follow_up.no_of_cleaners}}</div></div></td></tr>')
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{spp_schedule.id}}" data-id="{{spp_schedule.id}}" class="sp-yellow-box-second edit_followup" style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div class="right-value yellow-text">{{spp_schedule.follow_up.no_of_cleaners}}</div></div></td></tr>')
        
        {% endfor %}
 
@@ -1051,12 +1053,13 @@ $(".order_schedule").click(function(){
     $('#order_schedule_date_id').datepicker({
           pickTime: false, 
           format: "dd-mm-yyyy",
+          startDate: new Date(),
         });
 
     //time picker setup for confirm
     $('#order_schedule_time_id').datetimepicker({
           pickDate:false,
-          format: 'hh:mm A'
+          format: 'hh:mm A',
         });
 
     $("#orderschedule_dateconfirm_popup").css({'visibility':'visible','opacity':1,});
@@ -1083,6 +1086,7 @@ $(".followup_schedule").click(function(){
     $('#followup_schedule_date_id').datepicker({
           pickTime: false, 
           format: "dd-mm-yyyy",
+          startDate: new Date(),
         });
 
     //time picker setup for confirm
@@ -1143,6 +1147,7 @@ $('document').ready(function(){
         $('#appointment_date').datetimepicker({
               pickTime: false, 
               format: "DD-MM-YYYY",
+              minDate:1,
             });
         $('#appointment_time').datetimepicker({
               pickDate:false,
@@ -1163,6 +1168,17 @@ $('document').ready(function(){
         $('#evaluator').val($(this).data('evaluator_id'));
         $('#address').val($(this).data('address_id'));
 
+        //edit option toggle
+        evaluation_status = $(this).data('evaluation_status');
+        
+        if(evaluation_status == 'EVALUATED')
+            {
+                $('.edit-collapse').css('display','none');
+        }
+        else
+        {
+                $('.edit-collapse').css('display','block');
+        }
 });
 
 var coll = document.getElementsByClassName("collapsible");
@@ -1193,6 +1209,7 @@ for (i = 0; i < coll.length; i++) {
         $('#cleaning_date').datetimepicker({
               pickTime: false, 
               format: "DD-MM-YYYY",
+              minDate: 1,
             });
 
         $('#cleaning_time').datetimepicker({
@@ -1235,7 +1252,7 @@ for (i = 0; i < coll.length; i++) {
                     append_cleaners = '';
                     for(i=0;i<cleaners.length;++i)
                         {   
-                            if(i+1%5 == 0)
+                            if((i+1)%5 == 0)
                             {
                                 append_cleaners += cleaners[i].member_name+',<br>';
                             }
@@ -1244,8 +1261,12 @@ for (i = 0; i < coll.length; i++) {
                                 append_cleaners += cleaners[i].member_name+',';
                             }
                             
-                        }
-                    $('#team_member_cleaning_id td strong span').html(append_cleaners);    
+                        }   
+                    $('#team_member_cleaning_id td strong span').html(append_cleaners);
+                  }
+                  else
+                    {
+                        $('#team_member_cleaning_id').html('');
                   }  
 
                   //form
@@ -1286,6 +1307,7 @@ for (i = 0; i < coll.length; i++) {
         $('#followup_date').datetimepicker({
               pickTime: false, 
               format: "DD-MM-YYYY",
+              minDate: 1,
             });
 
         $('#followup_time').datetimepicker({
@@ -1329,7 +1351,7 @@ for (i = 0; i < coll.length; i++) {
                     append_cleaners = '';
                     for(i=0;i<cleaners.length;++i)
                         {   
-                            if(i+1%5 == 0)
+                            if((i+1)%5 == 0)
                             {
                                 append_cleaners += cleaners[i].member_name+',<br>';
                             }
@@ -1339,6 +1361,10 @@ for (i = 0; i < coll.length; i++) {
                             }
                         }
                     $('#team_member_followup_id td strong span').html(append_cleaners);    
+                  }
+                  else
+                    {
+                        $('#team_member_followup_id').html('');
                   }
 
                   //form

@@ -1,10 +1,14 @@
 .blue-box{ background:#528ce6; position:absolute; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:25px;  font-size:12px; padding:0 20px;}
 .sp-blue-box-first{ background:#528ce6; position:absolute;right:; top:9px; color:#fff; border-bottom-left-radius: 100px; border-top-left-radius: 100px;display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px;}
 .sp-blue-box-second{ background:#528ce6; position:absolute;right:; top:9px; color:#fff; border-bottom-right-radius: 100px; border-top-right-radius: 100px;display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px;}
+.sp-blue-box-first:hover{ background:#4980d4; cursor:pointer;}
+.sp-blue-box-second:hover{ background:#4980d4; cursor:pointer;}
 
 .green-box{ background:#3cbbb1; position:absolute;right:; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px;}
 .sp-green-box-first{ background:#3cbbb1; position:absolute;right:; top:9px; color:#fff; border-bottom-left-radius: 100px; border-top-left-radius: 100px;display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px;}
 .sp-green-box-second{ background:#3cbbb1; position:absolute;right:; top:9px; color:#fff; border-bottom-right-radius: 100px; border-top-right-radius: 100px;display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px;}
+.sp-green-box-first:hover{ background:#31a9a0; cursor:pointer;}
+.sp-green-box-second:hover{ background:#31a9a0; cursor:pointer;}
 
 .orange-box{ background:#ff8c56; position:absolute; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px;}
 .sp-orange-box-first{ background:#ff8c56; position:absolute;right:; top:9px; color:#fff; border-bottom-left-radius: 100px; border-top-left-radius: 100px;display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px;}
@@ -17,6 +21,8 @@
 .yellow-box{ background:#f2ba1e; position:absolute; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px;}
 .sp-yellow-box-first{ background:#f2ba1e; position:absolute;right:; top:9px; color:#fff; border-bottom-left-radius: 100px; border-top-left-radius: 100px;display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px;}
 .sp-yellow-box-second{ background:#f2ba1e; position:absolute;right:; top:9px; color:#fff; border-bottom-right-radius: 100px; border-top-right-radius: 100px;display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px;}
+.sp-yellow-box-first:hover{ background:#e7ab03; cursor:pointer;}
+.sp-yellow-box-second:hover{ background:#e7ab03; cursor:pointer;}
 
 .red-box:hover{ background:#d55757; cursor:pointer;}
 .left-avatar{width:22px; height:22px; position:absolute; left:1px; top:1px; border-radius:50px; text-align:center; }
@@ -37,6 +43,9 @@
 
 .blue-button{ background:#345beb; color:#fff; padding:4px 25px; border:none; font-size:15px; margin:15px 0 0px 0; border-radius:3px;transition: .4s; }
 .blue-button:hover{ background:#345beb;}
+
+.filter-button span{ color:#fff; text-decoration:none !important; background:#528ce6; border-radius:4px; padding:7px 20px !important; cursor: pointer;}
+.filter-button span:hover{ background:#4479cb; color:#fff;}
 
 .clickable-row-list{ cursor: pointer; }
 

@@ -173,6 +173,7 @@ $('document').ready(function(){
        $('.id_proposed_date').datetimepicker({ 
             pickTime: false, 
             format: "DD-MM-YYYY", 
+            minDate: 1,
             //maxDate: 'now().date()', 
         });
 
@@ -296,6 +297,7 @@ $(".assign_evaluator_button").click(function () {
     now_date = ({{evaluation_date.day}}<10 ? '0':'')+"{{evaluation_date.day}}-"+({{evaluation_date.month}}<10 ? '0':'')+"{{evaluation_date.month}}-"+"{{evaluation_date.year}}"
     
     now_time   = (hour<10 ? '0':'')+(hour>12 ? hour-12:hour)+":00 "+(hour>=12 ? 'PM':'AM')
+    
     
     $('.id_proposed_date').val(now_date);
     $('.id_proposed_time').val(now_time);

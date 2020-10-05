@@ -76,7 +76,7 @@
      
      <div class="white-wrapper-search"><!--white-wrapper-search-->
      <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
-          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search BLC Number & customer Name Here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
      </div><!--left-box leftbox-item1-->
      <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
      <input name="filter" type="button" value="Filter" id="filter" class="blue-button"> 
@@ -105,8 +105,9 @@
 <th data-hide="phone,tablet">Client Name</th>
 <th data-hide="phone">Area</th>
 <th>Contact</th>
-<th data-hide="phone,tablet">Status</th>
 <th data-hide="phone,tablet">Amount</th>
+<th data-hide="phone,tablet">Payment Mode</th>
+<th class="align-center" data-hide="phone,tablet">Status</th>
 </tr>
 </thead>
 <tbody>    {% for invoice in invoices %}
@@ -125,6 +126,8 @@
     {% endfor %}
     </td>
     <td>{{invoice.evaluation.customer.mobile_number}}</td>
+    <td>{{invoice.total_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
+    <td>{{invoice.evaluation.payment_method|default_if_none:''}}</td>
     <td><span 
         {% if invoice.payment_status == 'PENDING' %}
         class="red-bg"
@@ -134,7 +137,6 @@
         class="yellow-bg"
         {% endif %}
         >{{invoice.payment_status|default_if_none:''}}</span></td>
-    <td>{{invoice.total_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
     </tr>
     {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>

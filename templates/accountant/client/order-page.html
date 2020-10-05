@@ -34,38 +34,63 @@
                 
                     <div class="order-progress-widget order-progress-widget-column1"><!--order-progress-widget order-progress-widget-column1-->
                         <div class="evaluation">Evaluation</div>
-                        <div class="evaluation-icon"><img src="{% static 'files/images/evaluation-icon.svg' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-icon"><img src="{% static 'files/images/evaluation-green-icon.svg' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
                     </div><!--order-progress-widget order-progress-widget-column1-->
                    
+                    {% if order.evaluation.payment_method == 'PREPAID' or order.evaluation.payment_method == 'BREAKDOWN' %}
                     <div class="order-progress-widget order-progress-widget-column2"><!--order-progress-widget order-progress-widget-column2-->
                         <div class="evaluation">Payment</div>
-                        <div class="evaluation-icon"><img src="{% static 'files/images/order-payment.svg' %}" class="orderEval-icon"></div>
+                        {% if order.payment_status == 'COMPLETED' or order.evaluation.before_cleaning_amount == order.preamount_paid %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.svg' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
+                        {% else %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-gray-payment.svg' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Waiting</div>
+                        {% endif %}
                     </div><!--order-progress-widget order-progress-widget-column2-->
+                    {% endif %}
                     
                     <div class="order-progress-widget order-progress-widget-column3"><!--order-progress-widget order-progress-widget-column3-->
                         <div class="evaluation">Date Confirmation</div>
-                        <div class="evaluation-icon"><img src="{% static 'files/images/order-dateconfirmation.svg' %}" class="orderEval-icon"></div>
-                        <div class="evaluation-status">Completed</div>
+                        <div class="evaluation-icon"><img id="date_confirmed_image" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed <span id="date_confirmed"></span>/<span>{{order.orderschedules|length}}</span></div>
                     </div><!--order-progress-widget order-progress-widget-column3-->                    
                     
                     <div class="order-progress-widget order-progress-widget-column4"><!--order-progress-widget order-progress-widget-column4-->
                         <div class="evaluation">Assigning Team</div>
-                        <div class="evaluation-icon"><img src="{% static 'files/images/order-assigningteam.svg' %}" class="orderEval-icon"></div>
-                        <div class="evaluation-status">Completed</div>
+                        <div class="evaluation-icon"><img id="team_assigned_image" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed <span id="team_assigned"></span>/<span>{{order.orderschedules|length}}</span></div>
                     </div><!--order-progress-widget order-progress-widget-column4-->                     
                     
                     <div class="order-progress-widget order-progress-widget-column5"><!--order-progress-widget order-progress-widget-column5-->
                         <div class="evaluation">Cleaning</div>
-                        <div class="evaluation-icon"><img src="{% static 'files/images/order-cleaning.svg' %}" class="orderEval-icon"></div>
-                        <div class="evaluation-status">Completed</div>
+                        <div class="evaluation-icon"><img id="cleaning_completed_image" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed <span id="cleaning_completed">1</span>/<span>{{order.orderschedules|length}}</span></div>
                     </div><!--order-progress-widget order-progress-widget-column5-->                      
                     
+                    {% if order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'BREAKDOWN' %}
+                    <div class="order-progress-widget order-progress-widget-column2"><!--order-progress-widget order-progress-widget-column2-->
+                        <div class="evaluation">Payment</div>
+                        {% if order.payment_status == 'COMPLETED' or order.evaluation.after_cleaning_amount == order.postamount_paid %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.svg' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                        {% else %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-gray-payment.svg' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Waiting</div>
+                        {% endif %}
+                    </div><!--order-progress-widget order-progress-widget-column2-->
+                    {% endif %}
+
                     <div class="order-progress-widget order-progress-widget-column6"><!--order-progress-widget order-progress-widget-column6-->
                         <div class="evaluation">Feedback</div>
+                        {% if order.is_feedback_marked %}
                         <div class="evaluation-icon"><img src="{% static 'files/images/order-feedback.svg' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
+                        {% else %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-gray-feedback.svg' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Waiting</div>
+                        {% endif %}
                     </div><!--order-progress-widget order-progress-widget-column6-->                      
                 </div><!--order-progress-wrapper-->
             </div><!--order-left-stretch-->
@@ -105,7 +130,7 @@
                 {% endif %}
                 
                 {% if orderschedule.order_scheduler_book.cleaning_method %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.cleaning_method.name}} Method</div>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.cleaning_method}} Method</div>
                 {% endif %}
                 
                 {% if orderschedule.order_scheduler_book.area_type %}
@@ -132,7 +157,7 @@
         <div class="order-admin-wrapper"><!--order-admin-wrapper-->
        
             <div class="order-admin-widget-column1"><!--order-admin-widget-column1-->
-                {% if orderschedule.evaluation_details.evaluator.%}
+                {% if orderschedule.evaluation_details.evaluator.profile_image %}
                 <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}">{{orderschedule.evaluation_details.evaluator.profile_image.url}}</div>
                 {% else %}
                 <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
@@ -225,7 +250,7 @@
     <tr>
     <td class="red-line">Cleaning {{forloop.counter}}</td>
     <td>{{subscription_schedule.start_at}}</td>
-    <td><span class="red-bg">{{subscription_schedule.work_status|default_if_none:'Not Started'}}</span></td> 
+    <td><span class="red-bg clickable-cursor" onclick="appendsubscriptiondetails({{subscription_schedule.id}},{{forloop.parentloop.counter}})">{{subscription_schedule.work_status|default_if_none:'Not Started'}}</span></td> 
     </tr> 
     {% endif %}
     {% endfor %}     
@@ -235,10 +260,10 @@
 </tfoot>
 </table>
 
-
+<div class="appendsubscription"><!-- Append logic -->
 {% if  orderschedule.cleaning_team %}
  {% for cleaning_team in orderschedule.cleaning_team %}       
-<div class="details-sub-head align-left small-head">Cleaning Team</div>
+<div class="details-sub-head align-left small-head">Cleaning Team (Cleaning 1)</div>
     <div class="order-clean-outer-wrapper whitebg"><!--order-clean-outer-wrapper-->
         <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
             <div class="order-common-date">{{orderschedule.start_at}}</div>
@@ -326,9 +351,6 @@
             <p>{{investigation.notes}}</p>
         </div><!--investigation-columns-middle-->
 
-        <div class="investigation-columns-right"><!--investigation-columns-right-->
-            <div class=" "><img src="{% static 'files/images/cleaning1.jpg' %}"></div>
-        </div><!--investigation-columns-right-->
 </div><!--investigation-columns-->            
 
     
@@ -404,6 +426,7 @@
 
 {% endfor %}
 {% endif %}
+    </div><!-- Append logic -->
 </div><!--order-clean-outer-wrapper-->
 
 
@@ -502,9 +525,6 @@
             <p>{{investigation.notes}}</p>
         </div><!--investigation-columns-middle-->
 
-        <div class="investigation-columns-right"><!--investigation-columns-right-->
-            <div class=" "><img src="{% static 'files/images/cleaning1.jpg' %}"></div>
-        </div><!--investigation-columns-right-->
 </div><!--investigation-columns-->            
 
 {% for followup in investigation.followups %}
@@ -645,7 +665,7 @@
     <div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
     <div class="media-heading align-left">Evaluation</div>
     <section>
-        <div data-pn="{{forloop.counter}}" data-src="{% for media in orderschedule.order_scheduler_book.evaluationmedia %}{{media.media.url}},{% endfor %}"></div>
+        <div id="media{{forloop.counter}}1" data-pn="{{forloop.counter}}1" data-src="{% for media in orderschedule.order_scheduler_book.evaluationmedia %}{{media.media.url}},{% endfor %}"></div>
     </section>
   
     </div><!--gallery-widget-column-column1-->
@@ -653,18 +673,18 @@
     <div class="gallery-widget-column-column2"><!--gallery-widget-column-column2-->
     <div class="media-heading align-left">Investigation</div>
         <section>
-        <div data-pn="2" data-src="{% for investigation in orderschedule.investigations %}{% for media in investigation.investigationmedias %}{{media.media.url}},{% endfor %}{% endfor %}"></div>
+        <div id="media{{forloop.counter}}2" data-pn="{{forloop.counter}}2" data-src="{% for investigation in orderschedule.investigations %}{% for media in investigation.investigationmedias %}{{media.media.url}},{% endfor %}{% endfor %}"></div>
     </section>
     
     </div><!--gallery-widget-column-column2-->    
 </div><!--gallery-wrapper-->
 
 <div class="gallery-wrapper"><!--gallery-wrapper-->    
-    <div class="gallery-widget-column-column2"><!--gallery-widget-column-column3-->
+    <div class="gallery-widget-column-column3"><!--gallery-widget-column-column3-->
     <br>
     <div class="media-heading align-left">Cleaning (Before)</div>
     <section>
-        <div data-pn="3" data-src="{% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'BEFORE_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}"></div>
+        <div id="media{{forloop.counter}}3" data-pn="{{forloop.counter}}3" data-src="{% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'BEFORE_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}"></div>
     </section>
         
     </div><!--gallery-widget-column-column2-->     
@@ -673,7 +693,7 @@
     <br>
     <div class="media-heading align-left">Cleaning (After)</div>
     <section>
-        <div data-pn="4" data-src="{% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'AFTER_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}"></div>
+        <div id="media{{forloop.counter}}4" data-pn="{{forloop.counter}}4" data-src="{% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'AFTER_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}"></div>
     </section>
         
     </div><!--gallery-widget-column-column4-->      
@@ -748,7 +768,7 @@
 {% endblock %}
 {% block javascript %}
 <script>
-    $(document).ready(function(){
+    $(window).ready(function(){
         
         //Remove Duplicate details
         duplicates_array = []
@@ -775,6 +795,11 @@ $('.footable').footable({
    </script>
    
 <script id="rendered-js">
+dateconfirm_completed_count = 0    
+teamassign_completed_count  = 0
+cleaning_completed_count    = 0
+total_schedules = parseInt("{{order.orderschedules|length}}")
+
 {% for orderschedule in order.orderschedules %}
 
 $('.moreless-button{{orderschedule.id}}').click(function () {
@@ -785,7 +810,125 @@ $('.moreless-button{{orderschedule.id}}').click(function () {
     $(this).text("Show More");
   }
 });
+
+{% if orderschedule.status == 'CONFIRMED' %}
+dateconfirm_completed_count += 1;
+{% endif %}  
+{% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}
+teamassign_completed_count += 1;
+{% endif %}
+{% if orderschedule.work_status == 'CLEANING_FULFILLED' %}
+cleaning_completed_count += 1;
+{% endif %}
+
 {% endfor %}
+
+//change html
+$("#date_confirmed").html(dateconfirm_completed_count)
+$("#team_assigned").html(teamassign_completed_count)
+$("#cleaning_completed").html(cleaning_completed_count)
+
+if(dateconfirm_completed_count == total_schedules)
+{
+$("#date_confirmed_image").attr("src","{% static 'files/images/order-green-dateconfirmation.svg' %}")
+}
+else if(dateconfirm_completed_count > 0)
+{
+$("#date_confirmed_image").attr("src","{% static 'files/images/order-dateconfirmation.svg' %}")
+}
+else
+{
+$("#date_confirmed_image").attr("src","{% static 'files/images/order-gray-dateconfirmation.svg' %}")
+}
+
+if(teamassign_completed_count == total_schedules)
+{
+$("#team_assigned_image").attr("src","{% static 'files/images/order-green-assigningteam.svg' %}")
+}
+else if(teamassign_completed_count > 0)
+{
+$("#team_assigned_image").attr("src","{% static 'files/images/order-assigningteam.svg' %}")
+}
+else
+{
+$("#team_assigned_image").attr("src","{% static 'files/images/order-gray-assigningteam.svg' %}")    
+}
+
+if(cleaning_completed_count == total_schedules)
+{
+$("#cleaning_completed_image").attr("src","{% static 'files/images/order-green-cleaning.svg' %}")
+}
+else if(cleaning_completed_count > 0)
+{
+$("#cleaning_completed_image").attr("src","{% static 'files/images/order-cleaning.svg' %}")
+}
+else
+{
+$("#cleaning_completed_image").attr("src","{% static 'files/images/order-gray-cleaning.svg' %}")    
+}
+//bar percentage count
+total_percentage = (total_schedules*5)
+{% if order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'PREPAID' %}
+total_percentage += total_schedules
+{% else %}
+total_percentage += total_schedules
+{% endif %}
+
+active_percentage = dateconfirm_completed_count+teamassign_completed_count+cleaning_completed_count+total_schedules
+
+{% if order.evaluation.before_cleaning_amount == order.postamount_paid %}
+active_percentage += total_schedules
+{% endif %}
+
+{% if order.evaluation.after_cleaning_amount == order.preamount_paid %}
+active_percentage += total_schedules
+{% endif %}
+
+{% if order.payment_status == 'COMPLETED' %} {% if order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'PREPAID'%}
+active_percentage += total_schedules
+{% endif %}
+{% endif %}
+
+{% if order.is_feedback_marked %}
+active_percentage += total_schedules
+{% endif %}
+
+marking_percentage = (active_percentage/total_percentage)*100
+$(".bar-loader").css("width",marking_percentage+'%');
+
+
+function appendsubscriptiondetails(schedule_id,media_append){
+
+{% for orderschedule in order.orderschedules %}
+if(schedule_id == {{orderschedule.id}} )
+{
+
+//Media Update  
+$('#media'+media_append+'1').empty()
+$('#media'+media_append+'1').attr('data-src','{% for media in orderschedule.order_scheduler_book.evaluationmedia %}{{media.media.url}},{% endfor %}');
+
+$('#media'+media_append+'2').empty();
+$('#media'+media_append+'2').attr('data-src','{% for investigation in orderschedule.investigations %}{% for media in investigation.investigationmedias %}{{media.media.url}},{% endfor %}{% endfor %}');
+
+$('#media'+media_append+'3').empty();
+$('#media'+media_append+'3').attr('data-src','{% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'BEFORE_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}');
+
+$('#media'+media_append+'4').empty();
+$('#media'+media_append+'4').attr('data-src','{% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'AFTER_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}');
+
+$.getScript("{% static 'files/js/presentation.js' %}");
+
+
+
+append_html = '{% if  orderschedule.cleaning_team %}{% for cleaning_team in orderschedule.cleaning_team %}<div class="details-sub-head align-left small-head">Cleaning Team (Cleaning {{forloop.parentloop.counter}})</div><div class="order-clean-outer-wrapper whitebg"><!--order-clean-outer-wrapper--><div class="order-clean-team-wrapper"><!--order-clean-team-wrapper--><div class="order-common-date">{{orderschedule.start_at}}</div><div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1--><div class="team-profile-pic"><img src="{% static 'files/images/team-leader.svg' %}"></div></div><!--order-clean-team-widget order-clean-team-widget-column1--><div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column1--><div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper--><div class="order-clean-inColumn"><!--order-clean-inColumn--><div class="team-Name">{{cleaning_team.team_leader.name}}</div><div class="team-profile">Team Leader</div></div><!--order-clean-inColumn-->                            </div> <!--order-clean-team-inside-wrapper--></div><!--order-clean-team-widget order-clean-team-widget-column2--></div><!--order-clean-team-wrapper--><hr class="bar">        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper--><div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1--><div class="team-profile-pic"><img src="{% static 'files/images/team-member.svg' %}"></div></div><!--order-clean-team-widget order-clean-team-widget-column1--><div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2--><div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->{% for team_member in cleaning_team.cleaning_team_members %}<div class="order-clean-inColumn"><!--order-clean-inColumn--><div class="team-Name">{{team_member.member.name}}</div><div class="team-profile">Team Member</div></div><!--order-clean-inColumn-->{% endfor %}</div><!--order-clean-team-inside-wrapper--></div><!--order-clean-team-widget order-clean-team-widget-column2--></div><!--order-clean-team-wrapper--><hr class="bar"><div class="order-clean-team-wrapper"><!--order-clean-team-wrapper--><div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1--><div class="team-profile-pic"><img src="{% static 'files/images/driver.svg' %}"></div></div><!--order-clean-team-widget order-clean-team-widget-column1--><div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2--><div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper--><div class="order-clean-inColumn"><!--order-clean-inColumn--><div class="team-Name">{{cleaning_team.drop_off_driver.name}}</div><div class="team-profile">Dropoff Driver</div></div><!--order-clean-inColumn--><div class="order-clean-inColumn"><!--order-clean-inColumn--><div class="team-Name">{{cleaning_team.pick_up_driver.name}}</div><div class="team-profile">Pickup Driver</div></div><!--order-clean-inColumn--></div><!--order-clean-team-inside-wrapper--></div><!--order-clean-team-widget order-clean-team-widget-column2--></div><!--order-clean-team-wrapper--></div><!--order-clean-outer-wrapper-->{% endfor %}{% endif %}{% if orderschedule.investigations %}{% for investigation in orderschedule.investigations %}<div class="details-sub-head align-left">Investigation</div>     <div class="investigation-columns whitebg"><!--investigation-columns--><div class="investigation-columns-left"><!--investigation-columns-left-->{% if investigation.investigator.profile_image %}<div class="profile-pic"><img src="{{investigation.investigator.profile_image.url}}"></div>{% else %}<div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>{% endif %}<div class="client-name">{{investigation.investigator.name}}<div class="common-gray-text">Investigator</div></div></div><!--investigation-columns-left--><div class="investigation-columns-middle"><!--investigation-columns-middle--><div class="order-invest-date">{{investigation.sheduled_at}}</div><div class="notes">Notes</div><p>{{investigation.notes}}</p></div><!--investigation-columns-middle--><div class="investigation-columns-right"><!--investigation-columns-right--><div class=" "><img src="{% static 'files/images/cleaning1.jpg' %}"></div></div><!--investigation-columns-right--></div><!--investigation-columns-->{% for followup in investigation.followups %}{% for follow_up_scheduler in followup.follow_up_schedules %}{% for team in follow_up_scheduler.followupteams %}{% if team.followupmembers %}<div class="details-sub-head align-left small-head">Follow-up Cleaning</div><div class="order-clean-outer-wrapper whitebg"><!--order-clean-outer-wrapper--><div class="order-clean-team-wrapper"><!--order-clean-team-wrapper--><div class="order-common-date">{{follow_up_scheduler.start_at}}</div><div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1--><div class="team-profile-pic"><img src="{% static 'files/images/team-leader.svg' %}"></div></div><!--order-clean-team-widget order-clean-team-widget-column1--><div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column1--><div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper--><div class="order-clean-inColumn"><!--order-clean-inColumn--><div class="team-Name">{{team.team_leader}}</div><div class="team-profile">Team Leader</div></div><!--order-clean-inColumn--></div> <!--order-clean-team-inside-wrapper--></div><!--order-clean-team-widget order-clean-team-widget-column2--></div><!--order-clean-team-wrapper--><hr class="bar"><div class="order-clean-team-wrapper"><!--order-clean-team-wrapper--><div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1--><div class="team-profile-pic"><img src="{% static 'files/images/team-member.svg' %}"></div></div><!--order-clean-team-widget order-clean-team-widget-column1--><div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2--><div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->{% for member in team.followupmembers %}<div class="order-clean-inColumn"><!--order-clean-inColumn--><div class="team-Name">{{member.member.name}}</div><div class="team-profile">Team Member</div></div><!--order-clean-inColumn-->{% endfor %}</div><!--order-clean-team-inside-wrapper--></div><!--order-clean-team-widget order-clean-team-widget-column2--></div><!--order-clean-team-wrapper--><hr class="bar"><div class="order-clean-team-wrapper"><!--order-clean-team-wrapper--><div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1--><div class="team-profile-pic"><img src="{% static 'files/images/driver.svg' %}"></div></div><!--order-clean-team-widget order-clean-team-widget-column1--><div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2--><div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper--><div class="order-clean-inColumn"><!--order-clean-inColumn--><div class="team-Name">{{team.drop_off_driver.name}}</div><div class="team-profile">Dropoff Driver</div></div><!--order-clean-inColumn--><div class="order-clean-inColumn"><!--order-clean-inColumn--><div class="team-Name">{{team.pick_up_driver.name}}</div><div class="team-profile">Pickup Driver</div></div><!--order-clean-inColumn--></div><!--order-clean-team-inside-wrapper--> </div><!--order-clean-team-widget order-clean-team-widget-column2-->  </div><!--order-clean-team-wrapper--></div><!--order-clean-outer-wrapper-->{% endif %}{% endfor %}{% endfor %}{% endfor %}{% endfor %}{% endif %}'
+    
+    $('.appendsubscription').empty();
+    $('.appendsubscription').append(append_html);
+}
+{% endfor %}
+
+    }
+
  </script>
 {% endblock %}
 

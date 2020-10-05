@@ -45,12 +45,12 @@
                    
                     <div class="order-progress-widget order-progress-widget-column2"><!--order-progress-widget order-progress-widget-column2-->
                         <div class="evaluation">Investigation</div>
-                    	<div class="evaluation-icon">{% if followup_details.status == 'INVESTIGATOR_APPROVED' or followup_details.status == 'FOLLOWUP_IN_PROGRESS' or followup_details.status == 'FOLLOWUP_CLOSED' %}<img src="{% static 'files/images/investigation-green.svg' %}" class="orderEval-icon %}"><div class="evaluation-status">Completed</div>{% else %}<img src="{% static 'files/images/investigation-gray.svg' %}" class="orderEval-icon %}"><div class="evaluation-status">Waiting</div>{% endif %}</div>
+                    	<div class="evaluation-icon">{% if followup_details.status == 'INVESTIGATOR_APPROVED' or followup_details.status == 'FOLLOWUP_IN_PROGRESS' or followup_details.status == 'FOLLOWUP_CLOSED' %}<img src="{% static 'files/images/investigation-green.svg' %}" class="orderEval-icon %}"><div class="evaluation-status">Completed</div>{% else %}<img src="{% static 'files/images/investigation-gray.svg' %}" class="orderEval-icon %}">{% if followup_details.status == 'FOLLOWUP_CANCELLED' %}<div class="evaluation-status">Cancelled</div>{% else %}<div class="evaluation-status">Waiting</div>{% endif %} {% endif %}</div>
                     </div><!--order-progress-widget order-progress-widget-column2-->                  
                     
                     <div class="order-progress-widget order-progress-widget-column5"><!--order-progress-widget order-progress-widget-column5-->
                         <div class="evaluation">Cleaning</div>
-                    	<div class="evaluation-icon">{% if followup_details.status == 'FOLLOWUP_IN_PROGRESS' or followup_details.status == 'FOLLOWUP_CLOSED' %}<img src="{% static 'files/images/order-cleaning.svg' %}" class="orderEval-icon"><div class="evaluation-status">Completed</div>{% else %}<img src="{% static 'files/images/order-gray-cleaning.svg' %}" class="orderEval-icon"><div class="evaluation-status">Waiting</div>{% endif %}</div>
+                    	<div class="evaluation-icon">{% if followup_details.status == 'FOLLOWUP_IN_PROGRESS' or followup_details.status == 'FOLLOWUP_CLOSED' %}<img src="{% static 'files/images/order-green-cleaning.svg' %}" class="orderEval-icon"><div class="evaluation-status">Completed</div>{% else %}<img src="{% static 'files/images/order-gray-cleaning.svg' %}" class="orderEval-icon"><div class="evaluation-status">Waiting</div>{% endif %}</div>
                     </div><!--order-progress-widget order-progress-widget-column5-->                      
                     
                     <div class="order-progress-widget order-progress-widget-column6"><!--order-progress-widget order-progress-widget-column6-->

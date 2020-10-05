@@ -15,16 +15,17 @@ function phonenumber(inputtxt)
 {
     phone_id = $(inputtxt).attr('id');
   var phoneno = /^\d{8}$/;
+
   if((inputtxt.value.match(phoneno)) || (inputtxt.value == ""))
-        {
+    {
         $('.phone_alert').text("")
         return true;
-        }
-      else
-        {
+            }
+  else
+    {
         $('#'+phone_id+'').siblings('p').text("You have entered an invalid phone number!")
         return false;
-        }
+            }
 }
 
 function mobilenumber(inputtxt)
@@ -66,4 +67,4 @@ $(document).ready(function(){
        (charCode < 97 || charCode > 122)) 
         return false;
         return true;
-  }
+  }  

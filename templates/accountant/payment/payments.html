@@ -76,7 +76,7 @@
      
      <div class="white-wrapper-search"><!--white-wrapper-search-->
      <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
-          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search BLC Number & Customer Name Here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
      </div><!--left-box leftbox-item1-->
      <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
      <input name="filter" type="button" value="Filter" id="filter" class="blue-button"> 
@@ -232,7 +232,7 @@ $('.footable').footable({
 function set_params_go(args)
 {
 var url='{% url 'accountant:accountant-payments' %}';
-var params={search:$('#search-bar').val(),
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
 };
 for(key in args) 
     params[key]=args[key];

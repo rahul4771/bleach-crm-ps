@@ -61,10 +61,26 @@
             
      <div class="main-content-holder"><!--main-content-holder-->            
  
+ <div class="white-wrapper-search"><!--white-wrapper-search-->
+     <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
+          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search BLC Number & Customer Name Here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+     </div><!--left-box leftbox-item1-->
+     <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
+     <input name="filter" type="button" value="Filter" id="filter" class="blue-button"> 
+     </div><!--right-box leftbox-item1-->     
+     
+     </div><!--white-wrapper-search-->
      
             
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Pending Payments</h2>
+<label for="favcity" style="width:20%;"> 
+<select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
+<option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+<option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+<option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+</select>
+</label>
 <div class="page-entries">Show {{entry_per_page}} entries</div>
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
@@ -72,35 +88,35 @@
 <tr>
 <th>Order Number</th>
 <th data-hide="phone,tablet">Client Name</th>
-<th data-hide="phone">Area</th>
+<th data-hide="phone">Cleaning Policy(s)</th>
+<th data-hide="phone">Service Type(s)</th>
 <th>Contact</th>
-<th class="align-center" data-hide="phone">Status</th>
 <th data-hide="phone,tablet">Amount</th>
+<th data-hide="phone">Payment Method</th>
 </tr>
 </thead>
 <tbody>
     {% for invoice in pending_payments %}
     <tr>
-    <td {% if invoice.status == 'PENDING' %}
-        class="red-line"
-        {% else %}
-        class="yellow-line"
-        {% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+    <td class="red-line">{{invoice.evaluation.evaluation_id}}</td>
     <td>{{invoice.evaluation.customer.name}}</td>
     <td>
     {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
-    {{evaluation_details.address.area.name}}<br>
+    {% for book in evaluation_details.evaluation_books %}
+    {{book.cleaning_policy}}<br>
+    {% endfor %}
+    {% endfor %}
+    </td>
+    <td>
+    {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+    {% for book in evaluation_details.evaluation_books %}
+    {{book.service_type}}<br>
+    {% endfor %}
     {% endfor %}
     </td>
     <td>{{invoice.evaluation.customer.mobile_number}}</td>
-    <td><span 
-        {% if invoice.payment_status == 'PENDING' %}
-        class="red-bg"
-        {% else %}
-        class="yellow-bg"
-        {% endif %}
-        >{{invoice.payment_status|default_if_none:''}}</span></td>
     <td>{{invoice.total_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
+    <td>{{invoice.evaluation.payment_method|default_if_none:''}}</td>
     </tr>
     {% endfor %}
 </tbody>
@@ -164,13 +180,7 @@
         </div><!--pagination-column pagination-column-right-->
     </div><!--pagination-containter-->         
 </div><!--white-wrapper-pagination--> 
-</div><!--white-wrapper-->      
-  
-  
-        <div class="white-wrapper"><!--white-wrapper-->
-        <h2 class="h2">Subscription Status</h2>
-        
-        </div><!--white-wrapper-->         
+</div><!--white-wrapper-->             
             
       </div><!--main-content-holder-->
         </div><!--container-fluid space-->
@@ -193,4 +203,21 @@ $('.footable').footable({
 // http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
 //# sourceURL=pen.js
     </script>
+<script>
+function set_params_go(args)
+{
+var url='{% url 'accountant:accountantdash-board' %}';
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
+};
+for(key in args) 
+    params[key]=args[key];
+var query='';
+for(key in params)
+    if(params[key]) 
+        query+='&'+key+'='+params[key].toString();
+query=query.replace('&','?');
+window.location.href=url+query;  
+}
+    </script>
+
 {% endblock %}
