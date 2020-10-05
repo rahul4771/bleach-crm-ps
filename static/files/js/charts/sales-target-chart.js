@@ -177,11 +177,15 @@ function salestarget(evaluator_id){
         $("#reset_sales_target").click(function(){
             if ($("#daymonth_sales_target").is(':checked')){
             var date1 = new Date();
-            var datestring = date1.getDate()-1  + "-" + (date1.getMonth()+1) + "-" + date1.getFullYear();
-        
+
+            date1.setDate(date1.getDate()-1)
+            date1.setMonth(date1.getMonth()+1)
+            var datestring = ("0" + (date1.getDate())).slice(-2)  + "-" + ("0" + (date1.getMonth())).slice(-2) + "-" + date1.getFullYear();
+            
             var date2 = new Date();
             date2.setDate(date2.getDate()-30);
-            var datestring2 = date2.getDate()  + "-" + (date2.getMonth()+1) + "-" + date2.getFullYear();
+            date2.setMonth(date2.getMonth()+1)
+            var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
             console.log(datestring,datestring2)
         
             $('#sales_target_date1').val(datestring2);
@@ -190,14 +194,18 @@ function salestarget(evaluator_id){
             drawArea();
         }else{
             var date1 = new Date();
-            var month = ("0" + (date1.getMonth()-1)).slice(-2);
-            var month2 = ("0" + (date1.getMonth())).slice(-2);
-            console.log(month,"lp")
-            var datestring = month + "/" + date1.getFullYear();
-            var datestring2 = month2 + "/" + date1.getFullYear();
+            date1.setMonth(date1.getMonth()-1);
 
-            $('#sales_target_month1').val(datestring);
-            $('#sales_target_month2').val(datestring2);
+            var date2 = new Date();
+
+            var month = ("0" + (date1.getMonth())).slice(-2);
+            var month2 = ("0" + (date2.getMonth())).slice(-2);
+
+            var monthstring = month + "/" + date1.getFullYear();
+            var monthstring2 = month2 + "/" + date2.getFullYear();
+
+            $('#sales_target_month1').val(monthstring);
+            $('#sales_target_month2').val(monthstring2);
             drawBars();
         }
         });
@@ -215,20 +223,29 @@ function salestarget(evaluator_id){
     }
 
     var date1 = new Date();
-    var month = ("0" + (date1.getMonth()-1)).slice(-2);
-    var month2 = ("0" + (date1.getMonth())).slice(-2);
-    console.log(month,"lp")
-    var datestring = month + "/" + date1.getFullYear();
-    var datestring2 = month2 + "/" + date1.getFullYear();
-
-    $('#sales_target_month1').val(datestring);
-    $('#sales_target_month2').val(datestring2);
-
-    var datestring = date1.getDate()-1  + "-" + (date1.getMonth()+1) + "-" + date1.getFullYear();
+    date1.setMonth(date1.getMonth()-1);
 
     var date2 = new Date();
-    date2.setDate(date2.getDate()-60);
-    var datestring2 = date2.getDate()  + "-" + (date2.getMonth()+1) + "-" + date2.getFullYear();
+
+    var month = ("0" + (date1.getMonth())).slice(-2);
+    var month2 = ("0" + (date2.getMonth())).slice(-2);
+
+    var monthstring = month + "/" + date1.getFullYear();
+    var monthstring2 = month2 + "/" + date2.getFullYear();
+
+    $('#sales_target_month1').val(monthstring);
+    $('#sales_target_month2').val(monthstring2);
+
+    var date3 = new Date();
+
+    date3.setDate(date3.getDate()-1)
+    date3.setMonth(date3.getMonth()+1)
+    var datestring = ("0" + (date3.getDate())).slice(-2)  + "-" + ("0" + (date3.getMonth())).slice(-2) + "-" + date3.getFullYear();
+    
+    var date4 = new Date();
+    date4.setDate(date4.getDate()-30);
+    date4.setMonth(date4.getMonth()+1)
+    var datestring2 = ("0" + (date4.getDate())).slice(-2)  + "-" + ("0" + (date4.getMonth())).slice(-2) + "-" + date4.getFullYear();
     console.log(datestring,datestring2)
 
     $('#sales_target_date1').val(datestring2);

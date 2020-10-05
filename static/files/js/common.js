@@ -66,6 +66,17 @@ $(function () {
 
 //month pick
 $('.month_pick').datetimepicker({
+  maxDate: new Date(),
+  pickTime: false,
+  format: "MM/YYYY",
+  startView: "year", 
+  minViewMode: "months",
+  autoclose:true,
+}).on('changeDate', function (ev) {
+  $(this).datetimepicker('hide');
+});
+
+$('.month_pick_resource').datetimepicker({
   pickTime: false,
   format: "MM/YYYY",
   startView: "year", 
@@ -142,26 +153,26 @@ $(function () {
 $('.next-month-resource').on('click', function () {
 
   console.log($(this).parent('.date-wrapper-inner-resource'));
-  $selectedDay            = $(this).parent('#working_calendar2').children('.month_pick').data("DateTimePicker").getDate();
+  $selectedDay            = $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").getDate();
   var $tmpSelectedDay     = new Date($selectedDay) 
   $tmpSelectedDay.setMonth($tmpSelectedDay.getMonth() + 1);
-  $(this).parent('#working_calendar2').children('.month_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('MM/YYYY'));;
+  $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('MM/YYYY'));;
       
 });
 
 $('.prev-month-resource').on('click', function () {
 
-  $selectedDay            = $(this).parent('#working_calendar2').children('.month_pick').data("DateTimePicker").getDate();
+  $selectedDay            = $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").getDate();
   var $tmpSelectedDay     = new Date($selectedDay) 
   $tmpSelectedDay.setMonth($tmpSelectedDay.getMonth() - 1);
-  $(this).parent('#working_calendar2').children('.month_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('MM/YYYY'));
+  $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('MM/YYYY'));
 
 });
 
 $('.this-month-resource').on('click', function () {
   var $tmpSelectedDay     = new Date();
   $tmpSelectedDay.setMonth($tmpSelectedDay.getMonth());
-  $(this).parent('#working_calendar2').children('.month_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('MM/YYYY'));
+  $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('MM/YYYY'));
 }); 
 
  // toggle-password
@@ -227,11 +238,11 @@ $(".close-btn").on("click", function(){
 });
 
 // prev next datepicker
-$('.datepicker').datetimepicker({ 
-  pickTime: false, 
-  format: "DD-MM-YYYY",
-  defaultDate: new Date(),  
-});
+// $('.datepicker').datetimepicker({ 
+//   pickTime: false, 
+//   format: "DD-MM-YYYY",
+//   defaultDate: new Date(),  
+// });
 
   // $('#datepicker').datetimepicker();
 
@@ -293,6 +304,7 @@ $(".arrow-close").on('click', function (e) {
 
 
 $(".arrow-left").on('click', function (e) {
+  console.log("plo")
   $(".arrow-left").toggleClass("cross-left");
   $(".menu-filter-left").slideToggle("");
 });
