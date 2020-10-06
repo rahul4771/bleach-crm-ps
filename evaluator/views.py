@@ -22,7 +22,7 @@ from django.contrib import messages
 from dateutil.relativedelta import relativedelta
 
 from user.models import UserProfile,Address,Governorate,Area
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,ServiceType,AreaType
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningSection,CleaningMethod,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
@@ -358,9 +358,9 @@ class OrderDetails(IsEvaluator,View):
 		search                  = request.GET.get('search')
 
 		if search:
-			evaluations = Evaluation.objects.filter(is_active=True,quatation_status__isnull=False).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(evaluation_id__icontains=search))).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(evaluation_id__icontains=search))).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
 		else:
-			evaluations = Evaluation.objects.filter(is_active=True,quatation_status__isnull=False).select_related('customer').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
 
 		if evaluations:
 			approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
@@ -436,18 +436,25 @@ class OrderDetails(IsEvaluator,View):
 
 		#Apply prefetch filter
 		if evaluation_book_prefetch_filter and customer_address_prefetch_filter: 
-			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter & count_customer_address_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)		 
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,evaluator=request.user),to_attr='evaluators_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter & count_customer_address_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)		 
 			print("both")
 		elif evaluation_book_prefetch_filter and not customer_address_prefetch_filter:
-			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(book_count=Count(Case(When( count_evaluation_book_prefetch_filter,then=1),output_field=IntegerField()))).filter(book_count__gt=0)
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,evaluator=request.user),to_attr='evaluators_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(book_count=Count(Case(When( count_evaluation_book_prefetch_filter,then=1),output_field=IntegerField()))).filter(book_count__gt=0)
 			print("book only")
 		elif not evaluation_book_prefetch_filter and customer_address_prefetch_filter:
-			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,evaluator=request.user),to_attr='evaluators_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)
 			print("address only") 
 		else:
-			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))		
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,evaluator=request.user),to_attr='evaluators_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))		
 			print("not at all")
-		
+
+		#exclude atleast 1 not completed evaluatis
+		exclude_ids = []	
+		for evaluation in evaluations:
+			if not evaluation.completed_evaluations:
+				exclude_ids.append(evaluation.id)
+
+		evaluations = evaluations.exclude(id__in=exclude_ids)
 		
 		fil_status = request.GET.get('status')
 		#filters 	
@@ -995,7 +1002,7 @@ class MakeQuatationBase(IsEvaluator,View):
 			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 
 		try:
-			evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer_id=enquiry_id,call_attender=request.user,quatation_status='APPROVED')
+			evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer_id=enquiry_id,call_attender=request.user)
 		except:
 			evaluation = None
 
@@ -1067,7 +1074,7 @@ class MakeQuatationPhase2(IsEvaluator,View):
 		except:
 			area_types = None
 
-		return render(request,'agent/enquiry/phase2quatation.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,})
+		return render(request,'evaluator/enquiry/phase2quatation.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,})
 
 	def post(self,request,evaluation_detail_id):
 
@@ -1078,7 +1085,7 @@ class MakeQuatationPhase2(IsEvaluator,View):
 
 			form_count = 0
 			#create order					
-			new_order = Order.objects.get_or_create(evaluation=evaluation_details.evaluation,order_no=evaluation_details.evaluation.evaluation_id,total_amount=evaluation_details.evaluation.total_cost,remining_amount=evaluation_details.evaluation.total_cost,order_status='APPROVED_BY_CLIENT')	
+			new_order = Order.objects.get_or_create(evaluation=evaluation_details.evaluation,order_no=evaluation_details.evaluation.evaluation_id,total_amount=evaluation_details.evaluation.total_cost,remining_amount=evaluation_details.evaluation.total_cost)	
 				
 			order_schedule_array          = []
 			#Save Service Form
@@ -1169,7 +1176,8 @@ class MakeQuatationPhase2(IsEvaluator,View):
 							for j in range(no_of_keynotes):
 								keynote = request.POST.get('form'+str(form_count)+'_section'+str(i)+'_keynote'+str(j))
 								quantity= request.POST.get('form'+str(form_count)+'_section'+str(i)+'_quantity'+str(j))
-								keynote_array.append(EvaluationSectionKeynote(evaluation_section=section,sub_area=keynote,quantity=quantity))
+								if keynote and quantity:
+									keynote_array.append(EvaluationSectionKeynote(evaluation_section=section,sub_area=keynote,quantity=quantity))
 							#bulk_create keynote
 							EvaluationSectionKeynote.objects.bulk_create(keynote_array)
 
@@ -1293,7 +1301,7 @@ class MakeQuatationPhase2Edit(IsEvaluator,View):
 						for i in range(no_of_sections):
 							section_name  = request.POST.get('form'+str(form_count)+'_section'+str(i))
 							category      = request.POST.get('form'+str(form_count)+'_category'+str(i))
-							dirt_level    = request.POST.get('form'+str(form_count)+'_dirtlevel'+str(i))
+							dirt_level    = request.POST.get('form'+str(form_count)+'_dirt_level'+str(i))
 							quantity      = request.POST.get('form'+str(form_count)+'_quantity'+str(i))
 							size          = request.POST.get('form'+str(form_count)+'_size'+str(i))
 							unit          = request.POST.get('form'+str(form_count)+'_unit'+str(i))
@@ -1498,7 +1506,7 @@ class MakeAssignedQuatationPhase2(IsEvaluator,View):
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
 						updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)	
-						update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')-very_old_book.total_cost+total)
+						update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')+total)
 					#to save sections
 					no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))
 					section_array          = []
@@ -1659,7 +1667,7 @@ class MakeAssignedQuatationPhase2Edit(IsEvaluator,View):
 						for i in range(no_of_sections):
 							section_name  = request.POST.get('form'+str(form_count)+'_section'+str(i))
 							category      = request.POST.get('form'+str(form_count)+'_category'+str(i))
-							dirt_level    = request.POST.get('form'+str(form_count)+'_dirtlevel'+str(i))
+							dirt_level    = request.POST.get('form'+str(form_count)+'_dirt_level'+str(i))
 							quantity      = request.POST.get('form'+str(form_count)+'_quantity'+str(i))
 							size          = request.POST.get('form'+str(form_count)+'_size'+str(i))
 							unit          = request.POST.get('form'+str(form_count)+'_unit'+str(i))
@@ -1739,6 +1747,76 @@ class MakeAssignedQuatationPhase2Edit(IsEvaluator,View):
 			return render(request,'evaluator/enquiry/phase2assignedquatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})	
 
 		return redirect('evaluator:evaluator-makeassignedquatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
+
+
+class MakeQuatationPhase1Edit(IsEvaluator,View):
+
+	def get(self,request,enquiry_id,evaluation_id):
+		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
+		
+		try:
+			evaluation = Evaluation.objects.get(id=evaluation_id)
+		except:
+			evaluation = None		
+	
+		try:
+			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation)
+		except:
+			evaluation_details = None
+
+		#allow submition	
+		evaluation_details_count          = evaluation_details.count()
+		evaluation_details_completed_count= evaluation_details.filter(status='EVALUATED').count()
+		if evaluation_details_count==evaluation_details_completed_count:
+			allow_submit = True
+		else:
+			allow_submit = False				
+
+		return render(request,'evaluator/enquiry/phase1quatationedit.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit})	
+
+	def post(self,request,enquiry_id,evaluation_id):
+		
+		payment_method = request.POST.get('payment_method')
+		attender_notes = request.POST.get('attender_notes')
+		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
+		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
+
+		#update payment method
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,attender_notes=attender_notes,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+							
+		messages.success(request,"Quatation Edited Succesfully")		
+		return redirect('evaluator:evaluatordash-board')
+
+
+class MakeQuatationPhase2Delete(IsEvaluator,View):
+	def post(self,request,evaluation_detail_id):
+		
+		enquiry_id    = request.POST.get('enquiry_id')
+		evaluation_id = request.POST.get('evaluation_id')
+
+		evaluation_details = EvaluationDetails.objects.get(id=evaluation_detail_id)
+
+		#update cost
+		update_evaluation 		  = Evaluation.objects.filter(is_active=True,id=evaluation_id).update(estimated_cost=F('estimated_cost')-evaluation_details.estimated_cost,discount=F('discount')-evaluation_details.discount,total_cost=F('total_cost')-evaluation_details.total_cost,)
+		update_order              = Order.objects.filter(is_active=True,evaluation__id=evaluation_id).update(total_amount=F('total_amount')-evaluation_details.total_cost)
+
+		#delete evaluation details
+		evaluation_details.delete()
+
+
+		#delete full order if no other evaluations exists
+		try:
+			updated_evaluation = Evaluation.objects.prefetch_related('evaluation_details').get(is_active=True,id=evaluation_id)
+		except:
+			updated_evaluation = None
+
+		if not updated_evaluation.evaluation_details.exists():
+			updated_evaluation.delete()
+			Order.objects.filter(is_active=True,evaluation__id=evaluation_id).delete()
+			return redirect('evaluator:evaluator-orders')
+
+		return redirect('evaluator:evaluator-makequatation1edit',enquiry_id,evaluation_id)
+
 
 class InvestigationTask(View):
 	def get(self,request,investigation_id):

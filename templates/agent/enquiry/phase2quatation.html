@@ -307,13 +307,12 @@ function addSectionNew(form_identifier){
 
 if(pre_section_filled_checker && pre_section_added_keynote_checker)
 {
-    //for counter for backend
     selected_section = $("#id_form-"+formcount+"-section option:selected").val();
 
     //if selected section continue else message
  if(selected_section)
     {
-
+    //for counter for backend
     $('#id_form-'+formcount+'-section_counter').val(section_count+1);
 
 

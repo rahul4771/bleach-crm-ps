@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
-{% include "agent/common/header.html" %}
+{% include "evaluator/common/header.html" %}
     
 <section class="content"><!--content-->
 <div class="container-fluid space topspace"><!--container-fluid space topspace-->
@@ -41,12 +41,19 @@
         {% endif %}
       </div><!--checkin-form-left-->
       <div class="checkin-form-right align-right"><!--checkin-form-right-->
+        {% if detail.evaluator == request.user %}
         {% if detail.status == 'EVALUATED' %}
-        <a href="{% url 'agent:agent-makequatation2edit' detail.id %}"><div><input name="view" type="button" value="Edit" class="checkonButton"></div></a>
+        <a href="{% url 'evaluator:evaluator-makeassignedquatation2edit' detail.id %}"><div><input name="view" type="button" value="Edit" class="checkonButton"></div></a>
         {% else %}
-        <a href="{% url 'agent:agent-makequatation2' detail.id %}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
+        <a href="{% url 'evaluator:evaluator-makeassignedquatation2' detail.id %}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
         {% endif %}
-      </div><!--checkin-form-right-->               
+        {% endif %}
+      </div><!--checkin-form-right--> 
+      {% if detail.evaluator == request.user %}
+      <div class="checkin-form-right align-right"><!--checkin-form-right-->
+        <div><input name="view" type="button" value="Delete" class="checkonDeleteButton delete_evaluation_button" data-evaluation_id="{{detail.evaluation.id}}" data-enquiry_id="{{detail.evaluation.customer.id}}" data-url="{% url 'evaluator:evaluator-makequatation2delete' detail.id %}"></div>
+      </div><!--checkins-form-right-->
+      {% endif %}              
 </div><!--checkin-wrapper-row checkin-forms-boxes-->
 {% endfor %}        
         
@@ -70,26 +77,25 @@
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Payment Policy</label></div>
                 <label for="favcity">
-                <select id="payment_method_id" name="payment_method" class="payment_method" required>
+                <select id="favcity" name="payment_method" class="payment_method" required>
                 <option value="">Choose Payment Method</option>
-                <option value="PREPAID">Prepaid</option>
-                <option value="POSTPAID">Post Paid</option>
-                <option value="BREAKDOWN">Break-Down</option>
+                <option value="PREPAID" {% if evaluation.payment_method == "PREPAID" %}selected{% endif %}>Prepaid</option>
+                <option value="POSTPAID" {% if evaluation.payment_method == "POSTPAID" %}selected{% endif %}>Post Paid</option>
+                <option value="BREAKDOWN" {% if evaluation.payment_method == "BREAKDOWN" %}selected{% endif %}>Break-Down</option>
                 </select>
                 </label>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right payment_track"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Before Cleaning Amount</label></div>
-                <input name="before_cleaning_amount" id="before_cleaning_amount_id" type="text" class="textBox" placeholder=" ">
+                <input name="before_cleaning_amount" id="before_cleaning_amount_id" type="text" class="textBox" placeholder=" " value="{{evaluation.before_cleaning_amount}}">
   </div><!--ticket-form-right-->
     <div class="ticket-form-right payment_track"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>After Cleaning Amount</label></div>
-                <input name="after_cleaning_amount" id="after_cleaning_amount_id" type="text" class="textBox" placeholder=" ">
+                <input name="after_cleaning_amount" id="after_cleaning_amount_id" type="text" class="textBox" placeholder=" " value="{{evaluation.after_cleaning_amount}}">
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <br>
-<div align="center"><input class="assignButton" name="submitquatation" type="button" value="Submit" onclick="CheckForm(this);">
-</div>
+<div align="center"><input class="assignButton" name="submitquatation" type="button" value="Update" onclick="CheckForm(this);">
 <br><br>
 </form>
 {% endif %}
@@ -107,8 +113,39 @@
 </div><!--container-fluid space topspace-->
 </section><!--content-->
     
-{% include 'agent/common/footer.html' %}
+{% include 'evaluator/common/footer.html' %}
 </div><!--wrapper-->
+
+<!-- Delete Evaluation popup -->
+<div id="delete_evaluation_popup" class="overlay"><!--overlay-->
+    <div class="popup-assign-eval"><!--popup-assign-eval-->
+        <a class="close" id="delete_evaluation_popup_close">&times;</a>
+            <div class="content"><!--content-->
+            <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">
+                <tr>
+                    <td valign="bottom"><div class="blc-number">Do You Want to Delete Evaluation Permenently?</div></td>
+                </tr>
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->  
+<form method="post" action="" enctype= "multipart/form-data" id="evaluation_delete_form">
+{%csrf_token%}
+<input type="hidden" name="evaluation_id" id="delete_evaluation_id">
+<input type="hidden" name="enquiry_id" id="delete_enquiry_id">
+<div align="center"> <input class="assignButton" name="assing" type="button" value="Delete" onclick="submitAnyForm(this);"></div>
+</form> 
+
+</div><!--ticket-wrapper-full--> 
+            
+            </div><!--content-->
+    </div><!--popup-assign-eval-->
+</div><!--overlay-->
+<!-- /Delete Evaluation confirm_popup -->
 {% endblock %}
 
 
@@ -131,7 +168,26 @@ var x=0;
 $('document').ready(function(){
 
 //Initial Hiding of payment Breakdown
+{% if  evaluation.payment_method == 'BREAKDOWN' %}
+$('.payment_track').show();
+{% else %}
 $('.payment_track').hide();
+{% endif %}
+
+//evaluation delete
+$(".delete_evaluation_button").click(function(){
+    
+    $("#delete_evaluation_id").val($(this).data('evaluation_id'));
+    $("#delete_enquiry_id").val($(this).data('enquiry_id'));
+    $("#evaluation_delete_form").attr('action',$(this).data('url'));
+
+    $("#delete_evaluation_popup").css({'visibility':'visible','opacity':1,});
+})
+
+$("#delete_evaluation_popup_close").click(function(){
+    $("#delete_evaluation_popup").css({'visibility':'hidden','opacity':0,});
+});
+
 
 });
 
@@ -181,6 +237,7 @@ $("#before_cleaning_amount_id").keyup(function(){
     $("#after_cleaning_amount_id").val("0");
   }
 })
+
 
 //Check Breakdown Amounts
 function CheckForm(params1){

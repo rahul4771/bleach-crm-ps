@@ -43,12 +43,10 @@
       <div class="checkin-form-right align-right"><!--checkin-form-right-->
         {% if detail.evaluator == request.user %}
         {% if detail.status == 'EVALUATED' %}
-        <a href="{% url 'evaluator:evaluator-makeassignedquatation2edit' detail.id %}"><div><input name="view" type="button" value="View" class="checkonButton"></div></a>
+        <a href="{% url 'evaluator:evaluator-makeassignedquatation2edit' detail.id %}"><div><input name="view" type="button" value="Edit" class="checkonButton"></div></a>
         {% else %}
         <a href="{% url 'evaluator:evaluator-makeassignedquatation2' detail.id %}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
         {% endif %}
-        {% else %}
-        <div><input name="view" type="button" value="View" class="viewButton"></div>
         {% endif %}
       </div><!--checkin-form-right-->               
 </div><!--checkin-wrapper-row checkin-forms-boxes-->
