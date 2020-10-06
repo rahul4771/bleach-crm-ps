@@ -30,13 +30,13 @@ function drawlocationChart() {
         type: "GET",
         contentType: "application/json;charset=utf-8",
         
-        success: function(data) {
+        success: function(data_location) {
 
             var total_sales = 0;
             var cid = 1;
             var location_sales = [['Location', 'Sales']];
-        
-        $.each(data,function(key,value){
+            
+        $.each(data_location,function(key,value){
             console.log(value.location,parseInt(value.count),"gov")
             location_sales.push([value.location,value.count]);
             total_sales += parseInt(value.count)
@@ -69,7 +69,7 @@ function drawlocationChart() {
         var legend = document.getElementById("legend_location");
         var legItem = [];
         
-        for (var i = 0; i < 9; i++) {
+        for (var i = 0; i < 5; i++) {
             var label = data.getValue(i, 0);
             var value = data.getValue(i, 1);
             var percent = Number(100 * value / total).toFixed(1);
@@ -79,11 +79,23 @@ function drawlocationChart() {
             legItem[i] = document.createElement('div');
             legItem[i].className = 'donut-char-legend';
             legItem[i].id = 'legend_' + data.getValue(i, 0);
-
+            
             legItem[i].innerHTML = '<i class="fa fa-square" style="color:'+colors[i]+'"></i> <div class="chart-stat">' + label + '</div><span>' + percent + ' %</span>';
 
             legend.appendChild(legItem[i]);
         }
+
+        var others = 0;
+
+        for (var j = 5; j < data_location.length; j++){
+            
+            others += data.getValue(j, 1);
+            
+        }
+
+        var others_percent = Number(100 * others / total).toFixed(1);
+        console.log(others,others_percent,"otp")
+        $('#legend_location').append('<div class="donut-char-legend" ><i class="fa fa-square" style="color:#b82e2e"></i> <div class="chart-stat">Others</div><span>' + others_percent + ' %</span></div>')
         // // initial value
         // var percent = 0;
         // // start the animation loop
@@ -116,11 +128,15 @@ $("#daymonth_location").click(function(){
         $('.set1').attr("hidden",false);
         $('.set2').attr("hidden",true);
         var date1 = new Date();
-        var datestring = date1.getDate()-1  + "-" + (date1.getMonth()+1) + "-" + date1.getFullYear();
+
+        date1.setDate(date1.getDate()-1)
+        date1.setMonth(date1.getMonth()+1)
+        var datestring = ("0" + (date1.getDate())).slice(-2)  + "-" + ("0" + (date1.getMonth())).slice(-2) + "-" + date1.getFullYear();
 
         var date2 = new Date();
         date2.setDate(date2.getDate()-30);
-        var datestring2 = date2.getDate()  + "-" + (date2.getMonth()+1) + "-" + date2.getFullYear();
+        date2.setMonth(date2.getMonth()+1)
+        var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
 
         $('#location_pie_date1').val(datestring2);
         $('#location_pie_date2').val(datestring);
@@ -131,15 +147,19 @@ $("#daymonth_location").click(function(){
         $('.set1').attr("hidden",true);
         $('.set2').attr("hidden",false);
         
-        var date1 = new Date();
-        var month = ("0" + (date1.getMonth())).slice(-2);
-        var month2 = ("0" + (date1.getMonth()+1)).slice(-2);
-        console.log(month,"lp")
-        var datestring = month + "/" + date1.getFullYear();
-        var datestring2 = month2 + "/" + date1.getFullYear();
+        var date3 = new Date();
+        date3.setMonth(date3.getMonth()-1);
 
-        $('#location_pie_month1').val(datestring);
-        $('#location_pie_month2').val(datestring2);
+        var date4 = new Date();
+
+        var month = ("0" + (date3.getMonth())).slice(-2);
+        var month2 = ("0" + (date4.getMonth())).slice(-2);
+
+        var monthstring = month + "/" + date1.getFullYear();
+        var monthstring2 = month2 + "/" + date2.getFullYear();
+
+        $('#location_pie_month1').val(monthstring);
+        $('#location_pie_month2').val(monthstring2);
 
         drawlocationChart();
 
@@ -148,21 +168,29 @@ $("#daymonth_location").click(function(){
 
 $("#reset_locations").click(function(){
     var date1 = new Date();
-        var datestring = date1.getDate()-1  + "-" + (date1.getMonth()+1) + "-" + date1.getFullYear();
 
-        var date2 = new Date();
-        date2.setDate(date2.getDate()-30);
-        var datestring2 = date2.getDate()  + "-" + (date2.getMonth()+1) + "-" + date2.getFullYear();
+    date1.setDate(date1.getDate()-1)
+    date1.setMonth(date1.getMonth()+1)
+    var datestring = ("0" + (date1.getDate())).slice(-2)  + "-" + ("0" + (date1.getMonth())).slice(-2) + "-" + date1.getFullYear();
+
+    var date2 = new Date();
+    date2.setDate(date2.getDate()-30);
+    date2.setMonth(date2.getMonth()+1)
+    var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
 
     $('#location_pie_date1').val(datestring2);
     $('#location_pie_date2').val(datestring);
 
-    var month = ("0" + (date1.getMonth())).slice(-2);
-    var month2 = ("0" + (date1.getMonth()+1)).slice(-2);
-    console.log(month,"lp")
+    var date3 = new Date();
+    date3.setMonth(date3.getMonth()-1);
+
+    var date4 = new Date();
+
+    var month = ("0" + (date3.getMonth())).slice(-2);
+    var month2 = ("0" + (date4.getMonth())).slice(-2);
+
     var monthstring = month + "/" + date1.getFullYear();
-    var monthstring2 = month2 + "/" + date1.getFullYear();
-    console.log(monthstring,monthstring2,"dts")
+    var monthstring2 = month2 + "/" + date2.getFullYear();
 
     $('#location_pie_month1').val(monthstring);
     $('#location_pie_month2').val(monthstring2);
@@ -287,11 +315,15 @@ $("#daymonth_cleaningtype").click(function(){
         $('.clnset1').attr("hidden",false);
         $('.clnset2').attr("hidden",true);
         var date1 = new Date();
-        var datestring = date1.getDate()-1  + "-" + (date1.getMonth()+1) + "-" + date1.getFullYear();
+
+        date1.setDate(date1.getDate()-1)
+        date1.setMonth(date1.getMonth()+1)
+        var datestring = ("0" + (date1.getDate())).slice(-2)  + "-" + ("0" + (date1.getMonth())).slice(-2) + "-" + date1.getFullYear();
 
         var date2 = new Date();
         date2.setDate(date2.getDate()-30);
-        var datestring2 = date2.getDate()  + "-" + (date2.getMonth()+1) + "-" + date2.getFullYear();
+        date2.setMonth(date2.getMonth()+1)
+        var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
 
         $('#cleaningtype_pie_date1').val(datestring2);
         $('#cleaningtype_pie_date2').val(datestring);
@@ -302,15 +334,19 @@ $("#daymonth_cleaningtype").click(function(){
         $('.clnset1').attr("hidden",true);
         $('.clnset2').attr("hidden",false);
         
-        var date1 = new Date();
-        var month = ("0" + (date1.getMonth())).slice(-2);
-        var month2 = ("0" + (date1.getMonth()+1)).slice(-2);
-        console.log(month,"lp")
-        var datestring = month + "/" + date1.getFullYear();
-        var datestring2 = month2 + "/" + date1.getFullYear();
+        var date3 = new Date();
+        date3.setMonth(date3.getMonth()-1);
 
-        $('#cleaningtype_pie_month1').val(datestring);
-        $('#cleaningtype_pie_month2').val(datestring2);
+        var date4 = new Date();
+
+        var month = ("0" + (date3.getMonth())).slice(-2);
+        var month2 = ("0" + (date4.getMonth())).slice(-2);
+
+        var monthstring = month + "/" + date1.getFullYear();
+        var monthstring2 = month2 + "/" + date2.getFullYear();
+
+        $('#cleaningtype_pie_month1').val(monthstring);
+        $('#cleaningtype_pie_month2').val(monthstring2);
 
         drawcleaningtypeChart();
 
@@ -319,21 +355,29 @@ $("#daymonth_cleaningtype").click(function(){
 
 $("#reset_cleaningtypes").click(function(){
     var date1 = new Date();
-    var datestring = date1.getDate()-1  + "-" + (date1.getMonth()+1) + "-" + date1.getFullYear();
+
+    date1.setDate(date1.getDate()-1)
+    date1.setMonth(date1.getMonth()+1)
+    var datestring = ("0" + (date1.getDate())).slice(-2)  + "-" + ("0" + (date1.getMonth())).slice(-2) + "-" + date1.getFullYear();
 
     var date2 = new Date();
     date2.setDate(date2.getDate()-30);
-    var datestring2 = date2.getDate()  + "-" + (date2.getMonth()+1) + "-" + date2.getFullYear();
+    date2.setMonth(date2.getMonth()+1)
+    var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
 
     $('#cleaningtype_pie_date1').val(datestring2);
     $('#cleaningtype_pie_date2').val(datestring);
 
-    var month = ("0" + (date1.getMonth())).slice(-2);
-    var month2 = ("0" + (date1.getMonth()+1)).slice(-2);
-    console.log(month,"lp")
+    var date3 = new Date();
+    date3.setMonth(date3.getMonth()-1);
+
+    var date4 = new Date();
+
+    var month = ("0" + (date3.getMonth())).slice(-2);
+    var month2 = ("0" + (date4.getMonth())).slice(-2);
+
     var monthstring = month + "/" + date1.getFullYear();
-    var monthstring2 = month2 + "/" + date1.getFullYear();
-    console.log(monthstring,monthstring2,"dts")
+    var monthstring2 = month2 + "/" + date2.getFullYear();
 
     $('#cleaningtype_pie_month1').val(monthstring);
     $('#cleaningtype_pie_month2').val(monthstring2);
@@ -455,11 +499,15 @@ $("#daymonth_governorate").click(function(){
         $('.govset1').attr("hidden",false);
         $('.govset2').attr("hidden",true);
         var date1 = new Date();
-        var datestring = date1.getDate()-1  + "-" + (date1.getMonth()+1) + "-" + date1.getFullYear();
+
+        date1.setDate(date1.getDate()-1)
+        date1.setMonth(date1.getMonth()+1)
+        var datestring = ("0" + (date1.getDate())).slice(-2)  + "-" + ("0" + (date1.getMonth())).slice(-2) + "-" + date1.getFullYear();
 
         var date2 = new Date();
         date2.setDate(date2.getDate()-30);
-        var datestring2 = date2.getDate()  + "-" + (date2.getMonth()+1) + "-" + date2.getFullYear();
+        date2.setMonth(date2.getMonth()+1)
+        var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
 
         $('#governorate_pie_date1').val(datestring2);
         $('#governorate_pie_date2').val(datestring);
@@ -467,18 +515,19 @@ $("#daymonth_governorate").click(function(){
 
     }
     else{
-        $('.govset1').attr("hidden",true);
-        $('.govset2').attr("hidden",false);
-        
-        var date1 = new Date();
-        var month = ("0" + (date1.getMonth())).slice(-2);
-        var month2 = ("0" + (date1.getMonth()+1)).slice(-2);
-        console.log(month,"lp")
-        var datestring = month + "/" + date1.getFullYear();
-        var datestring2 = month2 + "/" + date1.getFullYear();
+        var date3 = new Date();
+        date3.setMonth(date3.getMonth()-1);
 
-        $('#governorate_pie_month1').val(datestring);
-        $('#governorate_pie_month2').val(datestring2);
+        var date4 = new Date();
+
+        var month = ("0" + (date3.getMonth())).slice(-2);
+        var month2 = ("0" + (date4.getMonth())).slice(-2);
+
+        var monthstring = month + "/" + date1.getFullYear();
+        var monthstring2 = month2 + "/" + date2.getFullYear();
+
+        $('#governorate_pie_month1').val(monthstring);
+        $('#governorate_pie_month2').val(monthstring2);
 
         drawgovernorateChart();
 
@@ -487,20 +536,29 @@ $("#daymonth_governorate").click(function(){
 
 $("#reset_governorates").click(function(){
     var date1 = new Date();
-    var datestring = date1.getDate()-1  + "-" + (date1.getMonth()+1) + "-" + date1.getFullYear();
+
+    date1.setDate(date1.getDate()-1)
+    date1.setMonth(date1.getMonth()+1)
+    var datestring = ("0" + (date1.getDate())).slice(-2)  + "-" + ("0" + (date1.getMonth())).slice(-2) + "-" + date1.getFullYear();
 
     var date2 = new Date();
     date2.setDate(date2.getDate()-30);
-    var datestring2 = date2.getDate()  + "-" + (date2.getMonth()+1) + "-" + date2.getFullYear();
+    date2.setMonth(date2.getMonth()+1)
+    var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
 
     $('#governorate_pie_date1').val(datestring2);
     $('#governorate_pie_date2').val(datestring);
 
-    var month = ("0" + (date1.getMonth())).slice(-2);
-    var month2 = ("0" + (date1.getMonth()+1)).slice(-2);
-    console.log(month,"lp")
+    var date3 = new Date();
+    date3.setMonth(date3.getMonth()-1);
+
+    var date4 = new Date();
+
+    var month = ("0" + (date3.getMonth())).slice(-2);
+    var month2 = ("0" + (date4.getMonth())).slice(-2);
+
     var monthstring = month + "/" + date1.getFullYear();
-    var monthstring2 = month2 + "/" + date1.getFullYear();
+    var monthstring2 = month2 + "/" + date2.getFullYear();
     console.log(monthstring,monthstring2,"dts")
 
     $('#governorate_pie_month1').val(monthstring);
@@ -511,20 +569,24 @@ $("#reset_governorates").click(function(){
 
 
 var date1 = new Date();
+date1.setMonth(date1.getMonth()-1);
+
+var date2 = new Date();
+
 var month = ("0" + (date1.getMonth())).slice(-2);
-var month2 = ("0" + (date1.getMonth()+1)).slice(-2);
-console.log(month,"lp")
-var datestring = month + "/" + date1.getFullYear();
-var datestring2 = month2 + "/" + date1.getFullYear();
+var month2 = ("0" + (date2.getMonth())).slice(-2);
 
-$('#location_pie_month1').val(datestring);
-$('#location_pie_month2').val(datestring2);
+var monthstring = month + "/" + date1.getFullYear();
+var monthstring2 = month2 + "/" + date2.getFullYear();
 
-$('#cleaningtype_pie_month1').val(datestring);
-$('#cleaningtype_pie_month2').val(datestring2);
+$('#location_pie_month1').val(monthstring);
+$('#location_pie_month2').val(monthstring2);
 
-$('#governorate_pie_month1').val(datestring);
-$('#governorate_pie_month2').val(datestring2);
+$('#cleaningtype_pie_month1').val(monthstring);
+$('#cleaningtype_pie_month2').val(monthstring2);
+
+$('#governorate_pie_month1').val(monthstring);
+$('#governorate_pie_month2').val(monthstring2);
 
 if ($('#daymonth_location').is(':checked')) {
     console.log("runnon")

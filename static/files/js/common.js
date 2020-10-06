@@ -35,11 +35,10 @@ $(function () {
       format: 'DD-MM-YYYY',
       autoclose:true,
       endDate: "today",
-      maxDate: today
+      maxDate: today,
   }).on('changeDate', function (ev) {
           $(this).datetimepicker('hide');
       });
-
 
   // $('.date_pick').keyup(function () {
   //   console.log("runo")
@@ -66,13 +65,25 @@ $(function () {
 });
 
 //month pick
-$('.month_pick').datepicker({
-  format: "mm/yyyy",
+$('.month_pick').datetimepicker({
+  maxDate: new Date(),
+  pickTime: false,
+  format: "MM/YYYY",
   startView: "year", 
   minViewMode: "months",
   autoclose:true,
 }).on('changeDate', function (ev) {
-  $(this).datepicker('hide');
+  $(this).datetimepicker('hide');
+});
+
+$('.month_pick_resource').datetimepicker({
+  pickTime: false,
+  format: "MM/YYYY",
+  startView: "year", 
+  minViewMode: "months",
+  autoclose:true,
+}).on('changeDate', function (ev) {
+  $(this).datetimepicker('hide');
 });
 
 //New Date picker
@@ -111,15 +122,16 @@ $(function () {
 });
 
 //New Date picker
-   $('.next-day-resource').on('click', function () {
+  $('.next-day-resource').on('click', function () {
 
-       console.log($(this).parent('.date-wrapper-inner-resource'));
-       $selectedDay            = $(this).parent('#working_calendar').children('.resource_date_pick').data("DateTimePicker").getDate();
-       var $tmpSelectedDay     = new Date($selectedDay) 
-       $tmpSelectedDay.setDate($tmpSelectedDay.getDate() + 1);
-       $(this).parent('#working_calendar').children('.resource_date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
-           
-    });
+    console.log($(this).parent('.date-wrapper-inner-resource'));
+    $selectedDay            = $(this).parent('#working_calendar').children('.resource_date_pick').data("DateTimePicker").getDate();
+    var $tmpSelectedDay     = new Date($selectedDay) 
+    $tmpSelectedDay.setDate($tmpSelectedDay.getDate() + 1);
+    $(this).parent('#working_calendar').children('.resource_date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+        
+  });
+
 
 
    $('.prev-day-resource').on('click', function () {
@@ -136,6 +148,32 @@ $(function () {
        $(this).parent('#working_calendar').children('.resource_date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
    });   
 
+
+//New Month picker
+$('.next-month-resource').on('click', function () {
+
+  console.log($(this).parent('.date-wrapper-inner-resource'));
+  $selectedDay            = $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").getDate();
+  var $tmpSelectedDay     = new Date($selectedDay) 
+  $tmpSelectedDay.setMonth($tmpSelectedDay.getMonth() + 1);
+  $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('MM/YYYY'));;
+      
+});
+
+$('.prev-month-resource').on('click', function () {
+
+  $selectedDay            = $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").getDate();
+  var $tmpSelectedDay     = new Date($selectedDay) 
+  $tmpSelectedDay.setMonth($tmpSelectedDay.getMonth() - 1);
+  $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('MM/YYYY'));
+
+});
+
+$('.this-month-resource').on('click', function () {
+  var $tmpSelectedDay     = new Date();
+  $tmpSelectedDay.setMonth($tmpSelectedDay.getMonth());
+  $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('MM/YYYY'));
+}); 
 
  // toggle-password
  $(".toggle-password").click(function() {
@@ -200,11 +238,11 @@ $(".close-btn").on("click", function(){
 });
 
 // prev next datepicker
-$('.datepicker').datetimepicker({ 
-  pickTime: false, 
-  format: "DD-MM-YYYY",
-  defaultDate: new Date(),  
-});
+// $('.datepicker').datetimepicker({ 
+//   pickTime: false, 
+//   format: "DD-MM-YYYY",
+//   defaultDate: new Date(),  
+// });
 
   // $('#datepicker').datetimepicker();
 
@@ -266,6 +304,7 @@ $(".arrow-close").on('click', function (e) {
 
 
 $(".arrow-left").on('click', function (e) {
+  console.log("plo")
   $(".arrow-left").toggleClass("cross-left");
   $(".menu-filter-left").slideToggle("");
 });
@@ -296,30 +335,30 @@ $(".arrow-left-close").on('click', function (e) {
 });
 
 // toggle month/date resources
-$('#daymonthtoggle_resource').click(function(){
-  if($(this).is(':checked')){
-      $('#resource_month').attr("hidden",false);
-      $('#working_calendar').attr("hidden",true);
-      $('#table_month').attr("hidden",false);
-      $('#table_date').attr("hidden",true);
-      $('.togglehide').attr("hidden",true);
-      $('.red-btn').attr("hidden",true);
-      $('.red-btn2').attr("hidden",false);
-      $('#resource_search').attr("hidden",true);
-      $('#resource_search2').attr("hidden",false);
-      load_workers_data();
-  }else{
-      $('#resource_month').attr("hidden",true);
-      $('#working_calendar').attr("hidden",false);
-      $('#table_month').attr("hidden",true);
-      $('#table_date').attr("hidden",false);
-      $('.togglehide').attr("hidden",false);
-      $('.red-btn').attr("hidden",false);
-      $('.red-btn2').attr("hidden",true);
-      $('#resource_search').attr("hidden",false);
-      $('#resource_search2').attr("hidden",true);
-  }
-});
+// $('#daymonthtoggle_resource').click(function(){
+//   if($(this).is(':checked')){
+//       $('#working_calendar2').attr("hidden",false);
+//       $('#working_calendar').attr("hidden",true);
+//       $('#table_month').attr("hidden",false);
+//       $('#table_date').attr("hidden",true);
+//       $('.togglehide').attr("hidden",true);
+//       $('.red-btn').attr("hidden",true);
+//       $('.red-btn2').attr("hidden",false);
+//       $('#resource_search').attr("hidden",true);
+//       $('#resource_search2').attr("hidden",false);
+//       load_workers_data();
+//   }else{
+//       $('#working_calendar2').attr("hidden",true);
+//       $('#working_calendar').attr("hidden",false);
+//       $('#table_month').attr("hidden",true);
+//       $('#table_date').attr("hidden",false);
+//       $('.togglehide').attr("hidden",false);
+//       $('.red-btn').attr("hidden",false);
+//       $('.red-btn2').attr("hidden",true);
+//       $('#resource_search').attr("hidden",false);
+//       $('#resource_search2').attr("hidden",true);
+//   }
+// });
 
 // keep position after refresh
 document.addEventListener("DOMContentLoaded", function(event) { 

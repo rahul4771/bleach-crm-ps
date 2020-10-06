@@ -223,6 +223,31 @@
                 
             </div><!--bar-chart-->        
             {% endfor %}
+
+
+            <div class="bar-chart"><!--bar-chart-->
+            
+                <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
+                
+                <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
+                
+                </div><!--bar-chart-items chart-column-one-->
+                
+                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
+                    <div class="evaluator-name">Customer Service</div>
+                    <div class="designation">AGENT</div>
+                </div><!--bar-chart-items chart-column-two-->
+                
+                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
+                <div class="evaluator-name" id="agent_sales_target">0.0%</div>
+                    <div class="bar-chart-graybg color"><div id="color_agent"></div></div>
+                </div><!--bar-chart-items chart-column-three-->
+                
+                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
+                     <a class="followup_graph" data-evaluator="Customer Service"><input name="Follow" type="button" class="follow" onclick="salestarget(0);" value="Follow"> </a> 
+                </div><!--bar-chart-items chart-column-four-->
+                
+            </div><!--bar-chart-->
             
     </div><!--two-col-fluid-left two-col-fluid-boxes--> 
     <div class="two-col-fluid-right two-col-fluid-boxes"><!--two-col-fluid-right two-col-fluid-boxes-->
@@ -248,8 +273,8 @@
         <div class="Button_wrapperChart">
             <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonth_sales"><div class="slider round"><span class="on">DATE</span><span class="off">MONTH</span></div></label></div>
 
-            <input type="text" id="sales_curve_date1" class="date_pick txt-box saleset1" hidden>
-            <input type="text" id="sales_curve_date2" class="date_pick txt-box saleset1" hidden>
+            <input type="text" id="sales_curve_date1" class=" txt-box saleset1" hidden>
+            <input type="text" id="sales_curve_date2" class=" txt-box saleset1" hidden>
 
             <input type="text" id="sales_curve_month1" class="month_pick txt-box saleset2" >
             <input type="text" id="sales_curve_month2" class="month_pick txt-box saleset2" >
@@ -429,7 +454,6 @@
                     </div><!--chart_boxDiv-->                
                 </div> <!--clients-card-column clients-column-right-->                                   
             </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-            <div class="popup-btn-wrap" align="center"> <input class="pop-assignButton" name="assing" type="button" value="Submit"> <input class="pop-cancel-Button" name="cancel" type="button" value="Reset"></div>
         </div><!--modal-body-->
         </div>  <!--full-wrapp-pop-->
     </div><!--modal-wrapper modal-transition-->
@@ -478,6 +502,29 @@
     };
 
 $('document').ready(function(){
+
+    $('#sales_curve_date1').datetimepicker({
+        maxDate:$('#sales_curve_date2').val(),
+        pickTime: false, 
+        format: 'DD-MM-YYYY',
+        autoclose:true,
+        onClose: function(selectedDate) {
+            $('#sales_curve_date2').datetimepicker('option', 'minDate', selectedDate);
+        }
+    })
+    //.on("change", function (selected) {
+    //  console.log("tyu")
+    //  $('#sales_curve_date2').datetimepicker('option', 'minDate', null);
+    //});
+
+    $('#sales_curve_date2').datetimepicker({
+        minDate:$('#sales_curve_date1').val(),
+        pickTime: false, 
+        format: 'DD-MM-YYYY',
+        autoclose:true,
+        maxDate: new Date(),
+    })
+
     salestargetcalculation();
     //Evaluation Callender
         {% for evaluator in evaluation_details %}
