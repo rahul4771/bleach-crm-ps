@@ -977,17 +977,36 @@ def SalesLocationData(request):
 		print("derr")
 		month,year = prevdate.split("/")
 		month2,year2 = todate.split("/")
+		
+		locationcount = 0
+		others_count = 0
 
+		# appending each location counts
 		for location in location_types:
+			locationcount += 1
+
 			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__year__range=(year,year2),evaluation__quatation_approved_date__month__range=(month,month2),evaluation__evaluation_details__evaluation_book_evaluation_details__area_type=location.name).count()
 			if not sales_location_count:
 				sales_location_count = 0
 
+			if locationcount <= 5:
+				location_dict = {
+				"location" : location.name,
+				"count" : sales_location_count,
+				}
+				data.append(location_dict)
+
+			if locationcount > 5:
+				others_count += sales_location_count
+
+		# appending total of other locations
+		if others_count > 0:
 			location_dict = {
-			"location" : location.name,
-			"count" : sales_location_count,
+			"location" : "Others",
+			"count" : others_count,
 			}
 			data.append(location_dict)
+
 	else:
 		print("war")
 		try:

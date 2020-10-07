@@ -1,4 +1,4 @@
-var colors = ['#3366cc', '#dc3912', '#ff9900', '#109618', '#990099', '#0099c6', '#dd4477', '#66aa00', '#b82e2e'];
+var colors = ['#3366cc', '#dc3912', '#ff9900', '#109618', '#990099', '#0099c6'];
 
 //donut chart
 google.charts.load("current", {packages:["corechart"]});
@@ -95,7 +95,7 @@ function drawlocationChart() {
 
         var others_percent = Number(100 * others / total).toFixed(1);
         console.log(others,others_percent,"otp")
-        $('#legend_location').append('<div class="donut-char-legend" ><i class="fa fa-square" style="color:#b82e2e"></i> <div class="chart-stat">Others</div><span>' + others_percent + ' %</span></div>')
+        $('#legend_location').append('<div class="donut-char-legend" ><i class="fa fa-square" style="color:#0099c6"></i> <div class="chart-stat">Others</div><span>' + others_percent + ' %</span></div>')
         // // initial value
         // var percent = 0;
         // // start the animation loop
