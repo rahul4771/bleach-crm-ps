@@ -25,7 +25,8 @@
           <hr class="div">
           
             <div class="common-sub-head align-left">Details</div> 
- 
+
+{% if evaluation_details %} 
 {% for detail in evaluation_details %} 
 <div class="checkin-wrapper-row checkin-forms-boxes"><!--checkin-wrapper-row checkin-forms-boxes-->
       <div class="checkin-form-left"><!--checkin-form-left-->
@@ -42,13 +43,18 @@
       </div><!--checkin-form-left-->
       <div class="checkin-form-right align-right"><!--checkin-form-right-->
         {% if detail.status == 'EVALUATED' %}
-        <a href="{% url 'agent:agent-makequatation2edit' detail.id %}"><div><input name="view" type="button" value="View" class="checkonButton"></div></a>
+        <a href="{% url 'agent:agent-makequatation2edit' detail.id %}"><div><input name="view" type="button" value="Edit" class="checkonButton"></div></a>
         {% else %}
         <a href="{% url 'agent:agent-makequatation2' detail.id %}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
         {% endif %}
-      </div><!--checkin-form-right-->               
+      </div><!--checkins-form-right--> 
+      <div class="checkin-form-right align-right"><!--checkin-form-right-->
+        <div><input name="view" type="button" value="Delete" class="checkonDeleteButton delete_evaluation_button" data-evaluation_id="{{detail.evaluation.id}}" data-enquiry_id="{{detail.evaluation.customer.id}}" data-url="{% url 'agent:agent-makequatation2delete' detail.id %}"></div>
+
+      </div><!--checkins-form-right-->               
 </div><!--checkin-wrapper-row checkin-forms-boxes-->
-{% endfor %}        
+{% endfor %}
+{% endif %}        
         
 <div class="checkin-wrapper-row checkin-forms-boxes ltblue-bg"><!--checkin-wrapper-row checkin-forms-boxes-->
       <div class="checkin-form-left align-right"><!--checkin-form-left-->
@@ -109,8 +115,38 @@
     
 {% include 'agent/common/footer.html' %}
 </div><!--wrapper-->
-{% endblock %}
 
+<!-- Delete Evaluation popup -->
+<div id="delete_evaluation_popup" class="overlay"><!--overlay-->
+    <div class="popup-assign-eval"><!--popup-assign-eval-->
+        <a class="close" id="delete_evaluation_popup_close">&times;</a>
+            <div class="content"><!--content-->
+            <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">
+                <tr>
+                    <td valign="bottom"><div class="blc-number">Do You Want to Delete Evaluation Permenently?</div></td>
+                </tr>
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->  
+<form method="post" action="" enctype= "multipart/form-data" id="evaluation_delete_form">
+{%csrf_token%}
+<input type="hidden" name="evaluation_id" id="delete_evaluation_id">
+<input type="hidden" name="enquiry_id" id="delete_enquiry_id">
+<div align="center"> <input class="assignButton" name="assing" type="button" value="Delete" onclick="submitAnyForm(this);"></div>
+</form> 
+
+</div><!--ticket-wrapper-full--> 
+            
+            </div><!--content-->
+    </div><!--popup-assign-eval-->
+</div><!--overlay-->
+<!-- /Delete Evaluation confirm_popup -->
+{% endblock %}
 
 {% block javascript %} 
 <script src="{% static 'files/js/jquery.formset.js' %}"></script>
@@ -136,6 +172,22 @@ $('.payment_track').show();
 {% else %}
 $('.payment_track').hide();
 {% endif %}
+
+//evaluation delete
+$(".delete_evaluation_button").click(function(){
+    
+    $("#delete_evaluation_id").val($(this).data('evaluation_id'));
+    $("#delete_enquiry_id").val($(this).data('enquiry_id'));
+    $("#evaluation_delete_form").attr('action',$(this).data('url'));
+
+    $("#delete_evaluation_popup").css({'visibility':'visible','opacity':1,});
+})
+
+$("#delete_evaluation_popup_close").click(function(){
+    $("#delete_evaluation_popup").css({'visibility':'hidden','opacity':0,});
+});
+
+
 });
 
 //hide shw formset with payment method
