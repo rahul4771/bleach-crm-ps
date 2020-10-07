@@ -440,9 +440,9 @@ class OrderDetails(IsAdmin,View):
 		search                  = request.GET.get('search')
 
 		if search:
-			evaluations = Evaluation.objects.filter(is_active=True,quatation_status__isnull=False).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(evaluation_id__icontains=search))).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
+			evaluations = Evaluation.objects.filter(is_active=True,quatation_status__isnull=False).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
 		else:
-			evaluations = Evaluation.objects.filter(is_active=True,quatation_status__isnull=False).select_related('customer').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
+			evaluations = Evaluation.objects.filter(is_active=True,quatation_status__isnull=False).select_related('customer').order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
 
 		if evaluations:
 			approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()

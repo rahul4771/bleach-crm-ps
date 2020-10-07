@@ -33,7 +33,9 @@ urlpatterns = [
     url(r'^stl/',include('senior_team_leader.urls',namespace='stl')),
     url(r'^tl/',include('team_leader.urls',namespace='tl')),
     url(r'^accountant/',include('accountant.urls',namespace='accountant')),
+    url(r'^customer/',include('customer.urls',namespace='customer')),
     url(r'^order-data/',include('order.urls',namespace='order_data')),
+
     url(r'^api/',include('Api.urls',namespace='api')),
 
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

@@ -69,7 +69,7 @@ class Order(models.Model):
 	payment_completed_date = models.DateTimeField(blank=True,null=True)
 	total_amount           = models.IntegerField(blank=True,null=True,default=0)
 	amount_paid            = models.IntegerField(blank=True,null=True)
-	remining_amount        = models.IntegerField(blank=True,null=True)
+	remining_amount        = models.IntegerField(blank=True,null=True,default=0)
 	preamount_paid		   = models.IntegerField(blank=True,null=True)
 	postamount_paid		   = models.IntegerField(blank=True,null=True)
 	

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'agent',
     'accountant',
     'bleachadmin',
+    'customer',
     'Api',
 ]
 
