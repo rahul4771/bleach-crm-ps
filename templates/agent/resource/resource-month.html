@@ -2,11 +2,11 @@
 
 {% for details in workers_details_month %}
 <tr>
-<td  class="yellow-line"><div class="profile-pic-inline"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} align="absmiddle"></div><div class="client-name-inline">{{details.name}}<div class="common-gray-text align-left">{{details.user_type}}</div></div></td>
-<td class="align-center top-space"> <div class="client-name">4.1</div><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td>
-<td  class="align-center top-space">20</td>
-<td class="align-center top-space">90</td>
-<td class="align-center top-space">60610001</td>
+<td  class="yellow-line"><div class="profile-pic-inline"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %}></div><div class="client-name-inline">{{details.name}}<div class="common-gray-text align-left">{{details.user_type}}</div></div></td>
+<td class="align-center"> <div class="client-name">4.1</div><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td>
+<td  class="align-center ">20</td>
+<td class="align-center ">90</td>
+<td class="align-center ">60610001</td>
 </tr>
 {% endfor %}
     
