@@ -29,6 +29,15 @@
 {% for detail in evaluation_details %} 
 <div class="checkin-wrapper-row checkin-forms-boxes"><!--checkin-wrapper-row checkin-forms-boxes-->
       <div class="checkin-form-left"><!--checkin-form-left-->
+      {% if detail.evaluator.profile_image %}
+      <div class="profile-pic"><img src="{{detail.evaluator.profile_image.url}}"></div>
+      {% else %}
+      <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+      {% endif %}
+      <div class="client-name">{{detail.evaluator.name}}<div class="common-gray-text">Evaluator</div></div>
+      </div>
+
+      <div class="checkin-form-left"><!--checkin-form-left-->
         {{detail.address.block}}st Block,{{detail.address.building}},{{detail.address.street}} Street,{{detail.address.area.name}}
       </div><!--checkin-form-left-->
       <div class="checkin-form-left align-center"><!--checkin-form-left-->
@@ -49,11 +58,11 @@
         {% endif %}
         {% endif %}
       </div><!--checkin-form-right--> 
-      {% if detail.evaluator == request.user %}
       <div class="checkin-form-right align-right"><!--checkin-form-right-->
+        {% if detail.evaluator == request.user %}
         <div><input name="view" type="button" value="Delete" class="checkonDeleteButton delete_evaluation_button" data-evaluation_id="{{detail.evaluation.id}}" data-enquiry_id="{{detail.evaluation.customer.id}}" data-url="{% url 'evaluator:evaluator-makequatation2delete' detail.id %}"></div>
-      </div><!--checkins-form-right-->
-      {% endif %}              
+        {% endif %}
+      </div><!--checkins-form-right-->              
 </div><!--checkin-wrapper-row checkin-forms-boxes-->
 {% endfor %}        
         

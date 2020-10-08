@@ -29,6 +29,18 @@
 {% if evaluation_details %} 
 {% for detail in evaluation_details %} 
 <div class="checkin-wrapper-row checkin-forms-boxes"><!--checkin-wrapper-row checkin-forms-boxes-->
+      
+      {% if detail.evaluator %}
+      <div class="checkin-form-left"><!--checkin-form-left-->
+      {% if detail.evaluator.profile_image %}
+      <div class="profile-pic"><img src="{{detail.evaluator.profile_image.url}}"></div>
+      {% else %}
+      <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+      {% endif %}
+      <div class="client-name">{{detail.evaluator.name}}<div class="common-gray-text">Evaluator</div></div>
+      </div>
+      {% endif %}
+
       <div class="checkin-form-left"><!--checkin-form-left-->
         {{detail.address.block}}st Block,{{detail.address.building}},{{detail.address.street}} Street,{{detail.address.area.name}}
       </div><!--checkin-form-left-->

@@ -28,9 +28,20 @@
  
 {% for detail in evaluation_details %} 
 <div class="checkin-wrapper-row checkin-forms-boxes"><!--checkin-wrapper-row checkin-forms-boxes-->
+      
+      <div class="checkin-form-left"><!--checkin-form-left-->
+      {% if detail.evaluator.profile_image %}
+      <div class="profile-pic"><img src="{{detail.evaluator.profile_image.url}}"></div>
+      {% else %}
+      <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+      {% endif %}
+      <div class="client-name">{{detail.evaluator.name}}<div class="common-gray-text">Evaluator</div></div>
+      </div>
+      
       <div class="checkin-form-left"><!--checkin-form-left-->
         {{detail.address.block}}st Block,{{detail.address.building}},{{detail.address.street}} Street,{{detail.address.area.name}}
       </div><!--checkin-form-left-->
+      
       <div class="checkin-form-left align-center"><!--checkin-form-left-->
         {% if detail.total_cost == 0.0 %}
         <div class="check-in-icons"><img src="{% static 'files/images/evaluation-pending-icon.svg' %}"></div>
@@ -40,6 +51,7 @@
         <div class="lg-text blue-text">{{detail.total_cost}} KD</div>
         {% endif %}
       </div><!--checkin-form-left-->
+      
       <div class="checkin-form-right align-right"><!--checkin-form-right-->
         {% if detail.evaluator == request.user %}
         {% if detail.status == 'EVALUATED' %}
