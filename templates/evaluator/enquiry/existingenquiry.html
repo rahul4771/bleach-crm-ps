@@ -100,7 +100,7 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>Company</label></div>
-                <input name="Company" id="id_company" type="text" class="textBox" placeholder=" " value="{{enquiry_user.Company|default_if_none:''}}">
+                <input name="company" id="id_company" type="text" class="textBox" placeholder=" " value="{{enquiry_user.company|default_if_none:''}}">
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label"> <label>Job Title</label></div>
@@ -218,9 +218,9 @@
             <div class="common-gray-text">{{enquiry_user.email}}</div>
             <br>
             <hr class="hr">
-            <div class="common-gray-text">Comapany Name : <span class="bold-text">{{enquiry_user.company|default_if_none:''}}</span></div>
+            <div class="common-gray-text">Comapany Name : <span class="bold-text">{{enquiry_user.company}}</span></div>
             <div class="common-gray-text">Nationality : <span class="bold-text">{{enquiry_user.nationality.name|default_if_none:''}}</span></div>
-            <div class="common-gray-text">Other Contact : <span class="bold-text">{{enquiry_user.phone_number|default_if_none:''}}</span></div>
+            <div class="common-gray-text">Other Contact : <span class="bold-text">{{enquiry_user.phone_number}}</span></div>
             <hr class="hr">
             <br>
             {% for address in addresses %}
@@ -327,6 +327,23 @@ $('document').ready(function(){
 $('.ui.multiple.dropdown').dropdown({
   });
 
+//initial hiding
+customer_type = "{{enquiry_user.customer_type}}"
+if(customer_type=='CORPORATE')
+{
+$("#id_customer_type_expand").css('display','block');  
+$("#id_company").attr('required',true);
+$("#id_job_title").attr('required',true);
+}
+else
+{
+$("#id_customer_type_expand").css('display','none');
+$("#id_company").val('');
+$("#id_job_title").val('');
+$("#id_company").attr('required',false);
+$("#id_job_title").attr('required',false);
+}
+
   //HIDE AND SHOW WITH CUSTOMER TYPE
 $("#id_customer_type").change(function(){
 customer_type=this.value;
@@ -334,16 +351,12 @@ customer_type=this.value;
 if(customer_type=='CORPORATE')
 {
 $("#id_customer_type_expand").css('display','block');  
-$("#id_company").parents('.page-col').show();
-$("#id_job_title").parents('.page-col').show();
 $("#id_company").attr('required',true);
 $("#id_job_title").attr('required',true);
 }
 else
 {
 $("#id_customer_type_expand").css('display','none');
-$("#id_company").parents('.page-col').hide();
-$("#id_job_title").parents('.page-col').hide();
 $("#id_company").val('');
 $("#id_job_title").val('');
 $("#id_company").attr('required',false);
