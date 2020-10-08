@@ -13,7 +13,7 @@
         <p>Bleach CRM-PS Version 0.1 (Beta) developed and owned by Bleach-Kw</p>
     </div><!--welcome-wrapper-->
             
-        
+        s
 <div class="order-top-wrapper"><!--order-top-wrapper-->
 	<div class="cleaning-Order-wrapper"><!--cleaning-Order-wrapper-->
     	<div class="cleaning--left-stretch"><!--cleaning--left-stretch-->
@@ -132,8 +132,9 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Contact Platform</label></div>
-                <div class="ui fluid dropdown multiple search selection"><input type="text" name="contact_platform"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">Select Platform</div><div class="menu" tabindex="-1"><div class="item" data-value="SMS">SMS</div><div class="item" data-value="Whatsapp">Whatsapp</div><div class="item" data-value="Email">Email</div></div>
+                <div class="ui fluid dropdown multiple search selection"><input type="hidden" name="contact_platform" id="contact_platform_id"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">Select Platform</div><div class="menu" tabindex="-1"><div class="item" data-value="SMS">SMS</div><div class="item" data-value="Whatsapp">Whatsapp</div><div class="item" data-value="Email">Email</div></div>
                 </div>
+                <p class="contact_platform_alert" style="color:Red;"></p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -212,7 +213,7 @@
 </div>
 
 <br>
-<div align="center"><input class="assignButton" name="addevaluator" type="button" value="Add Evaluator" onclick="submitAnyForm(this);" onmouseover="submitbuttontype('assign_evaluator')"> <input class="cancel-Button" name="makequotation" type="button" value="Make Quatation" onclick="submitAnyForm(this);" onmouseover="submitbuttontype('quatation')"></div>
+<div align="center"><input class="assignButton" name="addevaluator" type="button" value="Add Evaluator" onclick="SubmitNewEnquiry(this);" onmouseover="submitbuttontype('assign_evaluator')"> <input class="cancel-Button" name="makequotation" type="button" value="Make Quatation" onclick="SubmitNewEnquiry(this);" onmouseover="submitbuttontype('quatation')"></div>
 <br><br>
 
         </div> <!--center-formDiv-->
@@ -274,6 +275,18 @@ $("#id_customer_type_expand").css('display','none');
 // $('.ui.multiple.dropdown').dropdown({
 //   });
 $(".ui.fluid.dropdown").dropdown({
+  onChange: function() {
+  contact_platforms = $('#contact_platform_id').val();
+  if(contact_platforms)
+  {
+    $('.contact_platform_alert').text("");
+  }
+  else
+  {
+    $('.contact_platform_alert').text("Please Select atleast one Contact Platform");
+  }
+  
+}
 });
 
 
@@ -508,5 +521,21 @@ function remove_duplicate_mobile(input_mobile)
             
             }
 }
+
+//form validate and submit
+function SubmitNewEnquiry(params)
+{
+contact_platforms = $('#contact_platform_id').val(); 
+if(contact_platforms)
+{
+  submitAnyForm(params);
+}
+else
+{
+  $('.contact_platform_alert').text("Please Select atleast one Contact Platform")
+}
+
+}
+
 </script>
 {% endblock %}
