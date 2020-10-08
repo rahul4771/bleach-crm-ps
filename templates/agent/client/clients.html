@@ -88,7 +88,7 @@
   				<div class=" bold-text common-label"> <label>Governorate</label></div>
                 <label for="favcity">
                 <select name="governorate_filter" id="governorate_filter_id">
-                <option value=''>---SELECT---</option>
+                <option value=''>---ALL---</option>
                 {% for governorate in governorates %}
           <option value='{{governorate.id}}' {% if governorate.id == fil_governorate %}selected{%endif%}>{{governorate.name}}</option>
                 {% endfor %}                
@@ -99,7 +99,7 @@
   				<div class=" bold-text common-label"> <label>Area</label></div>
                 <label for="favcity">
                 <select name="area_filter" id="area_filter_id">
-                <option value=''>---SELECT---</option> 
+                <option value=''>---ALL---</option> 
                 {% for area in areas %}
                 <option value='{{area.id}}' {% if fil_area == area.id %}selected{% endif %}>{{area.name}}</option>
                 {% endfor %}               
@@ -113,7 +113,7 @@
   				<div class=" bold-text common-label"> <label>Customer Type</label></div>
 				<label for="favcity">
                 <select name="customertype_filter" id="customertype_filter_id">
-                <option value=''>---SELECT---</option>
+                <option value=''>---ALL---</option>
                 <option value="INDIVIDUAL" {% if fil_customertype == 'INDIVIDUAL' %}selected{% endif %}>INDIVIDUAL</option>
                 <option value="RETAIL" {% if fil_customertype == 'RETAIL' %}selected{% endif %}>RETAIL</option>
                 <option value="CORPORATE" {% if fil_customertype == 'CORPORATE' %}selected{% endif %}>CORPORATE</option>                
@@ -124,7 +124,7 @@
   				<div class=" bold-text common-label"> <label>Status</label></div>
                 <label for="favcity">
                 <select name="status_filter" id="status_filter_id">
-                <option value=''>---SELECT---</option>
+                <option value=''>---ALL---</option>
                 <option value="ACTIVE" {% if fil_status == 'ACTIVE' %}selected{% endif %}>ACTIVE</option> 
                 <option value="NOTACTIVE" {% if fil_status == 'NOTACTIVE' %}selected{% endif %}>NOT ACTIVE</option>               
               </select>
@@ -292,7 +292,7 @@ $("#governorate_filter_id").change(function(){
 
             value: "", 
 
-           text: "---SELECT---"
+           text: "---ALL---"
 
         })); 
 

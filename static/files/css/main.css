@@ -423,6 +423,9 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .chart-bluebg{ background:#6823e0; position:absolute; left:0; height:10px; width:80%;border-radius:20px;}
 .chart-yellobg{ background:#ffbe00; position:absolute; left:0; height:10px; width:60%;border-radius:20px;}
 .chart-pinkbg{ background:#fd0172; position:absolute; left:0; height:10px; width:90%;border-radius:20px;}
+.chart-redbg{ background:#ff0000; position:absolute; left:0; height:10px; width:90%;border-radius:20px;}
+.chart-orangebg{ background:#ff6600; position:absolute; left:0; height:10px; width:90%;border-radius:20px;}
+.chart-greenbg{ background:#1eff00; position:absolute; left:0; height:10px; width:90%;border-radius:20px;}
 
 /*16-07-2020*/
 .order-top-wrapper{ position:relative; margin:0 10px 0 0; padding:10px 20px;  position:relative; top:-75px;   }
@@ -699,10 +702,10 @@ label[for=favcity] select:focus {outline: 1px dotted #A9A9A9;}
 .login-inner-wrapper { display: flex; margin:0px 0 0 0; padding:0; text-align:left;min-height: 400px; position:relative; }
 .login-inner-boxes > div { flex: 1; } 
 .login-inner-left { padding:110px 0px 0 0; text-align: left; box-sizing:border-box; background:#0454a5; position:relative;  }
-.login-inner-left h1{ color:#fff; font-weight:400; font-size:35px; text-align:left; margin:0; padding:0 0 0 70px;}
-.login-inner-left p{ color:#fff; font-weight:600; font-size:13px; text-align:left;margin:0; padding:0 70px;}
+.login-inner-left h1{ color:#fff; font-weight:400; font-size:35px; font-family:'Catamaran'; text-align:left; margin:0; padding:0 0 0 70px;}
+.login-inner-left p{ color:#fff; font-weight:600; font-size:13px; font-family:'Catamaran'; text-align:left;margin:0; padding:0 70px;}
 .login-inner-right { padding: 0 0 0 18px; text-align: left; box-sizing:border-box; position:relative;  }
-.login-inner-right h1{ color:#9d9d9d; font-weight:400; font-size:25px; text-align:left; margin:0; padding:95px 0 0 20px;}
+.login-inner-right h1{ color:#9d9d9d; font-weight:400; font-size:25px; font-family:'Catamaran'; text-align:left; margin:0; padding:95px 0 0 20px;}
 .login-inner-right .newlogin-form{  margin:0; padding:0 30px 0 30px;}
 .login-inner-right .textBox{ width:100%;border:1px solid #d8d8d8; margin:0 0 10px 0; padding:9px 12px; box-sizing:border-box; border-radius:100px;} 
 .login-inner-right .sign-button{ background:#01509f; margin:0; padding:6px 40px; color:#fff; border:1px solid #01509f; border-radius:100px; transition: .4s;}

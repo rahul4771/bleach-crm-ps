@@ -85,7 +85,7 @@
   				<div class=" bold-text common-label"> <label>Governorate</label></div>
                 <label for="favcity">
                 <select name="governorate_filter" id="governorate_filter_id">
-                <option value=''>---SELECT---</option>
+                <option value=''>---ALL---</option>
                 {% for governorate in governorates %}
           <option value='{{governorate.id}}' {% if governorate.id == fil_governorate %}selected{%endif%}>{{governorate.name}}</option>
                 {% endfor %}                
@@ -96,7 +96,7 @@
   				<div class=" bold-text common-label"> <label>Area</label></div>
                 <label for="favcity">
                 <select name="area_filter" id="area_filter_id">
-                <option value=''>---SELECT---</option> 
+                <option value=''>---ALL---</option> 
                 {% for area in areas %}
                 <option value='{{area.id}}' {% if fil_area == area.id %}selected{% endif %}>{{area.name}}</option>
                 {% endfor %}               
@@ -110,7 +110,7 @@
   				<div class=" bold-text common-label"> <label>Investigator</label></div>
 				<label for="favcity">
                 <select name="investigator_filter" id="investigator_filter_id">
-                <option value=''>---SELECT---</option>   
+                <option value=''>---ALL---</option>   
                 {% for investigator in investigators %}
                 <option value='{{investigator.id}}' {% if fil_investigator == investigator.id %}selected{% endif %}>{{investigator.name}}</option>
                 {% endfor %}             
@@ -121,7 +121,7 @@
   				<div class=" bold-text common-label"> <label>Status</label></div>
                 <label for="favcity">
                 <select name="status_filter" id="status_filter_id">
-                <option value=''>---SELECT---</option>
+                <option value=''>---ALL---</option>
                 <option value="INVESTIGATOR_APPROVED" {% if fil_status == 'INVESTIGATOR_APPROVED' %}selected{%endif%}>Open</option>
                 <option value="FOLLOWUP_IN_PROGRESS" {% if fil_status == 'FOLLOWUP_IN_PROGRESS' %}selected{%endif%}>Cleaning</option>
                 <option value="FOLLOWUP_CLOSED" {% if fil_status == 'FOLLOWUP_CLOSED' %}selected{%endif%}>Closed</option>
@@ -314,7 +314,7 @@ $("#governorate_filter_id").change(function(){
 
             value: "", 
 
-           text: "---SELECT---"
+           text: "---ALL---"
 
         })); 
 

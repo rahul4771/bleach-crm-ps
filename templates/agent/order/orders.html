@@ -87,7 +87,7 @@
   				<div class=" bold-text common-label"> <label>Governorate</label></div>
                 <label for="favcity">
                 <select name="governorate_filter" id="governorate_filter_id">
-                <option value=''>---SELECT---</option>
+                <option value=''>---ALL---</option>
                 {% for governorate in governorates %}
           <option value='{{governorate.id}}' {% if governorate.id == fil_governorate %}selected{%endif%}>{{governorate.name}}</option>
                 {% endfor %}                
@@ -98,7 +98,7 @@
   				<div class=" bold-text common-label"> <label>Area</label></div>
                 <label for="favcity">
                 <select name="area_filter" id="area_filter_id">
-                <option value=''>---SELECT---</option> 
+                <option value=''>---ALL---</option> 
                 {% for area in areas %}
                 <option value='{{area.id}}' {% if fil_area == area.id %}selected{% endif %}>{{area.name}}</option>
                 {% endfor %}               
@@ -112,7 +112,7 @@
   				<div class=" bold-text common-label"> <label>Cleaning Policy</label></div>
 				<label for="favcity">
                 <select name="cleaning_policy_filter" id="cleaning_policy_filter_id">
-                <option value=''>---SELECT---</option>
+                <option value=''>---ALL---</option>
                 <option value="ONE TIME SERVICE" {% if fil_cleaning_policy == 'ONE TIME SERVICE' %}selected{%endif%}>ONE TIME SERVICE</option>
                 <option value="SUBSCRIPTION" {% if fil_cleaning_policy == 'SUBSCRIPTION' %}selected{%endif%}>SUBSCRIPTION</option>                
               </select>
@@ -122,7 +122,7 @@
   				<div class=" bold-text common-label"> <label>Status</label></div>
                 <label for="favcity">
                 <select name="status_filter" id="status_filter_id">
-                <option value=''>---SELECT---</option>
+                <option value=''>---ALL---</option>
                 <option value="APPROVED" {% if fil_status == 'APPROVED' %}selected{% endif %}>APPROVED</option>
                 <option value="PENDING" {% if fil_status == 'PENDING' %}selected{% endif %}>PENDING</option>
                 <option value="REJECTED" {% if fil_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
@@ -137,7 +137,7 @@
   				<div class=" bold-text common-label"> <label>Service Type</label></div>
 				<label for="favcity">
                 <select name="service_type_filter" id="service_type_filter_id">
-                <option value=''>---SELECT---</option>
+                <option value=''>---ALL---</option>
                 {% for service_type in service_types %}
                 <option value="{{service_type.id}}" {% if service_type.id == fil_service_type %}selected{% endif %}>{{service_type.name}}</option>
                 {% endfor %}                
@@ -306,7 +306,7 @@ $("#governorate_filter_id").change(function(){
 
             value: "", 
 
-           text: "---SELECT---"
+           text: "---ALL---"
 
         })); 
 

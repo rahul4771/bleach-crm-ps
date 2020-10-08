@@ -81,7 +81,7 @@
   				<div class=" bold-text common-label"> <label>Governorate</label></div>
                 <label for="favcity">
                 <select name="governorate_filter" id="governorate_filter_id">
-                <option value=''>---SELECT---</option>
+                <option value=''>---ALL---</option>
                 {% for governorate in governorates %}
           <option value='{{governorate.id}}' {% if governorate.id == fil_governorate %}selected{%endif%}>{{governorate.name}}</option>
                 {% endfor %}                
@@ -92,7 +92,7 @@
   				<div class=" bold-text common-label"> <label>Area</label></div>
                 <label for="favcity">
                 <select name="area_filter" id="area_filter_id">
-                <option value=''>---SELECT---</option> 
+                <option value=''>---ALL---</option> 
                 {% for area in areas %}
                 <option value='{{area.id}}' {% if fil_area == area.id %}selected{% endif %}>{{area.name}}</option>
                 {% endfor %}               
@@ -106,7 +106,7 @@
   				<div class=" bold-text common-label"> <label>Minimum Starring</label></div>
 				<label for="favcity">
                 <select name="minimumstarring_filter" id="minimumstarring_filter_id">
-                <option value=''>---SELECT---</option>
+                <option value=''>---ALL---</option>
                 <option value="0" {% if fil_minimumstarring == '0' %}selected{% endif %}>0</option>
                 <option value="1" {% if fil_minimumstarring == '1' %}selected{% endif %}>1</option>
                 <option value="2" {% if fil_minimumstarring == '2' %}selected{% endif %}>2</option>
@@ -120,7 +120,7 @@
   				<div class=" bold-text common-label"> <label>Maximum Starring</label></div>
                 <label for="favcity">
                 <select name="maximumstarring_filter" id="maximumstarring_filter_id">
-                <option value=''>---SELECT---</option>
+                <option value=''>---ALL---</option>
                 <option value="0" {% if fil_maximumstarring == '0' %}selected{% endif %}>0</option>
                 <option value="1" {% if fil_maximumstarring == '1' %}selected{% endif %}>1</option>
                 <option value="2" {% if fil_maximumstarring == '2' %}selected{% endif %}>2</option>
@@ -137,7 +137,7 @@
   				<div class=" bold-text common-label"> <label>Service Type</label></div>
 				<label for="favcity">
                 <select name="service_type_filter" id="service_type_filter_id">
-                <option value=''>---SELECT---</option>
+                <option value=''>---ALL---</option>
                 {% for service_type in service_types %}
                 <option value="{{service_type.id}}" {% if service_type.id == fil_service_type %}selected{% endif %}>{{service_type.name}}</option>
                 {% endfor %}                
@@ -402,7 +402,7 @@ $("#governorate_filter_id").change(function(){
 
             value: "", 
 
-           text: "---SELECT---"
+           text: "---ALL---"
 
         })); 
 
