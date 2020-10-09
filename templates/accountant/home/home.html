@@ -18,7 +18,7 @@
                 <div class="column-left"><img src="{% static 'files/images/card-pending-payment-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Pending Payments</h1>
-            	<h2 class="blue-text"><label>Orders<span>{{total_pending_orders|default_if_none:'0.00'|floatformat:'2'}}</span></label> </h2>
+            	<h2 class="blue-text"><label>Orders<span>{{total_pending_orders|default_if_none:'0'}}</span></label> </h2>
             	<p><label>Amount <span>{{total_pending_amount|default_if_none:'0.00'|floatformat:'2'}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
@@ -29,7 +29,7 @@
                 <div class="column-left"><img src="{% static 'files/images/card-week-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Week</h1>
-            	<h2 class="green-text"><label>Current<span>{{this_week_sales|default_if_none:'0.00'|floatformat:'2'}}KD</span></label>  </h2>
+            	<h2 class="green-text"><label>This<span>{{this_week_sales|default_if_none:'0.00'|floatformat:'2'}}KD</span></label></h2>
             	<p><label>Last Week <span>{{last_week_sales|default_if_none:'0.00'|floatformat:'2'}}KD</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
@@ -40,7 +40,7 @@
                 <div class="column-left"><img src="{% static 'files/images/card-month-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Month</h1>
-            	<h2 class="orange-text"><label>Current<span>{{this_month_sales|default_if_none:'0.00'|floatformat:'2'}}KD</span></label> </h2>
+            	<h2 class="orange-text"><label>This<span>{{this_month_sales|default_if_none:'0.00'|floatformat:'2'}}KD</span></label> </h2>
             	<p><label>Last Month <span>{{last_month_sales|default_if_none:'0.00'|floatformat:'2'}}KD</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
@@ -51,7 +51,7 @@
                 <div class="column-left"><img src="{% static 'files/images/card-quarter-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Quarter</h1>
-            	<h2 class="red-text"><label>Current<span>{{this_quarter_sales|default_if_none:'0.00'|floatformat:'2'}}KD</span></label> </h2>
+            	<h2 class="red-text"><label>This<span>{{this_quarter_sales|default_if_none:'0.00'|floatformat:'2'}}KD</span></label> </h2>
             	<p><label>Last Quarter <span>{{last_quarter_sales|default_if_none:'0.00'|floatformat:'2'}}KD</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->

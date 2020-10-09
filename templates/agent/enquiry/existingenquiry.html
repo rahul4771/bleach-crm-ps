@@ -136,8 +136,9 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Contact Platform</label></div>
-                <div class="ui fluid multiple search selection dropdown"><input type="hidden" name="contact_platform" value="{% if enquiry_user.is_sms %}SMS{% endif %}{% if enquiry_user.is_email%},Email{% endif %}{% if enquiry_user.is_whatsapp%},Whatsapp{% endif %}"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">Select Platform</div><div class="menu" tabindex="-1"><div class="item" data-value="SMS">SMS</div><div class="item" data-value="Whatsapp">Whatsapp</div><div class="item" data-value="Email">Email</div></div>
+                <div class="ui fluid multiple search selection dropdown"><input type="hidden" name="contact_platform" value="{% if enquiry_user.is_sms %}SMS{% endif %}{% if enquiry_user.is_email%},Email{% endif %}{% if enquiry_user.is_whatsapp%},Whatsapp{% endif %}" id="contact_platform_id"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">Select Platform</div><div class="menu" tabindex="-1"><div class="item" data-value="SMS">SMS</div><div class="item" data-value="Whatsapp">Whatsapp</div><div class="item" data-value="Email">Email</div></div>
                 </div>
+                <p class="contact_platform_alert" style="color:Red;"></p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -193,7 +194,7 @@
 <div class="add-address"><a>Add New Address</a></div>
 
 <br>
-<div align="center"><input class="cancel-Button" name="addevaluator" type="button" value="Update" onclick="submitAnyForm(this);"> <a href="{% url 'agent:agent-makeevaluation' enquiryid %}"><input class="assignButton" name="addevaluator" type="button" value="Add Evaluator"></a> <a href="{% url 'agent:agent-makequatation' enquiryid %}"><input class="assignButton" name="addevaluator" type="button" value="Make Quatation"></a>
+<div align="center"><input class="cancel-Button" name="addevaluator" type="button" value="Update" onclick="SubmitNewEnquiry(this);"> <a href="{% url 'agent:agent-makeevaluation' enquiryid %}"><input class="assignButton" name="addevaluator" type="button" value="Add Evaluator"></a> <a href="{% url 'agent:agent-makequatation' enquiryid %}"><input class="assignButton" name="addevaluator" type="button" value="Make Quatation"></a>
 </div>    
 <br><br>
         
@@ -309,7 +310,7 @@
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
  <hr class="hr-dashedpad">     
   
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Add" onclick="submitAnyForm(this);"></div> 
+<div align="center"> <input class="assignButton" name="assing" type="button" value="Add" onclick="SubmitNewEnquiry(this);"></div> 
 
 </div><!--ticket-wrapper-full-->             
 </form>
@@ -327,6 +328,18 @@
 $('document').ready(function(){
   
 $('.ui.multiple.dropdown').dropdown({
+  onChange: function() {
+  contact_platforms = $('#contact_platform_id').val();
+  if(contact_platforms)
+  {
+    $('.contact_platform_alert').text("");
+  }
+  else
+  {
+    $('.contact_platform_alert').text("Please Select atleast one Contact Platform");
+  }
+  
+}
   });
 
 //initial hiding
@@ -576,7 +589,7 @@ function remove_duplicate_mobile(input_mobile)
 {
   var mobileno_validator = /^\d{8}$/;
 
-  if((input_mobile.value.match(mobileno_validator)) || (inputtxt.value == ""))
+  if((input_mobile.value.match(mobileno_validator)) || (input_mobile.value == ""))
     {
 
         $.ajax({
@@ -600,6 +613,19 @@ function remove_duplicate_mobile(input_mobile)
             
             }
 }
+//form validate and submit
+function SubmitNewEnquiry(params)
+{
+contact_platforms = $('#contact_platform_id').val(); 
+if(contact_platforms)
+{
+  submitAnyForm(params);
+}
+else
+{
+  $('.contact_platform_alert').text("Please Select atleast one Contact Platform")
+}
 
+}
 </script>
 {% endblock %}

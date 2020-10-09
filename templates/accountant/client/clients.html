@@ -29,7 +29,7 @@
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-active-clients-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
-            	<h2 class="green-text"><label>Active Clients<span>{{active_clients_count}}</span></label>  </h2>
+            	<h2 class="green-text"><label>Active Clients<span id="active_clients_count"></span></label>  </h2>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -278,6 +278,7 @@ $('.footable').footable({
 
 <script>
 //initialisation of active and not active
+  active_clients = [];
   {% for detail in client_details %}
       {% if detail.customer_evaluations %}
         {% for evaluation in detail.customer_evaluations %}
@@ -285,10 +286,17 @@ $('.footable').footable({
             $("#clientstatus{{detail.id}}").html("Active");
             $("#clientstatus{{detail.id}}").addClass('green-bg');
             $("#clientstatus{{detail.id}}").removeClass('yellow-bg');
+
+            active_clients.push({{detail.id}});
           {% endif %}
         {% endfor %}
       {% endif %}
   {% endfor %}
+  active_clients_count = active_clients.filter(function(elem, index, self) {
+                          return index == self.indexOf(elem);
+                          }).length;
+  $('#active_clients_count').html(active_clients_count)
+  
 
   
 $("#governorate_filter_id").change(function(){  

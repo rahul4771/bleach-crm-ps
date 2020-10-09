@@ -13,7 +13,6 @@
         <p>Bleach CRM-PS Version 0.1 (Beta) developed and owned by Bleach-Kw</p>
     </div><!--welcome-wrapper-->
             
-        s
 <div class="order-top-wrapper"><!--order-top-wrapper-->
 	<div class="cleaning-Order-wrapper"><!--cleaning-Order-wrapper-->
     	<div class="cleaning--left-stretch"><!--cleaning--left-stretch-->
@@ -497,7 +496,7 @@ function remove_duplicate_mobile(input_mobile)
 {
   var mobileno_validator = /^\d{8}$/;
 
-  if((input_mobile.value.match(mobileno_validator)) || (inputtxt.value == ""))
+  if((input_mobile.value.match(mobileno_validator)) || (input_mobile.value == ""))
     {
 
         $.ajax({

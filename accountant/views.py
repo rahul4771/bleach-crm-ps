@@ -46,19 +46,22 @@ class AccountantHome(IsAccountant,View):
 		#Pending Payments
 		if search:
 			try:
-				pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).select_related('evaluation__customer').filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'))
+				pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD')&Q(evaluation__quatation_status='APPROVED'))).select_related('evaluation__customer').filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'))
 			except:
 				pending_payments = None
 		else:
 			try:
-				pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'))
+				pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD')&Q(evaluation__quatation_status='APPROVED'))).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'))
 			except:
 				pending_payments = None		
 
 		#Pending Payment and Order Count	
-		total_pending_amount = pending_payments.aggregate(total=Sum(F('remining_amount')))['total']		
-		total_pending_orders = pending_payments.count()
-		
+		if pending_payments:
+			total_pending_amount = pending_payments.aggregate(total=Sum(F('remining_amount')))['total']		
+			total_pending_orders = pending_payments.count()
+		else:
+			total_pending_amount = 0
+			total_pending_orders = 0
 		#PAGINATION PENDING PAYMENTS	
 		page = request.GET.get('page',1) 
 		no_of_entries = request.GET.get('no_of_entries')
@@ -126,7 +129,6 @@ class ClientDetails(IsAccountant,View):
 		except:
 			orders = None	
 
-		active_clients_count = orders.filter(~Q(order_status='ORDER_CLOSED')).values_list('evaluation__customer').distinct().count()	
 		new_clients_count    = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True,created__date__gte=timezone.now().date()-timedelta(30)).count()
 		
 
@@ -215,7 +217,7 @@ class ClientDetails(IsAccountant,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(client_details.end_index())-(client_details.start_index())+1
 
-		return render(request,'accountant/client/clients.html',{"client_details":client_details,"search_query":search,"active_clients_count":active_clients_count,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_customertype":fil_customertype,"fil_status":fil_status})		
+		return render(request,'accountant/client/clients.html',{"client_details":client_details,"search_query":search,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_customertype":fil_customertype,"fil_status":fil_status})		
 
 		
 class ClientOrders(IsAccountant,View):
