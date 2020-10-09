@@ -1,5 +1,10 @@
 var colors = ['#3366cc', '#dc3912', '#ff9900', '#109618', '#990099', '#0099c6'];
 
+function toTitleCase(str)
+{
+    return str.replace(/\w+/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
+
 //donut chart
 google.charts.load("current", {packages:["corechart"]});
 google.charts.setOnLoadCallback(drawlocationChart);
@@ -38,7 +43,8 @@ function drawlocationChart() {
             
         $.each(data_location,function(key,value){
             console.log(value.location,parseInt(value.count),"gov")
-            location_sales.push([value.location,value.count]);
+            var location = toTitleCase(value.location)
+            location_sales.push([location,value.count]);
             total_sales += parseInt(value.count)
         });
 
@@ -155,8 +161,8 @@ $("#daymonth_location").click(function(){
         var month = ("0" + (date3.getMonth())).slice(-2);
         var month2 = ("0" + (date4.getMonth())).slice(-2);
 
-        var monthstring = month + "/" + date1.getFullYear();
-        var monthstring2 = month2 + "/" + date2.getFullYear();
+        var monthstring = month + "/" + date3.getFullYear();
+        var monthstring2 = month2 + "/" + date4.getFullYear();
 
         $('#location_pie_month1').val(monthstring);
         $('#location_pie_month2').val(monthstring2);
@@ -189,8 +195,8 @@ $("#reset_locations").click(function(){
     var month = ("0" + (date3.getMonth())).slice(-2);
     var month2 = ("0" + (date4.getMonth())).slice(-2);
 
-    var monthstring = month + "/" + date1.getFullYear();
-    var monthstring2 = month2 + "/" + date2.getFullYear();
+    var monthstring = month + "/" + date3.getFullYear();
+    var monthstring2 = month2 + "/" + date4.getFullYear();
 
     $('#location_pie_month1').val(monthstring);
     $('#location_pie_month2').val(monthstring2);
@@ -270,6 +276,7 @@ function drawcleaningtypeChart() {
         
         for (var i = 0; i < data.getNumberOfRows(); i++) {
             var label = data.getValue(i, 0);
+            var split_label = label.split(" ")
             var value = data.getValue(i, 1);
             var percent = Number(100 * value / total).toFixed(1);
             if (isNaN(percent)) percent = 0.0; 
@@ -278,7 +285,7 @@ function drawcleaningtypeChart() {
             legItem[i] = document.createElement('div');
             legItem[i].className = 'donut-char-legend';
             legItem[i].id = 'legend_' + data.getValue(i, 0);
-            legItem[i].innerHTML = '<i class="fa fa-square" style="color:'+colors[i]+'"></i> <div class="chart-stat">' + label + '</div><span>' + percent + ' %</span>';
+            legItem[i].innerHTML = '<i class="fa fa-square" style="color:'+colors[i]+'"></i> <div class="chart-stat">' + split_label[0] + '</div><span>' + percent + ' %</span>';
 
             legend.appendChild(legItem[i]);
         }
@@ -342,8 +349,8 @@ $("#daymonth_cleaningtype").click(function(){
         var month = ("0" + (date3.getMonth())).slice(-2);
         var month2 = ("0" + (date4.getMonth())).slice(-2);
 
-        var monthstring = month + "/" + date1.getFullYear();
-        var monthstring2 = month2 + "/" + date2.getFullYear();
+        var monthstring = month + "/" + date3.getFullYear();
+        var monthstring2 = month2 + "/" + date4.getFullYear();
 
         $('#cleaningtype_pie_month1').val(monthstring);
         $('#cleaningtype_pie_month2').val(monthstring2);
@@ -376,8 +383,8 @@ $("#reset_cleaningtypes").click(function(){
     var month = ("0" + (date3.getMonth())).slice(-2);
     var month2 = ("0" + (date4.getMonth())).slice(-2);
 
-    var monthstring = month + "/" + date1.getFullYear();
-    var monthstring2 = month2 + "/" + date2.getFullYear();
+    var monthstring = month + "/" + date3.getFullYear();
+    var monthstring2 = month2 + "/" + date4.getFullYear();
 
     $('#cleaningtype_pie_month1').val(monthstring);
     $('#cleaningtype_pie_month2').val(monthstring2);
@@ -454,6 +461,9 @@ function drawgovernorateChart() {
         
         for (var i = 0; i < data.getNumberOfRows(); i++) {
             var label = data.getValue(i, 0);
+            if (label == 'Mubarak Al-Kabeer'){
+                label = 'Mub. Al-Kabeer'
+            }
             var value = data.getValue(i, 1);
             var percent = Number(100 * value / total).toFixed(1);
             if (isNaN(percent)) percent = 0.0; 
@@ -523,8 +533,8 @@ $("#daymonth_governorate").click(function(){
         var month = ("0" + (date3.getMonth())).slice(-2);
         var month2 = ("0" + (date4.getMonth())).slice(-2);
 
-        var monthstring = month + "/" + date1.getFullYear();
-        var monthstring2 = month2 + "/" + date2.getFullYear();
+        var monthstring = month + "/" + date3.getFullYear();
+        var monthstring2 = month2 + "/" + date4.getFullYear();
 
         $('#governorate_pie_month1').val(monthstring);
         $('#governorate_pie_month2').val(monthstring2);
@@ -557,8 +567,8 @@ $("#reset_governorates").click(function(){
     var month = ("0" + (date3.getMonth())).slice(-2);
     var month2 = ("0" + (date4.getMonth())).slice(-2);
 
-    var monthstring = month + "/" + date1.getFullYear();
-    var monthstring2 = month2 + "/" + date2.getFullYear();
+    var monthstring = month + "/" + date3.getFullYear();
+    var monthstring2 = month2 + "/" + date4.getFullYear();
     console.log(monthstring,monthstring2,"dts")
 
     $('#governorate_pie_month1').val(monthstring);

@@ -1016,16 +1016,34 @@ def SalesLocationData(request):
 			prevdate = todate - timedelta(days=30)
 		print(prevdate,todate,"testdt")
 
+		locationcount = 0
+		others_count = 0
+
+		# appending each location counts
 		for location in location_types:
+			locationcount += 1
 			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate,todate),evaluation__evaluation_details__evaluation_book_evaluation_details__area_type=location.name).count()
 			if not sales_location_count:
 				sales_location_count = 0
-				
+
+			if locationcount <= 5:
+				location_dict = {
+				"location" : location.name,
+				"count" : sales_location_count,
+				}
+				data.append(location_dict)
+
+			if locationcount > 5:
+				others_count += sales_location_count
+
+		# appending total of other locations
+		if others_count > 0:
 			location_dict = {
-			"location" : location.name,
-			"count" : sales_location_count,
+			"location" : "Others",
+			"count" : others_count,
 			}
 			data.append(location_dict)
+							
 	print(data)
  
 	return JsonResponse(data,safe=False)
