@@ -309,6 +309,11 @@ $(".arrow-left").on('click', function (e) {
   $(".menu-filter-left").slideToggle("");
 });
 
+$(".red-btn2").on('click', function (e) {
+  $(".arrow-left").toggleClass("cross-left");
+  $(".menu-filter-left").slideToggle("");
+});
+
 $(".arrow-left-close").on('click', function (e) {  
   //clear all
   $(".menu-filter-left").find(':input').each(function() {

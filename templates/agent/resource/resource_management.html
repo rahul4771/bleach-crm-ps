@@ -170,20 +170,21 @@
 </tr>
 </thead>
 <tbody>
-    
-    {% for details in workers_details %}
+{% for details in workers_details %}
     <tr id="worker{{details.id}}">
-    <th width="25" class="fixed-side togglehide dot-image"><img src="{% static 'files/images/green-dot.png' %}"></th>
-    <th width="40" class="profile fixed-side togglehide"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} align="absmiddle"></th>
+    <th width="25"  class="fixed-side togglehide dot-image"><img src="{% static 'files/images/green-dot.png' %}"></th>
+    <th width="40" class="profile fixed-side"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} align="absmiddle"></th>
     <td><div class="name-bold">{{details.name}}<div class="position">{{details.user_type}}</div></div></td>
+    {% comment %} <td class="align-center">8h 0m</td>
+    <td colspan="13"><div class="red-box"> <center>AREA</center></div> <div class="green-box"><center>AREA</center></div></td> {% endcomment %}
     </tr>
     {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td></tr>
     {% endfor %}
-    
  </tbody>
 </table>
 </div>
+
 
 <div class="resource-table-scroll-containter" id="table_month" hidden>
  
@@ -204,7 +205,7 @@
 </tr>
 </thead>
 <tbody>
-    {% include 'agent/resource/resource-month.html' %}                 
+       {% include 'agent/resource/resource-month.html' %}                
 </tbody>
  <tfoot>
  
