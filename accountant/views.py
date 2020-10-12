@@ -38,8 +38,11 @@ class AccountantHome(IsAccountant,View):
 		this_week_sales = invoices.filter(payment_status='COMPLETED',payment_completed_date__gte=timezone.now().date()-timedelta(6)).aggregate(total=Sum('amount_paid'))['total']
 		last_week_sales = invoices.filter(payment_status='COMPLETED',payment_completed_date__gte=timezone.now().date()-timedelta(13),payment_completed_date__lte=timezone.now().date()-timedelta(6)).aggregate(total=Sum('amount_paid'))['total']		
 		
-		this_month_sales=invoices.filter(payment_status='COMPLETED',payment_completed_date__month=timezone.now().month,payment_completed_date__year=timezone.now().year).aggregate(total=Sum('amount_paid'))['total']
-		last_month_sales=invoices.filter(payment_status='COMPLETED',payment_completed_date__month=((timezone.now().date()-relativedelta(months=1)).month),payment_completed_date__year=timezone.now().year).aggregate(total=Sum('amount_paid'))['total']	
+		month_start_date     = timezone.now().replace(day=1).date()
+		nxtmonth_start_date  = month_start_date+relativedelta(months=1)
+		prvmonth_start_date  = month_start_date-relativedelta(months=1)
+		this_month_sales=invoices.filter(payment_status='COMPLETED',payment_completed_date__gte=month_start_date,payment_completed_date__lt=nxtmonth_start_date).aggregate(total=Sum('amount_paid'))['total']
+		last_month_sales=invoices.filter(payment_status='COMPLETED',payment_completed_date__gte=prvmonth_start_date,payment_completed_date__lt=month_start_date).aggregate(total=Sum('amount_paid'))['total']	
 		
 		this_quarter_sales=invoices.filter(payment_status='COMPLETED',payment_completed_date__lte=timezone.now().date(),payment_completed_date__gte=(timezone.now().date()-relativedelta(months=3,day=1))).aggregate(total=Sum('amount_paid'))['total']
 		last_quarter_sales=invoices.filter(payment_status='COMPLETED',payment_completed_date__lt=(timezone.now().date()-relativedelta(months=3,day=1)),payment_completed_date__gte=(timezone.now().date()-relativedelta(months=6,day=1))).aggregate(total=Sum('amount_paid'))['total']	
