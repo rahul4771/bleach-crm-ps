@@ -44,8 +44,8 @@ class AccountantHome(IsAccountant,View):
 		this_month_sales=invoices.filter(payment_status='COMPLETED',payment_completed_date__gte=month_start_date,payment_completed_date__lt=nxtmonth_start_date).aggregate(total=Sum('amount_paid'))['total']
 		last_month_sales=invoices.filter(payment_status='COMPLETED',payment_completed_date__gte=prvmonth_start_date,payment_completed_date__lt=month_start_date).aggregate(total=Sum('amount_paid'))['total']	
 		
-		quarter_start_date   = month_start_date+relativedelta(months=2)
-		prvquarter_start_date= month_start_date+relativedelta(months=5)
+		quarter_start_date   = month_start_date-relativedelta(months=2)
+		prvquarter_start_date= month_start_date-relativedelta(months=5)
 		this_quarter_sales=invoices.filter(payment_status='COMPLETED',payment_completed_date__gte=quarter_start_date,payment_completed_date__lt=nxtmonth_start_date).aggregate(total=Sum('amount_paid'))['total']
 		last_quarter_sales=invoices.filter(payment_status='COMPLETED',payment_completed_date__gte=prvquarter_start_date,payment_completed_date__lt=quarter_start_date).aggregate(total=Sum('amount_paid'))['total']	
 		
