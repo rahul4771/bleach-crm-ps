@@ -84,30 +84,26 @@
     <td>
     <table width="100%" border="0" class="invoice-inside-table">
       
+      {% for orderschedule in order.orderschedules %}
+      {% if forloop.first %}
       <tr>
         <td width="20%">Street</td>
-        {% for orderschedule in order.orderschedules %}
-        <td><span class="bold-text invoice-details">{{orderschedule.customer_address.street}}{% if not forloop.last %}|{% endif %}</span></td>
-        {% endfor %}
+        <td><span class="bold-text invoice-details">{{orderschedule.customer_address.street}}</span></td>
       </tr>
       <tr>
         <td>Block</td>
-        {% for orderschedule in order.orderschedules %}
-        <td><span class="bold-text invoice-details">{{orderschedule.customer_address.block}}{% if not forloop.last %}|{% endif %}</span></td>
-        {% endfor %}
+        <td><span class="bold-text invoice-details">{{orderschedule.customer_address.block}</span></td>
       </tr>
       <tr>
         <td>Avenue</td>
-        {% for orderschedule in order.orderschedules %}
-        <td><span class="bold-text invoice-details">{{orderschedule.customer_address.avenue}}{% if not forloop.last %}|{% endif %}</span></td>
-        {% endfor %}
+        <td><span class="bold-text invoice-details">{{orderschedule.customer_address.avenue}}</span></td>
       </tr>
       <tr>
         <td>Area</td>
-        {% for orderschedule in order.orderschedules %}
-        <td><span class="bold-text invoice-details">{{orderschedule.customer_address.area.name}}{% if not forloop.last %}|{% endif %}</span></td>
-        {% endfor %}
+        <td><span class="bold-text invoice-details">{{orderschedule.customer_address.area.name}}</span></td>
       </tr>
+      {% endif %}
+      {% endfor %}
 
       </table>
     </td>
