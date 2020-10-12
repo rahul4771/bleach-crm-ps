@@ -31,7 +31,7 @@ class Quatation(View):
 			order_payment_update.payment_status 	    = 'COMPLETED'
 			order_payment_update.payment_completed_date = timezone.now()
 			order_payment_update.amount_paid            = order_payment_update.remining_amount
-			 order_payment_update.remining_amount       = 0
+			order_payment_update.remining_amount        = 0
 
 			order_payment_update.save()
 			
