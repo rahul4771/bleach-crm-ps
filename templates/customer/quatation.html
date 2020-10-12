@@ -128,11 +128,6 @@ that we will fulfill our responsibility with maximum care with due diligence.
         
       </tr>
       {% for orderschedule in order.orderschedules %}
-      
-      {% if orderschedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}
-      {% for subscriptionschedule in order.orderschedules %}
-      {% if subscriptionschedule.order_scheduler_book == orderschedule.order_scheduler_book %}
-      {% for section in subscriptionschedule.order_scheduler_book.evaluationbooksection %}
       <tr>
         <td align="center">{{forloop.parentloop.counter}}</td>
         <td align="center">100{{forloop.parentloop.counter}}</td>
@@ -146,28 +141,6 @@ that we will fulfill our responsibility with maximum care with due diligence.
         <td align="center">
         {% endif %}
       </tr>
-      {% endfor %}
-      {% endif %}
-      {% endfor %}
-      
-      {% else %}
-      {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
-      <tr>
-        <td align="center">{{forloop.parentloop.counter}}</td>
-        <td align="center">100{{forloop.parentloop.counter}}</td>
-        <td align="left">{{orderschedule.order_scheduler_book.service_type}}-{{orderschedule.customer_address.area.name}}-{{section.section_name}}</td>
-        <td align="center">{{section.size}}</td>
-        <td align="center">{{section.unit}}</td>
-        <td align="center">{{section.dirt_level}}</td>
-        {% if forloop.last %}
-        <td align="center">{{orderschedule.order_scheduler_book.total_cost|floatformat:'3'}}</td>
-        {% else %}
-        <td align="center">
-        {% endif %}
-      </tr>
-      {% endfor %}
-      {% endif %}
-
       {% endfor %}         
     </table>   
 	
