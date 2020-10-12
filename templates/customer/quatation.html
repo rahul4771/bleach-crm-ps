@@ -132,11 +132,10 @@ that we will fulfill our responsibility with maximum care with due diligence.
         
       </tr>
       {% for orderschedule in order.orderschedules %}
-      hiiii
       {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
       <tr>
-        <td align="center">{{forloop.counter}}</td>
-        <td align="center">100{{forloop.counter}}</td>
+        <td align="center">{{forloop.parentloop.counter}}</td>
+        <td align="center">100{{forloop.parentloop.counter}}</td>
         <td align="left">{{orderschedule.order_scheduler_book.service_type}}-{{orderschedule.customer_address.area.name}}-{{section.section_name}}</td>
         <td align="center">{{section.size}}</td>
         <td align="center">{{section.unit}}</td>
