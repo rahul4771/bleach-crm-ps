@@ -1351,7 +1351,7 @@ class MakeQuatationPhase2Edit(IsEvaluator,View):
 				form_count = form_count+1
 			
 			#delete old order schedules
-			OrderScheduler.objects.filter(order=old_order).delete()
+			OrderScheduler.objects.filter(order_scheduler_book_id=old_form_id).delete()
 
 			#bulk_create order schedules
 			OrderScheduler.objects.bulk_create(order_schedule_array)
@@ -1717,7 +1717,7 @@ class MakeAssignedQuatationPhase2Edit(IsEvaluator,View):
 				form_count = form_count+1
 			
 			#delete old order schedules
-			OrderScheduler.objects.filter(order=old_order).delete()
+			OrderScheduler.objects.filter(order_scheduler_book_id=old_form_id).delete()
 
 			#bulk_create order schedules
 			OrderScheduler.objects.bulk_create(order_schedule_array)
