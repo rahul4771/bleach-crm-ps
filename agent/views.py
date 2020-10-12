@@ -2105,6 +2105,7 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 						if cleaning_policy == 'SUBSCRIPTION':
 							tendative_dates = request.POST.get('form-'+str(form_count)+'-tendative_dates').split(',')
 							for date in tendative_dates:
+								print(date)
 								start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
 								end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
 								order_schedule_array.append(OrderScheduler(order=old_order,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))

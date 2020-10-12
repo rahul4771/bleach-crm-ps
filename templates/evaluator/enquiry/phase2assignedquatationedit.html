@@ -181,7 +181,7 @@
                 {% else %}
                 <div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Tendative Date(S)</label></div>
-                <input name="form-{{forloop.counter0}}-tendative_dates" id='id_form-{{forloop.counter0}}-tendative_dates' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{{orderschedule.start_at|date:'d-m-Y'}},{% endfor %}"> 
+                <input name="form-{{forloop.counter0}}-tendative_dates" id='id_form-{{forloop.counter0}}-tendative_dates' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{{orderschedule.start_at|date:'d-m-Y'}}{% if not forloop.last %},{% endif %}{% endfor %}"> 
                 </div><!--enquiry-form-left-->
                 <div class="enquiry-form-left" style="display:none"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Tendative Date</label></div>
