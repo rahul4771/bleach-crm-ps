@@ -874,7 +874,7 @@ label[for=favcity] select:focus {outline: 1px dotted #A9A9A9;}
 .toggle-content{ min-width:300px; position:absolute; top:50px;  right:0; z-index:999 !important; background:#FFF; border:1px solid #ccc; padding:15px; box-shadow: 3px 6px 22px #d2d2d2; }
 .chart-btnWrapper{font-size:25px !important;color:#666 !important;}
 .chart-btnWrapper a{font-size:25px !important;color:#666 !important;}
-.no-task-today{ font-size:20px; color:#F33; font-weight:100; padding:7px 0; font-family: 'Catamaran'; margin:0 auto; text-align:center; border-top:4px solid #FFE3AA; border-bottom:4px solid #FFE3AA; }
+.no-task-today{ font-size:20px; color:#2e4e85; font-weight:100; padding:7px 0; font-family: 'Catamaran'; margin:0 auto; text-align:center; border-top:4px solid #3cbbb1; border-bottom:4px solid #3cbbb1; }
 .no-task-today img{ width:60px; height:60px;}
 .close-popup{ position:absolute !important; top:25px !important; right:25px !important; z-index:99999999; width:25px; height:25px; padding:0; margin:0; text-align:center; line-height:24px; cursor:pointer; }
 .popup-btn-wrap{ margin:0 0 15px 0 !important; padding:0 !important;}
