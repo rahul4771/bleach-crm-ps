@@ -100,6 +100,7 @@ function drawlocationChart() {
         }
 
         var others_percent = Number(100 * others / total).toFixed(1);
+        if (isNaN(others_percent)) others_percent = 0.0;
         console.log(others,others_percent,"otp")
         $('#legend_location').append('<div class="donut-char-legend" ><i class="fa fa-square" style="color:#0099c6"></i> <div class="chart-stat">Others</div><span>' + others_percent + ' %</span></div>')
         // // initial value
