@@ -347,7 +347,7 @@
 <tbody>
 {% for evaluator in evaluation_details %}
 <tr id="evaluator{{evaluator.id}}">
-<th width="4.54%" bgcolor="#eee" class="fixed-side"><img {% if evaluator.profile_image %} src="{{evaluator.profile_image.url}}" {% else %} src="{% static 'files/images/profile-pic.jpg' %}" {% endif %} class="profile-avtar profile-avatar"></th>
+<th width="4.54%" bgcolor="#eee" class="fixed-side"><img {% if evaluator.profile_image %} src="{{evaluator.profile_image.url}}" {% else %} src="{% static 'files/images/profile-pic.jpg' %}" {% endif %} class="profile-avatar"></th>
 </tr>
 {% endfor %}
 </tbody>
