@@ -66,6 +66,7 @@ function initialize() {
                 quotations.push([monthNames[d2.getMonth()],value.submitted_qt,value.approved_qt]);
                 submitted_total_month += parseInt(value.submitted_qt);
                 approved_total_month += parseInt(value.approved_qt);
+                console.log(submitted_total_month,approved_total_month,"wee")
             });
             }else{
                 quotations.push(['',0,0]);
