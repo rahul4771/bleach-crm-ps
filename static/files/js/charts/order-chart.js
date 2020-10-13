@@ -55,7 +55,7 @@ function initialize() {
 
             if(data_month.length > 0){
             $.each(data_month,function(key,value){
-
+            
                 var vals = value.date.split('-');
                 var year = parseInt(vals[0]);
                 var month = parseInt (vals[1]);
@@ -66,7 +66,6 @@ function initialize() {
                 quotations.push([monthNames[d2.getMonth()],value.submitted_qt,value.approved_qt]);
                 submitted_total_month += parseInt(value.submitted_qt);
                 approved_total_month += parseInt(value.approved_qt);
-                console.log(submitted_total_month,approved_total_month,"wee")
             });
             }else{
                 quotations.push(['',0,0]);

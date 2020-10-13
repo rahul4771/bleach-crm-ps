@@ -19,7 +19,7 @@ def quotation_data(request):
         month,year = prevdate.split("/")
         month2,year2 = todate.split("/")
         
-        quotations = Order.objects.filter(is_active=True,evaluation__quatation_approved_date__year__range=(year,year2), evaluation__quatation_approved_date__month__range=(month,month2)).values('evaluation__quatation_approved_date').annotate(month=Month('evaluation__quatation_approved_date'),).values('month').annotate(count=Count('pk'))
+        quotations = Order.objects.filter(is_active=True,created__year__range=(year,year2), created__month__range=(month,month2)).values('created').annotate(month=Month('created'),).values('month').annotate(count=Count('pk'))
 
         for qt in quotations:
             quotations_approved = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__year__range=(year,year2), evaluation__quatation_approved_date__month__range=(month,month2)).values('evaluation__quatation_approved_date').annotate(month=Month('evaluation__quatation_approved_date'),).values('month').annotate(count=Count('pk'))
@@ -49,7 +49,7 @@ def quotation_data(request):
 
         for single_date in daterange:
             sdate = single_date.strftime("%Y-%m-%d")
-            submitted_qtns = Order.objects.filter(is_active=True,evaluation__quatation_approved_date__date=single_date).count()
+            submitted_qtns = Order.objects.filter(is_active=True,created__date=single_date).count()
             approved_qtns = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__date=single_date).count()
             print(sdate,submitted_qtns,approved_qtns,"qtc")
             qt_dict = {

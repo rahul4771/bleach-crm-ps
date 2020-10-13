@@ -964,10 +964,10 @@ class OrderDetails(IsAgent,View):
 
 		#exclude atleast 1 not completed evaluatis
 		exclude_ids = []	
-		# for evaluation in evaluations:
-		# 	if not evaluation.completed_evaluations:
-		# 		exclude_ids.append(evaluation.id)
-		# evaluations = evaluations.exclude(id__in=exclude_ids)	
+		for evaluation in evaluations:
+			if not evaluation.completed_evaluations:
+				exclude_ids.append(evaluation.id)
+		evaluations = evaluations.exclude(id__in=exclude_ids)	
 
 		fil_status = request.GET.get('status')
 		#filters

@@ -62,9 +62,9 @@ def list_function(list):
     return list_data
 
 def adddata(request):
-	startdate = pd.to_datetime('12-12-2020')
-	daterange = pd.date_range(startdate, periods=100)
-	print("rt")
+	# startdate = pd.to_datetime('12-12-2020')
+	# daterange = pd.date_range(startdate, periods=100)
+	# print("rt")
 
 	# print(daterange,"drg")
 	# for dt in daterange:
@@ -73,42 +73,42 @@ def adddata(request):
 
 	# usr = UserProfile.objects.get(username='bleachagent1')
 
-	evaluations=[]
-	saved_evaluations=[]
-	eval_details = []
-	eval_book = []
-	customers = []
-	address = []
-	agents = []
-	evaluators = []
-	dated = []
-	stype = []
-	ltype = []
-	clmethod = []
-	artype = []
+	# evaluations=[]
+	# saved_evaluations=[]
+	# eval_details = []
+	# eval_book = []
+	# customers = []
+	# address = []
+	# agents = []
+	# evaluators = []
+	# dated = []
+	# stype = []
+	# ltype = []
+	# clmethod = []
+	# artype = []
 
-	serv_type = ServiceType.objects.all()
-	for ser in serv_type:
-		stype.append(ser)
+	# serv_type = ServiceType.objects.all()
+	# for ser in serv_type:
+	# 	stype.append(ser)
   
-	loc_type = LocationType.objects.all()
-	for loc in loc_type:
-		ltype.append(loc)
+	# loc_type = LocationType.objects.all()
+	# for loc in loc_type:
+	# 	ltype.append(loc)
 
-	area_type = AreaType.objects.all()
-	for area in area_type:
-		artype.append(area)
+	# area_type = AreaType.objects.all()
+	# for area in area_type:
+	# 	artype.append(area)
 	
-	clean_method = CleaningMethod.objects.all()
-	for clm in clean_method:
-		clmethod.append(clm)
+	# clean_method = CleaningMethod.objects.all()
+	# for clm in clean_method:
+	# 	clmethod.append(clm)
  
-	gender = ["MALE","FEMALE"]
-	payment = ['PREPAID','POSTPAID','BREAKDOWN']
-	customer_types = ['INDIVIDUAL','RETAIL','CORPORATE']
-	cleaning_choices = ['ONE_TIME_SERVICE','SUBSCRIPTION']
-	order_status = ['APPROVED_BY_CLIENT','ORDER_IN_PROGRESS','ORDER_CANCELLED','ORDER_CLOSED']
-	payment_status = ['PENDING','COMPLETED']
+	# gender = ["MALE","FEMALE"]
+	# payment = ['PREPAID','POSTPAID','BREAKDOWN']
+	# customer_types = ['INDIVIDUAL','RETAIL','CORPORATE']
+	# cleaning_choices = ['ONE_TIME_SERVICE','SUBSCRIPTION']
+	# order_status = ['APPROVED_BY_CLIENT','ORDER_IN_PROGRESS','ORDER_CANCELLED','ORDER_CLOSED']
+	# payment_status = ['PENDING','COMPLETED']
 
 	# for i in range(1,8):
 	# 	random_gender = list_function(gender)
@@ -170,18 +170,18 @@ def adddata(request):
 	# 	mobile_number = random.randint(61111111,99999999)
 	# 	))
 
-	tracking_no=0
-	governorates = []
-	areas = []
-	orders = []
-	gar = {}
+	# tracking_no=0
+	# governorates = []
+	# areas = []
+	# orders = []
+	# gar = {}
  
-	gov = Governorate.objects.all()
-	for g in gov:
-		gov_areas = Area.objects.filter(governorate=g)
-		governorates.append(g)
-		gar[g] = gov_areas
-		areas.append(gar)
+	# gov = Governorate.objects.all()
+	# for g in gov:
+	# 	gov_areas = Area.objects.filter(governorate=g)
+	# 	governorates.append(g)
+	# 	gar[g] = gov_areas
+	# 	areas.append(gar)
 
 	# for i in range(1,200):
 	# 	random_gender = list_function(gender)
@@ -215,54 +215,54 @@ def adddata(request):
 	# 		))
 	# Address.objects.bulk_create(address)
  
-	tracking_no = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000
-	for date in  daterange:
-		for i in range(random.randint(1,3),random.randint(6,8)):
-			print(i,"eye")
-			customer = UserProfile.objects.filter(user_type="CUSTOMER",is_active=True)
-			agent = UserProfile.objects.filter(user_type="AGENT",is_active=True)
-			for cus in  customer:
-				customers.append(cus)
-			for ag in agent:
-				agents.append(ag)
-			agt = list_function(agents)
-			cst = list_function(customers)
-			gen = list_function(gender)
-			pay = list_function(payment)
-			tracking_no += 1 #Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000		
-			evaluation_id  = 'BLC2'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+str(tracking_no+1)
-			call_attender = agt
-			customer = cst
-			estimated_cost = random.randint(5000,20000)
-			discount = random.randint(500,1000)
-			total_cost = int(estimated_cost-discount)
-			preffered_gender = gen
-			quatation_status = 'REJECTED'
-			quatation_approved_date = date.strftime("%Y-%m-%d")
-			payment_method = pay
-			is_active = True
-			if pay == 'BREAKDOWN':
-				before_cleaning_amount = random.randint(500,total_cost)
-				after_cleaning_amount = int(total_cost - before_cleaning_amount)	
-			else:
-				before_cleaning_amount = None
-				after_cleaning_amount = None
+	# tracking_no = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000
+	# for date in  daterange:
+	# 	for i in range(random.randint(1,3),random.randint(6,8)):
+	# 		print(i,"eye")
+	# 		customer = UserProfile.objects.filter(user_type="CUSTOMER",is_active=True)
+	# 		agent = UserProfile.objects.filter(user_type="AGENT",is_active=True)
+	# 		for cus in  customer:
+	# 			customers.append(cus)
+	# 		for ag in agent:
+	# 			agents.append(ag)
+	# 		agt = list_function(agents)
+	# 		cst = list_function(customers)
+	# 		gen = list_function(gender)
+	# 		pay = list_function(payment)
+	# 		tracking_no += 1 #Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or 10000		
+	# 		evaluation_id  = 'BLC2'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+str(tracking_no+1)
+	# 		call_attender = agt
+	# 		customer = cst
+	# 		estimated_cost = random.randint(5000,20000)
+	# 		discount = random.randint(500,1000)
+	# 		total_cost = int(estimated_cost-discount)
+	# 		preffered_gender = gen
+	# 		quatation_status = 'REJECTED'
+	# 		quatation_approved_date = date.strftime("%Y-%m-%d")
+	# 		payment_method = pay
+	# 		is_active = True
+	# 		if pay == 'BREAKDOWN':
+	# 			before_cleaning_amount = random.randint(500,total_cost)
+	# 			after_cleaning_amount = int(total_cost - before_cleaning_amount)	
+	# 		else:
+	# 			before_cleaning_amount = None
+	# 			after_cleaning_amount = None
 
-			evaluations.append(Evaluation(
-					tracking_no=tracking_no,evaluation_id=evaluation_id,call_attender=call_attender,
-					customer=customer,estimated_cost=estimated_cost,discount=discount,total_cost=total_cost,
-					quatation_status=quatation_status,quatation_approved_date=quatation_approved_date,payment_method=payment_method,
-     				is_active=is_active,before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount))
-		# print(evaluations)
-		Evaluation.objects.bulk_create(evaluations)
+	# 		evaluations.append(Evaluation(
+	# 				tracking_no=tracking_no,evaluation_id=evaluation_id,call_attender=call_attender,
+	# 				customer=customer,estimated_cost=estimated_cost,discount=discount,total_cost=total_cost,
+	# 				quatation_status=quatation_status,quatation_approved_date=quatation_approved_date,payment_method=payment_method,
+    #  				is_active=is_active,before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount))
+	# 	# print(evaluations)
+	# 	Evaluation.objects.bulk_create(evaluations)
 		
-	evals = Evaluation.objects.filter(quatation_status = 'REJECTED',is_active=True)
-	# print(evals,"evs")
-	# for ev in evals:
+	# evals = Evaluation.objects.filter(quatation_status = 'REJECTED',is_active=True)
+	# # print(evals,"evs")
+	# # for ev in evals:
 		
-	evaluator = UserProfile.objects.filter(user_type="EVALUATOR",is_active=True)
-	for eval in evaluator:
-		evaluators.append(eval)
+	# evaluator = UserProfile.objects.filter(user_type="EVALUATOR",is_active=True)
+	# for eval in evaluator:
+	# 	evaluators.append(eval)
 	# 	evr = list_function(evaluators)
 
 	# 	eval_details.append(EvaluationDetails(
@@ -288,18 +288,18 @@ def adddata(request):
 	# 	))
 	# EvaluationBook.objects.bulk_create(eval_book)
 
-	for ev in evals:
-		rand_ord_status = list_function(order_status)
-		rand_payment_status = list_function(payment_status)
-		rand_evaluators = list_function(evaluators)
-		ord = ''.join(random.sample('ORD2' + string.digits, k=6))
-		while Order.objects.filter(order_no=ord).exists():
-			ord = ''.join(random.sample('ORD2' + string.digits, k=6))
-		orders.append(Order(
-			evaluation = ev, order_no = ord, order_status = 'APPROVED_BY_CLIENT',
-			payment_status = rand_payment_status, created_by = rand_evaluators
-		))
-	Order.objects.bulk_create(orders)
+	# for ev in evals:
+	# 	rand_ord_status = list_function(order_status)
+	# 	rand_payment_status = list_function(payment_status)
+	# 	rand_evaluators = list_function(evaluators)
+	# 	ord = ''.join(random.sample('ORD2' + string.digits, k=6))
+	# 	while Order.objects.filter(order_no=ord).exists():
+	# 		ord = ''.join(random.sample('ORD2' + string.digits, k=6))
+	# 	orders.append(Order(
+	# 		evaluation = ev, order_no = ord, order_status = 'APPROVED_BY_CLIENT',
+	# 		payment_status = rand_payment_status, created_by = rand_evaluators
+	# 	))
+	# Order.objects.bulk_create(orders)
 
 	# ords = Order.objects.filter(evaluation__quatation_status='APPROVED')
 	# orderschedules = []
@@ -396,6 +396,7 @@ def adddata(request):
 	# 		cleaning_team = cln, is_completed = True, start_time = cln.start_at, end_time = cln.end_at, is_active = True
 	# 	))
 	# CleaningTeamTask.objects.bulk_create(cleantasks)
+
 	return render(request,"createdata.html")
 
 def testcalendar(request):
