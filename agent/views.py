@@ -2398,17 +2398,16 @@ def TicketData(request):
 
 		print(month,year,month2,year2,"mko")
 
-		tickets = FollowUp.objects.filter(is_active=True,investigation__order__evaluation__quatation_approved_date__year__gte=year,
-								investigation__order__evaluation__quatation_approved_date__month__gte=month,
-								investigation__order__evaluation__quatation_approved_date__year__lte=year2,
-								investigation__order__evaluation__quatation_approved_date__month__lte=month2).values('investigation__order__evaluation__quatation_approved_date').annotate(month=Month('investigation__order__evaluation__quatation_approved_date'),).values('month').annotate(count=Count('pk'))
+		monthdate1 = datetime(day=1,month=int(month),year=int(year))
+		monthdate2 = datetime(day=1,month=int(month2),year=int(year2))
+
+		tickets = FollowUp.objects.filter(is_active=True,investigation__order__evaluation__quatation_approved_date__gte=monthdate1,
+								investigation__order__evaluation__quatation_approved_date__gt=monthdate2).values('investigation__order__evaluation__quatation_approved_date').annotate(month=Month('investigation__order__evaluation__quatation_approved_date')).values('month').annotate(count=Count('pk'))
 
 		print(tickets,"po")
 		for tkt in tickets:
-			followup_tickets = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_CLOSED',investigation__order__evaluation__quatation_approved_date__year__gte=year,
-								investigation__order__evaluation__quatation_approved_date__month__gte=month,
-								investigation__order__evaluation__quatation_approved_date__year__lte=year2,
-								investigation__order__evaluation__quatation_approved_date__month__lte=month2).values('investigation__order__evaluation__quatation_approved_date').annotate(month=Month('investigation__order__evaluation__quatation_approved_date'),).values('month').annotate(count=Count('pk'))
+			followup_tickets = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_CLOSED',investigation__order__evaluation__quatation_approved_date__gte=monthdate1,
+								investigation__order__evaluation__quatation_approved_date__lt=monthdate2).values('investigation__order__evaluation__quatation_approved_date').annotate(month=Month('investigation__order__evaluation__quatation_approved_date')).values('month').annotate(count=Count('pk'))
 			print(followup_tickets,"huy")
 
 			followup_count = 0
