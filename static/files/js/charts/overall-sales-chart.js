@@ -19,6 +19,7 @@ function initialize() {
         curveType: 'function',
         vAxis: {
             minValue: 0,
+            viewWindow: {min: 0}
         },
         animation: {
             duration: 1000,
@@ -51,7 +52,7 @@ function initialize() {
             contentType: "application/json;charset=utf-8",
             
             success: function(data_month) {
-            var sales = [['Month', 'Amount']];
+            var sales = [['Month', 'Sales']];
             var sale_sum = 0;
             var total_sum = 0;
 
@@ -106,7 +107,7 @@ function initialize() {
             contentType: "application/json;charset=utf-8",
             
             success: function(data_date) {
-            var sales = [['Date', 'Amount']];
+            var sales = [['Date', 'Sales']];
             var sale_sum = 0;
             var total_sum = 0;
             
