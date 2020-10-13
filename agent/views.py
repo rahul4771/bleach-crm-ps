@@ -1196,7 +1196,7 @@ class FeedbackAdvanced(IsAgent,View):
 
 		#total_feedback_rating
 		try:
-			average_feedback  = round(feedbacks.filter(id=order_id).aggregate(Sum('average_rating'))['average_rating__sum'])
+			average_feedback  = feedbacks.filter(id=order_id).aggregate(Sum('average_rating'))['average_rating__sum']
 		except:
 			average_feedback = 0.0
 

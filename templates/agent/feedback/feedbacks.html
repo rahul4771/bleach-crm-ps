@@ -350,32 +350,32 @@ average_total_feedback = (Math.round((starring_count[0]*1+starring_count[1]*2+st
 if(average_total_feedback >= 4.5)
 {
 $('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span>');
-  $('.rating-range').html(parseFloat(average_total_feedback).toFixed(2));
+  $('.rating-range').html(parseFloat(average_total_feedback).toFixed(1));
 }
 else if(average_total_feedback >= 3.5 && average_total_feedback < 4.5)
 {
 $('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span>');
-$('.rating-range').html(parseFloat(average_total_feedback).toFixed(2));
+$('.rating-range').html(parseFloat(average_total_feedback).toFixed(1));
 }
 else if(average_total_feedback >= 2.5 && average_total_feedback < 3.5)
 {
 $('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span>');
-$('.rating-range').html(parseFloat(average_total_feedback).toFixed(2));
+$('.rating-range').html(parseFloat(average_total_feedback).toFixed(1));
 }
 else if(average_total_feedback >= 1.5 && average_total_feedback < 2.5)
 {
 $('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span>');
-$('.rating-range').html(parseFloat(average_total_feedback).toFixed(2));
+$('.rating-range').html(parseFloat(average_total_feedback).toFixed(1));
 }
 else if(average_total_feedback >= 0.5 && average_total_feedback < 1.5 )
 {
 $('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span>');
-  $('.rating-range').html(parseFloat(average_total_feedback).toFixed(2));
+  $('.rating-range').html(parseFloat(average_total_feedback).toFixed(1));
 }
 else
 {
 $('.rating-star').append('<span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span>');
-$('.rating-range').html('0.00');
+$('.rating-range').html('0.0');
 }
 
 

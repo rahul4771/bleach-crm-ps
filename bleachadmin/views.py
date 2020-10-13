@@ -759,7 +759,7 @@ class FeedbackAdvanced(IsAdmin,View):
 			feedbacks = None
 
 		#total_feedback_rating
-		average_feedback  = round(feedbacks.filter(id=order_id).aggregate(Sum('avg_starring'))['avg_starring__sum'])
+		average_feedback  = feedbacks.filter(id=order_id).aggregate(Sum('avg_starring'))['avg_starring__sum']
 		
 		#other feedbacks
 		try:
