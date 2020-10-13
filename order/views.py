@@ -25,9 +25,6 @@ def quotation_data(request):
             quotations_approved = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__year__range=(year,year2), evaluation__quatation_approved_date__month__range=(month,month2)).values('evaluation__quatation_approved_date').annotate(month=Month('evaluation__quatation_approved_date'),).values('month').annotate(count=Count('pk'))
             print(quotations_approved,"huuh")
 
-            quotations22 = Order.objects.filter(is_active=True,evaluation__quatation_approved_date__year__range=(year,year2), evaluation__quatation_approved_date__month__range=(month,month2)).count()
-            print(quotations22,"qt22")
-
             approved_count = 0
             for qts in quotations_approved:
                 if qts['month'] == qt['month']:
@@ -36,8 +33,7 @@ def quotation_data(request):
             qt_dict = {
             "date" : qt['month'],
             "submitted_qt" : qt['count'],
-            "approved_qt" : approved_count,
-            "qt22" :quotations22
+            "approved_qt" : approved_count
             }
             data.append(qt_dict)
     else:
@@ -53,11 +49,11 @@ def quotation_data(request):
 
         for single_date in daterange:
             sdate = single_date.strftime("%Y-%m-%d")
-            submitted_qtns = Order.objects.filter(is_active=True,evaluation__quatation_approved_date__date=sdate).count()
-            approved_qtns = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__date=sdate).count()
+            submitted_qtns = Order.objects.filter(is_active=True,evaluation__quatation_approved_date__date=single_date).count()
+            approved_qtns = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__date=single_date).count()
             print(sdate,submitted_qtns,approved_qtns,"qtc")
             qt_dict = {
-                "date" : sdate,
+                "date" : single_date,
                 "submitted_qt" : submitted_qtns,
                 "approved_qt" : approved_qtns
             }
