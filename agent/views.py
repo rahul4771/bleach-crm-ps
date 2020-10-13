@@ -2348,11 +2348,13 @@ def ClientData(request):
 		month,year = prevdate.split("/")
 		month2,year2 = todate.split("/")
 		print(month,year,month2,year2,"mko")
-
+		monthdate1 = datetime(day=1,month=int(month),year=int(year))
+		monthdate2 = datetime(day=1,month=int(month2),year=int(year2))
+		
 		try:
 			for governorate in governorates:
 				#change date field from evaluation date to order created date
-				client_count = Order.objects.filter(is_active=True,evaluation__customer__address_customer__governorate__id=governorate.id, evaluation__quatation_approved_date__year__range=(year,year2), evaluation__quatation_approved_date__month__range=(month,month2)).values_list('evaluation__customer').distinct().count()
+				client_count = Order.objects.filter(is_active=True,evaluation__customer__address_customer__governorate__id=governorate.id, evaluation__quatation_approved_date__range=(monthdate1,monthdate2)).values_list('evaluation__customer').distinct().count()
 
 				data.append({
 					"governorate" : governorate.name,
