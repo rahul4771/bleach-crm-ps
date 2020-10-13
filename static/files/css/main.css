@@ -200,7 +200,7 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .yellow-box:hover{ background:#e7ab03; cursor:pointer;}
 .red-box:hover{ background:#d55757; cursor:pointer;}
 .left-avatar{width:22px; height:22px; position:absolute; left:1px; top:1px; border-radius:50px; text-align:center; }
-.left-avatar img{ width:100%; border-radius:50px;}
+.left-avatar img{ width:100%; border-radius:50px;height:22px;}
 .right-value{width:22px; height:22px; position:absolute; background:#fff; right:1px; top:1px; border-radius:50px; text-align:center; }
 
 /*.divtable { border:1px solid !important;
