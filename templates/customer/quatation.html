@@ -84,30 +84,26 @@
     <td>
     <table width="100%" border="0" class="invoice-inside-table">
       
+      {% for orderschedule in order.orderschedules %}
+      {% if forloop.first %}
       <tr>
         <td width="20%">Street</td>
-        {% for orderschedule in order.orderschedules %}
-        <td><span class="bold-text invoice-details">{{orderschedule.customer_address.street}}{% if not forloop.last %}|{% endif %}</span></td>
-        {% endfor %}
+        <td><span class="bold-text invoice-details">{{orderschedule.customer_address.street}}</span></td>
       </tr>
       <tr>
         <td>Block</td>
-        {% for orderschedule in order.orderschedules %}
-        <td><span class="bold-text invoice-details">{{orderschedule.customer_address.block}}{% if not forloop.last %}|{% endif %}</span></td>
-        {% endfor %}
+        <td><span class="bold-text invoice-details">{{orderschedule.customer_address.block}}</span></td>
       </tr>
       <tr>
         <td>Avenue</td>
-        {% for orderschedule in order.orderschedules %}
-        <td><span class="bold-text invoice-details">{{orderschedule.customer_address.avenue}}{% if not forloop.last %}|{% endif %}</span></td>
-        {% endfor %}
+        <td><span class="bold-text invoice-details">{{orderschedule.customer_address.avenue}}</span></td>
       </tr>
       <tr>
         <td>Area</td>
-        {% for orderschedule in order.orderschedules %}
-        <td><span class="bold-text invoice-details">{{orderschedule.customer_address.area.name}}{% if not forloop.last %}|{% endif %}</span></td>
-        {% endfor %}
+        <td><span class="bold-text invoice-details">{{orderschedule.customer_address.area.name}}</span></td>
       </tr>
+      {% endif %}
+      {% endfor %}
 
       </table>
     </td>
@@ -133,9 +129,9 @@ that we will fulfill our responsibility with maximum care with due diligence.
       </tr>
       {% for orderschedule in order.orderschedules %}
       {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
-      <tr>
-        <td align="center">{{forloop.counter}}</td>
-        <td align="center">100{{forloop.counter}}</td>
+      <tr id="details{{orderschedule.id}}">
+        <td align="center">{{forloop.parentloop.counter}}</td>
+        <td align="center">100{{forloop.parentloop.counter}}</td>
         <td align="left">{{orderschedule.order_scheduler_book.service_type}}-{{orderschedule.customer_address.area.name}}-{{section.section_name}}</td>
         <td align="center">{{section.size}}</td>
         <td align="center">{{section.unit}}</td>
@@ -249,14 +245,33 @@ www.bleach-kw.com</td>
 </div><!--custom-model-main-->
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
   
-      <script id="rendered-js" >
+<script id="rendered-js" >
 $(".Click-here").on('click', function () {
   $(".custom-model-main").addClass('model-open');
 });
 $(".close-btn-quatation, .bg-overlay").click(function () {
   $(".custom-model-main").removeClass('model-open');
+}); 
+</script>
+<script>
+$(window).ready(function(){
+        
+        //Remove Duplicate details
+        duplicates_array = []
+        {% for orderschedule in order.orderschedules %}
+        book_id = "{{orderschedule.order_scheduler_book.id}}"
+        
+        if(duplicates_array.includes(book_id))
+        {
+            $("#details{{orderschedule.id}}").remove();
+        }
+        else
+        {
+            duplicates_array.push("{{orderschedule.order_scheduler_book.id}}");
+        }
+        {% endfor %}
+
 });
- 
-    </script>
+</script>
  </body>
 </html>

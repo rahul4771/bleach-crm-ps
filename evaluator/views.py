@@ -1348,10 +1348,10 @@ class MakeQuatationPhase2Edit(IsEvaluator,View):
 								#bulk_create keynote
 								EvaluationSectionKeynote.objects.bulk_create(keynote_array)	
 						
+						#delete old order schedules
+						OrderScheduler.objects.filter(order_scheduler_book_id=old_form_id).delete()
+
 				form_count = form_count+1
-			
-			#delete old order schedules
-			OrderScheduler.objects.filter(order=old_order).delete()
 
 			#bulk_create order schedules
 			OrderScheduler.objects.bulk_create(order_schedule_array)
@@ -1713,11 +1713,11 @@ class MakeAssignedQuatationPhase2Edit(IsEvaluator,View):
 											keynote_array.append(EvaluationSectionKeynote(evaluation_section=section,sub_area=keynote,quantity=quantity))
 								#bulk_create keynote
 								EvaluationSectionKeynote.objects.bulk_create(keynote_array)	
-						
+
+						#delete old order schedules
+						OrderScheduler.objects.filter(order_scheduler_book_id=old_form_id).delete()
+
 				form_count = form_count+1
-			
-			#delete old order schedules
-			OrderScheduler.objects.filter(order=old_order).delete()
 
 			#bulk_create order schedules
 			OrderScheduler.objects.bulk_create(order_schedule_array)
