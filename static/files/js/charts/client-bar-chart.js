@@ -168,9 +168,9 @@ function initialize() {
         drawArea();
     }else{
         var date1 = new Date();
-        date1.setMonth(date1.getMonth()-1);
 
         var date2 = new Date();
+        date2.setMonth(date1.getMonth()+1);
 
         var month = ("0" + (date1.getMonth())).slice(-2);
         var month2 = ("0" + (date2.getMonth())).slice(-2);
@@ -197,9 +197,10 @@ function initialize() {
 }
 
 var date1 = new Date();
-date1.setMonth(date1.getMonth()-1);
+//date1.setMonth(date1.getMonth());
 
 var date2 = new Date();
+date2.setMonth(date1.getMonth()+1);
 
 var month = ("0" + (date1.getMonth())).slice(-2);
 var month2 = ("0" + (date2.getMonth())).slice(-2);
