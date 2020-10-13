@@ -876,12 +876,12 @@ class OrderDetails(IsAgent,View):
 		else:
 			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
 
-		# if evaluations:
-		# 	approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
-		# 	pending_orders_count  =	evaluations.filter(Q(quatation_status='PENDING')).count()
-		# else:
-		approved_orders_count = 0
-		pending_orders_count  = 0
+		if evaluations:
+			approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
+			pending_orders_count  =	evaluations.filter(Q(quatation_status='PENDING')).count()
+		else:
+			approved_orders_count = 0
+			pending_orders_count  = 0
 
 
 
