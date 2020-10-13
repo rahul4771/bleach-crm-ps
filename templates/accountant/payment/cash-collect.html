@@ -1,0 +1,387 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "accountant/common/header.html" %}
+
+<div class="wrapper"><!--wrapper-->
+   
+<section class="content"><!--content-->
+	<div class="container-fluid space topspace"><!--container-fluid space-->
+		<div class="welcome-wrapper"><!--welcome-wrapper-->
+	<h1 class="dashboard-head">Collection</h1>
+	<p>Bleach CRM-PS Version 0.1 (Beta) developed and owned by Bleach-Kw</p>  
+		</div><!--welcome-wrapper-->
+	
+		
+		
+	<div class="main-content-holder"><!--main-content-holder-->            
+	
+	
+		
+<div class="white-wrapper"><!--white-wrapper-->
+<div class="center-formDiv"><!--center-formDiv-->
+		<div class="order-Number bold-text"> <label>Order Number</label></div>
+    <div id="search_box">
+                <input name="time" type="text" id="search_box" class="textBox auto-complete-input" placeholder="Search here existing clients or BLC Number..." data-min-size="2" data-pattern="[a-zA-Z0-9\s]" data-result-onclick="select_existing_user" data-auto-suggest-url="{% url 'accountant:get-cashorderInfo' %}">
+    </div>
+		<hr class="div">
+		
+			<div class="common-sub-head align-left order-details-head">Customer Details</div> 
+			
+				<div class="cleaning-column-wrapper ltyellow-border order-details"><!--cleaning-column-wrapper-->
+				<div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
+				<div class="inside-head align-left order_customer_name"></div>
+				<p class="paragraph order_customer_mobile"></p>
+				
+				<div class="order_payment_status">
+				</div>
+
+				<div class="order_addresses">
+				</div>
+			</div><!--cleaning-column-widget cleaning-column-widget-column1-->
+			
+			<div class="cleaning-column-widget cleaning-column-widget-column2 order-details"><!--cleaning-column-widget cleaning-column-widget-column2-->
+				<div class="common-gray-text align-left order_date"></div>
+				<div class="common-gray-text align-left yellow-text lg-text order_cost"></div>
+				<div class="common-gray-text align-left sm-text gray-text order_total_cleaners"></div>
+				
+					<div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+			</div><!--cleaning-column-widget cleaning-column-widget-column2-->
+		</div><!--cleaning-column-wrapper-->
+		
+		<br><br>
+<div class="common-sub-head align-left ticket-form-head">Collection Form</div> 
+	<form method="post" action="{% url 'agent:agent-ticketregister' %}" enctype="multipart/form-data">{% csrf_token %}
+	<input type="hidden" name="order_id" id="order_id_hidden">
+
+<div class="ticket-wrapper-full ltyellow-border ticket-form"><!--ticket-wrapper-full-->
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Payment Policy</label></div>
+                <label for="favcity">
+                <select id="id_payment_policy" name="payment_policy" required>
+                </select>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label"> <label>Payment Method</label></div>
+                <label for="favcity">
+                <select id="id_investigator" name="investigator" required>
+                <option value="">----Choose Method----</option>
+                <option value="CASH">Cash</option>
+                <option value="CHECK">Check</option>
+                </select>
+                </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Amount</label></div>
+                <input name="amount" type="text" class="textBox" placeholder="Amount in KD" required>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Collection Date</label></div>
+                <input name="collection_date" id="id_collection_date" type="text" class="textBox readonly" placeholder="Date and Time" required>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Check Number</label></div>
+                <input name="check_number" type="text" class="textBox readonly"  required>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Check Date</label></div>
+                <input name="check_date" id="id_check_date" type="text" class="textBox readonly" placeholder="Date and Time" required>
+                </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+  
+</div><!--ticket-wrapper-full--> 
+
+<div align="center" class="ticket-form-button"><input class="assignButton" name="submit" type="submit" value="Done"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>   	
+</form>
+<br> <br>
+	</div><!--center-formDiv-->
+
+	</div><!--white-wrapper-->      
+			
+		
+		
+	</div><!--main-content-holder-->
+	</div><!--container-fluid space-->
+</section><!--content-->
+</div><!--wrapper-->
+
+{% include 'agent/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script>
+$('#id_collection_date').datetimepicker({
+    format: "DD/MM/YYYY hh:mm A",
+    minDate: 1,
+  });
+$('#id_check_date').datetimepicker({
+    format: "DD/MM/YYYY hh:mm A",
+    minDate: 1,
+  });
+
+$('document').ready(function(){
+  $('#id_payment_policy').empty();
+});
+
+$('.order-details-head').hide();
+$('.order-details').hide();
+$('.ticket-form-head').hide();
+$('.ticket-form').hide();
+$('.ticket-form-button').hide();
+
+//multiple image add and delete
+$(".imgAdd").click(function () {
+  $(this).closest(".row").find('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="investigation_media" value="Upload Photo" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
+});
+$(document).on("click", "i.del", function () {
+  $(this).parent().remove();
+});
+$(function () {
+  $(document).on("change", ".uploadFile", function ()
+  {
+    var uploadFile = $(this);
+    var files = !!this.files ? this.files : [];
+    if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+
+    if (/^image/.test(files[0].type)) {// only image file
+      var reader = new FileReader(); // instance of the FileReader
+      reader.readAsDataURL(files[0]); // read the local file
+
+      reader.onloadend = function () {// set image data as background of div
+        //alert(uploadFile.closest(".upimage").find('.imagePreview').length);
+        uploadFile.closest(".imgUp").find('.imagePreview').css("background-image", "url(" + this.result + ")");
+      };
+    }
+
+  });
+});
+</script>
+
+
+
+<script>
+  //  auto complete search
+
+$(window).ready(function(){
+
+  $('.auto-complete-input').attr('autocomplete','off').keyup(search_live).focusout(autoSuggestionOnFocusOut
+      ).after($('<div/>',{class:'auto-complete-results'})).parent().css('position','relative',);
+      
+      //Initial case
+      $(".auto-complete-results").css('display','none');
+
+    
+});
+
+//Dont Know
+$(window).ready(function(){
+    $('.goto-url').click(function(){window.location.href=$(this).data('url');});
+}); 
+
+
+
+function autoSuggestionOnFocusOut(event)
+{
+  
+    setTimeout(function(){
+
+      $(event.target).siblings('.auto-complete-results').first().hide();
+      },1000);
+
+}
+
+
+function select_existing_user(event,src){
+          var order_id=$(src).attr('data-id');
+          if(order_id!=0)
+          {
+              $.ajax({
+
+        url: "{% url 'agent:get-feedbackorderinfo' %}",
+
+        data: {'order_id':order_id}, 
+
+        dataType: 'json',
+
+        success: function (data) {
+
+            ajax_ret_orders = data;
+            $("#order_id_hidden").val(data['order_id']);
+
+            //to add order info
+            $('.order_customer_name').html(data['name'])
+            $('.order_customer_mobile').html(data['mobile_number']);
+            $('.order_cost').html(+data['total_cost']+' KD');
+            $('.order_total_cleaners').html(+data['total_cleaners']+' Cleaners');
+            $('.order_date').html(data['date']);
+            $('.agent_image').prop('src',data['agent_image_url']);
+
+            order_status   = data['order_status']
+            payment_status = data['payment_status']
+
+            $('.order_payment_status').empty();
+            if(payment_status == 'COMPLETED')
+            {
+                $('.order_payment_status').append('<div class="green-bg-lg payment_status">Paid</div>');
+            }
+            else if(payment_status == 'PENDING')
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg payment_status">Pending</div>');
+            }
+            else if(payment_status == 'ON_HOLD')
+            {
+                $('.order_payment_status').append('<div class="red-bg-lg payment_status">On Hold</div>');
+            }
+            else
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg payment_atatus">Waiting</div>');
+            }    
+
+
+            if(order_status == 'APPROVED_BY_CLIENT')
+            {
+                $('.order_payment_status').append('<div class="blue-bg-lg">Approved</div>');
+            }
+            else if(order_status == 'ORDER_IN_PROGRESS')
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg">On-going</div>');
+            }
+            else if(order_status == 'ORDER_CANCELLED')
+            {
+                $('.order_payment_status').append('<div class="red-bg-lg">Cancelled</div>');   
+            }
+            else if(order_status == 'ORDER_CLOSED')
+            {
+                $('.order_payment_status').append('<div class="green-bg-lg">Closed</div>');
+            }
+            else
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg">Waiting</div>');
+            }    
+
+
+            addresses = data['order_address'];
+            
+            $(".order_addresses").empty();
+            for(i=0;i<addresses.length;++i)
+            {
+                $(".order_addresses").append('<div class="area-bold">'+addresses[i][0]+'</div><div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> '+addresses[i][1]+'</div>');
+            }
+
+            //Payment Policy
+            if(data['payment_policy'] == 'BREAKDOWN')
+            {
+              $("#id_payment_policy").append($('<option>',{value: 'BEFORE CLEANING',text: 'BEFORE CLEANING'}));
+              $("#id_payment_policy").append($('<option>',{value: 'AFTER CLEANING',text: 'AFTER CLEANING'}));
+            }
+            else
+            {
+              $("#id_payment_policy").append($('<option>',{value: data['payment_policy'],text: data['payment_policy']}));
+            }
+
+            //to show
+            $('.order-details-head').show();
+            $('.order-details').show();
+            $('.ticket-form-head').show();
+            $('.ticket-form').show();
+            $('.ticket-form-button').show();
+            
+        }
+
+    });
+          }
+          
+}
+
+
+
+
+function autoSuggestionOnSelect(event){
+    eval($(this).data('select-result'))(event,$(this));
+    $(this).parents('.auto-complete-results').first().hide().siblings('.auto-complete-input').val('');
+}
+
+
+//Keyup condition
+function search_live(event){
+    var src=$(this);
+    var min_size=src.data('min-size');
+
+    var test_pattern=src.data('pattern');
+    if(test_pattern)
+        {
+        test_pattern=RegExp(test_pattern);
+        var inp = String.fromCharCode(event.keyCode);
+        if (! test_pattern.test(inp)) return;
+        }
+        var val=src.val();
+    if(min_size)
+        {
+        if(val.length<min_size) return;
+        }
+    var fetch_params_fn_name=eval(src.data('fetch-params'));
+    var data={};
+    if(fetch_params_fn_name)
+        data=fetch_params_fn_name();
+    data['keyword']=val;//typed key words
+    var url=src.data('auto-suggest-url');//list fetching url
+    var on_result_click=src.data('result-onclick');//after result url
+
+
+    var ajax={type:'get',url:url,data:data,
+  
+    success:function (data){
+      var listOfObjects = [];
+        if( data['order_details'])
+            {
+
+            $res=src.siblings('.auto-complete-results').first();
+            $res.contents().remove();
+            
+
+
+            $.each( data['order_details'],(i,v)=>{
+              $('<div/>',{class:'auto-complete-result-item','data-id':i,
+                text:v}).appendTo($res).
+                on('click',autoSuggestionOnSelect).
+                data('select-result',on_result_click).
+                attr('tabindex',-1);
+            });
+            $res.css('position','absolute');
+            $res.outerWidth(src.outerWidth());
+            $res.css('top',(src.position().top+src.outerHeight()).toString()+'px');
+          
+                $res.show();
+            }
+          if(data['status'] == 'false'){
+            $res=src.siblings('.auto-complete-results').first();
+            $res.contents().remove();
+          
+            $('<div/>',{class:'auto-complete-result-item','data-id':0,
+                text:"No result Found"}).appendTo($res).
+                on('click',autoSuggestionOnSelect).
+                data('select-result',on_result_click).
+                attr('tabindex',-1);
+            $res.outerWidth(src.outerWidth());
+            $res.css('top',(src.position().top+src.outerHeight()).toString()+'px');
+          
+                $res.show();
+          }
+          }
+        };
+        $.ajax(ajax);
+}
+
+</script>
+{% endblock %}	

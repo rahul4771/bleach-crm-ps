@@ -23,6 +23,31 @@ from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMemb
 from accountant.models import PaymentHistory
 
 import requests
+from django.http import HttpResponse,JsonResponse
+
+def GetCashCollectOrderInfo(request):
+	data               = {}
+	order_info_dict = {}
+
+	query       =   request.GET.get('keyword')
+
+	orders = Order.objects.filter(is_active=True,payment_status='PENDING').select_related('evaluation__customer').filter(Q(evaluation__quatation_status='APPROVED') & Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)) & ~Q(Q(order_status='ORDER_CANCELLED')))
+	
+	
+	if orders:
+		for order in orders:
+			order_info_dict[order.id] = order.evaluation.evaluation_id+'-'+order.evaluation.customer.name 	
+	
+	data['order_details'] = order_info_dict
+
+
+	data['status']     = 'true'
+
+	if order_info_dict == {}: 
+		data['status'] = 'false'	
+	
+	return JsonResponse(data)
+
 
 class AccountantHome(IsAccountant,View):
 	def get(self,request):
@@ -469,6 +494,10 @@ class PaymentDetails(IsAccountant,View):
 		entry_per_page=(invoices.end_index())-(invoices.start_index())+1
 
 		return render(request,'accountant/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})
+
+class CashCollect(View):
+	def get(self,request):
+		return render(request,'accountant/payment/cash-collect.html',{})
 
 class PaymentLinkGeneration(View):
 	baseURL = "https://apitest.myfatoorah.com"
