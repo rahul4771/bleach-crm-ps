@@ -168,7 +168,7 @@ class ClientDetails(IsAdmin,View):
 		except:
 			orders = None	
 
-		new_clients_count    = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True,created__date__gte=timezone.now().date()-timedelta(30)).count()
+		new_clients_count    = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True,created__gte=timezone.now().date()-timedelta(30)).count()
 		
 
 		#Prefetch filters
@@ -759,7 +759,7 @@ class FeedbackAdvanced(IsAdmin,View):
 			feedbacks = None
 
 		#total_feedback_rating
-		average_feedback  = round(feedbacks.filter(id=order_id).aggregate(Sum('avg_starring'))['avg_starring__sum'])
+		average_feedback  = feedbacks.filter(id=order_id).aggregate(Sum('avg_starring'))['avg_starring__sum']
 		
 		#other feedbacks
 		try:

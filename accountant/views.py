@@ -135,7 +135,7 @@ class ClientDetails(IsAccountant,View):
 		except:
 			orders = None	
 
-		new_clients_count    = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True,created__date__gte=timezone.now().date()-timedelta(30)).count()
+		new_clients_count    = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True,created__gte=timezone.now().date()-timedelta(30)).count()
 		
 
 		#Prefetch filters

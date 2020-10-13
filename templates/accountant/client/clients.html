@@ -170,11 +170,7 @@
 {% for client in client_details %}
 
     <tr>
-    <td {% if client.active_status == True  %} 
-        class="green-line"
-        {% else%}
-        class="red-line"
-        {% endif %}>{{client.name}}</td>
+    <td id="clientstatusline{{client.id}}" class="yellow-line">{{client.name}}</td>
     <td>{% for address in client.customer_address %}
         {{address.area.name}}<br>
         {% endfor %}
@@ -286,7 +282,9 @@ $('.footable').footable({
             $("#clientstatus{{detail.id}}").html("Active");
             $("#clientstatus{{detail.id}}").addClass('green-bg');
             $("#clientstatus{{detail.id}}").removeClass('yellow-bg');
-
+            
+            $("#clientstatusline{{detail.id}}").addClass('green-line');
+            $("#clientstatusline{{detail.id}}").removeClass('yellow-line');
             active_clients.push({{detail.id}});
           {% endif %}
         {% endfor %}
