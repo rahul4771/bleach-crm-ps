@@ -331,11 +331,11 @@ $(".governorate").change(function(){
 
           ajax_ret_areas = data;     
 
-   $("#id_form-"+x+"-area").empty();
+   $("#id_form-"+id+"-area").empty();
 
   
 
-          $("#id_form-"+x+"-area").append($('<option>', {
+          $("#id_form-"+id+"-area").append($('<option>', {
 
           value: "", 
 
@@ -345,7 +345,7 @@ $(".governorate").change(function(){
 
         $.each( ajax_ret_areas, function( key, values ) {
 
-              $("#id_form-"+x+"-area").append($('<option>', {        
+              $("#id_form-"+id+"-area").append($('<option>', {        
 
     value: key, 
 
