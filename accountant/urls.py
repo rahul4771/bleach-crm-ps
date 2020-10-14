@@ -11,6 +11,10 @@ urlpatterns = [
 	url(r'^client/orders/(?P<client_id>[-\w]+)$',views.ClientOrders.as_view(),name='accountant-client-orders'),
 	url(r'^client/order/details/(?P<order_id>[-\w]+)$',views.ClientOrderDetails.as_view(),name='accountant-client-orderdetails'),
 
+	url(r'^cash/collect/$',views.CashCollect.as_view(),name='accountant-cashcollect'),
+
 	url(r'^generate/link/$',views.PaymentLinkGeneration.as_view(),name='accountant-paymentlink'),
+
+	url(r'^ajax/cashcollect/order/info/$',views.GetCashCollectOrderInfo,name='get-cashorderInfo'),
 
 ]
