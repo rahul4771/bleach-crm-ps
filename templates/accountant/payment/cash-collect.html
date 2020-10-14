@@ -83,7 +83,7 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Collection Date</label></div>
-                <input name="collection_date" id="id_collection_date" type="text" class="textBox readonly" placeholder="Date and Time" required>
+                <input name="collection_date" id="id_collection_date" type="text" class="textBox date_time_pick readonly" placeholder="Date and Time" required>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">
@@ -94,7 +94,7 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Check Date</label></div>
-                <input name="check_date" id="id_check_date" type="text" class="textBox readonly" placeholder="Date and Time" required>
+                <input name="check_date" id="id_check_date" type="text" class="textBox date_pick readonly" placeholder="Date and Time" required>
                 </label>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
@@ -121,15 +121,6 @@
 
 {% block javascript %}
 <script>
-$('#id_collection_date').datetimepicker({
-    format: "DD/MM/YYYY hh:mm A",
-    minDate: 1,
-  });
-$('#id_check_date').datetimepicker({
-    format: "DD/MM/YYYY hh:mm A",
-    minDate: 1,
-  });
-
 $('document').ready(function(){
   $('#id_payment_policy').empty();
 });
