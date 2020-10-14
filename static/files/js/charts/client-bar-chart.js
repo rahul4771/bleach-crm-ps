@@ -17,7 +17,9 @@ function initialize() {
         chartArea : {height: '80%',},
         width: '100%',
         hAxis: {
+            viewWindow:{ min: 0 },
             minValue: 0,
+            format: '#'
         },
         vAxis: { textPosition: 'none' },
         animation: {
@@ -120,15 +122,16 @@ function initialize() {
     
     $("#daymonthtoggle").click(function(){
         if ($(this).is(':checked')){
-            console.log("red")
-            drawArea();
-            $('.set1').attr("hidden",false);
-            $('.set2').attr("hidden",true);
-        }else{
+
             $('.set1').attr("hidden",true);
             $('.set2').attr("hidden",false);
             console.log("red2")
             drawBars();
+        }else{
+            console.log("red")
+            drawArea();
+            $('.set1').attr("hidden",false);
+            $('.set2').attr("hidden",true);
         }
     });
 
@@ -150,23 +153,7 @@ function initialize() {
 
     $("#reset_clients").click(function(){
         if ($("#daymonthtoggle").is(':checked')){
-            var date1 = new Date();
 
-            date1.setDate(date1.getDate()-1)
-            date1.setMonth(date1.getMonth()+1)
-            var datestring = ("0" + (date1.getDate())).slice(-2)  + "-" + ("0" + (date1.getMonth())).slice(-2) + "-" + date1.getFullYear();
-            
-            var date2 = new Date();
-            date2.setDate(date2.getDate()-30);
-            date2.setMonth(date2.getMonth()+1)
-            var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
-            console.log(datestring,datestring2)
-    
-        $('#ord_fromdate').val(datestring2);
-        $('#ord_todate').val(datestring);
-    
-        drawArea();
-    }else{
         var date1 = new Date();
 
         var date2 = new Date();
@@ -181,17 +168,34 @@ function initialize() {
         $('#month1').val(monthstring);
         $('#month2').val(monthstring2);
         drawBars();
+    }else{
+        var date1 = new Date();
+
+        date1.setDate(date1.getDate()-1)
+        date1.setMonth(date1.getMonth()+1)
+        var datestring = ("0" + (date1.getDate())).slice(-2)  + "-" + ("0" + (date1.getMonth())).slice(-2) + "-" + date1.getFullYear();
+        
+        var date2 = new Date();
+        date2.setDate(date2.getDate()-30);
+        date2.setMonth(date2.getMonth()+1)
+        var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
+        console.log(datestring,datestring2)
+    
+        $('#ord_fromdate').val(datestring2);
+        $('#ord_todate').val(datestring);
+    
+        drawArea();
     }
     });
 
     if ($("#daymonthtoggle").is(':checked')){
-        $('.set1').attr("hidden",false);
-        $('.set2').attr("hidden",true);
-        drawArea();
-    }else{
         $('.set1').attr("hidden",true);
         $('.set2').attr("hidden",false);
         drawBars();
+    }else{
+        $('.set1').attr("hidden",false);
+        $('.set2').attr("hidden",true);
+        drawArea();
     };
     
 }
