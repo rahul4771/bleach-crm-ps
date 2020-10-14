@@ -1,6 +1,7 @@
 from django.db import models
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
 from user.models import UserProfile,Address
+
 # Create your models here.
 
 ORDER_STATUS = (
@@ -68,10 +69,10 @@ class Order(models.Model):
 	payment_status         = models.CharField(max_length=50,blank=True,null=True,default='PENDING',choices=PAYMENT_STATUS)
 	payment_completed_date = models.DateTimeField(blank=True,null=True)
 	total_amount           = models.IntegerField(blank=True,null=True,default=0)
-	amount_paid            = models.IntegerField(blank=True,null=True)
+	amount_paid            = models.IntegerField(blank=True,null=True,default=0)
 	remining_amount        = models.IntegerField(blank=True,null=True,default=0)
-	preamount_paid		   = models.IntegerField(blank=True,null=True)
-	postamount_paid		   = models.IntegerField(blank=True,null=True)
+	preamount_paid		   = models.IntegerField(blank=True,null=True,default=0)
+	postamount_paid		   = models.IntegerField(blank=True,null=True,default=0)
 	
 	instructions		   = models.CharField(max_length=500,blank=True,null=True)
 	

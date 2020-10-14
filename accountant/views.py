@@ -15,9 +15,10 @@ from dateutil.relativedelta import relativedelta
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField
 from django.db.models.functions import Cast 
 from django.db.models import Prefetch
+from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod,ServiceType
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
@@ -31,7 +32,7 @@ def GetCashCollectOrderInfo(request):
 
 	query       =   request.GET.get('keyword')
 
-	orders = Order.objects.filter(is_active=True,payment_status='PENDING').select_related('evaluation__customer').filter(Q(evaluation__quatation_status='APPROVED') & Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)) & ~Q(Q(order_status='ORDER_CANCELLED')))
+	orders = Order.objects.filter(is_active=True,order_status__isnull=False,payment_status='PENDING').select_related('evaluation__customer').filter(Q(evaluation__quatation_status='APPROVED') & Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)) & ~Q(Q(order_status='ORDER_CANCELLED')))
 	
 	
 	if orders:
@@ -495,96 +496,65 @@ class PaymentDetails(IsAccountant,View):
 
 		return render(request,'accountant/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})
 
-class CashCollect(View):
+class CashCollect(IsAccountant,View):
 	def get(self,request):
 		return render(request,'accountant/payment/cash-collect.html',{})
+	def post(self,request):
 
-class PaymentLinkGeneration(View):
-	baseURL = "https://apitest.myfatoorah.com"
-	token = '7Fs7eBv21F5xAocdPvvJ-sCqEyNHq4cygJrQUFvFiWEexBUPs4AkeLQxH4pzsUrY3Rays7GVA6SojFCz2DMLXSJVqk8NG-plK-cZJetwWjgwLPub_9tQQohWLgJ0q2invJ5C5Imt2ket_-JAlBYLLcnqp_WmOfZkBEWuURsBVirpNQecvpedgeCx4VaFae4qWDI_uKRV1829KCBEH84u6LYUxh8W_BYqkzXJYt99OlHTXHegd91PLT-tawBwuIly46nwbAs5Nt7HFOozxkyPp8BW9URlQW1fE4R_40BXzEuVkzK3WAOdpR92IkV94K_rDZCPltGSvWXtqJbnCpUB6iUIn1V-Ki15FAwh_nsfSmt_NQZ3rQuvyQ9B3yLCQ1ZO_MGSYDYVO26dyXbElspKxQwuNRot9hi3FIbXylV3iN40-nCPH4YQzKjo5p_fuaKhvRh7H8oFjRXtPtLQQUIDxk-jMbOp7gXIsdz02DrCfQIihT4evZuWA6YShl6g8fnAqCy8qRBf_eLDnA9w-nBh4Bq53b1kdhnExz0CMyUjQ43UO3uhMkBomJTXbmfAAHP8dZZao6W8a34OktNQmPTbOHXrtxf6DS-oKOu3l79uX_ihbL8ELT40VjIW3MJeZ_-auCPOjpE3Ax4dzUkSDLCljitmzMagH2X8jN8-AYLl46KcfkBV'
+		order_id = request.POST.get('order_id')
 
-	
-	def get(self,request):
+		if order_id:
+			payment_policy = request.POST.get('payment_policy')
+			payment_method = request.POST.get('payment_method')
 
-		#send link
-		url 	= self.baseURL + "/v2/SendPayment"
-		payload = "{\"CustomerName\": \"Ahmed\",\"NotificationOption\": \"ALL\",\"MobileCountryCode\": \"+965\"," \
-              "\"CustomerMobile\": \"92249465\",\"CustomerEmail\": \"aramadan@myfatoorah.com\",\"InvoiceValue\": 100," \
-              "\"DisplayCurrencyIso\": \"KWD\",\"CallBackUrl\": \"https://google.com\",\"ErrorUrl\": " \
-              "\"https://google.com\",\"Language\": \"en\",\"CustomerReference\": \"ref 1\",\"CustomerCivilId\": " \
-              "12345678,\"UserDefinedField\": \"Custom field\",\"ExpireDate\": \"\",\"CustomerAddress\": {\"Block\": " \
-              "\"\",\"Street\": \"\",\"HouseBuildingNo\": \"\",\"Address\": \"\",\"AddressInstructions\": \"\"}," \
-              "\"InvoiceItems\": [{\"ItemName\": \"Product 01\",\"Quantity\": 1,\"UnitPrice\": 100}]} "
-		headers = {'Content-Type': "application/json", 'Authorization': "Bearer " + self.token}
-		response = requests.request("POST", url, data=payload, headers=headers)
+			amount       = request.POST.get('amount')
+			payment_date = datetime.strptime(request.POST.get('collection_date'),'%d/%m/%Y %I:%M %p')
+			
+			if payment_method == 'CASH':
+				if payment_policy == 'PREPAID' or payment_policy == 'PREPAID':
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount) 
+				elif payment_policy == 'BEFORE CLEANING':
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=amount+F('preamount_paid'))
+				elif payment_policy == 'AFTER CLEANING':
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=amount+F('postamount_paid'))
 
-		print("send link response")
-		print(response)
-		print(response.json())
+				PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date)
+				messages.success(request,"Payment Received thruogh Cash")
+			if payment_method == 'CHECK':
+				check_no   = request.POST.get('check_number')
+				check_date = datetime.strptime(request.POST.get('check_date'),'%d-%m-%Y')
 
-		#initiate execute payment
+				if payment_policy == 'PREPAID' or payment_policy == 'PREPAID':
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount) 
+				elif payment_policy == 'BEFORE CLEANING':
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=amount+F('preamount_paid'))
+				elif payment_policy == 'AFTER CLEANING':
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=amount+F('postamount_paid'))
 
-		####### Initiate Payment ######
-		url 		= self.baseURL + "/v2/InitiatePayment"
-		payload 	= "{\"InvoiceAmount\":100,\"CurrencyIso\":\"KWD\"}"
-		headers 	= {'Content-Type': "application/json", 'Authorization': "Bearer " + self.token}
-		response 	= requests.request("POST", url, data=payload, headers=headers)
+				PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHECK',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date)
+
+			if payment_method == 'BANK':
+				bank_name   = request.POST.get('bank_name')
+				bank_no     = request.POST.get('ibn_number')
+
+				if payment_policy == 'PREPAID' or payment_policy == 'PREPAID':
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount) 
+				elif payment_policy == 'BEFORE CLEANING':
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=amount+F('preamount_paid'))
+				elif payment_policy == 'AFTER CLEANING':
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=amount+F('postamount_paid'))
+
+				PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no)
+			
+			is_payment_completed = Order.objects.get(id=order_id)
+			if is_payment_completed.amount_paid == is_payment_completed.total_amount:
+				is_payment_completed.payment_completed_date = payment_date 
+				is_payment_completed.payment_status         = 'COMPLETED'
+				is_payment_completed.save()
+
+			messages.success(request,"Payment Received thruogh "+payment_method)
 		
-		print("Initiate Payment Response")
-		print(response)
-		print(response.json())
+		else:
+			messages.suucess(request,"Something Went Wrong")
 
-		####### Execute Payment ######
-		url 	= self.baseURL + "/v2/ExecutePayment"
-		payload = "{\"CustomerName\": \"Ahmed\",\"MobileCountryCode\": \"+965\"," \
-		              "\"CustomerMobile\": \"92249465\",\"CustomerEmail\": \"aramadan@myfatoorah.com\",\"InvoiceValue\": 100," \
-		              "\"DisplayCurrencyIso\": \"KWD\",\"CallBackUrl\": \"https://google.com\",\"ErrorUrl\": " \
-		              "\"https://google.com\",\"Language\": \"en\",\"CustomerReference\": \"ref 1\",\"CustomerCivilId\": " \
-		              "12345678,\"UserDefinedField\": \"Custom field\",\"ExpireDate\": \"\",\"CustomerAddress\": {\"Block\": " \
-		              "\"\",\"Street\": \"\",\"HouseBuildingNo\": \"\",\"Address\": \"\",\"AddressInstructions\": \"\"}," \
-		              "\"InvoiceItems\": [{\"ItemName\": \"Product 01\",\"Quantity\": 1,\"UnitPrice\": 100}]}"
-		headers = {'Content-Type': "application/json", 'Authorization': "Bearer " + self.token}
-		response = requests.request("POST", url, data=payload, headers=headers)
-		
-		print("Execute Payment Response")
-		print(response)
-		print(response.json())
-
-
-		####### Direct Payment ######
-		
-		#initialize payment
-		url     = self.baseURL + "/v2/ExecutePayment"
-		payload = "{\"PaymentMethodId\":2,\"CustomerName\": \"Ahmed\",\"MobileCountryCode\": \"+965\"," \
-	              "\"CustomerMobile\": \"92249465\",\"CustomerEmail\": \"aramadan@myfatoorah.com\",\"InvoiceValue\": 100," \
-	              "\"DisplayCurrencyIso\": \"KWD\",\"CallBackUrl\": \"https://google.com\",\"ErrorUrl\": " \
-	              "\"https://google.com\",\"Language\": \"en\",\"CustomerReference\": \"ref 1\",\"CustomerCivilId\": " \
-	              "12345678,\"UserDefinedField\": \"Custom field\",\"ExpireDate\": \"\",\"CustomerAddress\": {\"Block\": " \
-	              "\"\",\"Street\": \"\",\"HouseBuildingNo\": \"\",\"Address\": \"\",\"AddressInstructions\": \"\"}," \
-	              "\"InvoiceItems\": [{\"ItemName\": \"Product 01\",\"Quantity\": 1,\"UnitPrice\": 100}]}"
-
-		headers = {'Content-Type': "application/json", 'Authorization': "Bearer " + self.token}
-		response = requests.request("POST", url, data=payload, headers=headers)
-		print("Initiate direct Payment Response")
-		print(response)
-		print(response.json())	    
-
-
-		#direct payment
-		data        = response.json()['Data']
-		payment_url = data['PaymentURL']
-
-		print("PaymentURL  Response:\n" + payment_url)
-	    # after getting the payment url call it as a post API and pass card info to it
-	    # if you saved the card info before you can pass the token for the api
-
-		payload = "{\"paymentType\": \"card\",\"card\": {\"Number\":\"5123450000000008\",\"expiryMonth\":\"05\","\
-		          "\"expiryYear\":\"21\",\"securityCode\":\"100\"},\"saveToken\": false} "
-		headers = {'Content-Type': "application/json", 'Authorization': "Bearer " + self.token}
-		response = requests.request("POST", payment_url, data=payload, headers=headers)
-
-		print("Direct Payment Response")
-		print(response)
-
-
-		return redirect('accountant:accountantdash-board')
+		return redirect('accountant:accountant-cashcollect')	
