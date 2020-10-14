@@ -25,7 +25,7 @@ class Signin(View):
 			
 		if user:
 			login(request, user)
-			messages.success(request, "Welcome " + user.username)	
+			messages.success(request, "Welcome " + user.name)	
 
 			if user.user_type == 'AGENT':
 				return redirect('agent:agentdash-board')
