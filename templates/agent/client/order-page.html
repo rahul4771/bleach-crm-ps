@@ -41,7 +41,10 @@
                     {% if order.evaluation.payment_method == 'PREPAID' or order.evaluation.payment_method == 'BREAKDOWN' %}
                     <div class="order-progress-widget order-progress-widget-column2"><!--order-progress-widget order-progress-widget-column2-->
                         <div class="evaluation">Payment</div>
-                    	{% if order.payment_status == 'COMPLETED' or order.evaluation.before_cleaning_amount == order.preamount_paid %}
+                    	{% if order.payment_status == 'COMPLETED' %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.svg' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                        {% elif order.evaluation.before_cleaning_amount == order.preamount_paid and order.evaluation.payment_method == 'BREAKDOWN'  %}
                         <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.svg' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
                         {% else %}
@@ -72,7 +75,10 @@
                     {% if order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'BREAKDOWN' %}
                     <div class="order-progress-widget order-progress-widget-column2"><!--order-progress-widget order-progress-widget-column2-->
                         <div class="evaluation">Payment</div>
-                        {% if order.payment_status == 'COMPLETED' or order.evaluation.after_cleaning_amount == order.postamount_paid %}
+                        {% if order.payment_status == 'COMPLETED' %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.svg' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                        {% elif order.evaluation.after_cleaning_amount == order.postamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
                         <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.svg' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
                         {% else %}
@@ -96,7 +102,7 @@
             </div><!--order-left-stretch-->
             
         <div class="order-right-fixed"><!--order-right-fixed-->
-			<div class="order-card-column whitebg red-border"><!--order-card-column-->
+			<div class="order-card-column whitebg red-border clickable-row-list" data-href="{% url 'agent:agent-client-orders' client_details.id %}"><!--order-card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-orders-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
@@ -118,7 +124,21 @@
      	<hr class="style-three" > 
 		<div class="order-clean-Details-wrapper"><!--order-clean-Details-wrapper-->
         	<div class="order-clean-Details-widget order-clean-Details-widget-column1"><!--order-clean-Details-widget order-clean-Details-widget-column1-->
-			<div class="cleaning-img"><img src="{% static 'files/images/cleaning.jpg' %}"></div>
+			<div class="cleaning-img">
+                {% if orderschedule.order_scheduler_book.service_type.name == 'General Cleaning' %}
+                <img src="{% static 'files/images/service_general_cleaning.jpg' %}">
+                {% elif orderschedule.order_scheduler_book.service_type.name == 'Deep Cleaning' %}
+                <img src="{% static 'files/images/service_deep_cleaning.jpg' %}">
+                {% elif orderschedule.order_scheduler_book.service_type.name == 'Carpet Cleaning' %}
+                <img src="{% static 'files/images/Service_carpet_cleaning.jpg' %}">
+                {% elif orderschedule.order_scheduler_book.service_type.name == 'Upholstery Cleaning' %}
+                <img src="{% static 'files/images/Service_uppostry.jpg' %}">
+                {% elif orderschedule.order_scheduler_book.service_type.name == 'Kitchen Cleaning' %}
+                <img src="{% static 'files/images/Service_kitchen_cleaning.jpg' %}">
+                {% elif orderschedule.order_scheduler_book.service_type.name == 'Sterilization' %}
+                <img src="{% static 'files/images/Service_sanitization.jpg' %}">
+                {% endif %}
+            </div>
             </div><!--order-clean-Details-widget order-clean-Details-widget-column1-->
             
         	<div class="order-clean-Details-widget order-clean-Details-widget-column2"><!--order-clean-Details-widget order-clean-Details-widget-column2-->
@@ -870,16 +890,16 @@ total_percentage = (total_schedules*5)
 {% if order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'PREPAID' %}
 total_percentage += total_schedules
 {% else %}
-total_percentage += total_schedules
+total_percentage += total_schedules*2
 {% endif %}
 
 active_percentage = dateconfirm_completed_count+teamassign_completed_count+cleaning_completed_count+total_schedules
 
-{% if order.evaluation.before_cleaning_amount == order.postamount_paid %}
+{% if order.evaluation.before_cleaning_amount == order.postamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
 active_percentage += total_schedules
 {% endif %}
 
-{% if order.evaluation.after_cleaning_amount == order.preamount_paid %}
+{% if order.evaluation.after_cleaning_amount == order.preamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
 active_percentage += total_schedules
 {% endif %}
 
