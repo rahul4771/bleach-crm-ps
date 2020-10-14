@@ -161,6 +161,9 @@
                 <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.location_type}}</div>
                 {% endif %}
                 
+                {% if orderschedule.customer_address.area %}
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.customer_address.area.name}}</div>
+                {% endif %}
             </div><!--order-clean-Details-widget order-clean-Details-widget-column2-->            
             
         	<div class="order-clean-Details-widget order-clean-Details-widget-column3"><!--order-clean-Details-widget order-clean-Details-widget-column3-->
@@ -179,14 +182,15 @@
         	<div class="order-admin-widget-column1"><!--order-admin-widget-column1-->
                 {% if orderschedule.evaluation_details.evaluator.profile_image %}
                 <div class="profile-pic"><img src="{{orderschedule.evaluation_details.evaluator.profile_image.url}}"></div>
-                {% else %}
-            	<div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
-    			{% endif %}
                 <div class="client-name">{{orderschedule.evaluation_details.evaluator.name}}<div class="common-gray-text">Evaluator</div></div>
+                {% else %}
+                <div class="profile-pic"><img src="{{orderschedule.evaluation_details.evaluation.call_attender.profile_image.url}}"></div>
+                <div class="client-name">{{orderschedule.evaluation_details.evaluation.call_attender.name}}<div class="common-gray-text">Agent</div></div>
+                {% endif %}
             </div><!--order-admin-widget-column1-->
             
             <div class="order-admin-widget-column2"><!--order-admin-widget-column2-->
-            <p>{{orderschedule.order_scheduler_book.evaluator_note}} </p>
+            <p>{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}} </p>
             </div><!--order-admin-widget-column2-->
         </div><!--order-admin-wrapper-->
         
@@ -681,6 +685,7 @@
 <div class="details-sub-head align-left">Media</div>
 <div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
 <div class="gallery-wrapper"><!--gallery-wrapper-->
+    {% if orderschedule.order_scheduler_book.evaluationmedia %}
 	<div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
     <div class="media-heading align-left">Evaluation</div>
     <section>
@@ -688,35 +693,53 @@
     </section>
   
     </div><!--gallery-widget-column-column1-->
-    
+    {% endif %}
+
+    {% for investigation in orderschedule.investigations %}{% for media in investigation.investigationmedias %}
+    {% if forloop.first %}
 	<div class="gallery-widget-column-column2"><!--gallery-widget-column-column2-->
     <div class="media-heading align-left">Investigation</div>
         <section>
-        <div id="media{{forloop.counter}}2" data-pn="{{forloop.counter}}2" data-src="{% for investigation in orderschedule.investigations %}{% for media in investigation.investigationmedias %}{{media.media.url}},{% endfor %}{% endfor %}"></div>
+        <div id="media{{forloop.parentloop.parentloop.counter}}2" data-pn="{{forloop.parentloop.parentloop.counter}}2" data-src="{% for investigation in orderschedule.investigations %}{% for media in investigation.investigationmedias %}{{media.media.url}},{% endfor %}{% endfor %}"></div>
     </section>
     
     </div><!--gallery-widget-column-column2-->    
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
 </div><!--gallery-wrapper-->
 
+
 <div class="gallery-wrapper"><!--gallery-wrapper-->    
-	<div class="gallery-widget-column-column3"><!--gallery-widget-column-column3-->
+	{% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'BEFORE_CLEANING' %}
+    {% if forloop.first %}
+    <div class="gallery-widget-column-column3"><!--gallery-widget-column-column3-->
     <br>
     <div class="media-heading align-left">Cleaning (Before)</div>
     <section>
-        <div id="media{{forloop.counter}}3" data-pn="{{forloop.counter}}3" data-src="{% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'BEFORE_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}"></div>
+        <div id="media{{forloop.parentloop.parentloop.counter}}3" data-pn="{{forloop.parentloop.parentloop.counter}}3" data-src="{% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'BEFORE_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}"></div>
     </section>
         
     </div><!--gallery-widget-column-column2-->     
-    
+    {% endif %}
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
+
+    {% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'AFTER_CLEANING' %}
+    {% if forloop.first %}
 	<div class="gallery-widget-column-column4"><!--gallery-widget-column-column4-->
     <br>
     <div class="media-heading align-left">Cleaning (After)</div>
     <section>
-        <div id="media{{forloop.counter}}4" data-pn="{{forloop.counter}}4" data-src="{% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'AFTER_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}"></div>
+        <div id="media{{forloop.parentloop.parentloop.counter}}4" data-pn="{{forloop.parentloop.parentloop.counter}}4" data-src="{% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'AFTER_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}"></div>
     </section>
         
     </div><!--gallery-widget-column-column4-->      
-    
+    {% endif %}
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
 </div><!--gallery-wrapper-->
 </div><!--order-clean-outer-wrapper-->
 
