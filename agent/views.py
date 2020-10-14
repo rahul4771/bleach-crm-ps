@@ -2467,7 +2467,7 @@ def FeedBackData(request):
 		monthdate1 = datetime(day=1,month=int(month),year=int(year))
 		monthdate2 = datetime(day=28,month=int(month2),year=int(year2))
 
-		feedbacks = FeedBack.objects.filter(is_active=True,order__evaluation__quatation_approved_date__range=(monthdate1,monthdate2)).values('order__evaluation__quatation_approved_date').annotate(month=Month('order__evaluation__quatation_approved_date'),).values('month').annotate(avg_rating=Avg('rating'))
+		feedbacks = FeedBack.objects.filter(is_active=True,order__evaluation__quatation_approved_date__date__range=(monthdate1,monthdate2)).values('order__evaluation__quatation_approved_date').annotate(month=Month('order__evaluation__quatation_approved_date'),).values('month').annotate(avg_rating=Avg('rating'))
 		print(feedbacks,"huh")
 		
 		for fb in feedbacks:
