@@ -2405,7 +2405,7 @@ def TicketData(request):
 		print(month,year,month2,year2,"mko")
 
 		monthdate1 = datetime(day=1,month=int(month),year=int(year))
-		monthdate2 = datetime(day=1,month=int(month2),year=int(year2))
+		monthdate2 = datetime(day=28,month=int(month2),year=int(year2))
 
 		tickets = FollowUp.objects.filter(is_active=True,investigation__order__evaluation__quatation_approved_date__gte=monthdate1,
 								investigation__order__evaluation__quatation_approved_date__gt=monthdate2).values('investigation__order__evaluation__quatation_approved_date').annotate(month=Month('investigation__order__evaluation__quatation_approved_date')).values('month').annotate(count=Count('pk'))
@@ -2464,10 +2464,11 @@ def FeedBackData(request):
 		month2,year2 = todate.split("/")
 
 		print(month2,year2,"mko")
-		feedbacks = FeedBack.objects.filter(is_active=True,order__evaluation__quatation_approved_date__year__gte=year,
-								order__evaluation__quatation_approved_date__month__gte=month,
-								order__evaluation__quatation_approved_date__year__lte=year2,
-								order__evaluation__quatation_approved_date__month__lte=month2).values('order__evaluation__quatation_approved_date').annotate(month=Month('order__evaluation__quatation_approved_date'),).values('month').annotate(avg_rating=Avg('rating'))
+
+		monthdate1 = datetime(day=1,month=int(month),year=int(year))
+		monthdate2 = datetime(day=28,month=int(month2),year=int(year2))
+
+		feedbacks = FeedBack.objects.filter(is_active=True,order__evaluation__quatation_approved_date__range=(monthdate1,monthdate2)).values('order__evaluation__quatation_approved_date').annotate(month=Month('order__evaluation__quatation_approved_date'),).values('month').annotate(avg_rating=Avg('rating'))
 		print(feedbacks,"huh")
 		
 		for fb in feedbacks:
@@ -2491,7 +2492,7 @@ def FeedBackData(request):
 
 		for single_date in daterange:
 			sdate = single_date.strftime("%Y-%m-%d")
-			feedback_date = FeedBack.objects.filter(is_active=True,order__evaluation__quatation_approved_date=sdate).aggregate(avg_rate=Avg('rating'))['avg_rate'] #use order date for final commit
+			feedback_date = FeedBack.objects.filter(is_active=True,order__evaluation__quatation_approved_date__date=sdate).aggregate(avg_rate=Avg('rating'))['avg_rate'] #use order date for final commit
 
 			print(sdate,feedback_date,"qtc")
 
