@@ -18,27 +18,41 @@ def quotation_data(request):
         print("kabir")
         month,year = prevdate.split("/")
         month2,year2 = todate.split("/")
-        monthdate1 = datetime(day=1,month=int(month),year=int(year))
-        monthdate2 = datetime(day=28,month=int(month2),year=int(year2))
+        monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=12)
+        monthdate2 = datetime(day=28,month=int(month2),year=int(year2),hour=12)
+        print(monthdate1,monthdate2,"mod")
+        quotations = Order.objects.filter(is_active=True,created__range=(monthdate1,monthdate2))  #.values('created').annotate(month=Month('created')).values('month').annotate(count=Count('pk'))
+        months = quotations.datetimes("created", kind="month")
 
-        quotations = Order.objects.filter(is_active=True,created__range=(monthdate1,monthdate2)).values('created').annotate(month=Month('created')).values('month').annotate(count=Count('pk'))
-
-        for qt in quotations:
-            quotations_approved = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(monthdate1,monthdate2)).values('evaluation__quatation_approved_date').annotate(month=Month('evaluation__quatation_approved_date')).values('month').annotate(count=Count('pk'))
-            print(qt['month'],quotations_approved,"huuh") 
-
-            approved_count = 0
-            for qts in quotations_approved:
-                print(qts['month'],"pop")
-                if qts['month'] == qt['month']:
-                    approved_count = qts['count']
-
+        for month in months:
+            submitted_quotes = quotations.filter(created__month=month.month)
+            approved_quotes = quotations.filter(evaluation__quatation_status='APPROVED',created__month=month.month)
+            submitted_total = submitted_quotes.aggregate(total=Count("pk")).get("total")
+            approved_total = approved_quotes.aggregate(total2=Count("pk")).get("total2")
+            print(month, submitted_total, approved_total,'dats')
             qt_dict = {
-            "date" : qt['month'],
-            "submitted_qt" : qt['count'],
-            "approved_qt" : approved_count
+            "date" : month,
+            "submitted_qt" : submitted_total,
+            "approved_qt" : approved_total
             }
             data.append(qt_dict)
+
+        # for qt in quotations:
+        #     quotations_approved = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(monthdate1,monthdate2)).values('evaluation__quatation_approved_date').annotate(month=Month('evaluation__quatation_approved_date')).values('month').annotate(count=Count('pk'))
+        #     print(qt['month'],quotations_approved,"huuh") 
+
+            # approved_count = 0
+            # for qts in quotations_approved:
+            #     print(qts['month'],"pop")
+            #     if qts['month'] == qt['month']:
+            #         approved_count = qts['count']
+
+            # qt_dict = {
+            # "date" : qt['month'],
+            # "submitted_qt" : qt['count'],
+            # "approved_qt" : approved_count
+            # }
+            # data.append(qt_dict)
     else:
         print("kab")
         try:
@@ -53,8 +67,8 @@ def quotation_data(request):
         for single_date in daterange:
             sdate = single_date.strftime("%Y-%m-%d")
             print(single_date,sdate,"date")
-            submitted_qtns = Order.objects.filter(is_active=True,created__date=single_date).count()
-            approved_qtns = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__date=single_date).count()
+            submitted_qtns = Order.objects.filter(is_active=True,created__date=single_date).aggregate(count=Count('pk'))['count']
+            approved_qtns = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__date=single_date).aggregate(count2=Count('pk'))['count2']
             print(sdate,submitted_qtns,approved_qtns,"qtc")
             qt_dict = {
                 "date" : sdate,
