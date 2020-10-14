@@ -67,8 +67,8 @@ def quotation_data(request):
         for single_date in daterange:
             sdate = single_date.strftime("%Y-%m-%d")
             print(single_date,sdate,"date")
-            submitted_qtns = Order.objects.filter(is_active=True,created__date=single_date).count()
-            approved_qtns = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__date=single_date).count()
+            submitted_qtns = Order.objects.filter(is_active=True,created__date=single_date).aggregate(count=Count('pk'))['count']
+            approved_qtns = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__date=single_date).aggregate(count2=Count('pk'))['count2']
             print(sdate,submitted_qtns,approved_qtns,"qtc")
             qt_dict = {
                 "date" : sdate,
