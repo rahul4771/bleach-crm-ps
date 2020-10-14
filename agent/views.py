@@ -107,16 +107,19 @@ def GetFeedbackOrderInfo(request):
 		dropdown_order_info['order_id']      = order.id
 
 		##order information
-		dropdown_order_info['name']          = order.evaluation.customer.name
-		dropdown_order_info['mobile_number'] = order.evaluation.customer.mobile_number
-		dropdown_order_info['total_cost']    = order.evaluation.total_cost
-		dropdown_order_info['date']          = order.evaluation.created.strftime('%b %d %Y,%I:%M %p')
-		dropdown_order_info['order_status']  = order.order_status
-		dropdown_order_info['payment_status']= order.payment_status
-		dropdown_order_info['payment_policy']= order.evaluation.payment_method
-		print(dropdown_order_info['payment_policy'])
-		dropdown_order_info['agent_image_url']= order.evaluation.call_attender.profile_image.url or None
-		dropdown_order_info['total_cleaners'] =order.total_cleaners
+		dropdown_order_info['name']          	= order.evaluation.customer.name
+		dropdown_order_info['mobile_number'] 	= order.evaluation.customer.mobile_number
+		dropdown_order_info['total_cost']    	= order.evaluation.total_cost
+		dropdown_order_info['date']          	= order.evaluation.created.strftime('%b %d %Y,%I:%M %p')
+		dropdown_order_info['order_status']  	= order.order_status
+		dropdown_order_info['payment_status']	= order.payment_status
+		dropdown_order_info['payment_policy']	= order.evaluation.payment_method
+		dropdown_order_info['agent_image_url']	= order.evaluation.call_attender.profile_image.url or None
+		dropdown_order_info['total_cleaners'] 	= order.total_cleaners
+		dropdown_order_info['before_amount']    = order.evaluation.before_cleaning_amount
+		dropdown_order_info['after_amount']     = order.evaluation.after_cleaning_amount
+
+
 
 		#for multiple order addresses
 		dropdown_order_info['order_address']   = []

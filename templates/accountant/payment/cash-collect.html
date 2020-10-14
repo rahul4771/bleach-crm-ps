@@ -67,7 +67,7 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label"> <label>Payment Method</label></div>
                 <label for="favcity">
-                <select id="id_investigator" name="investigator" required>
+                <select id="id_paymentmethod" name="paymentmethod" required>
                 <option value="">----Choose Method----</option>
                 <option value="CASH">Cash</option>
                 <option value="CHECK">Check</option>
@@ -79,7 +79,7 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Amount</label></div>
-                <input name="amount" type="text" class="textBox" placeholder="Amount in KD" required>
+                <input name="amount" id="id_amount" type="text" class="textBox" placeholder="Amount in KD" required>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Collection Date</label></div>
@@ -87,6 +87,7 @@
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">
+<div id="id_check_expand" style="display:none;">
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Check Number</label></div>
@@ -94,11 +95,11 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Check Date</label></div>
-                <input name="check_date" id="id_check_date" type="text" class="textBox date_pick readonly" placeholder="Date and Time" required>
+                <input name="check_date" id="id_check_date" type="text" class="textBox date_pick readonly" placeholder="Date" required>
                 </label>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
-  
+</div>  
 </div><!--ticket-wrapper-full--> 
 
 <div align="center" class="ticket-form-button"><input class="assignButton" name="submit" type="submit" value="Done"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>   	
@@ -270,15 +271,18 @@ function select_existing_user(event,src){
                 $(".order_addresses").append('<div class="area-bold">'+addresses[i][0]+'</div><div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> '+addresses[i][1]+'</div>');
             }
 
+            $('#id_payment_policy').empty();
             //Payment Policy
             if(data['payment_policy'] == 'BREAKDOWN')
             {
               $("#id_payment_policy").append($('<option>',{value: 'BEFORE CLEANING',text: 'BEFORE CLEANING'}));
               $("#id_payment_policy").append($('<option>',{value: 'AFTER CLEANING',text: 'AFTER CLEANING'}));
+              $('#id_amount').val(data['before_amount']);
             }
             else
             {
               $("#id_payment_policy").append($('<option>',{value: data['payment_policy'],text: data['payment_policy']}));
+              $('#id_amount').val(data['total_cost']);
             }
 
             //to show
@@ -287,6 +291,22 @@ function select_existing_user(event,src){
             $('.ticket-form-head').show();
             $('.ticket-form').show();
             $('.ticket-form-button').show();
+
+            //payment policy amount
+            $('#id_payment_policy').change(function(){
+              payment_policy = this.value;
+              
+              if(payment_policy == 'BEFORE CLEANING')
+              {
+                $('#id_amount').val(data['before_amount']);
+              }
+              
+              if(payment_policy == 'AFTER CLEANING')
+              {
+                $('#id_amount').val(data['after_amount']);
+              }
+
+            })
             
         }
 
@@ -373,6 +393,20 @@ function search_live(event){
         };
         $.ajax(ajax);
 }
+
+//if check -- check number
+$('#id_paymentmethod').change(function(){
+    payment_method = this.value;
+    if(payment_method == 'CHECK')
+    {
+      $('#id_check_expand').css('display','block');
+    }
+    else
+    {
+     $('#id_check_expand').css('display','none'); 
+    }
+});
+
 
 </script>
 {% endblock %}	
