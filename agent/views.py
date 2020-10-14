@@ -116,9 +116,10 @@ def GetFeedbackOrderInfo(request):
 		dropdown_order_info['payment_policy']	= order.evaluation.payment_method
 		dropdown_order_info['agent_image_url']	= order.evaluation.call_attender.profile_image.url or None
 		dropdown_order_info['total_cleaners'] 	= order.total_cleaners
-		dropdown_order_info['before_amount']    = order.evaluation.before_cleaning_amount
-		dropdown_order_info['after_amount']     = order.evaluation.after_cleaning_amount
 
+		dropdown_order_info['remining_amount']  = order.remining_amount
+		dropdown_order_info['before_amount']    = (order.evaluation.before_cleaning_amount or 0)-(order.preamount_paid or 0) 
+		dropdown_order_info['after_amount']     = (order.evaluation.after_cleaning_amount or 0)-(order.postamount_paid or 0)
 
 
 		#for multiple order addresses

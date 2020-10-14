@@ -721,7 +721,7 @@
             <br>
             <div class="payment-text bold-text red-text"><div>Final Amount</div> : {{order.evaluation.total_cost|default_if_none:'0.00'|floatformat:'2'}} KD</div>
             <hr class="bar"> 
-            <div class="payment-text"><div>Types of Payments</div> : {% if order.paymenthistory %}{% for history in order.paymenthistory %}{{history.payment_mode}}{% endfor %}{% endif %}</div>
+            <div class="payment-text"><div>Types of Payments</div> : {% if order.paymenthistory %}{% for history in order.paymenthistory %}{{history.payment_mode}},{% endfor %}{% endif %}</div>
             <div class="payment-text"><div>Closed Date</div> : {{order.payment_completed_date|default_if_none:''}}</div>
             <div class="payment-text"><div>Paid</div> : {{order.amount_paid|default_if_none:'0.00'|floatformat:'2'}} KD</div>
             <div class="payment-text"><div>Balance</div> : {{order.remining_amount|default_if_none:'0.00'|floatformat:'2'}} KD</div>

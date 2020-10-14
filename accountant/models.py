@@ -1,12 +1,13 @@
 from django.db import models
-from user.models import UserProfile
 from order.models import Order
+from user.models import UserProfile
+
 # Create your models here.
 
 PAYMENT_MODE_CHOICES = (
 	('CASH','CASH'),
 	('CHECK','CHECK'),
-	('OTHER','OTHER'),
+	('BANK','BANK'),
 	)
 
 #Payment History of Customers...There may be multiple payment history for single order(in case of subscription,down payment)
@@ -18,8 +19,9 @@ class PaymentHistory(models.Model):
 	received_by 				 = models.ForeignKey(UserProfile,blank=False,null=False,related_name='payment_history_received_by')
 	paid_date 					 = models.DateTimeField(blank=True,null=True)
 	check_no            		 = models.CharField(max_length=100,blank=True,null=True)
-	check_date 					 = models.CharField(max_length=100,blank=True,null=True)
+	check_date 					 = models.DateField(blank=True,null=True)
 	bank_name 					 = models.CharField(max_length=100,blank=True,null=True)
+	bank_no                      = models.CharField(max_length=100,blank=True,null=True)
 	is_active      				 = models.BooleanField(null=False,blank=True,default=True)
 	created       			     = models.DateTimeField(auto_now_add=True)
 	updated    				     = models.DateTimeField(auto_now=True)
@@ -28,4 +30,4 @@ class PaymentHistory(models.Model):
 		return str(self.order.id)
 
 	def __str__(self):
-		return self.order.id
+		return str(self.order.order_no)

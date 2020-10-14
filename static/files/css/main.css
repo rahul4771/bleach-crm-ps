@@ -438,7 +438,7 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .order-card-column:hover { box-shadow: 0 10px 28px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.10);}
 .order-bar-container{ position:relative; height:15px; margin:0 0 8px 0; padding:0; border-radius:15px; }
 .order-loaderbar{ background:#e3e3e3; position:absolute; top:0; height:12px; left:0; width:100%;border-radius:15px;} 
-.bar-loader{ background:#00be69;position:absolute; top:0; height:12px; left:0; width:75%;border-radius:15px;}
+.bar-loader{ background:#00be69;position:absolute; top:0; height:12px; left:0; width:0%;border-radius:15px;}
 .order-progress-wrapper { display:grid; grid-template-columns: repeat(auto-fit, minmax(13rem,1fr)); grid-gap:1rem; }
 .order-progress-widget {width: 100%; text-align: center; padding:0px 5px; }
 .order-progress-widget-column1 { margin:0 0 0 0; border-right:1px solid #e3e3e3; }
