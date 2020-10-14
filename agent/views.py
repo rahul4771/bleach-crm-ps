@@ -2351,9 +2351,9 @@ def ClientData(request):
 		print("kabir")
 		month,year = prevdate.split("/")
 		month2,year2 = todate.split("/")
-		print(month,year,month2,year2,"mko")
+		
 		monthdate1 = datetime(day=1,month=int(month),year=int(year))
-		monthdate2 = datetime(day=1,month=int(month2),year=int(year2))
+		monthdate2 = datetime(day=28,month=int(month2),year=int(year2))
 		
 		try:
 			for governorate in governorates:
