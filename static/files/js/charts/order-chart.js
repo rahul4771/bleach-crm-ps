@@ -18,6 +18,7 @@ function initialize() {
         width: '100%',
         vAxis: {
             minValue: 0,
+            format: '#'
         },
         animation: {
             duration: 1000,
