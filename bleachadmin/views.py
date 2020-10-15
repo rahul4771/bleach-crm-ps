@@ -976,7 +976,8 @@ def SalesLocationData(request):
 		print("derr")
 		month,year = prevdate.split("/")
 		month2,year2 = todate.split("/")
-		
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=12)
+		monthdate2 = datetime(day=28,month=int(month2),year=int(year2),hour=12)
 		locationcount = 0
 		others_count = 0
 
@@ -984,7 +985,7 @@ def SalesLocationData(request):
 		for location in location_types:
 			locationcount += 1
 
-			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__year__range=(year,year2),evaluation__quatation_approved_date__month__range=(month,month2),evaluation__evaluation_details__evaluation_book_evaluation_details__area_type=location.name).count()
+			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(monthdate1,monthdate2),evaluation__evaluation_details__evaluation_book_evaluation_details__area_type=location.name).count()
 			if not sales_location_count:
 				sales_location_count = 0
 

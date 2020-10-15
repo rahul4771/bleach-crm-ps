@@ -271,13 +271,13 @@
         
         <div class="chart_box_Left"><!--chart_box_Left-->        
         <div class="Button_wrapperChart">
-            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonth_sales"><div class="slider round"><span class="on">DATE</span><span class="off">MONTH</span></div></label></div>
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonth_sales"><div class="slider round"><span class="on">MONTH</span><span class="off">DATE</span></div></label></div>
 
-            <input type="text" id="sales_curve_date1" class=" txt-box saleset1" hidden>
-            <input type="text" id="sales_curve_date2" class=" txt-box saleset1" hidden>
+            <input type="text" id="sales_curve_date1" class=" txt-box saleset1" >
+            <input type="text" id="sales_curve_date2" class=" txt-box saleset1" >
 
-            <input type="text" id="sales_curve_month1" class="month_pick txt-box saleset2" >
-            <input type="text" id="sales_curve_month2" class="month_pick txt-box saleset2" >
+            <input type="text" id="sales_curve_month1" class="month_pick txt-box saleset2" hidden>
+            <input type="text" id="sales_curve_month2" class="month_pick txt-box saleset2" hidden>
             <div><button id="reset_sales_curve" class="green-button-chart">Reset</button></div>
             
             </div>
@@ -441,11 +441,11 @@
                             
         <div class="chart_box_Left"><!--chart_box_Left-->        
         <div class="Button_wrapperChart">
-            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonth_sales_target"><div class="slider round"><span class="on">DATE</span><span class="off">MONTH</span></div></label></div>
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonth_sales_target"><div class="slider round"><span class="on">MONTH</span><span class="off">DATE</span></div></label></div>
             <input type="text" id="sales_target_date1" class="followup_date targetset1 txt-box" >&nbsp;
             <input type="text" id="sales_target_date2" class="followup_date targetset1 txt-box" >
-            <input type="text" id="sales_target_month1" class="followup_month targetset2 txt-box" >&nbsp;
-            <input type="text" id="sales_target_month2" class="followup_month targetset2 txt-box" >
+            <input type="text" id="sales_target_month1" class="followup_month targetset2 txt-box" hidden>&nbsp;
+            <input type="text" id="sales_target_month2" class="followup_month targetset2 txt-box" hidden>
             <div><button id="reset_sales_target" class="green-button-chart">Reset</button></div>
               
             </div>
@@ -873,7 +873,6 @@ window.location.href=url+query;
 }
 
 $('document').ready(function(){
-  
   //Followup graph popup
   $('.followup_graph').on('click', function (e) {
     console.log($(this).data('evaluator'),"drt")

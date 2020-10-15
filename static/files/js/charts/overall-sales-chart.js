@@ -143,15 +143,15 @@ function initialize() {
     
     $("#daymonth_sales").click(function(){
         if ($(this).is(':checked')){
-            console.log("red")
-            drawArea();
-            $('.saleset1').attr("hidden",false);
-            $('.saleset2').attr("hidden",true);
-        }else{
             $('.saleset1').attr("hidden",true);
             $('.saleset2').attr("hidden",false);
             console.log("red2")
             drawBars();
+        }else{
+            console.log("red")
+            drawArea();
+            $('.saleset1').attr("hidden",false);
+            $('.saleset2').attr("hidden",true);
         }
     });
 
@@ -173,28 +173,11 @@ function initialize() {
 
     $("#reset_sales_curve").click(function(){
         if ($("#daymonth_sales").is(':checked')){
-            var date1 = new Date();
-
-            date1.setDate(date1.getDate()-1)
-            date1.setMonth(date1.getMonth()+1)
-            var datestring = ("0" + (date1.getDate())).slice(-2)  + "-" + ("0" + (date1.getMonth())).slice(-2) + "-" + date1.getFullYear();
-            
-            var date2 = new Date();
-            date2.setDate(date2.getDate()-30);
-            date2.setMonth(date2.getMonth()+1)
-            var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
-        console.log(datestring,datestring2)
-    
-        $('#sales_curve_date1').val(datestring2);
-        $('#sales_curve_date2').val(datestring);
-    
-        drawArea();
-    }else{
         var date1 = new Date();
-        date1.setMonth(date1.getMonth()-1);
 
         var date2 = new Date();
-        
+        date2.setMonth(date2.getMonth()+1);
+
         var month = ("0" + (date1.getMonth())).slice(-2);
         var month2 = ("0" + (date2.getMonth())).slice(-2);
         console.log(month,"lp")
@@ -204,25 +187,42 @@ function initialize() {
         $('#sales_curve_month1').val(datestring);
         $('#sales_curve_month2').val(datestring2);
         drawBars();
+    }else{
+        var date1 = new Date();
+
+        date1.setDate(date1.getDate()-1)
+        date1.setMonth(date1.getMonth()+1)
+        var datestring = ("0" + (date1.getDate())).slice(-2)  + "-" + ("0" + (date1.getMonth())).slice(-2) + "-" + date1.getFullYear();
+        
+        var date2 = new Date();
+        date2.setDate(date2.getDate()-30);
+        date2.setMonth(date2.getMonth()+1)
+        var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
+        console.log(datestring,datestring2)
+    
+        $('#sales_curve_date1').val(datestring2);
+        $('#sales_curve_date2').val(datestring);
+    
+        drawArea();
     }
     });
 
     if ($("#daymonth_sales").is(':checked')){
-        $('.saleset1').attr("hidden",false);
-        $('.saleset2').attr("hidden",true);
-        drawArea();
-    }else{
         $('.saleset1').attr("hidden",true);
         $('.saleset2').attr("hidden",false);
         drawBars();
+    }else{
+        $('.saleset1').attr("hidden",false);
+        $('.saleset2').attr("hidden",true);
+        drawArea();
     };
     
 }
 
 var date1 = new Date();
-date1.setMonth(date1.getMonth()-1);
 
 var date2 = new Date();
+date2.setMonth(date2.getMonth()+1);
 
 var month = ("0" + (date1.getMonth())).slice(-2);
 var month2 = ("0" + (date2.getMonth())).slice(-2);
