@@ -41,7 +41,10 @@
                     {% if order.evaluation.payment_method == 'PREPAID' or order.evaluation.payment_method == 'BREAKDOWN' %}
                     <div class="order-progress-widget order-progress-widget-column2"><!--order-progress-widget order-progress-widget-column2-->
                         <div class="evaluation">Payment</div>
-                        {% if order.payment_status == 'COMPLETED' or order.evaluation.before_cleaning_amount == order.preamount_paid %}
+                        {% if order.payment_status == 'COMPLETED' %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.svg' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                        {% elif order.evaluation.before_cleaning_amount == order.preamount_paid and order.evaluation.payment_method == 'BREAKDOWN'  %}
                         <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.svg' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
                         {% else %}
@@ -72,7 +75,10 @@
                     {% if order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'BREAKDOWN' %}
                     <div class="order-progress-widget order-progress-widget-column2"><!--order-progress-widget order-progress-widget-column2-->
                         <div class="evaluation">Payment</div>
-                        {% if order.payment_status == 'COMPLETED' or order.evaluation.after_cleaning_amount == order.postamount_paid %}
+                        {% if order.payment_status == 'COMPLETED' %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.svg' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                        {% elif order.evaluation.after_cleaning_amount == order.postamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
                         <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.svg' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
                         {% else %}
@@ -85,7 +91,7 @@
                     <div class="order-progress-widget order-progress-widget-column6"><!--order-progress-widget order-progress-widget-column6-->
                         <div class="evaluation">Feedback</div>
                         {% if order.is_feedback_marked %}
-                        <div class="evaluation-icon"><img src="{% static 'files/images/order-feedback.svg' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-green-feedback.svg' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
                         {% else %}
                         <div class="evaluation-icon"><img src="{% static 'files/images/order-gray-feedback.svg' %}" class="orderEval-icon"></div>
@@ -96,7 +102,7 @@
             </div><!--order-left-stretch-->
             
         <div class="order-right-fixed"><!--order-right-fixed-->
-            <div class="order-card-column whitebg red-border"><!--order-card-column-->
+            <div class="order-card-column whitebg red-border clickable-row-list" data-href="{% url 'bleach_admin:admin-client-orders' client_details.id %}"><!--order-card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-orders-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
@@ -118,7 +124,21 @@
         <hr class="style-three" > 
         <div class="order-clean-Details-wrapper"><!--order-clean-Details-wrapper-->
             <div class="order-clean-Details-widget order-clean-Details-widget-column1"><!--order-clean-Details-widget order-clean-Details-widget-column1-->
-            <div class="cleaning-img"><img src="{% static 'files/images/cleaning.jpg' %}"></div>
+            <div class="cleaning-img">
+                {% if orderschedule.order_scheduler_book.service_type.name == 'General Cleaning' %}
+                <img src="{% static 'files/images/service_general_cleaning.jpg' %}">
+                {% elif orderschedule.order_scheduler_book.service_type.name == 'Deep Cleaning' %}
+                <img src="{% static 'files/images/service_deep_cleaning.jpg' %}">
+                {% elif orderschedule.order_scheduler_book.service_type.name == 'Carpet Cleaning' %}
+                <img src="{% static 'files/images/Service_carpet_cleaning.jpg' %}">
+                {% elif orderschedule.order_scheduler_book.service_type.name == 'Upholstery Cleaning' %}
+                <img src="{% static 'files/images/Service_uppostry.jpg' %}">
+                {% elif orderschedule.order_scheduler_book.service_type.name == 'Kitchen Cleaning' %}
+                <img src="{% static 'files/images/Service_kitchen_cleaning.jpg' %}">
+                {% elif orderschedule.order_scheduler_book.service_type.name == 'Sterilization' %}
+                <img src="{% static 'files/images/Service_sanitization.jpg' %}">
+                {% endif %}
+            </div>
             </div><!--order-clean-Details-widget order-clean-Details-widget-column1-->
             
             <div class="order-clean-Details-widget order-clean-Details-widget-column2"><!--order-clean-Details-widget order-clean-Details-widget-column2-->
@@ -141,6 +161,9 @@
                 <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.location_type}}</div>
                 {% endif %}
                 
+                {% if orderschedule.customer_address.area %}
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.customer_address.area.name}}</div>
+                {% endif %}
             </div><!--order-clean-Details-widget order-clean-Details-widget-column2-->            
             
             <div class="order-clean-Details-widget order-clean-Details-widget-column3"><!--order-clean-Details-widget order-clean-Details-widget-column3-->
@@ -158,15 +181,16 @@
        
             <div class="order-admin-widget-column1"><!--order-admin-widget-column1-->
                 {% if orderschedule.evaluation_details.evaluator.profile_image %}
-                <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}">{{orderschedule.evaluation_details.evaluator.profile_image.url}}</div>
-                {% else %}
-                <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
-                {% endif %}
+                <div class="profile-pic"><img src="{{orderschedule.evaluation_details.evaluator.profile_image.url}}"></div>
                 <div class="client-name">{{orderschedule.evaluation_details.evaluator.name}}<div class="common-gray-text">Evaluator</div></div>
+                {% else %}
+                <div class="profile-pic"><img src="{{orderschedule.evaluation_details.evaluation.call_attender.profile_image.url}}"></div>
+                <div class="client-name">{{orderschedule.evaluation_details.evaluation.call_attender.name}}<div class="common-gray-text">Agent</div></div>
+                {% endif %}
             </div><!--order-admin-widget-column1-->
             
             <div class="order-admin-widget-column2"><!--order-admin-widget-column2-->
-            <p>{{orderschedule.order_scheduler_book.evaluator_note}} </p>
+            <p>{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}} </p>
             </div><!--order-admin-widget-column2-->
         </div><!--order-admin-wrapper-->
         
@@ -235,7 +259,7 @@
 
 <div class="details-sub-head align-left">Subscription Status</div>
 <div class="order-clean-outer-wrapper cream"><!--order-clean-outer-wrapper-->
-<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table whitebg">
+<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table whitebg">    
  
 <thead>
 <tr>
@@ -256,7 +280,6 @@
     {% endfor %}     
 </tbody>
 <tfoot>
- 
 </tfoot>
 </table>
 
@@ -661,6 +684,7 @@
 <div class="details-sub-head align-left">Media</div>
 <div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
 <div class="gallery-wrapper"><!--gallery-wrapper-->
+    {% if orderschedule.order_scheduler_book.evaluationmedia %}
     <div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
     <div class="media-heading align-left">Evaluation</div>
     <section>
@@ -668,8 +692,10 @@
     </section>
   
     </div><!--gallery-widget-column-column1-->
-    
-    <div class="gallery-widget-column-column2"><!--gallery-widget-column-column2-->
+    {% endif %}
+
+
+    <div class="gallery-widget-column-column2 gallery-widget-column-deletecolumn{{forloop.counter}}2"><!--gallery-widget-column-column2-->
     <div class="media-heading align-left">Investigation</div>
         <section>
         <div id="media{{forloop.counter}}2" data-pn="{{forloop.counter}}2" data-src="{% for investigation in orderschedule.investigations %}{% for media in investigation.investigationmedias %}{{media.media.url}},{% endfor %}{% endfor %}"></div>
@@ -678,8 +704,9 @@
     </div><!--gallery-widget-column-column2-->    
 </div><!--gallery-wrapper-->
 
+
 <div class="gallery-wrapper"><!--gallery-wrapper-->    
-    <div class="gallery-widget-column-column3"><!--gallery-widget-column-column3-->
+    <div class="gallery-widget-column-column3 gallery-widget-column-deletecolumn{{forloop.counter}}3"><!--gallery-widget-column-column3-->
     <br>
     <div class="media-heading align-left">Cleaning (Before)</div>
     <section>
@@ -687,8 +714,8 @@
     </section>
         
     </div><!--gallery-widget-column-column2-->     
-    
-    <div class="gallery-widget-column-column4"><!--gallery-widget-column-column4-->
+
+    <div class="gallery-widget-column-column4 gallery-widget-column-deletecolumn{{forloop.counter}}4"><!--gallery-widget-column-column4-->
     <br>
     <div class="media-heading align-left">Cleaning (After)</div>
     <section>
@@ -696,7 +723,6 @@
     </section>
         
     </div><!--gallery-widget-column-column4-->      
-    
 </div><!--gallery-wrapper-->
 </div><!--order-clean-outer-wrapper-->
 
@@ -801,6 +827,25 @@ total_schedules = parseInt("{{order.orderschedules|length}}")
 
 {% for orderschedule in order.orderschedules %}
 
+//To Hide Images 
+    investigation_img   = $('#media{{forloop.counter}}2').data('src');
+    before_img          = $('#media{{forloop.counter}}3').data('src');
+    after_img           = $('#media{{forloop.counter}}4').data('src');
+
+    if(investigation_img == '')
+    {
+        $('.gallery-widget-column-deletecolumn{{forloop.counter}}2').remove();
+    }
+    if(before_img == '')
+    {
+        $('.gallery-widget-column-deletecolumn{{forloop.counter}}3').remove();
+    }
+    if(after_img == '')
+    {
+        $('.gallery-widget-column-deletecolumn{{forloop.counter}}4').remove();
+    }
+
+
 $('.moreless-button{{orderschedule.id}}').click(function () {
   $('.more-details{{orderschedule.id}}').slideToggle();
   if ($('.moreless-button{{orderschedule.id}}').text() == "Show More") {
@@ -813,7 +858,7 @@ $('.moreless-button{{orderschedule.id}}').click(function () {
 {% if orderschedule.status == 'CONFIRMED' %}
 dateconfirm_completed_count += 1;
 {% endif %}  
-{% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}
+{% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' or orderschedule.work_status == 'CLEANING_FULFILLED' %}
 teamassign_completed_count += 1;
 {% endif %}
 {% if orderschedule.work_status == 'CLEANING_FULFILLED' %}
@@ -870,16 +915,16 @@ total_percentage = (total_schedules*5)
 {% if order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'PREPAID' %}
 total_percentage += total_schedules
 {% else %}
-total_percentage += total_schedules
+total_percentage += total_schedules*2
 {% endif %}
 
 active_percentage = dateconfirm_completed_count+teamassign_completed_count+cleaning_completed_count+total_schedules
 
-{% if order.evaluation.before_cleaning_amount == order.postamount_paid %}
+{% if order.evaluation.before_cleaning_amount == order.postamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
 active_percentage += total_schedules
 {% endif %}
 
-{% if order.evaluation.after_cleaning_amount == order.preamount_paid %}
+{% if order.evaluation.after_cleaning_amount == order.preamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
 active_percentage += total_schedules
 {% endif %}
 
