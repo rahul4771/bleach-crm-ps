@@ -15,13 +15,15 @@ def quotation_data(request):
     print(prevdate,todate,"pop")
     
     if dom == 'Month':
-        print("kabir")
         month,year = prevdate.split("/")
         month2,year2 = todate.split("/")
         monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=12)
         monthdate2 = datetime(day=28,month=int(month2),year=int(year2),hour=12)
-        print(monthdate1,monthdate2,"mod")
+        
         quotations = Order.objects.filter(is_active=True,created__range=(monthdate1,monthdate2)).values('created').annotate(month=Month('created')).values('month').annotate(count=Count('pk'))
+        
+        print(quatations)
+        print('graph dataaaaaaaaa')
         # months = quotations.datetimes("created", kind="month")
 
         # for month in months:
