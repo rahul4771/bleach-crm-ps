@@ -107,6 +107,7 @@ def GetFeedbackOrderInfo(request):
 		dropdown_order_info['order_id']      = order.id
 
 		##order information
+		dropdown_order_info['blc_no']           = order.order_no
 		dropdown_order_info['name']          	= order.evaluation.customer.name
 		dropdown_order_info['mobile_number'] 	= order.evaluation.customer.mobile_number
 		dropdown_order_info['total_cost']    	= order.evaluation.total_cost
@@ -115,6 +116,7 @@ def GetFeedbackOrderInfo(request):
 		dropdown_order_info['payment_status']	= order.payment_status
 		dropdown_order_info['payment_policy']	= order.evaluation.payment_method
 		dropdown_order_info['agent_image_url']	= order.evaluation.call_attender.profile_image.url or None
+		dropdown_order_info['agent_name']       = order.evaluation.call_attender.name or None
 		dropdown_order_info['total_cleaners'] 	= order.total_cleaners
 
 		dropdown_order_info['remining_amount']  = order.remining_amount
@@ -129,7 +131,8 @@ def GetFeedbackOrderInfo(request):
 
 			customer_order_address.append(scheduler.customer_address.area.name)
 			customer_order_address.append(scheduler.order_scheduler_book.service_type.name)
-
+			customer_order_address.append(scheduler.order_scheduler_book.cleaning_policy)
+			customer_order_address.append(scheduler.work_status)
 			dropdown_order_info['order_address'].append(customer_order_address)
 
 

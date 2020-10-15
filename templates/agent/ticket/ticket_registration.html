@@ -31,6 +31,7 @@
 			
 				<div class="cleaning-column-wrapper ltyellow-border order-details"><!--cleaning-column-wrapper-->
 				<div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
+        <div class="details-head align-left order_blc_no"></div>
 				<div class="inside-head align-left order_customer_name"></div>
 				<p class="paragraph order_customer_mobile"></p>
 				
@@ -46,7 +47,7 @@
 				<div class="common-gray-text align-left yellow-text lg-text order_cost"></div>
 				<div class="common-gray-text align-left sm-text gray-text order_total_cleaners"></div>
 				
-					<div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+					<div class="profile-pic-line"><img class="agent_image" src="{% static 'files/images/profile-pic.png' %}"></div>
 			</div><!--cleaning-column-widget cleaning-column-widget-column2-->
 		</div><!--cleaning-column-wrapper-->
 		
@@ -225,12 +226,15 @@ function select_existing_user(event,src){
             $("#order_id_hidden").val(data['order_id']);
 
             //to add order info
+            $('.order_blc_no').html(data['blc_no']);
             $('.order_customer_name').html(data['name'])
             $('.order_customer_mobile').html(data['mobile_number']);
             $('.order_cost').html(+data['total_cost']+' KD');
             $('.order_total_cleaners').html(+data['total_cleaners']+' Cleaners');
             $('.order_date').html(data['date']);
             $('.agent_image').prop('src',data['agent_image_url']);
+            $('.agent_image').prop('title',data['agent_name']);
+
 
             order_status   = data['order_status']
             payment_status = data['payment_status']
@@ -281,7 +285,7 @@ function select_existing_user(event,src){
             $(".order_addresses").empty();
             for(i=0;i<addresses.length;++i)
             {
-                $(".order_addresses").append('<div class="area-bold">'+addresses[i][0]+'</div><div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> '+addresses[i][1]+'</div>');
+                $(".order_addresses").append('<div class="area-bold">'+addresses[i][0]+'</div><div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle '+(addresses[i][3] == 'CLEANING_FULFILLED' ? 'green-text' : 'yellow-text' )+'" aria-hidden="true"></i> '+addresses[i][1]+'-'+addresses[i][2]+'</div>');
             }
 
             //to show
