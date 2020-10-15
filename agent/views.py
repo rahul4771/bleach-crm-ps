@@ -107,6 +107,7 @@ def GetFeedbackOrderInfo(request):
 		dropdown_order_info['order_id']      = order.id
 
 		##order information
+		dropdown_order_info['blc_no']           = order.order_no
 		dropdown_order_info['name']          	= order.evaluation.customer.name
 		dropdown_order_info['mobile_number'] 	= order.evaluation.customer.mobile_number
 		dropdown_order_info['total_cost']    	= order.evaluation.total_cost
@@ -115,6 +116,7 @@ def GetFeedbackOrderInfo(request):
 		dropdown_order_info['payment_status']	= order.payment_status
 		dropdown_order_info['payment_policy']	= order.evaluation.payment_method
 		dropdown_order_info['agent_image_url']	= order.evaluation.call_attender.profile_image.url or None
+		dropdown_order_info['agent_name']       = order.evaluation.call_attender.name or None
 		dropdown_order_info['total_cleaners'] 	= order.total_cleaners
 
 		dropdown_order_info['remining_amount']  = order.remining_amount
@@ -129,7 +131,8 @@ def GetFeedbackOrderInfo(request):
 
 			customer_order_address.append(scheduler.customer_address.area.name)
 			customer_order_address.append(scheduler.order_scheduler_book.service_type.name)
-
+			customer_order_address.append(scheduler.order_scheduler_book.cleaning_policy)
+			customer_order_address.append(scheduler.work_status)
 			dropdown_order_info['order_address'].append(customer_order_address)
 
 
@@ -252,16 +255,18 @@ def GetOrderScheduleTicketInfo(request):
 	order_id            = request.GET.get('order_id')
 
 	try:
-		ordershedules   = OrderScheduler.objects.filter(order_id=order_id,is_active=True,work_status='CLEANING_FULFILLED').select_related('customer_address__area','order_scheduler_book')
+		ordershedules   = OrderScheduler.objects.filter(order_id=order_id,is_active=True,work_status='CLEANING_FULFILLED').select_related('customer_address__area','order_scheduler_book').prefetch_related(Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(check_out__isnull=True),to_attr='assigned_investigations'))
 	except:
 		ordershedules   = None
 
 	order_schedule = {}
 	for schedule in ordershedules:
-		order_schedule[schedule.id] = schedule.customer_address.area.name+'-'+schedule.order_scheduler_book.service_type.name+'/'+datetime.strftime((schedule.start_at+timedelta(hours=3)),'%d-%m-%Y %I:%M %p') or ''
+		if not schedule.assigned_investigations:
+			print("hiiiiiiiiiiiiiiiiiiiiiiii")
+			order_schedule[schedule.id] = schedule.customer_address.area.name+'-'+schedule.order_scheduler_book.service_type.name+'/'+datetime.strftime((schedule.start_at+timedelta(hours=3)),'%d-%m-%Y %I:%M %p') or ''
 
-		dropdown_orderschedule_info['name']          = schedule.customer_address.customer.name
-		dropdown_orderschedule_info['mobile_number'] = schedule.customer_address.customer.mobile_number
+			dropdown_orderschedule_info['name']          = schedule.customer_address.customer.name
+			dropdown_orderschedule_info['mobile_number'] = schedule.customer_address.customer.mobile_number
 
 	dropdown_orderschedule_info['schedules'] = order_schedule
 	dropdown_orderschedule_info['order_id']  = order_id

@@ -75,16 +75,16 @@
 <tbody>
 {% for investigation in investigations %}
 <tr class="green-line"> 
-<td data-label="BLC Number" >{{investigation.order.evaluation.evaluation_id}}</td>
-<td data-label="Proposed Time">{{investigation.sheduled_at|date:"d/m/Y h:m A"}}</td>
+<td data-label="BLC Number" class="bold-text">{{investigation.order.evaluation.evaluation_id}}</td>
+<td data-label="Proposed Time" class="bold-text">{{investigation.sheduled_at|date:"d/m/Y h:m A"}}</td>
 <td data-label="Customer">{{investigation.order.evaluation.customer.name}}</td>
 <td class="hide-a" data-label="">{{investigation.order_schedule.customer_address.area.name}}</td>
 <td data-label="Mobile Number">{{investigation.order.evaluation.customer.mobile_number}}</td>
 <td class="hide-a" data-label="">
-{% if investigation.investigator.profile_image %}
-<img src="{{investigation.investigator.profile_image.url}}" class="profile-avatar" title="{{investigation.investigator.name}}">
+{% if investigation.assigned_by.profile_image %}
+<img src="{{investigation.assigned_by.profile_image.url}}" class="profile-avatar" title="{{investigation.assigned_by.name}}">
 {% else %}
-<img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avatar" title="{{investigation.investigator.name}}">
+<img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avatar" title="{{investigation.assigned_by.name}}">
 {% endif %}
 {% for team_detail in investigation.order_schedule.cleaning_team_details %}
 {% if team_detail.team_leader.profile_image %}

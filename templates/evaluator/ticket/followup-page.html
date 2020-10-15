@@ -69,7 +69,7 @@
             </div><!--order-left-stretch-->
             
         <div class="order-right-fixed"><!--order-right-fixed-->
-            <div class="order-card-column whitebg red-border"><!--order-card-column-->
+            <div class="order-card-column whitebg red-border clickable-row-list" data-href="{% url 'evaluator:evaluator-client-orders' client_details.id %}"><!--order-card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-orders-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
@@ -116,6 +116,11 @@
                 <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.location_type}}</div>
                 {% endif %}
 
+                {% if followup_details.investigation.order_schedule.customer_address.area %}
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i>
+                {{followup_details.investigation.order_schedule.customer_address.area.name}}</div>
+                {% endif %}
+
             </div><!--order-clean-Details-widget order-clean-Details-widget-column2-->            
             
             <div class="order-clean-Details-widget order-clean-Details-widget-column3"><!--order-clean-Details-widget order-clean-Details-widget-column3-->
@@ -150,9 +155,6 @@
             <p>{{followup_details.investigation.notes}}</p>
         </div><!--investigation-columns-middle-->
 
-        <div class="investigation-columns-right"><!--investigation-columns-right-->
-            <div class=" "><img src="{% static 'files/images/cleaning1.jpg' %}"></div>
-        </div><!--investigation-columns-right-->
 </div><!--investigation-columns-->
             
 {% for follow_up_scheduler in followup_details.follow_up_schedules %}
@@ -231,11 +233,7 @@
     <div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
     <div class="media-heading align-left">Investigation</div>
     <section>
-        <div data-pn="1" data-src="{% for investigationmedia in followup_details.investigation.investigationmedias %}
-        {% if investigationmedia.taken_status != 'CUSTOMER_SEND' %}
-        {{investigationmedia.media.url}},
-        {% endif %}
-        {% endfor %}"></div>
+        <div id="data-pn-1" data-pn="1" data-src="{% for investigationmedia in followup_details.investigation.investigationmedias %}{% if investigationmedia.taken_status != 'CUSTOMER_SEND' %}{{investigationmedia.media.url}},{% endif %}{% endfor %}"></div>
     </section>
   
     </div><!--gallery-widget-column-column1-->
@@ -243,11 +241,7 @@
     <div class="gallery-widget-column-column2"><!--gallery-widget-column-column2-->
     <div class="media-heading align-left">From Customer</div>
         <section>
-        <div data-pn="2" data-src="{% for investigationmedia in followup_details.investigation.investigationmedias %}
-        {% if investigationmedia.taken_status == 'CUSTOMER_SEND' %}
-        {{investigationmedia.media.url}},
-        {% endif %}
-        {% endfor %}"></div>
+        <div id="data-pn-2" data-pn="2" data-src="{% for investigationmedia in followup_details.investigation.investigationmedias %}{% if investigationmedia.taken_status == 'CUSTOMER_SEND' %}{{investigationmedia.media.url}},{% endif %}{% endfor %}"></div>
     </section>
     
     </div><!--gallery-widget-column-column2-->    
@@ -298,13 +292,29 @@
     </div><!--container-fluid space topspace-->
 </section><!--content-->
     
-{% include 'evaluator/common/footer.html' %} 
+{% include 'agent/common/footer.html' %} 
 </div><!--wrapper-->
 {% endblock %}
 {% block javascript %}
 <script>
  $('document').ready(function(){
- 
+    
+    //To Hide Images 
+    invest_img      = $('#data-pn-1').data('src');
+    invest_cust_img = $('#data-pn-2').data('src');
+
+    if(invest_img == '')
+    {
+        $('.gallery-widget-column-column1').remove();
+    }
+
+    if(invest_cust_img == '')
+    {
+     $('.gallery-widget-column-column2').remove();   
+    }
+
+
+    //Bar
     {% if followup_details.status == 'INVESTIGATOR_APPROVED' %}
     $('.bar-loader').css('width','50%');
     {% elif followup_details.status == 'FOLLOWUP_IN_PROGRESS' %}

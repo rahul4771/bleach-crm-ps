@@ -15,7 +15,6 @@ def quotation_data(request):
     print(prevdate,todate,"pop")
     
     if dom == 'Month':
-        print("kabir")
         month,year = prevdate.split("/")
         month2,year2 = todate.split("/")
         monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=12)
