@@ -22,8 +22,6 @@ def quotation_data(request):
         
         quotations = Order.objects.filter(is_active=True,created__range=(monthdate1,monthdate2)).values('created').annotate(month=Month('created')).values('month').annotate(count=Count('pk'))
         
-        print(quatations)
-        print('graph dataaaaaaaaa')
         # months = quotations.datetimes("created", kind="month")
 
         # for month in months:
