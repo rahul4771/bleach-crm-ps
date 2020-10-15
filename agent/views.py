@@ -255,16 +255,18 @@ def GetOrderScheduleTicketInfo(request):
 	order_id            = request.GET.get('order_id')
 
 	try:
-		ordershedules   = OrderScheduler.objects.filter(order_id=order_id,is_active=True,work_status='CLEANING_FULFILLED').select_related('customer_address__area','order_scheduler_book')
+		ordershedules   = OrderScheduler.objects.filter(order_id=order_id,is_active=True,work_status='CLEANING_FULFILLED').select_related('customer_address__area','order_scheduler_book').prefetch_related(Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(check_out__isnull=True),to_attr='assigned_investigations'))
 	except:
 		ordershedules   = None
 
 	order_schedule = {}
 	for schedule in ordershedules:
-		order_schedule[schedule.id] = schedule.customer_address.area.name+'-'+schedule.order_scheduler_book.service_type.name+'/'+datetime.strftime((schedule.start_at+timedelta(hours=3)),'%d-%m-%Y %I:%M %p') or ''
+		if not schedule.assigned_investigations:
+			print("hiiiiiiiiiiiiiiiiiiiiiiii")
+			order_schedule[schedule.id] = schedule.customer_address.area.name+'-'+schedule.order_scheduler_book.service_type.name+'/'+datetime.strftime((schedule.start_at+timedelta(hours=3)),'%d-%m-%Y %I:%M %p') or ''
 
-		dropdown_orderschedule_info['name']          = schedule.customer_address.customer.name
-		dropdown_orderschedule_info['mobile_number'] = schedule.customer_address.customer.mobile_number
+			dropdown_orderschedule_info['name']          = schedule.customer_address.customer.name
+			dropdown_orderschedule_info['mobile_number'] = schedule.customer_address.customer.mobile_number
 
 	dropdown_orderschedule_info['schedules'] = order_schedule
 	dropdown_orderschedule_info['order_id']  = order_id
