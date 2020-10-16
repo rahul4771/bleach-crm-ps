@@ -2362,8 +2362,8 @@ def ClientData(request):
 		month,year = prevdate.split("/")
 		month2,year2 = todate.split("/")
 		
-		monthdate1 = datetime(day=1,month=int(month),year=int(year))
-		monthdate2 = datetime(day=28,month=int(month2),year=int(year2))
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=28,month=int(month2),year=int(year2),hour=23,minute=59,second=59,microsecond=0)
 		
 		try:
 			for governorate in governorates:
@@ -2384,11 +2384,15 @@ def ClientData(request):
 			todate = date.today() - timedelta(days=1)
 			prevdate = todate - timedelta(days=30)
 		print(prevdate,todate,"bhoot")
+		prev_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
+		prev_date_end = prevdate+timedelta(1)
+		todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
+		todate_date_end = todate+timedelta(1)
 		try:
 			print("jn")
 			for governorate in governorates:
 				#change date field from evaluation date to order created date
-				client_count = Order.objects.filter(is_active=True,evaluation__customer__address_customer__governorate__id=governorate.id, evaluation__quatation_approved_date__range=(prevdate,todate)).values_list('evaluation__customer').distinct().count()
+				client_count = Order.objects.filter(is_active=True,evaluation__customer__address_customer__governorate__id=governorate.id, evaluation__quatation_approved_date__gte=prev_date_start,evaluation__quatation_approved_date__lte=todate_date_end).values_list('evaluation__customer').distinct().count()
 				print(client_count,"red")
 				data.append({
 					"governorate" : governorate.name,
@@ -2449,12 +2453,14 @@ def TicketData(request):
 		daterange = pd.date_range(prevdate, todate)
 
 		for single_date in daterange:
-			sdate = single_date.strftime("%Y-%m-%d")
-			total_tickets = FollowUp.objects.filter(is_active=True,investigation__order__evaluation__quatation_approved_date=sdate).count()
-			followup_tickets = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_CLOSED',investigation__order__evaluation__quatation_approved_date=sdate).count()
+			ticket_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
+			ticket_date_end    = single_date+timedelta(1)	
+			
+			total_tickets = FollowUp.objects.filter(is_active=True,investigation__order__evaluation__quatation_approved_date__gte=ticket_date_start,investigation__order__evaluation__quatation_approved_date__lte=ticket_date_end).count()
+			followup_tickets = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_CLOSED',investigation__order__evaluation__quatation_approved_date__gte=ticket_date_start,investigation__order__evaluation__quatation_approved_date__lte=ticket_date_end).count()
 			print(sdate,total_tickets,followup_tickets,"qtc")
 			tkt_dict = {
-			"date" : sdate,
+			"date" : single_date,
 			"total" : total_tickets,
 			"followup" : followup_tickets
 			}
@@ -2478,7 +2484,7 @@ def FeedBackData(request):
 		monthdate1 = datetime(day=1,month=int(month),year=int(year))
 		monthdate2 = datetime(day=28,month=int(month2),year=int(year2))
 
-		feedbacks = FeedBack.objects.filter(is_active=True,order__evaluation__quatation_approved_date__date__range=(monthdate1,monthdate2)).values('order__evaluation__quatation_approved_date').annotate(month=Month('order__evaluation__quatation_approved_date'),).values('month').annotate(avg_rating=Avg('rating'))
+		feedbacks = FeedBack.objects.filter(is_active=True,order__evaluation__quatation_approved_date__range=(monthdate1,monthdate2)).values('order__evaluation__quatation_approved_date').annotate(month=Month('order__evaluation__quatation_approved_date'),).values('month').annotate(avg_rating=Avg('rating'))
 		print(feedbacks,"huh")
 		
 		for fb in feedbacks:
@@ -2486,7 +2492,7 @@ def FeedBackData(request):
 
 			fb_dict = {
 			"date" : fb['month'],
-			"avg_rating" : fb['avg_rating'] or 0,
+			"avg_rating" : fb['avg_rating'] or 0.0,
 			}
 			data.append(fb_dict)
 	else:
@@ -2501,13 +2507,15 @@ def FeedBackData(request):
 		daterange = pd.date_range(prevdate, todate)
 
 		for single_date in daterange:
-			sdate = single_date.strftime("%Y-%m-%d")
-			feedback_date = FeedBack.objects.filter(is_active=True,order__evaluation__quatation_approved_date__date=sdate).aggregate(avg_rate=Avg('rating'))['avg_rate'] #use order date for final commit
+			feedback_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
+			feedback_date_end    = single_date+timedelta(1)	
+			
+			feedback_date = FeedBack.objects.filter(is_active=True,order__evaluation__quatation_approved_date__range=(feedback_date_start,feedback_date_end)).aggregate(avg_rate=Avg('rating'))['avg_rate'] #use order date for final commit
 
-			print(sdate,feedback_date,"qtc")
+			print(feedback_date,"qtc")
 
 			fb_dict = {
-			"date" : sdate,
+			"date" : single_date,
 			"avg_rating" : feedback_date or 0
 			}
 			data.append(fb_dict)

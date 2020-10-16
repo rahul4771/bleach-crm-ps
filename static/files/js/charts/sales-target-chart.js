@@ -146,15 +146,15 @@ function salestarget(evaluator_id){
         
         $("#daymonth_sales_target").click(function(){
             if ($(this).is(':checked')){
-                console.log("red")
-                drawArea();
-                $('.targetset1').attr("hidden",false);
-                $('.targetset2').attr("hidden",true);
-            }else{
                 $('.targetset1').attr("hidden",true);
                 $('.targetset2').attr("hidden",false);
                 console.log("red2")
                 drawBars();
+            }else{
+                console.log("red")
+                drawArea();
+                $('.targetset1').attr("hidden",false);
+                $('.targetset2').attr("hidden",true);
             }
         });
 
@@ -176,6 +176,21 @@ function salestarget(evaluator_id){
 
         $("#reset_sales_target").click(function(){
             if ($("#daymonth_sales_target").is(':checked')){
+                var date1 = new Date();
+
+                var date2 = new Date();
+                date2.setMonth(date2.getMonth()+1);
+
+                var month = ("0" + (date1.getMonth())).slice(-2);
+                var month2 = ("0" + (date2.getMonth())).slice(-2);
+
+                var monthstring = month + "/" + date1.getFullYear();
+                var monthstring2 = month2 + "/" + date2.getFullYear();
+
+                $('#sales_target_month1').val(monthstring);
+                $('#sales_target_month2').val(monthstring2);
+                drawBars();
+        }else{
             var date1 = new Date();
 
             date1.setDate(date1.getDate()-1)
@@ -192,40 +207,25 @@ function salestarget(evaluator_id){
             $('#sales_target_date2').val(datestring);
         
             drawArea();
-        }else{
-            var date1 = new Date();
-            date1.setMonth(date1.getMonth()-1);
-
-            var date2 = new Date();
-
-            var month = ("0" + (date1.getMonth())).slice(-2);
-            var month2 = ("0" + (date2.getMonth())).slice(-2);
-
-            var monthstring = month + "/" + date1.getFullYear();
-            var monthstring2 = month2 + "/" + date2.getFullYear();
-
-            $('#sales_target_month1').val(monthstring);
-            $('#sales_target_month2').val(monthstring2);
-            drawBars();
         }
         });
 
         if ($("#daymonth_sales_target").is(':checked')){
-            $('.targetset1').attr("hidden",false);
-            $('.targetset2').attr("hidden",true);
-            drawArea();
-        }else{
             $('.targetset1').attr("hidden",true);
             $('.targetset2').attr("hidden",false);
             drawBars();
+        }else{
+            $('.targetset1').attr("hidden",false);
+            $('.targetset2').attr("hidden",true);
+            drawArea();
         };
         
     }
 
     var date1 = new Date();
-    date1.setMonth(date1.getMonth()-1);
 
     var date2 = new Date();
+    date2.setMonth(date2.getMonth()+1);
 
     var month = ("0" + (date1.getMonth())).slice(-2);
     var month2 = ("0" + (date2.getMonth())).slice(-2);
