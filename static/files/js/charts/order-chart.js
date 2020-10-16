@@ -36,7 +36,7 @@ function initialize() {
 
         console.log(month_1, month_2, "monthd2")
 
-        const monthNames = ["January", "February", "March", "April", "May", "June",
+        const monthNames = ["","January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
         ];
 
@@ -57,14 +57,14 @@ function initialize() {
             if(data_month.length > 0){
             $.each(data_month,function(key,value){
             
-                var vals = value.date.split('-');
-                var year = parseInt(vals[0]);
-                var month = parseInt (vals[1]);
-                var day = parseInt (vals[2]);
-                console.log(year,month,day,value.submitted_qt,value.approved_qt,"ter")
+                // var vals = value.date.split('-');
+                // var year = parseInt(vals[0]);
+                // var month = parseInt (vals[1]);
+                // var day = parseInt (vals[2]);
+                // console.log(year,month,day,value.submitted_qt,value.approved_qt,"ter")
 
-                const d2 = new Date(year,month-1,day)
-                quotations.push([monthNames[d2.getMonth()],value.submitted_qt,value.approved_qt]);
+                // const d2 = new Date(year,month-1,day)
+                quotations.push([monthNames[value.date],value.submitted_qt,value.approved_qt]);
                 submitted_total_month += parseInt(value.submitted_qt);
                 approved_total_month += parseInt(value.approved_qt);
             });
