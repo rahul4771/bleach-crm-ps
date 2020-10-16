@@ -1336,22 +1336,36 @@ def cleaningcalendardate(request):
 
 def SalesTargetDaily(request):
 	data = []
+	data2 = []
 	target_dict = dict()
 	evaluators_sales_target = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
 	target_date = request.GET.get('target_date')
 	target_date = datetime.strptime(target_date, '%d-%m-%Y')
 
+	target_date_start = target_date.replace(hour=0,minute=0,second=0,microsecond=0)
+	target_date_end= target_date+timedelta(1)
+
 	for evaluator in evaluators_sales_target:
-		total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date=target_date).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+		total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(target_date_start,target_date_end)).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
 		if not total_sales:
 			total_sales = 0.0
 
-		target_dict = {
+		evaluator_target_dict = {
 		"evaluator_id" : evaluator.id,
 		"amount" : total_sales,
 		}
-		data.append(target_dict)
+		data.append(evaluator_target_dict)
 	print(data,"here")
+
+	agent_sales_total = Order.objects.filter(evaluation__evaluation_details__evaluator=None,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(target_date_start,target_date_end)).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+	if not agent_sales_total:
+		agent_sales_total = 0.0
+		
+	agent_target_dict = {
+		"evaluator_id" : 0,
+		"amount" : agent_sales_total,
+		}
+	data.append(agent_target_dict)
 	return JsonResponse(data,safe=False)
 
 def evaluationcalendardate(request):

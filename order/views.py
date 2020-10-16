@@ -27,15 +27,15 @@ def quotation_data(request):
         quotations = quotes.dates('created','month').distinct() #.values('created').annotate(month=Month('created')).values('month').annotate(count=Count('pk'))
 
         for month in quotations:
-            submitted_quotes = quotes.filter(created__month=month.month)
-            approved_quotes = quotes.filter(evaluation__quatation_status='APPROVED',created__month=month.month)
-            submitted_total = submitted_quotes.aggregate(total=Count("pk")).get("total")
-            approved_total = approved_quotes.aggregate(total2=Count("pk")).get("total2")
-            print(month.month, submitted_total, approved_total,'dats')
+            submitted_quotes = quotes.filter(created__month=month.month).count()
+            approved_quotes = quotes.filter(evaluation__quatation_status='APPROVED',created__month=month.month).count()
+            # submitted_total = submitted_quotes.aggregate(total=Count("pk")).get("total")
+            # approved_total = approved_quotes.aggregate(total2=Count("pk")).get("total2")
+            print(month.month, submitted_quotes, approved_quotes,'dats')
             qt_dict = {
             "date" : month.month,
-            "submitted_qt" : submitted_total,
-            "approved_qt" : approved_total
+            "submitted_qt" : submitted_quotes,
+            "approved_qt" : approved_quotes
             }
             data.append(qt_dict)
 
