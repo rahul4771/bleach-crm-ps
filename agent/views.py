@@ -2357,8 +2357,8 @@ def ClientData(request):
 		month,year = prevdate.split("/")
 		month2,year2 = todate.split("/")
 		
-		monthdate1 = datetime(day=1,month=int(month),year=int(year))
-		monthdate2 = datetime(day=28,month=int(month2),year=int(year2))
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=28,month=int(month2),year=int(year2),hour=23,minute=59,second=59,microsecond=0)
 		
 		try:
 			for governorate in governorates:
@@ -2379,11 +2379,15 @@ def ClientData(request):
 			todate = date.today() - timedelta(days=1)
 			prevdate = todate - timedelta(days=30)
 		print(prevdate,todate,"bhoot")
+		prev_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
+		prev_date_end = prevdate+timedelta(1)
+		todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
+		todate_date_end = todate+timedelta(1)
 		try:
 			print("jn")
 			for governorate in governorates:
 				#change date field from evaluation date to order created date
-				client_count = Order.objects.filter(is_active=True,evaluation__customer__address_customer__governorate__id=governorate.id, evaluation__quatation_approved_date__range=(prevdate,todate)).values_list('evaluation__customer').distinct().count()
+				client_count = Order.objects.filter(is_active=True,evaluation__customer__address_customer__governorate__id=governorate.id, evaluation__quatation_approved_date__gte=prev_date_start,evaluation__quatation_approved_date__lte=todate_date_end).values_list('evaluation__customer').distinct().count()
 				print(client_count,"red")
 				data.append({
 					"governorate" : governorate.name,

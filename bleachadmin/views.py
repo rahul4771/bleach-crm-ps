@@ -976,8 +976,8 @@ def SalesLocationData(request):
 		print("derr")
 		month,year = prevdate.split("/")
 		month2,year2 = todate.split("/")
-		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=12)
-		monthdate2 = datetime(day=28,month=int(month2),year=int(year2),hour=12)
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=28,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+timedelta(1)
 		locationcount = 0
 		others_count = 0
 
@@ -1017,13 +1017,16 @@ def SalesLocationData(request):
 			prevdate = todate - timedelta(days=30)
 		print(prevdate,todate,"testdt")
 
+		prevdate_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
+		todate_date_end  = todate.replace(hour=0,minute=0,second=0,microsecond=0)+timedelta(1)
+
 		locationcount = 0
 		others_count = 0
 
 		# appending each location counts
 		for location in location_types:
 			locationcount += 1
-			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate,todate),evaluation__evaluation_details__evaluation_book_evaluation_details__area_type=location.name).count()
+			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate_date_start,todate_date_end),evaluation__evaluation_details__evaluation_book_evaluation_details__area_type=location.name).count()
 			if not sales_location_count:
 				sales_location_count = 0
 
@@ -1063,8 +1066,11 @@ def SalesCleaningTypeData(request):
 		month,year = prevdate.split("/")
 		month2,year2 = todate.split("/")
 
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=28,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+timedelta(1)
+
 		for clean in cleaning_types:
-			sales_cleaningtype_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__year__range=(year,year2),evaluation__quatation_approved_date__month__range=(month,month2),evaluation__evaluation_details__evaluation_book_evaluation_details__service_type=clean).count()
+			sales_cleaningtype_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(monthdate1,monthdate2),evaluation__evaluation_details__evaluation_book_evaluation_details__service_type=clean).count()
 			
 			clean_dict = {
 			"cleaning_type" : clean.name,
@@ -1079,9 +1085,12 @@ def SalesCleaningTypeData(request):
 			todate = date.today() - timedelta(days=1)
 			prevdate = todate - timedelta(days=30)
 		print(prevdate,todate,"testdt")
+
+		prevdate_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
+		todate_date_end  = todate.replace(hour=0,minute=0,second=0,microsecond=0)+timedelta(1)
 	
 		for clean in cleaning_types:
-			sales_cleaningtype_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate,todate),evaluation__evaluation_details__evaluation_book_evaluation_details__service_type=clean).count()
+			sales_cleaningtype_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate_date_start,todate_date_end),evaluation__evaluation_details__evaluation_book_evaluation_details__service_type=clean).count()
 			
 			clean_dict = {
 			"cleaning_type" : clean.name,
@@ -1104,9 +1113,12 @@ def SalesGovernorateData(request):
 		month,year = prevdate.split("/")
 		month2,year2 = todate.split("/")
 
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=28,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+timedelta(1)
+
 		for gov in governorates:
 			print(gov,"govrt")
-			sales_governorate_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__year__range=(year,year2),evaluation__quatation_approved_date__month__range=(month,month2),evaluation__customer__address_customer__governorate=gov).count()
+			sales_governorate_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(monthdate1,monthdate2),evaluation__customer__address_customer__governorate=gov).count()
 			
 			gov_dict = {
 			"governorate" : gov.name,
@@ -1122,9 +1134,12 @@ def SalesGovernorateData(request):
 			todate = date.today() - timedelta(days=1)
 			prevdate = todate - timedelta(days=60)
 		print(prevdate,todate,"testdt")
+
+		prevdate_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
+		todate_date_end  = todate.replace(hour=0,minute=0,second=0,microsecond=0)+timedelta(1)
 	
 		for gov in governorates:
-			sales_governorate_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate,todate),evaluation__customer__address_customer__governorate=gov).count()
+			sales_governorate_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate_date_start,todate_date_end),evaluation__customer__address_customer__governorate=gov).count()
 			
 			print(sales_governorate_count,"sgc")		
 			gov_dict = {
@@ -1149,13 +1164,15 @@ def SalesData(request):
 		month,year = prevdate.split("/")
 		month2,year2 = todate.split("/")
 
-		sales = Order.objects.filter(is_active=True,created__year__range=(year,year2),
-							created__month__range=(month,month2)).values('created').values('created').annotate(month=Month('created'),).values('month').annotate(count=Sum('evaluation__total_cost'))
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=28,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2_end = monthdate2+timedelta(1)
+
+		sales = Order.objects.filter(is_active=True,created__range=(monthdate1,monthdate2_end)).values('created').values('created').annotate(month=Month('created'),).values('month').annotate(count=Sum('evaluation__total_cost'))
 
 		print(sales,"po")
 		for sale in sales:
-			total_sales = Order.objects.filter(is_active=True,evaluation__quatation_status="APPROVED",evaluation__quatation_approved_date__year__range=(year,year2),
-							evaluation__quatation_approved_date__month__range=(month,month2)).values('evaluation__quatation_approved_date').values('evaluation__quatation_approved_date').annotate(month=Month('evaluation__quatation_approved_date'),).values('month').annotate(count=Sum('evaluation__total_cost'))
+			total_sales = Order.objects.filter(is_active=True,evaluation__quatation_status="APPROVED",created__range=(monthdate1,monthdate2_end)).values('created').values('created').annotate(month=Month('created'),).values('month').annotate(count=Sum('evaluation__total_cost'))
 			
 			sale_total = 0
 
@@ -1181,12 +1198,14 @@ def SalesData(request):
 		daterange = pd.date_range(prevdate, todate)
 
 		for single_date in daterange:
-			sdate = single_date.strftime("%Y-%m-%d")
-			total_sales = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__date=single_date).aggregate(Sum('evaluation__total_cost'))['evaluation__total_cost__sum'] or 0.0
+			sale_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
+			sale_date_end    = single_date+timedelta(1)
 
-			total_orders = Order.objects.filter(is_active=True,created__date=single_date).aggregate(Sum('evaluation__total_cost'))['evaluation__total_cost__sum'] or 0.0
+			total_sales = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(sale_date_start,sale_date_end)).aggregate(Sum('evaluation__total_cost'))['evaluation__total_cost__sum'] or 0.0
 
-			print(sdate,total_sales,"qtc")
+			total_orders = Order.objects.filter(is_active=True,created__range=(sale_date_start,sale_date_end)).aggregate(Sum('evaluation__total_cost'))['evaluation__total_cost__sum'] or 0.0
+
+			print(total_sales,"qtc")
 			sales_dict = {
 			"date" : single_date,
 			"amount" : total_sales,
@@ -1210,16 +1229,18 @@ def SalesTargetData(request):
 		print("derr")
 		month,year = prevdate.split("/")
 		month2,year2 = todate.split("/")
+
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=28,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2_end = monthdate2+timedelta(1)
+
 		if evaluator_id == 0 :
-			sales = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=None,evaluation__quatation_approved_date__year__range=(year,year2),
-							evaluation__quatation_approved_date__month__range=(month,month2)).values('evaluation__quatation_approved_date').annotate(month=Month('evaluation__quatation_approved_date'),).values('month').annotate(count=Sum('evaluation__total_cost'))
+			sales = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=None,created__range=(monthdate1,monthdate2_end)).values('created').annotate(month=Month('created'),).values('month').annotate(count=Sum('evaluation__total_cost'))
 		else:
-			sales = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_approved_date__year__range=(year,year2),
-							evaluation__quatation_approved_date__month__range=(month,month2)).values('evaluation__quatation_approved_date').annotate(month=Month('evaluation__quatation_approved_date'),).values('month').annotate(count=Sum('evaluation__total_cost'))
+			sales = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=evaluator_id,created__range=(monthdate1,monthdate2_end)).values('created').annotate(month=Month('created'),).values('month').annotate(count=Sum('evaluation__total_cost'))
 		print(sales,"po")
 		for sale in sales:
-			total_sales = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__year__range=(year,year2),
-							evaluation__quatation_approved_date__month__range=(month,month2)).values('evaluation__quatation_approved_date').annotate(month=Month('evaluation__quatation_approved_date'),).values('month').annotate(count=Sum('evaluation__total_cost'))
+			total_sales = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_status='APPROVED',created__range=(monthdate1,monthdate2_end)).values('created').annotate(month=Month('created')).values('month').annotate(count=Sum('evaluation__total_cost'))
 			print(total_sales,"totsal")
 			sale_total = 0
 
@@ -1245,20 +1266,21 @@ def SalesTargetData(request):
 		daterange = pd.date_range(prevdate, todate)
 
 		for single_date in daterange:
-			sdate = single_date.strftime("%Y-%m-%d")
+			saletarget_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
+			saletarget_date_end    = single_date+timedelta(1)
 
 			if evaluator_id == 0 :
-				total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=None,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date=sdate).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)			
+				total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=None,evaluation__quatation_status='APPROVED',created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)			
 
-				total_orders = Order.objects.filter(evaluation__evaluation_details__evaluator=None,evaluation__quatation_approved_date=sdate).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+				total_orders = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
 			else:
-				total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date=sdate).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)			
+				total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_status='APPROVED',created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)			
 
-				total_orders = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_approved_date=sdate).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+				total_orders = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator_id,created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
 			
-			print(sdate,total_sales,total_orders,"red2")
+			print(total_sales,total_orders,"red2")
 			sales_dict = {
-			"date" : sdate,
+			"date" : single_date,
 			"amount" : total_sales or 0.0,
 			"total" : total_orders or 0.0,
 			}

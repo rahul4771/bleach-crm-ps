@@ -18,10 +18,12 @@ def quotation_data(request):
     if dom == 'Month':
         month,year = prevdate.split("/")
         month2,year2 = todate.split("/")
-        monthdate1 = datetime(day=1,month=int(month),year=int(year))
-        monthdate2 = datetime(day=28,month=int(month2),year=int(year2))
+
+        monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+        monthdate2 = datetime(day=28,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+timedelta(1)
         print(monthdate1,monthdate2,"mod")
-        quotations = Order.objects.filter(is_active=True,created__gte=monthdate1,created__lte=monthdate2).values('created').annotate(month=Month('created')).values('month').annotate(count=Count('pk'))
+        
+        quotations = Order.objects.filter(is_active=True,created__range=(monthdate1,monthdate2)).values('created').annotate(month=Month('created')).values('month').annotate(count=Count('pk'))
         # months = quotations.datetimes("created", kind="month")
 
         # for month in months:
