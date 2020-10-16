@@ -145,10 +145,16 @@ class Address(models.Model):
     is_active       = models.BooleanField(null=False,blank=True,default=True)
     created         = models.DateTimeField(auto_now_add=True)
     updated         = models.DateTimeField(auto_now=True)
+    
+    def save(self, *args, **kwargs):
+        for field_name in ['block','avenue','building','street','floor','apartment']:
+            val = getattr(self, field_name, False)
+            if val:
+                setattr(self, field_name, val.title())
+        super(Address, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return str(self.area.name)
 
     def __str__(self):
-        return self.area.name
-    # +"-"+self.block+" Block"
+        return self.area.name    
