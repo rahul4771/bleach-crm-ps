@@ -262,7 +262,6 @@ def GetOrderScheduleTicketInfo(request):
 	order_schedule = {}
 	for schedule in ordershedules:
 		if not schedule.assigned_investigations:
-			print("hiiiiiiiiiiiiiiiiiiiiiiii")
 			order_schedule[schedule.id] = schedule.customer_address.area.name+'-'+schedule.order_scheduler_book.service_type.name+'/'+datetime.strftime((schedule.start_at+timedelta(hours=3)),'%d-%m-%Y %I:%M %p') or ''
 
 			dropdown_orderschedule_info['name']          = schedule.customer_address.customer.name
@@ -530,18 +529,18 @@ class AgentHome(IsAgent,View):
 
 
 		#Order and Followup Schedules for date confirmation
-		confirm_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)+timedelta(4)
+		confirm_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
 		
-		order_schedules		  = OrderScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').annotate(color_status=Case(When(Q(Q(start_at__lte=confirm_to_date) & Q(start_at__gte=confirm_to_date-timedelta(1))), then=Value('green')),
-                  When(Q(Q(start_at__lt=confirm_to_date-timedelta(1))&Q(start_at__gte=confirm_to_date-timedelta(3))), then=Value('yellow')),
+		order_schedules		  = OrderScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(3)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').annotate(color_status=Case(When(Q(Q(start_at__lt=confirm_to_date+timedelta(3)) & Q(start_at__gte=confirm_to_date+timedelta(2))), then=Value('green')),
+                  When(Q(Q(start_at__lt=confirm_to_date+timedelta(2))&Q(start_at__gte=confirm_to_date+timedelta(1))), then=Value('yellow')),When(Q(Q(start_at__lt=confirm_to_date+timedelta(1))&Q(start_at__gte=confirm_to_date)), then=Value('orange')),
                   default=Value('red'),
                   output_field=CharField(),))
 		
 		
-		follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lte=confirm_to_date).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').annotate(color_status=Case(When(Q(Q(start_at__lte=confirm_to_date) & Q(start_at__gte=confirm_to_date-timedelta(1))), then=Value('green')),
-				  When(Q(Q(start_at__lt=confirm_to_date-timedelta(1))&Q(start_at__gte=confirm_to_date-timedelta(2))), then=Value('yellow')),
-				  default=Value('red'),
-				  output_field=CharField(),))
+		follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(3)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').annotate(color_status=Case(When(Q(Q(start_at__lt=confirm_to_date+timedelta(3)) & Q(start_at__gte=confirm_to_date+timedelta(2))), then=Value('green')),
+                  When(Q(Q(start_at__lt=confirm_to_date+timedelta(2))&Q(start_at__gte=confirm_to_date+timedelta(1))), then=Value('yellow')),When(Q(Q(start_at__lt=confirm_to_date+timedelta(1))&Q(start_at__gte=confirm_to_date)), then=Value('orange')),
+                  default=Value('red'),
+                  output_field=CharField(),))
 	
 
 		#cleaning schedule & followup schedule for cleaning calendar
@@ -1773,7 +1772,13 @@ class AssignEvaluator(IsAgent,View):
 			else:
 				messages.error(request,get_error(evaluation_form))
 
-		return redirect('agent:agent-assignevaluator',enquiry_id,evaluation_id)
+		#For Date in Redirection
+		selected_date = request.GET.get('evaluation_calendar_date')
+		
+		if selected_date:
+			return redirect('/agent/assignevaluator/'+enquiry_id+'/'+evaluation_id+'?evaluation_calendar_date='+selected_date)
+		else:
+			return redirect('agent:agent-assignevaluator',enquiry_id,evaluation_id)
 
 
 class MakeQuatationBase(IsAgent,View):

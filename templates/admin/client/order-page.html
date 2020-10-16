@@ -259,28 +259,18 @@
 
 <div class="details-sub-head align-left">Subscription Status</div>
 <div class="order-clean-outer-wrapper cream"><!--order-clean-outer-wrapper-->
-<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table whitebg">    
- 
-<thead>
-<tr>
-<th>Cleaning</th>
-<th data-hide="phone,tablet">Date and Time</th>
-<th class="align-center" data-hide="phone,tablet">Status</th>
-</tr>
-</thead>
+<table class="main-table">    
 <tbody>
     {% for subscription_schedule in order.orderschedules %}
     {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
     <tr>
-    <td class="red-line">Cleaning {{forloop.counter}}</td>
-    <td>{{subscription_schedule.start_at}}</td>
-    <td><span class="red-bg clickable-cursor" onclick="appendsubscriptiondetails({{subscription_schedule.id}},{{forloop.parentloop.counter}})">{{subscription_schedule.work_status|default_if_none:'Not Started'}}</span></td> 
+    <td data-label="Sl No" class="bold-text">Cleaning {{forloop.counter}}</td>
+    <td data-label="Time" class="bold-text">{{subscription_schedule.start_at}}</td>
+    <td class="hide-b clickable-cursor" data-label="" onclick="appendsubscriptiondetails({{subscription_schedule.id}},{{forloop.parentloop.counter}})"><span class="red-bg">{{subscription_schedule.work_status|default_if_none:'Not Started'}}</span></td> 
     </tr> 
     {% endif %}
     {% endfor %}     
 </tbody>
-<tfoot>
-</tfoot>
 </table>
 
 <div class="appendsubscription"><!-- Append logic -->
@@ -812,13 +802,7 @@
 
     })
 </script>
-<script id="rendered-js">
-$('.footable').footable({
-  calculateWidthOverride: function () {
-    return { width: $(window).width() };
-  } });
-   </script>
-   
+
 <script id="rendered-js">
 dateconfirm_completed_count = 0    
 teamassign_completed_count  = 0

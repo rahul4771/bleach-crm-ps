@@ -254,7 +254,7 @@ $('document').ready(function(){
 
  function set_params_go(args)
 {
-var url='{% url 'agent:agent-assignevaluator' enquiryid evaluation_id %}';
+var url='{% url 'evaluator:evaluator-assignevaluator' enquiryid evaluation_id %}';
 var params={evaluation_calendar_date:$('#evaluation_calendar').val(),
 };
 for(key in args) 

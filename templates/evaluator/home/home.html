@@ -77,7 +77,7 @@
 <tbody>
 
 {% for investigation in investigations %}
-<tr class="green-line">
+<tr class="{% if investigation.color_status == 'green' %}green-line{% elif investigation.color_status == 'yellow' %}yellow-line{% elif investigation.color_status == 'blue' %}blue-line{%else%}red-line{% endif %}">
 <td data-label="BLC Number" class="bold-text">{{investigation.order.evaluation.evaluation_id}}</td>
 <td data-label="Proposed Time" class="bold-text">{{investigation.sheduled_at|date:"d/m/Y h:i A"}}</td>
 <td class="hide-a" data-label="">{{investigation.order_schedule.customer_address.area.name}}</td>
@@ -101,7 +101,7 @@
     <span class="blue-text">{{investigation.order_schedule.order_scheduler_book.cleaning_policy}}</span>
 </td>
 <td data-label="">
-<span class="{% if investigation.color_status == 'green' %}green-bg{% elif investigation.color_status == 'yellow' %}yellow-bg{%else%}red-bg{% endif %} clickable-row-list" data-href="{% url 'evaluator:investigation' investigation.id %}">Checkin</span>
+<span class="{% if investigation.color_status == 'green' %}green-bg{% elif investigation.color_status == 'yellow' %}yellow-bg{% elif investigation.color_status == 'blue' %}blue-bg{%else%}red-bg{% endif %} clickable-row-list" data-href="{% url 'evaluator:investigation' investigation.id %}">Checkin</span>
 </td>
 </tr>
 {% endfor %}

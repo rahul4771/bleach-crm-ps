@@ -149,11 +149,11 @@ class StlHome(IsSeniorTeamLeader,View):
 
 
 		#Investigation tasks
-		investigation_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)+timedelta(4) 	
+		investigation_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
 
 		try:	
-			investigations  = Investigation.objects.filter(is_active=True,sheduled_at__lt=investigation_to_date,investigator=request.user,check_out=None).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details')).annotate(color_status=Case(When(Q(Q(sheduled_at__lte=investigation_to_date) & Q(sheduled_at__gte=investigation_to_date-timedelta(1))), then=Value('green')),
-	                  When(Q(Q(sheduled_at__lt=investigation_to_date-timedelta(1))&Q(sheduled_at__gte=investigation_to_date-timedelta(3))), then=Value('yellow')),
+			investigations  = Investigation.objects.filter(is_active=True,investigator=request.user,check_out=None).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details')).annotate(color_status=Case(When(Q(Q(sheduled_at__gte=investigation_to_date) & Q(sheduled_at__lt=investigation_to_date+timedelta(1)) & Q(sheduled_at__lte=timezone.now())), then=Value('yellow')),
+	                  When(Q(Q(sheduled_at__gte=investigation_to_date) & Q(sheduled_at__lt=investigation_to_date+timedelta(1)) & Q(sheduled_at__gt=timezone.now())), then=Value('green')),When(Q(sheduled_at__gte=investigation_to_date+timedelta(1)), then=Value('blue')),
 	                  default=Value('red'),
 	                  output_field=CharField(),))
 		except:
@@ -200,7 +200,28 @@ class StlHome(IsSeniorTeamLeader,View):
 		except:
 			spp_calendar_followup_schedules = None
 
-		return render(request,'stl/home/home.html',{'investigations':investigations,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,"fil_staff":fil_staff,})
+
+		#cleaning team assignment task
+		teamassign_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
+		
+		try:
+			assign_order_schedules = OrderScheduler.objects.filter(work_status__isnull=True,status='CONFIRMED',is_active=True,start_at__lt=teamassign_to_date+timedelta(3)).select_related('order__evaluation__customer','customer_address','order_scheduler_book').annotate(color_status=Case(When(Q(Q(start_at__lt=teamassign_to_date+timedelta(3)) & Q(start_at__gte=teamassign_to_date+timedelta(2))), then=Value('green')),
+                  When(Q(Q(start_at__lt=teamassign_to_date+timedelta(2))&Q(start_at__gte=teamassign_to_date+timedelta(1))), then=Value('yellow')),When(Q(Q(start_at__lt=teamassign_to_date+timedelta(1))&Q(start_at__gte=teamassign_to_date)), then=Value('orange')),
+                  default=Value('red'),
+                  output_field=CharField(),))
+		except:
+			assign_order_schedules = None
+
+		try:
+			assign_followup_schedules = FollowUpScheduler.objects.filter(work_status__isnull=True,status='CONFIRMED',is_active=True,start_at__lt=teamassign_to_date+timedelta(3)).select_related('follow_up__investigation__order__evaluation__customer','customer_address').annotate(color_status=Case(When(Q(Q(start_at__lt=teamassign_to_date+timedelta(3)) & Q(start_at__gte=teamassign_to_date+timedelta(2))), then=Value('green')),
+                  When(Q(Q(start_at__lt=teamassign_to_date+timedelta(2))&Q(start_at__gte=teamassign_to_date+timedelta(1))), then=Value('yellow')),When(Q(Q(start_at__lt=teamassign_to_date+timedelta(1))&Q(start_at__gte=teamassign_to_date)), then=Value('orange')),
+                  default=Value('red'),
+                  output_field=CharField(),))
+		except:
+			assign_followup_schedules = None
+
+
+		return render(request,'stl/home/home.html',{'investigations':investigations,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,"fil_staff":fil_staff,'assign_order_schedules':assign_order_schedules,'assign_followup_schedules':assign_followup_schedules,})
 
 class TicketDetails(IsSeniorTeamLeader,View):
 	def get(self,request):
