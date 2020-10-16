@@ -24,18 +24,16 @@ def quotation_data(request):
         print(monthdate1,monthdate2,"mod")
 
         quotes = Order.objects.filter(is_active=True,created__range=(monthdate1,monthdate2))
-        quotations = quotes.annotate(month_stamp=Extract('created','month')).distinct().values_list('month_stamp',flat=True) #.values('created').annotate(month=Month('created')).values('month').annotate(count=Count('pk'))
-        print(quotations,"poppp")
-        # months = quotations.datetimes("created", kind="month")
+        quotations = quotes.dates('created','month').distinct() #.values('created').annotate(month=Month('created')).values('month').annotate(count=Count('pk'))
 
         for month in quotations:
-            submitted_quotes = quotes.filter(created__month=month)
-            approved_quotes = quotes.filter(evaluation__quatation_status='APPROVED',created__month=month)
+            submitted_quotes = quotes.filter(created__month=month.month)
+            approved_quotes = quotes.filter(evaluation__quatation_status='APPROVED',created__month=month.month)
             submitted_total = submitted_quotes.aggregate(total=Count("pk")).get("total")
             approved_total = approved_quotes.aggregate(total2=Count("pk")).get("total2")
-            print(month, submitted_total, approved_total,'dats')
+            print(month.month, submitted_total, approved_total,'dats')
             qt_dict = {
-            "date" : month,
+            "date" : month.month,
             "submitted_qt" : submitted_total,
             "approved_qt" : approved_total
             }
