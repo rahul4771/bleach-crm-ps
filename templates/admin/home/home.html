@@ -484,7 +484,7 @@
             success: function(data) {
 
               $.each(data,function(key,value){
-                var percent = ((parseInt(value.amount)*parseInt(100))/parseInt(999999));
+                var percent = ((parseInt(value.amount)*parseInt(100))/parseInt(35000));
               
                 $('#evaluatorid'+value.evaluator_id+'').text(parseFloat(percent).toFixed(2));
                 

@@ -982,22 +982,24 @@ def SalesLocationData(request):
 		others_count = 0
 
 		# appending each location counts
-		for location in location_types:
-			locationcount += 1
-
+		for location in location_types:			
+			
 			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(monthdate1,monthdate2),evaluation__evaluation_details__evaluation_book_evaluation_details__area_type=location.name).count()
 			if not sales_location_count:
 				sales_location_count = 0
+			
+			if sales_location_count > 0:
+				locationcount += 1
+				if locationcount <= 5:
+					location_dict = {
+					"location" : location.name,
+					"count" : sales_location_count,
+					}
+					data.append(location_dict)
 
-			if locationcount <= 5:
-				location_dict = {
-				"location" : location.name,
-				"count" : sales_location_count,
-				}
-				data.append(location_dict)
-
-			if locationcount > 5:
-				others_count += sales_location_count
+				if locationcount > 5:
+					
+					others_count += sales_location_count
 
 		# appending total of other locations
 		if others_count > 0:
@@ -1027,17 +1029,17 @@ def SalesLocationData(request):
 		for location in location_types:
 			locationcount += 1
 			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate_date_start,todate_date_end),evaluation__evaluation_details__evaluation_book_evaluation_details__area_type=location.name).count()
-			if not sales_location_count:
-				sales_location_count = 0
+			# if not sales_location_count:
+			# 	sales_location_count = 0
 
-			if locationcount <= 5:
+			if locationcount <= 5 :
 				location_dict = {
 				"location" : location.name,
 				"count" : sales_location_count,
 				}
 				data.append(location_dict)
 
-			if locationcount > 5:
+			if locationcount > 5 :
 				others_count += sales_location_count
 
 		# appending total of other locations
@@ -1048,7 +1050,7 @@ def SalesLocationData(request):
 			}
 			data.append(location_dict)
 							
-	print(data)
+	print(data,"dot")
  
 	return JsonResponse(data,safe=False)
 
@@ -1071,12 +1073,12 @@ def SalesCleaningTypeData(request):
 
 		for clean in cleaning_types:
 			sales_cleaningtype_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(monthdate1,monthdate2),evaluation__evaluation_details__evaluation_book_evaluation_details__service_type=clean).count()
-			
-			clean_dict = {
-			"cleaning_type" : clean.name,
-			"count" : sales_cleaningtype_count,
-			}
-			data.append(clean_dict)
+			if sales_cleaningtype_count > 0:
+				clean_dict = {
+				"cleaning_type" : clean.name,
+				"count" : sales_cleaningtype_count,
+				}
+				data.append(clean_dict)
 	else:
 		try:
 			prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
@@ -1091,12 +1093,12 @@ def SalesCleaningTypeData(request):
 	
 		for clean in cleaning_types:
 			sales_cleaningtype_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate_date_start,todate_date_end),evaluation__evaluation_details__evaluation_book_evaluation_details__service_type=clean).count()
-			
-			clean_dict = {
-			"cleaning_type" : clean.name,
-			"count" : sales_cleaningtype_count,
-			}
-			data.append(clean_dict)
+			if sales_cleaningtype_count > 0:
+				clean_dict = {
+				"cleaning_type" : clean.name,
+				"count" : sales_cleaningtype_count,
+				}
+				data.append(clean_dict)
 		print(data)
 	return JsonResponse(data,safe=False)
 
@@ -1119,12 +1121,12 @@ def SalesGovernorateData(request):
 		for gov in governorates:
 			print(gov,"govrt")
 			sales_governorate_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(monthdate1,monthdate2),evaluation__customer__address_customer__governorate=gov).count()
-			
-			gov_dict = {
-			"governorate" : gov.name,
-			"count" : sales_governorate_count,
-			}
-			data.append(gov_dict)
+			if sales_governorate_count >0:
+				gov_dict = {
+				"governorate" : gov.name,
+				"count" : sales_governorate_count,
+				}
+				data.append(gov_dict)
 	else:
 
 		try:
@@ -1140,13 +1142,13 @@ def SalesGovernorateData(request):
 	
 		for gov in governorates:
 			sales_governorate_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate_date_start,todate_date_end),evaluation__customer__address_customer__governorate=gov).count()
-			
-			print(sales_governorate_count,"sgc")		
-			gov_dict = {
-			"governorate" : gov.name,
-			"count" : sales_governorate_count,
-			}
-			data.append(gov_dict)
+			if sales_governorate_count > 0:
+				print(sales_governorate_count,"sgc")		
+				gov_dict = {
+				"governorate" : gov.name,
+				"count" : sales_governorate_count,
+				}
+				data.append(gov_dict)
 		print(data)
 	return JsonResponse(data,safe=False)
 
@@ -1269,7 +1271,7 @@ def SalesTargetData(request):
 			saletarget_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
 			saletarget_date_end    = single_date+timedelta(1)
 
-			if evaluator_id == 0 :
+			if evaluator_id == '0' :
 				total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=None,evaluation__quatation_status='APPROVED',created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)			
 
 				total_orders = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
