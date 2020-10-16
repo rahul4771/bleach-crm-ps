@@ -2444,12 +2444,14 @@ def TicketData(request):
 		daterange = pd.date_range(prevdate, todate)
 
 		for single_date in daterange:
-			sdate = single_date.strftime("%Y-%m-%d")
-			total_tickets = FollowUp.objects.filter(is_active=True,investigation__order__evaluation__quatation_approved_date=sdate).count()
-			followup_tickets = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_CLOSED',investigation__order__evaluation__quatation_approved_date=sdate).count()
+			ticket_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
+			ticket_date_end    = single_date+timedelta(1)	
+			
+			total_tickets = FollowUp.objects.filter(is_active=True,investigation__order__evaluation__quatation_approved_date__gte=ticket_date_start,investigation__order__evaluation__quatation_approved_date__lte=ticket_date_end).count()
+			followup_tickets = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_CLOSED',investigation__order__evaluation__quatation_approved_date__gte=ticket_date_start,investigation__order__evaluation__quatation_approved_date__lte=ticket_date_end).count()
 			print(sdate,total_tickets,followup_tickets,"qtc")
 			tkt_dict = {
-			"date" : sdate,
+			"date" : single_date,
 			"total" : total_tickets,
 			"followup" : followup_tickets
 			}
@@ -2481,7 +2483,7 @@ def FeedBackData(request):
 
 			fb_dict = {
 			"date" : fb['month'],
-			"avg_rating" : fb['avg_rating'] or 0,
+			"avg_rating" : fb['avg_rating'] or 0.0,
 			}
 			data.append(fb_dict)
 	else:
@@ -2496,13 +2498,15 @@ def FeedBackData(request):
 		daterange = pd.date_range(prevdate, todate)
 
 		for single_date in daterange:
-			sdate = single_date.strftime("%Y-%m-%d")
-			feedback_date = FeedBack.objects.filter(is_active=True,order__evaluation__quatation_approved_date__date=single_date).aggregate(avg_rate=Avg('rating'))['avg_rate'] #use order date for final commit
+			feedback_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
+			feedback_date_end    = single_date+timedelta(1)	
+			
+			feedback_date = FeedBack.objects.filter(is_active=True,order__evaluation__quatation_approved_date__range=(feedback_date_start,feedback_date_end)).aggregate(avg_rate=Avg('rating'))['avg_rate'] #use order date for final commit
 
-			print(sdate,feedback_date,"qtc")
+			print(feedback_date,"qtc")
 
 			fb_dict = {
-			"date" : sdate,
+			"date" : single_date,
 			"avg_rating" : feedback_date or 0
 			}
 			data.append(fb_dict)

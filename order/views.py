@@ -59,19 +59,19 @@ def quotation_data(request):
             prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
             todate = datetime.strptime(todate, '%Y-%m-%d')
         except:
-            #todate = timezone.now().replace(tzinfo=None) - timedelta(days=1)
             todate = date.today() - timedelta(days=1)
             prevdate = todate - timedelta(days=30)
         print(prevdate,todate,"testdt")
         daterange = pd.date_range(prevdate, todate)
 
         for single_date in daterange:
-            evaluation_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
-            evaluation_date_end    = single_date+timedelta(1)	
-            sdate = single_date.strftime("%Y-%m-%d")
-            submitted_qtns = Order.objects.filter(is_active=True,created__gte=evaluation_date_start,created__lte=evaluation_date_end).count()
-            approved_qtns = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__gte=evaluation_date_start,created__lte=evaluation_date_end).count()
-            print(sdate,submitted_qtns,approved_qtns,"qtc")
+            quotation_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
+            quotation_date_end    = single_date+timedelta(1)	
+            
+            submitted_qtns = Order.objects.filter(is_active=True,created__range=(quotation_date_start,quotation_date_end)).count()
+            approved_qtns = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(quotation_date_start,quotation_date_end)).count()
+            print(submitted_qtns,approved_qtns,"qtc")
+
             qt_dict = {
                 "date" : single_date,
                 "submitted_qt" : submitted_qtns,
