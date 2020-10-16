@@ -5,6 +5,7 @@ from django.http import JsonResponse
 import pandas as pd
 from django.db.models.functions import TruncMonth as Month, TruncYear as Year
 from django.db.models import Count
+
 # Create your views here.
 
 def quotation_data(request):
@@ -17,8 +18,8 @@ def quotation_data(request):
     if dom == 'Month':
         month,year = prevdate.split("/")
         month2,year2 = todate.split("/")
-        monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=12)
-        monthdate2 = datetime(day=28,month=int(month2),year=int(year2),hour=12)
+        monthdate1 = datetime(day=1,month=int(month),year=int(year))
+        monthdate2 = datetime(day=28,month=int(month2),year=int(year2))
         print(monthdate1,monthdate2,"mod")
         quotations = Order.objects.filter(is_active=True,created__gte=monthdate1,created__lte=monthdate2).values('created').annotate(month=Month('created')).values('month').annotate(count=Count('pk'))
         # months = quotations.datetimes("created", kind="month")
@@ -63,16 +64,16 @@ def quotation_data(request):
         print(prevdate,todate,"testdt")
         daterange = pd.date_range(prevdate, todate)
 
-        # for single_date in daterange:
-        #     sdate = single_date.strftime("%Y-%m-%d")
-        #     print(single_date,sdate,"date")
-        submitted_qtns = Order.objects.filter(is_active=True,created__range=(prevdate,todate)).aggregate(count=Count('pk'))['count']
-        approved_qtns = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(prevdate,todate)).aggregate(count2=Count('pk'))['count2']
-        #print(sdate,submitted_qtns,approved_qtns,"qtc")
-        qt_dict = {
-            "date" : prevdate,
-            "submitted_qt" : submitted_qtns,
-            "approved_qt" : approved_qtns
-        }
-        data.append(qt_dict)
+        for single_date in daterange:
+            sdate = single_date.strftime("%Y-%m-%d")
+            submitted_qtns = Order.objects.filter(is_active=True,created__date=single_date).count()
+            approved_qtns = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__date=single_date).count()
+            print(sdate,submitted_qtns,approved_qtns,"qtc")
+            qt_dict = {
+                "date" : single_date,
+                "submitted_qt" : submitted_qtns,
+                "approved_qt" : approved_qtns
+            }
+            data.append(qt_dict)
+
     return JsonResponse(data,safe=False)
