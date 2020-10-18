@@ -5,7 +5,8 @@ from django.http import JsonResponse
 import pandas as pd
 #from django.db.models.functions import TruncMonth as Month, TruncYear as Year
 from django.db.models import Count
-from django.db.models.functions import Extract
+# from django.db.models.functions import Extract
+from dateutil.relativedelta import relativedelta
 # Create your views here.
 
 def quotation_data(request):
@@ -20,15 +21,17 @@ def quotation_data(request):
         month2,year2 = todate.split("/")
 
         monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
-        monthdate2 = datetime(day=28,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+timedelta(1)
+        monthdate2 = datetime(day=1,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
         print(monthdate1,monthdate2,"mod")
 
         quotes = Order.objects.filter(is_active=True,created__range=(monthdate1,monthdate2))
         quotations = quotes.dates('created','month').distinct() #.values('created').annotate(month=Month('created')).values('month').annotate(count=Count('pk'))
 
         for month in quotations:
-            submitted_quotes = quotes.filter(created__month=month.month).count()
-            approved_quotes = quotes.filter(evaluation__quatation_status='APPROVED',created__month=month.month).count()
+            month_start = datetime(day=1,month=month.month,year=month.year,hour=0,minute=0,second=0,microsecond=0)
+            month_end = datetime(day=1,month=month.month,year=month.year,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+            submitted_quotes = quotes.filter(created__range=(month_start,month_end)).count()
+            approved_quotes = quotes.filter(evaluation__quatation_status='APPROVED',created__range=(month_start,month_end)).count()
             # submitted_total = submitted_quotes.aggregate(total=Count("pk")).get("total")
             # approved_total = approved_quotes.aggregate(total2=Count("pk")).get("total2")
             print(month.month, submitted_quotes, approved_quotes,'dats')
