@@ -30,8 +30,8 @@ def quotation_data(request):
         for month in quotations:
             month_start = datetime(day=1,month=month.month,year=month.year,hour=0,minute=0,second=0,microsecond=0)
             month_end = datetime(day=1,month=month.month,year=month.year,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
-            submitted_quotes = quotes.filter(created__range=(month_start,month_end)).count()
-            approved_quotes = quotes.filter(evaluation__quatation_status='APPROVED',created__range=(month_start,month_end)).count()
+            submitted_quotes = Order.objects.filter(is_active=True,created__range=(month_start,month_end)).count()
+            approved_quotes = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(month_start,month_end)).count()
             # submitted_total = submitted_quotes.aggregate(total=Count("pk")).get("total")
             # approved_total = approved_quotes.aggregate(total2=Count("pk")).get("total2")
             print(month.month, submitted_quotes, approved_quotes,'dats')
@@ -42,22 +42,6 @@ def quotation_data(request):
             }
             data.append(qt_dict)
 
-        # for qt in quotations:
-        #     quotations_approved = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(monthdate1,monthdate2)).values('created').annotate(month=Month('created')).values('month').annotate(count=Count('pk'))
-        #     print(qt['month'],quotations_approved,"huuh") 
-
-        #     approved_count = 0
-        #     for qts in quotations_approved:
-        #         print(qts['month'],"pop")
-        #         if qts['month'] == qt['month']:
-        #             approved_count = qts['count']
-
-        #     qt_dict = {
-        #     "date" : qt['month'],
-        #     "submitted_qt" : qt['count'],
-        #     "approved_qt" : approved_count
-        #     }
-        #     data.append(qt_dict)
     else:
         print("kab")
         try:

@@ -35,7 +35,7 @@ function initialize() {
 
         console.log(month_1, month_2, "monthd2")
 
-        const monthNames = ["January", "February", "March", "April", "May", "June",
+        const monthNames = ["0","January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
         ];
 
@@ -56,14 +56,14 @@ function initialize() {
             if(data_month.length > 0){
             $.each(data_month,function(key,value){
 
-                var vals = value.date.split('-');
-                var year = parseInt(vals[0]);
-                var month = parseInt (vals[1]);
-                var day = parseInt (vals[2]);
-                console.log(year,month,day,parseFloat((value.avg_rating).toFixed(2)),"ter")
+                // var vals = value.date.split('-');
+                // var year = parseInt(vals[0]);
+                // var month = parseInt (vals[1]);
+                // var day = parseInt (vals[2]);
+                // console.log(year,month,day,parseFloat((value.avg_rating).toFixed(2)),"ter")
 
-                const d2 = new Date(year,month-1,day)
-                quotations.push([monthNames[d2.getMonth()],parseFloat((value.avg_rating).toFixed(2))]);
+                // const d2 = new Date(year,month-1,day)
+                quotations.push([monthNames[value.date],parseFloat((value.avg_rating).toFixed(2))]);
                 tot_ratings += parseFloat((value.avg_rating).toFixed(2));
                 count++ ;
             });
@@ -71,8 +71,8 @@ function initialize() {
                 quotations.push(['',0]);
             }
 
-            var avg_total_rating = parseFloat(tot_ratings/parseInt(count)).toFixed(2);
-            if (isNaN(avg_total_rating)) avg_total_rating = 0.00; 
+            var avg_total_rating = parseFloat(tot_ratings/parseInt(count)).toFixed(1);
+            if (isNaN(avg_total_rating)) avg_total_rating = 0.0; 
             console.log(avg_total_rating,"war2 ");
             $('#total_submitted').text(avg_total_rating);
 
@@ -119,14 +119,14 @@ function initialize() {
                 console.log(year,month,day,value.avg_rating,"ter")
 
             quotations.push([new Date(year,month-1,day),parseFloat((value.avg_rating).toFixed(2))]);
-                tot_ratings += parseFloat((value.avg_rating).toFixed(2));
+                tot_ratings += parseFloat((value.avg_rating).toFixed(1));
                 count++ ;
             });
             }else{
                 quotations.push(['',0]);
             }
             console.log(tot_ratings,"war ");
-            var avg_total_rating = parseFloat(tot_ratings/parseInt(count)).toFixed(2);
+            var avg_total_rating = parseFloat(tot_ratings/parseInt(count)).toFixed(1);
             $('#total_submitted').text(avg_total_rating);
 
             data[1] = new google.visualization.arrayToDataTable(quotations);
