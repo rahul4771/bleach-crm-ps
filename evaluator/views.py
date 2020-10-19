@@ -790,6 +790,7 @@ class NewEnquiry(IsEvaluator,View):
 			for address_form in address_formset:
 				if address_form.is_valid():
 					address_form_save = address_form.save(commit=False)
+					address_form_save.currently_active  = True
 					address_form_save.customer = enquiry_form_save
 					address_form.save()
 			messages.success(request,"Customer Details Succesfully Added")
