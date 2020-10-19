@@ -170,7 +170,7 @@ class EvaluatorHome(IsEvaluator,View):
 		evaluation_date_end       = evaluation_date_start+timedelta(1)
 
 		try:
-			my_evaluations = EvaluationDetails.objects.filter(is_active=True,proposed_time__gte=evaluation_date_start,proposed_time__lte=evaluation_date_end,evaluator=request.user)
+			my_evaluations = EvaluationDetails.objects.filter(is_active=True,proposed_time__gte=evaluation_date_start,proposed_time__lte=evaluation_date_end,evaluator=request.user).order_by('proposed_time')
 		except:
 			my_evaluations = None	
 
