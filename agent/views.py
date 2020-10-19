@@ -524,6 +524,7 @@ class AgentHome(IsAgent,View):
 
 		try:
 			evaluation_details		  = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').prefetch_related(Prefetch('evaluator_evaluation',queryset=EvaluationDetails.objects.filter(is_active=True,proposed_time__gte=evaluation_date_start,proposed_time__lte=evaluation_date_end),to_attr='evaluation_details'))
+			selected_date = request.GET.get('evaluation_calendar_date')
 		except:
 			evaluation_details 		  = None
 
@@ -647,6 +648,14 @@ class AgentHome(IsAgent,View):
 			EvaluationDetails.objects.filter(id=evaluation_detail_id).update(proposed_time=converted_proposed_datetime,evaluator_id=evaluator_id,evaluator_note=evaluator_notes)	
 			messages.success(request,"Evaluation Edited Succesfully")
 
+			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
+			cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
+
+			# if evaluation_calendar_date:
+			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
+			# else:
+			# 	return redirect('/agent/dashboard/')
+
 		elif action_mode == 'edit_cleaning':
 			schedule_id                       = request.POST.get('cleaning_id')
 
@@ -680,6 +689,11 @@ class AgentHome(IsAgent,View):
 				cleaner_update       =	None
 
 			messages.success(request,"Cleaning Edited Succesfully")
+
+			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
+			cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
+
+			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
 
 		elif action_mode == 'edit_followup':
 			schedule_id                       = request.POST.get('followup_id')

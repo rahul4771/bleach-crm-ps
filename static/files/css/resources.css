@@ -1,0 +1,12 @@
+.resource-table-scroll-containter { margin: 0 auto; width: 100%;}
+.resource-table-scroll, th, td { border: 1px solid #ccc;}
+.resource-table-scroll {  border-spacing: 0; border-collapse: collapse; width: 100%;}
+.resource-table-scroll th, .resource-table-scroll td {  padding: 6px 8px; /* vertical-align: top;*/  white-space: nowrap;}
+.resource-table-scroll th { background:#ececec;  font-weight: bold;  text-align: center;  white-space: nowrap; font-size:14px;}
+.resource-table-scroll tbody tr:nth-child(odd) { background: #f3f3f3;}
+.scrollable-div {   overflow: hidden; position: relative; width: 100%;}
+.scrollable-div.is-scrollable:after { position: absolute; top: 0; left: 100%; width: 50px; height: 100%; border-radius: 10px 0 0 10px / 50% 0 0 50%; box-shadow: -5px 0 10px rgba(0, 0, 0, 0.25); content: '';}
+.scrollable-div > div { overflow-x: auto;}
+.scrollable-div > div ::-webkit-scrollbar {  height: 12px;}
+.scrollable-div > div ::-webkit-scrollbar-track {  background: #f0f0f0;  box-shadow: 0 0 2px rgba(0, 0, 0, 0.15) inset;}
+.scrollable-div > div ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 6px;}

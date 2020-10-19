@@ -181,6 +181,8 @@ $('document').ready(function(){
         $(".id_proposed_time").datetimepicker({
                 pickDate:false,
                 format: 'hh:mm A',
+                minDate: moment({h:7}),
+                maxDate: moment({h:17}),
             });
         });
     //Evaluation Callender
