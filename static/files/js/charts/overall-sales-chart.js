@@ -38,7 +38,7 @@ function initialize() {
 
         console.log(month_1, month_2, "monthd2")
 
-        const monthNames = ["January", "February", "March", "April", "May", "June",
+        const monthNames = ["0","January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
         ];
 
@@ -59,12 +59,12 @@ function initialize() {
             if(data_month.length > 0){
                 $.each(data_month,function(key,value){
                     console.log(value.date,"uio")
-                    var vals = value.date.split('-');
-                    var year = parseInt(vals[0]);
-                    var month = parseInt (vals[1]);
-                    var day = parseInt (vals[2]);
-                    const d2 = new Date(year,month-1,day);
-                sales.push([monthNames[d2.getMonth()],value.amount]);
+                    // var vals = value.date.split('-');
+                    // var year = parseInt(vals[0]);
+                    // var month = parseInt (vals[1]);
+                    // var day = parseInt (vals[2]);
+                    // const d2 = new Date(year,month-1,day);
+                sales.push([monthNames[value.date],value.amount]);
                     sale_sum += parseInt(value.amount);
                     total_sum += parseInt(value.total);
                 });

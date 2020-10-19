@@ -35,9 +35,9 @@ from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
 from order.forms import InvestigationForm
 
-from django.db.models.functions import TruncMonth as Month, TruncYear as Year
 from django.db.models import Count
 
+from dateutil.relativedelta import relativedelta
 #Username Random Generation
 def generate_random_username(size=10, chars=string.ascii_uppercase + string.digits):
 
@@ -2481,17 +2481,23 @@ def FeedBackData(request):
 		print(month2,year2,"mko")
 
 		monthdate1 = datetime(day=1,month=int(month),year=int(year))
-		monthdate2 = datetime(day=28,month=int(month2),year=int(year2))
+		monthdate2 = datetime(day=1,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
 
-		feedbacks = FeedBack.objects.filter(is_active=True,order__evaluation__quatation_approved_date__range=(monthdate1,monthdate2)).values('order__evaluation__quatation_approved_date').annotate(month=Month('order__evaluation__quatation_approved_date'),).values('month').annotate(avg_rating=Avg('rating'))
-		print(feedbacks,"huh")
+		feedbacks = FeedBack.objects.filter(is_active=True,order__order_status='ORDER_CLOSED',order__created__range=(monthdate1,monthdate2))  #.values('order__evaluation__quatation_approved_date').annotate(month=Month('order__evaluation__quatation_approved_date'),).values('month').annotate(avg_rating=Avg('rating'))
+		feedback_months = feedbacks.dates('order__created','month').distinct()
+		print(feedback_months,"huh")
 		
-		for fb in feedbacks:
-			print(fb['month'],fb['avg_rating'],"fb")
-
+		for fb in feedback_months:
+			month_start = datetime(day=1,month=fb.month,year=fb.year,hour=0,minute=0,second=0,microsecond=0)
+			month_end = datetime(day=1,month=fb.month,year=fb.year,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+			print(month_start,month_end,"moth")
+			feedback_avg_rating = FeedBack.objects.filter(is_active=True,order__order_status='ORDER_CLOSED',order__created__range=(month_start,month_end)).aggregate(avg_rating=Avg('rating'))['avg_rating']
+			# if not feedback_avg_rating:
+			# 	feedback_avg_rating = 0.0
+			print(feedback_avg_rating,"fbr")
 			fb_dict = {
-			"date" : fb['month'],
-			"avg_rating" : fb['avg_rating'] or 0.0,
+			"date" : fb.month,
+			"avg_rating" : feedback_avg_rating,
 			}
 			data.append(fb_dict)
 	else:
@@ -2509,15 +2515,17 @@ def FeedBackData(request):
 			feedback_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
 			feedback_date_end    = single_date+timedelta(1)	
 			
-			feedback_date = FeedBack.objects.filter(is_active=True,order__evaluation__quatation_approved_date__range=(feedback_date_start,feedback_date_end)).aggregate(avg_rate=Avg('rating'))['avg_rate'] #use order date for final commit
+			feedback_date = FeedBack.objects.filter(is_active=True,order__order_status='ORDER_CLOSED',order__created__range=(feedback_date_start,feedback_date_end)).aggregate(avg_rate=Avg('rating'))['avg_rate'] #use order date for final commit
 
 			print(feedback_date,"qtc")
-
-			fb_dict = {
-			"date" : single_date,
-			"avg_rating" : feedback_date or 0
-			}
-			data.append(fb_dict)
+			if feedback_date:
+				fb_dict = {
+				"date" : single_date,
+				"avg_rating" : feedback_date
+				}
+				data.append(fb_dict)
+			else:
+				pass
 		print(data,"touche")
 	return JsonResponse(data,safe=False)
 
