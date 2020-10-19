@@ -178,6 +178,8 @@
         <span>Not Rated</span>
         {% endif %} </td>
     </tr>
+    {% empty %}
+    <tr><td></td><td></td><td>No Data</td><td></td>
     {% endfor %} 
 </tbody>
 <tfoot>

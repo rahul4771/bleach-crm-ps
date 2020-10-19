@@ -209,7 +209,7 @@
         {% if section.age %}
         <div class="category-cleaning"><span class="labelcategory">Age</span> : {{section.age}}</div>
         {% endif %}
-        <div class="category-cleaning"><span class="labelcategory">Size</span> : {{section.size}} {{section.unit}}</div>
+        <div class="category-cleaning"><span class="labelcategory">Size</span> : {{section.size}} {{section.unit|default_if_none:''}}</div>
         {% if section.floor %}
         <div class="category-cleaning"><span class="labelcategory">Floors</span> : {{section.floor}}</div>
         {% endif %}

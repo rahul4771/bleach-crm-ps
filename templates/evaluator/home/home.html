@@ -146,7 +146,7 @@
     class="orange-line"
     {% endif %}>
 <td
- data-label="Proposed Time" class="bold-text">{{evaluation.proposed_time|date:"d/m/Y h:i A"}}</td>    
+ data-label="Proposed Time" class="bold-text">{{evaluation.proposed_time|date:"h:i A"}}</td>    
 <td data-label="Area">{{evaluation.address.area.name}}</td>    
 <td data-label="Customer">{{evaluation.evaluation.customer.name}}</td>
 <td data-label="Mobile Number">{{evaluation.evaluation.customer.mobile_number}}</td>
@@ -157,11 +157,11 @@
 {% endif %}</td>
 <td class="clickable-row-list" data-label=""  data-href='{% url 'evaluator:evaluator-makeassignedquatation1' evaluation.evaluation.customer.id evaluation.evaluation.id%}'>
     {% if evaluation.status == 'EVALUATING' %}
-    <span class="yellow-bg">Evaluating</span>
+    <span class="red-bg">Evaluating</span>
     {% elif evaluation.status == 'EVALUATED'  %}
     <span class="green-bg">Evaluated</span>
     {% elif evaluation.status == 'TOBEEVALUATED' %}
-    <span class="red-bg">To Be Evaluated</span>
+    <span class="yellow-bg">To Be Evaluated</span>
     {% else %}
     <span class="orange-bg">On Hold</span>    
     {% endif %}   
