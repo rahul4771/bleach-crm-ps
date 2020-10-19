@@ -75,7 +75,8 @@ function drawlocationChart() {
         var legend = document.getElementById("legend_location");
         var legItem = [];
         
-        for (var i = 0; i < 5; i++) {
+        for (var i = 0; i < data.getNumberOfRows(); i++) {
+            if (i < 5){
             var label = data.getValue(i, 0);
             var value = data.getValue(i, 1);
             var percent = Number(100 * value / total).toFixed(1);
@@ -90,19 +91,23 @@ function drawlocationChart() {
 
             legend.appendChild(legItem[i]);
         }
+        }
 
         var others = 0;
 
         for (var j = 5; j < data_location.length; j++){
-            
+            console.log(j,"joy")
             others += data.getValue(j, 1);
             
         }
 
-        var others_percent = Number(100 * others / total).toFixed(1);
-        if (isNaN(others_percent)) others_percent = 0.0;
-        console.log(others,others_percent,"otp")
-        $('#legend_location').append('<div class="donut-char-legend" ><i class="fa fa-square" style="color:#0099c6"></i> <div class="chart-stat">Others</div><span>' + others_percent + ' %</span></div>')
+        if (others != 0){
+            console.log(others,"ott")
+            var others_percent = Number(100 * others / total).toFixed(1);
+            if (isNaN(others_percent)) others_percent = 0.0;
+            console.log(others,others_percent,"otp")
+            $('#legend_location').append('<div class="donut-char-legend" ><i class="fa fa-square" style="color:#0099c6"></i> <div class="chart-stat">Others</div><span>' + others_percent + ' %</span></div>')
+        }
         // // initial value
         // var percent = 0;
         // // start the animation loop
