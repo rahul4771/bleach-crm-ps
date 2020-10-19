@@ -317,6 +317,13 @@ class EvaluationBookSection(models.Model):
 	created              = models.DateTimeField(auto_now_add=True)
 	updated              = models.DateTimeField(auto_now=True)
 
+	def save(self, *args, **kwargs):
+		for field_name in ['size','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain']:
+			val = getattr(self, field_name, False)
+			if val:
+				setattr(self, field_name, val.title())
+		super(EvaluationBookSection, self).save(*args, **kwargs)
+
 	def __unicode__(self):
 		return str(self.id)
 
