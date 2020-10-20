@@ -2,6 +2,11 @@ from django.db import models
 from user.models import UserProfile,Address
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+
+from PIL import Image
+import sys
+from io import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
 # Create your models here.
 
 GENDER_CHOICES=(
@@ -279,6 +284,25 @@ class EvaluationMedia(models.Model):
 	created              = models.DateTimeField(auto_now_add=True)
 	updated              = models.DateTimeField(auto_now=True)
 	
+	def save(self,*args, **kwargs):
+		# Opening the uploaded image
+		im = Image.open(self.media)
+
+		output = BytesIO()
+
+		# Resize/modify the image
+		im = im.resize((100, 100))
+
+		# after modifications, save it to the output
+		im.save(output, format='JPEG', quality=90)
+		output.seek(0)
+
+		# change the imagefield value to be the newley modifed image value
+		self.media = InMemoryUploadedFile(output, 'ImageField', "%s.jpg" % self.media.name.split('.')[0], 'evaluationbook/',
+		                                sys.getsizeof(output), None)
+
+		super(EvaluationMedia, self).save(*args, **kwargs)
+
 	def __unicode__(self):
 		return str(self.evaluation_book.id)
 

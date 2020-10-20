@@ -1,5 +1,4 @@
 {% load static %}
-{% load customtags %}
 <!DOCTYPE html>
 <!--
   Invoice template by invoicebus.com
@@ -191,7 +190,7 @@
         <section>
         <table cellpadding="0" cellspacing="0" class="table1">
             <tr>         
-              <td id="tnc-padding" colspan="2" class="align-right"><input type="checkbox" id="myCheck"> <label><i> <u><b>I Agree the Terms & Condetions / شركة بلـــيتش شركة بلـــيتش</b></u></i></label> </td>
+              <td id="tnc-padding" colspan="2" class="align-right"><input type="checkbox" id="myCheck"> <label><i> <u><a href="{% url 'customer:tc' %}"><b>I Agree the Terms & Condetions / شركة بلـــيتش شركة بلـــيتش</b></a></u></i></label> </td>
 
             </tr>
             <tr>

@@ -2,6 +2,11 @@ from django.db import models
 from user.models import UserProfile
 from order.models import OrderScheduler,FollowUpScheduler,Order
 
+from PIL import Image
+import sys
+from io import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
 MEDIA_TAKEN_CHOICES = (
 	('BEFORE_CLEANING','BEFORE_CLEANING'),
 	('AFTER_CLEANING','AFTER_CLEANING')
@@ -48,6 +53,26 @@ class CleaningTeamMedia(models.Model):
 	is_active          		 = models.BooleanField(null=False,blank=True,default=True)
 	created            		 = models.DateTimeField(auto_now_add=True)
 	updated           		 = models.DateTimeField(auto_now=True)
+
+	def save(self,*args, **kwargs):
+		# Opening the uploaded image
+		im = Image.open(self.media)
+
+		output = BytesIO()
+
+		# Resize/modify the image
+		im = im.resize((100, 100))
+
+		# after modifications, save it to the output
+		im.save(output, format='JPEG', quality=90)
+		output.seek(0)
+
+		# change the imagefield value to be the newley modifed image value
+		self.media = InMemoryUploadedFile(output, 'ImageField', "%s.jpg" % self.media.name.split('.')[0], 'evaluationbook/',
+		                                sys.getsizeof(output), None)
+
+		super(CleaningTeamMedia, self).save(*args, **kwargs)
+
 
 	def __unicode__(self):
 		return str(self.team.team_leader.name)
@@ -127,6 +152,25 @@ class FollowUpTeamMedia(models.Model):
 	created            		 = models.DateTimeField(auto_now_add=True)
 	updated           		 = models.DateTimeField(auto_now=True)
 
+	def save(self,*args, **kwargs):
+		# Opening the uploaded image
+		im = Image.open(self.media)
+
+		output = BytesIO()
+
+		# Resize/modify the image
+		im = im.resize((100, 100))
+
+		# after modifications, save it to the output
+		im.save(output, format='JPEG', quality=90)
+		output.seek(0)
+
+		# change the imagefield value to be the newley modifed image value
+		self.media = InMemoryUploadedFile(output, 'ImageField', "%s.jpg" % self.media.name.split('.')[0], 'evaluationbook/',
+		                                sys.getsizeof(output), None)
+
+		super(FollowUpTeamMedia, self).save(*args, **kwargs)
+		
 	def __unicode__(self):
 		return str(self.team.team_leader.name)
 
