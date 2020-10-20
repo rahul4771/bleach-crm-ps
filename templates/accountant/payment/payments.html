@@ -29,7 +29,7 @@
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-pending-payment-orders-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
-            	<h2 class="green-text"><label>Pending<br>payments<span>{{total_pending_orders|default_if_none:'0.00'|floatformat:'2'}}</span><br><span class="orders">Orders</span></label>  </h2>
+            	<h2 class="green-text"><label>Pending<br>payments<span>{{total_pending_orders|default_if_none:'0'}}</span><br><span class="orders">Orders</span></label>  </h2>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -55,8 +55,8 @@
         <div class="chart_box_Left"><!--chart_box_Left-->        
         <div class="Button_wrapperChart">
             <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonthtoggle"><div class="slider round"><span class="on">MONTH</span><span class="off">DATE</span></div></label></div>
-            <input type="text" id="ord_fromdate" class="date_pick date_pick2 date-picker set1 date-pick-left"  >
-            <input type="text" id="ord_todate" class="date_pick date_pick2 date-picker set1 date-pick-right" >
+            <input type="text" id="ord_fromdate" class="date_pick_chart_from date_pick2 date-picker set1 date-pick-left"  >
+            <input type="text" id="ord_todate" class="date_pick_chart_to date_pick2 date-picker set1 date-pick-right" >
             <input type="text" id="month1" class="month_pick set2 date-pick-left" >
             <input type="text" id="month2" class="month_pick set2 date-pick-right" >
             <div><button id="reset_tickets" class="green-button-chart">Reset</button></div>

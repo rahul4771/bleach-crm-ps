@@ -161,10 +161,12 @@ function initialize() {
     }));
 
     $("#ord_fromdate").change(function(){
+        fromtodatecheck();
         drawArea();   
     });
     
     $("#ord_todate").change(function(){
+        fromtodatecheck();
         drawArea();   
     });
 

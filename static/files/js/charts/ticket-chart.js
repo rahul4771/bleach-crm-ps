@@ -154,10 +154,12 @@ function initialize() {
     }));
 
     $("#ord_fromdate").change(function(){
+        fromtodatecheck();
         drawLine();   
     });
     
     $("#ord_todate").change(function(){
+        fromtodatecheck();
         drawLine();   
     });
 

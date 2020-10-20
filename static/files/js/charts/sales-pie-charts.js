@@ -131,6 +131,12 @@ function drawlocationChart() {
 
 $("#location_pie_data").click(function(){
     console.log('room');
+    var d1 = $('#location_pie_date1').val();
+    var d2 = $('#location_pie_date2').val();
+    if ( d1 > d2){
+        $('#location_pie_date1').val(d2);
+        $('#location_pie_date2').val(d1);
+    }
     drawlocationChart(); 
 });
 
@@ -319,6 +325,12 @@ function drawcleaningtypeChart() {
 
 $("#cleaningtype_pie_data").click(function(){
     console.log('room');
+    var d1 = $('#cleaningtype_pie_date1').val();
+    var d2 = $('#cleaningtype_pie_date2').val();
+    if ( d1 > d2){
+        $('#cleaningtype_pie_date1').val(d2);
+        $('#cleaningtype_pie_date2').val(d1);
+    }
     drawcleaningtypeChart(); 
 });
 
@@ -506,6 +518,12 @@ function drawgovernorateChart() {
 
 $("#governorate_pie_data").click(function(){
     console.log('room');
+    var d1 = $('#governorate_pie_date1').val();
+    var d2 = $('#governorate_pie_date2').val();
+    if ( d1 > d2){
+        $('#governorate_pie_date1').val(d2);
+        $('#governorate_pie_date2').val(d1);
+    }
     drawgovernorateChart(); 
 });
 
