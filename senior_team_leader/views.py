@@ -374,7 +374,7 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		cleaners            = UserProfile.objects.filter(is_active=True,user_type='CLEANER').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
 		drivers             = UserProfile.objects.filter(is_active=True,user_type='DRIVER')
 	    #validation
-		check_cleaners_assigned = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
+		check_cleaners_assigned = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id__in=assigned_cleaners)
 		check_tl_assigned       = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id=request.POST.get('team_leader'))
 				
 
@@ -399,9 +399,12 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 			if len(assigned_cleaners)!=int(request.POST.get('no_of_cleaners')):
 				messages.error(request,"Assign Specified Number of cleaners")
 			else:	
+				print(check_cleaners_assigned)
+				print(check_tl_assigned)
+				print(cleaning_team_assign_form)
 				messages.error(request,"Something Went Wrong")
 
-			return render(request,'stl/cleaning/cleaningteam_assign.html',{'cleaning_team_assign_form':cleaning_team_assign_form,'order_schedule':order_schedule,'cleaners':cleaners,'leaders':leaders,'drivers':drivers,})	
+			return render(request,'stl/cleaning/cleaningteam_assign.html',{'cleaning_team_assign_form':cleaning_team_assign_form,'order_schedule':order_schedule,'cleaners':cleaners,'leaders':leaders,'drivers':drivers,'check_cleaners_assigned':check_cleaners_assigned,'check_tl_assigned':check_tl_assigned,})	
 
 		messages.success(request,"Cleaning Team Succesfully Assigned")
 
@@ -442,7 +445,7 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 		drivers             = UserProfile.objects.filter(is_active=True,user_type='DRIVER')
 
 		#validation
-		check_cleaners_assigned = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
+		check_cleaners_assigned = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id__in=assigned_cleaners)
 		check_tl_assigned       = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id=request.POST.get('team_leader'))
 		
 
