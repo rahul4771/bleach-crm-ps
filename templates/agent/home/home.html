@@ -1144,6 +1144,8 @@ $('document').ready(function(){
               minDate:1,
             });
         $('#appointment_time').datetimepicker({
+              minDate: moment({h:7}),
+              maxDate: moment({h:17}),
               pickDate:false,
               format: 'hh:mm A'
             });

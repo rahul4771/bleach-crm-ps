@@ -1288,6 +1288,70 @@ def SalesTargetData(request):
 	print(data,"sdt")
 	return JsonResponse(data,safe=False)
 
+#ajax for sales target charts
+def PaymentData(request):
+	data = []
+	dom = request.GET.get('dom', None)
+	prevdate  = request.GET.get('fromdate', None)
+	todate  = request.GET.get('todate', None)
+	print(dom,prevdate,todate,"pop333")
+	sales_dict = dict()
+	
+	if dom == 'Month':
+		print("derr")
+		month,year = prevdate.split("/")
+		month2,year2 = todate.split("/")
+
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=1,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+
+		sales = Order.objects.filter(is_active=True,created__range=(monthdate1,monthdate2)).filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD')|Q(payment_status='COMPLETED')))
+		print(sales,"po")
+
+		sales_month = sales.dates('created','month')
+		
+		for sale in sales_month:
+			month_start = datetime(day=1,month=sale.month,year=sale.year,hour=0,minute=0,second=0,microsecond=0)
+			month_end = datetime(day=1,month=sale.month,year=sale.year,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+			
+			paid_orders = Order.objects.filter(is_active=True,payment_status='COMPLETED',created__range=(monthdate1,monthdate2)).aggregate(count=Sum('evaluation__total_cost'))['count'] or 0.0
+			pending_orders = Order.objects.filter(is_active=True,created__range=(monthdate1,monthdate2)).filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).aggregate(count2=Sum('evaluation__total_cost'))['count2'] or 0.0
+			print(paid_orders,pending_orders,"totsal")
+			
+			sales_dict = {
+			"date" : sale.month,
+			"paid" : paid_orders,
+			"pending" : pending_orders,
+			}
+			data.append(sales_dict)
+	else:
+		print("njk")
+		try:
+			prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+			todate = datetime.strptime(todate, '%Y-%m-%d')
+		except:
+			todate = date.today() - timedelta(days=1)
+			prevdate = todate - timedelta(days=30)
+		print(prevdate,todate,"testdt")
+		daterange = pd.date_range(prevdate, todate)
+
+		for single_date in daterange:
+			saletarget_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
+			saletarget_date_end    = single_date+timedelta(1)
+
+			paid_orders = Order.objects.filter(is_active=True,payment_status='COMPLETED',created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(count=Sum('evaluation__total_cost'))['count'] or 0.0
+			pending_orders = Order.objects.filter(is_active=True,created__gte=saletarget_date_start,created__lte=saletarget_date_end).filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).aggregate(count2=Sum('evaluation__total_cost'))['count2'] or 0.0
+			
+			print(paid_orders,pending_orders,"red2")
+			sales_dict = {
+			"date" : single_date,
+			"paid" : paid_orders or 0.0,
+			"pending" : pending_orders or 0.0,
+			}
+			data.append(sales_dict)
+	print(data,"sdt")
+	return JsonResponse(data,safe=False)
+
 def cleaningcalendardate(request):
 	data = dict()
 	cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
@@ -1346,7 +1410,7 @@ def SalesTargetDaily(request):
 	target_date_end= target_date+timedelta(1)
 
 	for evaluator in evaluators_sales_target:
-		total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(target_date_start,target_date_end)).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+		total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,order_status='ORDER_CLOSED',created__range=(target_date_start,target_date_end)).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
 		if not total_sales:
 			total_sales = 0.0
 
@@ -1357,7 +1421,7 @@ def SalesTargetDaily(request):
 		data.append(evaluator_target_dict)
 	print(data,"here")
 
-	agent_sales_total = Order.objects.filter(evaluation__evaluation_details__evaluator=None,evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(target_date_start,target_date_end)).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+	agent_sales_total = Order.objects.filter(evaluation__evaluation_details__evaluator=None,order_status='ORDER_CLOSED',created__range=(target_date_start,target_date_end)).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
 	if not agent_sales_total:
 		agent_sales_total = 0.0
 		
