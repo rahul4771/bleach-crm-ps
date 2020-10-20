@@ -1027,20 +1027,22 @@ def SalesLocationData(request):
 
 		# appending each location counts
 		for location in location_types:
-			locationcount += 1
+			
 			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate_date_start,todate_date_end),evaluation__evaluation_details__evaluation_book_evaluation_details__area_type=location.name).count()
-			# if not sales_location_count:
-			# 	sales_location_count = 0
+			if not sales_location_count:
+				sales_location_count = 0
+				
+			if sales_location_count > 0:
+				locationcount += 1
+				if locationcount <= 5 :
+					location_dict = {
+					"location" : location.name,
+					"count" : sales_location_count,
+					}
+					data.append(location_dict)
 
-			if locationcount <= 5 :
-				location_dict = {
-				"location" : location.name,
-				"count" : sales_location_count,
-				}
-				data.append(location_dict)
-
-			if locationcount > 5 :
-				others_count += sales_location_count
+				if locationcount > 5 :
+					others_count += sales_location_count
 
 		# appending total of other locations
 		if others_count > 0:

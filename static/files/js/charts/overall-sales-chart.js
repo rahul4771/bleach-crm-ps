@@ -164,10 +164,12 @@ function initialize() {
     }));
 
     $("#sales_curve_date1").change(function(){
+        fromtodatecheck();
         drawArea();   
     });
     
     $("#sales_curve_date2").change(function(){
+        fromtodatecheck();
         drawArea();   
     });
 

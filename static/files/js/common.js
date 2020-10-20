@@ -30,7 +30,7 @@ $(function () {
 
 $(function () {
   var today = new Date();
-  $('.date_pick_today').datetimepicker({
+  $('.date_pick_chart_from').datetimepicker({
       pickTime: false, 
       format: 'DD-MM-YYYY',
       autoclose:true,
@@ -39,14 +39,29 @@ $(function () {
   }).on('changeDate', function (ev) {
           $(this).datetimepicker('hide');
       });
-
-  // $('.date_pick').keyup(function () {
-  //   console.log("runo")
-  //     if (this.value > now().date()) {
-  //         this.value = this.value.replace('');
-  //     }
-  // });
 });
+
+$(function () {
+  var today = new Date();
+  $('.date_pick_chart_to').datetimepicker({
+      pickTime: false, 
+      format: 'DD-MM-YYYY',
+      autoclose:true,
+      endDate: "today",
+      maxDate: today,
+  }).on('changeDate', function (ev) {
+          $(this).datetimepicker('hide');
+      });
+});
+
+function fromtodatecheck() {
+  var d1 = $('.date_pick_chart_from').val();
+  var d2 = $('.date_pick_chart_to').val();
+  if ( d1 > d2){
+    $('.date_pick_chart_from').val(d2);
+    $('.date_pick_chart_to').val(d1);
+  }
+};
 
 //time pick
 //tendative time initial

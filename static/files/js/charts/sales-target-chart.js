@@ -167,10 +167,22 @@ function salestarget(evaluator_id){
         }));
 
         $("#sales_target_date1").change(function(){
+            var d1 = $('#sales_target_date1').val();
+            var d2 = $('#sales_target_date2').val();
+            if ( d1 > d2){
+                $('#sales_target_date1').val(d2);
+                $('#sales_target_date2').val(d1);
+            }
             drawArea();   
         });
         
         $("#sales_target_date2").change(function(){
+            var d1 = $('#sales_target_date1').val();
+            var d2 = $('#sales_target_date2').val();
+            if ( d1 > d2){
+                $('#sales_target_date1').val(d2);
+                $('#sales_target_date2').val(d1);
+            }
             drawArea();   
         });
 
