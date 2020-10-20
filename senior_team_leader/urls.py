@@ -12,4 +12,7 @@ urlpatterns = [
 	url(r'^assignfollowup/team/(?P<scheduler_id>[-\w]+)/$',views.AssignFollowupTeam.as_view(),name='assign-followupteam'),
 
 	url(r'^investigation/(?P<investigation_id>[-\w]+)/$',views.InvestigationTask.as_view(),name='investigation'),
+
+	url(r'^ajax/cleaning/info$',views.GetCleaningInfo,name='ajax-getcleaninginfo'),
+	url(r'^ajax/followup/info$',views.GetFollowupInfo,name='ajax-getfollowupinfo'),
 ]

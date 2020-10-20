@@ -4,6 +4,7 @@ from django.views import View
 from django.conf import settings
 from bleach_crm_ps.permissions import IsSeniorTeamLeader
 from bleach_crm_ps.utils import get_error
+from django.http import HttpResponse,JsonResponse
 
 import functools
 import operator
@@ -22,6 +23,146 @@ from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMemb
 
 from senior_team_leader.forms import CleaningTeamAssignForm,FollowupTeamAssignForm
 # Create your views here.
+
+
+def GetCleaningInfo(request):
+	cleaning_dict = {}
+
+	scheduler_id  = int(request.GET.get('schedule_id'))
+	schedule  = OrderScheduler.objects.select_related('order_scheduler_book','customer_address__customer','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_member')),to_attr='cleaning_team')).get(id=scheduler_id,is_active=True)
+
+
+	cleaning_dict['order_no'] 		 = schedule.order.order_no
+	cleaning_dict['address']  		 = schedule.customer_address.apartment+', '+schedule.customer_address.block+', '+schedule.customer_address.street+', '+schedule.customer_address.avenue+', '+schedule.customer_address.building+', '+schedule.customer_address.area.name+', '+schedule.customer_address.governorate.name
+	cleaning_dict['customer'] 		 = schedule.customer_address.customer.name
+	cleaning_dict['customer_mobile'] = schedule.customer_address.customer.mobile_number
+	cleaning_dict['start_at_date']   = (schedule.start_at+timedelta(hours=3)).strftime('%d-%m-%Y')
+	cleaning_dict['start_at_time']   = (schedule.start_at+timedelta(hours=3)).strftime('%I:%M %p')
+	cleaning_dict['duration']		 = schedule.order_scheduler_book.cleaning_hours
+
+	#cleaners and team leader
+	cleaners_info ={}
+
+	cleaners_info['cleaners']   = []
+	for team in schedule.cleaning_team:
+		cleaning_dict['team_leader'] 	= team.team_leader.name
+		cleaning_dict['team_leader_id'] = team.team_leader.id
+		for cleaner in team.cleaning_member:
+			cleaner_dict = {}
+
+			cleaner_dict["member_name"] 	= cleaner.member.name
+			cleaner_dict["member_id"] 		= cleaner.member.id
+
+			cleaners_info['cleaners'].append(cleaner_dict)
+
+	cleaning_dict['cleanersinfo'] =	cleaners_info
+
+	#free slotes
+	active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at))|Q(Q(end_at__gte=schedule.start_at)&Q(end_at__lte=schedule.end_at))|Q(Q(start_at__lte=schedule.start_at)&Q(end_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at)&Q(end_at__gte=schedule.end_at))|Q(Q(start_at__gte=schedule.start_at)&Q(end_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at)&Q(end_at__lte=schedule.end_at)))).values_list("member",flat=True)
+	active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at))|Q(Q(end_at__gte=schedule.start_at)&Q(end_at__lte=schedule.end_at))|Q(Q(start_at__lte=schedule.start_at)&Q(end_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at)&Q(end_at__gte=schedule.end_at))|Q(Q(start_at__gte=schedule.start_at)&Q(end_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at)&Q(end_at__lte=schedule.end_at)))).values_list("member",flat=True)
+			
+	leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
+	cleaners            = UserProfile.objects.filter(is_active=True,user_type='CLEANER').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
+
+	#available leaders
+	available_leaders_info = {}
+	available_leaders_info['available_leaders']   = []
+	for leader in leaders:
+		available_leaders_dict = {}
+
+		available_leaders_dict["leader_name"] 	= leader.name
+		available_leaders_dict["leader_id"] 	= leader.id
+
+		available_leaders_info['available_leaders'].append(available_leaders_dict)
+
+	cleaning_dict['availableleadersinfo'] =	available_leaders_info
+
+
+	#available cleaners
+	available_cleaners_info = {}
+	available_cleaners_info['available_cleaners']   = []
+	for cleaner in cleaners:
+		available_cleaners_dict = {}
+
+		available_cleaners_dict["cleaner_name"] 	= cleaner.name
+		available_cleaners_dict["cleaner_id"]   	= cleaner.id
+
+		available_cleaners_info['available_cleaners'].append(available_cleaners_dict)
+
+	cleaning_dict['availablecleanersinfo'] =	available_cleaners_info
+
+	return JsonResponse(cleaning_dict)
+
+def GetFollowupInfo(request):
+	cleaning_dict = {}
+
+	scheduler_id  = request.GET.get('schedule_id')
+
+	schedule  = FollowUpScheduler.objects.select_related('customer_address__customer','follow_up__investigation__order').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_member')),to_attr='cleaning_team')).get(id=scheduler_id)
+
+	cleaning_dict['order_no'] 		 = schedule.follow_up.investigation.order.order_no
+	cleaning_dict['address']  		 = schedule.customer_address.apartment+', '+schedule.customer_address.block+', '+schedule.customer_address.street+', '+schedule.customer_address.avenue+', '+schedule.customer_address.building+', '+schedule.customer_address.area.name+', '+schedule.customer_address.governorate.name
+	cleaning_dict['customer'] 		 = schedule.customer_address.customer.name
+	cleaning_dict['customer_mobile'] = schedule.customer_address.customer.mobile_number
+	cleaning_dict['start_at_date']   = (schedule.start_at+timedelta(hours=3)).strftime('%d-%m-%Y')
+	cleaning_dict['start_at_time']   = (schedule.start_at+timedelta(hours=3)).strftime('%I:%M %p')
+	cleaning_dict['duration']		 = schedule.follow_up.cleaning_hours
+
+	#cleaners and team leader
+	cleaners_info ={}
+
+	cleaners_info['cleaners']   = []
+	for team in schedule.cleaning_team:
+		cleaning_dict['team_leader'] 	= team.team_leader.name
+		cleaning_dict['team_leader_id'] = team.team_leader.id
+		for cleaner in team.cleaning_member:
+			cleaner_dict = {}
+
+			cleaner_dict["member_name"] 	= cleaner.member.name
+			cleaner_dict["member_id"] 		= cleaner.member.id
+
+			cleaners_info['cleaners'].append(cleaner_dict)
+
+	cleaning_dict['cleanersinfo'] =	cleaners_info
+	
+
+	#free slotes
+	active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at))|Q(Q(end_at__gte=schedule.start_at)&Q(end_at__lte=schedule.end_at))|Q(Q(start_at__lte=schedule.start_at)&Q(end_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at)&Q(end_at__gte=schedule.end_at))|Q(Q(start_at__gte=schedule.start_at)&Q(end_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at)&Q(end_at__lte=schedule.end_at)))).values_list("member",flat=True)
+	active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at))|Q(Q(end_at__gte=schedule.start_at)&Q(end_at__lte=schedule.end_at))|Q(Q(start_at__lte=schedule.start_at)&Q(end_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at)&Q(end_at__gte=schedule.end_at))|Q(Q(start_at__gte=schedule.start_at)&Q(end_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at)&Q(end_at__lte=schedule.end_at)))).values_list("member",flat=True)
+
+	leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
+	cleaners            = UserProfile.objects.filter(is_active=True,user_type='CLEANER').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
+
+	#available leaders
+	available_leaders_info = {}
+	available_leaders_info['available_leaders']   = []
+	for leader in leaders:
+		available_leaders_dict = {}
+
+		available_leaders_dict["leader_name"] 	= leader.name
+		available_leaders_dict["leader_id"] 	= leader.id
+
+		available_leaders_info['available_leaders'].append(available_leaders_dict)
+
+	cleaning_dict['availableleadersinfo'] =	available_leaders_info
+
+
+	#available cleaners
+	available_cleaners_info = {}
+	available_cleaners_info['available_cleaners']   = []
+	for cleaner in cleaners:
+		available_cleaners_dict = {}
+
+		available_cleaners_dict["cleaner_name"] 	= cleaner.name
+		available_cleaners_dict["cleaner_id"]   	= cleaner.id
+
+		available_cleaners_info['available_cleaners'].append(available_cleaners_dict)
+
+	cleaning_dict['availablecleanersinfo'] =	available_cleaners_info
+
+	print(cleaning_dict)
+	return JsonResponse(cleaning_dict)	
+
 
 class StlHome(IsSeniorTeamLeader,View):
 	def get(self,request):
@@ -223,6 +364,73 @@ class StlHome(IsSeniorTeamLeader,View):
 
 		return render(request,'stl/home/home.html',{'investigations':investigations,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,"fil_staff":fil_staff,'assign_order_schedules':assign_order_schedules,'assign_followup_schedules':assign_followup_schedules,})
 
+	def post(self,request):
+		action = request.POST.get('action_type')
+
+		if action == 'edit_cleaning':
+			schedule_id    = request.POST.get('cleaning_id')	
+			order_schedule = OrderScheduler.objects.get(is_active=True,id=schedule_id)
+
+			#validates
+			assigned_cleaners   = request.POST.getlist('team_member')
+			active_cleaners1 	= CleaningTeamMember.objects.exclude(member__id__in=assigned_cleaners).filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list('member',flat=True)
+			active_cleaners2 	= FollowUpTeamMember.objects.exclude(member__id__in=assigned_cleaners).filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list('member',flat=True)	
+
+			check_cleaners_assigned = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id__in=assigned_cleaners)
+			check_tl_assigned       = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id=request.POST.get('team_leader'))		
+
+			
+			if schedule_id and not check_cleaners_assigned and not check_tl_assigned:
+				#update cleaning team leader
+				assigned_leader           = request.POST.get('team_leader')
+				CleaningTeamMember.objects.filter(is_active=True,team__order_scheduler_id=schedule_id,member__user_type='TEAMLEADER').update(member_id=assigned_leader)
+				CleaningTeam.objects.filter(is_active=True,order_scheduler_id=schedule_id,team_leader__user_type='TEAMLEADER').update(team_leader_id=assigned_leader)
+
+				#update Cleaning team members
+				assigned_cleaners         = request.POST.getlist('team_member')
+				
+				cleaning_team_members = CleaningTeamMember.objects.filter(is_active=True,team__order_scheduler_id=schedule_id,member__user_type='CLEANER')
+				if not assigned_cleaners==['']:
+					for cleaner,cleaner_db in zip(assigned_cleaners,cleaning_team_members):
+						cleaner_db.member_id = cleaner 
+						cleaner_db.save()
+				messages.success(request,"Cleaning Team Updated")
+			else:
+				messages.error(request,"Something Went Wrong")			
+
+		if action == 'edit_followup':
+			schedule_id    = request.POST.get('followup_id')
+			order_schedule = FollowUpScheduler.objects.get(is_active=True,id=schedule_id)
+
+			#validates
+			assigned_cleaners   = request.POST.getlist('team_member')
+			active_cleaners1 	= CleaningTeamMember.objects.exclude(member__id__in=assigned_cleaners).filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list('member',flat=True)
+			active_cleaners2 	= FollowUpTeamMember.objects.exclude(member__id__in=assigned_cleaners).filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list('member',flat=True)	
+
+			check_cleaners_assigned = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id__in=assigned_cleaners)
+			check_tl_assigned       = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id=request.POST.get('team_leader'))
+
+			if schedule_id and not check_cleaners_assigned and not check_tl_assigned:
+				#update Followup team leader
+				assigned_leader         = request.POST.get('team_leader')
+				FollowUpTeamMember.objects.filter(is_active=True,team__followup_scheduler_id=schedule_id,member__user_type='TEAMLEADER',).update(member_id=assigned_leader)
+				FollowUpTeam.objects.filter(is_active=True,followup_scheduler_id=schedule_id,team_leader__user_type='TEAMLEADER').update(team_leader_id=assigned_leader)
+
+				#update Followup team members
+				assigned_cleaners         = request.POST.getlist('team_member')
+
+				followup_team_members = FollowUpTeamMember.objects.filter(is_active=True,team__followup_scheduler_id=schedule_id,member__user_type='CLEANER')
+				if not assigned_cleaners==['']:
+					for cleaner,cleaner_db in zip(assigned_cleaners,followup_team_members):
+						cleaner_db.member_id = cleaner 
+						cleaner_db.save()
+				messages.success(request,"Follow Up Team Updated")		
+			else:
+				messages.error(request,"Something Went Wrong")				
+
+		return redirect('stl:stldash-board')
+
+
 class TicketDetails(IsSeniorTeamLeader,View):
 	def get(self,request):
 
@@ -404,7 +612,7 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 				print(cleaning_team_assign_form)
 				messages.error(request,"Something Went Wrong")
 
-			return render(request,'stl/cleaning/cleaningteam_assign.html',{'cleaning_team_assign_form':cleaning_team_assign_form,'order_schedule':order_schedule,'cleaners':cleaners,'leaders':leaders,'drivers':drivers,'check_cleaners_assigned':check_cleaners_assigned,'check_tl_assigned':check_tl_assigned,})	
+			return render(request,'stl/cleaning/cleaningteam_assign.html',{'cleaning_team_assign_form':cleaning_team_assign_form,'order_schedule':order_schedule,'cleaners':cleaners,'leaders':leaders,'drivers':drivers})	
 
 		messages.success(request,"Cleaning Team Succesfully Assigned")
 
@@ -462,10 +670,11 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 			assigned_cleaners_list   = []
 			for cleaner in assigned_cleaners:
 				assigned_cleaners_list.append(FollowUpTeamMember(team=follow_up_team_assign_form_save,member_id=cleaner,start_at=followup_schedule.start_at,end_at=followup_schedule.end_at))
+			assigned_cleaners_list.append(FollowUpTeamMember(team=follow_up_team_assign_form_save,member=follow_up_team_assign_form_save.team_leader,start_at=followup_schedule.start_at,end_at=followup_schedule.end_at))
 			#bulk create
 			FollowUpTeamMember.objects.bulk_create(assigned_cleaners_list)	
 
-			FollowUpScheduler.objects.filter(id=scheduler_id).update(work_status='CLEANING_TEAM_ASSIGNED')
+			FollowUpScheduler.objects.filter(id=scheduler_id).update(work_status='FOLLOW_UP_TEAM_ASSIGNED')
 		else:
 
 			if len(assigned_cleaners)!=int(request.POST.get('no_of_cleaners')):
