@@ -374,7 +374,7 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		cleaners            = UserProfile.objects.filter(is_active=True,user_type='CLEANER').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
 		drivers             = UserProfile.objects.filter(is_active=True,user_type='DRIVER')
 	    #validation
-		check_cleaners_assigned = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
+		check_cleaners_assigned = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id__in=assigned_cleaners)
 		check_tl_assigned       = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id=request.POST.get('team_leader'))
 				
 
@@ -445,7 +445,7 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 		drivers             = UserProfile.objects.filter(is_active=True,user_type='DRIVER')
 
 		#validation
-		check_cleaners_assigned = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
+		check_cleaners_assigned = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id__in=assigned_cleaners)
 		check_tl_assigned       = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id=request.POST.get('team_leader'))
 		
 
