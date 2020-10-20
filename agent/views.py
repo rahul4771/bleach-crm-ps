@@ -2471,7 +2471,7 @@ def TicketData(request):
 			
 			total_tickets = FollowUp.objects.filter(is_active=True,investigation__order__evaluation__quatation_approved_date__gte=ticket_date_start,investigation__order__evaluation__quatation_approved_date__lte=ticket_date_end).count()
 			followup_tickets = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_CLOSED',investigation__order__evaluation__quatation_approved_date__gte=ticket_date_start,investigation__order__evaluation__quatation_approved_date__lte=ticket_date_end).count()
-			print(sdate,total_tickets,followup_tickets,"qtc")
+			print(total_tickets,followup_tickets,"qtc")
 			tkt_dict = {
 			"date" : single_date,
 			"total" : total_tickets,
@@ -2545,14 +2545,17 @@ def FeedBackData(request):
 
 def ResourcesToggle(request):
 	data = dict()
+	worker_list = []
 	month_year = request.GET.get('month_year',None)
 	month,year = month_year.split("/")
 	print(month,year,"monthyr")
 	staff_type = request.GET.get('staff_type',None)
 	print(staff_type)
-
+	monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+	monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+	daterange = pd.date_range(monthdate1, monthdate2)
 	search = request.GET.get('search',None)
-
+	
 	try:
 		if staff_type:
 			workers =  UserProfile.objects.filter(is_active=True).filter(user_type=staff_type)
@@ -2563,12 +2566,23 @@ def ResourcesToggle(request):
 	except:
 		workers =  None
 	print(workers,"lp")
-	# try:
-	workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__year__gte=year,start_at__month__gte=month)&Q(start_at__year__lte=year,start_at__month__lte=month))|Q(Q(end_at__year__gte=year,end_at__month__gte=month)&Q(end_at__year__lte=year,end_at__month__lte=month))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__year__gte=year,start_at__month__gte=month)&Q(start_at__year__lte=year,start_at__month__lte=month))|Q(Q(end_at__year__gte=year,end_at__month__gte=month)&Q(end_at__year__lte=year,end_at__month__lte=month))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
-	# except:
-	#     workers_details = None
-	print(workers_details,"wok")
-	data['html_workers_list'] = render_to_string('agent/resource/resource-month.html', {'workers_details_month':workers_details})
+
+	for worker in workers:
+		print(worker,"wokl")
+		day_count = 0
+		for date in daterange:
+			start_date = date
+			end_date = date+timedelta(1)
+			queryset=CleaningTeamMember.objects.filter(is_active=True,member=worker.id,start_at__gte=start_date,start_at__lte=end_date,end_at__gte=start_date,end_at__lte=end_date)
+			queryset2=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(member=worker)&Q(Q(Q(start_at__gte=start_date)&Q(start_at__lte=end_date))|Q(Q(end_at__gte=start_date)&Q(end_at__lte=end_date))) ))
+			if queryset:
+				print(queryset,"qrs")
+				day_count += 1
+			else:
+				pass
+		worker_list = [worker,day_count]
+	print(worker_list,"wok")
+	data['html_workers_list'] = render_to_string('agent/resource/resource-month.html', {})
 	return JsonResponse(data)
 
 def ResourcesFilter(request):
