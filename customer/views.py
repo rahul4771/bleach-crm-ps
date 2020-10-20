@@ -47,3 +47,7 @@ class Quatation(View):
 		Evaluation.objects.filter(id=evaluation_id).update(quatation_status='APPROVED',quatation_approved_date=timezone.now())
 		Order.objects.filter(evaluation__id=evaluation_id).update(order_status='APPROVED_BY_CLIENT')
 		return redirect('login')
+
+class TermsandConditions(View):
+	def get(self,request):
+		return render(request,"customer/termsandconditions.html",{})

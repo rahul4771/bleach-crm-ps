@@ -57,6 +57,8 @@
 
 .clickable-cursor{ cursor: pointer; }
 
+.gray-text-evaluation{ color:#999 !important;} 
+.gray-text-cleaning{ color:#444 !important;} 
 /* Individual bars */
 .bar-n {height: 18px;}
 
