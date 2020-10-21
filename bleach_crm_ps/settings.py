@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'bleachadmin',
     'customer',
     'Api',
+    'mathfilters' 
 ]
 
 MIDDLEWARE = [
