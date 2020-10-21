@@ -588,6 +588,8 @@ $("#id_form-TOTAL_FORMS").val("{{evaluation_details.evaluationbooks|length}}");
 $("#id_form-{{forloop.counter0}}-tendative_time").datetimepicker({
     pickDate:false,
     format: 'hh:mm A',
+    minDate: moment({h:7}),
+    maxDate: moment({h:17}),
 });
 
 {% for media in book.evaluationbookmedias %}

@@ -35,7 +35,7 @@ function initialize() {
 
         console.log(month_1, month_2, "monthd2")
 
-        const monthNames = ["January", "February", "March", "April", "May", "June",
+        const monthNames = ["0","January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
         ];
 
@@ -54,13 +54,13 @@ function initialize() {
             var foll_tkt2 = 0;
             if(data_month.length > 0){
             $.each(data_month,function(key,value){
-                var vals2 = value.date.split('-');
-                var year2 = parseInt(vals2[0]);
-                var month2 = parseInt (vals2[1]);
-                var day2 = parseInt (vals2[2]);
-                console.log(year2,month2,day2,value.total,value.followup,"ter")
-                const d2 = new Date(year2,month2-1,day2)
-                tickets2.push([monthNames[d2.getMonth()],value.total,value.followup]);
+                // var vals2 = value.date.split('-');
+                // var year2 = parseInt(vals2[0]);
+                // var month2 = parseInt (vals2[1]);
+                // var day2 = parseInt (vals2[2]);
+                // console.log(year2,month2,day2,value.total,value.followup,"ter")
+                // const d2 = new Date(year2,month2-1,day2)
+                tickets2.push([monthNames[value.date],value.total,value.followup]);
                 tkt_tot2 += parseInt(value.total);
                 foll_tkt2 += parseInt(value.followup);
             });
