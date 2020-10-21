@@ -8,7 +8,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Bleach Cleaning Services | Quotation</title>
+    <title>Bleach Cleaning Services | Invoice</title>
     
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,8 +22,8 @@
   </head>
   <body>
     <div id="container">
-      <div>
       <!-- <div class="left-stripes"> -->
+      <div>
         <div class="circle c-upper"></div>
         <div class="circle c-lower"></div>
       </div>
@@ -31,9 +31,12 @@
       <div class="right-invoice">
         <section id="memo">
           <div class="company-info">
-			<div>Bleach Cleaning Services<div class="company-name-arabic"> شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف المباني والمدن</div>	
-          	</div>
-		  </div>
+            <div>Bleach Cleaning Services<div class="company-name-arabic"> شركة بلـــيتش الـــعالمــقاولات تنظيف المباني والمدن</div>	
+            
+			</div>
+             
+          </div>
+
           <div class="logo">
             <img src="{% static 'files/images/bleach logo.png' %}" />
           </div>
@@ -46,7 +49,7 @@
             <span>{{order.evaluation.created|date:'d-m-Y'}}</span> <span id="number">{{order.order_no}}</span>
           </div>
         
-          <div id="title">QUOTATION<div class="invoice-name-arabic">شركة بلـــيت</div></div> 
+          <div id="title">INVOICE<div class="invoice-name-arabic">شركة بلـــيت</div></div>
           
         </section>
 
@@ -85,26 +88,11 @@
         </section>
         {% endif %}
         {% endfor %}
-
-        <div class="clearfix"></div>
-        
-        <section id="invoice-info">
-          <div>
-            <span>Due Date / شركة بلـــيتش الـــع</span> <span>{{order.evaluation.quatation_expiry_date|date:'d-m-Y'}}</span>
-          </div>
-          <div>
-            <span>Evaluator(s) / شركة بلـــيتش الـــع</span> <span> {% for orderschedule in nonduplicate_schedules %}{% if orderschedule.evaluation_details.evaluator %}{{orderschedule.evaluation_details.evaluator.name}}{% if not forloop.last %},{% endif %}{% else %}{% if forloop.last %}{{orderschedule.evaluation_details.evaluation.call_attender.name}}{% endif %}{% endif %}{% endfor %} / شركة بلـــيتش الـــع</span>
-          </div>
-          <div>
-            <span>Payment Policy / شركة بلـــيتش الـــع</span> <span>{{order.evaluation.payment_method}} / شركة بلـــيتش الـــع</span>
-          </div>
-        </section>
         
         <div class="clearfix"></div>
 
         <div class="currency">
           <span> Currency in Kuwait Dianr / محمد محمد-شارع محمد</span>
-
         </div>
         
         <section >
@@ -114,10 +102,11 @@
             <tr>
               <th width="5%"></th> <!-- Dummy cell for the row number and row commands -->
               <th width="50%">ITEM<br>شارع محمد</th>
-              <th width="20%">CATEGORY<br>شارع محمد</th>
+              <th width="20%">CATEGOTY<br>شارع محمد</th>
               <th width="10%">SIZE<br>شارع محمد</th>
               <th width="15%" class="align-right">NET PRICE &nbsp;<br>شارع محمد &nbsp;</th>
             </tr>
+
             {% for orderschedule in nonduplicate_schedules %}
             {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
             <tr class="hide">
@@ -160,27 +149,20 @@
             <tr class="amount-total">
               <!-- {amount_total_label} -->
               <td colspan="2">{{order.evaluation.total_cost|floatformat:'3'}} KD
-                <!-- <div class="invoice-name-arabic">شركة بلـــيت</div> -->
-              </td>
+                <!-- <div class="invoice-name-arabic">شركة بلـــيت</div></td> -->
             </tr>
             
             <!-- You can use attribute data-hide-on-quote="true" to hide specific information on quotes.
                  For example Invoicebus doesn't need amount paid and amount due on quotes  -->
-            {% if order.evaluation.payment_method == 'BREAKDOWN' %}
-            <tr>
-              <td class="align-right" colspan="2"> <strong> BREAKDOWN PAYMENTMODE / شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف </strong></td>
+            <tr >
+              <th>Paid / شركة بلـــيتش</th>
+              <td><strong>{{order.amount_paid|floatformat:3}} KD</strong></td>
             </tr>
             
             <tr>
-              <td>Payment Before Cleaning<br>شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف</td>
-              <td><strong>{{order.evaluation.before_cleaning_amount|floatformat:'3'}} KD</strong></td>
+              <th class="medium">Amount Due / شركة بلـــيتش</th>
+              <td class="medium"> {{order.remining_amount|floatformat:'3'}} KD </td>
             </tr>
-            
-            <tr>
-              <td>Payment After Cleaning<br>شركة بلـــيتش الـــعالظيف</td>
-              <td class="medium">{{order.evaluation.after_cleaning_amount|floatformat:'3'}} KD </td>
-            </tr>
-            {% endif %}
             
           </table>
           
@@ -188,21 +170,21 @@
 
         <div class="clearfix"></div>
         <section>
-
         <table cellpadding="0" cellspacing="0" class="table1">
-            <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
-            <tr>         
-              <td id="tnc-padding" colspan="2" class="align-right"><input type="checkbox" id="myCheck" name="termsandconditions"> <label><i> <u><a href="{% url 'customer:tc' %}"><b>I Agree the Terms & Condetions / شركة بلـــيتش شركة بلـــيتش</b></a></u></i></label> </td>
-
-            </tr>
+            <!-- <tr>         
+              <td id="tnc-padding" colspan="2" class="align-right"><input type="checkbox" id="myCheck"> <label><i> <u><b>I Agree the Terms & Conditions / شركة بلـــيتش شركة بلـــيتش</b></u></i></label> </td>
+            </tr> -->
             <tr>
+
               <td colspan="2" class="align-right">
-                <input type="hidden" name="order_id" value="{{order.id}}">
-                <input type="hidden" name="action_type" value="Approve">
-                <input class="assignButton" name="submit" type="submit" value="Approve/الـــعالظيف"> 
-                <input class="cancel-Button Click-here" name="cancel" type="button" value="Reject/الـــعالظيف"></td>
+                <form method="post" action="http://paymentgateway.local/SendPerformREQuest.php" enctype= "multipart/form-data">{% csrf_token %}
+                <input type="hidden" name="price" value="{{order.remining_amount}}">
+                <input type="hidden" name="qty" value="1">
+                <input type="hidden" name="evaluation" value="{{order.evaluation.evaluation_id}}">
+                <input class="assignButton" name="pay" type="submit" value="Pay / شركة بلــ">
+                </form>
+              </td>
             </tr>
-            </form>
             <tr>
               <td class="align-left large" width="50%" ><div>{{order.evaluation.quatation_status}} / شركة بلـــيتش </div>Sales Authorisation / شارع محمد</td>
               <td class="align-right large">Customer Authorisation / شارع محمد</td>
@@ -237,14 +219,12 @@
     </div>
               </td>
             </tr>
-               
-          </table>
+           </table> 
         </section>
         
          
       </div>
     </div>
-    
     <table cellpadding="0" cellspacing="0" class="table3">
  <tr>
               <td colspan="2" class="note">NOTE : This is computer generated receipt and does not require physical signature<br>شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف</td>
@@ -253,35 +233,8 @@
               <td colspan="2" ><input name="print" type="button" class="print" value="Print / شارع محمد">&nbsp;<input name="download" type="button" class="download" value="Download / شارع محمد"> </td>
             </tr>            
           </table>
-    
-    <div class="custom-model-main"><!--custom-model-main-->
-    <div class="custom-model-inner">  <!--custom-model-inner-->      
-    <div class="close-btn">×</div>
-        <div class="custom-model-wrap"><!--custom-model-wrap-->
-            <div class="pop-up-content-wrap"><!--pop-up-content-wrap-->
-               <div class="bold-text">Do you want to Reject now ? It Will be Permenentlly Removed From the System and Need Further Evaluation ! <br> مبني 3، قطعة 13 ، شارع محمد الغانم ، مدينة الكويت	</div>	
-               <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
-                <input type="hidden" name="order_id" value="{{order.id}}">
-                <input type="hidden" name="action_type" value="Reject">
-               <div><input class="assignButton" name="submit" type="submit" value="Reject / شارع محمد"></div>
-               </form>
-            </div><!--pop-up-content-wrap-->
-        </div><!--custom-model-wrap-->  
-    </div><!--custom-model-inner-->   
-    <div class="bg-overlay"></div>
-</div><!--custom-model-main-->
-
-
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
-<script id="rendered-js" >
-$(".Click-here").on('click', function () {
-  $(".custom-model-main").addClass('model-open');
-});
-$(".close-btn, .bg-overlay").click(function () {
-  $(".custom-model-main").removeClass('model-open');
-});
-
-</script>
-{% include 'common_messages.html' %}
+ 
+ 
   </body>
 </html>
+

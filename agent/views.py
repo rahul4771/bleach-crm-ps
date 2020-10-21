@@ -1710,7 +1710,7 @@ class MakeEvaluation(IsAgent,View):
 			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 
 		#Create New Evaluation
-		new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,call_attender=request.user,customer_id=enquiry_id)
+		new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,call_attender=request.user,customer_id=enquiry_id,quatation_expiry_date=timezone.now()+timedelta(7))
 
 		return redirect('agent:agent-assignevaluator',enquiry_id,new_evaluation.id)
 
@@ -1808,10 +1808,8 @@ class MakeQuatationBase(IsAgent,View):
 			evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
 			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 		
-		try:
-			evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer_id=enquiry_id,call_attender=request.user)
-		except:
-			evaluation = None
+		evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer_id=enquiry_id,call_attender=request.user,quatation_expiry_date=timezone.now()+timedelta(7))
+		
 
 		#create evaluation details
 		try:

@@ -6,6 +6,7 @@ from django.db.models import Prefetch
 from django.utils import timezone
 
 from django.db.models import F
+from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
@@ -14,40 +15,72 @@ from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMemb
 from accountant.models import PaymentHistory
 
 #all users views
+class TermsandConditions(View):
+	def get(self,request):
+		return render(request,"customer/termsandconditions.html",{})
+
+
 class Quatation(View):
 	def get(self,request,evaluation_id):
 
-		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationmedia'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection'),Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_team_members')),to_attr='cleaning_team'),Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('followup_investigation',queryset = FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules')),to_attr='followups')),to_attr='investigations')),to_attr='orderschedules'),Prefetch('feed_backs_order',FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks')).get(is_active=True,evaluation__id=evaluation_id)
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__id=evaluation_id)
 
-		return render(request,"customer/newquatation.html",{"order":order,})
+		nonduplicate_schedules = []
+		#Remove duplicates for subscription
+		duplicate_schedules    = []
+		for orderschedule in order.orderschedules:
+			if orderschedule.order_scheduler_book in duplicate_schedules:
+				pass
+			else:	
+				nonduplicate_schedules.append(orderschedule)	
+
+			duplicate_schedules.append(orderschedule.order_scheduler_book)
+
+		return render(request,"customer/newquatation.html",{"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 
 	def post(self,request,evaluation_id):
 
 		order_id 		  = request.POST.get('order_id')
-		payment_condition = request.POST.get('submit')
 
-		order_payment_update 						= Order.objects.get(id=order_id)
+		action            = request.POST.get('action_type')
 		
-		if payment_condition == 'Yes':
-			#update payment status
-			order_payment_update.payment_status 	    = 'COMPLETED'
-			order_payment_update.payment_completed_date = timezone.now()
-			order_payment_update.amount_paid            = order_payment_update.remining_amount
-			order_payment_update.remining_amount        = 0
+		if action == 'Reject':
+			#UPDATE EVALUATION REJECTION
+			Evaluation.objects.filter(id=evaluation_id).update(quatation_status='REJECTED',quatation_rejected_date=timezone.now())
+			Order.objects.filter(id=order_id).update(order_status='ORDER_CANCELLED')
 
-			order_payment_update.save()
-			
-			#update payment history
-			try:
-				payment_history  = PaymentHistory.objects.create(order=order_payment_update,amount_paid=order_payment_update.total_amount)
-			except:
-				payment_history  = None
+		if action == 'Approve':
+			#UPDATE EVALUATION APPROVAL
+			termsandconditions = request.POST.get('termsandconditions')
+			if termsandconditions:
+				Evaluation.objects.filter(id=evaluation_id).update(quatation_status='APPROVED',quatation_approved_date=timezone.now())
+				Order.objects.filter(id=order_id).update(order_status='APPROVED_BY_CLIENT')
+				return redirect('customer:invoice',evaluation_id)
+			else:
+				messages.error(request,"Please Read Terms & Conditions and Agree")
+				return redirect('customer:quatation',evaluation_id)
 
-		#update evaluation approval
-		Evaluation.objects.filter(id=evaluation_id).update(quatation_status='APPROVED',quatation_approved_date=timezone.now())
-		Order.objects.filter(evaluation__id=evaluation_id).update(order_status='APPROVED_BY_CLIENT')
-		return redirect('login')
+		return redirect('customer:quatation',evaluation_id)
 
-class TermsandConditions(View):
+class CustomerInvoice(View):
+	def get(self,request,evaluation_id):
+		
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__id=evaluation_id)
+
+		nonduplicate_schedules = []
+		#Remove duplicates for subscription
+		duplicate_schedules    = []
+		for orderschedule in order.orderschedules:
+			if orderschedule.order_scheduler_book in duplicate_schedules:
+				pass
+			else:	
+				nonduplicate_schedules.append(orderschedule)	
+
+			duplicate_schedules.append(orderschedule.order_scheduler_book)
+
+		return render(request,"customer/invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,})		
+
+class PaymentResponse(View):
 	def get(self,request):
-		return render(request,"customer/termsandconditions.html",{})
+		print(request.GET)
+		return render(request,"customer/receipt-voucher.html",{})		
