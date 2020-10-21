@@ -2434,24 +2434,23 @@ def TicketData(request):
 		monthdate1 = datetime(day=1,month=int(month),year=int(year))
 		monthdate2 = datetime(day=28,month=int(month2),year=int(year2))
 
-		tickets = FollowUp.objects.filter(is_active=True,investigation__order__evaluation__quatation_approved_date__gte=monthdate1,
-								investigation__order__evaluation__quatation_approved_date__gt=monthdate2).values('investigation__order__evaluation__quatation_approved_date').annotate(month=Month('investigation__order__evaluation__quatation_approved_date')).values('month').annotate(count=Count('pk'))
+		tickets = FollowUp.objects.filter(is_active=True,investigation__order__created__range=(monthdate1,monthdate2))
 
+		ticket_months = tickets.dates('investigation__order__created','month').distinct()
 		print(tickets,"po")
-		for tkt in tickets:
-			followup_tickets = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_CLOSED',investigation__order__evaluation__quatation_approved_date__gte=monthdate1,
-								investigation__order__evaluation__quatation_approved_date__lt=monthdate2).values('investigation__order__evaluation__quatation_approved_date').annotate(month=Month('investigation__order__evaluation__quatation_approved_date')).values('month').annotate(count=Count('pk'))
+		for tkt in ticket_months:
+			month_start = datetime(day=1,month=tkt.month,year=tkt.year,hour=0,minute=0,second=0,microsecond=0)
+			month_end = datetime(day=1,month=tkt.month,year=tkt.year,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+			print(month_start,month_end,"moth")
+
+			monthly_tickets = FollowUp.objects.filter(is_active=True,investigation__order__created__range=(month_start,month_end)).count()
+			followup_tickets = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_CLOSED',investigation__order__created__range=(month_start,month_end)).count()
 			print(followup_tickets,"huy")
 
-			followup_count = 0
-			for followup in followup_tickets:
-				if followup['month'] == tkt['month']:
-					followup_count = followup['count']
-
 			tkt_dict = {
-			"date" : tkt['month'],
-			"total" : tkt['count'],
-			"followup" : followup_count
+			"date" : tkt.month,
+			"total" : monthly_tickets,
+			"followup" : followup_tickets
 			}
 			data.append(tkt_dict)
 	else:
