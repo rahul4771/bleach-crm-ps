@@ -1253,7 +1253,7 @@ def SalesTargetData(request):
 			
 			sales_dict = {
 			"date" : sale.month,
-			"amount" : total_sales,
+			"amount" : total_orders,
 			"total" : total_orders,
 			}
 			data.append(sales_dict)

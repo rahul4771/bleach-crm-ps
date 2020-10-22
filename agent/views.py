@@ -2403,7 +2403,7 @@ def ClientData(request):
 			print("jn")
 			for governorate in governorates:
 				#change date field from evaluation date to order created date
-				client_count = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,evaluation__customer__address_customer__governorate__id=governorate.id, evaluation__quatation_approved_date__gte=prev_date_start,evaluation__quatation_approved_date__lte=todate_date_end).values_list('evaluation__customer').distinct().count()
+				client_count = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,evaluation__customer__is_active=True,evaluation__customer__address_customer__governorate__id=governorate.id, evaluation__quatation_approved_date__gte=prev_date_start,evaluation__quatation_approved_date__lte=todate_date_end).values_list('evaluation__customer').distinct().count()
 				print(client_count,"red")
 				data.append({
 					"governorate" : governorate.name,
