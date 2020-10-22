@@ -1253,7 +1253,7 @@ def SalesTargetData(request):
 			
 			sales_dict = {
 			"date" : sale.month,
-			"amount" : total_orders,
+			"amount" : total_sales,
 			"total" : total_orders,
 			}
 			data.append(sales_dict)
@@ -1286,7 +1286,7 @@ def SalesTargetData(request):
 			print(total_sales,total_orders,evaluator_id,"red2")
 			sales_dict = {
 			"date" : single_date,
-			"amount" : total_sales or 0.0,
+			"amount" : total_orders or 0.0,
 			"total" : total_orders or 0.0,
 			}
 			data.append(sales_dict)
