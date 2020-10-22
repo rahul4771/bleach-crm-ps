@@ -134,11 +134,11 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Appointment Date</label></div>
-        <input type="text" name="proposed_date" class="textBox id_proposed_date readonly" required>
+        <input type="text" name="proposed_date" class="textBox id_proposed_date readonly" required readonly>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Appointment Time</label></div>
-                <input type="text" name="proposed_time" class="textBox id_proposed_time readonly" required>
+                <input type="text" name="proposed_time" class="textBox id_proposed_time readonly" required readonly>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
  
@@ -312,7 +312,15 @@ $("#close_add_evaluator").click(function () {
     $('#addevaluationdetails_popup').css({'visibility':'hidden','opacity':0,});
 });
 
-
+$('.id_proposed_time').change(function(){
+    var vals = $(this).val().split(':');
+    var start_time = $(this).val();
+    start_time = start_time.split(" ");
+    var time = start_time[0].split(":");
+    var stime = time[0];
+    var now_time   = (hour>12 ? hour-12:hour)+":00 "+(hour>=12 ? 'AM':'PM')
+    console.log(start_time,stime,"tru")
+})
 
 $("#assign_evaluator_id").click(function(){
   {% if active_addresses %}

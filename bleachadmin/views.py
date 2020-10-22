@@ -1171,15 +1171,16 @@ def SalesData(request):
 		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
 		monthdate2 = datetime(day=1,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
 
-		sales = Order.objects.filter(is_active=True,created__range=(monthdate1,monthdate2)).values('created').values('created').annotate(month=Month('created'),).values('month').annotate(count=Sum('evaluation__total_cost'))
+		sales = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,created__range=(monthdate1,monthdate2))   #.values('created').values('created').annotate(month=Month('created'),).values('month').annotate(count=Sum('evaluation__total_cost'))
+
 		sales_month = sales.dates('created','month')
 		print(sales,"po")
 		for sale in sales_month:
 			month_start = datetime(day=1,month=sale.month,year=sale.year,hour=0,minute=0,second=0,microsecond=0)
 			month_end = datetime(day=1,month=sale.month,year=sale.year,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
 
-			total_sales = Order.objects.filter(is_active=True,order_status='ORDER_CLOSED',created__range=(month_start,month_end)).aggregate(count=Sum('evaluation__total_cost'))['count']
-			total_orders = Order.objects.filter(is_active=True,created__range=(month_start,month_end)).aggregate(count2=Sum('evaluation__total_cost'))['count2']
+			total_sales = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,order_status='ORDER_CLOSED',created__range=(month_start,month_end)).aggregate(count=Sum('evaluation__total_cost'))['count']
+			total_orders = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,created__range=(month_start,month_end)).aggregate(count2=Sum('evaluation__total_cost'))['count2']
 
 			sales_dict = {
 			"date" : sale.month,
@@ -1202,9 +1203,9 @@ def SalesData(request):
 			sale_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
 			sale_date_end    = single_date+timedelta(1)
 
-			total_sales = Order.objects.filter(is_active=True,order_status='ORDER_CLOSED',created__range=(sale_date_start,sale_date_end)).aggregate(Sum('evaluation__total_cost'))['evaluation__total_cost__sum'] or 0.0
+			total_sales = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,order_status='ORDER_CLOSED',created__range=(sale_date_start,sale_date_end)).aggregate(Sum('evaluation__total_cost'))['evaluation__total_cost__sum'] or 0.0
 
-			total_orders = Order.objects.filter(is_active=True,created__range=(sale_date_start,sale_date_end)).aggregate(Sum('evaluation__total_cost'))['evaluation__total_cost__sum'] or 0.0
+			total_orders = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,created__range=(sale_date_start,sale_date_end)).aggregate(Sum('evaluation__total_cost'))['evaluation__total_cost__sum'] or 0.0
 
 			print(total_sales,"qtc")
 			sales_dict = {
@@ -1235,9 +1236,9 @@ def SalesTargetData(request):
 		monthdate2 = datetime(day=1,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
 
 		if evaluator_id == 0 :
-			sales = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=None,created__range=(monthdate1,monthdate2))
+			sales = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=None,evaluation__quatation_status__isnull=False,created__range=(monthdate1,monthdate2))
 		else:
-			sales = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=evaluator_id,created__range=(monthdate1,monthdate2))
+			sales = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_status__isnull=False,created__range=(monthdate1,monthdate2))
 		print(sales,evaluator_id,"po")
 
 		sales_month = sales.dates('created','month')
@@ -1246,8 +1247,8 @@ def SalesTargetData(request):
 			month_start = datetime(day=1,month=sale.month,year=sale.year,hour=0,minute=0,second=0,microsecond=0)
 			month_end = datetime(day=1,month=sale.month,year=sale.year,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
 			
-			total_sales = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=evaluator_id,order_status='ORDER_CLOSED',created__range=(monthdate1,monthdate2)).aggregate(count=Sum('evaluation__total_cost'))['count'] or 0.0
-			total_orders = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=evaluator_id,created__range=(monthdate1,monthdate2)).aggregate(count2=Sum('evaluation__total_cost'))['count2'] or 0.0
+			total_sales = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_status__isnull=False,order_status='ORDER_CLOSED',created__range=(monthdate1,monthdate2)).aggregate(count=Sum('evaluation__total_cost'))['count'] or 0.0
+			total_orders = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_status__isnull=False,created__range=(monthdate1,monthdate2)).aggregate(count2=Sum('evaluation__total_cost'))['count2'] or 0.0
 			print(total_sales,total_orders,"totsal")
 			
 			sales_dict = {
@@ -1267,19 +1268,21 @@ def SalesTargetData(request):
 		print(prevdate,todate,"testdt")
 		daterange = pd.date_range(prevdate, todate)
 
+		testvar = 0
 		for single_date in daterange:
 			saletarget_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
 			saletarget_date_end    = single_date+timedelta(1)
 
 			if evaluator_id == '0' :
-				total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=None,order_status='ORDER_CLOSED',created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)			
+				total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=None,evaluation__quatation_status__isnull=False,order_status='ORDER_CLOSED',created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)			
 
-				total_orders = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+				total_orders = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=None,evaluation__quatation_status__isnull=False,created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
 			else:
-				total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator_id,order_status='ORDER_CLOSED',created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)			
+				total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_status__isnull=False,order_status='ORDER_CLOSED',created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)			
 
-				total_orders = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator_id,created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+				total_orders = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_status__isnull=False,created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
 			
+			testvar += total_orders or 0.0
 			print(total_sales,total_orders,evaluator_id,"red2")
 			sales_dict = {
 			"date" : single_date,
@@ -1287,6 +1290,7 @@ def SalesTargetData(request):
 			"total" : total_orders or 0.0,
 			}
 			data.append(sales_dict)
+		print(testvar,"warria")
 	print(data,"sdt")
 	return JsonResponse(data,safe=False)
 

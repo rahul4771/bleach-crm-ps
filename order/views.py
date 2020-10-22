@@ -24,13 +24,13 @@ def quotation_data(request):
         monthdate2 = datetime(day=1,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
         print(monthdate1,monthdate2,"mod")
 
-        quotes = Order.objects.filter(is_active=True,created__range=(monthdate1,monthdate2))
+        quotes = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,created__range=(monthdate1,monthdate2))
         quotations = quotes.dates('created','month').distinct() #.values('created').annotate(month=Month('created')).values('month').annotate(count=Count('pk'))
 
         for month in quotations:
             month_start = datetime(day=1,month=month.month,year=month.year,hour=0,minute=0,second=0,microsecond=0)
             month_end = datetime(day=1,month=month.month,year=month.year,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
-            submitted_quotes = Order.objects.filter(is_active=True,created__range=(month_start,month_end)).count()
+            submitted_quotes = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,created__range=(month_start,month_end)).count()
             approved_quotes = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(month_start,month_end)).count()
             # submitted_total = submitted_quotes.aggregate(total=Count("pk")).get("total")
             # approved_total = approved_quotes.aggregate(total2=Count("pk")).get("total2")
@@ -57,7 +57,7 @@ def quotation_data(request):
             quotation_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
             quotation_date_end    = single_date+timedelta(1)	
             
-            submitted_qtns = Order.objects.filter(is_active=True,created__range=(quotation_date_start,quotation_date_end)).count()
+            submitted_qtns = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,created__range=(quotation_date_start,quotation_date_end)).count()
             approved_qtns = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(quotation_date_start,quotation_date_end)).count()
             print(submitted_qtns,approved_qtns,"qtc")
 
