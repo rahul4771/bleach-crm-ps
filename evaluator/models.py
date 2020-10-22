@@ -288,22 +288,6 @@ class EvaluationMedia(models.Model):
 	updated              = models.DateTimeField(auto_now=True)
 	
 	def save(self,*args, **kwargs):
-		# Opening the uploaded image
-		im = Image.open(self.media)
-
-		output = BytesIO()
-
-		# Resize/modify the image
-		im = im.resize((100, 100))
-
-		# after modifications, save it to the output
-		im.save(output, format='JPEG', quality=90)
-		output.seek(0)
-
-		# change the imagefield value to be the newley modifed image value
-		self.media = InMemoryUploadedFile(output, 'ImageField', "%s.jpg" % self.media.name.split('.')[0], 'evaluationbook/',
-		                                sys.getsizeof(output), None)
-
 		super(EvaluationMedia, self).save(*args, **kwargs)
 
 	def __unicode__(self):

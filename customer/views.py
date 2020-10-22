@@ -82,5 +82,61 @@ class CustomerInvoice(View):
 
 class PaymentResponse(View):
 	def get(self,request):
-		print(request.GET)
-		return render(request,"customer/receipt-voucher.html",{})		
+		evaluation_id     = request.GET.get("udf1")
+		amount_paid       = float(request.GET.get("amt"))
+		payment_result    = request.GET.get("result")
+
+		try:
+			order = Order.objects.select_related('evaluation').get(order_no=evaluation_id)
+		except:
+			order = None	
+
+		#To Check Payment Done 
+		payment_history_check = PaymentHistory.objects.filter(order=order,amount_paid=amount_paid,payment_mode='KNETGATEWAY',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid')).exists()	
+		
+
+		if order and payment_result == 'CAPTURED' and not payment_history_check:
+			payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='KNETGATEWAY',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid'))	
+			
+			#check payment completion
+			if (order.remining_amount-amount_paid) == 0:
+				order.payment_status         = 'COMPLETED'
+				order.payment_completed_date = timezone.now()
+
+			#UPDATE TOTAL AMOUNTS
+			order.amount_paid      = order.amount_paid+amount_paid
+			order.remining_amount  = order.remining_amount-amount_paid
+
+			#update breakdown info
+			if order.evaluation.payment_method == 'BREAKDOWN':
+				order.preamount_paid = order.evaluation.before_cleaning_amount
+				order.postamount_paid = order.evaluation.after_cleaning_amount 					
+
+			order.save()
+
+			return redirect('customer:payment-receipt',payment_history.id)
+		else:
+			messages.error(request,"Something Went Wrong ! Please Contact Admin")
+
+			return redirect('customer:invoice',order.evaluation.id)
+
+class PaymentReceipt(View):
+	def get(self,request,payment_id):
+
+		try:
+			payment_history = PaymentHistory.objects.select_related('order__evaluation').prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(id=payment_id)
+		except:	
+			payment_history = None
+
+		nonduplicate_schedules = []
+		#Remove duplicates for subscription
+		duplicate_schedules    = []
+		for orderschedule in payment_history.order.orderschedules:
+			if orderschedule.order_scheduler_book in duplicate_schedules:
+				pass
+			else:	
+				nonduplicate_schedules.append(orderschedule)	
+
+			duplicate_schedules.append(orderschedule.order_scheduler_book)
+
+		return render(request,"customer/receipt-voucher.html",{'payment_history':payment_history,'nonduplicate_schedules':nonduplicate_schedules,})

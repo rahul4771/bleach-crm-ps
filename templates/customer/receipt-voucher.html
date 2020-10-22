@@ -45,67 +45,79 @@
 
           <div class="title-top">
             <!--<span class="x-hidden"></span>-->
-            <span>31-10-2020</span> <span id="number">#4456565</span>
+            <span>{{payment_history.order.evaluation.created|date:'d-m-Y'}}</span> <span id="number">{{payment_history.order.order_no}}</span>
           </div>
         
           <div id="title">Receipt Voucher<div class="invoice-name-arabic">شركة بلـــيت</div></div>
           
         </section>
 
+        {% for orderschedule in order.orderschedules %}
+        {% if forloop.first %}
         <section id="client-info">
           <!--<span>billtolabel</span>-->
           <div class="client-name">
-           <span class="billto" id="number">Bill To - شركة بلـــيتش الـــع :</span>
-            <span>Slate Rock and Gravel Company</span>
+          <span class="billto" id="number"><b>Bill To/شركة بلـــيتش الـــع :</b></span>
+          <br>
+            <span>{{orderschedule.customer_address.customer.name}}</span>
+            {% if orderschedule.customer_address.customer.customer_type == 'CORPORATE' %}
+            <span>{{orderschedule.customer_address.customer.company}}</span>
+            <span>{{orderschedule.customer_address.customer.job_title}}</span>
+            {% endif %}
           </div>
           
           <div>
-            <span>222 Rocky Way</span>
+            <span>{{orderschedule.customer_address.street}},{{orderschedule.customer_address.block}}</span>
           </div>
           
           <div>
-            <span>30000 Brdrock, Cobblestone Country</span>
+            <span>{{orderschedule.customer_address.avenue}},{{orderschedule.customer_address.floor}}</span>
           </div>
           
           <div>
-            <span>+555 7 12-5555</span>
+            <span>{{orderschedule.customer_address.building}},{{orderschedule.customer_address.area.name}}</span>
           </div>
           
           <div>
-            <span>fred@slaterockgravel.bed</span>
+            <span>Contact No: <strong>{{orderschedule.customer_address.customer.mobile_number}}</strong></span>
           </div>
-          
           <div>
-            <span>Attt: <strong>Fred Flinstone</strong></span>
+            <span>Email: <strong>{{orderschedule.customer_address.customer.email}}</strong></span>
           </div>
         </section>
+        {% endif %}
+        {% endfor %}
         
         <div class="clearfix"></div>
         
         <section id="invoice-info">
           <div>
-            <span>order number / شركة بلـــيتش الـــع</span> <span>blc12345678</span>
+            <span>order number / شركة بلـــيتش الـــع</span> <span>{{payment_history.order.order_no}}</span>
           </div>
           <div>
-            <span>incoice number / شركة بلـــيتش الـــع</span> <span>123456</span>
+            <span>incoice number / شركة بلـــيتش الـــع</span> <span>{{payment_history.order.order_no}}</span>
           </div>
 
           <div class="recipt-info"> 
             <div class="recipt-info-amount">
-              <span> RECIVED AMOUNT /  شركة بلـــيتش الـــع</span> <span> 500.000 KD</span>
+              <span> RECIVED AMOUNT /  شركة بلـــيتش الـــع</span> <span> {{payment_history.amount_paid}} KD</span>
             </div>
           <div> 
-            <span> RECIVED DATE / شركة بلـــيتش الـــع</span> <span> 16.02.2020</span>
+            <span> RECIVED DATE / شركة بلـــيتش الـــع</span> <span> {{payment_history.paid_date|date:'d-m-Y'}}</span>
           </div>
           <div> 
-            <span> MODE OF PAYMENT / شركة بلـــيتش الـــع</span> <span>CHECHQUE / شركة بلـ</span>
+            <span> MODE OF PAYMENT / شركة بلـــيتش الـــع</span> <span>{{payment_history.payment_mode}} / شركة بلـ</span>
           </div>
+          {% if payment_history.payment_mode == 'CHECK' %}
           <div> 
-            <span> CHECHQUE DATE/ شركة بلـــيتش الـــع</span> <span> 20.02.2020</span>
+            <span> CHECHQUE DATE/ شركة بلـــيتش الـــع</span> <span> {{payment_history.cheack_date}}</span>
           </div>
+          {% endif %}
+          {% if payment_history.payment_mode == 'CHECK' %}
           <div> 
-            <span> BANK NAME/ شركة بلـــيتش الـــع</span> <span> NBK BANK </span>
+            <span> BANK NAME/ شركة بلـــيتش الـــع</span> <span> {{payment_history.bank_name}} </span>
           </div>
+          {% endif %}
         </div>
 
         </section>

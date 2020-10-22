@@ -180,7 +180,7 @@
                 <form method="post" action="http://paymentgateway.local/SendPerformREQuest.php" enctype= "multipart/form-data">{% csrf_token %}
                 <input type="hidden" name="price" value="{{order.remining_amount}}">
                 <input type="hidden" name="qty" value="1">
-                <input type="hidden" name="evaluation" value="{{order.evaluation.evaluation_id}}">
+                <input type="hidden" name="evaluation_id" value="{{order.evaluation.evaluation_id}}">
                 <input class="assignButton" name="pay" type="submit" value="Pay / شركة بلــ">
                 </form>
               </td>
@@ -236,5 +236,6 @@
  
  
   </body>
+  {% include 'common_messages.html' %}
 </html>
 

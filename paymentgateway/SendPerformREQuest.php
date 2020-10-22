@@ -33,8 +33,6 @@ $price = $_POST['price'];
 $qty = $_POST['qty'];
 $TranAmount = $price * $qty;
 
-$evaluation_id="evaluation_id=".$_POST['evaluation_id'];
-
 /* Generating a unique track id for each transaction. Merchant must ensure that each transaction has a unique Track ID. */
 $TranTrackid=mt_rand();
 
@@ -102,7 +100,7 @@ $ReqErrorUrl="errorURL=".$ErrorUrl;
 /* User Defined Fileds as per Merchant or bank requirment. Merchant MUST ensure merchant 
 merchant is not passing junk values OR CRLF in any of the UDF. In below sample UDF values 
 are not utilized */
-$ReqUdf1="udf1=Test1";
+$ReqUdf1="udf1=".$_POST['evaluation_id'];
 $ReqUdf2="udf2=Test2";
 $ReqUdf3="udf3=Test3";
 $ReqUdf4="udf4=Test4";
@@ -118,7 +116,7 @@ d) UDF values should not have junk values and CRLF (line terminating parameters)
 
 
 /* Now merchant sets all the inputs in one string for encrypt and then passing to the Payment Gateway URL */		
-$param=$ReqTranportalId."&".$ReqTranportalPassword."&".$ReqAction."&".$ReqLangid."&".$ReqCurrency."&".$ReqAmount."&".$ReqResponseUrl."&".$ReqErrorUrl."&".$ReqTrackId."&".$ReqUdf1."&".$ReqUdf2."&".$ReqUdf3."&".$ReqUdf4."&".$ReqUdf5."&".$evaluation_id;
+$param=$ReqTranportalId."&".$ReqTranportalPassword."&".$ReqAction."&".$ReqLangid."&".$ReqCurrency."&".$ReqAmount."&".$ReqResponseUrl."&".$ReqErrorUrl."&".$ReqTrackId."&".$ReqUdf1."&".$ReqUdf2."&".$ReqUdf3."&".$ReqUdf4."&".$ReqUdf5;
 
 //==============================Encryption LOGIC CODE START===============================================================================
 	/*Below are the fields/prametres which will use for Encryption using (AES (128 bit)) Encryption 

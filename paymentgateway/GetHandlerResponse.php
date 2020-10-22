@@ -45,7 +45,7 @@
 		{
 		//Decryption logice starts
 		$decrytedData=decrypt($ResTranData,$termResourceKey);
-		header("Location: http://127.0.0.1:8000/customer/receipt?".$decrytedData);
+		header("Location: http://127.0.0.1:8000/customer/payment/response/?".$decrytedData);
                 exit();
 		}
 	}
