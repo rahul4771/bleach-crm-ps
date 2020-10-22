@@ -1276,7 +1276,7 @@ def SalesTargetData(request):
 			if evaluator_id == '0' :
 				total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=None,evaluation__quatation_status__isnull=False,order_status='ORDER_CLOSED',created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)			
 
-				total_orders = Order.objects.filter(evaluation__evaluation_details__evaluator=None,evaluation__quatation_status__isnull=False,created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+				total_orders = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=None,evaluation__quatation_status__isnull=False,created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
 			else:
 				total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_status__isnull=False,order_status='ORDER_CLOSED',created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)			
 
@@ -1286,7 +1286,7 @@ def SalesTargetData(request):
 			print(total_sales,total_orders,evaluator_id,"red2")
 			sales_dict = {
 			"date" : single_date,
-			"amount" : total_orders or 0.0,
+			"amount" : total_sales or 0.0,
 			"total" : total_orders or 0.0,
 			}
 			data.append(sales_dict)

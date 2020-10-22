@@ -2571,6 +2571,7 @@ def ResourcesToggle(request):
 			"id":worker.id,
 			"worker":worker.name,
 			"worker_photo":worker.profile_image,
+			"rating":0.0,
 			"worked_days":0,
 			"total_hours":0
 		}
@@ -2583,12 +2584,12 @@ def ResourcesToggle(request):
 			start_date = date
 			end_date = date+timedelta(1)
 			print(start_date,end_date,"dts")
-			queryset=CleaningTeamMember.objects.filter(is_active=True,start_at__range=(start_date,end_date),end_at__range=(start_date,end_date)).values('member__id','member__profile_image','start_at','end_at').distinct()
-			queryset2=FollowUpTeamMember.objects.filter(is_active=True,start_at__gte=start_date,start_at__lte=end_date,end_at__gte=start_date,end_at__lte=end_date)
+			queryset=CleaningTeamMember.objects.filter(is_active=True,start_at__range=(start_date,end_date),end_at__range=(start_date,end_date)).values('team__order_scheduler__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at').distinct()
+			queryset2=FollowUpTeamMember.objects.filter(is_active=True,start_at__range=(start_date,end_date),end_at__range=(start_date,end_date)).values('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at').distinct()
 			print(queryset,"qst")
 
 			for query in queryset:
-				print(query['member__id'],query['member__profile_image'],query['start_at'],query['end_at'],"wok")
+				print(query['team__order_scheduler__order__feed_backs_order__rating'],query['member__id'],query['member__profile_image'],query['start_at'],query['end_at'],"wok")
 				# start = datetime.strptime(query['start_at'],'%d-%m-%Y %H:%M:%S')
 				# end = datetime.strptime(query['end_at'],'%d-%m-%Y %H:%M:%S')
 				diff = query['end_at']-query['start_at']
@@ -2597,7 +2598,20 @@ def ResourcesToggle(request):
 				if query['member__id'] == d['id']:
 					d['worked_days'] += 1
 					d['total_hours'] += hours
-			#write followup code also
+					d['rating'] = (float(d['rating'])+float(query['team__order_scheduler__order__feed_backs_order__rating']))/2
+
+			for query in queryset2:
+				print(query['member__id'],query['member__profile_image'],query['start_at'],query['end_at'],"wok")
+				# start = datetime.strptime(query['start_at'],'%d-%m-%Y %H:%M:%S')
+				# end = datetime.strptime(query['end_at'],'%d-%m-%Y %H:%M:%S')
+				diff2 = query['end_at']-query['start_at']
+				hours2 = (diff2.days) *24 + (diff2.seconds) / 3600
+				print(hours2,diff2.seconds,"wdf")
+				if query['member__id'] == d['id']:
+					d['worked_days'] += 1
+					d['total_hours'] += hours2
+					d['rating'] = (float(d['rating'])+float(query['team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating']))/2
+			
 	print(workers_list,"wst2")	
 	data['html_workers_list'] = render_to_string('agent/resource/resource-month.html', {"workers_details_month":workers_list})
 	return JsonResponse(data)
