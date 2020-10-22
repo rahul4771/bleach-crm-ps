@@ -1,12 +1,15 @@
 {% load static %}
-
+{% load mathfilters %}
 {% for details in workers_details_month %}
 <tr>
-<td  class="yellow-line"><div class="profile-pic-inline"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %}></div><div class="client-name-inline">{{details.name}}<div class="common-gray-text align-left">{{details.user_type}}</div></div></td>
+<td  class="yellow-line"><div class="profile-pic-inline"><img {% if details.worker_photo %}src="/media/{{details.worker_photo}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %}></div><div class="client-name-inline">{{details.worker}}<div class="common-gray-text align-left">{{details.user_type}}</div></div></td>
 <td class="align-center"> <div class="client-name">4.1</div><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td>
-<td  class="align-center ">{{details.day_count}}</td>
-<td class="align-center ">90</td>
-<td class="align-center ">60610001</td>
+<td  class="align-center ">{{details.worked_days}}</td>
+<td class="align-center ">{{details.total_hours}}</td>
+<td class="align-center ">
+{% if details.total_hours == 0 %} 0 {% else %}
+{{details.total_hours |div:details.worked_days |floatformat:2}} {% endif %}
+</td>
 </tr>
 {% endfor %}
 

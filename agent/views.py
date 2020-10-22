@@ -2542,7 +2542,9 @@ def FeedBackData(request):
 
 def ResourcesToggle(request):
 	data = dict()
-	worker_list = []
+	workers2 = []
+	workers_list = []
+	newlist = []
 	month_year = request.GET.get('month_year',None)
 	month,year = month_year.split("/")
 	print(month,year,"monthyr")
@@ -2565,21 +2567,39 @@ def ResourcesToggle(request):
 	print(workers,"lp")
 
 	for worker in workers:
-		print(worker,"wokl")
-		day_count = 0
+		workers_dict = {
+			"id":worker.id,
+			"worker":worker.name,
+			"worker_photo":worker.profile_image,
+			"worked_days":0,
+			"total_hours":0
+		}
+		workers_list.append(workers_dict)
+	print(workers_list,"wst")
+
+	for d in workers_list:
+
 		for date in daterange:
 			start_date = date
 			end_date = date+timedelta(1)
-			queryset=CleaningTeamMember.objects.filter(is_active=True,member=worker.id,start_at__gte=start_date,start_at__lte=end_date,end_at__gte=start_date,end_at__lte=end_date)
-			queryset2=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(member=worker)&Q(Q(Q(start_at__gte=start_date)&Q(start_at__lte=end_date))|Q(Q(end_at__gte=start_date)&Q(end_at__lte=end_date))) ))
-			if queryset:
-				print(queryset,"qrs")
-				day_count += 1
-			else:
-				pass
-		worker_list = [worker,day_count]
-	print(worker_list,"wok")
-	data['html_workers_list'] = render_to_string('agent/resource/resource-month.html', {})
+			print(start_date,end_date,"dts")
+			queryset=CleaningTeamMember.objects.filter(is_active=True,start_at__range=(start_date,end_date),end_at__range=(start_date,end_date)).values('member__id','member__profile_image','start_at','end_at').distinct()
+			queryset2=FollowUpTeamMember.objects.filter(is_active=True,start_at__gte=start_date,start_at__lte=end_date,end_at__gte=start_date,end_at__lte=end_date)
+			print(queryset,"qst")
+
+			for query in queryset:
+				print(query['member__id'],query['member__profile_image'],query['start_at'],query['end_at'],"wok")
+				# start = datetime.strptime(query['start_at'],'%d-%m-%Y %H:%M:%S')
+				# end = datetime.strptime(query['end_at'],'%d-%m-%Y %H:%M:%S')
+				diff = query['end_at']-query['start_at']
+				hours = (diff.days) *24 + (diff.seconds) / 3600
+				print(hours,diff.seconds,"wdf")
+				if query['member__id'] == d['id']:
+					d['worked_days'] += 1
+					d['total_hours'] += hours
+			#write followup code also
+	print(workers_list,"wst2")	
+	data['html_workers_list'] = render_to_string('agent/resource/resource-month.html', {"workers_details_month":workers_list})
 	return JsonResponse(data)
 
 def ResourcesFilter(request):
