@@ -4,3 +4,4 @@ tzlocal
 pillow
 python-dateutil
 pandas
+django-mathfilters
