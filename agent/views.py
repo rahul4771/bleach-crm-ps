@@ -1955,7 +1955,7 @@ class MakeQuatationPhase2(IsAgent,View):
 					for i in range(no_of_sections):
 						section_name  = request.POST.get('form'+str(form_count)+'_section'+str(i))
 						category      = request.POST.get('form'+str(form_count)+'_category'+str(i))
-						dirt_level    = request.POST.get('form'+str(form_count)+'_dirtlevel'+str(i))
+						dirt_level    = request.POST.get('form'+str(form_count)+'_dirt_level'+str(i))
 						quantity      = request.POST.get('form'+str(form_count)+'_quantity'+str(i))
 						size          = request.POST.get('form'+str(form_count)+'_size'+str(i))
 						unit          = request.POST.get('form'+str(form_count)+'_unit'+str(i))
@@ -2157,7 +2157,7 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 						for i in range(no_of_sections):
 							section_name  = request.POST.get('form'+str(form_count)+'_section'+str(i))
 							category      = request.POST.get('form'+str(form_count)+'_category'+str(i))
-							dirt_level    = request.POST.get('form'+str(form_count)+'_dirtlevel'+str(i))
+							dirt_level    = request.POST.get('form'+str(form_count)+'_dirt_level'+str(i))
 							quantity      = request.POST.get('form'+str(form_count)+'_quantity'+str(i))
 							size          = request.POST.get('form'+str(form_count)+'_size'+str(i))
 							unit          = request.POST.get('form'+str(form_count)+'_unit'+str(i))

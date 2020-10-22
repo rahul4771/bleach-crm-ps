@@ -1294,6 +1294,8 @@ $('document').ready(function(){
                         $('#team_member_cleaning_id').html('');
                   }         
 
+                  
+                  $('#team_members').empty();
                   //current cleaners
                   cleaners = data['cleanersinfo'].cleaners;
                   for(i=0;i<cleaners.length;++i)
@@ -1442,6 +1444,7 @@ $('.collapsible1-close').click(function(){
                         $('#team_member_followup_id').html('');
                   }
 
+                  $('#followup_members').empty();
                   //current cleaners
                   cleaners = data['cleanersinfo'].cleaners;
                   for(i=0;i<cleaners.length;++i)
