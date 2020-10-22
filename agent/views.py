@@ -2594,11 +2594,12 @@ def ResourcesToggle(request):
 				# end = datetime.strptime(query['end_at'],'%d-%m-%Y %H:%M:%S')
 				diff = query['end_at']-query['start_at']
 				hours = (diff.days) *24 + (diff.seconds) / 3600
+				order_rating = query['team__order_scheduler__order__feed_backs_order__rating'] or 0.0
 				print(hours,diff.seconds,"wdf")
 				if query['member__id'] == d['id']:
 					d['worked_days'] += 1
 					d['total_hours'] += hours
-					d['rating'] = (float(d['rating'])+float(query['team__order_scheduler__order__feed_backs_order__rating']))/2
+					d['rating'] = (float(d['rating'])+float(order_rating))/2
 
 			for query in queryset2:
 				print(query['member__id'],query['member__profile_image'],query['start_at'],query['end_at'],"wok")
@@ -2606,11 +2607,12 @@ def ResourcesToggle(request):
 				# end = datetime.strptime(query['end_at'],'%d-%m-%Y %H:%M:%S')
 				diff2 = query['end_at']-query['start_at']
 				hours2 = (diff2.days) *24 + (diff2.seconds) / 3600
+				order_rating2 = query['team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating'] or 0.0
 				print(hours2,diff2.seconds,"wdf")
 				if query['member__id'] == d['id']:
 					d['worked_days'] += 1
 					d['total_hours'] += hours2
-					d['rating'] = (float(d['rating'])+float(query['team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating']))/2
+					d['rating'] = (float(d['rating'])+float(order_rating2))/2
 			
 	print(workers_list,"wst2")	
 	data['html_workers_list'] = render_to_string('agent/resource/resource-month.html', {"workers_details_month":workers_list})
