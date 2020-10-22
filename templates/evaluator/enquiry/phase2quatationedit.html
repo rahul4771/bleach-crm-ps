@@ -171,27 +171,27 @@
             	
                 {% if book.cleaning_policy == 'ONE TIME SERVICE' %}
                 <div class="enquiry-form-left" style="display:none"><!--enquiry-form-left-->
-                <div class=" bold-text common-label"> <label>Tendative Date(S)</label></div>
-                <input name="form-{{forloop.counter0}}-tendative_dates" id='id_form-{{forloop.counter0}}-tendative_dates' type="text" class="textBox readonly" placeholder=" " value=""> 
+                <div class=" bold-text common-label"> <label>Tentative Date(S)</label></div>
+                <input name="form-{{forloop.counter0}}-tendative_dates" id='id_form-{{forloop.counter0}}-tendative_dates' type="text" class="textBox readonly" placeholder=" " value="" readonly> 
                 </div><!--enquiry-form-left-->
                 <div class="enquiry-form-left"><!--enquiry-form-left-->
-                <div class=" bold-text common-label"> <label>Tendative Date</label></div>
-                <input name="form-{{forloop.counter0}}-tendative_date" id='id_form-{{forloop.counter0}}-tendative_date' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{{orderschedule.start_at|date:'d-m-Y'}}{% endfor %}"> 
+                <div class=" bold-text common-label"> <label>Tentative Date</label></div>
+                <input name="form-{{forloop.counter0}}-tendative_date" id='id_form-{{forloop.counter0}}-tendative_date' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{{orderschedule.start_at|date:'d-m-Y'}}{% endfor %}" readonly> 
                 </div><!--enquiry-form-left-->
                 {% else %}
                 <div class="enquiry-form-left"><!--enquiry-form-left-->
-                <div class=" bold-text common-label"> <label>Tendative Date(S)</label></div>
-                <input name="form-{{forloop.counter0}}-tendative_dates" id='id_form-{{forloop.counter0}}-tendative_dates' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{{orderschedule.start_at|date:'d-m-Y'}}{% if not forloop.last %},{% endif %}{% endfor %}"> 
+                <div class=" bold-text common-label"> <label>Tentative Date(S)</label></div>
+                <input name="form-{{forloop.counter0}}-tendative_dates" id='id_form-{{forloop.counter0}}-tendative_dates' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{{orderschedule.start_at|date:'d-m-Y'}}{% if not forloop.last %},{% endif %}{% endfor %}" readonly> 
                 </div><!--enquiry-form-left-->
                 <div class="enquiry-form-left" style="display:none"><!--enquiry-form-left-->
-                <div class=" bold-text common-label"> <label>Tendative Date</label></div>
-                <input name="form-{{forloop.counter0}}-tendative_date" id='id_form-{{forloop.counter0}}-tendative_date' type="text" class="textBox readonly" placeholder=" " value=""> 
+                <div class=" bold-text common-label"> <label>Tentative Date</label></div>
+                <input name="form-{{forloop.counter0}}-tendative_date" id='id_form-{{forloop.counter0}}-tendative_date' type="text" class="textBox readonly" placeholder=" " value="" readonly> 
                 </div><!--enquiry-form-left-->
                 {% endif %}
 
                 <div class="enquiry-form-right"><!--enquiry-form-right-->
-                <div class=" bold-text common-label"> <label>Tendative Time</label></div>
-                <input name="form-{{forloop.counter0}}-tendative_time" id='id_form-{{forloop.counter0}}-tendative_time' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{%  if forloop.first %}{{orderschedule.start_at|date:'h:i A'}}{% endif %}{% endfor %}" required> 
+                <div class=" bold-text common-label"> <label>Tentative Time</label></div>
+                <input name="form-{{forloop.counter0}}-tendative_time" id='id_form-{{forloop.counter0}}-tendative_time' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{%  if forloop.first %}{{orderschedule.start_at|date:'h:i A'}}{% endif %}{% endfor %}" required readonly> 
                 </div><!--enquiry-form-right-->
 
 		</div> <!--enquiry-form-Wrapper enquiry-boxes-->
