@@ -116,7 +116,7 @@
               <td style="text-align:center;">&nbsp;</td> <!-- Don't remove this column as it's needed for the row commands -->
               {% endif %}
 
-              <td>{{orderschedule.order_scheduler_book.service_type}}-{{orderschedule.customer_address.area.name}}-{{section.section_name}} <br> شارع محمد الغانم</td>
+              <td>{{orderschedule.order_scheduler_book.service_type}}-{{orderschedule.customer_address.area.name}}-{{section.section_name}} <br> {{orderschedule.order_scheduler_book.service_type.name_arabic}}--</td>
               
               <td>{{section.dirt_level}}<br> {% if section.dirt_level == 'Red' %}أحمر{% endif %}{% if section.dirt_level == 'Random' %}وسط{%endif%}</td>
               
