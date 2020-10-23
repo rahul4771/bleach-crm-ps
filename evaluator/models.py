@@ -4,9 +4,8 @@ from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
 from PIL import Image
-import sys
 from io import BytesIO
-from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files import File
 # Create your models here.
 
 GENDER_CHOICES=(
@@ -288,14 +287,21 @@ class EvaluationMedia(models.Model):
 	created              = models.DateTimeField(auto_now_add=True)
 	updated              = models.DateTimeField(auto_now=True)
 	
-	def save(self,*args, **kwargs):
-		super(EvaluationMedia, self).save(*args, **kwargs)
 
 	def __unicode__(self):
 		return str(self.evaluation_book.id)
 
 	def __str__(self):
 		return str(self.evaluation_book.id)	
+
+	def save(self,*args, **kwargs):
+		if self.media:
+			im = Image.open(self.media)
+			im_io = BytesIO() 
+			im.save(im_io, im.format, quality=70) 
+			self.media = File(im_io, name=self.media.name)
+
+		super(EvaluationMedia, self).save(*args, **kwargs)	
 
 @receiver(post_delete, sender=EvaluationMedia)
 def submission_delete(sender, instance, **kwargs):

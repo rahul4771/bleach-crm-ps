@@ -155,6 +155,11 @@ class InvestigationMedia(models.Model):
 	is_active            	 = models.BooleanField(null=False,blank=True,default=True)
 	
 	def save(self,*args, **kwargs):
+		if self.media:
+			im = Image.open(self.media)
+			im_io = BytesIO() 
+			im.save(im_io, im.format, quality=70) 
+			self.media = File(im_io, name=self.media.name)
 		super(InvestigationMedia, self).save(*args, **kwargs)
 
 	def __unicode__(self):

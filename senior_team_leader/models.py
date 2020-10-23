@@ -55,6 +55,11 @@ class CleaningTeamMedia(models.Model):
 	updated           		 = models.DateTimeField(auto_now=True)
 
 	def save(self,*args, **kwargs):
+		if self.media:
+			im = Image.open(self.media)
+			im_io = BytesIO() 
+			im.save(im_io, im.format, quality=70) 
+			self.media = File(im_io, name=self.media.name)
 		super(CleaningTeamMedia, self).save(*args, **kwargs)
 
 
@@ -137,6 +142,11 @@ class FollowUpTeamMedia(models.Model):
 	updated           		 = models.DateTimeField(auto_now=True)
 
 	def save(self,*args, **kwargs):
+		if self.media:
+			im = Image.open(self.media)
+			im_io = BytesIO() 
+			im.save(im_io, im.format, quality=70) 
+			self.media = File(im_io, name=self.media.name)
 		super(FollowUpTeamMedia, self).save(*args, **kwargs)
 		
 	def __unicode__(self):
