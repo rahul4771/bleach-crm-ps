@@ -8,7 +8,7 @@ PAYMENT_MODE_CHOICES = (
 	('CASH','CASH'),
 	('CHECK','CHECK'),
 	('BANK','BANK'),
-	('KNETGATEWAY','KNETGATEWAY'),
+	('ONLINECREDIT','ONLINECREDIT'),
 	)
 
 #Payment History of Customers...There may be multiple payment history for single order(in case of subscription,down payment)

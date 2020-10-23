@@ -92,11 +92,11 @@ class PaymentResponse(View):
 			order = None	
 
 		#To Check Payment Done 
-		payment_history_check = PaymentHistory.objects.filter(order=order,amount_paid=amount_paid,payment_mode='KNETGATEWAY',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid')).exists()	
+		payment_history_check = PaymentHistory.objects.filter(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid')).exists()	
 		
 
 		if order and payment_result == 'CAPTURED' and not payment_history_check:
-			payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='KNETGATEWAY',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid'))	
+			payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid'))	
 			
 			#check payment completion
 			if (order.remining_amount-amount_paid) == 0:
