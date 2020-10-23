@@ -48,7 +48,7 @@
             <span>{{payment_history.order.evaluation.created|date:'d-m-Y'}}</span> <span id="number">{{payment_history.order.order_no}}</span>
           </div>
         
-          <div id="title">Receipt Voucher<div class="invoice-name-arabic">شركة بلـــيت</div></div>
+          <div id="title">Receipt Voucher<div class="invoice-name-arabic">سند قبض</div></div>
           
         </section>
 
@@ -57,7 +57,7 @@
         <section id="client-info">
           <!--<span>billtolabel</span>-->
           <div class="client-name">
-          <span class="billto" id="number"><b>Bill To/شركة بلـــيتش الـــع :</b></span>
+          <span class="billto" id="number"><b>Bill To/فاتورة الى :</b></span>
           <br>
             <span>{{orderschedule.customer_address.customer.name}}</span>
             {% if orderschedule.customer_address.customer.customer_type == 'CORPORATE' %}
@@ -92,30 +92,30 @@
         
         <section id="invoice-info">
           <div>
-            <span>order number / شركة بلـــيتش الـــع</span> <span>{{payment_history.order.order_no}}</span>
+            <span>order number / رقم الطلب</span> <span>{{payment_history.order.order_no}}</span>
           </div>
           <div>
-            <span>incoice number / شركة بلـــيتش الـــع</span> <span>{{payment_history.order.order_no}}</span>
+            <span>incoice number / رقم الفاتورة</span> <span>{{payment_history.order.order_no}}</span>
           </div>
 
           <div class="recipt-info"> 
             <div class="recipt-info-amount">
-              <span> RECIVED AMOUNT /  شركة بلـــيتش الـــع</span> <span> {{payment_history.amount_paid}} KD</span>
+              <span> RECIVED AMOUNT /  المبلغ المستلم</span> <span> {{payment_history.amount_paid}} KD</span>
             </div>
           <div> 
-            <span> RECIVED DATE / شركة بلـــيتش الـــع</span> <span> {{payment_history.paid_date|date:'d-m-Y'}}</span>
+            <span> RECIVED DATE / تاريخ الاستلام</span> <span> {{payment_history.paid_date|date:'d-m-Y'}}</span>
           </div>
           <div> 
-            <span> MODE OF PAYMENT / شركة بلـــيتش الـــع</span> <span>{{payment_history.payment_mode}} / شركة بلـ</span>
+            <span> MODE OF PAYMENT / آلية الدفع</span> <span>{{payment_history.payment_mode}} / شركة بلـ</span>
           </div>
           {% if payment_history.payment_mode == 'CHECK' %}
           <div> 
-            <span> CHECHQUE DATE/ شركة بلـــيتش الـــع</span> <span> {{payment_history.cheack_date}}</span>
+            <span> CHECHQUE DATE/ تاريخ الشيك</span> <span> {{payment_history.cheack_date}}</span>
           </div>
           {% endif %}
           {% if payment_history.payment_mode == 'CHECK' %}
           <div> 
-            <span> BANK NAME/ شركة بلـــيتش الـــع</span> <span> {{payment_history.bank_name}} </span>
+            <span> BANK NAME/ اسم البنك</span> <span> {{payment_history.bank_name}} </span>
           </div>
           {% endif %}
         </div>
@@ -143,8 +143,8 @@ Being payment  against  Invoice No:<span class="bold-text">123232</span> /Advanc
             </tr>
             <tr>
               <br><br> 
-              <td class="align-left large"> <div>( APPROVED  / والمدنشركة )</div> Accountant / والمدنشركة  </td>
-              <td class="align-right large">Receiver / والمدنشركة</td>
+              <td class="align-left large"> <div>( APPROVED  / تمت الموافقة )</div> Accountant / والمدنشركة  </td>
+              <td class="align-right large">Receiver / المتلقي</td>
             </tr>
          </table>
          </section>
@@ -194,7 +194,7 @@ Being payment  against  Invoice No:<span class="bold-text">123232</span> /Advanc
               <td colspan="2" class="note">NOTE : This is computer generated receipt and does not require physical signature<br>شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف</td>
             </tr>
             <tr>
-              <td colspan="2" ><input name="print" type="button" class="print" value="Print / شارع محمد">&nbsp;<input name="download" type="button" class="download" value="Download / شارع محمد"> </td>
+              <td colspan="2" ><input name="print" type="button" class="print" value="Print / طباعة">&nbsp;<input name="download" type="button" class="download" value="Download / تحميلs"> </td>
             </tr>            
           </table>
  

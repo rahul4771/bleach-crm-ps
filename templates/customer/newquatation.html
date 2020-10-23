@@ -28,25 +28,24 @@
         <div class="circle c-lower"></div>
       </div>
 
-      <div class="right-invoice">
-        <section id="memo">
-          <div class="company-info">
-			<div>Bleach Cleaning Services<div class="company-name-arabic"> شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف المباني والمدن</div>	
-          	</div>
-		  </div>
+          <div class="right-invoice">
+            <section id="memo">
+              <div class="company-info">
+    			<div>Bleach Cleaning Services<div class="company-name-arabic"> شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف المباني والمدن</div>	
+              	</div>
+    		  </div>
           <div class="logo">
             <img src="{% static 'files/images/bleach logo.png' %}" />
           </div>
         </section>
 
         <section id="invoice-title-number">
-
           <div class="title-top">
             <!--<span class="x-hidden"></span>-->
             <span>{{order.evaluation.created|date:'d-m-Y'}}</span> <span id="number">{{order.order_no}}</span>
           </div>
         
-          <div id="title">QUOTATION<div class="invoice-name-arabic">شركة بلـــيت</div></div> 
+          <div id="title">QUOTATION<div class="invoice-name-arabic">عرض سعر</div></div> 
           
         </section>
 
@@ -55,7 +54,7 @@
         <section id="client-info">
           <!--<span>billtolabel</span>-->
           <div class="client-name">
-          <span class="billto" id="number"><b>Bill To/شركة بلـــيتش الـــع :</b></span>
+          <span class="billto" id="number"><b>Bill To/فاتورة الى :</b></span>
           <br>
             <span>{{orderschedule.customer_address.customer.name}}</span>
             {% if orderschedule.customer_address.customer.customer_type == 'CORPORATE' %}
@@ -90,21 +89,20 @@
         
         <section id="invoice-info">
           <div>
-            <span>Due Date / شركة بلـــيتش الـــع</span> <span>{{order.evaluation.quatation_expiry_date|date:'d-m-Y'}}</span>
+            <span>Due Date / تاريخ الاستحقاق</span> <span>{{order.evaluation.quatation_expiry_date|date:'d-m-Y'}}</span>
           </div>
           <div>
-            <span>Evaluator(s) / شركة بلـــيتش الـــع</span> <span> {% for orderschedule in nonduplicate_schedules %}{% if orderschedule.evaluation_details.evaluator %}{{orderschedule.evaluation_details.evaluator.name}}{% if not forloop.last %},{% endif %}{% else %}{% if forloop.last %}{{orderschedule.evaluation_details.evaluation.call_attender.name}}{% endif %}{% endif %}{% endfor %} / شركة بلـــيتش الـــع</span>
+            <span>Evaluator(s) / معاينة</span> <span> {% for orderschedule in nonduplicate_schedules %}{% if orderschedule.evaluation_details.evaluator %}{{orderschedule.evaluation_details.evaluator.name}}{% if not forloop.last %},{% endif %}{% else %}{% if forloop.last %}{{orderschedule.evaluation_details.evaluation.call_attender.name}}{% endif %}{% endif %}{% endfor %}</span>
           </div>
           <div>
-            <span>Payment Policy / شركة بلـــيتش الـــع</span> <span>{{order.evaluation.payment_method}} / شركة بلـــيتش الـــع</span>
+            <span>Payment Policy / نظام الدفع</span> <span>{{order.evaluation.payment_method}} / {% if order.evaluation.payment_method == 'BREAKDOWN' %}قائمة التفاصيل{% elif order.evaluation.payment_method == 'PREPAID' %}مسبق الدفع{% else %}دفع بعد الخدمة{% endif %}</span>
           </div>
         </section>
         
         <div class="clearfix"></div>
 
         <div class="currency">
-          <span> Currency in Kuwait Dianr / محمد محمد-شارع محمد</span>
-
+          <span> Currency in Kuwait Dianr / العملة في الدينار الكويتي</span>
         </div>
         
         <section >
@@ -113,10 +111,10 @@
           
             <tr>
               <th width="5%"></th> <!-- Dummy cell for the row number and row commands -->
-              <th width="50%">ITEM<br>شارع محمد</th>
-              <th width="20%">CATEGORY<br>شارع محمد</th>
-              <th width="10%">SIZE<br>شارع محمد</th>
-              <th width="15%" class="align-right">NET PRICE &nbsp;<br>شارع محمد &nbsp;</th>
+              <th width="50%">ITEM<br>سلعة</th>
+              <th width="20%">CATEGORY<br>التصنيف</th>
+              <th width="10%">SIZE<br>الحجم</th>
+              <th width="15%" class="align-right">NET PRICE &nbsp;<br>صافي السعر &nbsp;</th>
             </tr>
             {% for orderschedule in nonduplicate_schedules %}
             {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
@@ -129,7 +127,7 @@
 
               <td>{{orderschedule.order_scheduler_book.service_type}}-{{orderschedule.customer_address.area.name}}-{{section.section_name}} <br> شارع محمد الغانم</td>
               
-              <td>{{section.dirt_level}}<br> شارع محمد الغانم</td>
+              <td>{{section.dirt_level}}<br> {% if section.dirt_level == 'Red' %}أحمر{% endif %}{% if section.dirt_level == 'Random' %}وسط{%endif%}</td>
               
               <td>{{section.size}} {{section.unit|default_if_none:''}}</td>
               
@@ -148,12 +146,12 @@
         
           <table cellpadding="0" cellspacing="0">
             <tr>
-              <th class="medium">Subtotal / شركة بلـــيتش</th>
+              <th class="medium">Subtotal / المجموع</th>
               <td class="due-amount medium"> {{order.evaluation.estimated_cost|floatformat:'3'}} </td>
             </tr>
             
             <tr>
-              <th>Discount / شركة بلـــيتش</th>
+              <th>Discount / الخصم</th>
               <td class="due-amount"> {{order.evaluation.discount|floatformat:'3'}} </td>
             </tr>
             
@@ -168,16 +166,16 @@
                  For example Invoicebus doesn't need amount paid and amount due on quotes  -->
             {% if order.evaluation.payment_method == 'BREAKDOWN' %}
             <tr>
-              <td class="align-right" colspan="2"> <strong> BREAKDOWN PAYMENTMODE / شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف </strong></td>
+              <td class="align-right" colspan="2"> <strong> BREAKDOWN PAYMENTMODE / قائمة التفاصيل </strong></td>
             </tr>
             
             <tr>
-              <td>Payment Before Cleaning<br>شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف</td>
+              <td>Payment Before Cleaning<br>الدفع بعد التنظيف</td>
               <td><strong>{{order.evaluation.before_cleaning_amount|floatformat:'3'}} KD</strong></td>
             </tr>
             
             <tr>
-              <td>Payment After Cleaning<br>شركة بلـــيتش الـــعالظيف</td>
+              <td>Payment After Cleaning<br>الدفع قبل التنظيف</td>
               <td class="medium">{{order.evaluation.after_cleaning_amount|floatformat:'3'}} KD </td>
             </tr>
             {% endif %}
@@ -189,26 +187,29 @@
         <div class="clearfix"></div>
         <section>
 
-        <table cellpadding="0" cellspacing="0" class="table1">
+            <table cellpadding="0" cellspacing="0" class="table1">
             <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
             <tr>         
-              <td id="tnc-padding" colspan="2" class="align-right"><input type="checkbox" id="myCheck" name="termsandconditions"> <label><i> <u><a href="{% url 'customer:tc' %}"><b>I Agree the Terms & Conditions / شركة بلـــيتش شركة بلـــيتش</b></a></u></i></label> </td>
+              <td id="tnc-padding" colspan="2" class="align-right"><input type="checkbox" id="myCheck" name="termsandconditions"> <label><i> <u><a href="{% url 'customer:tc' %}"><b>I Agree the Terms & Conditions / أوافق على الشروط والأحكام</b></a></u></i></label> </td>
 
             </tr>
             <tr>
               <td colspan="2" class="align-right">
                 <input type="hidden" name="order_id" value="{{order.id}}">
                 <input type="hidden" name="action_type" value="Approve">
-                <input class="assignButton" name="submit" type="submit" value="Approve/الـــعالظيف"> 
+                <input class="assignButton" name="submit" type="submit" value="Approve/الموافقة"> 
                 <input class="cancel-Button Click-here" name="cancel" type="button" value="Reject/الـــعالظيف"></td>
             </tr>
             </form>
             <tr>
-              <td class="align-left large" width="50%" ><div>{{order.evaluation.quatation_status}} / شركة بلـــيتش </div>Sales Authorisation / شارع محمد</td>
-              <td class="align-right large">Customer Authorisation / شارع محمد</td>
+              <td class="align-left large" width="50%" ><div>{{order.evaluation.quatation_status}} / {% if order.evaluation.quatation_status == 'APPROVED' %}تمت الموافقة{% elif order.evaluation.quatation_status == 'REJECTED' %}مرفوض{% else%}منتهية الصلاحية
+              {% endif %}</div>Sales Authorisation / إذن المبيعات</td>
+              <td class="align-right large">Customer Authorisation / تفويض العميل</td>
             </tr>
             </table>
+
             <br><br>
+            
             <table cellpadding="0" cellspacing="0" class="table2">
             <tr>
               <td class="align-left">Office: No. 3 ● Building No. 8 ● Block 13
@@ -227,14 +228,14 @@
             <tr>
               <td style="background-color: white;" colspan="2" >
                  <div class="socil-media">
-    <ul>
-    	<li><a href="#"><img src="{% static 'files/images/fb.svg' %}"></a></li>
-        <li><a href="#"><img src="{% static 'files/images/icon-twitter.svg' %}"></a></li>
-        <li><a href="#"><img src="{% static 'files/images/icon-insta.svg' %}"></a></li>
-        <li><a href="#"><img src="{% static 'files/images/icon-ut.svg' %}"></a></li>
-        <li><a href="#"><img src="{% static 'files/images/icon-in.svg' %}"></a></li>
-    </ul>
-    </div>
+                  <ul>
+    	             <li><a href="#"><img src="{% static 'files/images/fb.svg' %}"></a></li>
+                   <li><a href="#"><img src="{% static 'files/images/icon-twitter.svg' %}"></a></li>
+                   <li><a href="#"><img src="{% static 'files/images/icon-insta.svg' %}"></a></li>
+                   <li><a href="#"><img src="{% static 'files/images/icon-ut.svg' %}"></a></li>
+                   <li><a href="#"><img src="{% static 'files/images/icon-in.svg' %}"></a></li>
+                  </ul>
+                 </div>
               </td>
             </tr>
                
@@ -244,13 +245,13 @@
          
       </div>
     </div>
-    
+
     <table cellpadding="0" cellspacing="0" class="table3">
  <tr>
               <td colspan="2" class="note">NOTE : This is computer generated receipt and does not require physical signature<br>شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف</td>
             </tr>
             <tr>
-              <td colspan="2" ><input name="print" type="button" class="print" value="Print / شارع محمد">&nbsp;<input name="download" type="button" class="download" value="Download / شارع محمد"> </td>
+              <td colspan="2" ><input name="print" type="button" class="print" value="Print / طباعة" onclick="printDiv();">&nbsp;<input name="download" type="button" class="download" value="Download / تحميل"> </td>
             </tr>            
           </table>
     
@@ -263,14 +264,13 @@
                <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
                 <input type="hidden" name="order_id" value="{{order.id}}">
                 <input type="hidden" name="action_type" value="Reject">
-               <div><input class="assignButton" name="submit" type="submit" value="Reject / شارع محمد"></div>
+               <div><input class="assignButton" name="submit" type="submit" value="Reject / رفض الحجز"></div>
                </form>
             </div><!--pop-up-content-wrap-->
         </div><!--custom-model-wrap-->  
     </div><!--custom-model-inner-->   
     <div class="bg-overlay"></div>
 </div><!--custom-model-main-->
-
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
 <script id="rendered-js" >
@@ -280,7 +280,6 @@ $(".Click-here").on('click', function () {
 $(".close-btn, .bg-overlay").click(function () {
   $(".custom-model-main").removeClass('model-open');
 });
-
 </script>
 {% include 'common_messages.html' %}
   </body>
