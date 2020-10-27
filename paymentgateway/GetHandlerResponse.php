@@ -45,7 +45,7 @@
 		{
 		//Decryption logice starts
 		$decrytedData=decrypt($ResTranData,$termResourceKey);
-		header("Location: http://15.206.173.198:8085/customer/payment/response/?".$decrytedData);
+		header("Location: http://15.206.173.198/customer/payment/response/?".$decrytedData);
                 exit();
 		}
 	}
