@@ -177,7 +177,7 @@
             <tr>
 
               <td colspan="2" class="align-right">
-                <form method="post" action="http://paymentgateway.local/SendPerformREQuest.php" enctype= "multipart/form-data">{% csrf_token %}
+                <form method="post" action="http://15.206.173.198:8085/SendPerformREQuest.php" enctype= "multipart/form-data">{% csrf_token %}
                 <input type="hidden" name="price" value="{{order.remining_amount}}">
                 <input type="hidden" name="qty" value="1">
                 <input type="hidden" name="evaluation_id" value="{{order.evaluation.evaluation_id}}">

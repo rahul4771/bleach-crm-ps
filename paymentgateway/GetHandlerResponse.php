@@ -45,12 +45,12 @@
 		{
 		//Decryption logice starts
 		$decrytedData=decrypt($ResTranData,$termResourceKey);
-		header("Location: http://127.0.0.1:8000/customer/payment/response/?".$decrytedData);
+		header("Location: http://15.206.173.198:8085/customer/payment/response/?".$decrytedData);
                 exit();
 		}
 	}
 	else{
-				header("Location: http://127.0.0.1:8000?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId);
+				header("Location: http://15.206.173.198/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId);
                 exit();
 	}
 	  
