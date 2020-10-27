@@ -312,6 +312,7 @@ def submission_delete(sender, instance, **kwargs):
 class EvaluationBookSection(models.Model):
 	evaluation_book = models.ForeignKey('EvaluationBook',blank=False,null=False,related_name='evaluationsection_book')
 	section_name 	= models.CharField(max_length=100,blank=False,null=False)
+	section_name_arabic = models.CharField(max_length=100,blank=False,null=False)
 	category		= models.CharField(max_length=100,blank=True,null=True)
 	dirt_level		= models.CharField(max_length=100,blank=True,null=True)
 
