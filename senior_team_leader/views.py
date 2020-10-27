@@ -428,7 +428,10 @@ class StlHome(IsSeniorTeamLeader,View):
 			else:
 				messages.error(request,"Something Went Wrong")				
 
-		return redirect('stl:stldash-board')
+		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
+		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
+
+		return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)
 
 
 class TicketDetails(IsSeniorTeamLeader,View):
@@ -607,16 +610,16 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 			if len(assigned_cleaners)!=int(request.POST.get('no_of_cleaners')):
 				messages.error(request,"Assign Specified Number of cleaners")
 			else:	
-				print(check_cleaners_assigned)
-				print(check_tl_assigned)
-				print(cleaning_team_assign_form)
 				messages.error(request,"Something Went Wrong")
 
 			return render(request,'stl/cleaning/cleaningteam_assign.html',{'cleaning_team_assign_form':cleaning_team_assign_form,'order_schedule':order_schedule,'cleaners':cleaners,'leaders':leaders,'drivers':drivers})	
 
 		messages.success(request,"Cleaning Team Succesfully Assigned")
 
-		return redirect('stl:stldash-board')	
+		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
+		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
+
+		return redirect('/stl/dashboard/?cleaning_calendar_date ='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)	
 
 class AssignFollowupTeam(IsSeniorTeamLeader,View):
 	def get(self,request,scheduler_id):
@@ -686,7 +689,10 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 
 		messages.success(request,"FollowupTeam Team Succesfully Assigned")
 
-		return redirect('stl:stldash-board')
+		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
+		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
+
+		return redirect('/stl/dashboard/?cleaning_calendar_date ='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)
 
 class InvestigationTask(IsSeniorTeamLeader,View):
 	def get(self,request,investigation_id):

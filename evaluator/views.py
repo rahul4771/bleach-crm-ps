@@ -987,12 +987,9 @@ class AssignEvaluator(IsEvaluator,View):
 				messages.error(request,get_error(evaluation_form))	
 		
 		#For Date in Redirection
-		selected_date = request.GET.get('evaluation_calendar_date')
+		selected_date = request.GET.get('evaluation_calendar_date') or ''
 		
-		if selected_date:
-			return redirect('/evaluator/assignevaluator/'+enquiry_id+'/'+evaluation_id+'?evaluation_calendar_date='+selected_date)
-		else:
-			return redirect('evaluator:evaluator-assignevaluator',enquiry_id,evaluation_id)
+		return redirect('/evaluator/assignevaluator/'+enquiry_id+'/'+evaluation_id+'?evaluation_calendar_date='+selected_date)
 
 
 class MakeQuatationBase(IsEvaluator,View):

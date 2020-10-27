@@ -648,13 +648,10 @@ class AgentHome(IsAgent,View):
 			EvaluationDetails.objects.filter(id=evaluation_detail_id).update(proposed_time=converted_proposed_datetime,evaluator_id=evaluator_id,evaluator_note=evaluator_notes)	
 			messages.success(request,"Evaluation Edited Succesfully")
 
-			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
-			cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
+			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
+			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
 
-			# if evaluation_calendar_date:
 			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
-			# else:
-			# 	return redirect('/agent/dashboard/')
 
 		elif action_mode == 'edit_cleaning':
 			schedule_id                       = request.POST.get('cleaning_id')
@@ -690,8 +687,8 @@ class AgentHome(IsAgent,View):
 
 			messages.success(request,"Cleaning Edited Succesfully")
 
-			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
-			cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
+			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
+			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
 
 			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
 
@@ -728,6 +725,11 @@ class AgentHome(IsAgent,View):
 
 			messages.success(request,"Followup Cleaning Edited Succesfully")
 
+			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
+			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
+
+			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
+
 		elif action_mode == 'delete_evaluation':
 			evaluation_id = request.POST.get('delete_evaluation_id')
 
@@ -736,6 +738,11 @@ class AgentHome(IsAgent,View):
 
 			messages.success(request,"Evaluation Deleted Succesfully")
 
+			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
+			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
+
+			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
+
 		elif action_mode == 'delete_cleaning':
 			cleaning_id = request.POST.get('delete_cleaning_id')
 			#Delete Cleaning Schedule
@@ -743,12 +750,22 @@ class AgentHome(IsAgent,View):
 
 			messages.success(request,"Cleaning Deleted Succesfully")
 
+			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
+			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
+
+			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
+
 		elif action_mode == 'delete_followup':
 			followup_id = request.POST.get('delete_followup_id')
 			#Delete Followup Schedule
 			FollowUpScheduler.objects.filter(id=followup_id).delete()
 
 			messages.success(request,"Followup Deleted Succesfully")
+
+			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
+			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
+
+			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
 
 		return redirect('agent:agentdash-board')
 
@@ -1785,13 +1802,10 @@ class AssignEvaluator(IsAgent,View):
 			else:
 				messages.error(request,get_error(evaluation_form))
 
-		#For Date in Redirection
-		selected_date = request.GET.get('evaluation_calendar_date')
+		selected_date = request.GET.get('evaluation_calendar_date') or ''
+
+		return redirect('/agent/assignevaluator/'+enquiry_id+'/'+evaluation_id+'?evaluation_calendar_date='+selected_date)
 		
-		if selected_date:
-			return redirect('/agent/assignevaluator/'+enquiry_id+'/'+evaluation_id+'?evaluation_calendar_date='+selected_date)
-		else:
-			return redirect('agent:agent-assignevaluator',enquiry_id,evaluation_id)
 
 
 class MakeQuatationBase(IsAgent,View):

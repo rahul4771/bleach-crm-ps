@@ -3,9 +3,8 @@ from user.models import UserProfile
 from order.models import OrderScheduler,FollowUpScheduler,Order
 
 from PIL import Image
-import sys
 from io import BytesIO
-from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files import File
 
 MEDIA_TAKEN_CHOICES = (
 	('BEFORE_CLEANING','BEFORE_CLEANING'),

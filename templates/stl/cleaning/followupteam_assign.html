@@ -169,6 +169,22 @@
     $('#assigned_cleaner'+i+' :nth-child('+i+')').prop('selected',true);
     }
 
+    //to remove repeated selection
+  $('.assign_cleaner').each(function(){
+    cross_check_selected_option = this.value;
+    cross_check_id          = this.id;
+    $('.assign_cleaner').each(function(){
+      if(cross_check_id != this.id)
+      {
+        if(cross_check_selected_option == this.value)
+        {
+          $('option:selected',this).remove();   
+        }
+      }
+    });
+  
+  });
+
   });
 
 

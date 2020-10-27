@@ -3,9 +3,8 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
 from user.models import UserProfile,Address
 
 from PIL import Image
-import sys
 from io import BytesIO
-from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files import File
 # Create your models here.
 
 ORDER_STATUS = (
