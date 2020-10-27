@@ -21,6 +21,8 @@ from django.db.models import Prefetch
 from django.contrib import messages
 from dateutil.relativedelta import relativedelta
 
+from googletrans import Translator
+
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningSection,CleaningMethod,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
@@ -985,12 +987,9 @@ class AssignEvaluator(IsEvaluator,View):
 				messages.error(request,get_error(evaluation_form))	
 		
 		#For Date in Redirection
-		selected_date = request.GET.get('evaluation_calendar_date')
+		selected_date = request.GET.get('evaluation_calendar_date') or ''
 		
-		if selected_date:
-			return redirect('/evaluator/assignevaluator/'+enquiry_id+'/'+evaluation_id+'?evaluation_calendar_date='+selected_date)
-		else:
-			return redirect('evaluator:evaluator-assignevaluator',enquiry_id,evaluation_id)
+		return redirect('/evaluator/assignevaluator/'+enquiry_id+'/'+evaluation_id+'?evaluation_calendar_date='+selected_date)
 
 
 class MakeQuatationBase(IsEvaluator,View):
@@ -1168,8 +1167,13 @@ class MakeQuatationPhase2(IsEvaluator,View):
 						colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
 						cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
 
+						try:
+							section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
+						except:
+							section_name_arabic = None
+
 						#save section
-						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
+						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic)
 
 						#to save keynotes
 						try:
@@ -1323,12 +1327,18 @@ class MakeQuatationPhase2Edit(IsEvaluator,View):
 							cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
 							
 							old_section_id=request.POST.get('editform'+str(form_count)+'_section'+str(i)) 
+							
+							try:
+								section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
+							except:
+								section_name_arabic = None
+							
 							if old_section_id:
 								#edit section
-								section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
+								section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic)
 							else: 
 								#save section
-								section = EvaluationBookSection.objects.create(evaluation_book=old_book,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
+								section = EvaluationBookSection.objects.create(evaluation_book=old_book,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic)
 
 							#to save and update keynotes
 							try:
@@ -1534,8 +1544,13 @@ class MakeAssignedQuatationPhase2(IsEvaluator,View):
 						colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
 						cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
 
+						try:
+							section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
+						except:
+							section_name_arabic = None
+
 						#save section
-						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
+						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic)
 
 						#to save keynotes
 						try:
@@ -1689,12 +1704,18 @@ class MakeAssignedQuatationPhase2Edit(IsEvaluator,View):
 							cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
 							
 							old_section_id=request.POST.get('editform'+str(form_count)+'_section'+str(i)) 
+							
+							try:
+								section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
+							except:
+								section_name_arabic = None
+							
 							if old_section_id:
 								#edit section
-								section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
+								section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic)
 							else: 
 								#save section
-								section = EvaluationBookSection.objects.create(evaluation_book=old_book,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
+								section = EvaluationBookSection.objects.create(evaluation_book=old_book,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic)
 
 							#to save and update keynotes
 							try:

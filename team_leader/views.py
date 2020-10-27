@@ -364,8 +364,10 @@ class Cleaning(IsTeamLeader,View):
 				        )		
 
 		messages.success(request,"Checkout Succesfully")
+
+		my_cleaning_calendar_date = request.GET.get('my_cleaning_calendar_date') or ''
 				
-		return redirect('tl:tldash-board')
+		return redirect('/tl/dashboard/?my_cleaning_calendar_date='+my_cleaning_calendar_date)
 
 class FollowupCleaning(IsTeamLeader,View):
 	def get(self,request,team_id):
@@ -426,4 +428,6 @@ class FollowupCleaning(IsTeamLeader,View):
 
 		messages.success(request,"Checkout Succesfully")
 				
-		return redirect('tl:tldash-board')
+		my_cleaning_calendar_date = request.GET.get('my_cleaning_calendar_date') or ''
+				
+		return redirect('/tl/dashboard/?my_cleaning_calendar_date='+my_cleaning_calendar_date)

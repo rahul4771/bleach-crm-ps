@@ -3,9 +3,8 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
 from user.models import UserProfile,Address
 
 from PIL import Image
-import sys
 from io import BytesIO
-from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files import File
 # Create your models here.
 
 ORDER_STATUS = (
@@ -155,22 +154,11 @@ class InvestigationMedia(models.Model):
 	is_active            	 = models.BooleanField(null=False,blank=True,default=True)
 	
 	def save(self,*args, **kwargs):
-		# Opening the uploaded image
-		im = Image.open(self.media)
-
-		output = BytesIO()
-
-		# Resize/modify the image
-		im = im.resize((100, 100))
-
-		# after modifications, save it to the output
-		im.save(output, format='JPEG', quality=90)
-		output.seek(0)
-
-		# change the imagefield value to be the newley modifed image value
-		self.media = InMemoryUploadedFile(output, 'ImageField', "%s.jpg" % self.media.name.split('.')[0], 'evaluationbook/',
-		                                sys.getsizeof(output), None)
-
+		if self.media:
+			im = Image.open(self.media)
+			im_io = BytesIO() 
+			im.save(im_io, im.format, quality=70) 
+			self.media = File(im_io, name=self.media.name)
 		super(InvestigationMedia, self).save(*args, **kwargs)
 
 	def __unicode__(self):

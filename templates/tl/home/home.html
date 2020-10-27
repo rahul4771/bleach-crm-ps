@@ -94,7 +94,11 @@
 <td data-label="Contact Number">{{cleaning.order_scheduler.order.evaluation.customer.mobile_number}}</td>
 <td data-label="Service Type">{{cleaning.order_scheduler.order_scheduler_book.service_type}}</td>
 <td data-label="">
-<span class="{% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}blue-bg{% else %}green-bg{% endif %} clickable-row-list" data-href="{% url 'tl:cleaning' cleaning.id %}">Checkin</span>
+{% if cleaning.order_scheduler.work_status == 'CLEANING_TEAM_ASSIGNED' or cleaning.order_scheduler.work_status == 'CLEANING_IN_PROGRESS' %}
+<span class="{% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}blue-bg{% else %}green-bg{% endif %} clickable-row-list" data-href="{% url 'tl:cleaning' cleaning.id %}?my_cleaning_calendar_date={{my_cleaning_date|date:'d-m-Y'}}">Checkin</span>
+{% elif cleaning.order_scheduler.work_status == 'CLEANING_FULFILLED' %}
+<span class="{% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}blue-bg{% else %}green-bg{% endif %}">Cleaning Completed</span>
+{% endif %}
 </td>    
 </tr>
 {% endfor %}
@@ -107,8 +111,13 @@
 <td class="hide-a" data-label="">{{followup.followup_scheduler.customer_address.area.name}}</td>
 <td data-label="Contact Number">{{followup.followup_scheduler.follow_up.investigation.order.evaluation.customer.mobile_number}}</td>
 <td data-label="Service Type">{{followup.followup_scheduler.follow_up.investigation.order_schedule.order_scheduler_book.service_type.name}}</td>
+
 <td data-label="">
-    <span class="yellow-bg clickable-row-list" data-href="{% url 'tl:followupcleaning' followup.id %}">Checkin</span>
+{% if followup.followup_scheduler.work_status == 'FOLLOW_UP_TEAM_ASSIGNED' or followup.followup_scheduler.work_status == 'FOLLOW_UP_CLEANING_IN_PROGRESS' %}
+    <span class="yellow-bg clickable-row-list" data-href="{% url 'tl:followupcleaning' followup.id %}?my_cleaning_calendar_date={{my_cleaning_date|date:'d-m-Y'}}">Checkin</span>
+{% elif followup.followup_scheduler.work_status == 'FOLLOW_UP_CLEANING_FULFILLED' %}
+<span class="yellow-bg">Cleaning Completed</span>
+{% endif %}
 </td>    
 </tr>
 {% endfor %} 

@@ -33,8 +33,6 @@ $price = $_POST['price'];
 $qty = $_POST['qty'];
 $TranAmount = $price * $qty;
 
-$evaluation_id="evaluation_id=".$_POST['evaluation_id'];
-
 /* Generating a unique track id for each transaction. Merchant must ensure that each transaction has a unique Track ID. */
 $TranTrackid=mt_rand();
 
@@ -85,7 +83,7 @@ $ReqAction="action=1";
 Merchant MUST esure that below points in Response URL
 1- Response URL must start with http://
 2- the Response URL SHOULD NOT have any additional paramteres or query string  */
-$ResponseUrl="http://paymentgateway.local/GetHandlerResponse.php";
+$ResponseUrl="http://15.206.173.198:8085/GetHandlerResponse.php";
 $ReqResponseUrl="responseURL=".$ResponseUrl;
 
 
@@ -95,14 +93,14 @@ Merchant MUST esure that below points in ErrorURL
 2- the error url SHOULD NOT have any additional paramteres or query string
 */ 
 
-$ErrorUrl="http://127.0.0.1:8000";
+$ErrorUrl="http://15.206.173.198";
 $ReqErrorUrl="errorURL=".$ErrorUrl;
 
 
 /* User Defined Fileds as per Merchant or bank requirment. Merchant MUST ensure merchant 
 merchant is not passing junk values OR CRLF in any of the UDF. In below sample UDF values 
 are not utilized */
-$ReqUdf1="udf1=Test1";
+$ReqUdf1="udf1=".$_POST['evaluation_id'];
 $ReqUdf2="udf2=Test2";
 $ReqUdf3="udf3=Test3";
 $ReqUdf4="udf4=Test4";
@@ -118,7 +116,7 @@ d) UDF values should not have junk values and CRLF (line terminating parameters)
 
 
 /* Now merchant sets all the inputs in one string for encrypt and then passing to the Payment Gateway URL */		
-$param=$ReqTranportalId."&".$ReqTranportalPassword."&".$ReqAction."&".$ReqLangid."&".$ReqCurrency."&".$ReqAmount."&".$ReqResponseUrl."&".$ReqErrorUrl."&".$ReqTrackId."&".$ReqUdf1."&".$ReqUdf2."&".$ReqUdf3."&".$ReqUdf4."&".$ReqUdf5."&".$evaluation_id;
+$param=$ReqTranportalId."&".$ReqTranportalPassword."&".$ReqAction."&".$ReqLangid."&".$ReqCurrency."&".$ReqAmount."&".$ReqResponseUrl."&".$ReqErrorUrl."&".$ReqTrackId."&".$ReqUdf1."&".$ReqUdf2."&".$ReqUdf3."&".$ReqUdf4."&".$ReqUdf5;
 
 //==============================Encryption LOGIC CODE START===============================================================================
 	/*Below are the fields/prametres which will use for Encryption using (AES (128 bit)) Encryption 

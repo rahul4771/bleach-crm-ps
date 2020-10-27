@@ -49,7 +49,7 @@
             <span>{{order.evaluation.created|date:'d-m-Y'}}</span> <span id="number">{{order.order_no}}</span>
           </div>
         
-          <div id="title">INVOICE<div class="invoice-name-arabic">شركة بلـــيت</div></div>
+          <div id="title">INVOICE<div class="invoice-name-arabic">فاتورة</div></div>
           
         </section>
 
@@ -58,7 +58,7 @@
         <section id="client-info">
           <!--<span>billtolabel</span>-->
           <div class="client-name">
-          <span class="billto" id="number"><b>Bill To/شركة بلـــيتش الـــع :</b></span>
+          <span class="billto" id="number"><b>Bill To/فاتورة الى :</b></span>
           <br>
             <span>{{orderschedule.customer_address.customer.name}}</span>
             {% if orderschedule.customer_address.customer.customer_type == 'CORPORATE' %}
@@ -92,7 +92,7 @@
         <div class="clearfix"></div>
 
         <div class="currency">
-          <span> Currency in Kuwait Dianr / محمد محمد-شارع محمد</span>
+          <span> Currency in Kuwait Dianr / العملة في الدينار الكويتي</span>
         </div>
         
         <section >
@@ -101,10 +101,10 @@
           
             <tr>
               <th width="5%"></th> <!-- Dummy cell for the row number and row commands -->
-              <th width="50%">ITEM<br>شارع محمد</th>
-              <th width="20%">CATEGOTY<br>شارع محمد</th>
-              <th width="10%">SIZE<br>شارع محمد</th>
-              <th width="15%" class="align-right">NET PRICE &nbsp;<br>شارع محمد &nbsp;</th>
+              <th width="50%">ITEM<br>سلعة</th>
+              <th width="20%">CATEGOTY<br>التصنيف</th>
+              <th width="10%">SIZE<br>الحجم</th>
+              <th width="15%" class="align-right">NET PRICE &nbsp;<br>صافي السعر &nbsp;</th>
             </tr>
 
             {% for orderschedule in nonduplicate_schedules %}
@@ -116,9 +116,9 @@
               <td style="text-align:center;">&nbsp;</td> <!-- Don't remove this column as it's needed for the row commands -->
               {% endif %}
 
-              <td>{{orderschedule.order_scheduler_book.service_type}}-{{orderschedule.customer_address.area.name}}-{{section.section_name}} <br> شارع محمد الغانم</td>
+              <td>{{orderschedule.order_scheduler_book.service_type}}-{{orderschedule.customer_address.area.name}}-{{section.section_name}} <br> {{orderschedule.order_scheduler_book.service_type.name_arabic}}-{{orderschedule.customer_address.area.name_arabic}}-{{section.section_name_arabic}}</td>
               
-              <td>{{section.dirt_level}}<br> شارع محمد الغانم</td>
+              <td>{{section.dirt_level}}<br> {% if section.dirt_level == 'Red' %}أحمر{% endif %}{% if section.dirt_level == 'Random' %}وسط{%endif%}</td>
               
               <td>{{section.size}} {{section.unit|default_if_none:''}}</td>
               
@@ -137,12 +137,12 @@
         
           <table cellpadding="0" cellspacing="0">
             <tr>
-              <th class="medium">Subtotal / شركة بلـــيتش</th>
+              <th class="medium">Subtotal / المجموع</th>
               <td class="due-amount medium"> {{order.evaluation.estimated_cost|floatformat:'3'}} </td>
             </tr>
             
             <tr>
-              <th>Discount / شركة بلـــيتش</th>
+              <th>Discount / الخصم</th>
               <td class="due-amount"> {{order.evaluation.discount|floatformat:'3'}} </td>
             </tr>
             
@@ -155,12 +155,12 @@
             <!-- You can use attribute data-hide-on-quote="true" to hide specific information on quotes.
                  For example Invoicebus doesn't need amount paid and amount due on quotes  -->
             <tr >
-              <th>Paid / شركة بلـــيتش</th>
+              <th>Paid / تم الدفع</th>
               <td><strong>{{order.amount_paid|floatformat:3}} KD</strong></td>
             </tr>
             
             <tr>
-              <th class="medium">Amount Due / شركة بلـــيتش</th>
+              <th class="medium">Amount Due / المبلغ المستحق</th>
               <td class="medium"> {{order.remining_amount|floatformat:'3'}} KD </td>
             </tr>
             
@@ -177,33 +177,44 @@
             <tr>
 
               <td colspan="2" class="align-right">
-                <form method="post" action="http://paymentgateway.local/SendPerformREQuest.php" enctype= "multipart/form-data">{% csrf_token %}
+                <form method="post" action="http://15.206.173.198:8085/SendPerformREQuest.php" enctype= "multipart/form-data">{% csrf_token %}
                 <input type="hidden" name="price" value="{{order.remining_amount}}">
                 <input type="hidden" name="qty" value="1">
-                <input type="hidden" name="evaluation" value="{{order.evaluation.evaluation_id}}">
-                <input class="assignButton" name="pay" type="submit" value="Pay / شركة بلــ">
+                <input type="hidden" name="evaluation_id" value="{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">
+                <input class="assignButton" name="pay" type="submit" value="Pay / الدفع">
                 </form>
               </td>
             </tr>
             <tr>
-              <td class="align-left large" width="50%" ><div>{{order.evaluation.quatation_status}} / شركة بلـــيتش </div>Sales Authorisation / شارع محمد</td>
-              <td class="align-right large">Customer Authorisation / شارع محمد</td>
+              <td class="align-left large" width="50%" ><div>{{order.evaluation.quatation_status}} / {% if order.evaluation.quatation_status == 'APPROVED' %}تمت الموافقة{% elif order.evaluation.quatation_status == 'REJECTED' %}مرفوض{% else%}منتهية الصلاحية
+{% endif %} </div>Sales Authorisation / تفويض العميل</td>
+              <td class="align-right large">Customer Authorisation / تفويض العميل</td>
             </tr>
             </table>
             <br><br>
             <table cellpadding="0" cellspacing="0" class="table2">
             <tr>
-              <td class="align-left">Office: No. 3 ● Building No. 8 ● Block 13
+              <td class="align-left">
+                <b>
+                Bleach International Contracting Company      
+                for Cleaning Building & Cities WLL
+                </b>
+                <br>Office: No. 3 ● Building No. 8 ● Block 13
                 <br>Qibila Building ● Mohamed Al Ghanim Street
                 <br>Kuwait City ● PO Box 4489 ● Safat 13045 
                 <br>CR No. 362934 ●  Tel 1882707
-                <br>Email : info@bleach-kw.com</td>
+                <br>Email : customercare@bleach-kw.com</td>
 
-                <td class="align-right">المكتب: رقم 3 ● مبنى رقم 8 ● بلوك 13
+                <td class="align-right">
+                  <b>
+                  شركة بلـــيتش الـــعالمــــية 
+                  لمقاولات تنظيف المباني والمدن
+                  </b>
+                  <br>المكتب: رقم 3 ● مبنى رقم 8 ● بلوك 13
                   <br>عمارة قبيلة ● شارع محمد الغانم
                   <br>مدينة الكويت ● ص.ب 4489 ● الصفاة 13045
-                  <br>رقم السجل التجاري 362934 ● هاتف 1
-                  <br>البريد الإلكتروني: info@bleach-kw.com</td>
+                  <br>رقم السجل التجاري 362934 ● هاتف 1882707
+                  <br>البريد الإلكتروني: customercare@bleach-kw.com</td>
               
             </tr>
             <tr>
@@ -230,11 +241,12 @@
               <td colspan="2" class="note">NOTE : This is computer generated receipt and does not require physical signature<br>شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف</td>
             </tr>
             <tr>
-              <td colspan="2" ><input name="print" type="button" class="print" value="Print / شارع محمد">&nbsp;<input name="download" type="button" class="download" value="Download / شارع محمد"> </td>
+              <td colspan="2" ><input name="print" type="button" class="print" value="Print / طباعة">&nbsp;<input name="download" type="button" class="download" value="Download / تحميل"> </td>
             </tr>            
           </table>
  
  
   </body>
+  {% include 'common_messages.html' %}
 </html>
 

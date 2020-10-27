@@ -4,9 +4,8 @@ from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
 from PIL import Image
-import sys
 from io import BytesIO
-from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files import File
 # Create your models here.
 
 GENDER_CHOICES=(
@@ -107,6 +106,7 @@ PAYMENT_CHOICES =(
 
 class ServiceType(models.Model):
 	name 			= models.CharField(max_length=100,blank=False,null=False)
+	name_arabic     = models.CharField(max_length=100,blank=False,null=False)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
@@ -287,30 +287,21 @@ class EvaluationMedia(models.Model):
 	created              = models.DateTimeField(auto_now_add=True)
 	updated              = models.DateTimeField(auto_now=True)
 	
-	def save(self,*args, **kwargs):
-		# Opening the uploaded image
-		im = Image.open(self.media)
-
-		output = BytesIO()
-
-		# Resize/modify the image
-		im = im.resize((100, 100))
-
-		# after modifications, save it to the output
-		im.save(output, format='JPEG', quality=90)
-		output.seek(0)
-
-		# change the imagefield value to be the newley modifed image value
-		self.media = InMemoryUploadedFile(output, 'ImageField', "%s.jpg" % self.media.name.split('.')[0], 'evaluationbook/',
-		                                sys.getsizeof(output), None)
-
-		super(EvaluationMedia, self).save(*args, **kwargs)
 
 	def __unicode__(self):
 		return str(self.evaluation_book.id)
 
 	def __str__(self):
 		return str(self.evaluation_book.id)	
+
+	def save(self,*args, **kwargs):
+		if self.media:
+			im = Image.open(self.media)
+			im_io = BytesIO() 
+			im.save(im_io, im.format, quality=70) 
+			self.media = File(im_io, name=self.media.name)
+
+		super(EvaluationMedia, self).save(*args, **kwargs)	
 
 @receiver(post_delete, sender=EvaluationMedia)
 def submission_delete(sender, instance, **kwargs):
@@ -321,6 +312,7 @@ def submission_delete(sender, instance, **kwargs):
 class EvaluationBookSection(models.Model):
 	evaluation_book = models.ForeignKey('EvaluationBook',blank=False,null=False,related_name='evaluationsection_book')
 	section_name 	= models.CharField(max_length=100,blank=False,null=False)
+	section_name_arabic = models.CharField(max_length=100,blank=False,null=False)
 	category		= models.CharField(max_length=100,blank=True,null=True)
 	dirt_level		= models.CharField(max_length=100,blank=True,null=True)
 

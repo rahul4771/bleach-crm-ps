@@ -18,6 +18,25 @@ $(window).ready(function() {
                               }
 });
 
+//Image Validation
+$('input[type="file"]').change(function() {
+        var val = $(this).val();
+        $('.image_validation_msg').remove(); 
+        if(this.files[0].size>110000000)
+        {
+          alert("Upto 100MB File Upload is Possible");
+        }
+
+        switch(val.substring(val.lastIndexOf('.') + 1).toLowerCase()){
+            case 'gif': case 'jpg': case 'png': case 'jpeg': case 'bmp':
+                break;
+            default:
+                $(this).val('');
+                // error message here
+                alert("Only JPG,PNG,BMP and JPEG supported");
+                break;
+        }
+});
 
 //date_pick   
 $(function () {

@@ -12,6 +12,7 @@ from bleach_crm_ps.utils import get_error
 import requests
 
 import pandas as pd
+from googletrans import Translator
 
 import random
 import string
@@ -472,7 +473,6 @@ def RemoveEvaluationMedia(request):
 # Create your views here.
 class AgentHome(IsAgent,View):
 	def get(self,request):
-
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		count_today_end   = count_today_start+timedelta(1)
@@ -700,13 +700,10 @@ class AgentHome(IsAgent,View):
 
 			# print(response.text,"respo")
 
-			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
-			cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
+			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
+			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
 
-			# if evaluation_calendar_date:
 			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
-			# else:
-			# 	return redirect('/agent/dashboard/')
 
 		elif action_mode == 'edit_cleaning':
 			schedule_id                       = request.POST.get('cleaning_id')
@@ -805,6 +802,11 @@ class AgentHome(IsAgent,View):
 
 			messages.success(request,"Followup Cleaning Edited Succesfully")
 
+			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
+			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
+
+			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
+
 		elif action_mode == 'delete_evaluation':
 			evaluation_id = request.POST.get('delete_evaluation_id')
 
@@ -880,6 +882,11 @@ class AgentHome(IsAgent,View):
 			FollowUpScheduler.objects.filter(id=followup_id).delete()
 
 			messages.success(request,"Followup Deleted Succesfully")
+
+			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
+			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
+
+			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
 
 		return redirect('agent:agentdash-board')
 
@@ -1921,13 +1928,10 @@ class AssignEvaluator(IsAgent,View):
 			else:
 				messages.error(request,get_error(evaluation_form))
 
-		#For Date in Redirection
-		selected_date = request.GET.get('evaluation_calendar_date')
+		selected_date = request.GET.get('evaluation_calendar_date') or ''
+
+		return redirect('/agent/assignevaluator/'+enquiry_id+'/'+evaluation_id+'?evaluation_calendar_date='+selected_date)
 		
-		if selected_date:
-			return redirect('/agent/assignevaluator/'+enquiry_id+'/'+evaluation_id+'?evaluation_calendar_date='+selected_date)
-		else:
-			return redirect('agent:agent-assignevaluator',enquiry_id,evaluation_id)
 
 
 class MakeQuatationBase(IsAgent,View):
@@ -2051,7 +2055,7 @@ class MakeQuatationPhase2(IsAgent,View):
 	def post(self,request,evaluation_detail_id):
 
 		service_formset       = self.service_formset_define(request.POST)
-		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
+		evaluation_details 	  = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
 
 		if service_formset.is_valid() :
 			form_count = 0
@@ -2131,8 +2135,13 @@ class MakeQuatationPhase2(IsAgent,View):
 						colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
 						cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
 
+						try:
+							section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
+						except:
+							section_name_arabic = None
+
 						#save section
-						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
+						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
 
 						#to save keynotes
 						try:
@@ -2357,12 +2366,18 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 							cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
 
 							old_section_id=request.POST.get('editform'+str(form_count)+'_section'+str(i))
+							
+							try:
+								section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
+							except:
+								section_name_arabic = None
+							
 							if old_section_id:
 								#edit section
-								section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
+								section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic)
 							else:
 								#save section
-								section = EvaluationBookSection.objects.create(evaluation_book=old_book,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
+								section = EvaluationBookSection.objects.create(evaluation_book=old_book,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic)
 
 							#to save and update keynotes
 							try:

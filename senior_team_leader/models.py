@@ -3,9 +3,8 @@ from user.models import UserProfile
 from order.models import OrderScheduler,FollowUpScheduler,Order
 
 from PIL import Image
-import sys
 from io import BytesIO
-from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files import File
 
 MEDIA_TAKEN_CHOICES = (
 	('BEFORE_CLEANING','BEFORE_CLEANING'),
@@ -55,22 +54,11 @@ class CleaningTeamMedia(models.Model):
 	updated           		 = models.DateTimeField(auto_now=True)
 
 	def save(self,*args, **kwargs):
-		# Opening the uploaded image
-		im = Image.open(self.media)
-
-		output = BytesIO()
-
-		# Resize/modify the image
-		im = im.resize((100, 100))
-
-		# after modifications, save it to the output
-		im.save(output, format='JPEG', quality=90)
-		output.seek(0)
-
-		# change the imagefield value to be the newley modifed image value
-		self.media = InMemoryUploadedFile(output, 'ImageField', "%s.jpg" % self.media.name.split('.')[0], 'evaluationbook/',
-		                                sys.getsizeof(output), None)
-
+		if self.media:
+			im = Image.open(self.media)
+			im_io = BytesIO() 
+			im.save(im_io, im.format, quality=70) 
+			self.media = File(im_io, name=self.media.name)
 		super(CleaningTeamMedia, self).save(*args, **kwargs)
 
 
@@ -153,22 +141,11 @@ class FollowUpTeamMedia(models.Model):
 	updated           		 = models.DateTimeField(auto_now=True)
 
 	def save(self,*args, **kwargs):
-		# Opening the uploaded image
-		im = Image.open(self.media)
-
-		output = BytesIO()
-
-		# Resize/modify the image
-		im = im.resize((100, 100))
-
-		# after modifications, save it to the output
-		im.save(output, format='JPEG', quality=90)
-		output.seek(0)
-
-		# change the imagefield value to be the newley modifed image value
-		self.media = InMemoryUploadedFile(output, 'ImageField', "%s.jpg" % self.media.name.split('.')[0], 'evaluationbook/',
-		                                sys.getsizeof(output), None)
-
+		if self.media:
+			im = Image.open(self.media)
+			im_io = BytesIO() 
+			im.save(im_io, im.format, quality=70) 
+			self.media = File(im_io, name=self.media.name)
 		super(FollowUpTeamMedia, self).save(*args, **kwargs)
 		
 	def __unicode__(self):
