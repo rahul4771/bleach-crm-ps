@@ -174,8 +174,8 @@
             <!-- <tr>         
               <td id="tnc-padding" colspan="2" class="align-right"><input type="checkbox" id="myCheck"> <label><i> <u><b>I Agree the Terms & Conditions / شركة بلـــيتش شركة بلـــيتش</b></u></i></label> </td>
             </tr> -->
+            {% if request.user.user_type != 'AGENT' and request.user.user_type != 'ADMIN' and request.user.user_type != 'EVALUATOR' %}
             <tr>
-
               <td colspan="2" class="align-right">
                 <form method="post" action="http://15.206.173.198:8085/SendPerformREQuest.php" enctype= "multipart/form-data">{% csrf_token %}
                 <input type="hidden" name="price" value="{{order.remining_amount}}">
@@ -185,6 +185,7 @@
                 </form>
               </td>
             </tr>
+            {% endif %}
             <tr>
               <td class="align-left large" width="50%" ><div>{{order.evaluation.quatation_status}} / {% if order.evaluation.quatation_status == 'APPROVED' %}تمت الموافقة{% elif order.evaluation.quatation_status == 'REJECTED' %}مرفوض{% else%}منتهية الصلاحية
 {% endif %} </div>Sales Authorisation / تفويض العميل</td>

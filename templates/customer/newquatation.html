@@ -186,7 +186,7 @@
 
         <div class="clearfix"></div>
         <section>
-
+            {% if request.user.user_type != 'AGENT' and request.user.user_type != 'ADMIN' and request.user.user_type != 'EVALUATOR' %}
             <table cellpadding="0" cellspacing="0" class="table1">
             <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
             <tr>         
@@ -207,6 +207,7 @@
               <td class="align-right large">Customer Authorisation / تفويض العميل</td>
             </tr>
             </table>
+            {% endif %}
 
             <br><br>
             
