@@ -922,6 +922,8 @@ active_percentage += total_schedules
 active_percentage += total_schedules
 {% endif %}
 
+console.log(active_percentage)
+console.log(total_percentage)
 marking_percentage = (active_percentage/total_percentage)*100
 $(".bar-loader").css("width",marking_percentage+'%');
 
