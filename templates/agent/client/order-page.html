@@ -905,11 +905,11 @@ total_percentage += total_schedules*2
 
 active_percentage = dateconfirm_completed_count+teamassign_completed_count+cleaning_completed_count+total_schedules
 
-{% if order.evaluation.before_cleaning_amount == order.postamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
+{% if order.evaluation.before_cleaning_amount == order.preamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
 active_percentage += total_schedules
 {% endif %}
 
-{% if order.evaluation.after_cleaning_amount == order.preamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
+{% if order.evaluation.after_cleaning_amount == order.postamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
 active_percentage += total_schedules
 {% endif %}
 
