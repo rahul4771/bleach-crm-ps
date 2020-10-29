@@ -93,6 +93,7 @@
 <th>Contact</th>
 <th data-hide="phone,tablet">Amount</th>
 <th data-hide="phone">Payment Method</th>
+<th data-hide="phone"></th>
 </tr>
 </thead>
 <tbody>
@@ -117,6 +118,7 @@
     <td>{{invoice.evaluation.customer.mobile_number}}</td>
     <td>{{invoice.total_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
     <td>{{invoice.evaluation.payment_method|default_if_none:''}}</td>
+    <td><span data-href="{% url 'accountant:accountant-cashcollect' %}?orderid={{invoice.id}}" class="green-bg clickable-row">Collect</span></td>
     </tr>
     {% endfor %}
 </tbody>

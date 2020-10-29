@@ -19,7 +19,27 @@ from django import db
 #Login in Page
 class Signin(View):  
 	def get(self,request):
-		return render(request,'user/login.html',{})
+		if request.user.is_authenticated:
+			messages.success(request, "Welcome " + request.user.name)	
+
+			if request.user.user_type == 'AGENT':
+				return redirect('agent:agentdash-board')
+			if request.user.user_type == 'ADMIN':
+				return redirect('bleach_admin:admindash-board')
+
+			if request.user.user_type == 'EVALUATOR':
+				return redirect('evaluator:evaluatordash-board')
+
+			if request.user.user_type == 'SENIORTEAMLEADER':	
+				return redirect('stl:stldash-board')
+
+			if request.user.user_type == 'TEAMLEADER':	
+				return redirect('tl:tldash-board')
+
+			if request.user.user_type == 'ACCOUNTANT':	
+				return redirect('accountant:accountantdash-board')
+		else:		
+			return render(request,'user/login.html',{})
 	def post(self,request):  
 		user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
 			
