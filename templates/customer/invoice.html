@@ -181,7 +181,11 @@
                 <input type="hidden" name="price" value="{{order.remining_amount}}">
                 <input type="hidden" name="qty" value="1">
                 <input type="hidden" name="evaluation_id" value="{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">
+                {% if request.user.user_type == 'AGENT' %}
+                {% elif request.user.user_type == 'EVALUATOR' %}
+                {% else %}
                 <input class="assignButton" name="pay" type="submit" value="Pay / الدفع">
+                {% endif %}
                 </form>
               </td>
             </tr>

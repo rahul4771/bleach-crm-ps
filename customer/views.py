@@ -14,6 +14,8 @@ from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investi
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 
+import requests
+
 #all users views
 class TermsandConditions(View):
 	def get(self,request):
@@ -64,9 +66,40 @@ class Quatation(View):
 			#UPDATE EVALUATION APPROVAL
 			termsandconditions = request.POST.get('termsandconditions')
 			if termsandconditions:
+				print("jadoo")
 				Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(quatation_status='APPROVED',quatation_approved_date=timezone.now())
+				
+				evaluation = Evaluation.objects.get(evaluation_id=evaluation_id,customer__username=user_name)
+				language = evaluation.customer.sms_preference
+
 				Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='APPROVED_BY_CLIENT')
+				
+				url = "https://www.fast2sms.com/dev/bulk"
+
+				print("kaboonm",url)
+
+				if language == 'ENGLISH':
+
+					message = "Dear Customer, Please find the Invoice against the order number "+str(evaluation.evaluation_id)+"  here http://127.0.0.1:8000/customer/invoice/"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait."
+			
+					querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
+				
+				else:
+
+					message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط http://127.0.0.1:8000/customer/invoice/"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على (Customer Service Number).  شكراً لاختياركم بليتش لخدمات التنظيف"
+			
+					querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"arabic","route":"p","numbers":"8848953520"}
+				
+				headers = {
+					'cache-control': "no-cache"
+				}
+
+				response = requests.request("GET", url, headers=headers, params=querystring)
+
+				print(response.text,"respo")
+				
 				return redirect('customer:invoice',evaluation_id_encrypted)
+			
 			else:
 				messages.error(request,"Please Read Terms & Conditions and Agree")
 				return redirect('customer:quatation',evaluation_id_encrypted)

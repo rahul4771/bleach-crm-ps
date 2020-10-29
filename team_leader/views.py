@@ -19,6 +19,9 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,Evaluat
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Investigation,InvestigationMedia
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 
+import requests
+
+from django.http import HttpResponse,JsonResponse
 # Create your views here.
 
 
@@ -364,6 +367,38 @@ class Cleaning(IsTeamLeader,View):
 				        )		
 
 		messages.success(request,"Checkout Succesfully")
+
+		language = cleaning_team_detail.order_scheduler.order.evaluation.customer.sms_preference
+
+		evaluation = cleaning_team_detail.order_scheduler.order.evaluation
+
+		print(language,cleaning_team_detail.order_scheduler.order.remining_amount,"tesstt")
+
+		if cleaning_team_detail.order_scheduler.order.remining_amount > 0:
+
+			url = "https://www.fast2sms.com/dev/bulk"
+
+			if language == 'ENGLISH':
+
+				message = "Dear Customer, Please find the Invoice against the order number "+str(evaluation.evaluation_id)+"  here http://127.0.0.1:8000/customer/invoice/"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait."
+		
+				querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
+			
+			else:
+
+				message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط http://127.0.0.1:8000/customer/invoice/"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على (Customer Service Number).  شكراً لاختياركم بليتش لخدمات التنظيف"
+		
+				querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"arabic","route":"p","numbers":"8848953520"}
+			
+			headers = {
+				'cache-control': "no-cache"
+			}
+
+			response = requests.request("GET", url, headers=headers, params=querystring)
+
+			print(message,"respo")
+		else:
+			pass
 
 		my_cleaning_calendar_date = request.GET.get('my_cleaning_calendar_date') or ''
 				
