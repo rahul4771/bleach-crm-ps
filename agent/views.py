@@ -1199,6 +1199,8 @@ class FeedbackDetails(IsAgent,View):
 			except:	
 				order_wise_feedbacks = None
 
+		print(order_wise_feedbacks,"ofb")
+
 		#Prefetch filters
 		try:
 			fil_governorate       = int(request.GET.get('governorate'))
