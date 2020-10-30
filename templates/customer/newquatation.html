@@ -31,7 +31,7 @@
           <div class="right-invoice">
             <section id="memo">
               <div class="company-info">
-    			<div>Bleach Cleaning Services<div class="company-name-arabic"> شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف المباني والمدن</div>	
+    			<div>Bleach Cleaning Services<div class="company-name-arabic"> بليتش لخدمات التنظيف</div>	
               	</div>
     		  </div>
           <div class="logo">
@@ -117,6 +117,8 @@
               <th width="15%" class="align-right">NET PRICE &nbsp;<br>صافي السعر &nbsp;</th>
             </tr>
             {% for orderschedule in nonduplicate_schedules %}
+            
+            {% if orderschedule.order_scheduler_book.evaluationbooksection|length > 1 %}
             {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
             <tr class="hide">
               {% if forloop.first %}
@@ -136,6 +138,20 @@
               {% endif %}
             </tr>
             {% endfor %}
+
+            {% else %}
+            {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
+            <tr>
+              <td style="text-align:center;">{{forloop.parentloop.counter}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+              <td>{{orderschedule.order_scheduler_book.service_type}}-{{orderschedule.customer_address.area.name}}-{{section.section_name}} <br> {{orderschedule.order_scheduler_book.service_type.name_arabic}}-{{orderschedule.customer_address.area.name_arabic}}-{{section.section_name_arabic}}</td>
+              <td>{{section.dirt_level}}<br> {% if section.dirt_level == 'Red' %}أحمر{% endif %}{% if section.dirt_level == 'Random' %}وسط{%endif%}</td>
+              <td>{{section.size}} {{section.unit|default_if_none:''}}</td>
+              <td class="align-right">{{orderschedule.order_scheduler_book.total_cost|floatformat:'3'}}</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+
+
             {% endfor %}
             
           </table>
@@ -186,14 +202,13 @@
 
         <div class="clearfix"></div>
         <section>
-            {% if request.user.user_type != 'AGENT' and request.user.user_type != 'ADMIN' and request.user.user_type != 'EVALUATOR' %}
             <table cellpadding="0" cellspacing="0" class="table1">
+            {% if request.user.user_type != 'AGENT' and request.user.user_type != 'ADMIN' and request.user.user_type != 'EVALUATOR' %} {% if order.evaluation.quatation_status != 'APPROVED' and order.evaluation.quatation_status != 'REJECTED' %}
             <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
-            <tr>         
+            <tr class="table1tr1">         
               <td id="tnc-padding" colspan="2" class="align-right"><input type="checkbox" id="myCheck" name="termsandconditions"> <label><i> <u><a href="{% url 'customer:tc' %}"><b>I Agree the Terms & Conditions / أوافق على الشروط والأحكام</b></a></u></i></label> </td>
-
             </tr>
-            <tr>
+            <tr class="table1tr2">
               <td colspan="2" class="align-right">
                 <input type="hidden" name="order_id" value="{{order.id}}">
                 <input type="hidden" name="action_type" value="Approve">
@@ -201,13 +216,22 @@
                 <input class="cancel-Button Click-here" name="cancel" type="button" value="Reject/الـــعالظيف"></td>
             </tr>
             </form>
+            {% else %}
+            <tr class="table1tr2">
+              <td colspan="2" class="align-right">
+              <a href="/customer/invoice/{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">  
+                <input class="assignButton" name="submit" type="submit" value="Invoice/فاتورة">
+              </a>
+              </td>
+            </tr>
+            {% endif %}
+            {% endif %}
             <tr>
               <td class="align-left large" width="50%" ><div>{{order.evaluation.quatation_status}} / {% if order.evaluation.quatation_status == 'APPROVED' %}تمت الموافقة{% elif order.evaluation.quatation_status == 'REJECTED' %}مرفوض{% else%}منتهية الصلاحية
               {% endif %}</div>Sales Authorisation / إذن المبيعات</td>
               <td class="align-right large">Customer Authorisation / تفويض العميل</td>
             </tr>
             </table>
-            {% endif %}
 
             <br><br>
             
@@ -240,11 +264,11 @@
               <td style="background-color: white;" colspan="2" >
                  <div class="socil-media">
                   <ul>
-    	             <li><a href="#"><img src="{% static 'files/images/fb.svg' %}"></a></li>
+    	             <li><a href="https://www.facebook.com/BleachKw/"><img src="{% static 'files/images/fb.svg' %}"></a></li>
                    <li><a href="#"><img src="{% static 'files/images/icon-twitter.svg' %}"></a></li>
-                   <li><a href="#"><img src="{% static 'files/images/icon-insta.svg' %}"></a></li>
-                   <li><a href="#"><img src="{% static 'files/images/icon-ut.svg' %}"></a></li>
-                   <li><a href="#"><img src="{% static 'files/images/icon-in.svg' %}"></a></li>
+                   <li><a href="https://www.instagram.com/bleachkw/?hl=en"><img src="{% static 'files/images/icon-insta.svg' %}"></a></li>
+                   <li><a href="https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw"><img src="{% static 'files/images/icon-ut.svg' %}"></a></li>
+                   <li><a href="https://www.linkedin.com/company/bleachkw"><img src="{% static 'files/images/icon-in.svg' %}"></a></li>
                   </ul>
                  </div>
               </td>
@@ -258,11 +282,11 @@
     </div>
 
     <table cellpadding="0" cellspacing="0" class="table3">
- <tr>
-              <td colspan="2" class="note">NOTE : This is computer generated receipt and does not require physical signature<br>شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف</td>
+            <tr>
+              <td colspan="2" class="note">NOTE : This is computer generated receipt and does not require physical signature<br>ملاحظة: هذا إيصال تم إنشاؤه بواسطة الكمبيوتر ولا يتطلب توقيعًا فعليًا</td>
             </tr>
             <tr>
-              <td colspan="2" ><input name="print" type="button" class="print" value="Print / طباعة" onclick="printDiv();">&nbsp;<input name="download" type="button" class="download" value="Download / تحميل"> </td>
+              <td colspan="2" ><input name="print" type="button" class="print" value="Print / طباعة" onclick="printDiv();">&nbsp;<a href="/customer/quatation/download/{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}"><input name="download" type="button" class="download" value="Download / تحميل"></a> </td>
             </tr>            
           </table>
     
@@ -271,7 +295,7 @@
     <div class="close-btn">×</div>
         <div class="custom-model-wrap"><!--custom-model-wrap-->
             <div class="pop-up-content-wrap"><!--pop-up-content-wrap-->
-               <div class="bold-text">Do you want to Reject now ? It Will be Permenentlly Removed From the System and Need Further Evaluation ! <br> مبني 3، قطعة 13 ، شارع محمد الغانم ، مدينة الكويت	</div>	
+               <div class="bold-text">Do you want to Reject now ? It Will be Permenentlly Removed From the System and Need Further Evaluation ! <br><br> هل تريد الرفض الآن؟ سيتم إزالته بشكل دائم من النظام ويحتاج إلى مزيد من التقييم	</div>	
                <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
                 <input type="hidden" name="order_id" value="{{order.id}}">
                 <input type="hidden" name="action_type" value="Reject">
@@ -285,6 +309,14 @@
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
 <script id="rendered-js" >
+
+//print script
+function printDiv() 
+{
+window.print();
+}
+
+
 $(".Click-here").on('click', function () {
   $(".custom-model-main").addClass('model-open');
 });

@@ -561,4 +561,7 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 	body{  background:#fff;}
 #container {box-shadow:none;}
 .table th { background:#26A8E0; color:#FFF; padding:5px 0px;}
+.table3 {visibility:hidden;}
+.table1tr1 {display:none;}
+.table1tr2 {display:none;}
 }

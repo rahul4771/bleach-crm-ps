@@ -101,7 +101,7 @@ $ReqErrorUrl="errorURL=".$ErrorUrl;
 merchant is not passing junk values OR CRLF in any of the UDF. In below sample UDF values 
 are not utilized */
 $ReqUdf1="udf1=".$_POST['evaluation_id'];
-$ReqUdf2="udf2=Test2";
+$ReqUdf2="udf2=".$_POST['payment_mode'];
 $ReqUdf3="udf3=Test3";
 $ReqUdf4="udf4=Test4";
 $ReqUdf5="udf5=Test5";

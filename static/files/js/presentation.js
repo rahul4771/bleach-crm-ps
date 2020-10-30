@@ -136,6 +136,7 @@ var timer;
 		$all[data.pn] = $item;
 		$item.scrolled = 0;
 		$item.current = 0;
+
 		$item.to = function(index, e, loop){
 			if(e == true && index == json[data.pn].length){
 				index = 0;
