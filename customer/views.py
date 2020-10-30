@@ -336,9 +336,9 @@ def invoice_html_to_pdf_view(request,evaluation_id):
 	html_string = render_to_string('customer/newquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 
 	html = HTML(string=html_string,base_url=request.build_absolute_uri())
-	html.write_pdf(target='/home/ansab/Desktop/pdf/tmp/mypdf.pdf');
+	html.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');
 
-	fs = FileSystemStorage('/home/ansab/Desktop/pdf/tmp/')
+	fs = FileSystemStorage('/home/pdf/tmp/quatation/')
 	with fs.open('mypdf.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
@@ -370,9 +370,9 @@ def invoice_html_to_pdf_view(request,evaluation_id):
 	html_string = render_to_string('customer/newquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 
 	html = HTML(string=html_string,base_url=request.build_absolute_uri())
-	html.write_pdf(target='/home/ansab/Desktop/pdf/tmp/mypdf.pdf');
+	html.write_pdf(target='/home/pdf/tmp/invoice/invoice.pdf');
 
-	fs = FileSystemStorage('/home/ansab/Desktop/pdf/tmp/')
+	fs = FileSystemStorage('/home/pdf/tmp/invoice/')
 	with fs.open('mypdf.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
@@ -401,9 +401,9 @@ def receipt_html_to_pdf_view(request,payment_id):
 	html_string = render_to_string('customer/receipt-voucher.html', {'payment_history':payment_history,'nonduplicate_schedules':nonduplicate_schedules,})
 
 	html = HTML(string=html_string,base_url=request.build_absolute_uri())
-	html.write_pdf(target='/home/ansab/Desktop/pdf/tmp/mypdf.pdf');
+	html.write_pdf(target='/home/pdf/tmp/receipt/receipt.pdf');
 
-	fs = FileSystemStorage('/home/ansab/Desktop/pdf/tmp/')
+	fs = FileSystemStorage('/home/pdf/tmp/receipt/')
 	with fs.open('mypdf.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
