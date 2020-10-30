@@ -71,7 +71,7 @@
                 <select id="id_paymentmethod" name="payment_method" required>
                 <option value="">----Choose Method----</option>
                 <option value="CASH">Cash</option>
-                <option value="CHECK">Check</option>
+                <option value="CHEQUE">Cheque</option>
                 <option value="BANK">Bank</option>
                 </select>
                 </label>
@@ -526,7 +526,7 @@ function search_live(event){
 $('#id_paymentmethod').change(function(){
     console.log("hiiiiiiii");
     payment_method = this.value;
-    if(payment_method == 'CHECK')
+    if(payment_method == 'CHEQUE')
     {
       $('#id_check_expand').css('display','block');
       $('#id_check_number').attr('required',true)
