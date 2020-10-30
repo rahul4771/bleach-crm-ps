@@ -72,10 +72,10 @@ class Quatation(View):
 				evaluaation = Evaluation.objects.get(evaluation_id=evaluation_id,customer__username=user_name)
 				
 				if evaluaation.payment_method == 'PREPAID' or evaluaation.payment_method == 'BREAKDOWN':
-					messages.success("Quatation Approved Succesfully")
+					messages.success(request,"Quatation Approved Succesfully")
 					return redirect('customer:invoice',evaluation_id_encrypted)
 				else:
-					messages.success("Quatation Approved Succesfully")
+					messages.success(request,"Quatation Approved Succesfully")
 					redirect('customer:quatation',evaluation_id_encrypted)
 
 				print("jadoo")

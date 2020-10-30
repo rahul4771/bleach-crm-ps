@@ -78,12 +78,12 @@ class AccountantHome(IsAccountant,View):
 		#Pending Payments
 		if search:
 			try:
-				pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD')&Q(evaluation__quatation_status='APPROVED'))).select_related('evaluation__customer').filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'))
+				pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(evaluation__quatation_status='APPROVED')&Q(order_status='APPROVED_BY_CLIENT')).select_related('evaluation__customer').filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'))
 			except:
 				pending_payments = None
 		else:
 			try:
-				pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD')&Q(evaluation__quatation_status='APPROVED'))).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'))
+				pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(evaluation__quatation_status='APPROVED')&Q(order_status='APPROVED_BY_CLIENT')).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'))
 			except:
 				pending_payments = None		
 
@@ -454,7 +454,7 @@ class PaymentDetails(IsAccountant,View):
 				
 		#Pending Payments
 		try:
-			pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD')))
+			pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(evaluation__quatation_status='APPROVED')&Q(order_status='APPROVED_BY_CLIENT'))
 		except:
 			pending_payments = None
 
@@ -511,48 +511,48 @@ class CashCollect(IsAccountant,View):
 			payment_date = datetime.strptime(request.POST.get('collection_date'),'%d/%m/%Y %I:%M %p')
 			
 			if payment_method == 'CASH':
-				if payment_policy == 'PREPAID' or payment_policy == 'PREPAID':
-					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount) 
+				if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID':
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount,remining_amount=0) 
 				elif payment_policy == 'BEFORE CLEANING':
-					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=amount+F('preamount_paid'))
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=amount)
 				elif payment_policy == 'AFTER CLEANING':
-					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=amount+F('postamount_paid'))
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=amount)
 
 				PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date)
 				messages.success(request,"Payment Received thruogh Cash")
-			if payment_method == 'CHECK':
+			if payment_method == 'CHEQUE':
 				check_no   = request.POST.get('check_number')
 				check_date = datetime.strptime(request.POST.get('check_date'),'%d-%m-%Y')
 
-				if payment_policy == 'PREPAID' or payment_policy == 'PREPAID':
-					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount) 
+				if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID':
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount,remining_amount=0) 
 				elif payment_policy == 'BEFORE CLEANING':
-					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=amount+F('preamount_paid'))
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=amount)
 				elif payment_policy == 'AFTER CLEANING':
-					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=amount+F('postamount_paid'))
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=amount)
 
-				PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHECK',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date)
-
+				PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date)
+				messages.success(request,"Payment Received thruogh Cheque")
 			if payment_method == 'BANK':
 				bank_name   = request.POST.get('bank_name')
 				bank_no     = request.POST.get('ibn_number')
 
-				if payment_policy == 'PREPAID' or payment_policy == 'PREPAID':
-					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount) 
+				if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID':
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount,remining_amount=0) 
 				elif payment_policy == 'BEFORE CLEANING':
-					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=amount+F('preamount_paid'))
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=amount)
 				elif payment_policy == 'AFTER CLEANING':
-					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=amount+F('postamount_paid'))
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=amount)
 
 				PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no)
-			
+				messages.success(request,"Payment Received through Bank")
+
 			is_payment_completed = Order.objects.get(id=order_id)
+
 			if is_payment_completed.amount_paid == is_payment_completed.total_amount:
 				is_payment_completed.payment_completed_date = payment_date 
 				is_payment_completed.payment_status         = 'COMPLETED'
 				is_payment_completed.save()
-
-			messages.success(request,"Payment Received thruogh "+payment_method)
 		
 		else:
 			messages.suucess(request,"Something Went Wrong")

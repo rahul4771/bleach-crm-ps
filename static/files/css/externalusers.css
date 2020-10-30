@@ -551,7 +551,7 @@ text-align: right;
 .billto{ font-size:14px !important; color:#717070; font-weight:normal;}
 .invoice-name-arabic{ font-size:30px !important; text-align:right;}
 h1{ font-size:20px; font-weight:bold; text-align:left; margin-top:30px;color:#26A8E0;}
-h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#ffffff;}
+h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26A8E0;}
 /**
  * If the printed invoice is not looking as expected you may tune up
  * the print styles (you can use !important to override styles)

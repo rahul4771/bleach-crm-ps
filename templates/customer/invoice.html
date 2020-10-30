@@ -169,11 +169,11 @@
 
             {% if order.evaluation.payment_method == 'BREAKDOWN' %}
             <tr>
-              <th>After Cleaning/ الدفع بعد التنظيف</th>
+              <th>Before Cleaning/ الدفع قبل التنظيف</th>
               <td class="due-amount"> {{order.evaluation.before_cleaning_amount|floatformat:'3'}} </td>
             </tr>
             <tr>
-              <th>Before Cleaning/ الدفع قبل التنظيف</th>
+              <th>After Cleaning/ الدفع بعد التنظيف</th>
               <td class="due-amount"> {{order.evaluation.after_cleaning_amount|floatformat:'3'}} </td>
             </tr>
             {% endif %}

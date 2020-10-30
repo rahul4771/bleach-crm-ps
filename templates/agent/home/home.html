@@ -67,6 +67,7 @@
 <table class="main-table">
 <tbody>
 {% for order_schedule in order_schedules %}
+{% if order_schedule.order.payment_status == 'COMPLETED' or order_schedule.order.preamount_paid == order_schedule.order.evaluation.before_cleaning_amount %}
 <tr {% if order_schedule.color_status == 'green' %}class="green-line"{% elif order_schedule.color_status == 'yellow' %}class='yellow-line'{% elif order_schedule.color_status == 'orange' %}class="orange-line"{%else%}class="red-line"{% endif %}">
 <td data-label="BLC Number" class="bold-text">{{order_schedule.order.evaluation.evaluation_id}}</td>
 <td data-label="Time" class="bold-text">{{order_schedule.start_at|date:'d-m-Y h:i A'}}</td>
@@ -76,6 +77,7 @@
 <td data-label="Cleaning Policy"><span class="blue-text bold-text">{{order_schedule.order_scheduler_book.cleaning_policy}}</span></td>
 <td class="hide-b order_schedule clickable-cursor" data-label="" data-confirmdate="{{order_schedule.start_at|date:'d-m-Y'}}" data-confirmtime="{{order_schedule.start_at|date:'h:i A'}}" data-duration="{{order_schedule.order_scheduler_book.cleaning_hours}}" data-blcno="{{order_schedule.order.evaluation.evaluation_id}}" data-customer_name="{{order_schedule.order.evaluation.customer.name}}" data-mobile_no="{{order_schedule.order.evaluation.customer.mobile_number}}" data-area="{{order_schedule.customer_address.area.name}}" data-service_type="{{order_schedule.order_scheduler_book.service_type.name}}" data-id="{{order_schedule.id}}"><span {% if order_schedule.color_status == 'green' %}class="green-bg"{% elif order_schedule.color_status == 'yellow' %}class='yellow-bg'{% elif order_schedule.color_status == 'orange' %}class="orange-bg"{%else%}class="red-bg"{% endif %}>Click to Confirm</span></td>
 </tr>
+{% endif %}
 {% endfor %}
 {% for follow_up_schedule in follow_up_schedules %}
 <tr {% if follow_up_schedule.color_status == 'green' %}class="green-line"{% elif follow_up_schedule.color_status == 'yellow' %}class='yellow-line'{% elif follow_up_schedule.color_status == 'orange' %}class="orange-line"{%else%}class="red-line"{% endif %}>

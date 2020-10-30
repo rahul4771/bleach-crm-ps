@@ -253,6 +253,15 @@ var order_id=parseInt("{{request.GET.orderid}}");
                 $('#id_amount').attr('max',data['after_amount']);
               }
             }
+            else if(data['payment_policy'] == 'PREPAID')
+            {
+              $("#id_payment_policy").append($('<option>',{value: 'PREPAID',text: 'PREPAID'}));
+              $('#id_amount').val(data['total_cost']);
+            }
+            else if(data['payment_policy'] == 'POSTPAID')
+            {
+              $("#id_payment_policy").append($('<option>',{value: 'POSTPAID',text: 'POSTPAID'}));$('#id_amount').val(data['total_cost']);              
+            }
 
             //to show
             $('.order-details-head').show();
@@ -408,6 +417,16 @@ function select_existing_user(event,src){
                 $('#id_amount').val(data['after_amount']);
                 $('#id_amount').attr('max',data['after_amount']); 
               }
+            }
+            else if(data['payment_policy'] == 'PREPAID')
+            {
+              $("#id_payment_policy").append($('<option>',{value: 'PREPAID',text: 'PREPAID'}));
+              $('#id_amount').val(data['total_cost']);
+            }
+            else if(data['payment_policy'] == 'POSTPAID')
+            {
+              $("#id_payment_policy").append($('<option>',{value: 'POSTPAID',text: 'POSTPAID'})); 
+              $('#id_amount').val(data['total_cost']);            
             }
 
             //to show
