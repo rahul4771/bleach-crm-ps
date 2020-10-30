@@ -629,29 +629,65 @@ class AgentHome(IsAgent,View):
 			start_at         = datetime.strptime(confirm_date+' '+confirm_time,'%d-%m-%Y %I:%M %p')
 			end_at           = start_at + timedelta(hours=order_scheduler.order_scheduler_book.cleaning_hours)
 
+			orderschedule = OrderScheduler.objects.filter(id=orderscheduler_id).first()
+			orderschedule_start_at = orderschedule.start_at.date()
+
 			if confirm_status:
 				OrderScheduler.objects.filter(id=orderscheduler_id).update(status='CONFIRMED',start_at=start_at,end_at=end_at)
-				orderschedule = OrderScheduler.objects.filter(id=orderscheduler_id).first()
-
 				language = orderschedule.evaluation_details.evaluation.customer.sms_preference
+				address = orderschedule.evaluation_details.address
+				
 				messages.success(request,"Cleaning Date Succesfully Confirmed")
 
-				url = "https://www.fast2sms.com/dev/bulk"
+				#date confirmation sms
+				url = "https://smsapi.future-club.com/fccsms.aspx"
 
 				if language == 'ENGLISH':
 
-					message = "Dear Customer, We have confirmed your Cleaning Appointment against the Order Number "+ orderschedule.order.order_no +". Bleach's Cleaning Team will be visiting you on "+ str(confirm_date)+" "+ str(confirm_time) +" at "+orderschedule.evaluation_details.address.apartment+","+orderschedule.evaluation_details.address.floor+","+orderschedule.evaluation_details.address.street+","+orderschedule.evaluation_details.address.building+","+orderschedule.evaluation_details.address.avenue+","+orderschedule.evaluation_details.address.block+","+orderschedule.evaluation_details.address.area.name+","+orderschedule.evaluation_details.address.governorate.name+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait"
-				else:
-					message = "Arabic"
+					message = "Dear Customer, We have confirmed your Cleaning Appointment against the Order Number "+ orderschedule.order.order_no +". Bleach's Cleaning Team will be visiting you on "+ str(confirm_date)+" "+ str(confirm_time) +" at "+orderschedule.evaluation_details.address.apartment+","+orderschedule.evaluation_details.address.floor+","+orderschedule.evaluation_details.address.street+","+orderschedule.evaluation_details.address.building+","+orderschedule.evaluation_details.address.avenue+","+orderschedule.evaluation_details.address.block+","+orderschedule.evaluation_details.address.area.name+","+orderschedule.evaluation_details.address.governorate.name+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+				
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"L"}
 
-				querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
+				else:
+					message = "عزيزينا العميل تم تأكيد موعد التنظيف بنجاح وذلك للطلب رقم "+ orderschedule.order.order_no +".  سيقوم طاقم العمل بزيارتكم في "+ str(confirm_date)+" "+ str(confirm_time) +" في "+orderschedule.evaluation_details.address.apartment+","+orderschedule.evaluation_details.address.floor+","+orderschedule.evaluation_details.address.street+","+orderschedule.evaluation_details.address.building+","+orderschedule.evaluation_details.address.avenue+","+orderschedule.evaluation_details.address.block+","+orderschedule.evaluation_details.address.area.name+","+orderschedule.evaluation_details.address.governorate.name+". لأي استفسارات يمكنكم التواصل معنا عل 9651882707+ .  شكراً لاختياركم بليتش لخدمات التنظيف"
+
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"A"}
 
 				headers = {
 					'cache-control': "no-cache"
 				}
 
 				response = requests.request("GET", url, headers=headers, params=querystring)
+
+				print(message,"msg")
 				
+				#cleaning date change sms
+				if start_at.date() != orderschedule_start_at:
+
+					url = "https://smsapi.future-club.com/fccsms.aspx"
+
+					if language == 'ENGLISH':
+
+						message = "Dear Customer, We have changed the date of your Cleaning Appointment against order number "+ orderschedule.order.order_no +" as per your request. Bleach Cleaning Team will be visiting you on "+ str(confirm_date)+" "+ str(confirm_time) +" at "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+
+
+						querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"L"}
+
+					else:
+						message = "عزيزي العميل، لقد قمنا بتغيير تاريخ موعد التنظيف الخاص بك مقابل رقم الطلب "+ orderschedule.order.order_no +" وذلك وفق طلبكم.  سيقوم طاقم العمل بزيارتكم في "+ str(confirm_date)+" "+ str(confirm_time) +" في "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+					
+						querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"A"}
+
+					headers = {
+						'cache-control': "no-cache"
+					}
+
+					response = requests.request("GET", url, headers=headers, params=querystring)
+
+					print(message,response,"res")
+					
+				else:
+					pass
 			else:
 				OrderScheduler.objects.filter(id=orderscheduler_id).update(start_at=start_at,end_at=end_at)
 				messages.success(request,"Cleaning Date Not Confirmed")
@@ -667,7 +703,9 @@ class AgentHome(IsAgent,View):
 			evaluator_notes                   = request.POST.get('notes')
 
 			evaluation = EvaluationDetails.objects.filter(id=evaluation_detail_id).first()
-			proposed_datetime=evaluation.proposed_time
+			current_date=evaluation.proposed_time
+
+			print(current_date.date(),converted_proposed_datetime.date(), "datae")
 
 			language = evaluation.address.customer.sms_preference
 			gender = evaluation.address.customer.gender
@@ -681,23 +719,32 @@ class AgentHome(IsAgent,View):
 			EvaluationDetails.objects.filter(id=evaluation_detail_id).update(proposed_time=converted_proposed_datetime,evaluator_id=evaluator_id,evaluator_note=evaluator_notes)	
 			evaluator = EvaluationDetails.objects.get(id=evaluation_detail_id)
 			messages.success(request,"Evaluation Edited Succesfully")
+
+			if converted_proposed_datetime.date() != current_date.date():
 				
-			url = "https://www.fast2sms.com/dev/bulk"
+				url = "https://smsapi.future-club.com/fccsms.aspx"
 
-			if language == 'ENGLISH':
+				if language == 'ENGLISH':
 
-				message = "Dear Customer, We have postponed your Evaluation Appointment as per your request. "+ title +" "+evaluator.evaluator.name+" will be visiting you on "+str(converted_proposed_datetime)+" at "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait."
+					message = "Dear Customer, We have changed the date of your Evaluation Appointment as per your request. "+ title +" "+evaluator.evaluator.name+" will be visiting you on "+str(converted_proposed_datetime)+" at "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+				
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"L"}
+
+				else:
+					message = "عزيزي العميل، لقد قمنا بتغيير تاريخ موعد التقييم الخاص بك حسب طلبك.  "+ title +" "+evaluator.evaluator.name+" سيقوم بالزيارة في "+str(converted_proposed_datetime)+" في "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+" لأي استفسارات يمكنكم التواصل معنا على  9651882707+ . شكراً لاختياركم بليتش لخدمات التنظيف"
+					
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"A"}
+
+				headers = {
+					'cache-control': "no-cache"
+				}
+
+				response = requests.request("GET", url, headers=headers, params=querystring)
+
+				print(message,"respo")
+
 			else:
-				message = "Arabic"
-			querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
-
-			headers = {
-				'cache-control': "no-cache"
-			}
-
-			response = requests.request("GET", url, headers=headers, params=querystring)
-
-			print(message,"respo")
+				pass
 
 			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
 			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
@@ -727,6 +774,7 @@ class AgentHome(IsAgent,View):
 			#update cleaning team
 			try:
 				cleaning_team_update = CleaningTeam.objects.filter(order_scheduler=order_scheduler).update(start_at=start_at,end_at=end_at,)
+				cleaning_team = CleaningTeam.objects.filter(order_scheduler=order_scheduler).first()
 			except:
 				cleaning_team_update = None
 
@@ -744,24 +792,32 @@ class AgentHome(IsAgent,View):
 
 			messages.success(request,"Cleaning Edited Succesfully")
 
-			url = "https://www.fast2sms.com/dev/bulk"
+			if start_at.date() != cleaning_team.start_at.date():
 
-			if language == 'ENGLISH':
+				url = "https://smsapi.future-club.com/fccsms.aspx"
 
-				message = "Dear Customer, We have confirmed your Cleaning Appointment against the Order Number "+ orderschedule.order.order_no +". Bleachs Cleaning Team will be visiting you on "+ str(cleaning_date)+" "+ str(cleaning_time) +" at "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait"
+				if language == 'ENGLISH':
+
+					message = "Dear Customer, We have changed the date of your Cleaning Appointment against order number "+ orderschedule.order.order_no +" as per your request. Bleach’s Cleaning Team will be visiting you on "+ str(cleaning_date)+" "+ str(cleaning_time) +" at "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+
+
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"L"}
+
+				else:
+					message = "عزيزي العميل، لقد قمنا بتغيير تاريخ موعد التنظيف الخاص بك مقابل رقم الطلب "+ orderschedule.order.order_no +" وذلك وفق طلبكم.  سيقوم طاقم العمل بزيارتكم في "+ str(cleaning_date)+" "+ str(cleaning_time) +" في "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+				
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"A"}
+
+				headers = {
+					'cache-control': "no-cache"
+				}
+
+				response = requests.request("GET", url, headers=headers, params=querystring)
+
+				print(message,response,"res")
+
 			else:
-				message = "لتم تغییر موعد التنظیف الخاص بك بنجاح للطلب رقم BLCXXXXX وذلك وفق طلبكم. سیقوم طاقم العمل بزیارتكم .(Address) في (Date) (Time) في لأي استفسارات یمكنكم التواصل معنا على (Customer لاختیاركم بلیتش لخدمات شكرا). Service Number التنظیف"
-			
-			print(message,"mess")
-			querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
-
-			headers = {
-				'cache-control': "no-cache"
-			}
-
-			response = requests.request("GET", url, headers=headers, params=querystring)
-
-			print(message,response,"res")
+				pass
 
 			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
 			cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
@@ -825,14 +881,18 @@ class AgentHome(IsAgent,View):
 			
 			messages.success(request,"Evaluation Deleted Succesfully")
 
-			url = "https://www.fast2sms.com/dev/bulk"
+			url = "https://smsapi.future-club.com/fccsms.aspx"
 
 			if language == 'ENGLISH':
 
-				message = "Dear Customer, We have cancelled your Evaluation Appointment booked for "+str(proposed_datetime)+" at "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+" as per your request.For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait."
+				message = "Dear Customer, We have cancelled your Evaluation Appointment booked for "+str(proposed_datetime)+" at "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+" as per your request.For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+			
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"L"}
+
 			else:
-				message = "ARABIC"
-			querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"9745429692,8075965943"}
+				message = "عزيزنا العميل تم إلغاء موعد المعاينة الخاص بك المحجوز ب "+str(proposed_datetime)+" في "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+" وذلك وفق طلب حضراتكم. لأي استفسارات يمكنكم التواصل معنا على 9651882707+ .  شكراً لاختياركم بليتش لخدمات التنظيف"
+			
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"A"}
 
 			headers = {
 				'cache-control': "no-cache"
@@ -856,16 +916,18 @@ class AgentHome(IsAgent,View):
 
 			messages.success(request,"Cleaning Deleted Succesfully")
 
-			url = "https://www.fast2sms.com/dev/bulk"
+			url = "https://smsapi.future-club.com/fccsms.aspx"
 
 			if language == 'ENGLISH':
 
-				message = "Dear Customer, We have cancelled your Cleaning Appointment against the order number "+ order_no +" as per your request. For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait"
-			else:
-				message = "ل تم إلغاء موعد التنظیف الخاص بكم بنجاح للطلب رقم "+ order_no +" وذلك وفق طلبكم. لأي استفسارات یمكنكم التواصل معنا على (Customer لاختیاركم بلیتش لخدماتشكرا). Service Number التنظیف"
+				message = "Dear Customer, We have cancelled your Cleaning Appointment against the order number "+ order_no +" as per your request. For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
 			
-			print(message,"mess")
-			querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"L"}
+
+			else:
+				message = "ل تم إلغاء موعد التنظیف الخاص بكم بنجاح للطلب رقم "+ order_no +" وذلك وفق طلبكم. لأي استفسارات یمكنكم التواصل معنا على 9651882707+ لاختیاركم بلیتش لخدماتشكرا. التنظیف"
+			
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"A"}
 
 			headers = {
 				'cache-control': "no-cache"
@@ -1910,12 +1972,20 @@ class AssignEvaluator(IsAgent,View):
 
 				messages.success(request,"Evaluation Details Succesfully Completed")
 
-				url = "https://www.fast2sms.com/dev/bulk"
+				url = "https://smsapi.future-club.com/fccsms.aspx"
 
-				message = "Dear Customer , We have confirmed your Evaluation Appointment. "+ title +" "+evaluation_form_save.evaluator.name+" will be visiting you on "+str(evaluation_form_save.proposed_time)+" at  "+evaluation_form_save.address.apartment+","+evaluation_form_save.address.floor+","+evaluation_form_save.address.street+","+evaluation_form_save.address.building+","+evaluation_form_save.address.avenue+","+evaluation_form_save.address.block+","+evaluation_form_save.address.area.name+","+evaluation_form_save.address.governorate.name+". For any assistance please contact us on 999898. Thank you for choosing Bleach Kuwait."
+				if evaluation.customer.sms_preference == 'ENGLISH':
 
-				querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
+					message = "Dear Customer , We have confirmed your Evaluation Appointment. "+ title +" "+evaluation_form_save.evaluator.name+" will be visiting you on "+str(evaluation_form_save.proposed_time)+" at  "+evaluation_form_save.address.apartment+","+evaluation_form_save.address.floor+","+evaluation_form_save.address.street+","+evaluation_form_save.address.building+","+evaluation_form_save.address.avenue+","+evaluation_form_save.address.block+","+evaluation_form_save.address.area.name+","+evaluation_form_save.address.governorate.name+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"L"}
+
+				else:
+
+					message = "عزيزينا العميل تم تأكيد موعد المعاينة الخاص بك.  "+ title +" "+evaluation_form_save.evaluator.name+" سيقوم بالزيارة في "+str(evaluation_form_save.proposed_time)+" في "+evaluation_form_save.address.apartment+","+evaluation_form_save.address.floor+","+evaluation_form_save.address.street+","+evaluation_form_save.address.building+","+evaluation_form_save.address.avenue+","+evaluation_form_save.address.block+","+evaluation_form_save.address.area.name+","+evaluation_form_save.address.governorate.name+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"A"}
+				
 				headers = {
 					'cache-control': "no-cache"
 				}
@@ -2012,19 +2082,19 @@ class MakeQuatationPhase1(IsAgent,View):
 		# print(evaluation.evaluation_details.address.governorate,"popeye")
 		messages.success(request,"Quotation Submitted Succesfully")
 
-		url = "https://www.fast2sms.com/dev/bulk"
+		url = "https://smsapi.future-club.com/fccsms.aspx"
 
 		if language == 'ENGLISH':
 			print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
 
-			message = "Dear Customer, Please find the Quotation against the cleaning at "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" here http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+" Order Number : "+str(evaluation.evaluation_id)+" Service Type(s) : "+evaluationbook.service_type.name+" Address(s) : "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" Cost : "+ str(evaluation.total_cost) +" KD Due Date : "+ str(evaluation.quatation_expiry_date) +" For any assistance please contact us on 996545845. Thank you for choosing Bleach Kuwait"
+			message = "Dear Customer, Please find the Quotation against the cleaning at "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" here http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+" Order Number : "+str(evaluation.evaluation_id)+" Service Type(s) : "+evaluationbook.service_type.name+" Address(s) : "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" Cost : "+ str(evaluation.total_cost) +" KD Due Date : "+ str(evaluation.quatation_expiry_date) +" For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
 
-			querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
+			querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"L"}
 		
 		else:
-			message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" في هذا الرابط http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+". رقم الطلب: "+str(evaluation.evaluation_id)+" الخدمة: "+evaluationbook.service_type.name+" العنوان: "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" السعر: "+ str(evaluation.total_cost) +" KD تاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +" لأي استفسارات يمكنكم التواصل معنا على (Customer Service Number).  شكراً لاختياركم بليتش لخدمات التنظيف"
+			message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" في هذا الرابط http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+". رقم الطلب: "+str(evaluation.evaluation_id)+" الخدمة: "+evaluationbook.service_type.name+" العنوان: "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" السعر: "+ str(evaluation.total_cost) +" KD تاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
 
-			querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"arabic","route":"p","numbers":"8848953520"}
+			querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"A"}
 
 		headers = {
 			'cache-control': "no-cache"
@@ -2234,18 +2304,16 @@ class MakeQuatationPhase1Edit(IsAgent,View):
 		
 		messages.success(request,"Quatation Edited Succesfully")
 
-		url = "https://www.fast2sms.com/dev/bulk"
+		url = "https://smsapi.future-club.com/fccsms.aspx"
 
 		if evaluation.customer.sms_preference == 'ENGLISH':
 
-			message = "Dear Customer, Please find the Revised Quotation against the order number "+str(evaluation.evaluation_id)+"  here http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+" . Order Number : "+ str(evaluation.evaluation_id) +". Service Type(s) : "+ evaluationbook.service_type.name +", Address(s) : "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+", Cost : "+ str(evaluation.total_cost) +", Due Date : "+ str(evaluation.quatation_expiry_date) +". For any assistance please contact us on 987455666. Thank you for choosing Bleach Kuwait"
-			lang = "english"
+			message = "Dear Customer, Please find the Revised Quotation against the order number "+str(evaluation.evaluation_id)+"  here http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+" . Order Number : "+ str(evaluation.evaluation_id) +". Service Type(s) : "+ evaluationbook.service_type.name +", Address(s) : "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+", Cost : "+ str(evaluation.total_cost) +", Due Date : "+ str(evaluation.quatation_expiry_date) +". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+			querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"L"}
+
 		else:
-			lang = "arabic"
-			message = "عزيزنا العميل نرجوا الاطلاع على عرض السعر المعدّل للطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+" .رقم الطلب: "+ str(evaluation.evaluation_id) +"الخدمة: "+ evaluationbook.service_type.name +"العنوان: "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+"السعر: "+ str(evaluation.total_cost) +" KDتاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +"لأي استفسارات يمكنكم التواصل معنا على 987455666.  شكراً لاختياركم بليتش لخدمات التنظيف"
-
-
-		querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":lang,"route":"p","numbers":"8848953520"}
+			message = "عزيزنا العميل نرجوا الاطلاع على عرض السعر المعدّل للطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+" .رقم الطلب: "+ str(evaluation.evaluation_id) +"الخدمة: "+ evaluationbook.service_type.name +"العنوان: "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+"السعر: "+ str(evaluation.total_cost) +" KDتاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +"لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+			querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"A"}
 
 		headers = {
 			'cache-control': "no-cache"

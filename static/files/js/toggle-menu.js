@@ -15,8 +15,6 @@ jQuery(function ($) {
     if (window.innerWidth < settings.width)
         {
           collapseSidebar();
-        }else{
-          collapseSidebar(); //added else case for keeping sidemenu closed
         }
 
     init();
