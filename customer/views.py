@@ -66,6 +66,18 @@ class Quatation(View):
 			#UPDATE EVALUATION APPROVAL
 			termsandconditions = request.POST.get('termsandconditions')
 			if termsandconditions:
+				evaluation_update = Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(quatation_status='APPROVED',quatation_approved_date=timezone.now())
+				order_update      = Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='APPROVED_BY_CLIENT')
+				
+				evaluaation = Evaluation.objects.get(evaluation_id=evaluation_id,customer__username=user_name)
+				
+				if evaluaation.payment_method == 'PREPAID' or evaluaation.payment_method == 'BREAKDOWN':
+					messages.success(request,"Quatation Approved Succesfully")
+					return redirect('customer:invoice',evaluation_id_encrypted)
+				else:
+					messages.success(request,"Quatation Approved Succesfully")
+					return redirect('customer:quatation',evaluation_id_encrypted)
+
 				print("jadoo")
 				Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(quatation_status='APPROVED',quatation_approved_date=timezone.now())
 				
@@ -136,6 +148,7 @@ class PaymentResponse(View):
 
 		amount_paid       = float(request.GET.get("amt"))
 		payment_result    = request.GET.get("result")
+		payment_mode      = request.GET.get("udf2")
 
 		try:
 			order = Order.objects.select_related('evaluation').get(order_no=evaluation_id,evaluation__customer__username=user_name)
@@ -143,26 +156,40 @@ class PaymentResponse(View):
 			order = None	
 
 		#To Check Payment Done 
-		payment_history_check = PaymentHistory.objects.filter(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid')).exists()	
+		payment_history_check = PaymentHistory.objects.filter(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid')).exists()	
 		
 
 		if order and payment_result == 'CAPTURED' and not payment_history_check:
 			payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid'))	
-			
-			#check payment completion
-			if (order.remining_amount-amount_paid) == 0:
+
+			if payment_mode == 'before_cleaning' and order.preamount_paid != order.evaluation.before_cleaning_amount:
+				order.preamount_paid   = amount_paid
+				order.amount_paid      = amount_paid
+				order.remining_amount  = order.remining_amount-amount_paid
+
+			elif payment_mode == 'after_cleaning' and order.preamount_paid != order.evaluation.before_cleaning_amount:
+				order.postamount_paid  = amount_paid
+				order.amount_paid      = amount_paid
+				order.remining_amount  = order.remining_amount-amount_paid
+
 				order.payment_status         = 'COMPLETED'
 				order.payment_completed_date = timezone.now()
 
-			#UPDATE TOTAL AMOUNTS
-			order.amount_paid      = order.amount_paid+amount_paid
-			order.remining_amount  = order.remining_amount-amount_paid
+			elif payment_mode == 'prepaid' and order.amount_paid != order.total_cost:
+				order.amount_paid      = amount_paid
+				order.amount_paid      = amount_paid
+				order.remining_amount  = order.remining_amount-amount_paid					
 
-			#update breakdown info
-			if order.evaluation.payment_method == 'BREAKDOWN':
-				order.preamount_paid = order.evaluation.before_cleaning_amount
-				order.postamount_paid = order.evaluation.after_cleaning_amount 					
+				order.payment_status         = 'COMPLETED'
+				order.payment_completed_date = timezone.now()
 
+			elif payment_mode == 'postpaid' and order.amount_paid != order.total_cost:
+				order.amount_paid      = amount_paid
+				order.amount_paid      = amount_paid
+				order.remining_amount  = order.remining_amount-amount_paid
+
+				order.payment_status         = 'COMPLETED'
+				order.payment_completed_date = timezone.now()
 			order.save()
 
 			url = "https://smsapi.future-club.com/fccsms.aspx"
@@ -238,3 +265,147 @@ class PaymentReceipt(View):
 			duplicate_schedules.append(orderschedule.order_scheduler_book)
 
 		return render(request,"customer/receipt-voucher.html",{'payment_history':payment_history,'nonduplicate_schedules':nonduplicate_schedules,})
+
+
+
+
+#for download
+
+from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+
+from weasyprint import HTML
+
+def quatation_html_to_pdf_view(request,evaluation_id):
+
+	#evaluation id decryption
+	evaluation_id_encrypted = evaluation_id
+	evaluation_id = 'BLC'+evaluation_id_encrypted[0:11]
+	user_name     =  evaluation_id_encrypted[11:]
+
+
+	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
+
+	nonduplicate_schedules = []
+	#Remove duplicates for subscription
+	duplicate_schedules    = []
+	for orderschedule in order.orderschedules:
+		if orderschedule.order_scheduler_book in duplicate_schedules:
+			pass
+		else:	
+			nonduplicate_schedules.append(orderschedule)	
+
+		duplicate_schedules.append(orderschedule.order_scheduler_book)
+    
+
+	html_string = render_to_string('customer/newquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
+
+	html = HTML(string=html_string,base_url=request.build_absolute_uri())
+	html.write_pdf(target='/home/ansab/Desktop/pdf/tmp/mypdf.pdf');
+
+	fs = FileSystemStorage('/home/ansab/Desktop/pdf/tmp/')
+	with fs.open('mypdf.pdf') as pdf:
+		response = HttpResponse(pdf, content_type='application/pdf')
+		response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
+		return response
+	return response
+
+
+def invoice_html_to_pdf_view(request,evaluation_id):
+
+	#evaluation id decryption
+	evaluation_id_encrypted = evaluation_id
+	evaluation_id = 'BLC'+evaluation_id_encrypted[0:11]
+	user_name     =  evaluation_id_encrypted[11:]
+
+	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
+
+	nonduplicate_schedules = []
+	#Remove duplicates for subscription
+	duplicate_schedules    = []
+	for orderschedule in order.orderschedules:
+		if orderschedule.order_scheduler_book in duplicate_schedules:
+			pass
+		else:	
+			nonduplicate_schedules.append(orderschedule)	
+
+		duplicate_schedules.append(orderschedule.order_scheduler_book)
+    
+
+	html_string = render_to_string('customer/newquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
+
+	html = HTML(string=html_string,base_url=request.build_absolute_uri())
+	html.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');
+
+	fs = FileSystemStorage('/home/pdf/tmp/quatation/')
+	with fs.open('mypdf.pdf') as pdf:
+		response = HttpResponse(pdf, content_type='application/pdf')
+		response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
+		return response
+	return response	
+
+
+def invoice_html_to_pdf_view(request,evaluation_id):
+
+	#evaluation id decryption
+	evaluation_id_encrypted = evaluation_id
+	evaluation_id = 'BLC'+evaluation_id_encrypted[0:11]
+	user_name     =  evaluation_id_encrypted[11:]
+
+	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
+
+	nonduplicate_schedules = []
+	#Remove duplicates for subscription
+	duplicate_schedules    = []
+	for orderschedule in order.orderschedules:
+		if orderschedule.order_scheduler_book in duplicate_schedules:
+			pass
+		else:	
+			nonduplicate_schedules.append(orderschedule)	
+
+		duplicate_schedules.append(orderschedule.order_scheduler_book)
+    
+
+	html_string = render_to_string('customer/newquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
+
+	html = HTML(string=html_string,base_url=request.build_absolute_uri())
+	html.write_pdf(target='/home/pdf/tmp/invoice/invoice.pdf');
+
+	fs = FileSystemStorage('/home/pdf/tmp/invoice/')
+	with fs.open('mypdf.pdf') as pdf:
+		response = HttpResponse(pdf, content_type='application/pdf')
+		response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
+		return response
+	return response		
+
+def receipt_html_to_pdf_view(request,payment_id):
+
+	try:
+		payment_history = PaymentHistory.objects.select_related('order__evaluation').prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(id=payment_id)
+	except:	
+		payment_history = None
+
+	nonduplicate_schedules = []
+	#Remove duplicates for subscription
+	duplicate_schedules    = []
+	for orderschedule in payment_history.order.orderschedules:
+		if orderschedule.order_scheduler_book in duplicate_schedules:
+			pass
+		else:	
+			nonduplicate_schedules.append(orderschedule)	
+
+		duplicate_schedules.append(orderschedule.order_scheduler_book)
+    
+
+	html_string = render_to_string('customer/receipt-voucher.html', {'payment_history':payment_history,'nonduplicate_schedules':nonduplicate_schedules,})
+
+	html = HTML(string=html_string,base_url=request.build_absolute_uri())
+	html.write_pdf(target='/home/pdf/tmp/receipt/receipt.pdf');
+
+	fs = FileSystemStorage('/home/pdf/tmp/receipt/')
+	with fs.open('mypdf.pdf') as pdf:
+		response = HttpResponse(pdf, content_type='application/pdf')
+		response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
+		return response
+	return response	

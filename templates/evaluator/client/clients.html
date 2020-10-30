@@ -179,7 +179,7 @@
     <td>{{client.customer_type}}</td>
     <td>{{client.mobile_number}}</td>
     <td>
-        <span id="clientstatus{{client.id}}" class="clickable-row yellow-bg" data-href="{% url 'agent:agent-client-orders' client.id %}">Not Active</span>        
+        <span id="clientstatus{{client.id}}" class="clickable-row yellow-bg" data-href="{% url 'evaluator:evaluator-client-orders' client.id %}">Not Active</span>        
     </td>
     </tr>
 {% empty %}

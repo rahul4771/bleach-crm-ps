@@ -71,7 +71,7 @@
                 <select id="id_paymentmethod" name="payment_method" required>
                 <option value="">----Choose Method----</option>
                 <option value="CASH">Cash</option>
-                <option value="CHECK">Check</option>
+                <option value="CHEQUE">Cheque</option>
                 <option value="BANK">Bank</option>
                 </select>
                 </label>
@@ -81,7 +81,7 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Amount</label></div>
-                <input name="amount" id="id_amount" type="number" class="textBox OnlyNumber" placeholder="Amount in KD" min="1" required>
+                <input name="amount" id="id_amount" type="number" class="textBox OnlyNumber readonly" placeholder="Amount in KD" min="1" required>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Collection Date</label></div>
@@ -237,30 +237,30 @@ var order_id=parseInt("{{request.GET.orderid}}");
             //Payment Policy
             if(data['payment_policy'] == 'BREAKDOWN')
             {
-              if(data['before_amount'] != 0)
+              if(data['before_amount'] != data['before_amount_paid'])
               {
-                $("#id_payment_policy").append($('<option>',{value: 'BEFORE CLEANING',text: 'BEFORE CLEANING'}));
+                $("#id_payment_policy").append($('<option>',{value: 'BEFORE CLEANING',text: 'BREAK1'}));
 
                 $('#id_amount').val(data['before_amount']);
                 $('#id_amount').attr('max',data['before_amount']);
               }
 
-              if(data['after_amount'] != 0)
+              else if(data['after_amount'] != data['after_amount_paid'])
               {
-                $("#id_payment_policy").append($('<option>',{value: 'AFTER CLEANING',text: 'AFTER CLEANING'}));
+                $("#id_payment_policy").append($('<option>',{value: 'AFTER CLEANING',text: 'BREAK2'}));
                
-               if(data['before_amount'] == 0)
-                  {
-                    $('#id_amount').val(data['after_amount']);
-                    $('#id_amount').attr('max',data['after_amount']);
-                  } 
+                $('#id_amount').val(data['after_amount']);
+                $('#id_amount').attr('max',data['after_amount']);
               }
             }
-            else
+            else if(data['payment_policy'] == 'PREPAID')
             {
-              $("#id_payment_policy").append($('<option>',{value: data['payment_policy'],text: data['payment_policy']}));
-              $('#id_amount').val(data['remining_amount']);
-              $('#id_amount').attr('max',data['remining_amount']);
+              $("#id_payment_policy").append($('<option>',{value: 'PREPAID',text: 'PREPAID'}));
+              $('#id_amount').val(data['total_cost']);
+            }
+            else if(data['payment_policy'] == 'POSTPAID')
+            {
+              $("#id_payment_policy").append($('<option>',{value: 'POSTPAID',text: 'POSTPAID'}));$('#id_amount').val(data['total_cost']);              
             }
 
             //to show
@@ -269,22 +269,6 @@ var order_id=parseInt("{{request.GET.orderid}}");
             $('.ticket-form-head').show();
             $('.ticket-form').show();
             $('.ticket-form-button').show();
-
-            //payment policy amount
-            $('#id_payment_policy').change(function(){
-              payment_policy = this.value;
-              
-              if(payment_policy == 'BEFORE CLEANING')
-              {
-                $('#id_amount').val(data['before_amount']);
-              }
-              
-              if(payment_policy == 'AFTER CLEANING')
-              {
-                $('#id_amount').val(data['after_amount']);
-              }
-
-            })
             
         }
 
@@ -419,30 +403,30 @@ function select_existing_user(event,src){
             //Payment Policy
             if(data['payment_policy'] == 'BREAKDOWN')
             {
-              if(data['before_amount'] != 0)
+              if(data['before_amount'] != data['before_amount_paid'])
               {
-                $("#id_payment_policy").append($('<option>',{value: 'BEFORE CLEANING',text: 'BEFORE CLEANING'}));
+                $("#id_payment_policy").append($('<option>',{value: 'BEFORE CLEANING',text: 'BREAK1'}));
 
                 $('#id_amount').val(data['before_amount']);
                 $('#id_amount').attr('max',data['before_amount']);
               }
 
-              if(data['after_amount'] != 0)
+              else if(data['after_amount'] != data['after_amount_paid'])
               {
-                $("#id_payment_policy").append($('<option>',{value: 'AFTER CLEANING',text: 'AFTER CLEANING'}));
-               
-               if(data['before_amount'] == 0)
-                  {
-                    $('#id_amount').val(data['after_amount']);
-                    $('#id_amount').attr('max',data['after_amount']);
-                  } 
+                $("#id_payment_policy").append($('<option>',{value: 'AFTER CLEANING',text: 'BREAK2'})); 
+                $('#id_amount').val(data['after_amount']);
+                $('#id_amount').attr('max',data['after_amount']); 
               }
             }
-            else
+            else if(data['payment_policy'] == 'PREPAID')
             {
-              $("#id_payment_policy").append($('<option>',{value: data['payment_policy'],text: data['payment_policy']}));
-              $('#id_amount').val(data['remining_amount']);
-              $('#id_amount').attr('max',data['remining_amount']);
+              $("#id_payment_policy").append($('<option>',{value: 'PREPAID',text: 'PREPAID'}));
+              $('#id_amount').val(data['total_cost']);
+            }
+            else if(data['payment_policy'] == 'POSTPAID')
+            {
+              $("#id_payment_policy").append($('<option>',{value: 'POSTPAID',text: 'POSTPAID'})); 
+              $('#id_amount').val(data['total_cost']);            
             }
 
             //to show
@@ -451,22 +435,6 @@ function select_existing_user(event,src){
             $('.ticket-form-head').show();
             $('.ticket-form').show();
             $('.ticket-form-button').show();
-
-            //payment policy amount
-            $('#id_payment_policy').change(function(){
-              payment_policy = this.value;
-              
-              if(payment_policy == 'BEFORE CLEANING')
-              {
-                $('#id_amount').val(data['before_amount']);
-              }
-              
-              if(payment_policy == 'AFTER CLEANING')
-              {
-                $('#id_amount').val(data['after_amount']);
-              }
-
-            })
             
         }
 
@@ -558,7 +526,7 @@ function search_live(event){
 $('#id_paymentmethod').change(function(){
     console.log("hiiiiiiii");
     payment_method = this.value;
-    if(payment_method == 'CHECK')
+    if(payment_method == 'CHEQUE')
     {
       $('#id_check_expand').css('display','block');
       $('#id_check_number').attr('required',true)

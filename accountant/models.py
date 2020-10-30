@@ -6,7 +6,7 @@ from user.models import UserProfile
 
 PAYMENT_MODE_CHOICES = (
 	('CASH','CASH'),
-	('CHECK','CHECK'),
+	('CHEQUE','CHEQUE'),
 	('BANK','BANK'),
 	('ONLINECREDIT','ONLINECREDIT'),
 	)

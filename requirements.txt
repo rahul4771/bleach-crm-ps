@@ -6,3 +6,4 @@ python-dateutil
 pandas
 django-mathfilters
 googletrans
+WeasyPrint

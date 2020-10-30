@@ -30,8 +30,7 @@
       <div class="right-invoice">
         <section id="memo">
           <div class="company-info">
-            <div>Bleach Cleaning Services<div class="company-name-arabic"> شركة بلـــيتش الـــعالمــــية
-		لمقاولات تنظيف المباني والمدن</div>	
+            <div>Bleach Cleaning Services<div class="company-name-arabic"> بليتش لخدمات التنظيف</div>	
 			</div>
              
           </div>
@@ -184,11 +183,11 @@ Being payment  against  Invoice No:<span class="bold-text">123232</span> /Advanc
               <td style="background-color: white;" colspan="2" >
                  <div class="socil-media">
     <ul>
-    	<li><a href="#"><img src="{% static 'files/images/fb.svg' %}"></a></li>
-        <li><a href="#"><img src="{% static 'files/images/icon-twitter.svg' %}"></a></li>
-        <li><a href="#"><img src="{% static 'files/images/icon-insta.svg' %}"></a></li>
-        <li><a href="#"><img src="{% static 'files/images/icon-ut.svg' %}"></a></li>
-        <li><a href="#"><img src="{% static 'files/images/icon-in.svg' %}"></a></li>
+     <li><a href="https://www.facebook.com/BleachKw/"><img src="{% static 'files/images/fb.svg' %}"></a></li>
+     <li><a href="#"><img src="{% static 'files/images/icon-twitter.svg' %}"></a></li>
+     <li><a href="https://www.instagram.com/bleachkw/?hl=en"><img src="{% static 'files/images/icon-insta.svg' %}"></a></li>
+     <li><a href="https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw"><img src="{% static 'files/images/icon-ut.svg' %}"></a></li>
+     <li><a href="https://www.linkedin.com/company/bleachkw"><img src="{% static 'files/images/icon-in.svg' %}"></a></li>
     </ul>
     </div>
               </td>
@@ -201,13 +200,19 @@ Being payment  against  Invoice No:<span class="bold-text">123232</span> /Advanc
     </div>
     <table cellpadding="0" cellspacing="0" class="table3">
  <tr>
-              <td colspan="2" class="note">NOTE : This is computer generated receipt and does not require physical signature<br>شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف</td>
+              <td colspan="2" class="note">NOTE : This is computer generated receipt and does not require physical signature<br>ملاحظة: هذا إيصال تم إنشاؤه بواسطة الكمبيوتر ولا يتطلب توقيعًا فعليًا</td>
             </tr>
             <tr>
-              <td colspan="2" ><input name="print" type="button" class="print" value="Print / طباعة">&nbsp;<input name="download" type="button" class="download" value="Download / تحميلs"> </td>
+              <td colspan="2" ><input name="print" type="button" class="print" value="Print / طباعة">&nbsp;<a><input name="download" type="button" class="download" value="Download / تحميل" href="/customer/payment/receipt/download/{{payment_history.id}}"></a> </td>
             </tr>            
           </table>
- 
- 
   </body>
+<script>
+
+//print script
+function printDiv() 
+{
+window.print();
+}
+</script>ss  
 </html>

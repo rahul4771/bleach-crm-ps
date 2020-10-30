@@ -19,6 +19,7 @@
     <meta name="template-hash" content="91216e926eab41d8aa403bf4b00f4e19">
 
     <link href="{% static 'files/css/externalusers.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'files/css/message_wrapper.css' %}" rel="stylesheet" type="text/css">
   </head>
   <body>
     <div id="container">
@@ -31,7 +32,7 @@
       <div class="right-invoice">
         <section id="memo">
           <div class="company-info">
-            <div>Bleach Cleaning Services<div class="company-name-arabic"> شركة بلـــيتش الـــعالمــقاولات تنظيف المباني والمدن</div>	
+            <div>Bleach Cleaning Services<div class="company-name-arabic"> بليتش لخدمات التنظيف</div>	
             
 			</div>
              
@@ -108,6 +109,8 @@
             </tr>
 
             {% for orderschedule in nonduplicate_schedules %}
+            
+            {% if orderschedule.order_scheduler_book.evaluationbooksection|length > 1 %}
             {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
             <tr class="hide">
               {% if forloop.first %}
@@ -127,6 +130,20 @@
               {% endif %}
             </tr>
             {% endfor %}
+
+            {% else %}
+            {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
+            <tr>
+              <td style="text-align:center;">{{forloop.parentloop.counter}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+              <td>{{orderschedule.order_scheduler_book.service_type}}-{{orderschedule.customer_address.area.name}}-{{section.section_name}} <br> {{orderschedule.order_scheduler_book.service_type.name_arabic}}-{{orderschedule.customer_address.area.name_arabic}}-{{section.section_name_arabic}}</td>
+              <td>{{section.dirt_level}}<br> {% if section.dirt_level == 'Red' %}أحمر{% endif %}{% if section.dirt_level == 'Random' %}وسط{%endif%}</td>
+              <td>{{section.size}} {{section.unit|default_if_none:''}}</td>
+              <td class="align-right">{{orderschedule.order_scheduler_book.total_cost|floatformat:'3'}}</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+
+
             {% endfor %}
             
           </table>
@@ -145,12 +162,41 @@
               <th>Discount / الخصم</th>
               <td class="due-amount"> {{order.evaluation.discount|floatformat:'3'}} </td>
             </tr>
+
+            <tr>
+              <th class="medium" style="font-size: large;"> Total / مجموع</th>
+              <td class="due-amount medium" style="font-size: large;"> {{order.evaluation.total_cost|floatformat:'3'}} </td>
+            </tr>
+
+            {% if order.evaluation.payment_method == 'BREAKDOWN' %}
+            <tr>
+              <th>Before Cleaning/ الدفع قبل التنظيف</th>
+              <td class="due-amount"> {{order.evaluation.before_cleaning_amount|floatformat:'3'}} </td>
+            </tr>
+            <tr>
+              <th>After Cleaning/ الدفع بعد التنظيف</th>
+              <td class="due-amount"> {{order.evaluation.after_cleaning_amount|floatformat:'3'}} </td>
+            </tr>
+            {% endif %}
             
+            {% if order.payment_status != 'COMPLETED' %}
             <tr class="amount-total">
               <!-- {amount_total_label} -->
-              <td colspan="2">{{order.evaluation.total_cost|floatformat:'3'}} KD
+              <td colspan="2">Current Payment <br>
+                {% if order.evaluation.payment_method == 'BREAKDOWN' %}
+                {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
+                {{order.evaluation.before_cleaning_amount|floatformat:'3'}} KD
+                {% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}
+                {{order.evaluation.after_cleaning_amount|floatformat:'3'}} KD
+                {% endif %}
+                {% elif order.evaluation.payment_method == 'PREPAID' %}
+                {{order.evaluation.total_cost|floatformat:'3'}}
+                {% elif order.evaluation.payment_method == 'POSTPAID' %}
+                {{order.evaluation.total_cost|floatformat:'3'}}
+                {% endif %}
                 <!-- <div class="invoice-name-arabic">شركة بلـــيت</div></td> -->
             </tr>
+            {% endif %}
             
             <!-- You can use attribute data-hide-on-quote="true" to hide specific information on quotes.
                  For example Invoicebus doesn't need amount paid and amount due on quotes  -->
@@ -174,11 +220,25 @@
             <!-- <tr>         
               <td id="tnc-padding" colspan="2" class="align-right"><input type="checkbox" id="myCheck"> <label><i> <u><b>I Agree the Terms & Conditions / شركة بلـــيتش شركة بلـــيتش</b></u></i></label> </td>
             </tr> -->
-            {% if request.user.user_type != 'AGENT' and request.user.user_type != 'ADMIN' and request.user.user_type != 'EVALUATOR' %}
-            <tr>
+            {% if request.user.user_type != 'AGENT' and request.user.user_type != 'ADMIN' and request.user.user_type != 'EVALUATOR' and order.payment_status != 'COMPLETED' %}
+            <tr class="table1tr1">
               <td colspan="2" class="align-right">
                 <form method="post" action="http://15.206.173.198:8085/SendPerformREQuest.php" enctype= "multipart/form-data">{% csrf_token %}
-                <input type="hidden" name="price" value="{{order.remining_amount}}">
+                {% if order.evaluation.payment_method == 'BREAKDOWN' %}
+                {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
+                <input type="hidden" name="price" value="{{order.evaluation.before_cleaning_amount}}">
+                <input type="hidden" name="payment_mode" value="before_cleaning">
+                {% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}
+                <input type="hidden" name="price" value="{{order.evaluation.after_cleaning_amount}}">
+                <input type="hidden" name="payment_mode" value="after_cleaning">
+                {% endif %}
+                {% elif order.evaluation.payment_method == 'PREPAID' %}
+                <input type="hidden" name="price" value="{{order.evaluation.total_cost|floatformat:'3'}}">
+                <input type="hidden" name="payment_mode" value="prepaid">
+                {% elif order.evaluation.payment_method == 'POSTPAID' %}
+                <input type="hidden" name="price" value="{{order.evaluation.total_cost}}">
+                <input type="hidden" name="payment_mode" value="postpaid">
+                {% endif %}
                 <input type="hidden" name="qty" value="1">
                 <input type="hidden" name="evaluation_id" value="{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">
                 {% if request.user.user_type == 'AGENT' %}
@@ -226,11 +286,11 @@
               <td style="background-color: white;" colspan="2" >
                  <div class="socil-media">
     <ul>
-    	<li><a href="#"><img src="{% static 'files/images/fb.svg' %}"></a></li>
-        <li><a href="#"><img src="{% static 'files/images/icon-twitter.svg' %}"></a></li>
-        <li><a href="#"><img src="{% static 'files/images/icon-insta.svg' %}"></a></li>
-        <li><a href="#"><img src="{% static 'files/images/icon-ut.svg' %}"></a></li>
-        <li><a href="#"><img src="{% static 'files/images/icon-in.svg' %}"></a></li>
+    	<li><a href="https://www.facebook.com/BleachKw/"><img src="{% static 'files/images/fb.svg' %}"></a></li>
+     <li><a href="#"><img src="{% static 'files/images/icon-twitter.svg' %}"></a></li>
+     <li><a href="https://www.instagram.com/bleachkw/?hl=en"><img src="{% static 'files/images/icon-insta.svg' %}"></a></li>
+     <li><a href="https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw"><img src="{% static 'files/images/icon-ut.svg' %}"></a></li>
+     <li><a href="https://www.linkedin.com/company/bleachkw"><img src="{% static 'files/images/icon-in.svg' %}"></a></li>
     </ul>
     </div>
               </td>
@@ -243,15 +303,22 @@
     </div>
     <table cellpadding="0" cellspacing="0" class="table3">
  <tr>
-              <td colspan="2" class="note">NOTE : This is computer generated receipt and does not require physical signature<br>شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف شركة بلـــيتش الـــعالمــــية لمقاولات تنظيف</td>
+              <td colspan="2" class="note">NOTE : This is computer generated receipt and does not require physical signature<br>ملاحظة: هذا إيصال تم إنشاؤه بواسطة الكمبيوتر ولا يتطلب توقيعًا فعليًا</td>
             </tr>
             <tr>
-              <td colspan="2" ><input name="print" type="button" class="print" value="Print / طباعة">&nbsp;<input name="download" type="button" class="download" value="Download / تحميل"> </td>
+              <td colspan="2" ><input name="print" type="button" class="print" value="Print / طباعة" onclick="printDiv();">&nbsp;<a href="/customer/invoice/download/{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}"><input name="download" type="button" class="download" value="Download / تحميل"></a> </td>
             </tr>            
           </table>
  
  
   </body>
-  {% include 'common_messages.html' %}
+<script>
+//print script
+function printDiv() 
+{
+window.print();
+}
+</script>
+{% include 'common_messages.html' %}
 </html>
 
