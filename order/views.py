@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Order
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
 from datetime import datetime,date,timedelta,timezone
 from django.http import JsonResponse
 import pandas as pd
@@ -7,6 +8,7 @@ import pandas as pd
 from django.db.models import Count
 # from django.db.models.functions import Extract
 from dateutil.relativedelta import relativedelta
+import requests
 # Create your views here.
 
 def quotation_data(request):
@@ -68,4 +70,75 @@ def quotation_data(request):
             }
             data.append(qt_dict)
 
+    return JsonResponse(data,safe=False)
+
+def sendinvoice(request):
+    order_no = request.GET.get('order_no')
+    order = Order.objects.filter(order_no=order_no).first()
+
+    language = order.evaluation.customer.sms_preference
+
+    evaluation = order.evaluation
+
+    url = "https://www.fast2sms.com/dev/bulk"
+
+    print("kaboonm",url)
+
+    if language == 'ENGLISH':
+
+        message = "Dear Customer, Please find the Invoice against the order number "+str(evaluation.evaluation_id)+"  here http://127.0.0.1:8000/customer/invoice/"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait."
+
+        querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
+    
+    else:
+
+        message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط http://127.0.0.1:8000/customer/invoice/"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على (Customer Service Number).  شكراً لاختياركم بليتش لخدمات التنظيف"
+
+        querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"arabic","route":"p","numbers":"8848953520"}
+    
+    headers = {
+        'cache-control': "no-cache"
+    }
+
+    response = requests.request("GET", url, headers=headers, params=querystring)
+
+    print(message,"respo")
+    print(order_no)
+    data=True
+    return JsonResponse(data,safe=False)
+
+def sendquotation(request):
+    order_no = request.GET.get('order_no')
+    order = Order.objects.filter(order_no=order_no).first()
+
+    language = order.evaluation.customer.sms_preference
+
+    evaluation = order.evaluation
+
+    evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
+    evaluationbook = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
+
+    url = "https://www.fast2sms.com/dev/bulk"
+
+    if language == 'ENGLISH':
+        print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
+
+        message = "Dear Customer, Please find the Quotation against the cleaning at "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" here http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+" Order Number : "+str(evaluation.evaluation_id)+" Service Type(s) : "+evaluationbook.service_type.name+" Address(s) : "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" Cost : "+ str(evaluation.total_cost) +" KD Due Date : "+ str(evaluation.quatation_expiry_date) +" For any assistance please contact us on 996545845. Thank you for choosing Bleach Kuwait"
+
+        querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
+    
+    else:
+        message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" في هذا الرابط http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+". رقم الطلب: "+str(evaluation.evaluation_id)+" الخدمة: "+evaluationbook.service_type.name+" العنوان: "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" السعر: "+ str(evaluation.total_cost) +" KD تاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +" لأي استفسارات يمكنكم التواصل معنا على (Customer Service Number).  شكراً لاختياركم بليتش لخدمات التنظيف"
+
+        querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"arabic","route":"p","numbers":"8848953520"}
+
+    headers = {
+        'cache-control': "no-cache"
+    }
+    
+    response = requests.request("GET", url, headers=headers, params=querystring)
+
+    print(message,"respo")
+    print(order_no)
+    data=True
     return JsonResponse(data,safe=False)

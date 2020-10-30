@@ -40,8 +40,6 @@ from django.db.models import Count
 
 from dateutil.relativedelta import relativedelta
 
-import http.client
-import mimetypes
 #Username Random Generation
 def generate_random_username(size=10, chars=string.ascii_uppercase + string.digits):
 
@@ -648,6 +646,7 @@ class AgentHome(IsAgent,View):
 					message = "Dear Customer, We have confirmed your Cleaning Appointment against the Order Number "+ orderschedule.order.order_no +". Bleach's Cleaning Team will be visiting you on "+ str(confirm_date)+" "+ str(confirm_time) +" at "+orderschedule.evaluation_details.address.apartment+","+orderschedule.evaluation_details.address.floor+","+orderschedule.evaluation_details.address.street+","+orderschedule.evaluation_details.address.building+","+orderschedule.evaluation_details.address.avenue+","+orderschedule.evaluation_details.address.block+","+orderschedule.evaluation_details.address.area.name+","+orderschedule.evaluation_details.address.governorate.name+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait"
 				else:
 					message = "Arabic"
+
 				querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
 
 				headers = {
@@ -686,22 +685,22 @@ class AgentHome(IsAgent,View):
 			evaluator = EvaluationDetails.objects.get(id=evaluation_detail_id)
 			messages.success(request,"Evaluation Edited Succesfully")
 				
-			# url = "https://www.fast2sms.com/dev/bulk"
+			url = "https://www.fast2sms.com/dev/bulk"
 
-			# if language == 'ENGLISH':
+			if language == 'ENGLISH':
 
-			# 	message = "Dear Customer, We have postponed your Evaluation Appointment as per your request. "+ title +" "+evaluator.evaluator.name+" will be visiting you on "+str(converted_proposed_datetime)+" at "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait."
-			# else:
-			# 	message = "Arabic"
-			# querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
+				message = "Dear Customer, We have postponed your Evaluation Appointment as per your request. "+ title +" "+evaluator.evaluator.name+" will be visiting you on "+str(converted_proposed_datetime)+" at "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait."
+			else:
+				message = "Arabic"
+			querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
 
-			# headers = {
-			# 	'cache-control': "no-cache"
-			# }
+			headers = {
+				'cache-control': "no-cache"
+			}
 
-			# response = requests.request("GET", url, headers=headers, params=querystring)
+			response = requests.request("GET", url, headers=headers, params=querystring)
 
-			# print(response.text,"respo")
+			print(message,"respo")
 
 			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
 			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
@@ -1202,6 +1201,8 @@ class FeedbackDetails(IsAgent,View):
 				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))						
 			except:	
 				order_wise_feedbacks = None
+
+		print(order_wise_feedbacks,"ofb")
 
 		#Prefetch filters
 		try:
@@ -2017,19 +2018,21 @@ class MakeQuatationPhase1(IsAgent,View):
 		url = "https://www.fast2sms.com/dev/bulk"
 
 		if language == 'ENGLISH':
+			print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
 
 			message = "Dear Customer, Please find the Quotation against the cleaning at "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" here http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+" Order Number : "+str(evaluation.evaluation_id)+" Service Type(s) : "+evaluationbook.service_type.name+" Address(s) : "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" Cost : "+ str(evaluation.total_cost) +" KD Due Date : "+ str(evaluation.quatation_expiry_date) +" For any assistance please contact us on 996545845. Thank you for choosing Bleach Kuwait"
 
-		else:
-			message = "Arabic"
+			querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
 		
+		else:
+			message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" في هذا الرابط http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+". رقم الطلب: "+str(evaluation.evaluation_id)+" الخدمة: "+evaluationbook.service_type.name+" العنوان: "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" السعر: "+ str(evaluation.total_cost) +" KD تاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +" لأي استفسارات يمكنكم التواصل معنا على (Customer Service Number).  شكراً لاختياركم بليتش لخدمات التنظيف"
 
-		querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
+			querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"arabic","route":"p","numbers":"8848953520"}
 
 		headers = {
 			'cache-control': "no-cache"
 		}
-
+		
 		response = requests.request("GET", url, headers=headers, params=querystring)
 
 		print(response.text,"respo")
@@ -2229,29 +2232,31 @@ class MakeQuatationPhase1Edit(IsAgent,View):
 		#update payment method
 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,attender_notes=attender_notes,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
 		evaluation = Evaluation.objects.prefetch_related(Prefetch('evaluation_details',EvaluationDetails.objects.filter(is_active=True).select_related('address'),to_attr='evaluation_address')).filter(id=evaluation_id,is_active=True).get(id=evaluation_id,is_active=True)
-		print(evaluation.evaluation_address.address,"wopp")
+		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
+		evaluationbook = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
+		
 		messages.success(request,"Quatation Edited Succesfully")
 
-		# url = "https://www.fast2sms.com/dev/bulk"
+		url = "https://www.fast2sms.com/dev/bulk"
 
-		# if evaluation.customer.sms_preference == 'ENGLISH':
+		if evaluation.customer.sms_preference == 'ENGLISH':
 
-		# 	message = "Dear Customer, Please find the Revised Quotation against the order number "+evaluation_id+"  here http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+" . Order Number : "+ evaluation_id +". Service Type(s) : [Service type], Address(s) : [address], Cost : "+ str(evaluation.total_cost) +", Due Date : "+ str(evaluation.quatation_expiry_date) +". For any assistance please contact us on 987455666. Thank you for choosing Bleach Kuwait"
+			message = "Dear Customer, Please find the Revised Quotation against the order number "+str(evaluation.evaluation_id)+"  here http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+" . Order Number : "+ str(evaluation.evaluation_id) +". Service Type(s) : "+ evaluationbook.service_type.name +", Address(s) : "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+", Cost : "+ str(evaluation.total_cost) +", Due Date : "+ str(evaluation.quatation_expiry_date) +". For any assistance please contact us on 987455666. Thank you for choosing Bleach Kuwait"
+			lang = "english"
+		else:
+			lang = "arabic"
+			message = "عزيزنا العميل نرجوا الاطلاع على عرض السعر المعدّل للطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+" .رقم الطلب: "+ str(evaluation.evaluation_id) +"الخدمة: "+ evaluationbook.service_type.name +"العنوان: "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+"السعر: "+ str(evaluation.total_cost) +" KDتاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +"لأي استفسارات يمكنكم التواصل معنا على 987455666.  شكراً لاختياركم بليتش لخدمات التنظيف"
 
-		# else:
 
-		# 	message = "عزيزنا العميل. نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في (Address) في هذا الرابط http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+".رقم الطلب: BLCXXXXXالخدمة: (Service Type)العنوان: (Address)السعر: "+ str(evaluation.total_cost) +" KDتاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +"لأي استفسارات يمكنكم التواصل معنا على 987455666.  شكراً لاختياركم بليتش لخدمات التنظيف"
+		querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":lang,"route":"p","numbers":"8848953520"}
 
+		headers = {
+			'cache-control': "no-cache"
+		}
 
-		# querystring = {"authorization":"hyodI50LDjXTGqRxZApsmVQKtknHUY1vCcWJa2EFeblgS76wNMMv8QI3nuLlqK24jkZtgA71br09CXET","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520,8075965943"}
+		response = requests.request("GET", url, headers=headers, params=querystring)
 
-		# headers = {
-		# 	'cache-control': "no-cache"
-		# }
-
-		# response = requests.request("GET", url, headers=headers, params=querystring)
-
-		# print(response.text,"respo")
+		print(response.text,"respo")
 
 		return redirect('agent:agentdash-board')
 
