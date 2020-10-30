@@ -76,7 +76,7 @@ class Quatation(View):
 					return redirect('customer:invoice',evaluation_id_encrypted)
 				else:
 					messages.success(request,"Quatation Approved Succesfully")
-					redirect('customer:quatation',evaluation_id_encrypted)
+					return redirect('customer:quatation',evaluation_id_encrypted)
 
 				print("jadoo")
 				Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(quatation_status='APPROVED',quatation_approved_date=timezone.now())

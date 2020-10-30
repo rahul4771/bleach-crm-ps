@@ -1,3 +1,4 @@
+
 function horzScrollbarDetect() {
 
   var $scrollable = $('.scrollable');
