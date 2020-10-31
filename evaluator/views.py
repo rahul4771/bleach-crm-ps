@@ -32,6 +32,7 @@ from accountant.models import PaymentHistory
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import MyEvaluationDetailsForm,QuatationServiceForm
 
+import requests
 # Create your views here.
 
 
@@ -968,6 +969,12 @@ class AssignEvaluator(IsEvaluator,View):
 			agent_notes  = request.POST.get('agent_notes')
 			Evaluation.objects.filter(id=evaluation_id).update(attender_notes=agent_notes)
 
+			evaluation = Evaluation.objects.filter(id=evaluation_id).first()
+			if evaluation.customer.gender == 'MALE':
+				title = 'Mr.'
+			else:
+				title = 'Ms.'
+
 			#Save Evaluation Details
 			if evaluation_form.is_valid():
 				evaluation_form_save              = evaluation_form.save(commit=False)
@@ -982,6 +989,30 @@ class AssignEvaluator(IsEvaluator,View):
 				evaluation_form_save.save()
 
 				messages.success(request,"Evaluation Details Succesfully Completed")
+
+				url = "https://smsapi.future-club.com/fccsms.aspx"
+
+				if evaluation.customer.sms_preference == 'ENGLISH':
+
+					message = "Dear Customer , We have confirmed your Evaluation Appointment. "+ title +" "+evaluation_form_save.evaluator.name+" will be visiting you on "+str(evaluation_form_save.proposed_time)+" at  "+evaluation_form_save.address.apartment+","+evaluation_form_save.address.floor+","+evaluation_form_save.address.street+","+evaluation_form_save.address.building+","+evaluation_form_save.address.avenue+","+evaluation_form_save.address.block+","+evaluation_form_save.address.area.name+","+evaluation_form_save.address.governorate.name+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"L"}
+
+				else:
+
+					message = "عزيزينا العميل تم تأكيد موعد المعاينة الخاص بك.  "+ title +" "+evaluation_form_save.evaluator.name+" سيقوم بالزيارة في "+str(evaluation_form_save.proposed_time)+" في "+evaluation_form_save.address.apartment+","+evaluation_form_save.address.floor+","+evaluation_form_save.address.street+","+evaluation_form_save.address.building+","+evaluation_form_save.address.avenue+","+evaluation_form_save.address.block+","+evaluation_form_save.address.area.name+","+evaluation_form_save.address.governorate.name+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"A"}
+				
+				headers = {
+					'cache-control': "no-cache"
+				}
+
+				response = requests.request("GET", url, headers=headers, params=querystring)
+
+				print(response.text,"respo")
+				print(str(evaluation_form_save.proposed_time))
+				print(evaluation_form_save.evaluation.customer.mobile_number,"mobile")
 
 			else:
 				messages.error(request,get_error(evaluation_form))	
@@ -1058,8 +1089,36 @@ class MakeQuatationPhase1(IsEvaluator,View):
 
 		#update payment method
 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,attender_notes=attender_notes,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
-							
-		messages.success(request,"Quatation Submitted Succesfully")		
+
+		evaluation = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
+		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
+		evaluationbook = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
+		language = evaluation.customer.sms_preference
+
+		messages.success(request,"Quotation Submitted Succesfully")	
+
+		url = "https://smsapi.future-club.com/fccsms.aspx"
+
+		if language == 'ENGLISH':
+			print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
+
+			message = "Dear Customer, Please find the Quotation against the cleaning at "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" here http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+" Order Number : "+str(evaluation.evaluation_id)+" Service Type(s) : "+evaluationbook.service_type.name+" Address(s) : "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" Cost : "+ str(evaluation.total_cost) +" KD Due Date : "+ str(evaluation.quatation_expiry_date) +" For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+
+			querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"L"}
+		
+		else:
+			message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" في هذا الرابط http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+". رقم الطلب: "+str(evaluation.evaluation_id)+" الخدمة: "+evaluationbook.service_type.name+" العنوان: "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" السعر: "+ str(evaluation.total_cost) +" KD تاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+
+			querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"A"}
+
+		headers = {
+			'cache-control': "no-cache"
+		}
+		
+		response = requests.request("GET", url, headers=headers, params=querystring)
+
+		print(response.text,"respo")
+
 		return redirect('evaluator:evaluatordash-board')
 
 		
@@ -1810,8 +1869,31 @@ class MakeQuatationPhase1Edit(IsEvaluator,View):
 
 		#update payment method
 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,attender_notes=attender_notes,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
-							
-		messages.success(request,"Quatation Edited Succesfully")		
+		evaluation = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
+		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
+		evaluationbook = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
+		language = evaluation.customer.sms_preference
+
+		messages.success(request,"Quotation Edited Succesfully")	
+
+		url = "https://smsapi.future-club.com/fccsms.aspx"
+
+		if evaluation.customer.sms_preference == 'ENGLISH':
+
+			message = "Dear Customer, Please find the Revised Quotation against the order number "+str(evaluation.evaluation_id)+"  here http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+" . Order Number : "+ str(evaluation.evaluation_id) +". Service Type(s) : "+ evaluationbook.service_type.name +", Address(s) : "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+", Cost : "+ str(evaluation.total_cost) +", Due Date : "+ str(evaluation.quatation_expiry_date) +". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+			querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"L"}
+
+		else:
+			message = "عزيزنا العميل نرجوا الاطلاع على عرض السعر المعدّل للطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+" .رقم الطلب: "+ str(evaluation.evaluation_id) +"الخدمة: "+ evaluationbook.service_type.name +"العنوان: "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+"السعر: "+ str(evaluation.total_cost) +" KDتاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +"لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+			querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"A"}
+
+		headers = {
+			'cache-control': "no-cache"
+		}
+		
+		response = requests.request("GET", url, headers=headers, params=querystring)
+
+		print(response.text,"respo")		
 		return redirect('evaluator:evaluatordash-board')
 
 
