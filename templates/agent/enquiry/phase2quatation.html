@@ -506,7 +506,8 @@ $('document').ready(function(){
           $("#id_form-"+x+"-tendative_date").datetimepicker({ 
             pickTime: false, 
             format: "DD-MM-YYYY",
-            minDate: 1,
+            startDate:new Date(),
+            minDate:new Date()
           });
         });
         //tendative dates initial
@@ -516,6 +517,7 @@ $('document').ready(function(){
             closeOnDateSelect: true,
             format: "dd-mm-yyyy", 
             startDate:new Date(),
+            minDate:new Date()
           });
         });
         //tendative time
@@ -548,7 +550,7 @@ $(function () {
   $("#id_form-"+x+"-tendative_date").datetimepicker({ 
     pickTime: false, 
     format: "DD-MM-YYYY",
-    minDate: 1,
+    minDate: new Date(),
   });
 });
 //tendative dates initial
@@ -558,6 +560,7 @@ $(function () {
     closeOnDateSelect: true,
     format: "dd-mm-yyyy",
     startDate: new Date(),
+    minDate: new Date()
   });
 });
 

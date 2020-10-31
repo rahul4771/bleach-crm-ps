@@ -81,7 +81,7 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class="bold-text common-label"> <label>Schedule Date and Time</label></div>
-                <input name="sheduled_at" type="text" class="textBox readonly" placeholder="Date and Time" id="ticket_date_time_pick" required>
+                <input name="sheduled_at" type="text" class="textBox readonly" placeholder="Date and Time" id="ticket_date_time_pick" required readonly>
   </div><!--ticket-form-left--> 
 </div><!--ticket-wrapper-row ticket-forms-boxes-->  
 <hr class="hr-dashedpad">
@@ -122,7 +122,7 @@
 <script>
 $('#ticket_date_time_pick').datetimepicker({
     format: "DD/MM/YYYY hh:mm A",
-    minDate: 1,
+    minDate: new Date(),
   });
 
 
