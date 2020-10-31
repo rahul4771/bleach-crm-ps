@@ -1,4 +1,4 @@
-django==1.11
+django==1.11.17
 django-countries==6.1.2
 tzlocal
 pillow
@@ -7,3 +7,5 @@ pandas
 django-mathfilters
 googletrans
 WeasyPrint
+djangorestframework==3.5.3
+requests==2.18.4

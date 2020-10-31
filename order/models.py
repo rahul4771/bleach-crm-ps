@@ -157,7 +157,7 @@ class InvestigationMedia(models.Model):
 		if self.media:
 			im = Image.open(self.media)
 			im_io = BytesIO() 
-			im.save(im_io, im.format, quality=70) 
+			im.save(im_io, im.format, optimisation=True, quality=20) 
 			self.media = File(im_io, name=self.media.name)
 		super(InvestigationMedia, self).save(*args, **kwargs)
 
