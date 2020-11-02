@@ -795,7 +795,7 @@ class AgentHome(IsAgent,View):
 
 			messages.success(request,"Cleaning Edited Succesfully")
 
-			if start_at.date() != cleaning_team.start_at.date():
+			if cleaning_team and start_at.date() != cleaning_team.start_at.date():
 
 				url = "https://smsapi.future-club.com/fccsms.aspx"
 
@@ -1462,7 +1462,7 @@ class TicketDetails(IsAgent,View):
 		else:
 			tickets 	             = FollowUp.objects.filter(is_active=True).select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').order_by('-id').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))		
 
-		follow_ups_count = FollowUp.objects.filter(is_active=True).count()
+		follow_ups_count = FollowUp.objects.filter(Q(is_active=True)&Q(Q(status='TICKET_RISED')|Q(status='INVESTIGATOR_APPRVED')|Q(status='FOLLOWUP_IN_PROGRESS'))).count()
 		
 		#followup cleaning count	
 		try:

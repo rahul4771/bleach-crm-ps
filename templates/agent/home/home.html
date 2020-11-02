@@ -252,18 +252,19 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Cleaning Date</label></div>
-        <input id="order_schedule_date_id" name="order_schedule_date" type="text" class="textBox">
+        <input id="order_schedule_date_id" name="order_schedule_date" type="text" class="textBox" readonly>
+        <p id = "order_schedule_date_alert" hidden>Please Select a new date !</p>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Cleaning Time</label></div>
-                <input id="order_schedule_time_id" name="order_schedule_time" type="text" class="textBox">
+                <input id="order_schedule_time_id" name="order_schedule_time" type="text" class="textBox" readonly>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <br>
-<div align="center"><input name="confirm" type="checkbox"> Confirmation Date</div>
+<div align="center"><input name="confirm" type="checkbox"> Confirm Date</div>
  
  
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
+<div align="center"> <input class="assignButton confirmdate_order_btn" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
 </form> 
 
 </div><!--ticket-wrapper-full--> 
@@ -311,18 +312,19 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Cleaning Date</label></div>
-        <input id="followup_schedule_date_id" name="followup_schedule_date" type="text" class="textBox">
+        <input id="followup_schedule_date_id" name="followup_schedule_date" type="text" class="textBox" readonly>
+        <p id = "followup_schedule_date_alert" hidden>Please Select a new date !</p>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Cleaning Time</label></div>
-                <input id="followup_schedule_time_id" name="followup_schedule_time" type="text" class="textBox">
+                <input id="followup_schedule_time_id" name="followup_schedule_time" type="text" class="textBox" readonly>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <br>
-<div align="center"><input name="confirm" type="checkbox"> Confirmation Date</div>
+<div align="center"><input name="confirm" type="checkbox"> Confirm Date</div>
  
  
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
+<div align="center"> <input class="assignButton confirmdate_followup_btn" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
 </form> 
 
 </div><!--ticket-wrapper-full--> 
@@ -391,11 +393,12 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Appointment Date</label></div>
-        <input name="proposed_date" type="text" class="textBox readonly" id="appointment_date" required>
+        <input name="proposed_date" type="text" class="textBox readonly" id="appointment_date" required readonly>
+        <p id="appointment_date_alert" hidden>Please select a new date !</p>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Appointment Time</label></div>
-        <input name="proposed_time" type="text" class="textBox readonly" id="appointment_time" required>
+        <input name="proposed_time" type="text" class="textBox readonly" id="appointment_time" required readonly>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -406,7 +409,7 @@
                 <textarea name="notes" class="textArea" cols="" rows="" id="notes"></textarea>
   </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"> &nbsp<input class="cancel-Button close-btn delete_evaluation" name="delete" type="button" value="Delete"></div>
+<div align="center"> <input class="assignButton appointment_btn" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"> &nbsp<input class="cancel-Button close-btn delete_evaluation" name="delete" type="button" value="Delete"></div>
 </form>
  </div><!--popup-collapse-->
 </div><!--ticket-wrapper-full--> 
@@ -463,6 +466,7 @@
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Cleaning Date</label></div>
         <input name="cleaning_date" type="text" class="textBox" id="cleaning_date">
+        <p id="cleaning_date_alert">Please Select a new date !</p>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Starting Time</label></div>
@@ -478,7 +482,7 @@
   </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
    
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"> &nbsp<input class="cancel-Button close-btn delete_cleaning" name="delete" type="button" value="Delete"></div>
+<div align="center"> <input class="assignButton cleaning_btn" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"> &nbsp<input class="cancel-Button close-btn delete_cleaning" name="delete" type="button" value="Delete"></div>
 </form>
  </div><!--popup-collapse-->
 </div><!--ticket-wrapper-full--> 
@@ -1050,6 +1054,7 @@ $(".order_schedule").click(function(){
           pickTime: false, 
           format: "dd-mm-yyyy",
           startDate: new Date(),
+          minDate: new Date(),
         });
 
     //time picker setup for confirm
@@ -1057,6 +1062,29 @@ $(".order_schedule").click(function(){
           pickDate:false,
           format: 'hh:mm A',
         });
+
+    $("#order_schedule_date_alert").css({'color':'red'});
+
+    var vals = $('#order_schedule_date_id').val().split('-');
+    var day = parseInt(vals[0]);
+    var month = parseInt (vals[1]);
+    var year = parseInt (vals[2]);
+
+    var orderschedule_date = new Date(year,month,day);
+    orderschedule_date.setMonth(orderschedule_date.getMonth()-1);
+
+    if (orderschedule_date < new Date()){
+      $('#order_schedule_date_alert').attr("hidden",false);
+      $('.confirmdate_order_btn').attr("disabled",true);
+    }else{
+      $('#order_schedule_date_alert').attr("hidden",true);
+      $('.confirmdate_order_btn').attr("disabled",false);
+    };
+
+    $('#order_schedule_date_id').change(function(){
+      $('#order_schedule_date_alert').attr("hidden",true);
+      $('.confirmdate_order_btn').attr("disabled",false);
+    })
 
     $("#orderschedule_dateconfirm_popup").css({'visibility':'visible','opacity':1,});
 })
@@ -1083,6 +1111,7 @@ $(".followup_schedule").click(function(){
           pickTime: false, 
           format: "dd-mm-yyyy",
           startDate: new Date(),
+          minDate: new Date(),
         });
 
     //time picker setup for confirm
@@ -1090,6 +1119,29 @@ $(".followup_schedule").click(function(){
           pickDate:false,
           format: 'hh:mm A'
         });
+
+    $("#followup_schedule_date_alert").css({'color':'red'});
+
+    var vals = $('#followup_schedule_date_id').val().split('-');
+    var day = parseInt(vals[0]);
+    var month = parseInt (vals[1]);
+    var year = parseInt (vals[2]);
+
+    var followupschedule_date = new Date(year,month,day);
+    followupschedule_date.setMonth(followupschedule_date.getMonth()-1);
+
+    if (followupschedule_date < new Date()){
+      $('#followup_schedule_date_alert').attr("hidden",false);
+      $('.confirmdate_followup_btn').attr("disabled",true);
+    }else{
+      $('#followup_schedule_date_alert').attr("hidden",true);
+      $('.confirmdate_followup_btn').attr("disabled",false);
+    };
+
+    $('#followup_schedule_date_id').change(function(){
+      $('#followup_schedule_date_alert').attr("hidden",true);
+      $('.confirmdate_followup_btn').attr("disabled",false);
+    });
 
 
     $("#followupschedule_dateconfirm_popup").css({'visibility':'visible','opacity':1,});
@@ -1143,7 +1195,7 @@ $('document').ready(function(){
         $('#appointment_date').datetimepicker({
               pickTime: false, 
               format: "DD-MM-YYYY",
-              minDate:1,
+              minDate:new Date(),
             });
         $('#appointment_time').datetimepicker({
               minDate: moment({h:7}),
@@ -1151,6 +1203,29 @@ $('document').ready(function(){
               pickDate:false,
               format: 'hh:mm A'
             });
+
+        $("#appointment_date_alert").css({'color':'red'});
+
+        var vals = $('#appointment_date').val().split('-');
+        var day = parseInt(vals[0]);
+        var month = parseInt (vals[1]);
+        var year = parseInt (vals[2]);
+
+        var appointment_date = new Date(year,month,day);
+        appointment_date.setMonth(appointment_date.getMonth()-1);
+
+        if (appointment_date < new Date()){
+          $('#appointment_date_alert').attr("hidden",false);
+          $('.appointment_btn').attr("disabled",true);
+        }else{
+          $('#appointment_date_alert').attr("hidden",true);
+          $('.appointment_btn').attr("disabled",false);
+        };
+
+        $('#appointment_date').change(function(){
+          $('#appointment_date_alert').attr("hidden",true);
+          $('.appointment_btn').attr("disabled",false);
+        })
 
       customer_id         = $(this).data('customer_id'); 
 
@@ -1211,13 +1286,39 @@ $('.collapsible0-close').click(function(){
         $('#cleaning_date').datetimepicker({
               pickTime: false, 
               format: "DD-MM-YYYY",
-              minDate: 1,
+              minDate: new Date(),
             });
 
         $('#cleaning_time').datetimepicker({
               pickDate:false,
               format: 'hh:mm A'
             });
+
+        $("#cleaning_date_alert").css({'color':'red'});
+
+        var vals = $('#cleaning_date').val().split('-');
+        var day = parseInt(vals[0]);
+        var month = parseInt (vals[1]);
+        var year = parseInt (vals[2]);
+
+        var cleaning_date = new Date(year,month,day);
+        cleaning_date.setMonth(cleaning_date.getMonth()-1);
+
+        console.log(cleaning_date,new Date(),"ree")
+
+        if (cleaning_date > new Date()){
+          $('#cleaning_date_alert').attr("hidden",false);
+          $('.cleaning_btn').attr("disabled",true);
+        }else{
+          $('#cleaning_date_alert').attr("hidden",true);
+          $('.cleaning_btn').attr("disabled",false);
+        };
+
+        $('#cleaning_date').change(function(){
+          $('#cleaning_date_alert').attr("hidden",true);
+          $('.cleaning_btn').attr("disabled",false);
+        });
+
   $.ajax({
 
         url: "{% url 'agent:ajax-getcleaninginfo' %}",
