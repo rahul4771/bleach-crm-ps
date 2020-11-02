@@ -244,7 +244,9 @@
                 {% if request.user.user_type == 'AGENT' %}
                 {% elif request.user.user_type == 'EVALUATOR' %}
                 {% else %}
+                {% if order.order_status == 'APPROVED_BY_CLIENT' %}
                 <input class="assignButton" name="pay" type="submit" value="Pay / الدفع">
+                {% endif %}
                 {% endif %}
                 </form>
               </td>
