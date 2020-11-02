@@ -27,8 +27,8 @@ class Quatation(View):
 
 		#evaluation id decryption
 		evaluation_id_encrypted = evaluation_id
-		evaluation_id = 'BLC'+evaluation_id_encrypted[0:11]
-		user_name     =  evaluation_id_encrypted[11:]
+		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
+		user_name     =  evaluation_id_encrypted[14:]
 
 
 		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
@@ -54,8 +54,8 @@ class Quatation(View):
 		
 		#evaluation id decryption
 		evaluation_id_encrypted = evaluation_id
-		evaluation_id = 'BLC'+evaluation_id_encrypted[0:11]
-		user_name     =  evaluation_id_encrypted[11:]
+		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
+		user_name     =  evaluation_id_encrypted[14:]
 
 		if action == 'Reject':
 			#UPDATE EVALUATION REJECTION
@@ -97,9 +97,12 @@ class Quatation(View):
 
 					print(response.text,"respo")
 
-					return redirect('customer:invoice',evaluation_id_encrypted)
+					new_evaluation_id_encrypted = 'prw'+evaluation_id_encrypted[3:]
+					
+					return redirect('customer:invoice',new_evaluation_id_encrypted)
 				else:
 					messages.success(request,"Quatation Approved Succesfully")
+
 					return redirect('customer:quatation',evaluation_id_encrypted)
 
 				Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(quatation_status='APPROVED',quatation_approved_date=timezone.now())
@@ -119,8 +122,8 @@ class CustomerInvoice(View):
 
 		#evaluation id decryption
 		evaluation_id_encrypted = evaluation_id
-		evaluation_id = 'BLC'+evaluation_id_encrypted[0:11]
-		user_name     =  evaluation_id_encrypted[11:]
+		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
+		user_name     =  evaluation_id_encrypted[14:]
 
 		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
 
@@ -141,8 +144,8 @@ class PaymentResponse(View):
 	def get(self,request):
 		#evaluation id decryption
 		evaluation_id_encrypted = request.GET.get("udf1")
-		evaluation_id = 'BLC'+evaluation_id_encrypted[0:11]
-		user_name     =  evaluation_id_encrypted[11:]
+		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
+		user_name     =  evaluation_id_encrypted[14:]
 
 		amount_paid       = float(request.GET.get("amt"))
 		payment_result    = request.GET.get("result")
@@ -242,7 +245,7 @@ class PaymentResponse(View):
 			else:
 				pass
 
-			return redirect('customer:payment-receipt',payment_history.id)
+			return redirect('customer:payment-receipt','pvw'+payment_history.id)
 		else:
 
 			#payment fail sms
@@ -280,6 +283,7 @@ class PaymentFailedResponse(View):
 class PaymentReceipt(View):
 	def get(self,request,payment_id):
 
+		payment_id = payment_id[3:]
 		try:
 			payment_history = PaymentHistory.objects.select_related('order__evaluation').prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(id=payment_id)
 		except:	
