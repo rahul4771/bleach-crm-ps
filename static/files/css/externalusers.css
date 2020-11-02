@@ -565,3 +565,9 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 .table1tr1 {display:none;}
 .table1tr2 {display:none;}
 }
+
+@page {
+    size: Letter;
+    margin-right:100px;
+    margin: 0.2in 9in 0.2in 0.44in;
+}

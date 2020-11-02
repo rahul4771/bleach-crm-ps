@@ -14,6 +14,8 @@ from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investi
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 
+from agent.views import generate_random_username
+
 import requests
 
 #all users views
@@ -27,8 +29,8 @@ class Quatation(View):
 
 		#evaluation id decryption
 		evaluation_id_encrypted = evaluation_id
-		evaluation_id = 'BLC'+evaluation_id_encrypted[0:11]
-		user_name     =  evaluation_id_encrypted[11:]
+		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
+		user_name     =  evaluation_id_encrypted[14:]
 
 
 		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
@@ -43,6 +45,7 @@ class Quatation(View):
 				nonduplicate_schedules.append(orderschedule)	
 
 			duplicate_schedules.append(orderschedule.order_scheduler_book)
+	
 
 		return render(request,"customer/newquatation.html",{"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 
@@ -54,8 +57,8 @@ class Quatation(View):
 		
 		#evaluation id decryption
 		evaluation_id_encrypted = evaluation_id
-		evaluation_id = 'BLC'+evaluation_id_encrypted[0:11]
-		user_name     =  evaluation_id_encrypted[11:]
+		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
+		user_name     =  evaluation_id_encrypted[14:]
 
 		if action == 'Reject':
 			#UPDATE EVALUATION REJECTION
@@ -70,43 +73,44 @@ class Quatation(View):
 				order_update      = Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='APPROVED_BY_CLIENT')
 				
 				evaluaation = Evaluation.objects.get(evaluation_id=evaluation_id,customer__username=user_name)
+
+				language = evaluaation.customer.sms_preference
 				
 				if evaluaation.payment_method == 'PREPAID' or evaluaation.payment_method == 'BREAKDOWN':
 					messages.success(request,"Quatation Approved Succesfully")
-					return redirect('customer:invoice',evaluation_id_encrypted)
+					url = "https://www.fast2sms.com/dev/bulk"
+
+					if language == 'ENGLISH':
+
+						message = "Dear Customer, Please find the Invoice against the order number "+str(evaluaation.evaluation_id)+"  here http://127.0.0.1:8000/customer/invoice/"+str(evaluaation.tracking_no)+""+str(evaluaation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+				
+						querystring = {"authorization":"B1XzkADlQ6r7YnMH0KVtux8b4JCjpw52OoRecmyNs9ghv3fWSFvXKzWsxVGZbfOQA2jSylrJ5YuRMDdk","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
+					
+					else:
+
+						message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluaation.evaluation_id)+" في هذا الرابط http://127.0.0.1:8000/customer/invoice/"+str(evaluaation.tracking_no)+""+str(evaluaation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+				
+						querystring = {"authorization":"B1XzkADlQ6r7YnMH0KVtux8b4JCjpw52OoRecmyNs9ghv3fWSFvXKzWsxVGZbfOQA2jSylrJ5YuRMDdk","sender_id":"FSTSMS","message":message,"language":"arabic","route":"p","numbers":"8848953520"}
+					
+					headers = {
+						'cache-control': "no-cache"
+					}
+
+					response = requests.request("GET", url, headers=headers, params=querystring)
+
+					print(response.text,"respo")
+
+					new_evaluation_id_encrypted = 'prw'+evaluation_id_encrypted[3:]
+					
+					return redirect('customer:invoice',new_evaluation_id_encrypted)
 				else:
 					messages.success(request,"Quatation Approved Succesfully")
+
 					return redirect('customer:quatation',evaluation_id_encrypted)
 
-				print("jadoo")
 				Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(quatation_status='APPROVED',quatation_approved_date=timezone.now())
-				
-				evaluation = Evaluation.objects.get(evaluation_id=evaluation_id,customer__username=user_name)
-				language = evaluation.customer.sms_preference
 
 				Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='APPROVED_BY_CLIENT')
-				
-				url = "https://smsapi.future-club.com/fccsms.aspx"
-
-				if language == 'ENGLISH':
-
-					message = "Dear Customer, Please find the Invoice against the order number "+str(evaluation.evaluation_id)+"  here http://127.0.0.1:8000/customer/invoice/"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
-			
-					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"L"}
-				
-				else:
-
-					message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط http://127.0.0.1:8000/customer/invoice/"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
-			
-					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"A"}
-				
-				headers = {
-					'cache-control': "no-cache"
-				}
-
-				response = requests.request("GET", url, headers=headers, params=querystring)
-
-				print(response.text,"respo")
 				
 				return redirect('customer:invoice',evaluation_id_encrypted)
 			
@@ -121,8 +125,8 @@ class CustomerInvoice(View):
 
 		#evaluation id decryption
 		evaluation_id_encrypted = evaluation_id
-		evaluation_id = 'BLC'+evaluation_id_encrypted[0:11]
-		user_name     =  evaluation_id_encrypted[11:]
+		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
+		user_name     =  evaluation_id_encrypted[14:]
 
 		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
 
@@ -175,7 +179,7 @@ class PaymentResponse(View):
 				order.payment_status         = 'COMPLETED'
 				order.payment_completed_date = timezone.now()
 
-			elif payment_mode == 'prepaid' and order.amount_paid != order.total_cost:
+			elif payment_mode == 'prepaid' and order.amount_paid != order.total_amount:
 				order.amount_paid      = amount_paid
 				order.amount_paid      = amount_paid
 				order.remining_amount  = order.remining_amount-amount_paid					
@@ -183,7 +187,7 @@ class PaymentResponse(View):
 				order.payment_status         = 'COMPLETED'
 				order.payment_completed_date = timezone.now()
 
-			elif payment_mode == 'postpaid' and order.amount_paid != order.total_cost:
+			elif payment_mode == 'postpaid' and order.amount_paid != order.total_amount:
 				order.amount_paid      = amount_paid
 				order.amount_paid      = amount_paid
 				order.remining_amount  = order.remining_amount-amount_paid
@@ -192,16 +196,19 @@ class PaymentResponse(View):
 				order.payment_completed_date = timezone.now()
 			order.save()
 
-			url = "https://smsapi.future-club.com/fccsms.aspx"
+			#payment receipt sms
+			url = "https://www.fast2sms.com/dev/bulk"
 
 			if order.evaluation.customer.sms_preference == 'ENGLISH':
 
-				message = "Dear Customer, Please find the Payment receipt against the order number "+ order.order_no +"  here http://127.0.0.1:8000/customer/payment/receipt/"+request.GET.get('paymentid')+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
-				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"L"}
+				message = "Dear Customer, We have successfully received your payment against the order number "+ order.order_no +". Please find the Payment receipt here http://127.0.0.1:8000/customer/payment/receipt/"+request.GET.get('paymentid')+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+				querystring = {"authorization":"B1XzkADlQ6r7YnMH0KVtux8b4JCjpw52OoRecmyNs9ghv3fWSFvXKzWsxVGZbfOQA2jSylrJ5YuRMDdk","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
 			
 			else:
-				message = "عزيزنا العميل تمت عملية الدفع بنجاح للطلب رقم "+ order.order_no +" ، سند القبض الخاص بالدفع مبيّن في هذا الرابط http://127.0.0.1:8000/customer/payment/receipt/"+request.GET.get('paymentid')+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
-				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"A"}
+				message = "عزيزي العميل، لقد تلقينا مدفوعاتك بنجاح مقابل رقم الطلب "+ order.order_no +". يرجى العثور على إيصال الدفع هنا http://127.0.0.1:8000/customer/payment/receipt/"+request.GET.get('paymentid')+". لأي مساعدة يرجى الاتصال بنا على9651882707 شكرا لاختيارك بليتش الكويت"
+ 
+
+				querystring = {"authorization":"B1XzkADlQ6r7YnMH0KVtux8b4JCjpw52OoRecmyNs9ghv3fWSFvXKzWsxVGZbfOQA2jSylrJ5YuRMDdk","sender_id":"FSTSMS","message":message,"language":"arabic","route":"p","numbers":"8848953520"}
 
 			headers = {
 				'cache-control': "no-cache"
@@ -209,47 +216,86 @@ class PaymentResponse(View):
 
 			response = requests.request("GET", url, headers=headers, params=querystring)
 
+			print(response.text)
+
 			#feedback sms
-			order_feedback = Order.objects.select_related('evaluation__customer').filter(is_active=True,order_no=cleaning_team_detail.order_scheduler.order.order_no, payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+			# cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order').get(is_active=True,id=team_id)
+
+			# order_feedback = Order.objects.select_related('evaluation__customer').filter(is_active=True,order_no=cleaning_team_detail.order_scheduler.order.order_no, payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
 					
-			for ord in order_feedback:
-				order_data = ord
+			# for ord in order_feedback:
+			# 	order_data = ord
 
-			if order_feedback:
+			# if order_feedback:
 
-				url = "https://smsapi.future-club.com/fccsms.aspx"
+			# 	url = "https://www.fast2sms.com/dev/bulk"
 
-				if order_data.evaluation.customer.sms_preference == 'ENGLISH':
+			# 	if order_data.evaluation.customer.sms_preference == 'ENGLISH':
 
-					message = "Dear Customer, Thank you for choosing Bleach Kuwait. Kindly share your feedback for the order number "+ order_data.order_no +" here [feedback link]. For any assistance please contact us on +9651882707."
-					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"L"}
+			# 		message = "Dear Customer, Thank you for choosing Bleach Kuwait. Kindly share your feedback for the order number "+ order_data.order_no +" here [feedback link]. For any assistance please contact us on +9651882707."
+			# 		querystring = {"authorization":"B1XzkADlQ6r7YnMH0KVtux8b4JCjpw52OoRecmyNs9ghv3fWSFvXKzWsxVGZbfOQA2jSylrJ5YuRMDdk","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
 				
-				else:
-					message = "عزيزينا العميل نرجوا أن تكون خدماتنا خازت على رضاكم و شكراً لاختياركم بليتش لخدمات التنظيف.  نرجوا التكرم بإنجاز الاستبيان الخاص بالطلب رقم "+ order_data.order_no +" (Feedback Link) وذلك لضمان جودة الخدمة. لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
-					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"A"}
+			# 	else:
+			# 		message = "عزيزينا العميل نرجوا أن تكون خدماتنا خازت على رضاكم و شكراً لاختياركم بليتش لخدمات التنظيف.  نرجوا التكرم بإنجاز الاستبيان الخاص بالطلب رقم "+ order_data.order_no +" (Feedback Link) وذلك لضمان جودة الخدمة. لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+			# 		querystring = {"authorization":"B1XzkADlQ6r7YnMH0KVtux8b4JCjpw52OoRecmyNs9ghv3fWSFvXKzWsxVGZbfOQA2jSylrJ5YuRMDdk","sender_id":"FSTSMS","message":message,"language":"arabic","route":"p","numbers":"8848953520"}
 
-				headers = {
-					'cache-control': "no-cache"
-				}
+			# 	headers = {
+			# 		'cache-control': "no-cache"
+			# 	}
 
-				response = requests.request("GET", url, headers=headers, params=querystring)
+			# 	response = requests.request("GET", url, headers=headers, params=querystring)
 
-				print(message,",ess")
+			# 	print(response.text,",ess")
 
-			else:
-				pass
+			# else:
+			# 	pass
 
-			return redirect('customer:payment-receipt',payment_history.id)
+
+			return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
 		else:
-			messages.error(request,"Something Went Wrong ! Please Contact Admin")
 
-			return redirect('customer:invoice',evaluation_id_encrypted)
+			#payment fail sms
+			url = "https://www.fast2sms.com/dev/bulk"
+
+			if order.evaluation.customer.sms_preference == 'ENGLISH':
+
+				message = "Dear Customer, Your payment against the order number "+ order.order_no +" has failed. Click here to try again http://127.0.0.1:8000/customer/invoice/"+str(order.evaluation.tracking_no)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+				querystring = {"authorization":"B1XzkADlQ6r7YnMH0KVtux8b4JCjpw52OoRecmyNs9ghv3fWSFvXKzWsxVGZbfOQA2jSylrJ5YuRMDdk","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
+			
+			else:
+				message = "عزيزي العميلفشل الدفع الخاص بك مقابل رقم الطلب "+ order.order_no +". اضغط هنا للمحاولة مرة أخرى http://127.0.0.1:8000/customer/invoice/"+str(order.evaluation.tracking_no)+" أي مساعدة يرجى الاتصال بنا على . +9651882707 شكرا لاختيارك بليتش الكويت"
+
+				querystring = {"authorization":"B1XzkADlQ6r7YnMH0KVtux8b4JCjpw52OoRecmyNs9ghv3fWSFvXKzWsxVGZbfOQA2jSylrJ5YuRMDdk","sender_id":"FSTSMS","message":message,"language":"arabic","route":"p","numbers":"8848953520"}
+
+			headers = {
+				'cache-control': "no-cache"
+			}
+
+			response = requests.request("GET", url, headers=headers, params=querystring)
+
+			print(response.text)
+
+			return redirect('/customer/payment/failed/?udf1='+evaluation_id_encrypted+'&paymentid='+request.GET.get('paymentid'))
+
+class PaymentFailedResponse(View):
+	def get(self,request):
+
+		payment_id = request.GET.get('paymentid')
+
+		evaluation_id_encrypted = request.GET.get("udf1")
+
+		return render(request,"customer/paymentfailed.html",{'payment_id':payment_id,'evaluation_id_encrypted':evaluation_id_encrypted,})			
 
 class PaymentReceipt(View):
 	def get(self,request,payment_id):
 
+		original_payment_id    = payment_id[14:]
+		evaluation_id 		   = 'BLC'+payment_id[3:14]
+		print(original_payment_id)
+		print(evaluation_id)
+
 		try:
-			payment_history = PaymentHistory.objects.select_related('order__evaluation').prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(id=payment_id)
+			payment_history = PaymentHistory.objects.select_related('order__evaluation').prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(id=original_payment_id,order__order_no=evaluation_id)
 		except:	
 			payment_history = None
 
@@ -302,46 +348,12 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 	html_string = render_to_string('customer/newquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 
 	html = HTML(string=html_string,base_url=request.build_absolute_uri())
-	html.write_pdf(target='/home/ansab/Desktop/pdf/tmp/mypdf.pdf');
-
-	fs = FileSystemStorage('/home/ansab/Desktop/pdf/tmp/')
-	with fs.open('mypdf.pdf') as pdf:
-		response = HttpResponse(pdf, content_type='application/pdf')
-		response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
-		return response
-	return response
-
-
-def invoice_html_to_pdf_view(request,evaluation_id):
-
-	#evaluation id decryption
-	evaluation_id_encrypted = evaluation_id
-	evaluation_id = 'BLC'+evaluation_id_encrypted[0:11]
-	user_name     =  evaluation_id_encrypted[11:]
-
-	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
-
-	nonduplicate_schedules = []
-	#Remove duplicates for subscription
-	duplicate_schedules    = []
-	for orderschedule in order.orderschedules:
-		if orderschedule.order_scheduler_book in duplicate_schedules:
-			pass
-		else:	
-			nonduplicate_schedules.append(orderschedule)	
-
-		duplicate_schedules.append(orderschedule.order_scheduler_book)
-    
-
-	html_string = render_to_string('customer/newquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
-
-	html = HTML(string=html_string,base_url=request.build_absolute_uri())
 	html.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');
 
 	fs = FileSystemStorage('/home/pdf/tmp/quatation/')
-	with fs.open('mypdf.pdf') as pdf:
+	with fs.open('quatation.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
-		response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
+		response['Content-Disposition'] = 'attachment; filename="quatation.pdf"'
 		return response
 	return response	
 
@@ -373,9 +385,9 @@ def invoice_html_to_pdf_view(request,evaluation_id):
 	html.write_pdf(target='/home/pdf/tmp/invoice/invoice.pdf');
 
 	fs = FileSystemStorage('/home/pdf/tmp/invoice/')
-	with fs.open('mypdf.pdf') as pdf:
+	with fs.open('invoice.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
-		response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
+		response['Content-Disposition'] = 'attachment; filename="invoice.pdf"'
 		return response
 	return response		
 
@@ -404,8 +416,8 @@ def receipt_html_to_pdf_view(request,payment_id):
 	html.write_pdf(target='/home/pdf/tmp/receipt/receipt.pdf');
 
 	fs = FileSystemStorage('/home/pdf/tmp/receipt/')
-	with fs.open('mypdf.pdf') as pdf:
+	with fs.open('receipt.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
-		response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
+		response['Content-Disposition'] = 'attachment; filename="receipt.pdf"'
 		return response
 	return response	
