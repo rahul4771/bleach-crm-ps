@@ -244,7 +244,6 @@ class PaymentResponse(View):
 
 			return redirect('customer:payment-receipt',payment_history.id)
 		else:
-			messages.error(request,"Something Went Wrong ! Please Contact Admin")
 
 			#payment fail sms
 			url = "https://www.fast2sms.com/dev/bulk"
@@ -267,7 +266,7 @@ class PaymentResponse(View):
 
 			print(response.text)
 
-			return redirect('customer:invoice',evaluation_id_encrypted)
+			redirect('payment/failed/?udf1='+evaluation_id_encrypted+'&paymentid='+request.GET.get('paymentid'))
 
 class PaymentFailedResponse(View):
 	def get(self,request):
