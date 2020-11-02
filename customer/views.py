@@ -266,7 +266,7 @@ class PaymentResponse(View):
 
 			print(response.text)
 
-			redirect('payment/failed/?udf1='+evaluation_id_encrypted+'&paymentid='+request.GET.get('paymentid'))
+			return redirect('payment/failed/?udf1='+evaluation_id_encrypted+'&paymentid='+request.GET.get('paymentid'))
 
 class PaymentFailedResponse(View):
 	def get(self,request):
