@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <!--
   Invoice template by invoicebus.com
@@ -44,10 +45,10 @@
         
         <section id="invoice-info">
           <div>
-            <span>order number / رقم الطلب</span> <span>{{evaluation_id_encrypted|slice:':11'}}</span>
+            <span>order number / رقم الطلب</span> <span>BLC{{evaluation_id_encrypted|slice:':11'}}</span>
           </div>
           <div>
-            <span>invoice number / رقم الفاتورة</span> <span>{{evaluation_id_encrypted|slice:'3:11'}}</span>
+            <span>invoice number / رقم الفاتورة</span> <span>{{evaluation_id_encrypted|slice:'6:11'}}</span>
           </div>
 
 
