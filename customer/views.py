@@ -250,8 +250,6 @@ class PaymentResponse(View):
 			# else:
 			# 	pass
 
-			#update username
-			UserProfile.objects.filter(username=user_name).update(username=generate_random_username())
 
 			return redirect('customer:payment-receipt','pvw'+str(payment_history.id))
 		else:
