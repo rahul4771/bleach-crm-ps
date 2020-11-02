@@ -317,11 +317,11 @@ class PaymentReceipt(View):
 
 #for download
 
-# from django.core.files.storage import FileSystemStorage
-# from django.http import HttpResponse
-# from django.template.loader import render_to_string
+from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponse
+from django.template.loader import render_to_string
 
-# from weasyprint import HTML
+from weasyprint import HTML
 
 def quatation_html_to_pdf_view(request,evaluation_id):
 
@@ -348,46 +348,12 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 	html_string = render_to_string('customer/newquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 
 	html = HTML(string=html_string,base_url=request.build_absolute_uri())
-	html.write_pdf(target='/home/ansab/Desktop/pdf/tmp/mypdf.pdf');
-
-	fs = FileSystemStorage('/home/ansab/Desktop/pdf/tmp/')
-	with fs.open('mypdf.pdf') as pdf:
-		response = HttpResponse(pdf, content_type='application/pdf')
-		response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
-		return response
-	return response
-
-
-def invoice_html_to_pdf_view(request,evaluation_id):
-
-	#evaluation id decryption
-	evaluation_id_encrypted = evaluation_id
-	evaluation_id = 'BLC'+evaluation_id_encrypted[0:11]
-	user_name     =  evaluation_id_encrypted[11:]
-
-	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
-
-	nonduplicate_schedules = []
-	#Remove duplicates for subscription
-	duplicate_schedules    = []
-	for orderschedule in order.orderschedules:
-		if orderschedule.order_scheduler_book in duplicate_schedules:
-			pass
-		else:	
-			nonduplicate_schedules.append(orderschedule)	
-
-		duplicate_schedules.append(orderschedule.order_scheduler_book)
-    
-
-	html_string = render_to_string('customer/newquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
-
-	html = HTML(string=html_string,base_url=request.build_absolute_uri())
 	html.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');
 
 	fs = FileSystemStorage('/home/pdf/tmp/quatation/')
-	with fs.open('mypdf.pdf') as pdf:
+	with fs.open('quatation.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
-		response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
+		response['Content-Disposition'] = 'attachment; filename="quatation.pdf"'
 		return response
 	return response	
 
@@ -419,9 +385,9 @@ def invoice_html_to_pdf_view(request,evaluation_id):
 	html.write_pdf(target='/home/pdf/tmp/invoice/invoice.pdf');
 
 	fs = FileSystemStorage('/home/pdf/tmp/invoice/')
-	with fs.open('mypdf.pdf') as pdf:
+	with fs.open('invoice.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
-		response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
+		response['Content-Disposition'] = 'attachment; filename="invoice.pdf"'
 		return response
 	return response		
 
@@ -450,8 +416,8 @@ def receipt_html_to_pdf_view(request,payment_id):
 	html.write_pdf(target='/home/pdf/tmp/receipt/receipt.pdf');
 
 	fs = FileSystemStorage('/home/pdf/tmp/receipt/')
-	with fs.open('mypdf.pdf') as pdf:
+	with fs.open('receipt.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
-		response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
+		response['Content-Disposition'] = 'attachment; filename="receipt.pdf"'
 		return response
 	return response	
