@@ -14,6 +14,8 @@ from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investi
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 
+from agent.views import generate_random_username
+
 import requests
 
 #all users views
@@ -247,9 +249,12 @@ class PaymentResponse(View):
 			# else:
 			# 	pass
 
+			#update username
+			UserProfile.objects.filter(username=username).update(username=generate_random_username())
+
 			return redirect('customer:payment-receipt','pvw'+str(payment_history.id))
 		else:
-			
+
 			#payment fail sms
 			url = "https://www.fast2sms.com/dev/bulk"
 
