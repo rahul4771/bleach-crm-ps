@@ -247,9 +247,9 @@ class PaymentResponse(View):
 			# else:
 			# 	pass
 
-			return redirect('customer:payment-receipt','pvw'+payment_history.id)
+			return redirect('customer:payment-receipt','pvw'+str(payment_history.id))
 		else:
-
+			
 			#payment fail sms
 			url = "https://www.fast2sms.com/dev/bulk"
 
