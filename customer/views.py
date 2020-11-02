@@ -45,9 +45,7 @@ class Quatation(View):
 				nonduplicate_schedules.append(orderschedule)	
 
 			duplicate_schedules.append(orderschedule.order_scheduler_book)
-
-		#update user name
-		UserProfile.objects.filter(username=user_name).update(username=generate_random_username())	
+	
 
 		return render(request,"customer/newquatation.html",{"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 
