@@ -241,7 +241,7 @@ class PaymentResponse(View):
 
 			return redirect('customer:payment-receipt',payment_history.id)
 		else:
-			messages.error(request,"Something Went Wrong ! Please Contact Admin")
+			redirect('payment/failed/?udf1='+evaluation_id_encrypted+'&paymentid='+request.GET.get('paymentid'))
 
 			return redirect('customer:invoice',evaluation_id_encrypted)
 
