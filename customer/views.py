@@ -46,6 +46,9 @@ class Quatation(View):
 
 			duplicate_schedules.append(orderschedule.order_scheduler_book)
 
+		#update user name
+		UserProfile.objects.filter(username=user_name).update(username=generate_random_username())	
+
 		return render(request,"customer/newquatation.html",{"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 
 	def post(self,request,evaluation_id):
@@ -250,7 +253,7 @@ class PaymentResponse(View):
 			# 	pass
 
 			#update username
-			UserProfile.objects.filter(username=username).update(username=generate_random_username())
+			UserProfile.objects.filter(username=user_name).update(username=generate_random_username())
 
 			return redirect('customer:payment-receipt','pvw'+str(payment_history.id))
 		else:
