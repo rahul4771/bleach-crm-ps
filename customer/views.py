@@ -289,8 +289,8 @@ class PaymentFailedResponse(View):
 class PaymentReceipt(View):
 	def get(self,request,payment_id):
 
-		payment_id    = payment_id[8:]
-		evaluation_id = payment_id[3:8]
+		payment_id    = payment_id[14:]
+		evaluation_id = 'BLC'+payment_id[3:14]
 
 		try:
 			payment_history = PaymentHistory.objects.select_related('order__evaluation').prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(id=payment_id,order__evaluation__evaluation_id=evaluation_id)
