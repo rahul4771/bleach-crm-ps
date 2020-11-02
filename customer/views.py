@@ -173,7 +173,7 @@ class PaymentResponse(View):
 				order.payment_status         = 'COMPLETED'
 				order.payment_completed_date = timezone.now()
 
-			elif payment_mode == 'prepaid' and order.amount_paid != order.total_cost:
+			elif payment_mode == 'prepaid' and order.amount_paid != order.total_amount:
 				order.amount_paid      = amount_paid
 				order.amount_paid      = amount_paid
 				order.remining_amount  = order.remining_amount-amount_paid					
@@ -181,7 +181,7 @@ class PaymentResponse(View):
 				order.payment_status         = 'COMPLETED'
 				order.payment_completed_date = timezone.now()
 
-			elif payment_mode == 'postpaid' and order.amount_paid != order.total_cost:
+			elif payment_mode == 'postpaid' and order.amount_paid != order.total_amount:
 				order.amount_paid      = amount_paid
 				order.amount_paid      = amount_paid
 				order.remining_amount  = order.remining_amount-amount_paid
