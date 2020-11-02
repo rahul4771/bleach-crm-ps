@@ -190,9 +190,9 @@
                 {{order.evaluation.after_cleaning_amount|floatformat:'3'}} KD
                 {% endif %}
                 {% elif order.evaluation.payment_method == 'PREPAID' %}
-                {{order.evaluation.total_cost|floatformat:'3'}}
+                {{order.evaluation.total_cost|floatformat:'3'}} KD
                 {% elif order.evaluation.payment_method == 'POSTPAID' %}
-                {{order.evaluation.total_cost|floatformat:'3'}}
+                {{order.evaluation.total_cost|floatformat:'3'}} KD
                 {% endif %}
                 <!-- <div class="invoice-name-arabic">شركة بلـــيت</div></td> -->
             </tr>
