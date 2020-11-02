@@ -213,34 +213,36 @@ class PaymentResponse(View):
 			print(response.text)
 
 			#feedback sms
-			order_feedback = Order.objects.select_related('evaluation__customer').filter(is_active=True,order_no=cleaning_team_detail.order_scheduler.order.order_no, payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+			# cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order').get(is_active=True,id=team_id)
+
+			# order_feedback = Order.objects.select_related('evaluation__customer').filter(is_active=True,order_no=cleaning_team_detail.order_scheduler.order.order_no, payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
 					
-			for ord in order_feedback:
-				order_data = ord
+			# for ord in order_feedback:
+			# 	order_data = ord
 
-			if order_feedback:
+			# if order_feedback:
 
-				url = "https://www.fast2sms.com/dev/bulk"
+			# 	url = "https://www.fast2sms.com/dev/bulk"
 
-				if order_data.evaluation.customer.sms_preference == 'ENGLISH':
+			# 	if order_data.evaluation.customer.sms_preference == 'ENGLISH':
 
-					message = "Dear Customer, Thank you for choosing Bleach Kuwait. Kindly share your feedback for the order number "+ order_data.order_no +" here [feedback link]. For any assistance please contact us on +9651882707."
-					querystring = {"authorization":"B1XzkADlQ6r7YnMH0KVtux8b4JCjpw52OoRecmyNs9ghv3fWSFvXKzWsxVGZbfOQA2jSylrJ5YuRMDdk","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
+			# 		message = "Dear Customer, Thank you for choosing Bleach Kuwait. Kindly share your feedback for the order number "+ order_data.order_no +" here [feedback link]. For any assistance please contact us on +9651882707."
+			# 		querystring = {"authorization":"B1XzkADlQ6r7YnMH0KVtux8b4JCjpw52OoRecmyNs9ghv3fWSFvXKzWsxVGZbfOQA2jSylrJ5YuRMDdk","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
 				
-				else:
-					message = "عزيزينا العميل نرجوا أن تكون خدماتنا خازت على رضاكم و شكراً لاختياركم بليتش لخدمات التنظيف.  نرجوا التكرم بإنجاز الاستبيان الخاص بالطلب رقم "+ order_data.order_no +" (Feedback Link) وذلك لضمان جودة الخدمة. لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
-					querystring = {"authorization":"B1XzkADlQ6r7YnMH0KVtux8b4JCjpw52OoRecmyNs9ghv3fWSFvXKzWsxVGZbfOQA2jSylrJ5YuRMDdk","sender_id":"FSTSMS","message":message,"language":"arabic","route":"p","numbers":"8848953520"}
+			# 	else:
+			# 		message = "عزيزينا العميل نرجوا أن تكون خدماتنا خازت على رضاكم و شكراً لاختياركم بليتش لخدمات التنظيف.  نرجوا التكرم بإنجاز الاستبيان الخاص بالطلب رقم "+ order_data.order_no +" (Feedback Link) وذلك لضمان جودة الخدمة. لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+			# 		querystring = {"authorization":"B1XzkADlQ6r7YnMH0KVtux8b4JCjpw52OoRecmyNs9ghv3fWSFvXKzWsxVGZbfOQA2jSylrJ5YuRMDdk","sender_id":"FSTSMS","message":message,"language":"arabic","route":"p","numbers":"8848953520"}
 
-				headers = {
-					'cache-control': "no-cache"
-				}
+			# 	headers = {
+			# 		'cache-control': "no-cache"
+			# 	}
 
-				response = requests.request("GET", url, headers=headers, params=querystring)
+			# 	response = requests.request("GET", url, headers=headers, params=querystring)
 
-				print(response.text,",ess")
+			# 	print(response.text,",ess")
 
-			else:
-				pass
+			# else:
+			# 	pass
 
 			return redirect('customer:payment-receipt',payment_history.id)
 		else:
