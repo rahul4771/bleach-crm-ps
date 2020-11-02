@@ -144,8 +144,8 @@ class PaymentResponse(View):
 	def get(self,request):
 		#evaluation id decryption
 		evaluation_id_encrypted = request.GET.get("udf1")
-		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
-		user_name     =  evaluation_id_encrypted[14:]
+		evaluation_id = 'BLC'+evaluation_id_encrypted[0:11]
+		user_name     =  evaluation_id_encrypted[11:]
 
 		amount_paid       = float(request.GET.get("amt"))
 		payment_result    = request.GET.get("result")
