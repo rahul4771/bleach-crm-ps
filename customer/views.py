@@ -269,6 +269,15 @@ class PaymentResponse(View):
 
 			return redirect('customer:invoice',evaluation_id_encrypted)
 
+class PaymentFailedResponse(View):
+	def get(self,request):
+
+		payment_id = request.GET.get('paymentid')
+
+		evaluation_id_encrypted = request.GET.get("udf1")
+
+		return render(request,"customer/receipt-voucher.html",{'payment_id':payment_id,'evaluation_id_encrypted':evaluation_id_encrypted,})			
+
 class PaymentReceipt(View):
 	def get(self,request,payment_id):
 

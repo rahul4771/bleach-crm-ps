@@ -10,6 +10,7 @@ urlpatterns = [
 		url(r'^invoice/(?P<evaluation_id>[-\w]+)$',views.CustomerInvoice.as_view(),name='invoice'),
 		url(r'^payment/response/$',views.PaymentResponse.as_view(),name='response'),
 		url(r'^payment/receipt/(?P<payment_id>[-\w]+)$',views.PaymentReceipt.as_view(),name='payment-receipt'),
+		url(r'^payment/failed/$',views.PaymentFailedResponse.as_view(),name='payment-failed'),
 
 		url(r'^quatation/download/(?P<evaluation_id>[-\w]+)$',views.quatation_html_to_pdf_view,name='quatation-download'),
 		url(r'^invoice/download/(?P<evaluation_id>[-\w]+)$',views.invoice_html_to_pdf_view,name='invoice-download'),
