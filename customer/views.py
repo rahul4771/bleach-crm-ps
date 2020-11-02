@@ -266,7 +266,7 @@ class PaymentResponse(View):
 
 			print(response.text)
 
-			return redirect('/payment/failed/?udf1='+evaluation_id_encrypted+'&paymentid='+request.GET.get('paymentid'))
+			return redirect('/customer/payment/failed/?udf1='+evaluation_id_encrypted+'&paymentid='+request.GET.get('paymentid'))
 
 class PaymentFailedResponse(View):
 	def get(self,request):
@@ -296,7 +296,7 @@ class PaymentReceipt(View):
 
 			duplicate_schedules.append(orderschedule.order_scheduler_book)
 
-		return render(request,"customer/receipt-voucher.html",{'payment_history':payment_history,'nonduplicate_schedules':nonduplicate_schedules,})
+		return render(request,"customer/paymentfailed.html",{'payment_history':payment_history,'nonduplicate_schedules':nonduplicate_schedules,})
 
 
 
