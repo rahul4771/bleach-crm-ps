@@ -80,7 +80,7 @@ def sendinvoice(request):
 
     evaluation = order.evaluation
 
-    url = "https://smsapi.future-club.com/fccsms.aspx"
+    url = "https://www.fast2sms.com/dev/bulk"
 
     print("kaboonm",url)
 
@@ -88,13 +88,13 @@ def sendinvoice(request):
 
         message = "Dear Customer, Please find the Invoice against the order number "+str(evaluation.evaluation_id)+"  here http://127.0.0.1:8000/customer/invoice/"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait."
 
-        querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"L"}
+        querystring = {"authorization":"B1XzkADlQ6r7YnMH0KVtux8b4JCjpw52OoRecmyNs9ghv3fWSFvXKzWsxVGZbfOQA2jSylrJ5YuRMDdk","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
     
     else:
 
         message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط http://127.0.0.1:8000/customer/invoice/"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على (Customer Service Number).  شكراً لاختياركم بليتش لخدمات التنظيف"
 
-        querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"A"}
+        querystring = {"authorization":"B1XzkADlQ6r7YnMH0KVtux8b4JCjpw52OoRecmyNs9ghv3fWSFvXKzWsxVGZbfOQA2jSylrJ5YuRMDdk","sender_id":"FSTSMS","message":message,"language":"arabic","route":"p","numbers":"8848953520"}
     
     headers = {
         'cache-control': "no-cache"
@@ -102,9 +102,7 @@ def sendinvoice(request):
 
     response = requests.request("GET", url, headers=headers, params=querystring)
 
-    print(message,"respo")
     print(response.text,"respo")
-    print(response.url,"respo")
     print(order_no)
     data=True
     return JsonResponse(data,safe=False)
@@ -120,19 +118,19 @@ def sendquotation(request):
     evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
     evaluationbook = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
 
-    url = "https://smsapi.future-club.com/fccsms.aspx"
+    url = "https://www.fast2sms.com/dev/bulk"
 
     if language == 'ENGLISH':
         print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
 
         message = "Dear Customer, Please find the Quotation against the cleaning at "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" here http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+" Order Number : "+str(evaluation.evaluation_id)+" Service Type(s) : "+evaluationbook.service_type.name+" Address(s) : "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" Cost : "+ str(evaluation.total_cost) +" KD Due Date : "+ str(evaluation.quatation_expiry_date) +" For any assistance please contact us on 996545845. Thank you for choosing Bleach Kuwait"
 
-        querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"L"}
+        querystring = {"authorization":"B1XzkADlQ6r7YnMH0KVtux8b4JCjpw52OoRecmyNs9ghv3fWSFvXKzWsxVGZbfOQA2jSylrJ5YuRMDdk","sender_id":"FSTSMS","message":message,"language":"english","route":"p","numbers":"8848953520"}
     
     else:
         message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" في هذا الرابط http://127.0.0.1:8000/customer/quatation/"+str(evaluation.id)+". رقم الطلب: "+str(evaluation.evaluation_id)+" الخدمة: "+evaluationbook.service_type.name+" العنوان: "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" السعر: "+ str(evaluation.total_cost) +" KD تاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +" لأي استفسارات يمكنكم التواصل معنا على (Customer Service Number).  شكراً لاختياركم بليتش لخدمات التنظيف"
 
-        querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"918848953520","M":message,"IID":"1468","L":"A"}
+        querystring = {"authorization":"B1XzkADlQ6r7YnMH0KVtux8b4JCjpw52OoRecmyNs9ghv3fWSFvXKzWsxVGZbfOQA2jSylrJ5YuRMDdk","sender_id":"FSTSMS","message":message,"language":"arabic","route":"p","numbers":"8848953520"}
 
     headers = {
         'cache-control': "no-cache"
