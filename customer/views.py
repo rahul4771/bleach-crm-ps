@@ -275,7 +275,7 @@ class PaymentFailedResponse(View):
 
 		evaluation_id_encrypted = request.GET.get("udf1")
 
-		return render(request,"customer/receipt-voucher.html",{'payment_id':payment_id,'evaluation_id_encrypted':evaluation_id_encrypted,})			
+		return render(request,"customer/paymentfailed.html",{'payment_id':payment_id,'evaluation_id_encrypted':evaluation_id_encrypted,})			
 
 class PaymentReceipt(View):
 	def get(self,request,payment_id):
@@ -296,7 +296,7 @@ class PaymentReceipt(View):
 
 			duplicate_schedules.append(orderschedule.order_scheduler_book)
 
-		return render(request,"customer/paymentfailed.html",{'payment_history':payment_history,'nonduplicate_schedules':nonduplicate_schedules,})
+		return render(request,"customer/receipt-voucher.html",{'payment_history':payment_history,'nonduplicate_schedules':nonduplicate_schedules,})
 
 
 
