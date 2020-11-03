@@ -2,9 +2,9 @@ from django.db import models
 from user.models import UserProfile
 from order.models import OrderScheduler,FollowUpScheduler,Order
 
-from PIL import Image
-from io import BytesIO
-from django.core.files import File
+import cv2
+import os
+from bleach_crm_ps.settings import MEDIA_ROOT
 
 MEDIA_TAKEN_CHOICES = (
 	('BEFORE_CLEANING','BEFORE_CLEANING'),
@@ -54,13 +54,11 @@ class CleaningTeamMedia(models.Model):
 	updated           		 = models.DateTimeField(auto_now=True)
 
 	def save(self,*args, **kwargs):
-		if self.media:
-			im = Image.open(self.media)
-			im_io = BytesIO() 
-			im.save(im_io, im.format, optimisation=True, quality=20) 
-			self.media = File(im_io, name=self.media.name)
 		super(CleaningTeamMedia, self).save(*args, **kwargs)
 
+		file_path = os.path.abspath(os.path.join(MEDIA_ROOT, self.media.name))
+		img       = cv2.imread(file_path)
+		cv2.imwrite(file_path, img, [cv2.IMWRITE_JPEG_QUALITY,20])
 
 	def __unicode__(self):
 		return str(self.team.team_leader.name)
@@ -141,13 +139,12 @@ class FollowUpTeamMedia(models.Model):
 	updated           		 = models.DateTimeField(auto_now=True)
 
 	def save(self,*args, **kwargs):
-		if self.media:
-			im = Image.open(self.media)
-			im_io = BytesIO() 
-			im.save(im_io, im.format, optimisation=True, quality=20) 
-			self.media = File(im_io, name=self.media.name)
 		super(FollowUpTeamMedia, self).save(*args, **kwargs)
 		
+		file_path = os.path.abspath(os.path.join(MEDIA_ROOT, self.media.name))
+		img       = cv2.imread(file_path)
+		cv2.imwrite(file_path, img, [cv2.IMWRITE_JPEG_QUALITY,20])
+
 	def __unicode__(self):
 		return str(self.team.team_leader.name)
 

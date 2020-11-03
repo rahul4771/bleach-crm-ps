@@ -2,9 +2,9 @@ from django.db import models
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
 from user.models import UserProfile,Address
 
-from PIL import Image
-from io import BytesIO
-from django.core.files import File
+import cv2
+import os
+from bleach_crm_ps.settings import MEDIA_ROOT
 # Create your models here.
 
 ORDER_STATUS = (
@@ -154,12 +154,11 @@ class InvestigationMedia(models.Model):
 	is_active            	 = models.BooleanField(null=False,blank=True,default=True)
 	
 	def save(self,*args, **kwargs):
-		if self.media:
-			im = Image.open(self.media)
-			im_io = BytesIO() 
-			im.save(im_io, im.format, optimisation=True, quality=20) 
-			self.media = File(im_io, name=self.media.name)
 		super(InvestigationMedia, self).save(*args, **kwargs)
+		
+		file_path = os.path.abspath(os.path.join(MEDIA_ROOT, self.media.name))
+		img       = cv2.imread(file_path)
+		cv2.imwrite(file_path, img, [cv2.IMWRITE_JPEG_QUALITY,20])
 
 	def __unicode__(self):
 		return str(self.investigation.id)
