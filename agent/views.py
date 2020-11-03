@@ -22,7 +22,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone
 from datetime import timedelta,date,datetime
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField
-from django.db.models.functions import Cast
+from django.db.models.functions import Cast,TruncDate
 from django.db.models import Prefetch
 from django.contrib import messages
 
@@ -2818,82 +2818,99 @@ def ResourcesToggle(request):
 	workers2 = []
 	workers_list = []
 	newlist = []
+	
+	#staff type
+	staff_type = request.GET.get('staff_type',None)
+	
+	#date range for a month from month/year 
 	month_year = request.GET.get('month_year',None)
 	month,year = month_year.split("/")
-	print(month,year,"monthyr")
-	staff_type = request.GET.get('staff_type',None)
-	print(staff_type)
 	monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
 	monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
-	daterange = pd.date_range(monthdate1, monthdate2)
-	search = request.GET.get('search',None)
+	daterange  = pd.date_range(monthdate1, monthdate2)
 	
-	try:
-		if staff_type:
-			workers =  UserProfile.objects.filter(is_active=True).filter(user_type=staff_type)
-		elif search:
-			workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))&Q(name__icontains=search))
-		else:
-			workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
-	except:
-		workers =  None
-	print(workers,"lp")
+	#search
+	search = request.GET.get('search',None)
 
+	if search:
+		workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))&Q(name__icontains=search))
+	else:
+		workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
+
+	if staff_type:
+		workers =  workers.filter(user_type=staff_type)
+	
+
+	#append worker deatil to workers_list as dictionary
 	for worker in workers:
-		workers_dict = {
+		workers_list.append({
 			"id":worker.id,
 			"worker":worker.name,
 			"worker_photo":worker.profile_image,
 			"rating":0.0,
 			"worked_days":0,
 			"total_hours":0
-		}
-		workers_list.append(workers_dict)
-	print(workers_list,"wst")
+		})
+
 
 	for d in workers_list:
+		cleanings = CleaningTeamMember.objects.filter(is_active=True,member_id=d['id']).filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__order_scheduler__order__feed_backs_order').filter(team__check_out__isnull=False).values('team__order_scheduler__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at')
+		followups = FollowUpTeamMember.objects.filter(is_active=True,member_id=d['id']).filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__followup_scheduler__follow_up__investigation__order__feed_backs_order').filter(team__check_out__isnull=False).values('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at')		
+		
+		cleaning_worked_days = cleanings.annotate(date=TruncDate('start_at')).values('date').distinct().aggregate(total_worked_dates=Count('date'))
+		followup_worked_days = followups.annotate(date=TruncDate('start_at')).values('date').distinct().aggregate(total_worked_dates=Count('date'))
+		
+		cleaning_hours = cleanings.annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField())).aggregate(total_duration=Sum('duration'))
+		followup_hours = followups.annotate(duration = ExpressionWrapper(F('start_at') - F('start_at'), output_field=DurationField())).aggregate(total_duration=Sum('duration'))
 
-		for date in daterange:
-			start_date = date
-			end_date = date+timedelta(1)
-			print(start_date,end_date,"dts")
-			queryset=CleaningTeamMember.objects.filter(is_active=True,start_at__range=(start_date,end_date),end_at__range=(start_date,end_date)).values('team__order_scheduler__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at').distinct()
-			queryset2=FollowUpTeamMember.objects.filter(is_active=True,start_at__range=(start_date,end_date),end_at__range=(start_date,end_date)).values('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at').distinct()
-			print(queryset,"qst")
+		cleaning_rating = cleanings.aggregate(total_rating=Sum('team__order_scheduler__order__feed_backs_order__rating'))
+		followup_rating = followups.aggregate(total_rating=Sum('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating'))
 
-			for query in queryset:
-				print(query['team__order_scheduler__order__feed_backs_order__rating'],query['member__id'],query['member__profile_image'],query['start_at'],query['end_at'],"wok")
-				# start = datetime.strptime(query['start_at'],'%d-%m-%Y %H:%M:%S')
-				# end = datetime.strptime(query['end_at'],'%d-%m-%Y %H:%M:%S')
-				diff = query['end_at']-query['start_at']
-				hours = (diff.days) *24 + (diff.seconds) / 3600
-				order_rating = query['team__order_scheduler__order__feed_backs_order__rating'] or 0.0
-				print(hours,diff.seconds,"wdf")
-				if query['member__id'] == d['id']:
-					d['worked_days'] += 1
-					d['total_hours'] += hours
-					if d['rating'] == 0.0 :
-						d['rating'] = order_rating
-					else:
-						d['rating'] = (float(d['rating'])+float(order_rating))/2
+		d['worked_days'] = (cleaning_worked_days['total_worked_dates']or 0) + (followup_worked_days['total_worked_dates']or 0)
+		d['total_hours'] = (cleaning_hours['total_duration']or timedelta()) + (followup_hours['total_duration']or timedelta())
+		d['rating']      = (cleaning_rating['total_rating']or 0) + (followup_rating['total_rating']or 0)
+		
+		#to convert duration to hours
+		d['total_hours'] = d['total_hours'].days*24+d['total_hours'].seconds/3600
+	
+	# for d in workers_list:
 
-			for query in queryset2:
-				print(query['member__id'],query['member__profile_image'],query['start_at'],query['end_at'],"wok")
-				# start = datetime.strptime(query['start_at'],'%d-%m-%Y %H:%M:%S')
-				# end = datetime.strptime(query['end_at'],'%d-%m-%Y %H:%M:%S')
-				diff2 = query['end_at']-query['start_at']
-				hours2 = (diff2.days) *24 + (diff2.seconds) / 3600
-				order_rating2 = query['team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating'] or 0.0
-				print(hours2,diff2.seconds,"wdf")
-				if query['member__id'] == d['id']:
-					d['worked_days'] += 1
-					d['total_hours'] += hours2
-					if d['rating'] == 0.0 :
-						d['rating'] = order_rating2
-					else:
-						d['rating'] = (float(d['rating'])+float(order_rating2))/2
-			
-	print(workers_list,"wst2")	
+	# 	for date in daterange:
+	# 		start_date = date
+	# 		end_date = date+timedelta(1)
+
+	# 		queryset=CleaningTeamMember.objects.filter(is_active=True,start_at__range=(start_date,end_date),end_at__range=(start_date,end_date)).values('team__order_scheduler__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at').distinct()
+	# 		queryset2=FollowUpTeamMember.objects.filter(is_active=True,start_at__range=(start_date,end_date),end_at__range=(start_date,end_date)).values('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at').distinct()
+
+
+	# 		for query in queryset:
+	# 			diff         = query['end_at']-query['start_at']
+	# 			hours        = (diff.days) *24 + (diff.seconds) / 3600
+	# 			order_rating = query['team__order_scheduler__order__feed_backs_order__rating'] or 0.0
+				
+
+	# 			if query['member__id'] == d['id']:
+	# 				d['worked_days'] += 1
+	# 				d['total_hours'] += hours
+	# 				if d['rating'] == 0.0 :
+	# 					d['rating'] = order_rating
+	# 				else:
+	# 					d['rating'] = (float(d['rating'])+float(order_rating))/2
+
+	# 		for query in queryset2:
+	# 			diff2 = query['end_at']-query['start_at']
+	# 			hours2 = (diff2.days) *24 + (diff2.seconds) / 3600
+	# 			order_rating2 = query['team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating'] or 0.0
+				
+
+	# 			if query['member__id'] == d['id']:
+	# 				d['worked_days'] += 1
+	# 				d['total_hours'] += hours2
+	# 				if d['rating'] == 0.0 :
+	# 					d['rating'] = order_rating2
+	# 				else:
+	# 					d['rating'] = (float(d['rating'])+float(order_rating2))/2
+				
 	data['html_workers_list'] = render_to_string('agent/resource/resource-month.html', {"workers_details_month":workers_list})
 	return JsonResponse(data)
 
