@@ -2853,12 +2853,18 @@ def ResourcesToggle(request):
 		})
 
 
+	daterange = pd.date_range(monthdate1, monthdate2)
+
 	for d in workers_list:
 		cleanings = CleaningTeamMember.objects.filter(is_active=True,member_id=d['id']).filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__order_scheduler__order__feed_backs_order').filter(team__check_out__isnull=False).values('team__order_scheduler__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at')
 		followups = FollowUpTeamMember.objects.filter(is_active=True,member_id=d['id']).filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__followup_scheduler__follow_up__investigation__order__feed_backs_order').filter(team__check_out__isnull=False).values('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at')		
-		
-		cleaning_worked_days = cleanings.annotate(date=TruncDate('start_at')).values('date').distinct().aggregate(total_worked_dates=Count('date'))
-		followup_worked_days = followups.annotate(date=TruncDate('start_at')).values('date').distinct().aggregate(total_worked_dates=Count('date'))
+
+		#to find worked days
+		for date in daterange:
+			start_date_day = date
+			end_date_day   = date+timedelta(1)
+			if cleanings.filter(start_at__range=(start_date_day,end_date_day),end_at__range=(start_date_day,end_date_day)) or followups.filter(start_at__range=(start_date_day,end_date_day),end_at__range=(start_date_day,end_date_day)):
+				d['worked_days'] = d['worked_days']+1
 		
 		cleaning_hours = cleanings.annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField())).aggregate(total_duration=Sum('duration'))
 		followup_hours = followups.annotate(duration = ExpressionWrapper(F('start_at') - F('start_at'), output_field=DurationField())).aggregate(total_duration=Sum('duration'))
@@ -2866,7 +2872,6 @@ def ResourcesToggle(request):
 		cleaning_rating = cleanings.aggregate(total_rating=Sum('team__order_scheduler__order__feed_backs_order__rating')/Count('team__order_scheduler__order__feed_backs_order__rating'))
 		followup_rating = followups.aggregate(total_rating=Sum('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating')/Count('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating'))
 
-		d['worked_days'] = (cleaning_worked_days['total_worked_dates']or 0) + (followup_worked_days['total_worked_dates']or 0)
 		d['total_hours'] = (cleaning_hours['total_duration']or timedelta()) + (followup_hours['total_duration']or timedelta())
 		d['rating']      = (cleaning_rating['total_rating']or 0) + (followup_rating['total_rating']or 0)
 		
