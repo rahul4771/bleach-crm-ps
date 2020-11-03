@@ -2870,10 +2870,9 @@ def ResourcesToggle(request):
 		followup_hours = followups.annotate(duration = ExpressionWrapper(F('start_at') - F('start_at'), output_field=DurationField())).aggregate(total_duration=Sum('duration'))
 
 		cleaning_rating = cleanings.aggregate(total_rating=Sum('team__order_scheduler__order__feed_backs_order__rating')/Count('team__order_scheduler__order__feed_backs_order__rating'))
-		followup_rating = followups.aggregate(total_rating=Sum('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating')/Count('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating'))
 
 		d['total_hours'] = (cleaning_hours['total_duration']or timedelta()) + (followup_hours['total_duration']or timedelta())
-		d['rating']      = (cleaning_rating['total_rating']or 0) + (followup_rating['total_rating']or 0)
+		d['rating']      = cleaning_rating['total_rating']or 0
 		
 		#to convert duration to hours
 		d['total_hours'] = d['total_hours'].days*24+d['total_hours'].seconds/3600
