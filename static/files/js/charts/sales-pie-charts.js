@@ -37,95 +37,92 @@ function drawlocationChart() {
         
         success: function(data_location) {
 
-            var total_sales = 0;
-            var cid = 1;
-            var location_sales = [['Location', 'Sales']];
+            if (data_location.length == 0){
+                $('#donutchart1').attr("hidden",true);
+                $('#locationnodata').attr("hidden",false);
+                $("#legend_location").empty();
+            }else{
+                $('#locationnodata').attr("hidden",true);
+                $('#donutchart1').attr("hidden",false);
+
+                var total_sales = 0;
+                var cid = 1;
+                var location_sales = [['Location', 'Sales']];
             
-        $.each(data_location,function(key,value){
-            console.log(value.location,parseInt(value.count),"gov")
-            var location = toTitleCase(value.location)
-            location_sales.push([location,value.count]);
-            total_sales += parseInt(value.count)
-        });
+                $.each(data_location,function(key,value){
+                    console.log(value.location,parseInt(value.count),"govlo")
+                    var location = toTitleCase(value.location)
+                    location_sales.push([location,value.count]);
+                    total_sales += parseInt(value.count)
+                });
 
-        var data = google.visualization.arrayToDataTable(location_sales);
+                var data = google.visualization.arrayToDataTable(location_sales);
 
-        var options = {
-            chartArea : {height: '80%',left:'0%',right:'50%'},
-            width:'100%',
-            title: "",
-            pieHole: 0.4,
-            animation: {
-                duration:1000,
-                easing:'out',
-                startup: true
-            },
-            legend: {position:'none'}
-        };
+                var options = {
+                    chartArea : {height: '80%',left:'0%',right:'50%'},
+                    width:'100%',
+                    title: "",
+                    pieHole: 0.4,
+                    animation: {
+                        duration:1000,
+                        easing:'out',
+                        startup: true
+                    },
+                    legend: {position:'none'}
+                };
 
-        var chart = new google.visualization.PieChart(document.getElementById('donutchart1'));
-        chart.draw(data, options);
+                var chart = new google.visualization.PieChart(document.getElementById('donutchart1'));
+                chart.draw(data, options);
 
-        var total = 0;
-        for (var i = 0; i < data.getNumberOfRows(); i++) {
-            total += data.getValue(i, 1);
-        }
-        
-        $("#legend_location").empty();
-        var legend = document.getElementById("legend_location");
-        var legItem = [];
-        
-        for (var i = 0; i < data.getNumberOfRows(); i++) {
-            if (i < 5){
-            var label = data.getValue(i, 0);
-            var value = data.getValue(i, 1);
-            var percent = Number(100 * value / total).toFixed(1);
-            if (isNaN(percent)) percent = 0.0; 
-            console.log(percent,"perc")
-            // This will create legend list for the display
-            legItem[i] = document.createElement('div');
-            legItem[i].className = 'donut-char-legend';
-            legItem[i].id = 'legend_' + data.getValue(i, 0);
-            
-            legItem[i].innerHTML = '<i class="fa fa-square" style="color:'+colors[i]+'"></i> <div class="chart-stat">' + label + '</div><span>' + percent + ' %</span>';
+                var total = 0;
+                for (var i = 0; i < data.getNumberOfRows(); i++) {
+                    total += data.getValue(i, 1);
+                }
+                
+                $("#legend_location").empty();
+                var legend = document.getElementById("legend_location");
+                var legItem = [];
+                
+                for (var i = 0; i < data.getNumberOfRows(); i++) {
+                    if (i < 5){
+                    var label = data.getValue(i, 0);
+                    var value = data.getValue(i, 1);
+                    var percent = Number(100 * value / total).toFixed(1);
+                    if (isNaN(percent)) percent = 0.0; 
+                    console.log(percent,"perc")
+                    // This will create legend list for the display
+                    legItem[i] = document.createElement('div');
+                    legItem[i].className = 'donut-char-legend';
+                    legItem[i].id = 'legend_' + data.getValue(i, 0);
+                    
+                    legItem[i].innerHTML = '<i class="fa fa-square" style="color:'+colors[i]+'"></i> <div class="chart-stat">' + label + '</div><span>' + percent + ' %</span>';
 
-            legend.appendChild(legItem[i]);
-        }
-        }
+                    legend.appendChild(legItem[i]);
+                }
+                }
 
-        var others = 0;
+                var others = 0;
 
-        for (var j = 5; j < data_location.length; j++){
-            console.log(j,"joy")
-            others += data.getValue(j, 1);
-            
-        }
+                for (var j = 5; j < data_location.length; j++){
+                    console.log(j,"joy")
+                    others += data.getValue(j, 1);
+                    
+                }
 
-        if (others != 0){
-            console.log(others,"ott")
-            var others_percent = Number(100 * others / total).toFixed(1);
-            if (isNaN(others_percent)) others_percent = 0.0;
-            console.log(others,others_percent,"otp")
-            $('#legend_location').append('<div class="donut-char-legend" ><i class="fa fa-square" style="color:#0099c6"></i> <div class="chart-stat">Others</div><span>' + others_percent + ' %</span></div>')
-        }
-        // // initial value
-        // var percent = 0;
-        // // start the animation loop
-        // var handler = setInterval(function(){
-        //     // values increment
-        //     percent += 1;
-        //     // apply new values
-        //     data.setValue(0, 1, percent);
-        //     data.setValue(1, 1, 100 - percent);
-        //     // update the pie
-        //     chart.draw(data, options);
-        //     // check if we have reached the desired value
-        //     if (percent > 74)
-        //         // stop the loop
-        //         clearInterval(handler);
-        // }, 30);
-        $('#location_loader').attr("hidden",true);
+                if (others != 0){
+                    console.log(others,"ott")
+                    var others_percent = Number(100 * others / total).toFixed(1);
+                    if (isNaN(others_percent)) others_percent = 0.0;
+                    console.log(others,others_percent,"otp")
+                    $('#legend_location').append('<div class="donut-char-legend" ><i class="fa fa-square" style="color:#0099c6"></i> <div class="chart-stat">Others</div><span>' + others_percent + ' %</span></div>')
+                }
+                $('#location_loader').attr("hidden",true);
+
             }
+
+            
+            }
+
     })
 }
 
@@ -244,13 +241,21 @@ function drawcleaningtypeChart() {
         type: "GET",
         contentType: "application/json;charset=utf-8",
         
-        success: function(data) {
+        success: function(data_cleaning) {
+
+        if (data_cleaning.length == 0){
+            $('#donutchart2').attr("hidden",true);
+            $('#cleaningnodata').attr("hidden",false);
+            $("#legend_cleaning").empty();
+        }else{
+            $('#donutchart2').attr("hidden",false);
+            $('#cleaningnodata').attr("hidden",true);
 
             var total_cleaningtype_sales = 0;
             var clean_id = 1;
             var cleaningtype_sales = [['Cleaning Type', 'Sales']];
         
-        $.each(data,function(key,value){
+        $.each(data_cleaning,function(key,value){
             console.log(value.cleaning_type,parseInt(value.count),"gov")
             cleaningtype_sales.push([value.cleaning_type,value.count]);
             total_cleaningtype_sales += parseInt(value.count)
@@ -301,25 +306,10 @@ function drawcleaningtypeChart() {
 
             legend.appendChild(legItem[i]);
         }
-
-        // // initial value
-        // var percent = 0;
-        // //start the animation loop
-        // var handler = setInterval(function(){
-        //     // values increment
-        //     percent += 1;
-        //     // apply new values
-        //     data.setValue(0, 1, percent);
-        //     data.setValue(1, 1, 100 - percent);
-        //     // update the pie
-        //     chart.draw(data, options);
-        //     // check if we have reached the desired value
-        //     if (percent > 74)
-        //         // stop the loop
-        //         clearInterval(handler);
-        // }, 30);
         $('#cleaning_loader').attr("hidden",true);
+        
             }
+        }
     })
 }
 
@@ -438,13 +428,21 @@ function drawgovernorateChart() {
         type: "GET",
         contentType: "application/json;charset=utf-8",
         
-        success: function(data) {
+        success: function(data_governorate) {
 
+        if (data_governorate.length == 0){
+            $('#donutchart3').attr("hidden",true);
+            $('#governoratenodata').attr("hidden",false);
+            $("#legend_governorate").empty();
+        }else{
+            $('#donutchart3').attr("hidden",false);
+            $('#governoratenodata').attr("hidden",true);
+            
             var total_governorate_sales = 0;
             var gov_id = 1;
             var governorate_sales = [['Governorate', 'Sales']];
 
-        $.each(data,function(key,value){
+        $.each(data_governorate,function(key,value){
             console.log(value.governorate,parseInt(value.count),"gov")
             governorate_sales.push([value.governorate,value.count]);
             total_governorate_sales += parseInt(value.count)
@@ -494,25 +492,9 @@ function drawgovernorateChart() {
 
             legend.appendChild(legItem[i]);
         }
-
-        // // initial value
-        // var percent = 0;
-        // // start the animation loop
-        // var handler = setInterval(function(){
-        //     // values increment
-        //     percent += 1;
-        //     // apply new values
-        //     data.setValue(0, 1, percent);
-        //     data.setValue(1, 1, 100 - percent);
-        //     // update the pie
-        //     chart.draw(data, options);
-        //     // check if we have reached the desired value
-        //     if (percent > 74)
-        //         // stop the loop
-        //         clearInterval(handler);
-        // }, 30);
         $('#governorate_loader').attr("hidden",true);
             }
+        }
     })
 }
 
