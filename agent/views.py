@@ -2863,8 +2863,8 @@ def ResourcesToggle(request):
 		cleaning_hours = cleanings.annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField())).aggregate(total_duration=Sum('duration'))
 		followup_hours = followups.annotate(duration = ExpressionWrapper(F('start_at') - F('start_at'), output_field=DurationField())).aggregate(total_duration=Sum('duration'))
 
-		cleaning_rating = cleanings.aggregate(total_rating=Sum('team__order_scheduler__order__feed_backs_order__rating'))
-		followup_rating = followups.aggregate(total_rating=Sum('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating'))
+		cleaning_rating = cleanings.aggregate(total_rating=Sum('team__order_scheduler__order__feed_backs_order__rating')/Count('team__order_scheduler__order__feed_backs_order__rating'))
+		followup_rating = followups.aggregate(total_rating=Sum('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating')/Count('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating'))
 
 		d['worked_days'] = (cleaning_worked_days['total_worked_dates']or 0) + (followup_worked_days['total_worked_dates']or 0)
 		d['total_hours'] = (cleaning_hours['total_duration']or timedelta()) + (followup_hours['total_duration']or timedelta())
