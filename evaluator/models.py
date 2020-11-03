@@ -3,9 +3,9 @@ from user.models import UserProfile,Address
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
-from PIL import Image
-from io import BytesIO
-from django.core.files import File
+import cv2
+import os
+from bleach_crm_ps.settings import MEDIA_ROOT
 # Create your models here.
 
 GENDER_CHOICES=(
@@ -279,7 +279,7 @@ class EvaluationBook(models.Model):
 
 class EvaluationMedia(models.Model):
 	evaluation_book 		 = models.ForeignKey('EvaluationBook',blank=False,null=False,related_name='evaluationbookmedia')
-	media                    = models.FileField(upload_to='evaluationbook/',blank=True,null=True)
+	media                    = models.FileField(upload_to='evaluationbook/',blank=True,null=True,max_length=1000)
 	media_type 				 = models.CharField(max_length=20,blank=False,null=False,choices=MEDIA_CHOICES)
 	taken_status 			 = models.CharField(max_length=20,blank=False,null=False,choices=MEDIA_TAKEN_CHOICES)
 
@@ -295,13 +295,13 @@ class EvaluationMedia(models.Model):
 		return str(self.evaluation_book.id)	
 
 	def save(self,*args, **kwargs):
-		if self.media:
-			im = Image.open(self.media)
-			im_io = BytesIO() 
-			im.save(im_io, im.format,optimisation=True, quality=20) 
-			self.media = File(im_io, name=self.media.name)
+		super(EvaluationMedia, self).save(*args, **kwargs)
 
-		super(EvaluationMedia, self).save(*args, **kwargs)	
+		file_path = os.path.abspath(os.path.join(MEDIA_ROOT, self.media.name))
+		img       = cv2.imread(file_path)
+		cv2.imwrite(file_path, img, [cv2.IMWRITE_JPEG_QUALITY,20])
+
+		
 
 @receiver(post_delete, sender=EvaluationMedia)
 def submission_delete(sender, instance, **kwargs):
