@@ -307,6 +307,10 @@ class EvaluationMedia(models.Model):
 def submission_delete(sender, instance, **kwargs):
     instance.media.delete(False) 		
 
+# file_path = os.path.abspath(os.path.join(MEDIA_ROOT, self.media.name))
+# print(file_path,"file pathhhhhhhhhhhhhhh")
+# img       = cv2.imread(file_path,0)
+# cv2.imwrite(img, [cv2.IMWRITE_JPEG_QUALITY,20])
     
 
 class EvaluationBookSection(models.Model):

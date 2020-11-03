@@ -40,6 +40,9 @@ class Signin(View):
 				return redirect('accountant:accountantdash-board')
 		else:		
 			return render(request,'user/login.html',{})
+
+		return render(request,'user/login.html',{})	
+	
 	def post(self,request):  
 		user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
 			
