@@ -128,6 +128,8 @@
     <td>{{invoice.evaluation.customer.mobile_number}}</td>
     <td>{{invoice.total_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
     <td><span 
+  
+
         {% if invoice.payment_status == 'PENDING' %}
         class="red-bg"
         {% elif invoice.payment_status == 'COMPLETED' %}
