@@ -58,7 +58,12 @@
             </div>
           {% if payment_id %}
           <div> 
-            <span> Transacrion ID / رقم التحويلة </span> <span> {{payment_id}}</span>
+            <span> Payment ID / رقم المعاملة </span> <span> {{payment_id}}</span>
+          </div>
+          {% endif %}
+          {% if reference_id %}
+          <div> 
+            <span> Reference ID / الرقم المرجعي </span> <span> {{reference_id}}</span>
           </div>
           {% endif %}
     

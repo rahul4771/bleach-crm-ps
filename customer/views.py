@@ -275,16 +275,17 @@ class PaymentResponse(View):
 
 			print(response.text)
 
-			return redirect('/customer/payment/failed/?udf1='+evaluation_id_encrypted+'&paymentid='+request.GET.get('paymentid'))
+			return redirect('/customer/payment/failed/?udf1='+evaluation_id_encrypted+'&paymentid='+request.GET.get('paymentid')+'&ref='+request.GET.get('ref'))
 
 class PaymentFailedResponse(View):
 	def get(self,request):
 
-		payment_id = request.GET.get('paymentid')
+		payment_id   = request.GET.get('paymentid')
+		reference_id = request.GET.get('ref')
 
 		evaluation_id_encrypted = request.GET.get("udf1")
 
-		return render(request,"customer/paymentfailed.html",{'payment_id':payment_id,'evaluation_id_encrypted':evaluation_id_encrypted,})			
+		return render(request,"customer/paymentfailed.html",{'payment_id':payment_id,'evaluation_id_encrypted':evaluation_id_encrypted,'reference_id':reference_id,})			
 
 class PaymentReceipt(View):
 	def get(self,request,payment_id):
