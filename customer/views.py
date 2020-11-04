@@ -201,7 +201,7 @@ class PaymentResponse(View):
 
 			if order.evaluation.customer.sms_preference == 'ENGLISH':
 
-				message = "Dear Customer, We have successfully received your payment against the order number "+ order.order_no +". Please find the Payment receipt here http://15.206.173.198/customer/payment/receipt/pvw"+request.GET.get('paymentid')+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+				message = "Dear Customer, We have successfully received your payment of amount "+ str(amount_paid) +" KD, (Transaction ID: "+ str(request.GET.get('tranid')) +", Ref ID: "+ str(request.GET.get('ref')) +") against the order number "+ order.order_no +". Please find the Payment receipt here http://15.206.173.198/customer/payment/receipt/pvw"+ order.evaluation.tracking_no +""+str(payment_history.id)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 			
 			else:
@@ -259,7 +259,7 @@ class PaymentResponse(View):
 
 			if order.evaluation.customer.sms_preference == 'ENGLISH':
 
-				message = "Dear Customer, Your payment against the order number "+ order.order_no +" has failed. Click here to try again http://15.206.173.198/customer/invoice/prw"+str(order.evaluation.tracking_no)+""+str(order.evaluation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+				message = "Dear Customer, Your payment against the order number "+ order.order_no +" has failed (Payment ID : "+str(request.GET.get('paymentid'))+", Ref. ID: "+ str(request.GET.get('ref')) +"). Click here to try again http://15.206.173.198/customer/invoice/prw"+str(order.evaluation.tracking_no)+""+str(order.evaluation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 			
 			else:
