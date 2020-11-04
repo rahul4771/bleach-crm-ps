@@ -1050,12 +1050,15 @@ $(".order_schedule").click(function(){
 
     $('#order_schedule_id').val($(this).data('id'));
     //date picker setup for conirm 
-    $('#order_schedule_date_id').datepicker({
+    $('#order_schedule_date_id').datetimepicker({
           pickTime: false, 
-          format: "dd-mm-yyyy",
+          format: "DD-MM-YYYY",
           startDate: new Date(),
           minDate: new Date(),
-        });
+          autoclose:true,
+        }).on('changeDate', function (ev) {
+          $(this).datetimepicker('hide');
+      });
 
     //time picker setup for confirm
     $('#order_schedule_time_id').datetimepicker({

@@ -1,4 +1,6 @@
 from django.shortcuts import render,redirect
+from django.template.loader import render_to_string
+
 from django.views import View
 
 from django.db.models import Prefetch

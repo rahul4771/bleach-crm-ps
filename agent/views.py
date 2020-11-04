@@ -536,13 +536,13 @@ class AgentHome(IsAgent,View):
 		#Order and Followup Schedules for date confirmation
 		confirm_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
 		
-		order_schedules		  = OrderScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(3)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').annotate(color_status=Case(When(Q(Q(start_at__lt=confirm_to_date+timedelta(3)) & Q(start_at__gte=confirm_to_date+timedelta(2))), then=Value('green')),
+		order_schedules		  = OrderScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(3)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').annotate(color_status=Case(When(Q(Q(start_at__lt=confirm_to_date+timedelta(7)) & Q(start_at__gte=confirm_to_date+timedelta(6))), then=Value('green')),
                   When(Q(Q(start_at__lt=confirm_to_date+timedelta(2))&Q(start_at__gte=confirm_to_date+timedelta(1))), then=Value('yellow')),When(Q(Q(start_at__lt=confirm_to_date+timedelta(1))&Q(start_at__gte=confirm_to_date)), then=Value('orange')),
                   default=Value('red'),
                   output_field=CharField(),))
 		
 		
-		follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(3)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').annotate(color_status=Case(When(Q(Q(start_at__lt=confirm_to_date+timedelta(3)) & Q(start_at__gte=confirm_to_date+timedelta(2))), then=Value('green')),
+		follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(3)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').annotate(color_status=Case(When(Q(Q(start_at__lt=confirm_to_date+timedelta(7)) & Q(start_at__gte=confirm_to_date+timedelta(6))), then=Value('green')),
                   When(Q(Q(start_at__lt=confirm_to_date+timedelta(2))&Q(start_at__gte=confirm_to_date+timedelta(1))), then=Value('yellow')),When(Q(Q(start_at__lt=confirm_to_date+timedelta(1))&Q(start_at__gte=confirm_to_date)), then=Value('orange')),
                   default=Value('red'),
                   output_field=CharField(),))
