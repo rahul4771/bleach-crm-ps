@@ -745,8 +745,13 @@
         
         </div><!--order-payment-widget order-payment-widget-column-->
         <div class="order-payment-widget order-payment-widget-column"><!--order-payment-widget order-payment-widget-column-->
+        {% if order.evaluation.quatation_status == 'APPROVED' %}
         <div class="invoice-button"><a href="#" onclick="sendinvoice()">Send Invoice</a></div>
+        {% endif %}
         <div class="send-quotation"><a href="#" onclick="sendquotation()">Send Quotation</a></div>
+        {% if order.amount_paid != 0 %}
+        <div class="send-receipt"><a href="#" onclick="sendreceipt()">Send Receipt</a></div>
+        {% endif %}
         </div><!--order-payment-widget order-payment-widget-column-->      
     
     </div><!--order-payment-wrapper-->       
@@ -814,6 +819,24 @@
           
           success: function(data) {
               alert("Quotation Sent!")
+          }
+      
+      })
+  };
+
+
+  function sendreceipt(){
+      $.ajax({
+          url: "/order-data/send-receipt",
+          data: {
+          'order_no': "{{order.evaluation.evaluation_id}}"
+          },
+          dataType: "json",
+          type: "GET",
+          contentType: "application/json;charset=utf-8",
+          
+          success: function(data) {
+              alert("Receipt Sent!")
           }
       
       })
