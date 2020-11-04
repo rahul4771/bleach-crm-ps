@@ -2833,9 +2833,9 @@ def ResourcesToggle(request):
 	search = request.GET.get('search',None)
 
 	if search:
-		workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))&Q(name__icontains=search))
+		workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))&Q(name__icontains=search))#.prefetch_related( Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__order_scheduler__order__feed_backs_order').filter(is_active=True,team__check_out__isnull=False),to_attr='cleaningmembers'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__followup_scheduler__follow_up__investigation__order').filter(is_active=True,team__check_out__isnull=False),to_attr='followupmembers'))
 	else:
-		workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
+		workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))#.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__order_scheduler__order__feed_backs_order').filter(is_active=True,team__check_out__isnull=False),to_attr='cleaningmembers'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__followup_scheduler__follow_up__investigation__order').filter(is_active=True,team__check_out__isnull=False),to_attr='followupmembers'))
 
 	if staff_type:
 		workers =  workers.filter(user_type=staff_type)
@@ -2849,7 +2849,7 @@ def ResourcesToggle(request):
 			"worker_photo":worker.profile_image,
 			"rating":0.0,
 			"worked_days":0,
-			"total_hours":0
+			"total_hours":0,
 		})
 
 
@@ -2877,43 +2877,6 @@ def ResourcesToggle(request):
 		#to convert duration to hours
 		d['total_hours'] = d['total_hours'].days*24+d['total_hours'].seconds/3600
 	
-	# for d in workers_list:
-
-	# 	for date in daterange:
-	# 		start_date = date
-	# 		end_date = date+timedelta(1)
-
-	# 		queryset=CleaningTeamMember.objects.filter(is_active=True,start_at__range=(start_date,end_date),end_at__range=(start_date,end_date)).values('team__order_scheduler__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at').distinct()
-	# 		queryset2=FollowUpTeamMember.objects.filter(is_active=True,start_at__range=(start_date,end_date),end_at__range=(start_date,end_date)).values('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at').distinct()
-
-
-	# 		for query in queryset:
-	# 			diff         = query['end_at']-query['start_at']
-	# 			hours        = (diff.days) *24 + (diff.seconds) / 3600
-	# 			order_rating = query['team__order_scheduler__order__feed_backs_order__rating'] or 0.0
-				
-
-	# 			if query['member__id'] == d['id']:
-	# 				d['worked_days'] += 1
-	# 				d['total_hours'] += hours
-	# 				if d['rating'] == 0.0 :
-	# 					d['rating'] = order_rating
-	# 				else:
-	# 					d['rating'] = (float(d['rating'])+float(order_rating))/2
-
-	# 		for query in queryset2:
-	# 			diff2 = query['end_at']-query['start_at']
-	# 			hours2 = (diff2.days) *24 + (diff2.seconds) / 3600
-	# 			order_rating2 = query['team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating'] or 0.0
-				
-
-	# 			if query['member__id'] == d['id']:
-	# 				d['worked_days'] += 1
-	# 				d['total_hours'] += hours2
-	# 				if d['rating'] == 0.0 :
-	# 					d['rating'] = order_rating2
-	# 				else:
-	# 					d['rating'] = (float(d['rating'])+float(order_rating2))/2
 				
 	data['html_workers_list'] = render_to_string('agent/resource/resource-month.html', {"workers_details_month":workers_list})
 	return JsonResponse(data)

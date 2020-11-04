@@ -280,11 +280,12 @@ class PaymentResponse(View):
 class PaymentFailedResponse(View):
 	def get(self,request):
 
-		payment_id = request.GET.get('paymentid')
+		payment_id   = request.GET.get('paymentid')
+		reference_id = request.GET.get('ref')
 
 		evaluation_id_encrypted = request.GET.get("udf1")
 
-		return render(request,"customer/paymentfailed.html",{'payment_id':payment_id,'evaluation_id_encrypted':evaluation_id_encrypted,})			
+		return render(request,"customer/paymentfailed.html",{'payment_id':payment_id,'evaluation_id_encrypted':evaluation_id_encrypted,'reference_id':reference_id,})			
 
 class PaymentReceipt(View):
 	def get(self,request,payment_id):
