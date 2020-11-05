@@ -290,7 +290,7 @@ class PaymentFailedResponse(View):
 
 		#for back to invoice
 		try:
-			order = Order.objects.get(order_no='BLC'+evaluation_id_encrypted[0:9]).select_related('evaluation__customer')
+			order = Order.objects.select_related('evaluation__customer').get(order_no='BLC'+evaluation_id_encrypted[0:9])
 		except:
 			order = None
 
