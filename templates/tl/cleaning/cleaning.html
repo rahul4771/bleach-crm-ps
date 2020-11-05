@@ -44,6 +44,15 @@
 
 <hr class="hr-dashedpad">
 
+<div class="narrow-head align-left">Cleaners</div>
+{% for cleaner in cleaning_team_members %}
+{% if cleaner.member.user_type == 'CLEANER' %}
+<div class="common-gray-text align-left"><strong>{{cleaner.member.name}}</strong></div>
+{% endif %}
+{% endfor %}
+
+<hr class="hr-dashedpad">
+
 {% for section in  cleaning_team_detail.order_scheduler.order_scheduler_book.sections %}
 <div class="narrow-head align-left">Section {{forloop.counter}} : {{section.section_name}}</div>
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->

@@ -536,15 +536,16 @@ class AgentHome(IsAgent,View):
 		#Order and Followup Schedules for date confirmation
 		confirm_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
 		
-		order_schedules		  = OrderScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(3)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').annotate(color_status=Case(When(Q(Q(start_at__lt=confirm_to_date+timedelta(3)) & Q(start_at__gte=confirm_to_date+timedelta(2))), then=Value('green')),
+		order_schedules		  = OrderScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(3)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').annotate(color_status=Case(When(Q(Q(start_at__lt=confirm_to_date+timedelta(7)) & Q(start_at__gte=confirm_to_date+timedelta(6))), then=Value('green')),
                   When(Q(Q(start_at__lt=confirm_to_date+timedelta(2))&Q(start_at__gte=confirm_to_date+timedelta(1))), then=Value('yellow')),When(Q(Q(start_at__lt=confirm_to_date+timedelta(1))&Q(start_at__gte=confirm_to_date)), then=Value('orange')),
                   default=Value('red'),
                   output_field=CharField(),))
 		
-		follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(3)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').annotate(color_status=Case(When(Q(Q(start_at__lt=confirm_to_date+timedelta(3)) & Q(start_at__gte=confirm_to_date+timedelta(2))), then=Value('green')),
+		follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(3)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').annotate(color_status=Case(When(Q(Q(start_at__lt=confirm_to_date+timedelta(7)) & Q(start_at__gte=confirm_to_date+timedelta(6))), then=Value('green')),
                   When(Q(Q(start_at__lt=confirm_to_date+timedelta(2))&Q(start_at__gte=confirm_to_date+timedelta(1))), then=Value('yellow')),When(Q(Q(start_at__lt=confirm_to_date+timedelta(1))&Q(start_at__gte=confirm_to_date)), then=Value('orange')),
                   default=Value('red'),
                   output_field=CharField(),))
+		
 		#add days left
 		for schedule in order_schedules:
 			schedule.days_left_coming = (schedule.start_at-timezone.now()).days
@@ -2092,7 +2093,7 @@ class MakeQuatationPhase1(IsAgent,View):
 		if language == 'ENGLISH':
 			print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
 
-			message = "Dear Customer, Please find the Quotation against the cleaning at "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" here http://15.206.173.198//customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+			message = "Dear Customer, Please find the Quotation against the cleaning at "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" here http://15.206.173.198/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
 
 			querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 		

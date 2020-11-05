@@ -463,6 +463,94 @@ class PaymentDetails(IsAccountant,View):
 		else:
 			total_pending_amount = 0
 			total_pending_orders = 0
+
+		#Prefetch filters
+		# try:
+		# 	fil_governorate       = int(request.GET.get('governorate'))
+		# 	areas                 = Area.objects.filter(governorate_id=fil_governorate)
+		# except:
+		# 	fil_governorate       = None
+		# 	areas                 = None
+
+		# try:
+		# 	fil_area			  = int(request.GET.get('area'))
+		# except:
+		# 	fil_area              = None
+
+		# fil_cleaning_policy       = request.GET.get('cleaning_policy')
+
+		# try:
+		# 	fil_service_type      = int(request.GET.get('service_type'))
+		# except:
+		# 	fil_service_type      = None
+
+
+		# customer_address_filter       = []
+		# count_customer_address_filter = []
+		# if fil_governorate:
+		# 	case1       = Q(address__governorate_id=fil_governorate)
+		# 	count_case1 = Q(evaluation_details__address__governorate_id=fil_governorate)
+		# 	customer_address_filter.append(case1)
+		# 	count_customer_address_filter.append(count_case1)
+
+		# if fil_area:
+		# 	case2 		= Q(address__area_id=fil_area)
+		# 	count_case2 = Q(evaluation_details__address__area_id=fil_area)
+		# 	customer_address_filter.append(case2)
+		# 	count_customer_address_filter.append(count_case2)
+
+		# if fil_governorate or fil_area:
+		# 	customer_address_prefetch_filter              = functools.reduce(operator.and_,customer_address_filter)
+		# 	count_customer_address_prefetch_filter        = functools.reduce(operator.and_,count_customer_address_filter)
+		# else:
+		# 	customer_address_prefetch_filter              = None
+		# 	count_customer_address_prefetch_filter        = None
+
+
+		# evaluation_book_filter       = []
+		# count_evaluation_book_filter = []
+		# if fil_cleaning_policy:
+		# 	case1       = Q(cleaning_policy=fil_cleaning_policy)
+		# 	count_case1 = Q(evaluation_details__evaluation_book_evaluation_details__cleaning_policy=fil_cleaning_policy)
+		# 	evaluation_book_filter.append(case1)
+		# 	count_evaluation_book_filter.append(count_case1)
+		# if fil_service_type:
+		# 	case2       = Q(service_type_id=fil_service_type)
+		# 	count_case2 = Q(evaluation_details__evaluation_book_evaluation_details__service_type_id=fil_service_type)
+		# 	evaluation_book_filter.append(case2)
+		# 	count_evaluation_book_filter.append(count_case2)
+
+		# if fil_cleaning_policy or fil_service_type:
+		# 	evaluation_book_prefetch_filter              = functools.reduce(operator.and_,evaluation_book_filter)
+		# 	count_evaluation_book_prefetch_filter        = functools.reduce(operator.and_,count_evaluation_book_filter)
+		# else:
+		# 	evaluation_book_prefetch_filter              = None
+		# 	count_evaluation_book_prefetch_filter        = None
+
+		# #Apply prefetch filter
+		# if evaluation_book_prefetch_filter and customer_address_prefetch_filter:
+		# 	invoices = invoices.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter & count_customer_address_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)
+		# 	print("both")
+		# elif evaluation_book_prefetch_filter and not customer_address_prefetch_filter:
+		# 	invoices = invoices.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(book_count=Count(Case(When( count_evaluation_book_prefetch_filter,then=1),output_field=IntegerField()))).filter(book_count__gt=0)
+		# 	print("book only")
+		# elif not evaluation_book_prefetch_filter and customer_address_prefetch_filter:
+		# 	invoices = invoices.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)
+		# 	print("address only")
+		# else:
+		# 	invoices = invoices.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))
+		# 	print("not at all")	
+
+		# fil_status = request.GET.get('status')
+		# #filters
+		# filters=[]
+		# if fil_status:
+		# 	case1 = Q(quatation_status=fil_status)
+		# 	filters.append(case1)
+
+		# if fil_status:
+		# 	filters     = functools.reduce(operator.and_,filters)
+		# 	evaluations = evaluations.filter(filters)
 		
 		#PAGINATION INVOICE		
 		page = request.GET.get('page',1) 

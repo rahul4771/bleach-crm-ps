@@ -9,6 +9,8 @@ from django.db.models import Count
 # from django.db.models.functions import Extract
 from dateutil.relativedelta import relativedelta
 import requests
+
+from accountant.models import PaymentHistory
 # Create your views here.
 
 def quotation_data(request):
@@ -140,5 +142,38 @@ def sendquotation(request):
 
     print(message,"respo")
     print(order_no)
+    data=True
+    return JsonResponse(data,safe=False)
+
+def sendreceipt(request):
+    order_no = request.GET.get('order_no')
+    order = Order.objects.filter(order_no=order_no).first()
+
+    language = order.evaluation.customer.sms_preference
+
+    evaluation = order.evaluation
+
+    payment_history = PaymentHistory.objects.filter(order=order).last()
+
+    url = "https://smsapi.future-club.com/fccsms.aspx"
+
+    if order.evaluation.customer.sms_preference == 'ENGLISH':
+
+        message = "Dear Customer, We have successfully received your payment of amount "+ str(payment_history.amount_paid) +" KD, (Transaction ID: "+ str(payment_history.transaction_id) +", Ref ID: "+ str(payment_history.ref) +") against the order number "+ str(order.order_no) +". Please find the Payment receipt here http://15.206.173.198/customer/payment/receipt/pvw"+ str(order.evaluation.tracking_no) +""+str(payment_history.id)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+        querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+    
+    else:
+        message = "عزيزي العميل، لقد تلقينا مدفوعاتك بنجاح مقابل رقم الطلب "+ order.order_no +". يرجى العثور على إيصال الدفع هنا http://15.206.173.198/customer/payment/receipt/pvw"+request.GET.get('paymentid')+". لأي مساعدة يرجى الاتصال بنا على9651882707 شكرا لاختيارك بليتش الكويت"
+
+
+        querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+
+    headers = {
+        'cache-control': "no-cache"
+    }
+
+    response = requests.request("GET", url, headers=headers, params=querystring)
+
+    print(response.text)
     data=True
     return JsonResponse(data,safe=False)
