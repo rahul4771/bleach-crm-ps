@@ -244,7 +244,7 @@
                 {% if request.user.user_type == 'AGENT' %}
                 {% elif request.user.user_type == 'EVALUATOR' %}
                 {% else %}
-                {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+                {% if order.order_status == 'APPROVED_BY_CLIENT' and order.evaluation.payment_way == 'ONLINE' %}
                 <input class="assignButton" name="pay" type="submit" value="Pay / الدفع">
                 {% endif %}
                 {% endif %}

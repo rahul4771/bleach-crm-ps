@@ -57,7 +57,7 @@ class AccountantHome(IsAccountant,View):
 
 		#sales amount
 		try:
-			invoices         = Order.objects.filter(is_active=True).order_by('-id')
+			invoices         = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED').order_by('-id')
 		except:
 			invoices         = None
 
@@ -76,16 +76,41 @@ class AccountantHome(IsAccountant,View):
 		last_quarter_sales=invoices.filter(payment_status='COMPLETED',payment_completed_date__gte=prvquarter_start_date,payment_completed_date__lt=quarter_start_date).aggregate(total=Sum('amount_paid'))['total']	
 		
 		#Pending Payments
-		if search:
-			try:
-				pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(evaluation__quatation_status='APPROVED')&Q(order_status='APPROVED_BY_CLIENT')).select_related('evaluation__customer').filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'))
-			except:
-				pending_payments = None
-		else:
-			try:
-				pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(evaluation__quatation_status='APPROVED')&Q(order_status='APPROVED_BY_CLIENT')).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'))
-			except:
-				pending_payments = None		
+		pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).order_by('start_at'),to_attr='orderschedules')).annotate(Count('order_scheduler_order'))
+			
+
+		#remove object in postpaid if not last cleaning fulfilled	
+		for payment in pending_payments:
+			if payment.evaluation.payment_method == 'POSTPAID':
+				very_latest_cleaning=payment.orderschedules[payment.order_scheduler_order__count-1]
+				if very_latest_cleaning.work_status != 'CLEANING_FULFILLED':
+					pending_payments = pending_payments.exclude(id=payment.id)
+
+
+		#to find days
+		for payment in pending_payments:
+
+			if payment.evaluation.payment_method == 'PREPAID':
+				very_old_cleaning   = payment.orderschedules[0]
+				payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
+			elif payment.evaluation.payment_method == 'POSTPAID':
+				very_latest_cleaning=payment.orderschedules[payment.order_scheduler_order__count-1]
+				payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
+
+
+			elif payment.evaluation.payment_method == 'BREAKDOWN':
+			
+				very_old_cleaning   = payment.orderschedules[0]
+				very_latest_cleaning=payment.orderschedules[payment.order_scheduler_order__count-1]
+				payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
+				payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
+
+				#to check last cleaning completed for break down after payment
+				if very_latest_cleaning.work_status == 'CLEANING_FULFILLED':
+					payment.last_completed = True	
+
+
+
 
 		#Pending Payment and Order Count	
 		if pending_payments:
@@ -94,35 +119,8 @@ class AccountantHome(IsAccountant,View):
 		else:
 			total_pending_amount = 0
 			total_pending_orders = 0
-		#PAGINATION PENDING PAYMENTS	
-		page = request.GET.get('page',1) 
-		no_of_entries = request.GET.get('no_of_entries')
-		if not no_of_entries:
-			no_of_entries = 20
-		
 
-		page = request.GET.get('page',1) 
-		paginator=Paginator(pending_payments,no_of_entries)
-		try: 
-			pending_payments=paginator.page(page) 
-		except PageNotAnInteger:
-			pending_payments=paginator.page(1)
-		except EmptyPage:
-			pending_payments = paginator.page(paginator.num_pages) 
-
-		# Get the index of the current page
-		index = pending_payments.number - 1  # edited to something easier without index
-		# This value is maximum index of your pages, so the last page - 1
-		max_index = len(paginator.page_range)
-		# You want a range of 7, so lets calculate where to slice the list
-		start_index = index - 3 if index >= 3 else 0
-		end_index = index + 3 if index <= max_index - 3 else max_index
-		# Get our new page range. In the latest versions of Django page_range returns 
-		# an iterator. Thus pass it to list, to make our slice possible again.
-		page_range = list(paginator.page_range)[start_index:end_index]	
-		entry_per_page=(pending_payments.end_index())-(pending_payments.start_index())+1
-
-		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"search_query":search,})
+		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders})
 
 class ClientDetails(IsAccountant,View):
 	def get(self,request):

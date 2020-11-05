@@ -139,7 +139,7 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .lhs-raiseticket{background:url(../images/lhs-raietickets.svg) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
 .lhs-collection{background:url(../images/lhs-collections.svg) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
 .green-line{ border-left:4px solid #3cbbb1 !important; }
-.blue-line{ border-left:4px solid #528ce6;}
+.blue-line{ border-left:4px solid #528ce6 !important;}
 .orange-line{ border-left:4px solid #ff8c56;}
 .red-line{ border-left:4px solid #ec6262;}
 .yellow-line{ border-left:4px solid #f2ba1e;}

@@ -102,6 +102,11 @@ PAYMENT_CHOICES =(
 	('BREAKDOWN','BREAKDOWN'),
 	)
 
+PAYMENT_WAYS =(
+	('ONLINE','ONLINE'),
+	('CASH/CHEQUE','CASH/CHEQUE'),
+	)
+
 #Different cleaning service types.Eg:General Cleaning,Carpet Cleaning etc
 
 class ServiceType(models.Model):
@@ -208,6 +213,7 @@ class Evaluation(models.Model):
 	quatation_expiry_date   = models.DateTimeField(blank=True,null=True)
 	
 	payment_method			= models.CharField(max_length=20,blank=True,null=True,choices=PAYMENT_CHOICES)
+	payment_way             = models.CharField(max_length=20,blank=True,null=True,choices=PAYMENT_WAYS)
 	before_cleaning_amount	= models.FloatField(blank=True,null=True)
 	after_cleaning_amount	= models.FloatField(blank=True,null=True)
 

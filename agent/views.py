@@ -541,12 +541,16 @@ class AgentHome(IsAgent,View):
                   default=Value('red'),
                   output_field=CharField(),))
 		
-		
 		follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(3)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').annotate(color_status=Case(When(Q(Q(start_at__lt=confirm_to_date+timedelta(3)) & Q(start_at__gte=confirm_to_date+timedelta(2))), then=Value('green')),
                   When(Q(Q(start_at__lt=confirm_to_date+timedelta(2))&Q(start_at__gte=confirm_to_date+timedelta(1))), then=Value('yellow')),When(Q(Q(start_at__lt=confirm_to_date+timedelta(1))&Q(start_at__gte=confirm_to_date)), then=Value('orange')),
                   default=Value('red'),
                   output_field=CharField(),))
-	
+		#add days left
+		for schedule in order_schedules:
+			schedule.days_left_coming = (schedule.start_at-timezone.now()).days
+
+		for followupschedule in follow_up_schedules:
+			followupschedule.days_left_coming = (followupschedule.start_at-timezone.now()).days 
 
 		#cleaning schedule & followup schedule for cleaning calendar
 		cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
@@ -2209,10 +2213,9 @@ class MakeQuatationPhase2(IsAgent,View):
 						colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
 						cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
 
-						try:
-							section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
-						except:
-							section_name_arabic = None
+						print(section_name)
+						section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
+						
 
 						#save section
 						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
@@ -2441,10 +2444,9 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 
 							old_section_id=request.POST.get('editform'+str(form_count)+'_section'+str(i))
 							
-							try:
-								section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
-							except:
-								section_name_arabic = None
+							print(section_name)
+							section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
+							
 							
 							if old_section_id:
 								#edit section

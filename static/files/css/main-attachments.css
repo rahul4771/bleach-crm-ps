@@ -32,6 +32,12 @@
 
 .orange-bg{background:#ff8c56; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
 
+.green-bg-lite{ background:#8ce6de; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
+.orange-bg-lite{background:#ffb38f; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
+.red-bg-lite{background:#f79c9c; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
+
+.gray-bg{background:#D3D3D3; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
+.gray-line{ border-left:4px solid #D3D3D3;}
 
 .yellow-bg-lg{background:#cfcc08; padding:4px 5px; margin:0 5px 10px 0;  border-radius:3px; text-align:center; color:#fff; font-size:13px; width:80px; display:inline-block;}
 

@@ -536,6 +536,7 @@ text-align: right;
 .bold-text{ font-weight:bold; font-family: 'Open Sans', Sans-serif;}
 
 .custom-model-main { text-align: center; overflow: hidden; position: fixed; top: 0; right: 0; bottom: 0; left: 0; /* z-index: 1050; */ -webkit-overflow-scrolling: touch; outline: 0; opacity: 0; -webkit-transition: opacity 0.15s linear, z-index 0.15; -o-transition: opacity 0.15s linear, z-index 0.15; transition: opacity 0.15s linear, z-index 0.15; z-index: -1; overflow-x: hidden; overflow-y: auto;}
+.custom-model-main1 { text-align: center; overflow: hidden; position: fixed; top: 0; right: 0; bottom: 0; left: 0; /* z-index: 1050; */ -webkit-overflow-scrolling: touch; outline: 0; opacity: 0; -webkit-transition: opacity 0.15s linear, z-index 0.15; -o-transition: opacity 0.15s linear, z-index 0.15; transition: opacity 0.15s linear, z-index 0.15; z-index: -1; overflow-x: hidden; overflow-y: auto;}
 .model-open { z-index: 99999; opacity: 1; overflow: hidden;}
 .custom-model-inner {-webkit-transform: translate(0, -25%); -ms-transform: translate(0, -25%); transform: translate(0, -25%); -webkit-transition: -webkit-transform 0.3s ease-out; -o-transition: -o-transform 0.3s ease-out; transition: -webkit-transform 0.3s ease-out; -o-transition: transform 0.3s ease-out; transition: transform 0.3s ease-out; transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out; display: inline-block; vertical-align: middle; width: 400px; margin: 30px auto; max-width: 97%; }
 .custom-model-wrap { display: block; width: 100%; position: relative; background-color: #fff; border: 1px solid #999; border: 1px solid rgba(0, 0, 0, 0.2); border-radius: 6px; -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
@@ -546,6 +547,7 @@ text-align: right;
 .bg-overlay { background: rgba(0, 0, 0, 0); height: 100vh; width: 100%; position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 0; -webkit-transition: background 0.15s linear; -o-transition: background 0.15s linear; transition: background 0.15s linear;}
 .close-btn { position: absolute; right: 0; top: -40px; cursor: pointer; z-index: 99; font-size: 30px; color: #fff;}
 .custom-model-main:before {  content: ""; display: inline-block; height: auto; vertical-align: middle; margin-right: -0px; height: 100%;}
+.custom-model-main1:before {  content: ""; display: inline-block; height: auto; vertical-align: middle; margin-right: -0px; height: 100%;}
 .custom-model-inner{margin-top: 45px;}
 .company-name-arabic{ font-size:20px !important; text-align:right;}
 .billto{ font-size:14px !important; color:#717070; font-weight:normal;}
@@ -564,6 +566,8 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 .table3 {visibility:hidden;}
 .table1tr1 {display:none;}
 .table1tr2 {display:none;}
+.table1tr3 {display:none;}
+.table1tr4 {display:none;}
 }
 
 @page {

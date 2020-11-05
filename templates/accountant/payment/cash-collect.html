@@ -239,7 +239,7 @@ var order_id=parseInt("{{request.GET.orderid}}");
             {
               if(data['before_amount'] != data['before_amount_paid'])
               {
-                $("#id_payment_policy").append($('<option>',{value: 'BEFORE CLEANING',text: 'BREAK1'}));
+                $("#id_payment_policy").append($('<option>',{value: 'BEFORE CLEANING',text: 'Before Cleaning'}));
 
                 $('#id_amount').val(data['before_amount']);
                 $('#id_amount').attr('max',data['before_amount']);
@@ -247,7 +247,7 @@ var order_id=parseInt("{{request.GET.orderid}}");
 
               else if(data['after_amount'] != data['after_amount_paid'])
               {
-                $("#id_payment_policy").append($('<option>',{value: 'AFTER CLEANING',text: 'BREAK2'}));
+                $("#id_payment_policy").append($('<option>',{value: 'AFTER CLEANING',text: 'After Cleaning'}));
                
                 $('#id_amount').val(data['after_amount']);
                 $('#id_amount').attr('max',data['after_amount']);
@@ -405,7 +405,7 @@ function select_existing_user(event,src){
             {
               if(data['before_amount'] != data['before_amount_paid'])
               {
-                $("#id_payment_policy").append($('<option>',{value: 'BEFORE CLEANING',text: 'BREAK1'}));
+                $("#id_payment_policy").append($('<option>',{value: 'BEFORE CLEANING',text: 'Before Cleaning'}));
 
                 $('#id_amount').val(data['before_amount']);
                 $('#id_amount').attr('max',data['before_amount']);
@@ -413,7 +413,7 @@ function select_existing_user(event,src){
 
               else if(data['after_amount'] != data['after_amount_paid'])
               {
-                $("#id_payment_policy").append($('<option>',{value: 'AFTER CLEANING',text: 'BREAK2'})); 
+                $("#id_payment_policy").append($('<option>',{value: 'AFTER CLEANING',text: 'After Cleaning'})); 
                 $('#id_amount').val(data['after_amount']);
                 $('#id_amount').attr('max',data['after_amount']); 
               }
