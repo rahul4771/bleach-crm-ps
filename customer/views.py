@@ -289,11 +289,8 @@ class PaymentFailedResponse(View):
 		evaluation_id_encrypted = request.GET.get("udf1")
 
 		#for back to invoice
-		try:
-			order = Order.objects.select_related('evaluation__customer').get(order_no='BLC'+evaluation_id_encrypted[0:9])
-		except:
-			order = None
-
+		order = Order.objects.select_related('evaluation__customer').get(order_no='BLC'+evaluation_id_encrypted[0:11])
+	
 		return render(request,"customer/paymentfailed.html",{'payment_id':payment_id,'evaluation_id_encrypted':evaluation_id_encrypted,'reference_id':reference_id,'order':order})			
 
 class PaymentReceipt(View):
