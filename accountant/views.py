@@ -32,12 +32,19 @@ def GetCashCollectOrderInfo(request):
 
 	query       =   request.GET.get('keyword')
 
-	orders = Order.objects.filter(is_active=True,order_status__isnull=False,payment_status='PENDING').select_related('evaluation__customer').filter(Q(evaluation__quatation_status='APPROVED') & Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)) & ~Q(Q(order_status='ORDER_CANCELLED')))
-	
+	orders = Order.objects.filter(is_active=True,order_status__isnull=False).filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).select_related('evaluation__customer').filter(Q(evaluation__quatation_status='APPROVED') & Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)) & ~Q(Q(order_status='ORDER_CANCELLED'))).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).order_by('start_at'),to_attr='orderschedules')).annotate(Count('order_scheduler_order'))
+
+	#remove object in postpaid if not last cleaning fulfilled	
+	for order in orders:
+		if order.evaluation.payment_method == 'POSTPAID':
+			very_latest_cleaning=order.orderschedules[order.order_scheduler_order__count-1]
+			if very_latest_cleaning.work_status != 'CLEANING_FULFILLED':
+				orders = orders.exclude(id=order.id)			
 	
 	if orders:
 		for order in orders:
 			order_info_dict[order.id] = order.evaluation.evaluation_id+'-'+order.evaluation.customer.name 	
+
 	
 	data['order_details'] = order_info_dict
 
@@ -50,6 +57,103 @@ def GetCashCollectOrderInfo(request):
 	return JsonResponse(data)
 
 
+def GetCashCollectOrderDetailedInfo(request):
+
+		dropdown_order_info = {}
+
+		order_id            = request.GET.get('order_id')
+
+		order = Order.objects.select_related('evaluation__customer','evaluation__call_attender').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('customer_address__area','customer_address','order_scheduler_book__service_type'),to_attr='order_secheduler_feedback'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).order_by('start_at'),to_attr='orderschedules')).annotate(total_cleaners=Sum('order_scheduler_order__order_scheduler_book__number_of_cleaners')).annotate(Count('order_scheduler_order')).get(id=order_id,is_active=True)
+
+		#to mark last cleaning completed for breakdown
+		if order.evaluation.payment_method == 'BREAKDOWN':
+			very_latest_cleaning=order.orderschedules[order.order_scheduler_order__count-1]	
+			#to check last cleaning completed for break down after payment
+			if very_latest_cleaning.work_status == 'CLEANING_FULFILLED':
+				order.last_completed = True
+				dropdown_order_info['last_cleaning_completed']   = True
+			else:
+				dropdown_order_info['last_cleaning_completed']   = False	
+
+
+		dropdown_order_info['order_id']      = order.id
+
+		##order information
+		dropdown_order_info['blc_no']           = order.order_no
+		dropdown_order_info['name']          	= order.evaluation.customer.name
+		dropdown_order_info['mobile_number'] 	= order.evaluation.customer.mobile_number
+		dropdown_order_info['total_cost']    	= order.evaluation.total_cost
+		dropdown_order_info['date']          	= order.evaluation.created.strftime('%b %d %Y,%I:%M %p')
+		dropdown_order_info['order_status']  	= order.order_status
+		dropdown_order_info['payment_status']	= order.payment_status
+		dropdown_order_info['payment_policy']	= order.evaluation.payment_method
+		dropdown_order_info['agent_image_url']	= order.evaluation.call_attender.profile_image.url or None
+		dropdown_order_info['agent_name']       = order.evaluation.call_attender.name or None
+		dropdown_order_info['total_cleaners'] 	= order.total_cleaners
+
+		dropdown_order_info['remining_amount']     = order.remining_amount
+		dropdown_order_info['before_amount']       = order.evaluation.before_cleaning_amount 
+		dropdown_order_info['after_amount']        = order.evaluation.after_cleaning_amount
+		dropdown_order_info['before_amount_paid']  = order.preamount_paid 
+		dropdown_order_info['after_amount_paid']   = order.postamount_paid		
+
+
+		#for multiple order addresses
+		dropdown_order_info['order_address']   = []
+		for scheduler in order.order_secheduler_feedback:
+			customer_order_address = []
+
+			customer_order_address.append(scheduler.customer_address.area.name)
+			customer_order_address.append(scheduler.order_scheduler_book.service_type.name)
+			customer_order_address.append(scheduler.order_scheduler_book.cleaning_policy)
+			customer_order_address.append(scheduler.work_status)
+			dropdown_order_info['order_address'].append(customer_order_address)
+
+
+		##customer information
+		customer_information = {}
+		try:
+			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=order.evaluation.customer_id)
+		except:
+			client_details = None
+
+		customer_information['name']          = client_details.name
+		customer_information['email']         = client_details.email
+		customer_information['mobile']        = client_details.mobile_number
+		customer_information['other_number']  = client_details.phone_number
+		customer_information['nationality']   = client_details.nationality.code
+		customer_information['company']       = client_details.company
+
+		#for multiple customer addresses
+		customer_information['customer_address']   = []
+		for address in client_details.customer_addresses:
+			customer_address = {}
+
+			customer_address['governorate'] 	= address.governorate.name
+			customer_address['area'] 			= address.area.name
+			customer_address['block'] 			= address.block
+			customer_address['avenue'] 			= address.avenue
+			customer_address['building'] 		= address.building
+			customer_address['street'] 			= address.street
+			customer_address['floor'] 			= address.floor
+			customer_address['apartment'] 		= address.apartment
+
+			customer_information['customer_address'].append(customer_address)
+
+		dropdown_order_info['customer_details'] = customer_information
+
+		##previous order informations
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=order.evaluation.customer_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()
+		dropdown_order_info['active_orders_count'] = active_orders_count
+		dropdown_order_info['total_orders_count']  = total_orders_count
+
+
+		return JsonResponse(dropdown_order_info)	
+
+
 class AccountantHome(IsAccountant,View):
 	def get(self,request):
 		#Payment Details
@@ -57,7 +161,7 @@ class AccountantHome(IsAccountant,View):
 
 		#sales amount
 		try:
-			invoices         = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED').order_by('-id')
+			invoices         = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',order_status__isnull=False).order_by('-id')
 		except:
 			invoices         = None
 

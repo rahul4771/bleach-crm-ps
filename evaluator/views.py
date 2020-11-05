@@ -1229,7 +1229,7 @@ class MakeQuatationPhase2(IsEvaluator,View):
 						try:
 							section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
 						except:
-							section_name_arabic = None
+							section_name_arabic = section_name
 
 						#save section
 						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic)
@@ -1390,7 +1390,7 @@ class MakeQuatationPhase2Edit(IsEvaluator,View):
 							try:
 								section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
 							except:
-								section_name_arabic = None
+								section_name_arabic = section_name
 							
 							if old_section_id:
 								#edit section
@@ -1606,7 +1606,7 @@ class MakeAssignedQuatationPhase2(IsEvaluator,View):
 						try:
 							section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
 						except:
-							section_name_arabic = None
+							section_name_arabic = section_name
 
 						#save section
 						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic)
@@ -1767,7 +1767,7 @@ class MakeAssignedQuatationPhase2Edit(IsEvaluator,View):
 							try:
 								section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
 							except:
-								section_name_arabic = None
+								section_name_arabic = section_name
 							
 							if old_section_id:
 								#edit section

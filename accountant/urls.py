@@ -14,5 +14,6 @@ urlpatterns = [
 	url(r'^cash/collect/$',views.CashCollect.as_view(),name='accountant-cashcollect'),
 
 	url(r'^ajax/cashcollect/order/info/$',views.GetCashCollectOrderInfo,name='get-cashorderInfo'),
+	url(r'^ajax/cashcollect/order/detailed/info/$',views.GetCashCollectOrderDetailedInfo,name='get-cashorderdetailedInfo'),
 
 ]

@@ -32,17 +32,17 @@
 
 .orange-bg{background:#ff8c56; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
 
-.green-bg-lite{ background:#8ce6de; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
-.orange-bg-lite{background:#ffb38f; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
-.red-bg-lite{background:#f79c9c; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
+.green-text-h3{ color:#8ce6de;}
+.orange-text-h3{color:#ffb38f;}
+.yellow-text-h3{color:#ffca00;}
+.red-text-h3{color:#ed3024;}
+
 
 .gray-bg{background:#D3D3D3; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
 .gray-line{ border-left:4px solid #D3D3D3;}
 
 .yellow-bg-lg{background:#cfcc08; padding:4px 5px; margin:0 5px 10px 0;  border-radius:3px; text-align:center; color:#fff; font-size:13px; width:80px; display:inline-block;}
 
-.yellow-button{ background:#cfcc08; color:#fff; padding:4px 25px; border:none; font-size:15px; margin:15px 0 0px 0; border-radius:3px;transition: .4s; }
-.yellow-button:hover{ background:#cfcc08;}
 
 .red-button{ background:#ff0000; color:#fff; padding:4px 25px; border:none; font-size:15px; margin:15px 0 0px 0; border-radius:3px;transition: .4s; }
 .red-button:hover{ background:#ff0000;}
