@@ -189,11 +189,11 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .main-table-border th,
 .main-table-border td {padding: .525em; text-align: center; border : 1px solid #ccc; position:relative;}
 .main-table-border th {font-size: .85em; letter-spacing: .1em; text-transform: uppercase;}
- .blue-box{ background:#528ce6; position:absolute; left:2%; right:2%; width:75%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:25px;  font-size:12px; padding:0 20px; }
+ .blue-box{ background:#528ce6; position:absolute; left:2%; right:2%; width:75%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:20px;  font-size:12px; padding:0 20px; }
  .blue-box:hover{ background:#4980d4; cursor:pointer;} 
- .green-box{ background:#3cbbb1; position:absolute; left:52%; right:2%; width:30%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px; }
+ .green-box{ background:#3cbbb1; position:absolute; left:52%; right:2%; width:30%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:20px; font-size:12px; padding:0 20px; }
  .green-box:hover{ background:#31a9a0; cursor:pointer;}
-.orange-box{ background:#ff8c56; position:absolute; left:2%; right:2%; width:60%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px; }
+.orange-box{ background:#ff8c56; position:absolute; left:2%; right:2%; width:60%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:20px; font-size:12px; padding:0 20px; }
 .orange-box:hover{ background:#e77d4b; cursor:pointer;}
 .red-box{ background:#ec6262; position:absolute; left:0%; right:2%; width:40%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px;  }
 .yellow-box{ background:#f2ba1e; position:absolute; left:2%; right:2%; width:47%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px; }
