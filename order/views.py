@@ -174,6 +174,6 @@ def sendreceipt(request):
 
     response = requests.request("GET", url, headers=headers, params=querystring)
 
-    print(response.text)
+    print(response.text,"receipt")
     data=True
     return JsonResponse(data,safe=False)

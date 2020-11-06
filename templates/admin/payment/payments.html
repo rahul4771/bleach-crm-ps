@@ -112,7 +112,8 @@
 </thead>
 <tbody>    {% for invoice in invoices %}
     <tr>
-    <td {% if invoice.payment_status == 'PENDING' %}
+    <td 
+    {% if invoice.payment_status == 'PENDING' %}
         class="red-line"
         {% elif invoice.payment_status == 'COMPLETED' %}
         class="green-line" 
@@ -128,13 +129,13 @@
     <td>{{invoice.evaluation.customer.mobile_number}}</td>
     <td>{{invoice.total_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
     <td>{{invoice.evaluation.payment_method|default_if_none:''}}</td>
-    <td><span 
+    <td><span {% if invoice %}data-href="{% url 'bleach_admin:admin-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}
         {% if invoice.payment_status == 'PENDING' %}
-        class="red-bg"
+        class="red-bg clickable-row"
         {% elif invoice.payment_status == 'COMPLETED' %}
-        class="green-bg" 
+        class="green-bg clickable-row" 
         {% else %}
-        class="yellow-bg"
+        class="yellow-bg clickable-row"
         {% endif %}
         >{{invoice.payment_status|default_if_none:''}}</span></td>
     </tr>

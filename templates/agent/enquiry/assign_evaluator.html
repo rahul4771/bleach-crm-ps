@@ -139,6 +139,7 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Appointment Time</label></div>
                 <input type="text" name="proposed_time" class="textBox id_proposed_time readonly" required readonly>
+                <p id="time_alert" style="color:red" hidden>Please select proper time !</p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
  
@@ -299,10 +300,12 @@ $(".assign_evaluator_button").click(function () {
     now_date = ({{evaluation_date.day}}<10 ? '0':'')+"{{evaluation_date.day}}-"+({{evaluation_date.month}}<10 ? '0':'')+"{{evaluation_date.month}}-"+"{{evaluation_date.year}}"
     
     now_time   = (hour<10 ? '0':'')+(hour>12 ? hour-12:hour)+":00 "+(hour>=12 ? 'PM':'AM')
+
     
-    
-    $('.id_proposed_date').val(now_date);
     $('.id_proposed_time').val(now_time);
+            
+    $('.id_proposed_date').val(now_date);
+    
     $('.id_evaluator').val($(this).data('evaluator_id'));
 
     $('#addevaluationdetails_popup').css({'visibility':'visible','opacity':1,});
@@ -314,12 +317,52 @@ $("#close_add_evaluator").click(function () {
 
 $('.id_proposed_time').change(function(){
     var vals = $(this).val().split(':');
+    console.log($(this).val(),"time")
     var start_time = $(this).val();
     start_time = start_time.split(" ");
+    time_AM_PM = start_time[1];
     var time = start_time[0].split(":");
     var stime = time[0];
+
+    //splitting 0 in hour
+    if (stime < 10){
+        var hour_split = stime.split('');
+        var time_hour = hour_split[1];
+        console.log(time_hour,"werry")    
+    }else{
+        time_hour = stime;
+    }
+
     var now_time   = (hour>12 ? hour-12:hour)+":00 "+(hour>=12 ? 'AM':'PM')
+
+    console.log(time_AM_PM,"nowten")
     console.log(start_time,stime,"tru")
+
+    //time limit logic
+    if (time_AM_PM == 'AM'){
+        if (time_hour >= 8 && time_hour <= 11){
+            $('.id_proposed_time').val($(this).val());
+            $('#time_alert').attr("hidden",true);
+            console.log(time_hour,"test")
+        }else{
+            $('.id_proposed_time').val('');
+            $('#time_alert').attr("hidden",false);
+            console.log(time_hour,"test2")
+        }
+    };
+
+    if (time_AM_PM == 'PM') {
+
+        if ((time_hour == 12) || (time_hour >= 1 && time_hour <= 6)){
+            $('.id_proposed_time').val($(this).val());
+            $('#time_alert').attr("hidden",true);
+            console.log(time_hour,"test3")
+        }else{
+            $('.id_proposed_time').val('');
+            $('#time_alert').attr("hidden",false);
+            console.log(time_hour,"test4")
+        }
+    };
 })
 
 $("#assign_evaluator_id").click(function(){
