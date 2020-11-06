@@ -32,13 +32,13 @@
       <div class="right-invoice">
         <section id="memo">
           <div class="company-info">
-            <div>Bleach Cleaning Services<div class="company-name-arabic"> بليتش لخدمات التنظيف</div>	
+            <div>Bleach Cleaning Services<div class="company-name-arabic"> بليتش &nbsp;&nbsp;لخدمات &nbsp;&nbsp;التنظيف</div>	
             
 			</div>
              
           </div>
 
-          <div class="logo">
+          <div class="logo_invoice">
             <img src="{% static 'files/images/bleach logo.png' %}" />
           </div>
         </section>
@@ -108,42 +108,22 @@
               <th width="15%" class="align-right">NET PRICE &nbsp;<br>صافي السعر &nbsp;</th>
             </tr>
 
-            {% for orderschedule in nonduplicate_schedules %}
-            
-            {% if orderschedule.order_scheduler_book.evaluationbooksection|length > 1 %}
+            {% for orderschedule in nonduplicate_schedules %}            
             {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
-            <tr class="hide">
+            <tr>
               {% if forloop.first %}
               <td style="text-align:center;">{{forloop.parentloop.counter}}</td> <!-- Don't remove this column as it's needed for the row commands -->
               {% else %}
               <td style="text-align:center;">&nbsp;</td> <!-- Don't remove this column as it's needed for the row commands -->
               {% endif %}
-
-              <td>{{orderschedule.order_scheduler_book.service_type}}-{{orderschedule.customer_address.area.name}}-{{section.section_name}} <br> {{orderschedule.order_scheduler_book.service_type.name_arabic}}-{{orderschedule.customer_address.area.name_arabic}}-{{section.section_name_arabic}}</td>
+              
+              <td><a href="#">{{orderschedule.order_scheduler_book.service_type}}-{{orderschedule.customer_address.area.name}}-{{section.section_name}} <br> {{orderschedule.order_scheduler_book.service_type.name_arabic}}-{{orderschedule.customer_address.area.name_arabic}}-{{section.section_name_arabic}}</a></td>
               
               <td>{{section.dirt_level}}<br> {% if section.dirt_level == 'Red' %}أحمر{% endif %}{% if section.dirt_level == 'Random' %}وسط{%endif%}</td>
-              
               <td>{{section.size}} {{section.unit|default_if_none:''}}</td>
-              
-              {% if forloop.first %}
-              <td rowspan="2" class="align-right">{{orderschedule.order_scheduler_book.total_cost|floatformat:'3'}}</td>
-              {% endif %}
+              <td class="align-right">{{section.section_cost|floatformat:'3'}}</td>
             </tr>
             {% endfor %}
-
-            {% else %}
-            {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
-            <tr>
-              <td style="text-align:center;">{{forloop.parentloop.counter}}</td> <!-- Don't remove this column as it's needed for the row commands -->
-              <td>{{orderschedule.order_scheduler_book.service_type}}-{{orderschedule.customer_address.area.name}}-{{section.section_name}} <br> {{orderschedule.order_scheduler_book.service_type.name_arabic}}-{{orderschedule.customer_address.area.name_arabic}}-{{section.section_name_arabic}}</td>
-              <td>{{section.dirt_level}}<br> {% if section.dirt_level == 'Red' %}أحمر{% endif %}{% if section.dirt_level == 'Random' %}وسط{%endif%}</td>
-              <td>{{section.size}} {{section.unit|default_if_none:''}}</td>
-              <td class="align-right">{{orderschedule.order_scheduler_book.total_cost|floatformat:'3'}}</td>
-            </tr>
-            {% endfor %}
-            {% endif %}
-
-
             {% endfor %}
             
           </table>
@@ -167,17 +147,6 @@
               <th class="medium" style="font-size: large;"> Total / مجموع</th>
               <td class="due-amount medium" style="font-size: large;"> {{order.evaluation.total_cost|floatformat:'3'}} </td>
             </tr>
-
-            {% if order.evaluation.payment_method == 'BREAKDOWN' %}
-            <tr>
-              <th>Before Cleaning/ الدفع قبل التنظيف</th>
-              <td class="due-amount"> {{order.evaluation.before_cleaning_amount|floatformat:'3'}} </td>
-            </tr>
-            <tr>
-              <th>After Cleaning/ الدفع بعد التنظيف</th>
-              <td class="due-amount"> {{order.evaluation.after_cleaning_amount|floatformat:'3'}} </td>
-            </tr>
-            {% endif %}
             
             {% if order.payment_status != 'COMPLETED' %}
             <tr class="amount-total">
@@ -212,7 +181,34 @@
             
           </table>
           
-        </section>       
+        </section>    
+
+        {% if order.evaluation.payment_method == 'BREAKDOWN' %}
+        <section id="policy">
+        
+          <table cellpadding="0" cellspacing="0">
+                  
+            <!-- You can use attribute data-hide-on-quote="true" to hide specific information on quotes.
+                 For example Invoicebus doesn't need amount paid and amount due on quotes  -->
+            <tr>
+              <td class="align-left" colspan="2"> <strong> BREAKDOWN PAYMENTMODE <br> قائمة التفاصيل</strong></td>
+            </tr>
+            
+            <tr>
+              <td>Payment Before Cleaning<br>الدفع بعد التنظيف</td>
+              <td><strong>{{order.evaluation.before_cleaning_amount|floatformat:'3'}} KD</strong></td>
+            </tr>
+            
+            <tr>
+              <td>Payment After Cleaning<br>الدفع قبل التنظيف</td>
+              <td class="medium">{{order.evaluation.after_cleaning_amount|floatformat:'3'}} KD </td>
+            </tr>
+            
+          </table> 
+        </section>
+        {% endif %} 
+
+
 
         <div class="clearfix"></div>
         <section>

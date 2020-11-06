@@ -35,7 +35,7 @@
              
           </div>
 
-          <div class="logo">
+          <div class="logo_invoice">
             <img src="{% static 'files/images/bleach logo.png' %}" />
           </div>
         </section>
@@ -50,12 +50,6 @@
           <div>
             <span>invoice number / رقم الفاتورة</span> <span>{{evaluation_id_encrypted|slice:'6:11'}}</span>
           </div>
-
-
-          <div class="recipt-info"> 
-            <div class="recipt-info-amount">
-              <span> your transaction has been failed ! <br><br> فشلت معاملتك</span>
-            </div>
           {% if payment_id %}
           <div> 
             <span> Payment ID / رقم المعاملة </span> <span> {{payment_id}}</span>
@@ -66,6 +60,12 @@
             <span> Reference ID / الرقم المرجعي </span> <span> {{reference_id}}</span>
           </div>
           {% endif %}
+
+
+          <div class="recipt-info"> 
+            <div class="recipt-info-amount" style="text-align: left;">
+              <span> your transaction has been failed ! <br><br> فشلت معاملتك</span>
+            </div>
     
         </div>
 

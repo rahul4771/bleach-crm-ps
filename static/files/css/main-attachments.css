@@ -32,10 +32,10 @@
 
 .orange-bg{background:#ff8c56; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }
 
-.green-text-h3{ color:#53bbb2;}
-.orange-text-h3{color:#f38a54;}
-.yellow-text-h3{color:#ffca00;}
-.red-text-h3{color:#ec6262;}
+.green-text-h3{ color:#53bbb2;text-shadow: 1px 2px 3px #00000045;}
+.orange-text-h3{color:#f38a54;text-shadow: 1px 2px 3px #00000045;}
+.yellow-text-h3{color:#ffca00;text-shadow: 1px 2px 3px #00000045;}
+.red-text-h3{color:#ec6262;text-shadow: 1px 2px 3px #00000045;}
 
 
 .gray-bg{background:#D3D3D3; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; }

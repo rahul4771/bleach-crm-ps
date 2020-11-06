@@ -32,10 +32,10 @@
           <div class="right-invoice">
             <section id="memo">
               <div class="company-info">
-    			<div>Bleach Cleaning Services<div class="company-name-arabic"> بليتش لخدمات التنظيف</div>	
+    			<div>Bleach Cleaning Services<div class="company-name-arabic"> بليتش &nbsp;&nbsp;لخدمات &nbsp;&nbsp;التنظيف</div>	
               	</div>
     		  </div>
-          <div class="logo">
+          <div class="logo_invoice">
             <img src="{% static 'files/images/bleach logo.png' %}" />
           </div>
         </section>
@@ -117,11 +117,9 @@
               <th width="10%">SIZE<br>الحجم</th>
               <th width="15%" class="align-right">NET PRICE &nbsp;<br>صافي السعر &nbsp;</th>
             </tr>
-            {% for orderschedule in nonduplicate_schedules %}
-            
-            {% if orderschedule.order_scheduler_book.evaluationbooksection|length > 1 %}
+            {% for orderschedule in nonduplicate_schedules %}            
             {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
-            <tr class="hide">
+            <tr>
               {% if forloop.first %}
               <td style="text-align:center;">{{forloop.parentloop.counter}}</td> <!-- Don't remove this column as it's needed for the row commands -->
               {% else %}
@@ -149,12 +147,9 @@
               
               <td>{{section.dirt_level}}<br> {% if section.dirt_level == 'Red' %}أحمر{% endif %}{% if section.dirt_level == 'Random' %}وسط{%endif%}</td>
               <td>{{section.size}} {{section.unit|default_if_none:''}}</td>
-              <td class="align-right">{{orderschedule.order_scheduler_book.total_cost|floatformat:'3'}}</td>
+              <td class="align-right">{{section.section_cost|floatformat:'3'}}</td>
             </tr>
             {% endfor %}
-            {% endif %}
-
-
             {% endfor %}
             
           </table>
@@ -181,11 +176,19 @@
               </td>
             </tr>
             
+          </table>
+          
+        </section>   
+
+        {% if order.evaluation.payment_method == 'BREAKDOWN' %}
+        <section id="policy">
+        
+          <table cellpadding="0" cellspacing="0">
+                  
             <!-- You can use attribute data-hide-on-quote="true" to hide specific information on quotes.
                  For example Invoicebus doesn't need amount paid and amount due on quotes  -->
-            {% if order.evaluation.payment_method == 'BREAKDOWN' %}
             <tr>
-              <td class="align-right" colspan="2"> <strong> BREAKDOWN PAYMENTMODE / قائمة التفاصيل </strong></td>
+              <td class="align-left" colspan="2"> <strong> BREAKDOWN PAYMENTMODE <br> قائمة التفاصيل</strong></td>
             </tr>
             
             <tr>
@@ -197,20 +200,17 @@
               <td>Payment After Cleaning<br>الدفع قبل التنظيف</td>
               <td class="medium">{{order.evaluation.after_cleaning_amount|floatformat:'3'}} KD </td>
             </tr>
-            {% endif %}
             
-          </table>
-          
-        </section>       
+          </table> 
+        </section>
+        {% endif %}    
+
 
         <div class="clearfix"></div>
         <section>
             <table cellpadding="0" cellspacing="0" class="table1">
             {% if request.user.user_type != 'AGENT' and request.user.user_type != 'ADMIN' and request.user.user_type != 'EVALUATOR' %} {% if order.evaluation.quatation_status != 'APPROVED' and order.evaluation.quatation_status != 'REJECTED' %}
             <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
-            <tr class="table1tr1">         
-              <td id="tnc-padding" colspan="2" class="align-right"><input type="checkbox" id="myCheck" required> <label><i> <u><a href="{% url 'customer:tc' %}"><b>I Agree the Terms & Conditions / أوافق على الشروط والأحكام</b></a></u></i></label> </td>
-            </tr>
             <tr class="table1tr2">
               <td colspan="2" class="align-right large">
               Payment Method
@@ -218,9 +218,12 @@
             <tr>
             <tr class="table1tr3">  
               <td colspan="2" class="align-right">
-              <input type="radio" id="payment_way_id" value="ONLINE" name="payment_way_customer" required>Online Payment / الدفع الالكتروني
+              <input type="radio" id="payment_way_id" value="ONLINE" name="payment_way_customer" required checked>Online Payment / الدفع الالكتروني
               <input type="radio" id="payment_way_id" value="CASH/CHEQUE" name="payment_way_customer" required>Cash/Cheque  نقدي/شيك
               </td>
+            </tr>
+            <tr class="table1tr1">         
+              <td id="tnc-padding" colspan="2" class="align-right"><input type="checkbox" id="myCheck" required> <label><i> <u><a href="{% url 'customer:tc' %}"><b>I Agree the Terms & Conditions / أوافق على الشروط والأحكام</b></a></u></i></label> </td>
             </tr>
             <tr class="table1tr4">
               <td colspan="2" class="align-right">
