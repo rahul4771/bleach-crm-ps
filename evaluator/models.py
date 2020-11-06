@@ -342,6 +342,8 @@ class EvaluationBookSection(models.Model):
 	colour      	= models.CharField(max_length=100,blank=True,null=True)
 	cause_of_stain	= models.CharField(max_length=100,blank=True,null=True)
 
+	section_cost    = models.FloatField(blank=True,null=True)
+
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)
 	updated              = models.DateTimeField(auto_now=True)

@@ -2213,6 +2213,7 @@ class MakeQuatationPhase2(IsAgent,View):
 						material      = request.POST.get('form'+str(form_count)+'_material'+str(i))
 						colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
 						cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
+						section_cost  = request.POST.get('form'+str(form_count)+'_sectioncost'+str(i))
 
 						
 						try:
@@ -2221,7 +2222,7 @@ class MakeQuatationPhase2(IsAgent,View):
 							section_name_arabic = section_name
 
 						#save section
-						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain)
+						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost)
 
 						#to save keynotes
 						try:
@@ -2444,6 +2445,7 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 							material      = request.POST.get('form'+str(form_count)+'_material'+str(i))
 							colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
 							cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
+							section_cost  = request.POST.get('form'+str(form_count)+'_sectioncost'+str(i))
 
 							old_section_id=request.POST.get('editform'+str(form_count)+'_section'+str(i))
 							
@@ -2454,10 +2456,10 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 							
 							if old_section_id:
 								#edit section
-								section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic)
+								section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic,section_cost=section_cost)
 							else:
 								#save section
-								section = EvaluationBookSection.objects.create(evaluation_book=old_book,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic)
+								section = EvaluationBookSection.objects.create(evaluation_book=old_book,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic,section_cost=section_cost)
 
 							#to save and update keynotes
 							try:
