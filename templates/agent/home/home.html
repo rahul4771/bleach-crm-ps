@@ -67,8 +67,7 @@
 <table class="main-table">
 <tbody>
 {% for order_schedule in order_schedules %}
-{% if order_schedule.order.payment_status == 'COMPLETED' or order_schedule.order.preamount_paid == order_schedule.order.evaluation.before_cleaning_amount %}
-<tr {% if order_schedule.color_status == 'green' %}class="green-line"{% elif order_schedule.color_status == 'yellow' %}class='yellow-line'{% elif order_schedule.color_status == 'orange' %}class="orange-line"{%else%}class="red-line"{% endif %}">
+<tr {% if order_schedule.days_left_coming < 0 %}class="red-line"{% elif order_schedule.days_left_coming == 0 %}class="orange-line"{% elif order_schedule.days_left_coming == 1 %}class="yellow-line"{% elif order_schedule.days_left_coming == 2 or order_schedule.days_left_coming == 3 %}class="green-line"{% endif %}>
 <td data-label="BLC Number" class="bold-text">{{order_schedule.order.evaluation.evaluation_id}}</td>
 <td data-label="Customer">{{order_schedule.order.evaluation.customer.name}}</td>
 <td data-label="Area">{{order_schedule.customer_address.area}}</td>
@@ -77,10 +76,9 @@
 <td data-label="" class="bold-text">{% if order_schedule.days_left_coming < 0 %}<h3 class="red-text-h3">Exp</h3>{% elif order_schedule.days_left_coming == 0 %}<h3 class="orange-text-h3">{{order_schedule.days_left_coming}}</h3> Days&#11015;{% elif order_schedule.days_left_coming == 1 %}<h3 class="yellow-text-h3">{{order_schedule.days_left_coming}}</h3> Days&#11015;{% elif order_schedule.days_left_coming == 2 or order_schedule.days_left_coming == 3 %}<h3 class="green-text-h3">{{order_schedule.days_left_coming}}</h3> Days&#11015;{% endif %}</td>
 <td class="hide-b order_schedule clickable-cursor" data-label="" data-confirmdate="{{order_schedule.start_at|date:'d-m-Y'}}" data-confirmtime="{{order_schedule.start_at|date:'h:i A'}}" data-duration="{{order_schedule.order_scheduler_book.cleaning_hours}}" data-blcno="{{order_schedule.order.evaluation.evaluation_id}}" data-customer_name="{{order_schedule.order.evaluation.customer.name}}" data-mobile_no="{{order_schedule.order.evaluation.customer.mobile_number}}" data-area="{{order_schedule.customer_address.area.name}}" data-service_type="{{order_schedule.order_scheduler_book.service_type.name}}" data-id="{{order_schedule.id}}"><span {% if order_schedule.days_left_coming < 0 %}class="red-bg"{% elif order_schedule.days_left_coming == 0 %}class="orange-bg"{% elif order_schedule.days_left_coming == 1 %}class="yellow-bg"{% elif order_schedule.days_left_coming == 2 or order_schedule.days_left_coming == 3 %}class="green-bg"{% endif %}>Click to Confirm</span></td>
 </tr>
-{% endif %}
 {% endfor %}
 {% for follow_up_schedule in follow_up_schedules %}
-<tr {% if follow_up_schedule.color_status == 'green' %}class="green-line"{% elif follow_up_schedule.color_status == 'yellow' %}class='yellow-line'{% elif follow_up_schedule.color_status == 'orange' %}class="orange-line"{%else%}class="red-line"{% endif %}>
+<tr {% if follow_up_schedule.days_left_coming < 0 %}class="red-line"{% elif follow_up_schedule.days_left_coming == 0 %}class="orange-line"{% elif follow_up_schedule.days_left_coming == 1 %}class="yellow-line"{% elif follow_up_schedule.days_left_coming == 2 or follow_up_schedule.days_left_coming == 3 %}class="green-line"{% endif %}>
 <td data-label="BLC Number" class="bold-text">{{follow_up_schedule.follow_up.investigation.order.order_no}}</td>
 <td data-label="Customer">{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.name}}</td>
 <td data-label="Area">{{follow_up_schedule.customer_address.area}}</td>
@@ -846,7 +844,8 @@ $('document').ready(function(){
 
       //To add cleaning schedules in cleaning calender  
       completed_calender = []; 
-      {% for old_schedule in calendar_order_schedules %} 
+      {% for old_schedule in calendar_order_schedules %}  
+
             old_starting_time_string      = '{{old_schedule.start_at|date:'H:i'}}'.replace(":",".");
             old_ending_time_string        = '{{old_schedule.end_at|date:'H:i'}}'.replace(":",".");
 
@@ -913,6 +912,7 @@ $('document').ready(function(){
 
        //for special cases like 2 days cleanings
        {% for sp_schedule in sp_calendar_order_schedules %}
+
        starting_time_string      = '{{sp_schedule.start_at|date:'H:i'}}'.replace(":",".");
        ending_time_string        = '{{sp_schedule.end_at|date:'H:i'}}'.replace(":",".");
        
@@ -933,6 +933,7 @@ $('document').ready(function(){
 
        //for special cases like 2 days cleanings
        {% for spp_schedule in spp_calendar_order_schedules %}
+
        starting_time_string      = '{{spp_schedule.start_at|date:'H:i'}}'.replace(":",".");
        ending_time_string        = '{{spp_schedule.end_at|date:'H:i'}}'.replace(":",".");
        

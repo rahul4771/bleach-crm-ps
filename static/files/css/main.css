@@ -189,11 +189,11 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .main-table-border th,
 .main-table-border td {padding: .525em; text-align: center; border : 1px solid #ccc; position:relative;}
 .main-table-border th {font-size: .85em; letter-spacing: .1em; text-transform: uppercase;}
- .blue-box{ background:#528ce6; position:absolute; left:2%; right:2%; width:75%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:25px;  font-size:12px; padding:0 20px; }
+ .blue-box{ background:#528ce6; position:absolute; left:2%; right:2%; width:75%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:20px;  font-size:12px; padding:0 20px; }
  .blue-box:hover{ background:#4980d4; cursor:pointer;} 
- .green-box{ background:#3cbbb1; position:absolute; left:52%; right:2%; width:30%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px; }
+ .green-box{ background:#3cbbb1; position:absolute; left:52%; right:2%; width:30%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:20px; font-size:12px; padding:0 20px; }
  .green-box:hover{ background:#31a9a0; cursor:pointer;}
-.orange-box{ background:#ff8c56; position:absolute; left:2%; right:2%; width:60%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px; }
+.orange-box{ background:#ff8c56; position:absolute; left:2%; right:2%; width:60%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:20px; font-size:12px; padding:0 20px; }
 .orange-box:hover{ background:#e77d4b; cursor:pointer;}
 .red-box{ background:#ec6262; position:absolute; left:0%; right:2%; width:40%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px;  }
 .yellow-box{ background:#f2ba1e; position:absolute; left:2%; right:2%; width:47%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px; }
@@ -748,7 +748,7 @@ label[for=favcity] select:focus {outline: 1px dotted #A9A9A9;}
 .date-wrapper-inner-resource{ position:absolute; right:90px; height: 40px; width:205px; }
 .date-togglewrapper{ position: absolute; right:0; top:-30px; }
 .date-wrapper .previous-button{ border:1px solid #ccc; border-right:none; margin:0 !important; padding:5px 6px 6px 13px;  background:#fff; position:absolute; left:0; border-top-left-radius:25px; border-bottom-left-radius:25px;  outline:none; cursor:pointer; font-size:20px;}
-.date-wrapper .date-box{ border:1px solid #ccc; margin:0 !important;border-right:none; border-left:none; padding:9px 5px 8px 5px; width:88px !important; border-radius:0px; background:#fff; position:absolute; left:27px;  outline:none;  cursor:pointer; font-size:15px; }
+.date-wrapper .date-box{ border:1px solid #ccc; margin:0 !important;border-right:none; border-left:none; padding:9px 5px 7.75px 5px; width:88px !important; border-radius:0px; background:#fff; position:absolute; left:27px;  outline:none;  cursor:pointer; font-size:15px; }
 .date-wrapper .next-button{ border:1px solid #ccc; margin:0 !important; border-left:none; border-right:none; padding:5px 6px 6px 13px; border-radius:0px; background:#fff;position:absolute; left:110px; outline:none;  cursor:pointer;font-size:20px;}
 .date-wrapper .current-date{ border:1px solid #ccc; margin:0 !important; padding:10px 12px 8px 5px; border-left:none;  border-radius:0px; background:#fff;position:absolute; left:135px;  border-top-right-radius:25px; border-bottom-right-radius:25px; outline:none; cursor:pointer; }
 .popup-flip { width:150px; margin: 0px; padding: 0px; text-align: center; }
