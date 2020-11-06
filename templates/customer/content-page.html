@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <!--
   Invoice template by invoicebus.com
@@ -16,15 +17,13 @@
     <meta name="author" content="Invoicebus">
 
     <meta name="template-hash" content="91216e926eab41d8aa403bf4b00f4e19">
-   
-    <link href="css/main.css" rel="stylesheet" type="text/css">
+    <link href="{% static 'files/css/main.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'files/css/template.css' %}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
     <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
-
-    <link rel="stylesheet" href="css/template.css">
   </head>
   <body>
     <div id="container">
@@ -41,166 +40,141 @@
           	</div>
 		  </div>
           <div class="logo_invoice">
-            <img src="img/logo.png" />
+            <img src="{% static 'files/images/logo.png' %}" />
           </div>
              
         </section>
       <section id="invoice-info">
         <div class="order-details-wrapper"><!--order-details-wrapper--> 
           <div class="order-details-left-stretch"><!--order-details-left-stretch-->
-          
-              <div class="details-head"> BLC100000020 Item 1 In-detail <div class="order-date"></div></div>	
+            {% for orderschedule in order.orderschedules %}
+              <div id="details{{orderschedule.id}}">
+              <div class="details-head"> {{order.order_no}} Item 1 In-detail <div class="order-date"></div></div>	
                <hr class="style-three" > 
             <div class="order-clean-Details-wrapper"><!--order-clean-Details-wrapper-->
                   <div class="order-clean-Details-widget order-clean-Details-widget-column1"><!--order-clean-Details-widget order-clean-Details-widget-column1-->
-              <div class="cleaning-img"><img src="img/cleaning.jpg"></div>
+              <div class="cleaning-img">
+              {% if orderschedule.order_scheduler_book.service_type.name == 'General Cleaning' %}
+                <img src="{% static 'files/images/service_general_cleaning.jpg' %}" width="300" height="150">
+                {% elif orderschedule.order_scheduler_book.service_type.name == 'Deep Cleaning' %}
+                <img src="{% static 'files/images/service_deep_cleaning.jpg' %}">
+                {% elif orderschedule.order_scheduler_book.service_type.name == 'Carpet Cleaning' %}
+                <img src="{% static 'files/images/Service_carpet_cleaning.jpg' %}">
+                {% elif orderschedule.order_scheduler_book.service_type.name == 'Upholstery Cleaning' %}
+                <img src="{% static 'files/images/Service_uppostry.jpg' %}">
+                {% elif orderschedule.order_scheduler_book.service_type.name == 'Kitchen Cleaning' %}
+                <img src="{% static 'files/images/Service_kitchen_cleaning.jpg' %}">
+                {% elif orderschedule.order_scheduler_book.service_type.name == 'Sterilization' %}
+                <img src="{% static 'files/images/Service_sanitization.jpg' %}">
+                {% endif %}
+              </div>
                     </div><!--order-clean-Details-widget order-clean-Details-widget-column1-->
                     
                   <div class="order-clean-Details-widget order-clean-Details-widget-column2"><!--order-clean-Details-widget order-clean-Details-widget-column2-->
-                        <div class="details-head align-left">Deep Cleaning</div>
+                        <div class="details-head align-left" style="font-size:18px;">{{orderschedule.order_scheduler_book.service_type.name}}</div>
                         <br>
-                        <div class="blue-bg-sm">One Time</div>
+                        {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
+                        <div class="blue-bg-sm">ONE TIME</div>
+                        {% else %}
+                        <div class="green-bg-sm">SUBSCRIPTION</div>
+                        {% endif %}
                         <br>
-                        <div class="green-bg-sm">Subscription</div>
-                        <br>
-                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Methord </div>
-                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Area Type</div>
-                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Location Type </div>
-                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Area </div>
+                    
+                    {% if orderschedule.order_scheduler_book.cleaning_method %}
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.cleaning_method}}</div>
+                    {% endif %}
+                    
+                    {% if orderschedule.order_scheduler_book.area_type %}
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.area_type}}</div>
+                    {% endif %}
+                    
+                    {% if orderschedule.order_scheduler_book.location_type %}
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.location_type}}</div>
+                    {% endif %}
+                    
+                    {% if orderschedule.customer_address.area %}
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.customer_address.area.name}}</div>
+                    {% endif %}
 
                     </div><!--order-clean-Details-widget order-clean-Details-widget-column2-->            
                     
                   <div class="order-clean-Details-widget order-clean-Details-widget-column3"><!--order-clean-Details-widget order-clean-Details-widget-column3-->
                     <br>
-                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> 20 May 2020, 11:40AM</div>
-                        <br>
-                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> 20 May 2020, 11:40AM</div>
-                        <br>
-                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> 20 May 2020, 11:40AM</div>
-                        <br>
-                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> Building Name, Number Street Namaem Number, Area, Governerate</div>
-                        <br>
-                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-credit-card orange-text" aria-hidden="true"></i> 256 KD</div>
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{orderschedule.start_at}}</div>
+                    <br>
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> {{orderschedule.customer_address.building}}, {{orderschedule.customer_address.street}}, {{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</div>
+                    <br>
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
+                    <br>
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-credit-card orange-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.total_cost|floatformat:2}} KD</div>
                     </div><!--order-clean-Details-widget order-clean-Details-widget-column3-->                        
                 </div><!--order-clean-Details-wrapper--> 
-  
+        
                 
                
         <hr class="divider" > 
         
+        {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
+        {% if section.id == sectionid %}
         
-        
-        
-        <div class="details-sub-head align-left">Section Name : Floor</div>
+        <div class="details-sub-head align-left">{{section.section_name}}</div>
         <br>
         <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
             <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
-             <div class="category-cleaning"><span class="labelcategory">Category</span> : Category</div>
-                <div class="category-cleaning"><span class="labelcategory">Dirt Level</span> : Dirt Level</div>
-                <div class="category-cleaning"><span class="labelcategory">Size</span> : 100 sqm</div>
-                <div class="category-cleaning"><span class="labelcategory">Floors</span> : 2</div>
-                <div class="category-cleaning"><span class="labelcategory">Appartments</span> : 1</div>
-                <div class="category-cleaning"><span class="labelcategory">Rooms</span> : 3</div>
-                <div class="category-cleaning"><span class="labelcategory">Wall Type</span>  : apple, banana, cat dog, elephant</div>
-                <div class="category-cleaning"><span class="labelcategory">Celing Type</span>  : apple, banana, cat dog, elephant</div>
-                <div class="category-cleaning"><span class="labelcategory">Floor Type</span>  : apple, banana, cat dog, elephant</div>
-                </div><!--filter-column-boxes filter-columns-left-->      
+                {% if section.category %}  
+                <div class="category-cleaning"><span class="labelcategory">Category</span> : {{section.category}}</div>
+                {% endif %}
+                <div class="category-cleaning"><span class="labelcategory">Dirt Level</span> : {{section.dirt_level}}</div>
+                {% if section.age %}
+                <div class="category-cleaning"><span class="labelcategory">Age</span> : {{section.age}}</div>
+                {% endif %}
+                <div class="category-cleaning"><span class="labelcategory">Size</span> : {{section.size}} {{section.unit|default_if_none:''}}</div>
+                {% if section.floor %}
+                <div class="category-cleaning"><span class="labelcategory">Floors</span> : {{section.floor}}</div>
+                {% endif %}
+                {% if section.apartment %}
+                <div class="category-cleaning"><span class="labelcategory">Apartments</span> : {{section.apartment}}</div>
+                {% endif %}
+                {% if section.room %}
+                <div class="category-cleaning"><span class="labelcategory">Rooms</span> : {{section.room}}</div>
+                {% endif %}
+                </div><!--filter-column-boxes filter-columns-left-->
+
+                <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+                {% if section.wall_type %}
+                <div class="category-cleaning"><span class="labelcategory">Wall Type</span>  : {{section.wall_type}}</div>
+                {% endif %}
+                {% if section.ceiling_type %}
+                <div class="category-cleaning"><span class="labelcategory">Celing Type</span>  : {{section.ceiling_type}}</div>
+                {% endif %}
+                {% if section.floor_type %}
+                <div class="category-cleaning"><span class="labelcategory">Floor Type</span>  : {{section.floor_type}}</div>
+                {% endif %}
+                {% if section.material %}
+                <div class="category-cleaning"><span class="labelcategory">Material</span>  : {{section.material}}</div>
+                {% endif %}
+                {% if section.colour %}
+                <div class="category-cleaning"><span class="labelcategory">Color</span>  : {{section.colour}}</div>
+                {% endif %}
+                {% if section.cause_of_stain %}
+                <div class="category-cleaning"><span class="labelcategory">Cause of Stain</span>  : {{section.cause_of_stain}}</div>
+                {% endif %}
+                </div><!--filter-column-boxes filter-columns-right-->
                 </div><!--filter-columns-wrapper--> 
         <br> 
         <div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
-            <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
-        
-            <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
-        
-            <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
-                
-            <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
-                
+            {% if section.sectionkeynotes %}
+            {% for keynote in section.sectionkeynotes %}
                 <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->        
-                
-                <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
+                    <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
+                    </div><!--evaluation-card-->        
+            {% endfor %}
+            {% endif %}        
         
-            <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
-        
-            <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
-        
-            <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
-                
-            <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
-                
-                <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->        
-                
-                <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
-        
-            <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
-        
-            <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
-        
-            <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
-                
-            <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
-                
-                <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->        
-                
-                <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
-        
-            <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
-        
-            <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
-        
-            <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
-                
-            <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->
-                
-                <div class="evaluation-card"><!--evaluation-card-->
-                <div class="evaluation-section"><label>Bathroom</label>5</div> 
-                </div><!--evaluation-card-->        
-        
-        </div><!--evaluation-card-wrapper-->   
+        </div><!--evaluation-card-wrapper-->
+        {% endif %}
+        {% endfor %}
+        {% endfor %} 
           </div><!--order-details-left-stretch-->
         
         </div><!--order-details-wrapper-->    
@@ -237,13 +211,13 @@
             <tr>
               <td style="background-color: white;" colspan="2" >
                  <div class="socil-media">
-    <ul>
-    	<li><a href="#"><img src="img/fb.svg"></a></li>
-        <li><a href="#"><img src="img/icon-twitter.svg"></a></li>
-        <li><a href="#"><img src="img/icon-insta.svg"></a></li>
-        <li><a href="#"><img src="img/icon-ut.svg"></a></li>
-        <li><a href="#"><img src="img/icon-in.svg"></a></li>
-    </ul>
+                  <ul>
+    	             <li><a href="https://www.facebook.com/BleachKw/"><img src="{% static 'files/images/fb.svg' %}"></a></li>
+                   <li><a href="#"><img src="{% static 'files/images/icon-twitter.svg' %}"></a></li>
+                   <li><a href="https://www.instagram.com/bleachkw/?hl=en"><img src="{% static 'files/images/icon-insta.svg' %}"></a></li>
+                   <li><a href="https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw"><img src="{% static 'files/images/icon-ut.svg' %}"></a></li>
+                   <li><a href="https://www.linkedin.com/company/bleachkw"><img src="{% static 'files/images/icon-in.svg' %}"></a></li>
+                  </ul>
     </div>
               </td>
             </tr>
@@ -257,7 +231,7 @@
     
     <table cellpadding="0" cellspacing="0" class="table3">
             <tr>
-              <td colspan="2" ><input name="print" type="button" class="print" value="Print / شارع محمد">&nbsp;<input name="download" type="button" class="download" value="Download / شارع محمد"> </td>
+              <td colspan="2" ><input name="print" type="button" class="print" value="Print / طباعة" onclick="printDiv();">&nbsp;<a href="/customer/order-detail/download/{{order.id}}/{{sectionid}}"><input name="download" type="button" class="download" value="Download / تحميل"></a> </td>
             </tr>            
           </table>
     
@@ -275,15 +249,21 @@
 </div><!--custom-model-main-->
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
   
-      <script id="rendered-js" >
-$(".Click-here").on('click', function () {
-  $(".custom-model-main").addClass('model-open');
-});
-$(".close-btn, .bg-overlay").click(function () {
-  $(".custom-model-main").removeClass('model-open');
-});
+<script id="rendered-js" >
+
+  function printDiv() 
+  {
+  window.print();
+  }
+
+  $(".Click-here").on('click', function () {
+    $(".custom-model-main").addClass('model-open');
+  });
+  $(".close-btn, .bg-overlay").click(function () {
+    $(".custom-model-main").removeClass('model-open');
+  });
  
-    </script>
+</script>
   
  
   </body>

@@ -748,9 +748,9 @@ label[for=favcity] select:focus {outline: 1px dotted #A9A9A9;}
 .date-wrapper-inner-resource{ position:absolute; right:90px; height: 40px; width:205px; }
 .date-togglewrapper{ position: absolute; right:0; top:-30px; }
 .date-wrapper .previous-button{ border:1px solid #ccc; border-right:none; margin:0 !important; padding:5px 6px 6px 13px;  background:#fff; position:absolute; left:0; border-top-left-radius:25px; border-bottom-left-radius:25px;  outline:none; cursor:pointer; font-size:20px;}
-.date-wrapper .date-box{ border:1px solid #ccc; margin:0 !important;border-right:none; border-left:none; padding:9px 5px; width:88px !important; border-radius:0px; background:#fff; position:absolute; left:27px;  outline:none;  cursor:pointer; font-size:15px; }
+.date-wrapper .date-box{ border:1px solid #ccc; margin:0 !important;border-right:none; border-left:none; padding:9px 5px 7.75px 5px; width:88px !important; border-radius:0px; background:#fff; position:absolute; left:27px;  outline:none;  cursor:pointer; font-size:15px; }
 .date-wrapper .next-button{ border:1px solid #ccc; margin:0 !important; border-left:none; border-right:none; padding:5px 6px 6px 13px; border-radius:0px; background:#fff;position:absolute; left:110px; outline:none;  cursor:pointer;font-size:20px;}
-.date-wrapper .current-date{ border:1px solid #ccc; margin:0 !important; padding:10px 12px 10px 5px; border-left:none;  border-radius:0px; background:#fff;position:absolute; left:135px;  border-top-right-radius:25px; border-bottom-right-radius:25px; outline:none; cursor:pointer; }
+.date-wrapper .current-date{ border:1px solid #ccc; margin:0 !important; padding:10px 12px 8px 5px; border-left:none;  border-radius:0px; background:#fff;position:absolute; left:135px;  border-top-right-radius:25px; border-bottom-right-radius:25px; outline:none; cursor:pointer; }
 .popup-flip { width:150px; margin: 0px; padding: 0px; text-align: center; }
 .popup-panel {width:350px; margin:0; padding:10px 15px;display: none;background: #fff; border: solid 1px #ccc;}
 .popup-button{background:#99cc33; margin:0 auto 0px auto;  padding:8px 6px; color:#fff;transition: .4s; border:none; cursor:pointer;}

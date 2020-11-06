@@ -1,15 +1,14 @@
-
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
-{% include "agent/common/header.html" %}    
+{% include "agent/common/header.html" %}
     
 <section class="content"><!--content-->
 <div class="container-fluid space topspace"><!--container-fluid space topspace-->
     <div class="welcome-wrapper"><!--welcome-wrapper-->
-        <h1 class="dashboard-head">Order # {{feedback_details.order_no}}</h1>
-        <div class="align-left"><span class="xtralrg-text white-text"> {{average_feedback|default_if_none:'0.0'|floatformat:'1'}} </span>
+        <h1 class="dashboard-head">Order {{feedback_details.order_no}}</h1>
+        <div class="align-left"><span class="xtralrg-text white-text"> {{average_feedback|default_if_none:'0.0'|floatformat:'1'}}</span>
         {% if average_feedback >= 4.5 %}
         <span class="fa  fa-2x fa-star checked yellow-text"></span>
         <span class="fa  fa-2x fa-star checked yellow-text"></span>
@@ -46,8 +45,8 @@
         <span class="fa  fa-2x fa-star white-text"></span>
         <span class="fa  fa-2x fa-star white-text"></span>
         <span class="fa  fa-2x fa-star white-text"></span>
-        {% endif %}
-        </div>
+        {% endif %} 
+         </div>
     </div><!--welcome-wrapper-->
             
         
@@ -55,33 +54,13 @@
 	<div class="cleaning-Order-wrapper"><!--cleaning-Order-wrapper-->
     	<div class="cleaning--left-stretch"><!--cleaning--left-stretch-->
         	
-             <div class="common-sub-head align-left">Feedback</div> 
- 			 
-                  <div class="cleaning-column-wrapper"><!--cleaning-column-wrapper-->
-					<div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
-                	<div class="details-head align-left">{{feedback_details.order_no}}</div>
-                	<div class="green-bg-lg">Paid</div><div class="blue-bg-lg">On-going</div>
-                    <div class="area-bold">Farwania</div>
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Types of Cleaning</div>
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Types of Area</div>
-            	</div><!--cleaning-column-widget cleaning-column-widget-column1-->
-                
-                <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
-                    <div class="common-gray-text align-left">May 20, 2020 at 11:40 AM</div>
-                    <div class="common-gray-text align-left yellow-text lg-text">150 KD</div>
-                	<div class="common-gray-text align-left sm-text gray-text">2 Cleaners</div>
-                    
-                    <div class="profile-pic-line"><img src="images/profile-pic.png"></div><div class="profile-pic-line"><img src="images/profile-pic.png"></div><div class="profile-pic-line"><img src="images/profile-pic.png"></div>
-            	</div><!--cleaning-column-widget cleaning-column-widget-column2-->
-            </div><!--cleaning-column-wrapper-->
-            
-            <br><br>
- <div class="common-sub-head align-left">Feedback</div> 
+      
+   
 <div class="investigation-columns"><!--investigation-columns-->
 
         <div class="investigation-columns-middle"><!--investigation-columns-middle-->
         <div class="right-date">{{feedback_details.feedback_marked_date|default_if_none:''}}</div>
-               
+        <br>
         <div class="feedback-list"><!--feedback-list-->
         <ul>
         {% for feedback in feedback_details.feedbacks %}    
@@ -125,7 +104,7 @@
         <span class="fa fa-star"></span>
         {% endif %}
         </div>
-        {% endfor %}
+        {% endfor %}        
         </ul>
         </div><!--feedback-list-->
          
@@ -136,7 +115,7 @@
  
 </div><!--investigation-columns-->
      	
-<div class="details-sub-head align-left">Other Feedback</div> 
+<div class="details-sub-head align-left">Other Feedbacks</div> 
 <br>       
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
@@ -149,47 +128,59 @@
 </tr>
 </thead>
 <tbody>
-    <tr>
-    <td class="yellow-line">BLC20200405</td>
-    <td>Sura</td>
-    <td>General Cleaning</td>
-    <td class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td>
+    {% for other_feedback in other_feedbacks %}
+    <tr class="clickable-row" data-href="{% url 'agent:agent-feedbackadvanced' other_feedback.evaluation.customer.id other_feedback.id %}">
+    <td class="yellow-line">{{other_feedback.evaluation.evaluation_id}}</td>
+    <td>
+    {% for evaluation_detail in other_feedback.evaluation.order_evaluation_details %}
+    {{evaluation_detail.address.area.name}}
+    {% endfor %}
+    </td>
+    <td>
+    {% for evaluation_detail in other_feedback.evaluation.order_evaluation_details %}     
+    {% for evaluation_book in evaluation_detail.evaluation_book %}
+    {{evaluation_book.service_type.name}}
+    {% endfor %}
+    </br>
+    {% endfor %}
+    </td>
+    <td class="align-center">{% if other_feedback.avg_starring == 5 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        {% elif other_feedback.avg_starring < 5 and other_feedback.avg_starring >= 4 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        {% elif other_feedback.avg_starring < 4 and other_feedback.avg_starring >= 3 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% elif other_feedback.avg_starring < 3 and other_feedback.avg_starring >= 2 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% elif other_feedback.avg_starring < 2 and other_feedback.avg_starring >= 1 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% else %}
+        <span>Not Rated</span>
+        {% endif %} </td>
     </tr>
-    
-    <tr>
-    <td class="yellow-line">BLC20200402</td>
-    <td>Qurtuba</td>
-    <td>General Cleaning</td>
-    <td class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td>
-    </tr>
-    
-    <tr>
-    <td class="yellow-line">BLC20200403</td>
-    <td>Sulaibikhat</td>
-    <td>Part Time Service</td>
-    <td class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td>
-    </tr>
-     
-    <tr>
-    <td class="yellow-line">BLC20200404</td>
-    <td>Doha</td>
-    <td>Part Time Service</td>
-    <td class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td>
-        </tr>  
-
-	<tr>
-    <td class="yellow-line">BLC20200405</td>
-    <td>Rawda</td>
-    <td>General Cleaning</td>
-    <td class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td> 
-    </tr> 
- 
-	<tr>
-    <td class="yellow-line">BLC20200407</td>
-    <td>Kaifan</td>
-    <td>Uppostry Cleaning</td>
-    <td class="align-center"><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span> </td>
-    </tr> 
+    {% empty %}
+    <tr><td></td><td></td><td>No Data</td><td></td>
+    {% endfor %} 
 </tbody>
 <tfoot>
  
@@ -216,36 +207,33 @@
 		</div><!--cleaning--left-stretch-->  
         
         <div class="cleaning--right-fixed"><!--cleaning--right-fixed-->
-        	<div class="order-card-column whitebg red-border"><!--order-card-column-->
+        	<div class="order-card-column whitebg red-border clickable-row-list" data-href="{% url 'agent:agent-client-orders' client_details.id %}"><!--order-card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="images/card-orders-icon.svg"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-orders-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Orders</h1>
-            	<h2 class="red-text"><label>Active<span>2</span></label> </h2>
-            	<p><label>Total<span>5</span></label></p>
+            	<h2 class="red-text"><label>Active<span>{{active_orders_count}}</span></label> </h2>
+            	<p><label>Total<span>{{total_orders_count}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--order-card-column-->
         <div class="right-bgwrapper"><!--right-bgwrapper-->    
-            <div class="profile-pic"><img src="images/profile-pic.png"></div>
-            <div class="client-name">Mr. John Doe</div>
-            <div class="common-gray-text">+965 123 4564</div>
-            <div class="common-gray-text">johndoe@gmail.com</div>
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+            <div class="client-name">{{client_details.name}}</div>
+            <div class="common-gray-text">{{client_details.mobile_number}}</div>
+            <div class="common-gray-text">{{client_details.email}}</div>
             <br>
             <hr class="hr">
-            <div class="common-gray-text">Comapany Name : <span class="bold-text">Megadigit</span></div>
-            <div class="common-gray-text">Nationality : <span class="bold-text">Kuwaity</span></div>
-            <div class="common-gray-text">Other Contact : <span class="bold-text">+965 554666</span></div>
+            <div class="common-gray-text">Comapany Name : <span class="bold-text">{{client_details.company}}</span></div>
+            <div class="common-gray-text">Nationality : <span class="bold-text">{{client_details.nationality}}</span></div>
+            <div class="common-gray-text">Other Contact : <span class="bold-text">{{client_details.phone_number}}</span></div>
             <hr class="hr">
             <br>
-            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address 1: Appartment</div>
-            <div class="address">Building Name and, Number Street Name and Number, Area, Governerate</div>
+            {% for address in client_details.customer_addresses %}
+            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address {{forloop.counter}}: {{address.apartment}}</div>
+            <div class="address">{{address.building}}, {{address.street}}, {{address.area.name}}, {{address.governorate.name}}</div>
             <br>
-            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address 2: Appartment</div>
-            <div class="address">Building Name and, Number Street Name and Number, Area, Governerate</div>
-            <br>        
-            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address 3: Appartment</div>
-            <div class="address">Building Name and, Number Street Name and Number, Area, Governerate</div> 
+            {% endfor %} 
         </div><!--right-bgwrapper-->     
         </div><!--cleaning--right-fixed-->  
 	</div><!--cleaning-Order-wrapper-->
