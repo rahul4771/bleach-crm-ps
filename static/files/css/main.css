@@ -669,6 +669,7 @@ label[for=favcity] select::-ms-expand { display: none;}
 label[for=favcity] :-moz-any(select) { width: 100%; }
 label[for=favcity].ie9 select {width: 100%;}
 label[for=favcity] select:focus {outline: 1px dotted #A9A9A9;}
+.keynote_field { border: 1px solid #bebebf; background: white; padding: 8px 20px 7px 8px; width: 100%; font-weight:normal; cursor: pointer;}
 .checkin-wrapper-row { display: flex; margin:0 0 15px 0; padding:0; text-align:left; align-items: center; /*background:#eeeeef;*/ border:1px solid #d0d1d2; }
 .checkin-forms-boxes > div { flex: 1; } 
 .checkin-form-left { padding:5px 25px; text-align: left; color:#767676; }
