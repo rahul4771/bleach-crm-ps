@@ -101,7 +101,7 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .card-innerwrapper .column-right h1{ color:#737373; font-size:18px !important; font-weight:400; margin:0 !important; padding:0 0 6px 0 !important;}
 .card-innerwrapper .column-right h2{ font-size:25px; font-weight:400; margin:0; padding:0px 0 0 0 !important;}
 .card-innerwrapper .column-right p{ font-size:15px; font-weight:400; color:#8a8a8a; margin:0; padding:0px 0 0 0;}
-.card-innerwrapper .column-right label{ width:100%; font-weight:normal; display:inline-block; position:relative; margin:0 !important; padding:0; text-shadow: 1px 2px 3px #0000000d!important; }
+.card-innerwrapper .column-right label{ width:100%; font-weight:normal; display:inline-block; position:relative; margin:0 !important; padding:0 !important; }
 .card-innerwrapper .column-right label span{ display:inline-block; position:absolute; right:0; }
 .user-type-wrapper { margin:0; padding:0; overflow:hidden; }
 .user-type-wrapper ul{ margin:0; padding:0; position:relative;  }
