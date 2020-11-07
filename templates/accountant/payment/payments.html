@@ -123,10 +123,8 @@
                 <label for="favcity">
                 <select name="status_filter" id="status_filter_id">
                 <option value=''>---ALL---</option>
-                <option value="APPROVED" {% if fil_status == 'APPROVED' %}selected{% endif %}>APPROVED</option>
-                <option value="PENDING" {% if fil_status == 'PENDING' %}selected{% endif %}>PENDING</option>
-                <option value="REJECTED" {% if fil_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
-                <option value="EXPIRED" {% if fil_status == 'EXPIRED' %}selected{% endif %}>EXPIRED</option>                
+                <option value="APPROVED" {% if fil_status == 'APPROVED' %}selected{% endif %}>COMPLETED</option>
+                <option value="PENDING" {% if fil_status == 'PENDING' %}selected{% endif %}>PENDING</option>                
               </select>
                 </label>
   </div><!--ticket-form-right-->
@@ -147,12 +145,12 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label"> <label>Payment Policy</label></div>
                 <label for="favcity">
-                <select name="area_filter" id="area_filter_id">
+                <select name="payment_policy" id="payment_policy_id">
                 <option value=''>---ALL---</option> 
                 
-                <option value='PREPAID' {% if fil_payment == 'PREPAID' %}selected{% endif %}>PREPAID</option>
-                <option value='POSTPAID' {% if fil_payment == 'POSTPAID' %}selected{% endif %}>POSTPAID</option>
-                <option value='BREAKDOWN' {% if fil_payment == 'BREAKDOWN' %}selected{% endif %}>BREAKDOWN</option>
+                <option value='PREPAID' {% if fil_payment_policy == 'PREPAID' %}selected{% endif %}>PREPAID</option>
+                <option value='POSTPAID' {% if fil_payment_policy == 'POSTPAID' %}selected{% endif %}>POSTPAID</option>
+                <option value='BREAKDOWN' {% if fil_payment_policy == 'BREAKDOWN' %}selected{% endif %}>BREAKDOWN</option>
                            
               </select>
                 </label>
@@ -355,8 +353,8 @@ $("#governorate_filter_id").change(function(){
 
 function set_params_go(args)
 {
-var url='{% url 'accountant:accountant-orders' %}';
-var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),
+var url='{% url 'accountant:accountant-payments' %}';
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val(),
 };
 for(key in args) 
     params[key]=args[key];

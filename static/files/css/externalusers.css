@@ -233,7 +233,7 @@ b, strong, .bold {
 }
 .table tr{ border-bottom:1px solid #A0A0A0;}
 .table th { background:#26A8E0; color:#FFF; padding:5px 0px; font-weight:500; font-family: Sanchez, Serif ; }
-.table td { padding:7px 0px; vertical-align:middle !important; text-shadow: 1px 2px 3px #00000045;}
+.table td { padding:7px 0px; vertical-align:middle !important;}
 .table .hide{ border:none !important;}
 
 
@@ -567,19 +567,19 @@ text-align: right;
   border: 1px solid #999;
   padding: 6px 15px 6px 35px;
   margin-bottom: 10px;
-  background: url(../img/print.svg) no-repeat left #fff; background-size:20px; background-position: 12px; 
+  background: url(../images/print.svg) no-repeat left #fff; background-size:20px; background-position: 12px; 
   cursor: pointer; transition: .4s;
  }
-.print:hover{ background: url(../img/print.svg) no-repeat left #E5E5E5; background-size:20px; background-position: 12px; }
+.print:hover{ background: url(../images/print.svg) no-repeat left #E5E5E5; background-size:20px; background-position: 12px; }
 
 .download { font-size:15px; color:#555;
   border: 1px solid #999;
   padding: 6px 15px 6px 35px;
   margin-bottom: 10px;
-  background: url(../img/download.svg) no-repeat left #fff; background-size:20px; background-position: 12px; 
+  background: url(../images/download.svg) no-repeat left #fff; background-size:20px; background-position: 12px; 
   cursor: pointer; transition: .4s;
  }
-.download:hover{ background: url(../img/download.svg) no-repeat left #E5E5E5; background-size:20px; background-position: 12px; }
+.download:hover{ background: url(../images/download.svg) no-repeat left #E5E5E5; background-size:20px; background-position: 12px; }
 .bold-text{ font-weight:bold; font-family: 'Open Sans', Sans-serif;}
 
 .custom-model-main { text-align: center; overflow: hidden; position: fixed; top: 0; right: 0; bottom: 0; left: 0; /* z-index: 1050; */ -webkit-overflow-scrolling: touch; outline: 0; opacity: 0; -webkit-transition: opacity 0.15s linear, z-index 0.15; -o-transition: opacity 0.15s linear, z-index 0.15; transition: opacity 0.15s linear, z-index 0.15; z-index: -1; overflow-x: hidden; overflow-y: auto;}
@@ -621,4 +621,15 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
     size: Letter;
     margin-right:100px;
     margin: 0.2in 9in 0.2in 0.44in;
+}
+
+
+/* table automatic row count */
+.css-serial {
+  counter-reset: serial-number;  /* Set the serial number counter to 0 */
+}
+
+.css-serial td:first-child:before {
+  counter-increment: serial-number;  /* Increment the serial number counter */
+  content: counter(serial-number);  /* Display the counter */
 }

@@ -195,6 +195,7 @@ class FollowUpScheduler(models.Model):
 	customer_address	= models.ForeignKey(Address,blank=True,null=True)
 	work_status 	    = models.CharField(max_length=50,blank=True,null=True,choices=FOLLOWUP_SHEDULER_STATUS)
 	status      		= models.CharField(max_length=50,blank=True,null=True,default='WAITING',choices=SCHEDULER_CHOICES)
+	
 	is_active       	= models.BooleanField(null=False,blank=True,default=True)
 	created         	= models.DateTimeField(auto_now_add=True)
 	updated         	= models.DateTimeField(auto_now=True)

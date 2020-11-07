@@ -98,7 +98,7 @@
         
         <section >
           
-          <table cellpadding="0" cellspacing="0" class="table">
+          <table cellpadding="0" cellspacing="0" class="table css-serial">
           
             <tr>
               <th width="5%"></th> <!-- Dummy cell for the row number and row commands -->
@@ -111,12 +111,7 @@
             {% for orderschedule in nonduplicate_schedules %}            
             {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
             <tr>
-              {% if forloop.first %}
-              <td style="text-align:center;">{{forloop.parentloop.counter}}</td> <!-- Don't remove this column as it's needed for the row commands -->
-              {% else %}
-              <td style="text-align:center;">&nbsp;</td> <!-- Don't remove this column as it's needed for the row commands -->
-              {% endif %}
-              
+              <td style="text-align:center;"></td> <!-- Don't remove this column as it's needed for the row commands -->
               <td><a href="#">{{orderschedule.order_scheduler_book.service_type}}-{{orderschedule.customer_address.area.name}}-{{section.section_name}} <br> {{orderschedule.order_scheduler_book.service_type.name_arabic}}-{{orderschedule.customer_address.area.name_arabic}}-{{section.section_name_arabic}}</a></td>
               
               <td>{{section.dirt_level}}<br> {% if section.dirt_level == 'Red' %}أحمر{% endif %}{% if section.dirt_level == 'Random' %}وسط{%endif%}</td>

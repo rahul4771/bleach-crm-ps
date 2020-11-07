@@ -201,6 +201,15 @@ def GetCleaningInfo(request):
 	cleaning_dict['start_at_time']   = (schedule.start_at+timedelta(hours=3)).strftime('%I:%M %p')
 	cleaning_dict['duration']		 = schedule.order_scheduler_book.cleaning_hours
 
+	if schedule.work_status == 'CLEANING_FULFILLED':
+		cleaning_dict['status'] = 'Cleaning Completed'
+	elif schedule.work_status == 'CLEANING_TEAM_ASSIGNED' or schedule.work_status == 'CLEANING_FULFILLED':
+		cleaning_dict['status'] = 'Cleaning Team Assigned'
+	elif schedule.status == 'CONFIRMED':
+		cleaning_dict['status'] = 'Date Confirmed'
+	else:
+		cleaning_dict['status'] = 'Waiting For Date Confirmation'
+
 	#cleaners and team leader
 	cleaners_info ={}
 
@@ -208,6 +217,7 @@ def GetCleaningInfo(request):
 	for team in schedule.cleaning_team:
 		cleaning_dict['team_leader'] 	= team.team_leader.name
 		cleaning_dict['team_leader_id'] = team.team_leader.id
+		cleaning_dict['stl']            = team.created_by.name
 		for cleaner in team.cleaning_member:
 			cleaner_dict = {}
 
@@ -234,6 +244,15 @@ def GetFollowupInfo(request):
 	cleaning_dict['start_at_time']   = (schedule.start_at+timedelta(hours=3)).strftime('%I:%M %p')
 	cleaning_dict['duration']		 = schedule.follow_up.cleaning_hours
 
+	if schedule.work_status == 'FOLLOW_UP_CLEANING_FULFILLED':
+		cleaning_dict['status'] = 'Cleaning Completed'
+	elif schedule.work_status == 'FOLLOW_UP_TEAM_ASSIGNED' or schedule.work_status == 'FOLLOW_UP_CLEANING_IN_PROGRESS':
+		cleaning_dict['status'] = 'Cleaning Team Assigned'
+	elif schedule.status == 'CONFIRMED':
+		cleaning_dict['status'] = 'Date Confirmed'
+	else:
+		cleaning_dict['status'] = 'Waiting For Date Confirmation'
+
 	#cleaners and team leader
 	cleaners_info ={}
 
@@ -241,6 +260,7 @@ def GetFollowupInfo(request):
 	for team in schedule.cleaning_team:
 		cleaning_dict['team_leader'] 	= team.team_leader.name
 		cleaning_dict['team_leader_id'] = team.team_leader.id
+		cleaning_dict['stl']            = team.created_by.name
 		for cleaner in team.cleaning_member:
 			cleaner_dict = {}
 
@@ -536,7 +556,7 @@ class AgentHome(IsAgent,View):
 		#Order and Followup Schedules for date confirmation
 		confirm_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
 		
-		order_schedules		  = OrderScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(4)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').filter(Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)))
+		order_schedules		  = OrderScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(4)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') ))
 		
 		follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(4)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
 		
@@ -559,7 +579,7 @@ class AgentHome(IsAgent,View):
 		schedule_date_end   = schedule_date_start+timedelta(1)
 
 		try:
-			calendar_order_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).filter(Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0))) 
+			calendar_order_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') )) 
 		except:
 			calendar_order_schedules 	= None
 
@@ -569,7 +589,7 @@ class AgentHome(IsAgent,View):
 			calendar_followup_schedules = None
 
 		try:
-			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).filter(Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)))
+			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') ))
 		except:
 			sp_calendar_order_schedules = None
 
@@ -579,7 +599,7 @@ class AgentHome(IsAgent,View):
 			sp_calendar_followup_schedules = None
 
 		try:
-			spp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)))
+			spp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') ))
 		except:
 			spp_calendar_order_schedules = None
 
