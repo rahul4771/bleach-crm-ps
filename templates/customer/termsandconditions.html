@@ -30,13 +30,12 @@
       <div class="right-invoice">
         <section id="memo">
           <div class="company-info">
-            <div>Bleach Cleaning Services<div class="company-name-arabic"> شركة بلـــيتش الـــعالمــــية
-    لمقاولات تنظيف المباني والمدن</div> 
+            <div>Bleach Cleaning Services<div class="company-name-arabic"> شركة بلـــيتش الـــعالمـاني والمدن</div> 
       </div>            
           </div>
 
-          <div class="logo">
-            <img src="{% static '/files/images/bleach logo.png' %}" />
+          <div class="logo_invoice">
+            <img src="{% static 'files/images/bleach logo.png' %}" />
           </div>
         </section>
 
@@ -236,9 +235,82 @@
 
 <div class="clearfix"></div>
  
-        
-         
-      </div>
-    </div>
-  </body>
+<section>
+  <table cellpadding="0" cellspacing="0" class="table2">
+  <tr>
+    <td class="align-left">
+      <b>
+      Bleach International Contracting Company      
+      for Cleaning Building & Cities WLL
+      </b>
+      <br>Office: No. 3 ● Building No. 8 ● Block 13
+      <br>Qibila Building ● Mohamed Al Ghanim Street
+      <br>Kuwait City ● PO Box 4489 ● Safat 13045 
+      <br>CR No. 362934 ●  Tel 1882707
+      <br>Email : customercare@bleach-kw.com</td>
+
+      <td class="align-right">
+        <b>
+        شركة بلـــيتش الـــعالمــــية 
+        لمقاولات تنظيف المباني والمدن
+        </b>
+        <br>المكتب: رقم 3 ● مبنى رقم 8 ● بلوك 13
+        <br>عمارة قبيلة ● شارع محمد الغانم
+        <br>مدينة الكويت ● ص.ب 4489 ● الصفاة 13045
+        <br>رقم السجل التجاري 362934 ● هاتف 1882707
+    
+  </tr>
+  <tr>
+    <td style="background-color: white;" colspan="2" >
+       <div class="socil-media">
+<ul>
+      <li><a href="https://www.facebook.com/BleachKw/"><img src="{% static 'files/images/fb.svg' %}"></a></li>
+     <li><a href="#"><img src="{% static 'files/images/icon-twitter.svg' %}"></a></li>
+     <li><a href="https://www.instagram.com/bleachkw/?hl=en"><img src="{% static 'files/images/icon-insta.svg' %}"></a></li>
+     <li><a href="https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw"><img src="{% static 'files/images/icon-ut.svg' %}"></a></li>
+     <li><a href="https://www.linkedin.com/company/bleachkw"><img src="{% static 'files/images/icon-in.svg' %}"></a></li>
+</ul>
+</div>
+    </td>
+  </tr>
+     
+</table>
+</section>
+
+
+</div>
+</div>
+
+<table cellpadding="0" cellspacing="0" class="table3">
+  <tr>
+    <td colspan="2" ><input name="print" type="button" class="print" value="Print / شارع محمد">&nbsp;<input name="download" type="button" class="download" value="Download / شارع محمد"> </td>
+  </tr>            
+</table>
+
+<div class="custom-model-main"><!--custom-model-main-->
+<div class="custom-model-inner">  <!--custom-model-inner-->      
+<div class="close-btn">×</div>
+<div class="custom-model-wrap"><!--custom-model-wrap-->
+<div class="pop-up-content-wrap"><!--pop-up-content-wrap-->
+  <div class="bold-text">Do you want to pay now ? <br> مبني 3، قطعة 13 ، شارع محمد الغانم ، مدينة الكويت  </div>  
+  <div><input class="assignButton" name="submit" type="button" value="Approve / شارع محمد"> <input class="cancel-Button" name="cancel" type="button" value="Reject / شارع محمد"></div>
+</div><!--pop-up-content-wrap-->
+</div><!--custom-model-wrap-->  
+</div><!--custom-model-inner-->   
+<div class="bg-overlay"></div>
+</div><!--custom-model-main-->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+
+<script id="rendered-js" >
+$(".Click-here").on('click', function () {
+$(".custom-model-main").addClass('model-open');
+});
+$(".close-btn, .bg-overlay").click(function () {
+$(".custom-model-main").removeClass('model-open');
+});
+
+</script>
+
+
+</body>
 </html>
