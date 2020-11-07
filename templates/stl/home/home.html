@@ -1268,7 +1268,7 @@ $('document').ready(function(){
         dataType: 'json',
 
         success: function (data) { 
-                  $('#blcno_cleaning_id').html(data['order_no']);
+                  $('#blcno_cleaning_id').html(data['order_no']+'<br><br>'+data['status']);
                   $('#address_cleaning_id').html(data['address']);
                   $('#customername_cleaning_id').html(data['customer']);
                   $('#mobileno_cleaning_id').html(data['customer_mobile']);  
@@ -1277,9 +1277,9 @@ $('document').ready(function(){
                   $('#duration_cleaning_id').html(data['duration']+' Hours');
 
                   //Append Team Leader and team members Based on Conditions
-                  if(data['team_leader'])
+                  if(data['team_leader'] || data['stl'])
                   {
-                    $('#team_leader_cleaning_id').html('<td colspan="3">Team Leader:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> &nbsp;</td>');
+                    $('#team_leader_cleaning_id').html('<td colspan="3">Team Leader:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
                   }     
                   else
                   {
@@ -1419,7 +1419,7 @@ $('.collapsible1-close').click(function(){
         dataType: 'json',
 
         success: function (data) { 
-                  $('#blcno_followup_id').html(data['order_no']);
+                  $('#blcno_followup_id').html(data['order_no']+'<br><br>'+data['status']);
                   $('#address_followup_id').html(data['address']);
                   $('#customername_followup_id').html(data['customer']);
                   $('#mobileno_followup_id').html(data['customer_mobile']);  
@@ -1428,9 +1428,9 @@ $('.collapsible1-close').click(function(){
                   $('#duration_followup_id').html(data['duration']+' Hours');
 
                   //Append Team Leader and team members Based on Conditions
-                  if(data['team_leader'])
+                  if(data['team_leader'] || data['stl'])
                   {
-                    $('#team_leader_followup_id').html('<td colspan="3">Team Leader:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> &nbsp;</td>');
+                    $('#team_leader_followup_id').html('<td colspan="3">Team Leader:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
                   }     
                   else
                   {

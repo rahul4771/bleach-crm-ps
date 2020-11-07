@@ -201,6 +201,15 @@ def GetCleaningInfo(request):
 	cleaning_dict['start_at_time']   = (schedule.start_at+timedelta(hours=3)).strftime('%I:%M %p')
 	cleaning_dict['duration']		 = schedule.order_scheduler_book.cleaning_hours
 
+	if schedule.work_status == 'CLEANING_FULFILLED':
+		cleaning_dict['status'] = 'Cleaning Completed'
+	elif schedule.work_status == 'CLEANING_TEAM_ASSIGNED' or schedule.work_status == 'CLEANING_FULFILLED':
+		cleaning_dict['status'] = 'Cleaning Team Assigned'
+	elif schedule.status == 'CONFIRMED':
+		cleaning_dict['status'] = 'Date Confirmed'
+	else:
+		cleaning_dict['status'] = 'Waiting For Date Confirmation'
+
 	#cleaners and team leader
 	cleaners_info ={}
 
@@ -208,6 +217,7 @@ def GetCleaningInfo(request):
 	for team in schedule.cleaning_team:
 		cleaning_dict['team_leader'] 	= team.team_leader.name
 		cleaning_dict['team_leader_id'] = team.team_leader.id
+		cleaning_dict['stl']            = team.created_by.name
 		for cleaner in team.cleaning_member:
 			cleaner_dict = {}
 
@@ -234,6 +244,15 @@ def GetFollowupInfo(request):
 	cleaning_dict['start_at_time']   = (schedule.start_at+timedelta(hours=3)).strftime('%I:%M %p')
 	cleaning_dict['duration']		 = schedule.follow_up.cleaning_hours
 
+	if schedule.work_status == 'FOLLOW_UP_CLEANING_FULFILLED':
+		cleaning_dict['status'] = 'Cleaning Completed'
+	elif schedule.work_status == 'FOLLOW_UP_TEAM_ASSIGNED' or schedule.work_status == 'FOLLOW_UP_CLEANING_IN_PROGRESS':
+		cleaning_dict['status'] = 'Cleaning Team Assigned'
+	elif schedule.status == 'CONFIRMED':
+		cleaning_dict['status'] = 'Date Confirmed'
+	else:
+		cleaning_dict['status'] = 'Waiting For Date Confirmation'
+
 	#cleaners and team leader
 	cleaners_info ={}
 
@@ -241,6 +260,7 @@ def GetFollowupInfo(request):
 	for team in schedule.cleaning_team:
 		cleaning_dict['team_leader'] 	= team.team_leader.name
 		cleaning_dict['team_leader_id'] = team.team_leader.id
+		cleaning_dict['stl']            = team.created_by.name
 		for cleaner in team.cleaning_member:
 			cleaner_dict = {}
 
