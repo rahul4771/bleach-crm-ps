@@ -8,7 +8,7 @@
 <section class="content"><!--content-->
 <div class="container-fluid space topspace"><!--container-fluid space topspace-->
     <div class="welcome-wrapper"><!--welcome-wrapper-->
-        <h1 class="dashboard-head">Order # {{feedback_details.order_no}}</h1>
+        <a href="/agent/client/order/details/{{feedback_details.id}}"><h1 class="dashboard-head">Order # {{feedback_details.order_no}}</h1></a>
         <div class="align-left"><span class="xtralrg-text white-text"> {{average_feedback|default_if_none:'0.0'|floatformat:'1'}} </span>
         {% if average_feedback >= 4.5 %}
         <span class="fa  fa-2x fa-star checked yellow-text"></span>
@@ -73,31 +73,41 @@
                     {% else %}
                     <div class="yellow-bg-lg">Waiting</div>
                     {% endif %}
-                    {% for address in client_details.customer_addresses %}
-                    <div class="area-bold">{{address.area}}</div>
-                    {% endfor %}
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> 
+
+                    {% for orderschedule in order.orderschedules %}
+                    <div class="area-bold">{{orderschedule.customer_address.area.name}}</div>
+
                     
-                    {% for scheduler in order.order_secheduler_feedback %}
-                    {{scheduler.order_scheduler_book.service_type.name}}
-                    {% endfor %}
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> 
+                    {{orderschedule.order_scheduler_book.service_type.name}}
+                    </div>
+
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i>
+                     
+                    {{orderschedule.order_scheduler_book.area_type}}
                     
                     </div>
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i>
-                     {% for scheduler in order.order_secheduler_feedback %}
-                    {{scheduler.order_scheduler_book.area_type.name}}
                     {% endfor %}
-                     </div>
+
             	</div><!--cleaning-column-widget cleaning-column-widget-column1-->
                 
+                {% for orderschedule in order.orderschedules %}
                 <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
-                    <div class="common-gray-text align-left">{{order.evaluation.created}}</div>
-                    <div class="common-gray-text align-left yellow-text lg-text">{{order.evaluation.total_cost}} KD</div>
-                	<div class="common-gray-text align-left sm-text gray-text">{{order.total_cleaners}} cleaners</div>
+                    <div class="common-gray-text align-left">{{orderschedule.start_at}}</div>
+                    <div class="common-gray-text align-left yellow-text lg-text">{{orderschedule.order_scheduler_book.total_cost|floatformat:2}} KD</div>
+                	<div class="common-gray-text align-left sm-text gray-text">{{orderschedule.order_scheduler_book.number_of_cleaners}} cleaners</div>
                     
-                    <div class="profile-pic-line"><img src="images/profile-pic.png"></div><div class="profile-pic-line"><img src="images/profile-pic.png"></div><div class="profile-pic-line"><img src="images/profile-pic.png"></div>
+                    <div class="order-admin-widget-column1"><!--order-admin-widget-column1-->
+                        {% if orderschedule.evaluation_details.evaluator.profile_image %}
+                        <div class="profile-pic-line"><img src="{{orderschedule.evaluation_details.evaluator.profile_image.url}}"></div>
+                        <div class="client-name-line">{{orderschedule.evaluation_details.evaluator.name}}<div class="common-gray-text-line">Evaluator</div></div>
+                        {% else %}
+                        <div class="profile-pic-line"><img src="{{orderschedule.evaluation_details.evaluation.call_attender.profile_image.url}}"></div>
+                        <div class="client-name-line">{{orderschedule.evaluation_details.evaluation.call_attender.name}}<div class="common-gray-text-line">Agent</div></div>
+                        {% endif %}
+                    </div><!--order-admin-widget-column1-->
             	</div><!--cleaning-column-widget cleaning-column-widget-column2-->
-                
+                {% endfor %}
             </div><!--cleaning-column-wrapper-->
             
             <br><br>
@@ -253,7 +263,7 @@
 		</div><!--cleaning--left-stretch-->  
         
         <div class="cleaning--right-fixed"><!--cleaning--right-fixed-->
-        	<div class="order-card-column whitebg red-border"><!--order-card-column-->
+        	<div class="order-card-column whitebg red-border clickable-row-list" data-href="{% url 'agent:agent-client-orders' client_details.id %}"><!--order-card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-orders-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
