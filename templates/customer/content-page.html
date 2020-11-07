@@ -114,7 +114,11 @@
                     <br>
                     <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
                     <br>
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-credit-card orange-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.total_cost|floatformat:2}} KD</div>
+                    {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
+                    {% if section.id == sectionid %}
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-credit-card orange-text" aria-hidden="true"></i> {{section.section_cost|floatformat:2}} KD</div>
+                    {% endif %}
+                    {% endfor %}
                     </div><!--order-clean-Details-widget order-clean-Details-widget-column3-->                        
                 </div><!--order-clean-Details-wrapper--> 
         
