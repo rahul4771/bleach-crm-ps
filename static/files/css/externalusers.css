@@ -233,7 +233,7 @@ b, strong, .bold {
 }
 .table tr{ border-bottom:1px solid #A0A0A0;}
 .table th { background:#26A8E0; color:#FFF; padding:5px 0px; font-weight:500; font-family: Sanchez, Serif ; }
-.table td { padding:7px 0px; vertical-align:middle !important; text-shadow: 1px 2px 3px #00000045;}
+.table td { padding:7px 0px; vertical-align:middle !important;}
 .table .hide{ border:none !important;}
 
 
