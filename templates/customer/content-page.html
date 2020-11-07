@@ -55,7 +55,7 @@
                   <div class="order-clean-Details-widget order-clean-Details-widget-column1"><!--order-clean-Details-widget order-clean-Details-widget-column1-->
               <div class="cleaning-img">
               {% if orderschedule.order_scheduler_book.service_type.name == 'General Cleaning' %}
-                <img src="{% static 'files/images/service_general_cleaning.jpg' %}" width="300" height="150">
+                <img src="{% static 'files/images/service_general_cleaning.jpg' %}" >
                 {% elif orderschedule.order_scheduler_book.service_type.name == 'Deep Cleaning' %}
                 <img src="{% static 'files/images/service_deep_cleaning.jpg' %}">
                 {% elif orderschedule.order_scheduler_book.service_type.name == 'Carpet Cleaning' %}
@@ -100,7 +100,15 @@
                     
                   <div class="order-clean-Details-widget order-clean-Details-widget-column3"><!--order-clean-Details-widget order-clean-Details-widget-column3-->
                     <br>
+                    {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'SUBSCRIPTION' %}
+                      {% for subscription_schedule in order.orderschedules %}
+                        {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
+                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{orderschedule.start_at}}</div>
+                        {% endif %}
+                      {% endfor %}
+                    {% else %}
                     <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{orderschedule.start_at}}</div>
+                    {% endif %}
                     <br>
                     <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> {{orderschedule.customer_address.building}}, {{orderschedule.customer_address.street}}, {{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</div>
                     <br>
@@ -172,6 +180,7 @@
             {% endif %}        
         
         </div><!--evaluation-card-wrapper-->
+        {% else %}
         {% endif %}
         {% endfor %}
         {% endfor %} 

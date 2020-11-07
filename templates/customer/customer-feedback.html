@@ -1,0 +1,264 @@
+
+{% load static %}
+<!DOCTYPE html>
+<!--
+  Invoice template by invoicebus.com
+  To customize this template consider following this guide https://invoicebus.com/how-to-create-invoice-template/
+  This template is under Invoicebus Template License, see https://invoicebus.com/templates/license/
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Bleach Cleaning Services | Quotation</title>
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="description" content="Invoicebus Invoice Template">
+    <meta name="author" content="Invoicebus">
+
+    <meta name="template-hash" content="91216e926eab41d8aa403bf4b00f4e19">
+
+    <link href="{% static 'files/css/main_external.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'files/css/template.css' %}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
+  </head>
+  <body>
+    <div id="container">
+      <div>
+      <!-- <div class="left-stripes"> -->
+        <div class="circle c-upper"></div>
+        <div class="circle c-lower"></div>
+      </div>
+
+      <div class="right-invoice">
+        <section id="memo">
+          <div class="company-info">
+			<div>Bleach Cleaning Services<div class="company-name-arabic"> بليتش لخدمات التنظيف</div>	
+          	</div>
+		  </div>
+          <div class="logo_invoice">
+            <img src="{% static 'files/images/logo.png' %}" />
+          </div>
+        </section>
+        
+        <section id="invoice-info">
+          <div class="white-wrapper"><!--white-wrapper-->
+            <div class="center-formDiv"><!--center-formDiv-->
+
+                         <div class="common-sub-head align-left">Customer Details / تفاصيل العميل</div> 
+                          <br>
+                              <div class="cleaning-column-wrapper ltblue-border"><!--cleaning-column-wrapper-->
+                                <div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
+                                <div class="inside-head align-left">{{order.evaluation.customer.name}}</div>
+                                <p class="paragraph">{{order.evaluation.customer.mobile_number}}</p>
+                                
+                                {% if order.payment_status == 'COMPLETED' %}
+                                <div class="green-bg-lg">Paid</div>
+                                {% elif order.payment_status == 'PENDING' %}
+                                <div class="yellow-bg-lg">Pending</div>
+                                {% elif order.payment_status == 'ON_HOLD' %}
+                                <div class="red-bg-lg">On Hold</div>
+                                {% else %}
+                                <div class="yellow-bg-lg">Waiting</div>
+                                {% endif %}
+                                
+                                {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+                                <div class="blue-bg-lg">Approved</div>
+                                {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
+                                <div class="yellow-bg-lg">On-going</div>
+                                {% elif order.order_status == 'ORDER_CANCELLED' %}
+                                <div class="red-bg-lg">Cancelled</div>
+                                {% elif order.order_status == 'ORDER_CLOSED' %}
+                                <div class="green-bg-lg">Closed</div>
+                                {% else %}
+                                <div class="yellow-bg-lg">Waiting</div>
+                                {% endif %}
+                                
+                                {% for orderschedule in order.orderschedules %}
+                                <div class="area-bold">{{orderschedule.customer_address.area.name}} / {{orderschedule.customer_address.area.name_arabic}}</div>
+                                {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
+                                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.service_type.name}} - {{section.section_name}} <br> {{orderschedule.order_scheduler_book.service_type.name_arabic}}-ARABIC </div>
+                                {% endfor %}
+                                {% endfor %}
+                            </div><!--cleaning-column-widget cleaning-column-widget-column1-->
+                            
+                            {% for orderschedule in order.orderschedules %}
+                            <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
+                                <div class="common-gray-text align-left">{{orderschedule.start_at}}</div>
+                                <div class="common-gray-text align-left yellow-text lg-text">{{orderschedule.order_scheduler_book.total_cost|floatformat:2}} KD</div>
+                                <div class="common-gray-text align-left sm-text gray-text">{{orderschedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
+                                <div class="order-admin-widget-column1"><!--order-admin-widget-column1-->
+                                {% if orderschedule.evaluation_details.evaluator.profile_image %}
+                                <div class="profile-pic-line"><img src="{{orderschedule.evaluation_details.evaluator.profile_image.url}}"></div>
+                                <div class="client-name-line">{{orderschedule.evaluation_details.evaluator.name}}<div class="common-gray-text-line">Evaluator</div></div>
+                                {% else %}
+                                <div class="profile-pic-line"><img src="{{orderschedule.evaluation_details.evaluation.call_attender.profile_image.url}}"></div>
+                                <div class="client-name-line">{{orderschedule.evaluation_details.evaluation.call_attender.name}}<div class="common-gray-text-line">Agent</div></div>
+                                {% endif %}
+                                </div>
+                            </div><!--cleaning-column-widget cleaning-column-widget-column2-->
+                            {% endfor %}
+                        </div><!--cleaning-column-wrapper-->
+                        
+                        <br><br>
+             <div class="common-sub-head align-left">Please Rate Us Here / يرجى تقييمنا هنا</div> 
+             <br>
+             <form method="post" action="">
+                {%csrf_token%}
+            {% comment %} <input type="hidden" name="order_id" id="order_id_hidden">  {% endcomment %}
+            <div class="investigation-columns  ltblue-border"><!--investigation-columns-->
+            
+                    <div class="feedback-columns-middle"><!--feedback-columns-middle-->
+                    <!-- <div class="right-date-fix">April 28,2020 at 11:40 AM</div> -->
+                           
+                    <div class="feedback-list"><!--feedback-list-->
+                    <ul>
+                    {% for question in questions %}
+                        
+                    <li>{{question.question}}  ?</li>
+                            <section class='rating-widget'><!--rating-widget-->
+                                <div class='rating-stars text-center'>
+                                    <ul id='stars'>
+                                        <li class='star selected' title='Poor' data-value='1'> <i class='fa fa-star fa-fw'></i> </li>
+                                        <li class='star' title='Fair' data-value='2'> <i class='fa fa-star fa-fw'></i> </li>
+                                        <li class='star' title='Good' data-value='3'> <i class='fa fa-star fa-fw'></i> </li>
+                                        <li class='star' title='Excellent' data-value='4'> <i class='fa fa-star fa-fw'></i> </li>
+                                        <li class='star' title='WOW!!!' data-value='5'><i class='fa fa-star fa-fw'></i></li>
+                                        <input type="hidden" name="rating{{question.id}}" value="1">
+                                    </ul>
+                                </div>
+                                <div class='success-box'>
+                                    <div class='clearfix'></div>
+                                    <div class='text-message'></div>
+                                </div>
+                            </section><!--rating-widget-->
+                            <hr class="hr-dashed">
+                    {% endfor %}        
+                    </ul>
+                    </div><!--feedback-list-->
+                     
+                         <hr class="hr-dashed">
+                        <div class="details-notes align-left">Notes / ملاحظات</div>
+                             <textarea name="note" cols="" rows="4" class="textArea"></textarea>
+                    </div><!--feedback-columns-middle-->
+            
+            </div><!--investigation-columns-->
+            <div align="center"><input class="assignButton" name="submit" type="submit" value="Submit / إرسال"> <input class="cancel-Button" name="cancel" type="button" value="Cancel / إلغاء"></div> </form>    	
+                    
+                    
+            
+                    
+                    </div><!--center-formDiv-->
+            </div><!--white-wrapper-->   
+        </section>       
+
+        <div class="clearfix"></div>
+        <section>
+            <table cellpadding="0" cellspacing="0" class="table2">
+            <tr>
+                <td class="align-left">
+                <b>
+                Bleach International Contracting Company      
+                for Cleaning Building & Cities WLL
+                </b>
+                <br>Office: No. 3 ● Building No. 8 ● Block 13
+                <br>Qibila Building ● Mohamed Al Ghanim Street
+                <br>Kuwait City ● PO Box 4489 ● Safat 13045 
+                <br>CR No. 362934 ●  Tel 1882707
+                <br>Email : customercare@bleach-kw.com</td>
+
+                <td class="align-right">
+                  <b>
+                  شركة بلـــيتش الـــعالمــــية 
+                  لمقاولات تنظيف المباني والمدن
+                  </b>
+                  <br>المكتب: رقم 3 ● مبنى رقم 8 ● بلوك 13
+                  <br>عمارة قبيلة ● شارع محمد الغانم
+                  <br>مدينة الكويت ● ص.ب 4489 ● الصفاة 13045
+                  <br>رقم السجل التجاري 362934 ● هاتف 1882707
+                  <br>البريد الإلكتروني: customercare@bleach-kw.com</td>
+              
+            </tr>
+            <tr>
+              <td style="background-color: white;" colspan="2" >
+                 <div class="socil-media">
+    <ul>
+    	             <li><a href="https://www.facebook.com/BleachKw/"><img src="{% static 'files/images/fb.svg' %}"></a></li>
+                   <li><a href="#"><img src="{% static 'files/images/icon-twitter.svg' %}"></a></li>
+                   <li><a href="https://www.instagram.com/bleachkw/?hl=en"><img src="{% static 'files/images/icon-insta.svg' %}"></a></li>
+                   <li><a href="https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw"><img src="{% static 'files/images/icon-ut.svg' %}"></a></li>
+                   <li><a href="https://www.linkedin.com/company/bleachkw"><img src="{% static 'files/images/icon-in.svg' %}"></a></li>
+                  </ul>
+    </div>
+              </td>
+            </tr>
+               
+          </table>
+        </section>
+        
+         
+      </div>
+    </div>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+  <script type="text/javascript">
+  $(document).ready(function () {
+
+  /* 1. Visualizing things on Hover - See next part for action on click */
+  $('#stars li').on('mouseover', function () {
+    var onStar = parseInt($(this).data('value'), 10); // The star currently mouse on
+
+    // Now highlight all the stars that's not after the current hovered star
+    $(this).parent().children('li.star').each(function (e) {
+      if (e < onStar) {
+        $(this).addClass('hover');
+      } else
+      {
+        $(this).removeClass('hover');
+      }
+    });
+
+  }).on('mouseout', function () {
+    $(this).parent().children('li.star').each(function (e) {
+      $(this).removeClass('hover');
+    });
+  });
+
+
+  /* 2. Action to perform on click */
+  $('#stars li').on('click', function () {
+    var onStar = parseInt($(this).data('value'), 10); // The star currently selected
+    var stars = $(this).parent().children('li.star');
+
+    for (i = 0; i < stars.length; i++) {//if (window.CP.shouldStopExecution(0)) break;
+      $(stars[i]).removeClass('selected');
+    }//window.CP.exitedLoop(0);
+
+    for (i = 0; i < onStar; i++) {//if (window.CP.shouldStopExecution(1)) break;
+      $(stars[i]).addClass('selected');
+    }
+
+    // JUST RESPONSE (Not needed)
+    //window.CP.exitedLoop(1);
+    var ratingValue = parseInt($(this).data('value'), 10)
+    var msg = "";
+    if (ratingValue > 1) {
+      msg = "Thanks! You rated this " + ratingValue + " stars.";
+    } else
+    {
+      msg = "We will improve ourselves. You rated this " + ratingValue + " stars.";
+    }
+    //responseMessage(msg);
+    $(this).parent().children('input').val(ratingValue);
+
+    $(this).parent().parent().parent().children('div.success-box').fadeIn(200);
+    $(this).parent().parent().parent().children('div.success-box').children('div.text-message').html("<span>" + msg + "</span>");
+  });
+
+
+});
+</script>
+  </body>
+</html>
