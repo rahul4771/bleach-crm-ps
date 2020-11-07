@@ -194,6 +194,7 @@ b, strong, .bold {
   padding: 7px;
   font-family: Sanchez, Serif;
   line-height: 1em;
+  text-shadow: 1px 2px 3px #00000045;
 }
 
 #client-info {
@@ -484,6 +485,7 @@ text-align: right;
   font-size: 35px;
   line-height: 1em;
   padding: 7px !important;
+  text-shadow: 1px 2px 3px #00000045;
 }
 #sums table tr.due-amount th, #sums table tr.due-amount td {
   font-weight: bold;
