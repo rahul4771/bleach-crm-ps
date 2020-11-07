@@ -539,6 +539,16 @@ class OrderDetails(IsAccountant,View):
 class PaymentDetails(IsAccountant,View):
 	def get(self,request):
 
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
+		try:
+			service_types = ServiceType.objects.filter(is_active=True) 
+		except:
+			service_types =	None
+
 		#Evaluation Details
 		search                  = request.GET.get('search')
 		
@@ -569,24 +579,24 @@ class PaymentDetails(IsAccountant,View):
 			total_pending_orders = 0
 
 		#Prefetch filters
-		# try:
-		# 	fil_governorate       = int(request.GET.get('governorate'))
-		# 	areas                 = Area.objects.filter(governorate_id=fil_governorate)
-		# except:
-		# 	fil_governorate       = None
-		# 	areas                 = None
+		try:
+			fil_governorate       = int(request.GET.get('governorate'))
+			areas                 = Area.objects.filter(governorate_id=fil_governorate)
+		except:
+			fil_governorate       = None
+			areas                 = None
 
-		# try:
-		# 	fil_area			  = int(request.GET.get('area'))
-		# except:
-		# 	fil_area              = None
+		try:
+			fil_area			  = int(request.GET.get('area'))
+		except:
+			fil_area              = None
 
-		# fil_cleaning_policy       = request.GET.get('cleaning_policy')
+		fil_cleaning_policy       = request.GET.get('cleaning_policy')
 
-		# try:
-		# 	fil_service_type      = int(request.GET.get('service_type'))
-		# except:
-		# 	fil_service_type      = None
+		try:
+			fil_service_type      = int(request.GET.get('service_type'))
+		except:
+			fil_service_type      = None
 
 
 		# customer_address_filter       = []
@@ -684,7 +694,7 @@ class PaymentDetails(IsAccountant,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(invoices.end_index())-(invoices.start_index())+1
 
-		return render(request,'accountant/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})
+		return render(request,'accountant/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"service_types":service_types,})
 
 class CashCollect(IsAccountant,View):
 	def get(self,request):
