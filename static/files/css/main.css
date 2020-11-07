@@ -80,11 +80,19 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .blue-button{ background:#4385f5; margin:0; border:none; font-size:12px; padding:6px 10px; color:#fff;transition: .4s;}
 .blue-button:hover{ background:#f29605; border:none; }
 .blue-text{ color:#528ce6 !important;} 
-.green-text{ color:#3cbbb1 !important;} 
-.orange-text{ color:#ff8c56 !important;} 
-.red-text{ color:#ec6262 !important;}
-.yellow-text{ color:#f2ba1e !important;} 
-.gray-text{ color:#bababa !important;} 
+/* .shadow-effectadded */
+.green-text{ color:#3cbbb1 ; text-shadow: 1px 2px 3px #0000000d !important;} 
+.orange-text{ color:#ff8c56; text-shadow: 1px 2px 3px #0000000d!important;} 
+.red-text{ color:#ec6262;text-shadow: 1px 2px 3px #0000000d !important;}
+.yellow-text{ color:#f2ba1e;text-shadow: 1px 2px 3px #0000000d !important;} 
+.gray-text{ color:#bababa; text-shadow: 1px 2px 3px #0000000d !important;} 
+
+.indigo-text{ color:#165baa; text-shadow: 1px 2px 3px #0000000d !important;} 
+.rose-text{ color:#f765a3 ; text-shadow: 1px 2px 3px #0000000d !important;} 
+.violet-text{ color:#a155b9; text-shadow: 1px 2px 3px #0000000d !important;} 
+
+
+
 .h2{ color:#3968c6 !important; font-size:25px !important; font-weight:100 !important; margin-top:0 !important; padding-bottom:20px!important; }
 .card-innerwrapper{ display:flex; flex-grow: 1; overflow:hidden;}
 .card-innerwrapper .column-left{flex: 1; padding-right:15px; align-items: center; justify-content: center; }
@@ -93,7 +101,7 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .card-innerwrapper .column-right h1{ color:#737373; font-size:18px !important; font-weight:400; margin:0 !important; padding:0 0 6px 0 !important;}
 .card-innerwrapper .column-right h2{ font-size:25px; font-weight:400; margin:0; padding:0px 0 0 0 !important;}
 .card-innerwrapper .column-right p{ font-size:15px; font-weight:400; color:#8a8a8a; margin:0; padding:0px 0 0 0;}
-.card-innerwrapper .column-right label{ width:100%; font-weight:normal; display:inline-block; position:relative; margin:0 !important; padding:0 !important; }
+.card-innerwrapper .column-right label{ width:100%; font-weight:normal; display:inline-block; position:relative; margin:0 !important; padding:0; text-shadow: 1px 2px 3px #0000000d!important; }
 .card-innerwrapper .column-right label span{ display:inline-block; position:absolute; right:0; }
 .user-type-wrapper { margin:0; padding:0; overflow:hidden; }
 .user-type-wrapper ul{ margin:0; padding:0; position:relative;  }
@@ -189,14 +197,15 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .main-table-border th,
 .main-table-border td {padding: .525em; text-align: center; border : 1px solid #ccc; position:relative;}
 .main-table-border th {font-size: .85em; letter-spacing: .1em; text-transform: uppercase;}
- .blue-box{ background:#528ce6; position:absolute; left:2%; right:2%; width:75%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:20px;  font-size:12px; padding:0 20px; }
+
+ .blue-box{ background:#528ce6; position:absolute; left:2%; right:2%; width:75%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:20px;  font-size:12px; padding:0 20px; text-shadow: 1px 2px 3px #00000045; }
  .blue-box:hover{ background:#4980d4; cursor:pointer;} 
- .green-box{ background:#3cbbb1; position:absolute; left:52%; right:2%; width:30%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:20px; font-size:12px; padding:0 20px; }
+ .green-box{ background:#3cbbb1; position:absolute; left:52%; right:2%; width:30%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:20px; font-size:12px; padding:0 20px; text-shadow: 1px 2px 3px #00000045;}
  .green-box:hover{ background:#31a9a0; cursor:pointer;}
-.orange-box{ background:#ff8c56; position:absolute; left:2%; right:2%; width:60%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:20px; font-size:12px; padding:0 20px; }
+.orange-box{ background:#ff8c56; position:absolute; left:2%; right:2%; width:60%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:20px; font-size:12px; padding:0 20px;text-shadow: 1px 2px 3px #00000045; }
 .orange-box:hover{ background:#e77d4b; cursor:pointer;}
-.red-box{ background:#ec6262; position:absolute; left:0%; right:2%; width:40%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px;  }
-.yellow-box{ background:#f2ba1e; position:absolute; left:2%; right:2%; width:47%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px; }
+.red-box{ background:#ec6262; position:absolute; left:0%; right:2%; width:40%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px; text-shadow: 1px 2px 3px #00000045; }
+.yellow-box{ background:#f2ba1e; position:absolute; left:2%; right:2%; width:47%; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:25px; font-size:12px; padding:0 20px; text-shadow: 1px 2px 3px #00000045; }
 .yellow-box:hover{ background:#e7ab03; cursor:pointer;}
 .red-box:hover{ background:#d55757; cursor:pointer;}
 .left-avatar{width:22px; height:22px; position:absolute; left:1px; top:1px; border-radius:50px; text-align:center; }
