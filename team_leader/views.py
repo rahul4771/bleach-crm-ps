@@ -15,7 +15,7 @@ from django.db.models import Prefetch
 from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote,EvaluationMedia
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Investigation,InvestigationMedia
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 
@@ -318,7 +318,7 @@ class InvestigationTask(IsTeamLeader,View):
 class Cleaning(IsTeamLeader,View):
 	def get(self,request,team_id):
 
-		cleaning_team_detail = CleaningTeam.objects.select_related('team_leader','drop_off_driver','pick_up_driver','order_scheduler__evaluation_details','order_scheduler__order_scheduler_book__service_type','order_scheduler__customer_address','order_scheduler__order__evaluation').prefetch_related(Prefetch('order_scheduler__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections')).get(is_active=True,id=team_id)
+		cleaning_team_detail = CleaningTeam.objects.select_related('team_leader','drop_off_driver','pick_up_driver','order_scheduler__evaluation_details','order_scheduler__order_scheduler_book__service_type','order_scheduler__customer_address','order_scheduler__order__evaluation').prefetch_related(Prefetch('order_scheduler__order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections')).get(is_active=True,id=team_id)
 		cleaning_team_members = CleaningTeamMember.objects.filter(team=team_id,is_active=True)
 
 		#checkin save	
@@ -441,7 +441,7 @@ class Cleaning(IsTeamLeader,View):
 class FollowupCleaning(IsTeamLeader,View):
 	def get(self,request,team_id):
 
-		followup_team_detail = FollowUpTeam.objects.select_related('team_leader','drop_off_driver','pick_up_driver','followup_scheduler__follow_up__investigation__investigator','followup_scheduler__follow_up__investigation__order__evaluation','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book','followup_scheduler__customer_address').prefetch_related(Prefetch('followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections')).get(is_active=True,id=team_id)
+		followup_team_detail = FollowUpTeam.objects.select_related('team_leader','drop_off_driver','pick_up_driver','followup_scheduler__follow_up__investigation__investigator','followup_scheduler__follow_up__investigation__order__evaluation','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book','followup_scheduler__customer_address').prefetch_related(Prefetch('followup_scheduler__follow_up__investigation__investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr="investigationmedias"),Prefetch('followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections')).get(is_active=True,id=team_id)
 			
 
 		#checkin save

@@ -97,8 +97,14 @@
    
 <div class="eval-note-columns border"><!--eval-note-columns-->
       <div class="eval-note-columns-left"><!--eval-note-columns-left-->
-      <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
-            <div class="client-name">{{cleaning_team_detail.order_scheduler.evaluation_details.evaluator.name}}<div class="common-gray-text">Evaluator</div></div>
+      <div class="profile-pic">
+      {% if followup_team_detail.followup_scheduler.follow_up.investigation.investigator.profile_image %}
+      <img src="{{followup_team_detail.followup_scheduler.follow_up.investigation.investigator.profile_image.url}}" title="{{followup_team_detail.followup_scheduler.follow_up.investigation.investigator.name}}"></div>
+      {% else %}
+        <img src="{% static 'files/images/profile-pic.png' %}"></div>
+      {% endif %}
+
+            <div class="client-name"><div class="common-gray-text">{{followup_team_detail.followup_scheduler.follow_up.investigation.investigator.name}}</div>Investigator</div>
       </div><!--eval-note-columns-left-->
 
         <div class="eval-note-columns-middle"><!--eval-note-columns-middle-->
@@ -106,6 +112,21 @@
             <p>{{followup_team_detail.followup_scheduler.follow_up.instructions|default_if_none:''}}</p>
         </div><!--eval-note-columns-middle-->
 </div><!--eval-note-columns-->
+
+{% if followup_team_detail.followup_scheduler.follow_up.investigation.investigationmedias %}
+<div class="details-sub-head align-left">Media</div>
+<div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
+<div class="gallery-wrapper"><!--gallery-wrapper-->
+  <div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
+    <div class="media-heading align-left">Investigation</div>
+        <section>
+        <div id="data-pn-1" data-pn="1" data-src="{% for media in followup_team_detail.followup_scheduler.follow_up.investigation.investigationmedias %}{{media.media.url}},{% endfor %}"></div>
+    </section>
+    
+    </div><!--gallery-widget-column-column1-->    
+</div><!--gallery-wrapper-->
+{% endif %}
+
 
  </div><!--commnDiv-border--> 
 <div align="center"><input class="assignButton expandbutton" name="submit" type="button" value="Check-in"> </div>
