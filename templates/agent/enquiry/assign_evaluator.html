@@ -151,7 +151,7 @@
       </div><!--ticket-form-left--> 
         
   </div><!--ticket-wrapper-row ticket-forms-boxes-->  
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Assign" onclick="submitAnyForm(this);"></div>  
+<div align="center"> <input class="assignButton" name="assing" type="button" value="Assign" onclick="timecheck(this);"> <button id="ev_submit_btn" onclick="submitAnyForm(this);" hidden></button></div>  
 
 </div><!--ticket-wrapper-full-->             
 </form>
@@ -182,8 +182,6 @@ $('document').ready(function(){
         $(".id_proposed_time").datetimepicker({
                 pickDate:false,
                 format: 'hh:mm A',
-                minDate: moment({h:7}),
-                maxDate: moment({h:17}),
             });
         });
     //Evaluation Callender
@@ -274,6 +272,58 @@ $('document').ready(function(){
 
  });
 
+function timecheck(){
+    var vals = $('.id_proposed_time').val().split(':');
+    console.log($('.id_proposed_time').val(),"time")
+    var start_time = $('.id_proposed_time').val();
+    start_time = start_time.split(" ");
+    time_AM_PM = start_time[1];
+    var time = start_time[0].split(":");
+    var stime = time[0];
+
+    //splitting 0 in hour
+    if (stime < 10){
+        var hour_split = stime.split('');
+        var time_hour = hour_split[1];
+        console.log(time_hour,"werry")    
+    }else{
+        time_hour = stime;
+    }
+
+    var now_time   = (hour>12 ? hour-12:hour)+":00 "+(hour>=12 ? 'AM':'PM')
+
+    console.log(time_AM_PM,"nowten")
+    console.log(start_time,stime,"tru")
+
+    //time limit logic
+    if (time_AM_PM == 'AM'){
+        if (time_hour >= 8 && time_hour <= 11){
+            $('#time_alert').attr("hidden",true);
+            document.getElementById("ev_submit_btn").click();
+            
+            console.log(time_hour,"test")
+        }else{
+            $('.id_proposed_time').val('');
+            $('#time_alert').attr("hidden",false);
+            console.log(time_hour,"test2")
+        }
+    };
+
+    if (time_AM_PM == 'PM') {
+
+        if ((time_hour == 12) || (time_hour >= 1 && time_hour < 6)){
+            $('#time_alert').attr("hidden",true);
+            document.getElementById("ev_submit_btn").click();
+            
+            console.log(time_hour,"test3")
+        }else{
+            $('.id_proposed_time').val('');
+            $('#time_alert').attr("hidden",false);
+            console.log(time_hour,"test4")
+        }
+    };
+};
+
 
  function set_params_go(args)
 {
@@ -315,6 +365,7 @@ $("#close_add_evaluator").click(function () {
     $('#addevaluationdetails_popup').css({'visibility':'hidden','opacity':0,});
 });
 
+
 $('.id_proposed_time').change(function(){
     var vals = $(this).val().split(':');
     console.log($(this).val(),"time")
@@ -341,7 +392,6 @@ $('.id_proposed_time').change(function(){
     //time limit logic
     if (time_AM_PM == 'AM'){
         if (time_hour >= 8 && time_hour <= 11){
-            $('.id_proposed_time').val($(this).val());
             $('#time_alert').attr("hidden",true);
             console.log(time_hour,"test")
         }else{
@@ -353,8 +403,7 @@ $('.id_proposed_time').change(function(){
 
     if (time_AM_PM == 'PM') {
 
-        if ((time_hour == 12) || (time_hour >= 1 && time_hour <= 6)){
-            $('.id_proposed_time').val($(this).val());
+        if ((time_hour == 12) || (time_hour >= 1 && time_hour < 6)){
             $('#time_alert').attr("hidden",true);
             console.log(time_hour,"test3")
         }else{
@@ -364,6 +413,7 @@ $('.id_proposed_time').change(function(){
         }
     };
 })
+
 
 $("#assign_evaluator_id").click(function(){
   {% if active_addresses %}

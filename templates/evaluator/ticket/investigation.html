@@ -90,6 +90,7 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
   <div class=" bold-text common-label"> <label>Tendative Time</label></div>
   <input name="tendative_time" id="tendative_time_id" type="text" class="textBox time_pick" placeholder=" ">
+  <p id="time_alert" style="color:red" hidden>Please select proper time !</p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -109,7 +110,7 @@
  </div><!--commnDiv-border--> 
 <br>
  
- <div align="center"><input class="assignButton" name="addevaluator" type="button" value="Submit" onclick="submitAnyForm(this);"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>        
+ <div align="center"><input class="assignButton" name="addevaluator" type="button" value="Submit" onclick="timecheck(this);"> <button id="ev_submit_btn" onclick="submitAnyForm(this);" hidden></button> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>        
 <br> <br>
 </form>      
         
@@ -127,6 +128,57 @@
 
 {% block javascript %} 
 <script>
+
+    function timecheck(){
+    var vals = $('#tendative_time_id').val().split(':');
+    console.log($('#tendative_time_id').val(),"time")
+    var start_time = $('#tendative_time_id').val();
+    start_time = start_time.split(" ");
+    time_AM_PM = start_time[1];
+    var time = start_time[0].split(":");
+    var stime = time[0];
+
+    //splitting 0 in hour
+    if (stime < 10){
+        var hour_split = stime.split('');
+        var time_hour = hour_split[1];
+        console.log(time_hour,"werry")    
+    }else{
+        time_hour = stime;
+    }
+
+    console.log(time_AM_PM,"nowten")
+    console.log(start_time,stime,"tru")
+
+    //time limit logic
+    if (time_AM_PM == 'AM'){
+        if (time_hour >= 8 && time_hour <= 11){
+            $('#time_alert').attr("hidden",true);
+            document.getElementById("ev_submit_btn").click();
+            
+            console.log(time_hour,"test")
+        }else{
+            $('#tendative_time_id').val('');
+            $('#time_alert').attr("hidden",false);
+            console.log(time_hour,"test2")
+        }
+    };
+
+    if (time_AM_PM == 'PM') {
+
+        if ((time_hour == 12) || (time_hour >= 1 && time_hour < 6)){
+            $('#time_alert').attr("hidden",true);
+            document.getElementById("ev_submit_btn").click();
+            
+            console.log(time_hour,"test3")
+        }else{
+            $('#tendative_time_id').val('');
+            $('#time_alert').attr("hidden",false);
+            console.log(time_hour,"test4")
+        }
+    };
+};
+
 
     $('document').ready(function(){
         //Initial hiding
@@ -164,6 +216,52 @@
           $("#cleaning_hours_id").val('');
         }
     });
+
+$('#tendative_time_id').change(function(){
+    var vals = $(this).val().split(':');
+    console.log($(this).val(),"time")
+    var start_time = $(this).val();
+    start_time = start_time.split(" ");
+    time_AM_PM = start_time[1];
+    var time = start_time[0].split(":");
+    var stime = time[0];
+
+    //splitting 0 in hour
+    if (stime < 10){
+        var hour_split = stime.split('');
+        var time_hour = hour_split[1];
+        console.log(time_hour,"werry")    
+    }else{
+        time_hour = stime;
+    }
+
+    console.log(time_AM_PM,"nowten")
+    console.log(start_time,stime,"tru")
+
+    //time limit logic
+    if (time_AM_PM == 'AM'){
+        if (time_hour >= 8 && time_hour <= 11){
+            $('#time_alert').attr("hidden",true);
+            console.log(time_hour,"test")
+        }else{
+            $('#tendative_time_id').val('');
+            $('#time_alert').attr("hidden",false);
+            console.log(time_hour,"test2")
+        }
+    };
+
+    if (time_AM_PM == 'PM') {
+
+        if ((time_hour == 12) || (time_hour >= 1 && time_hour < 6)){
+            $('#time_alert').attr("hidden",true);
+            console.log(time_hour,"test3")
+        }else{
+            $('#tendative_time_id').val('');
+            $('#time_alert').attr("hidden",false);
+            console.log(time_hour,"test4")
+        }
+    };
+})
 
 
 //multiple image add and delete
