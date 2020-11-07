@@ -119,7 +119,11 @@ function initialize() {
                     var month = parseInt (vals[1]);
                     var day = parseInt (vals[2]);
                     // console.log(year,month,day)
-                sales.push([new Date(year,month-1,day),value.amount]);
+
+                    var os_date = new Date(year,month,day)
+                    os_date.setMonth(os_date.getMonth()-1);
+
+                sales.push([os_date,value.amount]);
                     sale_sum += parseInt(value.amount);
                     total_sum += parseInt(value.total);
                 });

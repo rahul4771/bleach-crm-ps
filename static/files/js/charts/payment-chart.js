@@ -118,7 +118,10 @@ function initialize() {
                 var day = parseInt (vals[2]);
                 console.log(year,month,day,value.paid,value.pending,"ter")
 
-            quotations.push([new Date(year,month-1,day),value.paid,value.pending]);
+                var payment_date = new Date(year,month,day)
+                payment_date.setMonth(payment_date.getMonth()-1);
+
+            quotations.push([payment_date,value.paid,value.pending]);
                 submitted_total += parseInt(value.paid);
                 approved_total += parseInt(value.pending);
             });

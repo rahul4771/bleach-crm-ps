@@ -73,10 +73,30 @@ $(function () {
       });
 });
 
+//date validation in charts
 function fromtodatecheck() {
   var d1 = $('.date_pick_chart_from').val();
+
+  var vals = d1.split('-');
+  var day = parseInt(vals[0]);
+  var month = parseInt (vals[1]);
+  var year = parseInt (vals[2]);
+
+  var d1date = new Date(year,month,day);
+  d1date.setMonth(d1date.getMonth()-1);
+  
   var d2 = $('.date_pick_chart_to').val();
-  if ( d1 > d2){
+
+  var vals2 = d2.split('-');
+  var day2 = parseInt(vals2[0]);
+  var month2 = parseInt (vals2[1]);
+  var year2 = parseInt (vals2[2]);
+
+  var d2date = new Date(year2,month2,day2);
+  d2date.setMonth(d2date.getMonth()-1);
+
+  console.log(d1,d2,"dee")
+  if ( d1date > d2date){
     $('.date_pick_chart_from').val(d2);
     $('.date_pick_chart_to').val(d1);
   }

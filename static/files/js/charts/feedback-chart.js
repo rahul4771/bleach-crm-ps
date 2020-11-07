@@ -118,7 +118,10 @@ function initialize() {
                 var day = parseInt (vals[2]);
                 console.log(year,month,day,value.avg_rating,"ter")
 
-            quotations.push([new Date(year,month-1,day),parseFloat((value.avg_rating).toFixed(2))]);
+                var fb_date = new Date(year,month,day)
+                fb_date.setMonth(fb_date.getMonth()-1);
+
+            quotations.push([fb_date,parseFloat((value.avg_rating).toFixed(2))]);
                 tot_ratings += parseFloat((value.avg_rating).toFixed(1));
                 count++ ;
             });
