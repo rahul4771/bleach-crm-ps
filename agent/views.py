@@ -556,7 +556,7 @@ class AgentHome(IsAgent,View):
 		#Order and Followup Schedules for date confirmation
 		confirm_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
 		
-		order_schedules		  = OrderScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(4)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').filter(Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)|Q(order__evaluation__payment_method='POSTPAID')))
+		order_schedules		  = OrderScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(4)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') ))
 		
 		follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(4)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
 		

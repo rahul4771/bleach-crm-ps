@@ -88,7 +88,7 @@
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>Governorate</label></div>
                 <label for="favcity">
-                <ALL name="governorate_filter" id="governorate_filter_id">
+                <select name="governorate_filter" id="governorate_filter_id">
                 <option value=''>---ALL---</option>
                 {% for governorate in governorates %}
           <option value='{{governorate.id}}' {% if governorate.id == fil_governorate %}selected{%endif%}>{{governorate.name}}</option>
@@ -271,7 +271,7 @@ $('.footable').footable({
     </script>
 
 <script>
-//initialisation of active and not active
+  //initialisation of active and not active and active count
   active_clients = [];
   {% for detail in client_details %}
       {% if detail.customer_evaluations %}
@@ -280,7 +280,7 @@ $('.footable').footable({
             $("#clientstatus{{detail.id}}").html("Active");
             $("#clientstatus{{detail.id}}").addClass('green-bg');
             $("#clientstatus{{detail.id}}").removeClass('yellow-bg');
-            
+
             $("#clientstatusline{{detail.id}}").addClass('green-line');
             $("#clientstatusline{{detail.id}}").removeClass('yellow-line');
             active_clients.push({{detail.id}});
