@@ -77,9 +77,9 @@ class Order(models.Model):
 	preamount_paid		   = models.IntegerField(blank=True,null=True,default=0)
 	postamount_paid		   = models.IntegerField(blank=True,null=True,default=0)
 	
-	instructions		   = models.CharField(max_length=500,blank=True,null=True)
+	instructions		   = models.CharField(max_length=5000,blank=True,null=True)
 	
-	feedback_notes  	= models.CharField(max_length=500,blank=True,null=True)
+	feedback_notes  	= models.CharField(max_length=5000,blank=True,null=True)
 	is_feedback_marked	= models.BooleanField(null=False,blank=True,default=False)
 	feedback_marked_date= models.DateTimeField(blank=True,null=True)
 
@@ -126,13 +126,12 @@ class OrderScheduler(models.Model):
 class Investigation(models.Model):
 	order 				 = models.ForeignKey('Order',blank=False,null=False,related_name='investigation_orders')
 	order_schedule		 = models.ForeignKey('OrderScheduler',blank=False,null=False,related_name='investigations_orderschedule')	
-	notes            	 = models.CharField(max_length=500,blank=True,null=True)
 	investigator    	 = models.ForeignKey(UserProfile,blank=True,null=True)
 	assigned_by          = models.ForeignKey(UserProfile,blank=True,null=True,related_name='investigation_assigned_by')
 	sheduled_at 		 = models.DateTimeField(blank=True,null=True)
 	check_in 		     = models.DateTimeField(blank=True,null=True)
 	check_out 		     = models.DateTimeField(blank=True,null=True)
-	notes 				 = models.CharField(max_length=500,blank=True,null=True)
+	notes 				 = models.CharField(max_length=5000,blank=True,null=True)
 	is_followup_approved = models.BooleanField(null=False,blank=True,default=False)
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)

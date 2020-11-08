@@ -29,17 +29,21 @@
         <div class="green-bg-lg">{% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}One-Time{% else %}Subscription{% endif %}</div><div class="blue-bg-lg">{% if cleaning_team_detail.order_scheduler.order.payment_status == 'COMPLETED' %}Paid{% elif cleaning_team_detail.order_scheduler.order.payment_status == 'ON_HOLD' %}ON HOLD<{% else %}Pending{% endif %}</div>
 
         <div class="customer-name"> {{cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name}}</div>
-        <div class="email"> {{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_method}}</div>
-        <div class="email"> {{cleaning_team_detail.order_scheduler.order_scheduler_book.area_type}}</div>
-        <div class="email"> {{cleaning_team_detail.order_scheduler.order_scheduler_book.location_type}}</div>
+        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_method}}</div>
+        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.area_type}}</div>
+        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.location_type}}</div>
   	</div><!--ticket-form-left-->
 	<div class="ticket-form-right"><!--ticket-form-right-->
-  		<div class="common-gray-text align-left">{{cleaning_team_detail.order_scheduler.customer_address.apartment}}, {{cleaning_team_detail.order_scheduler.customer_address.floor}}, {{cleaning_team_detail.order_scheduler.customer_address.block}},  {{cleaning_team_detail.order_scheduler.customer_address.street}}, {{cleaning_team_detail.order_scheduler.customer_address.avenue}}, {{cleaning_team_detail.order_scheduler.customer_address.address.area.name}} {{cleaning_team_detail.order_scheduler.customer_address.address.governorate.name}}</div>
-        <div class="common-gray-text align-left">{{cleaning_team_detail.order_scheduler.order_scheduler_book.number_of_cleaners}} Cleaners</div>
-        <div class="common-gray-text align-left">{{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_hours}} Hours</div>
-        <div class="common-gray-text align-left">{{cleaning_team_detail.order_scheduler.start_at|date:'d-m-Y'}}</div>
-        <div class="common-gray-text align-left">{{cleaning_team_detail.order_scheduler.start_at|date:'h:i A'}}</div>
-	</div><!--ticket-form-right-->
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.start_at}}</div>
+        <br>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-clock-o orange-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.start_at|date:'h:i A'}}</div>
+        <br>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-hourglass-o yellow-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_hours}} Hours</div>
+	      <br> 
+         <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.customer_address.apartment}}, {{cleaning_team_detail.order_scheduler.customer_address.floor}}, {{cleaning_team_detail.order_scheduler.customer_address.block}},  {{cleaning_team_detail.order_scheduler.customer_address.street}}, {{cleaning_team_detail.order_scheduler.customer_address.avenue}}, {{cleaning_team_detail.order_scheduler.customer_address.area.name}} {{cleaning_team_detail.order_scheduler.customer_address.governorate.name}}</div>
+        <br>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.number_of_cleaners}} Cleaners</div>
+  </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
 <hr class="hr-dashedpad">
