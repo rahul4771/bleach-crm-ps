@@ -195,7 +195,7 @@
 {% endfor %}
 <br>
 </div><!-- link formset end -->
- <div align="center" onclick="SubmitQuatationForm(this);"><input class="assignButton" name="submit" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>
+ <div align="center" onclick="SubmitQuatationForm(this);"><input class="assignButton quotation_btn" name="submit" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>
 </form> 
  
  
@@ -223,6 +223,71 @@
 
 {% block javascript %}
 <script>
+
+
+function datetimecheck(ftime,fdate,mode,x){
+        var today = new Date();
+
+        tentativedate = fdate;
+        if (tentativedate != ''){
+            console.log(tentativedate,today,"dte")
+            var vals = tentativedate.split('-');
+            var day = parseInt(vals[0]);
+            var month = parseInt (vals[1]);
+            var year = parseInt (vals[2]);
+
+            var start_time = ftime;
+            start_time = start_time.split(" ");
+            time_AM_PM = start_time[1];
+            var time = start_time[0].split(":");
+
+            //splitting 0 in hour
+            if (time[0] < 10){
+                var hour_split = time[0].split('');
+                var time_hour = hour_split[1];
+                console.log(time_hour,"werry")    
+            }else{
+                time_hour = time[0];
+            }
+
+            //converting to 24 hr
+            if (time_AM_PM == 'PM'){
+            if (time_hour < 12){
+                newhour = parseInt(time_hour) + 12 ;
+            }else{
+                newhour = time_hour;
+            }
+            }else{
+            if (time_hour == 12){
+                newhour = 00 ;
+            }else{
+                newhour = time[0];
+            }
+            }
+
+            //creating datetime element
+            selecteddatetime = new Date(year,month,day,newhour,time[1]);
+            selecteddatetime.setMonth(selecteddatetime.getMonth()-1);
+            console.log(newhour,selecteddatetime,"sel")
+
+            if (selecteddatetime < today){
+            //$('#time_alert').attr("hidden",false);
+            $('.assignButton').attr("disabled",true);
+            console.log("success")
+            }else{
+            //$('#time_alert').attr("hidden",true);
+            $('.assignButton').attr("disabled",false);
+            console.log("fail")
+            }
+        }else{
+        $("#id_form-"+x+"-tendative_time").val('');
+        $("#id_form-"+x+"-tendative_time").attr("placeholder","Select Date !!");
+
+        }
+
+    };
+
+
 
 $(".service-selector").change(function (){  
 id=this.id.match(/\d+/); 
@@ -550,6 +615,14 @@ $('document').ready(function(){
         $("#id_form-"+x+"-discount").val('0');
         $("#id_form-"+x+"-sectionbutton").prop('value','Add');
 
+        $("#id_form-"+x+"-tendative_time").change(function(){
+            datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_date").val(),'onetime',x);
+        });
+
+        $("#id_form-"+x+"-tendative_date").change(function(){
+            datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_date").val(),'onetime',x);
+        });
+        
     }
 
     function remove_row(){
@@ -583,6 +656,13 @@ $("#id_form-"+x+"-tendative_time").datetimepicker({
     //maxDate: moment({h:17}),
 });
 
+$("#id_form-"+x+"-tendative_time").change(function(){
+    datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_date").val(),'onetime',x);
+});
+
+$("#id_form-"+x+"-tendative_date").change(function(){
+    datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_date").val(),'onetime',x);
+});
 
 //Initial hiding of cleaning policy
 $("#id_form-"+x+"-tendative_date").parents('.enquiry-form-left').css("display", "none");

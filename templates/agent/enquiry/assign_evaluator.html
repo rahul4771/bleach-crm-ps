@@ -151,7 +151,7 @@
       </div><!--ticket-form-left--> 
         
   </div><!--ticket-wrapper-row ticket-forms-boxes-->  
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Assign" onclick="timecheck(this);"> <button id="ev_submit_btn" onclick="submitAnyForm(this);" hidden></button></div>  
+<div align="center"> <input class="assignButton dateconfirm" name="assing" type="button" value="Assign" onclick="submitAnyForm(this);" ></div>  
 
 </div><!--ticket-wrapper-full-->             
 </form>
@@ -168,7 +168,70 @@
 {% block javascript %}
 <script type="text/javascript">
 
+function datetimecheck(){
+        var today = new Date();
+        console.log("preee")
+        tentativedate = $('.id_proposed_date').val();
+    
+        console.log(tentativedate,today,"dte")
+        var vals = tentativedate.split('-');
+        var day = parseInt(vals[0]);
+        var month = parseInt (vals[1]);
+        var year = parseInt (vals[2]);
+
+        var start_time = $('.id_proposed_time').val();
+        start_time = start_time.split(" ");
+        time_AM_PM = start_time[1];
+        var time = start_time[0].split(":");
+
+        //splitting 0 in hour
+        if (time[0] < 10){
+            var hour_split = time[0].split('');
+            var time_hour = hour_split[1];
+            console.log(time_hour,"werry")    
+        }else{
+            time_hour = time[0];
+        }
+
+        //converting to 24 hr
+        if (time_AM_PM == 'PM'){
+          if (time_hour < 12){
+            newhour = parseInt(time_hour) + 12 ;
+          }else{
+            newhour = time_hour;
+          }
+        }else{
+          if (time_hour == 12){
+            newhour = 00 ;
+          }else{
+            newhour = time[0];
+          }
+        }
+
+        //creating datetime element
+        selecteddatetime = new Date(year,month,day,newhour,time[1]);
+        selecteddatetime.setMonth(selecteddatetime.getMonth()-1);
+        console.log(newhour,selecteddatetime,"sel")
+
+        if (selecteddatetime < today){
+          $('#time_alert').attr("hidden",false);
+          $('.dateconfirm').attr("disabled",true);
+          console.log("success")
+        }else{
+          $('#time_alert').attr("hidden",true);
+          $('.dateconfirm').attr("disabled",false);
+          console.log("fail")
+        }
+
+    }
+    //
+
+$('.id_proposed_date').change(function(){
+    datetimecheck();
+});
+
 $('document').ready(function(){ 
+
     // //datepicker and timepicker for popup
     $(document).on("click", ".content", function () {
        $('.id_proposed_date').datetimepicker({ 
@@ -184,6 +247,7 @@ $('document').ready(function(){
                 format: 'hh:mm A',
             });
         });
+
     //Evaluation Callender
         {% for evaluator in evaluation_details %}
             
@@ -272,7 +336,7 @@ $('document').ready(function(){
 
  });
 
-function timecheck(){
+{% comment %} $('.id_proposed_time').change(function(){
     var vals = $('.id_proposed_time').val().split(':');
     console.log($('.id_proposed_time').val(),"time")
     var start_time = $('.id_proposed_time').val();
@@ -299,12 +363,13 @@ function timecheck(){
     if (time_AM_PM == 'AM'){
         if (time_hour >= 8 && time_hour <= 11){
             $('#time_alert').attr("hidden",true);
-            document.getElementById("ev_submit_btn").click();
+            $('.dateconfirm').attr("disabled",false);
             
             console.log(time_hour,"test")
         }else{
             $('.id_proposed_time').val('');
             $('#time_alert').attr("hidden",false);
+            $('.dateconfirm').attr("disabled",true);
             console.log(time_hour,"test2")
         }
     };
@@ -313,16 +378,17 @@ function timecheck(){
 
         if ((time_hour == 12) || (time_hour >= 1 && time_hour < 6)){
             $('#time_alert').attr("hidden",true);
-            document.getElementById("ev_submit_btn").click();
+            $('.dateconfirm').attr("disabled",false);            
             
             console.log(time_hour,"test3")
         }else{
             $('.id_proposed_time').val('');
             $('#time_alert').attr("hidden",false);
+            $('.dateconfirm').attr("disabled",true);
             console.log(time_hour,"test4")
         }
     };
-};
+}); {% endcomment %}
 
 
  function set_params_go(args)
@@ -359,6 +425,9 @@ $(".assign_evaluator_button").click(function () {
     $('.id_evaluator').val($(this).data('evaluator_id'));
 
     $('#addevaluationdetails_popup').css({'visibility':'visible','opacity':1,});
+
+    datetimecheck();
+
       });
 
 $("#close_add_evaluator").click(function () {
@@ -367,6 +436,8 @@ $("#close_add_evaluator").click(function () {
 
 
 $('.id_proposed_time').change(function(){
+    datetimecheck();
+
     var vals = $(this).val().split(':');
     console.log($(this).val(),"time")
     var start_time = $(this).val();
@@ -393,10 +464,12 @@ $('.id_proposed_time').change(function(){
     if (time_AM_PM == 'AM'){
         if (time_hour >= 8 && time_hour <= 11){
             $('#time_alert').attr("hidden",true);
+            $('.dateconfirm').attr("disabled",false);
             console.log(time_hour,"test")
         }else{
             $('.id_proposed_time').val('');
             $('#time_alert').attr("hidden",false);
+            $('.dateconfirm').attr("disabled",true);
             console.log(time_hour,"test2")
         }
     };
@@ -405,10 +478,12 @@ $('.id_proposed_time').change(function(){
 
         if ((time_hour == 12) || (time_hour >= 1 && time_hour < 6)){
             $('#time_alert').attr("hidden",true);
+            $('.dateconfirm').attr("disabled",false);
             console.log(time_hour,"test3")
         }else{
             $('.id_proposed_time').val('');
             $('#time_alert').attr("hidden",false);
+            $('.dateconfirm').attr("disabled",true);
             console.log(time_hour,"test4")
         }
     };

@@ -118,7 +118,10 @@ function initialize() {
                 var day = parseInt (vals[2]);
                 console.log(year,month,day,value.submitted_qt,value.approved_qt,"ter")
 
-            quotations.push([new Date(year,month-1,day),value.submitted_qt,value.approved_qt]);
+                var ord_date = new Date(year,month,day)
+                ord_date.setMonth(ord_date.getMonth()-1);
+
+            quotations.push([ord_date,value.submitted_qt,value.approved_qt]);
                 submitted_total += parseInt(value.submitted_qt);
                 approved_total += parseInt(value.approved_qt);
             });

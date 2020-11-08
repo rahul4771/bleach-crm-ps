@@ -84,12 +84,12 @@
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  <div class=" bold-text common-label"> <label>Tendative Date</label></div>
-    <input name="tendative_date" id="tendative_date_id" type="text" class="textBox" placeholder=" ">
+  <div class=" bold-text common-label"> <label>Tentative Date</label></div>
+    <input name="tendative_date" id="tendative_date_id" type="text" class="textBox" placeholder=" " readonly>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-  <div class=" bold-text common-label"> <label>Tendative Time</label></div>
-  <input name="tendative_time" id="tendative_time_id" type="text" class="textBox time_pick" placeholder=" ">
+  <div class=" bold-text common-label"> <label>Tentative Time</label></div>
+  <input name="tendative_time" id="tendative_time_id" type="text" class="textBox time_pick" placeholder=" " readonly>
   <p id="time_alert" style="color:red" hidden>Please select proper time !</p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
@@ -186,50 +186,67 @@
         }
     });
 
+//previous time limit
 $('#tendative_time_id').change(function(){
-    var vals = $(this).val().split(':');
-    console.log($(this).val(),"time")
-    var start_time = $(this).val();
-    start_time = start_time.split(" ");
-    time_AM_PM = start_time[1];
-    var time = start_time[0].split(":");
-    var stime = time[0];
+    var today = new Date();
 
-    //splitting 0 in hour
-    if (stime < 10){
-        var hour_split = stime.split('');
-        var time_hour = hour_split[1];
-        console.log(time_hour,"werry")    
+    tentativedate = $('#tendative_date_id').val();
+    if (tentativedate != ''){
+        console.log(tentativedate,today,"dte")
+        var vals = tentativedate.split('-');
+        var day = parseInt(vals[0]);
+        var month = parseInt (vals[1]);
+        var year = parseInt (vals[2]);
+
+        var start_time = $(this).val();
+        start_time = start_time.split(" ");
+        time_AM_PM = start_time[1];
+        var time = start_time[0].split(":");
+
+        //splitting 0 in hour
+        if (time[0] < 10){
+            var hour_split = time[0].split('');
+            var time_hour = hour_split[1];
+            console.log(time_hour,"werry")    
+        }else{
+            time_hour = time[0];
+        }
+
+        //converting to 24 hr
+        if (time_AM_PM == 'PM'){
+          if (time_hour < 12){
+            newhour = parseInt(time_hour) + 12 ;
+          }else{
+            newhour = time_hour;
+          }
+        }else{
+          if (time_hour == 12){
+            newhour = 00 ;
+          }else{
+            newhour = time[0];
+          }
+        }
+
+        //creating datetime element
+        selecteddatetime = new Date(year,month,day,newhour,time[1]);
+        selecteddatetime.setMonth(selecteddatetime.getMonth()-1);
+        console.log(newhour,selecteddatetime,"sel")
+
+        if (selecteddatetime < today){
+          $('#time_alert').attr("hidden",false);
+          $('.assignButton').attr("disabled",true);
+          console.log("success")
+        }else{
+          $('#time_alert').attr("hidden",true);
+          $('.assignButton').attr("disabled",false);
+          console.log("fail")
+        }
     }else{
-        time_hour = stime;
+      $('#tendative_time_id').val('');
+      $('#tendative_time_id').attr("placeholder","Select Date !!");
+
     }
 
-    console.log(time_AM_PM,"nowten")
-    console.log(start_time,stime,"tru")
-
-    //time limit logic
-    if (time_AM_PM == 'AM'){
-        if (time_hour >= 8 && time_hour <= 11){
-            $('#time_alert').attr("hidden",true);
-            console.log(time_hour,"test")
-        }else{
-            $('#tendative_time_id').val('');
-            $('#time_alert').attr("hidden",false);
-            console.log(time_hour,"test2")
-        }
-    };
-
-    if (time_AM_PM == 'PM') {
-
-        if ((time_hour == 12) || (time_hour >= 1 && time_hour < 6)){
-            $('#time_alert').attr("hidden",true);
-            console.log(time_hour,"test3")
-        }else{
-            $('#tendative_time_id').val('');
-            $('#time_alert').attr("hidden",false);
-            console.log(time_hour,"test4")
-        }
-    };
 })
 
 

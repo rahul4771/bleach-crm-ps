@@ -281,6 +281,7 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Cleaning Time</label></div>
                 <input id="order_schedule_time_id" name="order_schedule_time" type="text" class="textBox" readonly>
+                <p id = "order_schedule_time_alert" hidden>Please Select a proper time !</p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <br>
@@ -341,6 +342,7 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Cleaning Time</label></div>
                 <input id="followup_schedule_time_id" name="followup_schedule_time" type="text" class="textBox" readonly>
+                <p id = "followup_schedule_time_alert" hidden>Please Select proper time !</p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <br>
@@ -422,6 +424,7 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Appointment Time</label></div>
         <input name="proposed_time" type="text" class="textBox readonly" id="appointment_time" required readonly>
+        <p id="appointment_time_alert" hidden>Please select proper time !</p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -489,11 +492,12 @@
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Cleaning Date</label></div>
         <input name="cleaning_date" type="text" class="textBox" id="cleaning_date">
-        <p id="cleaning_date_alert">Please Select a new date !</p>
+        <p id="cleaning_date_alert" hidden>Please Select a new date !</p>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Starting Time</label></div>
         <input name="cleaning_time" type="text" class="textBox" id="cleaning_time">
+        <p id="cleaning_time_alert">Please Select proper date and time !</p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -566,6 +570,7 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Starting Time</label></div>
         <input name="cleaning_time" type="text" class="textBox" id="followup_time">
+        <p id="followupcleaning_time_alert" hidden>Please select proper date and time !</p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
 <hr class="hr-dashedpad">
@@ -575,7 +580,7 @@
         <input name="cleaning_hours" type="text" class="textBox" id="followup_duration">
   </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);">  &nbsp<input class="cancel-Button close-btn delete_followup" name="delete" type="button" value="Delete"></div>
+<div align="center"> <input class="assignButton followupcleaning_btn" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);">  &nbsp<input class="cancel-Button close-btn delete_followup" name="delete" type="button" value="Delete"></div>
 </form>
  </div><!--popup-collapse-->
 </div><!--ticket-wrapper-full--> 
@@ -739,6 +744,108 @@
 {% endblock %}
 {% block javascript %}
 <script type="text/javascript">
+
+//previous time limit
+    function datetimecheck(ftime,fdate,mode){
+    var today = new Date();
+    console.log("preee")
+    tentativedate = fdate;
+    
+        console.log(tentativedate,today,"dte")
+        var vals = tentativedate.split('-');
+        var day = parseInt(vals[0]);
+        var month = parseInt (vals[1]);
+        var year = parseInt (vals[2]);
+
+        var start_time = ftime;
+        start_time = start_time.split(" ");
+        time_AM_PM = start_time[1];
+        var time = start_time[0].split(":");
+
+        //splitting 0 in hour
+        if (time[0] < 10){
+            var hour_split = time[0].split('');
+            var time_hour = hour_split[1];
+            console.log(time_hour,"werry")    
+        }else{
+            time_hour = time[0];
+        }
+
+        //converting to 24 hr
+        if (time_AM_PM == 'PM'){
+          if (time_hour < 12){
+            newhour = parseInt(time_hour) + 12 ;
+          }else{
+            newhour = time_hour;
+          }
+        }else{
+          if (time_hour == 12){
+            newhour = 00 ;
+          }else{
+            newhour = time[0];
+          }
+        }
+
+        //creating datetime element
+        selecteddatetime = new Date(year,month,day,newhour,time[1]);
+        selecteddatetime.setMonth(selecteddatetime.getMonth()-1);
+        console.log(newhour,selecteddatetime,"sel")
+
+        if (selecteddatetime < today){
+          if (mode == 'followup'){
+            $('#followup_schedule_time_alert').attr("hidden",false);
+            $('.confirmdate_followup_btn').attr("disabled",true);
+          }
+          if (mode == 'order'){
+            $('#order_schedule_time_alert').attr("hidden",false);
+            $('.confirmdate_order_btn').attr("disabled",true);
+          }
+          if (mode == 'evaluation'){
+            console.log("lop1")
+            $('#appointment_time_alert').attr("hidden",false);
+            $('.appointment_btn').attr("disabled",true);
+          }
+          if (mode == 'cleaning'){
+            console.log("lop1")
+            $('#cleaning_time_alert').attr("hidden",false);
+            $('.cleaning_btn').attr("disabled",true);
+          }
+          if (mode == 'followupcleaning'){
+            console.log("lop1")
+            $('#followupcleaning_time_alert').attr("hidden",false);
+            $('.followupcleaning_btn').attr("disabled",true);
+          }
+          console.log("success")
+        }else{
+          if (mode == 'followup'){
+          $('#followup_schedule_time_alert').attr("hidden",true);
+          $('.confirmdate_followup_btn').attr("disabled",false);
+          }
+          if (mode == 'order'){
+          $('#order_schedule_time_alert').attr("hidden",true);
+          $('.confirmdate_order_btn').attr("disabled",false);
+          }
+          if (mode == 'evaluation'){
+            console.log("lop2")
+            $('#appointment_time_alert').attr("hidden",true);
+            $('.appointment_btn').attr("disabled",false);
+          }
+          if (mode == 'cleaning'){
+            console.log("lop1")
+            $('#cleaning_time_alert').attr("hidden",true);
+            $('.cleaning_btn').attr("disabled",false);
+          }
+          if (mode == 'followupcleaning'){
+            console.log("lop1")
+            $('#followupcleaning_time_alert').attr("hidden",true);
+            $('.followupcleaning_btn').attr("disabled",false);
+          }
+          console.log("fail")
+        }
+
+    }
+    //
+
 $('document').ready(function(){
     //Evaluation Callender
         {% for evaluator in evaluation_details %}
@@ -1091,7 +1198,18 @@ $(".order_schedule").click(function(){
           format: 'hh:mm A',
         });
 
+    datetimecheck($('#order_schedule_time_id').val(),$('#order_schedule_date_id').val(),'order');
+
+    $('#order_schedule_time_id').change(function(){
+      datetimecheck($('#order_schedule_time_id').val(),$('#order_schedule_date_id').val(),'order');
+    });
+
+    $('#order_schedule_date_id').change(function(){
+      datetimecheck($('#order_schedule_time_id').val(),$('#order_schedule_date_id').val(),'order');
+    });
+
     $("#order_schedule_date_alert").css({'color':'red'});
+    $("#order_schedule_time_alert").css({'color':'red'});
 
     var vals = $('#order_schedule_date_id').val().split('-');
     var day = parseInt(vals[0]);
@@ -1125,6 +1243,7 @@ $("#orderschedule_dateconfirm_popup_close").click(function(){
 
 
 $(".followup_schedule").click(function(){
+
     $("#followup_schedule_blc_id").html($(this).data('blcno'));
     $("#followup_schedule_customer_id").html($(this).data('customer_name'));
     $("#followup_schedule_mobile_id").html($(this).data('mobile_no'));
@@ -1148,7 +1267,21 @@ $(".followup_schedule").click(function(){
           format: 'hh:mm A'
         });
 
+    datetimecheck($('#followup_schedule_time_id').val(),$('#followup_schedule_date_id').val(),'followup');
+    
+    $('#followup_schedule_time_id').change(function(){
+      datetimecheck($('#followup_schedule_time_id').val(),$('#followup_schedule_date_id').val(),'followup');
+    });
+
+    $('#followup_schedule_date_id').change(function(){
+      datetimecheck($('#followup_schedule_time_id').val(),$('#followup_schedule_date_id').val(),'followup');
+    });
+
+    
+
+
     $("#followup_schedule_date_alert").css({'color':'red'});
+    $("#followup_schedule_time_alert").css({'color':'red'});
 
     var vals = $('#followup_schedule_date_id').val().split('-');
     var day = parseInt(vals[0]);
@@ -1157,8 +1290,14 @@ $(".followup_schedule").click(function(){
 
     var followupschedule_date = new Date(year,month,day);
     followupschedule_date.setMonth(followupschedule_date.getMonth()-1);
+    followupschedule_date.setMinutes(01);
+    
+    var today_date = new Date();
+    today_date.setHours(00);
+    today_date.setMinutes(00);
+    today_date.setSeconds(00);
 
-    if (followupschedule_date < new Date()){
+    if (followupschedule_date < today_date){
       $('#followup_schedule_date_alert').attr("hidden",false);
       $('.confirmdate_followup_btn').attr("disabled",true);
     }else{
@@ -1232,28 +1371,19 @@ $('document').ready(function(){
               format: 'hh:mm A'
             });
 
-        $("#appointment_date_alert").css({'color':'red'});
+        datetimecheck($('#appointment_time').val(),$('#appointment_date').val(),'evaluation');
 
-        var vals = $('#appointment_date').val().split('-');
-        var day = parseInt(vals[0]);
-        var month = parseInt (vals[1]);
-        var year = parseInt (vals[2]);
-
-        var appointment_date = new Date(year,month,day);
-        appointment_date.setMonth(appointment_date.getMonth()-1);
-
-        if (appointment_date < new Date()){
-          $('#appointment_date_alert').attr("hidden",false);
-          $('.appointment_btn').attr("disabled",true);
-        }else{
-          $('#appointment_date_alert').attr("hidden",true);
-          $('.appointment_btn').attr("disabled",false);
-        };
+        $('#appointment_time').change(function(){
+          datetimecheck($('#appointment_time').val(),$('#appointment_date').val(),'evaluation');
+        });
 
         $('#appointment_date').change(function(){
-          $('#appointment_date_alert').attr("hidden",true);
-          $('.appointment_btn').attr("disabled",false);
-        })
+          console.log("hui")
+          datetimecheck($('#appointment_time').val(),$('#appointment_date').val(),'evaluation');
+        });
+
+        $("#appointment_date_alert").css({'color':'red'});
+        $("#appointment_time_alert").css({'color':'red'});
 
       customer_id         = $(this).data('customer_id'); 
 
@@ -1323,29 +1453,7 @@ $('.collapsible0-close').click(function(){
             });
 
         $("#cleaning_date_alert").css({'color':'red'});
-
-        var vals = $('#cleaning_date').val().split('-');
-        var day = parseInt(vals[0]);
-        var month = parseInt (vals[1]);
-        var year = parseInt (vals[2]);
-
-        var cleaning_date = new Date(year,month,day);
-        cleaning_date.setMonth(cleaning_date.getMonth()-1);
-
-        console.log(cleaning_date,new Date(),"ree")
-
-        if (cleaning_date > new Date()){
-          $('#cleaning_date_alert').attr("hidden",false);
-          $('.cleaning_btn').attr("disabled",true);
-        }else{
-          $('#cleaning_date_alert').attr("hidden",true);
-          $('.cleaning_btn').attr("disabled",false);
-        };
-
-        $('#cleaning_date').change(function(){
-          $('#cleaning_date_alert').attr("hidden",true);
-          $('.cleaning_btn').attr("disabled",false);
-        });
+        $("#cleaning_time_alert").css({'color':'red'});
 
   $.ajax({
 
@@ -1406,6 +1514,17 @@ $('.collapsible0-close').click(function(){
                   $('#cleaning_duration').val(data['duration']);                        
                                   }  
       });
+
+      datetimecheck($('#cleaning_time').val(),$('#cleaning_date').val(),'cleaning');
+
+        $('#cleaning_time').change(function(){
+          datetimecheck($('#cleaning_time').val(),$('#cleaning_date').val(),'cleaning');
+        });
+
+        $('#cleaning_date').change(function(){
+          console.log("hui")
+          datetimecheck($('#cleaning_time').val(),$('#cleaning_date').val(),'cleaning');
+        });
 
     //edit option toggle
         cleaning_status = $(this).data('cleaning_status');
@@ -1519,6 +1638,19 @@ $('.collapsible1-close').click(function(){
                   $('#followup_duration').val(data['duration']);                        
                                   }  
       });
+
+      datetimecheck($('#followup_time').val(),$('#followup_date').val(),'followupcleaning');
+
+        $('#followup_time').change(function(){
+          datetimecheck($('#followup_time').val(),$('#followup_date').val(),'followupcleaning');
+        });
+
+        $('#followup_date').change(function(){
+          console.log("hui")
+          datetimecheck($('#followup_time').val(),$('#followup_date').val(),'followupcleaning');
+        });
+
+      $("#followupcleaning_time_alert").css({'color':'red'});
         //edit option toggle
         followup_status = $(this).data('followup_status');
         

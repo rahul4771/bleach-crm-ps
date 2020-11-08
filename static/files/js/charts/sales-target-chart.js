@@ -121,8 +121,11 @@ function salestarget(evaluator_id){
                         var year = parseInt(vals[0]);
                         var month = parseInt (vals[1]);
                         var day = parseInt (vals[2]);
+
+                        var st_date = new Date(year,month,day)
+                        st_date.setMonth(st_date.getMonth()-1);
                         
-                        sales.push([new Date(year,month-1,day),value.amount]);
+                        sales.push([st_date,value.amount]);
                         sale_sum += parseInt(value.amount);
                         total_sum += parseInt(value.total);
                     });

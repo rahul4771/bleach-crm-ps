@@ -111,7 +111,11 @@ function initialize() {
                 var month = parseInt (vals[1]);
                 var day = parseInt (vals[2]);
                 console.log(year,month,day,value.total,value.followup,"ter")
-            quotes.push([new Date(year,month-1,day),value.total,value.followup]);
+
+                var tkt_date = new Date(year,month,day)
+                tkt_date.setMonth(tkt_date.getMonth()-1);
+
+            quotes.push([tkt_date,value.total,value.followup]);
                 tkt_tot += parseInt(value.total);
                 foll_tkt += parseInt(value.followup);
             });
