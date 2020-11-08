@@ -811,6 +811,11 @@
 {% block javascript %}
 <script>
 
+$(document).ready(function(){
+$(".pn-prev").click();
+});
+
+
     function sendinvoice(){
     $.ajax({
         url: "/order-data/send-invoice",

@@ -120,7 +120,7 @@
     <div class="order-details-left-stretch"><!--order-details-left-stretch-->
        {% for orderschedule in order.orderschedules %}
        <div id="details{{orderschedule.id}}">
-        <div class="details-head">Details <div class="order-date">{{orderschedule.start_at}}</div></div>    
+        <div class="details-head">Details <div class="order-date">{{orderschedule.order.evaluation.created}}</div></div>    
         <hr class="style-three" > 
         <div class="order-clean-Details-wrapper"><!--order-clean-Details-wrapper-->
             <div class="order-clean-Details-widget order-clean-Details-widget-column1"><!--order-clean-Details-widget order-clean-Details-widget-column1-->
@@ -146,7 +146,7 @@
                 {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
                 <div class="blue-bg-sm">ONE TIME</div>
                 {% else %}
-                <div class="green-bg-sm">SUBSCRIBED</div>
+                <div class="green-bg-sm">SUBSCRIPTION</div>
                 {% endif %}
                 
                 {% if orderschedule.order_scheduler_book.cleaning_method %}
@@ -168,7 +168,18 @@
             
             <div class="order-clean-Details-widget order-clean-Details-widget-column3"><!--order-clean-Details-widget order-clean-Details-widget-column3-->
             <br>
+                
+                {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
                 <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{orderschedule.start_at}}</div>
+                {% else %}
+                {% for subscription_schedule in order.orderschedules %}
+                {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{subscription_schedule.start_at}}</div>
+                <br>
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+
                 <br>
                 <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> {{orderschedule.customer_address.building}}, {{orderschedule.customer_address.street}}, {{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</div>
                 <br>
@@ -239,6 +250,7 @@
         {% if section.cause_of_stain %}
         <div class="category-cleaning"><span class="labelcategory">Cause of Stain</span>  : {{section.cause_of_stain}}</div>
         {% endif %}
+        <div class="category-cleaning"><span class="labelcategory">Cost</span>  : {{section.section_cost|floatformat:'3'}} KD</div>
         </div><!--filter-column-boxes filter-columns-right-->      
         </div><!--filter-columns-wrapper--> 
 <br> 
@@ -259,6 +271,7 @@
 
 <div class="details-sub-head align-left">Subscription Status</div>
 <div class="order-clean-outer-wrapper cream"><!--order-clean-outer-wrapper-->
+    
 <table class="main-table">    
 <tbody>
     {% for subscription_schedule in order.orderschedules %}
@@ -737,21 +750,30 @@
             <br>
             <div class="payment-text bold-text red-text"><div>Final Amount</div> : {{order.evaluation.total_cost|default_if_none:'0.00'|floatformat:'2'}} KD</div>
             <hr class="bar"> 
-            <div class="payment-text"><div>Types of Payments</div> : {% if order.paymenthistory %}{% for history in order.paymenthistory %}{{history.payment_mode}},{% endfor %}{% endif %}</div>
-            <div class="payment-text"><div>Closed Date</div> : {{order.payment_completed_date|default_if_none:''}}</div>
+            <div class="payment-text"><div>Payment Policy</div> : {{order.evaluation.payment_method|default_if_none:''}}</div>
+            {% if order.evaluation.payment_method == 'BREAKDOWN' %}
+            <div class="payment-text"><div>Before Cleaning Amount</div> : {{order.evaluation.before_cleaning_amount|default_if_none:''}}</div>
+            <div class="payment-text"><div>After Cleaning Amount</div> : {{order.evaluation.after_cleaning_amount|default_if_none:''}}</div>
+            <br>
+            {% endif %}
             <div class="payment-text"><div>Paid</div> : {{order.amount_paid|default_if_none:'0.00'|floatformat:'2'}} KD</div>
             <div class="payment-text"><div>Balance</div> : {{order.remining_amount|default_if_none:'0.00'|floatformat:'2'}} KD</div>
-        
+            {% if order.evaluation.payment_way %}
+            <div class="payment-text"><div>Payment Type</div> : {{order.evaluation.payment_way|default_if_none:''}}</div>
+            {% endif %}
+            {% if order.payment_completed_date %}
+            <div class="payment-text"><div>Closed Date</div> : {{order.payment_completed_date|default_if_none:''}}</div>
+            {% endif %}
         </div><!--order-payment-widget order-payment-widget-column-->
         <div class="order-payment-widget order-payment-widget-column"><!--order-payment-widget order-payment-widget-column-->
         {% if order.evaluation.quatation_status == 'APPROVED' %}
         <div class="invoice-button"><a href="#" onclick="sendinvoice()">Send Invoice</a></div>
         {% endif %}
         <div class="send-quotation"><a href="#" onclick="sendquotation()">Send Quotation</a></div>
-        
         {% if order.amount_paid != 0 %}
         <div class="send-receipt"><a href="#" onclick="sendreceipt()">Send Receipt</a></div>
-        {% endif %}</div><!--order-payment-widget order-payment-widget-column-->      
+        {% endif %}
+        </div><!--order-payment-widget order-payment-widget-column-->      
     
     </div><!--order-payment-wrapper-->       
        
@@ -789,6 +811,11 @@
 {% block javascript %}
 <script>
 
+$(document).ready(function(){
+$(".pn-prev").click();
+});
+
+
     function sendinvoice(){
     $.ajax({
         url: "/order-data/send-invoice",
@@ -822,6 +849,7 @@
       
       })
   };
+
 
   function sendreceipt(){
       $.ajax({
@@ -859,7 +887,7 @@
 
     })
 </script>
-
+   
 <script id="rendered-js">
 dateconfirm_completed_count = 0    
 teamassign_completed_count  = 0
@@ -961,11 +989,11 @@ total_percentage += total_schedules*2
 
 active_percentage = dateconfirm_completed_count+teamassign_completed_count+cleaning_completed_count+total_schedules
 
-{% if order.evaluation.before_cleaning_amount == order.postamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
+{% if order.evaluation.before_cleaning_amount == order.preamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
 active_percentage += total_schedules
 {% endif %}
 
-{% if order.evaluation.after_cleaning_amount == order.preamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
+{% if order.evaluation.after_cleaning_amount == order.postamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
 active_percentage += total_schedules
 {% endif %}
 
@@ -978,6 +1006,8 @@ active_percentage += total_schedules
 active_percentage += total_schedules
 {% endif %}
 
+console.log(active_percentage)
+console.log(total_percentage)
 marking_percentage = (active_percentage/total_percentage)*100
 $(".bar-loader").css("width",marking_percentage+'%');
 

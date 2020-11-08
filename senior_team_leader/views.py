@@ -368,7 +368,7 @@ class StlHome(IsSeniorTeamLeader,View):
 		teamassign_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
 		
 		try:
-			assign_order_schedules = OrderScheduler.objects.filter(work_status__isnull=True,status='CONFIRMED',is_active=True,start_at__lt=teamassign_to_date+timedelta(3)).select_related('order__evaluation__customer','customer_address','order_scheduler_book').annotate(color_status=Case(When(Q(Q(start_at__lt=teamassign_to_date+timedelta(3)) & Q(start_at__gte=teamassign_to_date+timedelta(2))), then=Value('green')),
+			assign_order_schedules = OrderScheduler.objects.filter(work_status__isnull=True,status='CONFIRMED',is_active=True,start_at__lt=teamassign_to_date+timedelta(4)).select_related('order__evaluation__customer','customer_address','order_scheduler_book').annotate(color_status=Case(When(Q(Q(start_at__lt=teamassign_to_date+timedelta(3)) & Q(start_at__gte=teamassign_to_date+timedelta(2))), then=Value('green')),
                   When(Q(Q(start_at__lt=teamassign_to_date+timedelta(2))&Q(start_at__gte=teamassign_to_date+timedelta(1))), then=Value('yellow')),When(Q(Q(start_at__lt=teamassign_to_date+timedelta(1))&Q(start_at__gte=teamassign_to_date)), then=Value('orange')),
                   default=Value('red'),
                   output_field=CharField(),))
@@ -376,12 +376,19 @@ class StlHome(IsSeniorTeamLeader,View):
 			assign_order_schedules = None
 
 		try:
-			assign_followup_schedules = FollowUpScheduler.objects.filter(work_status__isnull=True,status='CONFIRMED',is_active=True,start_at__lt=teamassign_to_date+timedelta(3)).select_related('follow_up__investigation__order__evaluation__customer','customer_address').annotate(color_status=Case(When(Q(Q(start_at__lt=teamassign_to_date+timedelta(3)) & Q(start_at__gte=teamassign_to_date+timedelta(2))), then=Value('green')),
+			assign_followup_schedules = FollowUpScheduler.objects.filter(work_status__isnull=True,status='CONFIRMED',is_active=True,start_at__lt=teamassign_to_date+timedelta(4)).select_related('follow_up__investigation__order__evaluation__customer','customer_address').annotate(color_status=Case(When(Q(Q(start_at__lt=teamassign_to_date+timedelta(3)) & Q(start_at__gte=teamassign_to_date+timedelta(2))), then=Value('green')),
                   When(Q(Q(start_at__lt=teamassign_to_date+timedelta(2))&Q(start_at__gte=teamassign_to_date+timedelta(1))), then=Value('yellow')),When(Q(Q(start_at__lt=teamassign_to_date+timedelta(1))&Q(start_at__gte=teamassign_to_date)), then=Value('orange')),
                   default=Value('red'),
                   output_field=CharField(),))
 		except:
 			assign_followup_schedules = None
+
+		#add days left
+		for schedule in assign_order_schedules:
+			schedule.days_left_coming = (schedule.start_at-timezone.now()).days
+
+		for followupschedule in assign_followup_schedules:
+			followupschedule.days_left_coming = (followupschedule.start_at-timezone.now()).days	
 
 
 		return render(request,'stl/home/home.html',{'investigations':investigations,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,"fil_staff":fil_staff,'assign_order_schedules':assign_order_schedules,'assign_followup_schedules':assign_followup_schedules,})
