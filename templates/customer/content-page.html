@@ -47,146 +47,149 @@
       <section id="invoice-info">
         <div class="order-details-wrapper"><!--order-details-wrapper--> 
           <div class="order-details-left-stretch"><!--order-details-left-stretch-->
+          
             {% for orderschedule in order.orderschedules %}
-              <div id="details{{orderschedule.id}}">
-              <div class="details-head"> {{order.order_no}} Item 1 In-detail <div class="order-date"></div></div>	
-               <hr class="style-three" > 
-            <div class="order-clean-Details-wrapper"><!--order-clean-Details-wrapper-->
-                  <div class="order-clean-Details-widget order-clean-Details-widget-column1"><!--order-clean-Details-widget order-clean-Details-widget-column1-->
-              <div class="cleaning-img">
-              {% if orderschedule.order_scheduler_book.service_type.name == 'General Cleaning' %}
-                <img src="{% static 'files/images/service_general_cleaning.jpg' %}" >
-                {% elif orderschedule.order_scheduler_book.service_type.name == 'Deep Cleaning' %}
-                <img src="{% static 'files/images/service_deep_cleaning.jpg' %}">
-                {% elif orderschedule.order_scheduler_book.service_type.name == 'Carpet Cleaning' %}
-                <img src="{% static 'files/images/Service_carpet_cleaning.jpg' %}">
-                {% elif orderschedule.order_scheduler_book.service_type.name == 'Upholstery Cleaning' %}
-                <img src="{% static 'files/images/Service_uppostry.jpg' %}">
-                {% elif orderschedule.order_scheduler_book.service_type.name == 'Kitchen Cleaning' %}
-                <img src="{% static 'files/images/Service_kitchen_cleaning.jpg' %}">
-                {% elif orderschedule.order_scheduler_book.service_type.name == 'Sterilization' %}
-                <img src="{% static 'files/images/Service_sanitization.jpg' %}">
-                {% endif %}
-              </div>
-                    </div><!--order-clean-Details-widget order-clean-Details-widget-column1-->
-                    
-                  <div class="order-clean-Details-widget order-clean-Details-widget-column2"><!--order-clean-Details-widget order-clean-Details-widget-column2-->
-                        <div class="details-head align-left" style="font-size:18px;">{{orderschedule.order_scheduler_book.service_type.name}}</div>
-                        <br>
-                        {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
-                        <div class="blue-bg-sm">ONE TIME</div>
-                        {% else %}
-                        <div class="green-bg-sm">SUBSCRIPTION</div>
+          
+                {% if orderschedule.order_scheduler_book.service_type.id == serviceid %}
+                  <div id="details{{orderschedule.id}}">
+                  <div class="details-head"> {{order.order_no}} Item(s) In-detail <div class="order-date"></div></div>	
+                  <hr class="style-three" > 
+                <div class="order-clean-Details-wrapper"><!--order-clean-Details-wrapper-->
+                      <div class="order-clean-Details-widget order-clean-Details-widget-column1"><!--order-clean-Details-widget order-clean-Details-widget-column1-->
+                  <div class="cleaning-img">
+                  {% if orderschedule.order_scheduler_book.service_type.name == 'General Cleaning' %}
+                    <img src="{% static 'files/images/service_general_cleaning.jpg' %}" >
+                    {% elif orderschedule.order_scheduler_book.service_type.name == 'Deep Cleaning' %}
+                    <img src="{% static 'files/images/service_deep_cleaning.jpg' %}">
+                    {% elif orderschedule.order_scheduler_book.service_type.name == 'Carpet Cleaning' %}
+                    <img src="{% static 'files/images/Service_carpet_cleaning.jpg' %}">
+                    {% elif orderschedule.order_scheduler_book.service_type.name == 'Upholstery Cleaning' %}
+                    <img src="{% static 'files/images/Service_uppostry.jpg' %}">
+                    {% elif orderschedule.order_scheduler_book.service_type.name == 'Kitchen Cleaning' %}
+                    <img src="{% static 'files/images/Service_kitchen_cleaning.jpg' %}">
+                    {% elif orderschedule.order_scheduler_book.service_type.name == 'Sterilization' %}
+                    <img src="{% static 'files/images/Service_sanitization.jpg' %}">
+                    {% endif %}
+                  </div>
+                        </div><!--order-clean-Details-widget order-clean-Details-widget-column1-->
+                        
+                      <div class="order-clean-Details-widget order-clean-Details-widget-column2"><!--order-clean-Details-widget order-clean-Details-widget-column2-->
+                            <div class="details-head align-left" style="font-size:18px;">{{orderschedule.order_scheduler_book.service_type.name}}</div>
+                            <br>
+                            {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
+                            <div class="blue-bg-sm">ONE TIME</div>
+                            {% else %}
+                            <div class="green-bg-sm">SUBSCRIPTION</div>
+                            {% endif %}
+                            <br>
+                        
+                        {% if orderschedule.order_scheduler_book.cleaning_method %}
+                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.cleaning_method}}</div>
                         {% endif %}
-                        <br>
-                    
-                    {% if orderschedule.order_scheduler_book.cleaning_method %}
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.cleaning_method}}</div>
-                    {% endif %}
-                    
-                    {% if orderschedule.order_scheduler_book.area_type %}
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.area_type}}</div>
-                    {% endif %}
-                    
-                    {% if orderschedule.order_scheduler_book.location_type %}
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.location_type}}</div>
-                    {% endif %}
-                    
-                    {% if orderschedule.customer_address.area %}
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.customer_address.area.name}}</div>
-                    {% endif %}
+                        
+                        {% if orderschedule.order_scheduler_book.area_type %}
+                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.area_type}}</div>
+                        {% endif %}
+                        
+                        {% if orderschedule.order_scheduler_book.location_type %}
+                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.location_type}}</div>
+                        {% endif %}
+                        
+                        {% if orderschedule.customer_address.area %}
+                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{orderschedule.customer_address.area.name}}</div>
+                        {% endif %}
 
-                    </div><!--order-clean-Details-widget order-clean-Details-widget-column2-->            
-                    
-                  <div class="order-clean-Details-widget order-clean-Details-widget-column3"><!--order-clean-Details-widget order-clean-Details-widget-column3-->
-                    <br>
-                    {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'SUBSCRIPTION' %}
-                      {% for subscription_schedule in order.orderschedules %}
-                        {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
+                        </div><!--order-clean-Details-widget order-clean-Details-widget-column2-->            
+                        
+                      <div class="order-clean-Details-widget order-clean-Details-widget-column3"><!--order-clean-Details-widget order-clean-Details-widget-column3-->
+                        <br>
+                        {% comment %} {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'SUBSCRIPTION' %}
+                          {% for subscription_schedule in order.orderschedules %}
+                            
+                            <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{subscription_schedule.start_at}}</div>
+                            
+                          {% endfor %}
+                        {% else %} {% endcomment %}
                         <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{orderschedule.start_at}}</div>
-                        {% endif %}
-                      {% endfor %}
-                    {% else %}
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{orderschedule.start_at}}</div>
+                        {% comment %} {% endif %} {% endcomment %}
+                        <br>
+                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> {{orderschedule.customer_address.building}}, {{orderschedule.customer_address.street}}, {{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</div>
+                        <br>
+                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
+                        <br>
+                        {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
+                        
+                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-credit-card orange-text" aria-hidden="true"></i> {{section.section_cost|floatformat:2}} KD</div>
+                        
+                        {% endfor %}
+                        </div><!--order-clean-Details-widget order-clean-Details-widget-column3-->                        
+                    </div><!--order-clean-Details-wrapper--> 
+            
+                    
+                  
+            <hr class="divider" > 
+            
+            {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
+            
+            
+            <div class="details-sub-head align-left">{{section.section_name}}</div>
+            <br>
+            <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
+                <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
+                    {% if section.category %}  
+                    <div class="category-cleaning"><span class="labelcategory">Category</span> : {{section.category}}</div>
                     {% endif %}
-                    <br>
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> {{orderschedule.customer_address.building}}, {{orderschedule.customer_address.street}}, {{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</div>
-                    <br>
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
-                    <br>
-                    {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
-                    {% if section.id == sectionid %}
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-credit-card orange-text" aria-hidden="true"></i> {{section.section_cost|floatformat:2}} KD</div>
+                    <div class="category-cleaning"><span class="labelcategory">Dirt Level</span> : {{section.dirt_level}}</div>
+                    {% if section.age %}
+                    <div class="category-cleaning"><span class="labelcategory">Age</span> : {{section.age}}</div>
                     {% endif %}
-                    {% endfor %}
-                    </div><!--order-clean-Details-widget order-clean-Details-widget-column3-->                        
-                </div><!--order-clean-Details-wrapper--> 
-        
-                
-               
-        <hr class="divider" > 
-        
-        {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
-        {% if section.id == sectionid %}
-        
-        <div class="details-sub-head align-left">{{section.section_name}}</div>
-        <br>
-        <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
-            <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
-                {% if section.category %}  
-                <div class="category-cleaning"><span class="labelcategory">Category</span> : {{section.category}}</div>
-                {% endif %}
-                <div class="category-cleaning"><span class="labelcategory">Dirt Level</span> : {{section.dirt_level}}</div>
-                {% if section.age %}
-                <div class="category-cleaning"><span class="labelcategory">Age</span> : {{section.age}}</div>
-                {% endif %}
-                <div class="category-cleaning"><span class="labelcategory">Size</span> : {{section.size}} {{section.unit|default_if_none:''}}</div>
-                {% if section.floor %}
-                <div class="category-cleaning"><span class="labelcategory">Floors</span> : {{section.floor}}</div>
-                {% endif %}
-                {% if section.apartment %}
-                <div class="category-cleaning"><span class="labelcategory">Apartments</span> : {{section.apartment}}</div>
-                {% endif %}
-                {% if section.room %}
-                <div class="category-cleaning"><span class="labelcategory">Rooms</span> : {{section.room}}</div>
-                {% endif %}
-                </div><!--filter-column-boxes filter-columns-left-->
+                    <div class="category-cleaning"><span class="labelcategory">Size</span> : {{section.size}} {{section.unit|default_if_none:''}}</div>
+                    {% if section.floor %}
+                    <div class="category-cleaning"><span class="labelcategory">Floors</span> : {{section.floor}}</div>
+                    {% endif %}
+                    {% if section.apartment %}
+                    <div class="category-cleaning"><span class="labelcategory">Apartments</span> : {{section.apartment}}</div>
+                    {% endif %}
+                    {% if section.room %}
+                    <div class="category-cleaning"><span class="labelcategory">Rooms</span> : {{section.room}}</div>
+                    {% endif %}
+                    </div><!--filter-column-boxes filter-columns-left-->
 
-                <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
-                {% if section.wall_type %}
-                <div class="category-cleaning"><span class="labelcategory">Wall Type</span>  : {{section.wall_type}}</div>
-                {% endif %}
-                {% if section.ceiling_type %}
-                <div class="category-cleaning"><span class="labelcategory">Celing Type</span>  : {{section.ceiling_type}}</div>
-                {% endif %}
-                {% if section.floor_type %}
-                <div class="category-cleaning"><span class="labelcategory">Floor Type</span>  : {{section.floor_type}}</div>
-                {% endif %}
-                {% if section.material %}
-                <div class="category-cleaning"><span class="labelcategory">Material</span>  : {{section.material}}</div>
-                {% endif %}
-                {% if section.colour %}
-                <div class="category-cleaning"><span class="labelcategory">Color</span>  : {{section.colour}}</div>
-                {% endif %}
-                {% if section.cause_of_stain %}
-                <div class="category-cleaning"><span class="labelcategory">Cause of Stain</span>  : {{section.cause_of_stain}}</div>
-                {% endif %}
-                </div><!--filter-column-boxes filter-columns-right-->
-                </div><!--filter-columns-wrapper--> 
-        <br> 
-        <div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
-            {% if section.sectionkeynotes %}
-            {% for keynote in section.sectionkeynotes %}
-                <div class="evaluation-card"><!--evaluation-card-->
-                    <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
-                    </div><!--evaluation-card-->        
+                    <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+                    {% if section.wall_type %}
+                    <div class="category-cleaning"><span class="labelcategory">Wall Type</span>  : {{section.wall_type}}</div>
+                    {% endif %}
+                    {% if section.ceiling_type %}
+                    <div class="category-cleaning"><span class="labelcategory">Celing Type</span>  : {{section.ceiling_type}}</div>
+                    {% endif %}
+                    {% if section.floor_type %}
+                    <div class="category-cleaning"><span class="labelcategory">Floor Type</span>  : {{section.floor_type}}</div>
+                    {% endif %}
+                    {% if section.material %}
+                    <div class="category-cleaning"><span class="labelcategory">Material</span>  : {{section.material}}</div>
+                    {% endif %}
+                    {% if section.colour %}
+                    <div class="category-cleaning"><span class="labelcategory">Color</span>  : {{section.colour}}</div>
+                    {% endif %}
+                    {% if section.cause_of_stain %}
+                    <div class="category-cleaning"><span class="labelcategory">Cause of Stain</span>  : {{section.cause_of_stain}}</div>
+                    {% endif %}
+                    </div><!--filter-column-boxes filter-columns-right-->
+                    </div><!--filter-columns-wrapper--> 
+            <br> 
+            <div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
+                {% if section.sectionkeynotes %}
+                {% for keynote in section.sectionkeynotes %}
+                    <div class="evaluation-card"><!--evaluation-card-->
+                        <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
+                        </div><!--evaluation-card-->        
+                {% endfor %}
+                {% endif %}        
+            
+            </div><!--evaluation-card-wrapper-->
             {% endfor %}
-            {% endif %}        
-        
-        </div><!--evaluation-card-wrapper-->
-        {% else %}
-        {% endif %}
-        {% endfor %}
+            {% else %}
+            {% endif %}
         {% endfor %} 
           </div><!--order-details-left-stretch-->
         
