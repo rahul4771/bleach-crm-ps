@@ -122,7 +122,7 @@
             {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
             <tr>
               <td style="text-align:center;"></td> <!-- Don't remove this column as it's needed for the row commands -->
-              <td><a href="{% url 'customer:customer-order-details' order.id section.id %}">{{orderschedule.order_scheduler_book.service_type}}-{{orderschedule.customer_address.area.name}}-{{section.section_name}} <br> {{orderschedule.order_scheduler_book.service_type.name_arabic}}-{{orderschedule.customer_address.area.name_arabic}}-{{section.section_name_arabic}}</a></td>
+              <td><a href="{% url 'customer:customer-order-details' order.id orderschedule.order_scheduler_book.service_type.id section.id %}">{{orderschedule.order_scheduler_book.service_type}}-{{orderschedule.customer_address.area.name}}-{{section.section_name}} <br> {{orderschedule.order_scheduler_book.service_type.name_arabic}}-{{orderschedule.customer_address.area.name_arabic}}-{{section.section_name_arabic}}</a></td>
               
               <td>{{section.dirt_level}}<br> {% if section.dirt_level == 'Red' %}أحمر{% endif %}{% if section.dirt_level == 'Random' %}وسط{%endif%}</td>
               <td>{{section.size}} {{section.unit|default_if_none:''}}</td>
