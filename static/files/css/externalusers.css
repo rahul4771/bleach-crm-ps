@@ -618,8 +618,7 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 }
 
 @page {
-    size: Letter;
-    margin-right:100px;
+    size: A4 portrait;
     margin: 0.2in 9in 0.2in 0.44in;
 }
 

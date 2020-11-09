@@ -1360,13 +1360,13 @@ $('document').ready(function(){
     //edit option toggle
         cleaning_status = $(this).data('cleaning_status');
         
-        if(cleaning_status != 'CLEANING_TEAM_ASSIGNED')
+        if(cleaning_status == 'CLEANING_TEAM_ASSIGNED' || cleaning_status == 'CLEANING_IN_PROGRESS')
             {
-                $('.edit-collapse').css('display','none');
+                $('.edit-collapse').css('display','block');
         }
         else
         {
-                $('.edit-collapse').css('display','block');
+             $('.edit-collapse').css('display','none');   
         }
 });
 
@@ -1508,13 +1508,14 @@ $('.collapsible1-close').click(function(){
         //edit option toggle
         followup_status = $(this).data('followup_status');
         
-        if(followup_status != 'FOLLOW_UP_TEAM_ASSIGNED')
+        
+        if(followup_status == 'FOLLOW_UP_TEAM_ASSIGNED' || followup_status == 'FOLLOW_UP_CLEANING_IN_PROGRESS')
             {
-                $('.edit-collapse').css('display','none');
+                $('.edit-collapse').css('display','block');
         }
         else
         {
-                $('.edit-collapse').css('display','block');
+                $('.edit-collapse').css('display','none');
         }
 
 });
