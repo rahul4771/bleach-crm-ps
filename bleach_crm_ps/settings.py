@@ -128,6 +128,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
+FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800
 
 STATIC_ROOT = local_settings.static_root
 MEDIA_URL   = '/media/'
