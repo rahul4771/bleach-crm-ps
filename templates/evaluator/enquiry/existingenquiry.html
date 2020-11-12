@@ -250,14 +250,34 @@
 <form method="post" enctype= "multipart/form-data">{% csrf_token %}                      
 <input type="hidden" name="action_type" value="add_address">
             <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->      
-          
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-          <div class=" bold-text common-label"> <label>Appartment</label></div>
+          <div class=" bold-text common-label"> <label>Governorate</label></div>
+        <label for="favcity">
+                <select id="favcity" name="governorate" class="governorate" required>
+                <option value="">Choose Governorate</option>
+                {% for governorate in governorates %}
+                <option value="{{governorate.id}}">{{governorate.name}}</option>
+                {% endfor %}
+                </select>
+        </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Area</label></div>
+          <label for="favcity">
+                <select id="id_area" name="area" required>
+                </select>
+          </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+ <hr class="hr-dashedpad">          
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Address Title</label></div>
         <input type="text" name="apartment" class="textBox" required>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-          <div class=" bold-text common-label"> <label>Floor</label></div>
+          <div class=" bold-text common-label"> <label>Floor/Flat/House</label></div>
                 <input type="text" name="floor" class="textBox" required>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
@@ -285,29 +305,7 @@
                 <input type="text" name="avenue" class="textBox" required>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
-<hr class="hr-dashedpad">
-
-<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-  <div class="ticket-form-left"><!--ticket-form-left-->
-          <div class=" bold-text common-label"> <label>Governorate</label></div>
-        <label for="favcity">
-                <select id="favcity" name="governorate" class="governorate" required>
-                <option value="">Choose Governorate</option>
-                {% for governorate in governorates %}
-                <option value="{{governorate.id}}">{{governorate.name}}</option>
-                {% endfor %}
-                </select>
-        </label>
-  </div><!--ticket-form-left-->
-  <div class="ticket-form-right"><!--ticket-form-right-->
-          <div class=" bold-text common-label"> <label>Area</label></div>
-          <label for="favcity">
-                <select id="id_area" name="area" required>
-                </select>
-          </label>
-  </div><!--ticket-form-right-->
-</div><!--ticket-wrapper-row ticket-forms-boxes-->
- <hr class="hr-dashedpad">     
+<hr class="hr-dashedpad">     
   
 <div align="center"> <input class="assignButton" name="assing" type="button" value="Add" onclick="submitAnyForm(this);"></div> 
 
