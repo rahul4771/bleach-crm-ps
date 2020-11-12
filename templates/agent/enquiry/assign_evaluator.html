@@ -139,7 +139,7 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Appointment Time</label></div>
                 <input type="text" name="proposed_time" class="textBox id_proposed_time readonly" required readonly>
-                <p id="time_alert" style="color:red" hidden>Please select proper time !</p>
+                <p id="time_alert" style="color:red" hidden>Please select proper date and time !</p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
  
@@ -424,6 +424,8 @@ $(".assign_evaluator_button").click(function () {
     
     $('.id_evaluator').val($(this).data('evaluator_id'));
 
+    datetimecheck();
+
     $('#addevaluationdetails_popup').css({'visibility':'visible','opacity':1,});
 
     datetimecheck();
@@ -436,7 +438,7 @@ $("#close_add_evaluator").click(function () {
 
 
 $('.id_proposed_time').change(function(){
-    datetimecheck();
+    
 
     var vals = $(this).val().split(':');
     console.log($(this).val(),"time")
@@ -463,8 +465,7 @@ $('.id_proposed_time').change(function(){
     //time limit logic
     if (time_AM_PM == 'AM'){
         if (time_hour >= 8 && time_hour <= 11){
-            $('#time_alert').attr("hidden",true);
-            $('.dateconfirm').attr("disabled",false);
+            datetimecheck();
             console.log(time_hour,"test")
         }else{
             $('.id_proposed_time').val('');
@@ -477,8 +478,7 @@ $('.id_proposed_time').change(function(){
     if (time_AM_PM == 'PM') {
 
         if ((time_hour == 12) || (time_hour >= 1 && time_hour < 6)){
-            $('#time_alert').attr("hidden",true);
-            $('.dateconfirm').attr("disabled",false);
+            datetimecheck();
             console.log(time_hour,"test3")
         }else{
             $('.id_proposed_time').val('');

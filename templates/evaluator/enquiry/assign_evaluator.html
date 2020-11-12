@@ -122,7 +122,7 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Appointment Time</label></div>
                 <input type="text" name="proposed_time" class="textBox id_proposed_time readonly" required readonly>
-                <p id="time_alert" style="color:red" hidden>Please select proper time !</p>
+                <p id="time_alert" style="color:red" hidden>Please select proper date and time !</p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
  
@@ -134,7 +134,7 @@
       </div><!--ticket-form-left--> 
         
   </div><!--ticket-wrapper-row ticket-forms-boxes-->  
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Assign" onclick="timecheck(this);"> <button id="ev_submit_btn" onclick="submitAnyForm(this);" hidden></button></div> 
+<div align="center"> <input class="assignButton dateconfirm" name="assing" type="button" value="Assign" onclick="timecheck(this);"> <button id="ev_submit_btn" onclick="submitAnyForm(this);" hidden></button></div> 
 
 </div><!--ticket-wrapper-full-->             
 </form>
@@ -150,13 +150,75 @@
 
 {% block javascript %}
 <script type="text/javascript">
-  
+
+function datetimecheck(){
+        var today = new Date();
+        console.log("preee")
+        tentativedate = $('.id_proposed_date').val();
+    
+        console.log(tentativedate,today,"dte")
+        var vals = tentativedate.split('-');
+        var day = parseInt(vals[0]);
+        var month = parseInt (vals[1]);
+        var year = parseInt (vals[2]);
+
+        var start_time = $('.id_proposed_time').val();
+        start_time = start_time.split(" ");
+        time_AM_PM = start_time[1];
+        var time = start_time[0].split(":");
+
+        //splitting 0 in hour
+        if (time[0] < 10){
+            var hour_split = time[0].split('');
+            var time_hour = hour_split[1];
+            console.log(time_hour,"werry")    
+        }else{
+            time_hour = time[0];
+        }
+
+        //converting to 24 hr
+        if (time_AM_PM == 'PM'){
+          if (time_hour < 12){
+            newhour = parseInt(time_hour) + 12 ;
+          }else{
+            newhour = time_hour;
+          }
+        }else{
+          if (time_hour == 12){
+            newhour = 00 ;
+          }else{
+            newhour = time[0];
+          }
+        }
+
+        //creating datetime element
+        selecteddatetime = new Date(year,month,day,newhour,time[1]);
+        selecteddatetime.setMonth(selecteddatetime.getMonth()-1);
+        console.log(newhour,selecteddatetime,"sel")
+
+        if (selecteddatetime < today){
+          $('#time_alert').attr("hidden",false);
+          $('.dateconfirm').attr("disabled",true);
+          console.log("success")
+        }else{
+          $('#time_alert').attr("hidden",true);
+          $('.dateconfirm').attr("disabled",false);
+          console.log("fail")
+        }
+
+    }
+    //
+
+$('.id_proposed_date').change(function(){
+    datetimecheck();
+});
+
 $('document').ready(function(){  
     // //datepicker and timepicker for popup
        $('.id_proposed_date').datetimepicker({ 
             pickTime: false, 
             format: "DD-MM-YYYY", 
-            //maxDate: 'now().date()', 
+            minDate: new Date(), 
         });
 
         //tendative time
@@ -253,59 +315,6 @@ $('document').ready(function(){
  });
 
 
-function timecheck(){
-    var vals = $('.id_proposed_time').val().split(':');
-    console.log($('.id_proposed_time').val(),"time")
-    var start_time = $('.id_proposed_time').val();
-    start_time = start_time.split(" ");
-    time_AM_PM = start_time[1];
-    var time = start_time[0].split(":");
-    var stime = time[0];
-
-    //splitting 0 in hour
-    if (stime < 10){
-        var hour_split = stime.split('');
-        var time_hour = hour_split[1];
-        console.log(time_hour,"werry")    
-    }else{
-        time_hour = stime;
-    }
-
-    var now_time   = (hour>12 ? hour-12:hour)+":00 "+(hour>=12 ? 'AM':'PM')
-
-    console.log(time_AM_PM,"nowten")
-    console.log(start_time,stime,"tru")
-
-    //time limit logic
-    if (time_AM_PM == 'AM'){
-        if (time_hour >= 8 && time_hour <= 11){
-            $('#time_alert').attr("hidden",true);
-            document.getElementById("ev_submit_btn").click();
-            
-            console.log(time_hour,"test")
-        }else{
-            $('.id_proposed_time').val('');
-            $('#time_alert').attr("hidden",false);
-            console.log(time_hour,"test2")
-        }
-    };
-
-    if (time_AM_PM == 'PM') {
-
-        if ((time_hour == 12) || (time_hour >= 1 && time_hour < 6)){
-            $('#time_alert').attr("hidden",true);
-            document.getElementById("ev_submit_btn").click();
-            
-            console.log(time_hour,"test3")
-        }else{
-            $('.id_proposed_time').val('');
-            $('#time_alert').attr("hidden",false);
-            console.log(time_hour,"test4")
-        }
-    };
-};
-
-
  function set_params_go(args)
 {
 var url='{% url 'evaluator:evaluator-assignevaluator' enquiryid evaluation_id %}';
@@ -334,6 +343,7 @@ $(".assign_evaluator_button").click(function () {
     $('.id_proposed_date').val(now_date);
     $('.id_proposed_time').val(now_time);
     $('.id_evaluator').val($(this).data('evaluator_id'));
+    datetimecheck();
     $('#addevaluationdetails_popup').css({'visibility':'visible','opacity':1,});
       });
 
@@ -342,6 +352,8 @@ $("#close_add_evaluator").click(function () {
 });
 
 $('.id_proposed_time').change(function(){
+    
+
     var vals = $(this).val().split(':');
     console.log($(this).val(),"time")
     var start_time = $(this).val();
@@ -359,19 +371,18 @@ $('.id_proposed_time').change(function(){
         time_hour = stime;
     }
 
-    var now_time   = (hour>12 ? hour-12:hour)+":00 "+(hour>=12 ? 'AM':'PM')
-
     console.log(time_AM_PM,"nowten")
     console.log(start_time,stime,"tru")
 
     //time limit logic
     if (time_AM_PM == 'AM'){
         if (time_hour >= 8 && time_hour <= 11){
-            $('#time_alert').attr("hidden",true);
+            datetimecheck();
             console.log(time_hour,"test")
         }else{
             $('.id_proposed_time').val('');
             $('#time_alert').attr("hidden",false);
+            $('.dateconfirm').attr("disabled",true);
             console.log(time_hour,"test2")
         }
     };
@@ -379,11 +390,12 @@ $('.id_proposed_time').change(function(){
     if (time_AM_PM == 'PM') {
 
         if ((time_hour == 12) || (time_hour >= 1 && time_hour < 6)){
-            $('#time_alert').attr("hidden",true);
+            datetimecheck();
             console.log(time_hour,"test3")
         }else{
             $('.id_proposed_time').val('');
             $('#time_alert').attr("hidden",false);
+            $('.dateconfirm').attr("disabled",true);
             console.log(time_hour,"test4")
         }
     };
