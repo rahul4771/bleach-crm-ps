@@ -69,6 +69,12 @@
                     {% else %}
                     <div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div>
                     {% endif %}
+
+                    {% if order.order_status == 'ORDER_CLOSED' %}
+                    <div class="align-left">
+                        <div class="yellow-bg-lg clickable-cursor duplicate_order" data-id="{{order.evaluation.id}}">Copy&nbsp;&nbsp;<i class="fa fa-copy" aria-hidden="true"></i></div>
+                    </div>
+                    {% endif %}    
             	</div><!--cleaning-column-widget cleaning-column-widget-column2-->
             </div><!--cleaning-column-wrapper-->
         	
@@ -116,7 +122,35 @@
 </div><!--container-fluid space topspace-->
 </section><!--content-->
     
-    
+
+<div class="custom-model-main-sp"><!--custom-model-main-->
+    <div class="custom-model-inner-sp">  <!--custom-model-inner-->      
+    <div class="close-btn-sp">×</div>
+        <div class="custom-model-wrap-sp"><!--custom-model-wrap-->
+            <div class="pop-up-content-wrap"><!--pop-up-content-wrap-->
+               <div class="bold-text">Are You Sure ? Do you want to Duplicate this Order ?</div>  
+               <form method="get" action="" enctype= "multipart/form-data" id="duplicate_form_id">{% csrf_token %}
+               <div><input class="assignButton" name="submit" type="submit" value="Duplicate"></div>
+               </form>
+            </div><!--pop-up-content-wrap-->
+        </div><!--custom-model-wrap-->  
+    </div><!--custom-model-inner-->   
+    <div class="bg-overlay-sp"></div>
+</div><!--custom-model-main-->
+
 {% include 'agent/common/footer.html' %} 
 </div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script>
+$(".duplicate_order").on('click', function () {
+  $(".custom-model-main-sp").addClass('model-open-sp');
+  evaluation_id = $(this).data('id');
+  $("#duplicate_form_id").attr('action','/agent/makequatation/duplicate/'+evaluation_id)
+});
+$(".close-btn-sp, .bg-overlay-sp").click(function () {
+  $(".custom-model-main-sp").removeClass('model-open-sp');
+});
+</script>
 {% endblock %}

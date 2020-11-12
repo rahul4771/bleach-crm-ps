@@ -499,4 +499,4 @@ def receipt_html_to_pdf_view(request,payment_id):
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="receipt.pdf"'
 		return response
-	return response	
+	return response		

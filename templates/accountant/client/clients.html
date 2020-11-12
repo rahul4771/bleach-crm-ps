@@ -292,6 +292,15 @@ $('.footable').footable({
                           return index == self.indexOf(elem);
                           }).length;
   $('#active_clients_count').html(active_clients_count)
+
+  //filter based on active and not active
+  {% if fil_status == 'ACTIVE' %}
+  $('.yellow-bg').parents('tr').remove();
+  {% endif %}
+
+  {% if fil_status == 'NOTACTIVE' %}
+  $('.green-bg').parents('tr').remove();
+  {% endif %}
   
 
   

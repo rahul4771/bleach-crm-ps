@@ -283,32 +283,18 @@
 
 <table cellpadding="0" cellspacing="0" class="table3">
   <tr>
-    <td colspan="2" ><input name="print" type="button" class="print" value="Print / شارع محمد">&nbsp;<input name="download" type="button" class="download" value="Download / شارع محمد"> </td>
+    <td colspan="2" ><input name="print" type="button" class="print" value="Print / شارع محمد" onclick="printDiv();">&nbsp;<input name="download" type="button" class="download" value="Download / شارع محمد"> </td>
   </tr>            
 </table>
 
-<div class="custom-model-main"><!--custom-model-main-->
-<div class="custom-model-inner">  <!--custom-model-inner-->      
-<div class="close-btn">×</div>
-<div class="custom-model-wrap"><!--custom-model-wrap-->
-<div class="pop-up-content-wrap"><!--pop-up-content-wrap-->
-  <div class="bold-text">Do you want to pay now ? <br> مبني 3، قطعة 13 ، شارع محمد الغانم ، مدينة الكويت  </div>  
-  <div><input class="assignButton" name="submit" type="button" value="Approve / شارع محمد"> <input class="cancel-Button" name="cancel" type="button" value="Reject / شارع محمد"></div>
-</div><!--pop-up-content-wrap-->
-</div><!--custom-model-wrap-->  
-</div><!--custom-model-inner-->   
-<div class="bg-overlay"></div>
-</div><!--custom-model-main-->
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
 
 <script id="rendered-js" >
-$(".Click-here").on('click', function () {
-$(".custom-model-main").addClass('model-open');
-});
-$(".close-btn, .bg-overlay").click(function () {
-$(".custom-model-main").removeClass('model-open');
-});
-
+//print script
+function printDiv() 
+{
+window.print();
+}
 </script>
 
 
