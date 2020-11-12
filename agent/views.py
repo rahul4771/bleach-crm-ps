@@ -2540,6 +2540,57 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 
 		return redirect('agent:agent-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
 
+class MakeQuatationDuplicate(IsAgent,View):
+	
+	def get(self,request,evaluation_id):
+		
+
+		duplicate_evaluation = Evaluation.objects.get(id=evaluation_id)
+		
+		duplicate_evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=duplicate_evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks'))
+		
+
+		#duplicate the order
+		tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+
+		current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
+		
+		if current_blc_starting == int(str(tracking_no)[:6]):
+			new_tracking_no = int(tracking_no)+1
+			evaluation_no   = 'BLC'+str(new_tracking_no)
+		else:
+			evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
+			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+		
+		new_evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=duplicate_evaluation.customer,call_attender=request.user,quatation_expiry_date=timezone.now()+timedelta(7),estimated_cost=duplicate_evaluation.estimated_cost,discount=duplicate_evaluation.discount,total_cost=duplicate_evaluation.total_cost)
+		new_order      = Order.objects.get_or_create(evaluation=new_evaluation,order_no=new_evaluation.evaluation_id)
+		
+		if duplicate_evaluation_details:
+
+			#new evaluation details
+			for duplicate_evaluation in duplicate_evaluation_details:
+				new_duplicate_evaluation_details = EvaluationDetails.objects.create(evaluation=new_evaluation,address=duplicate_evaluation.address,estimated_cost=duplicate_evaluation.estimated_cost,discount=duplicate_evaluation.discount,total_cost=duplicate_evaluation.total_cost,status=duplicate_evaluation.status)
+				
+				if duplicate_evaluation.evaluationbooks:
+					#new book
+					for duplicate_book in duplicate_evaluation.evaluationbooks:
+						new_duplicate_book = EvaluationBook.objects.create(evaluation_details=new_duplicate_evaluation_details,cleaning_policy=duplicate_book.cleaning_policy,service_type=duplicate_book.service_type,area_type=duplicate_book.area_type,cleaning_method=duplicate_book.cleaning_method,location_type=duplicate_book.location_type,number_of_cleaners=duplicate_book.number_of_cleaners,estimated_cost=duplicate_book.estimated_cost,discount=duplicate_book.discount,total_cost=duplicate_book.total_cost,cleaning_hours=duplicate_book.cleaning_hours,evaluator_note=duplicate_book.evaluator_note)
+
+						if duplicate_book.booksections:
+							#new booksection
+							for duplicate_book_section in duplicate_book.booksections:
+								new_duplicate_section = EvaluationBookSection.objects.create(evaluation_book=new_duplicate_book,section_name=duplicate_book_section.section_name,section_name_arabic=duplicate_book_section.section_name_arabic,category=duplicate_book_section.category,dirt_level=duplicate_book_section.dirt_level,quantity=duplicate_book_section.quantity,size=duplicate_book_section.size,unit=duplicate_book_section.unit,age=duplicate_book_section.age,floor=duplicate_book_section.floor,apartment=duplicate_book_section.apartment,room=duplicate_book_section.room,wall_type=duplicate_book_section.wall_type,ceiling_type=duplicate_book_section.ceiling_type,floor_type=duplicate_book_section.floor_type,material=duplicate_book_section.material,colour=duplicate_book_section.colour,cause_of_stain=duplicate_book_section.cause_of_stain,section_cost=duplicate_book_section.section_cost)
+						
+							
+								if duplicate_book_section.sectionkeynotes:
+									#new keynotes
+									for duplicate_keynote in duplicate_book_section.sectionkeynotes:	
+										new_duplicate_keynote = EvaluationSectionKeynote.objects.create(evaluation_section=new_duplicate_section,sub_area=duplicate_keynote.sub_area,quantity=duplicate_keynote.quantity,)
+
+		messages.success(request,"Duplicate Order Created Succesfully")
+
+		return redirect('agent:agent-makequatation1edit',new_evaluation.customer.id,new_evaluation.id,)
+	
 
 class MakeQuatationPhase2Delete(IsAgent,View):
 	def post(self,request,evaluation_detail_id):
