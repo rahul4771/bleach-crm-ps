@@ -1173,12 +1173,10 @@ def SalesData(request):
 			month_end = datetime(day=1,month=sale.month,year=sale.year,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
 
 			total_sales = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,order_status='ORDER_CLOSED',created__range=(month_start,month_end)).aggregate(count=Sum('evaluation__total_cost'))['count']
-			total_orders = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,created__range=(month_start,month_end)).aggregate(count2=Sum('evaluation__total_cost'))['count2']
 
 			sales_dict = {
 			"date" : sale.month,
 			"amount" : total_sales or 0.0,
-			"total" : total_orders or 0.0,
 			}
 			data.append(sales_dict)
 	else:
@@ -1198,13 +1196,10 @@ def SalesData(request):
 
 			total_sales = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,order_status='ORDER_CLOSED',created__range=(sale_date_start,sale_date_end)).aggregate(Sum('evaluation__total_cost'))['evaluation__total_cost__sum'] or 0.0
 
-			total_orders = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,created__range=(sale_date_start,sale_date_end)).aggregate(Sum('evaluation__total_cost'))['evaluation__total_cost__sum'] or 0.0
-
 			print(total_sales,"qtc")
 			sales_dict = {
 			"date" : single_date,
 			"amount" : total_sales,
-			"total" : total_orders,
 			}
 			data.append(sales_dict)
 	print(data,"sdt")

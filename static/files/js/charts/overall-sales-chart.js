@@ -54,7 +54,6 @@ function initialize() {
             success: function(data_month) {
             var sales = [['Month', 'Sales']];
             var sale_sum = 0;
-            var total_sum = 0;
 
             if(data_month.length > 0){
                 $.each(data_month,function(key,value){
@@ -66,16 +65,13 @@ function initialize() {
                     // const d2 = new Date(year,month-1,day);
                 sales.push([monthNames[value.date],value.amount]);
                     sale_sum += parseInt(value.amount);
-                    total_sum += parseInt(value.total);
                 });
             }else{
                 sales.push(['',0]);
                 sale_sum = 0;
-                total_sum = 0;
             }
             console.log(sales,"sls")
             $('#total_sales').text(sale_sum);
-            $('#total_orders').text(total_sum);
 
 
             data[0] = new google.visualization.arrayToDataTable(sales);
