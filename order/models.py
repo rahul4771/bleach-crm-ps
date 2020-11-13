@@ -77,6 +77,8 @@ class Order(models.Model):
 	preamount_paid		   = models.IntegerField(blank=True,null=True,default=0)
 	postamount_paid		   = models.IntegerField(blank=True,null=True,default=0)
 	
+	refund_paid            = models.IntegerField(blank=True,null=True,default=0)
+	
 	instructions		   = models.CharField(max_length=5000,blank=True,null=True)
 	
 	feedback_notes  	= models.CharField(max_length=5000,blank=True,null=True)
@@ -109,6 +111,7 @@ class OrderScheduler(models.Model):
 	work_status 		 = models.CharField(max_length=50,blank=True,null=True,choices=ORDER_SHEDULER_STATUS)
 	status      		 = models.CharField(max_length=20,blank=True,null=True,default='WAITING',choices=SCHEDULER_CHOICES)
 
+	complaint            = models.CharField(max_length=5000,blank=True,null=True)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)

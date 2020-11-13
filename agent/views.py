@@ -2755,30 +2755,50 @@ class TicketRegistration(IsAgent,View):
 	def post(self,request):
 		order_id           = request.POST.get('order_id')
 
-		investigation_medias = request.FILES.getlist('investigation_media')
+		# investigation_medias = request.FILES.getlist('investigation_media')
 
-		investigation_form = InvestigationForm(request.POST)
+		ticket_type        = request.POST.get('ticket_type')
 
-		if investigation_form.is_valid():
-			investigation_form_save            = investigation_form.save(commit=False)
-			investigation_form_save.assigned_by= request.user
-			investigation_form_save.order_id   = order_id
-			investigation_form_save.save()
 
-			if not investigation_medias == ['']:
-				for image in investigation_medias:
-					InvestigationMedia.objects.create(
-						investigation = investigation_form_save,
-						media = image,
-						media_type = 'PHOTO',
-						is_active = True
-					)
+		if ticket_type == 'FOLLOWUP':
+			investigation_form = InvestigationForm(request.POST)
+			if investigation_form.is_valid():
+				investigation_form_save            = investigation_form.save(commit=False)
+				investigation_form_save.assigned_by= request.user
+				investigation_form_save.order_id   = order_id
+				investigation_form_save.save()
 
-			FollowUp.objects.create(investigation=investigation_form_save,status='TICKET_RISED')
+				# if not investigation_medias == ['']:
+				# 	for image in investigation_medias:
+				# 		InvestigationMedia.objects.create(
+				# 			investigation = investigation_form_save,
+				# 			media = image,
+				# 			media_type = 'PHOTO',
+				# 			is_active = True
+				# 		)
 
-			messages.success(request,"Ticket Raised Succesfully!")
-		else:
-			messages.error(request,get_error(investigation_form))
+				FollowUp.objects.create(investigation=investigation_form_save,status='TICKET_RISED')
+
+				messages.success(request,"Investigation Rised Succesfully!")
+			else:
+				messages.error(request,get_error(investigation_form))
+		
+		elif ticket_type == 'COMPLAINT':
+			order_schedule_id = request.POST.get('order_schedule')
+			complaint         = request.POST.get('complaint')
+
+			OrderScheduler.objects.filter(id=order_schedule_id).update(complaint=complaint)
+
+			messages.success(request,"Complaint Registered Succesfully")
+
+		elif ticket_type == 'REFUND':	
+			refund_amount           = request.POST.get('refund_amount')
+			
+			order                   = Order.objects.select_related('evaluation').get(id=order_id)
+			order.evaluation.refund = refund_amount
+			order.evaluation.save()
+
+			messages.success(request,"Refund Amount Added Succesfully")
 
 		return redirect('agent:agent-ticketregister')
 
