@@ -424,6 +424,8 @@ def orderdetail_html_to_pdf_view(request,order_id,section_id):
 
 	section_id = section_id 
 
+	print(section_id,"secid")
+
 	html_string = render_to_string('customer/content-page.html', {"order":order,"sectionid":section_id})
 
 	html = HTML(string=html_string,base_url=request.build_absolute_uri())

@@ -5,6 +5,8 @@ from django.conf import settings
 from bleach_crm_ps.permissions import IsAccountant
 # Create your views here.
 
+import xlwt
+
 import functools
 import operator
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -25,6 +27,8 @@ from accountant.models import PaymentHistory
 
 import requests
 from django.http import HttpResponse,JsonResponse
+
+from user.models import UserProfile
 
 def GetCashCollectOrderInfo(request):
 	data               = {}
@@ -530,11 +534,6 @@ class PaymentDetails(IsAccountant,View):
 	def get(self,request):
 
 		try:
-			governorates = Governorate.objects.filter(is_active=True)
-		except:
-			governorates = None
-
-		try:
 			service_types = ServiceType.objects.filter(is_active=True) 
 		except:
 			service_types =	None
@@ -569,96 +568,58 @@ class PaymentDetails(IsAccountant,View):
 			total_pending_orders = 0
 
 		#Prefetch filters
-		try:
-			fil_governorate       = int(request.GET.get('governorate'))
-			areas                 = Area.objects.filter(governorate_id=fil_governorate)
-		except:
-			fil_governorate       = None
-			areas                 = None
 
-		try:
-			fil_area			  = int(request.GET.get('area'))
-		except:
-			fil_area              = None
+		fil_cleaning_policy       	= request.GET.get('cleaning_policy')
 
-		fil_cleaning_policy       = request.GET.get('cleaning_policy')
+		fil_cleaning_status			= request.GET.get('status')
+
+		fil_payment_policy			= request.GET.get('payment_policy')
 
 		try:
 			fil_service_type      = int(request.GET.get('service_type'))
 		except:
 			fil_service_type      = None
 
+		
+		evaluation_book_filter       	= []
 
-		customer_address_filter       = []
-		count_customer_address_filter = []
-		if fil_governorate:
-			case1       = Q(address__governorate_id=fil_governorate)
-			count_case1 = Q(evaluation__evaluation_details__address__governorate_id=fil_governorate)
-			customer_address_filter.append(case1)
-			count_customer_address_filter.append(count_case1)
+		orderscheduler_filter 			= []
 
-		if fil_area:
-			case2 		= Q(address__area_id=fil_area)
-			count_case2 = Q(evaluation__evaluation_details__address__area_id=fil_area)
-			customer_address_filter.append(case2)
-			count_customer_address_filter.append(count_case2)
-
-		if fil_governorate or fil_area:
-			customer_address_prefetch_filter              = functools.reduce(operator.and_,customer_address_filter)
-			count_customer_address_prefetch_filter        = functools.reduce(operator.and_,count_customer_address_filter)
-		else:
-			customer_address_prefetch_filter              = None
-			count_customer_address_prefetch_filter        = None
-
-
-		evaluation_book_filter       = []
-		count_evaluation_book_filter = []
 		if fil_cleaning_policy:
 			case1       = Q(cleaning_policy=fil_cleaning_policy)
-			count_case1 = Q(evaluation__evaluation_details__evaluation_book_evaluation_details__cleaning_policy=fil_cleaning_policy)
 			evaluation_book_filter.append(case1)
-			count_evaluation_book_filter.append(count_case1)
-		if fil_service_type:
+
+		if fil_service_type:     
 			case2       = Q(service_type_id=fil_service_type)
-			count_case2 = Q(evaluation__evaluation_details__evaluation_book_evaluation_details__service_type_id=fil_service_type)
-			evaluation_book_filter.append(case2)
-			count_evaluation_book_filter.append(count_case2)
+			evaluation_book_filter.append(case2)              
 
 		if fil_cleaning_policy or fil_service_type:
 			evaluation_book_prefetch_filter              = functools.reduce(operator.and_,evaluation_book_filter)
-			count_evaluation_book_prefetch_filter        = functools.reduce(operator.and_,count_evaluation_book_filter)
+
 		else:
-			evaluation_book_prefetch_filter              = None
+			evaluation_book_prefetch_filter              = None	
 			count_evaluation_book_prefetch_filter        = None
 
-		# #Apply prefetch filter
-		if evaluation_book_prefetch_filter and customer_address_prefetch_filter:
-			invoices = invoices.prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter & count_customer_address_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)
-			print("both")
-		elif evaluation_book_prefetch_filter and not customer_address_prefetch_filter:
-			invoices = invoices.prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(book_count=Count(Case(When( count_evaluation_book_prefetch_filter,then=1),output_field=IntegerField()))).filter(book_count__gt=0)
-			print("book only")
-		elif not evaluation_book_prefetch_filter and customer_address_prefetch_filter:
-			invoices = invoices.prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)
-			print("address only")
-		else:
-			invoices = invoices.prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))
-			print("not at all")	
+		#Apply prefetch filter
+		# if evaluation_book_prefetch_filter:
+		# 	invoices = invoices.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(book_count=Count(Case(When( count_evaluation_book_prefetch_filter,then=1),output_field=IntegerField()))).filter(book_count__gt=0)
+		# 	print("book only")
+		# else:
+		# 	invoices = invoices.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))		
+		# 	print("not at all")
+		
+		
+		fil_status = request.GET.get('status')
+		#filters 	
+		filters=[] 
+		if fil_status: 
+		    case1 = Q(quatation_status=fil_status)
+		    filters.append(case1)
+	
+		if fil_status: 
+		    filters     = functools.reduce(operator.and_,filters)
+		    evaluations = evaluations.filter(filters)
 
-		fil_status 			 = request.GET.get('status')
-		fil_payment_policy   = request.GET.get('payment_policy')
-		#filters
-		filters=[]
-		if fil_status:
-			case1 = Q(payment_status=fil_status)
-			filters.append(case1)
-		if fil_payment_policy:
-			invoices = invoices.filter(evaluation__payment_method=fil_payment_policy)
-
-
-		if fil_status:
-			filters     = functools.reduce(operator.and_,filters)
-			invoices    = invoices.filter(filters)
 		
 		#PAGINATION INVOICE		
 		page = request.GET.get('page',1) 
@@ -688,7 +649,7 @@ class PaymentDetails(IsAccountant,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(invoices.end_index())-(invoices.start_index())+1
 
-		return render(request,'accountant/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_cleaning_policy":fil_cleaning_policy,"fil_service_type":fil_service_type,"fil_status":fil_status,"fil_payment_policy":fil_payment_policy,})
+		return render(request,'accountant/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"service_types":service_types,"fil_cleaning_policy":fil_cleaning_policy,"fil_service_type":fil_service_type,"fil_status":fil_cleaning_status,"fil_payment_policy":fil_payment_policy,})
 
 class CashCollect(IsAccountant,View):
 	def get(self,request):
@@ -751,4 +712,53 @@ class CashCollect(IsAccountant,View):
 		else:
 			messages.suucess(request,"Something Went Wrong")
 
-		return redirect('accountant:accountant-cashcollect')	
+		return redirect('accountant:accountant-cashcollect')
+
+#export to excel
+def export_users_xls(request):
+
+	from_date = request.POST.get('from_date')
+	to_date = request.POST.get('to_date')
+	print(from_date,to_date,"ftd")
+
+	prevdate = datetime.strptime(from_date, '%d-%m-%Y')
+	todate = datetime.strptime(to_date, '%d-%m-%Y')
+
+	prev_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
+	prev_date_end = prevdate+timedelta(1)
+	todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
+	todate_date_end = todate+timedelta(1)
+
+	response = HttpResponse(content_type='application/ms-excel')
+	response['Content-Disposition'] = 'attachment; filename="Payments.xls"'
+
+	wb = xlwt.Workbook(encoding='utf-8')
+	ws = wb.add_sheet('Payments')
+
+	# Sheet header, first row
+	row_num = 0
+
+	font_style = xlwt.XFStyle()
+	font_style.font.bold = True
+
+	columns = ['Order Date', 'Order Number', 'Client Name', 'Total Amount', 'Paid', 'Balance' ]
+
+	for col_num in range(len(columns)):
+		ws.write(row_num, col_num, columns[col_num], font_style)
+
+	# Sheet body, remaining rows
+	font_style = xlwt.XFStyle()
+
+	rows = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(prev_date_start,todate_date_end)).order_by('-id').values_list('created','order_no','evaluation__customer__name','total_amount','amount_paid','remining_amount')
+
+	rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+
+	rows = [[str(x)+".000 KD" if isinstance(x, int) else x for x in row] for row in rows ]
+	
+	for row in rows:
+		row_num += 1
+		for col_num in range(len(row)):
+			ws.write(row_num, col_num, row[col_num], font_style)
+
+	wb.save(response)
+	return response

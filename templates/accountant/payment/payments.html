@@ -82,31 +82,6 @@
      <input name="filter" type="button" value="Filter" id="filter" class="blue-button arrow"> 
      <div class="menu-filter ltgreen-border" style="display:none;"><!--menu-filter ltgreen-border-->
 
-     <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-  <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>Governorate</label></div>
-                <label for="favcity">
-                <select name="governorate_filter" id="governorate_filter_id">
-                <option value=''>---ALL---</option>
-                {% for governorate in governorates %}
-          <option value='{{governorate.id}}' {% if governorate.id == fil_governorate %}selected{%endif%}>{{governorate.name}}</option>
-                {% endfor %}                
-              </select>
-                </label>
-  </div><!--ticket-form-left-->
-  <div class="ticket-form-right"><!--ticket-form-right-->
-  				<div class=" bold-text common-label"> <label>Area</label></div>
-                <label for="favcity">
-                <select name="area_filter" id="area_filter_id">
-                <option value=''>---ALL---</option> 
-                {% for area in areas %}
-                <option value='{{area.id}}' {% if fil_area == area.id %}selected{% endif %}>{{area.name}}</option>
-                {% endfor %}               
-              </select>
-                </label>
-  </div><!--ticket-form-right-->
-</div><!--ticket-wrapper-row ticket-forms-boxes--> 
-<hr class="hr-dashedpad"> 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>Cleaning Policy</label></div>
@@ -119,12 +94,13 @@
                 </label>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-  				<div class=" bold-text common-label"> <label>Status</label></div>
+  				<div class=" bold-text common-label"> <label>Cleaning Status</label></div>
                 <label for="favcity">
                 <select name="status_filter" id="status_filter_id">
                 <option value=''>---ALL---</option>
-                <option value="APPROVED" {% if fil_status == 'APPROVED' %}selected{% endif %}>COMPLETED</option>
-                <option value="PENDING" {% if fil_status == 'PENDING' %}selected{% endif %}>PENDING</option>                
+                <option value="CLEANING_TEAM_ASSIGNED" {% if fil_status == 'CLEANING_TEAM_ASSIGNED' %}selected{% endif %}>CLEANING_TEAM_ASSIGNED</option>
+                <option value="CLEANING_IN_PROGRESS" {% if fil_status == 'CLEANING_IN_PROGRESS' %}selected{% endif %}>CLEANING_IN_PROGRESS</option> 
+                <option value="CLEANING_FULFILLED" {% if fil_status == 'CLEANING_FULFILLED' %}selected{% endif %}>CLEANING_FULFILLED</option>               
               </select>
                 </label>
   </div><!--ticket-form-right-->
@@ -174,17 +150,24 @@
 <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
 </select>
 </label>
+<br>
+<button class="blue-button export_btn" style="font-size:15px;"><i class="fa fa-file-excel-o" aria-hidden="true"></i>  Export</button>
+<br>
+
 <div class="page-entries">Show {{entry_per_page}} entries</div>
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
 <thead>
 <tr>
+<th>Order Date</th>
 <th>Order Number</th>
 <th data-hide="phone,tablet">Client Name</th>
-<th data-hide="phone">Area</th>
-<th>Contact</th>
+{% comment %} <th data-hide="phone">Area</th>
+<th>Contact</th> {% endcomment %}
 <th data-hide="phone,tablet">Amount</th>
-<th class="align-center" data-hide="phone">Status</th>
+<th data-hide="phone,tablet">Paid</th>
+<th data-hide="phone,tablet">Balance</th>
+{% comment %} <th class="align-center" data-hide="phone">Status</th> {% endcomment %}
 </tr>
 </thead>
 <tbody>
@@ -196,16 +179,19 @@
         class="green-line" 
         {% else %}
         class="yellow-line"
-        {% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+        {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
+    <td>{{invoice.evaluation.evaluation_id}}</td>
     <td>{{invoice.evaluation.customer.name}}</td>
-    <td>
+    {% comment %} <td>
     {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
     {{evaluation_details.address.area.name}}<br>
     {% endfor %}
     </td>
-    <td>{{invoice.evaluation.customer.mobile_number}}</td>
-    <td>{{invoice.total_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
-    <td><span 
+    <td>{{invoice.evaluation.customer.mobile_number}}</td> {% endcomment %}
+    <td>{{invoice.total_amount|default_if_none:'0.00'|floatformat:'3'}} KD</td>
+    <td>{{invoice.amount_paid|default_if_none:'0.00'|floatformat:'3'}} KD</td>
+    <td>{{invoice.remining_amount|default_if_none:'0.00'|floatformat:'3'}} KD</td>
+    {% comment %} <td><span 
         {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}
 
         {% if invoice.payment_status == 'PENDING' %}
@@ -215,7 +201,7 @@
         {% else %}
         class="yellow-bg clickable-row"
         {% endif %}
-        >{{invoice.payment_status|default_if_none:''}}</span></td>
+        >{{invoice.payment_status|default_if_none:''}}</span></td> {% endcomment %}
     </tr>
     {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>
@@ -289,6 +275,37 @@
         </div><!--container-fluid space-->
     </section><!--content-->
 
+<!-- export popup -->
+<div class="overlay" id="export_popup">
+    <div class="popup-assign-eval"><!--popup-assign-eval-->
+        <a id="close_export_popup" class="close">&times;</a>
+            <div class="content"><!--content-->
+            
+<form method="post" action="{% url 'accountant:export_payment_xls' %}" enctype="multipart/form-data">{% csrf_token %}                      
+
+    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->  
+          
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>From Date</label></div>
+        <input type="text" name="from_date" class="textBox id_from_date readonly" required readonly>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>To Date</label></div>
+                <input type="text" name="to_date" class="textBox id_to_date readonly" required readonly>
+                <p id="time_alert" style="color:red" hidden>Please select proper date and time !</p>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+   
+<div align="center"> <input class="assignButton export_payment" name="assing" type="button" value="Export" ></div>  
+
+</div><!--ticket-wrapper-full-->             
+</form>
+            </div><!--content-->
+    </div><!--popup-assign-eval-->
+</div><!--overlay-->
+<!-- export popup -->
+
 {% include 'accountant/common/footer.html' %}
 </div><!--wrapper-->
 {% endblock %}
@@ -309,6 +326,55 @@ $('.footable').footable({
     </script>
 
     <script>
+
+var date = new Date();
+
+date.setDate(date.getDate()-1)
+date.setMonth(date.getMonth()+1)
+var datestring = ("0" + (date.getDate())).slice(-2)  + "-" + ("0" + (date.getMonth())).slice(-2) + "-" + date.getFullYear();
+
+var date2 = new Date();
+date2.setDate(date2.getDate()-30);
+date2.setMonth(date2.getMonth()+1)
+var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
+console.log(datestring,datestring2)
+
+$('.id_from_date').val(datestring2);
+$('.id_to_date').val(datestring);
+
+
+$('.export_btn').click(function(){
+  
+  $('#export_popup').css({'visibility':'visible','opacity':1,});
+});
+
+$("#close_export_popup").click(function () {
+    $('#export_popup').css({'visibility':'hidden','opacity':0,});
+});
+
+$(".export_payment").click(function () {
+  console.log("poi")
+    $('#export_popup').css({'visibility':'hidden','opacity':0,});
+    
+    submitAnyForm($(this));
+    
+});
+
+// //datepicker and timepicker for popup
+    $(document).on("click", ".content", function () {
+       $('.id_from_date').datetimepicker({ 
+            pickTime: false, 
+            format: "DD-MM-YYYY", 
+            startDate: new Date(), 
+        });
+
+        $('.id_to_date').datetimepicker({ 
+            pickTime: false, 
+            format: "DD-MM-YYYY", 
+            startDate: new Date(), 
+        });
+
+    });
 
 $("#governorate_filter_id").change(function(){  
 
@@ -354,7 +420,7 @@ $("#governorate_filter_id").change(function(){
 function set_params_go(args)
 {
 var url='{% url 'accountant:accountant-payments' %}';
-var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val(),
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val(),
 };
 for(key in args) 
     params[key]=args[key];

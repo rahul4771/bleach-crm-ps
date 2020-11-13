@@ -13,6 +13,8 @@ urlpatterns = [
 
 	url(r'^cash/collect/$',views.CashCollect.as_view(),name='accountant-cashcollect'),
 
+	url(r'^export/xls/$', views.export_users_xls, name='export_payment_xls'),
+
 	url(r'^ajax/cashcollect/order/info/$',views.GetCashCollectOrderInfo,name='get-cashorderInfo'),
 	url(r'^ajax/cashcollect/order/detailed/info/$',views.GetCashCollectOrderDetailedInfo,name='get-cashorderdetailedInfo'),
 
