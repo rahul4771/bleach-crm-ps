@@ -29,10 +29,14 @@ urlpatterns = [
 	
 	
 	url(r'^makequatation/(?P<enquiry_id>[-\w]+)/$',views.MakeQuatationBase.as_view(),name='agent-makequatation'),
+	
 	url(r'^makequatation/phase1/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1.as_view(),name='agent-makequatation1'),
 	url(r'^makequatation/phase1/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1Edit.as_view(),name='agent-makequatation1edit'),
+	url(r'^makequatation/phase1/duplicate/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1DuplicateEdit.as_view(),name='agent-makequatation1duplicateedit'),
+	
 	url(r'^makequatation/phase2/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2.as_view(),name='agent-makequatation2'),
 	url(r'^makequatation/phase2/edit/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2Edit.as_view(),name='agent-makequatation2edit'),
+	url(r'^makequatation/phase2/duplicate/edit/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2DuplicateEdit.as_view(),name='agent-makequatation2duplicateedit'),
 	url(r'^makequatation/phase2/delete/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2Delete.as_view(),name='agent-makequatation2delete'),
 
 	url(r'^makequatation/duplicate/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationDuplicate.as_view(),name='agent-makequatation1duplicate'),
@@ -58,5 +62,6 @@ urlpatterns = [
 	url(r'^ajax/removekeynote/',views.RemoveKeynote,name='removekeynote'),
 	url(r'^ajax/removeevaluationmedia/',views.RemoveEvaluationMedia,name='removeevaluationmedia'),
 	url(r'^ajax/mobile/validate/',views.MobileNumberValidate,name='mobilenumber-validate'),
+	url(r'^ajax/scheduled/dates/',views.CleaningExistingDates,name='scheduled-dates'),
 
 ]

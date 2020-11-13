@@ -72,7 +72,7 @@
 
                     {% if order.order_status == 'ORDER_CLOSED' %}
                     <div class="align-left">
-                        <div class="yellow-bg-lg clickable-cursor duplicate_order" data-id="{{order.evaluation.id}}">Copy&nbsp;&nbsp;<i class="fa fa-copy" aria-hidden="true"></i></div>
+                        <div class="yellow-bg-lg clickable-cursor duplicate_order" data-id="{{order.evaluation.id}}">Re-Order&nbsp;&nbsp;<i class="fa fa-copy" aria-hidden="true"></i></div>
                     </div>
                     {% endif %}    
             	</div><!--cleaning-column-widget cleaning-column-widget-column2-->
@@ -128,7 +128,7 @@
     <div class="close-btn-sp">×</div>
         <div class="custom-model-wrap-sp"><!--custom-model-wrap-->
             <div class="pop-up-content-wrap"><!--pop-up-content-wrap-->
-               <div class="bold-text">Are You Sure ? Do you want to Duplicate this Order ?</div>  
+               <div class="bold-text">Do you want to Duplicate this Order ?</div>  
                <form method="get" action="" enctype= "multipart/form-data" id="duplicate_form_id">{% csrf_token %}
                <div><input class="assignButton" name="submit" type="submit" value="Duplicate"></div>
                </form>

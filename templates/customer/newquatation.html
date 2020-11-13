@@ -143,10 +143,12 @@
               <td class="due-amount medium"> {{order.evaluation.estimated_cost|floatformat:'3'}} </td>
             </tr>
             
+            {% if order.evaluation.discount != 0 %}
             <tr>
               <th>Discount / الخصم</th>
               <td class="due-amount"> {{order.evaluation.discount|floatformat:'3'}} </td>
             </tr>
+            {% endif %}
             
             <tr class="amount-total">
               <!-- {amount_total_label} -->

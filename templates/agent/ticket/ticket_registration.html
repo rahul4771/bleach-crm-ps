@@ -59,9 +59,26 @@
 <div class="ticket-wrapper-full ltyellow-border ticket-form"><!--ticket-wrapper-full-->
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Ticket Type</label></div>
+                <label for="favcity">
+                <select id="id_ticket_type" name="ticket_type" required>
+                  <option value="FOLLOWUP">Follow Up</option>
+                  <option value="COMPLAINT">Complaint</option>
+                  <option value="REFUND">Refund</option>
+                </select>
+                </label>
+  </div><!--ticket-form-left-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">
+
+
+
+<div class="followup">
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>Cleaning Job</label></div>
                 <label for="favcity">
-                <select id="id_order_schedule" name="order_schedule" required>
+                <select class="id_order_schedule" id="id_order_schedule_followup" name="order_schedule" required>
                 </select>
                 </label>
   </div><!--ticket-form-left-->
@@ -87,6 +104,41 @@
 <hr class="hr-dashedpad">
 				<div class="bold-text common-label"> <label>Notes</label></div>
                  <textarea name="notes" cols="" rows="4" class="textArea"></textarea>
+</div>
+
+
+
+
+<div class="complaint">
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Cleaning Job</label></div>
+                <label for="favcity">
+                <select class="id_order_schedule" id="id_order_schedule_complaint" name="order_schedule">
+                </select>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+                <div class="bold-text common-label"> <label>Complaint</label></div>
+                 <textarea name="complaint" id="id_complaint" cols="" rows="4" class="textArea"></textarea>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div>
+
+
+
+
+<div class="refund">
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Refund Amount</label></div>
+                <input name="refund_amount" id="id_refund_amount" type="text" class="textBox" placeholder="Amount in KD">
+  </div><!--ticket-form-left-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div>
+
+
+
 
 
 {% comment %} <div class="details-notes align-left">Media</div>        
@@ -132,16 +184,61 @@ $('.order-details').hide();
 $('.ticket-form-head').hide();
 $('.ticket-form').hide();
 $('.ticket-form-button').hide();
+$('.complaint').hide();
+$('.refund').hide();
 
 $('document').ready(function(){
-	$('#id_order_schedule').empty();
-	$("#id_order_schedule").append($('<option>', {
+	$('.id_order_schedule').empty();
+	$(".id_order_schedule").append($('<option>', {
 
           value: "", 
 
          text: "-------------"
 
       }));
+
+  //TICKET TYPE CHANGE
+  $('#id_ticket_type').change(function(){
+    ticket_type = $('#id_ticket_type').val();
+    if(ticket_type == 'COMPLAINT')
+    {
+      $('.followup').hide();
+      $('.refund').hide();
+      $('.complaint').show();
+      $('#id_order_schedule_complaint').attr('required',true)
+      $('#id_complaint').attr('required',true)
+
+      $('#id_order_schedule_followup').attr('required',false)
+      $('#id_investigator').attr('required',false)
+      $('#ticket_date_time_pick').attr('required',false)
+      $('#id_refund_amount').attr('required',false)
+    }
+    else if(ticket_type == 'REFUND')
+    {
+      $('.followup').hide();
+      $('.refund').show();
+      $('.complaint').hide();
+      $('#id_refund_amount').attr('required',true)
+
+      $('#id_order_schedule_followup').attr('required',false)
+      $('#id_investigator').attr('required',false)
+      $('#id_order_schedule_complaint').attr('required',false)
+      $('#id_complaint').attr('required',false)
+    }
+    else
+    {
+      $('.followup').show();
+      $('.refund').hide();
+      $('.complaint').hide();
+      $('#id_order_schedule_followup').attr('required',true)
+      $('#id_investigator').attr('required',true)
+      $('#ticket_date_time_pick').attr('required',true)
+
+      $('#id_refund_amount').attr('required',false)
+      $('#id_order_schedule_complaint').attr('required',false)
+      $('#id_complaint').attr('required',false)
+    }
+  })
 
 });
 
@@ -311,8 +408,8 @@ function select_existing_user(event,src){
       success: function (data) {
         
         order_schedules = data['schedules'];
-        $('#id_order_schedule').empty();
-        $("#id_order_schedule").append($('<option>', {
+        $('.id_order_schedule').empty();
+        $(".id_order_schedule").append($('<option>', {
 
             value: "", 
 
@@ -321,7 +418,7 @@ function select_existing_user(event,src){
                   }));
         $.each( order_schedules, function( key, values ) {
 
-        $("#id_order_schedule").append($('<option>', {        
+        $(".id_order_schedule").append($('<option>', {        
 
           value: key, 
 
