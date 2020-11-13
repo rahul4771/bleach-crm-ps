@@ -41,6 +41,7 @@ class CleaningTeam(models.Model):
 
 	def __str__(self):
 		return self.team_leader.name
+	
 
 #For Tracking Medias Uploaded by Team Leader on Site
 
@@ -90,6 +91,8 @@ class CleaningTeamMember(models.Model):
 	member 			= models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaning_member_user')
 	start_at 		= models.DateTimeField(blank=True,null=True)
 	end_at 			= models.DateTimeField(blank=True,null=True)
+	start_time      = models.TimeField(blank=True,null=True)
+	end_time        = models.TimeField(blank=True,null=True)
 	
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
@@ -100,6 +103,12 @@ class CleaningTeamMember(models.Model):
 
 	def __str__(self):
 		return str(self.team)
+
+	def save(self, *args, **kwargs):
+		self.start_time = self.start_at.time()
+		self.end_time   = self.end_at.time()
+		super(CleaningTeamMember, self).save(*args, **kwargs)	
+
 
 #Followup team for different Followup Schedules
 
@@ -176,6 +185,9 @@ class FollowUpTeamMember(models.Model):
 	member 			= models.ForeignKey(UserProfile,blank=True,null=True,related_name='followup_member')
 	start_at 		= models.DateTimeField(blank=True,null=True)
 	end_at 			= models.DateTimeField(blank=True,null=True)
+	start_time      = models.TimeField(blank=True,null=True)
+	end_time        = models.TimeField(blank=True,null=True)
+
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
@@ -185,3 +197,8 @@ class FollowUpTeamMember(models.Model):
 
 	def __str__(self):
 		return str(self.team.team_leader.name)		
+
+	def save(self, *args, **kwargs):
+		self.start_time = self.start_at.time()
+		self.end_time   = self.end_at.time()
+		super(FollowUpTeamMember, self).save(*args, **kwargs)

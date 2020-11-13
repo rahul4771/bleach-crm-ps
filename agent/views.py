@@ -491,6 +491,83 @@ def RemoveEvaluationMedia(request):
 
 	return JsonResponse(data)
 
+def CleaningExistingDates(request):
+	data = {}
+	booking_time      = request.GET.get('booking_time')
+	no_of_cleaners    = request.GET.get('number_of_cleaners')
+	cleaning_duration = int(request.GET.get('cleaning_duration'))
+
+	start_at          = datetime.strptime(request.GET.get('booking_time'),'%I:%M %p').time()
+	end_at            = (datetime.strptime(request.GET.get('booking_time'),'%I:%M %p')+timedelta(hours=cleaning_duration)).time()
+
+
+	active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
+	active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
+
+	cleaning_active_team_leaders = active_cleaners1.filter(member__user_type='TEAMLEADER')
+	cleaning_active_cleaners     = active_cleaners1.filter(member__user_type='CLEANER')
+
+	followup_active_team_leaders = active_cleaners2.filter(member__user_type='TEAMLEADER')
+	followup_active_cleaners     = active_cleaners2.filter(member__user_type='CLEANER')
+
+	#merging
+	team_leaders_scheduled_dates      = []
+	team_members_scheduled_dates      = []
+
+	for active_team_leaders in cleaning_active_team_leaders:
+		team_leaders_scheduled_dates.append(active_team_leaders)
+	for active_team_leaders in followup_active_team_leaders:
+		team_leaders_scheduled_dates.append(active_team_leaders)
+
+	for active_team_member in cleaning_active_cleaners:
+		team_members_scheduled_dates.append(active_team_member)
+	for active_team_member in followup_active_cleaners:
+		team_members_scheduled_dates.append(active_team_member)
+
+	#busy slotes and count
+	team_leaders_busy = {}
+	team_members_busy = {}
+
+	for team_leader in team_leaders_scheduled_dates:
+		index = team_leader['start_at']
+		if index in team_leaders_busy:
+			team_leaders_busy[index] += team_leader['created_count']
+		else:	
+			team_leaders_busy[index] = team_leader['created_count']
+
+	for team_member in team_members_scheduled_dates:
+		index = team_member['start_at']
+		if index in team_members_busy:
+			team_members_busy[index] +=  team_member['created_count'] 
+		else: 
+			team_members_busy[index]   = team_member['created_count']
+
+
+	#remove available dates
+	print(team_leaders_busy)
+	print(team_members_busy)
+	total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER').count()
+	total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').count()		
+	print(total_leaders)
+	print(total_cleaners)
+
+	for k, v in list(team_leaders_busy.items()):
+		if v < total_leaders:
+			del team_leaders_busy[k]
+
+	for k, v in list(team_members_busy.items()):
+		if v < total_cleaners:
+			del team_members_busy[k]
+
+	print(team_leaders_busy)
+	print(team_members_busy)
+
+	data['leaders_busy_dates'] = team_leaders_busy
+	data['cleaner_busy_dates'] = team_members_busy
+
+	print(data)
+	return JsonResponse(data)
+
 # Create your views here.
 class AgentHome(IsAgent,View):
 	def get(self,request):

@@ -66,6 +66,7 @@ class ApiCheckSlote(APIView):
 				response_dict['success'] = True
 
 		return Response(response_dict,HTTP_200_OK)
+		
 
 class ApiBasicDetails(APIView):
 	permission_classes  	=   (AllowAny,)
