@@ -163,25 +163,31 @@ class AccountantHome(IsAccountant,View):
 		#Payment Details
 		search                  = request.GET.get('search')
 
+
+
 		#sales amount
 		try:
 			invoices         = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',order_status__isnull=False).order_by('-id')
 		except:
 			invoices         = None
 
-		this_week_sales = invoices.filter(payment_status='COMPLETED',payment_completed_date__gte=timezone.now().date()-timedelta(6)).aggregate(total=Sum('amount_paid'))['total']
-		last_week_sales = invoices.filter(payment_status='COMPLETED',payment_completed_date__gte=timezone.now().date()-timedelta(13),payment_completed_date__lte=timezone.now().date()-timedelta(6)).aggregate(total=Sum('amount_paid'))['total']		
+
+		payment_history = PaymentHistory.objects.filter(is_active=True)
+
+		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)		
+		this_week_sales = payment_history.filter(paid_date__gte=count_today_start-timedelta(7)).aggregate(total=Sum('amount_paid'))['total']
+		last_week_sales = payment_history.filter(paid_date__gte=count_today_start-timedelta(14),paid_date__lte=count_today_start-timedelta(7)).aggregate(total=Sum('amount_paid'))['total']		
 		
-		month_start_date     = timezone.now().replace(day=1).date()
+		month_start_date     = count_today_start.replace(day=1)
 		nxtmonth_start_date  = month_start_date+relativedelta(months=1)
 		prvmonth_start_date  = month_start_date-relativedelta(months=1)
-		this_month_sales=invoices.filter(payment_status='COMPLETED',payment_completed_date__gte=month_start_date,payment_completed_date__lt=nxtmonth_start_date).aggregate(total=Sum('amount_paid'))['total']
-		last_month_sales=invoices.filter(payment_status='COMPLETED',payment_completed_date__gte=prvmonth_start_date,payment_completed_date__lt=month_start_date).aggregate(total=Sum('amount_paid'))['total']	
+		this_month_sales=payment_history.filter(paid_date__gte=month_start_date,paid_date__lt=nxtmonth_start_date).aggregate(total=Sum('amount_paid'))['total']
+		last_month_sales=payment_history.filter(paid_date__gte=prvmonth_start_date,paid_date__lt=month_start_date).aggregate(total=Sum('amount_paid'))['total']	
 		
 		quarter_start_date   = month_start_date-relativedelta(months=2)
 		prvquarter_start_date= month_start_date-relativedelta(months=5)
-		this_quarter_sales=invoices.filter(payment_status='COMPLETED',payment_completed_date__gte=quarter_start_date,payment_completed_date__lt=nxtmonth_start_date).aggregate(total=Sum('amount_paid'))['total']
-		last_quarter_sales=invoices.filter(payment_status='COMPLETED',payment_completed_date__gte=prvquarter_start_date,payment_completed_date__lt=quarter_start_date).aggregate(total=Sum('amount_paid'))['total']	
+		this_quarter_sales=payment_history.filter(paid_date__gte=quarter_start_date,paid_date__lt=nxtmonth_start_date).aggregate(total=Sum('amount_paid'))['total']
+		last_quarter_sales=payment_history.filter(paid_date__gte=prvquarter_start_date,paid_date__lt=quarter_start_date).aggregate(total=Sum('amount_paid'))['total']	
 		
 		#Pending Payments
 		pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).order_by('start_at'),to_attr='orderschedules')).annotate(Count('order_scheduler_order'))
