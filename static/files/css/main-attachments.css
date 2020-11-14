@@ -587,3 +587,6 @@ right:0;
 .close-btn-sp { position: absolute; right: 0; top: -40px; cursor: pointer; z-index: 99; font-size: 30px; color: #fff;}
 .custom-model-main-sp:before {  content: ""; display: inline-block; height: auto; vertical-align: middle; margin-right: -0px; height: 100%;}
 .custom-model-inner-sp{margin-top: 45px;}
+
+
+.ticket-form-most-right{ text-align: left;padding :0px 0px 0px 350px;  }

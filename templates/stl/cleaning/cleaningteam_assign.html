@@ -35,7 +35,7 @@
                 <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
                     <div class="common-gray-text align-left">{{order_schedule.evaluation_details.address.apartment}}, {{order_schedule.evaluation_details.address.floor}}, {{order_schedule.evaluation_details.address.building}}, {{order_schedule.evaluation_details.address.block}}, {{order_schedule.evaluation_details.address.street}},  {{order_schedule.evaluation_details.address.avenue}} {{order_schedule.evaluation_details.address.governorate.name}}</div>
                     <br>
-                    <div class="common-gray-text align-left">{{order_schedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
+                    <div class="common-gray-text align-left" id="cleaners_count_to_be_assigned">{{order_schedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
                     <div class="common-gray-text align-left">{{order_schedule.order_scheduler_book.cleaning_hours}} hrs</div>
             	</div><!--cleaning-column-widget cleaning-column-widget-column2-->
             </div><!--cleaning-column-wrapper-->
@@ -68,10 +68,19 @@
 <hr class="hr-dashedpad">
 <br>
 <div class="details-notes align-left">Team Members</div> 
-<br>
 
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+<div class="ticket-form-left"><!--ticket-form-right-->
+</div><!--ticket-form-right-->
+<div class="ticket-form-most-right"><!--ticket-form-right-->
+    <input name="add" type="button" class="add-button" value="Remove Cleaner" id="remove_cleaner_id">
+</div><!--ticket-form-right-->
+</div>
+
+<br>
 <div class="team_members">
 </div>
+<input name="add" type="button" class="add-button1" value="Add Cleaner" id="add_cleaner_id">
 
 <div class="details-notes align-left">Transportation</div>
 <br>  
@@ -148,26 +157,17 @@
     {
         $('.team_members').append('<div class="ticket-wrapper-row ticket-forms-boxes box'+i+'"><!--ticket-wrapper-row ticket-forms-boxes--><div class="ticket-form-left"><!--ticket-form-left--><div class=" bold-text common-label"> <label>Cleaner '+i+'</label></div><label for="favcity"><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner" required>{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select></label> </div><!--ticket-form-left--></div><!--ticket-wrapper-row ticket-forms-boxes--><hr class="hr-dashedpad">');
 
-        if(i == no_of_cleaners)
-        {
-          $('.box'+i+'').append('<div class="ticket-form-right hide-m"><!--ticket-form-right-->&nbsp;</div><!--ticket-form-right-->')
-        }
     }
     else
     {
         $('.box'+(i-1)+'').append('<div class="ticket-form-right"><!--ticket-form-right--><div class=" bold-text common-label"> <label>Cleaner '+i+'</label></div><label for="favcity"><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner" required>{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select></label></div><!--ticket-form-right-->');
 
     }
-    
-    //design allignment
-    if(i == no_of_cleaners)
-        {
-          $('.team_members').append('<br>')
-        }
 
     //random selection    
     $('#assigned_cleaner'+i+' :nth-child('+i+')').prop('selected',true);
     }
+
 
 
     //to remove repeated selection if no cleaners available
@@ -185,6 +185,59 @@
     });
   
   });
+
+
+//Add Cleaner Button
+  $('#add_cleaner_id').click(function(){
+
+    if(i<={{cleaners.count}})
+    {
+    //header count
+    $('#cleaners_count_to_be_assigned').html(i+' Cleaners');
+
+    if(i%2 == 1)  
+    {
+        $('.team_members').append('<div class="ticket-wrapper-row ticket-forms-boxes box'+i+'"><!--ticket-wrapper-row ticket-forms-boxes--><div class="ticket-form-left"><!--ticket-form-left--><div class=" bold-text common-label"> <label>Cleaner '+i+'</label></div><label for="favcity"><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner" required>{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select></label> </div><!--ticket-form-left--></div><!--ticket-wrapper-row ticket-forms-boxes--><hr class="hr-dashedpad">');
+    }
+
+    else
+    {
+        $('.box'+(i-1)+'').append('<div class="ticket-form-right"><!--ticket-form-right--><div class=" bold-text common-label"> <label>Cleaner '+i+'</label></div><label for="favcity"><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner" required>{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select></label></div><!--ticket-form-right-->');
+
+    }
+    //random selection
+    $('#assigned_cleaner'+i+' :nth-child('+i+')').prop('selected',true);
+    
+    i++;
+    
+    }
+
+    else
+    {
+      alert("No More Available Cleaners !!")
+    }
+  })
+
+
+//Remove Cleaner Button
+  $('#remove_cleaner_id').click(function(){
+    i--;
+    //header count
+    $('#cleaners_count_to_be_assigned').html((i-1)+' Cleaners');
+
+    if(i%2 == 1)  
+    {
+        $('.box'+i).next('.hr-dashedpad').remove();
+        $('.box'+i).remove();
+    }
+
+    else
+    {
+        $('.box'+(i-1)+'').children('.ticket-form-right').remove();
+    }
+    
+  })
+
 
   });
 
