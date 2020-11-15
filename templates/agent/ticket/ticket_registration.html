@@ -132,7 +132,7 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Refund Amount</label></div>
-                <input name="refund_amount" id="id_refund_amount" type="text" class="textBox" placeholder="Amount in KD">
+                <input name="refund_amount" id="id_refund_amount" type="number" class="textBox OnlyNumber" placeholder="Amount in KD">
   </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 </div>
@@ -331,6 +331,7 @@ function select_existing_user(event,src){
             $('.order_date').html(data['date']);
             $('.agent_image').prop('src',data['agent_image_url']);
             $('.agent_image').prop('title',data['agent_name']);
+            $('#id_refund_amount').attr('max',data['total_cost'])
 
 
             order_status   = data['order_status']

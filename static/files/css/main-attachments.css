@@ -589,4 +589,7 @@ right:0;
 .custom-model-inner-sp{margin-top: 45px;}
 
 
-.ticket-form-most-right{ text-align: left;padding :0px 0px 0px 350px;  }
+
+/*remove button for cleaner add */
+.add-button-2{ background:#ec6262; margin:0; padding:8px 15px; color:#fff;transition: .4s; border:none;}
+.add-button-2:hover{ background:#d55757;}
