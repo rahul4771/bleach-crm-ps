@@ -249,6 +249,7 @@ $('.this-month-resource').on('click', function () {
 function submitAnyForm(src) 
     {
     var form=$(src).parents('form').first();
+    console.log(form);
     if(! form[0].checkValidity())
         $('<input type="submit">').hide().appendTo(form).click().remove();
     else

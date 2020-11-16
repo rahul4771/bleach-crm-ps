@@ -3061,15 +3061,6 @@ class TicketRegistration(IsAgent,View):
 
 			messages.success(request,"Complaint Registered Succesfully")
 
-		elif ticket_type == 'REFUND':	
-			refund_amount           = request.POST.get('refund_amount')
-			
-			order                   = Order.objects.select_related('evaluation').get(id=order_id)
-			order.evaluation.refund = refund_amount
-			order.evaluation.save()
-
-			messages.success(request,"Refund Amount Added Succesfully")
-
 		return redirect('agent:agent-ticketregister')
 
 #ajax for client chart
