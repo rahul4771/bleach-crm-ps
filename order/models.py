@@ -77,7 +77,6 @@ class Order(models.Model):
 	preamount_paid		   = models.IntegerField(blank=True,null=True,default=0)
 	postamount_paid		   = models.IntegerField(blank=True,null=True,default=0)
 	
-	refund_paid            = models.IntegerField(blank=True,null=True,default=0)
 	
 	instructions		   = models.CharField(max_length=5000,blank=True,null=True)
 	
