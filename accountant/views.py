@@ -544,18 +544,46 @@ class PaymentDetails(IsAccountant,View):
 		except:
 			service_types =	None
 
+		#date filter
+		fromdate = request.GET.get('fromdate',None)
+		todate = request.GET.get('todate',None)
+
+		if fromdate != None and todate != None:
+			prevdate = datetime.strptime(fromdate, '%d-%m-%Y')
+			todate = datetime.strptime(todate, '%d-%m-%Y')
+
+			prev_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
+			prev_date_end = prevdate+timedelta(1)
+			todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
+			todate_date_end = todate+timedelta(1)
+			print(prev_date_start,"pds")
+		elif fromdate != None and todate == None:
+			prevdate = datetime.strptime(fromdate, '%d-%m-%Y')
+			prev_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
+			todate_date_end = None
+			todate_date_start = None
+		elif fromdate == None and todate != None:
+			todate = datetime.strptime(todate, '%d-%m-%Y')
+			todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
+			todate_date_end = todate+timedelta(1)
+			prev_date_start  = None
+		else:
+			prev_date_start = None
+			todate_date_end = None
+			todate_date_start = None
+
 		#Evaluation Details
 		search                  = request.GET.get('search')
 		
 		#sales amount
 		if search:
 			try:
-				invoices         = Order.objects.filter(is_active=True).order_by('-id').select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED').filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='invoice_evaluation_details'))
+				invoices         = Order.objects.filter(is_active=True).order_by('-id').select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED').filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='invoice_evaluation_details')).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'))
 			except:
 				invoices         = None
 		else:
 			try:
-				invoices         = Order.objects.filter(is_active=True,).order_by('-id').select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='invoice_evaluation_details'))
+				invoices         = Order.objects.filter(is_active=True).order_by('-id').select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='invoice_evaluation_details')).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'))
 			except:
 				invoices         = None
 				
@@ -577,9 +605,27 @@ class PaymentDetails(IsAccountant,View):
 
 		fil_cleaning_policy       	= request.GET.get('cleaning_policy')
 
-		fil_cleaning_status			= request.GET.get('status')
+		fil_cleaning_status			= request.GET.get('status',None)
 
-		fil_payment_policy			= request.GET.get('payment_policy')
+		fil_payment_policy			= request.GET.get('payment_policy',None)
+
+		filters =[]
+		if fil_payment_policy:
+			case1 = Q(evaluation__payment_method=fil_payment_policy)
+			filters.append(case1)
+
+		if fil_cleaning_status:
+			case2       = Q(order_status=fil_cleaning_status)
+			filters.append(case2)
+
+		if prev_date_start and todate_date_end:
+			case3       = Q(created__range=(prev_date_start,todate_date_end))
+			filters.append(case3)
+
+		if fil_payment_policy or fil_cleaning_status or fromdate or todate:
+			filters=functools.reduce(operator.and_,filters)
+			invoices = invoices.filter(filters)
+			
 
 		try:
 			fil_service_type      = int(request.GET.get('service_type'))
@@ -588,8 +634,6 @@ class PaymentDetails(IsAccountant,View):
 
 		
 		evaluation_book_filter       	= []
-
-		orderscheduler_filter 			= []
 
 		if fil_cleaning_policy:
 			case1       = Q(cleaning_policy=fil_cleaning_policy)
@@ -604,27 +648,18 @@ class PaymentDetails(IsAccountant,View):
 
 		else:
 			evaluation_book_prefetch_filter              = None	
-			count_evaluation_book_prefetch_filter        = None
 
+		
 		#Apply prefetch filter
-		# if evaluation_book_prefetch_filter:
-		# 	invoices = invoices.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(book_count=Count(Case(When( count_evaluation_book_prefetch_filter,then=1),output_field=IntegerField()))).filter(book_count__gt=0)
-		# 	print("book only")
-		# else:
-		# 	invoices = invoices.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))		
-		# 	print("not at all")
-		
-		
-		fil_status = request.GET.get('status')
-		#filters 	
-		filters=[] 
-		if fil_status: 
-		    case1 = Q(quatation_status=fil_status)
-		    filters.append(case1)
-	
-		if fil_status: 
-		    filters     = functools.reduce(operator.and_,filters)
-		    evaluations = evaluations.filter(filters)
+
+		if evaluation_book_prefetch_filter :
+			invoices = invoices.select_related('evaluation').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation'))
+			print(invoices,"book only")
+			
+
+		else:
+			invoices = invoices.select_related('evaluation').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))		
+			print("not at all")
 
 		
 		#PAGINATION INVOICE		
@@ -655,7 +690,7 @@ class PaymentDetails(IsAccountant,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(invoices.end_index())-(invoices.start_index())+1
 
-		return render(request,'accountant/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"service_types":service_types,"fil_cleaning_policy":fil_cleaning_policy,"fil_service_type":fil_service_type,"fil_status":fil_cleaning_status,"fil_payment_policy":fil_payment_policy,})
+		return render(request,'accountant/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"service_types":service_types,"fil_cleaning_policy":fil_cleaning_policy,"fil_service_type":fil_service_type,"fil_status":fil_cleaning_status,"fil_payment_policy":fil_payment_policy,"fromdate":prev_date_start,"todate":todate_date_start})
 
 class CashCollect(IsAccountant,View):
 	def get(self,request):
@@ -747,7 +782,7 @@ def export_users_xls(request):
 	font_style = xlwt.XFStyle()
 	font_style.font.bold = True
 
-	columns = ['Order Date', 'Order Number', 'Client Name', 'Total Amount', 'Paid', 'Balance' ]
+	columns = ['Order Date', 'Order Number', 'Client Name', 'Payment Policy', 'Payment Mode', 'Total Amount (in KD)', 'Paid (in KD)', 'Balance (in KD)' ]
 
 	for col_num in range(len(columns)):
 		ws.write(row_num, col_num, columns[col_num], font_style)
@@ -755,11 +790,11 @@ def export_users_xls(request):
 	# Sheet body, remaining rows
 	font_style = xlwt.XFStyle()
 
-	rows = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(prev_date_start,todate_date_end)).order_by('-id').values_list('created','order_no','evaluation__customer__name','total_amount','amount_paid','remining_amount')
+	rows = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(prev_date_start,todate_date_end)).order_by('-id').values_list('created','order_no','evaluation__customer__name','evaluation__payment_method','history_order__payment_mode','total_amount','amount_paid','remining_amount')
 
 	rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
 
-	rows = [[str(x)+".000 KD" if isinstance(x, int) else x for x in row] for row in rows ]
+	rows = [[float(x)+float(0.000) if isinstance(x, float) else x for x in row] for row in rows ]
 	
 	for row in rows:
 		row_num += 1

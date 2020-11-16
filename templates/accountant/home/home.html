@@ -80,7 +80,7 @@
     </td>
     <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
     <td data-label="Total Amount">{{invoice.total_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
-    <td class="{% if invoice.evaluation.payment_method == 'PREPAID' %}indigo-text{% elif invoice.evaluation.payment_method == 'POSTPAID' %}rose-text{% else%}violet-text{% endif %}"  data-label="Payment Method">
+    <td class="{% if invoice.evaluation.payment_method == 'PREPAID' %}indigo-text{% else %}rose-text{% endif %}"  data-label="Payment Method">
     {{invoice.evaluation.payment_method|default_if_none:''}}
     </td>
     <td data-label="" class="bold-text">
@@ -122,7 +122,7 @@
     </td>
     <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
     <td data-label="Total Amount">{{invoice.evaluation.before_cleaning_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
-    <td data-label="Payment Method">{{invoice.evaluation.payment_method|default_if_none:''}}</td>
+    <td class="violet-text" data-label="Payment Method">{{invoice.evaluation.payment_method|default_if_none:''}}</td>
     <td data-label="" class="bold-text">{% if invoice.reminigdays <= 0 %}
     <h3 class="red-text-h3">Exp</h3>
     {% else %}

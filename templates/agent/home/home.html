@@ -1218,8 +1218,14 @@ $(".order_schedule").click(function(){
 
     var orderschedule_date = new Date(year,month,day);
     orderschedule_date.setMonth(orderschedule_date.getMonth()-1);
+    orderschedule_date.setMinutes(01);
+    
+    var today_date = new Date();
+    today_date.setHours(00);
+    today_date.setMinutes(00);
+    today_date.setSeconds(00);
 
-    if (orderschedule_date < new Date()){
+    if (orderschedule_date < today_date){
       $('#order_schedule_date_alert').attr("hidden",false);
       $('.confirmdate_order_btn').attr("disabled",true);
     }else{
