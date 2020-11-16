@@ -587,3 +587,9 @@ right:0;
 .close-btn-sp { position: absolute; right: 0; top: -40px; cursor: pointer; z-index: 99; font-size: 30px; color: #fff;}
 .custom-model-main-sp:before {  content: ""; display: inline-block; height: auto; vertical-align: middle; margin-right: -0px; height: 100%;}
 .custom-model-inner-sp{margin-top: 45px;}
+
+
+
+/*remove button for cleaner add */
+.add-button-2{ background:#ec6262; margin:0; padding:8px 15px; color:#fff;transition: .4s; border:none;}
+.add-button-2:hover{ background:#d55757;}

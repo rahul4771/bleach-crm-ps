@@ -211,7 +211,7 @@ class StlHome(IsSeniorTeamLeader,View):
 		
 		#total active workers
 		try:
-			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=count_today_start)&Q(end_at__gte=count_today_start)) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=timezone.now().replace(tzinfo=None))&Q(end_at__gte=timezone.now().replace(tzinfo=None)))) ).values_list('member',flat=True)).distinct().count()
+			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=timezone.now())&Q(end_at__gte=timezone.now())) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=timezone.now())&Q(end_at__gte=timezone.now()))) ).values_list('member',flat=True)).distinct().count()
 		except:
 			total_active_workers = 0	
 	
@@ -243,7 +243,6 @@ class StlHome(IsSeniorTeamLeader,View):
 			week_total_team_mens  = week_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_cleaning_active_teams.count() or 0+week_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_followup_active_teams.count() or 0
 		except:	
 			week_total_team_mens  = 0
-
 
 
 		#today and weekly active team count
@@ -606,6 +605,9 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		
 		cleaning_team_assign_form = CleaningTeamAssignForm(request.POST)
 		assigned_cleaners         = request.POST.getlist('assigned_cleaner')
+		#update cleaners count
+		order_schedule.order_scheduler_book.number_of_cleaners = len(assigned_cleaners)
+		order_schedule.order_scheduler_book.save()
 
 		active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list('member',flat=True)
 		active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list('member',flat=True)	
@@ -618,7 +620,7 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		check_tl_assigned       = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id=request.POST.get('team_leader'))
 				
 
-		if	cleaning_team_assign_form.is_valid() and not check_cleaners_assigned and not check_tl_assigned and len(assigned_cleaners)==int(request.POST.get('no_of_cleaners')):
+		if	cleaning_team_assign_form.is_valid() and not check_cleaners_assigned and not check_tl_assigned:
 			cleaning_team_assign_form_save                   = cleaning_team_assign_form.save(commit=False)
 			cleaning_team_assign_form_save.order_scheduler_id= scheduler_id
 			cleaning_team_assign_form_save.start_at          = order_schedule.start_at
@@ -635,11 +637,8 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 			CleaningTeamMember.objects.bulk_create(assigned_cleaners_list)	
 
 			OrderScheduler.objects.filter(id=scheduler_id).update(work_status='CLEANING_TEAM_ASSIGNED')
-		else:
-			if len(assigned_cleaners)!=int(request.POST.get('no_of_cleaners')):
-				messages.error(request,"Assign Specified Number of cleaners")
-			else:	
-				messages.error(request,"Something Went Wrong")
+		else:	
+			messages.error(request,"Something Went Wrong")
 
 			return render(request,'stl/cleaning/cleaningteam_assign.html',{'cleaning_team_assign_form':cleaning_team_assign_form,'order_schedule':order_schedule,'cleaners':cleaners,'leaders':leaders,'drivers':drivers})	
 
@@ -675,6 +674,9 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 
 		follow_up_team_assign_form = FollowupTeamAssignForm(request.POST)
 		assigned_cleaners          = request.POST.getlist('assigned_cleaner')
+		#update cleaners count
+		followup_schedule.follow_up.no_of_cleaners = len(assigned_cleaners)
+		followup_schedule.follow_up.save()
 
 
 		active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at))|Q(Q(end_at__gte=followup_schedule.start_at)&Q(end_at__lte=followup_schedule.end_at))|Q(Q(start_at__lte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__gte=followup_schedule.end_at))|Q(Q(start_at__gte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__lte=followup_schedule.end_at)))).values_list('member',flat=True)
@@ -690,7 +692,7 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 		
 
 		
-		if	follow_up_team_assign_form.is_valid() and not check_cleaners_assigned and not check_tl_assigned and len(assigned_cleaners)==int(request.POST.get('no_of_cleaners')):
+		if	follow_up_team_assign_form.is_valid() and not check_cleaners_assigned and not check_tl_assigned:
 			follow_up_team_assign_form_save                   = follow_up_team_assign_form.save(commit=False)
 			follow_up_team_assign_form_save.followup_scheduler_id= scheduler_id
 			follow_up_team_assign_form_save.start_at          = followup_schedule.start_at
@@ -707,12 +709,8 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 			FollowUpTeamMember.objects.bulk_create(assigned_cleaners_list)	
 
 			FollowUpScheduler.objects.filter(id=scheduler_id).update(work_status='FOLLOW_UP_TEAM_ASSIGNED')
-		else:
-
-			if len(assigned_cleaners)!=int(request.POST.get('no_of_cleaners')):
-				messages.error(request,"Assign Specified Number of cleaners")
-			else:	
-				messages.error(request,"Something Went Wrong")
+		else:	
+			messages.error(request,"Something Went Wrong")
 
 			return render(request,'stl/cleaning/followupteam_assign.html',{'follow_up_team_assign_form':follow_up_team_assign_form,'followup_schedule':followup_schedule,'cleaners':cleaners,'leaders':leaders,'drivers':drivers,})	
 

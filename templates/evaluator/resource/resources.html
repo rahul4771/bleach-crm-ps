@@ -526,8 +526,13 @@ var date1 = new Date();
             minutes = parseInt((total_duration+"").split('.')[1])*6
             if(Number.isNaN(minutes))
             {
-                minutes = 0;
+                minutes = '00';
             }
+            else
+            {
+                minutes = String(minutes)[0]+String(minutes)[1]
+            }
+
             //append gray dot
             if(total_duration == 0)
             {

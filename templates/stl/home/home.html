@@ -28,7 +28,7 @@
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-manhours-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
-                <h1>Man Hours</h1>
+                <h1>Man Occupied Hours</h1>
             	<h2 class="green-text"><label>Today<span id="today_man_hour"></span></label>  </h2>
             	<p><label>This Week <span id="week_man_hour"></span></label></p>
             	</div><!--column-right-->
@@ -39,7 +39,7 @@
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-man-average-hours-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
-                <h1>Man Average Hours</h1>
+                <h1>Man Occupied Average Hours</h1>
             	<h2 class="orange-text"><label>Today<span id="today_avg_man_hour"></span></label> </h2>
             	<p><label>This Week <span id="week_avg_man_hour"></span></label></p>
             	</div><!--column-right-->
@@ -414,6 +414,8 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
      <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label" id="team_members"> <label>Team Members</label></div>
+    <input name="add" type="button" class="add-button1" value="Add Cleaner" id="add_cleaner_id">
+    <input name="remove" type="button" class="add-button-2" value="Remove Cleaner" id="remove_cleaner_id">
   </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
    
@@ -483,6 +485,8 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
      <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label" id="followup_members"> <label>Team Members</label></div>
+    <input name="add" type="button" class="add-button1" value="Add Cleaner" id="add_cleanerfollowup_id">
+    <input name="remove" type="button" class="add-button-2" value="Remove Cleaner" id="remove_cleanerfollowup_id">
   </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
 
@@ -960,13 +964,22 @@ $('document').ready(function(){
         {
             $("#today_avg_man_hour").html('0.00');
         }
+        else if(average_today_hours == Infinity)
+        {
+            $("#today_avg_man_hour").html('0.00'); 
+        }
         else
         {
             $("#today_avg_man_hour").html(average_today_hours.toFixed(2));   
         }
+
         if (Number.isNaN(average_week_hours))
         {
             $("#week_avg_man_hour").html('0.00');
+        }
+        else if(average_week_hours == Infinity)
+        {
+            $("#week_avg_man_hour").html('0.00'); 
         }
         else
         {
@@ -1058,13 +1071,16 @@ $('document').ready(function(){
             minutes = parseInt((total_duration+"").split('.')[1])*6
             if(Number.isNaN(minutes))
             {
-                minutes = 0;
+                minutes = '00';
+            }
+            else
+            {
+                minutes = String(minutes)[0]+String(minutes)[1]
             }
             //append gray dot
             if(total_duration == 0)
             {
                 $("#worker{{details.id}} .dot-image img").attr("src","{% static 'files/images/gray-dot.png' %}");
-                console.log("zerooooo condition","{{details.id}}");
             }
 
 
@@ -1344,9 +1360,9 @@ $('document').ready(function(){
 
                     //team leader append
                     available_leaders = data['availableleadersinfo'].available_leaders;
-                    for(i=0;i<available_leaders.length;i++)
+                    for(j=0;j<available_leaders.length;j++)
                       {   
-                        $("#team_leader").append('<option value="'+available_leaders[i].leader_id+'">'+available_leaders[i].leader_name+'</option>');
+                        $("#team_leader").append('<option value="'+available_leaders[j].leader_id+'">'+available_leaders[j].leader_name+'</option>');
 
                             }
                     $("#team_leader").append('<option value="'+data['team_leader_id']+'">'+data['team_leader']+'</option>');
@@ -1357,17 +1373,65 @@ $('document').ready(function(){
                                   }  
       });
 
-    //edit option toggle
-        cleaning_status = $(this).data('cleaning_status');
-        
-        if(cleaning_status == 'CLEANING_TEAM_ASSIGNED' || cleaning_status == 'CLEANING_IN_PROGRESS')
-            {
-                $('.edit-collapse').css('display','block');
-        }
-        else
+//edit option toggle
+    cleaning_status = $(this).data('cleaning_status');
+    
+    if(cleaning_status == 'CLEANING_TEAM_ASSIGNED' || cleaning_status == 'CLEANING_IN_PROGRESS')
         {
-             $('.edit-collapse').css('display','none');   
-        }
+            $('.edit-collapse').css('display','block');
+    }
+    else
+    {
+         $('.edit-collapse').css('display','none');   
+    }
+
+                //Add cleaning Cleaner Button
+                  $('#add_cleaner_id').click(function(){
+                    if(i<(available_cleaners.length+assigned_cleaners.length))
+                    {   
+
+                        //append main select 
+                        $('#team_members').append('<label for="favcity"><select name="team_member" id="team_member'+i+'" class="assign_cleaner" onchange="remove_duplicate_selection(this);"></select></label><br>');
+
+                        //append available cleaners
+                          for(k=0;k<available_cleaners.length;k++)
+                          {   
+                            $("#team_member"+i).append('<option value="'+available_cleaners[k].cleaner_id+'">'+available_cleaners[k].cleaner_name+'</option>');
+
+                                }
+
+                        //append assigned cleaners
+                          for(l=0;l<assigned_cleaners.length;l++)
+                          {   
+                            $("#team_member"+i).append('<option value="'+assigned_cleaners[l].member_id+'">'+assigned_cleaners[l].member_name+'</option>');
+
+                                }        
+                        //main  cleaner select selection
+                        if(i<=(cleaners.length-1))
+                        {
+                            $("#team_member"+i).val(cleaners[i].member_id);
+                        } 
+                        else
+                        {
+                            $("#team_member"+i).val(available_cleaners[(i-cleaners.length)].cleaner_id);
+                        }
+
+                        i++;
+                    }
+
+                    else
+                    {
+                      alert("No More Available Cleaners !!")
+                    }
+                  })
+
+                  //Remove Cleaner Button
+                  $('#remove_cleaner_id').click(function(){
+                    i--;
+                    $("#team_member"+i).parents('label').next("br").remove()
+                    $("#team_member"+i).parents('label').remove();
+                  })
+      
 });
 
 var coll = document.getElementsByClassName("collapsible1");
@@ -1388,8 +1452,6 @@ for (i = 0; i < coll.length; i++) {
 $('.collapsible1-close').click(function(){
     $(".popup-collapse1").css('display','none');
 })
-
-
 
 
 // followup Edit
@@ -1493,9 +1555,9 @@ $('.collapsible1-close').click(function(){
 
                     //team leader append
                     available_leaders = data['availableleadersinfo'].available_leaders;
-                    for(i=0;i<available_leaders.length;i++)
+                    for(j=0;j<available_leaders.length;j++)
                       {   
-                        $("#followup_leader").append('<option value="'+available_leaders[i].leader_id+'">'+available_leaders[i].leader_name+'</option>');
+                        $("#followup_leader").append('<option value="'+available_leaders[j].leader_id+'">'+available_leaders[j].leader_name+'</option>');
 
                             }
                     $("#followup_leader").append('<option value="'+data['team_leader_id']+'">'+data['team_leader']+'</option>');
@@ -1517,6 +1579,54 @@ $('.collapsible1-close').click(function(){
         {
                 $('.edit-collapse').css('display','none');
         }
+
+
+                  //Add cleaning Cleaner Button
+                  $('#add_cleanerfollowup_id').click(function(){
+                    if(i<(available_cleaners.length+assigned_cleaners.length))
+                    {   
+
+                        //append main select 
+                        $('#followup_members').append('<label for="favcity"><select name="followup_member" id="followup_member'+i+'" class="assign_cleaner" onchange="remove_duplicate_selection(this);"></select></label><br>');
+
+                        //append available cleaners
+                          for(k=0;k<available_cleaners.length;k++)
+                          {   
+                            $("#followup_member"+i).append('<option value="'+available_cleaners[k].cleaner_id+'">'+available_cleaners[k].cleaner_name+'</option>');
+
+                                }
+
+                        //append assigned cleaners
+                          for(l=0;l<assigned_cleaners.length;l++)
+                          {   
+                            $("#followup_member"+i).append('<option value="'+assigned_cleaners[l].member_id+'">'+assigned_cleaners[l].member_name+'</option>');
+
+                                }        
+                        //main  cleaner select selection
+                        if(i<=(cleaners.length-1))
+                        {
+                            $("#followup_member"+i).val(cleaners[i].member_id);
+                        } 
+                        else
+                        {
+                            $("#followup_member"+i).val(available_cleaners[(i-cleaners.length)].cleaner_id);
+                        }
+
+                        i++;        
+                    }
+
+                    else
+                    {
+                      alert("No More Available Cleaners !!")
+                    }
+                  })
+
+                  //Remove Cleaner Button
+                  $('#remove_cleanerfollowup_id').click(function(){
+                    i--;
+                    $("#followup_member"+i).parents('label').next("br").remove()
+                    $("#followup_member"+i).parents('label').remove();
+                  })
 
 });
 
@@ -1574,6 +1684,5 @@ function remove_duplicate_selection(params)
   }); 
 
 }
-
 </script>
 {% endblock %}

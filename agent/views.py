@@ -610,7 +610,7 @@ class AgentHome(IsAgent,View):
 			feedbacks				  = None
 
 		month_average_feedback		  = feedbacks.filter(response_date__gte=count_today_end-timedelta(30)).aggregate(Avg('rating'))['rating__avg']
-		lastmonth_average_feedback		  = feedbacks.filter(response_date__gte=count_today_end-timedelta(60),response_date__lte=count_today_end-timedelta(30)).aggregate(Avg('rating'))['rating__avg']	
+		lastmonth_average_feedback	  = feedbacks.filter(response_date__gte=count_today_end-timedelta(60),response_date__lte=count_today_end-timedelta(30)).aggregate(Avg('rating'))['rating__avg']	
 		
 		#Evaluation details of each evaluator for evaluation table
 		evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
@@ -718,6 +718,11 @@ class AgentHome(IsAgent,View):
 				FollowUpScheduler.objects.filter(id=followupscheduler_id).update(start_at=start_at,end_at=end_at)
 				messages.success(request,"Followup Cleaning Date Not Confirmed")
 
+			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
+			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
+
+			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)	
+
 		elif action_mode =='confirm_orderschedule':
 			orderscheduler_id    = request.POST.get('orderscheduler')
 			order_scheduler      = OrderScheduler.objects.get(id=orderscheduler_id)
@@ -790,6 +795,11 @@ class AgentHome(IsAgent,View):
 				OrderScheduler.objects.filter(id=orderscheduler_id).update(start_at=start_at,end_at=end_at)
 				messages.success(request,"Cleaning Date Not Confirmed")
 
+			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
+			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
+
+			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
+
 		elif action_mode == 'edit_evaluation':
 			evaluation_detail_id 			  = request.POST.get('evaluation_id')
 
@@ -854,7 +864,7 @@ class AgentHome(IsAgent,View):
 
 			cleaning_date 	= request.POST.get('cleaning_date')
 			cleaning_time   = request.POST.get('cleaning_time')
-			cleaning_hours 	= int(request.POST.get('cleaning_hours'))
+			cleaning_hours 	= float(request.POST.get('cleaning_hours'))
 
 			start_at         = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
 			end_at           = start_at + timedelta(hours=cleaning_hours)
@@ -916,8 +926,8 @@ class AgentHome(IsAgent,View):
 			else:
 				pass
 
-			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
-			cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
+			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
+			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
 
 			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
 
@@ -926,7 +936,7 @@ class AgentHome(IsAgent,View):
 
 			cleaning_date 	= request.POST.get('cleaning_date')
 			cleaning_time   = request.POST.get('cleaning_time')
-			cleaning_hours 	= int(request.POST.get('cleaning_hours'))
+			cleaning_hours 	= float(request.POST.get('cleaning_hours'))
 
 			start_at         = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
 			end_at           = start_at + timedelta(hours=cleaning_hours)
@@ -998,7 +1008,10 @@ class AgentHome(IsAgent,View):
 
 			response = requests.request("GET", url, headers=headers, params=querystring)
 
-			print(response.text,"respo")
+			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
+			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
+
+			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
 
 		elif action_mode == 'delete_cleaning':
 			cleaning_id = request.POST.get('delete_cleaning_id')
@@ -1035,7 +1048,10 @@ class AgentHome(IsAgent,View):
 
 			response = requests.request("GET", url, headers=headers, params=querystring)
 
-			print(response.text,"res")
+			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
+			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
+
+			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
 
 		elif action_mode == 'delete_followup':
 			followup_id = request.POST.get('delete_followup_id')

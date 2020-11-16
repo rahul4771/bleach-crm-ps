@@ -28,7 +28,7 @@
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-manhours-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
-                <h1>Man Hours</h1>
+                <h1>Man Occupied Hours</h1>
             	<h2 class="green-text"><label>Today<span id="today_man_hour"></span></label>  </h2>
             	<p><label>This Week <span id="week_man_hour"></span></label></p>
             	</div><!--column-right-->
@@ -39,7 +39,7 @@
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-man-average-hours-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
-                <h1>Man Average Hours</h1>
+                <h1>Man Occupied Average Hours</h1>
             	<h2 class="orange-text"><label>Today<span id="today_avg_man_hour"></span></label> </h2>
             	<p><label>This Week <span id="week_avg_man_hour"></span ></label></p>
             	</div><!--column-right-->
@@ -325,13 +325,22 @@
         {
             $("#today_avg_man_hour").html('0.00');
         }
+        else if(average_today_hours == Infinity)
+        {
+            $("#today_avg_man_hour").html('0.00'); 
+        }
         else
         {
             $("#today_avg_man_hour").html(average_today_hours.toFixed(2));   
         }
+
         if (Number.isNaN(average_week_hours))
         {
             $("#week_avg_man_hour").html('0.00');
+        }
+        else if(average_week_hours == Infinity)
+        {
+            $("#week_avg_man_hour").html('0.00'); 
         }
         else
         {
