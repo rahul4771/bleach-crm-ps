@@ -79,7 +79,76 @@
           <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search BLC Number & customer Name Here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
      </div><!--left-box leftbox-item1-->
      <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
-     <input name="filter" type="button" value="Filter" id="filter" class="blue-button"> 
+     <input name="filter" type="button" value="Filter" id="filter" class="blue-button arrow"> 
+     
+     <div class="menu-filter ltgreen-border" style="display:none;"><!--menu-filter ltgreen-border-->
+
+      <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+        <div class="ticket-form-left"><!--ticket-form-left-->
+                <div class=" bold-text common-label"> <label>From Date</label></div>
+              <input type="text" name="from_date" id="payment_fromdate" class="date_pick textBox" onchange="paymentfromtodatecheck();" placeholder="Select From Date" value="{{fromdate|date:'d-m-Y'}}" required readonly>
+        </div><!--ticket-form-left-->
+        <div class="ticket-form-right"><!--ticket-form-right-->
+                <div class=" bold-text common-label"> <label>To Date</label></div>
+                      <input type="text" name="to_date" id="payment_todate" class="date_pick textBox" onchange="paymentfromtodatecheck();" placeholder="Select To Date" value="{{todate|date:'d-m-Y'}}" required readonly>
+        </div><!--ticket-form-right-->
+      </div><!--ticket-wrapper-row ticket-forms-boxes-->
+      <hr class="hr-dashedpad"> 
+      <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+        <div class="ticket-form-left"><!--ticket-form-left-->
+                <div class=" bold-text common-label"> <label>Cleaning Policy</label></div>
+              <label for="favcity">
+                      <select name="cleaning_policy_filter" id="cleaning_policy_filter_id">
+                      <option value=''>---ALL---</option>
+                      <option value="ONE TIME SERVICE" {% if fil_cleaning_policy == 'ONE TIME SERVICE' %}selected{%endif%}>ONE TIME SERVICE</option>
+                      <option value="SUBSCRIPTION" {% if fil_cleaning_policy == 'SUBSCRIPTION' %}selected{%endif%}>SUBSCRIPTION</option>                
+                    </select>
+                      </label>
+        </div><!--ticket-form-left-->
+        <div class="ticket-form-right"><!--ticket-form-right-->
+                <div class=" bold-text common-label"> <label>Cleaning Status</label></div>
+                      <label for="favcity">
+                      <select name="status_filter" id="status_filter_id">
+                      <option value=''>---ALL---</option>
+                      <option value="APPROVED_BY_CLIENT" {% if fil_status == 'APPROVED_BY_CLIENT' %}selected{% endif %}>APPROVED</option>
+                      <option value="ORDER_IN_PROGRESS" {% if fil_status == 'ORDER_IN_PROGRESS' %}selected{% endif %}>CLEANING IN PROGRESS</option>
+                      <option value="ORDER_CLOSED" {% if fil_status == 'ORDER_CLOSED' %}selected{% endif %}>CLEANING CLOSED</option>              
+                    </select>
+                      </label>
+        </div><!--ticket-form-right-->
+      </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+      <hr class="hr-dashedpad"> 
+      <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+        <div class="ticket-form-left"><!--ticket-form-left-->
+                <div class=" bold-text common-label"> <label>Service Type</label></div>
+              <label for="favcity">
+                      <select name="service_type_filter" id="service_type_filter_id">
+                      <option value=''>---ALL---</option>
+                      {% for service_type in service_types %}
+                      <option value="{{service_type.id}}" {% if service_type.id == fil_service_type %}selected{% endif %}>{{service_type.name}}</option>
+                      {% endfor %}                
+                    </select>
+                      </label>
+        </div><!--ticket-form-left-->
+        <div class="ticket-form-right"><!--ticket-form-right-->
+                <div class=" bold-text common-label"> <label>Payment Policy</label></div>
+                      <label for="favcity">
+                      <select name="payment_policy" id="payment_policy_id">
+                      <option value=''>---ALL---</option> 
+                      
+                      <option value='PREPAID' {% if fil_payment_policy == 'PREPAID' %}selected{% endif %}>PREPAID</option>
+                      <option value='POSTPAID' {% if fil_payment_policy == 'POSTPAID' %}selected{% endif %}>POSTPAID</option>
+                      <option value='BREAKDOWN' {% if fil_payment_policy == 'BREAKDOWN' %}selected{% endif %}>BREAKDOWN</option>
+                                
+                    </select>
+                      </label>
+        </div><!--ticket-form-right-->
+      </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+      <div align="center"> <input class="assignButton" name="assing" type="button" onclick="set_params_go();" value="Submit"> <input class="cancel-Button close-btn arrow-close" name="cancel" type="button" value="Reset"></div>
+
+          
+          </div><!--menu-filter ltgreen-border-->
+     
      </div><!--right-box leftbox-item1-->     
      
      
@@ -226,10 +295,42 @@ $('.footable').footable({
 //# sourceURL=pen.js
     </script>
     <script>
+
+function paymentfromtodatecheck() {
+  var d1 = $('#payment_fromdate').val();
+
+  var vals = d1.split('-');
+  var day = parseInt(vals[0]);
+  var month = parseInt (vals[1]);
+  var year = parseInt (vals[2]);
+
+  var d1date = new Date(year,month,day);
+  d1date.setMonth(d1date.getMonth()-1);
+  
+  var d2 = $('#payment_todate').val();
+
+  var vals2 = d2.split('-');
+  var day2 = parseInt(vals2[0]);
+  var month2 = parseInt (vals2[1]);
+  var year2 = parseInt (vals2[2]);
+
+  var d2date = new Date(year2,month2,day2);
+  d2date.setMonth(d2date.getMonth()-1);
+
+  console.log(d1,d2,"dee")
+  if ( d1date > d2date){
+    $('#payment_fromdate').val(d2);
+    $('#payment_todate').val(d1);
+  }
+};
+</script>
+
+<script>
 function set_params_go(args)
 {
 var url='{% url 'bleach_admin:admin-payments' %}';
-var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val(),
+fromdate:$('#payment_fromdate').val(),todate:$('#payment_todate').val()
 };
 for(key in args) 
     params[key]=args[key];

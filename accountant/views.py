@@ -578,12 +578,12 @@ class PaymentDetails(IsAccountant,View):
 		#sales amount
 		if search:
 			try:
-				invoices         = Order.objects.filter(is_active=True).order_by('-id').select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED').filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='invoice_evaluation_details')).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'))
+				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED').filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'))
 			except:
 				invoices         = None
 		else:
 			try:
-				invoices         = Order.objects.filter(is_active=True).order_by('-id').select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area'),to_attr='invoice_evaluation_details')).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'))
+				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'))
 			except:
 				invoices         = None
 				
@@ -634,26 +634,33 @@ class PaymentDetails(IsAccountant,View):
 
 		
 		evaluation_book_filter       	= []
+		count_evaluation_book_filter = []
 
 		if fil_cleaning_policy:
 			case1       = Q(cleaning_policy=fil_cleaning_policy)
+			count_case1 = Q(evaluation__evaluation_details__evaluation_book_evaluation_details__cleaning_policy=fil_cleaning_policy)
 			evaluation_book_filter.append(case1)
+			count_evaluation_book_filter.append(count_case1)
 
 		if fil_service_type:     
 			case2       = Q(service_type_id=fil_service_type)
-			evaluation_book_filter.append(case2)              
+			count_case2 = Q(evaluation__evaluation_details__evaluation_book_evaluation_details__service_type_id=fil_service_type)
+			evaluation_book_filter.append(case2) 
+			count_evaluation_book_filter.append(count_case2)             
 
 		if fil_cleaning_policy or fil_service_type:
 			evaluation_book_prefetch_filter              = functools.reduce(operator.and_,evaluation_book_filter)
-
+			count_evaluation_book_prefetch_filter        = functools.reduce(operator.and_,count_evaluation_book_filter)
+		
 		else:
 			evaluation_book_prefetch_filter              = None	
+			count_evaluation_book_prefetch_filter        = None
 
 		
 		#Apply prefetch filter
 
 		if evaluation_book_prefetch_filter :
-			invoices = invoices.select_related('evaluation').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation'))
+			invoices = invoices.select_related('evaluation').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)		 
 			print(invoices,"book only")
 			
 
