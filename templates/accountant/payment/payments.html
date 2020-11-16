@@ -203,7 +203,7 @@
     <td>{{invoice.order_no}}</td>
     <td>{{invoice.evaluation.payment_method}}</td>
 
-    {% for inv in invoice.paymenthistory%}
+    {% for inv in invoice.paymenthistory |slice:":1" %}
     <td>{{inv.payment_mode}}</td>
     {% empty %}
     <td>-</td>
