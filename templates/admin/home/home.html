@@ -220,9 +220,9 @@
                     <div class="bar-chart-graybg color"><div id="color{{evaluator.id}}"></div></div>
                 </div><!--bar-chart-items chart-column-three-->
                 
-                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
+                {% comment %} <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
                      <a class="followup_graph" data-evaluator="{{evaluator.name}}"><input name="Follow" type="button" class="follow" onclick="salestarget({{evaluator.id}});" value="Follow"> </a> 
-                </div><!--bar-chart-items chart-column-four-->
+                </div><!--bar-chart-items chart-column-four--> {% endcomment %}
                 
             </div><!--bar-chart-->        
             {% endfor %}
@@ -246,9 +246,9 @@
                     <div class="bar-chart-graybg color"><div id="color0"></div></div>
                 </div><!--bar-chart-items chart-column-three-->
                 
-                <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
+                {% comment %} <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
                      <a class="followup_graph" data-evaluator="Customer Service"><input name="Follow" type="button" class="follow" onclick="salestarget(0);" value="Follow"> </a> 
-                </div><!--bar-chart-items chart-column-four-->
+                </div><!--bar-chart-items chart-column-four--> {% endcomment %}
                 
             </div><!--bar-chart-->
             
@@ -466,7 +466,7 @@
 {% block javascript %}
 <script src="{% static 'files/js/charts/sales-pie-charts.js' %}"></script>
 <script src="{% static 'files/js/charts/overall-sales-chart.js' %}"></script>
-<script src="{% static 'files/js/charts/sales-target-chart.js' %}"></script>
+{% comment %} <script src="{% static 'files/js/charts/sales-target-chart.js' %}"></script> {% endcomment %}
 <script type="text/javascript">
 
 // sales target calculation

@@ -78,10 +78,29 @@
      <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
           <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search BLC Number & Customer Name Here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
      </div><!--left-box leftbox-item1-->
+     
+     
      <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
+     {% comment %} <input type="text" id="payment_fromdate" class="date_pick date-pick-left" placeholder="Select From Date" onchange="set_params_go();" value="{{fromdate|date:'d-m-Y'}}" readonly>
+     
+     <input type="text" id="payment_todate" class="date_pick date-pick-left" placeholder="Select To Date" onchange="set_params_go();" value="{{todate|date:'d-m-Y'}}" readonly> {% endcomment %}
+     
      <input name="filter" type="button" value="Filter" id="filter" class="blue-button arrow"> 
+     
+
      <div class="menu-filter ltgreen-border" style="display:none;"><!--menu-filter ltgreen-border-->
 
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>From Date</label></div>
+        <input type="text" name="from_date" id="payment_fromdate" class="date_pick textBox" placeholder="Select From Date" value="{{fromdate|date:'d-m-Y'}}" required readonly>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>To Date</label></div>
+                <input type="text" name="to_date" id="payment_todate" class="date_pick textBox" placeholder="Select To Date" value="{{todate|date:'d-m-Y'}}" required readonly>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad"> 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>Cleaning Policy</label></div>
@@ -98,9 +117,8 @@
                 <label for="favcity">
                 <select name="status_filter" id="status_filter_id">
                 <option value=''>---ALL---</option>
-                <option value="CLEANING_TEAM_ASSIGNED" {% if fil_status == 'CLEANING_TEAM_ASSIGNED' %}selected{% endif %}>CLEANING_TEAM_ASSIGNED</option>
-                <option value="CLEANING_IN_PROGRESS" {% if fil_status == 'CLEANING_IN_PROGRESS' %}selected{% endif %}>CLEANING_IN_PROGRESS</option> 
-                <option value="CLEANING_FULFILLED" {% if fil_status == 'CLEANING_FULFILLED' %}selected{% endif %}>CLEANING_FULFILLED</option>               
+                <option value="ORDER_IN_PROGRESS" {% if fil_status == 'ORDER_IN_PROGRESS' %}selected{% endif %}>ORDER IN PROGRESS</option>
+                <option value="ORDER_CLOSED" {% if fil_status == 'ORDER_CLOSED' %}selected{% endif %}>ORDER CLOSED</option>              
               </select>
                 </label>
   </div><!--ticket-form-right-->
@@ -161,12 +179,14 @@
 <tr>
 <th>Order Date</th>
 <th>Order Number</th>
+<th data-hide="phone,tablet">Payment Policy</th>
+<th data-hide="phone,tablet">Payment Mode</th>
 <th data-hide="phone,tablet">Client Name</th>
 {% comment %} <th data-hide="phone">Area</th>
 <th>Contact</th> {% endcomment %}
-<th data-hide="phone,tablet">Amount</th>
-<th data-hide="phone,tablet">Paid</th>
-<th data-hide="phone,tablet">Balance</th>
+<th data-hide="phone,tablet">Amount (in KD)</th>
+<th data-hide="phone,tablet">Paid (in KD)</th>
+<th data-hide="phone,tablet">Balance (in KD)</th>
 {% comment %} <th class="align-center" data-hide="phone">Status</th> {% endcomment %}
 </tr>
 </thead>
@@ -180,7 +200,15 @@
         {% else %}
         class="yellow-line"
         {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
-    <td>{{invoice.evaluation.evaluation_id}}</td>
+    <td>{{invoice.order_no}}</td>
+    <td>{{invoice.evaluation.payment_method}}</td>
+
+    {% for inv in invoice.paymenthistory%}
+    <td>{{inv.payment_mode}}</td>
+    {% empty %}
+    <td>-</td>
+    {% endfor %}
+
     <td>{{invoice.evaluation.customer.name}}</td>
     {% comment %} <td>
     {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
@@ -188,9 +216,10 @@
     {% endfor %}
     </td>
     <td>{{invoice.evaluation.customer.mobile_number}}</td> {% endcomment %}
-    <td>{{invoice.total_amount|default_if_none:'0.00'|floatformat:'3'}} KD</td>
-    <td>{{invoice.amount_paid|default_if_none:'0.00'|floatformat:'3'}} KD</td>
-    <td>{{invoice.remining_amount|default_if_none:'0.00'|floatformat:'3'}} KD</td>
+    <td class="text-right">{{invoice.total_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
+    <td class="text-right">{{invoice.amount_paid|default_if_none:'0.00'|floatformat:'3'}}</td>
+    <td class="text-right">{{invoice.remining_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
+    
     {% comment %} <td><span 
         {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}
 
@@ -421,6 +450,7 @@ function set_params_go(args)
 {
 var url='{% url 'accountant:accountant-payments' %}';
 var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val(),
+fromdate:$('#payment_fromdate').val(),todate:$('#payment_todate').val()
 };
 for(key in args) 
     params[key]=args[key];
