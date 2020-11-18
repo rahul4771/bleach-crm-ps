@@ -93,11 +93,11 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>From Date</label></div>
-        <input type="text" name="from_date" id="payment_fromdate" class="date_pick textBox" placeholder="Select From Date" value="{{fromdate|date:'d-m-Y'}}" required readonly>
+        <input type="text" name="from_date" id="payment_fromdate" class="date_pick textBox" onchange="paymentfromtodatecheck();" placeholder="Select From Date" value="{{fromdate|date:'d-m-Y'}}" required readonly>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>To Date</label></div>
-                <input type="text" name="to_date" id="payment_todate" class="date_pick textBox" placeholder="Select To Date" value="{{todate|date:'d-m-Y'}}" required readonly>
+                <input type="text" name="to_date" id="payment_todate" class="date_pick textBox" onchange="paymentfromtodatecheck();" placeholder="Select To Date" value="{{todate|date:'d-m-Y'}}" required readonly>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad"> 
@@ -117,8 +117,9 @@
                 <label for="favcity">
                 <select name="status_filter" id="status_filter_id">
                 <option value=''>---ALL---</option>
-                <option value="ORDER_IN_PROGRESS" {% if fil_status == 'ORDER_IN_PROGRESS' %}selected{% endif %}>ORDER IN PROGRESS</option>
-                <option value="ORDER_CLOSED" {% if fil_status == 'ORDER_CLOSED' %}selected{% endif %}>ORDER CLOSED</option>              
+                <option value="APPROVED_BY_CLIENT" {% if fil_status == 'APPROVED_BY_CLIENT' %}selected{% endif %}>APPROVED</option>
+                <option value="ORDER_IN_PROGRESS" {% if fil_status == 'ORDER_IN_PROGRESS' %}selected{% endif %}>CLEANING IN PROGRESS</option>
+                <option value="ORDER_CLOSED" {% if fil_status == 'ORDER_CLOSED' %}selected{% endif %}>CLEANING CLOSED</option>              
               </select>
                 </label>
   </div><!--ticket-form-right-->
@@ -200,7 +201,7 @@
         {% else %}
         class="yellow-line"
         {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
-    <td>{{invoice.order_no}}</td>
+    <td data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}" class="clickable-row">{{invoice.order_no}}</td>
     <td>{{invoice.evaluation.payment_method}}</td>
 
     {% for inv in invoice.paymenthistory|slice:":1" %}
@@ -317,12 +318,12 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>From Date</label></div>
-        <input type="text" name="from_date" class="textBox id_from_date readonly" required readonly>
+        <input type="text" name="from_date" class="textBox id_from_date readonly" onchange="exportfromtodatecheck();" required readonly>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>To Date</label></div>
-                <input type="text" name="to_date" class="textBox id_to_date readonly" required readonly>
-                <p id="time_alert" style="color:red" hidden>Please select proper date and time !</p>
+                <input type="text" name="to_date" class="textBox id_to_date readonly" onchange="exportfromtodatecheck();" required readonly>
+
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
    
@@ -445,6 +446,62 @@ $("#governorate_filter_id").change(function(){
       }); 
 
 });
+
+function paymentfromtodatecheck() {
+  var d1 = $('#payment_fromdate').val();
+
+  var vals = d1.split('-');
+  var day = parseInt(vals[0]);
+  var month = parseInt (vals[1]);
+  var year = parseInt (vals[2]);
+
+  var d1date = new Date(year,month,day);
+  d1date.setMonth(d1date.getMonth()-1);
+  
+  var d2 = $('#payment_todate').val();
+
+  var vals2 = d2.split('-');
+  var day2 = parseInt(vals2[0]);
+  var month2 = parseInt (vals2[1]);
+  var year2 = parseInt (vals2[2]);
+
+  var d2date = new Date(year2,month2,day2);
+  d2date.setMonth(d2date.getMonth()-1);
+
+  console.log(d1,d2,"dee")
+  if ( d1date > d2date){
+    $('#payment_fromdate').val(d2);
+    $('#payment_todate').val(d1);
+  }
+};
+
+function exportfromtodatecheck() {
+  var d1 = $('.id_from_date').val();
+
+  var vals = d1.split('-');
+  var day = parseInt(vals[0]);
+  var month = parseInt (vals[1]);
+  var year = parseInt (vals[2]);
+
+  var d1date = new Date(year,month,day);
+  d1date.setMonth(d1date.getMonth()-1);
+  
+  var d2 = $('.id_to_date').val();
+
+  var vals2 = d2.split('-');
+  var day2 = parseInt(vals2[0]);
+  var month2 = parseInt (vals2[1]);
+  var year2 = parseInt (vals2[2]);
+
+  var d2date = new Date(year2,month2,day2);
+  d2date.setMonth(d2date.getMonth()-1);
+
+  console.log(d1,d2,"dee")
+  if ( d1date > d2date){
+    $('.id_from_date').val(d2);
+    $('.id_to_date').val(d1);
+  }
+};
 
 function set_params_go(args)
 {
