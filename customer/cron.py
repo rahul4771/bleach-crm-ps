@@ -5,11 +5,13 @@ import requests
 
 def quotationexpiry():
     expiry_date=date.today()+timedelta(1)
-    evaluations = Evaluation.objects.filter(quatation_status='APPROVED',quatation_expiry_date=expiry_date,is_active=True)
+    
+    evaluations = Evaluation.objects.filter(quatation_status='APPROVED',quatation_expiry_date__date=expiry_date,is_active=True)
+    
     for evaluation in evaluations:
-
-        evaluation.attender_notes = "crontab success"
-        evaluation.save()
+			
+			evaluation.attender_notes = "crontab success"
+			evaluation.save()
 
         # url = "https://smsapi.future-club.com/fccsms.aspx"
 
