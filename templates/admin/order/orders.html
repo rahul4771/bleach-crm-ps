@@ -210,7 +210,7 @@
     <td class="align-center">{% if evaluation.quatation_status == 'APPROVED' %}<a href="/customer/quatation/download/{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}"><img src="{% static 'files/images/icon-download.svg' %}" align="absmiddle" class="download-icon"></a>{% else %}<img src="{% static 'files/images/icon-download-gray.svg' %}" align="absmiddle" class="download-icon">{% endif %}&nbsp &nbsp{% if evaluation.quatation_status == 'APPROVED' or evaluation.quatation_status == 'PENDING' %}<a href="/customer/quatation/{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.svg' %}" align="absmiddle" class="download-icon"></a>{% else %}<img src="{% static 'files/images/view-icon-gray.svg' %}" align="absmiddle" class="download-icon">{% endif %}</td>
     </tr>    
     {% empty %}
-    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>
     {% endfor %} 
 </tbody>
 <tfoot>
