@@ -45,12 +45,12 @@
 		{
 		//Decryption logice starts
 		$decrytedData=decrypt($ResTranData,$termResourceKey);
-		header("Location: http://167.71.135.67/customer/payment/response/?".$decrytedData);
+		header("Location: http://15.206.173.198/customer/payment/response/?".$decrytedData);
                 exit();
 		}
 	}
 	else{
-				header("Location: http://167.71.135.67/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
+				header("Location: http://15.206.173.198/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
                 exit();
 	}
 	  
