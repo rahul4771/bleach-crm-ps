@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_countries',
+    'django_crontab',
     'rest_framework',
     'user',
     'evaluator',
@@ -109,6 +110,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CRONJOBS = [
+    ('*/2 * * * *', 'customer.cron.quotationexpiry')
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
