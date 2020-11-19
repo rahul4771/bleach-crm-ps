@@ -20,7 +20,7 @@ class PaymentHistory(models.Model):
 	payment_mode 				 = models.CharField(max_length=100,blank=True,null=True,choices=PAYMENT_MODE_CHOICES)
 	received_by 				 = models.ForeignKey(UserProfile,blank=True,null=True,related_name='payment_history_received_by')
 	paid_date 					 = models.DateTimeField(blank=True,null=True)
-	
+
 	check_no            		 = models.CharField(max_length=100,blank=True,null=True)
 	check_date 					 = models.DateField(blank=True,null=True)
 	
