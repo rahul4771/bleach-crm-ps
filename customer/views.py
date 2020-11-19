@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 
 from django.views import View
 
-from django.db.models import Prefetch,Q,Avg,Sum
+from django.db.models import Prefetch,Q,Avg,Sum,Max
 
 from django.utils import timezone
 
@@ -167,7 +167,17 @@ class PaymentResponse(View):
 		
 
 		if order and payment_result == 'CAPTURED' and not payment_history_check:
-			payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid'))	
+
+			#Receipt Number
+			receipt_no               = PaymentHistory.objects.filter(is_active=True,receipt_no__isnull=False).aggregate(t=Max('receipt_no'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
+			current_receipt_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
+
+			if current_receipt_starting == int(str(receipt_no)[:4]):
+				new_receipt_no = int(receipt_no)+1
+			else:
+				new_receipt_no = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
+
+			payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid'),receipt_no=new_receipt_no)	
 
 			if payment_mode == 'before_cleaning' and order.preamount_paid != order.evaluation.before_cleaning_amount:
 				order.preamount_paid   = amount_paid

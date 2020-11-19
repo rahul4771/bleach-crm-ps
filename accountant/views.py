@@ -14,7 +14,7 @@ from django.utils import timezone
 from datetime import timedelta,date,datetime
 from dateutil.relativedelta import relativedelta
 
-from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField
+from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,Max
 from django.db.models.functions import Cast 
 from django.db.models import Prefetch
 from django.contrib import messages
@@ -713,6 +713,16 @@ class CashCollect(IsAccountant,View):
 			amount       = request.POST.get('amount')
 			payment_date = datetime.strptime(request.POST.get('collection_date'),'%d/%m/%Y %I:%M %p')
 			
+			#Receipt Number
+			receipt_no               = PaymentHistory.objects.filter(is_active=True,receipt_no__isnull=False).aggregate(t=Max('receipt_no'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
+			current_receipt_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
+
+			if current_receipt_starting == int(str(receipt_no)[:4]):
+				new_receipt_no = int(receipt_no)+1
+			else:
+				new_receipt_no = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')			
+	
+
 			if payment_method == 'CASH':
 				if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount,remining_amount=0) 
@@ -721,8 +731,10 @@ class CashCollect(IsAccountant,View):
 				elif payment_policy == 'AFTER CLEANING':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=amount)
 
-				PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date)
+				PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date,receipt_no=new_receipt_no)
+				
 				messages.success(request,"Payment Received thruogh Cash")
+
 			if payment_method == 'CHEQUE':
 				check_no   = request.POST.get('check_number')
 				check_date = datetime.strptime(request.POST.get('check_date'),'%d-%m-%Y')
@@ -734,8 +746,10 @@ class CashCollect(IsAccountant,View):
 				elif payment_policy == 'AFTER CLEANING':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=amount)
 
-				PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date)
+				PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date,receipt_no=new_receipt_no)
+				
 				messages.success(request,"Payment Received thruogh Cheque")
+
 			if payment_method == 'BANK':
 				bank_name   = request.POST.get('bank_name')
 				bank_no     = request.POST.get('ibn_number')
@@ -747,7 +761,8 @@ class CashCollect(IsAccountant,View):
 				elif payment_policy == 'AFTER CLEANING':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=amount)
 
-				PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no)
+				PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
+
 				messages.success(request,"Payment Received through Bank")
 
 			is_payment_completed = Order.objects.get(id=order_id)
