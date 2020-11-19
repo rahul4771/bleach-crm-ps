@@ -179,15 +179,15 @@
 <thead>
 <tr>
 <th>Order Date</th>
-<th>Order Number</th>
-<th data-hide="phone,tablet">Payment Policy</th>
-<th data-hide="phone,tablet">Payment Mode</th>
+<th class="text-left">Order Number</th>
+<th class="text-center" data-hide="phone,tablet">Payment Policy</th>
+<th class="text-center" data-hide="phone,tablet">Payment Mode</th>
 <th data-hide="phone,tablet">Client Name</th>
 {% comment %} <th data-hide="phone">Area</th>
 <th>Contact</th> {% endcomment %}
-<th data-hide="phone,tablet">Amount (in KD)</th>
-<th data-hide="phone,tablet">Paid (in KD)</th>
-<th data-hide="phone,tablet">Balance (in KD)</th>
+<th class="text-right" data-hide="phone,tablet">Amount</th>
+<th class="text-right" data-hide="phone,tablet">Paid</th>
+<th class="text-right" data-hide="phone,tablet">Balance</th>
 {% comment %} <th class="align-center" data-hide="phone">Status</th> {% endcomment %}
 </tr>
 </thead>
@@ -201,11 +201,11 @@
         {% else %}
         class="yellow-line"
         {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
-    <td data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}" class="clickable-row">{{invoice.order_no}}</td>
-    <td>{{invoice.evaluation.payment_method}}</td>
+    <td class="text-left" data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}" class="clickable-row">{{invoice.order_no}}</td>
+    <td class="text-center">{{invoice.evaluation.payment_method}}</td>
 
     {% for inv in invoice.paymenthistory|slice:":1" %}
-    <td>{{inv.payment_mode}}</td>
+    <td class="text-center">{{inv.payment_mode}}</td>
     {% empty %}
     <td>-</td>
     {% endfor %}
