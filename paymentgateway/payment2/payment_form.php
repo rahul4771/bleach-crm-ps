@@ -5,9 +5,10 @@
     <script type="text/javascript" src="jquery-1.7.min.js"></script>
 </head>
 <body>
-<form id="payment_form" action="payment_confirmation.php" method="post">
-    <input type="hidden" name="access_key" value="<REPLACE WITH ACCESS KEY>">
-    <input type="hidden" name="profile_id" value="<REPLACE WITH PROFILE ID>">
+<form id="payment_form" action="http://15.206.173.198:8085/payment2/payment_confirmation.php" method="post">
+    <input type="hidden" name="access_key" value="dc9b55c60e193d98a5861569b4c40d6b">
+    <input type="hidden" name="profile_id" value="340591FC-E863-4714-81A5-FFC0D7B5D9A7
+">
     <input type="hidden" name="transaction_uuid" value="<?php echo uniqid() ?>">
     <input type="hidden" name="signed_field_names" value="access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency">
     <input type="hidden" name="unsigned_field_names">
