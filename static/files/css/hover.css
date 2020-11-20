@@ -1,0 +1,77 @@
+
+  
+  .hoverprofile {
+    position: relative;
+    width: 60px;
+    margin: 0 1em;
+    height: 60px;
+    border-radius: 50%;
+    background: url(imgs/jeams.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    box-shadow: 0 0 0 4px #fff, 0 0 0 5px #246df5;
+    transition: 0.2s;
+  }
+  
+  .hoverprofile:hover {
+    box-shadow: 0 0 0 4px #000;
+  }
+  
+  .hovercontent {
+    position: absolute;
+    bottom: 75px;
+    padding: 20px;
+    min-width: 400px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: 0.5s;
+  }
+  
+  .hovercontent .header {
+    display: flex;
+    align-items: center;
+  }
+  .hovercontent .header img {
+    grid-column: 1/2;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .hovercontent .header .infos {
+    margin-left: 1em;
+  }
+  .hovercontent .header .infos .name {
+    font-size: 1.25em;
+    color: #333;
+    letter-spacing: 1px;
+    font-size: 600;
+  }
+  
+  .hovercontent .header .infos .title {
+    font-size: 0.9em;
+    color: #969696;
+    font-weight: 500;
+  }
+  
+  .hovercontent .body {
+    padding: 1em;
+  }
+  
+  .hovercontent .body p {
+    font-size: 0.95em;
+    color: #272727;
+  }
+  
+  .hoverprofile:hover .hovercontent {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-15%) translateY(0px);
+  }

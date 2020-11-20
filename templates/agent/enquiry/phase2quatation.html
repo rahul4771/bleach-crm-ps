@@ -117,11 +117,11 @@
  		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
             	<div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Number of Cleaners</label></div>
-                <input name="form-0-number_of_cleaners" type="text" class="textBox OnlyNumber" maxlength="2" placeholder=" " required> 
+                <input name="form-0-number_of_cleaners" id="id_form-0-number_of_cleaners" type="text" class="textBox OnlyNumber" maxlength="2" placeholder=" " required> 
                 </div><!--enquiry-form-left-->
             	<div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Cleaning Hours</label></div>
-                <input name="form-0-cleaning_hours" type="text" class="textBox OnlyNumber" maxlength="2" placeholder=" " required> 
+                <input name="form-0-cleaning_hours" id="id_form-0-cleaning_hours" type="text" class="textBox OnlyNumber" maxlength="2" placeholder=" " required> 
                 </div><!--enquiry-form-right-->
 		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
                       
@@ -647,6 +647,23 @@ $('document').ready(function(){
             }else{
                 datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_dates").val(),'subscription',x);
             }
+
+            $.ajax({
+            url: "{% url 'agent:scheduled-dates' %}",
+            data: {
+            'booking_time': $(this).val(),
+            'number_of_cleaners':$("#id_form-"+x+"-number_of_cleaners").val(),
+            'cleaning_duration':$("#id_form-"+x+"-cleaning_hours").val()
+            },
+            dataType: "json",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            
+            success: function(data_dates) {
+                console.log(data_dates,"dates")
+            }
+            
+        });
         });
 
         $("#id_form-"+x+"-tendative_date").change(function(){
@@ -697,6 +714,23 @@ $("#id_form-"+x+"-tendative_time").change(function(){
     }else{
         datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_dates").val(),'subscription',x);
     }
+
+    $.ajax({
+            url: "{% url 'agent:scheduled-dates' %}",
+            data: {
+            'booking_time': $(this).val(),
+            'number_of_cleaners':$("#id_form-"+x+"-number_of_cleaners").val(),
+            'cleaning_duration':$("#id_form-"+x+"-cleaning_hours").val()
+            },
+            dataType: "json",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            
+            success: function(data_dates) {
+                console.log(data_dates,"dates2")
+            }
+            
+        });
 });
 
 $("#id_form-"+x+"-tendative_date").change(function(){
