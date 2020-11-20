@@ -52,6 +52,8 @@
 	}
 	else{
 				echo("error");
+				echo($ResErrorNo);
+				
 				header("Location: https://my.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
                 exit();
 	}
