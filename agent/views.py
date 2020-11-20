@@ -659,12 +659,12 @@ class AgentHome(IsAgent,View):
 		schedule_date_end   = schedule_date_start+timedelta(1)
 
 		try:
-			calendar_order_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') )) 
+			calendar_order_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') )).order_by('start_at') 
 		except:
 			calendar_order_schedules 	= None
 
 		try:
-			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end)))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_teams'))
+			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end)))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_teams')).order_by('start_at')
 		except:
 			calendar_followup_schedules = None
 
@@ -2697,12 +2697,20 @@ class MakeQuatationPhase1DuplicateEdit(IsAgent,View):
 			evaluation_details = None
 
 		#allow submition	
-		evaluation_details_count         = evaluation_details.count()
-		evaluation_details_completed_count= evaluation_details.filter(status='EVALUATED').count()
+		evaluation_details_count           = evaluation_details.count()
+		evaluation_details_completed_count = evaluation_details.filter(status='EVALUATED').count()
+
 		if evaluation_details_count==evaluation_details_completed_count:
 			allow_submit = True
 		else:
 			allow_submit = False	
+
+		#allow submit only after date addition
+		evaluation_books           = EvaluationBook.objects.select_related('evaluation_details__evaluation').filter(evaluation_details__evaluation=evaluation).prefetch_related('order_scheduler_book_details').annotate(individual_schedules=Count('order_scheduler_book_details'))
+		scheduled_evaluation_books = evaluation_books.filter(individual_schedules__gt=0)
+
+		if evaluation_books.count() != scheduled_evaluation_books.count():
+			allow_submit = False
 
 		#orders count
 		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
