@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
+
+{% block xtra_css%}
+<!--hover text-->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+<!--hover text-->
+{% endblock %}
+
 <div class="wrapper">
 {% include "agent/common/header.html" %}
 
@@ -60,6 +67,26 @@
 </div><!--main-card-->
 
 <div class="main-content-holder"><!--main-content-holder-->
+
+
+        {% comment %} <div class="hoverprofile">
+            <div class="hovercontent">
+                <div class="header">
+                    <img src="{% static 'files/images/cleaning3.jpg'%}" alt="Jeams Middlman">
+                    <div class="infos">
+                        <h3 class="name">BLC202011000001</h3>
+                        <p class="title">Date Not Confirmed</p>
+                        <p>Area</p>
+                    </div>
+                </div>
+                <div class="body">
+                    <p>Team Leader</p>
+                    <p>Starting Time : 12:30 PM</p>
+                    <p>Cleaning Duration : 6Hrs</p>
+                </div>
+            </div>
+        </div> {% endcomment %}
+    
 
 {% if order_schedules or follow_up_schedules %}  
 <div class="white-wrapper"><!--white-wrapper-->
