@@ -43,23 +43,17 @@
 		$ResTranData= $_REQUEST['trandata'];
 		if($ResTranData !=null)
 		{
-		echo("correct");
-		echo($ResTranData);
 		//Decryption logice starts
 		$decrytedData=decrypt($ResTranData,$termResourceKey);
-		echo($decrytedData);
 		header("Location: https://my.bleachkw.com/customer/payment/response/?".$decrytedData);
                 exit();
 		}
-		echo("un defined");
 	}
-	else{		
-		
-		header("Location: https://my.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
-
-		echo($Resudf1)
-		header("Location: https://my.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid=".$ResPaymentId."&udf1=".$Resudf1);
-        exit();
+	else{
+				echo($Resudf1)
+				echo("hiiiiiii")
+				header("Location: https://my.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
+                exit();
 	}
 	  
 	
@@ -100,5 +94,3 @@ function byteArray2String($byteArray) {
 	
 	//Decryption Method for AES Algorithm Ends
 ?>
-
-
