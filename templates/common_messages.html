@@ -6,7 +6,7 @@
 	{% for message in messages %}
 	{% if forloop.counter0 == 0 %}
     <div class="message_wrapper {{ message.tags }}" onclick="close_message();">
-    <h2>{% autoescape off %}{{ message }}{% endautoescape %}</h2>
+    <h2 class="message_text">{% autoescape off %}{{ message }}{% endautoescape %}</h2>
     </div>
 	{% endif %}
 	{% endfor %}
