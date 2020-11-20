@@ -83,7 +83,7 @@ $ReqAction="action=1";
 Merchant MUST esure that below points in Response URL
 1- Response URL must start with http://
 2- the Response URL SHOULD NOT have any additional paramteres or query string  */
-$ResponseUrl="https://payment.bleachkw.com/GetHandlerResponse.php";
+$ResponseUrl="http://payment.bleachkw.com:8085/GetHandlerResponse.php";
 $ReqResponseUrl="responseURL=".$ResponseUrl;
 
 
@@ -93,7 +93,7 @@ Merchant MUST esure that below points in ErrorURL
 2- the error url SHOULD NOT have any additional paramteres or query string
 */ 
 
-$ErrorUrl="https://my.bleachkw.com/customer/payment/failed/?udf1=".$_POST['evaluation_id'];
+$ErrorUrl="http://my.bleachkw.com/customer/payment/failed/?udf1=".$_POST['evaluation_id'];
 $ReqErrorUrl="errorURL=".$ErrorUrl;
 
 

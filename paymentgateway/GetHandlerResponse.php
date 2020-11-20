@@ -31,7 +31,7 @@
 	//Below Terminal resource Key is used to decrypt the response sent from Payment Gateway.
 	$termResourceKey="81G1ZB54MNW8X3J9";
 	
-	
+	echo($_REQUEST['trandata'])
 /* Merchant (ME) checks, if error number is NOT present,then go for Encryption using required parameters */
 /* NOTE - MERCHANT MUST LOG THE RESPONSE RECEIVED IN LOGS AS PER BEST PRACTICE */	
 	if($ResErrorText==null && $ResErrorNo==null)
@@ -43,15 +43,16 @@
 		$ResTranData= $_REQUEST['trandata'];
 		if($ResTranData !=null)
 		{
+		echo("correct");
 		//Decryption logice starts
 		$decrytedData=decrypt($ResTranData,$termResourceKey);
 		header("Location: https://my.bleachkw.com/customer/payment/response/?".$decrytedData);
                 exit();
 		}
+		echo("undefined");
 	}
 	else{
-				echo($Resudf1)
-				echo("hiiiiiii")
+				echo("error");
 				header("Location: https://my.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
                 exit();
 	}
