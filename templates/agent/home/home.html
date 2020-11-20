@@ -990,6 +990,8 @@ $('document').ready(function(){
                     {
                         completed_calender.push('{{forloop.counter}}');
                         current_raw_timings.push([starting_time,ending_time]);
+
+                        console.log(current_raw_timings.length,"Array length")
                         //append raw
                         if(current_raw_timings.length==1)
                         {
