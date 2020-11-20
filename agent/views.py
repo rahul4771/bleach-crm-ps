@@ -2695,12 +2695,20 @@ class MakeQuatationPhase1DuplicateEdit(IsAgent,View):
 			evaluation_details = None
 
 		#allow submition	
-		evaluation_details_count         = evaluation_details.count()
-		evaluation_details_completed_count= evaluation_details.filter(status='EVALUATED').count()
+		evaluation_details_count           = evaluation_details.count()
+		evaluation_details_completed_count = evaluation_details.filter(status='EVALUATED').count()
+
 		if evaluation_details_count==evaluation_details_completed_count:
 			allow_submit = True
 		else:
 			allow_submit = False	
+
+		#allow submit only after date addition
+		evaluation_books           = EvaluationBook.objects.select_related('evaluation_details__evaluation').filter(evaluation_details__evaluation=evaluation).prefetch_related('order_scheduler_book_details').annotate(individual_schedules=Count('order_scheduler_book_details'))
+		scheduled_evaluation_books = evaluation_books.filter(individual_schedules__gt=0)
+
+		if evaluation_books.count() != scheduled_evaluation_books.count():
+			allow_submit = False
 
 		#orders count
 		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
