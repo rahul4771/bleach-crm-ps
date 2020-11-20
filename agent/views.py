@@ -572,17 +572,6 @@ def CleaningExistingDates(request):
 class AgentHome(IsAgent,View):
 	def get(self,request):
 
-		expiry_date=datetime.now()+timedelta(1)
-		expiry_date_start = expiry_date.replace(hour=0,minute=0,second=0,microsecond=0)
-		expiry_date_end = expiry_date_start+timedelta(1)
-		print(expiry_date_start,expiry_date_end,"expd")
-		evaluationss = Evaluation.objects.filter(quatation_status='APPROVED',quatation_expiry_date__range=(expiry_date_start,expiry_date_end),is_active=True)
-		print(evaluationss,"evss")
-		for evaluation in evaluationss:
-				
-				evaluation.attender_notes = "crontab success"
-				evaluation.save()
-
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		count_today_end   = count_today_start+timedelta(1)

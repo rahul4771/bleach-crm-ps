@@ -1,12 +1,15 @@
 {% load static %}
 {% block xtra_css %}
 <link href="{% static 'files/css/message_wrapper.css' %}?v=1" rel="stylesheet" type="text/css" /> 
+<!--new message wrapper-->
+<link href='https://fonts.googleapis.com/css?family=Roboto:300italic,400italic,400,100,300,600,700' rel='stylesheet' type='text/css'>
+<!--new message wrapper-->
 {% endblock %}
     {% if messages %}
 	{% for message in messages %}
 	{% if forloop.counter0 == 0 %}
     <div class="message_wrapper {{ message.tags }}" onclick="close_message();">
-    <h2 class="message_text">{% autoescape off %}{{ message }}{% endautoescape %}</h2>
+    <h2 style="font-weight: 100;font-size: 18pt;text-align:center;line-height: 2em;margin: 15px 0;color:#ffffff">{% autoescape off %}{{ message }}{% endautoescape %}</h2>
     </div>
 	{% endif %}
 	{% endfor %}
