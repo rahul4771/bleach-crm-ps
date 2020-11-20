@@ -111,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CRONJOBS = [
-    ('*/2 * * * *', 'customer.cron.quotationexpiry')
+    ('0 0 * * *', 'customer.cron.quotationexpiry')
 ]
 
 # Internationalization
