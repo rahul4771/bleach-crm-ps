@@ -11,4 +11,4 @@ djangorestframework==3.5.3
 requests==2.18.4
 opencv-python
 xlwt
-django-crontab
+django-crontab==0.7.1
