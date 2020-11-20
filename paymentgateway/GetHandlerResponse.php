@@ -43,13 +43,17 @@
 		$ResTranData= $_REQUEST['trandata'];
 		if($ResTranData !=null)
 		{
+		echo("correct");
+		echo($ResTranData);
 		//Decryption logice starts
 		$decrytedData=decrypt($ResTranData,$termResourceKey);
 		header("Location: https://my.bleachkw.com/customer/payment/response/?".$decrytedData);
                 exit();
 		}
+		echo("un defined");
 	}
 	else{
+		echo("error");
 				header("Location: https://my.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
                 exit();
 	}
