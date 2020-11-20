@@ -1,17 +1,18 @@
 from evaluator.models import Evaluation,EvaluationDetails
-from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField
 from datetime import datetime,timedelta,date
 import requests
 
 def quotationexpiry():
-    expiry_date=date.today()+timedelta(1)
+    expiry_date=datetime.now()+timedelta(1)
+    expiry_date_start = expiry_date.replace(hour=0,minute=0,second=0,microsecond=0)
+    expiry_date_end = expiry_date_start+timedelta(1)
     
-    evaluations = Evaluation.objects.filter(quatation_status='APPROVED',quatation_expiry_date__date=expiry_date,is_active=True)
+    evaluations = Evaluation.objects.filter(quatation_status='APPROVED',quatation_expiry_date__range=(expiry_date_start,expiry_date_end),is_active=True)
     
     for evaluation in evaluations:
-			
-			evaluation.attender_notes = "crontab success"
-			evaluation.save()
+            
+        evaluation.attender_notes = "crontab success"
+        evaluation.save()
 
         # url = "https://smsapi.future-club.com/fccsms.aspx"
 
