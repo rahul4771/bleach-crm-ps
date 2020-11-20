@@ -992,7 +992,7 @@ $('document').ready(function(){
                         //append raw
                         if(current_raw_timings.length==1)
                         {
-                            
+                            console.log("appending new raw")
                             left_percentage  = 100/24*starting_time
 
                             if(ending_time == 0)
@@ -1009,6 +1009,7 @@ $('document').ready(function(){
                         //append td to the raw 
                         else
                         { 
+                            console.log("appending same raw")
                            left_percentage  = 100/24*starting_time
                            
                            if(ending_time == 0)
