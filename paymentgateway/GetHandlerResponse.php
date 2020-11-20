@@ -31,7 +31,6 @@
 	//Below Terminal resource Key is used to decrypt the response sent from Payment Gateway.
 	$termResourceKey="81G1ZB54MNW8X3J9";
 	
-	echo($_REQUEST['trandata'])
 /* Merchant (ME) checks, if error number is NOT present,then go for Encryption using required parameters */
 /* NOTE - MERCHANT MUST LOG THE RESPONSE RECEIVED IN LOGS AS PER BEST PRACTICE */	
 	if($ResErrorText==null && $ResErrorNo==null)
