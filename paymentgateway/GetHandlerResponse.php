@@ -29,7 +29,7 @@
 	$Resudf5 = $_REQUEST['udf5'];               //UDF5
 	
 	//Below Terminal resource Key is used to decrypt the response sent from Payment Gateway.
-	$termResourceKey="81G1ZB54MNW8X3J9";
+	$termResourceKey="P287H49DV2GS6E0Z";
 	
 /* Merchant (ME) checks, if error number is NOT present,then go for Encryption using required parameters */
 /* NOTE - MERCHANT MUST LOG THE RESPONSE RECEIVED IN LOGS AS PER BEST PRACTICE */	
