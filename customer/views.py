@@ -485,7 +485,7 @@ def invoice_html_to_pdf_view(request,evaluation_id):
 	fs = FileSystemStorage('/home/pdf/tmp/invoice/')
 	with fs.open('invoice.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
-		response['Content-Disposition'] = 'attachment; filename="invoice.pdf"'
+		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_invoice.pdf"'
 		return response
 	return response		
 
