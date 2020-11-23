@@ -13,6 +13,7 @@
     <input type="hidden" name="unsigned_field_names">
     <input type="hidden" name="signed_date_time" value="<?php echo gmdate("Y-m-d\TH:i:s\Z"); ?>">
     <input type="hidden" name="locale" value="en">
+    <input type="hidden" name="bill_to_address_line1" value="malayil house,puthuppanam">
     <fieldset>
         <legend>Payment Details</legend>
         <div id="paymentDetailsSection" class="section">
