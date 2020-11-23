@@ -3040,7 +3040,7 @@ class TicketRegistration(IsAgent,View):
 
 		ticket_type        = request.POST.get('ticket_type')
 
-
+		print(request.POST)
 		if ticket_type == 'FOLLOWUP':
 			investigation_form = InvestigationForm(request.POST)
 			if investigation_form.is_valid():
@@ -3065,7 +3065,7 @@ class TicketRegistration(IsAgent,View):
 				messages.error(request,get_error(investigation_form))
 		
 		elif ticket_type == 'COMPLAINT':
-			order_schedule_id = request.POST.get('order_schedule')
+			order_schedule_id = request.POST.get('order_schedule_complaint')
 			complaint         = request.POST.get('complaint')
 
 			OrderScheduler.objects.filter(id=order_schedule_id).update(complaint=complaint)
