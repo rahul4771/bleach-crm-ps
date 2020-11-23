@@ -13,12 +13,6 @@
     <input type="hidden" name="unsigned_field_names">
     <input type="hidden" name="signed_date_time" value="<?php echo gmdate("Y-m-d\TH:i:s\Z"); ?>">
     <input type="hidden" name="locale" value="en">
-    <input type="hidden" name="bill_to_forename" value="Ansab M">
-    <input type="hidden" name="bill_to_email" value="ansabm2015@gmail.com">
-    <input type="hidden" name="bill_to_phone" value="8156906543">
-    <input type="hidden" name="bill_to_address_country" value="KW">
-    <input type="hidden" name="bill_to_address_city" value="vadakara">
-    <input type="hidden" name="bill_to_address_line1" value="malayil house,puthuppanam">
     <fieldset>
         <legend>Payment Details</legend>
         <div id="paymentDetailsSection" class="section">
@@ -26,6 +20,13 @@
             <span>reference_number:</span><input type="text" name="reference_number" size="25"><br/>
             <span>amount:</span><input type="text" name="amount" size="25"><br/>
             <span>currency:</span><input type="text" name="currency" size="25"><br/>
+        
+            <input type="hidden" name="bill_to_forename" value="Ansab M">
+            <input type="hidden" name="bill_to_email" value="ansabm2015@gmail.com">
+            <input type="hidden" name="bill_to_phone" value="8156906543">
+            <input type="hidden" name="bill_to_address_country" value="KW">
+            <input type="hidden" name="bill_to_address_city" value="vadakara">
+            <input type="hidden" name="bill_to_address_line1" value="malayil house,puthuppanam">
         </div>
     </fieldset>
     <input type="submit" id="submit" name="submit" value="Submit"/>
