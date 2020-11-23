@@ -49,10 +49,10 @@
           <div class="order-details-left-stretch"><!--order-details-left-stretch-->
           
             {% for orderschedule in order.orderschedules %}
-          
-                {% if orderschedule.order_scheduler_book.service_type.id == serviceid %}
+              
+                {% if orderschedule.order_scheduler_book.id == serviceid %}
                   <div id="details{{orderschedule.id}}">
-                  <div class="details-head"> {{order.order_no}} Item(s) In-detail <div class="order-date"></div></div>	
+                  <div class="details-head"> {{order.order_no}} Item In-detail <div class="order-date"></div></div>	
                   <hr class="style-three" > 
                 <div class="order-clean-Details-wrapper"><!--order-clean-Details-wrapper-->
                       <div class="order-clean-Details-widget order-clean-Details-widget-column1"><!--order-clean-Details-widget order-clean-Details-widget-column1-->
@@ -103,19 +103,23 @@
                         
                       <div class="order-clean-Details-widget order-clean-Details-widget-column3"><!--order-clean-Details-widget order-clean-Details-widget-column3-->
                         <br>
-                        {% comment %} {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'SUBSCRIPTION' %}
-                          {% for subscription_schedule in order.orderschedules %}
-                            
-                            <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{subscription_schedule.start_at}}</div>
-                            
-                          {% endfor %}
-                        {% else %} {% endcomment %}
+                        
+                        {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
                         <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{orderschedule.start_at}}</div>
-                        {% comment %} {% endif %} {% endcomment %}
                         <br>
+                        {% else %}
+                        {% for subscription_schedule in order.orderschedules %}
+                        {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
+                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{subscription_schedule.start_at}}</div>
+                        <br>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+
+
                         <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> {{orderschedule.customer_address.building}}, {{orderschedule.customer_address.street}}, {{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</div>
-                        <br>
-                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
+                        {% comment %} <br>
+                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.number_of_cleaners}} Cleaners</div> {% endcomment %}
                         <br>
                         {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
                         
