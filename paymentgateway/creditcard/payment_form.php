@@ -5,7 +5,7 @@
     <script type="text/javascript" src="jquery-1.7.min.js"></script>
 </head>
 <body>
-<form id="payment_form" action="http://15.206.173.198:8085/payment2/payment_confirmation.php" method="post">
+<form id="payment_form" action="http://15.206.173.198:8085/creditcard/payment_confirmation.php" method="post">
     <input type="hidden" name="access_key" value="dc9b55c60e193d98a5861569b4c40d6b">
     <input type="hidden" name="profile_id" value="340591FC-E863-4714-81A5-FFC0D7B5D9A7">
     <input type="hidden" name="transaction_uuid" value="<?php echo uniqid() ?>">
