@@ -25,6 +25,7 @@
             <input type="hidden" name="bill_to_email" value="ansabm2015@gmail.com">
             <input type="hidden" name="bill_to_phone" value="8156906543">
             <input type="hidden" name="bill_to_address_country" value="KW">
+            <input type="hidden" name="bill_to_company_name" value="TCS">
             <input type="hidden" name="bill_to_address_city" value="vadakara">
             <input type="hidden" name="bill_to_address_line1" value="malayil house,puthuppanam">
         </div>
