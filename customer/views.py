@@ -146,7 +146,7 @@ class CustomerInvoice(View):
 
 		return render(request,"customer/invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,})		
 
-class PaymentResponse(View):
+class PaymentResponseDebit(View):
 	def get(self,request):
 		#evaluation id decryption
 		evaluation_id_encrypted = request.GET.get("udf1")
@@ -289,6 +289,15 @@ class PaymentResponse(View):
 			print(response.text)
 
 			return redirect('/customer/payment/failed/?udf1='+evaluation_id_encrypted+'&paymentid='+request.GET.get('paymentid')+'&ref='+request.GET.get('ref'))
+
+class PaymentResponseCredit(View):
+	def post(self,request):
+		print(request.POST)
+		UserProfile.objects.filter(id=84).update(name="ansab abdul")
+		return redirect('login')
+
+
+
 
 class PaymentFailedResponse(View):
 	def get(self,request):
