@@ -573,14 +573,6 @@ def CleaningExistingDates(request):
 # Create your views here.
 class AgentHome(IsAgent,View):
 	def get(self,request):
-
-		user_update = UserProfile.objects.filter(~Q(user_type='CUSTOMER'))
-		count=0
-		for user in user_update: 
-			user.bleach_mobile_number = user.mobile_number
-			user.mobile_number = count
-			user.save()
-			count += 1
 		
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
