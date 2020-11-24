@@ -290,19 +290,6 @@ class PaymentResponseDebit(View):
 
 			return redirect('/customer/payment/failed/?udf1='+evaluation_id_encrypted+'&paymentid='+request.GET.get('paymentid')+'&ref='+request.GET.get('ref'))
 
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-
-class PaymentResponseCredit(View):
-
-	@csrf_exempt
-	def post(self,request):
-		print("HIIIIIIIIIIIIII")
-		print(request.POST)
-		print("hlwwwwwwwww")
-		return HttpResponse(status=200)
-
-
 
 
 class PaymentFailedResponse(View):

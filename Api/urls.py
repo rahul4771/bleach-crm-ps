@@ -7,4 +7,5 @@ urlpatterns = [
 	url(r'^basicdetails/$',views.ApiBasicDetails.as_view(),name='api-basicdetails'),
 	url(r'^evaluation-booking/$',views.EvaluationBooking.as_view(),name='api-evaluationbooking'),
 
+	url(r'^payment/response/credit/$',views.PaymentResponseCredit.as_view(),name='api-responsecredit'),
 ]
