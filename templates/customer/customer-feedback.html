@@ -44,6 +44,8 @@
           </div>
         </section>
         
+        {% if feedback_exist == "no" %}
+
         <section id="invoice-info">
           <div class="white-wrapper"><!--white-wrapper-->
             <div class="center-formDiv"><!--center-formDiv-->
@@ -155,6 +157,11 @@
             </div><!--white-wrapper-->   
         </section>       
 
+        {% else %}
+        <section>
+        <div> <h3>Thanks for your valuable feedback !</h3></div>
+        </section>
+        {% endif %}
         <div class="clearfix"></div>
         <section>
             <table cellpadding="0" cellspacing="0" class="table2">
@@ -260,5 +267,6 @@
 
 });
 </script>
+{% include 'external_messages.html' %}
   </body>
 </html>
