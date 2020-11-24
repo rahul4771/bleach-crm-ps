@@ -28,8 +28,8 @@
             <input type="hidden" name="bill_to_address_country" value="KW">
             <input type="hidden" name="bill_to_address_city" value="vadakara">
             <input type="hidden" name="bill_to_address_line1" value="malayil house,puthuppanam">
-            <input type="hidden" name=”merchant_defined_data1” value="ghlkjmnhibt1111111111111111">
-            <input type="hidden" name=”merchant_defined_data1” value="prepaid">
+            <input type="hidden" name="merchant_defined_data1" value="ghlkjmnhibt1111111111111111">
+            <input type="hidden" name="merchant_defined_data2" value="prepaid">
         </div>
     </fieldset>
     <input type="submit" id="submit" name="submit" value="Submit"/>
