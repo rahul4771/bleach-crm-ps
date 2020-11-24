@@ -706,7 +706,7 @@ $('document').ready(function(){
                 }
                 else
                 {
-                if(old_starting_time_string>=starting_time && old_starting_time_string>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0)||old_ending_time_string<=starting_time && old_ending_time_string<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0))
+                if(old_starting_time>=starting_time && old_starting_time>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0)||old_ending_time<=starting_time && old_ending_time<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0))
                     {
                         completed_calender.push('{{forloop.counter}}');
                         current_raw_timings.push([starting_time,ending_time]);
