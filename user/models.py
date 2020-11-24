@@ -71,6 +71,7 @@ class CustomUserManager(BaseUserManager):
 
 class UserProfile(AbstractUser):
     name			= models.CharField(max_length=100,blank=False,null=False)
+    bleach_mobile_number = models.CharField(max_length=10,blank=True,null=True)
     user_type 		= models.CharField(max_length=20,blank=True,null=True,choices=USER_TYPE_CHOICES)
     gender 	  		= models.CharField(max_length=20,blank=True,null=True,choices=GENDER_CHOICES)
     nationality		= CountryField(null=True,blank=True)
