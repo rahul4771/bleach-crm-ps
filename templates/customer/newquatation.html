@@ -97,7 +97,7 @@
             <span>Due Date / تاريخ الاستحقاق</span> <span>{{order.evaluation.quatation_expiry_date|date:'d-m-Y'}}</span>
           </div>
           <div>
-            <span>Evaluator(s) / معاينة</span> <span> {% for orderschedule in nonduplicate_schedules %}{% if orderschedule.evaluation_details.evaluator %}{% if forloop.first %}{{orderschedule.evaluation_details.evaluator.name}}{% else %}{%endif%}{% if not forloop.last %},{% endif %}{% else %}{% if forloop.last %}{{orderschedule.evaluation_details.evaluation.call_attender.name}}{% endif %}{% endif %}{% endfor %}</span>
+            <span>Evaluator(s) / معاينة</span> <span> {% for orderschedule in nonduplicate_schedules %}{% if orderschedule.evaluation_details.evaluator %}{% ifchanged orderschedule.evaluation_details.evaluator.name %}{{orderschedule.evaluation_details.evaluator.name}}, {% endifchanged %}{% else %}{% if forloop.last %}{{orderschedule.evaluation_details.evaluation.call_attender.name}}{% endif %}{% endif %}{% endfor %}</span>
           </div>
           <div>
             <span>Payment Policy / نظام الدفع</span> <span>{{order.evaluation.payment_method}} / {% if order.evaluation.payment_method == 'BREAKDOWN' %}قائمة التفاصيل{% elif order.evaluation.payment_method == 'PREPAID' %}مسبق الدفع{% else %}دفع بعد الخدمة{% endif %}</span>

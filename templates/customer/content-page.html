@@ -24,6 +24,7 @@
     <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+  
   </head>
   <body>
     <div id="container">
@@ -49,6 +50,8 @@
           <div class="order-details-left-stretch"><!--order-details-left-stretch-->
           
             {% for orderschedule in order.orderschedules %}
+
+            {% ifchanged orderschedule.order_scheduler_book.id %}
               
                 {% if orderschedule.order_scheduler_book.id == serviceid %}
                   <div id="details{{orderschedule.id}}">
@@ -194,6 +197,9 @@
             {% endfor %}
             {% else %}
             {% endif %}
+
+            {% endifchanged %}
+
         {% endfor %} 
           </div><!--order-details-left-stretch-->
         
@@ -251,7 +257,7 @@
     
     <table cellpadding="0" cellspacing="0" class="table3">
             <tr>
-              <td colspan="2" ><input name="print" type="button" class="print" value="Print / طباعة" onclick="printDiv();">&nbsp;<a href="/customer/order-detail/download/{{order.id}}/{{sectionid}}"><input name="download" type="button" class="download" value="Download / تحميل"></a> </td>
+              <td colspan="2" ><input name="print" type="button" class="print" value="Print / طباعة" onclick="printDiv();">&nbsp;<a href="/customer/order-detail/download/{{order.id}}/{{serviceid}}/{{sectionid}}"><input name="download" type="button" class="download" value="Download / تحميل"></a> </td>
             </tr>            
           </table>
     
