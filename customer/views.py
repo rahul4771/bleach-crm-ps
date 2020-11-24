@@ -291,7 +291,6 @@ class PaymentResponseDebit(View):
 			return redirect('/customer/payment/failed/?udf1='+evaluation_id_encrypted+'&paymentid='+request.GET.get('paymentid')+'&ref='+request.GET.get('ref'))
 
 
-
 class PaymentFailedResponse(View):
 	def get(self,request):
 
