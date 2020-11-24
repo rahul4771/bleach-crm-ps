@@ -292,8 +292,9 @@ class PaymentResponseDebit(View):
 
 class PaymentResponseCredit(View):
 	def post(self,request):
+		print("HIIIIIIIIIIIIII")
 		print(request.POST)
-		UserProfile.objects.filter(id=73).update(phone_number=89785646)
+		print("hlwwwwwwwww")
 		return redirect('login')
 
 
