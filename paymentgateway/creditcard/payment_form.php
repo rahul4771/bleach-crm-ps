@@ -9,7 +9,7 @@
     <input type="hidden" name="access_key" value="dc9b55c60e193d98a5861569b4c40d6b">
     <input type="hidden" name="profile_id" value="340591FC-E863-4714-81A5-FFC0D7B5D9A7">
     <input type="hidden" name="transaction_uuid" value="<?php echo uniqid() ?>">
-    <input type="hidden" name="signed_field_names" value="access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency">
+    <input type="hidden" name="signed_field_names" value="access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency,bill_to_forename,bill_to_lastname,bill_to_email,bill_to_phone,bill_to_address_country,bill_to_address_city,bill_to_address_line1">
     <input type="hidden" name="unsigned_field_names">
     <input type="hidden" name="signed_date_time" value="<?php echo gmdate("Y-m-d\TH:i:s\Z"); ?>">
     <input type="hidden" name="locale" value="en">
@@ -21,11 +21,11 @@
             <span>amount:</span><input type="text" name="amount" size="25"><br/>
             <span>currency:</span><input type="text" name="currency" size="25"><br/>
         
-            <input type="hidden" name="bill_to_forename" value="Ansab M">
+            <input type="hidden" name="bill_to_forename" value="Ansab">
+            <input type="hidden" name="bill_to_lastname" value="M">
             <input type="hidden" name="bill_to_email" value="ansabm2015@gmail.com">
             <input type="hidden" name="bill_to_phone" value="8156906543">
             <input type="hidden" name="bill_to_address_country" value="KW">
-            <input type="hidden" name="bill_to_company_name" value="TCS">
             <input type="hidden" name="bill_to_address_city" value="vadakara">
             <input type="hidden" name="bill_to_address_line1" value="malayil house,puthuppanam">
         </div>
