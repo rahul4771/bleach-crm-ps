@@ -107,7 +107,7 @@ class EvaluationBooking(APIView):
 		response_dict["evaluations"]=evaluation_serializer
 		return Response(response_dict,HTTP_200_OK)
 
-class PaymentResponseCredit(View):
+class PaymentResponseCredit(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
 
