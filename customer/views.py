@@ -20,8 +20,6 @@ from accountant.models import PaymentHistory
 from agent.views import generate_random_username
 
 import requests
-
-from uniqid import uniqid
 #all users views
 class TermsandConditions(View):
 	def get(self,request):
@@ -148,9 +146,17 @@ class CustomerInvoice(View):
 			duplicate_schedules.append(orderschedule.order_scheduler_book)
 
 		#for credit card
-		transaction_uuid = uniqid()
-		date_time        = timezone.now()-timedelta(hours=3)
-		return render(request,"customer/invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,"transaction_uuid":transaction_uuid,"date_time":date_time,})		
+		full_name_array = UserProfile.objects.get(username=user_name).name.split()
+		firstname = full_name_array[0]
+		lastname  = ''
+		
+		count = 0
+		for i in full_name_array:
+			if(count>=1):
+				lastname += i+' '
+			count += 1
+		
+		return render(request,"customer/invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,})		
 
 class PaymentResponseDebit(View):
 	def get(self,request):
