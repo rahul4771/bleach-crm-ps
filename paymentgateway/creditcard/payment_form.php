@@ -32,7 +32,7 @@
             <input type="hidden" name="merchant_defined_data2" value="<?php echo htmlspecialchars($_GET['merchant_defined_data2']);?>">
         </div>
     </fieldset>
-    <input type="submit" id="submit" name="submit" value="Submit"/>
+    <input type="submit" id="submitbtn" name="submitbtn" value="Submit"/>
     <script type="text/javascript" src="payment_form.js"></script>
 </form>
 </body>
