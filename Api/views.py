@@ -112,6 +112,57 @@ class PaymentResponseCredit(APIView):
 	authentication_classes  = ()
 
 	def post(self,request):
-		print(request.data.get('req_merchant_defined_data1'))
-		print(request.data.get('req_merchant_defined_data2'))
+		evaluation_id = request.POST.get('req_merchant_defined_data1')
+		payment_mode  = request.POST.get('req_merchant_defined_data2')
+		amount        = request.POST.get('req_amount')
+
+		try:
+			order = Order.objects.select_related('evaluation').get(order_no=evaluation_id)
+		except:
+			order = None
+
+		payment_result = request.POST.get('decision')
+
+		if order and payment_result == 'ACCEPT':
+			#Receipt Number
+			receipt_no               = PaymentHistory.objects.filter(is_active=True,receipt_no__isnull=False).aggregate(t=Max('receipt_no'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
+			current_receipt_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
+
+			if current_receipt_starting == int(str(receipt_no)[:4]):
+				new_receipt_no = int(receipt_no)+1
+			else:
+				new_receipt_no = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
+
+			payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.POST.get('payment_token'),ref=request.POST.get('payment_account_reference'),track_id=request.POST.get('req_reference_number')transaction_id=request.POST.get('transaction_id'),receipt_no=new_receipt_no,payment_gateway='CREDITCARD')	
+
+			if payment_mode == 'before_cleaning' and order.preamount_paid != order.evaluation.before_cleaning_amount:
+				order.preamount_paid   = amount_paid
+				order.amount_paid      = amount_paid
+				order.remining_amount  = order.remining_amount-amount_paid
+
+			elif payment_mode == 'after_cleaning' and order.preamount_paid != order.evaluation.before_cleaning_amount:
+				order.postamount_paid  = amount_paid
+				order.amount_paid      = amount_paid
+				order.remining_amount  = order.remining_amount-amount_paid
+
+				order.payment_status         = 'COMPLETED'
+				order.payment_completed_date = timezone.now()
+
+			elif payment_mode == 'prepaid' and order.amount_paid != order.total_amount:
+				order.amount_paid      = amount_paid
+				order.amount_paid      = amount_paid
+				order.remining_amount  = order.remining_amount-amount_paid					
+
+				order.payment_status         = 'COMPLETED'
+				order.payment_completed_date = timezone.now()
+
+			elif payment_mode == 'postpaid' and order.amount_paid != order.total_amount:
+				order.amount_paid      = amount_paid
+				order.amount_paid      = amount_paid
+				order.remining_amount  = order.remining_amount-amount_paid
+
+				order.payment_status         = 'COMPLETED'
+				order.payment_completed_date = timezone.now()
+			order.save()
+
 		return Response(HTTP_200_OK)		
