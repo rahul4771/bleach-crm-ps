@@ -12,3 +12,4 @@ requests==2.18.4
 opencv-python
 xlwt
 django-crontab==0.7.1
+uniqid==0.0.1

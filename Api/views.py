@@ -112,9 +112,6 @@ class PaymentResponseCredit(APIView):
 	authentication_classes  = ()
 
 	def post(self,request):
-		print("HIIIIIIIIIIIIII")
-		print(request.data)
-		print(request.data.get('merchant_defined_data1'))
-		print(request.data.get('merchant_defined_data2'))
-		print("HLWWWWWWWWWWWW")
+		print(request.data.get('req_merchant_defined_data1'))
+		print(request.data.get('req_merchant_defined_data2'))
 		return Response(HTTP_200_OK)		

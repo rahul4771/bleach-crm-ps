@@ -238,13 +238,45 @@
                 {% elif request.user.user_type == 'EVALUATOR' %}
                 {% else %}
                 {% if order.order_status == 'APPROVED_BY_CLIENT' and order.evaluation.payment_way == 'ONLINE' %}
-                <input class="assignButton" name="pay" type="submit" value="Pay / الدفع">
+                <input class="assignButton" name="pay" type="submit" value="&nbsp;&nbsp;&nbsp;Debit Card / بطاقة ائتمان">
                 {% endif %}
                 {% endif %}
                 </form>
               </td>
             </tr>
+      
+            <tr class="table1tr2">
+              <td colspan="2" class="align-right">
+              <form id="payment_form" method="post" action="http://payment.bleachkw.com:8085/creditcard/payment_confirmation.php">
+              <input type="hidden" name="access_key" value="dc9b55c60e193d98a5861569b4c40d6b">
+              <input type="hidden" name="profile_id" value="340591FC-E863-4714-81A5-FFC0D7B5D9A7">
+              <input type="hidden" name="transaction_uuid" value="{{transaction_uuid}}">
+              <input type="hidden" name="signed_field_names" value="access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency,bill_to_forename,bill_to_surname,bill_to_email,bill_to_phone,bill_to_address_country,bill_to_address_city,bill_to_address_line1,merchant_defined_data1,merchant_defined_data2">
+              <input type="hidden" name="unsigned_field_names">
+              <input type="hidden" name="signed_date_time" value="{{date_time|date:'Y-m-d'}}T{{date_time|date:'h-i-s'}}Z">
+              <input type="hidden" name="locale" value="en">
+
+              <input type="hidden" name="transaction_type" value="sale">
+              <input type="hidden" name="reference_number" value="dhgdhjd">
+              <input type="hidden" name="amount" value="100">
+              <input type="hidden" name="currency" value="KWD">
+
+              <input type="hidden" name="bill_to_forename" value="Ansab">
+              <input type="hidden" name="bill_to_surname" value="M">
+              <input type="hidden" name="bill_to_phone" value="8156906543">
+              <input type="hidden" name="bill_to_email" value="ansabm2015@gmail.com">
+              <input type="hidden" name="bill_to_address_country" value="KW">
+              <input type="hidden" name="bill_to_address_city" value="vadakara">
+              <input type="hidden" name="bill_to_address_line1" value="malayil house,puthuppanam">
+              <input type="hidden" name="merchant_defined_data1" value="ghlkjmnhibt1111111111111111">
+              <input type="hidden" name="merchant_defined_data2" value="prepaid">
+              
+              <input class="assignButton" name="submit" type="submit" value="Submit">
+              </form>
+              </td>
+            </tr>
             {% endif %}
+
             <tr>
               <td class="align-left large" width="50%" ><div>{{order.evaluation.quatation_status}} / {% if order.evaluation.quatation_status == 'APPROVED' %}تمت الموافقة{% elif order.evaluation.quatation_status == 'REJECTED' %}مرفوض{% else%}منتهية الصلاحية
 {% endif %} </div>Sales Authorisation / تفويض العميل</td>
