@@ -632,3 +632,5 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
   counter-increment: serial-number;  /* Increment the serial number counter */
   content: counter(serial-number);  /* Display the counter */
 }
+
+.clickable-row{ cursor: pointer; text-align:center;}
