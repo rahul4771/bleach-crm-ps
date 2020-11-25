@@ -462,9 +462,9 @@ def orderdetail_html_to_pdf_view(request,order_id,service_id,section_id):
 	html_string = render_to_string('customer/content-page.html', {"order":order,"sectionid":int(section_id),"serviceid":int(service_id)})
 
 	html = HTML(string=html_string,base_url=request.build_absolute_uri())
-	html.write_pdf(target='customer/orderdetails.pdf');
+	html.write_pdf(target='/home/pdf/tmp/orderdetails/orderdetails.pdf');
 
-	fs = FileSystemStorage('customer/')
+	fs = FileSystemStorage('/home/pdf/tmp/orderdetails/')
 	with fs.open('orderdetails.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="'+order.order_no+'_orderdetails.pdf"'
