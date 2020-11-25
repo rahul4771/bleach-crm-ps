@@ -116,7 +116,7 @@ class PaymentResponseCredit(APIView):
 	def post(self,request):
 		evaluation_id = request.POST.get('req_merchant_defined_data1')
 		payment_mode  = request.POST.get('req_merchant_defined_data2')
-		amount        = request.POST.get('req_amount')
+		amount_paid   = request.POST.get('req_amount')
 
 		try:
 			order = Order.objects.select_related('evaluation').get(order_no=evaluation_id)
