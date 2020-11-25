@@ -470,6 +470,15 @@ def orderdetail_html_to_pdf_view(request,order_id,service_id,section_id):
 	return response
 
 
+def termsandconditions_to_pdf(request):
+	fs = FileSystemStorage('/home/pdf/tmp/termsandconditions/')
+	with fs.open('termsandconditions.pdf') as pdf:
+		response = HttpResponse(pdf, content_type='application/pdf')
+		response['Content-Disposition'] = 'attachment; filename="termsandconditions.pdf"'
+		return response
+	return response	
+
+
 def invoice_html_to_pdf_view(request,evaluation_id):
 
 	#evaluation id decryption
