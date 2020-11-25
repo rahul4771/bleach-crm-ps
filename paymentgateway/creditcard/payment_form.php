@@ -16,10 +16,10 @@
     <fieldset>
         <legend>Payment Details</legend>
         <div id="paymentDetailsSection" class="section">
-            <span>transaction_type:</span><input type="text" name="transaction_type" size="25" value="<?php echo htmlspecialchars($_GET['transaction_type']);?>"><br/>
-            <span>reference_number:</span><input type="text" name="reference_number" size="25" value="<?php echo htmlspecialchars($_GET['reference_number']);?>"><br/>
-            <span>amount:</span><input type="text" name="amount" size="25" value="<?php echo htmlspecialchars($_GET['amount']);?>"><br/>
-            <span>currency:</span><input type="text" name="currency" size="25" value="<?php echo htmlspecialchars($_GET['currency']);?>"><br/>
+            <span>transaction_type:</span><input type="text" name="transaction_type" size="25" value="<?php echo htmlspecialchars($_GET['transaction_type']);?>" readonly><br/>
+            <span>reference_number:</span><input type="text" name="reference_number" size="25" value="<?php echo htmlspecialchars($_GET['reference_number']);?>" readonly><br/>
+            <span>amount:</span><input type="text" name="amount" size="25" value="<?php echo htmlspecialchars($_GET['amount']);?>" readonly><br/>
+            <span>currency:</span><input type="text" name="currency" size="25" value="<?php echo htmlspecialchars($_GET['currency']);?>" readonly><br/>
         
             <input type="hidden" name="bill_to_forename" value="<?php echo htmlspecialchars($_GET['bill_to_forename']);?>">
             <input type="hidden" name="bill_to_surname" value="<?php echo htmlspecialchars($_GET['bill_to_surname']);?>">
