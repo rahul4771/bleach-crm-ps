@@ -6,6 +6,7 @@ from django.views import View
 from django.db.models import Prefetch,Q,Avg,Sum,Max
 
 from django.utils import timezone
+from datetime import timedelta,date,datetime
 
 from django.db.models import F
 from django.contrib import messages
@@ -19,7 +20,6 @@ from accountant.models import PaymentHistory
 from agent.views import generate_random_username
 
 import requests
-
 #all users views
 class TermsandConditions(View):
 	def get(self,request):
@@ -123,6 +123,7 @@ class Quatation(View):
 
 		return redirect('customer:quatation',evaluation_id_encrypted)
 
+ 
 class CustomerInvoice(View):
 	def get(self,request,evaluation_id):
 
@@ -144,9 +145,20 @@ class CustomerInvoice(View):
 
 			duplicate_schedules.append(orderschedule.order_scheduler_book)
 
-		return render(request,"customer/invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,})		
+		#for credit card
+		full_name_array = UserProfile.objects.get(username=user_name).name.split()
+		firstname = full_name_array[0]
+		lastname  = ''
+		
+		count = 0
+		for i in full_name_array:
+			if(count>=1):
+				lastname += i+' '
+			count += 1
+		
+		return render(request,"customer/invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,})		
 
-class PaymentResponse(View):
+class PaymentResponseDebit(View):
 	def get(self,request):
 		#evaluation id decryption
 		evaluation_id_encrypted = request.GET.get("udf1")
@@ -289,6 +301,7 @@ class PaymentResponse(View):
 			print(response.text)
 
 			return redirect('/customer/payment/failed/?udf1='+evaluation_id_encrypted+'&paymentid='+request.GET.get('paymentid')+'&ref='+request.GET.get('ref'))
+
 
 class PaymentFailedResponse(View):
 	def get(self,request):

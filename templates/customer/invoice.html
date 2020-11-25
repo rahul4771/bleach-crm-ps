@@ -238,13 +238,21 @@
                 {% elif request.user.user_type == 'EVALUATOR' %}
                 {% else %}
                 {% if order.order_status == 'APPROVED_BY_CLIENT' and order.evaluation.payment_way == 'ONLINE' %}
-                <input class="assignButton" name="pay" type="submit" value="Pay / الدفع">
+                <input class="assignButton" name="pay" type="submit" value="&nbsp;&nbsp;&nbsp;Debit Card / بطاقة ائتمان">
                 {% endif %}
                 {% endif %}
                 </form>
               </td>
             </tr>
+
+            <tr class="table1tr2">
+            <td colspan="2" class="align-right">
+            <input class="assignButton clickable-row" name="pay" type="submit" value="Credit Card / بطاقة الائتمان" data-href="http://payment.bleachkw.com:8085/creditcard/payment_form.php?merchant_defined_data1={{order.order_no}}{% if order.evaluation.payment_method == 'BREAKDOWN' %}{% if order.evaluation.before_cleaning_amount != order.preamount_paid %}&amount={{order.evaluation.before_cleaning_amount}}&merchant_defined_data2=before_cleaning{% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}&amount={{order.evaluation.before_cleaning_amount}}&merchant_defined_data2=after_cleaning{% endif %}{% elif order.evaluation.payment_method == 'PREPAID' %}&amount={{order.evaluation.total_cost|floatformat:'3'}}&merchant_defined_data2=prepaid{% elif order.evaluation.payment_method == 'POSTPAID' %}&amount={{order.evaluation.total_cost|floatformat:'3'}}&merchant_defined_data2=postpaid{% endif %}&currency=KWD&reference_number={{order.order_no}}&transaction_type=sale{% for orderschedule in order.orderschedules %}{% if forloop.first %}&bill_to_forename={{firstname}}&bill_to_surname={{lastname}}&bill_to_phone={{orderschedule.customer_address.customer.mobile_number}}&bill_to_email={{orderschedule.customer_address.customer.email}}&bill_to_address_country={{orderschedule.customer_address.customer.nationality.code}}&bill_to_address_city={{orderschedule.customer_address.area.name}}&bill_to_address_line1={{orderschedule.customer_address.street}},{{orderschedule.customer_address.block}},{{orderschedule.customer_address.avenue}},{{orderschedule.customer_address.street}},{{orderschedule.customer_address.building}},{{orderschedule.customer_address.floor}},{{orderschedule.customer_address.area.name}},{{orderschedule.customer_address.governorate.name}}{% endif %}{% endfor %}">
+            </td>
+            </tr>
+
             {% endif %}
+
             <tr>
               <td class="align-left large" width="50%" ><div>{{order.evaluation.quatation_status}} / {% if order.evaluation.quatation_status == 'APPROVED' %}تمت الموافقة{% elif order.evaluation.quatation_status == 'REJECTED' %}مرفوض{% else%}منتهية الصلاحية
 {% endif %} </div>Sales Authorisation / تفويض العميل</td>
@@ -306,6 +314,7 @@
           </table>
  
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+  <script src="{% static 'files/js/hyperlink.js' %}"></script> 
   
   <script>
   //print script
@@ -313,6 +322,70 @@
   {
   window.print();
   }
+
+  $(function () {
+    payment_form = $('form').attr('id');
+    addLinkToSetDefaults();
+});
+
+
+function setDefaultsForAll() {
+         if (payment_form === "payment_confirmation"){
+      setDefaultsForUnsignedDetailsSection();
+   }
+   else {
+      setDefaultsForPaymentDetailsSection();
+   } 
+}
+
+function addLinkToSetDefaults() {
+    $(".section").prev().each(function (i) {
+        legendText = $(this).text();
+        $(this).text("");
+
+        var setDefaultMethod = "setDefaultsFor" + capitalize($(this).next().attr("id")) + "()";
+
+        newlink = $(document.createElement("a"));
+        newlink.attr({
+            id:'link-' + i, name:'link' + i, href:'#'
+        });
+        newlink.append(document.createTextNode(legendText));
+        newlink.bind('click', function () {
+            eval(setDefaultMethod);
+        });
+
+        $(this).append(newlink);
+    });
+
+    newbutton = $(document.createElement("input"));
+    newbutton.attr({
+        id:'defaultAll', value:'Default All', type:'button', onClick:'setDefaultsForAll()'
+    });
+    newbutton.bind('click', function() {
+        setDefaultsForAll;
+    });
+    $("#"+payment_form).append(newbutton);
+}
+
+function capitalize(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function setDefaultsForPaymentDetailsSection() {
+    $("input[name='transaction_type']").val("authorization");
+    $("input[name='reference_number']").val(new Date().getTime());
+    $("input[name='amount']").val("100.00");
+    $("input[name='currency']").val("USD");
+}
+
+function setDefaultsForUnsignedDetailsSection(){
+    $("input[name='card_type']").val("001");
+    $("input[name='card_number']").val("4242424242424242");
+    $("input[name='card_expiry_date']").val("11-2020");
+}
+
+
+
   </script>
   {% include 'external_messages.html' %}
   
