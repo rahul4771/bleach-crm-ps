@@ -213,6 +213,23 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .left-avatar img{ width:100%; border-radius:50px;}
 .right-value{width:22px; height:22px; position:absolute; background:#fff; right:1px; top:1px; border-radius:50px; text-align:center; }
 
+#downloadorder { font-size:15px; color:#555;
+  border: 1px solid #999;
+  padding: 6px 15px 6px 35px;
+  margin-bottom: 10px;
+  background: url(../images/download.svg) no-repeat left #fff; background-size:20px; background-position: 12px; 
+  cursor: pointer; transition: .4s;
+ }
+#downloadorder:hover{ background: url(../images/download.svg) no-repeat left #E5E5E5; background-size:20px; background-position: 12px; }
+
+#printorder { font-size:15px; color:#555;
+  border: 1px solid #999;
+  padding: 6px 15px 6px 35px;
+  margin-bottom: 10px;
+  background: url(../images/print.svg) no-repeat left #fff; background-size:20px; background-position: 12px; 
+  cursor: pointer; transition: .4s;
+ }
+#printorder:hover{ background: url(../images/print.svg) no-repeat left #E5E5E5; background-size:20px; background-position: 12px; }
 
 /*.divtable { border:1px solid !important;
     white-space:nowrap;
@@ -1210,6 +1227,22 @@ hr.hr-dashedpad { border: 0; margin:8px 0 5px 0; padding:0; border-bottom: 1px d
 
 }
 
+section p{ padding:0 0 15px 0;}
+@media print {
+	body{  background:#fff;}
+#container {box-shadow:none;}
+.table th { background:#26A8E0; color:#FFF; padding:5px 0px;}
+.table3 {visibility:hidden;}
+.table1tr1 {display:none;}
+.table1tr2 {display:none;}
+.table1tr3 {display:none;}
+.table1tr4 {display:none;}
+}
+
+@page {
+    size: A4 portrait;
+    margin: 0.2in 9in 0.2in 0.44in;
+}
 
 @media screen and (max-width: 650px) {
 .kw-login-midwrapper{ height:auto; width:auto; padding: 20px; }
