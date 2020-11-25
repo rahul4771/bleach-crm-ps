@@ -22,7 +22,6 @@
             <span>currency:</span><input type="text" name="currency" size="25" value="<?php echo htmlspecialchars($_GET['currency']);?>" readonly><br/>
         
             <input type="hidden" name="bill_to_forename" value="<?php echo htmlspecialchars($_GET['bill_to_forename']);?>">
-            <input type="hidden" name="bill_to_surname" value="<?php echo htmlspecialchars($_GET['bill_to_surname']);?>">
             <input type="hidden" name="bill_to_phone" value="<?php echo htmlspecialchars($_GET['bill_to_phone']);?>">
             <input type="hidden" name="bill_to_email" value="<?php echo htmlspecialchars($_GET['bill_to_email']);?>">
             <input type="hidden" name="bill_to_address_country" value="<?php echo htmlspecialchars($_GET['bill_to_address_country']);?>">
