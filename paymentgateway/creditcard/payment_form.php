@@ -37,3 +37,8 @@
 </form>
 </body>
 </html>
+
+<script type="text/javascript">
+    document.getElementById('payment_form').submit(); // SUBMIT FORM
+</script>
+
