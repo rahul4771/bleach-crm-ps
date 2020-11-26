@@ -133,10 +133,6 @@ class PaymentResponseCredit(APIView):
 			else:
 				new_receipt_no = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
 
-			print(request.POST.get('payment_token'))
-			print(request.POST.get('req_reference_number'))
-			print(request.POST.get('payment_account_reference'))
-			print(request.POST)
 			payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.POST.get('payment_token'),ref=request.POST.get('payment_account_reference'),track_id=request.POST.get('req_reference_number'),transaction_id=request.POST.get('transaction_id'),receipt_no=new_receipt_no,payment_gateway='CREDITCARD')	
 
 			if payment_mode == 'before_cleaning' and order.preamount_paid != order.evaluation.before_cleaning_amount:
