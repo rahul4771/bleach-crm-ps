@@ -143,15 +143,14 @@ class PaymentResponseCredit(APIView):
 				order.remining_amount  = order.remining_amount-amount_paid
 
 			elif payment_mode == 'after_cleaning' and order.preamount_paid != order.evaluation.before_cleaning_amount:
-				order.postamount_paid  = amount_paid
-				order.amount_paid      = amount_paid
-				order.remining_amount  = order.remining_amount-amount_paid
+				order.postamount_paid   = amount_paid
+				order.amount_paid       = amount_paid
+				order.remining_amount   = order.remining_amount-amount_paid
 
 				order.payment_status         = 'COMPLETED'
 				order.payment_completed_date = timezone.now()
 
 			elif payment_mode == 'prepaid' and order.amount_paid != order.total_amount:
-				order.amount_paid      = amount_paid
 				order.amount_paid      = amount_paid
 				order.remining_amount  = order.remining_amount-amount_paid					
 
@@ -159,7 +158,6 @@ class PaymentResponseCredit(APIView):
 				order.payment_completed_date = timezone.now()
 
 			elif payment_mode == 'postpaid' and order.amount_paid != order.total_amount:
-				order.amount_paid      = amount_paid
 				order.amount_paid      = amount_paid
 				order.remining_amount  = order.remining_amount-amount_paid
 
