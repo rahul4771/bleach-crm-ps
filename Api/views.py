@@ -123,7 +123,9 @@ class PaymentResponseCredit(APIView):
 		except:
 			order = None
 
-		if order:
+
+		payment_result = request.POST.get('decision')
+		if order and payment_result == 'ACCEPT':
 			#Receipt Number
 			receipt_no               = PaymentHistory.objects.filter(is_active=True,receipt_no__isnull=False).aggregate(t=Max('receipt_no'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
 			current_receipt_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
