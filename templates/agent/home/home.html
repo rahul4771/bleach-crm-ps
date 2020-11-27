@@ -68,25 +68,25 @@
 
 <div class="main-content-holder"><!--main-content-holder-->
 
+{% if request.user.username == 'samih' and followup_to_be_closed %}
+<div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Case Closing Task</h2>
+<table class="main-table">
+<tbody>
+{% for follow_up_schedule in followup_to_be_closed %}
+<tr class="green-line">
+<td data-label="BLC Number" class="bold-text">{{follow_up_schedule.follow_up.investigation.order.order_no}}</td>
+<td data-label="Customer">{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.name}}</td>
+<td data-label="Area">{{follow_up_schedule.customer_address.area}}</td>
+<td class="hide-a" data-label=""><img src="{{follow_up_schedule.follow_up.investigation.investigator.profile_image.url}}" class="profile-avatar" title="{{follow_up_schedule.follow_up.investigation.investigator.name}}"></td>
+<td data-label="" class="followup_schedule_close clickable-cursor" data-blcno="{{follow_up_schedule.follow_up.investigation.order.order_no}}" data-customer_name="{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.name}}" data-mobile_no="{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.mobile_number}}" data-area="{{follow_up_schedule.follow_up.investigation.order_schedule.customer_address.area.name}}" data-service_type="{{follow_up_schedule.follow_up.investigation.order_schedule.order_scheduler_book.service_type.name}}" data-id="{{follow_up_schedule.follow_up.id}}"><span class="green-bg">Click to Close</span></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div><!--white-wrapper-->
+{% endif %}
 
-        {% comment %} <div class="hoverprofile">
-            <div class="hovercontent">
-                <div class="header">
-                    <img src="{% static 'files/images/cleaning3.jpg'%}" alt="Jeams Middlman">
-                    <div class="infos">
-                        <h3 class="name">BLC202011000001</h3>
-                        <p class="title">Date Not Confirmed</p>
-                        <p>Area</p>
-                    </div>
-                </div>
-                <div class="body">
-                    <p>Team Leader</p>
-                    <p>Starting Time : 12:30 PM</p>
-                    <p>Cleaning Duration : 6Hrs</p>
-                </div>
-            </div>
-        </div> {% endcomment %}
-    
 
 {% if order_schedules or follow_up_schedules %}  
 <div class="white-wrapper"><!--white-wrapper-->
@@ -387,7 +387,43 @@
 <!-- /followup_scheduler confirm_popup -->
 
 
-
+<!-- followup close popup -->
+<div id="followup_close_popup" class="overlay"><!--overlay-->
+    <div class="popup-assign-eval"><!--popup-assign-eval-->
+        <a class="close" id="followup_close_popup_close">&times;</a>
+            <div class="content"><!--content-->
+                        
+            <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">
+                <tr>
+                    <td valign="bottom"><div class="blc-number" id="followup_schedule_close_blc_id"></div></td>
+                    <td rowspan="2" align="center"><div class="bold-text"id="followup_schedule_close_customer_id"></div><div id="followup_schedule_close_mobile_id"></div></td>
+                </tr>
+            <tr>
+              <td id="followup_schedule_close_area_id"></td>
+            </tr>
+            <tr>
+              <td id="followup_schedule_close_service_type_id"></td>
+            </tr>
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">   
+<form method="post" enctype= "multipart/form-data">
+{%csrf_token%}
+<input type="hidden" name="action_type" value="followup_close">
+<input type="hidden" name="followup" id="followup_schedule_close_id">          
+<div align="center"> <input class="assignButton" name="assing" type="button" value="Followup Close" onclick="submitAnyForm(this);"></div>
+</form> 
+</div><!--ticket-wrapper-full--> 
+            </div><!--content-->
+    </div><!--popup-assign-eval-->
+</div><!--overlay-->  
+<!-- /followup close popup-->
 
 
 <!-- edit_evaluation_popup -->
@@ -1372,6 +1408,24 @@ $("#followupschedule_dateconfirm_popup_close").click(function(){
 
     $("#followupschedule_dateconfirm_popup").css({'visibility':'hidden','opacity':0,});
 
+});
+
+
+
+//Close followup by special users
+$(".followup_schedule_close").click(function(){
+    $('#followup_schedule_close_id').val($(this).data('id'));
+    $("#followup_schedule_close_blc_id").html($(this).data('blcno'));
+    $("#followup_schedule_close_customer_id").html($(this).data('customer_name'));
+    $("#followup_schedule_close_mobile_id").html($(this).data('mobile_no'));
+    $("#followup_schedule_close_area_id").html($(this).data('area'));
+    $("#followup_schedule_close_service_type_id").html($(this).data('service_type'));
+    
+
+    $("#followup_close_popup").css({'visibility':'visible','opacity':1,});
+});
+$("#followup_close_popup_close").click(function(){
+    $("#followup_close_popup").css({'visibility':'hidden','opacity':0,});
 });
 
 

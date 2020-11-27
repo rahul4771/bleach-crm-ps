@@ -497,7 +497,6 @@ def CleaningExistingDates(request):
 	no_of_cleaners    = request.GET.get('number_of_cleaners')
 	cleaning_duration = int(request.GET.get('cleaning_duration'))
 
-	print(booking_time,no_of_cleaners,cleaning_duration,"ptyui")
 
 	start_at          = datetime.strptime(request.GET.get('booking_time'),'%I:%M %p').time()
 	end_at            = (datetime.strptime(request.GET.get('booking_time'),'%I:%M %p')+timedelta(hours=cleaning_duration)).time()
@@ -546,23 +545,16 @@ def CleaningExistingDates(request):
 
 
 	#remove available dates
-	print(team_leaders_busy)
-	print(team_members_busy)
 	total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER').count()
 	total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').count()		
-	print(total_leaders)
-	print(total_cleaners)
 
 	for k, v in list(team_leaders_busy.items()):
 		if v < total_leaders:
 			del team_leaders_busy[k]
 
 	for k, v in list(team_members_busy.items()):
-		if v < total_cleaners:
+		if int(no_of_cleaners) <= (total_cleaners-v):
 			del team_members_busy[k]
-
-	print(team_leaders_busy)
-	print(team_members_busy)
 
 	data['leaders_busy_dates'] = team_leaders_busy
 	data['cleaner_busy_dates'] = team_members_busy
@@ -688,7 +680,6 @@ class AgentHome(IsAgent,View):
 		except:
 			spp_calendar_followup_schedules = None
 
-
 		#for edit popup
 		try:
 			workers = UserProfile.objects.filter(is_active=True)
@@ -697,8 +688,12 @@ class AgentHome(IsAgent,View):
 
 		#for popup
 		customer_addresses = Address.objects.filter(is_active=True,currently_active=True).select_related('area')
+
+
+		#followup confirmation for special user
+		followup_to_be_closed = FollowUpScheduler.objects.select_related('follow_up').filter(is_active=True,follow_up__status='FOLLOWUP_IN_PROGRESS',)
 				
-		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'order_schedules':order_schedules,'follow_up_schedules':follow_up_schedules,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'workers':workers,"customer_addresses":customer_addresses,})
+		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'order_schedules':order_schedules,'follow_up_schedules':follow_up_schedules,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'workers':workers,"customer_addresses":customer_addresses,"followup_to_be_closed":followup_to_be_closed,})
 
 
 	def post(self,request):
@@ -802,6 +797,10 @@ class AgentHome(IsAgent,View):
 			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
 
 			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
+
+		elif action_mode == 'followup_close':
+			followup = FollowUp.objects.filter(id=request.POST.get('followup')).update(status='FOLLOWUP_CLOSED')
+			messages.success(request,"Followup Closed Successfully")
 
 		elif action_mode == 'edit_evaluation':
 			evaluation_detail_id 			  = request.POST.get('evaluation_id')
@@ -1868,6 +1867,16 @@ class NewEnquiry(IsAgent,View):
 			enquiry_form_save.username   = generate_random_username()
 			enquiry_form_save.created_by = request.user
 			enquiry_form_save.user_type  = 'CUSTOMER'
+
+			#customer id generation
+			customer_id                  = UserProfile.objects.filter(is_active=True,customer_id__isnull=False).aggregate(t=Max('customer_id'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'1000')
+			current_customer_id_starting = int(str(timezone.now().year)[2:]+str(timezone.now().month).zfill(2))					
+			if current_customer_id_starting == int(str(customer_id)[:4]):
+				new_customer_id = int(customer_id)+1
+			else:
+				new_customer_id   = int(str(timezone.now().year)[2:]+str(timezone.now().month).zfill(2)+'1001')
+
+			enquiry_form_save.customer_id = new_customer_id
 
 			#To Save Contact Platform
 			contact_platforms 			 = request.POST.get('contact_platform')

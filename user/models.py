@@ -87,6 +87,7 @@ class UserProfile(AbstractUser):
     is_whatsapp     = models.BooleanField(null=False,blank=True,default=False)
     is_sms          = models.BooleanField(null=False,blank=True,default=False)
     is_email        = models.BooleanField(null=False,blank=True,default=False)
+    customer_id     = models.CharField(max_length=12,blank=True,null=True)
 
     created_by      = models.ForeignKey('self',blank=True,null=True)
     is_active       = models.BooleanField(null=False,blank=True,default=True)
@@ -94,7 +95,6 @@ class UserProfile(AbstractUser):
     updated         = models.DateTimeField(auto_now=True)
 
     objects=CustomUserManager()
-
 
     def __unicode__(self):
     	return str(self.username)

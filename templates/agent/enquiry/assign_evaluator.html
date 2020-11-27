@@ -109,7 +109,7 @@
                 <select id="favcity" name="address" required>
                 <option value="">Choose your Address</option>
                 {% for address in active_addresses %}
-                <option value="{{address.id}}">{{address.area.name}}</option>
+                <option value="{{address.id}}">{{address.apartment}}-{{address.area.name}}</option>
                 {% endfor %}
                 </select>
                 </label>
