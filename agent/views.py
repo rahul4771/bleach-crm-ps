@@ -688,7 +688,6 @@ class AgentHome(IsAgent,View):
 		except:
 			spp_calendar_followup_schedules = None
 
-
 		#for edit popup
 		try:
 			workers = UserProfile.objects.filter(is_active=True)
@@ -697,8 +696,12 @@ class AgentHome(IsAgent,View):
 
 		#for popup
 		customer_addresses = Address.objects.filter(is_active=True,currently_active=True).select_related('area')
+
+
+		#followup confirmation for special user
+		followup_to_be_closed = FollowUpScheduler.objects.select_related('follow_up').filter(is_active=True,follow_up__status='FOLLOWUP_IN_PROGRESS',)
 				
-		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'order_schedules':order_schedules,'follow_up_schedules':follow_up_schedules,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'workers':workers,"customer_addresses":customer_addresses,})
+		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'order_schedules':order_schedules,'follow_up_schedules':follow_up_schedules,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'workers':workers,"customer_addresses":customer_addresses,"followup_to_be_closed":followup_to_be_closed,})
 
 
 	def post(self,request):
@@ -802,6 +805,10 @@ class AgentHome(IsAgent,View):
 			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
 
 			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
+
+		elif action_mode == 'followup_close':
+			followup = FollowUp.objects.filter(id=request.POST.get('followup')).update(status='FOLLOWUP_CLOSED')
+			messages.success(request,"Followup Closed Successfully")
 
 		elif action_mode == 'edit_evaluation':
 			evaluation_detail_id 			  = request.POST.get('evaluation_id')

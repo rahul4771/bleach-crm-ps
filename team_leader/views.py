@@ -468,11 +468,9 @@ class FollowupCleaning(IsTeamLeader,View):
 		if followup_team_detail: 
 			followup_team_detail.check_out                          = timezone.now()
 			followup_team_detail.followup_scheduler.work_status     = 'FOLLOW_UP_CLEANING_FULFILLED'
-			followup_team_detail.followup_scheduler.follow_up.status= 'FOLLOWUP_CLOSED'
 
 			followup_team_detail.save()
-			followup_team_detail.followup_scheduler.save()
-			followup_team_detail.followup_scheduler.follow_up.save()	
+			followup_team_detail.followup_scheduler.save()	
 
 		#To Save Media
 		medias = request.FILES.getlist('mediabefore')
