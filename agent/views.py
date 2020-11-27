@@ -497,7 +497,6 @@ def CleaningExistingDates(request):
 	no_of_cleaners    = request.GET.get('number_of_cleaners')
 	cleaning_duration = int(request.GET.get('cleaning_duration'))
 
-	print(booking_time,no_of_cleaners,cleaning_duration,"ptyui")
 
 	start_at          = datetime.strptime(request.GET.get('booking_time'),'%I:%M %p').time()
 	end_at            = (datetime.strptime(request.GET.get('booking_time'),'%I:%M %p')+timedelta(hours=cleaning_duration)).time()
@@ -546,23 +545,16 @@ def CleaningExistingDates(request):
 
 
 	#remove available dates
-	print(team_leaders_busy)
-	print(team_members_busy)
 	total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER').count()
 	total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').count()		
-	print(total_leaders)
-	print(total_cleaners)
 
 	for k, v in list(team_leaders_busy.items()):
 		if v < total_leaders:
 			del team_leaders_busy[k]
 
 	for k, v in list(team_members_busy.items()):
-		if v < total_cleaners:
+		if int(no_of_cleaners) <= (total_cleaners-v):
 			del team_members_busy[k]
-
-	print(team_leaders_busy)
-	print(team_members_busy)
 
 	data['leaders_busy_dates'] = team_leaders_busy
 	data['cleaner_busy_dates'] = team_members_busy

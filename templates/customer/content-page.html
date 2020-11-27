@@ -18,15 +18,14 @@
 
     <meta name="template-hash" content="91216e926eab41d8aa403bf4b00f4e19">
     
-    <link href="{% static 'files/css/orderdetails.css' %}" rel="stylesheet" type="text/css" media="all">
-    <link href="{% static 'files/css/template.css' %}" rel="stylesheet" type="text/css" media="all">
-    {% comment %} <link href="{% static 'files/css/externalusers.css' %}" rel="stylesheet" type="text/css" media="all"> {% endcomment %}
+    <link type="text/css" href="{% static 'files/css/orderdetails.css' %}" rel="stylesheet" media="all">
+    <link type="text/css" href="{% static 'files/css/template.css' %}" rel="stylesheet" media="all">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
-    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link type="text/css" rel="stylesheet" href="https://www.jqueryscript.net/css/jquerysctipttop.css">
   
   </head>
   <body>
@@ -260,7 +259,7 @@
     
     <table cellpadding="0" cellspacing="0" class="table3">
             <tr>
-              <td colspan="2" ><input name="print" type="button" class="print" id="printorder" value="Print / طباعة" onclick="printDiv();">&nbsp;<a href="/customer/order-detail/download/{{order.id}}/{{serviceid}}/{{sectionid}}"><input name="download" type="button" class="download" id="downloadorder" value="Download / تحميل"></a> </td>
+              <td colspan="2" ><input name="print" type="button" class="print" id="printorder" value="Print / طباعة" onclick="printDiv();"><!-- &nbsp;<a href="/customer/order-detail/download/{{order.id}}/{{serviceid}}/{{sectionid}}"><input name="download" type="button" class="download" id="downloadorder" value="Download / تحميل"></a> --> </td>
             </tr>            
           </table>
     
