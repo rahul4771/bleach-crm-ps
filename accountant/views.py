@@ -15,6 +15,7 @@ from datetime import timedelta,date,datetime
 from dateutil.relativedelta import relativedelta
 
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,Max
+from django.db.models.functions import Concat
 from django.db.models.functions import Cast 
 from django.db.models import Prefetch
 from django.contrib import messages
@@ -572,12 +573,12 @@ class PaymentDetails(IsAccountant,View):
 		#sales amount
 		if search:
 			try:
-				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED').filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'))
+				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED').filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
 			except:
 				invoices         = None
 		else:
 			try:
-				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'))
+				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
 			except:
 				invoices         = None
 				
@@ -787,12 +788,6 @@ def export_users_xls(request):
 	todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
 	todate_date_end = todate+timedelta(1)
 
-	response = HttpResponse(content_type='application/ms-excel')
-	response['Content-Disposition'] = 'attachment; filename="Payments_'+from_date+'_'+to_date+'.xls"'
-
-	wb = xlwt.Workbook(encoding='utf-8')
-	ws = wb.add_sheet('Payments')
-
 	# Sheet header, first row
 	row_num = 0
 
@@ -801,10 +796,110 @@ def export_users_xls(request):
 
 	if report_type == 'paymentlist':
 
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="GENERAL_PAYMENT_SHEET_'+from_date+'_'+to_date+'.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		ws = wb.add_sheet('GENERAL PAYMENT SHEET')
+
+		# columns = ['Order Date', 'Order Number', 'Client Name', 'Payment Policy', 'Payment Mode', 'Total Amount', 'Paid', 'Balance' ]
+
+		columns = ['Date','Quotation No.','Customer Name','Payment Policy','Amount','Paid Amount','Balance','Payment Mode','Job Status']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+		# Sheet body, remaining rows
+		font_style = xlwt.XFStyle()
+
+		# Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate')
+
+		rows = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).values_list('created','order_no','evaluation__customer__name', 'evaluation__payment_method','evaluation__total_cost','amount_paid','remining_amount','history_order__payment_mode','job_status').order_by('-id')
+	
+	
+	if report_type == 'totalsales':
+
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="TOTAL_SALES_'+from_date+'_'+to_date+'.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		ws = wb.add_sheet('TOTAL SALES')
+
+		# columns = ['Order Date', 'Order Number', 'Client Name', 'Payment Policy', 'Payment Mode', 'Total Amount', 'Paid', 'Balance' ]
+
+		columns = ['Date','Customer Name','Quotation No.','Salesman','Type of Contract','Type of location',
+		'Invoice No.','Job Status','Payment Policy','Gross Amount','Discount','Net Amount','Paid Amount',
+		'Payment Type','Date of Payment','Balance to Collect']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+		# Sheet body, remaining rows
+		font_style = xlwt.XFStyle()
+
+		# Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate')
+
+		rows = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).values_list('created','evaluation__customer__name','order_no','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no' , 'job_status', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost','amount_paid','history_order__payment_mode','history_order__paid_date','remining_amount').order_by('-id')
+	
+	if report_type == 'acceptedjobs':
+
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="ACCEPTED_JOBS_'+from_date+'_'+to_date+'.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		ws = wb.add_sheet('ACCEPTED JOBS')
+
 		# columns = ['Order Date', 'Order Number', 'Client Name', 'Payment Policy', 'Payment Mode', 'Total Amount', 'Paid', 'Balance' ]
 
 		columns = ['Date','Customer Name','Quotation No.','Quotation Date','Quotation Status','Salesman',
-		'Type of Contract','Type of location','Invoice No.','Job Execution Date','Job Status','Total Jobs',
+		'Type of Contract','Type of location','Invoice No.','Job Execution Date','Job Status','Payment Policy',
+		'Gross Amount','Discount','Net Amount']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+		# Sheet body, remaining rows
+		font_style = xlwt.XFStyle()
+
+		# Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate')
+
+		rows = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).values_list('created','evaluation__customer__name','order_no','evaluation__created','evaluation__quatation_status','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no', 'order_scheduler_order__start_at', 'job_status', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost').order_by('-id')
+
+	if report_type == 'rejectedjobs':
+
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="REJECTED_JOBS_'+from_date+'_'+to_date+'.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		ws = wb.add_sheet('REJECTED JOBS')
+
+		# columns = ['Order Date', 'Order Number', 'Client Name', 'Payment Policy', 'Payment Mode', 'Total Amount', 'Paid', 'Balance' ]
+
+		columns = ['Date','Customer Name','Quotation No.','Quotation Date','Quotation Status','Salesman',
+		'Type of Contract','Type of location','Invoice No.','Job Execution Date','Job Status','Payment Policy',
+		'Gross Amount','Discount','Net Amount']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+		# Sheet body, remaining rows
+		font_style = xlwt.XFStyle()
+
+		# Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate')
+
+		rows = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).values_list('created','evaluation__customer__name','order_no','evaluation__created','evaluation__quatation_status','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no', 'order_scheduler_order__start_at', 'job_status', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost').order_by('-id')
+	
+	if report_type == 'onetime':
+
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="ONETIME_CLEANING_'+from_date+'_'+to_date+'.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		ws = wb.add_sheet('ONETIME CLEANING')
+
+		# columns = ['Order Date', 'Order Number', 'Client Name', 'Payment Policy', 'Payment Mode', 'Total Amount', 'Paid', 'Balance' ]
+
+		columns = ['Date','Customer Name','Quotation No.','Salesman','Invoice No.','Job Status','Total Jobs',
 		'Pending Jobs','Job Completion Date','Payment Policy','Gross Amount','Discount','Net Amount','Paid Amount',
 		'Payment Type','Date of Payment','Balance to Collect']
 		
@@ -816,11 +911,82 @@ def export_users_xls(request):
 
 		# Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate')
 
-		rows = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(total_jobs=Count('order_scheduler_order') or 0 + Count('investigation_orders') or 0 , pending_jobs=Sum(Case(When(Q(investigation_orders__followup_investigation__status='INVESTIGATOR_APPRVED')|Q(investigation_orders__followup_investigation__status='FOLLOWUP_IN_PROGRESS'),then=1),default=0,output_field=IntegerField())) + Sum(Case(When(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS'),then=1),default=0,output_field=IntegerField()))).values_list('created','evaluation__customer__name','order_no','evaluation__created','evaluation__quatation_status','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no', 'order_scheduler_order__start_at', 'investigation_orders__followup_investigation__status', 'total_jobs', 'pending_jobs', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost','amount_paid','evaluation__payment_way','history_order__paid_date','history_order__payment_mode','remining_amount').order_by('-id')
+		rows = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).annotate(total_jobs=Count('order_scheduler_order') or 0 + Count('investigation_orders') or 0 , pending_jobs=Sum(Case(When(Q(investigation_orders__followup_investigation__status='INVESTIGATOR_APPROVED')|Q(investigation_orders__followup_investigation__status='FOLLOWUP_IN_PROGRESS'),then=1),default=0,output_field=IntegerField())) + Sum(Case(When(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS'),then=1),default=0,output_field=IntegerField()))).values_list('created','evaluation__customer__name','order_no','evaluation__call_attender__name' , 'order_no', 'job_status', 'total_jobs', 'pending_jobs', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost','amount_paid','history_order__payment_mode','history_order__paid_date','remining_amount').order_by('-id')
+	
+	if report_type == 'subscription':
+
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="SUBSCRIPTION_'+from_date+'_'+to_date+'.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		ws = wb.add_sheet('SUBSCRIPTION')
+
+		# columns = ['Order Date', 'Order Number', 'Client Name', 'Payment Policy', 'Payment Mode', 'Total Amount', 'Paid', 'Balance' ]
+
+		columns = ['Date','Customer Name','Quotation No.','Salesman','Invoice No.','Job Status','Total Jobs',
+		'Pending Jobs','Job Completion Date','Payment Policy','Gross Amount','Discount','Net Amount','Paid Amount',
+		'Payment Type','Date of Payment','Balance to Collect']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+		# Sheet body, remaining rows
+		font_style = xlwt.XFStyle()
+
+		# Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate')
+
+		rows = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).annotate(total_jobs=Count('order_scheduler_order') or 0 + Count('investigation_orders') or 0 , pending_jobs=Sum(Case(When(Q(investigation_orders__followup_investigation__status='INVESTIGATOR_APPROVED')|Q(investigation_orders__followup_investigation__status='FOLLOWUP_IN_PROGRESS'),then=1),default=0,output_field=IntegerField())) + Sum(Case(When(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS'),then=1),default=0,output_field=IntegerField()))).values_list('created','evaluation__customer__name','order_no','evaluation__call_attender__name' , 'order_no', 'job_status', 'total_jobs', 'pending_jobs', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost','amount_paid','history_order__payment_mode','history_order__paid_date','remining_amount').order_by('-id')
+	
+	if report_type == 'customer':
+
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="CUSTOMER_PAYMENTS_'+from_date+'_'+to_date+'.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		ws = wb.add_sheet('Payments')
+
+		# columns = ['Order Date', 'Order Number', 'Client Name', 'Payment Policy', 'Payment Mode', 'Total Amount', 'Paid', 'Balance' ]
+
+		columns = ['Date','Customer Name','Quotation No.','Payment Policy',
+		'Net Amount','Paid Amount','Payment Type','Date of Payment']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+		# Sheet body, remaining rows
+		font_style = xlwt.XFStyle()
+
+		# Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate')
+
+		rows = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).values_list('created','evaluation__customer__name','order_no', 'evaluation__payment_method','evaluation__total_cost','amount_paid','history_order__payment_mode','history_order__paid_date').order_by('-id')
+
+	if report_type == 'customeroutstanding':
+
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="CUSTOMER_OUTSTANDING_'+from_date+'_'+to_date+'.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		ws = wb.add_sheet('CUSTOMER OUTSTANDING')
+
+		# columns = ['Order Date', 'Order Number', 'Client Name', 'Payment Policy', 'Payment Mode', 'Total Amount', 'Paid', 'Balance' ]
+
+		columns = ['Date','Customer Name','Quotation No.','Invoice No.','Job Status',
+		'Job Completion Date','Payment Policy','Net Amount','Paid Amount',
+		'Payment Type','Date of Payment','Balance to Collect']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+		# Sheet body, remaining rows
+		font_style = xlwt.XFStyle()
+
+		# Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate')
+
+		rows = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).values_list('created','evaluation__customer__name','order_no','order_no', 'job_status', 'evaluation__payment_method' ,'evaluation__total_cost','amount_paid','history_order__payment_mode','history_order__paid_date','remining_amount').order_by('-id')
+
+
 
 	rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
-
-	rows = [[float(x)+float(0.000) if isinstance(x, float) else x for x in row] for row in rows ]
 	
 	for row in rows:
 		row_num += 1

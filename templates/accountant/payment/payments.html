@@ -237,17 +237,18 @@
     <td class="text-center">-</td>
     {% endfor %}
 
-    <td><span 
-        {% comment %} {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %} {% endcomment %}
-
-        {% if invoice.payment_status == 'PENDING' %}
-        class="red-bg clickable-row"
-        {% elif invoice.payment_status == 'COMPLETED' %}
-        class="green-bg clickable-row" 
+{% comment %} {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %} {% endcomment %}
+    <td>
+    {% for inv in invoice.orderschedules|slice:":1" %}
+        {% if inv.work_status == 'CLEANING_TEAM_ASSIGNED' %}
+        <span class="text-center red-bg clickable-row">PENDING</span>
+        {% elif inv.work_status == 'CLEANING_FULFILLED' %}
+        <span class="text-center green-bg clickable-row" >COMPLETED</span>
         {% else %}
-        class="yellow-bg clickable-row"
+        <span class="text-center yellow-bg clickable-row">IN PROGRESS</span>
         {% endif %}
-        >{{invoice.payment_status|default_if_none:''}}</span></td>
+        {% endfor %}
+        </td>
     </tr>
     {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td><td></td></tr>
@@ -357,7 +358,7 @@
   <div class="ticket-form-left"><!--ticket-form-left-->
     <div class=" bold-text common-label"> <label>Report Type</label></div>
       <select class="textBox" name="report_type" required>
-      <option value="paymentlist">PAYMENT LIST</option>
+      <option value="paymentlist">GENERAL PAYMENT SHEET</option>
       <option value="totalsales">TOTAL SALES REPORT</option>
       <option value="acceptedjobs">ACCEPED JOB SHEET</option>
       <option value="rejectedjobs">REJECTED JOB SHEET</option>
