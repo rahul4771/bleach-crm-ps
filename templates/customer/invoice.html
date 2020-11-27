@@ -245,6 +245,7 @@
               </td>
             </tr>
 
+            {% comment %}
             {% if request.user.user_type == 'AGENT' %}
             {% elif request.user.user_type == 'EVALUATOR' %}
             {% else %}
@@ -256,7 +257,7 @@
             </tr>
             {% endif %}
             {% endif %}
-
+            {% endcomment %}
 
             {% endif %}
             <tr>

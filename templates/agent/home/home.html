@@ -68,7 +68,7 @@
 
 <div class="main-content-holder"><!--main-content-holder-->
 
-
+{% if request.user.username == 'samih' %}
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Case Closing Task</h2>
 <table class="main-table">
@@ -85,7 +85,7 @@
 </tbody>
 </table>
 </div><!--white-wrapper-->
-
+{% endif %}
 
 
 {% if order_schedules or follow_up_schedules %}  
