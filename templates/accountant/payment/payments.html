@@ -226,7 +226,13 @@
     <td class="text-right">{{invoice.remining_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
     
     {% for inv in invoice.paymenthistory|slice:":1" %}
-    <td class="text-center">{{inv.payment_mode}}</td>
+    
+    {% if inv.payment_mode == 'ONLINECREDIT' %}
+      <td class="text-center">{{inv.payment_gateway|default_if_none:'-'}}</td>
+    {% else %}
+      <td class="text-center">{{inv.payment_mode}}</td>
+    {% endif %}
+
     {% empty %}
     <td class="text-center">-</td>
     {% endfor %}
