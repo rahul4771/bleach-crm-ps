@@ -33,6 +33,18 @@
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
+
+            <div class="card-column whitebg orange-border export_btn"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-export-icon-o.svg'%}"></div>
+                <div class="column-right"><!--column-right-->
+              	<!--  <h1>Evaluations</h1>-->
+            	<h2 class="orange-text"><label>Report Generator<span><i class="fa fa-download"></i> </span><br><span class="orders">Click to Export</span></label> </h2>
+            	<!--<p><label>This Week <span>42</span></label></p>-->
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+
         </div><!--clients-card-column clients-column-left-->
 		  
         <div class="clients-card-column clients-column-right whitebg hover ltyellow-border"><!--clients-card-column clients-column-right-->
@@ -81,9 +93,6 @@
      
      
      <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
-     {% comment %} <input type="text" id="payment_fromdate" class="date_pick date-pick-left" placeholder="Select From Date" onchange="set_params_go();" value="{{fromdate|date:'d-m-Y'}}" readonly>
-     
-     <input type="text" id="payment_todate" class="date_pick date-pick-left" placeholder="Select To Date" onchange="set_params_go();" value="{{todate|date:'d-m-Y'}}" readonly> {% endcomment %}
      
      <input name="filter" type="button" value="Filter" id="filter" class="blue-button arrow"> 
      
@@ -169,10 +178,11 @@
 <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
 </select>
 </label>
+{% comment %} <br>
+<button class="blue-button" style="font-size:15px;"><i class="fa fa-file-excel-o" aria-hidden="true"></i>  Click to Generate Report</button>
+<button class="export_btn" style="font-size:15px;"><i class="fa fa-file-excel-o" aria-hidden="true"></i>  Click to Generate Report</button>
 <br>
-<button class="blue-button export_btn" style="font-size:15px;"><i class="fa fa-file-excel-o" aria-hidden="true"></i>  Export</button>
-<br>
-
+<br> {% endcomment %}
 <div class="page-entries">Show {{entry_per_page}} entries</div>
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
@@ -180,15 +190,15 @@
 <tr>
 <th>Order Date</th>
 <th class="text-left">Order Number</th>
-<th class="text-center" data-hide="phone,tablet">Payment Policy</th>
-<th class="text-center" data-hide="phone,tablet">Payment Mode</th>
 <th data-hide="phone,tablet">Client Name</th>
+<th class="text-center" data-hide="phone,tablet">Payment Policy</th>
 {% comment %} <th data-hide="phone">Area</th>
 <th>Contact</th> {% endcomment %}
 <th class="text-right" data-hide="phone,tablet">Amount</th>
 <th class="text-right" data-hide="phone,tablet">Paid</th>
 <th class="text-right" data-hide="phone,tablet">Balance</th>
-{% comment %} <th class="align-center" data-hide="phone">Status</th> {% endcomment %}
+<th class="text-center" data-hide="phone,tablet">Payment Mode</th>
+<th class="align-center" data-hide="phone">Job Status</th>
 </tr>
 </thead>
 <tbody>
@@ -201,16 +211,10 @@
         {% else %}
         class="yellow-line"
         {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
-    <td class="text-left" data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}" class="clickable-row">{{invoice.order_no}}</td>
-    <td class="text-center">{{invoice.evaluation.payment_method}}</td>
-
-    {% for inv in invoice.paymenthistory|slice:":1" %}
-    <td class="text-center">{{inv.payment_mode}}</td>
-    {% empty %}
-    <td>-</td>
-    {% endfor %}
-
+    <td class="text-left clickable-row" data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}" >{{invoice.order_no}}</td>
     <td>{{invoice.evaluation.customer.name}}</td>
+    <td class="text-center">{{invoice.evaluation.payment_method}}</td>
+  
     {% comment %} <td>
     {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
     {{evaluation_details.address.area.name}}<br>
@@ -221,8 +225,20 @@
     <td class="text-right">{{invoice.amount_paid|default_if_none:'0.00'|floatformat:'3'}}</td>
     <td class="text-right">{{invoice.remining_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
     
-    {% comment %} <td><span 
-        {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}
+    {% for inv in invoice.paymenthistory|slice:":1" %}
+    
+    {% if inv.payment_mode == 'ONLINECREDIT' %}
+      <td class="text-center">{{inv.payment_gateway|default_if_none:'-'}}</td>
+    {% else %}
+      <td class="text-center">{{inv.payment_mode}}</td>
+    {% endif %}
+
+    {% empty %}
+    <td class="text-center">-</td>
+    {% endfor %}
+
+    <td><span 
+        {% comment %} {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %} {% endcomment %}
 
         {% if invoice.payment_status == 'PENDING' %}
         class="red-bg clickable-row"
@@ -231,7 +247,7 @@
         {% else %}
         class="yellow-bg clickable-row"
         {% endif %}
-        >{{invoice.payment_status|default_if_none:''}}</span></td> {% endcomment %}
+        >{{invoice.payment_status|default_if_none:''}}</span></td>
     </tr>
     {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td><td></td></tr>
@@ -314,7 +330,15 @@
 <form method="post" action="{% url 'accountant:export_payment_xls' %}" enctype="multipart/form-data">{% csrf_token %}                      
 
     <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->  
-          
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  <h3 align="center">Report Generator</h3>
+  </div>
+  </div>
+
+<hr class="hr-dashedpad"> 
+
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>From Date</label></div>
@@ -327,6 +351,24 @@
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
    
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    <div class=" bold-text common-label"> <label>Report Type</label></div>
+      <select class="textBox" name="report_type" required>
+      <option value="paymentlist">PAYMENT LIST</option>
+      <option value="totalsales">TOTAL SALES REPORT</option>
+      <option value="acceptedjobs">ACCEPED JOB SHEET</option>
+      <option value="rejectedjobs">REJECTED JOB SHEET</option>
+      <option value="onetime">SALES REPORT : ONETIME CLEANING</option>
+      <option value="subscription">SALES REPORT : SUBSCRIPTION</option>
+      <option value="customer">CUSTOMER PAYMENT REPORT</option>
+      <option value="customeroutstanding">CUSTOMER OUTSTANDING PAYMENTS REPORT</option>
+      </select>
+      </div>
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
 <div align="center"> <input class="assignButton export_payment" name="assing" type="button" value="Export" ></div>  
 
 </div><!--ticket-wrapper-full-->             

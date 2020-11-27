@@ -458,7 +458,7 @@ def orderdetail_html_to_pdf_view(request,order_id,service_id,section_id):
 	html_string = render_to_string('customer/content-page.html', {"order":order,"sectionid":int(section_id),"serviceid":int(service_id)})
 
 	html = HTML(string=html_string,base_url=request.build_absolute_uri())
-	html.write_pdf(target='/home/pdf/tmp/orderdetails/orderdetails.pdf');
+	html.write_pdf(target='/home/pdf/tmp/orderdetails/orderdetails.pdf'); #/home/pdf/tmp/orderdetails/orderdetails.pdf
 
 	fs = FileSystemStorage('/home/pdf/tmp/orderdetails/')
 	with fs.open('orderdetails.pdf') as pdf:

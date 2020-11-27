@@ -996,7 +996,6 @@ label[for=favcity] select:focus {outline: 1px dotted #A9A9A9;}
 
 /*Dashboard*/
 
-
 @media screen and (max-width: 1280px) {
   .card-column {  flex: 40%;}
   .card-innerwrapper .column-left img{ width:80%; }
@@ -1227,23 +1226,6 @@ hr.hr-dashedpad { border: 0; margin:8px 0 5px 0; padding:0; border-bottom: 1px d
 
 }
 
-section p{ padding:0 0 15px 0;}
-@media print {
-	body{  background:#fff;}
-#container {box-shadow:none;}
-.table th { background:#26A8E0; color:#FFF; padding:5px 0px;}
-.table3 {visibility:hidden;}
-.table1tr1 {display:none;}
-.table1tr2 {display:none;}
-.table1tr3 {display:none;}
-.table1tr4 {display:none;}
-}
-
-@page {
-    size: A4 portrait;
-    margin: 0.2in 9in 0.2in 0.44in;
-}
-
 @media screen and (max-width: 650px) {
 .kw-login-midwrapper{ height:auto; width:auto; padding: 20px; }
 .kw-left-area{ width:auto; position:inherit; height:160px; padding-top:10px;	}
@@ -1294,4 +1276,58 @@ section p{ padding:0 0 15px 0;}
   100% {
     overflow-x: visible;
   }
+}
+
+@media print {
+
+  .cleaning-img {
+  width:100%;
+  margin:0;
+  padding:0px;
+}
+
+.cleaning-img img {
+  width:100%; 
+  margin:0; 
+  padding:0;
+  object-fit:cover;
+  
+  height:16vh; 
+  object-position: top center;
+}
+
+.order-clean-Details-wrapper { display: flex; flex-direction: row; margin-top:50px; }
+.order-clean-Details-widget {width: 100%; padding:0px 0px; }
+.order-clean-Details-widget-column1 { margin:0 0 0 0; position:relative; }
+.order-clean-Details-widget-column2 { margin:0 0 0 0; padding:0px 25px;}
+.order-clean-Details-widget-column3 { margin:0 0 0 0; padding:0px 25px; border-left:1px solid #CCC;  }
+
+.filter-columns-wrapper  { display: flex; margin:0 0; padding:0; text-align:left; position:relative;  }
+.filter-column-boxes > div { flex: 1; } 
+.filter-columns-left { padding:0 0px 0 0; width:50%; text-align: left; position:relative; }
+.filter-columns-right {padding:0 0px 0 0; width:50%; text-align: left; position:relative; }
+
+.category-cleaning{ margin:0; 
+  
+  margin: 0;
+  padding: 2px 0;
+  color: #8a8a8a;
+  font-size: 15px;
+  font-weight: 700;
+
+}
+
+.labelcategory{ margin:0; display:inline-block; width:100px; font-size:15px; color:#666; padding:0; }
+
+.socil-media{ margin:20px auto 0 auto; text-align:center;}
+.socil-media ul{margin:0 auto; padding:0;}
+.socil-media ul li{margin:0 auto; padding:0; list-style:none; display:inline-block; width:30px; height:30px; }
+.socil-media ul li img{ width:100%;}
+.socil-media ul li a{ display: none;}
+
+}
+
+@page {
+  size: A4 portrait;
+  margin: 0.2in 9in 0.2in 0.44in;
 }
