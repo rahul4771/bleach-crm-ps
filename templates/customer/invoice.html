@@ -47,7 +47,7 @@
 
           <div class="title-top">
             <!--<span class="x-hidden"></span>-->
-            <span>{{order.evaluation.created|date:'d-m-Y'}}</span> <span id="number">{{order.order_no|slice:'9:'}}</span>
+            <span>{{order.evaluation.created|date:'d-m-Y'}}</span> <span id="number">INV{{order.order_no|slice:'5:'}}</span>
           </div>
         
           <div id="title">INVOICE<div class="invoice-name-arabic">فاتورة</div></div>
@@ -238,7 +238,7 @@
                 {% elif request.user.user_type == 'EVALUATOR' %}
                 {% else %}
                 {% if order.order_status == 'APPROVED_BY_CLIENT' and order.evaluation.payment_way == 'ONLINE' %}
-                <input class="assignButton" name="pay" type="submit" value="&nbsp;&nbsp;&nbsp;Debit Card / بطاقة ائتمان">
+                <input class="assignButton clickable-cursor" name="pay" type="submit" value="&nbsp;&nbsp;&nbsp;Pay using Debit Card / بطاقة ائتمان">
                 {% endif %}
                 {% endif %}
                 </form>
@@ -247,7 +247,7 @@
 
             <tr class="table1tr2">
             <td colspan="2" class="align-right">
-            <input class="assignButton clickable-row" name="pay" type="submit" value="Credit Card / بطاقة الائتمان" data-href="http://payment.bleachkw.com:8085/creditcard/payment_form.php?merchant_defined_data1={{order.order_no}}{% if order.evaluation.payment_method == 'BREAKDOWN' %}{% if order.evaluation.before_cleaning_amount != order.preamount_paid %}&amount={{order.evaluation.before_cleaning_amount}}&merchant_defined_data2=before_cleaning{% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}&amount={{order.evaluation.before_cleaning_amount}}&merchant_defined_data2=after_cleaning{% endif %}{% elif order.evaluation.payment_method == 'PREPAID' %}&amount={{order.evaluation.total_cost|floatformat:'3'}}&merchant_defined_data2=prepaid{% elif order.evaluation.payment_method == 'POSTPAID' %}&amount={{order.evaluation.total_cost|floatformat:'3'}}&merchant_defined_data2=postpaid{% endif %}&currency=KWD&reference_number={{order.order_no}}&transaction_type=sale{% for orderschedule in order.orderschedules %}{% if forloop.first %}&bill_to_forename={{firstname}}&bill_to_surname={{lastname}}&bill_to_phone={{orderschedule.customer_address.customer.mobile_number}}&bill_to_email={{orderschedule.customer_address.customer.email}}&bill_to_address_country={{orderschedule.customer_address.customer.nationality.code}}&bill_to_address_city={{orderschedule.customer_address.area.name}}&bill_to_address_line1={{orderschedule.customer_address.street}},{{orderschedule.customer_address.block}},{{orderschedule.customer_address.avenue}},{{orderschedule.customer_address.street}},{{orderschedule.customer_address.building}},{{orderschedule.customer_address.floor}},{{orderschedule.customer_address.area.name}},{{orderschedule.customer_address.governorate.name}}{% endif %}{% endfor %}">
+            <input class="assignButton clickable-row" name="pay" type="submit" value="Pay using Credit Card / بطاقة الائتمان" data-href="http://payment.bleachkw.com:8085/creditcard/payment_form.php?merchant_defined_data1={{order.order_no}}{% if order.evaluation.payment_method == 'BREAKDOWN' %}{% if order.evaluation.before_cleaning_amount != order.preamount_paid %}&reference_number={{order.order_no}}1&amount={{order.evaluation.before_cleaning_amount}}&merchant_defined_data2=before_cleaning{% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}&reference_number={{order.order_no}}2&amount={{order.evaluation.before_cleaning_amount}}&merchant_defined_data2=after_cleaning{% endif %}{% elif order.evaluation.payment_method == 'PREPAID' %}&reference_number={{order.order_no}}&amount={{order.evaluation.total_cost|floatformat:'3'}}&merchant_defined_data2=prepaid{% elif order.evaluation.payment_method == 'POSTPAID' %}&reference_number={{order.order_no}}&amount={{order.evaluation.total_cost|floatformat:'3'}}&merchant_defined_data2=postpaid{% endif %}&currency=KWD&transaction_type=sale{% for orderschedule in order.orderschedules %}{% if forloop.first %}&bill_to_forename={{firstname}}&bill_to_surname={{lastname}}&bill_to_phone={{orderschedule.customer_address.customer.mobile_number}}&bill_to_email={{orderschedule.customer_address.customer.email}}&bill_to_address_country={{orderschedule.customer_address.customer.nationality.code}}&bill_to_address_city={{orderschedule.customer_address.area.name}}&bill_to_address_line1={{orderschedule.customer_address.street}},{{orderschedule.customer_address.block}},{{orderschedule.customer_address.avenue}},{{orderschedule.customer_address.street}},{{orderschedule.customer_address.building}},{{orderschedule.customer_address.floor}},{{orderschedule.customer_address.area.name}},{{orderschedule.customer_address.governorate.name}}{% endif %}{% endfor %}">
             </td>
             </tr>
 
