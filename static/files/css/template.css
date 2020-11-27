@@ -560,8 +560,55 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
  * the print styles (you can use !important to override styles)
  */
  section p{ padding:0 0 15px 0;}
+
+
 @media print {
 	body{  background:#fff;}
-#container {box-shadow:none;}
-.table th { background:#26A8E0; color:#FFF; padding:5px 0px;}
+.table3 {visibility:hidden;}
+
+.detailsmain{
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+.right-invoice {/*padding: 40px 30px 40px 130px;*/
+  padding: 60px 50px 15px 50px;
+  /*min-height: 1078px;*/
+}
+
+#memo .company-info {
+  float: right;
+  margin-top: 40px
+}
+#memo .company-info div {
+  font-size: 28px;
+  text-transform: uppercase;
+  min-width: 20px;
+  line-height: 1.2em;
+  color: #505050;
+  font-weight: 100;
+}
+#memo .company-info span {
+  font-size: 12px;
+  color: #858585;
+  display: inline-block;
+  min-width: 20px;
+}
+#memo .logo_invoice {
+  float: left;
+  margin-left: 15px;
+}
+#memo .logo_invoice img {
+  width: 150px;
+  height: 150px;
+}
+#memo:after {
+  content: '';
+  display: block;
+  clear: both;
+}
 }

@@ -80,6 +80,7 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .blue-button{ background:#4385f5; margin:0; border:none; font-size:12px; padding:6px 10px; color:#fff;transition: .4s;}
 .blue-button:hover{ background:#f29605; border:none; }
 .blue-text{ color:#528ce6 !important; text-shadow: 1px 2px 3px #0000000d !important;} 
+
 /* .shadow-effectadded */
 .green-text{ color:#3cbbb1 ; text-shadow: 1px 2px 3px #0000000d !important;} 
 .orange-text{ color:#ff8c56; text-shadow: 1px 2px 3px #0000000d!important;} 

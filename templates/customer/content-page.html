@@ -18,9 +18,10 @@
 
     <meta name="template-hash" content="91216e926eab41d8aa403bf4b00f4e19">
     
-    <link href="{% static 'files/css/main_external.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'files/css/template.css' %}" rel="stylesheet" type="text/css">
-    {% comment %} <link href="{% static 'files/css/externalusers.css' %}" rel="stylesheet" type="text/css"> {% endcomment %}
+    <link href="{% static 'files/css/orderdetails.css' %}" rel="stylesheet" type="text/css" media="all">
+    <link href="{% static 'files/css/template.css' %}" rel="stylesheet" type="text/css" media="all">
+    {% comment %} <link href="{% static 'files/css/externalusers.css' %}" rel="stylesheet" type="text/css" media="all"> {% endcomment %}
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
     <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
@@ -56,7 +57,7 @@
             {% ifchanged orderschedule.order_scheduler_book.id %}
               
                 {% if orderschedule.order_scheduler_book.id == serviceid %}
-                  <div id="details{{orderschedule.id}}">
+                  <div id="details{{orderschedule.id}}" class="detailsmain">
                   <div class="details-head"> {{order.order_no}} Item In-detail <div class="order-date"></div></div>	
                   <hr class="style-three" > 
                 <div class="order-clean-Details-wrapper"><!--order-clean-Details-wrapper-->
