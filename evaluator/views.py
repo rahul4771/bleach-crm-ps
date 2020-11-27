@@ -769,6 +769,17 @@ class NewEnquiry(IsEvaluator,View):
 			enquiry_form_save.created_by = request.user
 			enquiry_form_save.user_type  = 'CUSTOMER'
 
+			#customer id generation
+			customer_id                  = UserProfile.objects.filter(is_active=True,customer_id__isnull=False).aggregate(t=Max('customer_id'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'1000')
+			current_customer_id_starting = int(str(timezone.now().year)[2:]+str(timezone.now().month).zfill(2))					
+			if current_customer_id_starting == int(str(customer_id)[:4]):
+				new_customer_id = int(customer_id)+1
+			else:
+				new_customer_id   = int(str(timezone.now().year)[2:]+str(timezone.now().month).zfill(2)+'1001')
+
+			enquiry_form_save.customer_id = new_customer_id
+			
+
 			#To Save Contact Platform
 			contact_platforms 			 = request.POST.get('contact_platform')
 			contact_platform_list 		 = contact_platforms.split(",")			

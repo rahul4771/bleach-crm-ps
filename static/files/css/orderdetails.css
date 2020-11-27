@@ -1278,7 +1278,9 @@ hr.hr-dashedpad { border: 0; margin:8px 0 5px 0; padding:0; border-bottom: 1px d
   }
 }
 
-@media print {
+
+
+@media screen,print {
 
   .cleaning-img {
   width:100%;
