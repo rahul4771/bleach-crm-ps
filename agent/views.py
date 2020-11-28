@@ -559,7 +559,8 @@ def CleaningExistingDates(request):
 	data['leaders_busy_dates'] = team_leaders_busy
 	data['cleaner_busy_dates'] = team_members_busy
 
-	print(data,"clteam")
+	print(start_at,end_at,active_cleaners1,active_cleaners2, "clteam")
+	print(cleaning_active_team_leaders,total_cleaners,total_leaders,"kol")
 	return JsonResponse(data)
 
 # Create your views here.

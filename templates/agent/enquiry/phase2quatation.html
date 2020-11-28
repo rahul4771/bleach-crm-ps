@@ -161,16 +161,16 @@
                 
  		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
             	<div class="enquiry-form-left"><!--enquiry-form-left-->
-                <div class=" bold-text common-label"> <label>Tentative Date(S)</label></div>
-                <input name="form-0-tendative_dates" id='id_form-0-tendative_dates' type="text" class="textBox readonly" placeholder=" " readonly> 
-                </div><!--enquiry-form-left-->
-                <div class="enquiry-form-left"><!--enquiry-form-left-->
-                <div class=" bold-text common-label"> <label>Tentative Date</label></div>
-                <input name="form-0-tendative_date" id='id_form-0-tendative_date' type="text" class="textBox readonly" placeholder=" " readonly> 
-                </div><!--enquiry-form-left-->
-            	<div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tentative Time</label></div>
                 <input name="form-0-tendative_time" id='id_form-0-tendative_time' type="text" class="textBox readonly" placeholder=" " required readonly> 
+                </div><!--enquiry-form-left-->
+                <div class="enquiry-form-right"><!--enquiry-form-right-->
+                <div class=" bold-text common-label"> <label>Tentative Date</label></div>
+                <input name="form-0-tendative_date" id='id_form-0-tendative_date' type="text" class="textBox readonly" placeholder=" " readonly> 
+                </div><!--enquiry-form-right-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                <div class=" bold-text common-label"> <label>Tentative Date(S)</label></div>
+                <input name="form-0-tendative_dates" id='id_form-0-tendative_dates' type="text" class="textBox readonly" placeholder=" " readonly> 
                 </div><!--enquiry-form-right-->
 		</div> <!--enquiry-form-Wrapper enquiry-boxes-->
         
@@ -304,11 +304,13 @@ function datetimecheck(ftime,fdate,mode,x){
             $('.assignButton').attr("disabled",false);
             console.log("fail")
             }
-        }else{
-        $("#id_form-"+x+"-tendative_time").val('');
-        $("#id_form-"+x+"-tendative_time").attr("placeholder","Select Date !!");
-
         }
+        
+        //else{
+        //$("#id_form-"+x+"-tendative_time").val('');
+        //$("#id_form-"+x+"-tendative_time").attr("placeholder","Select Date !!");
+
+        //}
 
     };
 
@@ -610,6 +612,7 @@ $('document').ready(function(){
             minDate:new Date()
           });
         });
+
         //tendative dates initial
         $(function () {
           $("#id_form-"+x+"-tendative_dates").datepicker({ 
@@ -630,9 +633,9 @@ $('document').ready(function(){
 
 
         //Initial hiding of cleaning policy
-        $("#id_form-"+x+"-tendative_date").parents('.enquiry-form-left').css("display", "none");
-        $("#id_form-"+x+"-tendative_dates").parents('.enquiry-form-left').css("display", "none");
-        $("#id_form-"+x+"-tendative_time").parents('.enquiry-form-right').css("display", "none");
+        $("#id_form-"+x+"-tendative_date").parents('.enquiry-form-right').css("display", "none");
+        $("#id_form-"+x+"-tendative_dates").parents('.enquiry-form-right').css("display", "none");
+        $("#id_form-"+x+"-tendative_time").parents('.enquiry-form-left').css("display", "none");
         $("#id_form-"+x+"-tendative_date").val('');
         $("#id_form-"+x+"-tendative_dates").val('');
         $("#id_form-"+x+"-tendative_time").val('');
@@ -661,6 +664,25 @@ $('document').ready(function(){
             
             success: function(data_dates) {
                 console.log(data_dates,"dates")
+                var array = ["29-11-2020","30-11-2020","01-12-2020"]
+                $("#id_form-"+x+"-tendative_dates").datepicker({ 
+                    beforeShowDay: function(date){
+                        var string = jQuery.datepicker.formatDate('dd-mm-yyyy', date);
+                        return [ array.indexOf(string) == -1 ]
+                    },
+                    multidate: true,
+                    closeOnDateSelect: true,
+                    format: "dd-mm-yyyy", 
+                    startDate:new Date(),
+                    minDate:new Date()
+                });
+
+                $("#id_form-"+x+"-tendative_date").datetimepicker({ 
+                    pickTime: false, 
+                    format: "DD-MM-YYYY",
+                    minDate: new Date(),
+                });
+                
             }
             
         });
@@ -688,9 +710,10 @@ $(function () {
     minDate: new Date(),
   });
 });
+
 //tendative dates initial
 $(function () {
-  $("#id_form-"+x+"-tendative_dates").datepicker({ 
+  $("#id_form-"+x+"-tendative_dates").datepicker({
     multidate: true,
     closeOnDateSelect: true,
     format: "dd-mm-yyyy",
@@ -743,9 +766,9 @@ $("#id_form-"+x+"-tendative_dates").change(function(){
 });
 
 //Initial hiding of cleaning policy
-$("#id_form-"+x+"-tendative_date").parents('.enquiry-form-left').css("display", "none");
-$("#id_form-"+x+"-tendative_dates").parents('.enquiry-form-left').css("display", "none");
-$("#id_form-"+x+"-tendative_time").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+x+"-tendative_date").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+x+"-tendative_dates").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+x+"-tendative_time").parents('.enquiry-form-left').css("display", "none");
 $("#id_form-"+x+"-tendative_date").val('');
 $("#id_form-"+x+"-tendative_dates").val('');
 $("#id_form-"+x+"-tendative_time").val('');
@@ -804,9 +827,9 @@ if(cleaning_policy=="SUBSCRIPTION")
 {
 $("#id_form-"+id+"-tendative_date").val('');
 $("#id_form-"+id+"-tendative_dates").val('');
-$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-left').css("display", "none");
-$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-left').css("display", "block");
-$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-right').css("display", "block");
+$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-right').css("display", "block");
+$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-left').css("display", "block");
 $("#id_form-"+id+"-tendative_date").prop('required',false);
 $("#id_form-"+id+"-tendative_dates").prop('required',true);
 }
@@ -814,16 +837,16 @@ else if(cleaning_policy=="ONE TIME SERVICE")
 {
 $("#id_form-"+id+"-tendative_date").val('');
 $("#id_form-"+id+"-tendative_dates").val('');
-$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-left').css("display", "block");
-$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-right').css("display", "block");
-$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-left').css("display", "none");
+$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-right').css("display", "block");
+$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-left').css("display", "block");
+$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-right').css("display", "none");
 $("#id_form-"+id+"-tendative_date").prop('required',true);
 $("#id_form-"+id+"-tendative_dates").prop('required',false);
 }
 else{
-$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-left').css("display", "none");
-$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-left').css("display", "none");
-$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-left').css("display", "none");
 $("#id_form-"+id+"-tendative_date").val('');
 $("#id_form-"+id+"-tendative_dates").val('');
 $("#id_form-"+id+"-tendative_time").val('');

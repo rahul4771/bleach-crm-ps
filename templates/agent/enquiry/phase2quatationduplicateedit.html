@@ -170,29 +170,29 @@
         <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
                 
                 {% if book.cleaning_policy == 'ONE TIME SERVICE' %}
-                <div class="enquiry-form-left" style="display:none"><!--enquiry-form-left-->
+                <div class="enquiry-form-right" style="display:none"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tentative Date(S)</label></div>
                 <input name="form-{{forloop.counter0}}-tendative_dates" id='id_form-{{forloop.counter0}}-tendative_dates' type="text" class="textBox readonly" placeholder=" " value="" readonly> 
-                </div><!--enquiry-form-left-->
-                <div class="enquiry-form-left"><!--enquiry-form-left-->
+                </div><!--enquiry-form-right-->
+                <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tentative Date</label></div>
                 <input name="form-{{forloop.counter0}}-tendative_date" id='id_form-{{forloop.counter0}}-tendative_date' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{{orderschedule.start_at|date:'d-m-Y'}}{% endfor %}"> 
-                </div><!--enquiry-form-left-->
+                </div><!--enquiry-form-right-->
                 {% else %}
-                <div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tentative Date(S)</label></div>
                 <input name="form-{{forloop.counter0}}-tendative_dates" id='id_form-{{forloop.counter0}}-tendative_dates' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{{orderschedule.start_at|date:'d-m-Y'}}{% if not forloop.last %},{% endif %}{% endfor %}"> 
-                </div><!--enquiry-form-left-->
-                <div class="enquiry-form-left" style="display:none"><!--enquiry-form-left-->
+                </div><!--enquiry-form-right-->
+                <div class="enquiry-form-right" style="display:none"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tentative Date</label></div>
                 <input name="form-{{forloop.counter0}}-tendative_date" id='id_form-{{forloop.counter0}}-tendative_date' type="text" class="textBox readonly" placeholder=" " value="" readonly> 
-                </div><!--enquiry-form-left-->
+                </div><!--enquiry-form-right-->
                 {% endif %}
 
-                <div class="enquiry-form-right"><!--enquiry-form-right-->
+                <div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Tentative Time</label></div>
                 <input name="form-{{forloop.counter0}}-tendative_time" id='id_form-{{forloop.counter0}}-tendative_time' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{%  if forloop.first %}{{orderschedule.start_at|date:'h:i A'}}{% endif %}{% endfor %}" required readonly> 
-                </div><!--enquiry-form-right-->
+                </div><!--enquiry-form-left-->
 
         </div> <!--enquiry-form-Wrapper enquiry-boxes-->
         
@@ -322,11 +322,13 @@ function datetimecheck(ftime,fdate,mode,x){
             $('.assignButton').attr("disabled",false);
             console.log("fail")
             }
-        }else{
-        $("#id_form-"+x+"-tendative_time").val('');
-        $("#id_form-"+x+"-tendative_time").attr("placeholder","Select Date !!");
-
         }
+        
+        //else{
+        //$("#id_form-"+x+"-tendative_time").val('');
+        //$("#id_form-"+x+"-tendative_time").attr("placeholder","Select Date !!");
+
+        //}
 
     };
 
@@ -772,9 +774,9 @@ if(cleaning_policy=="SUBSCRIPTION")
 {
 $("#id_form-"+id+"-tendative_date").val('');
 $("#id_form-"+id+"-tendative_dates").val('');
-$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-left').css("display", "none");
-$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-left').css("display", "block");
-$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-right').css("display", "block");
+$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-right').css("display", "block");
+$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-left').css("display", "block");
 $("#id_form-"+id+"-tendative_date").prop('required',false);
 $("#id_form-"+id+"-tendative_dates").prop('required',true);
 }
@@ -782,16 +784,16 @@ else if(cleaning_policy=="ONE TIME SERVICE")
 {
 $("#id_form-"+id+"-tendative_date").val('');
 $("#id_form-"+id+"-tendative_dates").val('');
-$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-left').css("display", "block");
-$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-right').css("display", "block");
-$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-left').css("display", "none");
+$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-right').css("display", "block");
+$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-left').css("display", "block");
+$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-right').css("display", "none");
 $("#id_form-"+id+"-tendative_date").prop('required',true);
 $("#id_form-"+id+"-tendative_dates").prop('required',false);
 }
 else{
-$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-left').css("display", "none");
-$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-left').css("display", "none");
-$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-left').css("display", "none");
 $("#id_form-"+id+"-tendative_date").val('');
 $("#id_form-"+id+"-tendative_dates").val('');
 $("#id_form-"+id+"-tendative_time").val('');
