@@ -496,8 +496,10 @@ def CleaningExistingDates(request):
 	booking_time      = request.GET.get('booking_time')
 	no_of_cleaners    = request.GET.get('number_of_cleaners')
 	cleaning_duration = int(request.GET.get('cleaning_duration'))
-
-
+	print(booking_time)
+	print(no_of_cleaners)
+	print(cleaning_duration)
+	
 	start_at          = datetime.strptime(request.GET.get('booking_time'),'%I:%M %p').time()
 	end_at            = (datetime.strptime(request.GET.get('booking_time'),'%I:%M %p')+timedelta(hours=cleaning_duration)).time()
 
@@ -559,8 +561,7 @@ def CleaningExistingDates(request):
 	data['leaders_busy_dates'] = team_leaders_busy
 	data['cleaner_busy_dates'] = team_members_busy
 
-	print(start_at,end_at,active_cleaners1,active_cleaners2, "clteam")
-	print(cleaning_active_team_leaders,total_cleaners,total_leaders,"kol")
+	print(data)
 	return JsonResponse(data)
 
 # Create your views here.

@@ -663,26 +663,7 @@ $('document').ready(function(){
             contentType: "application/json;charset=utf-8",
             
             success: function(data_dates) {
-                console.log(data_dates,"dates")
-                var array = ["29-11-2020","30-11-2020","01-12-2020"]
-                $("#id_form-"+x+"-tendative_dates").datepicker({ 
-                    beforeShowDay: function(date){
-                        var string = jQuery.datepicker.formatDate('dd-mm-yyyy', date);
-                        return [ array.indexOf(string) == -1 ]
-                    },
-                    multidate: true,
-                    closeOnDateSelect: true,
-                    format: "dd-mm-yyyy", 
-                    startDate:new Date(),
-                    minDate:new Date()
-                });
-
-                $("#id_form-"+x+"-tendative_date").datetimepicker({ 
-                    pickTime: false, 
-                    format: "DD-MM-YYYY",
-                    minDate: new Date(),
-                });
-                
+                console.log(data_dates,"dates1")
             }
             
         });
@@ -718,7 +699,7 @@ $(function () {
     closeOnDateSelect: true,
     format: "dd-mm-yyyy",
     startDate: new Date(),
-    minDate: new Date()
+    minDate: new Date(),
   });
 });
 
@@ -729,6 +710,8 @@ $("#id_form-"+x+"-tendative_time").datetimepicker({
     //minDate: moment({h:7}),
     //maxDate: moment({h:17}),
 });
+
+
 
 $("#id_form-"+x+"-tendative_time").change(function(){
     var policy = $("#id_form-"+x+"-cleaning_policy").val();
