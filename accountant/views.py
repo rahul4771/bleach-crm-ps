@@ -883,7 +883,7 @@ def export_users_xls(request):
 		# Sheet body, remaining rows
 		font_style = xlwt.XFStyle()
 
-		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).values_list('created','evaluation__customer__name','order_no','evaluation__created','evaluation__quatation_status','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no', 'order_scheduler_order__start_at', 'job_status', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost').order_by('-id')
+		orders = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).values_list('created','evaluation__customer__name','order_no','evaluation__created','evaluation__quatation_status','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no', 'order_scheduler_order__start_at', 'job_status', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost').order_by('-id')
 
 		#removing duplicates
 		found = set()
@@ -921,7 +921,7 @@ def export_users_xls(request):
 		# Sheet body, remaining rows
 		font_style = xlwt.XFStyle()
 
-		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).values_list('created','evaluation__customer__name','order_no','evaluation__created','evaluation__quatation_status','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no', 'order_scheduler_order__start_at', 'job_status', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost').order_by('-id')
+		orders = Order.objects.filter(is_active=True,evaluation__quatation_status='REJECTED',created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).values_list('created','evaluation__customer__name','order_no','evaluation__created','evaluation__quatation_status','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no', 'order_scheduler_order__start_at', 'job_status', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost').order_by('-id')
 	
 		#removing duplicates
 		found = set()
@@ -971,18 +971,24 @@ def export_users_xls(request):
 				order_completion_date = OrderScheduler.objects.filter(is_active=True,order__order_no=order_list[4]).last()
 				followup_completion_date = FollowUpScheduler.objects.filter(is_active=True,follow_up__investigation__order__order_no=order_list[4]).last()
 
+				order_cleaning_policy = OrderScheduler.objects.filter(is_active=True,order__order_no=order_list[4],order_scheduler_book__cleaning_policy='ONE TIME SERVICE').first()
 				
-				if followup_completion_date != None :
-					order_list[8] = followup_completion_date.end_at
-				else:
-					if order_completion_date != None :
-						order_list[8] = order_completion_date.end_at
+				if order_cleaning_policy != None:
+				
+					if followup_completion_date != None :
+						order_list[8] = followup_completion_date.end_at
 					else:
-						order_list[8] = '-'
+						if order_completion_date != None :
+							order_list[8] = order_completion_date.end_at
+						else:
+							order_list[8] = '-'
 
-				order_list[4] = order_list[4][9:]
-				order = tuple(order_list)
-				rows.append(order)
+					order_list[4] = order_list[4][9:]
+					order = tuple(order_list)
+					rows.append(order)
+				else:
+					pass
+
 			found.add(order[2])
 	
 	if report_type == 'subscription':
@@ -1019,18 +1025,23 @@ def export_users_xls(request):
 				order_completion_date = OrderScheduler.objects.filter(is_active=True,order__order_no=order_list[4]).last()
 				followup_completion_date = FollowUpScheduler.objects.filter(is_active=True,follow_up__investigation__order__order_no=order_list[4]).last()
 
+				order_cleaning_policy = OrderScheduler.objects.filter(is_active=True,order__order_no=order_list[4],order_scheduler_book__cleaning_policy='SUBSCRIPTION').first()
 				
-				if followup_completion_date != None :
-					order_list[8] = followup_completion_date.end_at
-				else:
-					if order_completion_date != None :
-						order_list[8] = order_completion_date.end_at
+				if order_cleaning_policy != None:
+					if followup_completion_date != None :
+						order_list[8] = followup_completion_date.end_at
 					else:
-						order_list[8] = '-'
+						if order_completion_date != None :
+							order_list[8] = order_completion_date.end_at
+						else:
+							order_list[8] = '-'
 
-				order_list[4] = order_list[4][9:]
-				order = tuple(order_list)
-				rows.append(order)
+					order_list[4] = order_list[4][9:]
+					order = tuple(order_list)
+					rows.append(order)
+				else:
+					pass
+	
 			found.add(order[2])
 	
 	if report_type == 'customer':
