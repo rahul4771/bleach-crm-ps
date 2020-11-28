@@ -165,4 +165,26 @@ class PaymentResponseCredit(APIView):
 				order.payment_completed_date = timezone.now()
 			order.save()
 
+			#payment receipt sms
+			url = "https://smsapi.future-club.com/fccsms.aspx"
+
+			if order.evaluation.customer.sms_preference == 'ENGLISH':
+
+				message = "Dear Customer, We have successfully received your payment of amount "+ str(amount_paid) +" KD, (Transaction ID: "+ str(request.GET.get('tranid')) +", Ref ID: "+ str(request.GET.get('ref')) +") against the order number "+ str(order.order_no) +". Please find the Payment receipt here https://my.bleachkw.com/customer/payment/receipt/pvw"+ str(order.evaluation.tracking_no) +""+str(payment_history.id)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+			
+			else:
+				message = "عزيزي العميل، لقد تلقينا مدفوعاتك بنجاح مقابل رقم الطلب "+ order.order_no +". يرجى العثور على إيصال الدفع هنا https://my.bleachkw.com/customer/payment/receipt/pvw"+request.GET.get('paymentid')+". لأي مساعدة يرجى الاتصال بنا على9651882707 شكرا لاختيارك بليتش الكويت"
+ 
+
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+
+			headers = {
+				'cache-control': "no-cache"
+			}
+
+			response = requests.request("GET", url, headers=headers, params=querystring)
+
+			print(response.text)
+
 		return Response(HTTP_200_OK)		
