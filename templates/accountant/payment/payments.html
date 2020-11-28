@@ -238,7 +238,7 @@
     {% endfor %}
 
 {% comment %} {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %} {% endcomment %}
-    <td>
+    <td class="clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
     {% for inv in invoice.orderschedules|slice:":1" %}
         {% if inv.work_status == 'CLEANING_TEAM_ASSIGNED' %}
         <span class="text-center red-bg clickable-row">PENDING</span>
@@ -328,7 +328,7 @@
         <a id="close_export_popup" class="close">&times;</a>
             <div class="content"><!--content-->
             
-<form method="post" action="{% url 'accountant:export_payment_xls' %}" enctype="multipart/form-data">{% csrf_token %}                      
+<form id="excelform" method="post" action="{% url 'accountant:export_payment_xls' %}" enctype="multipart/form-data" target="_blank">{% csrf_token %}
 
     <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->  
 
@@ -357,7 +357,7 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
     <div class=" bold-text common-label"> <label>Report Type</label></div>
-      <select class="textBox" name="report_type" required>
+      <select class="textBox" name="report_type" id="report_type" required>
       <option value="paymentlist">GENERAL PAYMENT SHEET</option>
       <option value="totalsales">TOTAL SALES REPORT</option>
       <option value="acceptedjobs">ACCEPED JOB SHEET</option>
@@ -425,11 +425,16 @@ $("#close_export_popup").click(function () {
     $('#export_popup').css({'visibility':'hidden','opacity':0,});
 });
 
+//EXPORT EXCEL
 $(".export_payment").click(function () {
   console.log("poi")
     $('#export_popup').css({'visibility':'hidden','opacity':0,});
     
     submitAnyForm($(this));
+
+    location.reload(true);
+
+    //document.getElementById("excelform").reset();
     
 });
 

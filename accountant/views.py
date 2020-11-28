@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,render_to_response
 from django.views import View
 
 from django.conf import settings
@@ -6,6 +6,7 @@ from bleach_crm_ps.permissions import IsAccountant
 # Create your views here.
 
 import xlwt
+import itertools
 
 import functools
 import operator
@@ -27,7 +28,7 @@ from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMemb
 from accountant.models import PaymentHistory
 
 import requests
-from django.http import HttpResponse,JsonResponse
+from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 
 from user.models import UserProfile
 
@@ -812,9 +813,17 @@ def export_users_xls(request):
 		# Sheet body, remaining rows
 		font_style = xlwt.XFStyle()
 
-		# Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate')
+		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status'),payment_type=Concat('history_order__payment_mode',Value(' '),'history_order__payment_gateway')).values_list('created','order_no','evaluation__customer__name', 'evaluation__payment_method','evaluation__total_cost','amount_paid','remining_amount','payment_type','job_status').order_by('-id')
+	
+		#removing duplicates
+		found = set()
 
-		rows = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).values_list('created','order_no','evaluation__customer__name', 'evaluation__payment_method','evaluation__total_cost','amount_paid','remining_amount','history_order__payment_mode','job_status').order_by('-id')
+		rows = []
+
+		for order in orders:
+			if order[1] not in found:
+				rows.append(order)
+			found.add(order[1])
 	
 	
 	if report_type == 'totalsales':
@@ -837,9 +846,22 @@ def export_users_xls(request):
 		# Sheet body, remaining rows
 		font_style = xlwt.XFStyle()
 
-		# Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate')
+		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status'),payment_type=Concat('history_order__payment_mode',Value(' '),'history_order__payment_gateway')).values_list('created','evaluation__customer__name','order_no','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no' , 'job_status', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost','amount_paid','payment_type','history_order__paid_date','remining_amount').order_by('-id')
+	
+		#removing duplicates
+		found = set()
 
-		rows = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).values_list('created','evaluation__customer__name','order_no','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no' , 'job_status', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost','amount_paid','history_order__payment_mode','history_order__paid_date','remining_amount').order_by('-id')
+		rows = []
+
+		for order in orders:
+			if order[2] not in found:
+				order_list = list(order)
+				order_list[6] = order_list[6][9:]
+				order = tuple(order_list)
+				rows.append(order)
+			found.add(order[2])
+
+	
 	
 	if report_type == 'acceptedjobs':
 
@@ -861,9 +883,23 @@ def export_users_xls(request):
 		# Sheet body, remaining rows
 		font_style = xlwt.XFStyle()
 
-		# Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate')
+		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).values_list('created','evaluation__customer__name','order_no','evaluation__created','evaluation__quatation_status','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no', 'order_scheduler_order__start_at', 'job_status', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost').order_by('-id')
 
-		rows = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).values_list('created','evaluation__customer__name','order_no','evaluation__created','evaluation__quatation_status','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no', 'order_scheduler_order__start_at', 'job_status', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost').order_by('-id')
+		#removing duplicates
+		found = set()
+
+		rows = []
+
+		for order in orders:
+			if order[2] not in found:
+				order_list = list(order)
+				order_list[8] = order_list[8][9:]
+				order = tuple(order_list)
+				rows.append(order)
+			found.add(order[2])
+
+		print(rows,"lol")
+
 
 	if report_type == 'rejectedjobs':
 
@@ -885,9 +921,20 @@ def export_users_xls(request):
 		# Sheet body, remaining rows
 		font_style = xlwt.XFStyle()
 
-		# Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate')
+		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).values_list('created','evaluation__customer__name','order_no','evaluation__created','evaluation__quatation_status','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no', 'order_scheduler_order__start_at', 'job_status', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost').order_by('-id')
+	
+		#removing duplicates
+		found = set()
 
-		rows = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).values_list('created','evaluation__customer__name','order_no','evaluation__created','evaluation__quatation_status','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no', 'order_scheduler_order__start_at', 'job_status', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost').order_by('-id')
+		rows = []
+
+		for order in orders:
+			if order[2] not in found:
+				order_list = list(order)
+				order_list[8] = order_list[8][9:]
+				order = tuple(order_list)
+				rows.append(order)
+			found.add(order[2])
 	
 	if report_type == 'onetime':
 
@@ -909,9 +956,34 @@ def export_users_xls(request):
 		# Sheet body, remaining rows
 		font_style = xlwt.XFStyle()
 
-		# Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate')
+		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status'),payment_type=Concat('history_order__payment_mode',Value(' '),'history_order__payment_gateway')).annotate(total_jobs=Count('order_scheduler_order') or 0 + Count('investigation_orders') or 0 , pending_jobs=Sum(Case(When(Q(investigation_orders__followup_investigation__status='INVESTIGATOR_APPROVED')|Q(investigation_orders__followup_investigation__status='FOLLOWUP_IN_PROGRESS'),then=1),default=0,output_field=IntegerField())) + Sum(Case(When(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS'),then=1),default=0,output_field=IntegerField()))).values_list('created','evaluation__customer__name','order_no','evaluation__call_attender__name' , 'order_no', 'job_status', 'total_jobs', 'pending_jobs', 'order_scheduler_order__end_at', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost','amount_paid','payment_type','history_order__paid_date','remining_amount').order_by('-id')
+	
+		#remove duplicates
+		found = set()
 
-		rows = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).annotate(total_jobs=Count('order_scheduler_order') or 0 + Count('investigation_orders') or 0 , pending_jobs=Sum(Case(When(Q(investigation_orders__followup_investigation__status='INVESTIGATOR_APPROVED')|Q(investigation_orders__followup_investigation__status='FOLLOWUP_IN_PROGRESS'),then=1),default=0,output_field=IntegerField())) + Sum(Case(When(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS'),then=1),default=0,output_field=IntegerField()))).values_list('created','evaluation__customer__name','order_no','evaluation__call_attender__name' , 'order_no', 'job_status', 'total_jobs', 'pending_jobs', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost','amount_paid','history_order__payment_mode','history_order__paid_date','remining_amount').order_by('-id')
+		rows = []
+
+		#invoice no and job completion date
+		for order in orders:
+			if order[2] not in found:
+				order_list = list(order)
+
+				order_completion_date = OrderScheduler.objects.filter(is_active=True,order__order_no=order_list[4]).last()
+				followup_completion_date = FollowUpScheduler.objects.filter(is_active=True,follow_up__investigation__order__order_no=order_list[4]).last()
+
+				
+				if followup_completion_date != None :
+					order_list[8] = followup_completion_date.end_at
+				else:
+					if order_completion_date != None :
+						order_list[8] = order_completion_date.end_at
+					else:
+						order_list[8] = '-'
+
+				order_list[4] = order_list[4][9:]
+				order = tuple(order_list)
+				rows.append(order)
+			found.add(order[2])
 	
 	if report_type == 'subscription':
 
@@ -933,9 +1005,33 @@ def export_users_xls(request):
 		# Sheet body, remaining rows
 		font_style = xlwt.XFStyle()
 
-		# Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate')
+		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status'),payment_type=Concat('history_order__payment_mode',Value(' '),'history_order__payment_gateway')).annotate(total_jobs=Count('order_scheduler_order') or 0 + Count('investigation_orders') or 0 , pending_jobs=Sum(Case(When(Q(investigation_orders__followup_investigation__status='INVESTIGATOR_APPROVED')|Q(investigation_orders__followup_investigation__status='FOLLOWUP_IN_PROGRESS'),then=1),default=0,output_field=IntegerField())) + Sum(Case(When(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS'),then=1),default=0,output_field=IntegerField()))).values_list('created','evaluation__customer__name','order_no','evaluation__call_attender__name' , 'order_no', 'job_status', 'total_jobs', 'pending_jobs', 'order_scheduler_order__end_at', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost','amount_paid','payment_type','history_order__paid_date','remining_amount').order_by('-id')
+	
+		#removing duplicates
+		found = set()
 
-		rows = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).annotate(total_jobs=Count('order_scheduler_order') or 0 + Count('investigation_orders') or 0 , pending_jobs=Sum(Case(When(Q(investigation_orders__followup_investigation__status='INVESTIGATOR_APPROVED')|Q(investigation_orders__followup_investigation__status='FOLLOWUP_IN_PROGRESS'),then=1),default=0,output_field=IntegerField())) + Sum(Case(When(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS'),then=1),default=0,output_field=IntegerField()))).values_list('created','evaluation__customer__name','order_no','evaluation__call_attender__name' , 'order_no', 'job_status', 'total_jobs', 'pending_jobs', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost','amount_paid','history_order__payment_mode','history_order__paid_date','remining_amount').order_by('-id')
+		rows = []
+
+		for order in orders:
+			if order[2] not in found:
+				order_list = list(order)
+
+				order_completion_date = OrderScheduler.objects.filter(is_active=True,order__order_no=order_list[4]).last()
+				followup_completion_date = FollowUpScheduler.objects.filter(is_active=True,follow_up__investigation__order__order_no=order_list[4]).last()
+
+				
+				if followup_completion_date != None :
+					order_list[8] = followup_completion_date.end_at
+				else:
+					if order_completion_date != None :
+						order_list[8] = order_completion_date.end_at
+					else:
+						order_list[8] = '-'
+
+				order_list[4] = order_list[4][9:]
+				order = tuple(order_list)
+				rows.append(order)
+			found.add(order[2])
 	
 	if report_type == 'customer':
 
@@ -956,10 +1052,18 @@ def export_users_xls(request):
 		# Sheet body, remaining rows
 		font_style = xlwt.XFStyle()
 
-		# Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate')
+		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(payment_type=Concat('history_order__payment_mode',Value(' '),'history_order__payment_gateway')).values_list('created','evaluation__customer__name','order_no', 'evaluation__payment_method','evaluation__total_cost','amount_paid','payment_type','history_order__paid_date').order_by('-id')
 
-		rows = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).values_list('created','evaluation__customer__name','order_no', 'evaluation__payment_method','evaluation__total_cost','amount_paid','history_order__payment_mode','history_order__paid_date').order_by('-id')
+		#removing duplicates
+		found = set()
 
+		rows = []
+
+		for order in orders:
+			if order[2] not in found:
+				rows.append(order)
+			found.add(order[2])
+	
 	if report_type == 'customeroutstanding':
 
 		response = HttpResponse(content_type='application/ms-excel')
@@ -980,10 +1084,36 @@ def export_users_xls(request):
 		# Sheet body, remaining rows
 		font_style = xlwt.XFStyle()
 
-		# Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate')
+		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status'),payment_type=Concat('history_order__payment_mode',Value(' '),'history_order__payment_gateway')).values_list('created','evaluation__customer__name','order_no','order_no', 'job_status', 'order_scheduler_order__end_at', 'evaluation__payment_method' ,'evaluation__total_cost','amount_paid','payment_type','history_order__paid_date','remining_amount').order_by('-id')
 
-		rows = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).values_list('created','evaluation__customer__name','order_no','order_no', 'job_status', 'evaluation__payment_method' ,'evaluation__total_cost','amount_paid','history_order__payment_mode','history_order__paid_date','remining_amount').order_by('-id')
+		#removing duplicates
+		found = set()
 
+		rows = []
+
+		for order in orders:
+			if order[2] not in found:
+
+				order_list = list(order)
+
+				order_completion_date = OrderScheduler.objects.filter(is_active=True,order__order_no=order_list[3]).last()
+				followup_completion_date = FollowUpScheduler.objects.filter(is_active=True,follow_up__investigation__order__order_no=order_list[3]).last()
+
+				
+				if followup_completion_date != None :
+					order_list[5] = followup_completion_date.end_at
+				else:
+					if order_completion_date != None :
+						order_list[5] = order_completion_date.end_at
+					else:
+						order_list[5] = '-'
+					
+
+				order_list[3] = order_list[3][9:]
+				order = tuple(order_list)
+				rows.append(order)
+
+			found.add(order[2])
 
 
 	rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
@@ -994,4 +1124,10 @@ def export_users_xls(request):
 			ws.write(row_num, col_num, row[col_num], font_style)
 
 	wb.save(response)
+
+	print(response.status_code,"resp")
+	
 	return response
+
+
+	
