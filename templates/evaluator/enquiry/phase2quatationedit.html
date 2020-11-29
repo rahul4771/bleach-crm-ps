@@ -667,19 +667,19 @@ $("#id_form-TOTAL_FORMS").val("{{evaluation_details.evaluationbooks|length}}");
   {% endfor %}
 
   //tendative date initial
-  //$("#id_form-{{forloop.counter0}}-tendative_date").datetimepicker({ 
-  //  pickTime: false, 
-  //  format: "DD-MM-YYYY",
-  //  minDate: new Date(),
-  //});
+  $("#id_form-{{forloop.counter0}}-tendative_date").datetimepicker({ 
+    pickTime: false, 
+    format: "DD-MM-YYYY",
+    minDate: new Date(),
+  });
 
 //tendative dates initial
-//  $("#id_form-{{forloop.counter0}}-tendative_dates").datepicker({ 
-///    multidate: true,
-///    closeOnDateSelect: true,
-//    format: "dd-mm-yyyy",
-//    startDate: new Date(),
-//  });
+  $("#id_form-{{forloop.counter0}}-tendative_dates").datepicker({ 
+    multidate: true,
+    closeOnDateSelect: true,
+    format: "dd-mm-yyyy",
+    startDate: new Date(),
+  });
 
 //initial time
 $("#id_form-{{forloop.counter0}}-tendative_time").datetimepicker({
@@ -695,12 +695,18 @@ $("#id_form-{{forloop.counter0}}-tendative_time, #id_form-{{forloop.counter0}}-n
         datetimecheck($("#id_form-{{forloop.counter0}}-tendative_time").val(),$("#id_form-{{forloop.counter0}}-tendative_dates").val(),'subscription',"{{forloop.counter0}}");
     }
 
+    var clean_duration = $("#id_form-{{forloop.counter0}}-cleaning_hours").val();
+    var order_duration = clean_duration.split('.');
+
+    //$("#id_form-{{forloop.counter0}}-tendative_dates").datepicker('remove');
+    //$("#id_form-{{forloop.counter0}}-tendative_date").datepicker('remove');
+
     $.ajax({
             url: "{% url 'agent:scheduled-dates' %}",
             data: {
             'booking_time': $("#id_form-{{forloop.counter0}}-tendative_time").val(),
             'number_of_cleaners':$("#id_form-{{forloop.counter0}}-number_of_cleaners").val(),
-            'cleaning_duration':$("#id_form-{{forloop.counter0}}-cleaning_hours").val()
+            'cleaning_duration':order_duration[0]
             },
             dataType: "json",
             type: "GET",
@@ -709,7 +715,7 @@ $("#id_form-{{forloop.counter0}}-tendative_time, #id_form-{{forloop.counter0}}-n
             success: function(data_dates) {
                 console.log(data_dates,"dates2")
 
-                var disableSpecificDates = ['2-12-2020','5-12-2020','15-12-2020'];
+                disableSpecificDates = Object.keys(data_dates['cleaners_busy_dates']).concat(Object.keys(data_dates['leaders_busy_dates']))
 
                 //one time date
                 $(function () {

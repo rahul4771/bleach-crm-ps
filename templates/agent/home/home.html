@@ -1284,6 +1284,8 @@ $(".order_schedule").click(function(){
 
     console.log(clean_duration,order_duration,"lop")
 
+    //$("#order_schedule_date_id").datepicker('remove');
+
     $.ajax({
             url: "{% url 'agent:scheduled-dates' %}",
             data: {
@@ -1298,32 +1300,41 @@ $(".order_schedule").click(function(){
             success: function(data_dates) {
                 console.log(data_dates,"dates2")
 
-                var disableSpecificDates = ['2-12-2020','5-12-2020','15-12-2020'];
+                disableSpecificDates = Object.keys(data_dates['cleaners_busy_dates']).concat(Object.keys(data_dates['leaders_busy_dates']))
 
-                $('#order_schedule_date_id').datetimepicker({
-                      pickTime: false, 
-                      format: "DD-MM-YYYY",
-                      disabledDates: disableSpecificDates,
-                      startDate: new Date(),
-                      minDate: new Date(),
-                      autoclose:true,
-                      }).on('changeDate', function (ev) {
-                      $(this).datetimepicker('hide');
-                  });
+                $(function () {
+                $("#order_schedule_date_id").datepicker({ 
+                    closeOnDateSelect: true,
+                    format: "dd-mm-yyyy", 
+
+                    beforeShowDay: function(date){
+                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+                    if(disableSpecificDates.indexOf(dmy) != -1){
+                    return false;
+                    }
+                    else{
+                    return true;
+                    }
+                    },
+
+                    startDate:new Date(),
+                    minDate:new Date()
+                });
+                });
                 
             }
             
         });
     //date picker setup for conirm 
-    //$('#order_schedule_date_id').datetimepicker({
-    //      pickTime: false, 
-    //      format: "DD-MM-YYYY",
-    //      startDate: new Date(),
-    //      minDate: new Date(),
-    //      autoclose:true,
-    //    }).on('changeDate', function (ev) {
-    //      $(this).datetimepicker('hide');
-    //  });
+    $('#order_schedule_date_id').datetimepicker({
+          pickTime: false, 
+          format: "DD-MM-YYYY",
+          startDate: new Date(),
+          minDate: new Date(),
+          autoclose:true,
+        }).on('changeDate', function (ev) {
+          $(this).datetimepicker('hide');
+      });
 
     //time picker setup for confirm
     $('#order_schedule_time_id').datetimepicker({
@@ -1340,6 +1351,8 @@ $(".order_schedule").click(function(){
     
       var clean_duration = $("#order_schedule_duration").val();
       var clean_duration =clean_duration.split('.');
+
+      //$("#order_schedule_date_id").datepicker('remove');
       
       $.ajax({
             url: "{% url 'agent:scheduled-dates' %}",
@@ -1355,18 +1368,27 @@ $(".order_schedule").click(function(){
             success: function(data_dates) {
                 console.log(data_dates,"dates2")
 
-                var disableSpecificDates = ['4-12-2020','8-12-2020','15-12-2020'];
+                disableSpecificDates = Object.keys(data_dates['cleaners_busy_dates']).concat(Object.keys(data_dates['leaders_busy_dates']))
 
-                $('#order_schedule_date_id').datetimepicker({
-                      pickTime: false, 
-                      format: "DD-MM-YYYY",
-                      disabledDates: disableSpecificDates,
-                      startDate: new Date(),
-                      minDate: new Date(),
-                      autoclose:true,
-                      }).on('changeDate', function (ev) {
-                      $(this).datetimepicker('hide');
-                  });
+                $(function () {
+                $("#order_schedule_date_id").datepicker({ 
+                    closeOnDateSelect: true,
+                    format: "dd-mm-yyyy", 
+
+                    beforeShowDay: function(date){
+                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+                    if(disableSpecificDates.indexOf(dmy) != -1){
+                    return false;
+                    }
+                    else{
+                    return true;
+                    }
+                    },
+
+                    startDate:new Date(),
+                    minDate:new Date()
+                });
+                });
                 
             }
             
@@ -1435,6 +1457,8 @@ $(".followup_schedule").click(function(){
     var clean_duration = $("#followup_schedule_duration").val();
     var followup_duration =clean_duration.split('.');
 
+    //$("#followup_schedule_date_id").datepicker('remove');
+
     $.ajax({
             url: "{% url 'agent:scheduled-dates' %}",
             data: {
@@ -1449,29 +1473,38 @@ $(".followup_schedule").click(function(){
             success: function(data_dates) {
                 console.log(data_dates,"dates2")
 
-                var disableSpecificDates = ['2-12-2020','5-12-2020','15-12-2020'];
+                disableSpecificDates = Object.keys(data_dates['cleaners_busy_dates']).concat(Object.keys(data_dates['leaders_busy_dates']))
 
-                $('#followup_schedule_date_id').datetimepicker({
-                      pickTime: false, 
-                      format: "DD-MM-YYYY",
-                      disabledDates: disableSpecificDates,
-                      startDate: new Date(),
-                      minDate: new Date(),
-                      autoclose:true,
-                      }).on('changeDate', function (ev) {
-                      $(this).datetimepicker('hide');
-                  });
+                $(function () {
+                $("#followup_schedule_date_id").datepicker({ 
+                    closeOnDateSelect: true,
+                    format: "dd-mm-yyyy", 
+
+                    beforeShowDay: function(date){
+                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+                    if(disableSpecificDates.indexOf(dmy) != -1){
+                    return false;
+                    }
+                    else{
+                    return true;
+                    }
+                    },
+
+                    startDate:new Date(),
+                    minDate:new Date()
+                });
+                });
                 
             }
             
         });
     //date picker setup for conirm 
-    //$('#followup_schedule_date_id').datepicker({
-    //      pickTime: false, 
-    //      format: "dd-mm-yyyy",
-    //      startDate: new Date(),
-    //      minDate: new Date(),
-    //    });
+    $('#followup_schedule_date_id').datepicker({
+          pickTime: false, 
+          format: "dd-mm-yyyy",
+          startDate: new Date(),
+          minDate: new Date(),
+        });
 
     //time picker setup for confirm
     $('#followup_schedule_time_id').datetimepicker({
@@ -1486,6 +1519,8 @@ $(".followup_schedule").click(function(){
     
       var clean_duration = $("#order_schedule_duration").val();
       var followup_duration = clean_duration.split('.');
+
+      //$("#followup_schedule_date_id").datepicker('remove');
       
       $.ajax({
             url: "{% url 'agent:scheduled-dates' %}",
@@ -1501,18 +1536,27 @@ $(".followup_schedule").click(function(){
             success: function(data_dates) {
                 console.log(data_dates,"dates2")
 
-                var disableSpecificDates = ['2-12-2020','5-12-2020','15-12-2020'];
+                disableSpecificDates = Object.keys(data_dates['cleaners_busy_dates']).concat(Object.keys(data_dates['leaders_busy_dates']))
 
-                $('#followup_schedule_date_id').datetimepicker({
-                      pickTime: false, 
-                      format: "DD-MM-YYYY",
-                      disabledDates: disableSpecificDates,
-                      startDate: new Date(),
-                      minDate: new Date(),
-                      autoclose:true,
-                      }).on('changeDate', function (ev) {
-                      $(this).datetimepicker('hide');
-                  });
+                $(function () {
+                $("#followup_schedule_date_id").datepicker({ 
+                    closeOnDateSelect: true,
+                    format: "dd-mm-yyyy", 
+
+                    beforeShowDay: function(date){
+                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+                    if(disableSpecificDates.indexOf(dmy) != -1){
+                    return false;
+                    }
+                    else{
+                    return true;
+                    }
+                    },
+
+                    startDate:new Date(),
+                    minDate:new Date()
+                });
+                });
                 
             }
             
