@@ -172,20 +172,20 @@
                 {% if book.cleaning_policy == 'ONE TIME SERVICE' %}
                 <div class="enquiry-form-right" style="display:none"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tentative Date(S)</label></div>
-                <input name="form-{{forloop.counter0}}-tendative_dates" id='id_form-{{forloop.counter0}}-tendative_dates' type="text" class="textBox readonly" placeholder=" " value="" readonly> 
+                <input name="form-{{forloop.counter0}}-tendative_dates" id='id_form-{{forloop.counter0}}-tendative_dates' type="text" class="textBox readonly" placeholder="Please select no. of cleaners, duration and time. " value="" readonly> 
                 </div><!--enquiry-form-right-->
                 <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tentative Date</label></div>
-                <input name="form-{{forloop.counter0}}-tendative_date" id='id_form-{{forloop.counter0}}-tendative_date' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{{orderschedule.start_at|date:'d-m-Y'}}{% endfor %}"> 
+                <input name="form-{{forloop.counter0}}-tendative_date" id='id_form-{{forloop.counter0}}-tendative_date' type="text" class="textBox readonly" placeholder="Please select no. of cleaners, duration and time. " value="{% for orderschedule in book.orderschedules %}{{orderschedule.start_at|date:'d-m-Y'}}{% endfor %}"> 
                 </div><!--enquiry-form-right-->
                 {% else %}
                 <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tentative Date(S)</label></div>
-                <input name="form-{{forloop.counter0}}-tendative_dates" id='id_form-{{forloop.counter0}}-tendative_dates' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{{orderschedule.start_at|date:'d-m-Y'}}{% if not forloop.last %},{% endif %}{% endfor %}"> 
+                <input name="form-{{forloop.counter0}}-tendative_dates" id='id_form-{{forloop.counter0}}-tendative_dates' type="text" class="textBox readonly" placeholder="Please select no. of cleaners, duration and time. " value="{% for orderschedule in book.orderschedules %}{{orderschedule.start_at|date:'d-m-Y'}}{% if not forloop.last %},{% endif %}{% endfor %}"> 
                 </div><!--enquiry-form-right-->
                 <div class="enquiry-form-right" style="display:none"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tentative Date</label></div>
-                <input name="form-{{forloop.counter0}}-tendative_date" id='id_form-{{forloop.counter0}}-tendative_date' type="text" class="textBox readonly" placeholder=" " value="" readonly> 
+                <input name="form-{{forloop.counter0}}-tendative_date" id='id_form-{{forloop.counter0}}-tendative_date' type="text" class="textBox readonly" placeholder="Please select no. of cleaners, duration and time. " value="" readonly> 
                 </div><!--enquiry-form-right-->
                 {% endif %}
 
@@ -674,19 +674,19 @@ $("#id_form-TOTAL_FORMS").val("{{evaluation_details.evaluationbooks|length}}");
   {% endfor %}
 
   //tendative date initial
-  $("#id_form-{{forloop.counter0}}-tendative_date").datetimepicker({ 
-    pickTime: false, 
-    format: "DD-MM-YYYY",
-    minDate: new Date(),
-  });
+  //$("#id_form-{{forloop.counter0}}-tendative_date").datetimepicker({ 
+  //  pickTime: false, 
+  //  format: "DD-MM-YYYY",
+  //  minDate: new Date(),
+  //});
 
 //tendative dates initial
-  $("#id_form-{{forloop.counter0}}-tendative_dates").datepicker({ 
-    multidate: true,
-    closeOnDateSelect: true,
-    format: "dd-mm-yyyy",
-    startDate: new Date(),
-  });
+//  $("#id_form-{{forloop.counter0}}-tendative_dates").datepicker({ 
+//    multidate: true,
+//    closeOnDateSelect: true,
+//    format: "dd-mm-yyyy",
+//    startDate: new Date(),
+//  });
 
 //initial time
 $("#id_form-{{forloop.counter0}}-tendative_time").datetimepicker({
@@ -701,6 +701,59 @@ $("#id_form-{{forloop.counter0}}-tendative_time").change(function(){
     }else{
         datetimecheck($("#id_form-{{forloop.counter0}}-tendative_time").val(),$("#id_form-{{forloop.counter0}}-tendative_dates").val(),'subscription',"{{forloop.counter0}}");
     };
+
+    $.ajax({
+            url: "{% url 'agent:scheduled-dates' %}",
+            data: {
+            'booking_time': $(this).val(),
+            'number_of_cleaners':$("#id_form-{{forloop.counter0}}-number_of_cleaners").val(),
+            'cleaning_duration':$("#id_form-{{forloop.counter0}}-cleaning_hours").val()
+            },
+            dataType: "json",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            
+            success: function(data_dates) {
+                console.log(data_dates,"dates2")
+
+                var disableSpecificDates = ['2-12-2020','5-12-2020','15-12-2020'];
+
+                //one time date
+                $(function () {
+                $("#id_form-{{forloop.counter0}}-tendative_date").datetimepicker({ 
+                    pickTime: false, 
+                    format: "DD-MM-YYYY",
+                    disabledDates: disableSpecificDates,
+                    startDate:new Date(),
+                    minDate:new Date()
+                });
+                });
+
+                //subscription date
+                $(function () {
+                $("#id_form-{{forloop.counter0}}-tendative_dates").datepicker({ 
+                    multidate: true,
+                    closeOnDateSelect: true,
+                    format: "dd-mm-yyyy", 
+
+                    beforeShowDay: function(date){
+                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+                    if(disableSpecificDates.indexOf(dmy) != -1){
+                    return false;
+                    }
+                    else{
+                    return true;
+                    }
+                    },
+
+                    startDate:new Date(),
+                    minDate:new Date()
+                });
+                });
+                
+            }
+            
+        });
     
 });
 

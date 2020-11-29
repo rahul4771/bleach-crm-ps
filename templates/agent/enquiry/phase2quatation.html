@@ -166,11 +166,11 @@
                 </div><!--enquiry-form-left-->
                 <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tentative Date</label></div>
-                <input name="form-0-tendative_date" id='id_form-0-tendative_date' type="text" class="textBox readonly" placeholder=" " readonly> 
+                <input name="form-0-tendative_date" id='id_form-0-tendative_date' type="text" class="textBox readonly" placeholder="Please select no. of cleaners, duration and time." readonly> 
                 </div><!--enquiry-form-right-->
             	<div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tentative Date(S)</label></div>
-                <input name="form-0-tendative_dates" id='id_form-0-tendative_dates' type="text" class="textBox readonly" placeholder=" " readonly> 
+                <input name="form-0-tendative_dates" id='id_form-0-tendative_dates' type="text" class="textBox readonly" placeholder="Please select no. of cleaners, duration and time." readonly> 
                 </div><!--enquiry-form-right-->
 		</div> <!--enquiry-form-Wrapper enquiry-boxes-->
         
@@ -603,26 +603,29 @@ $('document').ready(function(){
 
     function add_row(){
         x++;
+
         //tendative date initial
-        $(function () {
-          $("#id_form-"+x+"-tendative_date").datetimepicker({ 
-            pickTime: false, 
-            format: "DD-MM-YYYY",
-            startDate:new Date(),
-            minDate:new Date()
-          });
-        });
+        //$(function () {
+        //  $("#id_form-"+x+"-tendative_date").datetimepicker({ 
+        //    pickTime: false, 
+        //    format: "DD-MM-YYYY",
+        //    startDate:new Date(),
+        //    minDate:new Date()
+        //  });
+        //});
+
 
         //tendative dates initial
-        $(function () {
-          $("#id_form-"+x+"-tendative_dates").datepicker({ 
-            multidate: true,
-            closeOnDateSelect: true,
-            format: "dd-mm-yyyy", 
-            startDate:new Date(),
-            minDate:new Date()
-          });
-        });
+        //$(function () {
+        //  $("#id_form-"+x+"-tendative_dates").datepicker({ 
+        //    multidate: true,
+        //    closeOnDateSelect: true,
+        //    format: "dd-mm-yyyy", 
+        //    startDate:new Date(),
+        //    minDate:new Date()
+        //  });
+        //});
+
         //tendative time
         $("#id_form-"+x+"-tendative_time").datetimepicker({
                 pickDate:false,
@@ -664,6 +667,42 @@ $('document').ready(function(){
             
             success: function(data_dates) {
                 console.log(data_dates,"dates1")
+
+                var disableSpecificDates = ['2-12-2020','5-12-2020','15-12-2020'];
+
+                //one time date
+                $(function () {
+                $("#id_form-"+x+"-tendative_date").datetimepicker({ 
+                    pickTime: false, 
+                    format: "DD-MM-YYYY",
+                    disabledDates: disableSpecificDates,
+                    startDate:new Date(),
+                    minDate:new Date()
+                });
+                });
+
+                //subscription date
+                $(function () {
+                $("#id_form-"+x+"-tendative_dates").datepicker({ 
+                    multidate: true,
+                    closeOnDateSelect: true,
+                    format: "dd-mm-yyyy", 
+
+                    beforeShowDay: function(date){
+                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+                    if(disableSpecificDates.indexOf(dmy) != -1){
+                    return false;
+                    }
+                    else{
+                    return true;
+                    }
+                    },
+
+                    startDate:new Date(),
+                    minDate:new Date()
+                });
+                });
+                
             }
             
         });
@@ -684,24 +723,24 @@ $('document').ready(function(){
     }
 
 //tendative date initial
-$(function () {
-  $("#id_form-"+x+"-tendative_date").datetimepicker({ 
-    pickTime: false, 
-    format: "DD-MM-YYYY",
-    minDate: new Date(),
-  });
-});
+//$(function () {
+//  $("#id_form-"+x+"-tendative_date").datetimepicker({ 
+//    pickTime: false, 
+//    format: "DD-MM-YYYY",
+//    minDate: new Date(),
+//  });
+//});
 
 //tendative dates initial
-$(function () {
-  $("#id_form-"+x+"-tendative_dates").datepicker({
-    multidate: true,
-    closeOnDateSelect: true,
-    format: "dd-mm-yyyy",
-    startDate: new Date(),
-    minDate: new Date(),
-  });
-});
+//$(function () {
+//  $("#id_form-"+x+"-tendative_dates").datepicker({
+//    multidate: true,
+//    closeOnDateSelect: true,
+//    format: "dd-mm-yyyy",
+//    startDate: new Date(),
+//    minDate: new Date(),
+//  });
+//});
 
 //initial time
 $("#id_form-"+x+"-tendative_time").datetimepicker({
@@ -734,6 +773,42 @@ $("#id_form-"+x+"-tendative_time").change(function(){
             
             success: function(data_dates) {
                 console.log(data_dates,"dates2")
+
+                var disableSpecificDates = ['2-12-2020','5-12-2020','15-12-2020'];
+
+                //one time date
+                $(function () {
+                $("#id_form-"+x+"-tendative_date").datetimepicker({ 
+                    pickTime: false, 
+                    format: "DD-MM-YYYY",
+                    disabledDates: disableSpecificDates,
+                    startDate:new Date(),
+                    minDate:new Date()
+                });
+                });
+
+                //subscription date
+                $(function () {
+                $("#id_form-"+x+"-tendative_dates").datepicker({ 
+                    multidate: true,
+                    closeOnDateSelect: true,
+                    format: "dd-mm-yyyy", 
+
+                    beforeShowDay: function(date){
+                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+                    if(disableSpecificDates.indexOf(dmy) != -1){
+                    return false;
+                    }
+                    else{
+                    return true;
+                    }
+                    },
+
+                    startDate:new Date(),
+                    minDate:new Date()
+                });
+                });
+                
             }
             
         });
