@@ -200,15 +200,13 @@ class AccountantHome(IsAccountant,View):
 		#to find days
 		for payment in pending_payments:
 
-			if payment.evaluation.payment_method == 'PREPAID':
+			if payment.evaluation.payment_method == 'PREPAID' and payment.orderschedules:
 				very_old_cleaning   = payment.orderschedules[0]
 				payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
-			elif payment.evaluation.payment_method == 'POSTPAID':
+			elif payment.evaluation.payment_method == 'POSTPAID' and payment.orderschedules:
 				very_latest_cleaning=payment.orderschedules[payment.order_scheduler_order__count-1]
 				payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
-
-
-			elif payment.evaluation.payment_method == 'BREAKDOWN':
+			elif payment.evaluation.payment_method == 'BREAKDOWN' and payment.orderschedules:
 			
 				very_old_cleaning   = payment.orderschedules[0]
 				very_latest_cleaning=payment.orderschedules[payment.order_scheduler_order__count-1]
