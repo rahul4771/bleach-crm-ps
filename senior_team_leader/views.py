@@ -425,10 +425,12 @@ class StlHome(IsSeniorTeamLeader,View):
 				cleaning_team.save()
 
 				#update cleaning team members
+				start_at_to_assign=(order_schedule.start_at+timedelta(hours=3)).time()
+				end_at_to_assign  =(order_schedule.end_at+timedelta(hours=3)).time()
 				assigned_cleaners_list   = []
 				for cleaner in assigned_cleaners:
-					assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team,member_id=cleaner,start_at=order_schedule.start_at,end_at=order_schedule.end_at,start_time=followup_schedule.start_at.time(),end_time=followup_schedule.end_at.time()))
-				assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team,member_id=assigned_leader,start_at=order_schedule.start_at,end_at=order_schedule.end_at,start_time=followup_schedule.start_at.time(),end_time=followup_schedule.end_at.time()))
+					assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team,member_id=cleaner,start_at=order_schedule.start_at,end_at=order_schedule.end_at,start_time=start_at_to_assign,end_time=end_at_to_assign))
+				assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team,member_id=assigned_leader,start_at=order_schedule.start_at,end_at=order_schedule.end_at,start_time=start_at_to_assign,end_time=end_at_to_assign))
 				#bulk create
 				CleaningTeamMember.objects.bulk_create(assigned_cleaners_list)
 						
@@ -456,9 +458,6 @@ class StlHome(IsSeniorTeamLeader,View):
 			check_cleaners_assigned = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id__in=assigned_cleaners)
 			check_tl_assigned       = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id=request.POST.get('team_leader'))
 
-			print(schedule_id)
-			print(check_cleaners_assigned)
-			print(check_tl_assigned)
 			if schedule_id and not check_cleaners_assigned and not check_tl_assigned:
 				#update followup team leader
 				assigned_leader  = request.POST.get('team_leader')
@@ -468,10 +467,12 @@ class StlHome(IsSeniorTeamLeader,View):
 				followup_team.save()
 
 				#update Followup team members
+				start_at_to_assign=(followup_schedule.start_at+timedelta(hours=3)).time()
+				end_at_to_assign  =(followup_schedule.end_at+timedelta(hours=3)).time()
 				assigned_cleaners_list   = []
 				for cleaner in assigned_cleaners:
-					assigned_cleaners_list.append(FollowUpTeamMember(team=followup_team,member_id=cleaner,start_at=followup_schedule.start_at,end_at=followup_schedule.end_at,start_time=followup_schedule.start_at.time(),end_time=followup_schedule.end_at.time()))
-				assigned_cleaners_list.append(FollowUpTeamMember(team=followup_team,member_id=assigned_leader,start_at=followup_schedule.start_at,end_at=followup_schedule.end_at,start_time=followup_schedule.start_at.time(),end_time=followup_schedule.end_at.time()))
+					assigned_cleaners_list.append(FollowUpTeamMember(team=followup_team,member_id=cleaner,start_at=followup_schedule.start_at,end_at=followup_schedule.end_at,start_time=start_at_to_assign,end_time=end_at_to_assign))
+				assigned_cleaners_list.append(FollowUpTeamMember(team=followup_team,member_id=assigned_leader,start_at=followup_schedule.start_at,end_at=followup_schedule.end_at,start_time=start_at_to_assign,end_time=end_at_to_assign))
 				#bulk create
 				FollowUpTeamMember.objects.bulk_create(assigned_cleaners_list)	
 
@@ -653,11 +654,14 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 			cleaning_team_assign_form_save.created_by        = request.user
 			cleaning_team_assign_form_save.save()
 
+
 			#cleaners
+			start_at_to_assign=(order_schedule.start_at+timedelta(hours=3)).time()
+			end_at_to_assign  =(order_schedule.end_at+timedelta(hours=3)).time()
 			assigned_cleaners_list   = []
 			for cleaner in assigned_cleaners:
-				assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team_assign_form_save,member_id=cleaner,start_at=order_schedule.start_at,end_at=order_schedule.end_at,start_time=order_schedule.start_at.time(),end_time=order_schedule.end_at.time()))
-			assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team_assign_form_save,member=cleaning_team_assign_form_save.team_leader,start_at=order_schedule.start_at,end_at=order_schedule.end_at,start_time=order_schedule.start_at.time(),end_time=order_schedule.end_at.time()))
+				assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team_assign_form_save,member_id=cleaner,start_at=order_schedule.start_at,end_at=order_schedule.end_at,start_time=start_at_to_assign,end_time=end_at_to_assign))
+			assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team_assign_form_save,member=cleaning_team_assign_form_save.team_leader,start_at=order_schedule.start_at,end_at=order_schedule.end_at,start_time=start_at_to_assign,end_time=end_at_to_assign))
 			#bulk create
 			CleaningTeamMember.objects.bulk_create(assigned_cleaners_list)	
 
@@ -726,10 +730,12 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 			follow_up_team_assign_form_save.save()
 
 			#cleaners
+			start_at_to_assign=(followup_schedule.start_at+timedelta(hours=3)).time()
+			end_at_to_assign  =(followup_schedule.end_at+timedelta(hours=3)).time()
 			assigned_cleaners_list   = []
 			for cleaner in assigned_cleaners:
-				assigned_cleaners_list.append(FollowUpTeamMember(team=follow_up_team_assign_form_save,member_id=cleaner,start_at=followup_schedule.start_at,end_at=followup_schedule.end_at,start_time=followup_schedule.start_at.time(),end_time=followup_schedule.end_at.time()))
-			assigned_cleaners_list.append(FollowUpTeamMember(team=follow_up_team_assign_form_save,member=follow_up_team_assign_form_save.team_leader,start_at=followup_schedule.start_at,end_at=followup_schedule.end_at,start_time=followup_schedule.start_at.time(),end_time=followup_schedule.end_at.time()))
+				assigned_cleaners_list.append(FollowUpTeamMember(team=follow_up_team_assign_form_save,member_id=cleaner,start_at=followup_schedule.start_at,end_at=followup_schedule.end_at,start_time=start_at_to_assign,end_time=end_at_to_assign))
+			assigned_cleaners_list.append(FollowUpTeamMember(team=follow_up_team_assign_form_save,member=follow_up_team_assign_form_save.team_leader,start_at=followup_schedule.start_at,end_at=followup_schedule.end_at,start_time=start_at_to_assign,end_time=end_at_to_assign))
 			#bulk create
 			FollowUpTeamMember.objects.bulk_create(assigned_cleaners_list)	
 
