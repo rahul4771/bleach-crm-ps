@@ -1279,12 +1279,17 @@ $(".order_schedule").click(function(){
 
     $('#order_schedule_id').val($(this).data('id'));
 
+    var clean_duration = $("#order_schedule_duration").val();
+    var order_duration = clean_duration.split('.');
+
+    console.log(clean_duration,order_duration,"lop")
+
     $.ajax({
             url: "{% url 'agent:scheduled-dates' %}",
             data: {
             'booking_time': $('#order_schedule_time_id').val(),
             'number_of_cleaners':$("#order_schedule_cleaners").val(),
-            'cleaning_duration':$("#order_schedule_duration").val()
+            'cleaning_duration':order_duration[0]
             },
             dataType: "json",
             type: "GET",
@@ -1329,14 +1334,19 @@ $(".order_schedule").click(function(){
     datetimecheck($('#order_schedule_time_id').val(),$('#order_schedule_date_id').val(),'order');
 
     $('#order_schedule_time_id').change(function(){
+
+      $('#order_schedule_date_id').datetimepicker('remove');
       datetimecheck($('#order_schedule_time_id').val(),$('#order_schedule_date_id').val(),'order');
     
+      var clean_duration = $("#order_schedule_duration").val();
+      var clean_duration =clean_duration.split('.');
+      
       $.ajax({
             url: "{% url 'agent:scheduled-dates' %}",
             data: {
             'booking_time': $(this).val(),
             'number_of_cleaners':$("#order_schedule_cleaners").val(),
-            'cleaning_duration':$("#order_schedule_duration").val()
+            'cleaning_duration':clean_duration[0]
             },
             dataType: "json",
             type: "GET",
@@ -1345,7 +1355,7 @@ $(".order_schedule").click(function(){
             success: function(data_dates) {
                 console.log(data_dates,"dates2")
 
-                var disableSpecificDates = ['2-12-2020','5-12-2020','15-12-2020'];
+                var disableSpecificDates = ['4-12-2020','8-12-2020','15-12-2020'];
 
                 $('#order_schedule_date_id').datetimepicker({
                       pickTime: false, 
@@ -1422,12 +1432,15 @@ $(".followup_schedule").click(function(){
 
     $('#followup_schedule_id').val($(this).data('id'));
 
+    var clean_duration = $("#followup_schedule_duration").val();
+    var followup_duration =clean_duration.split('.');
+
     $.ajax({
             url: "{% url 'agent:scheduled-dates' %}",
             data: {
             'booking_time': $("#followup_schedule_time_id").val(),
             'number_of_cleaners':$("#followup_schedule_cleaners").val(),
-            'cleaning_duration':$("#followup_schedule_duration").val()
+            'cleaning_duration':followup_duration[0]
             },
             dataType: "json",
             type: "GET",
@@ -1471,12 +1484,15 @@ $(".followup_schedule").click(function(){
     $('#followup_schedule_time_id').change(function(){
       datetimecheck($('#followup_schedule_time_id').val(),$('#followup_schedule_date_id').val(),'followup');
     
+      var clean_duration = $("#order_schedule_duration").val();
+      var followup_duration = clean_duration.split('.');
+      
       $.ajax({
             url: "{% url 'agent:scheduled-dates' %}",
             data: {
             'booking_time': $(this).val(),
             'number_of_cleaners':$("#followup_schedule_cleaners").val(),
-            'cleaning_duration':$("#followup_schedule_duration").val()
+            'cleaning_duration':followup_duration[0]
             },
             dataType: "json",
             type: "GET",

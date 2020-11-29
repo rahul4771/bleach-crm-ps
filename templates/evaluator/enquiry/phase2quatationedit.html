@@ -667,19 +667,19 @@ $("#id_form-TOTAL_FORMS").val("{{evaluation_details.evaluationbooks|length}}");
   {% endfor %}
 
   //tendative date initial
-  $("#id_form-{{forloop.counter0}}-tendative_date").datetimepicker({ 
-    pickTime: false, 
-    format: "DD-MM-YYYY",
-    minDate: new Date(),
-  });
+  //$("#id_form-{{forloop.counter0}}-tendative_date").datetimepicker({ 
+  //  pickTime: false, 
+  //  format: "DD-MM-YYYY",
+  //  minDate: new Date(),
+  //});
 
 //tendative dates initial
-  $("#id_form-{{forloop.counter0}}-tendative_dates").datepicker({ 
-    multidate: true,
-    closeOnDateSelect: true,
-    format: "dd-mm-yyyy",
-    startDate: new Date(),
-  });
+//  $("#id_form-{{forloop.counter0}}-tendative_dates").datepicker({ 
+///    multidate: true,
+///    closeOnDateSelect: true,
+//    format: "dd-mm-yyyy",
+//    startDate: new Date(),
+//  });
 
 //initial time
 $("#id_form-{{forloop.counter0}}-tendative_time").datetimepicker({
@@ -694,6 +694,60 @@ $("#id_form-{{forloop.counter0}}-tendative_time").change(function(){
     }else{
         datetimecheck($("#id_form-{{forloop.counter0}}-tendative_time").val(),$("#id_form-{{forloop.counter0}}-tendative_dates").val(),'subscription',"{{forloop.counter0}}");
     }
+
+    $.ajax({
+            url: "{% url 'agent:scheduled-dates' %}",
+            data: {
+            'booking_time': $(this).val(),
+            'number_of_cleaners':$("#id_form-{{forloop.counter0}}-number_of_cleaners").val(),
+            'cleaning_duration':$("#id_form-{{forloop.counter0}}-cleaning_hours").val()
+            },
+            dataType: "json",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            
+            success: function(data_dates) {
+                console.log(data_dates,"dates2")
+
+                var disableSpecificDates = ['2-12-2020','5-12-2020','15-12-2020'];
+
+                //one time date
+                $(function () {
+                $("#id_form-{{forloop.counter0}}-tendative_date").datetimepicker({ 
+                    pickTime: false, 
+                    format: "DD-MM-YYYY",
+                    disabledDates: disableSpecificDates,
+                    startDate:new Date(),
+                    minDate:new Date()
+                });
+                });
+
+                //subscription date
+                $(function () {
+                $("#id_form-{{forloop.counter0}}-tendative_dates").datepicker({ 
+                    multidate: true,
+                    closeOnDateSelect: true,
+                    format: "dd-mm-yyyy", 
+
+                    beforeShowDay: function(date){
+                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+                    if(disableSpecificDates.indexOf(dmy) != -1){
+                    return false;
+                    }
+                    else{
+                    return true;
+                    }
+                    },
+
+                    startDate:new Date(),
+                    minDate:new Date()
+                });
+                });
+                
+            }
+            
+        });
+
 });
 
 $("#id_form-{{forloop.counter0}}-tendative_date").change(function(){
