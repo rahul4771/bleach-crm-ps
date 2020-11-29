@@ -1174,9 +1174,9 @@ class MakeQuatationPhase2(IsEvaluator,View):
 							        )
 
 					#for updating cost details in evaluation details
-					cost     = int(request.POST.get('form-'+str(form_count)+'-estimated_cost')) 
-					discount = int(request.POST.get('form-'+str(form_count)+'-discount'))
-					total    = int(request.POST.get('form-'+str(form_count)+'-total_cost'))
+					cost     = float(request.POST.get('form-'+str(form_count)+'-estimated_cost')) 
+					discount = float(request.POST.get('form-'+str(form_count)+'-discount'))
+					total    = float(request.POST.get('form-'+str(form_count)+'-total_cost'))
 
 					#for creating cleaning schedules and corresponding cleanings
 
@@ -1553,9 +1553,9 @@ class MakeAssignedQuatationPhase2(IsEvaluator,View):
 
 
 					#for updating cost details in evaluation details
-					cost     = int(request.POST.get('form-'+str(form_count)+'-estimated_cost')) 
-					discount = int(request.POST.get('form-'+str(form_count)+'-discount'))
-					total    = int(request.POST.get('form-'+str(form_count)+'-total_cost'))
+					cost     = float(request.POST.get('form-'+str(form_count)+'-estimated_cost')) 
+					discount = float(request.POST.get('form-'+str(form_count)+'-discount'))
+					total    = float(request.POST.get('form-'+str(form_count)+'-total_cost'))
 
 					#for creating cleaning schedules and corresponding cleanings
 
