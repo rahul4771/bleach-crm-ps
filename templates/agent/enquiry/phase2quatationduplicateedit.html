@@ -168,11 +168,6 @@
                 <hr class="hr-dashedpad">    
                 
         <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
-
-                <div class="enquiry-form-left"><!--enquiry-form-left-->
-                <div class=" bold-text common-label"> <label>Tentative Time</label></div>
-                <input name="form-{{forloop.counter0}}-tendative_time" id='id_form-{{forloop.counter0}}-tendative_time' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{%  if forloop.first %}{{orderschedule.start_at|date:'h:i A'}}{% endif %}{% endfor %}" required readonly> 
-                </div><!--enquiry-form-left-->
                 
                 {% if book.cleaning_policy == 'ONE TIME SERVICE' %}
                 <div class="enquiry-form-right" style="display:none"><!--enquiry-form-right-->
