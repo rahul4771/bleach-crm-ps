@@ -646,7 +646,7 @@ $('document').ready(function(){
         $("#id_form-"+x+"-discount").val('0');
         $("#id_form-"+x+"-sectionbutton").prop('value','Add');
 
-        $("#id_form-"+x+"-tendative_time").change(function(){
+        $("#id_form-"+x+"-tendative_time, #id_form-"+x+"-number_of_cleaners , #id_form-"+x+"-cleaning_hours").change(function(){
             var policy = $("#id_form-"+x+"-cleaning_policy").val();
             if (policy == 'ONE TIME SERVICE'){
                 datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_date").val(),'onetime',x);
@@ -654,10 +654,13 @@ $('document').ready(function(){
                 datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_dates").val(),'subscription',x);
             }
 
+            $("#id_form-"+x+"-tendative_dates").datepicker('remove');
+            $("#id_form-"+x+"-tendative_date").datepicker('remove');
+
             $.ajax({
             url: "{% url 'agent:scheduled-dates' %}",
             data: {
-            'booking_time': $(this).val(),
+            'booking_time': $("#id_form-"+x+"-tendative_time").val(),
             'number_of_cleaners':$("#id_form-"+x+"-number_of_cleaners").val(),
             'cleaning_duration':$("#id_form-"+x+"-cleaning_hours").val()
             },
@@ -671,10 +674,21 @@ $('document').ready(function(){
 
                 //one time date
                 $(function () {
-                $("#id_form-"+x+"-tendative_date").datetimepicker({ 
-                    pickTime: false, 
-                    format: "DD-MM-YYYY",
-                    disabledDates: disableSpecificDates,
+                $("#id_form-"+x+"-tendative_date").datepicker({ 
+                    //multidate: true,
+                    closeOnDateSelect: true,
+                    format: "dd-mm-yyyy", 
+
+                    beforeShowDay: function(date){
+                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+                    if(disableSpecificDates.indexOf(dmy) != -1){
+                    return false;
+                    }
+                    else{
+                    return true;
+                    }
+                    },
+
                     startDate:new Date(),
                     minDate:new Date()
                 });
@@ -751,7 +765,7 @@ $("#id_form-"+x+"-tendative_time").datetimepicker({
 
 
 
-$("#id_form-"+x+"-tendative_time").change(function(){
+$("#id_form-"+x+"-tendative_time, #id_form-"+x+"-number_of_cleaners , #id_form-"+x+"-cleaning_hours").change(function(){
     var policy = $("#id_form-"+x+"-cleaning_policy").val();
     if (policy == 'ONE TIME SERVICE'){
         datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_date").val(),'onetime',x);
@@ -759,10 +773,13 @@ $("#id_form-"+x+"-tendative_time").change(function(){
         datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_dates").val(),'subscription',x);
     }
 
+    $("#id_form-"+x+"-tendative_dates").datepicker('remove');
+    $("#id_form-"+x+"-tendative_date").datepicker('remove');
+
     $.ajax({
             url: "{% url 'agent:scheduled-dates' %}",
             data: {
-            'booking_time': $(this).val(),
+            'booking_time': $("#id_form-"+x+"-tendative_time").val(),
             'number_of_cleaners':$("#id_form-"+x+"-number_of_cleaners").val(),
             'cleaning_duration':$("#id_form-"+x+"-cleaning_hours").val()
             },
@@ -772,14 +789,26 @@ $("#id_form-"+x+"-tendative_time").change(function(){
             
             success: function(data_dates) {
                 console.log(data_dates,"dates2")
-                disableSpecificDates = Object.keys(data_dates['cleaners_busy_dates']).concat(Object.keys(data_dates['leaders_busy_dates']))
+                //disableSpecificDates = Object.keys(data_dates['cleaners_busy_dates']).concat(Object.keys(data_dates['leaders_busy_dates']))
+                var disableSpecificDates = ['2-12-2020','5-12-2020','15-12-2020'];
 
                 //one time date
                 $(function () {
-                $("#id_form-"+x+"-tendative_date").datetimepicker({ 
-                    pickTime: false, 
-                    format: "DD-MM-YYYY",
-                    disabledDates: disableSpecificDates,
+                $("#id_form-"+x+"-tendative_date").datepicker({ 
+                    //multidate: true,
+                    closeOnDateSelect: true,
+                    format: "dd-mm-yyyy", 
+
+                    beforeShowDay: function(date){
+                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+                    if(disableSpecificDates.indexOf(dmy) != -1){
+                    return false;
+                    }
+                    else{
+                    return true;
+                    }
+                    },
+
                     startDate:new Date(),
                     minDate:new Date()
                 });

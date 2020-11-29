@@ -676,7 +676,7 @@ $("#id_form-{{forloop.counter0}}-tendative_time").datetimepicker({
     format: 'hh:mm A',
 });
 
-$("#id_form-{{forloop.counter0}}-tendative_time").change(function(){
+$("#id_form-{{forloop.counter0}}-tendative_time, #id_form-{{forloop.counter0}}-number_of_cleaners , #id_form-{{forloop.counter0}}-cleaning_hours").change(function(){
     var policy = $("#id_form-{{forloop.counter0}}-cleaning_policy").val();
     if (policy == 'ONE TIME SERVICE'){
         datetimecheck($("#id_form-{{forloop.counter0}}-tendative_time").val(),$("#id_form-{{forloop.counter0}}-tendative_date").val(),'onetime',"{{forloop.counter0}}");
@@ -687,7 +687,7 @@ $("#id_form-{{forloop.counter0}}-tendative_time").change(function(){
     $.ajax({
             url: "{% url 'agent:scheduled-dates' %}",
             data: {
-            'booking_time': $(this).val(),
+            'booking_time': $("#id_form-{{forloop.counter0}}-tendative_time").val(),
             'number_of_cleaners':$("#id_form-{{forloop.counter0}}-number_of_cleaners").val(),
             'cleaning_duration':$("#id_form-{{forloop.counter0}}-cleaning_hours").val()
             },
