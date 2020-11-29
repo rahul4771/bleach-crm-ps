@@ -125,11 +125,11 @@
         <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
                 <div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Number of Cleaners</label></div>
-                <input name="form-{{forloop.counter0}}-number_of_cleaners" type="text" class="textBox OnlyNumber" maxlength="2" placeholder=" " value="{{book.number_of_cleaners}}" required> 
+                <input name="form-{{forloop.counter0}}-number_of_cleaners" type="text" class="textBox OnlyNumber" maxlength="2" id='id_form-{{forloop.counter0}}-number_of_cleaners' placeholder=" " value="{{book.number_of_cleaners}}" required> 
                 </div><!--enquiry-form-left-->
                 <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Cleaning Hours</label></div>
-                <input name="form-{{forloop.counter0}}-cleaning_hours" type="text" class="textBox OnlyNumber" maxlength="2" placeholder=" " value="{{book.cleaning_hours}}" required> 
+                <input name="form-{{forloop.counter0}}-cleaning_hours" type="text" class="textBox OnlyNumber" maxlength="2" id='id_form-{{forloop.counter0}}-cleaning_hours' placeholder=" " value="{{book.cleaning_hours}}" required> 
                 </div><!--enquiry-form-right-->
         </div> <!--enquiry-form-Wrapper enquiry-boxes--> 
                       
@@ -168,6 +168,11 @@
                 <hr class="hr-dashedpad">    
                 
         <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+
+                <div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class=" bold-text common-label"> <label>Tentative Time</label></div>
+                <input name="form-{{forloop.counter0}}-tendative_time" id='id_form-{{forloop.counter0}}-tendative_time' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{%  if forloop.first %}{{orderschedule.start_at|date:'h:i A'}}{% endif %}{% endfor %}" required readonly> 
+                </div><!--enquiry-form-left-->
                 
                 {% if book.cleaning_policy == 'ONE TIME SERVICE' %}
                 <div class="enquiry-form-right" style="display:none"><!--enquiry-form-right-->
@@ -674,19 +679,19 @@ $("#id_form-TOTAL_FORMS").val("{{evaluation_details.evaluationbooks|length}}");
   {% endfor %}
 
   //tendative date initial
-  //$("#id_form-{{forloop.counter0}}-tendative_date").datetimepicker({ 
-  //  pickTime: false, 
-  //  format: "DD-MM-YYYY",
-  //  minDate: new Date(),
-  //});
+  $("#id_form-{{forloop.counter0}}-tendative_date").datetimepicker({ 
+    pickTime: false, 
+    format: "DD-MM-YYYY",
+    minDate: new Date(),
+  });
 
 //tendative dates initial
-//  $("#id_form-{{forloop.counter0}}-tendative_dates").datepicker({ 
-//    multidate: true,
-//    closeOnDateSelect: true,
-//    format: "dd-mm-yyyy",
-//    startDate: new Date(),
-//  });
+  $("#id_form-{{forloop.counter0}}-tendative_dates").datepicker({ 
+    multidate: true,
+    closeOnDateSelect: true,
+    format: "dd-mm-yyyy",
+    startDate: new Date(),
+  });
 
 //initial time
 $("#id_form-{{forloop.counter0}}-tendative_time").datetimepicker({
@@ -716,14 +721,25 @@ $("#id_form-{{forloop.counter0}}-tendative_time, #id_form-{{forloop.counter0}}-n
             success: function(data_dates) {
                 console.log(data_dates,"dates2")
 
-                var disableSpecificDates = ['2-12-2020','5-12-2020','15-12-2020'];
+                disableSpecificDates = Object.keys(data_dates['cleaners_busy_dates']).concat(Object.keys(data_dates['leaders_busy_dates']))
 
                 //one time date
                 $(function () {
-                $("#id_form-{{forloop.counter0}}-tendative_date").datetimepicker({ 
-                    pickTime: false, 
-                    format: "DD-MM-YYYY",
-                    disabledDates: disableSpecificDates,
+                $("#id_form-{{forloop.counter0}}-tendative_date").datepicker({ 
+                    //multidate: true,
+                    closeOnDateSelect: true,
+                    format: "dd-mm-yyyy", 
+
+                    beforeShowDay: function(date){
+                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+                    if(disableSpecificDates.indexOf(dmy) != -1){
+                    return false;
+                    }
+                    else{
+                    return true;
+                    }
+                    },
+
                     startDate:new Date(),
                     minDate:new Date()
                 });

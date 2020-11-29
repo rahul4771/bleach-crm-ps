@@ -532,7 +532,7 @@ def CleaningExistingDates(request):
 	team_members_busy = {}
 
 	for team_leader in team_leaders_scheduled_dates:
-		index = datetime.strptime(team_leader['start_at'],'%Y-%m-%d').strftime('%-d-%-m-%Y')
+		index = datetime.strptime(team_leader['start_at'],'%Y-%m-%d').strftime('%d-%-m-%Y')
 		if index in team_leaders_busy:
 			team_leaders_busy[index] += team_leader['created_count']
 		else:	
