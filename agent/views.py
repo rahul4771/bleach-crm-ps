@@ -532,14 +532,14 @@ def CleaningExistingDates(request):
 	team_members_busy = {}
 
 	for team_leader in team_leaders_scheduled_dates:
-		index = team_leader['start_at']
+		index = datetime.strptime(team_leader['start_at'],'%Y-%m-%d').strftime('%-d-%-m-%Y')
 		if index in team_leaders_busy:
 			team_leaders_busy[index] += team_leader['created_count']
 		else:	
 			team_leaders_busy[index] = team_leader['created_count']
 
 	for team_member in team_members_scheduled_dates:
-		index = team_member['start_at']
+		index = datetime.strptime(team_member['start_at'],'%Y-%m-%d').strftime('%-d-%-m-%Y')
 		if index in team_members_busy:
 			team_members_busy[index] +=  team_member['created_count'] 
 		else: 
@@ -559,7 +559,7 @@ def CleaningExistingDates(request):
 			del team_members_busy[k]
 
 	data['leaders_busy_dates'] = team_leaders_busy
-	data['cleaner_busy_dates'] = team_members_busy
+	data['cleaners_busy_dates'] = team_members_busy
 
 	print(data)
 	return JsonResponse(data)
@@ -2283,9 +2283,9 @@ class MakeQuatationPhase2(IsAgent,View):
 									)
 
 					#for updating cost details in evaluation details
-					cost     = int(request.POST.get('form-'+str(form_count)+'-estimated_cost'))
-					discount = int(request.POST.get('form-'+str(form_count)+'-discount'))
-					total    = int(request.POST.get('form-'+str(form_count)+'-total_cost'))
+					cost     = float(request.POST.get('form-'+str(form_count)+'-estimated_cost'))
+					discount = float(request.POST.get('form-'+str(form_count)+'-discount'))
+					total    = float(request.POST.get('form-'+str(form_count)+'-total_cost'))
 
 					#for creating cleaning schedules and corresponding cleanings
 
