@@ -160,18 +160,18 @@
                 <hr class="hr-dashedpad">    
                 
  		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
-            	<div class="enquiry-form-right"><!--enquiry-form-right-->
-                <div class=" bold-text common-label"> <label>Tentative Date(S)</label></div>
-                <input name="form-0-tendative_dates" id='id_form-0-tendative_dates' type="text" class="textBox readonly" placeholder="Please select no. of cleaners, duration and time. "> 
-                </div><!--enquiry-form-right-->
-                <div class="enquiry-form-right"><!--enquiry-form-right-->
-                <div class=" bold-text common-label"> <label>Tentative Date</label></div>
-                <input name="form-0-tendative_date" id='id_form-0-tendative_date' type="text" class="textBox readonly" placeholder="Please select no. of cleaners, duration and time. " readonly> 
-                </div><!--enquiry-form-right-->
             	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class=" bold-text common-label"> <label>Tentative Date(S)</label></div>
+                <input name="form-0-tendative_dates" id='id_form-0-tendative_dates' type="text" class="textBox readonly" placeholder=" "> 
+                </div><!--enquiry-form-left-->
+                <div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class=" bold-text common-label"> <label>Tentative Date</label></div>
+                <input name="form-0-tendative_date" id='id_form-0-tendative_date' type="text" class="textBox readonly" placeholder=" " readonly> 
+                </div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tentative Time</label></div>
                 <input name="form-0-tendative_time" id='id_form-0-tendative_time' type="text" class="textBox readonly" placeholder=" " readonly> 
-                </div><!--enquiry-form-left-->
+                </div><!--enquiry-form-right-->
 		</div> <!--enquiry-form-Wrapper enquiry-boxes-->
         
         <br><br><br>
@@ -303,13 +303,11 @@ function datetimecheck(ftime,fdate,mode,x){
             $('.assignButton').attr("disabled",false);
             console.log("fail")
             }
-        }
-        
-        //else{
-        //$("#id_form-"+x+"-tendative_time").val('');
-        //$("#id_form-"+x+"-tendative_time").attr("placeholder","Select Date !!");
+        }else{
+        $("#id_form-"+x+"-tendative_time").val('');
+        $("#id_form-"+x+"-tendative_time").attr("placeholder","Select Date !!");
 
-        //}
+        }
 
     };
 
@@ -564,24 +562,22 @@ $('document').ready(function(){
     function add_row(){
         x++;
         //tendative date initial
-        //$(function () {
-        //  $("#id_form-"+x+"-tendative_date").datetimepicker({ 
-        //    pickTime: false, 
-        //    format: "DD-MM-YYYY",
-        //    minDate: new Date(),
-        //  });
-        //});
-
+        $(function () {
+          $("#id_form-"+x+"-tendative_date").datetimepicker({ 
+            pickTime: false, 
+            format: "DD-MM-YYYY",
+            minDate: new Date(),
+          });
+        });
         //tendative dates initial
-        //$(function () {
-        //  $("#id_form-"+x+"-tendative_dates").datepicker({ 
-        //    multidate: true,
-        //    closeOnDateSelect: true,
-        //    format: "dd-mm-yyyy",
-        //    startDate: new Date(),
-        //  });
-        //});
-
+        $(function () {
+          $("#id_form-"+x+"-tendative_dates").datepicker({ 
+            multidate: true,
+            closeOnDateSelect: true,
+            format: "dd-mm-yyyy",
+            startDate: new Date(),
+          });
+        });
         //tendative time initial
         $("#id_form-"+x+"-tendative_time").timepicker({
                 timeFormat: 'h:mm p',
@@ -597,9 +593,9 @@ $('document').ready(function(){
 
 
         //Initial hiding of cleaning policy
-        $("#id_form-"+x+"-tendative_date").parents('.enquiry-form-right').css("display", "none");
-        $("#id_form-"+x+"-tendative_dates").parents('.enquiry-form-right').css("display", "none");
-        $("#id_form-"+x+"-tendative_time").parents('.enquiry-form-left').css("display", "none");
+        $("#id_form-"+x+"-tendative_date").parents('.enquiry-form-left').css("display", "none");
+        $("#id_form-"+x+"-tendative_dates").parents('.enquiry-form-left').css("display", "none");
+        $("#id_form-"+x+"-tendative_time").parents('.enquiry-form-right').css("display", "none");
         $("#id_form-"+x+"-tendative_date").val('');
         $("#id_form-"+x+"-tendative_dates").val('');
         $("#id_form-"+x+"-tendative_time").val('');
@@ -607,67 +603,13 @@ $('document').ready(function(){
         $("#id_form-"+x+"-discount").val('0');
         $("#id_form-"+x+"-sectionbutton").prop('value','Add');
 
-        $("#id_form-"+x+"-tendative_time, #id_form-"+x+"-number_of_cleaners , #id_form-"+x+"-cleaning_hours").change(function(){
+        $("#id_form-"+x+"-tendative_time").change(function(){
             var policy = $("id_form-"+x+"-cleaning_policy").val();
             if (policy == 'ONE TIME SERVICE'){
                 datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_date").val(),'onetime',x);
             }else{
                 datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_dates").val(),'subscription',x);
             }
-
-            $.ajax({
-            url: "{% url 'agent:scheduled-dates' %}",
-            data: {
-            'booking_time': $("#id_form-"+x+"-tendative_time").val(),
-            'number_of_cleaners':$("#id_form-"+x+"-number_of_cleaners").val(),
-            'cleaning_duration':$("#id_form-"+x+"-cleaning_hours").val()
-            },
-            dataType: "json",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            
-            success: function(data_dates) {
-                console.log(data_dates,"dates2")
-
-                var disableSpecificDates = ['2-12-2020','5-12-2020','15-12-2020'];
-
-                //one time date
-                $(function () {
-                $("#id_form-"+x+"-tendative_date").datetimepicker({ 
-                    pickTime: false, 
-                    format: "DD-MM-YYYY",
-                    disabledDates: disableSpecificDates,
-                    startDate:new Date(),
-                    minDate:new Date()
-                });
-                });
-
-                //subscription date
-                $(function () {
-                $("#id_form-"+x+"-tendative_dates").datepicker({ 
-                    multidate: true,
-                    closeOnDateSelect: true,
-                    format: "dd-mm-yyyy", 
-
-                    beforeShowDay: function(date){
-                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
-                    if(disableSpecificDates.indexOf(dmy) != -1){
-                    return false;
-                    }
-                    else{
-                    return true;
-                    }
-                    },
-
-                    startDate:new Date(),
-                    minDate:new Date()
-                });
-                });
-                
-            }
-            
-        });
-
         });
 
         $("#id_form-"+x+"-tendative_date").change(function(){
@@ -684,91 +626,35 @@ $('document').ready(function(){
     }
 
 //tendative date initial
-//$(function () {
-//  $("#id_form-"+x+"-tendative_date").datetimepicker({ 
-//    pickTime: false, 
-//    format: "DD-MM-YYYY",
-//    minDate: new Date(),
-//  });
-//});
-
-//tendative dates initial
-//$(function () {
-//  $("#id_form-"+x+"-tendative_dates").datepicker({ 
-//    multidate: true,
-//    closeOnDateSelect: true,
-//    format: "dd-mm-yyyy",
-//    startDate: new Date(),
-//  });
+$(function () {
+  $("#id_form-"+x+"-tendative_date").datetimepicker({ 
+    pickTime: false, 
+    format: "DD-MM-YYYY",
+    minDate: new Date(),
+  });
 });
-
+//tendative dates initial
+$(function () {
+  $("#id_form-"+x+"-tendative_dates").datepicker({ 
+    multidate: true,
+    closeOnDateSelect: true,
+    format: "dd-mm-yyyy",
+    startDate: new Date(),
+  });
+});
 //tendative time initial
 $("#id_form-"+x+"-tendative_time").datetimepicker({
         pickDate:false,
         format: 'hh:mm A',
     });
 
-$("#id_form-"+x+"-tendative_time, #id_form-"+x+"-number_of_cleaners , #id_form-"+x+"-cleaning_hours").change(function(){
+$("#id_form-"+x+"-tendative_time").change(function(){
     var policy = $("id_form-"+x+"-cleaning_policy").val();
     if (policy == 'ONE TIME SERVICE'){
         datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_date").val(),'onetime',x);
     }else{
         datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_dates").val(),'subscription',x);
     }
-
-    $.ajax({
-            url: "{% url 'agent:scheduled-dates' %}",
-            data: {
-            'booking_time': $("#id_form-"+x+"-tendative_time").val(),
-            'number_of_cleaners':$("#id_form-"+x+"-number_of_cleaners").val(),
-            'cleaning_duration':$("#id_form-"+x+"-cleaning_hours").val()
-            },
-            dataType: "json",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            
-            success: function(data_dates) {
-                console.log(data_dates,"dates2")
-
-                var disableSpecificDates = ['2-12-2020','5-12-2020','15-12-2020'];
-
-                //one time date
-                $(function () {
-                $("#id_form-"+x+"-tendative_date").datetimepicker({ 
-                    pickTime: false, 
-                    format: "DD-MM-YYYY",
-                    disabledDates: disableSpecificDates,
-                    startDate:new Date(),
-                    minDate:new Date()
-                });
-                });
-
-                //subscription date
-                $(function () {
-                $("#id_form-"+x+"-tendative_dates").datepicker({ 
-                    multidate: true,
-                    closeOnDateSelect: true,
-                    format: "dd-mm-yyyy", 
-
-                    beforeShowDay: function(date){
-                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
-                    if(disableSpecificDates.indexOf(dmy) != -1){
-                    return false;
-                    }
-                    else{
-                    return true;
-                    }
-                    },
-
-                    startDate:new Date(),
-                    minDate:new Date()
-                });
-                });
-                
-            }
-            
-        });
-
 });
 
 $("#id_form-"+x+"-tendative_date").change(function(){
@@ -781,14 +667,14 @@ $("#id_form-"+x+"-tendative_dates").change(function(){
 
 
 //Initial hiding of cleaning policy
-$("#id_form-"+x+"-tendative_date").parents('.enquiry-form-right').css("display", "none");
-$("#id_form-"+x+"-tendative_dates").parents('.enquiry-form-right').css("display", "none");
-$("#id_form-"+x+"-tendative_time").parents('.enquiry-form-left').css("display", "none");
+$("#id_form-"+x+"-tendative_date").parents('.enquiry-form-left').css("display", "none");
+$("#id_form-"+x+"-tendative_dates").parents('.enquiry-form-left').css("display", "none");
+$("#id_form-"+x+"-tendative_time").parents('.enquiry-form-right').css("display", "none");
 $("#id_form-"+x+"-tendative_date").val('');
 $("#id_form-"+x+"-tendative_dates").val('');
 $("#id_form-"+x+"-tendative_time").val('');
 
-//});
+});
 
 
 
@@ -836,9 +722,9 @@ if(cleaning_policy=="SUBSCRIPTION")
 {
 $("#id_form-"+id+"-tendative_date").val('');
 $("#id_form-"+id+"-tendative_dates").val('');
-$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-right').css("display", "none");
-$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-right').css("display", "block");
-$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-left').css("display", "block");
+$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-left').css("display", "none");
+$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-left').css("display", "block");
+$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-right').css("display", "block");
 $("#id_form-"+id+"-tendative_date").prop('required',false);
 $("#id_form-"+id+"-tendative_dates").prop('required',true);
 }
@@ -846,16 +732,16 @@ else if(cleaning_policy=="ONE TIME SERVICE")
 {
 $("#id_form-"+id+"-tendative_date").val('');
 $("#id_form-"+id+"-tendative_dates").val('');
-$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-right').css("display", "block");
-$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-left').css("display", "block");
-$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-left').css("display", "block");
+$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-right').css("display", "block");
+$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-left').css("display", "none");
 $("#id_form-"+id+"-tendative_date").prop('required',true);
 $("#id_form-"+id+"-tendative_dates").prop('required',false);
 }
 else{
-$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-right').css("display", "none");
-$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-right').css("display", "none");
-$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-left').css("display", "none");
+$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-left').css("display", "none");
+$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-left').css("display", "none");
+$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-right').css("display", "none");
 $("#id_form-"+id+"-tendative_date").val('');
 $("#id_form-"+id+"-tendative_dates").val('');
 $("#id_form-"+id+"-tendative_time").val('');
