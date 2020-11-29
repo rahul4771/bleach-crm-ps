@@ -789,8 +789,8 @@ $("#id_form-"+x+"-tendative_time, #id_form-"+x+"-number_of_cleaners , #id_form-"
             
             success: function(data_dates) {
                 console.log(data_dates,"dates2")
-                //disableSpecificDates = Object.keys(data_dates['cleaners_busy_dates']).concat(Object.keys(data_dates['leaders_busy_dates']))
-                var disableSpecificDates = ['2-12-2020','5-12-2020','15-12-2020'];
+                
+                disableSpecificDates = Object.keys(data_dates['cleaners_busy_dates']).concat(Object.keys(data_dates['leaders_busy_dates']))
 
                 //one time date
                 $(function () {
