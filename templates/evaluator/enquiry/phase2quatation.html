@@ -575,22 +575,22 @@ $('document').ready(function(){
     function add_row(){
         x++;
         //tendative date initial
-        //$(function () {
-        //  $("#id_form-"+x+"-tendative_date").datetimepicker({ 
-        //    pickTime: false, 
-        //    format: "DD-MM-YYYY",
-        //    minDate: new Date(),
-        //  });
-        //});
+        $(function () {
+          $("#id_form-"+x+"-tendative_date").datetimepicker({ 
+            pickTime: false, 
+            format: "DD-MM-YYYY",
+            minDate: new Date(),
+          });
+        });
         //tendative dates initial
-        //$(function () {
-        //  $("#id_form-"+x+"-tendative_dates").datepicker({ 
-        //    multidate: true,
-        //    closeOnDateSelect: true,
-        //    format: "dd-mm-yyyy",
-        //    startDate: new Date()
-        //  });
-        //});
+        $(function () {
+          $("#id_form-"+x+"-tendative_dates").datepicker({ 
+            multidate: true,
+            closeOnDateSelect: true,
+            format: "dd-mm-yyyy",
+            startDate: new Date()
+          });
+        });
         //tendative time initial
         $("#id_form-"+x+"-tendative_time").timepicker({
                 timeFormat: 'h:mm p',
@@ -624,8 +624,8 @@ $('document').ready(function(){
                 datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_dates").val(),'subscription',x);
             }
 
-            $("#id_form-"+x+"-tendative_dates").datepicker('remove');
-            $("#id_form-"+x+"-tendative_date").datepicker('remove');
+            //$("#id_form-"+x+"-tendative_dates").datepicker('remove');
+            //$("#id_form-"+x+"-tendative_date").datepicker('remove');
 
             $.ajax({
             url: "{% url 'agent:scheduled-dates' %}",
@@ -707,22 +707,22 @@ $('document').ready(function(){
     }
 
 //tendative date initial
-//$(function () {
-//  $("#id_form-"+x+"-tendative_date").datetimepicker({ 
-//    pickTime: false, 
-//    format: "DD-MM-YYYY",
-//    minDate: new Date(),
-//  });
-//});
+$(function () {
+  $("#id_form-"+x+"-tendative_date").datetimepicker({ 
+    pickTime: false, 
+    format: "DD-MM-YYYY",
+    minDate: new Date(),
+  });
+});
 //tendative dates initial
-//$(function () {
-//  $("#id_form-"+x+"-tendative_dates").datepicker({ 
-//    multidate: true,
-//    closeOnDateSelect: true,
-//    format: "dd-mm-yyyy",
-//    startDate: new Date(),
-//  });
-//});
+$(function () {
+  $("#id_form-"+x+"-tendative_dates").datepicker({ 
+    multidate: true,
+    closeOnDateSelect: true,
+    format: "dd-mm-yyyy",
+    startDate: new Date(),
+  });
+});
 //tendative time initial
 $("#id_form-"+x+"-tendative_time").datetimepicker({
         pickDate:false,
@@ -737,8 +737,8 @@ $("#id_form-"+x+"-tendative_time, #id_form-"+x+"-number_of_cleaners , #id_form-"
         datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_dates").val(),'subscription',x);
     }
 
-    $("#id_form-"+x+"-tendative_dates").datepicker('remove');
-    $("#id_form-"+x+"-tendative_date").datepicker('remove');
+    //$("#id_form-"+x+"-tendative_dates").datepicker('remove');
+    //$("#id_form-"+x+"-tendative_date").datepicker('remove');
 
     $.ajax({
             url: "{% url 'agent:scheduled-dates' %}",
