@@ -100,7 +100,7 @@ class Order(models.Model):
 
 class OrderScheduler(models.Model):
 	order 			     = models.ForeignKey('Order',blank=False,null=False,related_name='order_scheduler_order')
-	evaluation_details   = models.ForeignKey(EvaluationDetails,blank=True,null=True)
+	evaluation_details   = models.ForeignKey(EvaluationDetails,blank=True,null=True,related_name='order_scheduler_evaluationdetails')
 	order_scheduler_book = models.ForeignKey(EvaluationBook,blank=True,null=True,related_name='order_scheduler_book_details')
 	
 	start_at		   	 = models.DateTimeField(blank=True,null=True)

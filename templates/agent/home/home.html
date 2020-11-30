@@ -89,29 +89,30 @@
 {% endif %}
 
 
-{% if order_schedules or follow_up_schedules %}  
+{% if follow_up_schedules or order_schedules_by_address %}  
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Date Confirmation Task</h2>
 <table class="main-table">
 <tbody>
-{% for order_schedule in order_schedules %}
-<tr {% if order_schedule.days_left_coming < 0 %}class="red-line"{% elif order_schedule.days_left_coming == 0 %}class="orange-line"{% elif order_schedule.days_left_coming == 1 %}class="yellow-line"{% elif order_schedule.days_left_coming == 2 or order_schedule.days_left_coming == 3 %}class="green-line"{% endif %}>
-<td data-label="BLC Number" class="bold-text">{{order_schedule.order.evaluation.evaluation_id}}</td>
-<td data-label="Customer">{{order_schedule.order.evaluation.customer.name}}</td>
-<td data-label="Area">{{order_schedule.customer_address.area}}</td>
-<td class="hide-a" data-label="">{% if order_schedule.evaluation_details.evaluator.profile_image %}<img src="{{order_schedule.evaluation_details.evaluator.profile_image.url}}" title="{{order_schedule.evaluation_details.evaluator.name}}" class="profile-avatar">{% else %}<img src="{{order_schedule.evaluation_details.evaluation.call_attender.profile_image.url}}" title="{{order_schedule.evaluation_details.evaluation.call_attender.name}}" class="profile-avatar">{% endif %}</td>
-<td data-label="Cleaning Policy"><span class="{% if order_schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}green-text{% else %}blue-text{% endif %} bold-text">{{order_schedule.order_scheduler_book.cleaning_policy}}</span></td>
-<td data-label="" class="bold-text">{% if order_schedule.days_left_coming < 0 %}<h3 class="red-text-h3">Exp</h3>{% elif order_schedule.days_left_coming == 0 %}<h3 class="orange-text-h3">{{order_schedule.days_left_coming}}</h3> Days&#11015;{% elif order_schedule.days_left_coming == 1 %}<h3 class="yellow-text-h3">{{order_schedule.days_left_coming}}</h3> Days&#11015;{% elif order_schedule.days_left_coming == 2 or order_schedule.days_left_coming == 3 %}<h3 class="green-text-h3">{{order_schedule.days_left_coming}}</h3> Days&#11015;{% endif %}</td>
-<td class="hide-b order_schedule clickable-cursor" data-label="" data-confirmdate="{{order_schedule.start_at|date:'d-m-Y'}}" data-cleaners="{{order_schedule.order_scheduler_book.number_of_cleaners}}" data-duration="{{order_schedule.order_scheduler_book.cleaning_hours}}" data-confirmtime="{{order_schedule.start_at|date:'h:i A'}}" data-duration="{{order_schedule.order_scheduler_book.cleaning_hours}}" data-blcno="{{order_schedule.order.evaluation.evaluation_id}}" data-customer_name="{{order_schedule.order.evaluation.customer.name}}" data-mobile_no="{{order_schedule.order.evaluation.customer.mobile_number}}" data-area="{{order_schedule.customer_address.area.name}}" data-service_type="{{order_schedule.order_scheduler_book.service_type.name}}" data-id="{{order_schedule.id}}"><span {% if order_schedule.days_left_coming < 0 %}class="red-bg"{% elif order_schedule.days_left_coming == 0 %}class="orange-bg"{% elif order_schedule.days_left_coming == 1 %}class="yellow-bg"{% elif order_schedule.days_left_coming == 2 or order_schedule.days_left_coming == 3 %}class="green-bg"{% endif %}>Click to Confirm</span></td>
+{% for order in order_schedules_by_address %}
+{% for evaluation_details in order.evaluation.evaluationdetails %}
+<tr {% if evaluation_details.days_left_coming < 0 %}class="red-line"{% elif evaluation_details.days_left_coming == 0 %}class="orange-line"{% elif evaluation_details.days_left_coming == 1 %}class="yellow-line"{% elif evaluation_details.days_left_coming == 2 or evaluation_details.days_left_coming == 3 %}class="green-line"{% else %}class="green-line"{% endif %}>
+<td data-label="BLC Number" class="bold-text">{{evaluation_details.evaluation.evaluation_id}}</td>
+<td data-label="Customer">{{evaluation_details.evaluation.customer.name}}</td>
+<td data-label="Area">{{evaluation_details.address.area}}</td>
+<td class="hide-a" data-label="">{% if evaluation_details.evaluator.profile_image %}<img src="{{evaluation_details.evaluator.profile_image.url}}" title="{{evaluation_details.evaluator.name}}" class="profile-avatar">{% else %}<img src="{{evaluation_details.evaluation.call_attender.profile_image.url}}" title="{{evaluation_details.evaluation.call_attender.name}}" class="profile-avatar">{% endif %}</td>
+<td data-label="" class="bold-text">{% if evaluation_details.days_left_coming < 0 %}<h3 class="red-text-h3">Exp</h3>{% elif evaluation_details.days_left_coming == 0 %}<h3 class="orange-text-h3">{{evaluation_details.days_left_coming}}</h3> Days&#11015;{% elif evaluation_details.days_left_coming == 1 %}<h3 class="yellow-text-h3">{{evaluation_details.days_left_coming}}</h3> Days&#11015;{% elif evaluation_details.days_left_coming == 2 or evaluation_details.days_left_coming == 3 %}<h3 class="green-text-h3">{{evaluation_details.days_left_coming}}</h3> Days&#11015;{% else %}<h3 class="green-text-h3">{{evaluation_details.days_left_coming}}</h3> Days&#11015;{% endif %}</td>
+<td class="hide-b order_schedules clickable-cursor" data-label="" data-details_id="{{evaluation_details.id}}" data-blcno="{{evaluation_details.evaluation.evaluation_id}}" data-customer_name="{{evaluation_details.evaluation.customer.name}}" data-mobile_no="{{evaluation_details.evaluation.customer.mobile_number}}" data-area="{{evaluation_details.address.area}}"><span {% if evaluation_details.days_left_coming < 0 %}class="red-bg"{% elif evaluation_details.days_left_coming == 0 %}class="orange-bg"{% elif evaluation_details.days_left_coming == 1 %}class="yellow-bg"{% elif evaluation_details.days_left_coming == 2 or evaluation_details.days_left_coming == 3 %}class="green-bg"{% else %}class="green-bg"{% endif %}>Click to Confirm</span></td>
 </tr>
 {% endfor %}
+{% endfor %}
+
 {% for follow_up_schedule in follow_up_schedules %}
 <tr {% if follow_up_schedule.days_left_coming < 0 %}class="red-line"{% elif follow_up_schedule.days_left_coming == 0 %}class="orange-line"{% elif follow_up_schedule.days_left_coming == 1 %}class="yellow-line"{% elif follow_up_schedule.days_left_coming == 2 or follow_up_schedule.days_left_coming == 3 %}class="green-line"{% endif %}>
 <td data-label="BLC Number" class="bold-text">{{follow_up_schedule.follow_up.investigation.order.order_no}}</td>
 <td data-label="Customer">{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.name}}</td>
 <td data-label="Area">{{follow_up_schedule.customer_address.area}}</td>
 <td class="hide-a" data-label=""><img src="{{follow_up_schedule.follow_up.investigation.investigator.profile_image.url}}" class="profile-avatar" title="{{follow_up_schedule.follow_up.investigation.investigator.name}}"></td>
-<td data-label="cleaning policy"><span class="yellow-text bold-text">FOLLOW UP</span></td>
 <td data-label="" class="bold-text">{% if follow_up_schedule.days_left_coming < 0 %}<h3 class="red-text-h3">Exp</h3>{% elif follow_up_schedule.days_left_coming == 0 %}<h3 class="orange-text-h3">{{follow_up_schedule.days_left_coming}}</h3> Days&#11015;{% elif follow_up_schedule.days_left_coming == 1 %}<h3 class="yellow-text-h3">{{follow_up_schedule.days_left_coming}} </h3>Days&#11015;{% elif follow_up_schedule.days_left_coming == 2 or follow_up_schedule.days_left_coming == 3 %}<h3 class="green-text-h3">{{follow_up_schedule.days_left_coming}}</h3> Days&#11015;{% endif %}</td>
 <td data-label="" class="followup_schedule clickable-cursor" data-confirmdate="{{follow_up_schedule.start_at|date:'d-m-Y'}}" data-confirmtime="{{follow_up_schedule.start_at|date:'h:i A'}}" data-cleaners="{{follow_up_schedule.follow_up.no_of_cleaners}}" data-duration="{{follow_up_schedule.follow_up.cleaning_hours}}" data-blcno="{{follow_up_schedule.follow_up.investigation.order.order_no}}" data-customer_name="{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.name}}" data-mobile_no="{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.mobile_number}}" data-area="{{follow_up_schedule.follow_up.investigation.order_schedule.customer_address.area.name}}" data-service_type="{{follow_up_schedule.follow_up.investigation.order_schedule.order_scheduler_book.service_type.name}}" data-id="{{follow_up_schedule.id}}"><span {% if follow_up_schedule.days_left_coming < 0 %}class="red-bg"{% elif follow_up_schedule.days_left_coming == 0 %}class="orange-bg"{% elif follow_up_schedule.days_left_coming == 1 %}class="yellow-bg"{% elif follow_up_schedule.days_left_coming == 2 or follow_up_schedule.days_left_coming == 3 %}class="green-bg"{% endif %}>Click to Confirm</span></td>
 </tr>
@@ -268,11 +269,10 @@
 </section>
 {% include 'agent/common/footer.html' %}
 </div>     
-
-<!-- order_scheduler confirm_popup -->
-<div id="orderschedule_dateconfirm_popup" class="overlay"><!--overlay-->
+<!-- order_schedules confirm_popup -->
+<div id="orderschedules_dateconfirm_popup" class="overlay"><!--overlay-->
     <div class="popup-assign-eval"><!--popup-assign-eval-->
-        <a class="close" id="orderschedule_dateconfirm_popup_close">&times;</a>
+        <a class="close" id="orderschedules_dateconfirm_popup_close">&times;</a>
             <div class="content"><!--content-->
             
                         
@@ -282,46 +282,24 @@
     
     <table width="100%" border="0" class="popup-tble1">
                 <tr>
-                    <td valign="bottom"><div class="blc-number" id="order_schedule_blc_id"></div></td>
-                    <td rowspan="2" align="center"><div class="bold-text"id="order_schedule_customer_id"></div><div id="order_schedule_mobile_id"></div></td>
+                    <td valign="bottom"><div class="blc-number" id="order_schedules_blc_id"></div></td>
+                    <td rowspan="2" align="center"><div class="bold-text"id="order_schedules_customer_id"></div><div id="order_schedules_mobile_id"></div></td>
                 </tr>
             <tr>
-              <td id="order_schedule_area_id"></td>
+              <td id="order_schedules_area_id"></td>
             </tr>
             <tr>
-              <td id="order_schedule_service_type_id"></td>
+              <td id="order_schedules_service_type_id"></td>
             </tr>
             </table>
     
       </div><!--ticket-form-left--> 
   </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">   
-<form method="post" enctype= "multipart/form-data">
+<form  id="orderschedules_confirm" method="post" enctype= "multipart/form-data">
 {%csrf_token%}
-<input type="hidden" name="action_type" value="confirm_orderschedule">
-<input type="hidden" name="orderscheduler" id="order_schedule_id">          
-<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-  
-  <input type="hidden" id="order_schedule_cleaners">
-  <input type="hidden" id="order_schedule_duration">
-
-  <div class="ticket-form-left"><!--ticket-form-left-->
-          <div class=" bold-text common-label"> <label>Cleaning Time</label></div>
-                <input id="order_schedule_time_id" name="order_schedule_time" type="text" class="textBox" readonly>
-                <p id = "order_schedule_time_alert" hidden>Please Select a proper time !</p>
-  </div><!--ticket-form-left-->
-
-  <div class="ticket-form-right"><!--ticket-form-right-->
-          <div class=" bold-text common-label"> <label>Cleaning Date</label></div>
-        <input id="order_schedule_date_id" name="order_schedule_date" type="text" class="textBox" readonly>
-        <p id = "order_schedule_date_alert" hidden>Please Select a new date !</p>
-  </div><!--ticket-form-right-->
-  
-</div><!--ticket-wrapper-row ticket-forms-boxes-->
-<br>
-<div align="center"><input name="confirm" type="checkbox"> Confirm Date</div>
- 
- 
+<input type="hidden" name="action_type" value="confirm_orderschedules">
+<input type="hidden" name="total_schedules_to_confirm" id="total_schedules_to_confirm_id">          
 <div align="center"> <input class="assignButton confirmdate_order_btn" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
 </form> 
 
@@ -332,8 +310,7 @@
             </div><!--content-->
     </div><!--popup-assign-eval-->
 </div><!--overlay-->  
-<!-- /order_scheduler confirm_popup -->
-
+<!-- /order_schedules confirm_popup -->
 
 
 <!-- followup_scheduler confirm_popup -->
@@ -1266,180 +1243,65 @@ $('document').ready(function(){
 });
 
 
-$(".order_schedule").click(function(){
-    $("#order_schedule_blc_id").html($(this).data('blcno'));
-    $("#order_schedule_customer_id").html($(this).data('customer_name'));
-    $("#order_schedule_mobile_id").html($(this).data('mobile_no'));
-    $("#order_schedule_date_id").val($(this).data('confirmdate'));
-    $("#order_schedule_time_id").val($(this).data('confirmtime'));
-    $("#order_schedule_cleaners").val($(this).data('cleaners'));
-    $("#order_schedule_duration").val($(this).data('duration'));
-    $("#order_schedule_area_id").html($(this).data('area'));
-    $("#order_schedule_service_type_id").html($(this).data('service_type'));
+//order schedules confirm
+$(".order_schedules").click(function(){
+    $("#order_schedules_blc_id").html($(this).data('blcno'));
+    $("#order_schedules_customer_id").html($(this).data('customer_name'));
+    $("#order_schedules_mobile_id").html($(this).data('mobile_no'));
+    $("#order_schedules_area_id").html($(this).data('area'));
 
-    $('#order_schedule_id').val($(this).data('id'));
-
-    var clean_duration = $("#order_schedule_duration").val();
-    var order_duration = clean_duration.split('.');
-
-    console.log(clean_duration,order_duration,"lop")
-
-    //$("#order_schedule_date_id").datepicker('remove');
-
+    console.log($(this).data('details_id'),"evaluation id")
     $.ajax({
-            url: "{% url 'agent:scheduled-dates' %}",
+            url: "{% url 'agent:evaluationdetais-schedules' %}",
             data: {
-            'booking_time': $('#order_schedule_time_id').val(),
-            'number_of_cleaners':$("#order_schedule_cleaners").val(),
-            'cleaning_duration':order_duration[0]
+            'evaluation_id': $(this).data('details_id'),
             },
             dataType: "json",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             
-            success: function(data_dates) {
-                console.log(data_dates,"dates2")
+            success: function(schedules) {
+                confirm_schedules = schedules['schedules_details']
+                for(i=0;i<confirm_schedules.length;i++)
+                {
+                    console.log(confirm_schedules[i])
+                    append_html = '<div class="for_removeschedule"><div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes--><input type="hidden" name="order_schedules_id'+i+'" value="'+confirm_schedules[i]['id']+'"><div class="ticket-form-left"><!--ticket-form-left--><div class=" bold-text common-label"> <label>Cleaning Time</label></div><input name="order_schedule_time'+i+'" id="order_schedule_time_id'+i+'" type="text" class="textBox" readonly value="'+confirm_schedules[i]['start_at_time']+'"></div><!--ticket-form-left--><div class="ticket-form-right"><!--ticket-form-right--><div class=" bold-text common-label"> <label>Cleaning Date</label></div><input name="order_schedule_date'+i+'" id="order_schedule_date_id'+i+'" type="text" class="textBox" readonly value="'+confirm_schedules[i]['start_at_date']+'"></div><!--ticket-form-right--></div><!--ticket-wrapper-row ticket-forms-boxes--><br><div align="center"><input name="confirm'+i+'" type="checkbox"> Confirm Date</div><hr class="hr-dashedpad"></div>'
+                    $('#orderschedules_confirm').prepend(append_html);
 
-                disableSpecificDates = Object.keys(data_dates['cleaners_busy_dates']).concat(Object.keys(data_dates['leaders_busy_dates']))
+                    //date picker setup for conirm 
+                    $("#order_schedule_date_id"+i).datetimepicker({
+                          pickTime: false, 
+                          format: "DD-MM-YYYY",
+                          startDate: new Date(),
+                          minDate: new Date(),
+                          autoclose:true,
+                        })
 
-                $(function () {
-                $("#order_schedule_date_id").datepicker({ 
-                    closeOnDateSelect: true,
-                    format: "dd-mm-yyyy", 
-
-                    beforeShowDay: function(date){
-                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
-                    if(disableSpecificDates.indexOf(dmy) != -1){
-                    return false;
-                    }
-                    else{
-                    return true;
-                    }
-                    },
-
-                    startDate:new Date(),
-                    minDate:new Date()
-                });
-                });
-                
+                    //time picker setup for confirm
+                    $("#order_schedule_time_id"+i).datetimepicker({
+                          pickDate:false,
+                          format: 'hh:mm A',
+                        });
+                }
+                //total schedules to be confirmed count                
+                $('#total_schedules_to_confirm_id').val(confirm_schedules.length);
             }
             
         });
-    //date picker setup for conirm 
-    $('#order_schedule_date_id').datetimepicker({
-          pickTime: false, 
-          format: "DD-MM-YYYY",
-          startDate: new Date(),
-          minDate: new Date(),
-          autoclose:true,
-        }).on('changeDate', function (ev) {
-          $(this).datetimepicker('hide');
-      });
+    $("#orderschedules_dateconfirm_popup").css({'visibility':'visible','opacity':1,});
+});
 
-    //time picker setup for confirm
-    $('#order_schedule_time_id').datetimepicker({
-          pickDate:false,
-          format: 'hh:mm A',
-        });
+$("#orderschedules_dateconfirm_popup_close").click(function(){
 
-    datetimecheck($('#order_schedule_time_id').val(),$('#order_schedule_date_id').val(),'order');
-
-    $('#order_schedule_time_id').change(function(){
-
-      $('#order_schedule_date_id').datetimepicker('remove');
-      datetimecheck($('#order_schedule_time_id').val(),$('#order_schedule_date_id').val(),'order');
-    
-      var clean_duration = $("#order_schedule_duration").val();
-      var clean_duration =clean_duration.split('.');
-
-      //$("#order_schedule_date_id").datepicker('remove');
-      
-      $.ajax({
-            url: "{% url 'agent:scheduled-dates' %}",
-            data: {
-            'booking_time': $(this).val(),
-            'number_of_cleaners':$("#order_schedule_cleaners").val(),
-            'cleaning_duration':clean_duration[0]
-            },
-            dataType: "json",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            
-            success: function(data_dates) {
-                console.log(data_dates,"dates2")
-
-                disableSpecificDates = Object.keys(data_dates['cleaners_busy_dates']).concat(Object.keys(data_dates['leaders_busy_dates']))
-
-                $(function () {
-                $("#order_schedule_date_id").datepicker({ 
-                    closeOnDateSelect: true,
-                    format: "dd-mm-yyyy", 
-
-                    beforeShowDay: function(date){
-                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
-                    if(disableSpecificDates.indexOf(dmy) != -1){
-                    return false;
-                    }
-                    else{
-                    return true;
-                    }
-                    },
-
-                    startDate:new Date(),
-                    minDate:new Date()
-                });
-                });
-                
-            }
-            
-        });
-    
-    });
-
-    $('#order_schedule_date_id').change(function(){
-      datetimecheck($('#order_schedule_time_id').val(),$('#order_schedule_date_id').val(),'order');
-    });
-
-    $("#order_schedule_date_alert").css({'color':'red'});
-    $("#order_schedule_time_alert").css({'color':'red'});
-
-    var vals = $('#order_schedule_date_id').val().split('-');
-    var day = parseInt(vals[0]);
-    var month = parseInt (vals[1]);
-    var year = parseInt (vals[2]);
-
-    var orderschedule_date = new Date(year,month,day);
-    orderschedule_date.setMonth(orderschedule_date.getMonth()-1);
-    orderschedule_date.setMinutes(01);
-    
-    var today_date = new Date();
-    today_date.setHours(00);
-    today_date.setMinutes(00);
-    today_date.setSeconds(00);
-
-    if (orderschedule_date < today_date){
-      $('#order_schedule_date_alert').attr("hidden",false);
-      $('.confirmdate_order_btn').attr("disabled",true);
-    }else{
-      $('#order_schedule_date_alert').attr("hidden",true);
-      $('.confirmdate_order_btn').attr("disabled",false);
-    };
-
-    $('#order_schedule_date_id').change(function(){
-      $('#order_schedule_date_alert').attr("hidden",true);
-      $('.confirmdate_order_btn').attr("disabled",false);
-    })
-
-    $("#orderschedule_dateconfirm_popup").css({'visibility':'visible','opacity':1,});
-})
-
-$("#orderschedule_dateconfirm_popup_close").click(function(){
-
-    $("#orderschedule_dateconfirm_popup").css({'visibility':'hidden','opacity':0,});
-
+    $("#orderschedules_dateconfirm_popup").css({'visibility':'hidden','opacity':0,});
+    //remove appended items
+    $(".for_removeschedule").remove();
 });
 
 
+
+
+//followup confirm
 $(".followup_schedule").click(function(){
 
     $("#followup_schedule_blc_id").html($(this).data('blcno'));
