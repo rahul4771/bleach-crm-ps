@@ -33,6 +33,18 @@
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
+
+            <div class="card-column whitebg orange-border export_btn"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-export-icon-o.svg'%}"></div>
+                <div class="column-right"><!--column-right-->
+              	<!--  <h1>Evaluations</h1>-->
+            	<h2 class="orange-text"><label>Report Generator<span><i class="fa fa-download"></i> </span><br><span class="orders">Click to Export</span></label> </h2>
+            	<!--<p><label>This Week <span>42</span></label></p>-->
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+
         </div><!--clients-card-column clients-column-left-->
 
         <div class="clients-card-column clients-column-right whitebg hover ltyellow-border"><!--clients-card-column clients-column-right-->
@@ -48,8 +60,8 @@
         
          <div class="chart_box_Left"><!--chart_box_Left-->
          <div class="legend-wrapper"><!--legend-wrapper--> 
-            <div class="legend-result count_div"><label class="legend-label">PAID AMOUNT </label> <b class="legend-result-blue" id="total_submitted"></b> <b>KD</b></div>
-            <div class="legend-result count_div"><label class="legend-label">PENDING AMOUNT </label> <b class="legend-result-red" id="total_approved"></b> <b>KD</b></div>
+            <div class="legend-result count_div"><label class="legend-label">SALES </label> <b class="legend-result-blue" id="total_submitted"></b> <b>KD</b></div>
+            <!--<div class="legend-result count_div"><label class="legend-label">PENDING AMOUNT </label> <b class="legend-result-red" id="total_approved"></b> <b>KD</b></div>-->
          </div><!--legend-wrapper-->
   		</div><!--chart_box_Left-->
         <div class="chart_box_Left"><!--chart_box_Left-->        
@@ -170,47 +182,72 @@
  
 <thead>
 <tr>
-<th>Order Number</th>
+<th>Order Date</th>
+<th class="text-left">Order Number</th>
 <th data-hide="phone,tablet">Client Name</th>
-<th data-hide="phone">Area</th>
-<th>Contact</th>
-<th data-hide="phone,tablet">Amount</th>
-<th data-hide="phone,tablet">Payment Mode</th>
-<th class="align-center" data-hide="phone,tablet">Status</th>
+<th class="text-center" data-hide="phone,tablet">Payment Policy</th>
+{% comment %} <th data-hide="phone">Area</th>
+<th>Contact</th> {% endcomment %}
+<th class="text-right" data-hide="phone,tablet">Amount</th>
+<th class="text-right" data-hide="phone,tablet">Paid</th>
+<th class="text-right" data-hide="phone,tablet">Balance</th>
+<th class="text-center" data-hide="phone,tablet">Payment Mode</th>
+<th class="align-center" data-hide="phone">Job Status</th>
 </tr>
 </thead>
-<tbody>    {% for invoice in invoices %}
+<tbody>
+    {% for invoice in invoices %}
     <tr>
-    <td 
-    {% if invoice.payment_status == 'PENDING' %}
+    <td {% if invoice.payment_status == 'PENDING' %}
         class="red-line"
         {% elif invoice.payment_status == 'COMPLETED' %}
         class="green-line" 
         {% else %}
         class="yellow-line"
-        {% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+        {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
+    <td class="text-left clickable-row" data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}" >{{invoice.order_no}}</td>
     <td>{{invoice.evaluation.customer.name}}</td>
-    <td>
+    <td class="text-center">{{invoice.evaluation.payment_method}}</td>
+  
+    {% comment %} <td>
     {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
     {{evaluation_details.address.area.name}}<br>
     {% endfor %}
     </td>
-    <td>{{invoice.evaluation.customer.mobile_number}}</td>
-    <td>{{invoice.total_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
-    <td>{{invoice.evaluation.payment_method|default_if_none:''}}</td>
-    <td><span {% if invoice %}data-href="{% url 'bleach_admin:admin-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}
-        {% if invoice.payment_status == 'PENDING' %}
-        class="red-bg clickable-row"
-        {% elif invoice.payment_status == 'COMPLETED' %}
-        class="green-bg clickable-row" 
+    <td>{{invoice.evaluation.customer.mobile_number}}</td> {% endcomment %}
+    <td class="text-right">{{invoice.total_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
+    <td class="text-right">{{invoice.amount_paid|default_if_none:'0.00'|floatformat:'3'}}</td>
+    <td class="text-right">{{invoice.remining_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
+    
+    {% for inv in invoice.paymenthistory|slice:":1" %}
+    
+    {% if inv.payment_mode == 'ONLINECREDIT' %}
+      <td class="text-center">{{inv.payment_gateway|default_if_none:'-'}}</td>
+    {% else %}
+      <td class="text-center">{{inv.payment_mode}}</td>
+    {% endif %}
+
+    {% empty %}
+    <td class="text-center">-</td>
+    {% endfor %}
+
+{% comment %} {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %} {% endcomment %}
+    <td class="clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
+    {% for inv in invoice.orderschedules|slice:":1" %}
+        {% if inv.work_status == 'CLEANING_TEAM_ASSIGNED' %}
+        <span class="text-center red-bg clickable-row">PENDING</span>
+        {% elif inv.work_status == 'CLEANING_FULFILLED' %}
+        <span class="text-center green-bg clickable-row" >COMPLETED</span>
         {% else %}
-        class="yellow-bg clickable-row"
+        <span class="text-center yellow-bg clickable-row">IN PROGRESS</span>
         {% endif %}
-        >{{invoice.payment_status|default_if_none:''}}</span></td>
+        {% endfor %}
+        </td>
     </tr>
     {% empty %}
-    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td><td></td></tr>
     {% endfor %}
+
 </tbody>
 <tfoot>
  
@@ -278,6 +315,64 @@
       </div><!--main-content-holder-->
         </div><!--container-fluid space-->
     </section><!--content-->
+
+  <!-- export popup -->
+<div class="overlay" id="export_popup">
+    <div class="popup-assign-eval"><!--popup-assign-eval-->
+        <a id="close_export_popup" class="close">&times;</a>
+            <div class="content"><!--content-->
+            
+<form id="excelform" method="post" action="{% url 'accountant:export_payment_xls' %}" enctype="multipart/form-data" target="_blank">{% csrf_token %}
+
+    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->  
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  <h3 align="center">Report Generator</h3>
+  </div>
+  </div>
+
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>From Date</label></div>
+        <input type="text" name="from_date" class="textBox id_from_date readonly" onchange="exportfromtodatecheck();" required readonly>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>To Date</label></div>
+                <input type="text" name="to_date" class="textBox id_to_date readonly" onchange="exportfromtodatecheck();" required readonly>
+
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+   
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    <div class=" bold-text common-label"> <label>Report Type</label></div>
+      <select class="textBox" name="report_type" id="report_type" required>
+      <option value="paymentlist">GENERAL PAYMENT SHEET</option>
+      <option value="totalsales">TOTAL SALES REPORT</option>
+      <option value="acceptedjobs">ACCEPED JOB SHEET</option>
+      <option value="rejectedjobs">REJECTED JOB SHEET</option>
+      <option value="onetime">SALES REPORT : ONETIME CLEANING</option>
+      <option value="subscription">SALES REPORT : SUBSCRIPTION</option>
+      <option value="customer">CUSTOMER PAYMENT REPORT</option>
+      <option value="customeroutstanding">CUSTOMER OUTSTANDING PAYMENTS REPORT</option>
+      </select>
+      </div>
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<div align="center"> <input class="assignButton export_payment" name="assing" type="button" value="Export" ></div>  
+
+</div><!--ticket-wrapper-full-->             
+</form>
+            </div><!--content-->
+    </div><!--popup-assign-eval-->
+</div><!--overlay-->
+<!-- export popup -->
+
 {% include 'admin/common/footer.html' %}
 </div><!--wrapper-->
 {% endblock %}
@@ -295,6 +390,44 @@ $('.footable').footable({
 //# sourceURL=pen.js
     </script>
     <script>
+
+var date = new Date();
+
+date.setDate(date.getDate()-1)
+date.setMonth(date.getMonth()+1)
+var datestring = ("0" + (date.getDate())).slice(-2)  + "-" + ("0" + (date.getMonth())).slice(-2) + "-" + date.getFullYear();
+
+var date2 = new Date();
+date2.setDate(date2.getDate()-30);
+date2.setMonth(date2.getMonth()+1)
+var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
+console.log(datestring,datestring2)
+
+$('.id_from_date').val(datestring2);
+$('.id_to_date').val(datestring);
+
+
+$('.export_btn').click(function(){
+  
+  $('#export_popup').css({'visibility':'visible','opacity':1,});
+});
+
+$("#close_export_popup").click(function () {
+    $('#export_popup').css({'visibility':'hidden','opacity':0,});
+});
+
+//EXPORT EXCEL
+$(".export_payment").click(function () {
+  console.log("poi")
+    $('#export_popup').css({'visibility':'hidden','opacity':0,});
+    
+    submitAnyForm($(this));
+
+    location.reload(true);
+
+    //document.getElementById("excelform").reset();
+    
+});
 
 function paymentfromtodatecheck() {
   var d1 = $('#payment_fromdate').val();

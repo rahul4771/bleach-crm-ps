@@ -60,8 +60,8 @@
         
          <div class="chart_box_Left"><!--chart_box_Left-->
          <div class="legend-wrapper"><!--legend-wrapper--> 
-            <div class="legend-result count_div"><label class="legend-label">PAID AMOUNT </label> <b class="legend-result-blue" id="total_submitted"></b> <b>KD</b></div>
-            <div class="legend-result count_div"><label class="legend-label">PENDING AMOUNT </label> <b class="legend-result-red" id="total_approved"></b> <b>KD</b></div>
+            <div class="legend-result count_div"><label class="legend-label">SALES </label> <b class="legend-result-blue" id="total_submitted"></b> <b>KD</b></div>
+            <!--<div class="legend-result count_div"><label class="legend-label">PENDING AMOUNT </label> <b class="legend-result-red" id="total_approved"></b> <b>KD</b></div>-->
          </div><!--legend-wrapper-->
   		</div><!--chart_box_Left-->
         <div class="chart_box_Left"><!--chart_box_Left-->        
@@ -178,11 +178,7 @@
 <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
 </select>
 </label>
-{% comment %} <br>
-<button class="blue-button" style="font-size:15px;"><i class="fa fa-file-excel-o" aria-hidden="true"></i>  Click to Generate Report</button>
-<button class="export_btn" style="font-size:15px;"><i class="fa fa-file-excel-o" aria-hidden="true"></i>  Click to Generate Report</button>
-<br>
-<br> {% endcomment %}
+
 <div class="page-entries">Show {{entry_per_page}} entries</div>
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
