@@ -50,9 +50,9 @@ function initialize() {
             contentType: "application/json;charset=utf-8",
             
             success: function(data_month) {
-            var quotations = [['Month', 'Paid', 'Pending']];
+            var quotations = [['Month', 'Paid']];
             var submitted_total_month = 0;
-            var approved_total_month = 0;
+            //var approved_total_month = 0;
 
             if(data_month.length > 0){
             $.each(data_month,function(key,value){
@@ -64,17 +64,17 @@ function initialize() {
                 // console.log(year,month,day,value.submitted_qt,value.approved_qt,"ter")
 
                 // const d2 = new Date(year,month-1,day)
-                quotations.push([monthNames[value.date],value.paid,value.pending]);
+                quotations.push([monthNames[value.date],value.paid]);
                 submitted_total_month += parseInt(value.paid);
-                approved_total_month += parseInt(value.pending);
+                //approved_total_month += parseInt(value.pending);
             });
             }else{
-                quotations.push(['',0,0]);
+                quotations.push(['',0]);
             }
 
-            console.log(submitted_total_month,approved_total_month,"war2 ");
+            console.log(submitted_total_month,"war2 ");
             $('#total_submitted').text(submitted_total_month);
-            $('#total_approved').text(approved_total_month);
+            //$('#total_approved').text(approved_total_month);
 
 
             data[0] = new google.visualization.arrayToDataTable(quotations);
@@ -106,9 +106,9 @@ function initialize() {
             contentType: "application/json;charset=utf-8",
             
             success: function(data_date) {
-            var quotations = [['Date', 'Paid', 'Pending']];
+            var quotations = [['Date', 'Paid']];
             var submitted_total = 0;
-            var approved_total = 0;
+            //var approved_total = 0;
 
             if(data_date.length > 0){
             $.each(data_date,function(key,value){
@@ -121,16 +121,16 @@ function initialize() {
                 var payment_date = new Date(year,month,day)
                 payment_date.setMonth(payment_date.getMonth()-1);
 
-            quotations.push([payment_date,value.paid,value.pending]);
+            quotations.push([payment_date,value.paid]);
                 submitted_total += parseInt(value.paid);
-                approved_total += parseInt(value.pending);
+                //approved_total += parseInt(value.pending);
             });
             }else{
-                quotations.push(['',0,0]);
+                quotations.push(['',0]);
             }
-            console.log(submitted_total,approved_total,"war ");
+            console.log(submitted_total,"war ");
             $('#total_submitted').text(submitted_total);
-            $('#total_approved').text(approved_total);
+            //$('#total_approved').text(approved_total);
 
             data[1] = new google.visualization.arrayToDataTable(quotations);
 
