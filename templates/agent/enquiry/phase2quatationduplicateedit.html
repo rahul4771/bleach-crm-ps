@@ -142,7 +142,7 @@
                 </div><!--enquiry-form-left-->
                 <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Discount</label></div>
-                <input name="form-{{forloop.counter0}}-discount" id="id_form-{{forloop.counter0}}-discount" type="text" class="textBox discount OnlyNumber" maxlength="10" placeholder=" " value="{{book.discount|floatformat:'2'}}" required> 
+                <input name="form-{{forloop.counter0}}-discount" id="id_form-{{forloop.counter0}}-discount" type="number" placeholder="1.0" step="0.001" class="textBox discount OnlyNumber" maxlength="10" placeholder=" " value="{{book.discount|floatformat:'2'}}" required> 
                 </div><!--enquiry-form-right-->
         </div> <!--enquiry-form-Wrapper enquiry-boxes-->  
                      
