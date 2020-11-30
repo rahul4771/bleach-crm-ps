@@ -228,11 +228,11 @@ var date1 = new Date();
 //date1.setMonth(date1.getMonth());
 
 var date2 = new Date();
-date2.setMonth(date1.getMonth()+1);
+date2.setMonth(date2.getMonth()+2);
 
 var month = ("0" + (date1.getMonth())).slice(-2);
 var month2 = ("0" + (date2.getMonth())).slice(-2);
-console.log(month,"lp")
+console.log(date2.getMonth(),"lp")
 var datestring = month + "/" + date1.getFullYear();
 var datestring2 = month2 + "/" + date2.getFullYear();
 

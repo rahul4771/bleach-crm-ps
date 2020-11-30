@@ -150,7 +150,7 @@ $("#daymonth_location").click(function(){
 
         var date2 = new Date();
         date2.setDate(date2.getDate()-30);
-        date2.setMonth(date2.getMonth()+1)
+        date2.setMonth(date2.getMonth()+2)
         var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
 
         $('#location_pie_date1').val(datestring2);
@@ -190,7 +190,7 @@ $("#reset_locations").click(function(){
 
     var date2 = new Date();
     date2.setDate(date2.getDate()-30);
-    date2.setMonth(date2.getMonth()+1)
+    date2.setMonth(date2.getMonth()+2)
     var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
 
     $('#location_pie_date1').val(datestring2);
@@ -337,7 +337,7 @@ $("#daymonth_cleaningtype").click(function(){
 
         var date2 = new Date();
         date2.setDate(date2.getDate()-30);
-        date2.setMonth(date2.getMonth()+1)
+        date2.setMonth(date2.getMonth()+2)
         var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
 
         $('#cleaningtype_pie_date1').val(datestring2);
@@ -377,7 +377,7 @@ $("#reset_cleaningtypes").click(function(){
 
     var date2 = new Date();
     date2.setDate(date2.getDate()-30);
-    date2.setMonth(date2.getMonth()+1)
+    date2.setMonth(date2.getMonth()+2)
     var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
 
     $('#cleaningtype_pie_date1').val(datestring2);
@@ -522,7 +522,7 @@ $("#daymonth_governorate").click(function(){
 
         var date2 = new Date();
         date2.setDate(date2.getDate()-30);
-        date2.setMonth(date2.getMonth()+1)
+        date2.setMonth(date2.getMonth()+2)
         var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
 
         $('#governorate_pie_date1').val(datestring2);
@@ -561,7 +561,7 @@ $("#reset_governorates").click(function(){
 
     var date2 = new Date();
     date2.setDate(date2.getDate()-30);
-    date2.setMonth(date2.getMonth()+1)
+    date2.setMonth(date2.getMonth()+2)
     var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
 
     $('#governorate_pie_date1').val(datestring2);
@@ -590,7 +590,7 @@ $("#reset_governorates").click(function(){
 var date1 = new Date();
 
 var date2 = new Date();
-date2.setMonth(date2.getMonth()+1);
+date2.setMonth(date2.getMonth()+2);
 
 var month = ("0" + (date1.getMonth())).slice(-2);
 var month2 = ("0" + (date2.getMonth())).slice(-2);
