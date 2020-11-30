@@ -555,6 +555,27 @@ $('document').ready(function(){
     });
 
     $("body").on("click", ".close-div", function(){
+        //find total when we remove a section
+        var formcount    = parseInt($(this).parent('div').attr('id').match(/\d+/g)[0]);
+        var sectioncount = parseInt($(this).parent('div').attr('id').match(/\d+/g)[1]);        
+        total_estimated_cost = 0
+        for(i=0;i<sectioncount;i++)
+        {
+            cost = $('#id_form'+formcount+'_sectioncost'+i).val() 
+            if (cost == '')
+            {
+                cost = 0;
+            }
+
+            total_estimated_cost += parseFloat(cost);
+        }
+        $("#id_form-"+formcount+"-estimated_cost").val(total_estimated_cost)
+
+        discount       = $("#id_form-"+formcount+"-discount").val();
+        total_cost = total_estimated_cost-discount
+        $("#id_form-"+formcount+"-total_cost").val(total_cost);
+
+        //remove section
         $(this).parent('div').remove();
         $('.close-div:last').attr("hidden",false);
     });
