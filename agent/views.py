@@ -496,7 +496,7 @@ def GetOrdersSchedulesFromEvalDetails(request):
 	evaluation_id = request.GET.get('evaluation_id')
 
 	
-	order_schedules = OrderScheduler.objects.select_related('evaluation_details','order_scheduler_book__service_type').filter(evaluation_details_id=evaluation_id,status='WAITING')
+	order_schedules = OrderScheduler.objects.select_related('evaluation_details','order_scheduler_book__service_type').filter(evaluation_details_id=evaluation_id,status='WAITING').order_by('-start_at')
 	
 	complete_schedule_details = []
 	if order_schedules:
@@ -661,7 +661,7 @@ class AgentHome(IsAgent,View):
 			followupschedule.days_left_coming = (followupschedule.start_at-timezone.now()).days 
 
 		
-		order_schedules_by_address = Order.objects.select_related('evaluation__call_attender').filter(evaluation__quatation_status='APPROVED').filter(Q( Q(Q(payment_status='COMPLETED')|~Q(preamount_paid = 0)) | Q(evaluation__payment_method='POSTPAID') )).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED').select_related('evaluator').prefetch_related(Prefetch('order_scheduler_evaluationdetails',queryset=OrderScheduler.objects.filter(is_active=True,status='WAITING').order_by('-start_at'),to_attr="orderschedules")),to_attr='evaluationdetails'))		
+		order_schedules_by_address = Order.objects.select_related('evaluation__call_attender').filter(evaluation__quatation_status='APPROVED').filter(Q( Q(Q(payment_status='COMPLETED')|~Q(preamount_paid = 0)) | Q(evaluation__payment_method='POSTPAID') )).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED').select_related('evaluator').prefetch_related(Prefetch('order_scheduler_evaluationdetails',queryset=OrderScheduler.objects.filter(is_active=True,status='WAITING').order_by('start_at'),to_attr="orderschedules")),to_attr='evaluationdetails'))		
 		for order_details in order_schedules_by_address:
 			if order_details.evaluation.evaluationdetails:
 				for evaluation_detail in order_details.evaluation.evaluationdetails:
