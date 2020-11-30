@@ -491,6 +491,26 @@ def RemoveEvaluationMedia(request):
 
 	return JsonResponse(data)
 
+def GetOrdersSchedulesFromEvalDetails(request):
+	data = {}
+	evaluation_id = request.GET.get('evaluation_id')
+
+	
+	order_schedules = OrderScheduler.objects.select_related('evaluation_details').filter(evaluation_details_id=evaluation_id,status='WAITING')
+	
+	complete_schedule_details = []
+	if order_schedules:
+		for schedule in order_schedules:
+			schedule_details = {}
+			schedule_details['id']       = schedule.id
+			schedule_details['start_at_time'] = (schedule.start_at+timedelta(hours=3)).strftime('%I:%M %p')
+			schedule_details['start_at_date'] = ((schedule.start_at+timedelta(hours=3)).date()).strftime('%d-%m-%Y')
+			complete_schedule_details.append(schedule_details)
+
+	data['schedules_details'] = complete_schedule_details
+
+	return JsonResponse(data)		
+
 def CleaningExistingDates(request):
 	data = {}
 	booking_time      = request.GET.get('booking_time')
@@ -631,15 +651,24 @@ class AgentHome(IsAgent,View):
 		confirm_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
 		
 		order_schedules		  = OrderScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(4)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') ))
-		
-		follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(4)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
-		
-		#add days left
 		for schedule in order_schedules:
 			schedule.days_left_coming = (schedule.start_at-timezone.now()).days
 
+		follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(4)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
 		for followupschedule in follow_up_schedules:
 			followupschedule.days_left_coming = (followupschedule.start_at-timezone.now()).days 
+
+		
+		order_schedules_by_address = Order.objects.select_related('evaluation__call_attender').filter(evaluation__quatation_status='APPROVED').filter(Q( Q(Q(payment_status='COMPLETED')|~Q(preamount_paid = 0)) | Q(evaluation__payment_method='POSTPAID') )).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED').select_related('evaluator').prefetch_related(Prefetch('order_scheduler_evaluationdetails',queryset=OrderScheduler.objects.filter(is_active=True,status='WAITING').order_by('start_at'),to_attr="orderschedules")),to_attr='evaluationdetails'))		
+		for order_details in order_schedules_by_address:
+			if order_details:
+				for evaluation_detail in order_details.evaluation.evaluationdetails:
+					if evaluation_detail:
+						count = 0
+						for schedule in evaluation_detail.orderschedules:
+							if count == 0:
+								evaluation_detail.days_left_coming = (schedule.start_at-timezone.now()).days
+							count += 1
 
 		#cleaning schedule & followup schedule for cleaning calendar
 		cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
@@ -695,7 +724,7 @@ class AgentHome(IsAgent,View):
 		#followup confirmation for special user
 		followup_to_be_closed = FollowUpScheduler.objects.select_related('follow_up').filter(is_active=True,follow_up__status='FOLLOWUP_IN_PROGRESS',)
 				
-		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'order_schedules':order_schedules,'follow_up_schedules':follow_up_schedules,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'workers':workers,"customer_addresses":customer_addresses,"followup_to_be_closed":followup_to_be_closed,})
+		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'order_schedules':order_schedules,'follow_up_schedules':follow_up_schedules,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'workers':workers,"customer_addresses":customer_addresses,"followup_to_be_closed":followup_to_be_closed,"order_schedules_by_address":order_schedules_by_address,})
 
 
 	def post(self,request):
@@ -799,6 +828,27 @@ class AgentHome(IsAgent,View):
 			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
 
 			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
+
+		elif action_mode =='confirm_orderschedules':
+			print(request.POST)
+			total_schedules = int(request.POST.get('total_schedules_to_confirm'))
+			for i in range(total_schedules):
+				schedule_id    = request.POST.get('order_schedules_id'+str(i))
+				
+				order_scheduler= OrderScheduler.objects.select_related('order_scheduler_book').get(id=schedule_id)
+				tendative_date = request.POST.get('order_schedule_date'+str(i))
+				tendative_time = request.POST.get('order_schedule_time'+str(i))
+				start_at         = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+				end_at           = start_at + timedelta(hours=order_scheduler.order_scheduler_book.cleaning_hours)
+
+				confirm_status = request.POST.get('confirm'+str(i))
+
+				if confirm_status:
+					OrderScheduler.objects.filter(id=schedule_id).update(status='CONFIRMED',start_at=start_at,end_at=end_at)
+				else:
+					OrderScheduler.objects.filter(id=schedule_id).update(start_at=start_at,end_at=end_at)
+			
+			messages.success(request,"Cleaning Date(s) Confirmed/Changed Successfully")
 
 		elif action_mode == 'followup_close':
 			followup = FollowUp.objects.filter(id=request.POST.get('followup')).update(status='FOLLOWUP_CLOSED')

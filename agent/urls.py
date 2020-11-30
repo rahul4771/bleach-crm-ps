@@ -63,5 +63,5 @@ urlpatterns = [
 	url(r'^ajax/removeevaluationmedia/',views.RemoveEvaluationMedia,name='removeevaluationmedia'),
 	url(r'^ajax/mobile/validate/',views.MobileNumberValidate,name='mobilenumber-validate'),
 	url(r'^ajax/scheduled/dates/',views.CleaningExistingDates,name='scheduled-dates'),
-
+	url(r'^ajax/evaluationdetail/schedules/',views.GetOrdersSchedulesFromEvalDetails,name='evaluationdetais-schedules'),
 ]
