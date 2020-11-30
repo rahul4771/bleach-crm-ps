@@ -773,53 +773,53 @@ class AgentHome(IsAgent,View):
 				messages.success(request,"Cleaning Date Succesfully Confirmed")
 
 				#date confirmation sms
-				url = "https://smsapi.future-club.com/fccsms.aspx"
+				# url = "https://smsapi.future-club.com/fccsms.aspx"
 
-				if language == 'ENGLISH':
+				# if language == 'ENGLISH':
 
-					message = "Dear Customer, We have confirmed your Cleaning Appointment against the Order Number "+ orderschedule.order.order_no +". Bleach's Cleaning Team will be visiting you on "+ str(confirm_date)+" "+ str(confirm_time) +" at "+orderschedule.evaluation_details.address.apartment+","+orderschedule.evaluation_details.address.floor+","+orderschedule.evaluation_details.address.street+","+orderschedule.evaluation_details.address.building+","+orderschedule.evaluation_details.address.avenue+","+orderschedule.evaluation_details.address.block+","+orderschedule.evaluation_details.address.area.name+","+orderschedule.evaluation_details.address.governorate.name+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+				# 	message = "Dear Customer, We have confirmed your Cleaning Appointment against the Order Number "+ orderschedule.order.order_no +". Bleach's Cleaning Team will be visiting you on "+ str(confirm_date)+" "+ str(confirm_time) +" at "+orderschedule.evaluation_details.address.apartment+","+orderschedule.evaluation_details.address.floor+","+orderschedule.evaluation_details.address.street+","+orderschedule.evaluation_details.address.building+","+orderschedule.evaluation_details.address.avenue+","+orderschedule.evaluation_details.address.block+","+orderschedule.evaluation_details.address.area.name+","+orderschedule.evaluation_details.address.governorate.name+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
 				
-					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+orderschedule.order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+				# 	querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+orderschedule.order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 
-				else:
-					message = "عزيزينا العميل تم تأكيد موعد التنظيف بنجاح وذلك للطلب رقم "+ orderschedule.order.order_no +".  سيقوم طاقم العمل بزيارتكم في "+ str(confirm_date)+" "+ str(confirm_time) +" في "+orderschedule.evaluation_details.address.apartment+","+orderschedule.evaluation_details.address.floor+","+orderschedule.evaluation_details.address.street+","+orderschedule.evaluation_details.address.building+","+orderschedule.evaluation_details.address.avenue+","+orderschedule.evaluation_details.address.block+","+orderschedule.evaluation_details.address.area.name+","+orderschedule.evaluation_details.address.governorate.name+". لأي استفسارات يمكنكم التواصل معنا عل 9651882707+ .  شكراً لاختياركم بليتش لخدمات التنظيف"
+				# else:
+				# 	message = "عزيزينا العميل تم تأكيد موعد التنظيف بنجاح وذلك للطلب رقم "+ orderschedule.order.order_no +".  سيقوم طاقم العمل بزيارتكم في "+ str(confirm_date)+" "+ str(confirm_time) +" في "+orderschedule.evaluation_details.address.apartment+","+orderschedule.evaluation_details.address.floor+","+orderschedule.evaluation_details.address.street+","+orderschedule.evaluation_details.address.building+","+orderschedule.evaluation_details.address.avenue+","+orderschedule.evaluation_details.address.block+","+orderschedule.evaluation_details.address.area.name+","+orderschedule.evaluation_details.address.governorate.name+". لأي استفسارات يمكنكم التواصل معنا عل 9651882707+ .  شكراً لاختياركم بليتش لخدمات التنظيف"
 					
-					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+orderschedule.order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+				# 	querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+orderschedule.order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 
-				headers = {
-					'cache-control': "no-cache"
-				}
+				# headers = {
+				# 	'cache-control': "no-cache"
+				# }
 
-				response = requests.request("GET", url, headers=headers, params=querystring)
+				# response = requests.request("GET", url, headers=headers, params=querystring)
 
-				print(response.text,"msg")
+				# print(response.text,"msg")
 				
 				#cleaning date change sms
-				if start_at.date() != orderschedule_start_at:
+				# if start_at.date() != orderschedule_start_at:
 
-					url = "https://smsapi.future-club.com/fccsms.aspx"
+				# 	url = "https://smsapi.future-club.com/fccsms.aspx"
 
-					if language == 'ENGLISH':
+				# 	if language == 'ENGLISH':
 
-						message = "Dear Customer, We have changed the date of your Cleaning Appointment against order number "+ orderschedule.order.order_no +" as per your request. Bleach Cleaning Team will be visiting you on "+ str(confirm_date)+" "+ str(confirm_time) +" at "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+				# 		message = "Dear Customer, We have changed the date of your Cleaning Appointment against order number "+ orderschedule.order.order_no +" as per your request. Bleach Cleaning Team will be visiting you on "+ str(confirm_date)+" "+ str(confirm_time) +" at "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 
-						querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+orderschedule.order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+				# 		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+orderschedule.order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 
-					else:
-						message = "عزيزي العميل، لقد قمنا بتغيير تاريخ موعد التنظيف الخاص بك مقابل رقم الطلب "+ orderschedule.order.order_no +" وذلك وفق طلبكم.  سيقوم طاقم العمل بزيارتكم في "+ str(confirm_date)+" "+ str(confirm_time) +" في "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+				# 	else:
+				# 		message = "عزيزي العميل، لقد قمنا بتغيير تاريخ موعد التنظيف الخاص بك مقابل رقم الطلب "+ orderschedule.order.order_no +" وذلك وفق طلبكم.  سيقوم طاقم العمل بزيارتكم في "+ str(confirm_date)+" "+ str(confirm_time) +" في "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
 					
-						querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+orderschedule.order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+				# 		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+orderschedule.order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 
-					headers = {
-						'cache-control': "no-cache"
-					}
+				# 	headers = {
+				# 		'cache-control': "no-cache"
+				# 	}
 
-					response = requests.request("GET", url, headers=headers, params=querystring)
+				# 	response = requests.request("GET", url, headers=headers, params=querystring)
 
-					print(message,response,"res")
+				# 	print(message,response,"res")
 					
-				else:
-					pass
+				# else:
+				# 	pass
 			else:
 				OrderScheduler.objects.filter(id=orderscheduler_id).update(start_at=start_at,end_at=end_at)
 				messages.success(request,"Cleaning Date Not Confirmed")
