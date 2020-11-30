@@ -58,7 +58,7 @@
         {% elif detail.status == 'TOBEEVALUATED' and detail.evaluator == None %}
         <a href="{% url 'agent:agent-makequatation2' detail.id %}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
         {% else %}
-        <div><input name="view" type="button" value="Edit" class="checkonButton"></div>
+        <div><input name="view" type="button" value="Edit" class="checkonButton" hidden></div>
         {% endif %}
       </div><!--checkins-form-right--> 
       <div class="checkin-form-right align-right"><!--checkin-form-right-->
