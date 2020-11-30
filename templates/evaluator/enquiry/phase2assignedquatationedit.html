@@ -168,6 +168,11 @@
                 <hr class="hr-dashedpad">    
                 
         <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+
+                <div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class=" bold-text common-label"> <label>Tentative Time</label></div>
+                <input name="form-{{forloop.counter0}}-tendative_time" id='id_form-{{forloop.counter0}}-tendative_time' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{%  if forloop.first %}{{orderschedule.start_at|date:'h:i A'}}{% endif %}{% endfor %}" required> 
+                </div><!--enquiry-form-left-->
                 
                 {% if book.cleaning_policy == 'ONE TIME SERVICE' %}
                 <div class="enquiry-form-right" style="display:none"><!--enquiry-form-right-->
@@ -188,11 +193,6 @@
                 <input name="form-{{forloop.counter0}}-tendative_date" id='id_form-{{forloop.counter0}}-tendative_date' type="text" class="textBox readonly" placeholder=" " value=""> 
                 </div><!--enquiry-form-right-->
                 {% endif %}
-
-                <div class="enquiry-form-left"><!--enquiry-form-left-->
-                <div class=" bold-text common-label"> <label>Tentative Time</label></div>
-                <input name="form-{{forloop.counter0}}-tendative_time" id='id_form-{{forloop.counter0}}-tendative_time' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{%  if forloop.first %}{{orderschedule.start_at|date:'h:i A'}}{% endif %}{% endfor %}" required> 
-                </div><!--enquiry-form-left-->
 
         </div> <!--enquiry-form-Wrapper enquiry-boxes-->
         
@@ -698,14 +698,19 @@ $("#id_form-{{forloop.counter0}}-tendative_time").datetimepicker({
     format: 'hh:mm A',
 });
 
-$("#id_form-{{forloop.counter0}}-tendative_time, #id_form-{{forloop.counter0}}-number_of_cleaners , #id_form-{{forloop.counter0}}-cleaning_hours").change(function(){
+
+    //prev date time check
+    $("#id_form-{{forloop.counter0}}-tendative_time").change(function(){
     var policy = $("#id_form-{{forloop.counter0}}-cleaning_policy").val();
     if (policy == 'ONE TIME SERVICE'){
         datetimecheck($("#id_form-{{forloop.counter0}}-tendative_time").val(),$("#id_form-{{forloop.counter0}}-tendative_date").val(),'onetime',"{{forloop.counter0}}");
     }else{
         datetimecheck($("#id_form-{{forloop.counter0}}-tendative_time").val(),$("#id_form-{{forloop.counter0}}-tendative_dates").val(),'subscription',"{{forloop.counter0}}");
     }
+    });
 
+    //busy dates code .. inactive
+    $("#id_form--tendative_time, #id_form--number_of_cleaners , #id_form--cleaning_hours").change(function(){
     var clean_duration = $("#id_form-{{forloop.counter0}}-cleaning_hours").val();
     var order_duration = clean_duration.split('.');
 
