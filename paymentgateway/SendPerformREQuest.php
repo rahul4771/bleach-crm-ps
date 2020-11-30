@@ -93,7 +93,7 @@ Merchant MUST esure that below points in ErrorURL
 2- the error url SHOULD NOT have any additional paramteres or query string
 */ 
 
-$ErrorUrl="http://my.bleachkw.com/customer/payment/failed/?udf1=".$_POST['evaluation_id'];
+$ErrorUrl="http://payment.bleachkw.com:8085/testphp.php";
 $ReqErrorUrl="errorURL=".$ErrorUrl;
 
 
