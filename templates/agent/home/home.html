@@ -103,7 +103,7 @@
 <td data-label="Area">{{evaluation_details.address.area}}</td>
 <td class="hide-a" data-label="">{% if evaluation_details.evaluator.profile_image %}<img src="{{evaluation_details.evaluator.profile_image.url}}" title="{{evaluation_details.evaluator.name}}" class="profile-avatar">{% else %}<img src="{{evaluation_details.evaluation.call_attender.profile_image.url}}" title="{{evaluation_details.evaluation.call_attender.name}}" class="profile-avatar">{% endif %}</td>
 <td data-label="" class="bold-text">{% if evaluation_details.days_left_coming < 0 %}<h3 class="red-text-h3">Exp</h3>{% elif evaluation_details.days_left_coming == 0 %}<h3 class="orange-text-h3">{{evaluation_details.days_left_coming}}</h3> Days&#11015;{% elif evaluation_details.days_left_coming == 1 %}<h3 class="yellow-text-h3">{{evaluation_details.days_left_coming}}</h3> Days&#11015;{% elif evaluation_details.days_left_coming == 2 or evaluation_details.days_left_coming == 3 %}<h3 class="green-text-h3">{{evaluation_details.days_left_coming}}</h3> Days&#11015;{% else %}<h3 class="green-text-h3">{{evaluation_details.days_left_coming}}</h3> Days&#11015;{% endif %}</td>
-<td class="hide-b order_schedules clickable-cursor" data-label="" data-details_id="{{evaluation_details.id}}" data-blcno="{{evaluation_details.evaluation.evaluation_id}}" data-customer_name="{{evaluation_details.evaluation.customer.name}}" data-mobile_no="{{evaluation_details.evaluation.customer.mobile_number}}" data-area="{{evaluation_details.address.area}}"><span {% if evaluation_details.days_left_coming < 0 %}class="red-bg"{% elif evaluation_details.days_left_coming == 0 %}class="orange-bg"{% elif evaluation_details.days_left_coming == 1 %}class="yellow-bg"{% elif evaluation_details.days_left_coming == 2 or evaluation_details.days_left_coming == 3 %}class="green-bg"{% else %}class="green-bg"{% endif %}>Click to Confirm</span></td>
+<td class="hide-b order_schedules clickable-cursor" data-label="" data-details_id="{{evaluation_details.id}}" data-blcno="{{evaluation_details.evaluation.evaluation_id}}" data-customer_name="{{evaluation_details.evaluation.customer.name}}" data-mobile_no="{{evaluation_details.evaluation.customer.mobile_number}}" data-area="{{evaluation_details.address.area}}" data-apartment="{{evaluation_details.address.apartment}}" data-avenue="{{evaluation_details.address.avenue}}" data-street="{{evaluation_details.address.street}}" data-building="{{evaluation_details.address.building}}" data-block="{{evaluation_details.address.block}}" data-floor="{{evaluation_details.address.floor}}" data-governorate="{{evaluation_details.address.governorate.name}}"><span {% if evaluation_details.days_left_coming < 0 %}class="red-bg"{% elif evaluation_details.days_left_coming == 0 %}class="orange-bg"{% elif evaluation_details.days_left_coming == 1 %}class="yellow-bg"{% elif evaluation_details.days_left_coming == 2 or evaluation_details.days_left_coming == 3 %}class="green-bg"{% else %}class="green-bg"{% endif %}>Click to Confirm</span></td>
 </tr>
 {% endif %}
 {% endfor %}
@@ -271,48 +271,37 @@
 </section>
 {% include 'agent/common/footer.html' %}
 </div>     
+
 <!-- order_schedules confirm_popup -->
-<div id="orderschedules_dateconfirm_popup" class="overlay"><!--overlay-->
-    <div class="popup-assign-eval"><!--popup-assign-eval-->
-        <a class="close" id="orderschedules_dateconfirm_popup_close">&times;</a>
-            <div class="content"><!--content-->
-            
-                        
-            <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
-            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-  <div class="ticket-form-left"><!--ticket-form-left-->
-    
-    <table width="100%" border="0" class="popup-tble1">
-                <tr>
-                    <td valign="bottom"><div class="blc-number" id="order_schedules_blc_id"></div></td>
-                    <td rowspan="2" align="center"><div class="bold-text"id="order_schedules_customer_id"></div><div id="order_schedules_mobile_id"></div></td>
-                </tr>
-            <tr>
-              <td id="order_schedules_area_id"></td>
-            </tr>
-            <tr>
-              <td id="order_schedules_service_type_id"></td>
-            </tr>
-            </table>
-    
-      </div><!--ticket-form-left--> 
-  </div><!--ticket-wrapper-row ticket-forms-boxes-->
-<hr class="hr-dashedpad">   
+<div id="orderschedules_dateconfirm_popup" class="overlay">
+        <div class="popup-assign-eval"><!--popup-assign-eval-->
+            <a class="close" id="orderschedules_dateconfirm_popup_close" href="#">&times;</a>
+                <div class="content"><!--content-->                     
+                <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+                <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+      <div class="ticket-form-left"><!--ticket-form-left-->
+        
+            <div class="blc-number-big" id="order_schedules_blc_id"></div>             
+            <div class="customer-name"><i class="fa blue-text fa-user-circle-o" aria-hidden="true"></i>&nbsp;<span id="order_schedules_customer_id"></span></div>
+            <div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;<span id="order_schedules_mobile_id"></span></div>
+            <div class="mobile-number"><i class="fa orange-text fa-lg fa-address-card-o" aria-hidden="true"></i> &nbsp;<span id="order_schedules_address_id"></span></div>
+            </div><!--ticket-form-left--> 
+        </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <form  id="orderschedules_confirm" method="post" enctype= "multipart/form-data">
 {%csrf_token%}
 <input type="hidden" name="action_type" value="confirm_orderschedules">
-<input type="hidden" name="total_schedules_to_confirm" id="total_schedules_to_confirm_id">          
-<div align="center"> <input class="assignButton confirmdate_order_btn" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
-</form> 
+<input type="hidden" name="total_schedules_to_confirm" id="total_schedules_to_confirm_id">
+
+    <div>
+
+        <hr class="hr-dashedpad"> 
+<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
+</form>
 
 </div><!--ticket-wrapper-full--> 
-            
-      
-            
             </div><!--content-->
     </div><!--popup-assign-eval-->
-</div><!--overlay-->  
-<!-- /order_schedules confirm_popup -->
+</div><!-- /order_schedules confirm_popup -->
 
 
 <!-- followup_scheduler confirm_popup -->
@@ -1250,9 +1239,8 @@ $(".order_schedules").click(function(){
     $("#order_schedules_blc_id").html($(this).data('blcno'));
     $("#order_schedules_customer_id").html($(this).data('customer_name'));
     $("#order_schedules_mobile_id").html($(this).data('mobile_no'));
-    $("#order_schedules_area_id").html($(this).data('area'));
+    $("#order_schedules_address_id").html($(this).data('apartment')+', '+$(this).data('floor')+', '+$(this).data('building')+', '+$(this).data('block')+', '+$(this).data('street')+', '+$(this).data('avenue')+', '+$(this).data('area')+', '+$(this).data('governorate'))
 
-    console.log($(this).data('details_id'),"evaluation id")
     $.ajax({
             url: "{% url 'agent:evaluationdetais-schedules' %}",
             data: {
@@ -1267,7 +1255,9 @@ $(".order_schedules").click(function(){
                 for(i=0;i<confirm_schedules.length;i++)
                 {
                     console.log(confirm_schedules[i])
-                    append_html = '<div class="for_removeschedule"><div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes--><input type="hidden" name="order_schedules_id'+i+'" value="'+confirm_schedules[i]['id']+'"><div class="ticket-form-left"><!--ticket-form-left--><div class=" bold-text common-label"> <label>Cleaning Time</label></div><input name="order_schedule_time'+i+'" id="order_schedule_time_id'+i+'" type="text" class="textBox" readonly value="'+confirm_schedules[i]['start_at_time']+'"></div><!--ticket-form-left--><div class="ticket-form-right"><!--ticket-form-right--><div class=" bold-text common-label"> <label>Cleaning Date</label></div><input name="order_schedule_date'+i+'" id="order_schedule_date_id'+i+'" type="text" class="textBox" readonly value="'+confirm_schedules[i]['start_at_date']+'"></div><!--ticket-form-right--></div><!--ticket-wrapper-row ticket-forms-boxes--><br><div align="center"><input name="confirm'+i+'" type="checkbox"> Confirm Date</div><hr class="hr-dashedpad"></div>'
+                    append_html = '<div class="for_removeschedule"><hr class="hr-dashedpad"><div '+(confirm_schedules[i]['cleaning_policy'] == 'SUBSCRIPTION' ? 'class="green-bg-lg"': 'class="blue-bg-lg"')+'>'+(confirm_schedules[i]['cleaning_policy'] == 'SUBSCRIPTION' ? 'Subscription': 'One Time')+'</div><div class="area-bold">'+confirm_schedules[i]['service_type']+'</div><hr><div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes--><input type="hidden" name="order_schedules_id'+i+'" value="'+confirm_schedules[i]['id']+'"><div class="ticket-form-left"><!--ticket-form-left--><div class=" bold-text common-label"> <label><i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;Cleaning Date</label></div><input name="order_schedule_date'+i+'" id="order_schedule_date_id'+i+'" type="text" class="textBox" readonly value="'+confirm_schedules[i]['start_at_date']+'"></div><!--ticket-form-left--><div class="ticket-form-right"><!--ticket-form-right--><div class=" bold-text common-label"> <label><i class="fa fa-clock-o" aria-hidden="true"></i>&nbsp;Cleaning Time</label></div><input name="order_schedule_time'+i+'" id="order_schedule_time_id'+i+'" type="text" class="textBox" readonly value="'+confirm_schedules[i]['start_at_time']+'"></div><!--ticket-form-right--></div><!--ticket-wrapper-row ticket-forms-boxes--><br><div align="right"><input name="confirm'+i+'" type="checkbox"><b>&nbsp;Confirm Date</b></div></div>'
+
+
                     $('#orderschedules_confirm').prepend(append_html);
 
                     //date picker setup for conirm 
