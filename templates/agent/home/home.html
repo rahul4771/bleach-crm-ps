@@ -96,6 +96,7 @@
 <tbody>
 {% for order in order_schedules_by_address %}
 {% for evaluation_details in order.evaluation.evaluationdetails %}
+{% if evaluation_details.orderschedules %}
 <tr {% if evaluation_details.days_left_coming < 0 %}class="red-line"{% elif evaluation_details.days_left_coming == 0 %}class="orange-line"{% elif evaluation_details.days_left_coming == 1 %}class="yellow-line"{% elif evaluation_details.days_left_coming == 2 or evaluation_details.days_left_coming == 3 %}class="green-line"{% else %}class="green-line"{% endif %}>
 <td data-label="BLC Number" class="bold-text">{{evaluation_details.evaluation.evaluation_id}}</td>
 <td data-label="Customer">{{evaluation_details.evaluation.customer.name}}</td>
@@ -104,6 +105,7 @@
 <td data-label="" class="bold-text">{% if evaluation_details.days_left_coming < 0 %}<h3 class="red-text-h3">Exp</h3>{% elif evaluation_details.days_left_coming == 0 %}<h3 class="orange-text-h3">{{evaluation_details.days_left_coming}}</h3> Days&#11015;{% elif evaluation_details.days_left_coming == 1 %}<h3 class="yellow-text-h3">{{evaluation_details.days_left_coming}}</h3> Days&#11015;{% elif evaluation_details.days_left_coming == 2 or evaluation_details.days_left_coming == 3 %}<h3 class="green-text-h3">{{evaluation_details.days_left_coming}}</h3> Days&#11015;{% else %}<h3 class="green-text-h3">{{evaluation_details.days_left_coming}}</h3> Days&#11015;{% endif %}</td>
 <td class="hide-b order_schedules clickable-cursor" data-label="" data-details_id="{{evaluation_details.id}}" data-blcno="{{evaluation_details.evaluation.evaluation_id}}" data-customer_name="{{evaluation_details.evaluation.customer.name}}" data-mobile_no="{{evaluation_details.evaluation.customer.mobile_number}}" data-area="{{evaluation_details.address.area}}"><span {% if evaluation_details.days_left_coming < 0 %}class="red-bg"{% elif evaluation_details.days_left_coming == 0 %}class="orange-bg"{% elif evaluation_details.days_left_coming == 1 %}class="yellow-bg"{% elif evaluation_details.days_left_coming == 2 or evaluation_details.days_left_coming == 3 %}class="green-bg"{% else %}class="green-bg"{% endif %}>Click to Confirm</span></td>
 </tr>
+{% endif %}
 {% endfor %}
 {% endfor %}
 

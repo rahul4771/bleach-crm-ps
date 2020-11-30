@@ -661,14 +661,14 @@ class AgentHome(IsAgent,View):
 		
 		order_schedules_by_address = Order.objects.select_related('evaluation__call_attender').filter(evaluation__quatation_status='APPROVED').filter(Q( Q(Q(payment_status='COMPLETED')|~Q(preamount_paid = 0)) | Q(evaluation__payment_method='POSTPAID') )).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED').select_related('evaluator').prefetch_related(Prefetch('order_scheduler_evaluationdetails',queryset=OrderScheduler.objects.filter(is_active=True,status='WAITING').order_by('start_at'),to_attr="orderschedules")),to_attr='evaluationdetails'))		
 		for order_details in order_schedules_by_address:
-			if order_details:
+			if order_details.evaluation.evaluationdetails:
 				for evaluation_detail in order_details.evaluation.evaluationdetails:
-					if evaluation_detail:
+					if evaluation_detail.orderschedules:
 						count = 0
 						for schedule in evaluation_detail.orderschedules:
 							if count == 0:
 								evaluation_detail.days_left_coming = (schedule.start_at-timezone.now()).days
-							count += 1
+							count += 1 	
 
 		#cleaning schedule & followup schedule for cleaning calendar
 		cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')

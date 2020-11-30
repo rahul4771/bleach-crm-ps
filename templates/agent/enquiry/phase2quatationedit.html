@@ -635,6 +635,9 @@ $('document').ready(function(){
         total_cost = total_estimated_cost-discount
         $("#id_form-"+formcount+"-total_cost").val(total_cost);
 
+        //update section count
+        new_section_count = $('#id_form-'+formcount+'-section_counter').val()-1
+        $('#id_form-'+formcount+'-section_counter').val(new_section_count);
 
         //remove section
         $(this).parent('div').remove();
