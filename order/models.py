@@ -71,11 +71,11 @@ class Order(models.Model):
 
 	payment_status         = models.CharField(max_length=50,blank=True,null=True,default='PENDING',choices=PAYMENT_STATUS)
 	payment_completed_date = models.DateTimeField(blank=True,null=True)
-	total_amount           = models.IntegerField(blank=True,null=True,default=0)
-	amount_paid            = models.IntegerField(blank=True,null=True,default=0)
-	remining_amount        = models.IntegerField(blank=True,null=True,default=0)
-	preamount_paid		   = models.IntegerField(blank=True,null=True,default=0)
-	postamount_paid		   = models.IntegerField(blank=True,null=True,default=0)
+	total_amount           = models.FloatField(blank=True,null=True,default=0)
+	amount_paid            = models.FloatField(blank=True,null=True,default=0)
+	remining_amount        = models.FloatField(blank=True,null=True,default=0)
+	preamount_paid		   = models.FloatField(blank=True,null=True,default=0)
+	postamount_paid		   = models.FloatField(blank=True,null=True,default=0)
 	
 	
 	instructions		   = models.CharField(max_length=5000,blank=True,null=True)

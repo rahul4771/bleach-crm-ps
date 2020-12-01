@@ -496,15 +496,17 @@ def GetOrdersSchedulesFromEvalDetails(request):
 	evaluation_id = request.GET.get('evaluation_id')
 
 	
-	order_schedules = OrderScheduler.objects.select_related('evaluation_details').filter(evaluation_details_id=evaluation_id,status='WAITING')
+	order_schedules = OrderScheduler.objects.select_related('evaluation_details','order_scheduler_book__service_type').filter(evaluation_details_id=evaluation_id,status='WAITING').order_by('-start_at')
 	
 	complete_schedule_details = []
 	if order_schedules:
 		for schedule in order_schedules:
 			schedule_details = {}
 			schedule_details['id']       = schedule.id
-			schedule_details['start_at_time'] = (schedule.start_at+timedelta(hours=3)).strftime('%I:%M %p')
-			schedule_details['start_at_date'] = ((schedule.start_at+timedelta(hours=3)).date()).strftime('%d-%m-%Y')
+			schedule_details['start_at_time']   = (schedule.start_at+timedelta(hours=3)).strftime('%I:%M %p')
+			schedule_details['start_at_date']   = ((schedule.start_at+timedelta(hours=3)).date()).strftime('%d-%m-%Y')
+			schedule_details['cleaning_policy'] = schedule.order_scheduler_book.cleaning_policy
+			schedule_details['service_type']    = schedule.order_scheduler_book.service_type.name
 			complete_schedule_details.append(schedule_details)
 
 	data['schedules_details'] = complete_schedule_details
@@ -659,7 +661,7 @@ class AgentHome(IsAgent,View):
 			followupschedule.days_left_coming = (followupschedule.start_at-timezone.now()).days 
 
 		
-		order_schedules_by_address = Order.objects.select_related('evaluation__call_attender').filter(evaluation__quatation_status='APPROVED').filter(Q( Q(Q(payment_status='COMPLETED')|~Q(preamount_paid = 0)) | Q(evaluation__payment_method='POSTPAID') )).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED').select_related('evaluator').prefetch_related(Prefetch('order_scheduler_evaluationdetails',queryset=OrderScheduler.objects.filter(is_active=True,status='WAITING').order_by('-start_at'),to_attr="orderschedules")),to_attr='evaluationdetails'))		
+		order_schedules_by_address = Order.objects.select_related('evaluation__call_attender').filter(evaluation__quatation_status='APPROVED').filter(Q( Q(Q(payment_status='COMPLETED')|~Q(preamount_paid = 0)) | Q(evaluation__payment_method='POSTPAID') )).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED').select_related('evaluator').prefetch_related(Prefetch('order_scheduler_evaluationdetails',queryset=OrderScheduler.objects.filter(is_active=True,status='WAITING').order_by('start_at'),to_attr="orderschedules")),to_attr='evaluationdetails'))		
 		for order_details in order_schedules_by_address:
 			if order_details.evaluation.evaluationdetails:
 				for evaluation_detail in order_details.evaluation.evaluationdetails:
@@ -730,6 +732,7 @@ class AgentHome(IsAgent,View):
 	def post(self,request):
 		action_mode = request.POST.get('action_type')
 
+		print(request.POST)
 		if action_mode =='confirm_followupchedule':
 			followupscheduler_id = request.POST.get('followupscheduler')
 			followup_scheduler   = FollowUpScheduler.objects.get(id=followupscheduler_id)
@@ -830,7 +833,6 @@ class AgentHome(IsAgent,View):
 			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
 
 		elif action_mode =='confirm_orderschedules':
-			print(request.POST)
 			total_schedules = int(request.POST.get('total_schedules_to_confirm'))
 			for i in range(total_schedules):
 				schedule_id    = request.POST.get('order_schedules_id'+str(i))
