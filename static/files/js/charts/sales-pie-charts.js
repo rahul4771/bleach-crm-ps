@@ -142,39 +142,13 @@ $("#daymonth_location").click(function(){
 
         $('.set1').attr("hidden",false);
         $('.set2').attr("hidden",true);
-        var date1 = new Date();
-
-        date1.setDate(date1.getDate()-1)
-        date1.setMonth(date1.getMonth()+1)
-        var datestring = ("0" + (date1.getDate())).slice(-2)  + "-" + ("0" + (date1.getMonth())).slice(-2) + "-" + date1.getFullYear();
-
-        var date2 = new Date();
-        date2.setDate(date2.getDate()-30);
-        date2.setMonth(date2.getMonth()+2)
-        var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
-
-        $('#location_pie_date1').val(datestring2);
-        $('#location_pie_date2').val(datestring);
+        
         drawlocationChart();
 
     }
     else{
         $('.set1').attr("hidden",true);
         $('.set2').attr("hidden",false);
-        
-        var date3 = new Date();
-
-        var date4 = new Date();
-        date4.setMonth(date4.getMonth()+1);
-
-        var month = ("0" + (date3.getMonth())).slice(-2);
-        var month2 = ("0" + (date4.getMonth())).slice(-2);
-
-        var monthstring = month + "/" + date3.getFullYear();
-        var monthstring2 = month2 + "/" + date4.getFullYear();
-
-        $('#location_pie_month1').val(monthstring);
-        $('#location_pie_month2').val(monthstring2);
 
         drawlocationChart();
 
@@ -183,26 +157,25 @@ $("#daymonth_location").click(function(){
 
 $("#reset_locations").click(function(){
     var date1 = new Date();
-
     date1.setDate(date1.getDate()-1)
-    date1.setMonth(date1.getMonth()+1)
-    var datestring = ("0" + (date1.getDate())).slice(-2)  + "-" + ("0" + (date1.getMonth())).slice(-2) + "-" + date1.getFullYear();
+    
+    var datestring = appendLeadingZeroes(date1.getDate())  + "-" + appendLeadingZeroes(date1.getMonth()+1) + "-" + date1.getFullYear();
 
     var date2 = new Date();
     date2.setDate(date2.getDate()-30);
-    date2.setMonth(date2.getMonth()+2)
-    var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
+   
+    var datestring2 = appendLeadingZeroes(date2.getDate())  + "-" + appendLeadingZeroes(date2.getMonth()+1) + "-" + date2.getFullYear();
 
     $('#location_pie_date1').val(datestring2);
     $('#location_pie_date2').val(datestring);
 
     var date3 = new Date();
+    date3.setMonth(date3.getMonth()-1);
 
     var date4 = new Date();
-    date4.setMonth(date4.getMonth()+1);
 
-    var month = ("0" + (date3.getMonth())).slice(-2);
-    var month2 = ("0" + (date4.getMonth())).slice(-2);
+    var month = appendLeadingZeroes(date3.getMonth()+1);
+    var month2 = appendLeadingZeroes(date4.getMonth()+1);
 
     var monthstring = month + "/" + date3.getFullYear();
     var monthstring2 = month2 + "/" + date4.getFullYear();
@@ -329,39 +302,13 @@ $("#daymonth_cleaningtype").click(function(){
 
         $('.clnset1').attr("hidden",false);
         $('.clnset2').attr("hidden",true);
-        var date1 = new Date();
-
-        date1.setDate(date1.getDate()-1)
-        date1.setMonth(date1.getMonth()+1)
-        var datestring = ("0" + (date1.getDate())).slice(-2)  + "-" + ("0" + (date1.getMonth())).slice(-2) + "-" + date1.getFullYear();
-
-        var date2 = new Date();
-        date2.setDate(date2.getDate()-30);
-        date2.setMonth(date2.getMonth()+2)
-        var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
-
-        $('#cleaningtype_pie_date1').val(datestring2);
-        $('#cleaningtype_pie_date2').val(datestring);
+        
         drawcleaningtypeChart();
 
     }
     else{
         $('.clnset1').attr("hidden",true);
         $('.clnset2').attr("hidden",false);
-        
-        var date3 = new Date();
-
-        var date4 = new Date();
-        date4.setMonth(date4.getMonth()+1);
-
-        var month = ("0" + (date3.getMonth())).slice(-2);
-        var month2 = ("0" + (date4.getMonth())).slice(-2);
-
-        var monthstring = month + "/" + date3.getFullYear();
-        var monthstring2 = month2 + "/" + date4.getFullYear();
-
-        $('#cleaningtype_pie_month1').val(monthstring);
-        $('#cleaningtype_pie_month2').val(monthstring2);
 
         drawcleaningtypeChart();
 
@@ -372,24 +319,24 @@ $("#reset_cleaningtypes").click(function(){
     var date1 = new Date();
 
     date1.setDate(date1.getDate()-1)
-    date1.setMonth(date1.getMonth()+1)
-    var datestring = ("0" + (date1.getDate())).slice(-2)  + "-" + ("0" + (date1.getMonth())).slice(-2) + "-" + date1.getFullYear();
+    
+    var datestring = appendLeadingZeroes(date1.getDate())  + "-" + appendLeadingZeroes(date1.getMonth()+1) + "-" + date1.getFullYear();
 
     var date2 = new Date();
     date2.setDate(date2.getDate()-30);
-    date2.setMonth(date2.getMonth()+2)
-    var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
+    
+    var datestring2 = appendLeadingZeroes(date2.getDate())  + "-" + appendLeadingZeroes(date2.getMonth()+1) + "-" + date2.getFullYear();
 
     $('#cleaningtype_pie_date1').val(datestring2);
     $('#cleaningtype_pie_date2').val(datestring);
 
     var date3 = new Date();
+    date3.setMonth(date3.getMonth()-1);
 
     var date4 = new Date();
-    date4.setMonth(date4.getMonth()+1);
 
-    var month = ("0" + (date3.getMonth())).slice(-2);
-    var month2 = ("0" + (date4.getMonth())).slice(-2);
+    var month = appendLeadingZeroes(date3.getMonth()+1);
+    var month2 = appendLeadingZeroes(date4.getMonth()+1);
 
     var monthstring = month + "/" + date3.getFullYear();
     var monthstring2 = month2 + "/" + date4.getFullYear();
@@ -514,38 +461,13 @@ $("#daymonth_governorate").click(function(){
 
         $('.govset1').attr("hidden",false);
         $('.govset2').attr("hidden",true);
-        var date1 = new Date();
-
-        date1.setDate(date1.getDate()-1)
-        date1.setMonth(date1.getMonth()+1)
-        var datestring = ("0" + (date1.getDate())).slice(-2)  + "-" + ("0" + (date1.getMonth())).slice(-2) + "-" + date1.getFullYear();
-
-        var date2 = new Date();
-        date2.setDate(date2.getDate()-30);
-        date2.setMonth(date2.getMonth()+2)
-        var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
-
-        $('#governorate_pie_date1').val(datestring2);
-        $('#governorate_pie_date2').val(datestring);
+        
         drawgovernorateChart();
 
     }
     else{
         $('.govset1').attr("hidden",true);
         $('.govset2').attr("hidden",false);
-        var date3 = new Date();
-
-        var date4 = new Date();
-        date4.setMonth(date4.getMonth()+1);
-
-        var month = ("0" + (date3.getMonth())).slice(-2);
-        var month2 = ("0" + (date4.getMonth())).slice(-2);
-
-        var monthstring = month + "/" + date3.getFullYear();
-        var monthstring2 = month2 + "/" + date4.getFullYear();
-
-        $('#governorate_pie_month1').val(monthstring);
-        $('#governorate_pie_month2').val(monthstring2);
 
         drawgovernorateChart();
 
@@ -554,27 +476,25 @@ $("#daymonth_governorate").click(function(){
 
 $("#reset_governorates").click(function(){
     var date1 = new Date();
-
     date1.setDate(date1.getDate()-1)
-    date1.setMonth(date1.getMonth()+1)
-    var datestring = ("0" + (date1.getDate())).slice(-2)  + "-" + ("0" + (date1.getMonth())).slice(-2) + "-" + date1.getFullYear();
+    
+    var datestring = appendLeadingZeroes(date1.getDate())  + "-" + appendLeadingZeroes(date1.getMonth()+1) + "-" + date1.getFullYear();
 
     var date2 = new Date();
     date2.setDate(date2.getDate()-30);
-    date2.setMonth(date2.getMonth()+2)
-    var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
+   
+    var datestring2 = appendLeadingZeroes(date2.getDate())  + "-" + appendLeadingZeroes(date2.getMonth()+1) + "-" + date2.getFullYear();
 
     $('#governorate_pie_date1').val(datestring2);
     $('#governorate_pie_date2').val(datestring);
 
     var date3 = new Date();
+    date3.setMonth(date3.getMonth()-1);
 
     var date4 = new Date();
-    date4.setMonth(date4.getMonth()+1);
 
-
-    var month = ("0" + (date3.getMonth())).slice(-2);
-    var month2 = ("0" + (date4.getMonth())).slice(-2);
+    var month = appendLeadingZeroes(date3.getMonth()+1);
+    var month2 = appendLeadingZeroes(date4.getMonth()+1);
 
     var monthstring = month + "/" + date3.getFullYear();
     var monthstring2 = month2 + "/" + date4.getFullYear();
@@ -585,15 +505,22 @@ $("#reset_governorates").click(function(){
     drawgovernorateChart();
 })
 
+// 0 append to single digit date and month
+function appendLeadingZeroes(n){
+    if(n <= 9){
+      return "0" + n;
+    }
+    return n
+  }
 
-
+// month picker month add
 var date1 = new Date();
+date1.setMonth(date1.getMonth()-1);
 
 var date2 = new Date();
-date2.setMonth(date2.getMonth()+2);
 
-var month = ("0" + (date1.getMonth())).slice(-2);
-var month2 = ("0" + (date2.getMonth())).slice(-2);
+var month = appendLeadingZeroes(date1.getMonth()+1);
+var month2 = appendLeadingZeroes(date2.getMonth()+1);
 
 var monthstring = month + "/" + date1.getFullYear();
 var monthstring2 = month2 + "/" + date2.getFullYear();
@@ -606,6 +533,28 @@ $('#cleaningtype_pie_month2').val(monthstring2);
 
 $('#governorate_pie_month1').val(monthstring);
 $('#governorate_pie_month2').val(monthstring2);
+
+//datepicker dates
+var date3 = new Date();
+
+date3.setDate(date3.getDate()-1)
+
+var datestring = appendLeadingZeroes(date3.getDate())  + "-" + appendLeadingZeroes(date3.getMonth()+1) + "-" + date3.getFullYear();
+
+var date4 = new Date();
+date4.setDate(date4.getDate()-30);
+
+var datestring2 = appendLeadingZeroes(date4.getDate())  + "-" + appendLeadingZeroes(date4.getMonth()+1) + "-" + date2.getFullYear();
+
+$('#cleaningtype_pie_date1').val(datestring2);
+$('#cleaningtype_pie_date2').val(datestring);
+
+$('#location_pie_date1').val(datestring2);
+$('#location_pie_date2').val(datestring);
+
+$('#governorate_pie_date1').val(datestring2);
+$('#governorate_pie_date2').val(datestring);
+
 
 if ($('#daymonth_location').is(':checked')) {
     console.log("runnon")

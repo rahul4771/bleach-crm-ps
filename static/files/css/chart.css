@@ -1,7 +1,10 @@
 #chart_div, #chart_div2 {
     float: right; background:none;  width:100% !important;height:34vh; padding:0; margin:0;    }
  
-/*Praveen*/
+#chart_payment {
+    float: right; background:none;  width:100% !important;height:50vh; padding:0; margin:0;    }
+
+    /*Praveen*/
 .chart_boxDiv { display: flex;flex-direction: row; column-gap: 2rem;}
 .chart_box_Left { flex: 1; position:relative; margin:0 !important; padding:0 !important; }
 .chart_box_Right {flex: 1; position:relative; margin:0 !important; padding:0 !important; }
