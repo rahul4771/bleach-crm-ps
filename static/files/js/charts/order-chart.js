@@ -244,6 +244,11 @@ var date3 = new Date();
 date3.setDate(date3.getDate()-1)
 date3.setMonth(date3.getMonth()+1)
 
+if (date3.getMonth() ==  0){
+    console.log("000")
+    date3.setMonth(date3.getMonth()+1)
+}
+
 var datestring = ("0" + (date3.getDate())).slice(-2)  + "-" + ("0" + (date3.getMonth())).slice(-2) + "-" + date3.getFullYear();
 
 var date4 = new Date();
