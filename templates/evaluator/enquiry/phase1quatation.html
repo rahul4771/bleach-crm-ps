@@ -58,6 +58,7 @@
       </div><!--checkin-form-left-->
       <div class="checkin-form-right align-left"><!--checkin-form-right-->
         <div class="total-Amount">{{evaluation.total_cost}} KD</div>
+        <input type="hidden" name='total_amount' id="total_amount_id" value="{{evaluation.total_cost|floatformat:'3'}}">
         <br>
       </div><!--checkin-form-right-->               
 </div><!--checkin-wrapper-row checkin-forms-boxes-->         
@@ -80,11 +81,11 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right payment_track"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Before Cleaning Amount</label></div>
-                <input name="before_cleaning_amount" id="before_cleaning_amount_id" type="text" class="textBox" placeholder=" "  >
+                <input name="before_cleaning_amount" id="before_cleaning_amount_id" type="number" step="0.001" class="textBox" placeholder=" "  >
   </div><!--ticket-form-right-->
     <div class="ticket-form-right payment_track"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>After Cleaning Amount</label></div>
-                <input name="after_cleaning_amount" id="after_cleaning_amount_id" type="text" class="textBox" placeholder=" "  >
+                <input name="after_cleaning_amount" id="after_cleaning_amount_id" type="number" step="0.001" class="textBox" placeholder=" "  >
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <br>
@@ -150,12 +151,12 @@ $('.payment_method').change(function(){
   });
 
 //total adjustment
-total_cost = parseInt("{{evaluation.total_cost}}")
+total_cost = parseFloat("{{evaluation.total_cost|floatformat:'3'}}")
 $("#after_cleaning_amount_id").keyup(function(){
   after_amount  =  $("#after_cleaning_amount_id").val();
   before_amount =  $("#before_cleaning_amount_id").val();
 
-  before_cleaning_amount = total_cost-after_amount
+  before_cleaning_amount = parseFloat(parseFloat(total_cost)-parseFloat(after_amount)).toFixed(3)
   $("#before_cleaning_amount_id").val(before_cleaning_amount) 
 
   if(after_amount > total_cost)
@@ -169,7 +170,7 @@ $("#before_cleaning_amount_id").keyup(function(){
   after_amount  =  $("#after_cleaning_amount_id").val();
   before_amount =  $("#before_cleaning_amount_id").val();
 
-  after_cleaning_amount = total_cost-before_amount
+  after_cleaning_amount = parseFloat(parseFloat(total_cost)-parseFloat(before_amount)).toFixed(3)
   $("#after_cleaning_amount_id").val(after_cleaning_amount)  
 
   if(before_amount > total_cost)
@@ -186,8 +187,9 @@ function CheckForm(params1){
   {
         before_cleaning_amount = $("#before_cleaning_amount_id").val();
         after_cleaning_amount  = $("#after_cleaning_amount_id").val();
-        manual_total           = parseInt(before_cleaning_amount)+parseInt(after_cleaning_amount)
+        manual_total           = parseFloat(before_cleaning_amount)+parseFloat(after_cleaning_amount)
         total                  = $("#total_amount_id").val();
+        
         if(total == manual_total)
         {
           submitAnyForm(params);
