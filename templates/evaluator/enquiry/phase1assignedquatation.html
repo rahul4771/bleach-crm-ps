@@ -164,7 +164,7 @@ $('.payment_method').change(function(){
   });
 
 //total adjustment
-total_cost = parseInt("{{evaluation.total_cost}}")
+total_cost = parseFloat("{{evaluation.total_cost|floatformat:'3'}}")
 $("#after_cleaning_amount_id").keyup(function(){
   after_amount  =  $("#after_cleaning_amount_id").val();
   before_amount =  $("#before_cleaning_amount_id").val();
