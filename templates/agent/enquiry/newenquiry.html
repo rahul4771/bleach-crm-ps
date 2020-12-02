@@ -108,8 +108,12 @@
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>Civil ID</label></div>
-                <input name="civil_id_number" id="id_civil_id_number" type="text" class="textBox" placeholder=" "  >
+  				<div class=" bold-text common-label"> <label>Date of Birth</label></div>         
+                <input name="date_of_birth" id="id_date_of_birth" type="text" class="textBox readonly" autocomplete="off" placeholder=" " required>
+                
+                <input type="checkbox" id="date_and_month" />
+                <label for="date_and_month">Date and Month only</label>
+                
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
   				<div class=" bold-text common-label"> <label>Other Mobile</label></div>
@@ -234,6 +238,12 @@
 <script>
 var x=0;
 var ajax_ret_areas; 
+
+$('#id_date_of_birth').datepicker({
+  closeOnDateSelect: true,
+  format: "dd-mm", 
+  endDate: new Date()
+});
 
 $('document').ready(function(){
 //formset
