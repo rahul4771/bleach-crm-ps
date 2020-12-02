@@ -241,8 +241,29 @@ var ajax_ret_areas;
 
 $('#id_date_of_birth').datepicker({
   closeOnDateSelect: true,
-  format: "dd-mm", 
+  format: "M-dd-yyyy", 
   endDate: new Date()
+});
+
+$('#date_and_month').click(function(){
+  $('#id_date_of_birth').datepicker('remove');
+  if ($('#date_and_month').is(':checked')){
+
+      $('#id_date_of_birth').datepicker({
+        closeOnDateSelect: true,
+        format: "M-dd", 
+        endDate: new Date()
+      });
+
+  }else{
+
+      $('#id_date_of_birth').datepicker({
+        closeOnDateSelect: true,
+        format: "M-dd-yyyy", 
+        endDate: new Date()
+      });
+
+  }
 });
 
 $('document').ready(function(){

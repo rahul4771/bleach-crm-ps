@@ -115,6 +115,10 @@
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>Date of Birth</label></div>
                 <input name="date_of_birth" id="id_date_of_birth" type="text" class="textBox readonly" autocomplete="off" placeholder=" " value="{{enquiry_user.date_of_birth|default_if_none:''}}" required>
+  
+                <input type="checkbox" id="date_and_month" />
+                <label for="date_and_month">Date and Month only</label>
+
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
         <div class=" bold-text common-label"> <label>Other Mobile</label></div>
@@ -327,8 +331,29 @@
 
 $('#id_date_of_birth').datepicker({
   closeOnDateSelect: true,
-  format: "dd-mm", 
+  format: "M-dd-yyyy", 
   endDate: new Date()
+});
+
+$('#date_and_month').click(function(){
+  $('#id_date_of_birth').datepicker('remove');
+  if ($('#date_and_month').is(':checked')){
+
+      $('#id_date_of_birth').datepicker({
+        closeOnDateSelect: true,
+        format: "M-dd", 
+        endDate: new Date()
+      });
+
+  }else{
+
+      $('#id_date_of_birth').datepicker({
+        closeOnDateSelect: true,
+        format: "M-dd-yyyy", 
+        endDate: new Date()
+      });
+
+  }
 });
 
 $('document').ready(function(){
