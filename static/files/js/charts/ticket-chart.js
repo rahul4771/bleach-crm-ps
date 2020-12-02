@@ -171,12 +171,12 @@ function initialize() {
         if ($("#daym").is(':checked')){
 
             var date1 = new Date();
+            date1.setMonth(date1.getMonth()-1);
 
             var date2 = new Date();
-            date2.setMonth(date2.getMonth()+1);
 
-            var month = ("0" + (date1.getMonth())).slice(-2);
-            var month2 = ("0" + (date2.getMonth())).slice(-2);
+            var month = appendLeadingZeroes(date1.getMonth()+1);
+            var month2 = appendLeadingZeroes(date2.getMonth()+1);
 
             var monthstring = month + "/" + date1.getFullYear();
             var monthstring2 = month2 + "/" + date2.getFullYear();
@@ -186,15 +186,14 @@ function initialize() {
             drawBars();
     }else{
         var date3 = new Date();
-
         date3.setDate(date3.getDate()-1)
-        date3.setMonth(date3.getMonth()+1)
-        var datestring = ("0" + (date3.getDate())).slice(-2)  + "-" + ("0" + (date3.getMonth())).slice(-2) + "-" + date3.getFullYear();
+        
+        var datestring = appendLeadingZeroes(date3.getDate())  + "-" + appendLeadingZeroes(date3.getMonth()+1) + "-" + date3.getFullYear();
 
         var date4 = new Date();
         date4.setDate(date4.getDate()-30);
-        date4.setMonth(date4.getMonth()+1)
-        var datestring2 = ("0" + (date4.getDate())).slice(-2)  + "-" + ("0" + (date4.getMonth())).slice(-2) + "-" + date4.getFullYear();
+        
+        var datestring2 = appendLeadingZeroes(date4.getDate())  + "-" + appendLeadingZeroes(date4.getMonth()+1) + "-" + date4.getFullYear();
         $('#ord_fromdate').val(datestring2);
         $('#ord_todate').val(datestring);
         drawLine();
@@ -213,13 +212,20 @@ function initialize() {
     
 }
 
+function appendLeadingZeroes(n){
+    if(n <= 9){
+      return "0" + n;
+    }
+    return n
+  }
+
 var date1 = new Date();
+date1.setMonth(date1.getMonth()-1);
 
 var date2 = new Date();
-date2.setMonth(date2.getMonth()+1);
 
-var month = ("0" + (date1.getMonth())).slice(-2);
-var month2 = ("0" + (date2.getMonth())).slice(-2);
+var month = appendLeadingZeroes(date1.getMonth()+1);
+var month2 = appendLeadingZeroes(date2.getMonth()+1);
 
 var monthstring = month + "/" + date1.getFullYear();
 var monthstring2 = month2 + "/" + date2.getFullYear();
@@ -228,15 +234,14 @@ $('#month1').val(monthstring);
 $('#month2').val(monthstring2);
 
 var date3 = new Date();
-
 date3.setDate(date3.getDate()-1)
-date3.setMonth(date3.getMonth()+1)
-var datestring = ("0" + (date3.getDate())).slice(-2)  + "-" + ("0" + (date3.getMonth())).slice(-2) + "-" + date3.getFullYear();
+
+var datestring = appendLeadingZeroes(date3.getDate())  + "-" + appendLeadingZeroes(date3.getMonth()+1) + "-" + date3.getFullYear();
 
 var date4 = new Date();
 date4.setDate(date4.getDate()-30);
-date4.setMonth(date4.getMonth()+1)
-var datestring2 = ("0" + (date4.getDate())).slice(-2)  + "-" + ("0" + (date4.getMonth())).slice(-2) + "-" + date4.getFullYear();
+
+var datestring2 = appendLeadingZeroes(date4.getDate())  + "-" + appendLeadingZeroes(date4.getMonth()+1) + "-" + date4.getFullYear();
 console.log(datestring,datestring2)
 
 $('#ord_fromdate').val(datestring2);

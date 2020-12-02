@@ -160,6 +160,7 @@
  
 <thead>
 <tr>
+<th>Customer ID</th>
 <th>Name</th>
 <th data-hide="phone,tablet">Area</th>
 <th data-hide="phone">Customer Type</th>
@@ -171,7 +172,8 @@
  {% for client in client_details %}
 
     <tr>
-    <td id="clientstatusline{{client.id}}" class="yellow-line">{{client.name}}</td>
+    <td id="clientstatusline{{client.id}}" class="yellow-line">{{client.customer_id|default_if_none:'-'}}</td>
+    <td>{{client.name}}</td>
     <td>{% for address in client.customer_address %}
         {{address.area.name}}<br>
         {% endfor %}

@@ -81,7 +81,7 @@ class UserProfile(AbstractUser):
     phone_number 	= models.CharField(max_length=10,blank=True,null=True)
     profile_image	= models.ImageField(upload_to='profile_photo/',blank=True,null=True,validators=[FileExtensionValidator(allowed_extensions=['jpg','jpeg','png']),validate_image],)
     customer_type   = models.CharField(max_length=20,blank=True,null=True,choices=CUSTOMER_TYPE_CHOICES)
-    civil_id_number = models.CharField(max_length=100,blank=True,null=True)
+    date_of_birth   = models.CharField(max_length=50,blank=False,null=False)
     
     sms_preference  = models.CharField(max_length=20,blank=True,null=True,choices=SMS_LANGUAGE_CHOICES)
     is_whatsapp     = models.BooleanField(null=False,blank=True,default=False)

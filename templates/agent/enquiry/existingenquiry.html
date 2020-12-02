@@ -113,8 +113,8 @@
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>Civil ID</label></div>
-                <input name="civil_id_number" id="id_civil_id_number" type="text" class="textBox" placeholder=" " value="{{enquiry_user.civil_id_number|default_if_none:''}}">
+  				<div class=" bold-text common-label"> <label>Date of Birth</label></div>
+                <input name="date_of_birth" id="id_date_of_birth" type="text" class="textBox readonly" autocomplete="off" placeholder=" " value="{{enquiry_user.date_of_birth|default_if_none:''}}" required>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
         <div class=" bold-text common-label"> <label>Other Mobile</label></div>
@@ -324,6 +324,12 @@
 
 {% block javascript %}
 <script>
+
+$('#id_date_of_birth').datepicker({
+  closeOnDateSelect: true,
+  format: "dd-mm", 
+  endDate: new Date()
+});
 
 $('document').ready(function(){
   
