@@ -114,10 +114,9 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>Date of Birth</label></div>         
-                <input name="date_of_birth" id="id_date_of_birth" type="text" class="textBox readonly" autocomplete="off" placeholder=" " value="{{enquiry_user.date_of_birth|default_if_none:''}}" required>
-                
-                <input type="checkbox" id="date_and_month" />
-                <label for="date_and_month">Date and Month only</label>
+          <input name="date_day" id="id_date_day" type="text" class="dateBox OnlyNumber" minlength="2" value="{{enquiry_user.date_day|default_if_none:''}}" placeholder="DD" onkeyup="daterange();" required>
+          <input name="date_month" id="id_date_month" type="text" class="dateBox OnlyNumber" minlength="2" value="{{enquiry_user.date_month|default_if_none:''}}" placeholder="MM" onkeyup="monthrange();" required>
+          <input name="date_year" id="id_date_year" type="text" class="dateBox OnlyNumber" minlength="4" value="{{enquiry_user.date_year|default_if_none:''}}" placeholder="YYYY" onkeyup="yearrange();">
 
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
@@ -326,32 +325,34 @@
 {% block javascript %}
 <script>
 
-$('#id_date_of_birth').datepicker({
-  closeOnDateSelect: true,
-  format: "M-dd-yyyy", 
-  endDate: new Date()
-});
+function daterange(){
 
-$('#date_and_month').click(function(){
-  $('#id_date_of_birth').datepicker('remove');
-  if ($('#date_and_month').is(':checked')){
-
-      $('#id_date_of_birth').datepicker({
-        closeOnDateSelect: true,
-        format: "M-dd", 
-        endDate: new Date()
-      });
-
+  var date = $('#id_date_day').val();
+  if (date > 31){
+    $('#id_date_day').val('');
   }else{
-
-      $('#id_date_of_birth').datepicker({
-        closeOnDateSelect: true,
-        format: "M-dd-yyyy", 
-        endDate: new Date()
-      });
-
+    console.log("all good")
   }
-});
+};
+
+function monthrange(){
+  var month = $('#id_date_month').val();
+  if (month > 12){
+    $('#id_date_month').val('');
+  }else{
+    console.log("all good")
+  }
+};
+
+function yearrange(){
+  var year = $('#id_date_year').val();
+  if (year > new Date().getFullYear()){
+    $('#id_date_year').val('');
+  }
+  else{
+    console.log("all good")
+  }
+};
 
 $('document').ready(function(){
 

@@ -4,6 +4,7 @@ from django_countries.fields import CountryField
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from datetime import datetime
 # Create your models here.
 
 USER_TYPE_CHOICES=( 
@@ -81,7 +82,10 @@ class UserProfile(AbstractUser):
     phone_number 	= models.CharField(max_length=10,blank=True,null=True)
     profile_image	= models.ImageField(upload_to='profile_photo/',blank=True,null=True,validators=[FileExtensionValidator(allowed_extensions=['jpg','jpeg','png']),validate_image],)
     customer_type   = models.CharField(max_length=20,blank=True,null=True,choices=CUSTOMER_TYPE_CHOICES)
-    date_of_birth   = models.CharField(max_length=50,blank=False,null=False)
+
+    date_day        = models.CharField(max_length=2,blank=False,null=False)
+    date_month      = models.CharField(max_length=2,blank=False,null=False)
+    date_year       = models.CharField(max_length=4,blank=True,null=True)
     
     sms_preference  = models.CharField(max_length=20,blank=True,null=True,choices=SMS_LANGUAGE_CHOICES)
     is_whatsapp     = models.BooleanField(null=False,blank=True,default=False)
