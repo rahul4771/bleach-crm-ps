@@ -114,12 +114,14 @@
 			<div class="profile-pic">
         {% if cleaning_team_detail.order_scheduler.evaluation_details.evaluator.profile_image %}
         <img src="{{cleaning_team_detail.order_scheduler.evaluation_details.evaluator.profile_image.url}}" title="{{cleaning_team_detail.order_scheduler.evaluation_details.evaluator.name}}"></div>
+        <div class="client-name">{{cleaning_team_detail.order_scheduler.evaluation_details.evaluator.name}}<div class="common-gray-text">Evaluator</div></div>
         {% elif cleaning_team_detail.order_scheduler.evaluation_details.evaluation.call_attender.profile_image %}
         <img src="{{cleaning_team_detail.order_scheduler.evaluation_details.evaluation.call_attender.profile_image.url}}" title="{{cleaning_team_detail.order_scheduler.evaluation_details.evaluation.call_attender.name}}"></div>
+        <div class="client-name">{{cleaning_team_detail.order_scheduler.evaluation_details.evaluation.call_attender.name}}<div class="common-gray-text">Evaluator</div></div>
         {% else %}
         <img src="{% static 'files/images/profile-pic.png' %}"></div>
+        <div class="client-name"><div class="common-gray-text">Evaluator</div></div>
         {% endif %}    
-            <div class="client-name">{{cleaning_team_detail.order_scheduler.evaluation_details.evaluator.name}}<div class="common-gray-text">Evaluator</div></div>
     	</div><!--eval-note-columns-left-->
 
         <div class="eval-note-columns-middle"><!--eval-note-columns-middle-->

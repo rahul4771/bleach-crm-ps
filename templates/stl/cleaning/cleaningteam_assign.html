@@ -20,28 +20,134 @@
 <div class="white-wrapper"><!--white-wrapper-->
 <div class="center-formDiv"><!--center-formDiv-->
 
-             <div class="common-sub-head align-left">Details</div> 
- 			 
-                  <div class="cleaning-column-wrapper ltyellow-border"><!--cleaning-column-wrapper-->
-					<div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
-                	<div class="blc-number-big">{{order_schedule.evaluation_details.evaluation.evaluation_id}}</div>
-                  <br>
-                	<div class="green-bg-lg">{% if order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}One-Time{% else %}Subscription{% endif %}</div><div class="blue-bg-lg">{% if order_schedule.order.payment_status == 'COMPLETED' %}Paid{% elif order_schedule.order.payment_status == 'ON_HOLD' %}ON HOLD<{% else %}Pending{% endif %}</div>
-                    <div class="area-bold">{{order_schedule.order_scheduler_book.service_type.name}}</div>
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.start_at|date:'d-m-Y'}}</div>
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.start_at|date:'h:i A'}}</div>
-            	</div><!--cleaning-column-widget cleaning-column-widget-column1-->
-                
-                <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
-                    <div class="common-gray-text align-left">{{order_schedule.evaluation_details.address.apartment}}, {{order_schedule.evaluation_details.address.floor}}, {{order_schedule.evaluation_details.address.building}}, {{order_schedule.evaluation_details.address.block}}, {{order_schedule.evaluation_details.address.street}},  {{order_schedule.evaluation_details.address.avenue}} {{order_schedule.evaluation_details.address.governorate.name}}</div>
-                    <br>
-                    <div class="common-gray-text align-left" id="cleaners_count_to_be_assigned">{{order_schedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
-                    <div class="common-gray-text align-left">{{order_schedule.order_scheduler_book.cleaning_hours}} hrs</div>
-            	</div><!--cleaning-column-widget cleaning-column-widget-column2-->
-            </div><!--cleaning-column-wrapper-->
-            
-            <br><br>
- 
+<div class="common-sub-head align-left">Details</div> 
+    <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+    <div class="ticket-form-left"><!--ticket-form-left-->
+    <div class="blc-number-big">{{order_schedule.evaluation_details.evaluation.evaluation_id}}</div>
+    <br>        
+        <div class="green-bg-lg">{% if order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}One-Time{% else %}Subscription{% endif %}</div><div class="blue-bg-lg">{% if order_schedule.order.payment_status == 'COMPLETED' %}Paid{% elif order_schedule.order.payment_status == 'ON_HOLD' %}ON HOLD<{% else %}Pending{% endif %}</div>
+
+        <div class="customer-name">{{order_schedule.order_scheduler_book.service_type.name}}</div>
+        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.cleaning_method}}</div>
+        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.area_type}}</div>
+        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.location_type}}</div>
+    </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{order_schedule.start_at}}</div>
+        <br>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-clock-o orange-text" aria-hidden="true"></i> {{order_schedule.start_at|date:'h:i A'}}</div>
+        <br>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-hourglass-o yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.cleaning_hours}} Hours</div>
+        <br> 
+         <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> {{order_schedule.customer_address.apartment}}, {{order_schedule.customer_address.floor}}, {{order_schedule.customer_address.block}},  {{order_schedule.customer_address.street}}, {{order_schedule.customer_address.avenue}}, {{order_schedule.customer_address.area.name}} {{order_schedule.customer_address.governorate.name}}</div>
+        <br>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">
+
+{% for section in  order_schedule.order_scheduler_book.sections %}
+<div class="narrow-head align-left">Section {{forloop.counter}} : {{section.section_name}}</div>
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    {% if section.category %}
+    <div class="common-gray-text align-left"><label class="common-labels">Category</label> :<strong> {{section.category}}</strong></div>
+    {% endif %}
+    {% if section.dirt_level %}
+    <div class="common-gray-text align-left"><label class="common-labels">Dirt Level</label> : <strong>{{section.dirt_level}}</strong></div>
+    {% endif %}
+    <div class="common-gray-text align-left"><label class="common-labels">Size</label> : <strong>{{section.size}} {{section.unit}}</strong></div>
+    {% if section.floor %}
+    <div class="common-gray-text align-left"><label class="common-labels">Floors</label> : <strong>{{section.floor}}</strong></div>
+    {% endif %}
+    {% if section.apartment %}
+    <div class="common-gray-text align-left"><label class="common-labels">Appartments</label> : <strong>{{section.apartment}}</strong></div>
+    {% endif %}
+    {% if section.room %}
+    <div class="common-gray-text align-left"><label class="common-labels">Rooms</label> : <strong>{{section.room}}</strong></div>
+    {% endif %}
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  {% if section.wall_type %}
+  <div class="common-gray-text align-left"><label class="common-labels">Wall Type</label> : <strong>{{section.wall_type}}</strong></div>
+  {% endif %}
+  {% if section.ceiling_type %}
+    <div class="common-gray-text align-left"><label class="common-labels">Ceiling Type</label> : <strong>{{section.ceiling_type}}</strong></div>
+  {% endif %}
+  {% if section.floor_type %}  
+    <div class="common-gray-text align-left"><label class="common-labels">Floor Type</label> : <strong>{{section.floor_type}}</strong></div>
+  {% endif %}
+  {% if section.material %}
+  <div class="common-gray-text align-left"><label class="common-labels">Material</label> : <strong>{{section.material}}</strong></div>
+  {% endif %}
+  {% if section.colour %}  
+    <div class="common-gray-text align-left"><label class="common-labels">Colour</label> : <strong>{{section.colour}}</strong></div>
+  {% endif %}
+  {% if section.cause_of_stain %}  
+    <div class="common-gray-text align-left"><label class="common-labels">Cause of Stain</label> : <strong>{{section.cause_of_stain}}</strong></div>
+  {% endif %}
+  {% if section.quantity %}  
+    <div class="common-gray-text align-left"><label class="common-labels">Quantity</label> : <strong>{{section.quantity}}</strong></div>
+  {% endif %}
+  {% if section.age %}  
+    <div class="common-gray-text align-left"><label class="common-labels">Age</label> : <strong>{{section.age}}</strong></div>
+  {% endif %}  
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+{% if section.keynotes %}
+<br>
+<div class="narrow-head align-left">Keynotes</div>
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+<div class="ticket-form-left"><!--ticket-form-left-->
+{% for keynote in section.keynotes %}
+<div class="common-gray-text align-left"><label class="common-labels">{{keynote.sub_area}}</label> : <strong>{{keynote.quantity}}</strong></div>
+</div>
+{% endfor %}
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+{% endif %}
+
+<hr class="hr-dashedpad">
+{% endfor %}
+   
+<div class="eval-note-columns border"><!--eval-note-columns-->
+      <div class="eval-note-columns-left"><!--eval-note-columns-left-->
+      <div class="profile-pic">
+        {% if order_schedule.evaluation_details.evaluator.profile_image %}
+        <img src="{{order_schedule.evaluation_details.evaluator.profile_image.url}}" title="{{order_schedule.evaluation_details.evaluator.name}}"></div>
+        <div class="client-name">{{order_schedule.evaluation_details.evaluator.name}}<div class="common-gray-text">Evaluator</div></div>
+        {% elif order_schedule.evaluation_details.evaluation.call_attender.profile_image %}
+        <img src="{{order_schedule.evaluation_details.evaluation.call_attender.profile_image.url}}" title="{{order_schedule.evaluation_details.evaluation.call_attender.name}}"></div>
+        <div class="client-name">{{order_schedule.evaluation_details.evaluation.call_attender.name}}<div class="common-gray-text">Evaluator</div></div>
+        {% else %}
+        <img src="{% static 'files/images/profile-pic.png' %}"></div>
+        <div class="client-name"><div class="common-gray-text">Evaluator</div></div>
+        {% endif %}    
+      </div><!--eval-note-columns-left-->
+
+        <div class="eval-note-columns-middle"><!--eval-note-columns-middle-->
+            <div class="notes">Evaluation Notes</div>
+            <p>{{order_schedule.order_scheduler_book.evaluator_note|default_if_none:''}}</p>
+        </div><!--eval-note-columns-middle-->
+</div><!--eval-note-columns-->
+
+{% if order_schedule.order_scheduler_book.evaluationmedias %}
+<div class="details-sub-head align-left">Media</div>
+<div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
+<div class="gallery-wrapper"><!--gallery-wrapper-->
+  <div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
+    <div class="media-heading align-left">Evaluation</div>
+        <section>
+        <div id="data-pn-1" data-pn="1" data-src="{% for media in  order_schedule.order_scheduler_book.evaluationmedias %}{{media.media.url}},{% endfor %}"></div>
+    </section>
+    
+    </div><!--gallery-widget-column-column1-->    
+</div><!--gallery-wrapper-->
+{% endif %}
+</div><!--commnDiv-border-->
+<br><br>
  
 <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
  <input type="hidden" name="no_of_cleaners" value="{{order_schedule.order_scheduler_book.number_of_cleaners}}">
@@ -74,50 +180,6 @@
 </div>
 <input name="add" type="button" class="add-button1" value="Add Cleaner" id="add_cleaner_id">
 <input name="remove" type="button" class="add-button-2" value="Remove Cleaner" id="remove_cleaner_id">
-
-{% comment %}
-<div class="details-notes align-left">Transportation</div>
-<br>  
-
-<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-  <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>Driver Pick-up</label></div>
-                <label for="favcity">
-                <select id="favcity" name="pick_up_driver" required>
-                <option value="">Choose Driver</option>
-                {% for driver in drivers %}
-                <option value="{{driver.id}}">{{driver.name}}</option>
-                {% endfor %}
-                </select>
-                </label> 
-  </div><!--ticket-form-left-->
-  <div class="ticket-form-right"><!--ticket-form-right-->
-  				<div class=" bold-text common-label hide-m"> <label>Vehicle Number pick-up</label></div>
-                <input name="vehicle_number_pick_up" type="text" class="textBox" placeholder="" required>
-  </div><!--ticket-form-right-->
-</div><!--ticket-wrapper-row ticket-forms-boxes-->
-
-<hr class="hr-dashedpad">  
-
-<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-  <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>Driver Drop-off</label></div>
-                <label for="favcity">
-                <select id="favcity" name="drop_off_driver" required>
-                <option value="">Choose Driver</option>  
-                {% for driver in drivers %}
-                <option value="{{driver.id}}">{{driver.name}}</option>
-                {% endfor %}
-                </select>
-                </label> 
-  </div><!--ticket-form-left-->
-
-  <div class="ticket-form-right"><!--ticket-form-right-->
-  				<div class=" bold-text common-label hide-m"><label>Vehicle Number Drop-off</label></div>
-                <input name="vehicle_number_drop_off" type="text" class="textBox" placeholder="" required>
-  </div><!--ticket-form-right-->
-</div><!--ticket-wrapper-row ticket-forms-boxes-->
-{% endcomment %}
 
 </div><!--commnDiv-border--> 
 
