@@ -235,9 +235,9 @@
     <td class="clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
     {% for inv in invoice.orderschedules|slice:":1" %}
         {% if inv.work_status == 'CLEANING_TEAM_ASSIGNED' %}
-        <span class="text-center red-bg clickable-row">PENDING</span>
+        <span class="text-center blue-bg clickable-row">CLEANING TEAM ASSIGNED</span>
         {% elif inv.work_status == 'CLEANING_FULFILLED' %}
-        <span class="text-center green-bg clickable-row" >COMPLETED</span>
+        <span class="text-center green-bg clickable-row" >CLEANING COMPLETED</span>
         {% else %}
         <span class="text-center yellow-bg clickable-row">IN PROGRESS</span>
         {% endif %}
