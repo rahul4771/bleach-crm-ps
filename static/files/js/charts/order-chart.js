@@ -257,7 +257,7 @@ var datestring = appendLeadingZeroes(date3.getDate())  + "-" + appendLeadingZero
 var date4 = new Date();
 date4.setDate(date4.getDate()-30);
 //date4.setMonth(date4.getMonth()+1);
-var datestring2 = appendLeadingZeroes(date4.getDate())  + "-" + appendLeadingZeroes(date3.getMonth()+1) + "-" + date4.getFullYear();
+var datestring2 = appendLeadingZeroes(date4.getDate())  + "-" + appendLeadingZeroes(date4.getMonth()+1) + "-" + date4.getFullYear();
 
 console.log(datestring,datestring2)
 
