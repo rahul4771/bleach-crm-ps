@@ -80,7 +80,7 @@
 {% endfor %}
 {% for follow_up_schedule in assign_followup_schedules %}
 <tr {% if follow_up_schedule.days_left_coming < 0 %}class="red-line"{% elif follow_up_schedule.days_left_coming == 0 %}class="orange-line"{% elif follow_up_schedule.days_left_coming == 1 %}class="yellow-line"{% elif follow_up_schedule.days_left_coming == 2 or follow_up_schedule.days_left_coming == 3 %}class="green-line"{% endif %}>
-<td data-label="BLC Number">{{follow_up_schedule.follow_up.investigation.order.order_no}}</td>
+<td data-label="BLC Number" class="bold-text">{{follow_up_schedule.follow_up.investigation.order.order_no}}</td>
 <td data-label="Customer">{{follow_up_schedule.follow_up.investigation.order.evaluation.customer.name}}</td>
 <td data-label="Area">{{follow_up_schedule.customer_address.area}}</td>
 <td class="hide-a" data-label=""><img src="{{follow_up_schedule.follow_up.investigation.investigator.profile_image.url}}" class="profile-avatar" title="{{follow_up_schedule.follow_up.investigation.investigator.name}}"></td>

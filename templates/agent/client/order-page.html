@@ -949,7 +949,7 @@ $('.moreless-button{{orderschedule.id}}').click(function () {
 {% if orderschedule.status == 'CONFIRMED' %}
 dateconfirm_completed_count += 1;
 {% endif %}  
-{% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' or orderschedule.work_status == 'CLEANING_FULFILLED' %}
+{% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' or orderschedule.work_status == 'CLEANING_FULFILLED' or orderschedule.work_status == 'CLEANING_IN_PROGRESS' %}
 teamassign_completed_count += 1;
 {% endif %}
 {% if orderschedule.work_status == 'CLEANING_FULFILLED' %}
