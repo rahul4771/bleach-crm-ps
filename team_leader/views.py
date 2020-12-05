@@ -325,7 +325,8 @@ class Cleaning(IsTeamLeader,View):
 		if cleaning_team_detail: 
 			if not cleaning_team_detail.check_in:
 				cleaning_team_detail.check_in                    = timezone.now()
-			cleaning_team_detail.order_scheduler.work_status     = 'CLEANING_IN_PROGRESS'
+			if not cleaning_team_detail.check_out:
+				cleaning_team_detail.order_scheduler.work_status     = 'CLEANING_IN_PROGRESS'
 			cleaning_team_detail.save()	
 			cleaning_team_detail.order_scheduler.save()
 		
