@@ -1896,6 +1896,11 @@ class NewEnquiry(IsAgent,View):
 		except:
 			governorates = None
 
+		try:
+			locations = AreaType.objects.filter(is_active=True)
+		except:
+			locations = None
+
 		enquiry_form    = UserProfileForm()
 
 		try:
@@ -1903,7 +1908,7 @@ class NewEnquiry(IsAgent,View):
 		except:
 			customer_info = None
 
-		return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':self.address_formset_define(),'customer_info':customer_info,'governorates':governorates,})
+		return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':self.address_formset_define(),'customer_info':customer_info,'governorates':governorates,'locations':locations})
 
 	def post(self,request):
 		enquiry_form     = UserProfileForm(request.POST,request.FILES or None)
@@ -1958,9 +1963,14 @@ class NewEnquiry(IsAgent,View):
 			try:
 				governorates = Governorate.objects.filter(is_active=True)
 			except:
-				governorates = None	
+				governorates = None
+
+			try:
+				locations = AreaType.objects.filter(is_active=True)
+			except:
+				locations = None
 			
-			return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'governorates':governorates})					
+			return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'governorates':governorates,'locations':locations})					
 
 		redirection = request.POST.get('redirect_to')	
 
@@ -1980,6 +1990,11 @@ class ExistingEnquiry(IsAgent,View):
 			governorates = Governorate.objects.filter(is_active=True)
 		except:
 			governorates = None
+
+		try:
+			locations = AreaType.objects.filter(is_active=True)
+		except:
+			locations = None
 
 
 		enquiry_user    = UserProfile.objects.get(id=enquiry_id)
