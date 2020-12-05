@@ -145,10 +145,10 @@ class Address(models.Model):
     location        = models.CharField(max_length=100,blank=False,null=False)
     block           = models.CharField(max_length=100,blank=False,null=False)
     avenue          = models.CharField(max_length=100,blank=True,null=True)
-    building        = models.CharField(max_length=100,blank=True,null=True)
+    building        = models.CharField(max_length=100,blank=False,null=False)
     street          = models.CharField(max_length=100,blank=False,null=False)
     floor           = models.CharField(max_length=100,blank=True,null=True)
-    apartment       = models.CharField(max_length=100,blank=True,null=True)
+    apartment       = models.CharField(max_length=100,blank=False,null=False)
     currently_active= models.BooleanField(null=False,blank=True)
     
     is_active       = models.BooleanField(null=False,blank=True,default=True)

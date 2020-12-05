@@ -92,7 +92,10 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .rose-text{ color:#f765a3 ; text-shadow: 1px 2px 3px #0000000d !important;} 
 .violet-text{ color:#a155b9; text-shadow: 1px 2px 3px #0000000d !important;} 
 
-
+.required-field::after {
+  content: "*";
+  color: red;
+}
 
 .h2{ color:#3968c6 !important; font-size:25px !important; font-weight:100 !important; margin-top:0 !important; padding-bottom:20px!important; }
 .card-innerwrapper{ display:flex; flex-grow: 1; overflow:hidden;}
