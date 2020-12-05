@@ -518,9 +518,6 @@ def CleaningExistingDates(request):
 	booking_time      = request.GET.get('booking_time')
 	no_of_cleaners    = request.GET.get('number_of_cleaners')
 	cleaning_duration = int(request.GET.get('cleaning_duration'))
-	print(booking_time)
-	print(no_of_cleaners)
-	print(cleaning_duration)
 	
 	start_at          = datetime.strptime(request.GET.get('booking_time'),'%I:%M %p').time()
 	end_at            = (datetime.strptime(request.GET.get('booking_time'),'%I:%M %p')+timedelta(hours=cleaning_duration)).time()
@@ -554,13 +551,15 @@ def CleaningExistingDates(request):
 	team_members_busy = {}
 
 	for team_leader in team_leaders_scheduled_dates:
-		index = datetime.strptime(team_leader['start_at'],'%Y-%m-%d').strftime('%d-%-m-%Y')
+		print(team_leader['start_at'],"leader")
+		index = datetime.strptime(team_leader['start_at'],'%Y-%m-%d').strftime('%-d-%-m-%Y')
 		if index in team_leaders_busy:
 			team_leaders_busy[index] += team_leader['created_count']
 		else:	
 			team_leaders_busy[index] = team_leader['created_count']
 
 	for team_member in team_members_scheduled_dates:
+		print(team_member['start_at'],"leader")
 		index = datetime.strptime(team_member['start_at'],'%Y-%m-%d').strftime('%-d-%-m-%Y')
 		if index in team_members_busy:
 			team_members_busy[index] +=  team_member['created_count'] 
@@ -580,9 +579,8 @@ def CleaningExistingDates(request):
 		if int(no_of_cleaners) <= (total_cleaners-v):
 			del team_members_busy[k]
 
-	data['leaders_busy_dates'] = team_leaders_busy
+	data['leaders_busy_dates']  = team_leaders_busy
 	data['cleaners_busy_dates'] = team_members_busy
-
 	print(data)
 	return JsonResponse(data)
 
