@@ -22,6 +22,44 @@
           <div class="customer-name"><i class="fa blue-text fa-user-circle-o" aria-hidden="true"></i> {{enquiry_user.name}}</div>
           <div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;  {{enquiry_user.mobile_number}}</div>
           <div class="email"><i class="fa orange-text fa-lg fa-envelope-o" aria-hidden="true"></i> &nbsp;  {{enquiry_user.email}}</div>
+          <br>
+          {% for detail in evaluation_details %} 
+          {% if detail.attender_note %}
+
+          <div class="checkin-wrapper-row checkin-forms-boxes"><!--checkin-wrapper-row checkin-forms-boxes-->
+
+            <div class="checkin-form-left"><!--checkin-form-left-->
+            {% if evaluation.call_attender.profile_image %}
+            <div class="profile-pic"><img src="{{evaluation.call_attender.profile_image.url}}"></div>
+            {% else %}
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+            {% endif %}
+            <div class="client-name">{{evaluation.call_attender.name}}<div class="common-gray-text">
+            {% if evaluation.call_attender.user_type == 'EVALUATOR' %}
+            Evaluator
+            {% else %}
+            Agent
+            {% endif %}
+            
+            </div></div>
+            </div>
+            
+            
+            <label>Notes :</label>
+            <div class="checkin-form-left">{{detail.attender_note}}</div>
+            
+
+            <div class="checkin-form-left align-center">
+            </div>
+
+            <div class="checkin-form-right align-right">
+            </div>
+
+          </div>
+
+          {% endif %}
+          {% endfor %} 
+
           <hr class="div">
           
             <div class="common-sub-head align-left">Details</div> 

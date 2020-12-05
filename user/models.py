@@ -5,6 +5,7 @@ from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import datetime
+
 # Create your models here.
 
 USER_TYPE_CHOICES=( 
@@ -141,12 +142,13 @@ class Address(models.Model):
     customer        = models.ForeignKey('UserProfile',blank=False,null=False,related_name='address_customer')
     governorate     = models.ForeignKey('Governorate',blank=False,null=False)
     area            = models.ForeignKey('Area',blank=False,null=False)
-    block           = models.CharField(max_length=100,blank=True,null=True)
+    location        = models.CharField(max_length=100,blank=False,null=False)
+    block           = models.CharField(max_length=100,blank=False,null=False)
     avenue          = models.CharField(max_length=100,blank=True,null=True)
-    building        = models.CharField(max_length=100,blank=True,null=True)
-    street          = models.CharField(max_length=100,blank=True,null=True)
+    building        = models.CharField(max_length=100,blank=False,null=False)
+    street          = models.CharField(max_length=100,blank=False,null=False)
     floor           = models.CharField(max_length=100,blank=True,null=True)
-    apartment       = models.CharField(max_length=100,blank=True,null=True)
+    apartment       = models.CharField(max_length=100,blank=False,null=False)
     currently_active= models.BooleanField(null=False,blank=True)
     
     is_active       = models.BooleanField(null=False,blank=True,default=True)

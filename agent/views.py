@@ -1892,6 +1892,11 @@ class NewEnquiry(IsAgent,View):
 		except:
 			governorates = None
 
+		try:
+			locations = AreaType.objects.filter(is_active=True)
+		except:
+			locations = None
+
 		enquiry_form    = UserProfileForm()
 
 		try:
@@ -1899,7 +1904,7 @@ class NewEnquiry(IsAgent,View):
 		except:
 			customer_info = None
 
-		return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':self.address_formset_define(),'customer_info':customer_info,'governorates':governorates,})
+		return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':self.address_formset_define(),'customer_info':customer_info,'governorates':governorates,'locations':locations})
 
 	def post(self,request):
 		enquiry_form     = UserProfileForm(request.POST,request.FILES or None)
@@ -1941,6 +1946,56 @@ class NewEnquiry(IsAgent,View):
 					address_form_save                   = address_form.save(commit=False)
 					address_form_save.customer          = enquiry_form_save
 					address_form_save.currently_active  = True
+
+					#string check
+					block_text = address_form_save.block
+					floor_text = address_form_save.floor
+					street_text = address_form_save.street
+					avenue_text = address_form_save.avenue
+
+					is_block = block_text.find("Block")
+					is_street = street_text.find("Street")
+
+					if floor_text:
+						is_floor = floor_text.find("Floor")
+
+						if is_floor == -1 :
+							floor_text += ' '
+							floor_text += 'Floor'
+							address_form_save.floor = floor_text
+						else:
+							pass
+					else: 
+						pass
+
+					if avenue_text:
+						is_avenue = avenue_text.find("Avenue")
+
+						if is_avenue == -1 :
+							avenue_text += ' '
+							avenue_text += 'Avenue'
+							address_form_save.avenue = avenue_text
+						else:
+							pass
+					else:
+						pass
+
+					print(block_text,is_block,"blockkk")
+
+					if is_block == -1 :
+						block_text += ' '
+						block_text += 'Block'
+						address_form_save.block = block_text
+					else:
+						pass
+
+					if is_street == -1 :
+						street_text += ' '
+						street_text += 'Street'
+						address_form_save.street = street_text
+					else:
+						pass
+
 					address_form_save.save()
 
 			messages.success(request,"Customer Details Succesfully Added")
@@ -1954,9 +2009,14 @@ class NewEnquiry(IsAgent,View):
 			try:
 				governorates = Governorate.objects.filter(is_active=True)
 			except:
-				governorates = None	
+				governorates = None
+
+			try:
+				locations = AreaType.objects.filter(is_active=True)
+			except:
+				locations = None
 			
-			return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'governorates':governorates})					
+			return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'governorates':governorates,'locations':locations})					
 
 		redirection = request.POST.get('redirect_to')	
 
@@ -1977,6 +2037,11 @@ class ExistingEnquiry(IsAgent,View):
 		except:
 			governorates = None
 
+		try:
+			locations = AreaType.objects.filter(is_active=True)
+		except:
+			locations = None
+
 
 		enquiry_user    = UserProfile.objects.get(id=enquiry_id)
 
@@ -1995,7 +2060,7 @@ class ExistingEnquiry(IsAgent,View):
 		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
 		total_orders_count  = orders.count()
 
-		return render(request,'agent/enquiry/existingenquiry.html',{'enquiry_user':enquiry_user,'enquiry_form':enquiry_form,"address_form":address_form,'enquiryid':enquiry_id,'addresses':addresses,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"governorates":governorates,})
+		return render(request,'agent/enquiry/existingenquiry.html',{'enquiry_user':enquiry_user,'enquiry_form':enquiry_form,"address_form":address_form,'enquiryid':enquiry_id,'addresses':addresses,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"governorates":governorates,'locations':locations})
 
 	def post(self,request,enquiry_id):
 
@@ -2050,6 +2115,56 @@ class ExistingEnquiry(IsAgent,View):
 				address_form_save                  = address_form.save(commit=False)
 				address_form_save.customer         = enquiry_user
 				address_form_save.currently_active = True
+
+				#string check
+				block_text = address_form_save.block
+				floor_text = address_form_save.floor
+				street_text = address_form_save.street
+				avenue_text = address_form_save.avenue
+
+				is_block = block_text.find("Block")
+				is_street = street_text.find("Street")
+
+				if floor_text:
+					is_floor = floor_text.find("Floor")
+
+					if is_floor == -1 :
+						floor_text += ' '
+						floor_text += 'Floor'
+						address_form_save.floor = floor_text
+					else:
+						pass
+				else: 
+					pass
+
+				if avenue_text:
+					is_avenue = avenue_text.find("Avenue")
+
+					if is_avenue == -1 :
+						avenue_text += ' '
+						avenue_text += 'Avenue'
+						address_form_save.avenue = avenue_text
+					else:
+						pass
+				else:
+					pass
+
+				print(block_text,is_block,"blockkk")
+
+				if is_block == -1 :
+					block_text += ' '
+					block_text += 'Block'
+					address_form_save.block = block_text
+				else:
+					pass
+
+				if is_street == -1 :
+					street_text += ' '
+					street_text += 'Street'
+					address_form_save.street = street_text
+				else:
+					pass
+
 				address_form_save.save()
 
 				messages.success(request,"New Address Succesfully Added")
@@ -2069,6 +2184,56 @@ class ExistingEnquiry(IsAgent,View):
 			if address_form.is_valid():
 				address_form_save                  = address_form.save(commit=False)
 				address_form_save.currently_active = True
+
+				#string check
+				block_text = address_form_save.block
+				floor_text = address_form_save.floor
+				street_text = address_form_save.street
+				avenue_text = address_form_save.avenue
+
+				is_block = block_text.find("Block")
+				is_street = street_text.find("Street")
+
+				if floor_text:
+					is_floor = floor_text.find("Floor")
+
+					if is_floor == -1 :
+						floor_text += ' '
+						floor_text += 'Floor'
+						address_form_save.floor = floor_text
+					else:
+						pass
+				else: 
+					pass
+
+				if avenue_text:
+					is_avenue = avenue_text.find("Avenue")
+
+					if is_avenue == -1 :
+						avenue_text += ' '
+						avenue_text += 'Avenue'
+						address_form_save.avenue = avenue_text
+					else:
+						pass
+				else:
+					pass
+
+				print(block_text,is_block,"blockkk")
+
+				if is_block == -1 :
+					block_text += ' '
+					block_text += 'Block'
+					address_form_save.block = block_text
+				else:
+					pass
+
+				if is_street == -1 :
+					street_text += ' '
+					street_text += 'Street'
+					address_form_save.street = street_text
+				else:
+					pass
+
 				address_form_save.save()
 
 				messages.success(request,"Address Updated Succesfully")

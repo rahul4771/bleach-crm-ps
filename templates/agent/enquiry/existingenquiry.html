@@ -162,7 +162,7 @@
         <br>
         </div><!--address-col-middle-->
         <div class="address-col-right"><!--address-col-right-->
-        <div class="delete-icon"><span class="edit-address clickable-cursor" data-id="{{address.id}}" data-street="{{address.street|default_if_none:''}}" data-building="{{address.building|default_if_none:''}}" data-apartment="{{address.apartment|default_if_none:''}}" data-floor="{{address.floor|default_if_none:''}}" data-block="{{address.block|default_if_none:''}}" data-avenue="{{address.avenue|default_if_none:''}}" data-area="{{address.area.id}}" data-governorate="{{address.governorate.id}}"><i class="fa fa-1x fa-pencil-square-o" aria-hidden="true"></i></span></div>
+        <div class="delete-icon"><span class="edit-address clickable-cursor" data-id="{{address.id}}" data-street="{{address.street|default_if_none:''}}" data-building="{{address.building|default_if_none:''}}" data-apartment="{{address.apartment|default_if_none:''}}" data-floor="{{address.floor|default_if_none:''}}" data-block="{{address.block|default_if_none:''}}" data-avenue="{{address.avenue|default_if_none:''}}" data-area="{{address.area.id}}" data-location="{{address.location}}" data-governorate="{{address.governorate.id}}"><i class="fa fa-1x fa-pencil-square-o" aria-hidden="true"></i></span></div>
     </div><!--address-col-right-->
       
     </div><!--address-wrapper-->
@@ -189,7 +189,7 @@
     <br>
     </div><!--address-col-middle-->
     <div class="address-col-right"><!--address-col-right-->
-        <div class="delete-icon"><span class="edit-address clickable-cursor" data-id="{{address.id}}" data-street="{{address.street|default_if_none:''}}" data-building="{{address.building|default_if_none:''}}" data-apartment="{{address.apartment|default_if_none:''}}" data-floor="{{address.floor|default_if_none:''}}" data-block="{{address.block|default_if_none:''}}" data-avenue="{{address.avenue|default_if_none:''}}" data-area="{{address.area.id}}" data-governorate="{{address.governorate.id}}"><i class="fa fa-1x fa-pencil-square-o" aria-hidden="true"></i></span></div>
+        <div class="delete-icon"><span class="edit-address clickable-cursor" data-id="{{address.id}}" data-street="{{address.street|default_if_none:''}}" data-building="{{address.building|default_if_none:''}}" data-apartment="{{address.apartment|default_if_none:''}}" data-floor="{{address.floor|default_if_none:''}}" data-block="{{address.block|default_if_none:''}}" data-avenue="{{address.avenue|default_if_none:''}}" data-area="{{address.area.id}}" data-location="{{address.location}}" data-governorate="{{address.governorate.id}}"><i class="fa fa-1x fa-pencil-square-o" aria-hidden="true"></i></span></div>
     </div><!--address-col-right-->
 </div><!--address-wrapper-->
 </div><!--address-form-left-->
@@ -260,9 +260,24 @@
 <input type="hidden" name="action_type" value="add_address">
             <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->      
 
+<div class="address3-wrapper-row address3-forms-boxes"><!--address3-wrapper-row address3-forms-boxes-->
+  <div class="address3-form-left"><!--address3-form-left-->
+          <div class=" bold-text common-label required-field"> <label>Location</label></div>
+                <label for="favcity">
+                <select name="location" class="governorate" required>
+                <option value="">Choose Location</option>
+                {% for location in locations %}
+                <option value="{{location.name}}">{{location.name}}</option>
+                {% endfor %}
+                </select>
+                </label>
+    </div><!--address3-form-left-->
+    </div><!--address3-wrapper-row address3-forms-boxes-->
+<hr class="hr-dashedpad">
+
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-          <div class=" bold-text common-label"> <label>Governorate</label></div>
+          <div class=" bold-text common-label required-field"> <label>Governorate</label></div>
         <label for="favcity">
                 <select id="favcity" name="governorate" class="governorate" required>
                 <option value="">Choose Governorate</option>
@@ -273,7 +288,7 @@
         </label>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-          <div class=" bold-text common-label"> <label>Area</label></div>
+          <div class=" bold-text common-label required-field"> <label>Area</label></div>
           <label for="favcity">
                 <select class="id_area" name="area" required>
                 </select>
@@ -284,23 +299,23 @@
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-          <div class=" bold-text common-label"> <label>Address Title</label></div>
+          <div class=" bold-text common-label required-field"> <label>Address Title</label></div>
         <input type="text" name="apartment" class="textBox" required>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Floor/Flat/House</label></div>
-                <input type="text" name="floor" class="textBox" required>
+                <input type="text" name="floor" class="textBox" >
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-          <div class=" bold-text common-label"> <label>Building</label></div>
+          <div class=" bold-text common-label required-field"> <label>Building</label></div>
         <input type="text" name="building" class="textBox" required>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-          <div class=" bold-text common-label"> <label>Block</label></div>
+          <div class=" bold-text common-label required-field"> <label>Block</label></div>
                 <input type="text" name="block" class="textBox" required>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
@@ -308,12 +323,12 @@
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-          <div class=" bold-text common-label"> <label>Street</label></div>
+          <div class=" bold-text common-label required-field"> <label>Street</label></div>
         <input type="text" name="street" class="textBox" required>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Avenue</label></div>
-                <input type="text" name="avenue" class="textBox" required>
+                <input type="text" name="avenue" class="textBox" >
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">     
@@ -339,9 +354,24 @@
 <input type="hidden" id="address_id" name="address" value="edit_address">
             <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->      
 
+<div class="address3-wrapper-row address3-forms-boxes"><!--address3-wrapper-row address3-forms-boxes-->
+  <div class="address3-form-left"><!--address3-form-left-->
+          <div class=" bold-text common-label required-field"> <label>Location</label></div>
+                <label for="favcity">
+                <select id="edit_location" name="location" class="governorate" required>
+                <option value="">Choose Location</option>
+                {% for location in locations %}
+                <option value="{{location.name}}">{{location.name}}</option>
+                {% endfor %}
+                </select>
+                </label>
+    </div><!--address3-form-left-->
+    </div><!--address3-wrapper-row address3-forms-boxes-->
+<hr class="hr-dashedpad">
+
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-          <div class=" bold-text common-label"> <label>Governorate</label></div>
+          <div class=" bold-text common-label required-field"> <label>Governorate</label></div>
         <label for="favcity">
                 <select id="edit_governorate" name="governorate" class="governorate" required>
                 <option value="">Choose Governorate</option>
@@ -352,7 +382,7 @@
         </label>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-          <div class=" bold-text common-label"> <label>Area</label></div>
+          <div class=" bold-text common-label required-field"> <label>Area</label></div>
           <label for="favcity">
                 <select id="edit_area" class="id_area" name="area" required>
                 </select>
@@ -363,23 +393,23 @@
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-          <div class=" bold-text common-label"> <label>Address Title</label></div>
+          <div class=" bold-text common-label required-field"> <label>Address Title</label></div>
         <input type="text" id="edit_apartment" name="apartment" class="textBox" required>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Floor/Flat/House</label></div>
-                <input type="text" id="edit_floor" name="floor" class="textBox" required>
+                <input type="text" id="edit_floor" name="floor" class="textBox" >
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-          <div class=" bold-text common-label"> <label>Building</label></div>
+          <div class=" bold-text common-label required-field"> <label>Building</label></div>
         <input type="text" id="edit_building" name="building" class="textBox" required>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-          <div class=" bold-text common-label"> <label>Block</label></div>
+          <div class=" bold-text common-label required-field"> <label>Block</label></div>
                 <input type="text" id="edit_block" name="block" class="textBox" required>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
@@ -387,12 +417,12 @@
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-          <div class=" bold-text common-label"> <label>Street</label></div>
+          <div class=" bold-text common-label required-field"> <label>Street</label></div>
         <input type="text" id="edit_street" name="street" class="textBox" required>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Avenue</label></div>
-                <input type="text" id="edit_avenue" name="avenue" class="textBox" required>
+                <input type="text" id="edit_avenue" name="avenue" class="textBox" >
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">     
@@ -509,6 +539,7 @@ $("#closenewaddress").click(function () {
 $(".edit-address").click(function () {
     $('#address_id').val($(this).data('id'));
     $('#edit_governorate').val($(this).data('governorate'));
+    $('#edit_location').val($(this).data('location'));
 
     selected_area = $(this).data('area');
     $.ajax({

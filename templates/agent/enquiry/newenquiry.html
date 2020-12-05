@@ -156,6 +156,21 @@
 <div class="common-sub-head align-left"></div> 
 <div class="address-FullWrapper"><!--address-FullWrapper-->
 <div class="close-div close-div-address"><!-- <a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a> --></div>
+
+<div class="address3-wrapper-row address3-forms-boxes"><!--address3-wrapper-row address3-forms-boxes-->
+  <div class="address3-form-left"><!--address3-form-left-->
+          <div class=" bold-text common-label"> <label>Location</label></div>
+                <label for="favcity">
+                <select id="id_form-0-location" name="form-0-location" class="governorate" required>
+                <option value="">Choose Location</option>
+                {% for location in locations %}
+                <option value="{{location.name}}">{{location.name}}</option>
+                {% endfor %}
+                </select>
+                </label>
+    </div><!--address3-form-left-->
+    </div><!--address3-wrapper-row address3-forms-boxes-->
+<hr class="hr-dashedpad">
 <div class="address3-wrapper-row address3-forms-boxes"><!--address3-wrapper-row address3-forms-boxes-->
   <div class="address3-form-left"><!--address3-form-left-->
           <div class=" bold-text common-label"> <label>Governerate</label></div>
@@ -187,7 +202,7 @@
     
     <div class="address3-form-right"><!--address3-form-right-->
         <div class=" bold-text common-label"> <label>Floor/Flat/House</label></div>
-        <input name="form-0-floor" type="text" class="textBox" placeholder=" " required>
+        <input name="form-0-floor" type="text" class="textBox" placeholder=" " >
     	</div><!--address3-form-right-->    
 </div><!--address3-wrapper-row address3-forms-boxes-->
 <hr class="hr-dashedpad">
@@ -211,7 +226,7 @@
     
     <div class="address3-form-right"><!--address3-form-right-->
         <div class=" bold-text common-label"> <label>Avenue</label></div>
-        <input name="form-0-avenue" type="text" class="textBox" placeholder=" "  required>
+        <input name="form-0-avenue" type="text" class="textBox" placeholder=" "  >
     	</div><!--address3-form-right-->
 </div><!--address3-wrapper-row address3-forms-boxes-->
 </div><!--address-FullWrapper-->
