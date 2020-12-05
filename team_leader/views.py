@@ -341,9 +341,12 @@ class Cleaning(IsTeamLeader,View):
 
 		#checkin save	
 		if cleaning_team_detail: 
-			cleaning_team_detail.check_out                    		= timezone.now()
-			cleaning_team_detail.order_scheduler.work_status  		= 'CLEANING_FULFILLED'
+			submit_status = request.POST.get('assign')
+			if submit_status == 'Checkout':
+				cleaning_team_detail.order_scheduler.work_status  		= 'CLEANING_FULFILLED'	
+				cleaning_team_detail.check_out                    		= timezone.now()
 			cleaning_team_detail.order_scheduler.order.order_status = 'ORDER_IN_PROGRESS'
+			
 			cleaning_team_detail.save()
 			cleaning_team_detail.order_scheduler.save()
 			cleaning_team_detail.order_scheduler.order.save()	
@@ -449,8 +452,9 @@ class FollowupCleaning(IsTeamLeader,View):
 		if followup_team_detail: 
 			if not followup_team_detail.check_in:
 				followup_team_detail.check_in                       = timezone.now()
-			followup_team_detail.followup_scheduler.work_status     = 'FOLLOW_UP_CLEANING_IN_PROGRESS'
-			followup_team_detail.followup_scheduler.follow_up.status= 'FOLLOWUP_IN_PROGRESS'
+			if not followup_team_detail.check_out:
+				followup_team_detail.followup_scheduler.work_status     = 'FOLLOW_UP_CLEANING_IN_PROGRESS'
+				followup_team_detail.followup_scheduler.follow_up.status= 'FOLLOWUP_IN_PROGRESS'
 			followup_team_detail.save()	
 			followup_team_detail.followup_scheduler.save()
 			followup_team_detail.followup_scheduler.follow_up.save()
@@ -467,9 +471,10 @@ class FollowupCleaning(IsTeamLeader,View):
 
 		#checkin save	
 		if followup_team_detail: 
-			followup_team_detail.check_out                          = timezone.now()
-			followup_team_detail.followup_scheduler.work_status     = 'FOLLOW_UP_CLEANING_FULFILLED'
-
+			submit_status = request.POST.get('assign')
+			if submit_status == 'Checkout':
+				followup_team_detail.check_out                          = timezone.now()
+				followup_team_detail.followup_scheduler.work_status     = 'FOLLOW_UP_CLEANING_FULFILLED'
 			followup_team_detail.save()
 			followup_team_detail.followup_scheduler.save()	
 

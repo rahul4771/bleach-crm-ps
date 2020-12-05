@@ -825,6 +825,10 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		#shceduled order details
 		order_schedule = OrderScheduler.objects.select_related('evaluation_details__evaluation','order_scheduler_book').get(is_active=True,id=scheduler_id)
 		
+		#to block back button submission
+		if order_schedule.work_status=='CLEANING_TEAM_ASSIGNED':
+			return redirect('agent:agentdash-board')
+
 		cleaning_team_assign_form = CleaningTeamAssignForm(request.POST)
 		assigned_cleaners         = request.POST.getlist('assigned_cleaner')
 		#update cleaners count

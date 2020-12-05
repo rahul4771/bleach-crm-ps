@@ -160,6 +160,9 @@
         <p>{{address.street}}, {{address.building}}, {{address.apartment}}, {{address.floor}}, {{address.block}}, {{address.avenue}}, {{address.area.name}} {{address.governorate.name}}</p>
         <br>
         </div><!--address-col-middle-->
+        <div class="address-col-right"><!--address-col-right-->
+        <div class="delete-icon"><span class="edit-address clickable-cursor" data-id="{{address.id}}" data-street="{{address.street|default_if_none:''}}" data-building="{{address.building|default_if_none:''}}" data-apartment="{{address.apartment|default_if_none:''}}" data-floor="{{address.floor|default_if_none:''}}" data-block="{{address.block|default_if_none:''}}" data-avenue="{{address.avenue|default_if_none:''}}" data-area="{{address.area.id}}" data-governorate="{{address.governorate.id}}"><i class="fa fa-1x fa-pencil-square-o" aria-hidden="true"></i></span></div>
+    </div><!--address-col-right-->
         
     </div><!--address-wrapper-->
     </div><!--address-form-right-->    
@@ -184,6 +187,9 @@
     <p>{{address.apartment}}, {{address.floor}}, {{address.building}}, {{address.block}}, {{address.governorate}}, {{address.avenue}}, {{address.area.name}}, {{address.governorate.name}}</p>
     <br>
     </div><!--address-col-middle-->
+    <div class="address-col-right"><!--address-col-right-->
+        <div class="delete-icon"><span class="edit-address clickable-cursor" data-id="{{address.id}}" data-street="{{address.street|default_if_none:''}}" data-building="{{address.building|default_if_none:''}}" data-apartment="{{address.apartment|default_if_none:''}}" data-floor="{{address.floor|default_if_none:''}}" data-block="{{address.block|default_if_none:''}}" data-avenue="{{address.avenue|default_if_none:''}}" data-area="{{address.area.id}}" data-governorate="{{address.governorate.id}}"><i class="fa fa-1x fa-pencil-square-o" aria-hidden="true"></i></span></div>
+    </div><!--address-col-right-->
 
 </div><!--address-wrapper-->
 </div><!--address-form-left-->
@@ -193,7 +199,7 @@
 {% endif %}
 {% endfor %}
 
-<div class="add-address"><a>Add New Address</a></div>
+<div class="add-address clickable-cursor"><a>Add New Address</a></div>
 
 <br>
 <div align="center"><input class="cancel-Button" name="addevaluator" type="button" value="Update" onclick="SubmitNewEnquiry(this);"> <a href="{% url 'evaluator:evaluator-makeevaluation' enquiryid %}"><input class="assignButton" name="addevaluator" type="button" value="Add to My Calendar"></a> <a href="{% url 'evaluator:evaluator-makequatation' enquiryid %}"><input class="assignButton" name="addevaluator" type="button" value="Make Quotation"></a>
@@ -235,15 +241,11 @@
         </div><!--right-bgwrapper-->     
         </div><!--cleaning--right-fixed-->  
 	</div><!--cleaning-Order-wrapper-->
-</div><!--order-top-wrapper-->  
-            
-            
-            
-            
-                 
+</div><!--order-top-wrapper-->                   
 </div><!--container-fluid space topspace-->
 </section><!--content-->
     
+
  <!-- new address popup -->
 <div id="addnewaddress_popup" class="overlay"><!--overlay-->
     <div class="popup-assign-eval"><!--popup-assign-eval-->
@@ -268,7 +270,7 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Area</label></div>
           <label for="favcity">
-                <select id="id_area" name="area" required>
+                <select class="id_area" name="area" required>
                 </select>
           </label>
   </div><!--ticket-form-right-->
@@ -318,6 +320,87 @@
     </div><!--popup-assign-eval-->
 </div><!--overlay-->
 <!-- new address popup -->   
+
+
+
+
+<!-- edit address popup -->
+<div id="editaddress_popup" class="overlay"><!--overlay-->
+    <div class="popup-assign-eval"><!--popup-assign-eval-->
+        <a class="close" id="closeeditaddress">&times;</a>
+            <div class="content"><!--content-->
+            
+<form method="post" enctype= "multipart/form-data">{% csrf_token %}                      
+<input type="hidden" name="action_type" value="edit_address">
+<input type="hidden" id="address_id" name="address" value="edit_address">
+            <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->      
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Governorate</label></div>
+        <label for="favcity">
+                <select id="edit_governorate" name="governorate" class="governorate" required>
+                <option value="">Choose Governorate</option>
+                {% for governorate in governorates %}
+                <option value="{{governorate.id}}">{{governorate.name}}</option>
+                {% endfor %}
+                </select>
+        </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Area</label></div>
+          <label for="favcity">
+                <select id="edit_area" class="id_area" name="area" required>
+                </select>
+          </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+ <hr class="hr-dashedpad">
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Address Title</label></div>
+        <input type="text" id="edit_apartment" name="apartment" class="textBox" required>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Floor/Flat/House</label></div>
+                <input type="text" id="edit_floor" name="floor" class="textBox" required>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Building</label></div>
+        <input type="text" id="edit_building" name="building" class="textBox" required>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Block</label></div>
+                <input type="text" id="edit_block" name="block" class="textBox" required>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Street</label></div>
+        <input type="text" id="edit_street" name="street" class="textBox" required>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Avenue</label></div>
+                <input type="text" id="edit_avenue" name="avenue" class="textBox" required>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">     
+  
+<div align="center"> <input class="assignButton" name="assing" type="button" value="update" onclick="SubmitNewEnquiry(this);"></div> 
+
+</div><!--ticket-wrapper-full-->             
+</form>
+            </div><!--content-->
+    </div><!--popup-assign-eval-->
+</div><!--overlay-->
+<!-- edit_address popup -->
 {% include 'evaluator/common/footer.html' %}
 </div><!--wrapper-->
 {% endblock %}
@@ -408,6 +491,7 @@ $("#id_job_title").attr('required',false);
 }
     });
 
+//to add new address
 $(".add-address").click(function () {     
     $('#addnewaddress_popup').css({'visibility':'visible','opacity':1,});      
       });
@@ -415,6 +499,64 @@ $(".add-address").click(function () {
 $("#closenewaddress").click(function () {
     $('#addnewaddress_popup').css({'visibility':'hidden','opacity':0,});
 });
+
+
+//edit Address
+$(".edit-address").click(function () {
+    $('#address_id').val($(this).data('id'));
+    $('#edit_governorate').val($(this).data('governorate'));
+
+    selected_area = $(this).data('area');
+    $.ajax({
+        url: "{% url 'agent:ajax-getarea' %}",
+        data: {'governorate_id':$(this).data('governorate')}, 
+        dataType: 'json',
+        
+        success: function (data) { 
+          ajax_ret_areas = data;     
+          $(".id_area").empty();
+          console.log($(this).data());
+          $(".id_area").append($('<option>', {
+          value: "", 
+         text: "Choose Area"
+                                       })); 
+        $.each( ajax_ret_areas, function( key, values ) {
+              if(selected_area == key )
+              {
+                  $(".id_area").append($('<option>', {        
+                          value: key, 
+                          text: values,
+                          selected:true
+                  }));
+              }
+              else
+              {
+                  $(".id_area").append($('<option>', {        
+                          value: key, 
+                          text: values
+                  }));
+              }
+
+            });
+
+            }
+      })                         
+    $('#edit_apartment').val($(this).data('apartment'));
+    $('#edit_avenue').val($(this).data('avenue'));
+    $('#edit_block').val($(this).data('block'));
+    $('#edit_floor').val($(this).data('floor'));
+    $('#edit_block').val($(this).data('block'));
+    $('#edit_floor').val($(this).data('floor'));
+    $('#edit_building').val($(this).data('building'));
+    $('#edit_street').val($(this).data('street'));
+
+    $('#editaddress_popup').css({'visibility':'visible','opacity':1,});      
+      });
+
+$("#closeeditaddress").click(function () {
+    $('#editaddress_popup').css({'visibility':'hidden','opacity':0,});
+});
+
 
 })
   

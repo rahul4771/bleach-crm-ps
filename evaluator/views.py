@@ -918,6 +918,25 @@ class ExistingEnquiry(IsEvaluator,View):
 
 				return render(request,'evaluator/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})					
 
+		if action_mode == 'edit_address':
+			address_id = request.POST.get('address')
+			address = Address.objects.select_related('customer').get(id=address_id)
+
+			address_form = AddressForm(request.POST,instance=address)
+			if address_form.is_valid():
+				address_form_save                  = address_form.save(commit=False)
+				address_form_save.currently_active = True
+				address_form_save.save()
+
+				messages.success(request,"Address Updated Succesfully")
+
+			else:
+				messages.error(request,get_error(address_form))
+
+				enquiry_form = UserProfileForm(request.FILES or None,instance=address.customer)
+
+				return render(request,'evaluator/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})
+
 		return redirect('evaluator:evaluator-existingenquiry',enquiry_id)
 
 
@@ -968,10 +987,6 @@ class AssignEvaluator(IsEvaluator,View):
 
 
 		if action_mode == 'add':
-
-			#update evaluation
-			agent_notes  = request.POST.get('agent_notes')
-			Evaluation.objects.filter(id=evaluation_id).update(attender_notes=agent_notes)
 
 			evaluation = Evaluation.objects.filter(id=evaluation_id).first()
 			if evaluation.customer.gender == 'MALE':

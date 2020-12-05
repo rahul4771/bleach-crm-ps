@@ -6,7 +6,7 @@ class EvaluationDetailsForm(forms.ModelForm):
 	proposed_time = forms.CharField(widget=forms.TextInput(attrs={'required':'required'}))
 	class Meta:
 		model  = EvaluationDetails
-		fields = ('evaluator','address')	
+		fields = ('evaluator','address','attender_note')	
 	
 	def __init__(self,*args,enquiry_user_id,evaluation_id,**kwargs):
 		self.enquiry_user_id = kwargs.pop('enquiry_user_id', None)
@@ -20,7 +20,7 @@ class MyEvaluationDetailsForm(forms.ModelForm):
 	proposed_time = forms.CharField(widget=forms.TextInput(attrs={'required':'required'}))
 	class Meta:
 		model  = EvaluationDetails
-		fields = ('address',)	
+		fields = ('address','attender_note')	
 	
 	def __init__(self,*args,enquiry_user_id,evaluation_id,**kwargs):
 		self.enquiry_user_id = kwargs.pop('enquiry_user_id', None)

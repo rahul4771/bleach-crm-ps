@@ -471,7 +471,7 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
      <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Notes</label></div>
-                <textarea name="notes" class="textArea" cols="" rows="" id="notes"></textarea>
+                <textarea name="attender_note" class="textArea" cols="" rows="" id="notes"></textarea>
   </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
 <div align="center"> <input class="assignButton appointment_btn" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"> &nbsp<input class="cancel-Button close-btn delete_evaluation" name="delete" type="button" value="Delete"></div>
@@ -913,7 +913,7 @@ $('document').ready(function(){
                               same_slote_count += 1
                               if(same_slote_count == 1)
                               {
-                                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="edit_evaluation clickable-cursor bold-text {% if evaluation.status == 'EVALUATED' %}gray-text-evaluation{% endif %}" data-blcno="{{evaluation.evaluation.evaluation_id}}" data-customer_name="{{evaluation.evaluation.customer.name}}" data-area="{{evaluation.address.area.name}}" data-governorate="{{evaluation.address.governorate.name}}" data-block="{{evaluation.address.block}}" data-apartment="{{evaluation.address.apartment}}" data-street="{{evaluation.address.street}}" data-building="{{evaluation.address.building}}" data-avenue="{{evaluation.address.avenue}}"  data-mobile_no="{{evaluation.evaluation.customer.mobile_number}}" data-proposed_date="{{evaluation.proposed_time|date:'d-m-Y'}}" data-proposed_time="{{evaluation.proposed_time|date:'h:i A'}}" data-evaluator_name="{{evaluation.evaluator.name}}" data-notes="{{evaluation.evaluator_note|escapejs|default_if_none:''}}" data-customer_id="{{evaluation.evaluation.customer.id}}" data-evaluator_id="{{evaluation.evaluator.id}}" data-address_id="{{evaluation.address.id}}" data-evaluation_status="{{evaluation.status}}" data-id="{{evaluation.id}}">{{evaluation.address.area.name}}</a></td>');
+                                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="edit_evaluation clickable-cursor bold-text {% if evaluation.status == 'EVALUATED' %}gray-text-evaluation{% endif %}" data-blcno="{{evaluation.evaluation.evaluation_id}}" data-customer_name="{{evaluation.evaluation.customer.name}}" data-area="{{evaluation.address.area.name}}" data-governorate="{{evaluation.address.governorate.name}}" data-block="{{evaluation.address.block}}" data-apartment="{{evaluation.address.apartment}}" data-street="{{evaluation.address.street}}" data-building="{{evaluation.address.building}}" data-avenue="{{evaluation.address.avenue}}"  data-mobile_no="{{evaluation.evaluation.customer.mobile_number}}" data-proposed_date="{{evaluation.proposed_time|date:'d-m-Y'}}" data-proposed_time="{{evaluation.proposed_time|date:'h:i A'}}" data-evaluator_name="{{evaluation.evaluator.name}}" data-notes="{{evaluation.attender_note|escapejs|default_if_none:''}}" data-customer_id="{{evaluation.evaluation.customer.id}}" data-evaluator_id="{{evaluation.evaluator.id}}" data-address_id="{{evaluation.address.id}}" data-evaluation_status="{{evaluation.status}}" data-id="{{evaluation.id}}">{{evaluation.address.area.name}}</a></td>');
                               }
                               else
                               {

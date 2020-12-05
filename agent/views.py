@@ -860,12 +860,10 @@ class AgentHome(IsAgent,View):
 			converted_proposed_datetime       = datetime.strptime(new_proposed_date+' '+new_proposed_time,'%d-%m-%Y %I:%M %p')
 
 			evaluator_id                      = request.POST.get('evaluator')
-			evaluator_notes                   = request.POST.get('notes')
+			attender_note                    = request.POST.get('attender_note')
 
 			evaluation = EvaluationDetails.objects.filter(id=evaluation_detail_id).first()
 			current_date=evaluation.proposed_time
-
-			print(current_date.date(),converted_proposed_datetime.date(), "datae")
 
 			language = evaluation.address.customer.sms_preference
 			gender = evaluation.address.customer.gender
@@ -876,7 +874,7 @@ class AgentHome(IsAgent,View):
 			address = evaluation.address
 
 			#update evaluation time
-			EvaluationDetails.objects.filter(id=evaluation_detail_id).update(proposed_time=converted_proposed_datetime,evaluator_id=evaluator_id,evaluator_note=evaluator_notes)	
+			EvaluationDetails.objects.filter(id=evaluation_detail_id).update(proposed_time=converted_proposed_datetime,evaluator_id=evaluator_id,attender_note=attender_note)	
 			evaluator = EvaluationDetails.objects.get(id=evaluation_detail_id)
 			messages.success(request,"Evaluation Edited Succesfully")
 
@@ -2067,6 +2065,25 @@ class ExistingEnquiry(IsAgent,View):
 
 				return render(request,'agent/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})
 
+		if action_mode == 'edit_address':
+			address_id = request.POST.get('address')
+			address = Address.objects.select_related('customer').get(id=address_id)
+
+			address_form = AddressForm(request.POST,instance=address)
+			if address_form.is_valid():
+				address_form_save                  = address_form.save(commit=False)
+				address_form_save.currently_active = True
+				address_form_save.save()
+
+				messages.success(request,"Address Updated Succesfully")
+
+			else:
+				messages.error(request,get_error(address_form))
+
+				enquiry_form = UserProfileForm(request.FILES or None,instance=address.customer)
+
+				return render(request,'agent/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})			
+		
 		return redirect('agent:agent-existingenquiry',enquiry_id)
 
 
@@ -2123,9 +2140,6 @@ class AssignEvaluator(IsAgent,View):
 
 		if action_mode == 'add':
 
-			#update evaluation
-			agent_notes  = request.POST.get('agent_notes')
-			Evaluation.objects.filter(id=evaluation_id).update(attender_notes=agent_notes)
 			evaluation = Evaluation.objects.filter(id=evaluation_id).first()
 			if evaluation.customer.gender == 'MALE':
 				title = 'Mr.'
