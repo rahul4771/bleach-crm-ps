@@ -69,17 +69,17 @@
           </div>
           
           <div>
-            <span>{{orderschedule.customer_address.street}},{{orderschedule.customer_address.block}}</span>
+            <span><b>{{orderschedule.customer_address.apartment}}</b>, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}},</span>
           </div>
           
           <div>
-            <span>{{orderschedule.customer_address.avenue}},{{orderschedule.customer_address.floor}}</span>
+            <span>{{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}}, {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %}</span>
           </div>
           
           <div>
-            <span>{{orderschedule.customer_address.building}},{{orderschedule.customer_address.area.name}}</span>
+            <span>{{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</span>
           </div>
-          
+          <br>
           <div>
             <span>Contact No: <strong>{{orderschedule.customer_address.customer.mobile_number}}</strong></span>
           </div>
