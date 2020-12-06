@@ -41,7 +41,7 @@
       {% endif %}
 
       <div class="checkin-form-left"><!--checkin-form-left-->
-        {{detail.address.block}}st Block,{{detail.address.building}},{{detail.address.street}} Street,{{detail.address.area.name}}
+        <b>{{detail.address.apartment}}</b>: {% if detail.address.floor %}{{detail.address.floor}}, {% else %}{% endif %} {{detail.address.building}}, {{detail.address.block}}, {{detail.address.street}}, {% if detail.address.avenue %}{{detail.address.avenue}}, {% else %}{% endif %} {{detail.address.area.name}}, {{detail.address.governorate.name}} 
       </div><!--checkin-form-left-->
       <div class="checkin-form-left align-center"><!--checkin-form-left-->
         {% if detail.total_cost == 0.0 %}
