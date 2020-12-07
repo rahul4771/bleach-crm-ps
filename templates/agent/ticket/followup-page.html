@@ -127,7 +127,7 @@
             <br>
                 <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.start_at}}</div>
                 <br>
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.customer_address.building}}, {{followup_details.investigation.order_schedule.customer_address.street}}, {{followup_details.investigation.order_schedule.customer_address.area.name}}, {{followup_details.investigation.order_schedule.customer_address.governorate.name}}</div>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> <b>{{followup_details.investigation.order_schedule.customer_address.apartment}}</b>: {% if followup_details.investigation.order_schedule.customer_address.floor %}{{followup_details.investigation.order_schedule.customer_address.floor}}, {% else %}{% endif %} {{followup_details.investigation.order_schedule.customer_address.building}}, {{followup_details.investigation.order_schedule.customer_address.block}}, {{followup_details.investigation.order_schedule.customer_address.street}}, {% if followup_details.investigation.order_schedule.customer_address.avenue %}{{followup_details.investigation.order_schedule.customer_address.avenue}}, {% else %}{% endif %} {{followup_details.investigation.order_schedule.customer_address.area.name}}, {{followup_details.investigation.order_schedule.customer_address.governorate.name}}</div>
                 <br>
                 <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
                 <br>
@@ -262,16 +262,22 @@
         <div class="common-gray-text">{{client_details.email}}</div>
         <br>
         <hr class="hr">
+        {% if client_details.company  %}
         <div class="common-gray-text">Comapany Name : <span class="bold-text">{{client_details.company}}</span></div>
+        {% endif %}
+        {% if client_details.nationality %}
         <div class="common-gray-text">Nationality : <span class="bold-text">{{client_details.nationality}}</span></div>
+        {% endif %}
+        {% if client_details.phone_number %}
         <div class="common-gray-text">Other Contact : <span class="bold-text">{{client_details.phone_number}}</span></div>
+        {% endif %}
         <hr class="hr">
         <br>
         {% for address in client_details.customer_addresses %}
-            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address {{forloop.counter}}: {{address.apartment}}</div>
-            <div class="address">{{address.building}}, {{address.street}}, {{address.area.name}}, {{address.governorate.name}}</div>
+            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address {{forloop.counter}}: <b>{{address.apartment}}</b></div>
+            <div class="address">{% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}}, {{address.block}}, {{address.street}}, {% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} {{address.area.name}}, {{address.governorate.name}}</div>
             <br>
-        {% endfor %} 
+            {% endfor %}
     </div><!--order-details-right-fixed-->
 
 

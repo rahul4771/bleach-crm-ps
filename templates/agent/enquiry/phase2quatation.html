@@ -25,7 +25,7 @@
         	<div class="customer-name"><i class="fa blue-text fa-user-circle-o" aria-hidden="true"></i> {{evaluation_details.evaluation.customer.name}}</div>
         	<div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;  {{evaluation_details.evaluation.customer.mobile_number}}</div>
         	<div class="email"><i class="fa orange-text fa-lg fa-envelope-o" aria-hidden="true"></i> &nbsp;  {{evaluation_details.evaluation.customer.email}}</div>
-            <div class="mobile-number"><i class="fa red-text fa-lg fa-home" aria-hidden="true"></i> &nbsp;  Apartment, 3rd Floor, {{evaluation_details.address.building}} Building, {{evaluation_details.address.block}} Block, {{evaluation_details.address.street}} Street, {{evaluation_details.address.avenue}} Avenue, {{evaluation_details.address.area.name}} {{evaluation_details.address.governorate.name}}</div>
+            <div class="mobile-number"><i class="fa red-text fa-lg fa-home" aria-hidden="true"></i> &nbsp;  <b>{{evaluation_details.address.apartment}}</b>: {% if evaluation_details.address.floor %}{{evaluation_details.address.floor}}, {% else %}{% endif %} {{evaluation_details.address.building}}, {{evaluation_details.address.block}}, {{evaluation_details.address.street}}, {% if evaluation_details.address.avenue %}{{evaluation_details.address.avenue}}, {% else %}{% endif %} {{evaluation_details.address.area.name}}, {{evaluation_details.address.governorate.name}}</div>
         	<hr class="div">
 <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
 

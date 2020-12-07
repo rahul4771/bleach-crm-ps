@@ -800,9 +800,15 @@
         <div class="common-gray-text">{{client_details.email}}</div>
         <br>
         <hr class="hr">
-        <div class="common-gray-text">Comapany Name : <span class="bold-text">{{client_details.company}}</span></div>
+        {% if client_details.company  %}
+        <div class="common-gray-text">Company Name : <span class="bold-text">{{client_details.company}}</span></div>
+        {% endif %}
+        {% if client_details.nationality %}
         <div class="common-gray-text">Nationality : <span class="bold-text">{{client_details.nationality}}</span></div>
+        {% endif %}
+        {% if client_details.phone_number %}
         <div class="common-gray-text">Other Contact : <span class="bold-text">{{client_details.phone_number}}</span></div>
+        {% endif %}
         <hr class="hr">
         <br>
         {% for address in client_details.customer_addresses %}
