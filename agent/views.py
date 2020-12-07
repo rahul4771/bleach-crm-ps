@@ -2426,7 +2426,6 @@ class MakeQuatationPhase1(IsAgent,View):
 		#update payment method
 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
 		
-
 		#sms integration
 		evaluation        = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
 		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
