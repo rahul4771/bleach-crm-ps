@@ -62,11 +62,6 @@ SCHEDULER_CHOICES = (
 	('CANCELLED','CANCELLED')
 	)
 
-SUBSCRIPTION_POLICY_CHOICES = (
-	('PREMONTHSUBSCRIPTION','PREMONTHSUBSCRIPTION'),
-	('POSTMONTHSUBSCRIPTION','POSTMONTHSUBSCRIPTION')
-	)
-
 
 #Store the Order Details.DownPayment,Subscription and Direct Cleaning Comes Under a Single Order
 
@@ -105,7 +100,6 @@ class Order(models.Model):
 #Devide an Order into a number of Schedules.This is to handle multiple days cleaning,multiple address cleaning Subscription Cleaning etc...
 class PaymentSubscriptionDetails(models.Model):
 	amount              = models.IntegerField(blank=True,null=True)
-	subscription_policy = models.CharField(max_length=100,blank=True,null=True,choices=SUBSCRIPTION_POLICY_CHOICES)
 	is_paid             = models.BooleanField(null=False,blank=True,default=True)
 	paid_date 			= models.DateTimeField(blank=True,null=True)
 	

@@ -1273,12 +1273,11 @@ class MakeQuatationPhase1(IsEvaluator,View):
 	def post(self,request,enquiry_id,evaluation_id):
 		
 		payment_method = request.POST.get('payment_method')
-		attender_notes = request.POST.get('attender_notes')
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0.000)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0.000)
 
 		#update payment method
-		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,attender_notes=attender_notes,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
 
 		evaluation = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
 		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
@@ -2057,12 +2056,11 @@ class MakeQuatationPhase1Edit(IsEvaluator,View):
 	def post(self,request,enquiry_id,evaluation_id):
 		
 		payment_method = request.POST.get('payment_method')
-		attender_notes = request.POST.get('attender_notes')
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
 
 		#update payment method
-		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,attender_notes=attender_notes,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
 		evaluation = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
 		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
 		evaluationbook = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
