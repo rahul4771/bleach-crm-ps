@@ -238,7 +238,7 @@
                 {% if request.user.user_type == 'AGENT' %}
                 {% elif request.user.user_type == 'EVALUATOR' %}
                 {% else %}
-                {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+                {% if order.evaluation.quatation_status == 'APPROVED' %}
                 <input class="assignButton clickable-cursor" name="pay" type="submit" value="&nbsp;&nbsp;&nbsp;Pay by Debit Card / بطاقة ائتمان">
                 {% endif %}
                 {% endif %}
