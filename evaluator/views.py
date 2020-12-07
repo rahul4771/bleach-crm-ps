@@ -1273,7 +1273,6 @@ class MakeQuatationPhase1(IsEvaluator,View):
 	def post(self,request,enquiry_id,evaluation_id):
 		
 		payment_method = request.POST.get('payment_method')
-		attender_notes = request.POST.get('attender_notes')
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0.000)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0.000)
 
@@ -2057,7 +2056,6 @@ class MakeQuatationPhase1Edit(IsEvaluator,View):
 	def post(self,request,enquiry_id,evaluation_id):
 		
 		payment_method = request.POST.get('payment_method')
-		attender_notes = request.POST.get('attender_notes')
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
 

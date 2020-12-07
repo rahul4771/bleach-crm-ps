@@ -2419,13 +2419,12 @@ class MakeQuatationPhase1(IsAgent,View):
 	def post(self,request,enquiry_id,evaluation_id):
 
 		payment_method 			= request.POST.get('payment_method')
-		attender_notes 			= request.POST.get('attender_notes')
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
 
 
 		#update payment method
-		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,attender_notes=attender_notes,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
 		evaluation = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
 		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
 		evaluationbook = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
@@ -2644,13 +2643,12 @@ class MakeQuatationPhase1Edit(IsAgent,View):
 	def post(self,request,enquiry_id,evaluation_id):
 		
 		payment_method 			= request.POST.get('payment_method')
-		attender_notes 			= request.POST.get('attender_notes')
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
 
 
 		#update payment method
-		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,attender_notes=attender_notes,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
 		evaluation = Evaluation.objects.prefetch_related(Prefetch('evaluation_details',EvaluationDetails.objects.filter(is_active=True).select_related('address'),to_attr='evaluation_address')).filter(id=evaluation_id,is_active=True).get(id=evaluation_id,is_active=True)
 		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
 		if evaluationdetails.address.floor == None:
@@ -2966,13 +2964,12 @@ class MakeQuatationPhase1DuplicateEdit(IsAgent,View):
 	def post(self,request,enquiry_id,evaluation_id):
 		
 		payment_method 			= request.POST.get('payment_method')
-		attender_notes 			= request.POST.get('attender_notes')
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
 
 
 		#update payment method
-		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,attender_notes=attender_notes,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
 		evaluation = Evaluation.objects.prefetch_related(Prefetch('evaluation_details',EvaluationDetails.objects.filter(is_active=True).select_related('address'),to_attr='evaluation_address')).filter(id=evaluation_id,is_active=True).get(id=evaluation_id,is_active=True)
 		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
 		evaluationbook = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
