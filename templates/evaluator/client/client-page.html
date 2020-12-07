@@ -158,14 +158,20 @@
             <div class="common-gray-text">{{client_details.email}}</div>
             <br>
             <hr class="hr">
+            {% if client_details.company  %}
             <div class="common-gray-text">Comapany Name : <span class="bold-text">{{client_details.company}}</span></div>
+            {% endif %}
+            {% if client_details.nationality %}
             <div class="common-gray-text">Nationality : <span class="bold-text">{{client_details.nationality}}</span></div>
+            {% endif %}
+            {% if client_details.phone_number %}
             <div class="common-gray-text">Other Contact : <span class="bold-text">{{client_details.phone_number}}</span></div>
+            {% endif %}
             <hr class="hr">
             <br>
             {% for address in client_details.customer_addresses %}
-            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address {{forloop.counter}}: {{address.apartment}}</div>
-            <div class="address">{{address.building}}, {{address.street}}, {{address.area.name}}, {{address.governorate.name}}</div>
+            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address {{forloop.counter}}: <b>{{address.apartment}}</b></div>
+            <div class="address">{% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}}, {{address.block}}, {{address.street}}, {% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} {{address.area.name}}, {{address.governorate.name}}</div>
             <br>
             {% endfor %}
         </div><!--right-bgwrapper-->     

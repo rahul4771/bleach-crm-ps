@@ -181,7 +181,7 @@
                 {% endif %}
 
                 <br>
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> {{orderschedule.customer_address.building}}, {{orderschedule.customer_address.street}}, {{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</div>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> <b>{{orderschedule.customer_address.apartment}}</b>: {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}}, {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}}, {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %} {{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</div>
                 <br>
                 <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
                 <br>
@@ -800,14 +800,20 @@
         <div class="common-gray-text">{{client_details.email}}</div>
         <br>
         <hr class="hr">
+        {% if client_details.company  %}
         <div class="common-gray-text">Comapany Name : <span class="bold-text">{{client_details.company}}</span></div>
+        {% endif %}
+        {% if client_details.nationality %}
         <div class="common-gray-text">Nationality : <span class="bold-text">{{client_details.nationality}}</span></div>
+        {% endif %}
+        {% if client_details.phone_number %}
         <div class="common-gray-text">Other Contact : <span class="bold-text">{{client_details.phone_number}}</span></div>
+        {% endif %}
         <hr class="hr">
         <br>
         {% for address in client_details.customer_addresses %}
-        <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address {{forloop.counter}}: {{address.apartment}}</div>
-        <div class="address">{{address.building}}, {{address.street}}, {{address.area.name}}, {{address.governorate.name}}</div>
+        <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address {{forloop.counter}}: <b>{{address.apartment}}</b></div>
+        <div class="address">{% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}}, {{address.block}}, {{address.street}}, {% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} {{address.area.name}}, {{address.governorate.name}}</div>
         <br>
         {% endfor %}
     </div><!--order-details-right-fixed-->

@@ -205,7 +205,7 @@
         {% else %}
         class="yellow-line"
         {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
-    <td class="text-left clickable-row" data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}" >{{invoice.order_no}}</td>
+    <td class="text-left" >{{invoice.order_no}}</td>
     <td>{{invoice.evaluation.customer.name}}</td>
     <td class="text-center">{{invoice.evaluation.payment_method}}</td>
   
@@ -232,7 +232,7 @@
     {% endfor %}
 
 {% comment %} {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %} {% endcomment %}
-    <td class="clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
+    <td class="clickable-row" {% if invoice %}data-href="{% url 'bleach_admin:admin-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
     {% for inv in invoice.orderschedules|slice:":1" %}
         {% if inv.work_status == 'CLEANING_TEAM_ASSIGNED' %}
         <span class="text-center blue-bg clickable-row">CLEANING TEAM ASSIGNED</span>
