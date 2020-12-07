@@ -3,3 +3,4 @@ from accountant.models import PaymentHistory
 # Register your models here.
 
 admin.site.register(PaymentHistory)
+
