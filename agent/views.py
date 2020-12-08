@@ -862,6 +862,10 @@ class AgentHome(IsAgent,View):
 			current_date=evaluation.proposed_time
 
 			language = evaluation.address.customer.sms_preference
+			contact_platform = evaluation.address.customer.is_sms
+
+			print(contact_platform,"plo")
+
 			gender = evaluation.address.customer.gender
 			if gender == 'MALE':
 				title = 'Mr.'
@@ -874,7 +878,7 @@ class AgentHome(IsAgent,View):
 			evaluator = EvaluationDetails.objects.get(id=evaluation_detail_id)
 			messages.success(request,"Evaluation Edited Succesfully")
 
-			if converted_proposed_datetime.date() != current_date.date():
+			if converted_proposed_datetime.date() != current_date.date() and contact_platform == True:
 				
 				url = "https://smsapi.future-club.com/fccsms.aspx"
 
@@ -882,12 +886,12 @@ class AgentHome(IsAgent,View):
 
 					message = "Dear Customer, We have changed the date of your Evaluation Appointment as per your request. "+ title +" "+evaluator.evaluator.name+" will be visiting you on "+str(converted_proposed_datetime)+" at "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 				
-					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.address.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 
 				else:
 					message = "عزيزي العميل، لقد قمنا بتغيير تاريخ موعد التقييم الخاص بك حسب طلبك.  "+ title +" "+evaluator.evaluator.name+" سيقوم بالزيارة في "+str(converted_proposed_datetime)+" في "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+" لأي استفسارات يمكنكم التواصل معنا على  9651882707+ . شكراً لاختياركم بليتش لخدمات التنظيف"
 					
-					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.address.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 
 				headers = {
 					'cache-control': "no-cache"
