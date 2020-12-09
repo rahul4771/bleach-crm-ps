@@ -67,7 +67,7 @@ class Quatation(View):
 			Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(quatation_status='REJECTED',quatation_rejected_date=timezone.now())
 			Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='ORDER_CANCELLED')
 
-		print(request.POST)
+		#print(request.POST)
 		if action == 'Approve':
 			#UPDATE EVALUATION APPROVAL
 			termsandconditions = request.POST.get('termsandconditions')

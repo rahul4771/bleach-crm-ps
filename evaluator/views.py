@@ -1276,9 +1276,39 @@ class MakeQuatationPhase1(IsEvaluator,View):
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0.000)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0.000)
 
+		#for delete subscription to solve back button problem
+		evaluation      = Evaluation.objects.get(id=evaluation_id)
+		if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
+			OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
+			PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
+
 		#update payment method
 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
 
+		#update payment subscription if it is subscription
+		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
+			order           = Order.objects.get(evaluation_id=evaluation_id)
+			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id)
+
+			#create subscription model
+			cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
+			for month in cleaning_months:
+				subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=evaluation.total_cost/len(cleaning_months),monthyear=(str(month[0])+'-'+str(month[1])) )			
+				#update orderschedules
+				for schedule in order_schedules:
+					if payment_method == 'POSTPAIDSUBSCRIPTION':
+						if schedule.start_at.date().month-1 == month[0]:
+							schedule.payment_subscription = subscription
+							schedule.save()
+						elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
+							schedule.payment_subscription = subscription
+							schedule.save()
+					else:
+						if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
+							schedule.payment_subscription = subscription
+							schedule.save()
+
+		#sms integration
 		evaluation = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
 		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
 		evaluationbook = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
@@ -1680,10 +1710,39 @@ class MakeAssignedQuatationPhase1(IsEvaluator,View):
 		payment_method = request.POST.get('payment_method')
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
-		
+			
+		#for delete subscription to solve back button problem
+		evaluation      = Evaluation.objects.get(id=evaluation_id)
+		if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
+			OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
+			PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
+
 		#update payment method
 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
-							
+
+		#update payment subscription if it is subscription
+		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
+			order           = Order.objects.get(evaluation_id=evaluation_id)
+			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id)
+
+			#create subscription model
+			cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
+			for month in cleaning_months:
+				subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=evaluation.total_cost/len(cleaning_months),monthyear=(str(month[0])+'-'+str(month[1])) )			
+				#update orderschedules
+				for schedule in order_schedules:
+					if payment_method == 'POSTPAIDSUBSCRIPTION':
+						if schedule.start_at.date().month-1 == month[0]:
+							schedule.payment_subscription = subscription
+							schedule.save()
+						elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
+							schedule.payment_subscription = subscription
+							schedule.save()
+					else:
+						if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
+							schedule.payment_subscription = subscription
+							schedule.save()
+												
 		messages.success(request,"Quatation Submitted Succesfully")		
 		return redirect('evaluator:evaluatordash-board')
 
@@ -2059,8 +2118,39 @@ class MakeQuatationPhase1Edit(IsEvaluator,View):
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
 
+		#for delete previous subscription
+		evaluation      = Evaluation.objects.get(id=evaluation_id)
+		if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
+			OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
+			PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
+
 		#update payment method
 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+
+		#update payment subscription if it is subscription
+		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
+			order           = Order.objects.get(evaluation_id=evaluation_id)
+			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id)
+
+			#create subscription model
+			cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
+			for month in cleaning_months:
+				subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=evaluation.total_cost/len(cleaning_months),monthyear=(str(month[0])+'-'+str(month[1])) )			
+				#update orderschedules
+				for schedule in order_schedules:
+					if payment_method == 'POSTPAIDSUBSCRIPTION':
+						if schedule.start_at.date().month-1 == month[0]:
+							schedule.payment_subscription = subscription
+							schedule.save()
+						elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
+							schedule.payment_subscription = subscription
+							schedule.save()
+					else:
+						if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
+							schedule.payment_subscription = subscription
+							schedule.save()
+
+		#sms integration
 		evaluation = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
 		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
 		evaluationbook = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()

@@ -676,7 +676,7 @@ class AgentHome(IsAgent,View):
 		schedule_date_end   = schedule_date_start+timedelta(1)
 
 		try:
-			calendar_order_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book','payment_subscription').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(Q(order__evaluation__payment_method='POSTPAIDSUBSCRIPTION')&Q(Q(payment_subscription__is_paid=True)|Q(payment_subscription=None))) | Q(Q(order__evaluation__payment_method='PREPAIDSUBSCRIPTION')&Q(payment_subscription__is_paid=True)) )).order_by('start_at') 
+			calendar_order_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book','payment_subscription').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(Q(order__evaluation__payment_method='POSTPAIDSUBSCRIPTION')&Q(Q(payment_subscription__is_paid=True)|Q(payment_subscription=None))) | Q(Q(order__evaluation__payment_method='PREPAIDSUBSCRIPTION')&Q(payment_subscription__is_paid=True)) )).order_by('start_at') 
 		except:
 			calendar_order_schedules 	= None
 
@@ -686,7 +686,7 @@ class AgentHome(IsAgent,View):
 			calendar_followup_schedules = None
 
 		try:
-			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book','payment_subscription').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(Q(order__evaluation__payment_method='POSTPAIDSUBSCRIPTION')&Q(Q(payment_subscription__is_paid=True)|Q(payment_subscription=None))) | Q(Q(order__evaluation__payment_method='PREPAIDSUBSCRIPTION')&Q(payment_subscription__is_paid=True)) ))
+			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book','payment_subscription').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(Q(order__evaluation__payment_method='POSTPAIDSUBSCRIPTION')&Q(Q(payment_subscription__is_paid=True)|Q(payment_subscription=None))) | Q(Q(order__evaluation__payment_method='PREPAIDSUBSCRIPTION')&Q(payment_subscription__is_paid=True)) ))
 		except:
 			sp_calendar_order_schedules = None
 
@@ -696,7 +696,7 @@ class AgentHome(IsAgent,View):
 			sp_calendar_followup_schedules = None
 
 		try:
-			spp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book','payment_subscription').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(Q(order__evaluation__payment_method='POSTPAIDSUBSCRIPTION')&Q(Q(payment_subscription__is_paid=True)|Q(payment_subscription=None))) | Q(Q(order__evaluation__payment_method='PREPAIDSUBSCRIPTION')&Q(payment_subscription__is_paid=True)) ))
+			spp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book','payment_subscription').filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(Q(order__evaluation__payment_method='POSTPAIDSUBSCRIPTION')&Q(Q(payment_subscription__is_paid=True)|Q(payment_subscription=None))) | Q(Q(order__evaluation__payment_method='PREPAIDSUBSCRIPTION')&Q(payment_subscription__is_paid=True)) ))
 		except:
 			spp_calendar_order_schedules = None
 
@@ -862,6 +862,10 @@ class AgentHome(IsAgent,View):
 			current_date=evaluation.proposed_time
 
 			language = evaluation.address.customer.sms_preference
+			contact_platform = evaluation.address.customer.is_sms
+
+			print(contact_platform,"plo")
+
 			gender = evaluation.address.customer.gender
 			if gender == 'MALE':
 				title = 'Mr.'
@@ -874,7 +878,7 @@ class AgentHome(IsAgent,View):
 			evaluator = EvaluationDetails.objects.get(id=evaluation_detail_id)
 			messages.success(request,"Evaluation Edited Succesfully")
 
-			if converted_proposed_datetime.date() != current_date.date():
+			if converted_proposed_datetime.date() != current_date.date() and contact_platform == True:
 				
 				url = "https://smsapi.future-club.com/fccsms.aspx"
 
@@ -882,12 +886,12 @@ class AgentHome(IsAgent,View):
 
 					message = "Dear Customer, We have changed the date of your Evaluation Appointment as per your request. "+ title +" "+evaluator.evaluator.name+" will be visiting you on "+str(converted_proposed_datetime)+" at "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 				
-					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.address.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 
 				else:
 					message = "عزيزي العميل، لقد قمنا بتغيير تاريخ موعد التقييم الخاص بك حسب طلبك.  "+ title +" "+evaluator.evaluator.name+" سيقوم بالزيارة في "+str(converted_proposed_datetime)+" في "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+" لأي استفسارات يمكنكم التواصل معنا على  9651882707+ . شكراً لاختياركم بليتش لخدمات التنظيف"
 					
-					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.address.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 
 				headers = {
 					'cache-control': "no-cache"
@@ -2422,16 +2426,22 @@ class MakeQuatationPhase1(IsAgent,View):
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
 
+
+		#for backbutton safety delete subscription
+		evaluation      = Evaluation.objects.get(id=evaluation_id)
+		if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
+			OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
+			PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
+
 		#update payment method
 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
 
 		#update payment subscription if it is subscription
 		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
-			evaluation      = Evaluation.objects.get(id=evaluation_id)
 			order           = Order.objects.get(evaluation_id=evaluation_id)
 			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id)
 
-			#create subscription model			 
+			#create subscription model
 			cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
 			for month in cleaning_months:
 				subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=evaluation.total_cost/len(cleaning_months),monthyear=(str(month[0])+'-'+str(month[1])) )			
@@ -2448,6 +2458,7 @@ class MakeQuatationPhase1(IsAgent,View):
 						if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
 							schedule.payment_subscription = subscription
 							schedule.save()
+	
 		#sms integration
 		evaluation        = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
 		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
@@ -2668,25 +2679,37 @@ class MakeQuatationPhase1Edit(IsAgent,View):
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
 
+		#for delete previous subscription
+		evaluation      = Evaluation.objects.get(id=evaluation_id)
+		if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
+			OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
+			PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
 
 		#update payment method
 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
-		
+
 		#update payment subscription if it is subscription
 		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
-			evaluation      = Evaluation.objects.get(id=evaluation_id)
+			order           = Order.objects.get(evaluation_id=evaluation_id)
 			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id)
 
-			#create subscription model			 
+			#create subscription model
 			cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
-			subscriptions = []
 			for month in cleaning_months:
-				subscription = PaymentSubscriptionDetails.objects.create(amount=evaluation.total_cost/len(cleaning_months),monthyear=(str(month[0])+'-'+str(month[1])) )			
+				subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=evaluation.total_cost/len(cleaning_months),monthyear=(str(month[0])+'-'+str(month[1])) )			
 				#update orderschedules
 				for schedule in order_schedules:
-					if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
-						schedule.payment_subscription = subscription
-						schedule.save()
+					if payment_method == 'POSTPAIDSUBSCRIPTION':
+						if schedule.start_at.date().month-1 == month[0]:
+							schedule.payment_subscription = subscription
+							schedule.save()
+						elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
+							schedule.payment_subscription = subscription
+							schedule.save()
+					else:
+						if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
+							schedule.payment_subscription = subscription
+							schedule.save()
 
 		#sms integration
 		evaluation = Evaluation.objects.prefetch_related(Prefetch('evaluation_details',EvaluationDetails.objects.filter(is_active=True).select_related('address'),to_attr='evaluation_address')).filter(id=evaluation_id,is_active=True).get(id=evaluation_id,is_active=True)	
@@ -3006,26 +3029,39 @@ class MakeQuatationPhase1DuplicateEdit(IsAgent,View):
 		payment_method 			= request.POST.get('payment_method')
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
+		
 
+		#for delete previous subscription
+		evaluation      = Evaluation.objects.get(id=evaluation_id)
+		if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
+			OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
+			PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
 
 		#update payment method
 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
-		
+
 		#update payment subscription if it is subscription
 		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
-			evaluation      = Evaluation.objects.get(id=evaluation_id)
+			order           = Order.objects.get(evaluation_id=evaluation_id)
 			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id)
 
-			#create subscription model			 
+			#create subscription model
 			cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
-			subscriptions = []
 			for month in cleaning_months:
-				subscription = PaymentSubscriptionDetails.objects.create(amount=evaluation.total_cost/len(cleaning_months),monthyear=(str(month[0])+'-'+str(month[1])) )			
+				subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=evaluation.total_cost/len(cleaning_months),monthyear=(str(month[0])+'-'+str(month[1])) )			
 				#update orderschedules
 				for schedule in order_schedules:
-					if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
-						schedule.payment_subscription = subscription
-						schedule.save()
+					if payment_method == 'POSTPAIDSUBSCRIPTION':
+						if schedule.start_at.date().month-1 == month[0]:
+							schedule.payment_subscription = subscription
+							schedule.save()
+						elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
+							schedule.payment_subscription = subscription
+							schedule.save()
+					else:
+						if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
+							schedule.payment_subscription = subscription
+							schedule.save()
 
 		#sms integration
 		evaluation = Evaluation.objects.prefetch_related(Prefetch('evaluation_details',EvaluationDetails.objects.filter(is_active=True).select_related('address'),to_attr='evaluation_address')).filter(id=evaluation_id,is_active=True).get(id=evaluation_id,is_active=True)

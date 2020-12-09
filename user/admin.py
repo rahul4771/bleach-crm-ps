@@ -21,7 +21,7 @@ class CustomUserAdmin(UserAdmin):
  
     fieldsets = (
         (None, {'fields': ('username', 'password','email')}),
-        (('Personal info'), {'fields': ('user_type','name','gender','nationality','bleach_mobile_number','company','job_title','mobile_number','date_day','date_month','date_year','phone_number','sms_preference','customer_id','profile_image',)}),
+        (('Personal info'), {'fields': ('user_type','name','gender','nationality','bleach_mobile_number','company','job_title','mobile_number','date_day','date_month','date_year','phone_number','sms_preference','is_sms','customer_id','profile_image',)}),
 
         (('Permissions'), {'fields': ('is_active', 'is_staff','is_superuser',
                                        'groups', 'user_permissions')}),
