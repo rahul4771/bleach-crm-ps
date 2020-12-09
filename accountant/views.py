@@ -23,7 +23,7 @@ from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,PaymentSubscriptionDetails
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 
@@ -186,7 +186,7 @@ class AccountantHome(IsAccountant,View):
 		last_quarter_sales=payment_history.filter(paid_date__gte=prvquarter_start_date,paid_date__lt=quarter_start_date).aggregate(total=Sum('amount_paid'))['total']	
 		
 		#Pending Payments
-		pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).order_by('start_at'),to_attr='orderschedules')).annotate(Count('order_scheduler_order'))
+		pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).order_by('start_at'),to_attr='orderschedules'),Prefetch('ordersubscription',queryset=PaymentSubscriptionDetails.objects.filter(is_paid=False,is_active=True).prefetch_related(Prefetch('paymentsubscription',queryset=OrderScheduler.objects.filter(is_active=True).order_by('start_at'),to_attr='subscriptionorders')),to_attr='subscriptions')).annotate(Count('order_scheduler_order'))
 			
 
 		#remove object in postpaid if not last cleaning fulfilled	
@@ -195,7 +195,6 @@ class AccountantHome(IsAccountant,View):
 				very_latest_cleaning=payment.orderschedules[payment.order_scheduler_order__count-1]
 				if very_latest_cleaning.work_status != 'CLEANING_FULFILLED':
 					pending_payments = pending_payments.exclude(id=payment.id)
-
 
 		#to find days
 		for payment in pending_payments:
@@ -217,8 +216,18 @@ class AccountantHome(IsAccountant,View):
 				if very_latest_cleaning.work_status == 'CLEANING_FULFILLED':
 					payment.last_completed = True	
 
-
-
+			elif payment.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' and payment.subscriptions:
+				print("prepaid subscription")
+				if payment.subscriptions[0]:
+					month = int(payment.subscriptions[0].monthyear.split('-')[0])
+					payment.delaydays   = ((timezone.now().replace(hour=0,minute=0,second=0,microsecond=0))-(timezone.now().replace(day=1,month=month,hour=0,minute=0,second=0,microsecond=0))).days
+					payment.reminigdays = ((timezone.now().replace(day=1,month=month,hour=0,minute=0,second=0,microsecond=0))-(timezone.now().replace(hour=0,minute=0,second=0,microsecond=0))).days
+			elif payment.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' and payment.subscriptions:
+				print("postpaid subscription")
+				if payment.subscriptions[0]: 				
+					month = int(payment.subscriptions[0].monthyear.split('-')[0])
+					payment.delaydays = ((timezone.now().replace(hour=0,minute=0,second=0,microsecond=0))-(timezone.now().replace(day=1,month=month+1,hour=0,minute=0,second=0,microsecond=0))).days
+					payment.delaydays = ((timezone.now().replace(day=1,month=month+1,hour=0,minute=0,second=0,microsecond=0))-(timezone.now().replace(hour=0,minute=0,second=0,microsecond=0))).days
 
 		#Pending Payment and Order Count	
 		if pending_payments:
