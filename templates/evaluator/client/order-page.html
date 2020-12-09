@@ -849,7 +849,11 @@ $(".pn-prev").click();
         contentType: "application/json;charset=utf-8",
         
         success: function(data) {
-            alert("Invoice Sent!")
+            if (data == true){
+              alert("Invoice Sent!")
+              }else{
+                alert("Customer not opted for SMS!")  
+              }
         }
     
     })
@@ -866,7 +870,12 @@ $(".pn-prev").click();
           contentType: "application/json;charset=utf-8",
           
           success: function(data) {
+              console.log(data,"dat")
+              if (data == true){
               alert("Quotation Sent!")
+              }else{
+                alert("Customer not opted for SMS!")  
+              }
           }
       
       })
@@ -884,7 +893,12 @@ $(".pn-prev").click();
           contentType: "application/json;charset=utf-8",
           
           success: function(data) {
+              console.log(data,"dat")
+              if (data == true){
               alert("Receipt Sent!")
+              }else{
+                alert("No Payment History / Customer not opted for SMS!")  
+              }
           }
       
       })
