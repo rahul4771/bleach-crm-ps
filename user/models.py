@@ -73,6 +73,7 @@ class CustomUserManager(BaseUserManager):
 
 class UserProfile(AbstractUser):
     name			= models.CharField(max_length=100,blank=False,null=False)
+    name_arabic     = models.CharField(max_length=100,blank=True,null=True)
     bleach_mobile_number = models.CharField(max_length=10,blank=True,null=True)
     user_type 		= models.CharField(max_length=20,blank=True,null=True,choices=USER_TYPE_CHOICES)
     gender 	  		= models.CharField(max_length=20,blank=True,null=True,choices=GENDER_CHOICES)
@@ -93,6 +94,8 @@ class UserProfile(AbstractUser):
     is_sms          = models.BooleanField(null=False,blank=True,default=False)
     is_email        = models.BooleanField(null=False,blank=True,default=False)
     customer_id     = models.CharField(max_length=12,blank=True,null=True)
+
+    agent_notes     = models.TextField(max_length=1000,blank=True,null=True)
 
     created_by      = models.ForeignKey('self',blank=True,null=True)
     is_active       = models.BooleanField(null=False,blank=True,default=True)
