@@ -1180,17 +1180,32 @@ class AssignEvaluator(IsEvaluator,View):
 
 				messages.success(request,"Evaluation Details Succesfully Completed")
 
+				#address check for floor,avenue None
+				if evaluation_form_save.address.floor == None and evaluation_form_save.address.avenue == None:
+					address_list = [evaluation_form_save.address.apartment, evaluation_form_save.address.street, evaluation_form_save.address.building, evaluation_form_save.address.block, evaluation_form_save.address.area.name, evaluation_form_save.address.governorate.name]
+				
+				elif evaluation_form_save.address.floor == None:
+					address_list = [evaluation_form_save.address.apartment, evaluation_form_save.address.street, evaluation_form_save.address.building, evaluation_form_save.address.avenue, evaluation_form_save.address.block, evaluation_form_save.address.area.name, evaluation_form_save.address.governorate.name]
+				
+				elif evaluation_form_save.address.avenue == None:
+					address_list = [evaluation_form_save.address.apartment, evaluation_form_save.address.floor, evaluation_form_save.address.street, evaluation_form_save.address.building, evaluation_form_save.address.block, evaluation_form_save.address.area.name, evaluation_form_save.address.governorate.name]
+				
+				else:
+					address_list = [evaluation_form_save.address.apartment, evaluation_form_save.address.floor, evaluation_form_save.address.street, evaluation_form_save.address.building, evaluation_form_save.address.avenue, evaluation_form_save.address.block, evaluation_form_save.address.area.name, evaluation_form_save.address.governorate.name]
+
+				separator = ", "
+
 				url = "https://smsapi.future-club.com/fccsms.aspx"
 
 				if evaluation.customer.sms_preference == 'ENGLISH':
 
-					message = "Dear Customer , We have confirmed your Evaluation Appointment. "+ title +" "+evaluation_form_save.evaluator.name+" will be visiting you on "+str(evaluation_form_save.proposed_time)+" at  "+evaluation_form_save.address.apartment+","+evaluation_form_save.address.floor+","+evaluation_form_save.address.street+","+evaluation_form_save.address.building+","+evaluation_form_save.address.avenue+","+evaluation_form_save.address.block+","+evaluation_form_save.address.area.name+","+evaluation_form_save.address.governorate.name+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+					message = "Dear Customer , We have confirmed your Evaluation Appointment. "+ title +" "+evaluation_form_save.evaluator.name+" will be visiting you on "+str(evaluation_form_save.proposed_time)+" at  "+separator.join(address_list)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 
 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 
 				else:
 
-					message = "عزيزينا العميل تم تأكيد موعد المعاينة الخاص بك.  "+ title +" "+evaluation_form_save.evaluator.name+" سيقوم بالزيارة في "+str(evaluation_form_save.proposed_time)+" في "+evaluation_form_save.address.apartment+","+evaluation_form_save.address.floor+","+evaluation_form_save.address.street+","+evaluation_form_save.address.building+","+evaluation_form_save.address.avenue+","+evaluation_form_save.address.block+","+evaluation_form_save.address.area.name+","+evaluation_form_save.address.governorate.name+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+					message = "عزيزينا العميل تم تأكيد موعد المعاينة الخاص بك.  "+ title +" "+evaluation_form_save.evaluator.name+" سيقوم بالزيارة في "+str(evaluation_form_save.proposed_time)+" في "+separator.join(address_list)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
 
 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 				

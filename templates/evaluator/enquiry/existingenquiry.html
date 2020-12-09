@@ -35,18 +35,12 @@
 <input type="hidden" name="action_type" value="update_customer_details">
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>Name</label></div>
+  				<div class=" bold-text common-label required-field"> <label>Name</label></div>
                 <input name="name" id="id_name" type="text" class="textBox OnlyText" placeholder=" " required value="{{enquiry_user.name}}">
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-  				<div class=" bold-text common-label"> <label>Gender</label></div>
-                <label for="favcity">
-                <select id="favcity" name="gender" required>
-                <option value="">Choose your Gender</option>
-                <option value="MALE" {% if enquiry_user.gender == 'MALE' %}selected{% endif %}>Male</option>
-                <option value="FEMALE" {% if enquiry_user.gender == 'FEMALE' %}selected{% endif %}>Female</option>
-                </select>
-                </label>
+      <div class=" bold-text common-label "> <label>Name (Arabic)</label></div>
+      <input name="name_arabic" id="id_name_arabic" type="text" class="textBox OnlyText" placeholder=" " value="{{enquiry_user.name_arabic|default_if_none:''}}" >
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -54,12 +48,27 @@
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>Email</label></div>
+      <div class=" bold-text common-label required-field"> <label>Gender</label></div>
+                <label for="favcity">
+                <select id="favcity" name="gender" required>
+                <option value="">Choose your Gender</option>
+                <option value="MALE" {% if enquiry_user.gender == 'MALE' %}selected{% endif %}>Male</option>
+                <option value="FEMALE" {% if enquiry_user.gender == 'FEMALE' %}selected{% endif %}>Female</option>
+                </select>
+                </label>
+      </div>
+    </div>
+
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label required-field"> <label>Email</label></div>
                 <input name="email" id="id_email" type="text" class="textBox" placeholder=" " value="{{enquiry_user.email}}" oninput="ValidateEmail(this);" required>
                 <p class="email_alert" style="color:Red;"></p>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-  				<div class=" bold-text common-label"> <label>Phone</label></div>
+  				<div class=" bold-text common-label required-field"> <label>Phone</label></div>
         <input name="mobile_number" id="id_mobile_number" type="text" class="textBox OnlyNumber" placeholder=" " value="{{enquiry_user.mobile_number}}" oninput="phonenumber(this);remove_duplicate_mobile(this);" maxlength="8" required>
         <p class="phone_alert" style="color:Red;"></p>
   </div><!--ticket-form-right-->
@@ -69,7 +78,7 @@
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>Nationality</label></div>
+  				<div class=" bold-text common-label required-field"> <label>Nationality</label></div>
                 <label for="favcity">   
                 {% load countries %}
                 {% get_countries as countries %} 
@@ -82,7 +91,7 @@
                 </label>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-  				<div class=" bold-text common-label"> <label>Customer Type</label></div>
+  				<div class=" bold-text common-label required-field"> <label>Customer Type</label></div>
                 <label for="favcity">
                 <select id="id_customer_type" name="customer_type" required>
                 <option value="">Choose Customer Type</option>
@@ -113,7 +122,7 @@
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>Date of Birth</label></div>         
+  				<div class=" bold-text common-label required-field"> <label>Date of Birth</label></div>         
           <input name="date_day" id="id_date_day" type="text" class="dateBox OnlyNumber" minlength="2" value="{{enquiry_user.date_day|default_if_none:''}}" placeholder="DD" onkeyup="daterange();" required>
           <input name="date_month" id="id_date_month" type="text" class="dateBox OnlyNumber" minlength="2" value="{{enquiry_user.date_month|default_if_none:''}}" placeholder="MM" onkeyup="monthrange();" required>
           <input name="date_year" id="id_date_year" type="text" class="dateBox OnlyNumber" minlength="4" value="{{enquiry_user.date_year|default_if_none:''}}" placeholder="YYYY" onkeyup="yearrange();">
@@ -127,7 +136,7 @@
 <hr class="hr-dashedpad">
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>SMS Language</label></div>
+  				<div class=" bold-text common-label required-field"> <label>SMS Language</label></div>
                 <label for="favcity">
                 <select id="favcity" name="sms_preference" required>
                 <option value="">Choose Language</option>
@@ -137,7 +146,7 @@
                 </label>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-          <div class=" bold-text common-label"> <label>Contact Platform</label></div>
+          <div class=" bold-text common-label required-field"> <label>Contact Platform</label></div>
                 <div class="ui fluid multiple search selection dropdown"><input type="hidden" name="contact_platform" value="{% if enquiry_user.is_sms %}SMS{% endif %}{% if enquiry_user.is_email%},Email{% endif %}{% if enquiry_user.is_whatsapp%},Whatsapp{% endif %}" id="contact_platform_id"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">Select Platform</div><div class="menu" tabindex="-1"><div class="item" data-value="SMS">SMS</div><div class="item" data-value="Whatsapp">Whatsapp</div><div class="item" data-value="Email">Email</div></div>
                 </div>
                 <p class="contact_platform_alert" style="color:Red;"></p>
@@ -184,7 +193,7 @@
     
     <div class="address-col-middle"><!--address-col-middle-->
     <p class="bold-text">Address {{forloop.counter}}</p>
-    <p>{{address.apartment}}, {{address.floor}}, {{address.building}}, {{address.block}}, {{address.governorate}}, {{address.avenue}}, {{address.area.name}}, {{address.governorate.name}}</p>
+    <p>{{address.apartment}}, {% if address.floor %}{{address.floor}},{% else %}{% endif %} {{address.building}}, {{address.block}}, {% if address.avenue %}{{address.avenue}},{% else %}{% endif %} {{address.area.name}} {{address.governorate.name}}</p>
     <br>
     </div><!--address-col-middle-->
     <div class="address-col-right"><!--address-col-right-->
@@ -228,9 +237,15 @@
             <div class="common-gray-text">{{enquiry_user.email}}</div>
             <br>
             <hr class="hr">
+            {% if enquiry_user.company %}
             <div class="common-gray-text">Comapany Name : <span class="bold-text">{{enquiry_user.company}}</span></div>
+            {% endif %}
+            {% if enquiry_user.nationality.name %}
             <div class="common-gray-text">Nationality : <span class="bold-text">{{enquiry_user.nationality.name|default_if_none:''}}</span></div>
+            {% endif %}
+            {% if enquiry_user.phone_number %}
             <div class="common-gray-text">Other Contact : <span class="bold-text">{{enquiry_user.phone_number}}</span></div>
+            {% endif %}
             <hr class="hr">
             <br>
             {% for address in addresses %}
@@ -299,7 +314,7 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Floor/Flat/House</label></div>
-                <input type="text" name="floor" class="textBox" required>
+                <input type="text" name="floor" class="textBox" >
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">
@@ -323,7 +338,7 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Avenue</label></div>
-                <input type="text" name="avenue" class="textBox" required>
+                <input type="text" name="avenue" class="textBox" >
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">     
@@ -395,7 +410,7 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Floor/Flat/House</label></div>
-                <input type="text" id="edit_floor" name="floor" class="textBox" required>
+                <input type="text" id="edit_floor" name="floor" class="textBox" >
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">
@@ -419,7 +434,7 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Avenue</label></div>
-                <input type="text" id="edit_avenue" name="avenue" class="textBox" required>
+                <input type="text" id="edit_avenue" name="avenue" class="textBox" >
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">     
@@ -598,6 +613,8 @@ $(".governorate").change(function(){
 
   id=this.id.match(/\d+/); 
 
+  console.log(id,"govid")
+
 
   $.ajax({
 
@@ -609,13 +626,15 @@ $(".governorate").change(function(){
 
         success: function (data) { 
 
-          ajax_ret_areas = data;     
+          ajax_ret_areas = data;   
 
-   $("#id_area").empty();
+          console.log(ajax_ret_areas,"ajaxarea")  
+
+   $(".id_area").empty();
 
   
 
-          $("#id_area").append($('<option>', {
+          $(".id_area").append($('<option>', {
 
           value: "", 
 
@@ -625,7 +644,7 @@ $(".governorate").change(function(){
 
         $.each( ajax_ret_areas, function( key, values ) {
 
-              $("#id_area").append($('<option>', {        
+              $(".id_area").append($('<option>', {        
 
     value: key, 
 

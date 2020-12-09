@@ -873,10 +873,25 @@ class AgentHome(IsAgent,View):
 				title = 'Ms.'
 			address = evaluation.address
 
+
 			#update evaluation time
 			EvaluationDetails.objects.filter(id=evaluation_detail_id).update(proposed_time=converted_proposed_datetime,evaluator_id=evaluator_id,attender_note=attender_note)	
 			evaluator = EvaluationDetails.objects.get(id=evaluation_detail_id)
 			messages.success(request,"Evaluation Edited Succesfully")
+
+			if address.floor == None and address.avenue == None:
+				address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
+			
+			elif address.floor == None:
+				address_list = [address.apartment, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+			
+			elif address.avenue == None:
+				address_list = [address.apartment, address.floor, address.street, address.building, address.block, address.area.name, address.governorate.name]
+			
+			else:
+				address_list = [address.apartment, address.floor, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+
+			separator = ", "
 
 			if converted_proposed_datetime.date() != current_date.date() and contact_platform == True:
 				
@@ -884,12 +899,12 @@ class AgentHome(IsAgent,View):
 
 				if language == 'ENGLISH':
 
-					message = "Dear Customer, We have changed the date of your Evaluation Appointment as per your request. "+ title +" "+evaluator.evaluator.name+" will be visiting you on "+str(converted_proposed_datetime)+" at "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+					message = "Dear Customer, We have changed the date of your Evaluation Appointment as per your request. "+ title +" "+evaluator.evaluator.name+" will be visiting you on "+str(converted_proposed_datetime)+" at "+ separator.join(address_list) +". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 				
 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.address.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 
 				else:
-					message = "عزيزي العميل، لقد قمنا بتغيير تاريخ موعد التقييم الخاص بك حسب طلبك.  "+ title +" "+evaluator.evaluator.name+" سيقوم بالزيارة في "+str(converted_proposed_datetime)+" في "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+" لأي استفسارات يمكنكم التواصل معنا على  9651882707+ . شكراً لاختياركم بليتش لخدمات التنظيف"
+					message = "عزيزي العميل، لقد قمنا بتغيير تاريخ موعد التقييم الخاص بك حسب طلبك.  "+ title +" "+evaluator.evaluator.name+" سيقوم بالزيارة في "+str(converted_proposed_datetime)+" في "+separator.join(address_list)+" لأي استفسارات يمكنكم التواصل معنا على  9651882707+ . شكراً لاختياركم بليتش لخدمات التنظيف"
 					
 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.address.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 
@@ -950,18 +965,32 @@ class AgentHome(IsAgent,View):
 
 			messages.success(request,"Cleaning Edited Succesfully")
 
+			if address.floor == None and address.avenue == None:
+				address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
+			
+			elif address.floor == None:
+				address_list = [address.apartment, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+			
+			elif address.avenue == None:
+				address_list = [address.apartment, address.floor, address.street, address.building, address.block, address.area.name, address.governorate.name]
+			
+			else:
+				address_list = [address.apartment, address.floor, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+
+			separator = ", "
+
 			if cleaning_team and start_at.date() != cleaning_team.start_at.date():
 
 				url = "https://smsapi.future-club.com/fccsms.aspx"
 
 				if language == 'ENGLISH':
 
-					message = "Dear Customer, We have changed the date of your Cleaning Appointment against order number "+ orderschedule.order.order_no +" as per your request. Bleach’s Cleaning Team will be visiting you on "+ str(cleaning_date)+" "+ str(cleaning_time) +" at "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+					message = "Dear Customer, We have changed the date of your Cleaning Appointment against order number "+ orderschedule.order.order_no +" as per your request. Bleach’s Cleaning Team will be visiting you on "+ str(cleaning_date)+" "+ str(cleaning_time) +" at "+separator.join(address_list)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 
 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+orderschedule.order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 
 				else:
-					message = "عزيزي العميل، لقد قمنا بتغيير تاريخ موعد التنظيف الخاص بك مقابل رقم الطلب "+ orderschedule.order.order_no +" وذلك وفق طلبكم.  سيقوم طاقم العمل بزيارتكم في "+ str(cleaning_date)+" "+ str(cleaning_time) +" في "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+					message = "عزيزي العميل، لقد قمنا بتغيير تاريخ موعد التنظيف الخاص بك مقابل رقم الطلب "+ orderschedule.order.order_no +" وذلك وفق طلبكم.  سيقوم طاقم العمل بزيارتكم في "+ str(cleaning_date)+" "+ str(cleaning_time) +" في "+separator.join(address_list)+". لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
 				
 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+orderschedule.order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 
@@ -1039,16 +1068,30 @@ class AgentHome(IsAgent,View):
 			
 			messages.success(request,"Evaluation Deleted Succesfully")
 
+			if address.floor == None and address.avenue == None:
+				address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
+			
+			elif address.floor == None:
+				address_list = [address.apartment, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+			
+			elif address.avenue == None:
+				address_list = [address.apartment, address.floor, address.street, address.building, address.block, address.area.name, address.governorate.name]
+			
+			else:
+				address_list = [address.apartment, address.floor, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+
+			separator = ", "
+
 			url = "https://smsapi.future-club.com/fccsms.aspx"
 
 			if language == 'ENGLISH':
 
-				message = "Dear Customer, We have cancelled your Evaluation Appointment booked for "+str(proposed_datetime)+" at "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+" as per your request.For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+				message = "Dear Customer, We have cancelled your Evaluation Appointment booked for "+str(proposed_datetime)+" at "+separator.join(address_list)+" as per your request.For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 			
 				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+mobile+"","M":message,"IID":"1468","L":"L"}
 
 			else:
-				message = "عزيزنا العميل تم إلغاء موعد المعاينة الخاص بك المحجوز ب "+str(proposed_datetime)+" في "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+" وذلك وفق طلب حضراتكم. لأي استفسارات يمكنكم التواصل معنا على 9651882707+ .  شكراً لاختياركم بليتش لخدمات التنظيف"
+				message = "عزيزنا العميل تم إلغاء موعد المعاينة الخاص بك المحجوز ب "+str(proposed_datetime)+" في "+separator.join(address_list)+" وذلك وفق طلب حضراتكم. لأي استفسارات يمكنكم التواصل معنا على 9651882707+ .  شكراً لاختياركم بليتش لخدمات التنظيف"
 			
 				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+mobile+"","M":message,"IID":"1468","L":"A"}
 
@@ -2327,17 +2370,32 @@ class AssignEvaluator(IsAgent,View):
 
 				messages.success(request,"Evaluation Details Succesfully Completed")
 
+				#address check for floor,avenue None
+				if evaluation_form_save.address.floor == None and evaluation_form_save.address.avenue == None:
+					address_list = [evaluation_form_save.address.apartment, evaluation_form_save.address.street, evaluation_form_save.address.building, evaluation_form_save.address.block, evaluation_form_save.address.area.name, evaluation_form_save.address.governorate.name]
+				
+				elif evaluation_form_save.address.floor == None:
+					address_list = [evaluation_form_save.address.apartment, evaluation_form_save.address.street, evaluation_form_save.address.building, evaluation_form_save.address.avenue, evaluation_form_save.address.block, evaluation_form_save.address.area.name, evaluation_form_save.address.governorate.name]
+				
+				elif evaluation_form_save.address.avenue == None:
+					address_list = [evaluation_form_save.address.apartment, evaluation_form_save.address.floor, evaluation_form_save.address.street, evaluation_form_save.address.building, evaluation_form_save.address.block, evaluation_form_save.address.area.name, evaluation_form_save.address.governorate.name]
+				
+				else:
+					address_list = [evaluation_form_save.address.apartment, evaluation_form_save.address.floor, evaluation_form_save.address.street, evaluation_form_save.address.building, evaluation_form_save.address.avenue, evaluation_form_save.address.block, evaluation_form_save.address.area.name, evaluation_form_save.address.governorate.name]
+
+				separator = ", "
+				
 				url = "https://smsapi.future-club.com/fccsms.aspx"
 
 				if evaluation.customer.sms_preference == 'ENGLISH':
 
-					message = "Dear Customer , We have confirmed your Evaluation Appointment. "+ title +" "+evaluation_form_save.evaluator.name+" will be visiting you on "+str(evaluation_form_save.proposed_time)+" at  "+evaluation_form_save.address.apartment+","+evaluation_form_save.address.floor+","+evaluation_form_save.address.street+","+evaluation_form_save.address.building+","+evaluation_form_save.address.avenue+","+evaluation_form_save.address.block+","+evaluation_form_save.address.area.name+","+evaluation_form_save.address.governorate.name+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+					message = "Dear Customer , We have confirmed your Evaluation Appointment. "+ title +" "+evaluation_form_save.evaluator.name+" will be visiting you on "+str(evaluation_form_save.proposed_time)+" at  "+ separator.join(address_list) +". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 
 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+mobile+"","M":message,"IID":"1468","L":"L"}
 
 				else:
 
-					message = "عزيزينا العميل تم تأكيد موعد المعاينة الخاص بك.  "+ title +" "+evaluation_form_save.evaluator.name+" سيقوم بالزيارة في "+str(evaluation_form_save.proposed_time)+" في "+evaluation_form_save.address.apartment+","+evaluation_form_save.address.floor+","+evaluation_form_save.address.street+","+evaluation_form_save.address.building+","+evaluation_form_save.address.avenue+","+evaluation_form_save.address.block+","+evaluation_form_save.address.area.name+","+evaluation_form_save.address.governorate.name+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+					message = "عزيزينا العميل تم تأكيد موعد المعاينة الخاص بك.  "+ title +" "+evaluation_form_save.evaluator.name+" سيقوم بالزيارة في "+str(evaluation_form_save.proposed_time)+" في "+ separator.join(address_list)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
 
 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+mobile+"","M":message,"IID":"1468","L":"A"}
 				
@@ -2349,7 +2407,7 @@ class AssignEvaluator(IsAgent,View):
 
 				print(response.text,"respo")
 				print(str(evaluation_form_save.proposed_time))
-				print(evaluation_form_save.evaluation.customer.mobile_number,"mobile")
+				print(message, evaluation_form_save.evaluation.customer.mobile_number,"mobile")
 
 			else:
 				messages.error(request,get_error(evaluation_form))
