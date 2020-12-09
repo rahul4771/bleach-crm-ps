@@ -408,11 +408,12 @@ class Cleaning(IsTeamLeader,View):
 
 		#feedback sms
 		order = Order.objects.select_related('evaluation__customer').filter(is_active=True,order_no=cleaning_team_detail.order_scheduler.order.order_no, payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
-				
+
 		for ord in order:
+			# print(ord.cleaning_count,ord.completed_cleaning_count,"ordcount2")
 			order_data = ord
 
-		if order:
+		if order_data:   #.completed_cleaning_count == order_data.cleaning_count or order_data.completed_followup_count == order_data.followup_count :
 
 			url = "https://smsapi.future-club.com/fccsms.aspx"
 
@@ -433,7 +434,7 @@ class Cleaning(IsTeamLeader,View):
 
 			response = requests.request("GET", url, headers=headers, params=querystring)
 
-			print(response.text,",ess")
+			print(order_data.id,response.text,",ess")
 
 		else:
 			pass
