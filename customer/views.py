@@ -20,6 +20,15 @@ from accountant.models import PaymentHistory
 from agent.views import generate_random_username
 
 import requests
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
 #all users views
 class TermsandConditions(View):
 	def get(self,request):
@@ -47,7 +56,6 @@ class Quatation(View):
 				nonduplicate_schedules.append(orderschedule)	
 
 			duplicate_schedules.append(orderschedule.order_scheduler_book)
-	
 
 		return render(request,"customer/newquatation.html",{"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 
@@ -156,7 +164,9 @@ class CustomerInvoice(View):
 				lastname += i+' '
 			count += 1
 		
-		return render(request,"customer/invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,})		
+		customer_ip_address = get_client_ip(request)
+
+		return render(request,"customer/invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,})		
 
 class PaymentResponseDebit(View):
 	def get(self,request):
