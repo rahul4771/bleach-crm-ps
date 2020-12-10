@@ -100,7 +100,7 @@ class Order(models.Model):
 #Devide an Order into a number of Schedules.This is to handle multiple days cleaning,multiple address cleaning Subscription Cleaning etc...
 class PaymentSubscriptionDetails(models.Model):
 	order 			    = models.ForeignKey('Order',blank=False,null=False,related_name='ordersubscription')
-	amount              = models.IntegerField(blank=True,null=True)
+	amount              = models.FloatField(blank=True,null=True)
 	is_paid             = models.BooleanField(null=False,blank=True,default=False)
 	paid_date 			= models.DateTimeField(blank=True,null=True)
 	monthyear           = models.CharField(max_length=100,blank=True,null=True)

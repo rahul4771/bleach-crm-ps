@@ -88,6 +88,19 @@
                     </div><!--order-progress-widget order-progress-widget-column2-->
                     {% endif %}
 
+                    {% if order.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' %}
+                    <div class="order-progress-widget order-progress-widget-column2"><!--order-progress-widget order-progress-widget-column2-->
+                        <div class="evaluation">Payment</div>
+                        {% if order.payment_status == 'COMPLETED' %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.svg' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                        {% else %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-gray-payment.svg' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Waiting</div>
+                        {% endif %}
+                    </div><!--order-progress-widget order-progress-widget-column2-->
+                    {% endif %}
+
                     <div class="order-progress-widget order-progress-widget-column6"><!--order-progress-widget order-progress-widget-column6-->
                         <div class="evaluation">Feedback</div>
                         {% if order.is_feedback_marked %}
@@ -849,7 +862,11 @@ $(".pn-prev").click();
         contentType: "application/json;charset=utf-8",
         
         success: function(data) {
-            alert("Invoice Sent!")
+            if (data == true){
+              alert("Invoice Sent!")
+              }else{
+                alert("Customer not opted for SMS!")  
+              }
         }
     
     })
@@ -866,7 +883,12 @@ $(".pn-prev").click();
           contentType: "application/json;charset=utf-8",
           
           success: function(data) {
+              console.log(data,"dat")
+              if (data == true){
               alert("Quotation Sent!")
+              }else{
+                alert("Customer not opted for SMS!")  
+              }
           }
       
       })
@@ -884,7 +906,12 @@ $(".pn-prev").click();
           contentType: "application/json;charset=utf-8",
           
           success: function(data) {
+              console.log(data,"dat")
+              if (data == true){
               alert("Receipt Sent!")
+              }else{
+                alert("No Payment History / Customer not opted for SMS!")  
+              }
           }
       
       })
@@ -1011,7 +1038,7 @@ $("#cleaning_completed_image").attr("src","{% static 'files/images/order-gray-cl
 }
 //bar percentage count
 total_percentage = (total_schedules*5)
-{% if order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'PREPAID' %}
+{% if order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'PREPAID' or order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' or order.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' %}
 total_percentage += total_schedules
 {% else %}
 total_percentage += total_schedules*2
@@ -1027,7 +1054,7 @@ active_percentage += total_schedules
 active_percentage += total_schedules
 {% endif %}
 
-{% if order.payment_status == 'COMPLETED' %} {% if order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'PREPAID'%}
+{% if order.payment_status == 'COMPLETED' %} {% if order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'PREPAID' or order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' or order.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' %}
 active_percentage += total_schedules
 {% endif %}
 {% endif %}

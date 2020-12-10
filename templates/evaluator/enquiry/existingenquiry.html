@@ -40,7 +40,7 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
       <div class=" bold-text common-label "> <label>Name (Arabic)</label></div>
-      <input name="name_arabic" id="id_name_arabic" type="text" class="textBox OnlyText" placeholder=" " value="{{enquiry_user.name_arabic|default_if_none:''}}" >
+      <input name="name_arabic" id="id_name_arabic" type="text" class="textBox OnlyText" placeholder=" " value="{{enquiry_user.name_arabic|default_if_none:''}}" style="text-align:right;">
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -57,7 +57,15 @@
                 </select>
                 </label>
       </div>
-    </div>
+
+  <div class="ticket-form-right"><!--ticket-form-right-->
+      <div class=" bold-text common-label required-field"> <label>Date of Birth</label></div>         
+          <input name="date_day" id="id_date_day" type="text" class="dateBox OnlyNumber" minlength="2" value="{{enquiry_user.date_day|default_if_none:''}}" placeholder="DD" onkeyup="daterange();" required>
+          <input name="date_month" id="id_date_month" type="text" class="dateBox OnlyNumber" minlength="2" value="{{enquiry_user.date_month|default_if_none:''}}" placeholder="MM" onkeyup="monthrange();" required>
+          <input name="date_year" id="id_date_year" type="text" class="dateBox OnlyNumber" minlength="4" value="{{enquiry_user.date_year|default_if_none:''}}" placeholder="YYYY" onkeyup="yearrange();">
+  </div>
+
+  </div>
 
 <hr class="hr-dashedpad"> 
 
@@ -122,16 +130,14 @@
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label required-field"> <label>Date of Birth</label></div>         
-          <input name="date_day" id="id_date_day" type="text" class="dateBox OnlyNumber" minlength="2" value="{{enquiry_user.date_day|default_if_none:''}}" placeholder="DD" onkeyup="daterange();" required>
-          <input name="date_month" id="id_date_month" type="text" class="dateBox OnlyNumber" minlength="2" value="{{enquiry_user.date_month|default_if_none:''}}" placeholder="MM" onkeyup="monthrange();" required>
-          <input name="date_year" id="id_date_year" type="text" class="dateBox OnlyNumber" minlength="4" value="{{enquiry_user.date_year|default_if_none:''}}" placeholder="YYYY" onkeyup="yearrange();">
+  			<div class=" bold-text common-label"> <label>Other Mobile</label></div>
+				<input name="phone_number" id="id_phone_number" type="text" class="textBox" placeholder=" " value="{{enquiry_user.phone_number|default_if_none:''}}">	
 
   </div><!--ticket-form-left-->
-  <div class="ticket-form-right"><!--ticket-form-right-->
-  				<div class=" bold-text common-label"> <label>Other Mobile</label></div>
-				<input name="phone_number" id="id_phone_number" type="text" class="textBox" placeholder=" " value="{{enquiry_user.phone_number|default_if_none:''}}">
+  
+  <div class="ticket-form-right"><!--ticket-form-right-->				
   </div><!--ticket-form-right-->
+
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
