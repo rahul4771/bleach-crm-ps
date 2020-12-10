@@ -380,7 +380,7 @@ class Cleaning(IsTeamLeader,View):
 		print(language,cleaning_team_detail.order_scheduler.order.remining_amount,"tesstt")
 
 		#invoice sms
-		if cleaning_team_detail.order_scheduler.order.remining_amount > 0:
+		if cleaning_team_detail.order_scheduler.order.remining_amount > 0 and evaluation.customer.is_sms == True:
 
 			url = "https://smsapi.future-club.com/fccsms.aspx"
 
@@ -413,7 +413,7 @@ class Cleaning(IsTeamLeader,View):
 			# print(ord.cleaning_count,ord.completed_cleaning_count,"ordcount2")
 			order_data = ord
 
-		if order_data:   #.completed_cleaning_count == order_data.cleaning_count or order_data.completed_followup_count == order_data.followup_count :
+		if order_data and order_data.evaluation.customer.is_sms == True:   #.completed_cleaning_count == order_data.cleaning_count or order_data.completed_followup_count == order_data.followup_count :
 
 			url = "https://smsapi.future-club.com/fccsms.aspx"
 
@@ -507,7 +507,7 @@ class FollowupCleaning(IsTeamLeader,View):
 		for ord in order:
 			order_data = ord
 		
-		if order:
+		if order and order_data.evaluation.customer.is_sms == True:
 
 			url = "https://smsapi.future-club.com/fccsms.aspx"
 

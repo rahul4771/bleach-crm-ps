@@ -185,6 +185,8 @@
                 <br>
                 <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
                 <br>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-clock-o blue-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.cleaning_hours}} Hour(s)</div>
+                <br>
                 <div class="common-gray-text align-left"><i class="fa fa-lg fa-credit-card orange-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.total_cost|floatformat:2}} KD</div>
             </div><!--order-clean-Details-widget order-clean-Details-widget-column3-->                        
         </div><!--order-clean-Details-wrapper--> 
@@ -847,7 +849,11 @@ $(".pn-prev").click();
         contentType: "application/json;charset=utf-8",
         
         success: function(data) {
-            alert("Invoice Sent!")
+            if (data == true){
+              alert("Invoice Sent!")
+              }else{
+                alert("Customer not opted for SMS!")  
+              }
         }
     
     })
@@ -864,7 +870,12 @@ $(".pn-prev").click();
           contentType: "application/json;charset=utf-8",
           
           success: function(data) {
+              console.log(data,"dat")
+              if (data == true){
               alert("Quotation Sent!")
+              }else{
+                alert("Customer not opted for SMS!")  
+              }
           }
       
       })
@@ -882,7 +893,12 @@ $(".pn-prev").click();
           contentType: "application/json;charset=utf-8",
           
           success: function(data) {
+              console.log(data,"dat")
+              if (data == true){
               alert("Receipt Sent!")
+              }else{
+                alert("No Payment History / Customer not opted for SMS!")  
+              }
           }
       
       })

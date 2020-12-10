@@ -32,11 +32,21 @@
 <input type="hidden" name="redirect_to" id="redirect_to_id">               
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>Name</label></div>
+  				<div class=" bold-text common-label required-field"> <label>Name</label></div>
                 <input name="name" id="id_name" type="text" class="textBox OnlyText" placeholder=" " required>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-  				<div class=" bold-text common-label"> <label>Gender</label></div>
+      <div class=" bold-text common-label "> <label>Name (Arabic)</label></div>
+      <input name="name_arabic" id="id_name_arabic" type="text" class="textBox OnlyText" placeholder=" " style="text-align:right;">
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+
+  <div class=" bold-text common-label required-field"> <label>Gender</label></div>
                 <label for="favcity">
                 <select id="favcity" name="gender" required>
                 <option value="">Choose Gender</option>
@@ -44,19 +54,27 @@
                 <option value="FEMALE">Female</option>
                 </select>
                 </label>
-  </div><!--ticket-form-right-->
-</div><!--ticket-wrapper-row ticket-forms-boxes-->
 
-<hr class="hr-dashedpad"> 
+  </div>
+
+  <div class="ticket-form-right"><!--ticket-form-right-->
+    <div class=" bold-text common-label required-field"> <label>Date of Birth</label></div>         
+          <input name="date_day" id="id_date_day" type="text" class="dateBox OnlyNumber" minlength="2" placeholder="DD" onkeyup="daterange();" required>
+          <input name="date_month" id="id_date_month" type="text" class="dateBox OnlyNumber" minlength="2" placeholder="MM" onkeyup="monthrange();" required>
+          <input name="date_year" id="id_date_year" type="text" class="dateBox OnlyNumber" minlength="4" placeholder="YYYY" onkeyup="yearrange();">
+  </div>
+  </div>
+
+<hr class="hr-dashedpad">
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>Email</label></div>
+  				<div class=" bold-text common-label required-field"> <label>Email</label></div>
                 <input name="email" type="text" class="textBox" placeholder=" " oninput="ValidateEmail(this);" required>
                 <p class="email_alert" style="color:Red;"></p>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-  				<div class=" bold-text common-label"> <label>Phone</label></div>
+  				<div class=" bold-text common-label required-field"> <label>Phone</label></div>
 				<input name="mobile_number" type="text" id="id_mobile" class="textBox OnlyNumber" placeholder=" " oninput="phonenumber(this);remove_duplicate_mobile(this);" maxlength="8" required>
         <p class="phone_alert" style="color:Red;"></p>
   </div><!--ticket-form-right-->
@@ -66,7 +84,7 @@
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>Nationality</label></div>
+  				<div class=" bold-text common-label required-field"> <label>Nationality</label></div>
                 <label for="favcity">
                 {% load countries %}
                 {% get_countries as countries %} 
@@ -79,7 +97,7 @@
                 </label>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-  				<div class=" bold-text common-label"> <label>Customer Type</label></div>
+  				<div class=" bold-text common-label required-field"> <label>Customer Type</label></div>
                 <label for="favcity">
                 <select id="id_customer_type" name="customer_type" required>
                 <option value="">Choose Customer Type</option>
@@ -111,22 +129,19 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
 
-  				<div class=" bold-text common-label"> <label>Date of Birth</label></div>         
-          <input name="date_day" id="id_date_day" type="text" class="dateBox OnlyNumber" minlength="2" placeholder="DD" onkeyup="daterange();" required>
-          <input name="date_month" id="id_date_month" type="text" class="dateBox OnlyNumber" minlength="2" placeholder="MM" onkeyup="monthrange();" required>
-          <input name="date_year" id="id_date_year" type="text" class="dateBox OnlyNumber" minlength="4" placeholder="YYYY" onkeyup="yearrange();">
+  				<div class=" bold-text common-label"> <label>Other Mobile</label></div>
+				<input name="phone_number" id="id_phone_number" class="textBox OnlyNumber" placeholder=" " oninput="mobilenumber(this);" maxlength="8" >
+        <p class="mobile_alert" style="color:Red;"></p>	
 
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-  				<div class=" bold-text common-label"> <label>Other Mobile</label></div>
-				<input name="phone_number" id="id_phone_number" class="textBox OnlyNumber" placeholder=" " oninput="mobilenumber(this);" maxlength="8" >
-        <p class="mobile_alert" style="color:Red;"></p>
+  			
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>SMS Language</label></div>
+  				<div class=" bold-text common-label required-field"> <label>SMS Language</label></div>
                 <label for="favcity">
                 <select id="favcity" name="sms_preference" required>
                 <option value="">Choose Languages</option>
@@ -136,7 +151,7 @@
                 </label>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-          <div class=" bold-text common-label"> <label>Contact Platform</label></div>
+          <div class=" bold-text common-label required-field"> <label>Contact Platform</label></div>
                 <div class="ui fluid multiple search selection dropdown"><input type="hidden" name="contact_platform" id="contact_platform_id"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">Select Platform</div><div class="menu" tabindex="-1"><div class="item" data-value="SMS">SMS</div><div class="item" data-value="Whatsapp">Whatsapp</div><div class="item" data-value="Email">Email</div></div>
                 </div>
                 <p class="contact_platform_alert" style="color:Red;"></p>
@@ -200,7 +215,7 @@
     </div><!--address3-form-left-->
     
     <div class="address3-form-right"><!--address3-form-right-->
-        <div class=" bold-text common-label"> <label>Floor/Flat/House</label></div>
+        <div class=" bold-text common-label "> <label>Floor/Flat/House</label></div>
         <input name="form-0-floor" type="text" class="textBox" placeholder=" "  >
     	</div><!--address3-form-right-->    
 </div><!--address3-wrapper-row address3-forms-boxes-->

@@ -25,39 +25,32 @@
           
           <br>
 
-          {% for detail in evaluation_details %} 
-            {% if detail.attender_note %}
+          {% if evaluation.customer.agent_notes %}
+
           <div class="checkin-wrapper-row checkin-forms-boxes"><!--checkin-wrapper-row checkin-forms-boxes-->
 
-            <div class="checkin-form-left"><!--checkin-form-left-->
-            {% if evaluation.call_attender.profile_image %}
-            <div class="profile-pic"><img src="{{evaluation.call_attender.profile_image.url}}"></div>
-            {% else %}
-            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
-            {% endif %}
-            <div class="client-name">{{evaluation.call_attender.name}}<div class="common-gray-text">
-            {% if evaluation.call_attender.user_type == 'EVALUATOR' %}
-            Evaluator
-            {% else %}
-            Agent
-            {% endif %}
-            
-            </div></div>
-            </div>
-            
-            
-            <label>Notes :</label>
-            <div class="checkin-form-left">{{detail.attender_note}}</div>
+            <div class="investigation-columns"><!--investigation-columns-->
+                    <div class="investigation-columns-left"><!--investigation-columns-left-->
+                        {% if evaluation.call_attender.profile_image %}
+                        <div class="profile-pic"><img src="{{evaluation.call_attender.profile_image.url}}"></div>
+                        {% else %}
+                        <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>            
+                        {% endif %}
+                        <div class="client-name">{{evaluation.call_attender.name}}<div class="common-gray-text">{{evaluation.call_attender.user_type}}</div></div>
+                    </div><!--investigation-columns-left-->
 
-            <div class="checkin-form-left align-center">
-            </div>
+                    <div class="investigation-columns-middle"><!--investigation-columns-middle-->
+                    
+                        <div class="notes">Notes</div>
+                        <p>{{evaluation.customer.agent_notes}}</p>
+                    </div><!--investigation-columns-middle-->
 
-            <div class="checkin-form-right align-right">
-            </div>
+            </div><!--investigation-columns-->
 
           </div>
-          {% endif%}
-            {% endfor %} 
+
+          {% endif %}
+          
           <hr class="div">
           
             <div class="common-sub-head align-left">Details</div> 
