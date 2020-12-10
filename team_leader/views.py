@@ -413,7 +413,7 @@ class Cleaning(IsTeamLeader,View):
 			# print(ord.cleaning_count,ord.completed_cleaning_count,"ordcount2")
 			order_data = ord
 
-		if order_data and order_data.evaluation.customer.is_sms == True:   #.completed_cleaning_count == order_data.cleaning_count or order_data.completed_followup_count == order_data.followup_count :
+		if order and order_data.evaluation.customer.is_sms == True:   #.completed_cleaning_count == order_data.cleaning_count or order_data.completed_followup_count == order_data.followup_count :
 
 			url = "https://smsapi.future-club.com/fccsms.aspx"
 
