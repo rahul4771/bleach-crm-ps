@@ -82,11 +82,9 @@ def sendinvoice(request):
 
     evaluation = order.evaluation
 
-    url = "https://smsapi.future-club.com/fccsms.aspx"
-
-    print("kaboonm",url)
-
     if evaluation.customer.is_sms == True:
+
+        url = "https://smsapi.future-club.com/fccsms.aspx"
 
         if language == 'ENGLISH':
 
