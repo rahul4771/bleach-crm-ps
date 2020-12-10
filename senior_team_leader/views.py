@@ -563,18 +563,12 @@ class StlHome(IsSeniorTeamLeader,View):
 		teamassign_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
 		
 		try:
-			assign_order_schedules = OrderScheduler.objects.filter(work_status__isnull=True,status='CONFIRMED',is_active=True,start_at__lt=teamassign_to_date+timedelta(4)).select_related('order__evaluation__customer','customer_address','order_scheduler_book').annotate(color_status=Case(When(Q(Q(start_at__lt=teamassign_to_date+timedelta(3)) & Q(start_at__gte=teamassign_to_date+timedelta(2))), then=Value('green')),
-                  When(Q(Q(start_at__lt=teamassign_to_date+timedelta(2))&Q(start_at__gte=teamassign_to_date+timedelta(1))), then=Value('yellow')),When(Q(Q(start_at__lt=teamassign_to_date+timedelta(1))&Q(start_at__gte=teamassign_to_date)), then=Value('orange')),
-                  default=Value('red'),
-                  output_field=CharField(),))
+			assign_order_schedules = OrderScheduler.objects.filter(work_status__isnull=True,status='CONFIRMED',is_active=True,start_at__lt=teamassign_to_date+timedelta(365)).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
 		except:
 			assign_order_schedules = None
 
 		try:
-			assign_followup_schedules = FollowUpScheduler.objects.filter(work_status__isnull=True,status='CONFIRMED',is_active=True,start_at__lt=teamassign_to_date+timedelta(4)).select_related('follow_up__investigation__order__evaluation__customer','customer_address').annotate(color_status=Case(When(Q(Q(start_at__lt=teamassign_to_date+timedelta(3)) & Q(start_at__gte=teamassign_to_date+timedelta(2))), then=Value('green')),
-                  When(Q(Q(start_at__lt=teamassign_to_date+timedelta(2))&Q(start_at__gte=teamassign_to_date+timedelta(1))), then=Value('yellow')),When(Q(Q(start_at__lt=teamassign_to_date+timedelta(1))&Q(start_at__gte=teamassign_to_date)), then=Value('orange')),
-                  default=Value('red'),
-                  output_field=CharField(),))
+			assign_followup_schedules = FollowUpScheduler.objects.filter(work_status__isnull=True,status='CONFIRMED',is_active=True,start_at__lt=teamassign_to_date+timedelta(365)).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
 		except:
 			assign_followup_schedules = None
 

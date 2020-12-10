@@ -2918,7 +2918,8 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 									quantity= request.POST.get('form'+str(form_count)+'_section'+str(i)+'_quantity'+str(j))
 
 									if old_keynote_id:
-										EvaluationSectionKeynote.objects.filter(id=old_keynote_id).update(id=old_keynote_id,sub_area=keynote,quantity=quantity)
+										if keynote and quantity:
+											EvaluationSectionKeynote.objects.filter(id=old_keynote_id).update(id=old_keynote_id,sub_area=keynote,quantity=quantity)
 									else:
 										if old_section_id and keynote and quantity:
 											old_section = EvaluationBookSection.objects.get(id=old_section_id)
@@ -3233,7 +3234,8 @@ class MakeQuatationPhase2DuplicateEdit(IsAgent,View):
 									quantity= request.POST.get('form'+str(form_count)+'_section'+str(i)+'_quantity'+str(j))
 
 									if old_keynote_id:
-										EvaluationSectionKeynote.objects.filter(id=old_keynote_id).update(id=old_keynote_id,sub_area=keynote,quantity=quantity)
+										if keynote and quantity:
+											EvaluationSectionKeynote.objects.filter(id=old_keynote_id).update(id=old_keynote_id,sub_area=keynote,quantity=quantity)
 									else:
 										if old_section_id and keynote and quantity:
 											old_section = EvaluationBookSection.objects.get(id=old_section_id)

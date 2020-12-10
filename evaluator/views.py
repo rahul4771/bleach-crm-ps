@@ -1628,7 +1628,8 @@ class MakeQuatationPhase2Edit(IsEvaluator,View):
 									quantity= request.POST.get('form'+str(form_count)+'_section'+str(i)+'_quantity'+str(j))
 
 									if old_keynote_id:
-										EvaluationSectionKeynote.objects.filter(id=old_keynote_id).update(id=old_keynote_id,sub_area=keynote,quantity=quantity)
+										if keynote and quantity:
+											EvaluationSectionKeynote.objects.filter(id=old_keynote_id).update(id=old_keynote_id,sub_area=keynote,quantity=quantity)
 									else:	
 										if old_section_id and keynote and quantity:
 											old_section = EvaluationBookSection.objects.get(id=old_section_id)
@@ -1837,7 +1838,8 @@ class MakeAssignedQuatationPhase2(IsEvaluator,View):
 							for j in range(no_of_keynotes):
 								keynote = request.POST.get('form'+str(form_count)+'_section'+str(i)+'_keynote'+str(j))
 								quantity= request.POST.get('form'+str(form_count)+'_section'+str(i)+'_quantity'+str(j))
-								keynote_array.append(EvaluationSectionKeynote(evaluation_section=section,sub_area=keynote,quantity=quantity))
+								if keynote and quantity:
+									keynote_array.append(EvaluationSectionKeynote(evaluation_section=section,sub_area=keynote,quantity=quantity))
 							#bulk_create keynote
 							EvaluationSectionKeynote.objects.bulk_create(keynote_array)
 					
