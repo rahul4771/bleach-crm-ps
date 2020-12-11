@@ -272,7 +272,7 @@ class EvaluationBook(models.Model):
 	discount            = models.FloatField(blank=True,null=True,default=0)
 	total_cost          = models.FloatField(blank=True,null=True)
 	cleaning_hours 		= models.FloatField(blank=True,null=True)
-	evaluator_note		= models.CharField(max_length=500,blank=True,null=True)
+	evaluator_note		= models.CharField(max_length=5000,blank=True,null=True)
 	
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)
