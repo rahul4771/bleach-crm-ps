@@ -391,16 +391,23 @@ $('.footable').footable({
     </script>
     <script>
 
-var date = new Date();
+function appendLeadingZeroes(n){
+    if(n <= 9){
+      return "0" + n;
+    }
+    return n
+  }
 
-date.setDate(date.getDate()-1)
-date.setMonth(date.getMonth()+1)
-var datestring = ("0" + (date.getDate())).slice(-2)  + "-" + ("0" + (date.getMonth())).slice(-2) + "-" + date.getFullYear();
+//append dates to export popup
+var date3 = new Date();
+date3.setDate(date3.getDate()-1)
 
-var date2 = new Date();
-date2.setDate(date2.getDate()-30);
-date2.setMonth(date2.getMonth()+1)
-var datestring2 = ("0" + (date2.getDate())).slice(-2)  + "-" + ("0" + (date2.getMonth())).slice(-2) + "-" + date2.getFullYear();
+var datestring = appendLeadingZeroes(date3.getDate())  + "-" + appendLeadingZeroes(date3.getMonth()+1) + "-" + date3.getFullYear();
+
+var date4 = new Date();
+date4.setDate(date4.getDate()-30);
+
+var datestring2 = appendLeadingZeroes(date4.getDate())  + "-" + appendLeadingZeroes(date4.getMonth()+1) + "-" + date4.getFullYear();
 console.log(datestring,datestring2)
 
 $('.id_from_date').val(datestring2);
