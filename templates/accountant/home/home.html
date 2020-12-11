@@ -103,10 +103,6 @@
     </td>
     </tr>
 
-
-
-
-
     {% elif invoice.evaluation.payment_method == 'BREAKDOWN' %}
     
     {% if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount %}
@@ -161,7 +157,63 @@
     </tr>
     {% endif %}
 
+    {% elif invoice.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' %}
+    <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+    <td data-label="BLC Number" class="bold-text">{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+    <td data-label="Service Type(s)">
+    {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+    {% for book in evaluation_details.evaluation_books %}
+    {{book.service_type}}<br>
+    {% endfor %}
+    {% endfor %}
+    </td>
+    <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+    <td data-label="Total Amount">
+    {% for subscription in invoice.subscriptions %}
+    {% if forloop.first %}
+    {{subscription.amount|default_if_none:''}}
+    {% endif %}{% endfor %} KD</td>
+    <td class="violet-text" data-label="Payment Method">{{invoice.evaluation.payment_method|default_if_none:''}}</td>
+    <td data-label="" class="bold-text">
+    <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{% if invoice.reminigdays %}{{invoice.reminigdays}}</h3> Days&#11015;{% else %}{{invoice.delaydays}}</h3> Days&#11014;{% endif %}</td>
+    <td data-label="">{% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}
+        <span class="green-bg clickable-row" data-href="{% url 'accountant:accountant-cashcollect' %}?orderid={{invoice.id}}">Collect</span>   
+        {% else %}
+        <span class="gray-bg">Collect</span>
+        {% endif %}
+    </td>
+    </tr>
+    
+    {% elif invoice.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' %}
+    <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+    <td data-label="BLC Number" class="bold-text">{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+    <td data-label="Service Type(s)">
+    {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+    {% for book in evaluation_details.evaluation_books %}
+    {{book.service_type}}<br>
+    {% endfor %}
+    {% endfor %}
+    </td>
+    <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+    <td data-label="Total Amount">
+    {% for subscription in invoice.subscriptions %}
+    {% if forloop.first %}
+    {{subscription.amount|default_if_none:''}}
+    {% endif %}{% endfor %} KD</td>
+    <td class="violet-text" data-label="Payment Method">{{invoice.evaluation.payment_method|default_if_none:''}}</td>
+    <td data-label="" class="bold-text">
+    <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{% if invoice.reminigdays %}{{invoice.reminigdays}}</h3> Days&#11015;{% else %}{{invoice.delaydays}}</h3> Days&#11014;{% endif %}</td>
+    <td data-label="">{% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}
+        <span class="green-bg clickable-row" data-href="{% url 'accountant:accountant-cashcollect' %}?orderid={{invoice.id}}">Collect</span>   
+        {% else %}
+        <span class="gray-bg">Collect</span>
+        {% endif %}
+    </td>
+    </tr>
     {% endif %}
+
     {% endfor %}
 </tbody>
 </table>

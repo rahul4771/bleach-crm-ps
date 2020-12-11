@@ -461,6 +461,116 @@
     </div><!--modal-wrapper modal-transition-->
 </div><!--followup graph popup-->
 
+<!-- edit_evaluation_popup -->
+<div class="modal-popup-wrapper"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+        <div class="modal-header"><!--modal-header-->
+        <button class="modal-close edit_evaluation collapsible0-close">X</button>
+        </div><!--modal-header-->
+    <div class="modal-body"><!--modal-body-->
+    <div class="modal-content"><!--modal-content-->
+    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">  
+                <tr>
+                    <td valign="center"><div class="blc-number" id="area_evaluation_id"></div><span id="address_evaluation_id"></span></td>
+                    <td><div class="bold-text" id="customername_evaluation_id"></div><div id="mobileno_evaluation_id"></div></td>
+                </tr>
+ 
+            <tr>
+            <td colspan="3">Evaluation Date:<strong><span class="blue-text" id="proposed_date_evaluation_id"></span></strong> &nbsp;Evaluation Time:<strong><span class="blue-text" id="proposed_time_evaluation_id"></span></strong> &nbsp;Evaluator:<strong><span class="blue-text" id="evaluator_name_evaluation_id"></span></strong></td>
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div><!--ticket-wrapper-full--> 
+        
+    </div><!--modal-content-->
+    </div><!--modal-body-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--modal-popup-wrapper-->
+<!-- /edit_evaluation_popup -->
+
+
+<!-- edit_cleaning_popup -->
+<div class="modal-popup-wrapper1"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+        <div class="modal-header"><!--modal-header-->
+        <button class="modal-close edit_cleaning collapsible1-close">X</button>
+        </div><!--modal-header-->
+    <div class="modal-body"><!--modal-body-->
+    <div class="modal-content"><!--modal-content-->
+    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">  
+                <tr>
+                    <td><div class="blc-number" id="blcno_cleaning_id"></div><span id="address_cleaning_id"></span></td>
+                    <td><div class="bold-text" id="customername_cleaning_id"></div><div id="mobileno_cleaning_id"></div></td>
+                </tr>
+ 
+            <tr>
+            <td colspan="3">Cleaning Date:<strong><span class="blue-text" id="starting_date_cleaning_id"></span></strong> &nbsp;Starting Time:<strong><span class="blue-text" id="starting_time_cleaning_id"></span></strong> &nbsp;Duration:<strong><span class="blue-text" id="duration_cleaning_id"></span></strong></td>
+            </tr>
+            <tr id="team_leader_cleaning_id">
+            </tr>
+            <tr id="team_member_cleaning_id">
+            </tr>  
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div><!--ticket-wrapper-full--> 
+        
+    </div><!--modal-content-->
+    </div><!--modal-body-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--modal-popup-wrapper-->
+<!-- /edit_cleaning_popup -->
+
+
+<!--edit followup popup -->
+<div class="modal-popup-wrapper2"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+        <div class="modal-header"><!--modal-header-->
+        <button class="modal-close edit_followup collapsible2-close">X</button>
+        </div><!--modal-header-->
+    <div class="modal-body"><!--modal-body-->
+    <div class="modal-content"><!--modal-content-->
+    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">  
+                <tr>
+                    <td valign="center"><div class="blc-number" id="blcno_followup_id"></div><span id="address_followup_id"></span></td>
+                    <td><div class="bold-text" id="customername_followup_id"></div><div id="mobileno_followup_id"></div></td>
+                </tr>
+ 
+            <tr>
+            <td colspan="3">Cleaning Date:<strong><span class="blue-text" id="starting_date_followup_id"></span></strong> &nbsp;Starting Time:<strong><span class="blue-text" id="starting_time_followup_id"></span></strong> &nbsp;Duration:<strong><span class="blue-text" id="duration_followup_id"></span></strong></td>
+            </tr>
+            <tr id="team_leader_followup_id">
+            </tr>
+            <tr id="team_member_followup_id">
+            </tr>  
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div><!--ticket-wrapper-full--> 
+        
+    </div><!--modal-content-->
+    </div><!--modal-body-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--modal-popup-wrapper-->
+<!--edit followup popup -->
 
 {% endblock %}
 {% block javascript %}
@@ -954,6 +1064,216 @@ $('document').ready(function(){
       console.log("hiiiiii");
       $('.modal-popup-wrappergraph').toggleClass('is-visible');
     });  
+
+
+  // Evaluation Edit
+    $('.edit_evaluation').on('click', function (e) {
+      e.preventDefault();
+      $('.modal-popup-wrapper').toggleClass('is-visible');
+
+      $('#area_evaluation_id').html($(this).data('area'));
+      $('#address_evaluation_id').html($(this).data('street')+', '+$(this).data('apartment')+', '+$(this).data('block')+', '+$(this).data('avenue')+', '+$(this).data('building')+', '+$(this).data('area')+', '+$(this).data('governorate'));
+      $('#proposed_date_evaluation_id').html($(this).data('proposed_date'));
+      $('#proposed_time_evaluation_id').html($(this).data('proposed_time'));
+      $('#customername_evaluation_id').html($(this).data('customer_name'));
+      $('#mobileno_evaluation_id').html($(this).data('mobile_no'));
+      $('#evaluator_name_evaluation_id').html($(this).data('evaluator_name'));
+
+      //form values
+      $('#evaluation_id').val($(this).data('id'));
+      $('#appointment_date').val($(this).data('proposed_date'));
+      $('#appointment_time').val($(this).data('proposed_time'));
+      $('#notes').html($(this).data('notes'));
+
+});
+
+var coll = document.getElementsByClassName("collapsible");
+var i;
+console.log(coll);
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });  
+  }
+
+$('.collapsible0-close').click(function(){
+    $(".popup-collapse0").css('display','none');
+})
+
+
+
+// Cleaning Edit
+    $('.edit_cleaning').on('click', function (e) {
+      e.preventDefault();
+      $('.modal-popup-wrapper1').toggleClass('is-visible');
+      schedule_id         = $(this).data('id'); 
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getcleaninginfo' %}",
+
+        data: {'schedule_id':schedule_id}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+                  $('#blcno_cleaning_id').html(data['order_no']+'<br><br>'+data['status']);
+                  $('#address_cleaning_id').html(data['address']);
+                  $('#customername_cleaning_id').html(data['customer']);
+                  $('#mobileno_cleaning_id').html(data['customer_mobile']);  
+                  $('#starting_date_cleaning_id').html(data['start_at_date']);
+                  $('#starting_time_cleaning_id').html(data['start_at_time']);
+                  $('#duration_cleaning_id').html(data['duration']+' Hours');
+
+                  //Append Team Leader and team members Based on Conditions
+                  if(data['team_leader'] || data['stl'])
+                  {
+                    $('#team_leader_cleaning_id').html('<td colspan="3">Team Leader:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
+                  }     
+                  else
+                  {
+                    $('#team_leader_cleaning_id').html('<td colspan="3"><strong class="red-text">Cleaning Team Not Assigned</strong></td>')
+                  }
+
+                  cleaners = data['cleanersinfo'].cleaners;
+                  
+                  if(cleaners != '')
+                  {
+                    $('#team_member_cleaning_id').html('<td colspan="3">Team Members:<strong><span class="blue-text"></span></strong> &nbsp;</td>');
+
+                    append_cleaners = '';
+                    for(i=0;i<cleaners.length;++i)
+                        {   
+                            if((i+1)%5 == 0)
+                            {
+                                append_cleaners += cleaners[i].member_name+',<br>';
+                            }
+                            else
+                            {
+                                append_cleaners += cleaners[i].member_name+',';
+                            }
+                            
+                        }   
+                    $('#team_member_cleaning_id td strong span').html(append_cleaners);
+                  }
+                  else
+                    {
+                        $('#team_member_cleaning_id').html('');
+                  }  
+                        
+                                  }  
+      });
+});
+
+var coll = document.getElementsByClassName("collapsible1");
+var i;
+for (i = 0; i < coll.length; i++) {  
+  coll[i].addEventListener("click", function() {
+    console.log(this);
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+  }
+
+$('.collapsible1-close').click(function(){
+    $(".popup-collapse1").css('display','none');
+})
+
+
+
+
+// followup Edit
+    $('.edit_followup').on('click', function (e) {
+      e.preventDefault();
+      $('.modal-popup-wrapper2').toggleClass('is-visible');
+      schedule_id         = $(this).data('id'); 
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getfollowupinfo' %}",
+
+        data: {'schedule_id':schedule_id}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+                  $('#blcno_followup_id').html(data['order_no']+'<br><br>'+data['status']);
+                  $('#address_followup_id').html(data['address']);
+                  $('#customername_followup_id').html(data['customer']);
+                  $('#mobileno_followup_id').html(data['customer_mobile']);  
+                  $('#starting_date_followup_id').html(data['start_at_date']);
+                  $('#starting_time_followup_id').html(data['start_at_time']);
+                  $('#duration_followup_id').html(data['duration']+' Hours');
+
+                  //Append Team Leader and team members Based on Conditions
+                  if(data['team_leader'] || data['stl'])
+                  {
+                    $('#team_leader_followup_id').html('<td colspan="3">Team Leader:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
+                  }     
+                  else
+                  {
+                    $('#team_leader_followup_id').html('<td colspan="3"><strong class="red-text">Followup Team Not Assigned</strong></td>')
+                  }
+
+                  cleaners = data['cleanersinfo'].cleaners;
+                  
+                  if(cleaners != '')
+                  {
+                    $('#team_member_followup_id').html('<td colspan="3">Team Members:<strong><span class="blue-text"></span></strong> &nbsp;</td>');
+
+                    append_cleaners = '';
+                    for(i=0;i<cleaners.length;++i)
+                        {   
+                            if((i+1)%5 == 0)
+                            {
+                                append_cleaners += cleaners[i].member_name+',<br>';
+                            }
+                            else
+                            {
+                                append_cleaners += cleaners[i].member_name+',';
+                            }
+                        }
+                    $('#team_member_followup_id td strong span').html(append_cleaners);    
+                  }
+                  else
+                    {
+                        $('#team_member_followup_id').html('');
+                  }
+                       
+                                  }  
+      });
+
+});
+
+var coll = document.getElementsByClassName("collapsible2");
+var i;
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+  }
+
+$('.collapsible2-close').click(function(){
+    $(".popup-collapse2").css('display','none');
+})
+
 
 });
 

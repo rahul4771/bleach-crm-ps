@@ -62,6 +62,7 @@ SCHEDULER_CHOICES = (
 	('CANCELLED','CANCELLED')
 	)
 
+
 #Store the Order Details.DownPayment,Subscription and Direct Cleaning Comes Under a Single Order
 
 class Order(models.Model):
@@ -97,15 +98,33 @@ class Order(models.Model):
 
 
 #Devide an Order into a number of Schedules.This is to handle multiple days cleaning,multiple address cleaning Subscription Cleaning etc...
+class PaymentSubscriptionDetails(models.Model):
+	order 			    = models.ForeignKey('Order',blank=False,null=False,related_name='ordersubscription')
+	amount              = models.FloatField(blank=True,null=True)
+	is_paid             = models.BooleanField(null=False,blank=True,default=False)
+	paid_date 			= models.DateTimeField(blank=True,null=True)
+	monthyear           = models.CharField(max_length=100,blank=True,null=True)
+	
+	is_active           = models.BooleanField(null=False,blank=True,default=True)
+	created             = models.DateTimeField(auto_now_add=True)
+	updated             = models.DateTimeField(auto_now=True)
+
+	def __unicode__(self):
+		return str(self.id)
+
+	def __str__(self):
+		return str(self.id)
+
+
 
 class OrderScheduler(models.Model):
 	order 			     = models.ForeignKey('Order',blank=False,null=False,related_name='order_scheduler_order')
 	evaluation_details   = models.ForeignKey(EvaluationDetails,blank=True,null=True,related_name='order_scheduler_evaluationdetails')
 	order_scheduler_book = models.ForeignKey(EvaluationBook,blank=True,null=True,related_name='order_scheduler_book_details')
-	
+	payment_subscription = models.ForeignKey('PaymentSubscriptionDetails',blank=True,null=True,related_name='paymentsubscription')
+
 	start_at		   	 = models.DateTimeField(blank=True,null=True)
 	end_at			   	 = models.DateTimeField(blank=True,null=True)
-	#cleaning_type & other details foreign key connection
 	customer_address	 = models.ForeignKey(Address,blank=True,null=True)
 	work_status 		 = models.CharField(max_length=50,blank=True,null=True,choices=ORDER_SHEDULER_STATUS)
 	status      		 = models.CharField(max_length=20,blank=True,null=True,default='WAITING',choices=SCHEDULER_CHOICES)
