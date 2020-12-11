@@ -98,9 +98,10 @@ def GetCashCollectOrderDetailedInfo(request):
 		dropdown_order_info['after_amount_paid']   = order.postamount_paid		
 
 		#for subscription
-		if order.subscriptions[0]:
-			dropdown_order_info['subscription_amount'] = order.subscriptions[0].amount
-			dropdown_order_info['subscription_id']     = order.subscriptions[0].id			
+		if order.subscriptions and (order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' or order.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION'):
+			if order.subscriptions[0]:
+				dropdown_order_info['subscription_amount'] = order.subscriptions[0].amount
+				dropdown_order_info['subscription_id']     = order.subscriptions[0].id			
 
 		#for multiple order addresses
 		dropdown_order_info['order_address']   = []
