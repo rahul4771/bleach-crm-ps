@@ -1983,6 +1983,8 @@ class NewEnquiry(IsAgent,View):
 
 					address_form_save.save()
 
+			request.session['agent_notes'] = request.POST.get('agent_notes')
+
 			messages.success(request,"Customer Details Succesfully Added")
 
 		else:	
@@ -2003,7 +2005,7 @@ class NewEnquiry(IsAgent,View):
 			
 			return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'governorates':governorates,'locations':locations})					
 
-		redirection = request.POST.get('redirect_to')	
+		redirection = request.POST.get('redirect_to')
 
 		if redirection == 'assign_evaluator':
 			return redirect('agent:agent-makeevaluation',enquiry_form_save.id)
@@ -2053,7 +2055,9 @@ class ExistingEnquiry(IsAgent,View):
 
 		action_mode 	= request.POST.get('action_type')
 
-		if action_mode == 'update_customer_details':
+		redirection = request.POST.get('redirect_to')
+
+		if redirection == 'update_customer_details':
 			enquiry_form    = UserProfileForm(request.POST,request.FILES or None,instance=enquiry_user)
 
 			if enquiry_form.is_valid():
@@ -2093,6 +2097,12 @@ class ExistingEnquiry(IsAgent,View):
 
 				return render(request,'agent/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,'governorates':governorates})
 
+		if redirection == 'assign_evaluator':
+
+			request.session['agent_notes'] = request.POST.get('agent_notes')
+
+			return redirect('agent:agent-makeevaluation',enquiry_id)
+		
 		if action_mode == 'add_address':
 			address_form = AddressForm(request.POST)
 
@@ -2247,8 +2257,14 @@ class MakeEvaluation(IsAgent,View):
 			evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
 			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 
+		existing_user_note = request.POST.get('agent_notes',None)
+
+		notes = request.session['agent_notes']
+
 		#Create New Evaluation
-		new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,call_attender=request.user,customer_id=enquiry_id,quatation_expiry_date=timezone.now()+timedelta(14))
+		new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,call_attender=request.user,customer_id=enquiry_id,quatation_expiry_date=timezone.now()+timedelta(14),agent_notes=notes)
+
+		del request.session['agent_notes']
 
 		return redirect('agent:agent-assignevaluator',enquiry_id,new_evaluation.id)
 
