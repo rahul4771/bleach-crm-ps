@@ -32,8 +32,8 @@
 	<div class="common-sub-head align-left">Existing Enquiry</div> 
     <br>
 <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
-{% comment %} <input type="hidden" name="action_type" value="update_customer_details"> {% endcomment %}
-<input type="hidden" name="redirect_to" id="redirect_to_id">
+<input type="hidden" name="action_type" value="update_customer_details">
+
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label required-field"> <label>Name</label></div>
@@ -160,13 +160,13 @@
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
-<hr class="hr-dashedpad">
+{% comment %} <hr class="hr-dashedpad">
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   <div class=" bold-text common-label"> <label>Notes</label></div>
   <textarea name="agent_notes" id="id_agent_notes" class="textBox" placeholder="Recommended to add any notes if necessary"  ></textarea>
   </div>
-  </div>
+  </div> {% endcomment %}
 
 <hr class="hr-dashedpad"> 
 
@@ -225,7 +225,7 @@
 <div class="add-address clickable-cursor"><a>Add New Address</a></div>
 
 <br>
-<div align="center"><input class="cancel-Button" name="addevaluator" type="button" value="Update" onclick="SubmitNewEnquiry(this);" onmouseover="submitbuttontype('update_customer_details')"> <input class="assignButton" name="addevaluator" type="button" value="Add Evaluator" onclick="SubmitNewEnquiry(this);" onmouseover="submitbuttontype('assign_evaluator')"> <a href="{% url 'agent:agent-makequatation' enquiryid %}"><input class="assignButton" name="addevaluator" type="button" value="Make Quatation"></a>
+<div align="center"><input class="cancel-Button" name="addevaluator" type="button" value="Update" onclick="SubmitNewEnquiry(this);" > <a href="{% url 'agent:agent-makeevaluation' enquiryid %}"> <input class="assignButton" name="addevaluator" type="button" value="Add Evaluator" ></a> <a href="{% url 'agent:agent-makequatation' enquiryid %}"><input class="assignButton" name="addevaluator" type="button" value="Make Quatation"></a>
 </div>    
 <br><br>
         
@@ -694,10 +694,6 @@ $(".active_address").change(function(){
 
  })
 
-function submitbuttontype(type)
-{
-  $("#redirect_to_id").val(type);
-}
 
 </script>    
 

@@ -1983,8 +1983,6 @@ class NewEnquiry(IsAgent,View):
 
 					address_form_save.save()
 
-			request.session['agent_notes'] = request.POST.get('agent_notes')
-
 			messages.success(request,"Customer Details Succesfully Added")
 
 		else:	
@@ -2055,9 +2053,7 @@ class ExistingEnquiry(IsAgent,View):
 
 		action_mode 	= request.POST.get('action_type')
 
-		redirection = request.POST.get('redirect_to')
-
-		if redirection == 'update_customer_details':
+		if action_mode == 'update_customer_details':
 			enquiry_form    = UserProfileForm(request.POST,request.FILES or None,instance=enquiry_user)
 
 			if enquiry_form.is_valid():
@@ -2096,12 +2092,6 @@ class ExistingEnquiry(IsAgent,View):
 					governorates = None
 
 				return render(request,'agent/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,'governorates':governorates})
-
-		if redirection == 'assign_evaluator':
-
-			request.session['agent_notes'] = request.POST.get('agent_notes')
-
-			return redirect('agent:agent-makeevaluation',enquiry_id)
 		
 		if action_mode == 'add_address':
 			address_form = AddressForm(request.POST)
@@ -2259,12 +2249,8 @@ class MakeEvaluation(IsAgent,View):
 
 		existing_user_note = request.POST.get('agent_notes',None)
 
-		notes = request.session['agent_notes']
-
 		#Create New Evaluation
-		new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,call_attender=request.user,customer_id=enquiry_id,quatation_expiry_date=timezone.now()+timedelta(14),agent_notes=notes)
-
-		del request.session['agent_notes']
+		new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,call_attender=request.user,customer_id=enquiry_id,quatation_expiry_date=timezone.now()+timedelta(14))
 
 		return redirect('agent:agent-assignevaluator',enquiry_id,new_evaluation.id)
 
