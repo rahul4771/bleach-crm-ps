@@ -1024,7 +1024,7 @@ $("#cleaning_completed_image").attr("src","{% static 'files/images/order-gray-cl
 }
 //bar percentage count
 total_percentage = (total_schedules*5)
-{% if order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'PREPAID' or or order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' or order.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' %}
+{% if order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'PREPAID' or order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' or order.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' %}
 total_percentage += total_schedules
 {% else %}
 total_percentage += total_schedules*2
