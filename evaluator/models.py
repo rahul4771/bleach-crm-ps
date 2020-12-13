@@ -217,7 +217,6 @@ class Evaluation(models.Model):
 	payment_way             = models.CharField(max_length=20,blank=True,null=True,choices=PAYMENT_WAYS)
 	before_cleaning_amount	= models.FloatField(blank=True,null=True)
 	after_cleaning_amount	= models.FloatField(blank=True,null=True)
-	agent_notes     		= models.TextField(max_length=1000,blank=True,null=True)
 
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)

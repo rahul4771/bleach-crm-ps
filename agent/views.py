@@ -1983,8 +1983,6 @@ class NewEnquiry(IsAgent,View):
 
 					address_form_save.save()
 
-			request.session['agent_notes'] = request.POST.get('agent_notes')
-
 			messages.success(request,"Customer Details Succesfully Added")
 
 		else:	
@@ -2055,9 +2053,7 @@ class ExistingEnquiry(IsAgent,View):
 
 		action_mode 	= request.POST.get('action_type')
 
-		redirection = request.POST.get('redirect_to')
-
-		if redirection == 'update_customer_details':
+		if action_mode == 'update_customer_details':
 			enquiry_form    = UserProfileForm(request.POST,request.FILES or None,instance=enquiry_user)
 
 			if enquiry_form.is_valid():
@@ -2096,12 +2092,6 @@ class ExistingEnquiry(IsAgent,View):
 					governorates = None
 
 				return render(request,'agent/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,'governorates':governorates})
-
-		if redirection == 'assign_evaluator':
-
-			request.session['agent_notes'] = request.POST.get('agent_notes')
-
-			return redirect('agent:agent-makeevaluation',enquiry_id)
 		
 		if action_mode == 'add_address':
 			address_form = AddressForm(request.POST)
@@ -2259,12 +2249,8 @@ class MakeEvaluation(IsAgent,View):
 
 		existing_user_note = request.POST.get('agent_notes',None)
 
-		notes = request.session['agent_notes']
-
 		#Create New Evaluation
-		new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,call_attender=request.user,customer_id=enquiry_id,quatation_expiry_date=timezone.now()+timedelta(14),agent_notes=notes)
-
-		del request.session['agent_notes']
+		new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,call_attender=request.user,customer_id=enquiry_id,quatation_expiry_date=timezone.now()+timedelta(14))
 
 		return redirect('agent:agent-assignevaluator',enquiry_id,new_evaluation.id)
 
@@ -2487,8 +2473,24 @@ class MakeQuatationPhase1(IsAgent,View):
 		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
 		evaluationbook    = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
 		language = evaluation.customer.sms_preference
+		address = evaluationdetails.address
 
 		messages.success(request,"Quotation Submitted Succesfully")
+
+		#address check for floor,avenue None
+		if address.floor == None and address.avenue == None:
+			address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		elif address.floor == None:
+			address_list = [address.apartment, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+		
+		elif address.avenue == None:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		else:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+
+		separator = ", "
 
 		if evaluation.customer.is_sms == True:
 		
@@ -2497,12 +2499,12 @@ class MakeQuatationPhase1(IsAgent,View):
 			if language == 'ENGLISH':
 				print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
 
-				message = "Dear Customer, Please find the Quotation against the cleaning at "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" here https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+				message = "Dear Customer, Please find the Quotation against the cleaning at "+separator.join(address_list)+" here https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
 
 				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 			
 			else:
-				message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" في هذا الرابط https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". رقم الطلب: "+str(evaluation.evaluation_id)+" الخدمة: "+evaluationbook.service_type.name+" العنوان: "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" السعر: "+ str(evaluation.total_cost) +" KD تاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+				message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+separator.join(address_list)+" https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+"  لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
 
 				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 
