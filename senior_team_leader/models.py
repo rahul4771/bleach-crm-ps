@@ -37,10 +37,10 @@ class CleaningTeam(models.Model):
 	updated         = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.id)
+		return str(self.order_scheduler)
 
 	def __str__(self):
-		return self.id
+		return str(self.order_scheduler)
 	
 
 #For Tracking Medias Uploaded by Team Leader on Site
