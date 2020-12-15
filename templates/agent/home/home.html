@@ -999,13 +999,6 @@ $('document').ready(function(){
             old_starting_time             = parseInt(old_starting_time_string.split('.')[0])+parseInt(old_starting_time_string.split('.')[1])/60
             old_ending_time               = parseInt(old_ending_time_string.split('.')[0])+parseInt(
                 old_ending_time_string.split('.')[1])/60
-            
-            console.log({{forloop.counter}})
-            console.log(old_starting_time_string)
-            console.log(old_starting_time)
-            console.log(old_ending_time_string)
-            console.log(old_ending_time)
-            console.log(completed_calender)
             current_raw_timings = []
             {% for schedule in calendar_order_schedules %}
                 starting_time_string      = '{{schedule.start_at|date:'H:i'}}'.replace(":",".");
@@ -1016,27 +1009,17 @@ $('document').ready(function(){
                     ending_time_string.split('.')[1])/60
                 if(completed_calender.includes('{{forloop.counter}}'))
                 {
-                    console.log("includes");
                 }
                 else
                 {
-                    console.log("excludes")
-                    console.log(starting_time_string)
-                    console.log(starting_time)
-                    console.log(ending_time_string)
-                    console.log(ending_time)
-                    console.log("current raw timings")
-                    console.log(current_raw_timings)
                 if(old_starting_time>=starting_time && old_starting_time>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0)||old_ending_time<=starting_time && old_ending_time<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0))
                     {
                         completed_calender.push('{{forloop.counter}}');
                         current_raw_timings.push([starting_time,ending_time]);
 
-                        console.log(current_raw_timings.length,"Array length")
                         //append raw
                         if(current_raw_timings.length==1)
                         {
-                            console.log("appending new raw")
                             left_percentage  = 100/24*starting_time
 
                             if(ending_time == 0)
