@@ -37,7 +37,7 @@
         <div class="lg-text yellow-text">Evaluation Pending</div>
         {% else %}
         <div class="check-in-icons"><img src="{% static 'files/images/price-icon.svg' %}"></div>
-        <div class="lg-text blue-text">{{detail.total_cost}} KD</div>
+        <div class="lg-text blue-text">{{detail.total_cost|floatformat:'3'}} KD</div>
         {% endif %}
       </div><!--checkin-form-left-->
                    
