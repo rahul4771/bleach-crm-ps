@@ -62,10 +62,10 @@ class CleaningTeamMedia(models.Model):
 		cv2.imwrite(file_path, img, [cv2.IMWRITE_JPEG_QUALITY,20])
 
 	def __unicode__(self):
-		return str(self.team.team_leader.name)
+		return str(self.team)
 
 	def __str__(self):
-		return self.team.team_leader.name
+		return str(self.team)
 
 #Tasks assigned to Cleaning Team
 
