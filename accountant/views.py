@@ -446,7 +446,7 @@ class PaymentEdit(IsAccountant,View):
 			PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
 
 		#update payment method
-		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
 
 		#update payment subscription if it is subscription
 		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
