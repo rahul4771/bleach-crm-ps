@@ -783,7 +783,7 @@
             
             {% for orderschedule in order.orderschedules %}
             {% if orderschedule.status == 'CONFIRMED' %}
-
+            {% else %}
             &nbsp;&nbsp;&nbsp;<a href="{% url 'accountant:accountant-payment-edit' order.evaluation.customer.id order.evaluation.id %}"><span style="color: blue "><i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</span></a>
             {% endif %}
             {% endfor %}
