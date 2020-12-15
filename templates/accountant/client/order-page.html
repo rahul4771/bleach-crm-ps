@@ -780,13 +780,7 @@
             <div class="payment-text bold-text red-text"><div>Final Amount</div> : {{order.evaluation.total_cost|default_if_none:'0.00'|floatformat:'2'}} KD</div>
             <hr class="bar"> 
             <div class="payment-text"><div>Payment Policy</div> : {{order.evaluation.payment_method|default_if_none:''}}
-            
-            {% for orderschedule in order.orderschedules %}
-            {% if orderschedule.status == 'CONFIRMED' %}
-            {% else %}
-            &nbsp;&nbsp;&nbsp;<a href="{% url 'accountant:accountant-payment-edit' order.evaluation.customer.id order.evaluation.id %}"><span style="color: blue "><i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</span></a>
-            {% endif %}
-            {% endfor %}
+            &nbsp;&nbsp;&nbsp;<a class="paymentedit" href="{% url 'accountant:accountant-payment-edit' order.evaluation.customer.id order.evaluation.id %}"><div class="edit_payment_policy"></div></a>
             </div>
 
             {% if order.evaluation.payment_method == 'BREAKDOWN' %}
@@ -987,6 +981,13 @@ cleaning_completed_count += 1;
 {% endif %}
 
 {% endfor %}
+
+//payment policy edit button hide / Show
+if (dateconfirm_completed_count > 0){
+    $('.paymentedit').remove();
+}else{
+    $('.edit_payment_policy').append('<span style="color: blue "><i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</span>');
+}
 
 //change html
 $("#date_confirmed").html(dateconfirm_completed_count)
