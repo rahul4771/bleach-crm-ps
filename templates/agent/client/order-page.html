@@ -802,6 +802,16 @@
         {% if order.amount_paid != 0 %}
         <div class="send-receipt"><a href="#" onclick="sendreceipt()">Send Receipt</a></div>
         {% endif %}
+
+        <div class="send_feedback">
+        {% if order.payment_status == 'COMPLETED' %}
+            <div class="send-feedbacklink"><a href="#" onclick="sendfeedbacklink()">Send Feedback Link</a></div>
+        {% elif order.evaluation.after_cleaning_amount == order.postamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
+            <div class="send-feedbacklink"><a href="#" onclick="sendfeedbacklink()">Send Feedback Link</a></div>
+        {% else %}
+        {% endif %}
+        </div>
+
         </div><!--order-payment-widget order-payment-widget-column-->      
     
     </div><!--order-payment-wrapper-->       
@@ -916,6 +926,29 @@ $(".pn-prev").click();
       })
   };
 
+
+  function sendfeedbacklink(){
+      $.ajax({
+          url: "/order-data/send-feedback-link",
+          data: {
+          'order_no': "{{order.evaluation.evaluation_id}}"
+          },
+          dataType: "json",
+          type: "GET",
+          contentType: "application/json;charset=utf-8",
+          
+          success: function(data) {
+              console.log(data,"dat")
+              if (data == true){
+              alert("Feedback link Sent!")
+              }else{
+                alert("Customer not opted for SMS!")  
+              }
+          }
+      
+      })
+  };
+
     $(window).ready(function(){
         
         //Remove Duplicate details
@@ -991,6 +1024,15 @@ cleaning_completed_count += 1;
 {% endif %}
 
 {% endfor %}
+
+//feedback button hide/show
+if (cleaning_completed_count == total_schedules){
+    $('.send_feedback').attr("hidden",false);
+    $('.send_feedback').attr("disabled",false);
+}else{
+    $('.send_feedback').attr("hidden",true);
+    $('.send_feedback').attr("disabled",true);
+};
 
 //change html
 $("#date_confirmed").html(dateconfirm_completed_count)

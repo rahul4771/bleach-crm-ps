@@ -556,6 +556,9 @@ hr.div{ border: 0; margin:35px 0 35px 0; padding:0; border-bottom: 1px solid #cb
 .send-receipt{ text-align:right; margin: 20px 0; }
 .send-receipt a{border:1px solid #0677b8; color:#0677b8; font-size:12px; text-decoration:none; padding:5px 10px;}
 .send-receipt a:hover{border:1px solid #6666; color:#666; text-decoration:none;}
+.send-feedbacklink{ text-align:right; margin: 20px 0; }
+.send-feedbacklink a{border:1px solid #ff7d03; color:#ff7d03; font-size:12px; text-decoration:none; padding:5px 10px;}
+.send-feedbacklink a:hover{border:1px solid #6666; color:#666; text-decoration:none;}
 .cleaning-Order-wrapper {display: flex; align-items: flex-start; }
 .cleaning--left-stretch {background:#fff; padding:15px 25px; flex-grow: 1; flex-shrink: 1; flex-basis: auto; flex: 1 1 auto; margin-right:30px; }
 .cleaning--right-fixed { padding:0; flex-grow: 0; flex-shrink: 0; flex-basis: 280px; flex: 0 0 280px; }
