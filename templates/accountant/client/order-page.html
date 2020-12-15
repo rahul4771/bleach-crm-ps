@@ -3,7 +3,7 @@
 {% load static %}
 <div class="wrapper"><!--wrapper-->
 {% include "accountant/common/header.html" %}
-    
+
 <section class="content"><!--content-->
     <div class="container-fluid space topspace"><!--container-fluid space topspace-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
@@ -779,7 +779,16 @@
             <br>
             <div class="payment-text bold-text red-text"><div>Final Amount</div> : {{order.evaluation.total_cost|default_if_none:'0.00'|floatformat:'2'}} KD</div>
             <hr class="bar"> 
-            <div class="payment-text"><div>Payment Policy</div> : {{order.evaluation.payment_method|default_if_none:''}}</div>
+            <div class="payment-text"><div>Payment Policy</div> : {{order.evaluation.payment_method|default_if_none:''}}
+            
+            {% for orderschedule in order.orderschedules %}
+            {% if orderschedule.status == 'CONFIRMED' %}
+            {% else %}
+            &nbsp;&nbsp;&nbsp;<a href="{% url 'accountant:accountant-payment-edit' order.evaluation.customer.id order.evaluation.id %}"><span style="color: blue "><i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</span></a>
+            {% endif %}
+            {% endfor %}
+            </div>
+
             {% if order.evaluation.payment_method == 'BREAKDOWN' %}
             <div class="payment-text"><div>Before Cleaning Amount</div> : {{order.evaluation.before_cleaning_amount|default_if_none:''}}</div>
             <div class="payment-text"><div>After Cleaning Amount</div> : {{order.evaluation.after_cleaning_amount|default_if_none:''}}</div>
