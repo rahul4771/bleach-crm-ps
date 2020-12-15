@@ -207,7 +207,7 @@
         {% else %}
         class="yellow-line"
         {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
-    <td class="text-left "  >{{invoice.order_no}}</td>
+    <td class="text-left clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails-payment' invoice.id %}"{% else %}data-href="#"{% endif %} >{{invoice.order_no}}</td>
     <td>{{invoice.evaluation.customer.name}}</td>
     <td class="text-center">{{invoice.evaluation.payment_method}}</td>
   
