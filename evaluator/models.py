@@ -252,10 +252,10 @@ class EvaluationDetails(models.Model):
 	updated              = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.id)
+		return str(self.evaluation)
 
 	def __str__(self):
-		return str(self.id)
+		return str(self.evaluation)
 
 #For Multiple Cleaning evaluation details
 class EvaluationBook(models.Model):
@@ -272,17 +272,17 @@ class EvaluationBook(models.Model):
 	discount            = models.FloatField(blank=True,null=True,default=0)
 	total_cost          = models.FloatField(blank=True,null=True)
 	cleaning_hours 		= models.FloatField(blank=True,null=True)
-	evaluator_note		= models.CharField(max_length=500,blank=True,null=True)
+	evaluator_note		= models.CharField(max_length=5000,blank=True,null=True)
 	
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)
 	updated              = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.id)
+		return str(self.evaluation_details)
 
 	def __str__(self):
-		return str(self.id)
+		return str(self.evaluation_details)
 #For Tracking Medias Uploaded by Evaluator on Site
 
 class EvaluationMedia(models.Model):
@@ -358,10 +358,10 @@ class EvaluationBookSection(models.Model):
 		super(EvaluationBookSection, self).save(*args, **kwargs)
 
 	def __unicode__(self):
-		return str(self.id)
+		return str(self.evaluation_book)
 
 	def __str__(self):
-		return str(self.id)	
+		return str(self.evaluation_book)	
 
 
 class EvaluationSectionKeynote(models.Model):
@@ -374,7 +374,7 @@ class EvaluationSectionKeynote(models.Model):
 	created              = models.DateTimeField(auto_now_add=True)
 	updated              = models.DateTimeField(auto_now=True)
 	def __unicode__(self):
-		return str(self.id)
+		return str(self.evaluation_section)
 
 	def __str__(self):
-		return str(self.id)
+		return str(self.evaluation_section)

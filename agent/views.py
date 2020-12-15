@@ -749,83 +749,6 @@ class AgentHome(IsAgent,View):
 
 			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)	
 
-		elif action_mode =='confirm_orderschedule':
-			orderscheduler_id    = request.POST.get('orderscheduler')
-			order_scheduler      = OrderScheduler.objects.get(id=orderscheduler_id)
-			confirm_status       = request.POST.get('confirm')
-
-			confirm_date 	 = request.POST.get('order_schedule_date')
-			confirm_time 	 = request.POST.get('order_schedule_time')
-			start_at         = datetime.strptime(confirm_date+' '+confirm_time,'%d-%m-%Y %I:%M %p')
-			end_at           = start_at + timedelta(hours=order_scheduler.order_scheduler_book.cleaning_hours)
-
-			orderschedule = OrderScheduler.objects.filter(id=orderscheduler_id).first()
-			orderschedule_start_at = orderschedule.start_at.date()
-
-			if confirm_status:
-				OrderScheduler.objects.filter(id=orderscheduler_id).update(status='CONFIRMED',start_at=start_at,end_at=end_at)
-				language = orderschedule.evaluation_details.evaluation.customer.sms_preference
-				address = orderschedule.evaluation_details.address
-				
-				messages.success(request,"Cleaning Date Succesfully Confirmed")
-
-				#date confirmation sms
-				# url = "https://smsapi.future-club.com/fccsms.aspx"
-
-				# if language == 'ENGLISH':
-
-				# 	message = "Dear Customer, We have confirmed your Cleaning Appointment against the Order Number "+ orderschedule.order.order_no +". Bleach's Cleaning Team will be visiting you on "+ str(confirm_date)+" "+ str(confirm_time) +" at "+orderschedule.evaluation_details.address.apartment+","+orderschedule.evaluation_details.address.floor+","+orderschedule.evaluation_details.address.street+","+orderschedule.evaluation_details.address.building+","+orderschedule.evaluation_details.address.avenue+","+orderschedule.evaluation_details.address.block+","+orderschedule.evaluation_details.address.area.name+","+orderschedule.evaluation_details.address.governorate.name+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
-				
-				# 	querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+orderschedule.order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
-
-				# else:
-				# 	message = "عزيزينا العميل تم تأكيد موعد التنظيف بنجاح وذلك للطلب رقم "+ orderschedule.order.order_no +".  سيقوم طاقم العمل بزيارتكم في "+ str(confirm_date)+" "+ str(confirm_time) +" في "+orderschedule.evaluation_details.address.apartment+","+orderschedule.evaluation_details.address.floor+","+orderschedule.evaluation_details.address.street+","+orderschedule.evaluation_details.address.building+","+orderschedule.evaluation_details.address.avenue+","+orderschedule.evaluation_details.address.block+","+orderschedule.evaluation_details.address.area.name+","+orderschedule.evaluation_details.address.governorate.name+". لأي استفسارات يمكنكم التواصل معنا عل 9651882707+ .  شكراً لاختياركم بليتش لخدمات التنظيف"
-					
-				# 	querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+orderschedule.order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
-
-				# headers = {
-				# 	'cache-control': "no-cache"
-				# }
-
-				# response = requests.request("GET", url, headers=headers, params=querystring)
-
-				# print(response.text,"msg")
-				
-				#cleaning date change sms
-				# if start_at.date() != orderschedule_start_at:
-
-				# 	url = "https://smsapi.future-club.com/fccsms.aspx"
-
-				# 	if language == 'ENGLISH':
-
-				# 		message = "Dear Customer, We have changed the date of your Cleaning Appointment against order number "+ orderschedule.order.order_no +" as per your request. Bleach Cleaning Team will be visiting you on "+ str(confirm_date)+" "+ str(confirm_time) +" at "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
-
-				# 		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+orderschedule.order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
-
-				# 	else:
-				# 		message = "عزيزي العميل، لقد قمنا بتغيير تاريخ موعد التنظيف الخاص بك مقابل رقم الطلب "+ orderschedule.order.order_no +" وذلك وفق طلبكم.  سيقوم طاقم العمل بزيارتكم في "+ str(confirm_date)+" "+ str(confirm_time) +" في "+address.apartment+","+address.floor+","+address.street+","+address.building+","+address.avenue+","+address.block+","+address.area.name+","+address.governorate.name+". لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
-					
-				# 		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+orderschedule.order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
-
-				# 	headers = {
-				# 		'cache-control': "no-cache"
-				# 	}
-
-				# 	response = requests.request("GET", url, headers=headers, params=querystring)
-
-				# 	print(message,response,"res")
-					
-				# else:
-				# 	pass
-			else:
-				OrderScheduler.objects.filter(id=orderscheduler_id).update(start_at=start_at,end_at=end_at)
-				messages.success(request,"Cleaning Date Not Confirmed")
-
-			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
-			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
-
-			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
-
 		elif action_mode =='confirm_orderschedules':
 			total_schedules = int(request.POST.get('total_schedules_to_confirm'))
 			for i in range(total_schedules):
@@ -2082,7 +2005,7 @@ class NewEnquiry(IsAgent,View):
 			
 			return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'governorates':governorates,'locations':locations})					
 
-		redirection = request.POST.get('redirect_to')	
+		redirection = request.POST.get('redirect_to')
 
 		if redirection == 'assign_evaluator':
 			return redirect('agent:agent-makeevaluation',enquiry_form_save.id)
@@ -2171,7 +2094,7 @@ class ExistingEnquiry(IsAgent,View):
 					governorates = None
 
 				return render(request,'agent/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,'governorates':governorates})
-
+		
 		if action_mode == 'add_address':
 			address_form = AddressForm(request.POST)
 
@@ -2325,6 +2248,8 @@ class MakeEvaluation(IsAgent,View):
 		else:
 			evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
 			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+
+		existing_user_note = request.POST.get('agent_notes',None)
 
 		#Create New Evaluation
 		new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,call_attender=request.user,customer_id=enquiry_id,quatation_expiry_date=timezone.now()+timedelta(14))
@@ -2550,8 +2475,24 @@ class MakeQuatationPhase1(IsAgent,View):
 		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
 		evaluationbook    = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
 		language = evaluation.customer.sms_preference
+		address = evaluationdetails.address
 
 		messages.success(request,"Quotation Submitted Succesfully")
+
+		#address check for floor,avenue None
+		if address.floor == None and address.avenue == None:
+			address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		elif address.floor == None:
+			address_list = [address.apartment, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+		
+		elif address.avenue == None:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		else:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+
+		separator = ", "
 
 		if evaluation.customer.is_sms == True:
 		
@@ -2560,12 +2501,12 @@ class MakeQuatationPhase1(IsAgent,View):
 			if language == 'ENGLISH':
 				print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
 
-				message = "Dear Customer, Please find the Quotation against the cleaning at "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" here https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+				message = "Dear Customer, Please find the Quotation against the cleaning at "+separator.join(address_list)+" here https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
 
 				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 			
 			else:
-				message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" في هذا الرابط https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". رقم الطلب: "+str(evaluation.evaluation_id)+" الخدمة: "+evaluationbook.service_type.name+" العنوان: "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" السعر: "+ str(evaluation.total_cost) +" KD تاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+				message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+separator.join(address_list)+" https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+"  لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
 
 				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 

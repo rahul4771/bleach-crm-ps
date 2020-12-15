@@ -1341,6 +1341,23 @@ class MakeQuatationPhase1(IsEvaluator,View):
 		language = evaluation.customer.sms_preference
 
 		messages.success(request,"Quotation Submitted Succesfully")	
+		
+		address = evaluationdetails.address
+
+		#address check for floor,avenue None
+		if address.floor == None and address.avenue == None:
+			address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		elif address.floor == None:
+			address_list = [address.apartment, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+		
+		elif address.avenue == None:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		else:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+
+		separator = ", "
 
 		if evaluation.customer.is_sms == True:
 
@@ -1349,12 +1366,12 @@ class MakeQuatationPhase1(IsEvaluator,View):
 			if language == 'ENGLISH':
 				print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
 
-				message = "Dear Customer, Please find the Quotation against the cleaning at "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" here https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+				message = "Dear Customer, Please find the Quotation against the cleaning at "+separator.join(address_list)+" here https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
 
 				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 			
 			else:
-				message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" في هذا الرابط https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". رقم الطلب: "+str(evaluation.evaluation_id)+" الخدمة: "+evaluationbook.service_type.name+" العنوان: "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+evaluationdetails.address.avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+" السعر: "+ str(evaluation.total_cost) +" KD تاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+				message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+separator.join(address_list)+" https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+"  لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
 
 				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 
@@ -2203,17 +2220,24 @@ class MakeQuatationPhase1Edit(IsEvaluator,View):
 		evaluationbook = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
 		language = evaluation.customer.sms_preference
 
-		if evaluationdetails.address.floor == None:
-			address_floor = '-'
-		else:
-			address_floor = evaluationdetails.address.floor
+		messages.success(request,"Quotation Edited Succesfully")
 
-		if evaluationdetails.address.avenue == None:
-			address_avenue = '-'
-		else:
-			address_avenue = evaluationdetails.address.avenue
+		address = evaluationdetails.address
 
-		messages.success(request,"Quotation Edited Succesfully")	
+		#address check for floor,avenue None
+		if address.floor == None and address.avenue == None:
+			address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		elif address.floor == None:
+			address_list = [address.apartment, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+		
+		elif address.avenue == None:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		else:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+
+		separator = ", "	
 
 		if evaluation.customer.is_sms == True:
 
@@ -2221,11 +2245,11 @@ class MakeQuatationPhase1Edit(IsEvaluator,View):
 
 			if evaluation.customer.sms_preference == 'ENGLISH':
 
-				message = "Dear Customer, Please find the Revised Quotation against the order number "+str(evaluation.evaluation_id)+"  here https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" . Order Number : "+ str(evaluation.evaluation_id) +". Service Type(s) : "+ evaluationbook.service_type.name +", Address(s) : "+evaluationdetails.address.apartment+","+address_floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+address_avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+", Cost : "+ str(evaluation.total_cost) +", Due Date : "+ str(evaluation.quatation_expiry_date) +". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+				message = "Dear Customer, Please find the Revised Quotation against the order number "+str(evaluation.evaluation_id)+"  here https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" . Order Number : "+ str(evaluation.evaluation_id) +". Service Type(s) : "+ evaluationbook.service_type.name +", Address(s) : "+separator.join(address_list)+", Cost : "+ str(evaluation.total_cost) +", Due Date : "+ str(evaluation.quatation_expiry_date) +". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
 				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 
 			else:
-				message = "عزيزنا العميل نرجوا الاطلاع على عرض السعر المعدّل للطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" .رقم الطلب: "+ str(evaluation.evaluation_id) +"الخدمة: "+ evaluationbook.service_type.name +"العنوان: "+evaluationdetails.address.apartment+","+address_floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+address_avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+"السعر: "+ str(evaluation.total_cost) +" KDتاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +"لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+				message = "عزيزنا العميل نرجوا الاطلاع على عرض السعر المعدّل للطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" .رقم الطلب: "+ str(evaluation.evaluation_id) +"الخدمة: "+ evaluationbook.service_type.name +"العنوان: "+separator.join(address_list)+"السعر: "+ str(evaluation.total_cost) +" KDتاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +"لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
 				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 
 			headers = {

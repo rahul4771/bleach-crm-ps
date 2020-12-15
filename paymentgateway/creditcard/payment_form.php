@@ -34,7 +34,7 @@
             <input type="hidden" name="merchant_defined_data5" value="<?php echo htmlspecialchars($_GET['merchant_defined_data5']);?>">
             <input type="hidden" name="merchant_defined_data7" value="<?php echo htmlspecialchars($_GET['merchant_defined_data7']);?>">
             <input type="hidden" name="merchant_defined_data20" value="<?php echo htmlspecialchars($_GET['merchant_defined_data20']);?>">
-            <input type="hidden" name="customer_ip_address" value="<?php echo htmlspecialchars($_GET['customer_ip_addresss']);?>">
+            <input type="hidden" name="customer_ip_address" value="<?php echo htmlspecialchars($_GET['customer_ip_address']);?>">
         </div>
     </fieldset>
     <input type="submit" id="submitbtn" name="submitbtn" value="Submit"/>
@@ -44,6 +44,6 @@
 </html>
 
 <script type="text/javascript">
-    document.getElementById('payment_form').submit(); // SUBMIT FORM
+//    document.getElementById('payment_form').submit(); // SUBMIT FORM
 </script>
 
