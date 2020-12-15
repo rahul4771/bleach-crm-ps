@@ -916,6 +916,9 @@ def export_users_xls(request):
 
 	# Sheet header, first row
 	row_num = 0
+	row_num2 = 0
+	row_num3 = 0
+	row_num4 = 0
 
 	font_style = xlwt.XFStyle()
 	font_style.font.bold = True
@@ -1393,9 +1396,9 @@ def export_users_xls(request):
 		columns2 = ['Transaction Date','Order No.','Payment Policy','Invoice No.','Transaction Amount','Payment Method','Receipt No.']
 		
 		for col_num in range(len(columns2)):
-			ws2.write(row_num, col_num, columns2[col_num], font_style)
+			ws2.write(row_num2, col_num, columns2[col_num], font_style)
 
-		payments2 = PaymentHistory.objects.filter(is_active=True,payment_mode='CASH',created__range=(prev_date_start,todate_date_end)).values_list('paid_date','order__order_no','order__evaluation__payment_method','amount_paid','amount_paid','transaction_id', 'payment_mode' , 'receipt_no').order_by('-id')
+		payments2 = PaymentHistory.objects.filter(is_active=True,payment_mode='CASH',created__range=(prev_date_start,todate_date_end)).values_list('paid_date','order__order_no','order__evaluation__payment_method','amount_paid','amount_paid', 'payment_mode' , 'receipt_no').order_by('-id')
 
 		
 		print(payments2,"payss")
@@ -1414,9 +1417,9 @@ def export_users_xls(request):
 		print(rows2,"ross2")
 
 		for row in rows2:
-			row_num += 1
+			row_num2 += 1
 			for col_num in range(len(row)):
-				ws2.write(row_num, col_num, row[col_num], font_style)
+				ws2.write(row_num2, col_num, row[col_num], font_style)
 
 		#CHEQUE sheet
 		ws3 = wb.add_sheet('CHEQUE',cell_overwrite_ok = True)
@@ -1424,7 +1427,7 @@ def export_users_xls(request):
 		columns3 = ['Transaction Date','Order No.','Payment Policy','Invoice No.','Transaction Amount','Cheque Number','Cheque Date','Payment Method','Receipt No.']
 		
 		for col_num in range(len(columns3)):
-			ws3.write(row_num, col_num, columns3[col_num], font_style)
+			ws3.write(row_num3, col_num, columns3[col_num], font_style)
 
 		payments3 = PaymentHistory.objects.filter(is_active=True,payment_mode='CHEQUE',created__range=(prev_date_start,todate_date_end)).values_list('paid_date','order__order_no','order__evaluation__payment_method','amount_paid','amount_paid', 'check_no', 'check_date', 'payment_mode', 'receipt_no').order_by('-id')
 
@@ -1440,9 +1443,9 @@ def export_users_xls(request):
 		rows3 = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows3 ]
 
 		for row in rows3:
-			row_num += 1
+			row_num3 += 1
 			for col_num in range(len(row)):
-				ws3.write(row_num, col_num, row[col_num], font_style)
+				ws3.write(row_num3, col_num, row[col_num], font_style)
 
 		#bank transfer sheet
 		ws4 = wb.add_sheet('BANK TRANSFER',cell_overwrite_ok = True)
@@ -1450,7 +1453,7 @@ def export_users_xls(request):
 		columns4 = ['Transaction Date','Order No.','Payment Policy','Invoice No.','Transaction Amount','Bank Name','IBAN number','Payment Method','Receipt No.']
 		
 		for col_num in range(len(columns4)):
-			ws4.write(row_num, col_num, columns4[col_num], font_style)
+			ws4.write(row_num4, col_num, columns4[col_num], font_style)
 
 		payments4 = PaymentHistory.objects.filter(is_active=True,payment_mode='BANK',created__range=(prev_date_start,todate_date_end)).values_list('paid_date','order__order_no','order__evaluation__payment_method','amount_paid','amount_paid', 'bank_name', 'bank_no', 'payment_mode', 'receipt_no').order_by('-id')
 
@@ -1466,9 +1469,9 @@ def export_users_xls(request):
 		rows4 = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows4 ]
 
 		for row in rows4:
-			row_num += 1
+			row_num4 += 1
 			for col_num in range(len(row)):
-				ws4.write(row_num, col_num, row[col_num], font_style)	
+				ws4.write(row_num4, col_num, row[col_num], font_style)	
 
 	wb.save(response)
 
