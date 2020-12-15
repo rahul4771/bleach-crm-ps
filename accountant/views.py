@@ -818,10 +818,13 @@ class CashCollect(IsAccountant,View):
 			if payment_method == 'CASH':
 				if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount,remining_amount=0) 
+					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date,receipt_no=new_receipt_no)
 				elif payment_policy == 'BEFORE CLEANING':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=amount)
+					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date,receipt_no=new_receipt_no)
 				elif payment_policy == 'AFTER CLEANING':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=amount)
+					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date,receipt_no=new_receipt_no)
 				elif payment_policy == 'PREPAIDSUBSCRIPTION':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount)
 					subscription_id = request.POST.get('subscription')
@@ -830,7 +833,6 @@ class CashCollect(IsAccountant,View):
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount)
 					subscription_id = request.POST.get('subscription')
 					PaymentSubscriptionDetails.objects.filter(id=subscription_id).update(is_paid=True)
-				PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date,receipt_no=new_receipt_no)
 				
 				messages.success(request,"Payment Received thruogh Cash")
 
@@ -840,10 +842,13 @@ class CashCollect(IsAccountant,View):
 
 				if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount,remining_amount=0) 
+					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date,receipt_no=new_receipt_no)
 				elif payment_policy == 'BEFORE CLEANING':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=amount)
+					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date,receipt_no=new_receipt_no)
 				elif payment_policy == 'AFTER CLEANING':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=amount)
+					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date,receipt_no=new_receipt_no)
 				elif payment_policy == 'PREPAIDSUBSCRIPTION':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount)
 					subscription_id = request.POST.get('subscription')
@@ -852,8 +857,6 @@ class CashCollect(IsAccountant,View):
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount)
 					subscription_id = request.POST.get('subscription')
 					PaymentSubscriptionDetails.objects.filter(id=subscription_id).update(is_paid=True)
-
-				PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date,receipt_no=new_receipt_no)
 				
 				messages.success(request,"Payment Received thruogh Cheque")
 
@@ -863,10 +866,13 @@ class CashCollect(IsAccountant,View):
 
 				if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount,remining_amount=0) 
+					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
 				elif payment_policy == 'BEFORE CLEANING':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=amount)
+					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
 				elif payment_policy == 'AFTER CLEANING':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=amount)
+					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
 				elif payment_policy == 'PREPAIDSUBSCRIPTION':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount)
 					subscription_id = request.POST.get('subscription')
@@ -875,12 +881,6 @@ class CashCollect(IsAccountant,View):
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount)
 					subscription_id = request.POST.get('subscription')
 					PaymentSubscriptionDetails.objects.filter(id=subscription_id).update(is_paid=True)
-
-				#save payment history if its a subscription or not
-				if subscription_id:
-					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no,history_payment_subscription__id=subscription_id)
-				else:	
-					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
 
 				messages.success(request,"Payment Received through Bank")
 
