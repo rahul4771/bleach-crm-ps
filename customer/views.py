@@ -211,10 +211,10 @@ class PaymentResponseDebit(View):
 				order.amount_paid      = amount_paid
 				order.remining_amount  = order.remining_amount-amount_paid
 
-			elif payment_mode == 'after_cleaning' and order.preamount_paid != order.evaluation.before_cleaning_amount:
-				order.postamount_paid  = amount_paid
-				order.amount_paid      = amount_paid
-				order.remining_amount  = order.remining_amount-amount_paid
+			elif payment_mode == 'after_cleaning' and order.postamount_paid != order.evaluation.after_cleaning_amount:
+				order.postamount_paid   = amount_paid
+				order.amount_paid      += amount_paid
+				order.remining_amount   = order.remining_amount-amount_paid
 
 				order.payment_status         = 'COMPLETED'
 				order.payment_completed_date = timezone.now()
