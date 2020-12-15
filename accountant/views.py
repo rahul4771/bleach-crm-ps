@@ -949,6 +949,13 @@ def export_users_xls(request):
 			if order[1] not in found:
 				rows.append(order)
 			found.add(order[1])
+
+		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+	
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
 	
 	
 	if report_type == 'totalsales':
@@ -985,6 +992,13 @@ def export_users_xls(request):
 				order = tuple(order_list)
 				rows.append(order)
 			found.add(order[2])
+
+		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+	
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
 
 	
 	
@@ -1025,6 +1039,13 @@ def export_users_xls(request):
 
 		print(rows,"lol")
 
+		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+	
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
+
 
 	if report_type == 'rejectedjobs':
 
@@ -1060,6 +1081,13 @@ def export_users_xls(request):
 				order = tuple(order_list)
 				rows.append(order)
 			found.add(order[2])
+
+		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+	
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
 	
 	if report_type == 'onetime':
 
@@ -1138,6 +1166,13 @@ def export_users_xls(request):
 					pass
 
 			found.add(order[2])
+
+		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+	
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
 	
 	if report_type == 'subscription':
 
@@ -1210,6 +1245,13 @@ def export_users_xls(request):
 					pass
 	
 			found.add(order[2])
+
+		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+	
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
 	
 	if report_type == 'customer':
 
@@ -1241,6 +1283,13 @@ def export_users_xls(request):
 			if order[2] not in found:
 				rows.append(order)
 			found.add(order[2])
+
+		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+	
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
 	
 	if report_type == 'customeroutstanding':
 
@@ -1293,6 +1342,13 @@ def export_users_xls(request):
 
 			found.add(order[2])
 
+		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+	
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
+
 
 	if report_type == 'transactionhistory':
 		response = HttpResponse(content_type='application/ms-excel')
@@ -1301,7 +1357,7 @@ def export_users_xls(request):
 		wb = xlwt.Workbook(encoding='utf-8')
 		
 		#online
-		ws = wb.add_sheet('ONLINE')
+		ws = wb.add_sheet('ONLINE',cell_overwrite_ok = True)
 	
 		columns = ['Transaction Date','Order No.','Payment Policy','Invoice No.','Transaction Amount',
 		'Transaction ID','Payment Method','Receipt No.']
@@ -1313,7 +1369,7 @@ def export_users_xls(request):
 		# Sheet body, remaining rows
 		font_style = xlwt.XFStyle()
 
-		payments = PaymentHistory.objects.filter(is_active=True,payment_mode='ONLINECREDIT',created__range=(prev_date_start,todate_date_end)).values_list('paid_date','order__order_no','order__evaluation__payment_method','amount_paid','amount_paid','transaction_id', 'payment_gateway' , 'receipt_no').order_by('-id')
+		payments = PaymentHistory.objects.filter(is_active=True,payment_mode='ONLINECREDIT',created__range=(prev_date_start,todate_date_end)).values_list('paid_date','order__order_no','order__evaluation__payment_method','amount_paid','amount_paid','transaction_id', 'payment_gateway', 'receipt_no').order_by('-id')
 
 		rows = []
 
@@ -1324,8 +1380,15 @@ def export_users_xls(request):
 			pay = tuple(pay_list)
 			rows.append(pay)
 
+		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+	
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
+
 		#cash sheet
-		ws2 = wb.add_sheet('CASH')
+		ws2 = wb.add_sheet('CASH',cell_overwrite_ok = True)
 	
 		columns2 = ['Transaction Date','Order No.','Payment Policy','Invoice No.','Transaction Amount','Payment Method','Receipt No.']
 		
@@ -1356,7 +1419,7 @@ def export_users_xls(request):
 				ws2.write(row_num, col_num, row[col_num], font_style)
 
 		#CHEQUE sheet
-		ws3 = wb.add_sheet('CHEQUE')
+		ws3 = wb.add_sheet('CHEQUE',cell_overwrite_ok = True)
 	
 		columns3 = ['Transaction Date','Order No.','Payment Policy','Invoice No.','Transaction Amount','Cheque Number','Cheque Date','Payment Method','Receipt No.']
 		
@@ -1382,7 +1445,7 @@ def export_users_xls(request):
 				ws3.write(row_num, col_num, row[col_num], font_style)
 
 		#bank transfer sheet
-		ws4 = wb.add_sheet('BANK TRANSFER')
+		ws4 = wb.add_sheet('BANK TRANSFER',cell_overwrite_ok = True)
 	
 		columns4 = ['Transaction Date','Order No.','Payment Policy','Invoice No.','Transaction Amount','Bank Name','IBAN number','Payment Method','Receipt No.']
 		
@@ -1405,15 +1468,7 @@ def export_users_xls(request):
 		for row in rows4:
 			row_num += 1
 			for col_num in range(len(row)):
-				ws4.write(row_num, col_num, row[col_num], font_style)
-
-	#common row adding for all types
-	rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
-	
-	for row in rows:
-		row_num += 1
-		for col_num in range(len(row)):
-			ws.write(row_num, col_num, row[col_num], font_style)	
+				ws4.write(row_num, col_num, row[col_num], font_style)	
 
 	wb.save(response)
 
