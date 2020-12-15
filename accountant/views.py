@@ -441,6 +441,8 @@ class PaymentEdit(IsAccountant,View):
 
 		#for delete previous subscription
 		evaluation      = Evaluation.objects.get(id=evaluation_id)
+		order			= Order.objects.get(evaluation_id=evaluation_id)
+
 		if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
 			OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
 			PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
@@ -480,7 +482,7 @@ class PaymentEdit(IsAccountant,View):
 		
 		messages.success(request,"Payment Policy Edited Succesfully")
 
-		return redirect('accountant:accountantdash-board')
+		return redirect('accountant:accountant-client-orderdetails',order.id)
 
 class OrderDetails(IsAccountant,View):
 	def get(self,request):
