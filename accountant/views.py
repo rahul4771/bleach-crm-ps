@@ -962,7 +962,7 @@ def export_users_xls(request):
 		# columns = ['Order Date', 'Order Number', 'Client Name', 'Payment Policy', 'Payment Mode', 'Total Amount', 'Paid', 'Balance' ]
 
 		columns = ['Date','Customer Name','Quotation No.','Salesman','Type of Contract','Type of location',
-		'Invoice No.','Job Status','Payment Policy','Gross Amount','Discount','Net Amount','Paid Amount','Transaction ID',
+		'Invoice No.','Job Status','Payment Policy','Gross Amount','Discount','Net Amount','Paid Amount',
 		'Payment Type','Date of Payment','Balance to Collect']
 		
 		for col_num in range(len(columns)):
@@ -971,7 +971,7 @@ def export_users_xls(request):
 		# Sheet body, remaining rows
 		font_style = xlwt.XFStyle()
 
-		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status'),payment_type=Concat('history_order__payment_mode',Value(' '),'history_order__payment_gateway')).values_list('created','evaluation__customer__name','order_no','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no' , 'job_status', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost','amount_paid','history_order__transaction_id','payment_type','history_order__paid_date','remining_amount').order_by('-id')
+		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status'),payment_type=Concat('history_order__payment_mode',Value(' '),'history_order__payment_gateway')).values_list('created','evaluation__customer__name','order_no','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no' , 'job_status', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost','amount_paid','payment_type','history_order__paid_date','remining_amount').order_by('-id')
 	
 		#removing duplicates
 		found = set()
@@ -1294,12 +1294,125 @@ def export_users_xls(request):
 			found.add(order[2])
 
 
+	if report_type == 'transactionhistory':
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="CUSTOMER_OUTSTANDING_'+from_date+'_'+to_date+'.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		#online
+		ws = wb.add_sheet('ONLINE')
+	
+		columns = ['Transaction Date','Order No.','Payment Policy','Invoice No.','Transaction Amount',
+		'Transaction ID','Payment Method','Receipt No.']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+
+		# Sheet body, remaining rows
+		font_style = xlwt.XFStyle()
+
+		payments = PaymentHistory.objects.filter(is_active=True,payment_mode='ONLINECREDIT',created__range=(prev_date_start,todate_date_end)).values_list('paid_date','order__order_no','order__evaluation__payment_method','amount_paid','amount_paid','transaction_id', 'payment_gateway' , 'receipt_no').order_by('-id')
+
+		rows = []
+
+		for pay in payments:
+			pay_list = list(pay)
+
+			pay_list[3] = pay_list[1][9:]
+			pay = tuple(pay_list)
+			rows.append(pay)
+
+		#cash sheet
+		ws2 = wb.add_sheet('CASH')
+	
+		columns2 = ['Transaction Date','Order No.','Payment Policy','Invoice No.','Transaction Amount','Payment Method','Receipt No.']
+		
+		for col_num in range(len(columns2)):
+			ws2.write(row_num, col_num, columns2[col_num], font_style)
+
+		payments2 = PaymentHistory.objects.filter(is_active=True,payment_mode='CASH',created__range=(prev_date_start,todate_date_end)).values_list('paid_date','order__order_no','order__evaluation__payment_method','amount_paid','amount_paid','transaction_id', 'payment_mode' , 'receipt_no').order_by('-id')
+
+		
+		print(payments2,"payss")
+
+		rows2 = []
+
+		for pay in payments2:
+			pay_list = list(pay)
+
+			pay_list[3] = pay_list[1][9:]
+			pay = tuple(pay_list)
+			rows2.append(pay)
+
+		rows2 = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows2 ]
+
+		print(rows2,"ross2")
+
+		for row in rows2:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws2.write(row_num, col_num, row[col_num], font_style)
+
+		#CHEQUE sheet
+		ws3 = wb.add_sheet('CHEQUE')
+	
+		columns3 = ['Transaction Date','Order No.','Payment Policy','Invoice No.','Transaction Amount','Cheque Number','Cheque Date','Payment Method','Receipt No.']
+		
+		for col_num in range(len(columns3)):
+			ws3.write(row_num, col_num, columns3[col_num], font_style)
+
+		payments3 = PaymentHistory.objects.filter(is_active=True,payment_mode='CHEQUE',created__range=(prev_date_start,todate_date_end)).values_list('paid_date','order__order_no','order__evaluation__payment_method','amount_paid','amount_paid', 'check_no', 'check_date', 'payment_mode', 'receipt_no').order_by('-id')
+
+		rows3 = []
+
+		for pay in payments3:
+			pay_list = list(pay)
+
+			pay_list[3] = pay_list[1][9:]
+			pay = tuple(pay_list)
+			rows3.append(pay)
+
+		rows3 = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows3 ]
+
+		for row in rows3:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws3.write(row_num, col_num, row[col_num], font_style)
+
+		#bank transfer sheet
+		ws4 = wb.add_sheet('BANK TRANSFER')
+	
+		columns4 = ['Transaction Date','Order No.','Payment Policy','Invoice No.','Transaction Amount','Bank Name','IBAN number','Payment Method','Receipt No.']
+		
+		for col_num in range(len(columns4)):
+			ws4.write(row_num, col_num, columns4[col_num], font_style)
+
+		payments4 = PaymentHistory.objects.filter(is_active=True,payment_mode='BANK',created__range=(prev_date_start,todate_date_end)).values_list('paid_date','order__order_no','order__evaluation__payment_method','amount_paid','amount_paid', 'bank_name', 'bank_no', 'payment_mode', 'receipt_no').order_by('-id')
+
+		rows4 = []
+
+		for pay in payments4:
+			pay_list = list(pay)
+
+			pay_list[3] = pay_list[1][9:]
+			pay = tuple(pay_list)
+			rows4.append(pay)
+
+		rows4 = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows4 ]
+
+		for row in rows4:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws4.write(row_num, col_num, row[col_num], font_style)
+
+	#common row adding for all types
 	rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
 	
 	for row in rows:
 		row_num += 1
 		for col_num in range(len(row)):
-			ws.write(row_num, col_num, row[col_num], font_style)
+			ws.write(row_num, col_num, row[col_num], font_style)	
 
 	wb.save(response)
 
