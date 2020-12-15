@@ -107,7 +107,7 @@
     
     {% if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount %}
     <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
-    <td data-label="BLC Number" class="bold-text">{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="BLC Number" class="bold-text clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
     <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
     <td data-label="Service Type(s)">
     {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
@@ -135,7 +135,7 @@
 
     {% if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount %}
     <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
-    <td data-label="BLC Number" class="bold-text">{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="BLC Number" class="bold-text clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
     <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
     <td data-label="Service Type(s)">
     {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
@@ -159,7 +159,7 @@
 
     {% elif invoice.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' %}
     <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
-    <td data-label="BLC Number" class="bold-text">{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="BLC Number" class="bold-text clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
     <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
     <td data-label="Service Type(s)">
     {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
@@ -187,7 +187,7 @@
     
     {% elif invoice.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' %}
     <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
-    <td data-label="BLC Number" class="bold-text">{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="BLC Number" class="bold-text clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
     <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
     <td data-label="Service Type(s)">
     {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
