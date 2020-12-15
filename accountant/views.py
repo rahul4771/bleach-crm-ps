@@ -403,7 +403,103 @@ class ClientOrderDetails(IsAccountant,View):
 				
 		return render(request,"accountant/client/order-page.html",{"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count})
 
+class ClientOrderDetailsPaymentEdit(IsAccountant,View):
+	def get(self,request,order_id):
 
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationmedia'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection'),Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_team_members')),to_attr='cleaning_team'),Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('followup_investigation',queryset = FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules')),to_attr='followups')),to_attr='investigations')),to_attr='orderschedules'),Prefetch('feed_backs_order',FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks')).get(is_active=True,id=order_id)
+			
+
+		try:
+			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=order.evaluation.customer_id)
+		except:
+			client_details = None
+
+		#orders count
+		orders = Order.objects.filter(is_active=True,evaluation__customer_id=order.evaluation.customer_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()
+					
+				
+		return render(request,"accountant/payment/order-page.html",{"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count})
+
+class PaymentEdit(IsAccountant,View):
+
+	def get(self,request,enquiry_id,evaluation_id):
+		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
+		
+		try:
+			evaluation = Evaluation.objects.get(id=evaluation_id)
+		except:
+			evaluation = None		
+	
+		try:
+			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation)
+		except:
+			evaluation_details = None
+
+		#allow submition	
+		evaluation_details_count         = evaluation_details.count()
+		evaluation_details_completed_count= evaluation_details.filter(status='EVALUATED').count()
+		if evaluation_details_count==evaluation_details_completed_count:
+			allow_submit = True
+		else:
+			allow_submit = False	
+
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()				
+
+		return render(request,'accountant/payment/payment_edit.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,})	
+
+	def post(self,request,enquiry_id,evaluation_id):
+		
+		payment_method 			= request.POST.get('payment_method')
+		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
+		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
+
+		#for delete previous subscription
+		evaluation      = Evaluation.objects.get(id=evaluation_id)
+		if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
+			OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
+			PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
+
+		#update payment method
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+
+		#update payment subscription if it is subscription
+		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
+			order           = Order.objects.get(evaluation_id=evaluation_id)
+			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id)
+
+			#create subscription model
+			cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
+			count=0
+			for month in cleaning_months:
+				count += 1
+				if len(cleaning_months) == count:
+					amount = evaluation.total_cost-round((evaluation.total_cost/len(cleaning_months)*(count-1)),3)			
+					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=amount,monthyear=(str(month[0])+'-'+str(month[1])) )
+				else:
+					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=round(evaluation.total_cost/len(cleaning_months),3),monthyear=(str(month[0])+'-'+str(month[1])) )			
+	
+				#update orderschedules
+				for schedule in order_schedules:
+					if payment_method == 'POSTPAIDSUBSCRIPTION':
+						if schedule.start_at.date().month-1 == month[0]:
+							schedule.payment_subscription = subscription
+							schedule.save()
+						elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
+							schedule.payment_subscription = subscription
+							schedule.save()
+					else:
+						if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
+							schedule.payment_subscription = subscription
+							schedule.save()
+		
+		messages.success(request,"Payment Policy Edited Succesfully")
+
+		return redirect('accountant:accountantdash-board')
 
 class OrderDetails(IsAccountant,View):
 	def get(self,request):

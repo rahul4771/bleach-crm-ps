@@ -11,6 +11,10 @@ urlpatterns = [
 	url(r'^client/orders/(?P<client_id>[-\w]+)$',views.ClientOrders.as_view(),name='accountant-client-orders'),
 	url(r'^client/order/details/(?P<order_id>[-\w]+)$',views.ClientOrderDetails.as_view(),name='accountant-client-orderdetails'),
 
+	url(r'^client/order/details/payment/(?P<order_id>[-\w]+)$',views.ClientOrderDetailsPaymentEdit.as_view(),name='accountant-client-orderdetails-payment'),
+
+	url(r'^payment-policy/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.PaymentEdit.as_view(),name='accountant-payment-edit'),
+
 	url(r'^cash/collect/$',views.CashCollect.as_view(),name='accountant-cashcollect'),
 
 	url(r'^export/xls/$', views.export_users_xls, name='export_payment_xls'),
