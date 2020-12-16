@@ -94,67 +94,44 @@
      <input name="filter" type="button" value="Filter" id="filter" class="blue-button arrow"> 
      
      <div class="menu-filter ltgreen-border" style="display:none;"><!--menu-filter ltgreen-border-->
-
       <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-        <div class="ticket-form-left"><!--ticket-form-left-->
-                <div class=" bold-text common-label"> <label>From Date</label></div>
-              <input type="text" name="from_date" id="payment_fromdate" class="date_pick textBox" onchange="paymentfromtodatecheck();" placeholder="Select From Date" value="{{fromdate|date:'d-m-Y'}}" required readonly>
-        </div><!--ticket-form-left-->
-        <div class="ticket-form-right"><!--ticket-form-right-->
-                <div class=" bold-text common-label"> <label>To Date</label></div>
-                      <input type="text" name="to_date" id="payment_todate" class="date_pick textBox" onchange="paymentfromtodatecheck();" placeholder="Select To Date" value="{{todate|date:'d-m-Y'}}" required readonly>
-        </div><!--ticket-form-right-->
-      </div><!--ticket-wrapper-row ticket-forms-boxes-->
-      <hr class="hr-dashedpad"> 
-      <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-        <div class="ticket-form-left"><!--ticket-form-left-->
-                <div class=" bold-text common-label"> <label>Cleaning Policy</label></div>
-              <label for="favcity">
-                      <select name="cleaning_policy_filter" id="cleaning_policy_filter_id">
-                      <option value=''>---ALL---</option>
-                      <option value="ONE TIME SERVICE" {% if fil_cleaning_policy == 'ONE TIME SERVICE' %}selected{%endif%}>ONE TIME SERVICE</option>
-                      <option value="SUBSCRIPTION" {% if fil_cleaning_policy == 'SUBSCRIPTION' %}selected{%endif%}>SUBSCRIPTION</option>                
-                    </select>
-                      </label>
-        </div><!--ticket-form-left-->
-        <div class="ticket-form-right"><!--ticket-form-right-->
-                <div class=" bold-text common-label"> <label>Cleaning Status</label></div>
-                      <label for="favcity">
-                      <select name="status_filter" id="status_filter_id">
-                      <option value=''>---ALL---</option>
-                      <option value="APPROVED_BY_CLIENT" {% if fil_status == 'APPROVED_BY_CLIENT' %}selected{% endif %}>APPROVED</option>
-                      <option value="ORDER_IN_PROGRESS" {% if fil_status == 'ORDER_IN_PROGRESS' %}selected{% endif %}>CLEANING IN PROGRESS</option>
-                      <option value="ORDER_CLOSED" {% if fil_status == 'ORDER_CLOSED' %}selected{% endif %}>CLEANING CLOSED</option>              
-                    </select>
-                      </label>
-        </div><!--ticket-form-right-->
+  <div class="ticket-form-left"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Order Status</label></div>
+                <label for="favcity">
+                <select name="status_filter" id="status_filter_id">
+                <option value=''>---ALL---</option>
+                <option value="ORDER_CLOSED" {% if fil_order_status == 'ORDER_CLOSED' %}selected{% endif %}>COMPLETED</option>
+                <option value="APPROVED_BY_CLIENT" {% if fil_order_status == 'APPROVED_BY_CLIENT' %}selected{% endif %}>NOT STARTED</option>
+                <option value="ORDER_IN_PROGRESS" {% if fil_order_status == 'ORDER_IN_PROGRESS' %}selected{% endif %}>IN PROGRESS</option>              
+              </select>
+                </label>
+  </div><!--ticket-form-right-->
       </div><!--ticket-wrapper-row ticket-forms-boxes--> 
       <hr class="hr-dashedpad"> 
-      <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-        <div class="ticket-form-left"><!--ticket-form-left-->
-                <div class=" bold-text common-label"> <label>Service Type</label></div>
-              <label for="favcity">
-                      <select name="service_type_filter" id="service_type_filter_id">
-                      <option value=''>---ALL---</option>
-                      {% for service_type in service_types %}
-                      <option value="{{service_type.id}}" {% if service_type.id == fil_service_type %}selected{% endif %}>{{service_type.name}}</option>
-                      {% endfor %}                
-                    </select>
-                      </label>
-        </div><!--ticket-form-left-->
-        <div class="ticket-form-right"><!--ticket-form-right-->
-                <div class=" bold-text common-label"> <label>Payment Policy</label></div>
-                      <label for="favcity">
-                      <select name="payment_policy" id="payment_policy_id">
-                      <option value=''>---ALL---</option> 
-                      
-                      <option value='PREPAID' {% if fil_payment_policy == 'PREPAID' %}selected{% endif %}>PREPAID</option>
-                      <option value='POSTPAID' {% if fil_payment_policy == 'POSTPAID' %}selected{% endif %}>POSTPAID</option>
-                      <option value='BREAKDOWN' {% if fil_payment_policy == 'BREAKDOWN' %}selected{% endif %}>BREAKDOWN</option>
-                                
-                    </select>
-                      </label>
-        </div><!--ticket-form-right-->
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+<div class="ticket-form-right"><!--ticket-form-left-->
+      <div class=" bold-text common-label"> <label>Payment Status</label></div>
+    <label for="favcity">
+            <select name="payment_status_filter" id="payment_status_filter_id">
+            <option value=''>---ALL---</option>
+            <option value="PENDING" {% if fil_payment_status == 'PENDING' %}selected{% endif %}>PENDING</option>
+            <option value="COMPLETED" {% if fil_payment_status == 'COMPLETED' %}selected{% endif %}>PAID</option>                
+          </select>
+            </label>
+</div><!--ticket-form-left-->
+<div class="ticket-form-left"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Payment Policy</label></div>
+                <label for="favcity">
+                <select name="payment_policy" id="payment_policy_id">
+                <option value=''>---ALL---</option> 
+                
+                <option value='PREPAID' {% if fil_payment_policy == 'PREPAID' %}selected{% endif %}>PREPAID</option>
+                <option value='POSTPAID' {% if fil_payment_policy == 'POSTPAID' %}selected{% endif %}>POSTPAID</option>
+                <option value='BREAKDOWN' {% if fil_payment_policy == 'BREAKDOWN' %}selected{% endif %}>BREAKDOWN</option>
+                           
+              </select>
+                </label>
+</div><!--ticket-form-right-->
       </div><!--ticket-wrapper-row ticket-forms-boxes--> 
       <div align="center"> <input class="assignButton" name="assing" type="button" onclick="set_params_go();" value="Submit"> <input class="cancel-Button close-btn arrow-close" name="cancel" type="button" value="Reset"></div>
 
@@ -205,43 +182,34 @@
         {% else %}
         class="yellow-line"
         {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
-    <td class="text-left" >{{invoice.order_no}}</td>
+    <td class="text-left"  >{{invoice.order_no}}</td>
     <td>{{invoice.evaluation.customer.name}}</td>
     <td class="text-center">{{invoice.evaluation.payment_method}}</td>
-  
-    {% comment %} <td>
-    {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
-    {{evaluation_details.address.area.name}}<br>
-    {% endfor %}
     </td>
-    <td>{{invoice.evaluation.customer.mobile_number}}</td> {% endcomment %}
     <td class="text-right">{{invoice.total_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
     <td class="text-right">{{invoice.amount_paid|default_if_none:'0.00'|floatformat:'3'}}</td>
     <td class="text-right">{{invoice.remining_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
-    
+    <td class="text-center">
     {% for inv in invoice.paymenthistory|slice:":1" %}
-    
     {% if inv.payment_mode == 'ONLINECREDIT' %}
-      <td class="text-center">{{inv.payment_gateway|default_if_none:'-'}}</td>
+    {{inv.payment_gateway|default_if_none:'-'}},
     {% else %}
-      <td class="text-center">{{inv.payment_mode}}</td>
+    {{inv.payment_mode|default_if_none:'-'}},
     {% endif %}
-
     {% empty %}
-    <td class="text-center">-</td>
+    -
     {% endfor %}
-
-{% comment %} {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %} {% endcomment %}
-    <td class="clickable-row" {% if invoice %}data-href="{% url 'bleach_admin:admin-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
-    {% for inv in invoice.orderschedules|slice:":1" %}
-        {% if inv.work_status == 'CLEANING_TEAM_ASSIGNED' %}
-        <span class="text-center blue-bg clickable-row">CLEANING TEAM ASSIGNED</span>
-        {% elif inv.work_status == 'CLEANING_FULFILLED' %}
-        <span class="text-center green-bg clickable-row" >CLEANING COMPLETED</span>
-        {% else %}
+    </td>
+    <td class="clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
+        {% if invoice.order_status == 'APPROVED_BY_CLIENT' %}
+        <span class="text-center blue-bg clickable-row">Not Started</span>
+        {% elif invoice.order_status == 'ORDER_IN_PROGRESS' %}
         <span class="text-center yellow-bg clickable-row">IN PROGRESS</span>
+        {% elif invoice.order_status == 'ORDER_CLOSED' %}
+        <span class="text-center green-bg clickable-row" >COMPLETED</span>
+        {% elif invoice.order_status == 'ORDER_CANCELLED' %}
+        <span class="text-center red-bg clickable-row" >CANCELLED</span>
         {% endif %}
-        {% endfor %}
         </td>
     </tr>
     {% empty %}
@@ -250,7 +218,6 @@
 
 </tbody>
 <tfoot>
- 
 </tfoot>
 </table>
 
@@ -470,8 +437,7 @@ function paymentfromtodatecheck() {
 function set_params_go(args)
 {
 var url='{% url 'bleach_admin:admin-payments' %}';
-var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val(),
-fromdate:$('#payment_fromdate').val(),todate:$('#payment_todate').val()
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),status:$('#status_filter_id').val(),payment_policy:$('#payment_policy_id').val(),payment_status:$('#payment_status_filter_id').val()
 };
 for(key in args) 
     params[key]=args[key];

@@ -170,9 +170,8 @@ class AccountantHome(IsAccountant,View):
 		except:
 			invoices         = None
 
-
+		#Payment Details
 		payment_history = PaymentHistory.objects.filter(is_active=True)
-
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)		
 		this_week_sales = payment_history.filter(paid_date__gte=count_today_start-timedelta(7)).aggregate(total=Sum('amount_paid'))['total']
 		last_week_sales = payment_history.filter(paid_date__gte=count_today_start-timedelta(14),paid_date__lte=count_today_start-timedelta(7)).aggregate(total=Sum('amount_paid'))['total']		
@@ -187,6 +186,15 @@ class AccountantHome(IsAccountant,View):
 		prvquarter_start_date= month_start_date-relativedelta(months=5)
 		this_quarter_sales=payment_history.filter(paid_date__gte=quarter_start_date,paid_date__lt=nxtmonth_start_date).aggregate(total=Sum('amount_paid'))['total']
 		last_quarter_sales=payment_history.filter(paid_date__gte=prvquarter_start_date,paid_date__lt=quarter_start_date).aggregate(total=Sum('amount_paid'))['total']	
+
+		#Pending Payment and Order Count	
+		if invoices:
+			total_pending_amount = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).aggregate(total=Sum(F('remining_amount')))['total']		
+			total_pending_orders = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).count()
+		else:
+			total_pending_amount = 0
+			total_pending_orders = 0
+
 		
 		#Pending Payments
 		pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).order_by('start_at'),to_attr='orderschedules'),Prefetch('ordersubscription',queryset=PaymentSubscriptionDetails.objects.filter(is_paid=False,is_active=True),to_attr='subscriptions')).annotate(Count('order_scheduler_order'))
@@ -241,13 +249,6 @@ class AccountantHome(IsAccountant,View):
 					else:
 						payment.delaydays   = ((timezone.now().replace(hour=0,minute=0,second=0,microsecond=0))-(timezone.now().replace(day=1,month=month,year=year,hour=0,minute=0,second=0,microsecond=0))).days	
 
-		#Pending Payment and Order Count	
-		if pending_payments:
-			total_pending_amount = pending_payments.aggregate(total=Sum(F('remining_amount')))['total']		
-			total_pending_orders = pending_payments.count()
-		else:
-			total_pending_amount = 0
-			total_pending_orders = 0
 
 		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders})
 
@@ -638,52 +639,24 @@ class PaymentDetails(IsAccountant,View):
 		except:
 			service_types =	None
 
-		#date filter
-		fromdate = request.GET.get('fromdate',None)
-		todate = request.GET.get('todate',None)
-
-		if fromdate != None and todate != None:
-			prevdate = datetime.strptime(fromdate, '%d-%m-%Y')
-			todate = datetime.strptime(todate, '%d-%m-%Y')
-
-			prev_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
-			prev_date_end = prevdate+timedelta(1)
-			todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
-			todate_date_end = todate+timedelta(1)
-			print(prev_date_start,"pds")
-		elif fromdate != None and todate == None:
-			prevdate = datetime.strptime(fromdate, '%d-%m-%Y')
-			prev_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
-			todate_date_end = None
-			todate_date_start = None
-		elif fromdate == None and todate != None:
-			todate = datetime.strptime(todate, '%d-%m-%Y')
-			todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
-			todate_date_end = todate+timedelta(1)
-			prev_date_start  = None
-		else:
-			prev_date_start = None
-			todate_date_end = None
-			todate_date_start = None
-
 		#Evaluation Details
 		search                  = request.GET.get('search')
 		
 		#sales amount
 		if search:
 			try:
-				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED').filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
+				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
 			except:
 				invoices         = None
 		else:
 			try:
-				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
+				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
 			except:
 				invoices         = None
 				
 		#Pending Payments
 		try:
-			pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(evaluation__quatation_status='APPROVED')&Q(order_status='APPROVED_BY_CLIENT'))
+			pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD')))
 		except:
 			pending_payments = None
 
@@ -697,70 +670,28 @@ class PaymentDetails(IsAccountant,View):
 
 		#Prefetch filters
 
-		fil_cleaning_policy       	= request.GET.get('cleaning_policy')
+		fil_order_status			= request.GET.get('status')
 
-		fil_cleaning_status			= request.GET.get('status',None)
+		fil_payment_status       	= request.GET.get('payment_status')
 
-		fil_payment_policy			= request.GET.get('payment_policy',None)
+		fil_payment_policy			= request.GET.get('payment_policy')
 
 		filters =[]
 		if fil_payment_policy:
 			case1 = Q(evaluation__payment_method=fil_payment_policy)
 			filters.append(case1)
 
-		if fil_cleaning_status:
-			case2       = Q(order_status=fil_cleaning_status)
+		if fil_payment_status:
+			case2       = Q(payment_status=fil_payment_status)
 			filters.append(case2)
 
-		if prev_date_start and todate_date_end:
-			case3       = Q(created__range=(prev_date_start,todate_date_end))
+		if fil_order_status:
+			case3       = Q(order_status=fil_order_status)
 			filters.append(case3)
 
-		if fil_payment_policy or fil_cleaning_status or fromdate or todate:
+		if fil_payment_policy or fil_payment_status or fil_order_status:
 			filters=functools.reduce(operator.and_,filters)
 			invoices = invoices.filter(filters)
-			
-
-		try:
-			fil_service_type      = int(request.GET.get('service_type'))
-		except:
-			fil_service_type      = None
-
-		
-		evaluation_book_filter       	= []
-		count_evaluation_book_filter = []
-
-		if fil_cleaning_policy:
-			case1       = Q(cleaning_policy=fil_cleaning_policy)
-			count_case1 = Q(evaluation__evaluation_details__evaluation_book_evaluation_details__cleaning_policy=fil_cleaning_policy)
-			evaluation_book_filter.append(case1)
-			count_evaluation_book_filter.append(count_case1)
-
-		if fil_service_type:     
-			case2       = Q(service_type_id=fil_service_type)
-			count_case2 = Q(evaluation__evaluation_details__evaluation_book_evaluation_details__service_type_id=fil_service_type)
-			evaluation_book_filter.append(case2) 
-			count_evaluation_book_filter.append(count_case2)             
-
-		if fil_cleaning_policy or fil_service_type:
-			evaluation_book_prefetch_filter              = functools.reduce(operator.and_,evaluation_book_filter)
-			count_evaluation_book_prefetch_filter        = functools.reduce(operator.and_,count_evaluation_book_filter)
-		
-		else:
-			evaluation_book_prefetch_filter              = None	
-			count_evaluation_book_prefetch_filter        = None
-
-		
-		#Apply prefetch filter
-
-		if evaluation_book_prefetch_filter :
-			invoices = invoices.select_related('evaluation').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)		 
-			print(invoices,"book only")
-			
-
-		else:
-			invoices = invoices.select_related('evaluation').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))		
-			print("not at all")
 
 		
 		#PAGINATION INVOICE		
@@ -791,7 +722,7 @@ class PaymentDetails(IsAccountant,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(invoices.end_index())-(invoices.start_index())+1
 
-		return render(request,'accountant/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"service_types":service_types,"fil_cleaning_policy":fil_cleaning_policy,"fil_service_type":fil_service_type,"fil_status":fil_cleaning_status,"fil_payment_policy":fil_payment_policy,"fromdate":prev_date_start,"todate":todate_date_start})
+		return render(request,'accountant/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status})
 
 class CashCollect(IsAccountant,View):
 	def get(self,request):
