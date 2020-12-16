@@ -906,34 +906,6 @@ class PaymentDetails(IsAdmin,View):
 		
 		#Evaluation Details
 		search                  = request.GET.get('search')
-
-		#date filter
-		fromdate = request.GET.get('fromdate',None)
-		todate = request.GET.get('todate',None)
-
-		if fromdate != None and todate != None:
-			prevdate = datetime.strptime(fromdate, '%d-%m-%Y')
-			todate = datetime.strptime(todate, '%d-%m-%Y')
-
-			prev_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
-			prev_date_end = prevdate+timedelta(1)
-			todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
-			todate_date_end = todate+timedelta(1)
-			print(prev_date_start,"pds")
-		elif fromdate != None and todate == None:
-			prevdate = datetime.strptime(fromdate, '%d-%m-%Y')
-			prev_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
-			todate_date_end = None
-			todate_date_start = None
-		elif fromdate == None and todate != None:
-			todate = datetime.strptime(todate, '%d-%m-%Y')
-			todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
-			todate_date_end = todate+timedelta(1)
-			prev_date_start  = None
-		else:
-			prev_date_start = None
-			todate_date_end = None
-			todate_date_start = None
 		
 		#sales amount
 		if search:
@@ -982,11 +954,7 @@ class PaymentDetails(IsAdmin,View):
 			case3       = Q(order_status=fil_order_status)
 			filters.append(case3)
 
-		if prev_date_start and todate_date_end:
-			case4       = Q(created__range=(prev_date_start,todate_date_end))
-			filters.append(case4)
-
-		if fil_payment_policy or fil_payment_status or fil_order_status or fromdate or todate:
+		if fil_payment_policy or fil_payment_status or fil_order_status:
 			filters=functools.reduce(operator.and_,filters)
 			invoices = invoices.filter(filters)
 			
@@ -1017,7 +985,7 @@ class PaymentDetails(IsAdmin,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(invoices.end_index())-(invoices.start_index())+1	
 
-		return render(request,'admin/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,'no_of_entries':no_of_entries,"service_types":service_types,"fromdate":prev_date_start,"todate":todate_date_start,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status})		
+		return render(request,'admin/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,'no_of_entries':no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status})		
 
 #ajax for sales charts
 def SalesLocationData(request):

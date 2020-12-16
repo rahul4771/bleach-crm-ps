@@ -94,18 +94,6 @@
      <input name="filter" type="button" value="Filter" id="filter" class="blue-button arrow"> 
      
      <div class="menu-filter ltgreen-border" style="display:none;"><!--menu-filter ltgreen-border-->
-
-      <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-        <div class="ticket-form-left"><!--ticket-form-left-->
-                <div class=" bold-text common-label"> <label>From Date</label></div>
-              <input type="text" name="from_date" id="payment_fromdate" class="date_pick textBox" onchange="paymentfromtodatecheck();" placeholder="Select From Date" value="{{fromdate|date:'d-m-Y'}}" required readonly>
-        </div><!--ticket-form-left-->
-        <div class="ticket-form-right"><!--ticket-form-right-->
-                <div class=" bold-text common-label"> <label>To Date</label></div>
-                      <input type="text" name="to_date" id="payment_todate" class="date_pick textBox" onchange="paymentfromtodatecheck();" placeholder="Select To Date" value="{{todate|date:'d-m-Y'}}" required readonly>
-        </div><!--ticket-form-right-->
-      </div><!--ticket-wrapper-row ticket-forms-boxes-->
-      <hr class="hr-dashedpad"> 
       <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Order Status</label></div>
@@ -449,8 +437,7 @@ function paymentfromtodatecheck() {
 function set_params_go(args)
 {
 var url='{% url 'bleach_admin:admin-payments' %}';
-var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),status:$('#status_filter_id').val(),payment_policy:$('#payment_policy_id').val(),payment_status:$('#payment_status_filter_id').val(),
-fromdate:$('#payment_fromdate').val(),todate:$('#payment_todate').val()
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),status:$('#status_filter_id').val(),payment_policy:$('#payment_policy_id').val(),payment_status:$('#payment_status_filter_id').val()
 };
 for(key in args) 
     params[key]=args[key];
