@@ -238,7 +238,7 @@
                 {% elif request.user.user_type == 'EVALUATOR' %}
                 {% else %}
                 {% if order.evaluation.quatation_status == 'APPROVED' %}
-                <input class="assignButton clickable-cursor" name="pay" type="submit" value="Pay by Debit Card / بطاقة ائتمان &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
+                <input class="assignButton clickable-cursor" name="pay" type="submit" value="Pay by Debit Card">
                 {% endif %}
                 {% endif %}
                 </form>
@@ -261,7 +261,7 @@
 
             <tr class="table1tr3">
               <td colspan="2" class="align-right">
-                <input class="assignButton clickable-cursor Click-here" name="pay" type="submit" value="Request CASH/CHECK  / طلب نقدا / شيك">
+                <input class="assignButton clickable-cursor Click-here" name="pay" type="submit" value="Pay by CASH/CHEQUE">
               </td>
             </tr>
 
