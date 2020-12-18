@@ -80,7 +80,7 @@ class Quatation(View):
 			#UPDATE EVALUATION APPROVAL
 			termsandconditions = request.POST.get('termsandconditions')
 			if termsandconditions:
-				evaluation_update = Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(quatation_status='APPROVED',payment_way=request.POST.get('payment_way'),quatation_approved_date=timezone.now())
+				evaluation_update = Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(quatation_status='APPROVED',quatation_approved_date=timezone.now())
 				order_update      = Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='APPROVED_BY_CLIENT')
 				
 				evaluaation = Evaluation.objects.get(evaluation_id=evaluation_id,customer__username=user_name)
@@ -172,6 +172,18 @@ class CustomerInvoice(View):
 		customer_ip_address = get_client_ip(request)
 
 		return render(request,"customer/invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,})		
+
+	def post(self,request,evaluation_id):
+		action            = request.POST.get('action_type')
+		#evaluation id decryption
+		evaluation_id_encrypted = evaluation_id
+		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
+		user_name     =  evaluation_id_encrypted[14:]
+
+		if action == 'CASH/CHEQUE':
+			Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(payment_way='CASH/CHEQUE')
+
+		return redirect('customer:invoice',evaluation_id_encrypted)
 
 class PaymentResponseDebit(View):
 	def get(self,request):
