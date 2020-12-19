@@ -259,12 +259,14 @@
 
             {% endif %}
 
+            {% if order.evaluation.payment_method == 'POSTPAID' %}
             <tr class="table1tr3">
               <td colspan="2" class="align-right">
-                <input class="assignButton clickable-cursor Click-here" name="pay" type="submit" value="Pay by CASH/CHEQUE">
+                <input class="assignButton clickable-cursor Click-here" name="pay" type="submit" value="Pay by CASH / CHEQUE">
               </td>
             </tr>
-
+            {% endif %}
+            
             <tr>
               <td class="align-left large" width="50%" ><div>{{order.evaluation.quatation_status}} / {% if order.evaluation.quatation_status == 'APPROVED' %}تمت الموافقة{% elif order.evaluation.quatation_status == 'REJECTED' %}مرفوض{% else%}منتهية الصلاحية
 {% endif %} </div>Sales Authorisation / تفويض العميل</td>
