@@ -9,6 +9,7 @@ urlpatterns = [
 		url(r'^subscription/quatation/(?P<evaluation_id>[-\w]+)$',views.SubscriptionQuatation.as_view(),name='subscriptionquatation'),
 		url(r'^tc/$',views.TermsandConditions.as_view(),name='tc'),
 		url(r'^invoice/(?P<evaluation_id>[-\w]+)$',views.CustomerInvoice.as_view(),name='invoice'),
+		url(r'^subscription/invoice/(?P<evaluation_id>[-\w]+)$',views.CustomerSubscriptionInvoice.as_view(),name='invoice'),
 		
 		url(r'^payment/response/$',views.PaymentResponseDebit.as_view(),name='response'),
 		url(r'^payment/receipt/(?P<payment_id>[-\w]+)$',views.PaymentReceipt.as_view(),name='payment-receipt'),
