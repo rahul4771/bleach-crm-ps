@@ -250,9 +250,9 @@
     {% endif %}
     {% for pg in page_range %}
     {% if vus.number == pg %}
-            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{entry_per_page}}&status={{fil_order_status}}&payment_policy={{fil_payment_policy}}&payment_status={{fil_payment_status}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{entry_per_page}}&status={{fil_order_status|default_if_none:''}}&payment_policy={{fil_payment_policy|default_if_none:''}}&payment_status={{fil_payment_status|default_if_none:''}}">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{entry_per_page}}&status={{fil_order_status}}&payment_policy={{fil_payment_policy}}&payment_status={{fil_payment_status}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{entry_per_page}}&status={{fil_order_status|default_if_none:''}}&payment_policy={{fil_payment_policy|default_if_none:''}}&payment_status={{fil_payment_status|default_if_none:''}}">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
     {% if invoices.has_next %}        

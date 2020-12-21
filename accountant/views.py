@@ -675,11 +675,11 @@ class PaymentDetails(IsAccountant,View):
 
 		#Prefetch filters
 
-		fil_order_status			= request.GET.get('status')
+		fil_order_status			= request.GET.get('status',None)
 
-		fil_payment_status       	= request.GET.get('payment_status')
+		fil_payment_status       	= request.GET.get('payment_status',None)
 
-		fil_payment_policy			= request.GET.get('payment_policy')
+		fil_payment_policy			= request.GET.get('payment_policy',None)
 
 		filters =[]
 		if fil_payment_policy:
