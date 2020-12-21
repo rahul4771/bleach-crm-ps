@@ -751,6 +751,27 @@ $('document').ready(function(){
 
         $("#id_form-"+x+"-tendative_dates").change(function(){
             datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_dates").val(),'subscription',x);
+            
+            sectioncount = $("#id_form-"+x+"-section_counter").val();
+            total_estimated_cost = 0
+            for(i=0;i<sectioncount;i++)
+                {
+                    cost = $('#id_form'+x+'_sectioncost'+i).val() 
+                    if (cost == '')
+                    {
+                        cost = 0;
+                    }
+
+                    total_estimated_cost += parseFloat(cost);
+                }
+            subscription_dates = $("#id_form-"+x+"-tendative_dates").val().split(',').length;
+
+            total_cost = subscription_dates*total_estimated_cost;
+            discount   = $("#id_form-"+x+"-discount").val();
+            final_cost = total_cost-discount;
+            $("#id_form-"+x+"-estimated_cost").val(total_cost);
+            $("#id_form-"+x+"-total_cost").val(final_cost);
+
         });
         
     }
@@ -870,8 +891,27 @@ $("#id_form-"+x+"-tendative_date").change(function(){
 });
 
 $("#id_form-"+x+"-tendative_dates").change(function(){
-    console.log($("#id_form-"+x+"-tendative_dates").val(),"subs");
     datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_dates").val(),'subscription',x);
+
+    sectioncount = $("#id_form-"+x+"-section_counter").val();
+    total_estimated_cost = 0
+    for(i=0;i<sectioncount;i++)
+        {
+            cost = $('#id_form'+x+'_sectioncost'+i).val() 
+            if (cost == '')
+            {
+                cost = 0;
+            }
+
+            total_estimated_cost += parseFloat(cost);
+        }
+    subscription_dates = $("#id_form-"+x+"-tendative_dates").val().split(',').length;
+
+    total_cost = subscription_dates*total_estimated_cost;
+    discount   = $("#id_form-"+x+"-discount").val();
+    final_cost = total_cost-discount;
+    $("#id_form-"+x+"-estimated_cost").val(total_cost);
+    $("#id_form-"+x+"-total_cost").val(final_cost);
 });
 
 //Initial hiding of cleaning policy
@@ -916,6 +956,10 @@ function findsectiontotal(event)
 
         total_estimated_cost += parseFloat(cost);
     }
+    //for subsription
+    subscription_dates    = $("#id_form-"+formcount+"-tendative_dates").val().split(',').length;
+    total_estimated_cost *= subscription_dates
+
     $("#id_form-"+formcount+"-estimated_cost").val(total_estimated_cost)
 
     discount       = $("#id_form-"+formcount+"-discount").val();

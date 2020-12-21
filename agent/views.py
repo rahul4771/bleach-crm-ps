@@ -2443,19 +2443,34 @@ class MakeQuatationPhase1(IsAgent,View):
 		#update payment subscription if it is subscription
 		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
 			order           = Order.objects.get(evaluation_id=evaluation_id)
-			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id)
+			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).select_related('order_scheduler_book').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
 
 			#create subscription model
 			cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
-			count=0
-			for month in cleaning_months:
-				count += 1
-				if len(cleaning_months) == count:
-					amount = evaluation.total_cost-round((evaluation.total_cost/len(cleaning_months)*(count-1)),3)			
-					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=amount,monthyear=(str(month[0])+'-'+str(month[1])) )
-				else:
-					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=round(evaluation.total_cost/len(cleaning_months),3),monthyear=(str(month[0])+'-'+str(month[1])) )			
+			count = 0;
+			for month in reversed(cleaning_months):
+				count += 1;
+				month_schedules      = order_schedules.filter(start_at__month=month[0])
+				total_cost_per_month = 0
+				for schedule in month_schedules:
+					if schedule.order_scheduler_book.booksections:
+						for section in schedule.order_scheduler_book.booksections:
+							total_cost_per_month += section.section_cost
 				
+				if count == 1:
+					if total_cost_per_month >= order.evaluation.discount:
+						subscription          = PaymentSubscriptionDetails.objects.create(order=order,amount=(total_cost_per_month-order.evaluation.discount/2),monthyear=(str(month[0])+'-'+str(month[1])) )
+						remining_discount = (total_cost_per_month-order.evaluation.discount/2)
+					else:
+						subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=(total_cost_per_month-order.evaluation.discount),monthyear=(str(month[0])+'-'+str(month[1])) )
+						remining_discount = 0
+				
+				elif count == 2 and remining_discount != 0:
+					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=(total_cost_per_month-remining_discount),monthyear=(str(month[0])+'-'+str(month[1])) )
+				
+				else:
+					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=total_cost_per_month,monthyear=(str(month[0])+'-'+str(month[1])) )
+
 				#update orderschedules
 				for schedule in order_schedules:
 					if payment_method == 'POSTPAIDSUBSCRIPTION':

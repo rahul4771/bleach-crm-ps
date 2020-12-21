@@ -788,6 +788,26 @@ $("#id_form-{{forloop.counter0}}-tendative_date").change(function(){
 
 $("#id_form-{{forloop.counter0}}-tendative_dates").change(function(){
     datetimecheck($("#id_form-{{forloop.counter0}}-tendative_time").val(),$("#id_form-{{forloop.counter0}}-tendative_dates").val(),'subscription',"{{forloop.counter0}}");
+
+    sectioncount = $("#id_form-{{forloop.counter0}}-section_counter").val();
+    total_estimated_cost = 0
+    for(i=0;i<sectioncount;i++)
+        {
+            cost = $('#id_form{{forloop.counter0}}_sectioncost'+i).val() 
+            if (cost == '')
+            {
+                cost = 0;
+            }
+
+            total_estimated_cost += parseFloat(cost);
+        }
+    subscription_dates = $("#id_form-{{forloop.counter0}}-tendative_dates").val().split(',').length;
+
+    total_cost = subscription_dates*total_estimated_cost;
+    discount   = $("#id_form-{{forloop.counter0}}-discount").val();
+    final_cost = total_cost-discount;
+    $("#id_form-{{forloop.counter0}}-estimated_cost").val(total_cost);
+    $("#id_form-{{forloop.counter0}}-total_cost").val(final_cost);
 });
 
 
@@ -836,6 +856,10 @@ function findsectiontotal(event)
 
         total_estimated_cost += parseFloat(cost);
     }
+    //for subsription
+    subscription_dates    = $("#id_form-"+formcount+"-tendative_dates").val().split(',').length;
+    total_estimated_cost *= subscription_dates
+    
     $("#id_form-"+formcount+"-estimated_cost").val(total_estimated_cost)
 
     discount       = $("#id_form-"+formcount+"-discount").val();
