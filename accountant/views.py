@@ -650,12 +650,12 @@ class PaymentDetails(IsAccountant,View):
 		#sales amount
 		if search:
 			try:
-				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
+				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(orderschedule_count=Count('order_scheduler_order'), completed_count=Count(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1))))
 			except:
 				invoices         = None
 		else:
 			try:
-				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
+				invoices         = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',order_status__isnull=False).order_by('-id').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(orderschedule_count=Count('order_scheduler_order'), completed_count=Count(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1))))
 			except:
 				invoices         = None
 				
@@ -676,28 +676,52 @@ class PaymentDetails(IsAccountant,View):
 		#Prefetch filters
 
 		fil_order_status			= request.GET.get('status',None)
+		
+		orderschedule_filter       = []
+		count_orderschedule_filter = []
 
+		if fil_order_status:
+			case1       = Q(work_status=fil_order_status)
+			count_case1 = Q(order_scheduler_order__work_status=fil_order_status)
+			orderschedule_filter.append(case1)
+			count_orderschedule_filter.append(count_case1)
+
+		if fil_order_status :
+			orderschedule_prefetch_filter              = functools.reduce(operator.and_,orderschedule_filter)
+			count_orderschedule_prefetch_filter        = functools.reduce(operator.and_,count_orderschedule_filter)
+		else:
+			filters										= None
+			orderschedule_prefetch_filter              = None	
+			count_orderschedule_prefetch_filter        = None
+		
+		if orderschedule_prefetch_filter:
+			print(orderschedule_prefetch_filter,"orderfdh")
+			print("waaa")
+			invoices = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).filter(orderschedule_prefetch_filter),to_attr='orderschedules2')).annotate(orderschedule_filter_count=Count(Case(When(count_orderschedule_prefetch_filter,then=1),output_field=IntegerField())), orderschedule_count=Count('order_scheduler_order'), completed_count=Count(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1)))).filter(orderschedule_filter_count__gt=0)
+
+
+		#filters
 		fil_payment_status       	= request.GET.get('payment_status',None)
 
 		fil_payment_policy			= request.GET.get('payment_policy',None)
 
-		filters =[]
-		if fil_payment_policy:
-			case1 = Q(evaluation__payment_method=fil_payment_policy)
-			filters.append(case1)
+		filters = []
 
-		if fil_payment_status:
-			case2       = Q(payment_status=fil_payment_status)
+		if fil_payment_policy:
+			case2 = Q(evaluation__payment_method=fil_payment_policy)
 			filters.append(case2)
 
-		if fil_order_status:
-			case3       = Q(order_status=fil_order_status)
+		if fil_payment_status:
+			if fil_payment_status == 'PENDING':
+				print("jar")
+				case3       = Q(Q(Q(payment_status=fil_payment_status)|Q(payment_status='ON_HOLD')))
+			else:
+				case3 = Q(payment_status=fil_payment_status)
 			filters.append(case3)
 
-		if fil_payment_policy or fil_payment_status or fil_order_status:
-			filters=functools.reduce(operator.and_,filters)
+		if fil_payment_policy or fil_payment_status:
+			filters	= functools.reduce(operator.and_,filters)
 			invoices = invoices.filter(filters)
-
 		
 		#PAGINATION INVOICE		
 		page = request.GET.get('page',1) 

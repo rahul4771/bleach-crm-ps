@@ -137,10 +137,10 @@ class OrderScheduler(models.Model):
 	updated         = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.id)
+		return str(self.order.order_no)
 
 	def __str__(self):
-		return str(self.id)
+		return str(self.order.order_no)
 
 
 
