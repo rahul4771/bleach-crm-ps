@@ -100,7 +100,7 @@
      <div class="menu-filter ltgreen-border" style="display:none;"><!--menu-filter ltgreen-border--> 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-right-->
-  				<div class=" bold-text common-label"> <label>Order Status</label></div>
+  				<div class=" bold-text common-label"> <label>Job Status</label></div>
                 <label for="favcity">
                 <select name="status_filter" id="status_filter_id">
                 <option value=''>---ALL---</option>
@@ -169,7 +169,7 @@
 <th class="text-right" data-hide="phone,tablet">Paid</th>
 <th class="text-right" data-hide="phone,tablet">Balance</th>
 <th class="text-center" data-hide="phone,tablet">Payment Mode</th>
-<th class="align-center" data-hide="phone">Order Status</th>
+<th class="align-center" data-hide="phone">Job Status</th>
 </tr>
 </thead>
 <tbody>
@@ -250,9 +250,9 @@
     {% endif %}
     {% for pg in page_range %}
     {% if vus.number == pg %}
-            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{entry_per_page}}&status={{fil_order_status}}&payment_policy={{fil_payment_policy}}&payment_status={{fil_payment_status}}">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{entry_per_page}}&status={{fil_order_status}}&payment_policy={{fil_payment_policy}}&payment_status={{fil_payment_status}}">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
     {% if invoices.has_next %}        

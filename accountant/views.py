@@ -592,13 +592,18 @@ class OrderDetails(IsAccountant,View):
 		
 		
 		fil_status = request.GET.get('status')
+		fil_payment_policy		= request.GET.get('payment_policy')
 		#filters 	
 		filters=[] 
 		if fil_status: 
 		    case1 = Q(quatation_status=fil_status)
 		    filters.append(case1)
+
+		if fil_payment_policy:
+			case2 = Q(payment_method=fil_payment_policy)
+			filters.append(case2)
 	
-		if fil_status: 
+		if fil_status or fil_payment_policy: 
 		    filters     = functools.reduce(operator.and_,filters)
 		    evaluations = evaluations.filter(filters)
 		
@@ -628,7 +633,7 @@ class OrderDetails(IsAccountant,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
 
-		return render(request,'accountant/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_status":fil_status,"fil_cleaning_policy":fil_cleaning_policy,"fil_service_type":fil_service_type,})		
+		return render(request,'accountant/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_status":fil_status,"fil_cleaning_policy":fil_cleaning_policy,"fil_service_type":fil_service_type,"fil_payment_policy":fil_payment_policy})		
 
 
 class PaymentDetails(IsAccountant,View):
