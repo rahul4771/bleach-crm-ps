@@ -27,7 +27,8 @@
  			 
                   <div class="cleaning-column-wrapper ltyellow-border order-details"><!--cleaning-column-wrapper-->
 					<div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
-                	<div class="inside-head align-left order_customer_name"></div>
+                	<div class="details-head align-left order_id_fb"></div>
+                    <div class="inside-head align-left order_customer_name"></div>
                     <p class="paragraph order_customer_mobile"></p>
                     <div class="order_payment_status">
                     </div>
@@ -290,6 +291,7 @@ if(feedback_order_id)
             $("#order_id_hidden").val(data['order_id']);
 
             //to add order info
+            $('.order_id_fb').html(data['blc_no']);
             $('.order_customer_name').html(data['name'])
             $('.order_customer_mobile').html(data['mobile_number']);
             $('.order_cost').html(+data['total_cost']+' KD');
@@ -496,6 +498,7 @@ function select_existing_user(event,src){
             $("#order_id_hidden").val(data['order_id']);
 
             //to add order info
+            $('.order_id_fb').html(data['blc_no']);
             $('.order_customer_name').html(data['name'])
             $('.order_customer_mobile').html(data['mobile_number']);
             $('.order_cost').html(+data['total_cost']+' KD');

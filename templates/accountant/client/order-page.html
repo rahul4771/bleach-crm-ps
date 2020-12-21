@@ -265,7 +265,7 @@
         {% if section.cause_of_stain %}
         <div class="category-cleaning"><span class="labelcategory">Cause of Stain</span>  : {{section.cause_of_stain}}</div>
         {% endif %}
-        <div class="category-cleaning"><span class="labelcategory">Cost</span>  : {{section.section_cost|floatformat:'3'}} KD</div>
+        <div class="category-cleaning"><span class="labelcategory">Cost</span>  : {{section.section_cost|floatformat:3}} KD</div>
         </div><!--filter-column-boxes filter-columns-right-->      
         </div><!--filter-columns-wrapper--> 
 <br> 
@@ -774,19 +774,16 @@
     <div class="order-payment-wrapper"><!--order-payment-wrapper-->
     
         <div class="order-payment-widget order-payment-widget-column"><!--order-payment-widget order-payment-widget-column-->
-            <div class="payment-text"><div>Total Amount</div> : {{order.evaluation.estimated_cost|default_if_none:'0.00'|floatformat:'2'}} KD</div>
-            <div class="payment-text"><div>Discount</div> : {{order.evaluation.discount|default_if_none:'0.00'|floatformat:'2'}} KD</div>
+            <div class="payment-text"><div>Total Amount</div> : {{order.evaluation.estimated_cost|default_if_none:'0.00'|floatformat:2}} KD</div>
+            <div class="payment-text"><div>Discount</div> : {{order.evaluation.discount|default_if_none:'0.00'|floatformat:2}} KD</div>
             <br>
-            <div class="payment-text bold-text red-text"><div>Final Amount</div> : {{order.evaluation.total_cost|default_if_none:'0.00'|floatformat:'2'}} KD</div>
+            <div class="payment-text bold-text red-text"><div>Final Amount</div> : {{order.evaluation.total_cost|default_if_none:'0.00'|floatformat:2}} KD</div>
             <hr class="bar"> 
             <div class="payment-text"><div>Payment Policy</div> : {{order.evaluation.payment_method|default_if_none:''}}
-            
-            {% for orderschedule in order.orderschedules %}
-            {% if orderschedule.status == 'CONFIRMED' %}
+            {% if order.amount_paid == 0.00 %}
+            &nbsp;&nbsp;&nbsp;<a class="paymentedit" href="{% url 'accountant:accountant-payment-edit' order.evaluation.customer.id order.evaluation.id %}"><div class="edit_payment_policy"></div></a>
             {% else %}
-            &nbsp;&nbsp;&nbsp;<a href="{% url 'accountant:accountant-payment-edit' order.evaluation.customer.id order.evaluation.id %}"><span style="color: blue "><i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</span></a>
             {% endif %}
-            {% endfor %}
             </div>
 
             {% if order.evaluation.payment_method == 'BREAKDOWN' %}
@@ -794,8 +791,8 @@
             <div class="payment-text"><div>After Cleaning Amount</div> : {{order.evaluation.after_cleaning_amount|default_if_none:''}}</div>
             <br>
             {% endif %}
-            <div class="payment-text"><div>Paid</div> : {{order.amount_paid|default_if_none:'0.00'|floatformat:'2'}} KD</div>
-            <div class="payment-text"><div>Balance</div> : {{order.remining_amount|default_if_none:'0.00'|floatformat:'2'}} KD</div>
+            <div class="payment-text"><div>Paid</div> : {{order.amount_paid|default_if_none:'0.00'|floatformat:2}} KD</div>
+            <div class="payment-text"><div>Balance</div> : {{order.remining_amount|default_if_none:'0.00'|floatformat:2}} KD</div>
             {% if order.evaluation.payment_way %}
             <div class="payment-text"><div>Payment Type</div> : {{order.evaluation.payment_way|default_if_none:''}}</div>
             {% endif %}
@@ -987,6 +984,13 @@ cleaning_completed_count += 1;
 {% endif %}
 
 {% endfor %}
+
+//payment policy edit button hide / Show
+if (dateconfirm_completed_count > 0){
+    $('.paymentedit').remove();
+}else{
+    $('.edit_payment_policy').append('<span style="color: blue "><i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</span>');
+}
 
 //change html
 $("#date_confirmed").html(dateconfirm_completed_count)

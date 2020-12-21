@@ -207,3 +207,40 @@ def sendreceipt(request):
         data=False
     
     return JsonResponse(data,safe=False)
+
+def sendfeedbacklink(request):
+    order_no = request.GET.get('order_no')
+    order = Order.objects.filter(order_no=order_no).first()
+
+    language = order.evaluation.customer.sms_preference
+
+    evaluation = order.evaluation
+
+    if evaluation.customer.is_sms == True:
+
+        url = "https://smsapi.future-club.com/fccsms.aspx"
+
+        if evaluation.customer.sms_preference == 'ENGLISH':
+
+            message = "Dear Customer, Thank you for choosing Bleach Kuwait. Kindly share your feedback for the order number "+ order.order_no +" here https://my.bleachkw.com/customer/feedback-page/"+str(order.id)+". For any assistance please contact us on +9651882707."
+        
+            querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+
+        else:
+            message = "عزيزينا العميل نرجوا أن تكون خدماتنا خازت على رضاكم و شكراً لاختياركم بليتش لخدمات التنظيف.  نرجوا التكرم بإنجاز الاستبيان الخاص بالطلب رقم "+ order.order_no +" https://my.bleachkw.com/customer/feedback-page/"+str(order.id)+" وذلك لضمان جودة الخدمة. لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+
+            querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+
+        headers = {
+            'cache-control': "no-cache"
+        }
+
+        response = requests.request("GET", url, headers=headers, params=querystring)
+        print(message,"mess")
+        print(response.text,",ess")
+        data=True
+        
+    else:
+        data=False
+    
+    return JsonResponse(data,safe=False)

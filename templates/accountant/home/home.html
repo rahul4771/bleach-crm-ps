@@ -62,10 +62,11 @@
      <div class="main-content-holder"><!--main-content-holder-->            
             
 <div class="white-wrapper"><!--white-wrapper-->
-<h2 class="h2">Pending Payments</h2>
+<h2 class="h2">Cash Collection Requests</h2>
 <table class="main-table">
 <tbody>
     {% for invoice in pending_payments %}
+    {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}
     
     {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
     <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
@@ -214,11 +215,148 @@
     </tr>
     {% endif %}
 
+    {% endif %}
     {% endfor %}
 </tbody>
 </table>
 
-</div><!--white-wrapper-->             
+</div><!--white-wrapper-->
+
+
+
+
+<div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Pending Payments</h2>
+<table class="main-table">
+<tbody>
+    {% for invoice in pending_payments %}
+    
+    {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
+    <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+    <td data-label="BLC Number" class="bold-text clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+    <td data-label="Service Type(s)">
+    {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+    {% for book in evaluation_details.evaluation_books %}
+    {{book.service_type}}<br>
+    {% endfor %}
+    {% endfor %}
+    </td>
+    <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+    <td data-label="Total Amount">{{invoice.total_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
+    <td class="{% if invoice.evaluation.payment_method == 'PREPAID' %}indigo-text{% else %}rose-text{% endif %}"  data-label="Payment Method">
+    {{invoice.evaluation.payment_method|default_if_none:''}}
+    </td>
+    <td data-label="" class="bold-text">
+    {% if invoice.evaluation.payment_method == 'PREPAID' %}
+    {% if invoice.reminigdays < 0 %}
+    <h3 class="red-text-h3">Exp</h3>
+    {% else %}
+    <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}">{{invoice.reminigdays}}</h3> Days&#11015;
+    {% endif %}
+
+    {% elif invoice.evaluation.payment_method == 'POSTPAID' %}
+    <h3 class="{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;
+    {% endif %}
+    </td>
+    </tr>
+
+    {% elif invoice.evaluation.payment_method == 'BREAKDOWN' %}
+    
+    {% if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount %}
+    <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+    <td data-label="BLC Number" class="bold-text clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+    <td data-label="Service Type(s)">
+    {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+    {% for book in evaluation_details.evaluation_books %}
+    {{book.service_type}}<br>
+    {% endfor %}
+    {% endfor %}
+    </td>
+    <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+    <td data-label="Total Amount">{{invoice.evaluation.before_cleaning_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
+    <td class="violet-text" data-label="Payment Method">{{invoice.evaluation.payment_method|default_if_none:''}}</td>
+    <td data-label="" class="bold-text">{% if invoice.reminigdays <= 0 %}
+    <h3 class="red-text-h3">Exp</h3>
+    {% else %}
+    <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}">{{invoice.reminigdays}}</h3> Days&#11015;
+    {% endif %}</td>
+    </tr>
+    {% endif %}
+
+    {% if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount %}
+    <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+    <td data-label="BLC Number" class="bold-text clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+    <td data-label="Service Type(s)">
+    {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+    {% for book in evaluation_details.evaluation_books %}
+    {{book.service_type}}<br>
+    {% endfor %}
+    {% endfor %}
+    </td>
+    <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+    <td data-label="Total Amount">{{invoice.evaluation.after_cleaning_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
+    <td data-label="Payment Method">{{invoice.evaluation.payment_method|default_if_none:''}}</td>
+    <td data-label="" class="bold-text"><h3 class="{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
+    </tr>
+    {% endif %}
+
+    {% elif invoice.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' %}
+    <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+    <td data-label="BLC Number" class="bold-text clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+    <td data-label="Service Type(s)">
+    {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+    {% for book in evaluation_details.evaluation_books %}
+    {{book.service_type}}<br>
+    {% endfor %}
+    {% endfor %}
+    </td>
+    <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+    <td data-label="Total Amount">
+    {% for subscription in invoice.subscriptions %}
+    {% if forloop.first %}
+    {{subscription.amount|default_if_none:''}}
+    {% endif %}{% endfor %} KD</td>
+    <td class="violet-text" data-label="Payment Method">{{invoice.evaluation.payment_method|default_if_none:''}}</td>
+    <td data-label="" class="bold-text">
+    <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{% if invoice.reminigdays %}{{invoice.reminigdays}}</h3> Days&#11015;{% else %}{{invoice.delaydays}}</h3> Days&#11014;{% endif %}</td>
+    </tr>
+    
+    {% elif invoice.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' %}
+    <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+    <td data-label="BLC Number" class="bold-text clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+    <td data-label="Service Type(s)">
+    {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+    {% for book in evaluation_details.evaluation_books %}
+    {{book.service_type}}<br>
+    {% endfor %}
+    {% endfor %}
+    </td>
+    <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+    <td data-label="Total Amount">
+    {% for subscription in invoice.subscriptions %}
+    {% if forloop.first %}
+    {{subscription.amount|default_if_none:''}}
+    {% endif %}{% endfor %} KD</td>
+    <td class="violet-text" data-label="Payment Method">{{invoice.evaluation.payment_method|default_if_none:''}}</td>
+    <td data-label="" class="bold-text">
+    <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{% if invoice.reminigdays %}{{invoice.reminigdays}}</h3> Days&#11015;{% else %}{{invoice.delaydays}}</h3> Days&#11014;{% endif %}</td>
+    </tr>
+    {% endif %}
+
+    {% endfor %}
+</tbody>
+</table>
+
+</div><!--white-wrapper-->
+
+
+
+
             
       </div><!--main-content-holder-->
         </div><!--container-fluid space-->

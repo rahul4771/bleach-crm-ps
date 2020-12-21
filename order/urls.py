@@ -7,6 +7,7 @@ urlpatterns = [
 	url(r'^send-invoice/',views.sendinvoice,name='send-invoice'),
 	url(r'^send-quotation/',views.sendquotation,name='send-quotation'),
 	url(r'^send-receipt/',views.sendreceipt,name='send-receipt'),
+	url(r'^send-feedback-link/',views.sendfeedbacklink,name='send-feedback-link'),
 
 	
 ]

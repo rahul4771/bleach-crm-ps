@@ -238,7 +238,7 @@
                 {% elif request.user.user_type == 'EVALUATOR' %}
                 {% else %}
                 {% if order.evaluation.quatation_status == 'APPROVED' %}
-                <input class="assignButton clickable-cursor" name="pay" type="submit" value="&nbsp;&nbsp;&nbsp;Pay by Debit Card / بطاقة ائتمان">
+                <input class="assignButton clickable-cursor" name="pay" type="submit" value="Pay by Debit Card">
                 {% endif %}
                 {% endif %}
                 </form>
@@ -251,13 +251,22 @@
             {% if order.order_status == 'APPROVED_BY_CLIENT' %}
             <!-- <tr class="table1tr2">
             <td colspan="2" class="align-right">
-            <input class="assignButton clickable-row" name="pay" type="submit" value="Pay by Credit Card / بطاقة الائتمان" data-href="http://payment.bleachkw.com:8085/creditcard/payment_form.php?merchant_defined_data1={{order.order_no}}{% if order.evaluation.payment_method == 'BREAKDOWN' %}{% if order.evaluation.before_cleaning_amount != order.preamount_paid %}&reference_number={{order.order_no}}1&amount={{order.evaluation.before_cleaning_amount}}&merchant_defined_data2=before_cleaning{% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}&reference_number={{order.order_no}}2&amount={{order.evaluation.before_cleaning_amount}}&merchant_defined_data2=after_cleaning{% endif %}{% elif order.evaluation.payment_method == 'PREPAID' %}&reference_number={{order.order_no}}&amount={{order.evaluation.total_cost|floatformat:'3'}}&merchant_defined_data2=prepaid{% elif order.evaluation.payment_method == 'POSTPAID' %}&reference_number={{order.order_no}}&amount={{order.evaluation.total_cost|floatformat:'3'}}&merchant_defined_data2=postpaid{% endif %}&currency=KWD&transaction_type=sale{% for orderschedule in order.orderschedules %}{% if forloop.first %}&bill_to_forename={{firstname}}&bill_to_surname={{lastname}}&bill_to_phone={{orderschedule.customer_address.customer.mobile_number}}&bill_to_email={{orderschedule.customer_address.customer.email}}&bill_to_address_country={{orderschedule.customer_address.customer.nationality.code}}&bill_to_address_city={{orderschedule.customer_address.area.name}}&bill_to_address_line1={{orderschedule.customer_address.street}},{{orderschedule.customer_address.block}},{{orderschedule.customer_address.avenue}},{{orderschedule.customer_address.street}},{{orderschedule.customer_address.building}},{{orderschedule.customer_address.floor}},{{orderschedule.customer_address.area.name}},{{orderschedule.customer_address.governorate.name}}{% endif %}{% endfor %}&merchant_defined_data4={{order.evaluation.payment_way}}&merchant_defined_data5=NO&merchant_defined_data7=1&merchant_defined_data20=NO&customer_ip_address={{customer_ip_address}}">
+            <input class="assignButton clickable-row" name="pay" type="submit" value="Pay by Credit Card / بطاقة الائتمان" data-href="http://payment.bleachkw.com:8085/creditcard/payment_form.php?merchant_defined_data1={{order.order_no}}{% if order.evaluation.payment_method == 'BREAKDOWN' %}{% if order.evaluation.before_cleaning_amount != order.preamount_paid %}&reference_number={{order.order_no}}1&amount={{order.evaluation.before_cleaning_amount}}&merchant_defined_data2=before_cleaning{% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}&reference_number={{order.order_no}}2&amount={{order.evaluation.before_cleaning_amount}}&merchant_defined_data2=after_cleaning{% endif %}{% elif order.evaluation.payment_method == 'PREPAID' %}&reference_number={{order.order_no}}&amount={{order.evaluation.total_cost|floatformat:'3'}}&merchant_defined_data2=prepaid{% elif order.evaluation.payment_method == 'POSTPAID' %}&reference_number={{order.order_no}}&amount={{order.evaluation.total_cost|floatformat:'3'}}&merchant_defined_data2=postpaid{% endif %}&currency=KWD&transaction_type=sale{% for orderschedule in order.orderschedules %}{% if forloop.first %}&bill_to_forename={{firstname}}&bill_to_surname={{lastname}}&bill_to_phone={{orderschedule.customer_address.customer.mobile_number}}&bill_to_email={{orderschedule.customer_address.customer.email}}&bill_to_address_country={{orderschedule.customer_address.customer.nationality.code}}&bill_to_address_city={{orderschedule.customer_address.area.name|default_if_none:''}}&bill_to_address_line1={{orderschedule.customer_address.street|default_if_none:''}},{{orderschedule.customer_address.block|default_if_none:''}},{{orderschedule.customer_address.avenue|default_if_none:''}},{{orderschedule.customer_address.street|default_if_none:''}},{{orderschedule.customer_address.building|default_if_none:''}},{{orderschedule.customer_address.floor|default_if_none:''}},{{orderschedule.customer_address.area.name|default_if_none:''}},{{orderschedule.customer_address.governorate.name|default_if_none:''}}{% endif %}{% endfor %}&merchant_defined_data4={{order.evaluation.payment_way}}&merchant_defined_data5=NO&merchant_defined_data7=1&merchant_defined_data20=NO&customer_ip_address={{customer_ip_address}}">
             </td>
             </tr> -->
             {% endif %}
             {% endif %}
 
             {% endif %}
+
+            {% if order.evaluation.payment_method == 'POSTPAID' %}
+            <tr class="table1tr3">
+              <td colspan="2" class="align-right">
+                <input class="assignButton clickable-cursor Click-here" name="pay" type="submit" value="Pay by CASH / CHEQUE">
+              </td>
+            </tr>
+            {% endif %}
+            
             <tr>
               <td class="align-left large" width="50%" ><div>{{order.evaluation.quatation_status}} / {% if order.evaluation.quatation_status == 'APPROVED' %}تمت الموافقة{% elif order.evaluation.quatation_status == 'REJECTED' %}مرفوض{% else%}منتهية الصلاحية
 {% endif %} </div>Sales Authorisation / تفويض العميل</td>
@@ -317,11 +326,34 @@
               <td colspan="2" ><input name="print" type="button" class="print" value="Print / طباعة" onclick="printDiv();">&nbsp;<a href="/customer/invoice/download/{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}"><input name="download" type="button" class="download" value="Download / تحميل"></a> </td>
             </tr>            
           </table>
+
+<div class="custom-model-main"><!--custom-model-main-->
+    <div class="custom-model-inner">  <!--custom-model-inner-->      
+    <div class="close-btn">×</div>
+        <div class="custom-model-wrap"><!--custom-model-wrap-->
+            <div class="pop-up-content-wrap"><!--pop-up-content-wrap-->
+               <div class="bold-text">You have been requested for CASH/CHEQUE Payment.Our Team Will Contact You Soon.... <br><br> لقد طُلب منك الدفع نقدًا / شيكًا ، وسيتصل بك فريقنا قريبًا </div>  
+               <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+                <input type="hidden" name="action_type" value="CASH/CHEQUE">
+               <div><input class="assignButton" name="submit" type="submit" value="Send / إرسال"></div>
+               </form>
+            </div><!--pop-up-content-wrap-->
+        </div><!--custom-model-wrap-->  
+    </div><!--custom-model-inner-->   
+    <div class="bg-overlay"></div>
+</div><!--custom-model-main-->
  
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
   <script src="{% static 'files/js/hyperlink.js' %}"></script> 
   
-  <script>
+<script>
+$(".Click-here").on('click', function () {
+  $(".custom-model-main").addClass('model-open');
+});
+$(".close-btn, .bg-overlay").click(function () {
+  $(".custom-model-main").removeClass('model-open');
+});
+
   //print script
   function printDiv() 
   {
