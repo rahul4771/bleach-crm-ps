@@ -2447,8 +2447,11 @@ class MakeQuatationPhase1(IsAgent,View):
 
 			#create subscription model
 			cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
-			count = 0;
-			for month in reversed(cleaning_months):
+			count           = 0
+
+			#for adjustment
+			append_discount = 0
+			for month in cleaning_months:
 				count += 1;
 				month_schedules      = order_schedules.filter(start_at__month=month[0])
 				total_cost_per_month = 0
@@ -2457,19 +2460,17 @@ class MakeQuatationPhase1(IsAgent,View):
 						for section in schedule.order_scheduler_book.booksections:
 							total_cost_per_month += section.section_cost
 				
-				if count == 1:
-					if total_cost_per_month >= order.evaluation.discount:
-						subscription          = PaymentSubscriptionDetails.objects.create(order=order,amount=(total_cost_per_month-order.evaluation.discount/2),monthyear=(str(month[0])+'-'+str(month[1])) )
-						remining_discount = (total_cost_per_month-order.evaluation.discount/2)
-					else:
-						subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=(total_cost_per_month-order.evaluation.discount),monthyear=(str(month[0])+'-'+str(month[1])) )
-						remining_discount = 0
-				
-				elif count == 2 and remining_discount != 0:
-					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=(total_cost_per_month-remining_discount),monthyear=(str(month[0])+'-'+str(month[1])) )
-				
+				if count == len(cleaning_months):
+					total_discount_per_month = round(evaluation.discount-append_discount,3)
 				else:
-					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=total_cost_per_month,monthyear=(str(month[0])+'-'+str(month[1])) )
+					total_discount_per_month = round((evaluation.discount/order_schedules.count())*month_schedules.count(),3)
+
+				total_cost_per_month     = round(total_cost_per_month-total_discount_per_month,3)
+				actual_cost_per_month    = total_cost_per_month+total_discount_per_month
+				subscription             = PaymentSubscriptionDetails.objects.create(order=order,actual_amount=actual_cost_per_month,discount=total_discount_per_month,amount=total_cost_per_month,monthyear=(str(month[0])+'-'+str(month[1])) )
+
+				#for adjustment
+				append_discount          += total_discount_per_month
 
 				#update orderschedules
 				for schedule in order_schedules:
