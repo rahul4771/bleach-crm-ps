@@ -681,8 +681,12 @@ class PaymentDetails(IsAccountant,View):
 		count_orderschedule_filter = []
 
 		if fil_order_status:
-			case1       = Q(work_status=fil_order_status)
-			count_case1 = Q(order_scheduler_order__work_status=fil_order_status)
+			if fil_order_status == 'CLEANING_TEAM_ASSIGNED':
+				case1       = Q(Q(work_status=fil_order_status)|Q(work_status=None))
+				count_case1 = Q(Q(order_scheduler_order__work_status=fil_order_status)|Q(order_scheduler_order__work_status=None))
+			else:
+				case1       = Q(work_status=fil_order_status)
+				count_case1 = Q(order_scheduler_order__work_status=fil_order_status)
 			orderschedule_filter.append(case1)
 			count_orderschedule_filter.append(count_case1)
 
@@ -714,7 +718,7 @@ class PaymentDetails(IsAccountant,View):
 		if fil_payment_status:
 			if fil_payment_status == 'PENDING':
 				print("jar")
-				case3       = Q(Q(Q(payment_status=fil_payment_status)|Q(payment_status='ON_HOLD')))
+				case3       = Q(Q(payment_status=fil_payment_status)|Q(payment_status='ON_HOLD'))
 			else:
 				case3 = Q(payment_status=fil_payment_status)
 			filters.append(case3)
