@@ -173,233 +173,52 @@
 </tr>
 </thead>
 <tbody>
-    {% for invoice in invoices %}
-    {% comment %} POSTPAID PENDING {% endcomment %}
-    {% if fil_payment_status == 'PENDING' and invoice.payment_policy == 'POSTPAID' and invoice.completed_count == invoice.orderschedule_count %}
-    <tr>
-    <td {% if invoice.payment_status == 'PENDING' %}
-        class="red-line"
-        {% elif invoice.payment_status == 'COMPLETED' %}
-        class="green-line" 
-        {% else %}
-        class="yellow-line"
-        {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
-    <td class="text-left"  >{{invoice.order_no}}</td>
-    <td>{{invoice.evaluation.customer.name}}</td>
-    <td class="text-center">{{invoice.evaluation.payment_method}}</td>
-    </td>
-    <td class="text-right">{{invoice.total_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
-    <td class="text-right">{{invoice.amount_paid|default_if_none:'0.00'|floatformat:'3'}}</td>
-    <td class="text-right">{{invoice.remining_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
-    <td class="text-center">
-    {% for inv in invoice.paymenthistory|slice:":1" %}
-    {% if inv.payment_mode == 'ONLINECREDIT' %}
-    {{inv.payment_gateway|default_if_none:'-'}},
-    {% else %}
-    {{inv.payment_mode|default_if_none:'-'}},
-    {% endif %}
-    {% empty %}
-    -
-    {% endfor %}
-    </td>
-    <td class="clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
-        {% if invoice.completed_count == 0 %}
-        <span class="text-center blue-bg clickable-row">Not Started</span>
-        {% elif invoice.completed_count != 0 and invoice.completed_count < invoice.orderschedule_count %}
-        <span class="text-center yellow-bg clickable-row">IN PROGRESS</span>
-        {% elif invoice.completed_count == invoice.orderschedule_count %}
-        <span class="text-center green-bg clickable-row" >COMPLETED</span>
-        {% endif %}
-        {% comment %} {% for schedule in invoice.orderschedules %}
-        <p>{{schedule.work_status}}</p>
-        <p>{{invoice.orderschedule_count}}</p>
-        <p>{{invoice.completed_count}}</p>
-        {% endfor %} {% endcomment %}
+    {% for invoice in invoices%}
+        <tr>
+        <td {% if invoice.payment_status == 'PENDING' %}
+            class="red-line"
+            {% elif invoice.payment_status == 'COMPLETED' %}
+            class="green-line" 
+            {% else %}
+            class="yellow-line"
+            {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
+        <td class="text-left"  >{{invoice.order_no}}</td>
+        <td>{{invoice.evaluation.customer.name}}</td>
+        <td class="text-center">{{invoice.evaluation.payment_method}}</td>
         </td>
-    </tr>
-
-    {% comment %} PREPAID PENDING {% endcomment %}
-    {% elif fil_payment_status == 'PENDING' and invoice.payment_policy == 'PREPAID' and invoice.amount_paid == 0.0 %}
-    <tr>
-    <td {% if invoice.payment_status == 'PENDING' %}
-        class="red-line"
-        {% elif invoice.payment_status == 'COMPLETED' %}
-        class="green-line" 
+        <td class="text-right">{{invoice.total_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
+        <td class="text-right">{{invoice.amount_paid|default_if_none:'0.00'|floatformat:'3'}}</td>
+        <td class="text-right">{{invoice.remining_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
+        <td class="text-center">
+        {% for inv in invoice.paymenthistory|slice:":1" %}
+        {% if inv.payment_mode == 'ONLINECREDIT' %}
+        {{inv.payment_gateway|default_if_none:'-'}},
         {% else %}
-        class="yellow-line"
-        {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
-    <td class="text-left"  >{{invoice.order_no}}</td>
-    <td>{{invoice.evaluation.customer.name}}</td>
-    <td class="text-center">{{invoice.evaluation.payment_method}}</td>
-    </td>
-    <td class="text-right">{{invoice.total_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
-    <td class="text-right">{{invoice.amount_paid|default_if_none:'0.00'|floatformat:'3'}}</td>
-    <td class="text-right">{{invoice.remining_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
-    <td class="text-center">
-    {% for inv in invoice.paymenthistory|slice:":1" %}
-    {% if inv.payment_mode == 'ONLINECREDIT' %}
-    {{inv.payment_gateway|default_if_none:'-'}},
-    {% else %}
-    {{inv.payment_mode|default_if_none:'-'}},
-    {% endif %}
-    {% empty %}
-    -
-    {% endfor %}
-    </td>
-    <td class="clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
-        {% if invoice.completed_count == 0 %}
-        <span class="text-center blue-bg clickable-row">Not Started</span>
-        {% elif invoice.completed_count != 0 and invoice.completed_count < invoice.orderschedule_count %}
-        <span class="text-center yellow-bg clickable-row">IN PROGRESS</span>
-        {% elif invoice.completed_count == invoice.orderschedule_count %}
-        <span class="text-center green-bg clickable-row" >COMPLETED</span>
+        {{inv.payment_mode|default_if_none:'-'}},
         {% endif %}
-        {% comment %} {% for schedule in invoice.orderschedules %}
-        <p>{{schedule.work_status}}</p>
-        <p>{{invoice.orderschedule_count}}</p>
-        <p>{{invoice.completed_count}}</p>
-        {% endfor %} {% endcomment %}
+        {% empty %}
+        -
+        {% endfor %}
         </td>
-    </tr>
+        <td class="clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
+            {% if invoice.completed_count == 0 %}
+            <span class="text-center blue-bg clickable-row">Not Started</span>
+            {% elif invoice.completed_count != 0 and invoice.completed_count < invoice.orderschedule_count %}
+            <span class="text-center yellow-bg clickable-row">IN PROGRESS</span>
+            {% elif invoice.completed_count == invoice.orderschedule_count %}
+            <span class="text-center green-bg clickable-row" >COMPLETED</span>
+            {% endif %}
+            {% comment %} {% for schedule in invoice.orderschedules %}
+            <p>{{schedule.work_status}}</p>
+            <p>{{invoice.orderschedule_count}}</p>
+            <p>{{invoice.completed_count}}</p>
+            {% endfor %} {% endcomment %}
+            </td>
+        </tr>
 
-    {% comment %} BREAKDOWN BEFORE PENDING {% endcomment %}
-    {% elif fil_payment_status == 'PENDING' and invoice.payment_policy == 'BREAKDOWN' and invoice.preamount_paid == 0.0 %}
-    <tr>
-    <td {% if invoice.payment_status == 'PENDING' %}
-        class="red-line"
-        {% elif invoice.payment_status == 'COMPLETED' %}
-        class="green-line" 
-        {% else %}
-        class="yellow-line"
-        {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
-    <td class="text-left"  >{{invoice.order_no}}</td>
-    <td>{{invoice.evaluation.customer.name}}</td>
-    <td class="text-center">{{invoice.evaluation.payment_method}}</td>
-    </td>
-    <td class="text-right">{{invoice.total_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
-    <td class="text-right">{{invoice.amount_paid|default_if_none:'0.00'|floatformat:'3'}}</td>
-    <td class="text-right">{{invoice.remining_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
-    <td class="text-center">
-    {% for inv in invoice.paymenthistory|slice:":1" %}
-    {% if inv.payment_mode == 'ONLINECREDIT' %}
-    {{inv.payment_gateway|default_if_none:'-'}},
-    {% else %}
-    {{inv.payment_mode|default_if_none:'-'}},
-    {% endif %}
-    {% empty %}
-    -
+        {% empty %}
+        <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td><td></td></tr>
     {% endfor %}
-    </td>
-    <td class="clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
-        {% if invoice.completed_count == 0 %}
-        <span class="text-center blue-bg clickable-row">Not Started</span>
-        {% elif invoice.completed_count != 0 and invoice.completed_count < invoice.orderschedule_count %}
-        <span class="text-center yellow-bg clickable-row">IN PROGRESS</span>
-        {% elif invoice.completed_count == invoice.orderschedule_count %}
-        <span class="text-center green-bg clickable-row" >COMPLETED</span>
-        {% endif %}
-        {% comment %} {% for schedule in invoice.orderschedules %}
-        <p>{{schedule.work_status}}</p>
-        <p>{{invoice.orderschedule_count}}</p>
-        <p>{{invoice.completed_count}}</p>
-        {% endfor %} {% endcomment %}
-        </td>
-    </tr>
-
-    {% comment %} BREAKDOWN AFTER PENDING {% endcomment %}
-    {% elif fil_payment_status == 'PENDING' and invoice.payment_policy == 'BREAKDOWN' and invoice.preamount_paid != 0.0 and invoice.postamount_paid == 0.0 and invoice.completed_count == invoice.orderschedule_count %}
-    <tr>
-    <td {% if invoice.payment_status == 'PENDING' %}
-        class="red-line"
-        {% elif invoice.payment_status == 'COMPLETED' %}
-        class="green-line" 
-        {% else %}
-        class="yellow-line"
-        {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
-    <td class="text-left"  >{{invoice.order_no}}</td>
-    <td>{{invoice.evaluation.customer.name}}</td>
-    <td class="text-center">{{invoice.evaluation.payment_method}}</td>
-    </td>
-    <td class="text-right">{{invoice.total_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
-    <td class="text-right">{{invoice.amount_paid|default_if_none:'0.00'|floatformat:'3'}}</td>
-    <td class="text-right">{{invoice.remining_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
-    <td class="text-center">
-    {% for inv in invoice.paymenthistory|slice:":1" %}
-    {% if inv.payment_mode == 'ONLINECREDIT' %}
-    {{inv.payment_gateway|default_if_none:'-'}},
-    {% else %}
-    {{inv.payment_mode|default_if_none:'-'}},
-    {% endif %}
-    {% empty %}
-    -
-    {% endfor %}
-    </td>
-    <td class="clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
-        {% if invoice.completed_count == 0 %}
-        <span class="text-center blue-bg clickable-row">Not Started</span>
-        {% elif invoice.completed_count != 0 and invoice.completed_count < invoice.orderschedule_count %}
-        <span class="text-center yellow-bg clickable-row">IN PROGRESS</span>
-        {% elif invoice.completed_count == invoice.orderschedule_count %}
-        <span class="text-center green-bg clickable-row" >COMPLETED</span>
-        {% endif %}
-        {% comment %} {% for schedule in invoice.orderschedules %}
-        <p>{{schedule.work_status}}</p>
-        <p>{{invoice.orderschedule_count}}</p>
-        <p>{{invoice.completed_count}}</p>
-        {% endfor %} {% endcomment %}
-        </td>
-    </tr>
-
-    {% else %}
-
-    <tr>
-    <td {% if invoice.payment_status == 'PENDING' %}
-        class="red-line"
-        {% elif invoice.payment_status == 'COMPLETED' %}
-        class="green-line" 
-        {% else %}
-        class="yellow-line"
-        {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
-    <td class="text-left"  >{{invoice.order_no}}</td>
-    <td>{{invoice.evaluation.customer.name}}</td>
-    <td class="text-center">{{invoice.evaluation.payment_method}}</td>
-    </td>
-    <td class="text-right">{{invoice.total_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
-    <td class="text-right">{{invoice.amount_paid|default_if_none:'0.00'|floatformat:'3'}}</td>
-    <td class="text-right">{{invoice.remining_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
-    <td class="text-center">
-    {% for inv in invoice.paymenthistory|slice:":1" %}
-    {% if inv.payment_mode == 'ONLINECREDIT' %}
-    {{inv.payment_gateway|default_if_none:'-'}},
-    {% else %}
-    {{inv.payment_mode|default_if_none:'-'}},
-    {% endif %}
-    {% empty %}
-    -
-    {% endfor %}
-    </td>
-    <td class="clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
-        {% if invoice.completed_count == 0 %}
-        <span class="text-center blue-bg clickable-row">Not Started</span>
-        {% elif invoice.completed_count != 0 and invoice.completed_count < invoice.orderschedule_count %}
-        <span class="text-center yellow-bg clickable-row">IN PROGRESS</span>
-        {% elif invoice.completed_count == invoice.orderschedule_count %}
-        <span class="text-center green-bg clickable-row" >COMPLETED</span>
-        {% endif %}
-        {% comment %} {% for schedule in invoice.orderschedules %}
-        <p>{{schedule.work_status}}</p>
-        <p>{{invoice.orderschedule_count}}</p>
-        <p>{{invoice.completed_count}}</p>
-        {% endfor %} {% endcomment %}
-        </td>
-    </tr>
-
-    {% endif %}
-
-    {% empty %}
-    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td><td></td></tr>
-    {% endfor %}
-
 </tbody>
 <tfoot>
  
