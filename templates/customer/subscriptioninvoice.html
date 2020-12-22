@@ -93,7 +93,7 @@
         
         <section id="invoice-info">
           <div><span>Order Number</span> <span>{{order.order_no}}</span></div>
-          <div><span>MONTHLY PAYMENT</span> <span>for ------ month</span></div>
+          <div><span>MONTHLY PAYMENT</span> <span>for {% for subscription in subscriptions %}{% if forloop.first %}{{subscription.monthyear}}{% endif %}{% endfor %} month</span></div>
         </section>
         
         <div class="clearfix"></div>
@@ -158,7 +158,7 @@
             <tr class="amount-total">
               <!-- {amount_total_label} -->
               <td colspan="2">Current Payment <br>
-                  KD
+                 {% for subscription in subscriptions %}{% if forloop.first %}{{subscription.amount}}{% endif %}{% endfor %} KD
                 <!-- <div class="invoice-name-arabic">شركة بلـــيت</div></td> -->
             </tr>
             

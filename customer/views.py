@@ -13,7 +13,7 @@ from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,PaymentSubscriptionDetails
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 
@@ -159,14 +159,14 @@ class SubscriptionQuatation(View):
 
 			duplicate_schedules.append(orderschedule.order_scheduler_book)
 
-
+		
 		#per completed jobs coun
 		per_job_cost = 0
 		for orderschedule in nonduplicate_schedules:            
 			for section in orderschedule.order_scheduler_book.evaluationbooksection:
 				per_job_cost += section.section_cost
 		
-		return render(request,"customer/subscriptionquatation.html",{"order":order,"nonduplicate_schedules":nonduplicate_schedules,"per_job_cost":per_job_cost,})
+		return render(request,"customer/subscriptionquatation.html",{"order":order,"nonduplicate_schedules":nonduplicate_schedules,"per_job_cost":per_job_cost})
  
 	def post(self,request,evaluation_id):
 		order_id 		  = request.POST.get('order_id')
@@ -281,13 +281,17 @@ class CustomerSubscriptionInvoice(View):
 		
 		customer_ip_address = get_client_ip(request)
 
+		#subscription amounts
+		subscriptions = PaymentSubscriptionDetails.objects.select_related('order__evaluation').filter(order__evaluation__evaluation_id=evaluation_id,is_paid=False)
+		print(subscriptions)
+
 		#per completed jobs count
 		completed_jobs_count = 0 
 		for schedule in order.orderschedules:
 			if schedule.work_status == 'CLEANING_FULFILLED':
 				completed_jobs_count += 1
 		
-		return render(request,"customer/subscriptioninvoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"completed_jobs_count":completed_jobs_count,})
+		return render(request,"customer/subscriptioninvoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"completed_jobs_count":completed_jobs_count,"subscriptions":subscriptions})
 
 class PaymentResponseDebit(View):
 	def get(self,request):
