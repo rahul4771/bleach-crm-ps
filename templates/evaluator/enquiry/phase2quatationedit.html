@@ -692,10 +692,11 @@ $("#id_form-TOTAL_FORMS").val("{{evaluation_details.evaluationbooks|length}}");
   {% endfor %}
 
   //tendative date initial
-  $("#id_form-{{forloop.counter0}}-tendative_date").datetimepicker({ 
-    pickTime: false, 
-    format: "DD-MM-YYYY",
-    minDate: new Date(),
+  $("#id_form-{{forloop.counter0}}-tendative_date").datepicker({ 
+    multidate: true,
+    closeOnDateSelect: true,
+    format: "dd-mm-yyyy",
+    startDate: new Date(),
   });
 
 //tendative dates initial
@@ -749,6 +750,7 @@ $("#id_form--tendative_time, #id_form--number_of_cleaners , #id_form--cleaning_h
                     multidate: true,
                     closeOnDateSelect: true,
                     format: "dd-mm-yyyy", 
+                    minDate:new Date(),
 
                     beforeShowDay: function(date){
                     dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
@@ -770,7 +772,8 @@ $("#id_form--tendative_time, #id_form--number_of_cleaners , #id_form--cleaning_h
                 $("#id_form-{{forloop.counter0}}-tendative_dates").datepicker({ 
                     multidate: true,
                     closeOnDateSelect: true,
-                    format: "dd-mm-yyyy", 
+                    format: "dd-mm-yyyy",
+                    minDate:new Date(), 
 
                     beforeShowDay: function(date){
                     dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();

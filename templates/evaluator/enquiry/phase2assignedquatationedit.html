@@ -745,6 +745,7 @@ $("#id_form-{{forloop.counter0}}-tendative_time").datetimepicker({
                     multidate: true,
                     closeOnDateSelect: true,
                     format: "dd-mm-yyyy", 
+                    minDate:new Date(),
 
                     beforeShowDay: function(date){
                     dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
@@ -767,6 +768,7 @@ $("#id_form-{{forloop.counter0}}-tendative_time").datetimepicker({
                     multidate: true,
                     closeOnDateSelect: true,
                     format: "dd-mm-yyyy", 
+                    minDate:new Date(),
 
                     beforeShowDay: function(date){
                     dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();

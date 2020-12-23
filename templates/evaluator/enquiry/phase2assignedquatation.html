@@ -666,6 +666,7 @@ $('document').ready(function(){
                         multidate: true,
                         closeOnDateSelect: true,
                         format: "dd-mm-yyyy", 
+                        minDate:new Date(),
 
                         beforeShowDay: function(date){
                         dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
@@ -688,6 +689,7 @@ $('document').ready(function(){
                         multidate: true,
                         closeOnDateSelect: true,
                         format: "dd-mm-yyyy", 
+                        minDate:new Date(),
 
                         beforeShowDay: function(date){
                         dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
@@ -788,6 +790,7 @@ $("#id_form-"+x+"-tendative_time, #id_form-"+x+"-number_of_cleaners , #id_form-"
                     multidate: true,
                     closeOnDateSelect: true,
                     format: "dd-mm-yyyy", 
+                    minDate:new Date(),
 
                     beforeShowDay: function(date){
                     dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
@@ -810,6 +813,7 @@ $("#id_form-"+x+"-tendative_time, #id_form-"+x+"-number_of_cleaners , #id_form-"
                     multidate: true,
                     closeOnDateSelect: true,
                     format: "dd-mm-yyyy", 
+                    minDate:new Date(),
 
                     beforeShowDay: function(date){
                     dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
