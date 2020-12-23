@@ -700,7 +700,7 @@ class PaymentDetails(IsAccountant,View):
 		
 		if orderschedule_prefetch_filter:
 			print(orderschedule_prefetch_filter,"orderfdh")
-			invoicess = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).filter(orderschedule_prefetch_filter),to_attr='orderschedules2')).annotate(orderschedule_filter_count=Count(Case(When(count_orderschedule_prefetch_filter,then=1),output_field=IntegerField())), orderschedule_count=Count('order_scheduler_order'), completed_count=Count(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1)))).filter(orderschedule_filter_count__gt=0)
+			invoices = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).filter(orderschedule_prefetch_filter),to_attr='orderschedules2')).annotate(orderschedule_filter_count=Count(Case(When(count_orderschedule_prefetch_filter,then=1),output_field=IntegerField())), orderschedule_count=Count('order_scheduler_order'), completed_count=Count(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1)))).filter(orderschedule_filter_count__gt=0)
 
 		#filters
 		fil_payment_status       	= request.GET.get('payment_status',None)

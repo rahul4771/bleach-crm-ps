@@ -745,10 +745,21 @@ $("#id_form--tendative_time, #id_form--number_of_cleaners , #id_form--cleaning_h
 
                 //one time date
                 $(function () {
-                $("#id_form-{{forloop.counter0}}-tendative_date").datetimepicker({ 
-                    pickTime: false, 
-                    format: "DD-MM-YYYY",
-                    disabledDates: disableSpecificDates,
+                $("#id_form-{{forloop.counter0}}-tendative_date").datepicker({ 
+                    multidate: true,
+                    closeOnDateSelect: true,
+                    format: "dd-mm-yyyy", 
+
+                    beforeShowDay: function(date){
+                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+                    if(disableSpecificDates.indexOf(dmy) != -1){
+                    return false;
+                    }
+                    else{
+                    return true;
+                    }
+                    },
+
                     startDate:new Date(),
                     minDate:new Date()
                 });

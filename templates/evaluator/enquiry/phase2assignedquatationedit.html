@@ -681,10 +681,11 @@ $("#id_form-TOTAL_FORMS").val("{{evaluation_details.evaluationbooks|length}}");
   {% endfor %}
 
   //tendative date initial
-  $("#id_form-{{forloop.counter0}}-tendative_date").datetimepicker({ 
-    pickTime: false, 
-    format: "DD-MM-YYYY",
-    minDate: new Date(),
+  $("#id_form-{{forloop.counter0}}-tendative_date").datepicker({ 
+    multidate: true,
+    closeOnDateSelect: true,
+    format: "dd-mm-yyyy",
+    startDate: new Date(),
   });
 
 //tendative dates initial
@@ -741,7 +742,7 @@ $("#id_form-{{forloop.counter0}}-tendative_time").datetimepicker({
                 //one time date
                 $(function () {
                 $("#id_form-{{forloop.counter0}}-tendative_date").datepicker({ 
-                    //multidate: true,
+                    multidate: true,
                     closeOnDateSelect: true,
                     format: "dd-mm-yyyy", 
 

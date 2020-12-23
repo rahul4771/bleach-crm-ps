@@ -110,8 +110,10 @@
                         <br>
                         
                         {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
+                        {% for orderschedule in order.orderschedules %}
                         <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{orderschedule.start_at}}</div>
                         <br>
+                        {% endfor %}
                         {% else %}
                         {% for subscription_schedule in order.orderschedules %}
                         {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
