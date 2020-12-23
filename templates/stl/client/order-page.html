@@ -475,7 +475,7 @@
 <!--multiple cleanings-->
 {% elif order.orderschedules|length > 1 %}
 
-<div class="details-sub-head align-left">Multiple Cleaning Status</div>
+<div class="details-sub-head align-left">Cleaning Status</div>
 <div class="order-clean-outer-wrapper cream"><!--order-clean-outer-wrapper-->
     
 <table class="main-table">    
@@ -485,7 +485,8 @@
     <tr>
     <td data-label="Sl No" class="bold-text">Cleaning {{forloop.counter}}</td>
     <td data-label="Time" class="bold-text">{{orderschedule.start_at}}</td>
-    <td class="hide-b clickable-cursor" data-label="" onclick="appendsubscriptiondetails({{orderschedule.id}},{{forloop.parentloop.counter}})"><span class="red-bg">{{orderschedule.work_status|default_if_none:'Not Started'}}</span></td> 
+    <td class="hide-b clickable-cursor" data-label="" onclick="appendsubscriptiondetails({{orderschedule.id}},{{forloop.parentloop.counter}})">
+    <span {% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}class="yellow-bg"{% elif orderschedule.work_status == 'CLEANING_FULFILLED' %}class="green-bg"{% else %}class="red-bg"{% endif %}>{{orderschedule.work_status|default_if_none:'NOT STARTED'}}</span></td> 
     </tr> 
     {% endif %}
     {% endfor %}     
