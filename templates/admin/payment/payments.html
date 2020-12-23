@@ -175,12 +175,14 @@
 <tbody>
     {% for invoice in invoices %}
     <tr>
-    <td {% if invoice.payment_status == 'PENDING' %}
-        class="red-line"
-        {% elif invoice.payment_status == 'COMPLETED' %}
-        class="green-line" 
-        {% else %}
+    <td {% if invoice.order_status == 'APPROVED_BY_CLIENT' %}
+        class="blue-line"
+        {% elif invoice.order_status == 'ORDER_IN_PROGRESS' %}
         class="yellow-line"
+        {% elif invoice.order_status == 'ORDER_CLOSED' %}
+        class="green-line"
+        {% elif invoice.order_status == 'ORDER_CANCELLED' %}
+        class="red-line"
         {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
     <td class="text-left"  >{{invoice.order_no}}</td>
     <td>{{invoice.evaluation.customer.name}}</td>
@@ -200,7 +202,7 @@
     -
     {% endfor %}
     </td>
-    <td class="clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
+    <td class="clickable-row" {% if invoice %}data-href="{% url 'bleach_admin:admin-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
         {% if invoice.order_status == 'APPROVED_BY_CLIENT' %}
         <span class="text-center blue-bg clickable-row">Not Started</span>
         {% elif invoice.order_status == 'ORDER_IN_PROGRESS' %}

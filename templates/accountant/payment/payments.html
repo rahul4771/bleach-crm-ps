@@ -175,13 +175,17 @@
 <tbody>
     {% for invoice in invoices%}
         <tr>
-        <td {% if invoice.payment_status == 'PENDING' %}
-            class="red-line"
-            {% elif invoice.payment_status == 'COMPLETED' %}
-            class="green-line" 
-            {% else %}
-            class="yellow-line"
-            {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
+
+        <td {% if invoice.completed_count == 0 %}
+        class="blue-line"
+        {% elif invoice.completed_count != 0 and invoice.completed_count < invoice.orderschedule_count %}
+        class="yellow-line"
+        {% elif invoice.completed_count == invoice.orderschedule_count %}
+        class="green-line"
+        {% else %}
+        class="red-line"
+        {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
+
         <td class="text-left"  >{{invoice.order_no}}</td>
         <td>{{invoice.evaluation.customer.name}}</td>
         <td class="text-center">{{invoice.evaluation.payment_method}}</td>
