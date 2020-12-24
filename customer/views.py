@@ -165,7 +165,7 @@ class SubscriptionQuatation(View):
 			duplicate_schedules.append(orderschedule.order_scheduler_book)
 
 		
-		#per completed jobs coun
+		#per job cost
 		per_job_cost = 0
 		for orderschedule in nonduplicate_schedules:            
 			for section in orderschedule.order_scheduler_book.evaluationbooksection:
@@ -273,6 +273,15 @@ class CustomerSubscriptionInvoice(View):
 
 			duplicate_schedules.append(orderschedule.order_scheduler_book)
 
+		#subscription amounts
+		subscriptions = PaymentSubscriptionDetails.objects.select_related('order__evaluation').filter(order__evaluation__evaluation_id=evaluation_id,is_paid=False)
+
+		#per completed jobs count
+		completed_jobs_count = 0 
+		for schedule in order.orderschedules:
+			if schedule.work_status == 'CLEANING_FULFILLED':
+				completed_jobs_count += 1
+		
 		#for credit card
 		full_name_array = UserProfile.objects.get(username=user_name).name.split()
 		firstname = full_name_array[0]
@@ -286,16 +295,6 @@ class CustomerSubscriptionInvoice(View):
 		
 		customer_ip_address = get_client_ip(request)
 
-		#subscription amounts
-		subscriptions = PaymentSubscriptionDetails.objects.select_related('order__evaluation').filter(order__evaluation__evaluation_id=evaluation_id,is_paid=False)
-		print(subscriptions)
-
-		#per completed jobs count
-		completed_jobs_count = 0 
-		for schedule in order.orderschedules:
-			if schedule.work_status == 'CLEANING_FULFILLED':
-				completed_jobs_count += 1
-		
 		return render(request,"customer/subscriptioninvoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"completed_jobs_count":completed_jobs_count,"subscriptions":subscriptions})
 
 class PaymentResponseDebit(View):
@@ -329,9 +328,26 @@ class PaymentResponseDebit(View):
 			else:
 				new_receipt_no = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
 
-			payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid'),receipt_no=new_receipt_no,payment_gateway='DEBITCARD')	
+			#payment history
+			if payment_mode == 'subscription':
+				subscription_id      = request.GET.get("udf3")
+				subscription         = PaymentSubscriptionDetails.objects.get(id=subscription_id)			
+				subscription.is_paid = True
+				subscription.save()
+				payment_history = PaymentHistory.objects.create(order=order,history_payment_subscription=subscription,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid'),receipt_no=new_receipt_no,payment_gateway='DEBITCARD')
+			else:
+				payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid'),receipt_no=new_receipt_no,payment_gateway='DEBITCARD')	
 
-			if payment_mode == 'before_cleaning' and order.preamount_paid != order.evaluation.before_cleaning_amount:
+			#payment calculations
+			if payment_mode == 'subscription':
+				order.amount_paid      += amount_paid
+				order.remining_amount  = order.remining_amount-amount_paid
+				#to check payment completed
+				if order.remining_amount-amount_paid == 0:
+					order.payment_status         = 'COMPLETED'
+					order.payment_completed_date = timezone.now()					
+			
+			elif payment_mode == 'before_cleaning' and order.preamount_paid != order.evaluation.before_cleaning_amount:
 				order.preamount_paid   = amount_paid
 				order.amount_paid      = amount_paid
 				order.remining_amount  = order.remining_amount-amount_paid

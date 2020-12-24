@@ -141,11 +141,28 @@ class PaymentResponseCredit(APIView):
 			if current_receipt_starting == int(str(receipt_no)[:4]):
 				new_receipt_no = int(receipt_no)+1
 			else:
-				new_receipt_no = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
+				new_receipt_no = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')	
 
-			payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.POST.get('echeck_debit_ref_no'),ref=request.POST.get('payer_authentication_xid'),track_id=request.POST.get('req_reference_number'),transaction_id=request.POST.get('transaction_id'),receipt_no=new_receipt_no,payment_gateway='CREDITCARD')	
+			#payment history
+			if payment_mode == 'subscription':
+				subscription_id      = request.GET.get("req_merchant_defined_data2")
+				subscription         = PaymentSubscriptionDetails.objects.get(id=subscription_id)			
+				subscription.is_paid = True
+				subscription.save()
+				payment_history = PaymentHistory.objects.create(order=order,history_payment_subscription=subscription,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.POST.get('echeck_debit_ref_no'),ref=request.POST.get('payer_authentication_xid'),track_id=request.POST.get('req_reference_number'),transaction_id=request.POST.get('transaction_id'),receipt_no=new_receipt_no,payment_gateway='CREDITCARD')
+			else:
+				payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.POST.get('echeck_debit_ref_no'),ref=request.POST.get('payer_authentication_xid'),track_id=request.POST.get('req_reference_number'),transaction_id=request.POST.get('transaction_id'),receipt_no=new_receipt_no,payment_gateway='CREDITCARD')
 
-			if payment_mode == 'before_cleaning' and order.preamount_paid != order.evaluation.before_cleaning_amount:
+			#payment calculations
+			if payment_mode == 'subscription':
+				order.amount_paid      += amount_paid
+				order.remining_amount  = order.remining_amount-amount_paid
+				#to check payment completed
+				if order.remining_amount-amount_paid == 0:
+					order.payment_status         = 'COMPLETED'
+					order.payment_completed_date = timezone.now()
+
+			elif payment_mode == 'before_cleaning' and order.preamount_paid != order.evaluation.before_cleaning_amount:
 				order.preamount_paid   = amount_paid
 				order.amount_paid      = amount_paid
 				order.remining_amount  = order.remining_amount-amount_paid
