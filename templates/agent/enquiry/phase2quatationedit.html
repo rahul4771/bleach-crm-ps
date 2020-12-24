@@ -38,7 +38,15 @@
 <input type="hidden" name="editform{{forloop.counter0}}" value="{{book.id}}">      	
             <div class="common-sub-head align-left service_form" id="id_form-{{forloop.counter0}}-service">Service {{forloop.counter}}</div> 
 	<div class="enquiry-FullWrapper"><!--enquiry-FullWrapper-->       
-                <div class="close-div close-div-service"></div>     
+                <div class="close-div close-div-service">
+                {% comment %} {% if forloop.counter > 1 %}
+                <form method="post" action="" >{% csrf_token %}
+                <input type="hidden" name="action" value="delete_service">
+                <input type="hidden" name="evaluation_book_id" value="{{book.id}}">
+                <a onclick="submitAnyForm(this);"><i class="fa fa-times-circle" aria-hidden="true" ></i></a>
+                </form>
+                {% endif %} {% endcomment %}
+                </div>     
 		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
             	<div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Service Type</label></div>
