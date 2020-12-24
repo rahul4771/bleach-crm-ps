@@ -54,11 +54,11 @@
                     </div><!--order-progress-widget order-progress-widget-column2-->
                     {% endif %}
                     
-                    <div class="order-progress-widget order-progress-widget-column3"><!--order-progress-widget order-progress-widget-column3-->
+                    <!-- <div class="order-progress-widget order-progress-widget-column3">
                         <div class="evaluation">Date Confirmation</div>
                         <div class="evaluation-icon"><img id="date_confirmed_image" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed <span id="date_confirmed"></span>/<span>{{order.orderschedules|length}}</span></div>
-                    </div><!--order-progress-widget order-progress-widget-column3-->                    
+                    </div> -->                    
                     
                     <div class="order-progress-widget order-progress-widget-column4"><!--order-progress-widget order-progress-widget-column4-->
                         <div class="evaluation">Assigning Team</div>
@@ -924,7 +924,7 @@ $(".pn-prev").click();
 </script>
    
 <script id="rendered-js">
-dateconfirm_completed_count = 0    
+// dateconfirm_completed_count = 0    
 teamassign_completed_count  = 0
 cleaning_completed_count    = 0
 total_schedules = parseInt("{{order.orderschedules|length}}")
@@ -967,9 +967,9 @@ $('.moreless-button{{orderschedule.id}}').click(function () {
   }
 });
 
-{% if orderschedule.status == 'CONFIRMED' %}
-dateconfirm_completed_count += 1;
-{% endif %}  
+// {% if orderschedule.status == 'CONFIRMED' %}
+// dateconfirm_completed_count += 1;
+// {% endif %}  
 {% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' or orderschedule.work_status == 'CLEANING_FULFILLED' or orderschedule.work_status == 'CLEANING_IN_PROGRESS' %}
 teamassign_completed_count += 1;
 {% endif %}
@@ -980,22 +980,22 @@ cleaning_completed_count += 1;
 {% endfor %}
 
 //change html
-$("#date_confirmed").html(dateconfirm_completed_count)
+// $("#date_confirmed").html(dateconfirm_completed_count)
 $("#team_assigned").html(teamassign_completed_count)
 $("#cleaning_completed").html(cleaning_completed_count)
 
-if(dateconfirm_completed_count == total_schedules)
-{
-$("#date_confirmed_image").attr("src","{% static 'files/images/order-green-dateconfirmation.svg' %}")
-}
-else if(dateconfirm_completed_count > 0)
-{
-$("#date_confirmed_image").attr("src","{% static 'files/images/order-dateconfirmation.svg' %}")
-}
-else
-{
-$("#date_confirmed_image").attr("src","{% static 'files/images/order-gray-dateconfirmation.svg' %}")
-}
+// if(dateconfirm_completed_count == total_schedules)
+// {
+// $("#date_confirmed_image").attr("src","{% static 'files/images/order-green-dateconfirmation.svg' %}")
+// }
+// else if(dateconfirm_completed_count > 0)
+// {
+// $("#date_confirmed_image").attr("src","{% static 'files/images/order-dateconfirmation.svg' %}")
+// }
+// else
+// {
+// $("#date_confirmed_image").attr("src","{% static 'files/images/order-gray-dateconfirmation.svg' %}")
+// }
 
 if(teamassign_completed_count == total_schedules)
 {
@@ -1023,14 +1023,14 @@ else
 $("#cleaning_completed_image").attr("src","{% static 'files/images/order-gray-cleaning.svg' %}")    
 }
 //bar percentage count
-total_percentage = (total_schedules*5)
+total_percentage = (total_schedules*4)
 {% if order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'PREPAID' or order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' or order.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' %}
 total_percentage += total_schedules
 {% else %}
 total_percentage += total_schedules*2
 {% endif %}
 
-active_percentage = dateconfirm_completed_count+teamassign_completed_count+cleaning_completed_count+total_schedules
+active_percentage = teamassign_completed_count+cleaning_completed_count+total_schedules
 
 {% if order.evaluation.before_cleaning_amount == order.preamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
 active_percentage += total_schedules

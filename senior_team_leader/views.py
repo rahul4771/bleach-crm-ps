@@ -572,34 +572,35 @@ class StlHome(IsSeniorTeamLeader,View):
 		except:
 			assign_followup_schedules = None
 
-		#Order and Followup Schedules for date confirmation
-		confirm_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
-
-		follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(4)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
-		for followupschedule in follow_up_schedules:
-			followupschedule.days_left_coming = (followupschedule.start_at-timezone.now()).days 
-
-		
-		order_schedules_by_address = Order.objects.select_related('evaluation__call_attender').filter(evaluation__quatation_status='APPROVED').filter(Q( Q(Q(payment_status='COMPLETED')|~Q(preamount_paid = 0)) | Q(evaluation__payment_method='POSTPAID') )).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED').select_related('evaluator').prefetch_related(Prefetch('order_scheduler_evaluationdetails',queryset=OrderScheduler.objects.filter(is_active=True,status='WAITING').order_by('start_at'),to_attr="orderschedules")),to_attr='evaluationdetails'))		
-		for order_details in order_schedules_by_address:
-			if order_details.evaluation.evaluationdetails:
-				for evaluation_detail in order_details.evaluation.evaluationdetails:
-					if evaluation_detail.orderschedules:
-						count = 0
-						for schedule in evaluation_detail.orderschedules:
-							if count == 0:
-								evaluation_detail.days_left_coming = (schedule.start_at-timezone.now()).days
-							count += 1
-
 		#add days left
 		for schedule in assign_order_schedules:
 			schedule.days_left_coming = (schedule.start_at-timezone.now()).days
 
 		for followupschedule in assign_followup_schedules:
-			followupschedule.days_left_coming = (followupschedule.start_at-timezone.now()).days	
+			followupschedule.days_left_coming = (followupschedule.start_at-timezone.now()).days
+
+		#Order and Followup Schedules for date confirmation
+		# confirm_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
+
+		# follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(4)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+		# for followupschedule in follow_up_schedules:
+		# 	followupschedule.days_left_coming = (followupschedule.start_at-timezone.now()).days 
+
+		
+		# order_schedules_by_address = Order.objects.select_related('evaluation__call_attender').filter(evaluation__quatation_status='APPROVED').filter(Q( Q(Q(payment_status='COMPLETED')|~Q(preamount_paid = 0)) | Q(evaluation__payment_method='POSTPAID') )).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED').select_related('evaluator').prefetch_related(Prefetch('order_scheduler_evaluationdetails',queryset=OrderScheduler.objects.filter(is_active=True,status='WAITING').order_by('start_at'),to_attr="orderschedules")),to_attr='evaluationdetails'))		
+		# for order_details in order_schedules_by_address:
+		# 	if order_details.evaluation.evaluationdetails:
+		# 		for evaluation_detail in order_details.evaluation.evaluationdetails:
+		# 			if evaluation_detail.orderschedules:
+		# 				count = 0
+		# 				for schedule in evaluation_detail.orderschedules:
+		# 					if count == 0:
+		# 						evaluation_detail.days_left_coming = (schedule.start_at-timezone.now()).days
+		# 					count += 1
+	
 
 
-		return render(request,'stl/home/home.html',{'investigations':investigations,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,"fil_staff":fil_staff,'assign_order_schedules':assign_order_schedules,'assign_followup_schedules':assign_followup_schedules,"follow_up_schedules":follow_up_schedules,"order_schedules_by_address":order_schedules_by_address})
+		return render(request,'stl/home/home.html',{'investigations':investigations,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,"fil_staff":fil_staff,'assign_order_schedules':assign_order_schedules,'assign_followup_schedules':assign_followup_schedules})
 
 	def post(self,request):
 		action = request.POST.get('action_type')
@@ -708,25 +709,25 @@ class StlHome(IsSeniorTeamLeader,View):
 				FollowUpScheduler.objects.filter(id=followupscheduler_id).update(start_at=start_at,end_at=end_at)
 				messages.success(request,"Followup Cleaning Date Not Confirmed")	
 
-		if action =='confirm_orderschedules':
-			total_schedules = int(request.POST.get('total_schedules_to_confirm'))
-			for i in range(total_schedules):
-				schedule_id    = request.POST.get('order_schedules_id'+str(i))
+		# if action =='confirm_orderschedules':
+		# 	total_schedules = int(request.POST.get('total_schedules_to_confirm'))
+		# 	for i in range(total_schedules):
+		# 		schedule_id    = request.POST.get('order_schedules_id'+str(i))
 				
-				order_scheduler= OrderScheduler.objects.select_related('order_scheduler_book').get(id=schedule_id)
-				tendative_date = request.POST.get('order_schedule_date'+str(i))
-				tendative_time = request.POST.get('order_schedule_time'+str(i))
-				start_at         = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
-				end_at           = start_at + timedelta(hours=order_scheduler.order_scheduler_book.cleaning_hours)
+		# 		order_scheduler= OrderScheduler.objects.select_related('order_scheduler_book').get(id=schedule_id)
+		# 		tendative_date = request.POST.get('order_schedule_date'+str(i))
+		# 		tendative_time = request.POST.get('order_schedule_time'+str(i))
+		# 		start_at         = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+		# 		end_at           = start_at + timedelta(hours=order_scheduler.order_scheduler_book.cleaning_hours)
 
-				confirm_status = request.POST.get('confirm'+str(i))
+		# 		confirm_status = request.POST.get('confirm'+str(i))
 
-				if confirm_status:
-					OrderScheduler.objects.filter(id=schedule_id).update(status='CONFIRMED',start_at=start_at,end_at=end_at)
-				else:
-					OrderScheduler.objects.filter(id=schedule_id).update(start_at=start_at,end_at=end_at)
+		# 		if confirm_status:
+		# 			OrderScheduler.objects.filter(id=schedule_id).update(status='CONFIRMED',start_at=start_at,end_at=end_at)
+		# 		else:
+		# 			OrderScheduler.objects.filter(id=schedule_id).update(start_at=start_at,end_at=end_at)
 			
-			messages.success(request,"Cleaning Date(s) Confirmed/Changed Successfully")
+		# 	messages.success(request,"Cleaning Date(s) Confirmed/Changed Successfully")
 
 		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
 		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
@@ -1041,7 +1042,7 @@ class InvestigationTask(IsSeniorTeamLeader,View):
 			follow_up.cleaning_hours = cleaning_hours
 			follow_up.save()
 			
-			follow_up_scheduler = FollowUpScheduler.objects.create(follow_up=follow_up,start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
+			follow_up_scheduler = FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
 		
 		else:
 			Investigation.objects.filter(id=investigation_id).update(is_followup_approved=False,check_out=timezone.now(),notes=request.POST.get('notes'))

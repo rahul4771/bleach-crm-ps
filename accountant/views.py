@@ -898,6 +898,13 @@ class CashCollect(IsAccountant,View):
 				is_payment_completed.payment_status         = 'COMPLETED'
 				is_payment_completed.save()
 		
+		
+			####to close order
+			order_closing_check = Order.objects.select_related('evaluation__customer').filter(is_active=True,id=order_id,payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+			if order_closing_check:
+				closing_order	= Order.objects.get(is_active=True,order_no=evaluation_id)
+				closing_order.order_status = 'ORDER_CLOSED'
+				closing_order.save()
 		else:
 			messages.suucess(request,"Something Went Wrong")
 
