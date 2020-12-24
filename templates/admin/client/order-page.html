@@ -183,9 +183,11 @@
             <br>
                 
                 {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
-                {% for orderschedule in order.orderschedules %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{orderschedule.start_at}}</div>
+                {% for multi_order_schedule in order.orderschedules %}
+                {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{multi_order_schedule.start_at}}</div>
                 <br>
+                {% endif %}
                 {% endfor %}
                 {% else %}
                 {% for subscription_schedule in order.orderschedules %}
@@ -480,12 +482,13 @@
     
 <table class="main-table">    
 <tbody>
-    {% for orderschedule in order.orderschedules %}
-    {% if orderschedule.order_scheduler_book == orderschedule.order_scheduler_book %}
+    {% for mult_order_schedule in order.orderschedules %}
+    {% if mult_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
     <tr>
     <td data-label="Sl No" class="bold-text">Cleaning {{forloop.counter}}</td>
-    <td data-label="Time" class="bold-text">{{orderschedule.start_at}}</td>
-    <td class="hide-b clickable-cursor" data-label="" onclick="appendsubscriptiondetails({{orderschedule.id}},{{forloop.parentloop.counter}})"><span class="red-bg">{{orderschedule.work_status|default_if_none:'Not Started'}}</span></td> 
+    <td data-label="Time" class="bold-text">{{mult_order_schedule.start_at}}</td>
+    <td class="hide-b clickable-cursor" data-label="" onclick="appendsubscriptiondetails({{mult_order_schedule.id}},{{forloop.parentloop.counter}})">
+    <span {% if mult_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}class="yellow-bg"{% elif mult_order_schedule.work_status == 'CLEANING_FULFILLED' %}class="green-bg"{% else %}class="red-bg"{% endif %}>{{mult_order_schedule.work_status|default_if_none:'NOT STARTED'}}</span></td> 
     </tr> 
     {% endif %}
     {% endfor %}     

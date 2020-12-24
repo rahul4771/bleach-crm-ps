@@ -340,14 +340,15 @@ class Cleaning(IsTeamLeader,View):
 			cleaning_team_detail = None
 
 		#remaining teams
-		cleaning_teams = CleaningTeam.objects.filter(order_scheduler__order=cleaning_team_detail.order_scheduler.order).values('order_scheduler__work_status')
+		cleaning_teams = CleaningTeam.objects.filter(order_scheduler__order_scheduler_book=cleaning_team_detail.order_scheduler.order_scheduler_book).values('order_scheduler__work_status')
 		remaining_team = 0
 		for team in cleaning_teams:
 			if team['order_scheduler__work_status'] != 'CLEANING_FULFILLED':
 				remaining_team += 1
 		
+		print(remaining_team,"rtm")
 		#remaining keynotes
-		keynotes = EvaluationSectionKeynote.objects.filter(evaluation_section__evaluation_book__evaluation_details__evaluation__evaluation_order__order_no=cleaning_team_detail.order_scheduler.order.order_no).values('completion_status')
+		keynotes = EvaluationSectionKeynote.objects.filter(evaluation_section__evaluation_book=cleaning_team_detail.order_scheduler.order_scheduler_book).values('completion_status')
 		remaining_keynotes = 0
 		if keynotes:
 			for key in keynotes:
@@ -355,6 +356,7 @@ class Cleaning(IsTeamLeader,View):
 					remaining_keynotes += 1
 		else:
 			pass
+		print(remaining_keynotes,"rky")
 
 		#checkin save	
 		if cleaning_team_detail: 
