@@ -601,6 +601,8 @@ def CleaningExistingDates(request):
 class AgentHome(IsAgent,View):
 	def get(self,request):
 		
+		OrderScheduler.objects.filter(is_active=True,status='WAITING').update(status='CONFIRMED')
+
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		count_today_end   = count_today_start+timedelta(1)
