@@ -110,9 +110,11 @@
                         <br>
                         
                         {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
-                        {% for orderschedule in order.orderschedules %}
-                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{orderschedule.start_at}}</div>
+                        {% for multi_order_schedule in order.orderschedules %}
+                        {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
+                        <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{multi_order_schedule.start_at}}</div>
                         <br>
+                        {% endif %}
                         {% endfor %}
                         {% else %}
                         {% for subscription_schedule in order.orderschedules %}
