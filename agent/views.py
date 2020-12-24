@@ -600,7 +600,7 @@ def CleaningExistingDates(request):
 # Create your views here.
 class AgentHome(IsAgent,View):
 	def get(self,request):
-		
+
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		count_today_end   = count_today_start+timedelta(1)
@@ -1518,14 +1518,9 @@ class FeedbackDetails(IsAgent,View):
 				filters              = functools.reduce(operator.and_,filters)
 				order_wise_feedbacks = order_wise_feedbacks.filter(filters)
 
-		#to find starring caluculations in whole system
-		try:
-			feedbacks                 = FeedBack.objects.filter(is_active=True)
-		except:
-			feedbacks				  = None
-
-		total_feedbacks               = feedbacks.values('order').distinct().count()
+		#to find starring caluculations in whole system		
 		full_order_wise_feedbacks     = order_wise_feedbacks
+		total_feedbacks               = order_wise_feedbacks.filter(is_feedback_marked=True).count()
 
 
 		#PAGINATION FEEDBACKS
@@ -1554,7 +1549,7 @@ class FeedbackDetails(IsAgent,View):
 		page_range = list(paginator.page_range)[start_index:end_index]
 		entry_per_page=(order_wise_feedbacks.end_index())-(order_wise_feedbacks.start_index())+1
 
-		return render(request,'agent/feedback/feedbacks.html',{"feedbacks":feedbacks,"total_feedbacks":total_feedbacks,"order_wise_feedbacks":order_wise_feedbacks,"full_order_wise_feedbacks":full_order_wise_feedbacks,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_minimumstarring":fil_minimumstarring,"fil_maximumstarring":fil_maximumstarring,"fil_service_type":fil_service_type,})
+		return render(request,'agent/feedback/feedbacks.html',{"total_feedbacks":total_feedbacks,"order_wise_feedbacks":order_wise_feedbacks,"full_order_wise_feedbacks":full_order_wise_feedbacks,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_minimumstarring":fil_minimumstarring,"fil_maximumstarring":fil_maximumstarring,"fil_service_type":fil_service_type,})
 
 class FeedbackAdvanced(IsAgent,View):
 	def get(self,request,client_id,order_id):
