@@ -89,6 +89,8 @@
 {% endif %}
 
 
+<!-- As per the requirement date confirmation task commeneted -->
+{% comment %}
 {% if follow_up_schedules or order_schedules_by_address %}  
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Date Confirmation Task</h2>
@@ -123,7 +125,7 @@
 </table>
 </div><!--white-wrapper-->
 {% endif %}
-
+{% endcomment %}
 
 
 
@@ -273,6 +275,7 @@
 </div>     
 
 <!-- order_schedules confirm_popup -->
+{% comment %}
 <div id="orderschedules_dateconfirm_popup" class="overlay">
         <div class="popup-assign-eval"><!--popup-assign-eval-->
             <a class="close" id="orderschedules_dateconfirm_popup_close" href="#">&times;</a>
@@ -298,7 +301,9 @@
 </div><!--ticket-wrapper-full--> 
             </div><!--content-->
     </div><!--popup-assign-eval-->
-</div><!-- /order_schedules confirm_popup -->
+</div>
+{% endcomment %}
+<!-- /order_schedules confirm_popup -->
 
 
 <!-- followup_scheduler confirm_popup -->

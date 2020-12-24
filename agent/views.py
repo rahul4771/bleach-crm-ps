@@ -661,23 +661,23 @@ class AgentHome(IsAgent,View):
 
 
 		#Order and Followup Schedules for date confirmation
-		confirm_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
+		# confirm_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
 
-		follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(4)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
-		for followupschedule in follow_up_schedules:
-			followupschedule.days_left_coming = (followupschedule.start_at-timezone.now()).days 
+		# follow_up_schedules	  = FollowUpScheduler.objects.filter(is_active=True,start_at__lt=confirm_to_date+timedelta(4)).exclude(Q(Q(status='CONFIRMED')|Q(status='CANCELLED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+		# for followupschedule in follow_up_schedules:
+		# 	followupschedule.days_left_coming = (followupschedule.start_at-timezone.now()).days 
 
 		
-		order_schedules_by_address = Order.objects.select_related('evaluation__call_attender').filter(evaluation__quatation_status='APPROVED').filter(Q( Q(Q(payment_status='COMPLETED')|~Q(preamount_paid = 0)) | Q(evaluation__payment_method='POSTPAID') )).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED').select_related('evaluator').prefetch_related(Prefetch('order_scheduler_evaluationdetails',queryset=OrderScheduler.objects.filter(is_active=True,status='WAITING').order_by('start_at'),to_attr="orderschedules")),to_attr='evaluationdetails'))		
-		for order_details in order_schedules_by_address:
-			if order_details.evaluation.evaluationdetails:
-				for evaluation_detail in order_details.evaluation.evaluationdetails:
-					if evaluation_detail.orderschedules:
-						count = 0
-						for schedule in evaluation_detail.orderschedules:
-							if count == 0:
-								evaluation_detail.days_left_coming = (schedule.start_at-timezone.now()).days
-							count += 1 	
+		# order_schedules_by_address = Order.objects.select_related('evaluation__call_attender').filter(evaluation__quatation_status='APPROVED').filter(Q( Q(Q(payment_status='COMPLETED')|~Q(preamount_paid = 0)) | Q(evaluation__payment_method='POSTPAID') )).prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED').select_related('evaluator').prefetch_related(Prefetch('order_scheduler_evaluationdetails',queryset=OrderScheduler.objects.filter(is_active=True,status='WAITING').order_by('start_at'),to_attr="orderschedules")),to_attr='evaluationdetails'))		
+		# for order_details in order_schedules_by_address:
+		# 	if order_details.evaluation.evaluationdetails:
+		# 		for evaluation_detail in order_details.evaluation.evaluationdetails:
+		# 			if evaluation_detail.orderschedules:
+		# 				count = 0
+		# 				for schedule in evaluation_detail.orderschedules:
+		# 					if count == 0:
+		# 						evaluation_detail.days_left_coming = (schedule.start_at-timezone.now()).days
+		# 					count += 1 	
 
 		#cleaning schedule & followup schedule for cleaning calendar
 		cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
@@ -733,56 +733,56 @@ class AgentHome(IsAgent,View):
 		#followup confirmation for special user
 		followup_to_be_closed = FollowUpScheduler.objects.select_related('follow_up').filter(is_active=True,follow_up__status='FOLLOWUP_IN_PROGRESS',)
 				
-		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'follow_up_schedules':follow_up_schedules,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'workers':workers,"customer_addresses":customer_addresses,"followup_to_be_closed":followup_to_be_closed,"order_schedules_by_address":order_schedules_by_address,})
+		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'workers':workers,"customer_addresses":customer_addresses,"followup_to_be_closed":followup_to_be_closed,})
 
 
 	def post(self,request):
 		action_mode = request.POST.get('action_type')
 
 		print(request.POST)
-		if action_mode =='confirm_followupchedule':
-			followupscheduler_id = request.POST.get('followupscheduler')
-			followup_scheduler   = FollowUpScheduler.objects.get(id=followupscheduler_id)
-			confirm_status       = request.POST.get('confirm')
+		# if action_mode =='confirm_followupchedule':
+		# 	followupscheduler_id = request.POST.get('followupscheduler')
+		# 	followup_scheduler   = FollowUpScheduler.objects.get(id=followupscheduler_id)
+		# 	confirm_status       = request.POST.get('confirm')
 
-			confirm_date 	 = request.POST.get('followup_schedule_date')
-			confirm_time 	 = request.POST.get('followup_schedule_time')
-			start_at         = datetime.strptime(confirm_date+' '+confirm_time,'%d-%m-%Y %I:%M %p')
-			end_at           = start_at + timedelta(hours=followup_scheduler.follow_up.cleaning_hours)
+		# 	confirm_date 	 = request.POST.get('followup_schedule_date')
+		# 	confirm_time 	 = request.POST.get('followup_schedule_time')
+		# 	start_at         = datetime.strptime(confirm_date+' '+confirm_time,'%d-%m-%Y %I:%M %p')
+		# 	end_at           = start_at + timedelta(hours=followup_scheduler.follow_up.cleaning_hours)
 
-			if confirm_status:
-				FollowUpScheduler.objects.filter(id=followupscheduler_id).update(status='CONFIRMED',start_at=start_at,end_at=end_at)
-				messages.success(request,"Followup Cleaning Date Succesfully Confirmed")
-			else:
-				FollowUpScheduler.objects.filter(id=followupscheduler_id).update(start_at=start_at,end_at=end_at)
-				messages.success(request,"Followup Cleaning Date Not Confirmed")
+		# 	if confirm_status:
+		# 		FollowUpScheduler.objects.filter(id=followupscheduler_id).update(status='CONFIRMED',start_at=start_at,end_at=end_at)
+		# 		messages.success(request,"Followup Cleaning Date Succesfully Confirmed")
+		# 	else:
+		# 		FollowUpScheduler.objects.filter(id=followupscheduler_id).update(start_at=start_at,end_at=end_at)
+		# 		messages.success(request,"Followup Cleaning Date Not Confirmed")
 
-			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
-			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
+		# 	evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
+		# 	cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
 
-			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)	
+		# 	return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)	
 
-		elif action_mode =='confirm_orderschedules':
-			total_schedules = int(request.POST.get('total_schedules_to_confirm'))
-			for i in range(total_schedules):
-				schedule_id    = request.POST.get('order_schedules_id'+str(i))
+		# elif action_mode =='confirm_orderschedules':
+		# 	total_schedules = int(request.POST.get('total_schedules_to_confirm'))
+		# 	for i in range(total_schedules):
+		# 		schedule_id    = request.POST.get('order_schedules_id'+str(i))
 				
-				order_scheduler= OrderScheduler.objects.select_related('order_scheduler_book').get(id=schedule_id)
-				tendative_date = request.POST.get('order_schedule_date'+str(i))
-				tendative_time = request.POST.get('order_schedule_time'+str(i))
-				start_at         = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
-				end_at           = start_at + timedelta(hours=order_scheduler.order_scheduler_book.cleaning_hours)
+		# 		order_scheduler= OrderScheduler.objects.select_related('order_scheduler_book').get(id=schedule_id)
+		# 		tendative_date = request.POST.get('order_schedule_date'+str(i))
+		# 		tendative_time = request.POST.get('order_schedule_time'+str(i))
+		# 		start_at         = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+		# 		end_at           = start_at + timedelta(hours=order_scheduler.order_scheduler_book.cleaning_hours)
 
-				confirm_status = request.POST.get('confirm'+str(i))
+		# 		confirm_status = request.POST.get('confirm'+str(i))
 
-				if confirm_status:
-					OrderScheduler.objects.filter(id=schedule_id).update(status='CONFIRMED',start_at=start_at,end_at=end_at)
-				else:
-					OrderScheduler.objects.filter(id=schedule_id).update(start_at=start_at,end_at=end_at)
+		# 		if confirm_status:
+		# 			OrderScheduler.objects.filter(id=schedule_id).update(status='CONFIRMED',start_at=start_at,end_at=end_at)
+		# 		else:
+		# 			OrderScheduler.objects.filter(id=schedule_id).update(start_at=start_at,end_at=end_at)
 			
-			messages.success(request,"Cleaning Date(s) Confirmed/Changed Successfully")
+		# 	messages.success(request,"Cleaning Date(s) Confirmed/Changed Successfully")
 
-		elif action_mode == 'followup_close':
+		if action_mode == 'followup_close':
 			followup = FollowUp.objects.filter(id=request.POST.get('followup')).update(status='FOLLOWUP_CLOSED')
 			messages.success(request,"Followup Closed Successfully")
 
@@ -1407,23 +1407,20 @@ class FeedbackDetails(IsAgent,View):
 		except:
 			service_types =	None
 
-
-
 		search                  = request.GET.get('search')
 
 		#order wise feedback
 		if search:
 			try:
-				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,payment_status='COMPLETED').filter(Q(Q(evaluation__evaluation_id__icontains=search)|Q(evaluation__customer__name__icontains=search))).order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))		
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True).filter(Q(Q(evaluation__evaluation_id__icontains=search)|Q(evaluation__customer__name__icontains=search))).order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter( Q(Q(cleaning_count=F('completed_cleaning_count'))&Q(followup_count=F('completed_followup_count')))|Q(is_feedback_marked=True))		
 			except:
 				order_wise_feedbacks = None		
 		else:
 			try:
-				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))						
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True).order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(Q(Q(cleaning_count=F('completed_cleaning_count'))&Q(followup_count=F('completed_followup_count')))|Q(is_feedback_marked=True))						
 			except:	
 				order_wise_feedbacks = None
 
-		print(order_wise_feedbacks,"ofb")
 
 		#Prefetch filters
 		try:
@@ -2600,7 +2597,7 @@ class MakeQuatationPhase2(IsAgent,View):
 						for date in tendative_dates:
 							start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
 							end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
-							order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))
+							order_schedule_array.append(OrderScheduler(order=new_order[0],status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))
 
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
@@ -2611,7 +2608,7 @@ class MakeQuatationPhase2(IsAgent,View):
 
 						start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
 						end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
-						order_schedule_array.append(OrderScheduler(order=new_order[0],evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))
+						order_schedule_array.append(OrderScheduler(order=new_order[0],status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))
 
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
@@ -2883,7 +2880,7 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 								print(date)
 								start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
 								end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
-								order_schedule_array.append(OrderScheduler(order=old_order,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))
+								order_schedule_array.append(OrderScheduler(order=old_order,status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))
 
 
 							updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total,status='EVALUATED')
@@ -2894,7 +2891,7 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 
 							start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
 							end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
-							order_schedule_array.append(OrderScheduler(order=old_order,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))
+							order_schedule_array.append(OrderScheduler(order=old_order,status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))
 
 							updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total,status='EVALUATED')
 							updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total)
@@ -3237,7 +3234,7 @@ class MakeQuatationPhase2DuplicateEdit(IsAgent,View):
 								print(date)
 								start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
 								end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
-								order_schedule_array.append(OrderScheduler(order=old_order,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))
+								order_schedule_array.append(OrderScheduler(order=old_order,status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))
 
 
 							updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total,status='EVALUATED')
@@ -3248,7 +3245,7 @@ class MakeQuatationPhase2DuplicateEdit(IsAgent,View):
 
 							start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
 							end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
-							order_schedule_array.append(OrderScheduler(order=old_order,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))
+							order_schedule_array.append(OrderScheduler(order=old_order,status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))
 
 							updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total,status='EVALUATED')
 							updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total)
@@ -3403,7 +3400,6 @@ class AddFeedBack(IsAgent,View):
 			order                    = Order.objects.get(id=order_id)
 			order.feedback_notes     = feedback_remark
 			order.is_feedback_marked = True
-			order.order_status       = 'ORDER_CLOSED'
 			order.save()
 		except:
 			order = 	None
