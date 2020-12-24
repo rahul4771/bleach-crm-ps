@@ -200,7 +200,7 @@
      <br>
      {% endfor %}
     </td>
-    <td>{{order.evaluation.customer.mobile_number}}{{order.is_feedback_marked}}</td>
+    <td>{{order.evaluation.customer.mobile_number}}{{order.is_feedback_marked}}{{order.avg_starring}}</td>
     <td>
       <div class="clickable-row-list" {% if order.is_feedback_marked %}data-href="{% url 'agent:agent-feedbackadvanced' order.evaluation.customer.id order.id %}"{% else %}data-href="{% url 'agent:new-feedback' %}?feedback={{order.id}}"{% endif %} align="center"> 
       {% if order.avg_starring <= 5 and order.avg_starring >= 4.5 %}
