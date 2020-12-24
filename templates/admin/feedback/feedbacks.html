@@ -187,7 +187,7 @@
 <tbody>
   {% for order in order_wise_feedbacks %}
     <tr>
-    <td class="yellow-line">{{order.evaluation.evaluation_id}}</td>
+    <td {% if order.is_feedback_marked == True %} class="orange-line" {% else %} class="grey-line" {% endif %}>{{order.evaluation.evaluation_id}}</td>
     <td>{{order.evaluation.customer.name}}</td>
     <td>
     {% for evaluation_detail in order.evaluation.order_evaluation_details %}
@@ -203,7 +203,7 @@
     </td>
     <td>{{order.evaluation.customer.mobile_number}}</td>
     <td>
-      <div class="clickable-row-list" data-href="{% url 'bleach_admin:admin-feedbackadvanced' order.evaluation.customer.id order.id %}"> 
+      <div class="clickable-row-list" {% if order.is_feedback_marked %}data-href="{% url 'bleach_admin:admin-feedbackadvanced' order.evaluation.customer.id order.id %}"{% else %}data-href="{% url 'bleach_admin:new-feedback' %}?feedback={{order.id}}"{% endif %} align="center"> 
       {% if order.avg_starring <= 5 and order.avg_starring >= 4.5 %}
         <span class="fa fa-star checked"></span>
         <span class="fa fa-star checked"></span>
@@ -235,7 +235,7 @@
         <span class="fa fa-star"></span>
         <span class="fa fa-star"></span>
         {% else %}
-        <span>Not Rated</span>
+        <span class="orange-bg">Click to Rate</span>
         {% endif %}
         </div>
     </td>

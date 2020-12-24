@@ -236,8 +236,6 @@ def sendfeedbacklink(request):
         }
 
         response = requests.request("GET", url, headers=headers, params=querystring)
-        print(message,"mess")
-        print(response.text,",ess")
         data=True
         
     else:

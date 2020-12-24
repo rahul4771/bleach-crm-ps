@@ -1,17 +1,25 @@
 from django.shortcuts import render
 
-from evaluator.models import Evaluation,EvaluationDetails
-from user.models import UserProfile
-from order.models import Order
+from user.models import UserProfile,Address,Governorate,Area
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,PaymentSubscriptionDetails
+from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 
 from Api.serializers import UserProfileSerializer, EvaluationSerializer
 from agent.views import generate_random_username
 
-from django.utils import timezone 
+import random
+import string
+import functools
+import operator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.utils import timezone
 from datetime import timedelta,date,datetime
-from django.db.models import Q,Max
+from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField
+from django.db.models.functions import Cast,TruncDate,ExtractMonth,ExtractYear,Concat
 from django.db.models import Prefetch
+
 
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny,IsAuthenticated
@@ -185,6 +193,11 @@ class PaymentResponseCredit(APIView):
 
 			response = requests.request("GET", url, headers=headers, params=querystring)
 
-			print(response.text)
+			####to close order
+			order_closing_check = Order.objects.select_related('evaluation__customer').filter(is_active=True,order_no=evaluation_id,payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+			if order_closing_check:
+				closing_order	= Order.objects.get(is_active=True,order_no=evaluation_id)
+				closing_order.order_status = 'ORDER_CLOSED'
+				closing_order.save()
 
 		return Response(HTTP_200_OK)		

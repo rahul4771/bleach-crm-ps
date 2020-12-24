@@ -33,7 +33,7 @@
         
             <div class="card-column whitebg green-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><svg src="{% static 'files/images/card-cleaning-job-icon.svg' %}" xmlns="http://www.w3.org/2000/svg" version="1.1"></svg></div>
+                <div class="column-left"><img src="{% static 'files/images/card-cleaning-job-icon.svg' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Cleaning Jobs</h1>
             	<h2 class="green-text"><label>Today<span>{{today_cleaning_job_count|default_if_none:''}}</span></label>  </h2>
@@ -89,6 +89,8 @@
 {% endif %}
 
 
+<!-- As per the requirement date confirmation task commeneted -->
+{% comment %}
 {% if follow_up_schedules or order_schedules_by_address %}  
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Date Confirmation Task</h2>
@@ -123,7 +125,7 @@
 </table>
 </div><!--white-wrapper-->
 {% endif %}
-
+{% endcomment %}
 
 
 
@@ -273,6 +275,7 @@
 </div>     
 
 <!-- order_schedules confirm_popup -->
+{% comment %}
 <div id="orderschedules_dateconfirm_popup" class="overlay">
         <div class="popup-assign-eval"><!--popup-assign-eval-->
             <a class="close" id="orderschedules_dateconfirm_popup_close" href="#">&times;</a>
@@ -298,7 +301,9 @@
 </div><!--ticket-wrapper-full--> 
             </div><!--content-->
     </div><!--popup-assign-eval-->
-</div><!-- /order_schedules confirm_popup -->
+</div>
+{% endcomment %}
+<!-- /order_schedules confirm_popup -->
 
 
 <!-- followup_scheduler confirm_popup -->
@@ -418,7 +423,7 @@
     <table width="100%" border="0" class="popup-tble1">  
                 <tr>
                     <td valign="center"><div class="blc-number" id="area_evaluation_id"></div><span id="address_evaluation_id"></span></td>
-                    <td><div class="bold-text" id="customername_evaluation_id"></div><div id="mobileno_evaluation_id"></div></td>
+                    <td><a id="client_url"><div class="bold-text" id="customername_evaluation_id"></div></a><div id="mobileno_evaluation_id"></div></td>
                 </tr>
  
             <tr>
@@ -501,7 +506,7 @@
     
     <table width="100%" border="0" class="popup-tble1">  
                 <tr>
-                    <td><div class="blc-number" id="blcno_cleaning_id"></div><span id="address_cleaning_id"></span></td>
+                    <td><a id="order_url"><div class="blc-number" id="blcno_cleaning_id"></div></a><span id="address_cleaning_id"></span></td>
                     <td><div class="bold-text" id="customername_cleaning_id"></div><div id="mobileno_cleaning_id"></div></td>
                 </tr>
  
@@ -1495,6 +1500,10 @@ $('document').ready(function(){
       $('#mobileno_evaluation_id').html($(this).data('mobile_no'));
       $('#evaluator_name_evaluation_id').html($(this).data('evaluator_name'));
 
+      var client_url = '/agent/client/orders/'+$(this).data('customer_id')+'';
+      console.log(client_url,"web")
+      $('#client_url').attr('href',client_url);
+
       //form values
       $('#evaluation_id').val($(this).data('id'));
       $('#appointment_date').val($(this).data('proposed_date'));
@@ -1615,6 +1624,10 @@ $('.collapsible0-close').click(function(){
                   $('#starting_date_cleaning_id').html(data['start_at_date']);
                   $('#starting_time_cleaning_id').html(data['start_at_time']);
                   $('#duration_cleaning_id').html(data['duration']+' Hours');
+
+                  var order_url = '/agent/client/order/details/'+data['order_id']+'';
+                    
+                  $('#order_url').attr('href',order_url);
 
                   //Append Team Leader and team members Based on Conditions
                   if(data['team_leader'] || data['stl'])

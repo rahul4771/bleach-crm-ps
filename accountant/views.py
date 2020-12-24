@@ -700,9 +700,7 @@ class PaymentDetails(IsAccountant,View):
 		
 		if orderschedule_prefetch_filter:
 			print(orderschedule_prefetch_filter,"orderfdh")
-			print("waaa")
 			invoices = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).filter(orderschedule_prefetch_filter),to_attr='orderschedules2')).annotate(orderschedule_filter_count=Count(Case(When(count_orderschedule_prefetch_filter,then=1),output_field=IntegerField())), orderschedule_count=Count('order_scheduler_order'), completed_count=Count(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1)))).filter(orderschedule_filter_count__gt=0)
-
 
 		#filters
 		fil_payment_status       	= request.GET.get('payment_status',None)
@@ -717,7 +715,6 @@ class PaymentDetails(IsAccountant,View):
 
 		if fil_payment_status:
 			if fil_payment_status == 'PENDING':
-				print("jar")
 				case3       = Q(Q(payment_status=fil_payment_status)|Q(payment_status='ON_HOLD'))
 			else:
 				case3 = Q(payment_status=fil_payment_status)
@@ -726,6 +723,49 @@ class PaymentDetails(IsAccountant,View):
 		if fil_payment_policy or fil_payment_status:
 			filters	= functools.reduce(operator.and_,filters)
 			invoices = invoices.filter(filters)
+
+		#conditional filtering using orderschedule counts
+		# invoices_list = []
+
+		# for inv in invoices:
+		# 	if fil_order_status == 'CLEANING_FULFILLED' and inv.orderschedule_count == inv.completed_count:
+		# 		invoices_list.append(inv)
+
+		# 	elif fil_order_status == 'CLEANING_TEAM_ASSIGNED' and inv.completed_count == 0 :
+		# 		invoices_list.append(inv)
+
+		# 	elif fil_order_status == 'CLEANING_IN_PROGRESS' and inv.completed_count != 0 and inv.completed_count < inv.orderschedule_count:
+		# 		invoices_list.append(inv)
+
+		# 	elif fil_payment_status == 'PENDING':
+		# 		print("deys1")
+		# 		if inv.payment_status == 'PENDING' or inv.payment_status == 'ON_HOLD':
+		# 			print("deys2")
+		# 			if inv.evaluation.payment_method == 'POSTPAID' and inv.orderschedule_count == inv.completed_count:
+		# 				print("deys3")
+		# 				invoices_list.append(inv)
+
+		# 			elif inv.evaluation.payment_method == 'PREPAID' and inv.amount_paid == 0.0 :
+		# 				invoices_list.append(inv)
+
+		# 			elif inv.evaluation.payment_method == 'BREAKDOWN':
+		# 				if inv.preamount_paid == 0.0 or inv.postamount_paid == 0.0:
+		# 					invoices_list.append(inv)
+
+		# 			else:
+		# 				pass
+
+		# 	elif fil_payment_status == 'PAID':
+		# 		if inv.payment_status == 'COMPLETED':
+		# 			invoices_list.append(inv)
+
+		# 	elif fil_order_status == None or fil_payment_policy == None or fil_payment_status == None:
+		# 		invoices_list.append(inv)
+			
+		# 	else:
+		# 		pass
+
+		# print(invoices_list,"invo")
 		
 		#PAGINATION INVOICE		
 		page = request.GET.get('page',1) 
@@ -857,6 +897,13 @@ class CashCollect(IsAccountant,View):
 				is_payment_completed.payment_status         = 'COMPLETED'
 				is_payment_completed.save()
 		
+		
+			####to close order
+			order_closing_check = Order.objects.select_related('evaluation__customer').filter(is_active=True,id=order_id,payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+			if order_closing_check:
+				closing_order	= Order.objects.get(is_active=True,order_no=evaluation_id)
+				closing_order.order_status = 'ORDER_CLOSED'
+				closing_order.save()
 		else:
 			messages.suucess(request,"Something Went Wrong")
 

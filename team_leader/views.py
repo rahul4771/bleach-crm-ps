@@ -298,7 +298,7 @@ class InvestigationTask(IsTeamLeader,View):
 			follow_up.cleaning_hours = cleaning_hours
 			follow_up.save()
 
-			follow_up_scheduler = FollowUpScheduler.objects.create(follow_up=follow_up,start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
+			follow_up_scheduler = FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
 		
 		else:
 			Investigation.objects.filter(id=investigation_id).update(is_followup_approved=False,check_out=timezone.now(),notes=request.POST.get('notes'))
@@ -339,105 +339,133 @@ class Cleaning(IsTeamLeader,View):
 		except:	
 			cleaning_team_detail = None
 
+		#remaining teams
+		cleaning_teams = CleaningTeam.objects.filter(order_scheduler__order_scheduler_book=cleaning_team_detail.order_scheduler.order_scheduler_book).values('order_scheduler__work_status')
+		remaining_team = 0
+		for team in cleaning_teams:
+			if team['order_scheduler__work_status'] != 'CLEANING_FULFILLED':
+				remaining_team += 1
+		
+		print(remaining_team,"rtm")
+		#remaining keynotes
+		keynotes = EvaluationSectionKeynote.objects.filter(evaluation_section__evaluation_book=cleaning_team_detail.order_scheduler.order_scheduler_book).values('completion_status')
+		remaining_keynotes = 0
+		if keynotes:
+			for key in keynotes:
+				if key['completion_status'] == False:
+					remaining_keynotes += 1
+		else:
+			pass
+		print(remaining_keynotes,"rky")
+
 		#checkin save	
 		if cleaning_team_detail: 
 			submit_status = request.POST.get('assign')
+
 			if submit_status == 'Checkout':
-				cleaning_team_detail.order_scheduler.work_status  		= 'CLEANING_FULFILLED'	
-				cleaning_team_detail.check_out                    		= timezone.now()
-			cleaning_team_detail.order_scheduler.order.order_status = 'ORDER_IN_PROGRESS'
+
+				if remaining_team == 1 and remaining_keynotes >= 1:
+					messages.error(request,"Please Check all Keynotes!!!")
+					return redirect('tl:cleaning',team_id)
+				else:	
+					cleaning_team_detail.order_scheduler.work_status  		= 'CLEANING_FULFILLED'	
+					cleaning_team_detail.check_out                    		= timezone.now()
+				
+				cleaning_team_detail.order_scheduler.order.order_status = 'ORDER_IN_PROGRESS'
+				
+				cleaning_team_detail.save()
+				cleaning_team_detail.order_scheduler.save()
+				cleaning_team_detail.order_scheduler.order.save()	
+
+			#To Save Media
+			medias = request.FILES.getlist('mediabefore')
+			if not medias==['']:
+				for media in medias:
+					CleaningTeamMedia.objects.create(
+							team_id=team_id,
+							media=media,
+							taken_status='BEFORE_CLEANING'
+							)
+
+			#To Save Media
+			medias = request.FILES.getlist('mediaafter')
+			if not medias==['']:
+				for media in medias:
+					CleaningTeamMedia.objects.create(
+							team_id=team_id,
+							media=media,
+							taken_status='AFTER_CLEANING'
+							)		
+
+			messages.success(request,"Checkout Succesfully")
+
+			language = cleaning_team_detail.order_scheduler.order.evaluation.customer.sms_preference
+
+
+			evaluation = cleaning_team_detail.order_scheduler.order.evaluation
+			#invoice sms
+			if cleaning_team_detail.order_scheduler.order.remining_amount > 0 and evaluation.customer.is_sms == True:
+
+				url = "https://smsapi.future-club.com/fccsms.aspx"
+
+				if language == 'ENGLISH':
+
+					message = "Dear Customer, Please find the Invoice against the order number "+str(evaluation.evaluation_id)+"  here https://my.bleachkw.com/customer/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 			
-			cleaning_team_detail.save()
-			cleaning_team_detail.order_scheduler.save()
-			cleaning_team_detail.order_scheduler.order.save()	
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+				
+				else:
 
-		#To Save Media
-		medias = request.FILES.getlist('mediabefore')
-		if not medias==['']:
-			for media in medias:
-				CleaningTeamMedia.objects.create(
-				        team_id=team_id,
-				        media=media,
-				        taken_status='BEFORE_CLEANING'
-				        )
-
-		#To Save Media
-		medias = request.FILES.getlist('mediaafter')
-		if not medias==['']:
-			for media in medias:
-				CleaningTeamMedia.objects.create(
-				        team_id=team_id,
-				        media=media,
-				        taken_status='AFTER_CLEANING'
-				        )		
-
-		messages.success(request,"Checkout Succesfully")
-
-		language = cleaning_team_detail.order_scheduler.order.evaluation.customer.sms_preference
-
-		evaluation = cleaning_team_detail.order_scheduler.order.evaluation
-
-		print(language,cleaning_team_detail.order_scheduler.order.remining_amount,"tesstt")
-
-		#invoice sms
-		if cleaning_team_detail.order_scheduler.order.remining_amount > 0 and evaluation.customer.is_sms == True:
-
-			url = "https://smsapi.future-club.com/fccsms.aspx"
-
-			if language == 'ENGLISH':
-
-				message = "Dear Customer, Please find the Invoice against the order number "+str(evaluation.evaluation_id)+"  here https://my.bleachkw.com/customer/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
-		
-				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+					message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
 			
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+				
+				headers = {
+					'cache-control': "no-cache"
+				}
+
+				response = requests.request("GET", url, headers=headers, params=querystring)
+
+				print(response.text,"respo")
 			else:
+				pass
 
-				message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
-		
-				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
-			
-			headers = {
-				'cache-control': "no-cache"
-			}
 
-			response = requests.request("GET", url, headers=headers, params=querystring)
+			#feedback sms
+			order = Order.objects.select_related('evaluation__customer').filter(is_active=True,order_no=cleaning_team_detail.order_scheduler.order.order_no).order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
 
-			print(response.text,"respo")
-		else:
-			pass
+			for ord in order:
+				order_data = ord
 
-		#feedback sms
-		order = Order.objects.select_related('evaluation__customer').filter(is_active=True,order_no=cleaning_team_detail.order_scheduler.order.order_no, payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+			if order and order_data.evaluation.customer.is_sms == True:   #.completed_cleaning_count == order_data.cleaning_count or order_data.completed_followup_count == order_data.followup_count :
 
-		for ord in order:
-			# print(ord.cleaning_count,ord.completed_cleaning_count,"ordcount2")
-			order_data = ord
+				url = "https://smsapi.future-club.com/fccsms.aspx"
 
-		if order and order_data.evaluation.customer.is_sms == True:   #.completed_cleaning_count == order_data.cleaning_count or order_data.completed_followup_count == order_data.followup_count :
+				if order_data.evaluation.customer.sms_preference == 'ENGLISH':
 
-			url = "https://smsapi.future-club.com/fccsms.aspx"
+					message = "Dear Customer, Thank you for choosing Bleach Kuwait. Kindly share your feedback for the order number "+ order_data.order_no +" here https://my.bleachkw.com/customer/feedback-page/"+str(order_data.id)+". For any assistance please contact us on +9651882707."
+				
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+order_data.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 
-			if order_data.evaluation.customer.sms_preference == 'ENGLISH':
+				else:
+					message = "عزيزينا العميل نرجوا أن تكون خدماتنا خازت على رضاكم و شكراً لاختياركم بليتش لخدمات التنظيف.  نرجوا التكرم بإنجاز الاستبيان الخاص بالطلب رقم "+ order_data.order_no +" https://my.bleachkw.com/customer/feedback-page/"+str(order_data.id)+" وذلك لضمان جودة الخدمة. لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
 
-				message = "Dear Customer, Thank you for choosing Bleach Kuwait. Kindly share your feedback for the order number "+ order_data.order_no +" here https://my.bleachkw.com/customer/feedback-page/"+str(order_data.id)+". For any assistance please contact us on +9651882707."
-			
-				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+order_data.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+order_data.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 
+				headers = {
+					'cache-control': "no-cache"
+				}
+
+				response = requests.request("GET", url, headers=headers, params=querystring)
 			else:
-				message = "عزيزينا العميل نرجوا أن تكون خدماتنا خازت على رضاكم و شكراً لاختياركم بليتش لخدمات التنظيف.  نرجوا التكرم بإنجاز الاستبيان الخاص بالطلب رقم "+ order_data.order_no +" https://my.bleachkw.com/customer/feedback-page/"+str(order_data.id)+" وذلك لضمان جودة الخدمة. لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+				pass
 
-				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+order_data.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+		####to close order
+		closing_order	= Order.objects.get(is_active=True,order_no=cleaning_team_detail.order_scheduler.order.order_no,payment_status='COMPLETED')
+		if closing_order and order:
+			closing_order.order_status = 'ORDER_CLOSED'
+			closing_order.save()
 
-			headers = {
-				'cache-control': "no-cache"
-			}
-
-			response = requests.request("GET", url, headers=headers, params=querystring)
-
-			print(order_data.id,response.text,",ess")
-
-		else:
-			pass
 
 		my_cleaning_calendar_date = request.GET.get('my_cleaning_calendar_date') or ''
 				
@@ -502,7 +530,7 @@ class FollowupCleaning(IsTeamLeader,View):
 		messages.success(request,"Checkout Succesfully")
 
 		#feedback sms
-		order = Order.objects.select_related('evaluation__customer').filter(is_active=True,order_no=followup_team_detail.followup_scheduler.follow_up.investigation.order.order_no, payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+		order = Order.objects.select_related('evaluation__customer').filter(is_active=True,order_no=followup_team_detail.followup_scheduler.follow_up.investigation.order.order_no).order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
 
 		for ord in order:
 			order_data = ord
@@ -532,7 +560,13 @@ class FollowupCleaning(IsTeamLeader,View):
 
 		else:
 			pass
-		
+
+		####to close order
+		closing_order	= Order.objects.get(is_active=True,order_no=cleaning_team_detail.order_scheduler.order.order_no,payment_status='COMPLETED')
+		if closing_order and order:
+			closing_order.order_status = 'ORDER_CLOSED'
+			closing_order.save()
+					
 		my_cleaning_calendar_date = request.GET.get('my_cleaning_calendar_date') or ''
 				
 		return redirect('/tl/dashboard/?my_cleaning_calendar_date='+my_cleaning_calendar_date)

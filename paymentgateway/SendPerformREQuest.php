@@ -42,6 +42,7 @@ browser by any means. Merchant MUST ensure that Tranportal ID is stored in secur
 securely at merchant end. Tranportal Id is referred as id. Tranportal ID for test and production will be 
 different, please contact bank for test and production Tranportal ID*/
 $TranportalId="306201";
+// $TranportalId="248101";
 $ReqTranportalId="id=".$TranportalId;
 
 /* to pass Tranportal password provided by the bank to merchant. Tranportal password is sensitive 
@@ -51,6 +52,7 @@ environment & securely at merchant end. Tranportal password is referred as passw
 password for test and production will be different, please contact bank for test and production
 Tranportal password */
 $pass="DbzXGVY0";
+// $pass="248101pg";
 $ReqTranportalPassword="password=".$pass;
 
 /* Transaction Amount that will be send to payment gateway by merchant for processing
@@ -83,7 +85,8 @@ $ReqAction="action=1";
 Merchant MUST esure that below points in Response URL
 1- Response URL must start with http://
 2- the Response URL SHOULD NOT have any additional paramteres or query string  */
-$ResponseUrl="http://payment.bleachkw.com:8085/GetHandlerResponse.php";
+$ResponseUrl="https://payment.bleachkw.com/GetHandlerResponse.php";
+// $ResponseUrl="https://testpay.bleachkw.com/GetHandlerResponse.php";
 $ReqResponseUrl="responseURL=".$ResponseUrl;
 
 
@@ -93,7 +96,8 @@ Merchant MUST esure that below points in ErrorURL
 2- the error url SHOULD NOT have any additional paramteres or query string
 */ 
 
-$ErrorUrl="http://payment.bleachkw.com:8085/testphp.php";
+$ErrorUrl="https://payment.bleachkw.com/testphp.php";
+// $ErrorUrl="https://testpay.bleachkw.com/testphp.php";
 $ReqErrorUrl="errorURL=".$ErrorUrl;
 
 
@@ -127,6 +131,7 @@ $param=$ReqTranportalId."&".$ReqTranportalPassword."&".$ReqAction."&".$ReqLangid
 	  the request/response from Merchant To PG and vice Versa*/
 	  
 	$termResourceKey="P287H49DV2GS6E0Z";
+	// $termResourceKey="81G1ZB54MNW8X3J9";
 	$param=encryptAES($param,$termResourceKey)."&tranportalId=".$TranportalId."&responseURL=".$ResponseUrl."&errorURL=".$ErrorUrl;
 
 //==============================Encryption LOGIC CODE End=================================================================================
