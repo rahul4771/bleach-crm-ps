@@ -360,6 +360,22 @@ $('.footable').footable({
 //# sourceURL=pen.js
     </script>
     <script>
+    
+// //datepicker and timepicker for popup
+    $(document).on("click", ".content", function () {
+       $('.id_from_date').datetimepicker({ 
+            pickTime: false, 
+            format: "DD-MM-YYYY", 
+            startDate: new Date(), 
+        });
+
+        $('.id_to_date').datetimepicker({ 
+            pickTime: false, 
+            format: "DD-MM-YYYY", 
+            startDate: new Date(), 
+        });
+
+    });
 
 function appendLeadingZeroes(n){
     if(n <= 9){
