@@ -1522,7 +1522,7 @@ class FeedbackDetails(IsAgent,View):
 
 		#to find starring caluculations in whole system		
 		full_order_wise_feedbacks     = order_wise_feedbacks
-		total_feedbacks               = order_wise_feedbacks.count()
+		total_feedbacks               = order_wise_feedbacks.filter(is_feedback_marked=True).count()
 
 
 		#PAGINATION FEEDBACKS
