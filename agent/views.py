@@ -193,8 +193,23 @@ def GetCleaningInfo(request):
 
 	print(schedule)
 
+	if schedule.customer_address.floor == None and schedule.customer_address.avenue == None:
+		address_list = [schedule.customer_address.apartment, schedule.customer_address.street, schedule.customer_address.building, schedule.customer_address.block, schedule.customer_address.area.name, schedule.customer_address.governorate.name]
+	
+	elif schedule.customer_address.floor == None:
+		address_list = [schedule.customer_address.apartment, schedule.customer_address.street, schedule.customer_address.building, schedule.customer_address.avenue, schedule.customer_address.block, schedule.customer_address.area.name, schedule.customer_address.governorate.name]
+	
+	elif schedule.customer_address.avenue == None:
+		address_list = [schedule.customer_address.apartment, schedule.customer_address.floor, schedule.customer_address.street, schedule.customer_address.building, schedule.customer_address.block, schedule.customer_address.area.name, schedule.customer_address.governorate.name]
+	
+	else:
+		address_list = [schedule.customer_address.apartment, schedule.customer_address.floor, schedule.customer_address.street, schedule.customer_address.building, schedule.customer_address.avenue, schedule.customer_address.block, schedule.customer_address.area.name, schedule.customer_address.governorate.name]
+
+	separator = ", "
+
+	cleaning_dict['order_id'] 		 = schedule.order.id
 	cleaning_dict['order_no'] 		 = schedule.order.order_no
-	cleaning_dict['address']  		 = str(schedule.customer_address.apartment)+', '+str(schedule.customer_address.block)+', '+str(schedule.customer_address.street)+', '+str(schedule.customer_address.avenue)+', '+str(schedule.customer_address.building)+', '+str(schedule.customer_address.area.name)+', '+str(schedule.customer_address.governorate.name)
+	cleaning_dict['address']  		 = separator.join(address_list)
 	cleaning_dict['customer'] 		 = schedule.customer_address.customer.name
 	cleaning_dict['customer_mobile'] = schedule.customer_address.customer.mobile_number
 	cleaning_dict['start_at_date']   = (schedule.start_at+timedelta(hours=3)).strftime('%d-%m-%Y')

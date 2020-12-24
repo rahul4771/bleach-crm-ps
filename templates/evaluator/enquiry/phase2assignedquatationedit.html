@@ -181,7 +181,7 @@
                 </div><!--enquiry-form-right-->
                 <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tentative Date</label></div>
-                <input name="form-{{forloop.counter0}}-tendative_date" id='id_form-{{forloop.counter0}}-tendative_date' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{{orderschedule.start_at|date:'d-m-Y'}}{% endfor %}" required> 
+                <input name="form-{{forloop.counter0}}-tendative_date" id='id_form-{{forloop.counter0}}-tendative_date' type="text" class="textBox readonly" placeholder=" " value="{% for orderschedule in book.orderschedules %}{{orderschedule.start_at|date:'d-m-Y'}}{% if not forloop.last %},{% endif %}{% endfor %}" required> 
                 </div><!--enquiry-form-right-->
                 {% else %}
                 <div class="enquiry-form-right"><!--enquiry-form-right-->
@@ -681,10 +681,11 @@ $("#id_form-TOTAL_FORMS").val("{{evaluation_details.evaluationbooks|length}}");
   {% endfor %}
 
   //tendative date initial
-  $("#id_form-{{forloop.counter0}}-tendative_date").datetimepicker({ 
-    pickTime: false, 
-    format: "DD-MM-YYYY",
-    minDate: new Date(),
+  $("#id_form-{{forloop.counter0}}-tendative_date").datepicker({ 
+    multidate: true,
+    closeOnDateSelect: true,
+    format: "dd-mm-yyyy",
+    startDate: new Date(),
   });
 
 //tendative dates initial
@@ -741,9 +742,10 @@ $("#id_form-{{forloop.counter0}}-tendative_time").datetimepicker({
                 //one time date
                 $(function () {
                 $("#id_form-{{forloop.counter0}}-tendative_date").datepicker({ 
-                    //multidate: true,
+                    multidate: true,
                     closeOnDateSelect: true,
                     format: "dd-mm-yyyy", 
+                    minDate:new Date(),
 
                     beforeShowDay: function(date){
                     dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
@@ -766,6 +768,7 @@ $("#id_form-{{forloop.counter0}}-tendative_time").datetimepicker({
                     multidate: true,
                     closeOnDateSelect: true,
                     format: "dd-mm-yyyy", 
+                    minDate:new Date(),
 
                     beforeShowDay: function(date){
                     dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();

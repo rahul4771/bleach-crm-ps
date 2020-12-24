@@ -183,7 +183,12 @@
             <br>
                 
                 {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{orderschedule.start_at}}</div>
+                {% for multi_order_schedule in order.orderschedules %}
+                {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{multi_order_schedule.start_at}}</div>
+                <br>
+                {% endif %}
+                {% endfor %}
                 {% else %}
                 {% for subscription_schedule in order.orderschedules %}
                 {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
@@ -193,7 +198,6 @@
                 {% endfor %}
                 {% endif %}
 
-                <br>
                 <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> <b>{{orderschedule.customer_address.apartment}}</b>: {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}}, {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}}, {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %} {{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</div>
                 <br>
                 <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
@@ -282,6 +286,7 @@
 <hr class="hr-dashedpad">
 {% endfor %}
 
+<!--subscription cleaning team-->
 {% if orderschedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}
 
 <div class="details-sub-head align-left">Subscription Status</div>
@@ -468,10 +473,198 @@
 {% endif %}
     </div><!-- Append logic -->
 </div><!--order-clean-outer-wrapper-->
+<!--subscription cleaning team end-->
+
+<!--multiple cleanings-->
+{% elif order.orderschedules|length > 1 %}
+
+<div class="details-sub-head align-left">Cleaning Status</div>
+<div class="order-clean-outer-wrapper cream"><!--order-clean-outer-wrapper-->
+    
+<table class="main-table">    
+<tbody>
+    {% for mult_order_schedule in order.orderschedules %}
+    {% if mult_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
+    <tr>
+    <td data-label="Sl No" class="bold-text">Cleaning {{forloop.counter}}</td>
+    <td data-label="Time" class="bold-text">{{mult_order_schedule.start_at}}</td>
+    <td class="hide-b clickable-cursor" data-label="" onclick="appendsubscriptiondetails({{mult_order_schedule.id}},{{forloop.parentloop.counter}})">
+    <span {% if mult_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}class="yellow-bg"{% elif mult_order_schedule.work_status == 'CLEANING_FULFILLED' %}class="green-bg"{% else %}class="red-bg"{% endif %}>{{mult_order_schedule.work_status|default_if_none:'NOT STARTED'}}</span></td> 
+    </tr> 
+    {% endif %}
+    {% endfor %}     
+</tbody>
+</table>
+
+<div class="appendsubscription"><!-- Append logic -->
+{% if  orderschedule.cleaning_team %}
+ {% for cleaning_team in orderschedule.cleaning_team %}       
+<div class="details-sub-head align-left small-head">Cleaning Team (Cleaning 1)</div>
+    <div class="order-clean-outer-wrapper whitebg"><!--order-clean-outer-wrapper-->
+        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+            <div class="order-common-date">{{orderschedule.start_at}}</div>
+                    <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                        <div class="team-profile-pic"><img src="{% static 'files/images/team-leader.svg' %}"></div>
+                    </div><!--order-clean-team-widget order-clean-team-widget-column1-->
+                    
+                <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                    <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                        
+                        <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                            <div class="team-Name">{{cleaning_team.team_leader.name}}</div>
+                            <div class="team-profile">Team Leader</div>
+                        </div><!--order-clean-inColumn-->
+                                            
+                    </div> <!--order-clean-team-inside-wrapper-->
+                </div><!--order-clean-team-widget order-clean-team-widget-column2-->
+        </div><!--order-clean-team-wrapper-->
+        
+<hr class="bar">
+        
+        
+        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+            <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                <div class="team-profile-pic"><img src="{% static 'files/images/team-member.svg' %}"></div>
+            </div><!--order-clean-team-widget order-clean-team-widget-column1-->
+            
+            <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
+                <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                    {% for team_member in cleaning_team.cleaning_team_members %}
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">{{team_member.member.name}}</div>
+                        <div class="team-profile">Team Member</div>
+                    </div><!--order-clean-inColumn-->
+                    {% endfor %}
+                </div><!--order-clean-team-inside-wrapper-->     
+            </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
+        </div><!--order-clean-team-wrapper-->
+        
+<hr class="bar">        
+
+        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+            <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                <div class="team-profile-pic"><img src="{% static 'files/images/driver.svg' %}"></div>
+            </div><!--order-clean-team-widget order-clean-team-widget-column1-->
+            
+            <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
+                <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">{{cleaning_team.drop_off_driver.name}}</div>
+                        <div class="team-profile">Dropoff Driver</div>
+                    </div><!--order-clean-inColumn-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">{{cleaning_team.pick_up_driver.name}}</div>
+                        <div class="team-profile">Pickup Driver</div>
+                    </div><!--order-clean-inColumn-->
+                </div><!--order-clean-team-inside-wrapper-->     
+            </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
+        </div><!--order-clean-team-wrapper-->
+        
+    </div><!--order-clean-outer-wrapper-->
+{% endfor %}    
+{% endif %}
 
 
+{% if orderschedule.investigations %}
+{% for investigation in orderschedule.investigations %}
+<div class="details-sub-head align-left">Investigation</div>     
+<div class="investigation-columns whitebg"><!--investigation-columns-->
+        <div class="investigation-columns-left"><!--investigation-columns-left-->
+            
+            {% if investigation.investigator.profile_image %}
+            <div class="profile-pic"><img src="{{investigation.investigator.profile_image.url}}"></div>
+            {% else %}
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+            {% endif %}
 
+            <div class="client-name">{{investigation.investigator.name}}<div class="common-gray-text">Investigator</div></div>
+        </div><!--investigation-columns-left-->
 
+        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
+        <div class="order-invest-date">{{investigation.sheduled_at}}</div>
+            <div class="notes">Notes</div>
+            <p>{{investigation.notes}}</p>
+        </div><!--investigation-columns-middle-->
+</div><!--investigation-columns-->            
+
+    
+{% for followup in investigation.followups %}
+{% for follow_up_scheduler in followup.follow_up_schedules %}
+{% for team in follow_up_scheduler.followupteams %}
+
+{% if team.followupmembers %}
+<div class="details-sub-head align-left small-head">Follow-up Cleaning</div>
+    <div class="order-clean-outer-wrapper whitebg"><!--order-clean-outer-wrapper-->
+        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+            <div class="order-common-date">{{follow_up_scheduler.start_at}}</div>
+                    <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                        <div class="team-profile-pic"><img src="{% static 'files/images/team-leader.svg' %}"></div>
+                    </div><!--order-clean-team-widget order-clean-team-widget-column1-->
+                    
+                <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                    <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                        <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                            <div class="team-Name">{{team.team_leader}}</div>
+                            <div class="team-profile">Team Leader</div>
+                        </div><!--order-clean-inColumn-->                    
+                    </div> <!--order-clean-team-inside-wrapper-->
+                </div><!--order-clean-team-widget order-clean-team-widget-column2-->
+        </div><!--order-clean-team-wrapper-->
+        
+<hr class="bar">
+        
+        
+        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+            <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                <div class="team-profile-pic"><img src="{% static 'files/images/team-member.svg' %}"></div>
+            </div><!--order-clean-team-widget order-clean-team-widget-column1-->
+            
+            <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
+                <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                    {% for member in team.followupmembers %}
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">{{member.member.name}}</div>
+                        <div class="team-profile">Team Member</div>
+                    </div><!--order-clean-inColumn-->
+                    {% endfor %}
+                </div><!--order-clean-team-inside-wrapper-->     
+            </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
+        </div><!--order-clean-team-wrapper-->
+        
+<hr class="bar">        
+
+        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+            <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                <div class="team-profile-pic"><img src="{% static 'files/images/driver.svg' %}"></div>
+            </div><!--order-clean-team-widget order-clean-team-widget-column1-->
+            
+            <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
+                <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">{{team.drop_off_driver.name}}</div>
+                        <div class="team-profile">Dropoff Driver</div>
+                    </div><!--order-clean-inColumn-->
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">{{team.pick_up_driver.name}}</div>
+                        <div class="team-profile">Pickup Driver</div>
+                    </div><!--order-clean-inColumn-->
+                </div><!--order-clean-team-inside-wrapper-->     
+            </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
+        </div><!--order-clean-team-wrapper-->
+        
+    </div><!--order-clean-outer-wrapper-->
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endfor %}
+
+{% endfor %}
+{% endif %}
+    </div><!-- Append logic -->
+</div><!--order-clean-outer-wrapper-->
+<!--multiple cleaning end-->
+
+<!--single cleaning team-->
 {% else %}  
 
  {% if  orderschedule.cleaning_team %}

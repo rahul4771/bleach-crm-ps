@@ -715,7 +715,6 @@ class PaymentDetails(IsAccountant,View):
 
 		if fil_payment_status:
 			if fil_payment_status == 'PENDING':
-				print("jar")
 				case3       = Q(Q(payment_status=fil_payment_status)|Q(payment_status='ON_HOLD'))
 			else:
 				case3 = Q(payment_status=fil_payment_status)
@@ -738,27 +737,27 @@ class PaymentDetails(IsAccountant,View):
 		# 	elif fil_order_status == 'CLEANING_IN_PROGRESS' and inv.completed_count != 0 and inv.completed_count < inv.orderschedule_count:
 		# 		invoices_list.append(inv)
 
-		# 	# elif fil_payment_status == 'PENDING':
-		# 	# 	print("deys1")
-		# 	# 	if inv.payment_status == 'PENDING' or inv.payment_status == 'ON_HOLD':
-		# 	# 		print("deys2")
-		# 	# 		if inv.evaluation.payment_method == 'POSTPAID' and inv.orderschedule_count == inv.completed_count:
-		# 	# 			print("deys3")
-		# 	# 			invoices_list.append(inv)
+		# 	elif fil_payment_status == 'PENDING':
+		# 		print("deys1")
+		# 		if inv.payment_status == 'PENDING' or inv.payment_status == 'ON_HOLD':
+		# 			print("deys2")
+		# 			if inv.evaluation.payment_method == 'POSTPAID' and inv.orderschedule_count == inv.completed_count:
+		# 				print("deys3")
+		# 				invoices_list.append(inv)
 
-		# 	# 		elif inv.evaluation.payment_method == 'PREPAID' and inv.amount_paid == 0.0 :
-		# 	# 			invoices_list.append(inv)
+		# 			elif inv.evaluation.payment_method == 'PREPAID' and inv.amount_paid == 0.0 :
+		# 				invoices_list.append(inv)
 
-		# 	# 		elif inv.evaluation.payment_method == 'BREAKDOWN':
-		# 	# 			if inv.preamount_paid == 0.0 or inv.postamount_paid == 0.0:
-		# 	# 				invoices_list.append(inv)
+		# 			elif inv.evaluation.payment_method == 'BREAKDOWN':
+		# 				if inv.preamount_paid == 0.0 or inv.postamount_paid == 0.0:
+		# 					invoices_list.append(inv)
 
-		# 	# 		else:
-		# 	# 			pass
+		# 			else:
+		# 				pass
 
-		# 	# elif fil_payment_status == 'PAID':
-		# 	# 	if inv.payment_status == 'COMPLETED':
-		# 	# 		invoices_list.append(inv)
+		# 	elif fil_payment_status == 'PAID':
+		# 		if inv.payment_status == 'COMPLETED':
+		# 			invoices_list.append(inv)
 
 		# 	elif fil_order_status == None or fil_payment_policy == None or fil_payment_status == None:
 		# 		invoices_list.append(inv)
