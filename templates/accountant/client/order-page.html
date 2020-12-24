@@ -1178,11 +1178,11 @@ cleaning_completed_count += 1;
 {% endfor %}
 
 //payment policy edit button hide / Show
-// if (dateconfirm_completed_count > 0){
-//     $('.paymentedit').remove();
-// }else{
-//     $('.edit_payment_policy').append('<span style="color: blue "><i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</span>');
-// }
+if (teamassign_completed_count > 0){
+    $('.paymentedit').remove();
+}else{
+    $('.edit_payment_policy').append('<span style="color: blue "><i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</span>');
+}
 
 //change html
 // $("#date_confirmed").html(dateconfirm_completed_count)
