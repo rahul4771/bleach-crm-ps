@@ -21,9 +21,10 @@
     <!--new message wrapper-->
     <link href='https://fonts.googleapis.com/css?family=Roboto:300italic,400italic,400,100,300,600,700' rel='stylesheet' type='text/css'>
     <!--new message wrapper-->
-    
+
     <link href="{% static 'files/css/externalusers.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'files/css/message_wrapper.css' %}" rel="stylesheet" type="text/css">
+
   </head>
   <body>
     <div id="container">
@@ -33,18 +34,21 @@
         <div class="circle c-lower"></div>
       </div>
 
-          <div class="right-invoice">
-            <section id="memo">
-              <div class="company-info">
-    			<div>Bleach Cleaning Services<div class="company-name-arabic"> بليتش &nbsp;&nbsp;لخدمات &nbsp;&nbsp;التنظيف</div>	
-              	</div>
-    		  </div>
+      <div class="right-invoice">
+        <section id="memo">
+          <div class="company-info">
+            <div>Bleach Cleaning Services<div class="company-name-arabic"> بليتش &nbsp;&nbsp;لخدمات &nbsp;&nbsp;التنظيف</div>		
+
+          	</div>
+      </div>
+      <!-- change here -->
           <div class="logo_invoice">
             <img src="{% static 'files/images/bleach logo.png' %}" />
           </div>
         </section>
 
         <section id="invoice-title-number">
+
           <div class="title-top">
             <!--<span class="x-hidden"></span>-->
             <span>{{order.evaluation.created|date:'d-m-Y'}}</span> <span id="number">{{order.order_no}}</span>
@@ -89,7 +93,7 @@
         </section>
         {% endif %}
         {% endfor %}
-
+        
         <div class="clearfix"></div>
         
         <section id="invoice-info">
@@ -100,7 +104,7 @@
             <span>Evaluator(s) / معاينة</span> <span> {% for orderschedule in nonduplicate_schedules %}{% if orderschedule.evaluation_details.evaluator %}{% ifchanged orderschedule.evaluation_details.evaluator.name %}{{orderschedule.evaluation_details.evaluator.name}}, {% endifchanged %}{% else %}{% if forloop.last %}{{orderschedule.evaluation_details.evaluation.call_attender.name}}{% endif %}{% endif %}{% endfor %}</span>
           </div>
           <div>
-            <span>Payment Policy / نظام الدفع</span> <span>{{order.evaluation.payment_method}} / {% if order.evaluation.payment_method == 'BREAKDOWN' %}قائمة التفاصيل{% elif order.evaluation.payment_method == 'PREPAID' %}مسبق الدفع{% else %}دفع بعد الخدمة{% endif %}</span>
+            <span>Payment Policy / نظام الدفع</span> <span>{{order.evaluation.payment_method}} / {% if order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' %}الدفع المسبق شهريًا{% elif order.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' %}الدفع اللاحق شهريًا{% endif %}</span>
           </div>
         </section>
         
@@ -108,6 +112,7 @@
 
         <div class="currency">
           <span> Currency in Kuwait Dinar / العملة في الدينار الكويتي</span>
+
         </div>
         
         <section >
@@ -115,22 +120,26 @@
           <table cellpadding="0" cellspacing="0" class="table css-serial">
           
             <tr>
-              <th width="5%"></th> <!-- Dummy cell for the row number and row commands -->
-              <th width="50%">ITEM<br>سلعة</th>
-              <th width="20%">CATEGORY<br>التصنيف</th>
-              <th width="10%">SIZE<br>الحجم</th>
-              <th width="15%" class="align-right">NET PRICE &nbsp;<br>صافي السعر &nbsp;</th>
+              <th style="text-align:center;" width="5%"></th> <!-- Dummy cell for the row number and row commands -->
+              <th style="text-align: left;"  width="45%">ITEM</th>
+              <th style="text-align: left;"width="10%">CATEGORY</th>
+              <th style="text-align: left;" width="10%">UNIT SIZE</th>
+              <th style="text-align: left;" width="10%">UNIT PRICE</th>
+              <th style="text-align: left;" width="5%"> QNT</th>
+              <th width="15%" class="align-right">NET PRICE&nbsp;</th>
             </tr>
-
+            
             {% for orderschedule in nonduplicate_schedules %}            
             {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
             <tr>
-              <td style="text-align:center;"></td> <!-- Don't remove this column as it's needed for the row commands -->
+              <td style="text-align:center;" ></td> <!-- Don't remove this column as it's needed for the row commands -->
               <td><a href="{% url 'customer:customer-order-details' order.id section.evaluation_book.id section.id %}">{{orderschedule.order_scheduler_book.service_type}}-{{orderschedule.customer_address.area.name}}-{{section.section_name}} <br> {{orderschedule.order_scheduler_book.service_type.name_arabic}}-{{orderschedule.customer_address.area.name_arabic}}-{{section.section_name_arabic}}</a></td>
               
               <td>{{section.dirt_level}}<br> {% if section.dirt_level == 'Red' %}أحمر{% endif %}{% if section.dirt_level == 'Random' %}وسط{%endif%}</td>
               <td>{{section.size}} {{section.unit|default_if_none:''}}</td>
-              <td class="align-right">{{section.section_cost|floatformat:'3'}}</td>
+              <td>{{section.section_cost|default_if_none:''}}</td>
+              <td>{{section.section_cleanings|default_if_none:''}}</td>
+              <td class="align-right">{{section.section_net_cost|default_if_none:''}}</td>
             </tr>
             {% endfor %}
             {% endfor %}
@@ -139,7 +148,7 @@
           
         </section>
         
-         <section id="sums">
+        <section id="sums">
         
           <table cellpadding="0" cellspacing="0">
             <tr>
@@ -155,47 +164,48 @@
             {% endif %}
             
             <tr class="amount-total">
-              <!-- {amount_total_label} -->
               <td colspan="2">{{order.evaluation.total_cost|floatformat:'3'}} KD
-                <!-- <div class="invoice-name-arabic">شركة بلـــيت</div> -->
               </td>
             </tr>
             
-          </table>
-          
-        </section>   
+            
+          </table> 
+        </section>       
 
-        {% if order.evaluation.payment_method == 'BREAKDOWN' %}
+
+
         <section id="policy">
         
           <table cellpadding="0" cellspacing="0">
                   
             <!-- You can use attribute data-hide-on-quote="true" to hide specific information on quotes.
-                 For example Invoicebus doesn't need amount paid and amount due on quotes  -->
-            <tr>
-              <td class="align-left" colspan="2"> <strong> BREAKDOWN PAYMENTMODE <br> قائمة التفاصيل</strong></td>
-            </tr>
-            
-            <tr>
-              <td>Payment Before Cleaning<br>الدفع بعد التنظيف</td>
-              <td><strong>{{order.evaluation.before_cleaning_amount|floatformat:'3'}} KD</strong></td>
-            </tr>
-            
-            <tr>
-              <td>Payment After Cleaning<br>الدفع قبل التنظيف</td>
-              <td class="medium">{{order.evaluation.after_cleaning_amount|floatformat:'3'}} KD </td>
-            </tr>
-            
+                 For example Invoicebus doesn't need amount paid and amount due on quotes  -->          
+            <tr><td class="align-left" colspan="2"> <strong> {% if order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' %}MONTHLY PREPAID SERVICE{% elif order.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' %}MONTHLY POSTPAID SERVICE{% endif %}</strong></td></tr>
+
+            <tr><td>{% if order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' %}Billing monthly in advance according to the number of jobs<br>فاتورة شهرية مقدما حسب عدد التنظيف{% elif order.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' %}Billing monthly in arrears according to the number of jobs<br>الفواتير الشهرية المتأخرة حسب عدد التنظيف{% endif %}</td></tr>
+
           </table> 
-        </section>
-        {% endif %}    
+
+          <table cellpadding="0" cellspacing="0">
+            <tr>
+              <td>Total Jobs / إجمالي الوظائف</td>
+              <td><strong>: {{order.orderschedules|length}} Cleanings</strong></td>
+            </tr>
+            <tr>
+              <td>Per-Job Cost / تكلفة الوظيفة</td>
+              <td><strong>: {{per_job_cost|floatformat:'3'}} KD</strong></td>
+            </tr>
+          </table> 
+        
+        </section>  
+
+
 
 
         <div class="clearfix"></div>
         <section>
-            <table cellpadding="0" cellspacing="0" class="table1">
+        <table cellpadding="0" cellspacing="0" class="table1">
             {% if request.user.user_type != 'AGENT' and request.user.user_type != 'ADMIN' and request.user.user_type != 'EVALUATOR' %} {% if order.evaluation.quatation_status != 'APPROVED' and order.evaluation.quatation_status != 'REJECTED' %}
-            <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
             <tr class="table1tr1">         
               <td id="tnc-padding" colspan="2" class="align-right"><input type="checkbox" id="myCheck" required> <label><i> <u><a href="{% url 'customer:tc' %}"><b>I Agree the Terms & Conditions / أوافق على الشروط والأحكام</b></a></u></i></label> </td>
             </tr>
@@ -206,11 +216,11 @@
                 <input class="assignButton" id="approvebutton_id" name="submit" type="button" value="Approve/الموافقة" > 
                 <input class="cancel-Button Click-here" name="cancel" type="button" value="Reject/الـــعالظيف"></td>
             </tr>
-            </form>
+            <tr>
             {% else %}
             <tr class="table1tr2">
               <td colspan="2" class="align-right">
-              <a href="/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">  
+              <a href="/customer/subscription/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">  
                 <input class="assignButton" name="submit" type="button" value="Invoice/فاتورة" onclick="approve(this)">
               </a>
               </td>
@@ -223,9 +233,7 @@
               <td class="align-right large">Customer Authorisation / تفويض العميل</td>
             </tr>
             </table>
-
             <br><br>
-            
             <table cellpadding="0" cellspacing="0" class="table2">
             <tr>
               <td class="align-left">
@@ -253,14 +261,14 @@
             <tr>
               <td style="background-color: white;" colspan="2" >
                  <div class="socil-media">
-                  <ul>
-    	             <li><a href="https://www.facebook.com/BleachKw/"><img src="{% static 'files/images/fb.svg' %}"></a></li>
-                   <li><a href="#"><img src="{% static 'files/images/icon-twitter.svg' %}"></a></li>
-                   <li><a href="https://www.instagram.com/bleachkw/?hl=en"><img src="{% static 'files/images/icon-insta.svg' %}"></a></li>
-                   <li><a href="https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw"><img src="{% static 'files/images/icon-ut.svg' %}"></a></li>
-                   <li><a href="https://www.linkedin.com/company/bleachkw"><img src="{% static 'files/images/icon-in.svg' %}"></a></li>
-                  </ul>
-                 </div>
+    <ul>
+    <li><a href="https://www.facebook.com/BleachKw/"><img src="{% static 'files/images/fb.svg' %}"></a></li>
+    <li><a href="#"><img src="{% static 'files/images/icon-twitter.svg' %}"></a></li>
+    <li><a href="https://www.instagram.com/bleachkw/?hl=en"><img src="{% static 'files/images/icon-insta.svg' %}"></a></li>
+    <li><a href="https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw"><img src="{% static 'files/images/icon-ut.svg' %}"></a></li>
+    <li><a href="https://www.linkedin.com/company/bleachkw"><img src="{% static 'files/images/icon-in.svg' %}"></a></li>
+    </ul>
+    </div>
               </td>
             </tr>
                
@@ -270,22 +278,23 @@
          
       </div>
     </div>
-
+    
     <table cellpadding="0" cellspacing="0" class="table3">
-            <tr>
+ <tr>
               <td colspan="2" class="note">NOTE : This is computer generated receipt and does not require physical signature<br>ملاحظة: هذا إيصال تم إنشاؤه بواسطة الكمبيوتر ولا يتطلب توقيعًا فعليًا</td>
             </tr>
             <tr>
-              <td colspan="2" ><input name="print" type="button" class="print" value="Print / طباعة" onclick="printDiv();">&nbsp;<a href="/customer/quatation/download/{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}"><input name="download" type="button" class="download" value="Download / تحميل"></a> </td>
+              <td colspan="2" ><input name="print" type="button" class="print" value="Print / طباعة" onclick="printDiv();">&nbsp;<a href="#"><input name="download" type="button" class="download" value="Download / تحميل"></a> </td>
             </tr>            
           </table>
-    
-    <div class="custom-model-main"><!--custom-model-main-->
+
+
+<div class="custom-model-main"><!--custom-model-main-->
     <div class="custom-model-inner">  <!--custom-model-inner-->      
     <div class="close-btn">×</div>
         <div class="custom-model-wrap"><!--custom-model-wrap-->
             <div class="pop-up-content-wrap"><!--pop-up-content-wrap-->
-               <div class="bold-text">Do you want to Reject now ? It Will be Permenentlly Removed From the System and Need Further Evaluation ! <br><br> هل تريد الرفض الآن؟ سيتم إزالته بشكل دائم من النظام ويحتاج إلى مزيد من التقييم	</div>	
+               <div class="bold-text">Do you want to Reject now ? It Will be Permenentlly Removed From the System and Need Further Evaluation ! <br><br> هل تريد الرفض الآن؟ سيتم إزالته بشكل دائم من النظام ويحتاج إلى مزيد من التقييم </div>  
                <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
                 <input type="hidden" name="order_id" value="{{order.id}}">
                 <input type="hidden" name="action_type" value="Reject">
@@ -317,13 +326,11 @@
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
 <script id="rendered-js" >
-
 //print script
 function printDiv() 
 {
 window.print();
 }
-
 
 $(".Click-here").on('click', function () {
   $(".custom-model-main").addClass('model-open');
@@ -332,7 +339,6 @@ $(".close-btn, .bg-overlay").click(function () {
   $(".custom-model-main").removeClass('model-open');
   $(".custom-model-main1").removeClass('model-open');
 });
-
 
 
 //Approval
@@ -352,9 +358,8 @@ else if(!approve)
   alert("Please Approve Our Terms and Conditions to Continue")
 }
 
-});
-
+}); 
 </script>
-{% include 'external_messages.html' %}
-  </body>
+{% include 'external_messages.html' %} 
+</body>
 </html>

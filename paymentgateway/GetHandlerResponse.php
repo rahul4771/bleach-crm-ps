@@ -11,26 +11,26 @@
 	/* BELOW ARE LIST OF PARAMETERS THAT WILL BE RECEIVED BY MERCHANT FROM PAYMENT GATEWAY */
 	/*Variable Declaration*/
 	//=========================================================================================
-	$ResErrorText= $_REQUEST['ErrorText']; 	  	//Error Text/message
+	$ResErrorText = $_REQUEST['ErrorText']; 	  	//Error Text/message
 	$ResPaymentId = $_REQUEST['paymentid'];		//Payment Id
-	$ResTrackID = $_REQUEST['trackid'];       	//Merchant Track ID
-	$ResErrorNo = $_REQUEST['Error'];           //Error Number
-	$ResResult =  $_REQUEST['result'];          //Transaction Result
-	$ResPosdate = $_REQUEST['postdate'];        //Postdate
-	$ResTranId = $_REQUEST['tranid'];           //Transaction ID
-	$ResAuth = $_REQUEST['auth'];               //Auth Code		
-	$ResAVR = $_REQUEST['avr'];                 //TRANSACTION avr					
-	$ResRef = $_REQUEST['ref'];                 //Reference Number also called Seq Number
-	$ResAmount = $_REQUEST['amt'];              //Transaction Amount
-	$Resudf1 = $_REQUEST['udf1'];               //UDF1
-	$Resudf2 = $_REQUEST['udf2'];               //UDF2
-	$Resudf3 = $_REQUEST['udf3'];               //UDF3
-	$Resudf4 = $_REQUEST['udf4'];               //UDF4
-	$Resudf5 = $_REQUEST['udf5'];               //UDF5
+	$ResTrackID   = $_REQUEST['trackid'];       	//Merchant Track ID
+	$ResErrorNo   = $_REQUEST['Error'];           //Error Number
+	$ResResult    =  $_REQUEST['result'];          //Transaction Result
+	$ResPosdate   = $_REQUEST['postdate'];        //Postdate
+	$ResTranId    = $_REQUEST['tranid'];           //Transaction ID
+	$ResAuth      = $_REQUEST['auth'];               //Auth Code		
+	$ResAVR       = $_REQUEST['avr'];                 //TRANSACTION avr					
+	$ResRef       = $_REQUEST['ref'];                 //Reference Number also called Seq Number
+	$ResAmount    = $_REQUEST['amt'];              //Transaction Amount
+	$Resudf1      = $_REQUEST['udf1'];               //UDF1
+	$Resudf2      = $_REQUEST['udf2'];               //UDF2
+	$Resudf3      = $_REQUEST['udf3'];               //UDF3
+	$Resudf4      = $_REQUEST['udf4'];               //UDF4
+	$Resudf5      = $_REQUEST['udf5'];               //UDF5
 	
 	//Below Terminal resource Key is used to decrypt the response sent from Payment Gateway.
-	$termResourceKey="P287H49DV2GS6E0Z";
-	// $termResourceKey="81G1ZB54MNW8X3J9";
+	// $termResourceKey="P287H49DV2GS6E0Z";
+	$termResourceKey="81G1ZB54MNW8X3J9";
 	
 /* Merchant (ME) checks, if error number is NOT present,then go for Encryption using required parameters */
 /* NOTE - MERCHANT MUST LOG THE RESPONSE RECEIVED IN LOGS AS PER BEST PRACTICE */	
@@ -45,15 +45,15 @@
 		{
 		//Decryption logice starts
 		$decrytedData=decrypt($ResTranData,$termResourceKey);
-		header("Location: https://my.bleachkw.com/customer/payment/response/?".$decrytedData);
-		// header("Location: https://test.bleachkw.com/customer/payment/response/?".$decrytedData);
+		// header("Location: https://my.bleachkw.com/customer/payment/response/?".$decrytedData);
+		header("Location: https://test.bleachkw.com/customer/payment/response/?".$decrytedData);
                 exit();
 		}
 	}
 	else{
 				
-				header("Location: https://my.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
-				// header("Location: https://test.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
+				// header("Location: https://my.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
+				header("Location: https://test.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
                 exit();
 	}
 	  

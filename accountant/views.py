@@ -155,7 +155,6 @@ def GetCashCollectOrderDetailedInfo(request):
 		dropdown_order_info['active_orders_count'] = active_orders_count
 		dropdown_order_info['total_orders_count']  = total_orders_count
 
-
 		return JsonResponse(dropdown_order_info)	
 
 

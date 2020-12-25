@@ -25,7 +25,7 @@ from googletrans import Translator
 
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningSection,CleaningMethod,ServiceType,AreaType
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,PaymentSubscriptionDetails
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 
@@ -1295,7 +1295,7 @@ class MakeQuatationPhase1(IsEvaluator,View):
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0.000)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0.000)
 
-		#for delete subscription to solve back button problem
+		#for backbutton safety delete subscription
 		evaluation      = Evaluation.objects.get(id=evaluation_id)
 		if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
 			OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
@@ -1307,18 +1307,34 @@ class MakeQuatationPhase1(IsEvaluator,View):
 		#update payment subscription if it is subscription
 		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
 			order           = Order.objects.get(evaluation_id=evaluation_id)
-			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id)
+			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).select_related('order_scheduler_book').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
 
 			#create subscription model
-			cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
-			count=0
+			cleaning_months = order_schedules.extra(select={'year': "EXTRACT(year FROM start_at)",'month': "EXTRACT(month FROM start_at)"}).values_list('month','year').distinct()
+			count           = 0
+
+			#for adjustment
+			append_discount = 0
 			for month in cleaning_months:
-				count += 1
-				if len(cleaning_months) == count:
-					amount = evaluation.total_cost-round((evaluation.total_cost/len(cleaning_months)*(count-1)),3)			
-					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=amount,monthyear=(str(month[0])+'-'+str(month[1])) )
+				count += 1;
+				month_schedules      = order_schedules.filter(start_at__month=month[0])
+				total_cost_per_month = 0
+				for schedule in month_schedules:
+					if schedule.order_scheduler_book.booksections:
+						for section in schedule.order_scheduler_book.booksections:
+							total_cost_per_month += section.section_cost
+				
+				if count == len(cleaning_months):
+					total_discount_per_month = round(evaluation.discount-append_discount,3)
 				else:
-					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=round(evaluation.total_cost/len(cleaning_months),3),monthyear=(str(month[0])+'-'+str(month[1])) )
+					total_discount_per_month = round((evaluation.discount/order_schedules.count())*month_schedules.count(),3)
+
+				total_cost_per_month     = round(total_cost_per_month-total_discount_per_month,3)
+				actual_cost_per_month    = total_cost_per_month+total_discount_per_month
+				subscription             = PaymentSubscriptionDetails.objects.create(order=order,actual_amount=actual_cost_per_month,discount=total_discount_per_month,amount=total_cost_per_month,monthyear=(str(month[0])+'-'+str(month[1])) )
+
+				#for adjustment
+				append_discount          += total_discount_per_month
 
 				#update orderschedules
 				for schedule in order_schedules:
@@ -1500,7 +1516,10 @@ class MakeQuatationPhase2(IsEvaluator,View):
 							section_name_arabic = section_name
 
 						#save section
-						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic,section_cost=section_cost)
+						if cleaning_policy == 'SUBSCRIPTION':
+							section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=len(tendative_dates),section_net_cost=len(tendative_dates)*float(section_cost))
+						else:
+							section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
 
 						#to save keynotes
 						try:
@@ -1664,10 +1683,16 @@ class MakeQuatationPhase2Edit(IsEvaluator,View):
 							
 							if old_section_id:
 								#edit section
-								section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic,section_cost=section_cost)
-							else: 
+								if cleaning_policy == 'SUBSCRIPTION':
+									section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=len(tendative_dates),section_net_cost=len(tendative_dates)*float(section_cost))
+								else:
+									section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
+							else:
 								#save section
-								section = EvaluationBookSection.objects.create(evaluation_book=old_book,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic,section_cost=section_cost)
+								if cleaning_policy == 'SUBSCRIPTION':
+									section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=len(tendative_dates),section_net_cost=len(tendative_dates)*float(section_cost))
+								else:
+									section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
 
 							#to save and update keynotes
 							try:
@@ -1761,7 +1786,7 @@ class MakeAssignedQuatationPhase1(IsEvaluator,View):
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
 			
-		#for delete subscription to solve back button problem
+		#for backbutton safety delete subscription
 		evaluation      = Evaluation.objects.get(id=evaluation_id)
 		if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
 			OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
@@ -1773,18 +1798,34 @@ class MakeAssignedQuatationPhase1(IsEvaluator,View):
 		#update payment subscription if it is subscription
 		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
 			order           = Order.objects.get(evaluation_id=evaluation_id)
-			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id)
+			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).select_related('order_scheduler_book').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
 
 			#create subscription model
-			cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
-			count=0
+			cleaning_months = order_schedules.extra(select={'year': "EXTRACT(year FROM start_at)",'month': "EXTRACT(month FROM start_at)"}).values_list('month','year').distinct()
+			count           = 0
+
+			#for adjustment
+			append_discount = 0
 			for month in cleaning_months:
-				count += 1
-				if len(cleaning_months) == count:
-					amount = evaluation.total_cost-round((evaluation.total_cost/len(cleaning_months)*(count-1)),3)			
-					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=amount,monthyear=(str(month[0])+'-'+str(month[1])) )
+				count += 1;
+				month_schedules      = order_schedules.filter(start_at__month=month[0])
+				total_cost_per_month = 0
+				for schedule in month_schedules:
+					if schedule.order_scheduler_book.booksections:
+						for section in schedule.order_scheduler_book.booksections:
+							total_cost_per_month += section.section_cost
+				
+				if count == len(cleaning_months):
+					total_discount_per_month = round(evaluation.discount-append_discount,3)
 				else:
-					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=round(evaluation.total_cost/len(cleaning_months),3),monthyear=(str(month[0])+'-'+str(month[1])) )			
+					total_discount_per_month = round((evaluation.discount/order_schedules.count())*month_schedules.count(),3)
+
+				total_cost_per_month     = round(total_cost_per_month-total_discount_per_month,3)
+				actual_cost_per_month    = total_cost_per_month+total_discount_per_month
+				subscription             = PaymentSubscriptionDetails.objects.create(order=order,actual_amount=actual_cost_per_month,discount=total_discount_per_month,amount=total_cost_per_month,monthyear=(str(month[0])+'-'+str(month[1])) )
+
+				#for adjustment
+				append_discount          += total_discount_per_month
 
 				#update orderschedules
 				for schedule in order_schedules:
@@ -1918,7 +1959,10 @@ class MakeAssignedQuatationPhase2(IsEvaluator,View):
 							section_name_arabic = section_name
 
 						#save section
-						section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic,section_cost=section_cost)
+						if cleaning_policy == 'SUBSCRIPTION':
+							section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=len(tendative_dates),section_net_cost=len(tendative_dates)*float(section_cost))
+						else:
+							section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
 
 						#to save keynotes
 						try:
@@ -2083,10 +2127,16 @@ class MakeAssignedQuatationPhase2Edit(IsEvaluator,View):
 							
 							if old_section_id:
 								#edit section
-								section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic,section_cost=section_cost)
-							else: 
+								if cleaning_policy == 'SUBSCRIPTION':
+									section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=len(tendative_dates),section_net_cost=len(tendative_dates)*float(section_cost))
+								else:
+									section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
+							else:
 								#save section
-								section = EvaluationBookSection.objects.create(evaluation_book=old_book,section_name=section_name,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_name_arabic=section_name_arabic,section_cost=section_cost)
+								if cleaning_policy == 'SUBSCRIPTION':
+									section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=len(tendative_dates),section_net_cost=len(tendative_dates)*float(section_cost))
+								else:
+									section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
 
 							#to save and update keynotes
 							try:
@@ -2179,7 +2229,7 @@ class MakeQuatationPhase1Edit(IsEvaluator,View):
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
 
-		#for delete previous subscription
+		#for backbutton safety delete subscription
 		evaluation      = Evaluation.objects.get(id=evaluation_id)
 		if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
 			OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
@@ -2191,18 +2241,34 @@ class MakeQuatationPhase1Edit(IsEvaluator,View):
 		#update payment subscription if it is subscription
 		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
 			order           = Order.objects.get(evaluation_id=evaluation_id)
-			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id)
+			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).select_related('order_scheduler_book').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
 
 			#create subscription model
-			cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
-			count=0
+			cleaning_months = order_schedules.extra(select={'year': "EXTRACT(year FROM start_at)",'month': "EXTRACT(month FROM start_at)"}).values_list('month','year').distinct()
+			count           = 0
+
+			#for adjustment
+			append_discount = 0
 			for month in cleaning_months:
-				count += 1
-				if len(cleaning_months) == count:
-					amount = evaluation.total_cost-round((evaluation.total_cost/len(cleaning_months)*(count-1)),3)			
-					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=amount,monthyear=(str(month[0])+'-'+str(month[1])) )
+				count += 1;
+				month_schedules      = order_schedules.filter(start_at__month=month[0])
+				total_cost_per_month = 0
+				for schedule in month_schedules:
+					if schedule.order_scheduler_book.booksections:
+						for section in schedule.order_scheduler_book.booksections:
+							total_cost_per_month += section.section_cost
+				
+				if count == len(cleaning_months):
+					total_discount_per_month = round(evaluation.discount-append_discount,3)
 				else:
-					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=round(evaluation.total_cost/len(cleaning_months),3),monthyear=(str(month[0])+'-'+str(month[1])) )			
+					total_discount_per_month = round((evaluation.discount/order_schedules.count())*month_schedules.count(),3)
+
+				total_cost_per_month     = round(total_cost_per_month-total_discount_per_month,3)
+				actual_cost_per_month    = total_cost_per_month+total_discount_per_month
+				subscription             = PaymentSubscriptionDetails.objects.create(order=order,actual_amount=actual_cost_per_month,discount=total_discount_per_month,amount=total_cost_per_month,monthyear=(str(month[0])+'-'+str(month[1])) )
+
+				#for adjustment
+				append_discount          += total_discount_per_month
 
 				#update orderschedules
 				for schedule in order_schedules:
@@ -2364,7 +2430,7 @@ def deleteservice(request,book_id,evaluation_detail_id):
 
 	#evaluation amount fix
 	evaluation.estimated_cost = float(evaluation.estimated_cost) - float(service.total_cost)
-	evaluation.total_cost = float(evaluation.estimated_cost) - float(evaluation.discount)
+	evaluation.total_cost     = float(evaluation.estimated_cost) - float(evaluation.discount)
 	evaluation.save()
 
 	#evaluation details amount fix
@@ -2379,6 +2445,61 @@ def deleteservice(request,book_id,evaluation_detail_id):
 	
 	orderscheduler.delete()
 	service.delete()
+
+	#for backbutton safety delete subscription
+	evaluation_id   = service.evaluation_details.evaluation.id
+	payment_method  = service.evaluation_details.evaluation.payment_method
+	
+	if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
+		OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
+		PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
+
+	#update payment subscription if it is subscription
+	if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
+		order           = Order.objects.get(evaluation_id=evaluation_id)
+		order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).select_related('order_scheduler_book').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
+
+		#create subscription model
+		cleaning_months = order_schedules.extra(select={'year': "EXTRACT(year FROM start_at)",'month': "EXTRACT(month FROM start_at)"}).values_list('month','year').distinct()
+		count           = 0
+
+		#for adjustment
+		append_discount = 0
+		for month in cleaning_months:
+			count += 1;
+			month_schedules      = order_schedules.filter(start_at__month=month[0])
+			total_cost_per_month = 0
+			for schedule in month_schedules:
+				if schedule.order_scheduler_book.booksections:
+					for section in schedule.order_scheduler_book.booksections:
+						total_cost_per_month += section.section_cost
+			
+			if count == len(cleaning_months):
+				total_discount_per_month = round(evaluation.discount-append_discount,3)
+			else:
+				total_discount_per_month = round((evaluation.discount/order_schedules.count())*month_schedules.count(),3)
+
+			total_cost_per_month     = round(total_cost_per_month-total_discount_per_month,3)
+			actual_cost_per_month    = total_cost_per_month+total_discount_per_month
+			subscription             = PaymentSubscriptionDetails.objects.create(order=order,actual_amount=actual_cost_per_month,discount=total_discount_per_month,amount=total_cost_per_month,monthyear=(str(month[0])+'-'+str(month[1])) )
+
+			#for adjustment
+			append_discount          += total_discount_per_month
+
+			#update orderschedules
+			for schedule in order_schedules:
+				if payment_method == 'POSTPAIDSUBSCRIPTION':
+					if schedule.start_at.date().month-1 == month[0]:
+						schedule.payment_subscription = subscription
+						schedule.save()
+					elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
+						schedule.payment_subscription = subscription
+						schedule.save()
+				else:
+					if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
+						schedule.payment_subscription = subscription
+						schedule.save()
+
 
 	messages.success(request,"Service deleted successfully!")
 	return redirect('evaluator:evaluator-makeassignedquatation2edit',evaluation_detail_id)
@@ -2414,6 +2535,60 @@ def deletesection(request,url_type,section_id,evaluation_detail_id):
 
 	section.delete()
 
+	#for backbutton safety delete subscription
+	evaluation_id   = service.evaluation_details.evaluation.id
+	payment_method  = service.evaluation_details.evaluation.payment_method
+	
+	if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
+		OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
+		PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
+
+	#update payment subscription if it is subscription
+	if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
+		order           = Order.objects.get(evaluation_id=evaluation_id)
+		order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).select_related('order_scheduler_book').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
+
+		#create subscription model
+		cleaning_months = order_schedules.extra(select={'year': "EXTRACT(year FROM start_at)",'month': "EXTRACT(month FROM start_at)"}).values_list('month','year').distinct()
+		count           = 0
+
+		#for adjustment
+		append_discount = 0
+		for month in cleaning_months:
+			count += 1;
+			month_schedules      = order_schedules.filter(start_at__month=month[0])
+			total_cost_per_month = 0
+			for schedule in month_schedules:
+				if schedule.order_scheduler_book.booksections:
+					for section in schedule.order_scheduler_book.booksections:
+						total_cost_per_month += section.section_cost
+			
+			if count == len(cleaning_months):
+				total_discount_per_month = round(evaluation.discount-append_discount,3)
+			else:
+				total_discount_per_month = round((evaluation.discount/order_schedules.count())*month_schedules.count(),3)
+
+			total_cost_per_month     = round(total_cost_per_month-total_discount_per_month,3)
+			actual_cost_per_month    = total_cost_per_month+total_discount_per_month
+			subscription             = PaymentSubscriptionDetails.objects.create(order=order,actual_amount=actual_cost_per_month,discount=total_discount_per_month,amount=total_cost_per_month,monthyear=(str(month[0])+'-'+str(month[1])) )
+
+			#for adjustment
+			append_discount          += total_discount_per_month
+
+			#update orderschedules
+			for schedule in order_schedules:
+				if payment_method == 'POSTPAIDSUBSCRIPTION':
+					if schedule.start_at.date().month-1 == month[0]:
+						schedule.payment_subscription = subscription
+						schedule.save()
+					elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
+						schedule.payment_subscription = subscription
+						schedule.save()
+				else:
+					if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
+						schedule.payment_subscription = subscription
+						schedule.save()
+						
 	messages.success(request,"Section deleted successfully!")
 
 	if url_type == 'assigned':
