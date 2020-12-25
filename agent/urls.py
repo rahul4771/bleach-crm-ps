@@ -39,6 +39,9 @@ urlpatterns = [
 	url(r'^makequatation/phase2/duplicate/edit/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2DuplicateEdit.as_view(),name='agent-makequatation2duplicateedit'),
 	url(r'^makequatation/phase2/delete/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2Delete.as_view(),name='agent-makequatation2delete'),
 
+	url(r'^delete/service/(?P<book_id>[-\w]+)/(?P<evaluation_detail_id>[-\w]+)/$',views.deleteservice,name='agent-delete-service'),
+	url(r'^delete/section/(?P<section_id>[-\w]+)/(?P<evaluation_detail_id>[-\w]+)/$',views.deletesection,name='agent-delete-section'),		
+
 	url(r'^makequatation/duplicate/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationDuplicate.as_view(),name='agent-makequatation1duplicate'),
 
 	url(r'^ajax/address/status/$',views.UpdateAddressStatus,name='ajax-updateaddress'),

@@ -141,7 +141,68 @@ class Quatation(View):
 
 		return redirect('customer:quatation',evaluation_id_encrypted)
 
+
+class SubscriptionQuatation(View):
+	def get(self,request,evaluation_id):
+
+		#evaluation id decryption
+		evaluation_id_encrypted = evaluation_id
+		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
+		user_name     =  evaluation_id_encrypted[14:]
+
+
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
+
+		nonduplicate_schedules = []
+		#Remove duplicates for subscription
+		duplicate_schedules    = []
+		for orderschedule in order.orderschedules:
+			if orderschedule.order_scheduler_book in duplicate_schedules:
+				pass
+			else:	
+				nonduplicate_schedules.append(orderschedule)	
+
+			duplicate_schedules.append(orderschedule.order_scheduler_book)
+
+		
+		#per job cost
+		per_job_cost = 0
+		for orderschedule in nonduplicate_schedules:            
+			for section in orderschedule.order_scheduler_book.evaluationbooksection:
+				per_job_cost += section.section_cost
+		
+		return render(request,"customer/subscriptionquatation.html",{"order":order,"nonduplicate_schedules":nonduplicate_schedules,"per_job_cost":per_job_cost})
  
+	def post(self,request,evaluation_id):
+		order_id 		  = request.POST.get('order_id')
+		action            = request.POST.get('action_type')
+
+		#evaluation id decryption
+		evaluation_id_encrypted = evaluation_id
+		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
+		user_name     =  evaluation_id_encrypted[14:]
+
+		if action == 'Reject':
+			#UPDATE EVALUATION REJECTION
+			Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(quatation_status='REJECTED',quatation_rejected_date=timezone.now())
+			Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='ORDER_CANCELLED')
+
+		#print(request.POST)
+		if action == 'Approve':
+			#UPDATE EVALUATION APPROVAL
+			termsandconditions = request.POST.get('termsandconditions')
+			if termsandconditions:
+				evaluation_update = Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(quatation_status='APPROVED',quatation_approved_date=timezone.now())
+				order_update      = Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='APPROVED_BY_CLIENT')
+				
+				return redirect('customer:subscriptioninvoice',evaluation_id_encrypted)
+			
+			else:
+				messages.error(request,"Please Read Terms & Conditions and Agree")
+				return redirect('customer:subscriptionquatation',evaluation_id_encrypted)
+
+		return redirect('customer:subscriptionquatation',evaluation_id_encrypted)
+
 class CustomerInvoice(View):
 	def get(self,request,evaluation_id):
 
@@ -190,6 +251,52 @@ class CustomerInvoice(View):
 
 		return redirect('customer:invoice',evaluation_id_encrypted)
 
+
+class CustomerSubscriptionInvoice(View):
+	def get(self,request,evaluation_id):
+
+		#evaluation id decryption
+		evaluation_id_encrypted = evaluation_id
+		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
+		user_name     =  evaluation_id_encrypted[14:]
+
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
+
+		nonduplicate_schedules = []
+		#Remove duplicates for subscription
+		duplicate_schedules    = []
+		for orderschedule in order.orderschedules:
+			if orderschedule.order_scheduler_book in duplicate_schedules:
+				pass
+			else:	
+				nonduplicate_schedules.append(orderschedule)	
+
+			duplicate_schedules.append(orderschedule.order_scheduler_book)
+
+		#subscription amounts
+		subscriptions = PaymentSubscriptionDetails.objects.select_related('order__evaluation').filter(order__evaluation__evaluation_id=evaluation_id,is_paid=False)
+
+		#per completed jobs count
+		completed_jobs_count = 0 
+		for schedule in order.orderschedules:
+			if schedule.work_status == 'CLEANING_FULFILLED':
+				completed_jobs_count += 1
+		
+		#for credit card
+		full_name_array = UserProfile.objects.get(username=user_name).name.split()
+		firstname = full_name_array[0]
+		lastname  = ''
+		
+		count = 0
+		for i in full_name_array:
+			if(count>=1):
+				lastname += i+' '
+			count += 1
+		
+		customer_ip_address = get_client_ip(request)
+
+		return render(request,"customer/subscriptioninvoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"completed_jobs_count":completed_jobs_count,"subscriptions":subscriptions})
+
 class PaymentResponseDebit(View):
 	def get(self,request):
 		#evaluation id decryption
@@ -221,9 +328,26 @@ class PaymentResponseDebit(View):
 			else:
 				new_receipt_no = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
 
-			payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid'),receipt_no=new_receipt_no,payment_gateway='DEBITCARD')	
+			#payment history
+			if payment_mode == 'subscription':
+				subscription_id      = request.GET.get("udf3")
+				subscription         = PaymentSubscriptionDetails.objects.get(id=subscription_id)			
+				subscription.is_paid = True
+				subscription.save()
+				payment_history = PaymentHistory.objects.create(order=order,history_payment_subscription=subscription,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid'),receipt_no=new_receipt_no,payment_gateway='DEBITCARD')
+			else:
+				payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid'),receipt_no=new_receipt_no,payment_gateway='DEBITCARD')	
 
-			if payment_mode == 'before_cleaning' and order.preamount_paid != order.evaluation.before_cleaning_amount:
+			#payment calculations
+			if payment_mode == 'subscription':
+				order.amount_paid      += amount_paid
+				order.remining_amount  = order.remining_amount-amount_paid
+				#to check payment completed
+				if order.remining_amount-amount_paid == 0:
+					order.payment_status         = 'COMPLETED'
+					order.payment_completed_date = timezone.now()					
+			
+			elif payment_mode == 'before_cleaning' and order.preamount_paid != order.evaluation.before_cleaning_amount:
 				order.preamount_paid   = amount_paid
 				order.amount_paid      = amount_paid
 				order.remining_amount  = order.remining_amount-amount_paid
