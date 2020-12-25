@@ -471,7 +471,8 @@ def RemoveSection(request):
 	section_id = request.GET.get('section_id')
 
 	try:
-		EvaluationBookSection.objects.filter(id=section_id).delete()
+		section         = EvaluationBookSection.objects.select_related('evaluation_book__evaluation_details__evaluation').get(id=section_id)
+		section.delete()
 		data['success'] = True
 	except:
 		data['success'] = False
@@ -3368,7 +3369,7 @@ class MakeQuatationPhase2Delete(IsAgent,View):
 			updated_evaluation.delete()
 			Order.objects.filter(is_active=True,evaluation__id=evaluation_id).delete()
 			return redirect('agent:agent-orders')
-
+			
 		return redirect('agent:agent-makequatation1edit',enquiry_id,evaluation_id)
 
 
