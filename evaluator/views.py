@@ -2419,3 +2419,60 @@ class InvestigationTask(View):
 
 		messages.success(request,"Investigation Form submitted succesfully")	
 		return redirect('evaluator:evaluatordash-board')
+
+def deleteservice(request,book_id,evaluation_detail_id):
+	
+	orderscheduler = OrderScheduler.objects.get(order_scheduler_book__id=book_id)
+	order = orderscheduler.order
+	service = EvaluationBook.objects.get(id=book_id)
+	evaluation = service.evaluation_details.evaluation
+
+	#evaluation amount fix
+	evaluation.estimated_cost = float(evaluation.estimated_cost) - float(service.total_cost)
+	evaluation.total_cost = float(evaluation.estimated_cost) - float(evaluation.discount)
+	evaluation.save()
+
+	#order amount fix
+	order.total_amount = float(order.total_amount) - float(service.total_cost)
+	order.remining_amount = float(order.remining_amount) - float(service.total_cost)
+	order.save()
+	
+	orderscheduler.delete()
+	service.delete()
+
+	messages.success(request,"Service deleted successfully!")
+	return redirect('evaluator:evaluator-makeassignedquatation2edit',evaluation_detail_id)
+
+def deletesection(request,url_type,section_id,evaluation_detail_id):
+	print(url_type,section_id,evaluation_detail_id,"ids47")
+	section = EvaluationBookSection.objects.get(id=section_id)
+	
+	service = section.evaluation_book
+
+	evaluation = service.evaluation_details.evaluation
+
+	order = Order.objects.get(evaluation__id=evaluation.id)
+
+	#evaluationbook amount fix
+	service.estimated_cost = float(service.estimated_cost) - float(section.section_cost)
+	service.total_cost = float(service.estimated_cost) - float(service.discount)
+	service.save()
+
+	#evaluation amount fix
+	evaluation.estimated_cost = float(evaluation.estimated_cost) - float(section.section_cost)
+	evaluation.total_cost = float(evaluation.estimated_cost) - float(evaluation.discount)
+	evaluation.save()
+
+	#order amount fix
+	order.total_amount = float(order.total_amount) - float(section.section_cost)
+	order.remining_amount = float(order.remining_amount) - float(section.section_cost)
+	order.save()
+
+	section.delete()
+
+	messages.success(request,"Section deleted successfully!")
+
+	if url_type == 'assigned':
+		return redirect('evaluator:evaluator-makeassignedquatation2edit',evaluation_detail_id)
+	else:
+		return redirect('evaluator:evaluator-makequatation2edit',evaluation_detail_id)

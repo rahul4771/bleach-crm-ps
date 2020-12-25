@@ -646,7 +646,7 @@ def CleaningExistingDates(request):
 
 # Create your views here.
 class AgentHome(IsAgent,View):
-	def get(self,request):
+	def get(self,request):		
 
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
@@ -2909,7 +2909,7 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 		return render(request,'agent/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
 
 	def post(self,request,evaluation_detail_id):
-
+		
 		evaluation_details 	  = EvaluationDetails.objects.select_related('evaluation__customer','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationbookmedias'),Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')).get(is_active=True,id=evaluation_detail_id)
 		service_formset       = self.service_formset_store(request.POST)
 
@@ -3884,3 +3884,16 @@ def ResourcesFilter(request):
 #     ['rangeenkmr043@gmail.com'], fail_silently=False)
 
 # 	return redirect('agent:agentdash-board')
+
+def deleteservice(request,book_id,evaluation_detail_id):
+	print(book_id,evaluation_detail_id,"ids")
+	OrderScheduler.objects.filter(order_scheduler_book__id=book_id).delete()
+	EvaluationBook.objects.get(id=book_id).delete()
+	messages.success(request,"Service deleted successfully!")
+	return redirect('agent:agent-makequatation2edit',evaluation_detail_id)
+
+def deletesection(request,section_id,evaluation_detail_id):
+	print(section_id,evaluation_detail_id,"ids47")
+	EvaluationBookSection.objects.get(id=section_id).delete()
+	messages.success(request,"Section deleted successfully!")
+	return redirect('agent:agent-makequatation2edit',evaluation_detail_id)
