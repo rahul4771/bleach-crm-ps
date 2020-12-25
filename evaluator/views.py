@@ -2440,6 +2440,60 @@ def deleteservice(request,book_id,evaluation_detail_id):
 	orderscheduler.delete()
 	service.delete()
 
+	#for backbutton safety delete subscription
+	evaluation_id   = service.evaluation_details.evaluation.id
+	payment_method  = service.evaluation_details.evaluation.payment_method
+	
+	if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
+		OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
+		PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
+
+	#update payment subscription if it is subscription
+	if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
+		order           = Order.objects.get(evaluation_id=evaluation_id)
+		order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).select_related('order_scheduler_book').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
+
+		#create subscription model
+		cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
+		count           = 0
+
+		#for adjustment
+		append_discount = 0
+		for month in cleaning_months:
+			count += 1;
+			month_schedules      = order_schedules.filter(start_at__month=month[0])
+			total_cost_per_month = 0
+			for schedule in month_schedules:
+				if schedule.order_scheduler_book.booksections:
+					for section in schedule.order_scheduler_book.booksections:
+						total_cost_per_month += section.section_cost
+			
+			if count == len(cleaning_months):
+				total_discount_per_month = round(evaluation.discount-append_discount,3)
+			else:
+				total_discount_per_month = round((evaluation.discount/order_schedules.count())*month_schedules.count(),3)
+
+			total_cost_per_month     = round(total_cost_per_month-total_discount_per_month,3)
+			actual_cost_per_month    = total_cost_per_month+total_discount_per_month
+			subscription             = PaymentSubscriptionDetails.objects.create(order=order,actual_amount=actual_cost_per_month,discount=total_discount_per_month,amount=total_cost_per_month,monthyear=(str(month[0])+'-'+str(month[1])) )
+
+			#for adjustment
+			append_discount          += total_discount_per_month
+
+			#update orderschedules
+			for schedule in order_schedules:
+				if payment_method == 'POSTPAIDSUBSCRIPTION':
+					if schedule.start_at.date().month-1 == month[0]:
+						schedule.payment_subscription = subscription
+						schedule.save()
+					elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
+						schedule.payment_subscription = subscription
+						schedule.save()
+				else:
+					if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
+						schedule.payment_subscription = subscription
+						schedule.save()
+
 
 	messages.success(request,"Service deleted successfully!")
 	return redirect('evaluator:evaluator-makeassignedquatation2edit',evaluation_detail_id)
@@ -2471,6 +2525,60 @@ def deletesection(request,url_type,section_id,evaluation_detail_id):
 
 	section.delete()
 
+	#for backbutton safety delete subscription
+	evaluation_id   = service.evaluation_details.evaluation.id
+	payment_method  = service.evaluation_details.evaluation.payment_method
+	
+	if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
+		OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
+		PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
+
+	#update payment subscription if it is subscription
+	if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
+		order           = Order.objects.get(evaluation_id=evaluation_id)
+		order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).select_related('order_scheduler_book').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
+
+		#create subscription model
+		cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
+		count           = 0
+
+		#for adjustment
+		append_discount = 0
+		for month in cleaning_months:
+			count += 1;
+			month_schedules      = order_schedules.filter(start_at__month=month[0])
+			total_cost_per_month = 0
+			for schedule in month_schedules:
+				if schedule.order_scheduler_book.booksections:
+					for section in schedule.order_scheduler_book.booksections:
+						total_cost_per_month += section.section_cost
+			
+			if count == len(cleaning_months):
+				total_discount_per_month = round(evaluation.discount-append_discount,3)
+			else:
+				total_discount_per_month = round((evaluation.discount/order_schedules.count())*month_schedules.count(),3)
+
+			total_cost_per_month     = round(total_cost_per_month-total_discount_per_month,3)
+			actual_cost_per_month    = total_cost_per_month+total_discount_per_month
+			subscription             = PaymentSubscriptionDetails.objects.create(order=order,actual_amount=actual_cost_per_month,discount=total_discount_per_month,amount=total_cost_per_month,monthyear=(str(month[0])+'-'+str(month[1])) )
+
+			#for adjustment
+			append_discount          += total_discount_per_month
+
+			#update orderschedules
+			for schedule in order_schedules:
+				if payment_method == 'POSTPAIDSUBSCRIPTION':
+					if schedule.start_at.date().month-1 == month[0]:
+						schedule.payment_subscription = subscription
+						schedule.save()
+					elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
+						schedule.payment_subscription = subscription
+						schedule.save()
+				else:
+					if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
+						schedule.payment_subscription = subscription
+						schedule.save()
+						
 	messages.success(request,"Section deleted successfully!")
 
 	if url_type == 'assigned':
