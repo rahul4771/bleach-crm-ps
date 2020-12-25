@@ -26,6 +26,9 @@ urlpatterns = [
 	url(r'^makequatation/phase2/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2.as_view(),name='evaluator-makequatation2'),
 	url(r'^makequatation/phase2/edit/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2Edit.as_view(),name='evaluator-makequatation2edit'),
 
+	url(r'^delete/service/(?P<book_id>[-\w]+)/(?P<evaluation_detail_id>[-\w]+)/$',views.deleteservice,name='evaluator-delete-service'),
+	url(r'^delete/section/(?P<url_type>[-\w]+)/(?P<section_id>[-\w]+)/(?P<evaluation_detail_id>[-\w]+)/$',views.deletesection,name='evaluator-delete-section'),		
+	
 	url(r'^makequatation/assigned/phase1/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeAssignedQuatationPhase1.as_view(),name='evaluator-makeassignedquatation1'),
 	url(r'^makequatation/assigned/phase2/(?P<evaluation_detail_id>[-\w]+)$',views.MakeAssignedQuatationPhase2.as_view(),name='evaluator-makeassignedquatation2'),
 	url(r'^makequatation/assigned/phase2/edit/(?P<evaluation_detail_id>[-\w]+)$',views.MakeAssignedQuatationPhase2Edit.as_view(),name='evaluator-makeassignedquatation2edit'),
