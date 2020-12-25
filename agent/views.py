@@ -477,49 +477,10 @@ def RemoveSection(request):
 
 	try:
 		section         = EvaluationBookSection.objects.select_related('evaluation_book__evaluation_details__evaluation').get(id=section_id)
-		evaluation_id   = section.evaluation_book.evaluation_details.evaluation.id
 		section.delete()
 		data['success'] = True
 	except:
 		data['success'] = False
-
-	#for backbutton safety delete subscription
-	evaluation      = Evaluation.objects.get(id=evaluation_id)
-	if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
-		OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
-		PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
-		
-
-	#update payment subscription if it is subscription
-	payment_method = evaluation.payment_method
-	if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
-		order           = Order.objects.get(evaluation_id=evaluation_id)
-		order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id)
-
-		#create subscription model
-		cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
-		count=0
-		for month in cleaning_months:
-			count += 1
-			if len(cleaning_months) == count:
-				amount = evaluation.total_cost-round((evaluation.total_cost/len(cleaning_months)*(count-1)),3)			
-				subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=amount,monthyear=(str(month[0])+'-'+str(month[1])) )
-			else:
-				subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=round(evaluation.total_cost/len(cleaning_months),3),monthyear=(str(month[0])+'-'+str(month[1])) )			
-			
-			#update orderschedules
-			for schedule in order_schedules:
-				if payment_method == 'POSTPAIDSUBSCRIPTION':
-					if schedule.start_at.date().month-1 == month[0]:
-						schedule.payment_subscription = subscription
-						schedule.save()
-					elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
-						schedule.payment_subscription = subscription
-						schedule.save()
-				else:
-					if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
-						schedule.payment_subscription = subscription
-						schedule.save()
 
 	return JsonResponse(data)
 

@@ -2429,7 +2429,7 @@ def deleteservice(request,book_id,evaluation_detail_id):
 
 	#evaluation amount fix
 	evaluation.estimated_cost = float(evaluation.estimated_cost) - float(service.total_cost)
-	evaluation.total_cost = float(evaluation.estimated_cost) - float(evaluation.discount)
+	evaluation.total_cost     = float(evaluation.estimated_cost) - float(evaluation.discount)
 	evaluation.save()
 
 	#order amount fix
@@ -2439,6 +2439,7 @@ def deleteservice(request,book_id,evaluation_detail_id):
 	
 	orderscheduler.delete()
 	service.delete()
+
 
 	messages.success(request,"Service deleted successfully!")
 	return redirect('evaluator:evaluator-makeassignedquatation2edit',evaluation_detail_id)
