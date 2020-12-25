@@ -2885,6 +2885,10 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 			#Save Service Form
 			for service_form in service_formset:
 				if service_form.is_valid():
+					service_form_save 					    = service_form.save(commit=False)
+					service_form_save.evaluation_details_id = evaluation_detail_id
+					service_form_save.save()
+					
 					old_form_id                                 = request.POST.get('editform'+str(form_count))
 					if old_form_id:
 						old_form_id								= int(old_form_id)
