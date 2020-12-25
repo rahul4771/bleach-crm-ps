@@ -2438,11 +2438,17 @@ def deleteservice(request,book_id,evaluation_detail_id):
 	order = orderscheduler.order
 	service = EvaluationBook.objects.get(id=book_id)
 	evaluation = service.evaluation_details.evaluation
+	evaluationdetails = service.evaluation_details
 
 	#evaluation amount fix
 	evaluation.estimated_cost = float(evaluation.estimated_cost) - float(service.total_cost)
 	evaluation.total_cost     = float(evaluation.estimated_cost) - float(evaluation.discount)
 	evaluation.save()
+
+	#evaluation details amount fix
+	evaluationdetails.estimated_cost = float(evaluationdetails.estimated_cost) - float(service.total_cost)
+	evaluationdetails.total_cost = float(evaluationdetails.estimated_cost) - float(evaluationdetails.discount)
+	evaluationdetails.save()
 
 	#order amount fix
 	order.total_amount = float(order.total_amount) - float(service.total_cost)
@@ -2519,10 +2525,9 @@ def deletesection(request,url_type,section_id,evaluation_detail_id):
 	section = EvaluationBookSection.objects.get(id=section_id)
 	
 	service = section.evaluation_book
-
 	evaluation = service.evaluation_details.evaluation
-
 	order = Order.objects.get(evaluation__id=evaluation.id)
+	evaluationdetails = service.evaluation_details
 
 	#evaluationbook amount fix
 	service.estimated_cost = float(service.estimated_cost) - float(section.section_cost)
@@ -2534,6 +2539,11 @@ def deletesection(request,url_type,section_id,evaluation_detail_id):
 	evaluation.total_cost = float(evaluation.estimated_cost) - float(evaluation.discount)
 	evaluation.save()
 
+	#evaluation details amount fix
+	evaluationdetails.estimated_cost = float(evaluationdetails.estimated_cost) - float(section.section_cost)
+	evaluationdetails.total_cost = float(evaluationdetails.estimated_cost) - float(evaluationdetails.discount)
+	evaluationdetails.save()
+	
 	#order amount fix
 	order.total_amount = float(order.total_amount) - float(section.section_cost)
 	order.remining_amount = float(order.remining_amount) - float(section.section_cost)

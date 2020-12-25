@@ -725,52 +725,6 @@ class FeedbackDetails(IsAdmin,View):
 
 		return render(request,'admin/feedback/feedbacks.html',{"total_feedbacks":total_feedbacks,"order_wise_feedbacks":order_wise_feedbacks,"full_order_wise_feedbacks":full_order_wise_feedbacks,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_minimumstarring":fil_minimumstarring,"fil_maximumstarring":fil_maximumstarring,"fil_service_type":fil_service_type,})
 
-class AddFeedBack(IsAdmin,View):
-	def get(self,request):
-
-		try:
-			orders = Order.objects.filter(is_active=True,is_feedback_marked=False,payment_status='COMPLETED')
-		except:
-			orders = None
-
-		try:
-			questions = Question.objects.filter(is_active=True).order_by('id')
-		except:
-			questions = None
-
-		return render(request,'admin/feedback/add-feedback.html',{'orders':orders,"questions":questions})
-
-	def post(self,request):
-		order_id        = request.POST.get('order_id')
-		feedback_remark = request.POST.get('notes')
-
-		try:
-			order                    = Order.objects.get(id=order_id)
-			order.feedback_notes     = feedback_remark
-			order.is_feedback_marked = True
-			order.save()
-		except:
-			order = 	None
-
-		try:
-			questions = Question.objects.filter(is_active=True).order_by('id')
-		except:
-			questions = None
-
-		create_feedbacks = []
-		if order:
-			for question in questions:
-				rating = request.POST.get('rating'+str(question.id)) or 0
-
-				create_feedbacks.append(FeedBack(order=order,question=question,rating=rating,response_date=timezone.now()))
-			FeedBack.objects.bulk_create(create_feedbacks)
-
-			messages.success(request,"Feedback Succesfully Submitted")
-		else:
-			messages.error(request,'Please Select a BLC Number')
-
-		return redirect('bleach_admin:admin-new-feedback')
-
 class FeedbackAdvanced(IsAdmin,View):
 	def get(self,request,client_id,order_id):
 		

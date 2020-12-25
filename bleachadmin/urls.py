@@ -9,7 +9,6 @@ urlpatterns = [
 
 	url(r'^feedbacks/$',views.FeedbackDetails.as_view(),name='admin-feedbacks'),
 	url(r'^feedback/details/(?P<client_id>[-\w]+)/(?P<order_id>[-\w]+)/$',views.FeedbackAdvanced.as_view(),name='admin-feedbackadvanced'),	
-	url(r'^newfeedback/$',views.AddFeedBack.as_view(),name='admin-new-feedback'),
 
 	url(r'^tickets/$',views.TicketDetails.as_view(),name='admin-tickets'),
 	url(r'^ticket/details/(?P<client_id>[-\w]+)/(?P<followup_id>[-\w]+)/$',views.TicketAdvanced.as_view(),name='admin-ticketadvanced'),

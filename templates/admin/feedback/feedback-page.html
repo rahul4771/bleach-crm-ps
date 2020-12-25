@@ -176,16 +176,17 @@
  
 <thead>
 <tr>
-<th>Order Number</th>
-<th data-hide="phone">Area</th>
-<th data-hide="phone,tablet">Cleaning Type</th>
-<th class="align-center" data-hide="phone,tablet">Ratings</th>
+<th class="align-center">Order Number</th>
+<th data-hide="phone" class="align-center">Area</th>
+<th data-hide="phone,tablet" class="align-center">Cleaning Type</th>
+<th class="align-center" data-hide="phone,tablet" >Ratings</th>
 </tr>
 </thead>
 <tbody>
     {% for other_feedback in other_feedbacks %}
     <tr class="clickable-row" data-href="{% url 'bleach_admin:admin-feedbackadvanced' other_feedback.evaluation.customer.id other_feedback.id %}">
-    <td class="yellow-line">{{other_feedback.evaluation.evaluation_id}}</td>
+    <td class="yellow-line">
+    {{other_feedback.evaluation.evaluation_id}}</td>
     <td>
     {% for evaluation_detail in other_feedback.evaluation.order_evaluation_details %}
     {{evaluation_detail.address.area.name}}
@@ -230,7 +231,7 @@
         <span class="fa fa-star"></span>
         <span class="fa fa-star"></span>
         {% else %}
-        <span class="orange-bg">Click to Rate</span>
+        <span class="gray-bg">Not Rated</span>
         {% endif %} </td>
     </tr>
     {% empty %}
