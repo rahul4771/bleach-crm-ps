@@ -506,7 +506,7 @@ else
     };
 
     //close button for only last section initial
-    $('#id_form-'+formcount+'-sectioncontainer .close-div').attr("hidden",false);
+    $('#id_form-'+formcount+'-sectioncontainer .close-div').attr("hidden",true);
     $('#id_form-'+formcount+'-sectioncontainer .form_section:first .close-div').attr("hidden",false);
 }
 
@@ -636,7 +636,7 @@ $("body").on("click", ".close-div", function(){
         console.log(section_id,"seid")
         if(section_id == undefined)
         {
-          console.log("rer")
+          console.log("nun")  
         }else{
                 url = "/evaluator/delete/section/assigned/"+section_id+"/"+{{evaluation_details.id}}+""
                 window.location = url ;
