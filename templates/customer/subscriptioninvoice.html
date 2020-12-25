@@ -155,12 +155,14 @@
               <th class="medium" > Total / مجموع</th>
               <td class="due-amount medium" > {{order.evaluation.total_cost|floatformat:'3'}} KD </td>
             </tr>
+            {% if order.payment_status != 'COMPLETED' %}
             <tr class="amount-total">
               <!-- {amount_total_label} -->
               <td colspan="2">Current Payment <br>
                  {% for subscription in subscriptions %}{% if forloop.first %}{{subscription.amount}}{% endif %}{% endfor %} KD
                 <!-- <div class="invoice-name-arabic">شركة بلـــيت</div></td> -->
             </tr>
+            {% endif %}
             
             
             <!-- You can use attribute data-hide-on-quote="true" to hide specific information on quotes.
