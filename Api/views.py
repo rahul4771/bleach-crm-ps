@@ -156,9 +156,9 @@ class PaymentResponseCredit(APIView):
 			#payment calculations
 			if payment_mode == 'subscription':
 				order.amount_paid      += amount_paid
-				order.remining_amount  = order.remining_amount-amount_paid
+				order.remining_amount   = order.remining_amount-amount_paid
 				#to check payment completed
-				if order.remining_amount-amount_paid == 0:
+				if order.remining_amount == 0:
 					order.payment_status         = 'COMPLETED'
 					order.payment_completed_date = timezone.now()
 
