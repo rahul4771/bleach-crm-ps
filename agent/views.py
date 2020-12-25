@@ -2465,9 +2465,10 @@ class MakeQuatationPhase1(IsAgent,View):
 			#for adjustment
 			append_discount = 0
 			for month in cleaning_months:
-				print(month,"month")
 				count += 1;
 				month_schedules      = order_schedules.filter(start_at__month=month[0])
+				print(month[0],"monthhhh")
+				print(month_schedules,"objectsssss")
 				total_cost_per_month = 0
 				for schedule in month_schedules:
 					if schedule.order_scheduler_book.booksections:
