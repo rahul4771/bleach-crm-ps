@@ -2760,7 +2760,7 @@ class MakeQuatationPhase1Edit(IsAgent,View):
 			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).select_related('order_scheduler_book').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
 
 			#create subscription model
-			cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
+			cleaning_months = order_schedules.extra(select={'year': "EXTRACT(year FROM start_at)",'month': "EXTRACT(month FROM start_at)"}).values_list('month','year').distinct()
 			count           = 0
 
 			#for adjustment
@@ -3146,7 +3146,7 @@ class MakeQuatationPhase1DuplicateEdit(IsAgent,View):
 			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).select_related('order_scheduler_book').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
 
 			#create subscription model
-			cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
+			cleaning_months = order_schedules.extra(select={'year': "EXTRACT(year FROM start_at)",'month': "EXTRACT(month FROM start_at)"}).values_list('month','year').distinct()
 			count           = 0
 
 			#for adjustment
@@ -3455,7 +3455,7 @@ class MakeQuatationPhase2Delete(IsAgent,View):
 				order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id)
 
 				#create subscription model
-				cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
+				cleaning_months = order_schedules.extra(select={'year': "EXTRACT(year FROM start_at)",'month': "EXTRACT(month FROM start_at)"}).values_list('month','year').distinct()
 				count=0
 				for month in cleaning_months:
 					count += 1
@@ -3880,7 +3880,7 @@ def deleteservice(request,book_id,evaluation_detail_id):
 		order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).select_related('order_scheduler_book').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
 
 		#create subscription model
-		cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
+		cleaning_months = order_schedules.extra(select={'year': "EXTRACT(year FROM start_at)",'month': "EXTRACT(month FROM start_at)"}).values_list('month','year').distinct()
 		count           = 0
 
 		#for adjustment
@@ -3964,7 +3964,7 @@ def deletesection(request,section_id,evaluation_detail_id):
 		order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).select_related('order_scheduler_book').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
 
 		#create subscription model
-		cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
+		cleaning_months = order_schedules.extra(select={'year': "EXTRACT(year FROM start_at)",'month': "EXTRACT(month FROM start_at)"}).values_list('month','year').distinct()
 		count           = 0
 
 		#for adjustment
