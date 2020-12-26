@@ -208,7 +208,7 @@
             </tr> -->
             {% if request.user.user_type != 'AGENT' and request.user.user_type != 'ADMIN' and request.user.user_type != 'EVALUATOR' and order.payment_status != 'COMPLETED' %}
             <tr class="table1tr1">
-              <form method="post" action="https://testpay.bleachkw.com/SendPerformREQuest.php" enctype= "multipart/form-data">{% csrf_token %}
+              <form method="post" action="https://payment.bleachkw.com/SendPerformREQuest.php" enctype= "multipart/form-data">{% csrf_token %}
               <input type="hidden" name="price" value="{% for subscription in subscriptions %}{% if forloop.first %}{{subscription.amount|floatformat:'3'}}{% endif %}{% endfor %}">
               <input type="hidden" name="payment_mode" value="subscription">
               <input type="hidden" name="subscription_id" value="{% for subscription in subscriptions %}{% if forloop.first %}{{subscription.id}}{% endif %}{% endfor %}">
