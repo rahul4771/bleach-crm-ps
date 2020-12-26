@@ -95,6 +95,9 @@
           <div><span>Order Number</span> <span>{{order.order_no}}</span></div>
           {% load customer_tags %}
           <div><span>MONTHLY PAYMENT</span> <span>for {% for subscription in subscriptions %}{% if forloop.first %}{% get_month subscription.monthyear %} month of {% get_year subscription.monthyear %}{% endif %}{% endfor %}</span></div>
+          <div>
+            <span>Payment Policy / نظام الدفع</span> <span>{% if order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' %}Monthly Prepaid / الدفع المسبق شهريًا{% elif order.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' %}Monthly Postpaid / الدفع اللاحق شهريًا{% endif %}</span>
+          </div>
         </section>
         
         <div class="clearfix"></div>
@@ -110,9 +113,9 @@
             <tr>
               <th style="text-align:center;" width="5%"></th> <!-- Dummy cell for the row number and row commands -->
               <th style="text-align: left;"  width="45%">ITEM</th>
-              <th style="text-align: left;"width="10%">CATEGORY</th>
+              <th style="text-align: left;"width="15%">CATEGORY</th>
               <th style="text-align: left;" width="10%">UNIT SIZE</th>
-              <th style="text-align: left;" width="10%">UNIT PRICE</th>
+              <th style="text-align: left;" width="5%">UNIT PRICE</th>
               <th style="text-align: left;" width="5%"> QNT</th>
               <th width="15%" class="align-right">NET PRICE&nbsp;</th>
             </tr>
@@ -125,9 +128,9 @@
               
               <td>{{section.dirt_level}}<br> {% if section.dirt_level == 'Red' %}أحمر{% endif %}{% if section.dirt_level == 'Random' %}وسط{%endif%}</td>
               <td>{{section.size}} {{section.unit|default_if_none:''}}</td>
-              <td>{{section.section_cost|default_if_none:''}}</td>
+              <td>{{section.section_cost|floatformat:'3'}}</td>
               <td>{{section.section_cleanings|floatformat:'0'}}</td>
-              <td class="align-right">{{section.section_net_cost|default_if_none:''}}</td>
+              <td class="align-right">{{section.section_net_cost|floatformat:'3'}}</td>
             </tr>
             {% endfor %}
             {% endfor %}

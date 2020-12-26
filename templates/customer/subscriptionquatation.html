@@ -122,9 +122,9 @@
             <tr>
               <th style="text-align:center;" width="5%"></th> <!-- Dummy cell for the row number and row commands -->
               <th style="text-align: left;"  width="45%">ITEM</th>
-              <th style="text-align: left;"width="10%">CATEGORY</th>
+              <th style="text-align: left;"width="15%">CATEGORY</th>
               <th style="text-align: left;" width="10%">UNIT SIZE</th>
-              <th style="text-align: left;" width="10%">UNIT PRICE</th>
+              <th style="text-align: left;" width="5%">UNIT PRICE</th>
               <th style="text-align: left;" width="5%"> QNT</th>
               <th width="15%" class="align-right">NET PRICE&nbsp;</th>
             </tr>
@@ -137,9 +137,9 @@
               
               <td>{{section.dirt_level}}<br> {% if section.dirt_level == 'Red' %}أحمر{% endif %}{% if section.dirt_level == 'Random' %}وسط{%endif%}</td>
               <td>{{section.size}} {{section.unit|default_if_none:''}}</td>
-              <td>{{section.section_cost|default_if_none:''}}</td>
-              <td>{{section.section_cleanings|default_if_none:''}}</td>
-              <td class="align-right">{{section.section_net_cost|default_if_none:''}}</td>
+              <td>{{section.section_cost|floatformat:'3'}}</td>
+              <td>{{section.section_cleanings|floatformat:'0'}}</td>
+              <td class="align-right">{{section.section_net_cost|floatformat:'3'}}</td>
             </tr>
             {% endfor %}
             {% endfor %}
@@ -190,10 +190,6 @@
             <tr>
               <td>Total Jobs / إجمالي الوظائف</td>
               <td><strong>: {{order.orderschedules|length}} Cleanings</strong></td>
-            </tr>
-            <tr>
-              <td>Per-Job Cost / تكلفة الوظيفة</td>
-              <td><strong>: {{per_job_cost|floatformat:'3'}} KD</strong></td>
             </tr>
           </table> 
         
