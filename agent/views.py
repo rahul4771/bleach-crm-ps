@@ -2777,11 +2777,7 @@ class MakeQuatationPhase1Edit(IsAgent,View):
 			append_discount = 0
 			for month in cleaning_months:
 				count += 1;
-				
-				month_start 		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)
-				month_end   		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
-				month_schedules      = order_schedules.filter(start_at__range=(month_start,month_end))
-
+				month_schedules      = order_schedules.filter(start_at__month=month[0])
 				total_cost_per_month = 0
 				for schedule in month_schedules:
 					if schedule.order_scheduler_book.booksections:
@@ -3167,11 +3163,7 @@ class MakeQuatationPhase1DuplicateEdit(IsAgent,View):
 			append_discount = 0
 			for month in cleaning_months:
 				count += 1;
-			
-				month_start 		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)
-				month_end   		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
-				month_schedules      = order_schedules.filter(start_at__range=(month_start,month_end))
-
+				month_schedules      = order_schedules.filter(start_at__month=month[0])
 				total_cost_per_month = 0
 				for schedule in month_schedules:
 					if schedule.order_scheduler_book.booksections:
@@ -3866,10 +3858,10 @@ def ResourcesFilter(request):
 # 	return redirect('agent:agentdash-board')
 
 def deleteservice(request,book_id,evaluation_detail_id):
-	orderscheduler = OrderScheduler.objects.get(order_scheduler_book__id=book_id)
-	order = orderscheduler.order
+	
 	service = EvaluationBook.objects.get(id=book_id)
 	evaluation = service.evaluation_details.evaluation
+	order = Order.objects.get(evaluation__id=evaluation.id)
 	evaluationdetails = service.evaluation_details
 
 	#evaluation amount fix
@@ -3887,7 +3879,7 @@ def deleteservice(request,book_id,evaluation_detail_id):
 	order.remining_amount = float(order.remining_amount) - float(service.total_cost)
 	order.save()
 	
-	orderscheduler.delete()
+	orderscheduler = OrderScheduler.objects.filter(order_scheduler_book__id=book_id).delete()
 	service.delete()
 	
 	#for backbutton safety delete subscription
@@ -3911,11 +3903,7 @@ def deleteservice(request,book_id,evaluation_detail_id):
 		append_discount = 0
 		for month in cleaning_months:
 			count += 1;
-			
-			month_start 		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)
-			month_end   		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
-			month_schedules      = order_schedules.filter(start_at__range=(month_start,month_end))
-
+			month_schedules      = order_schedules.filter(start_at__month=month[0])
 			total_cost_per_month = 0
 			for schedule in month_schedules:
 				if schedule.order_scheduler_book.booksections:
@@ -4003,11 +3991,7 @@ def deletesection(request,section_id,evaluation_detail_id):
 		append_discount = 0
 		for month in cleaning_months:
 			count += 1;
-			
-			month_start 		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)
-			month_end   		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
-			month_schedules      = order_schedules.filter(start_at__range=(month_start,month_end))
-
+			month_schedules      = order_schedules.filter(start_at__month=month[0])
 			total_cost_per_month = 0
 			for schedule in month_schedules:
 				if schedule.order_scheduler_book.booksections:

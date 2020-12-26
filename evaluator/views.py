@@ -2434,10 +2434,9 @@ class InvestigationTask(View):
 
 def deleteservice(request,book_id,evaluation_detail_id):
 	
-	orderscheduler = OrderScheduler.objects.get(order_scheduler_book__id=book_id)
-	order = orderscheduler.order
 	service = EvaluationBook.objects.get(id=book_id)
 	evaluation = service.evaluation_details.evaluation
+	order = Order.objects.get(evaluation__id=evaluation.id)
 	evaluationdetails = service.evaluation_details
 
 	#evaluation amount fix
@@ -2455,7 +2454,7 @@ def deleteservice(request,book_id,evaluation_detail_id):
 	order.remining_amount = float(order.remining_amount) - float(service.total_cost)
 	order.save()
 	
-	orderscheduler.delete()
+	orderscheduler = OrderScheduler.objects.filter(order_scheduler_book__id=book_id).delete()
 	service.delete()
 
 	#for backbutton safety delete subscription
