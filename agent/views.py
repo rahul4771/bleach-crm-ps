@@ -3953,31 +3953,36 @@ def deleteservice(request,book_id,evaluation_detail_id):
 
 def deletesection(request,section_id,evaluation_detail_id):
 	print(section_id,evaluation_detail_id,"ids47")
-	section = EvaluationBookSection.objects.get(id=section_id)
-	
+	section = EvaluationBookSection.objects.get(id=section_id)	
 	service = section.evaluation_book
 	evaluation = service.evaluation_details.evaluation
 	evaluationdetails = service.evaluation_details
 	order = Order.objects.get(evaluation__id=evaluation.id)
 
+	if service.cleaning_policy == 'SUBSCRIPTION':
+		orderschedules = OrderScheduler.objects.filter(order_scheduler_book__id=service.id).count()
+		section_total_cost = float(section.section_cost) * float(orderschedules)
+	else:
+		section_total_cost = section.section_cost
+	
 	#evaluationbook amount fix
-	service.estimated_cost = float(service.estimated_cost) - float(section.section_cost)
+	service.estimated_cost = float(service.estimated_cost) - float(section_total_cost)
 	service.total_cost = float(service.estimated_cost) - float(service.discount)
 	service.save()
 
 	#evaluation amount fix
-	evaluation.estimated_cost = float(evaluation.estimated_cost) - float(section.section_cost)
+	evaluation.estimated_cost = float(evaluation.estimated_cost) - float(section_total_cost)
 	evaluation.total_cost = float(evaluation.estimated_cost) - float(evaluation.discount)
 	evaluation.save()
 
 	#evaluation details amount fix
-	evaluationdetails.estimated_cost = float(evaluationdetails.estimated_cost) - float(section.section_cost)
+	evaluationdetails.estimated_cost = float(evaluationdetails.estimated_cost) - float(section_total_cost)
 	evaluationdetails.total_cost = float(evaluationdetails.estimated_cost) - float(evaluationdetails.discount)
 	evaluationdetails.save()
 
 	#order amount fix
-	order.total_amount = float(order.total_amount) - float(section.section_cost)
-	order.remining_amount = float(order.remining_amount) - float(section.section_cost)
+	order.total_amount = float(order.total_amount) - float(section_total_cost)
+	order.remining_amount = float(order.remining_amount) - float(section_total_cost)
 	order.save()
 
 	section.delete()
