@@ -94,7 +94,7 @@
         <section id="invoice-info">
           <div><span>Order Number</span> <span>{{order.order_no}}</span></div>
           {% load customer_tags %}
-          <div><span>MONTHLY PAYMENT</span> <span>for {% for subscription in subscriptions %}{% if forloop.first %}{% get_month subscription.monthyear %} month of {{subscription.monthyear}}{% endif %}{% endfor %}</span></div>
+          <div><span>MONTHLY PAYMENT</span> <span>for {% for subscription in subscriptions %}{% if forloop.first %}{% get_month subscription.monthyear %} month of {% get_year subscription.monthyear %}{% endif %}{% endfor %}</span></div>
         </section>
         
         <div class="clearfix"></div>

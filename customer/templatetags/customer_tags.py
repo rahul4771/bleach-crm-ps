@@ -3,7 +3,9 @@ from django import template
 register = template.Library()
 
 @register.simple_tag
-def get_month(month):
+def get_month(monthyear):
+	month = int(monthyear.split('-')[0])
+
 	if month == 1:
 		return "January"
 	elif month == 2:
@@ -30,3 +32,8 @@ def get_month(month):
 		return "December"
 	else:
 		return "Unknown Month"
+
+@register.simple_tag
+def get_year(monthyear):
+	year = monthyear.split('-')[1]
+	return year
