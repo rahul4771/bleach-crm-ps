@@ -104,7 +104,7 @@
             <span>Evaluator(s) / معاينة</span> <span> {% for orderschedule in nonduplicate_schedules %}{% if orderschedule.evaluation_details.evaluator %}{% ifchanged orderschedule.evaluation_details.evaluator.name %}{{orderschedule.evaluation_details.evaluator.name}}, {% endifchanged %}{% else %}{% if forloop.last %}{{orderschedule.evaluation_details.evaluation.call_attender.name}}{% endif %}{% endif %}{% endfor %}</span>
           </div>
           <div>
-            <span>Payment Policy / نظام الدفع</span> <span>{{order.evaluation.payment_method}} / {% if order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' %}الدفع المسبق شهريًا{% elif order.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' %}الدفع اللاحق شهريًا{% endif %}</span>
+            <span>Payment Policy / نظام الدفع</span> <span>{% if order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' %}Monthly Prepaid / الدفع المسبق شهريًا{% elif order.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' %}Monthly Postpaid / الدفع اللاحق شهريًا{% endif %}</span>
           </div>
         </section>
         

@@ -125,7 +125,7 @@
               <td>{{section.dirt_level}}<br> {% if section.dirt_level == 'Red' %}أحمر{% endif %}{% if section.dirt_level == 'Random' %}وسط{%endif%}</td>
               <td>{{section.size}} {{section.unit|default_if_none:''}}</td>
               <td>{{section.section_cost|default_if_none:''}}</td>
-              <td>{{section.section_cleanings|default_if_none:''}}</td>
+              <td>{{section.section_cleanings|floatformat:'0'}}</td>
               <td class="align-right">{{section.section_net_cost|default_if_none:''}}</td>
             </tr>
             {% endfor %}
