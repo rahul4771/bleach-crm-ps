@@ -2466,9 +2466,14 @@ class MakeQuatationPhase1(IsAgent,View):
 			append_discount = 0
 			for month in cleaning_months:
 				count += 1;
-				month_schedules      = order_schedules.filter(start_at__month=month[0])
-				print(month[0],"monthhhh")
-				print(month_schedules,"objectsssss")
+				
+				month_start 		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)
+				month_end   		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+				month_schedules      = order_schedules.filter(start_at__range=(month_start,month_end))
+				print(month_start,"month start")
+				print(month_end,"month end")
+				print(month_schedules,"schedules")
+
 				total_cost_per_month = 0
 				for schedule in month_schedules:
 					if schedule.order_scheduler_book.booksections:
@@ -2483,6 +2488,9 @@ class MakeQuatationPhase1(IsAgent,View):
 				total_cost_per_month     = round(total_cost_per_month-total_discount_per_month,3)
 				actual_cost_per_month    = total_cost_per_month+total_discount_per_month
 				subscription             = PaymentSubscriptionDetails.objects.create(order=order,actual_amount=actual_cost_per_month,discount=total_discount_per_month,amount=total_cost_per_month,monthyear=(str(month[0])+'-'+str(month[1])) )
+				print(subscription,"subscription")
+				print(total_cost_per_month,"total discount")
+				print(total_discount_per_month,"total cost")
 
 				#for adjustment
 				append_discount          += total_discount_per_month
@@ -2769,7 +2777,11 @@ class MakeQuatationPhase1Edit(IsAgent,View):
 			append_discount = 0
 			for month in cleaning_months:
 				count += 1;
-				month_schedules      = order_schedules.filter(start_at__month=month[0])
+				
+				month_start 		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)
+				month_end   		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+				month_schedules      = order_schedules.filter(start_at__range=(month_start,month_end))
+
 				total_cost_per_month = 0
 				for schedule in month_schedules:
 					if schedule.order_scheduler_book.booksections:
@@ -3155,7 +3167,11 @@ class MakeQuatationPhase1DuplicateEdit(IsAgent,View):
 			append_discount = 0
 			for month in cleaning_months:
 				count += 1;
-				month_schedules      = order_schedules.filter(start_at__month=month[0])
+				
+				month_start 		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)
+				month_end   		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+				month_schedules      = order_schedules.filter(start_at__range=(month_start,month_end))
+
 				total_cost_per_month = 0
 				for schedule in month_schedules:
 					if schedule.order_scheduler_book.booksections:
@@ -3895,7 +3911,11 @@ def deleteservice(request,book_id,evaluation_detail_id):
 		append_discount = 0
 		for month in cleaning_months:
 			count += 1;
-			month_schedules      = order_schedules.filter(start_at__month=month[0])
+			
+			month_start 		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)
+			month_end   		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+			month_schedules      = order_schedules.filter(start_at__range=(month_start,month_end))
+			
 			total_cost_per_month = 0
 			for schedule in month_schedules:
 				if schedule.order_scheduler_book.booksections:
@@ -3983,7 +4003,11 @@ def deletesection(request,section_id,evaluation_detail_id):
 		append_discount = 0
 		for month in cleaning_months:
 			count += 1;
-			month_schedules      = order_schedules.filter(start_at__month=month[0])
+			
+			month_start 		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)
+			month_end   		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+			month_schedules      = order_schedules.filter(start_at__range=(month_start,month_end))
+
 			total_cost_per_month = 0
 			for schedule in month_schedules:
 				if schedule.order_scheduler_book.booksections:

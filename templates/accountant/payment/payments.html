@@ -132,6 +132,9 @@
                 <option value='PREPAID' {% if fil_payment_policy == 'PREPAID' %}selected{% endif %}>PREPAID</option>
                 <option value='POSTPAID' {% if fil_payment_policy == 'POSTPAID' %}selected{% endif %}>POSTPAID</option>
                 <option value='BREAKDOWN' {% if fil_payment_policy == 'BREAKDOWN' %}selected{% endif %}>BREAKDOWN</option>
+                <option value='PREPAIDSUBSCRIPTION' {% if fil_payment_policy == 'PREPAIDSUBSCRIPTION' %}selected{% endif %}>MONTHLY PREPAID</option>
+                <option value='POSTPAIDSUBSCRIPTION' {% if fil_payment_policy == 'POSTPAIDSUBSCRIPTION' %}selected{% endif %}>MONTHLY POSTPAID</option>
+
                            
               </select>
                 </label>
@@ -188,7 +191,7 @@
 
         <td class="text-left"  >{{invoice.order_no}}</td>
         <td>{{invoice.evaluation.customer.name}}</td>
-        <td class="text-center">{{invoice.evaluation.payment_method}}</td>
+        <td class="text-center">{% if invoice.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' %}MONTHLY PREPAID{% elif invoice.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' %}MONTHLY POSTPAID{% else %}{{invoice.evaluation.payment_method}}{% endif %}</td>
         </td>
         <td class="text-right">{{invoice.total_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
         <td class="text-right">{{invoice.amount_paid|default_if_none:'0.00'|floatformat:'3'}}</td>

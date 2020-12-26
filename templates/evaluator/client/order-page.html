@@ -972,7 +972,12 @@
             <br>
             <div class="payment-text bold-text red-text"><div>Final Amount</div> : {{order.evaluation.total_cost|default_if_none:'0.00'|floatformat:'2'}} KD</div>
             <hr class="bar"> 
-            <div class="payment-text"><div>Payment Policy</div> : {{order.evaluation.payment_method|default_if_none:''}}</div>
+            <div class="payment-text"><div>Payment Policy</div> : {% if order.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION'  %}
+            Monthly Postpaid
+            {% elif order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION'  %}
+            Monthly Prepaid
+            {% else %}
+            {{order.evaluation.payment_method|default_if_none:''}}{% endif %}</div>
             {% if order.evaluation.payment_method == 'BREAKDOWN' %}
             <div class="payment-text"><div>Before Cleaning Amount</div> : {{order.evaluation.before_cleaning_amount|default_if_none:''}}</div>
             <div class="payment-text"><div>After Cleaning Amount</div> : {{order.evaluation.after_cleaning_amount|default_if_none:''}}</div>
