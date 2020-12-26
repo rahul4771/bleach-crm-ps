@@ -175,7 +175,7 @@
     {% if forloop.first %}
     {{subscription.amount|default_if_none:''}}
     {% endif %}{% endfor %} KD</td>
-    <td class="intigo-text" data-label="Payment Method">Monthly Prepaid</td>
+    <td class="intigo-text" data-label="Payment Method">MONTHLY PREPAID</td>
     <td data-label="" class="bold-text">
     <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{% if invoice.reminigdays %}{{invoice.reminigdays}}</h3> Days&#11015;{% else %}{{invoice.delaydays}}</h3> Days&#11014;{% endif %}</td>
     <td data-label="">{% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}
@@ -203,7 +203,7 @@
     {% if forloop.first %}
     {{subscription.amount|default_if_none:''}}
     {% endif %}{% endfor %} KD</td>
-    <td class="rose-text" data-label="Payment Method">Monthly Postpaid</td>
+    <td class="rose-text" data-label="Payment Method">MONTHLY POSTPAID</td>
     <td data-label="" class="bold-text">
     <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{% if invoice.reminigdays %}{{invoice.reminigdays}}</h3> Days&#11015;{% else %}{{invoice.delaydays}}</h3> Days&#11014;{% endif %}</td>
     <td data-label="">{% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}
@@ -320,7 +320,7 @@
     {% if forloop.first %}
     {{subscription.amount|default_if_none:''}}
     {% endif %}{% endfor %} KD</td>
-    <td class="indigo-text" data-label="Payment Method">Monthly Prepaid</td>
+    <td class="indigo-text" data-label="Payment Method">MONTHLY PREPAID</td>
     <td data-label="" class="bold-text">
     <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{% if invoice.reminigdays %}{{invoice.reminigdays}}</h3> Days&#11015;{% else %}{{invoice.delaydays}}</h3> Days&#11014;{% endif %}</td>
     </tr>
@@ -342,7 +342,7 @@
     {% if forloop.first %}
     {{subscription.amount|default_if_none:''}}
     {% endif %}{% endfor %} KD</td>
-    <td class="rose-text" data-label="Payment Method">Monthly Postpaid</td>
+    <td class="rose-text" data-label="Payment Method">MONTHLY POSTPAID</td>
     <td data-label="" class="bold-text">
     <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{% if invoice.reminigdays %}{{invoice.reminigdays}}</h3> Days&#11015;{% else %}{{invoice.delaydays}}</h3> Days&#11014;{% endif %}</td>
     </tr>
