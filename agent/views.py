@@ -1262,11 +1262,14 @@ class OrderDetails(IsAgent,View):
 
 		#Evaluation Details
 		search                  = request.GET.get('search')
-
+		#for order filtering
+		status = request.GET.get('status')
+		
 		if search:
-			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__orderstatus='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),order_cancelled_count=Count(Case(When( evaluation_order__orderstatus='ORDER_CANCELLED',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q(Q(Q(payment_method='POSTPAID'))|Q(Q(evaluation_order__payment_status='COMPLETED')|~Q(preamount_paid=0))),then=1),output_field=IntegerField())))
 		else:
-			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'))
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__orderstatus='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),order_cancelled_count=Count(Case(When( evaluation_order__orderstatus='ORDER_CANCELLED',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q(Q(Q(payment_method='POSTPAID'))|Q(Q(evaluation_order__payment_status='COMPLETED')|~Q(preamount_paid=0))),then=1),output_field=IntegerField())))
+			
 
 		if evaluations:
 			approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
@@ -1354,7 +1357,7 @@ class OrderDetails(IsAgent,View):
 			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))
 			print("not at all")
 
-		#exclude atleast 1 not completed evaluatis
+		#exclude atleast 1 not completed evaluation
 		exclude_ids = []	
 		for evaluation in evaluations:
 			if not evaluation.completed_evaluations:
@@ -1365,7 +1368,17 @@ class OrderDetails(IsAgent,View):
 		#filters
 		filters=[]
 		if fil_status:
-			case1 = Q(quatation_status=fil_status)
+			if status == 'ORDER_IN_PROGRESS' or status = 'ORDER_CANCELLED' or status == 'ORDER_CLOSED' or status == 'APPROVED-NOT PAID':
+				if status == 'ORDER_IN_PROGRESS':
+					case1 = Q(order_in_progress_count__gte=1)
+				elif status == 'ORDER_CANCELLED':
+					case1 = Q(order_cancelled_count__gte=1)
+				elif status == 'ORDER_CLOSED':
+					case1 = Q(order_closed_count__gte=1)
+				elif status == 'APPROVED-NOT PAID':
+					case1 = Q(approved_not_paid_count__gte=1)
+			else:
+				case1 = Q(quatation_status=fil_status)
 			filters.append(case1)
 
 		if fil_status:
