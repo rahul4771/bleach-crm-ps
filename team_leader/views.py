@@ -461,7 +461,11 @@ class Cleaning(IsTeamLeader,View):
 				pass
 
 		####to close order
-		closing_order	= Order.objects.get(is_active=True,order_no=cleaning_team_detail.order_scheduler.order.order_no,payment_status='COMPLETED')
+		try:
+			closing_order	= Order.objects.get(is_active=True,order_no=cleaning_team_detail.order_scheduler.order.order_no,payment_status='COMPLETED')
+		except:
+			closing_order   = None
+
 		if closing_order and order:
 			closing_order.order_status = 'ORDER_CLOSED'
 			closing_order.save()
@@ -562,7 +566,11 @@ class FollowupCleaning(IsTeamLeader,View):
 			pass
 
 		####to close order
-		closing_order	= Order.objects.get(is_active=True,order_no=cleaning_team_detail.order_scheduler.order.order_no,payment_status='COMPLETED')
+		try:
+			closing_order	= Order.objects.get(is_active=True,order_no=followup_team_detail.followup_scheduler.follow_up.investigation.order.order_no,payment_status='COMPLETED')
+		except:
+			closing_order   = None
+			
 		if closing_order and order:
 			closing_order.order_status = 'ORDER_CLOSED'
 			closing_order.save()

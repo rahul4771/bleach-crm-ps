@@ -205,6 +205,7 @@
     {% for evaluation in evaluations %}
     <tr>
     <td {% if evaluation.quatation_status == 'APPROVED' %}{% for order in evaluation.evaluationorder %}
+        {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' %}
         {% if order.order_status == 'APPROVED_BY_CLIENT' %}
         class="green-line"
         {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
@@ -214,7 +215,12 @@
         {% else %}
         class="red-line"
         {% endif %}
-        {% endfor %}{% elif evaluation.quatation_status == 'REJECTED' %}class="red-line"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line"{% elif evaluation.quatation_status == 'EXPIRED' %}class="orange-line"{%else%}class="blue-line"{%endif%}>{{evaluation.evaluation_id}}</td>    
+        {% else %}
+        class="oil-green-line"
+        {% endif %}
+        {% endfor %}
+
+        {% elif evaluation.quatation_status == 'REJECTED' %}class="red-line"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line"{% elif evaluation.quatation_status == 'EXPIRED' %}class="orange-line"{%else%}class="blue-line"{%endif%}>{{evaluation.evaluation_id}}</td>    
     <td>{{evaluation.customer.name|default_if_none:''}}</td>
     <td>{% for evaluation_detail in evaluation.details_evaluation %}{{evaluation_detail.address.area.name}}<br>{% endfor %}</td>
     <td>{% for evaluation_detail in evaluation.details_evaluation %}
@@ -224,9 +230,14 @@
      <br> 
      {% endfor %}</td>
     {% comment %} <td>{{evaluation.customer.mobile_number|default_if_none:''}}</td> {% endcomment %}
-    <td>{% if evaluation.quatation_status == 'APPROVED' %}{% for order in evaluation.evaluationorder %}
+    <td>{% if evaluation.quatation_status == 'APPROVED' %}
+
+
+        {% for order in evaluation.evaluationorder %}
+      
+        {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' %}
         {% if order.order_status == 'APPROVED_BY_CLIENT' %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'accountant:accountant-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="green-bg clickable-row">Quatation Approved</span>
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'accountant:accountant-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="green-bg clickable-row">Approved</span>
         {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
         <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'accountant:accountant-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="violet-bg clickable-row">Order in Progress</span>
         {% elif order.order_status == 'ORDER_CLOSED' %}
@@ -234,7 +245,13 @@
         {% else %}
         <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'accountant:accountant-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Order Cancelled</span>
         {% endif %}
+
+        {% else %}
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'accountant:accountant-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="oil-green-bg clickable-row">Approved-Not Paid</span>
+        {% endif %}
+
         {% endfor %}
+
         {% elif evaluation.quatation_status == 'REJECTED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'accountant:accountant-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Rejected</span>
         {% elif evaluation.quatation_status == 'PENDING' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'accountant:accountant-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="yellow-bg clickable-row">Pending</span>
         {% elif evaluation.quatation_status == 'EXPIRED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'accountant:accountant-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="orange-bg clickable-row">Expired</span>
@@ -270,7 +287,7 @@
   <ul class="pagination">
      {% if evaluations.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&payment_policy={{request.GET.payment_policy}}" aria-label="Previous">
+      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&payment_policy={{request.GET.payment_policy}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
@@ -285,14 +302,14 @@
     {% endif %}
     {% for pg in page_range %}
     {% if vus.number == pg %}
-            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&payment_policy={{request.GET.payment_policy}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&payment_policy={{request.GET.payment_policy}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&payment_policy={{request.GET.payment_policy}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&payment_policy={{request.GET.payment_policy}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
     {% if evaluations.has_next %}        
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&payment_policy={{request.GET.payment_policy}}" aria-label="Next">
+      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&payment_policy={{request.GET.payment_policy}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
