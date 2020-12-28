@@ -187,6 +187,9 @@
     {% for evaluation in evaluations %}
     <tr>
     <td {% if evaluation.quatation_status == 'APPROVED' %}{% for order in evaluation.evaluationorder %}
+        {% if  order.evaluation.payment_method != 'POSTPAID' and order.payment_status != 'COMPLETED' or order.preamount_paid == 0 %}
+        class="oil-green-line"
+        {% else %}
         {% if order.order_status == 'APPROVED_BY_CLIENT' %}
         class="green-line"
         {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
@@ -195,6 +198,7 @@
         class="rose-line"
         {% else %}
         class="red-line"
+        {% endif %}
         {% endif %}
         {% endfor %}{% elif evaluation.quatation_status == 'REJECTED' %}class="red-line"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line"{% elif evaluation.quatation_status == 'EXPIRED' %}class="orange-line"{%else%}class="blue-line"{%endif%}>{{evaluation.evaluation_id}}</td>    
     <td>{{evaluation.customer.name|default_if_none:''}}</td>
