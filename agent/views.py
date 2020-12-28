@@ -1368,14 +1368,14 @@ class OrderDetails(IsAgent,View):
 		#filters
 		filters=[]
 		if fil_status:
-			if status == 'ORDER_IN_PROGRESS' or status = 'ORDER_CANCELLED' or status == 'ORDER_CLOSED' or status == 'APPROVED-NOT PAID':
-				if status == 'ORDER_IN_PROGRESS':
+			if fil_status == 'ORDER_IN_PROGRESS' or fil_status == 'ORDER_CANCELLED' or fil_status == 'ORDER_CLOSED' or fil_status == 'APPROVED-NOT PAID':
+				if fil_status == 'ORDER_IN_PROGRESS':
 					case1 = Q(order_in_progress_count__gte=1)
-				elif status == 'ORDER_CANCELLED':
+				elif fil_status == 'ORDER_CANCELLED':
 					case1 = Q(order_cancelled_count__gte=1)
-				elif status == 'ORDER_CLOSED':
+				elif fil_status == 'ORDER_CLOSED':
 					case1 = Q(order_closed_count__gte=1)
-				elif status == 'APPROVED-NOT PAID':
+				elif fil_status == 'APPROVED-NOT PAID':
 					case1 = Q(approved_not_paid_count__gte=1)
 			else:
 				case1 = Q(quatation_status=fil_status)
