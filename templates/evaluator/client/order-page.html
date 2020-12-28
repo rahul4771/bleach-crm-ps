@@ -299,7 +299,8 @@
     <tr>
     <td data-label="Sl No" class="bold-text">Cleaning {{forloop.counter}}</td>
     <td data-label="Time" class="bold-text">{{subscription_schedule.start_at}}</td>
-    <td class="hide-b clickable-cursor" data-label="" onclick="appendsubscriptiondetails({{subscription_schedule.id}},{{forloop.parentloop.counter}})"><span class="red-bg">{{subscription_schedule.work_status|default_if_none:'Not Started'}}</span></td> 
+    <td class="hide-b clickable-cursor" data-label="" onclick="appendsubscriptiondetails({{subscription_schedule.id}},{{forloop.parentloop.counter}})">
+    <span {% if subscription_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}class="yellow-bg"{% elif subscription_schedule.work_status == 'CLEANING_FULFILLED' %}class="green-bg"{% else %}class="red-bg"{% endif %}>{{subscription_schedule.work_status|default_if_none:'NOT STARTED'}}</span></td> 
     </tr> 
     {% endif %}
     {% endfor %}     
