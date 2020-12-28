@@ -215,8 +215,9 @@
 
         {% for order in evaluation.evaluationorder %}
       
-        {% if  order.evaluation.payment_method != 'POSTPAID' and order.payment_status != 'COMPLETED' or order.preamount_paid == 0 %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'stl:stl-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="oil-green-bg clickable-row">Approved-Not Paid</span>
+        {% if  order.evaluation.payment_method != 'POSTPAID' %}{% if order.payment_status != 'COMPLETED' or order.preamount_paid == 0 %}
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'accountant:accountant-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="oil-green-bg clickable-row">Approved-Not Paid</span>
+        {% endif %}
         
         {% else %}
         
