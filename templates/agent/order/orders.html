@@ -208,15 +208,25 @@
      {% endfor %}</td>
     {% comment %} <td>{{evaluation.customer.mobile_number|default_if_none:''}}</td> {% endcomment %}
     <td>{% if evaluation.quatation_status == 'APPROVED' %}
+
+
         {% for order in evaluation.evaluationorder %}
+      
+        {% if  order.evaluation.payment_method != 'POSTPAID' and order.payment_status != 'COMPLETED' or order.preamount_paid == 0 %}
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="oil-green-bg clickable-row">Approved-Not Paid</span>
+        
+        {% else %}
+        
         {% if order.order_status == 'APPROVED_BY_CLIENT' %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="green-bg clickable-row">Quatation Approved</span>
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="green-bg clickable-row">Approved</span>
         {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
         <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="violet-bg clickable-row">Order in Progress</span>
         {% elif order.order_status == 'ORDER_CLOSED' %}
         <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="rose-bg clickable-row">Completed</span>
         {% else %}
         <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Order Cancelled</span>
+        {% endif %}
+
         {% endif %}
         {% endfor %}
 
