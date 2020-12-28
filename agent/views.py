@@ -1378,7 +1378,7 @@ class OrderDetails(IsAgent,View):
 				elif fil_status == 'APPROVED-NOT PAID':
 					case1 = Q(approved_not_paid_count__gte=1)
 				elif fil_status == 'EVALUATING':
-					case1 = Q(quatation__isnull=True)
+					case1 = Q(quatation_status__isnull=True)
 			else:
 				case1 = Q(quatation_status=fil_status)
 			filters.append(case1)
