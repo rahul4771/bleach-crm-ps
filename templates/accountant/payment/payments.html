@@ -245,7 +245,7 @@
   <ul class="pagination">
      {% if invoices.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ invoices.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&status={{fil_order_status|default_if_none:''}}&payment_policy={{fil_payment_policy|default_if_none:''}}&payment_status={{fil_payment_status|default_if_none:''}}" aria-label="Previous">
+      <a class="page-link" href="?page={{ invoices.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&status={{fil_order_status|default_if_none:''}}&payment_policy={{fil_payment_policy|default_if_none:''}}&payment_status={{fil_payment_status|default_if_none:''}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
@@ -260,14 +260,14 @@
     {% endif %}
     {% for pg in page_range %}
     {% if vus.number == pg %}
-            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&status={{fil_order_status|default_if_none:''}}&payment_policy={{fil_payment_policy|default_if_none:''}}&payment_status={{fil_payment_status|default_if_none:''}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&status={{fil_order_status|default_if_none:''}}&payment_policy={{fil_payment_policy|default_if_none:''}}&payment_status={{fil_payment_status|default_if_none:''}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&status={{fil_order_status|default_if_none:''}}&payment_policy={{fil_payment_policy|default_if_none:''}}&payment_status={{fil_payment_status|default_if_none:''}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&status={{fil_order_status|default_if_none:''}}&payment_policy={{fil_payment_policy|default_if_none:''}}&payment_status={{fil_payment_status|default_if_none:''}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
     {% if invoices.has_next %}        
     <li class="page-item">
-      <a class="page-link" href="?page={{ invoices.next_page_number}}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&status={{fil_order_status|default_if_none:''}}&payment_policy={{fil_payment_policy|default_if_none:''}}&payment_status={{fil_payment_status|default_if_none:''}}" aria-label="Next">
+      <a class="page-link" href="?page={{ invoices.next_page_number}}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&status={{fil_order_status|default_if_none:''}}&payment_policy={{fil_payment_policy|default_if_none:''}}&payment_status={{fil_payment_status|default_if_none:''}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
