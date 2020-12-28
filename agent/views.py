@@ -1384,8 +1384,7 @@ class OrderDetails(IsAgent,View):
 		if fil_status:
 			filters     = functools.reduce(operator.and_,filters)
 			evaluations = evaluations.filter(filters)
-
-
+			
 		#PAGINATION ORDERS
 		no_of_entries = request.GET.get('no_of_entries')
 		if not no_of_entries:

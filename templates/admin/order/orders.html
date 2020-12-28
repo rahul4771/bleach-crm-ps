@@ -125,6 +125,10 @@
                 <select name="status_filter" id="status_filter_id">
                 <option value=''>---ALL---</option>
                 <option value="APPROVED" {% if fil_status == 'APPROVED' %}selected{% endif %}>APPROVED</option>
+                <option value="APPROVED-NOT PAID" {% if fil_status == 'APPROVED-NOT PAID' %}selected{% endif %}>APPROVED-NOT PAID</option>
+                <option value="ORDER_IN_PROGRESS" {% if fil_status == 'ORDER_IN_PROGRESS' %}selected{% endif %}>ORDER IN PROGRESS</option>
+                <option value="ORDER_CLOSED" {% if fil_status == 'ORDER_CLOSED' %}selected{% endif %}>ORDER CLOSED</option>
+                <option value="ORDER_CANCELLED" {% if fil_status == 'ORDER_CANCELLED' %}selected{% endif %}>ORDER CANCELLED</option>
                 <option value="PENDING" {% if fil_status == 'PENDING' %}selected{% endif %}>PENDING</option>
                 <option value="REJECTED" {% if fil_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
                 <option value="EXPIRED" {% if fil_status == 'EXPIRED' %}selected{% endif %}>EXPIRED</option>                
