@@ -1368,7 +1368,7 @@ class OrderDetails(IsAgent,View):
 		#filters
 		filters=[]
 		if fil_status:
-			if fil_status == 'ORDER_IN_PROGRESS' or fil_status == 'ORDER_CANCELLED' or fil_status == 'ORDER_CLOSED' or fil_status == 'APPROVED-NOT PAID':
+			if fil_status == 'ORDER_IN_PROGRESS' or fil_status == 'ORDER_CANCELLED' or fil_status == 'ORDER_CLOSED' or fil_status == 'APPROVED-NOT PAID' or fil_status == 'EVALUATING':
 				if fil_status == 'ORDER_IN_PROGRESS':
 					case1 = Q(order_in_progress_count__gte=1)
 				elif fil_status == 'ORDER_CANCELLED':
@@ -1377,6 +1377,8 @@ class OrderDetails(IsAgent,View):
 					case1 = Q(order_closed_count__gte=1)
 				elif fil_status == 'APPROVED-NOT PAID':
 					case1 = Q(approved_not_paid_count__gte=1)
+				elif fil_status == 'EVALUATING':
+					case1 = Q(quatation__isnull=True)
 			else:
 				case1 = Q(quatation_status=fil_status)
 			filters.append(case1)
