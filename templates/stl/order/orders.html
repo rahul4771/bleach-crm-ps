@@ -187,7 +187,7 @@
     {% for evaluation in evaluations %}
     <tr>
     <td {% if evaluation.quatation_status == 'APPROVED' %}{% for order in evaluation.evaluationorder %}
-        {% if  order.evaluation.payment_method != 'POSTPAID' and order.payment_status != 'COMPLETED' or order.preamount_paid == 0 %}
+        {% if order.payment_status != 'COMPLETED' or order.preamount_paid == 0 and order.evaluation.payment_method != 'POSTPAID' %}
         class="oil-green-line"
         {% else %}
         {% if order.order_status == 'APPROVED_BY_CLIENT' %}
@@ -215,9 +215,8 @@
 
         {% for order in evaluation.evaluationorder %}
       
-        {% if  order.evaluation.payment_method != 'POSTPAID' %}{% if order.payment_status != 'COMPLETED' or order.preamount_paid == 0 %}
+        {% if order.payment_status != 'COMPLETED' or order.preamount_paid == 0 and order.evaluation.payment_method != 'POSTPAID' %}
         <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'accountant:accountant-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="oil-green-bg clickable-row">Approved-Not Paid</span>
-        {% endif %}
         
         {% else %}
         
