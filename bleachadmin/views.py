@@ -533,7 +533,8 @@ class OrderDetails(IsAdmin,View):
 				exclude_ids.append(evaluation.id)
 		evaluations = evaluations.exclude(id__in=exclude_ids)
 		
-		fil_status = request.GET.get('status')
+		fil_status         = request.GET.get('status')
+		fil_payment_policy = request.GET.get('payment_policy')
 		#filters
 		filters=[]
 		if fil_status:
