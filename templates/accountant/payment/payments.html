@@ -104,9 +104,9 @@
                 <label for="favcity">
                 <select name="status_filter" id="status_filter_id">
                 <option value=''>---ALL---</option>
-                <option value="NOT STARTED" {% if fil_order_status == 'APPROVED_BY_CLIENT' %}selected{% endif %}>NOT STARTED</option>
-                <option value="IN PROGRESS" {% if fil_order_status == 'ORDER_IN_PROGRESS' %}selected{% endif %}>IN PROGRESS</option>
-                <option value="COMPLETED" {% if fil_order_status == 'ORDER_CLOSED' %}selected{% endif %}>COMPLETED</option>
+                <option value="NOT STARTED" {% if fil_order_status == 'NOT STARTED' %}selected{% endif %}>NOT STARTED</option>
+                <option value="IN PROGRESS" {% if fil_order_status == 'IN PROGRESS' %}selected{% endif %}>IN PROGRESS</option>
+                <option value="COMPLETED" {% if fil_order_status == 'COMPLETED' %}selected{% endif %}>COMPLETED</option>
               </select>
                 </label>
   </div><!--ticket-form-right-->
