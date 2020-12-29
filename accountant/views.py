@@ -613,6 +613,8 @@ class OrderDetails(IsAccountant,View):
 				else:
 					case1 = Q(quatation_status=fil_status)
 
+			filters.append(case1)
+
 		if fil_payment_policy:
 			case2 = Q(payment_method=fil_payment_policy)
 			filters.append(case2)
