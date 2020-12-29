@@ -545,7 +545,8 @@ class OrderDetails(IsAdmin,View):
 					case1 = Q(Q(quatation_status=fil_status)&~Q(order_in_progress_count__gte=1)&~Q(order_closed_count__gte=1)&~Q(approved_not_paid_count__gte=1))
 				else:
 					case1 = Q(quatation_status=fil_status)
-	
+			filters.append(case1)
+			
 		if fil_status: 
 		    filters     = functools.reduce(operator.and_,filters)
 		    evaluations = evaluations.filter(filters)
