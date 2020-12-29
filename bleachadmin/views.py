@@ -526,6 +526,12 @@ class OrderDetails(IsAdmin,View):
 			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))		
 			print("not at all")
 		
+		#exclude atleast 1 not completed evaluation
+		exclude_ids = []	
+		for evaluation in evaluations:
+			if not evaluation.completed_evaluations:
+				exclude_ids.append(evaluation.id)
+		evaluations = evaluations.exclude(id__in=exclude_ids)
 		
 		fil_status = request.GET.get('status')
 		#filters
