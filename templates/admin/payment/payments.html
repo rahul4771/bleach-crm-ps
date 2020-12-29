@@ -96,13 +96,13 @@
      <div class="menu-filter ltgreen-border" style="display:none;"><!--menu-filter ltgreen-border-->
       <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-right-->
-          <div class=" bold-text common-label"> <label>Order Status</label></div>
+          <div class=" bold-text common-label"> <label>Job Status</label></div>
                 <label for="favcity">
                 <select name="status_filter" id="status_filter_id">
                 <option value=''>---ALL---</option>
-                <option value="APPROVED_BY_CLIENT" {% if fil_order_status == 'APPROVED_BY_CLIENT' %}selected{% endif %}>NOT STARTED</option>
-                <option value="ORDER_IN_PROGRESS" {% if fil_order_status == 'ORDER_IN_PROGRESS' %}selected{% endif %}>IN PROGRESS</option>
-                <option value="ORDER_CLOSED" {% if fil_order_status == 'ORDER_CLOSED' %}selected{% endif %}>COMPLETED</option>              
+                <option value="NOT STARTED" {% if fil_order_status == 'APPROVED_BY_CLIENT' %}selected{% endif %}>NOT STARTED</option>
+                <option value="IN PROGRESS" {% if fil_order_status == 'ORDER_IN_PROGRESS' %}selected{% endif %}>IN PROGRESS</option>
+                <option value="COMPLETED" {% if fil_order_status == 'ORDER_CLOSED' %}selected{% endif %}>COMPLETED</option>              
               </select>
                 </label>
   </div><!--ticket-form-right-->
@@ -174,12 +174,14 @@
 <tbody>
     {% for invoice in invoices %}
     <tr>
-    <td {% if invoice.order_status == 'APPROVED_BY_CLIENT' or invoice.order_status == 'ORDER_CANCELLED' %}
+    <td {% if invoice.cleaning_in_progress_count == 0 and invoice.completed_cleaning_count == 0 %}
         class="blue-line"
-        {% elif invoice.order_status == 'ORDER_IN_PROGRESS' %}
+        {% elif invoice.cleaning_in_progress_count >= 1 %}
         class="yellow-line"
-        {% elif invoice.order_status == 'ORDER_CLOSED' %}
+        {% elif invoice.completed_cleaning_count == invoice.cleaning_count %}
         class="green-line"
+        {% else %}
+        class="blue-line"
         {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
     <td class="text-left"  >{{invoice.order_no}}</td>
     <td class="text-center">{{invoice.evaluation.payment_method}}</td>
@@ -199,12 +201,14 @@
     {% endfor %}
     </td>
     <td class="clickable-row" {% if invoice %}data-href="{% url 'bleach_admin:admin-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
-        {% if invoice.order_status == 'APPROVED_BY_CLIENT' or invoice.order_status == 'ORDER_CANCELLED' %}
+        {% if invoice.cleaning_in_progress_count == 0 and invoice.completed_cleaning_count == 0 %}
         <span class="text-center blue-bg clickable-row">Not Started</span>
-        {% elif invoice.order_status == 'ORDER_IN_PROGRESS' %}
+        {% elif invoice.cleaning_in_progress_count >= 1 %}
         <span class="text-center yellow-bg clickable-row">IN PROGRESS</span>
-        {% elif invoice.order_status == 'ORDER_CLOSED' %}
+        {% elif invoice.completed_cleaning_count == invoice.cleaning_count %}
         <span class="text-center green-bg clickable-row" >COMPLETED</span>
+        {% else %}
+        <span class="text-center blue-bg clickable-row">Not Started</span>
         {% endif %}
         </td>
     </tr>

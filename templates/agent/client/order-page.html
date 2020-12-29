@@ -8,25 +8,27 @@
 	<div class="container-fluid space topspace"><!--container-fluid space topspace-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
             <h1 class="dashboard-head">Order {{order.evaluation.evaluation_id}}</h1>
+            <p>
             {% if order.payment_status == 'COMPLETED' %}
-            <p><input name="paid" type="button" class="green-button" value="Paid" id="paid"></p>    
+            <input name="paid" type="button" class="green-button" value="Paid" id="paid">    
             {% elif order.payment_status == 'PENDING' %}
-            <p><input name="paid" type="button" class="yellow-button" value="Payment Pending" id="paid"></p>
+            <input name="paid" type="button" class="yellow-button" value="Payment Pending" id="paid">
             {% else %}
-            <p><input name="paid" type="button" class="red-button" value="Payment Holding" id="paid"></p> 
+            <input name="paid" type="button" class="red-button" value="Payment Holding" id="paid"> 
             {% endif %}
             
             {% if order.evaluation.quatation_status == 'PENDING' %}
-            <p><input name="paid" type="button" class="yellow-button" value="Pending" id="paid">
+            <input name="paid" type="button" class="yellow-button" value="Quatation Pending" id="paid">
             {% elif order.evaluation.quatation_status == 'APPROVED' %}
-            <p><input name="paid" type="button" class="green-button" value="Approved" id="paid">
+            <input name="paid" type="button" class="green-button" value="Quatation Approved" id="paid">
             {% elif order.evaluation.quatation_status == 'REJECTED' %}
-            <p><input name="paid" type="button" class="red-button" value="Rejected" id="paid">
+            <input name="paid" type="button" class="red-button" value="Quatation Rejected" id="paid">
             {% elif order.evaluation.quatation_status == 'EXPIRED' %}
-            <p><input name="paid" type="button" class="orange-button" value="Expired" id="paid">
+            <input name="paid" type="button" class="orange-button" value="Quatation Expired" id="paid">
             {% else %}
-            <p><input name="paid" type="button" class="blue-button" value="Evaluating" id="paid">
+            <input name="paid" type="button" class="blue-button" value="Evaluating" id="paid">
             {% endif %}
+            </p>
             </div><!--welcome-wrapper-->            
         
         
