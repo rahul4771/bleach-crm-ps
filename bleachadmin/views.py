@@ -24,6 +24,7 @@ from accountant.models import PaymentHistory
 
 from django.db.models.functions import TruncMonth as Month, TruncYear as Year
 from django.db.models import Count
+from operator import itemgetter
 
 # Create your views here.
 
@@ -1038,27 +1039,30 @@ def SalesLocationData(request):
 			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(monthdate1,monthdate2),evaluation__evaluation_details__evaluation_book_evaluation_details__area_type=location.name).count()
 			if not sales_location_count:
 				sales_location_count = 0
-			
-			if sales_location_count > 0:
-				locationcount += 1
-				if locationcount <= 5:
-					location_dict = {
+
+			location_dict = {
 					"location" : location.name,
 					"count" : sales_location_count,
 					}
-					data.append(location_dict)
-
-				if locationcount > 5:
-					
-					others_count += sales_location_count
-
-		# appending total of other locations
-		if others_count > 0:
-			location_dict = {
-			"location" : "Others",
-			"count" : others_count,
-			}
 			data.append(location_dict)
+
+		data_sorted = sorted(data, key = itemgetter('count'),reverse=True)
+
+		data_list = data_sorted[:5]
+
+		others_sum = 0 
+
+		for d in data_sorted[5:] :
+			others_sum += int(d['count'])
+		
+		others_dict = {
+			"location" : 'Others',
+			"count" : others_sum,
+		}
+
+		data_list.append(others_dict)
+
+		print(data_list,"sortt")
 
 	else:
 		print("war")
@@ -1073,9 +1077,6 @@ def SalesLocationData(request):
 		prevdate_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
 		todate_date_end  = todate.replace(hour=0,minute=0,second=0,microsecond=0)+timedelta(1)
 
-		locationcount = 0
-		others_count = 0
-
 		# appending each location counts
 		for location in location_types:
 			
@@ -1083,29 +1084,31 @@ def SalesLocationData(request):
 			if not sales_location_count:
 				sales_location_count = 0
 				
-			if sales_location_count > 0:
-				locationcount += 1
-				if locationcount <= 5 :
-					location_dict = {
+			location_dict = {
 					"location" : location.name,
 					"count" : sales_location_count,
 					}
-					data.append(location_dict)
-
-				if locationcount > 5 :
-					others_count += sales_location_count
-
-		# appending total of other locations
-		if others_count > 0:
-			location_dict = {
-			"location" : "Others",
-			"count" : others_count,
-			}
 			data.append(location_dict)
-							
-	print(data,"dot")
+
+		data_sorted = sorted(data, key = itemgetter('count'),reverse=True)
+
+		data_list = data_sorted[:5]
+
+		others_sum = 0 
+
+		for d in data_sorted[5:] :
+			others_sum += int(d['count'])
+		
+		others_dict = {
+			"location" : 'Others',
+			"count" : others_sum,
+		}
+
+		data_list.append(others_dict)
+
+		print(data_list,"sortt2")
  
-	return JsonResponse(data,safe=False)
+	return JsonResponse(data_list,safe=False)
 
 #ajax for sales charts
 def SalesCleaningTypeData(request):
@@ -1230,7 +1233,7 @@ def SalesData(request):
 			month_start = datetime(day=1,month=sale.month,year=sale.year,hour=0,minute=0,second=0,microsecond=0)
 			month_end = datetime(day=1,month=sale.month,year=sale.year,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
 
-			total_sales = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,order_status='ORDER_CLOSED',created__range=(month_start,month_end)).aggregate(count=Sum('evaluation__total_cost'))['count']
+			total_sales = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(month_start,month_end)).aggregate(count=Sum('evaluation__total_cost'))['count']
 
 			sales_dict = {
 			"date" : sale.month,
@@ -1252,7 +1255,7 @@ def SalesData(request):
 			sale_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
 			sale_date_end    = single_date+timedelta(1)
 
-			total_sales = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,order_status='ORDER_CLOSED',created__range=(sale_date_start,sale_date_end)).aggregate(Sum('evaluation__total_cost'))['evaluation__total_cost__sum'] or 0.0
+			total_sales = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(sale_date_start,sale_date_end)).aggregate(Sum('evaluation__total_cost'))['evaluation__total_cost__sum'] or 0.0
 
 			print(total_sales,"qtc")
 			sales_dict = {
