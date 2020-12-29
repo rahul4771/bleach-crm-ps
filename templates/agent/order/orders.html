@@ -119,12 +119,16 @@
                 </label>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-  				<div class=" bold-text common-label"> <label>Quatation Status</label></div>
+  				<div class=" bold-text common-label"> <label>Status</label></div>
                 <label for="favcity">
                 <select name="status_filter" id="status_filter_id">
                 <option value=''>---ALL---</option>
-                <option value="APPROVED" {% if fil_status == 'APPROVED' %}selected{% endif %}>APPROVED</option>
+                <option value="EVALUATING" {% if fil_status == 'EVALUATING' %}selected{% endif %}>EVALUATING</option>
                 <option value="PENDING" {% if fil_status == 'PENDING' %}selected{% endif %}>PENDING</option>
+                <option value="APPROVED" {% if fil_status == 'APPROVED' %}selected{% endif %}>APPROVED</option>
+                <option value="APPROVED-NOT PAID" {% if fil_status == 'APPROVED-NOT PAID' %}selected{% endif %}>APPROVED-NOT PAID</option>
+                <option value="ORDER_IN_PROGRESS" {% if fil_status == 'ORDER_IN_PROGRESS' %}selected{% endif %}>ORDER IN PROGRESS</option>
+                <option value="ORDER_CLOSED" {% if fil_status == 'ORDER_CLOSED' %}selected{% endif %}>COMPLETED</option>
                 <option value="REJECTED" {% if fil_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
                 <option value="EXPIRED" {% if fil_status == 'EXPIRED' %}selected{% endif %}>EXPIRED</option>                
               </select>
@@ -225,8 +229,6 @@
         <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="violet-bg clickable-row">Order in Progress</span>
         {% elif order.order_status == 'ORDER_CLOSED' %}
         <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="rose-bg clickable-row">Completed</span>
-        {% else %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Order Cancelled</span>
         {% endif %}
         {% else %}
         <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="oil-green-bg clickable-row">Approved-Not Paid</span>

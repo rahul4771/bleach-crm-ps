@@ -124,9 +124,15 @@
                 <select name="status_filter" id="status_filter_id">
                 <option value=''>---ALL---</option>
                 <option value="APPROVED" {% if fil_status == 'APPROVED' %}selected{% endif %}>APPROVED</option>
+                <option value="APPROVED-NOT PAID" {% if fil_status == 'APPROVED-NOT PAID' %}selected{% endif %}>APPROVED-NOT PAID</option>
+                <option value="ORDER_IN_PROGRESS" {% if fil_status == 'ORDER_IN_PROGRESS' %}selected{% endif %}>ORDER IN PROGRESS</option>
+                <option value="ORDER_CLOSED" {% if fil_status == 'ORDER_CLOSED' %}selected{% endif %}>ORDER CLOSED</option>
+                <option value="ORDER_CANCELLED" {% if fil_status == 'ORDER_CANCELLED' %}selected{% endif %}>ORDER CANCELLED</option>
                 <option value="PENDING" {% if fil_status == 'PENDING' %}selected{% endif %}>PENDING</option>
                 <option value="REJECTED" {% if fil_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
-                <option value="EXPIRED" {% if fil_status == 'EXPIRED' %}selected{% endif %}>EXPIRED</option>                
+                <option value="EXPIRED" {% if fil_status == 'EXPIRED' %}selected{% endif %}>EXPIRED</option>
+                <option value="EVALUATING" {% if fil_status == 'EVALUATING' %}selected{% endif %}>EVALUATING</option>
+                                
               </select>
                 </label>
   </div><!--ticket-form-right-->
@@ -218,24 +224,25 @@
         {% for order in evaluation.evaluationorder %}
       
         {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'stl:stl-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="green-bg clickable-row">Approved</span>
+        {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'stl:stl-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="green-bg clickable-row">Approved</span>
         {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'stl:stl-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="violet-bg clickable-row">Order in Progress</span>
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'stl:stl-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="violet-bg clickable-row">Order in Progress</span>
         {% elif order.order_status == 'ORDER_CLOSED' %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'stl:stl-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="rose-bg clickable-row">Completed</span>
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'stl:stl-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="rose-bg clickable-row">Completed</span>
         {% else %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'stl:stl-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Order Cancelled</span>
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'stl:stl-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Order Cancelled</span>
         {% endif %}
 
         {% else %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'stl:stl-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="oil-green-bg clickable-row">Approved-Not Paid</span>
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'stl:stl-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="oil-green-bg clickable-row">Approved-Not Paid</span>
         {% endif %}
         
         {% endfor %}
 
-        {% elif evaluation.quatation_status == 'REJECTED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'stl:stl-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Rejected</span>
-        {% elif evaluation.quatation_status == 'PENDING' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'stl:stl-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="yellow-bg clickable-row">Pending</span>
-        {% elif evaluation.quatation_status == 'EXPIRED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'stl:stl-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="orange-bg clickable-row">Expired</span>
+        {% elif evaluation.quatation_status == 'REJECTED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'stl:stl-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Rejected</span>
+        {% elif evaluation.quatation_status == 'PENDING' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'stl:stl-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="yellow-bg clickable-row">Pending</span>
+        {% elif evaluation.quatation_status == 'EXPIRED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'stl:stl-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="orange-bg clickable-row">Expired</span>
         {% else %}
         <span data-href="#" class="blue-bg clickable-row">Evaluating</span>
         {%endif%}
