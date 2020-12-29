@@ -678,20 +678,3 @@ def receipt_html_to_pdf_view(request,payment_id):
 		response['Content-Disposition'] = 'attachment; filename="'+payment_history.order.order_no+'_receipt.pdf"'
 		return response
 	return response	
-
-def orderupdate(request):
-	orders = Order.objects.filter(payment_status='COMPLETED')
-	for ord in orders:
-		orderschedulers = OrderScheduler.objects.filter(order__id=ord.id)
-		orderschedules_count = orderschedulers.count()
-		completed_count = 0
-		for schedule in orderschedulers:
-			if schedule.work_status == 'CLEANING_FULFILLED':
-				completed_count += 1
-		print(orderschedules_count,completed_count,"counts")
-		if orderschedules_count == completed_count:
-			ord.order_status='ORDER_CLOSED'
-			ord.save()
-			print(ord.order_no,ord.order_status,"ostat")
-
-	return render(request,"customer/order_update.html")
