@@ -151,7 +151,19 @@
                 </label>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right hide-m"><!--ticket-form-right-->
-  				 
+  		<div class=" bold-text common-label"> <label>Payment Policy</label></div>
+                <label for="favcity">
+                <select name="payment_policy" id="payment_policy_id">
+                <option value=''>---ALL---</option> 
+                
+                <option value='PREPAID' {% if fil_payment_policy == 'PREPAID' %}selected{% endif %}>PREPAID</option>
+                <option value='POSTPAID' {% if fil_payment_policy == 'POSTPAID' %}selected{% endif %}>POSTPAID</option>
+                <option value='BREAKDOWN' {% if fil_payment_policy == 'BREAKDOWN' %}selected{% endif %}>BREAKDOWN</option>
+                <option value='PREPAIDSUBSCRIPTION' {% if fil_payment_policy == 'PREPAIDSUBSCRIPTION' %}selected{% endif %}>MONTHLY PREPAID</option>
+                <option value='POSTPAIDSUBSCRIPTION' {% if fil_payment_policy == 'POSTPAIDSUBSCRIPTION' %}selected{% endif %}>MONTHLY POSTPAID</option>
+                           
+              </select>
+              </label>		 
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
 <div align="center"> <input class="assignButton" name="assing" type="button" onclick="set_params_go({});" value="Submit"> <input class="cancel-Button close-btn arrow-close" name="cancel" type="button" value="Reset"></div>
