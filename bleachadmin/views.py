@@ -1463,33 +1463,37 @@ def SalesTargetDaily(request):
 
 	for evaluator in evaluators_sales_target:
 		# total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,order_status='ORDER_CLOSED',created__range=(target_date_start,target_date_end)).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
-		total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(target_date_start,target_date_end),evaluation__quatation_status='APPROVED').count()
-		total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(target_date_start,target_date_end)).filter(Q(Q(evaluation__quatation_status='PENDING')|Q(evaluation__quatation_status='APPROVED'))).count()
-		print(total_sales,"evat")
-		if not total_sales:
-			total_sales = 0
-		if not total_sales:
-			total_sales_submitted = 0
+		total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(target_date_start,target_date_end),evaluation__quatation_status='APPROVED').aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+		total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(target_date_start,target_date_end)).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+		
+		if not total_sales_approved:
+			total_sales_approved = 0.0
+		if not total_sales_submitted:
+			total_sales_submitted = 0.0
+
+		print(total_sales_approved,total_sales_submitted,"evat")
 
 		evaluator_target_dict = {
 		"evaluator_id" : evaluator.id,
-		"amount" : total_sales,
+		"amount" : total_sales_approved,
 		"submitted":total_sales_submitted
 		}
 		data.append(evaluator_target_dict)
 	print(data,"here")
 
-	agent_total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(target_date_start,target_date_end),evaluation__quatation_status='APPROVED').count()
-	agent_total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(target_date_start,target_date_end)).filter(Q(Q(evaluation__quatation_status='PENDING')|Q(evaluation__quatation_status='APPROVED'))).count()
-	print(agent_total_sales,"aget")
-	if not agent_total_sales:
-		agent_sales_total = 0.0
+	agent_total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(target_date_start,target_date_end),evaluation__quatation_status='APPROVED').aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+	agent_total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(target_date_start,target_date_end)).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+	
+	if not agent_total_sales_approved:
+		agent_total_sales_approved = 0.0
 	if not agent_total_sales_submitted:
 		agent_total_sales_submitted = 0.0
+
+	print(agent_total_sales_approved,agent_total_sales_submitted,"aget")
 		
 	agent_target_dict = {
 		"evaluator_id" : 0,
-		"amount" : agent_total_sales,
+		"amount" : agent_total_sales_approved,
 		"submitted":agent_total_sales_submitted
 		}
 	data.append(agent_target_dict)

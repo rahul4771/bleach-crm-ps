@@ -217,13 +217,14 @@
                 
                 <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
                 
-                <div class="evaluator-name" align="right">Submitted : <span id="submittedid{{evaluator.id}}"></span></div>
+                <div class="evaluator-name" align="right"><span id="submittedid{{evaluator.id}}">0.000</span> KD</div>
                 <div class="evaluator-name" ><span id="evaluatorid{{evaluator.id}}">0.0</span> <span>%</span></div>
                     <div class="bar-chart-graybg color"><div id="color{{evaluator.id}}"></div></div>
                 </div><!--bar-chart-items chart-column-three-->
                 
-                {% comment %} <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
-                     <a class="followup_graph" data-evaluator="{{evaluator.name}}"><input name="Follow" type="button" class="follow" onclick="salestarget({{evaluator.id}});" value="Follow"> </a> 
+                {% comment %} <div class="bar-chart-items chart-column-four evaluator-name"><!--bar-chart-items chart-column-four-->
+                    <span id="submittedid{{evaluator.id}}"></span> KD
+                     <a class="followup_graph" data-evaluator="{{evaluator.name}}"><input name="Follow" type="button" class="follow" onclick="salestarget({{evaluator.id}});" value="Follow"> </a>
                 </div><!--bar-chart-items chart-column-four--> {% endcomment %}
                 
             </div><!--bar-chart-->        
@@ -244,13 +245,14 @@
                 </div><!--bar-chart-items chart-column-two-->
                 
                 <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-                <div class="evaluator-name" align="right">Submitted : <span id="submittedid0">0</span></div>
+                <div class="evaluator-name" align="right"><span id="submittedid0">0.000</span> KD</div>
                 <div class="evaluator-name" id="agent_sales_target"><span id="evaluatorid0">0.0</span> <span>%</span></div>
                     <div class="bar-chart-graybg color"><div id="color0"></div></div>
                 </div><!--bar-chart-items chart-column-three-->
                 
                 {% comment %} <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
-                     <a class="followup_graph" data-evaluator="Customer Service"><input name="Follow" type="button" class="follow" onclick="salestarget(0);" value="Follow"> </a> 
+                        <span id="submittedid0">8320.000</span>
+                     <a class="followup_graph" data-evaluator="Customer Service"><input name="Follow" type="button" class="follow" onclick="salestarget(0);" value="Follow"> </a>
                 </div><!--bar-chart-items chart-column-four--> {% endcomment %}
                 
             </div><!--bar-chart-->
@@ -599,11 +601,15 @@
             success: function(data) {
 
               $.each(data,function(key,value){
-                var percent = ((parseInt(value.amount)*parseInt(100))/parseInt(50));
+                var percent = ((parseFloat(value.amount)*parseFloat(100))/parseFloat(value.submitted));
+
+                if (isNaN(percent)){
+                    percent = 0.0;
+                };
               
                 $('#evaluatorid'+value.evaluator_id+'').text(parseFloat(percent).toFixed(2));
 
-                $('#submittedid'+value.evaluator_id+'').text(value.submitted);
+                $('#submittedid'+value.evaluator_id+'').text(parseFloat(value.submitted).toFixed(3));
                 
                 $('#color'+value.evaluator_id+'').attr("style",'width:'+parseFloat(percent).toFixed(2)+'%;');
 
@@ -619,10 +625,11 @@
                     $('#color'+value.evaluator_id+'').removeAttr("class");
                     $('#color'+value.evaluator_id+'').addClass('chart-yellobg');
                 }
-                if (percent > 75 & percent < 100){
+                if (percent > 75 & percent <= 100){
                     $('#color'+value.evaluator_id+'').removeAttr("class");
                     $('#color'+value.evaluator_id+'').addClass('chart-greenbg');
                 }
+                
                 console.log(percent,"per")
               });
             }
