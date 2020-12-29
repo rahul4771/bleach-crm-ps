@@ -216,7 +216,9 @@
                 </div><!--bar-chart-items chart-column-two-->
                 
                 <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-                <div class="evaluator-name"><span id="evaluatorid{{evaluator.id}}">0.0</span> <span>%</span></div>
+                
+                <div class="evaluator-name" align="right">Submitted : <span id="submittedid{{evaluator.id}}"></span></div>
+                <div class="evaluator-name" ><span id="evaluatorid{{evaluator.id}}">0.0</span> <span>%</span></div>
                     <div class="bar-chart-graybg color"><div id="color{{evaluator.id}}"></div></div>
                 </div><!--bar-chart-items chart-column-three-->
                 
@@ -596,9 +598,11 @@
             success: function(data) {
 
               $.each(data,function(key,value){
-                var percent = ((parseInt(value.amount)*parseInt(100))/parseInt(50000));
+                var percent = ((parseInt(value.amount)*parseInt(100))/parseInt(50));
               
                 $('#evaluatorid'+value.evaluator_id+'').text(parseFloat(percent).toFixed(2));
+
+                $('#submittedid'+value.evaluator_id+'').text(value.submitted);
                 
                 $('#color'+value.evaluator_id+'').attr("style",'width:'+parseFloat(percent).toFixed(2)+'%;');
 
