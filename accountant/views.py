@@ -188,8 +188,8 @@ class AccountantHome(IsAccountant,View):
 
 		#Pending Payment and Order Count	
 		if invoices:
-			total_pending_amount = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).aggregate(total=Sum(F('remining_amount')))['total']		
-			total_pending_orders = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).count()
+			total_pending_amount = invoices.filter(Q( Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))) | Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(preamount_paid=0)) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) )).aggregate(total=Sum(F('remining_amount')))['total']		
+			total_pending_orders = invoices.filter(Q( Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))) | Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(preamount_paid=0)) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) )).count()
 		else:
 			total_pending_amount = 0
 			total_pending_orders = 0
@@ -674,18 +674,18 @@ class PaymentDetails(IsAccountant,View):
 		#sales amount
 		if search:
 			try:
-				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(orderschedule_count=Count('order_scheduler_order'), completed_count=Count(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1))))
+				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())))
 			except:
 				invoices         = None
 		else:
 			try:
-				invoices         = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',order_status__isnull=False).order_by('-id').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(orderschedule_count=Count('order_scheduler_order'), completed_count=Count(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1))))
+				invoices         = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',order_status__isnull=False).order_by('-id').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())))
 			except:
 				invoices         = None
 				
 		#Pending Payments
 		try:
-			pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD')))
+			pending_payments = invoices.filter(Q( Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))) | Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(preamount_paid=0)) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) ))
 		except:
 			pending_payments = None
 
@@ -697,99 +697,32 @@ class PaymentDetails(IsAccountant,View):
 			total_pending_amount = 0
 			total_pending_orders = 0
 
-		#Prefetch filters
-
-		fil_order_status			= request.GET.get('status',None)
-		
-		orderschedule_filter       = []
-		count_orderschedule_filter = []
-
-		if fil_order_status:
-			if fil_order_status == 'CLEANING_TEAM_ASSIGNED':
-				case1       = Q(Q(work_status=fil_order_status)|Q(work_status=None))
-				count_case1 = Q(Q(order_scheduler_order__work_status=fil_order_status)|Q(order_scheduler_order__work_status=None))
-			else:
-				case1       = Q(work_status=fil_order_status)
-				count_case1 = Q(order_scheduler_order__work_status=fil_order_status)
-			orderschedule_filter.append(case1)
-			count_orderschedule_filter.append(count_case1)
-
-		if fil_order_status :
-			orderschedule_prefetch_filter              = functools.reduce(operator.and_,orderschedule_filter)
-			count_orderschedule_prefetch_filter        = functools.reduce(operator.and_,count_orderschedule_filter)
-		else:
-			filters										= None
-			orderschedule_prefetch_filter              = None	
-			count_orderschedule_prefetch_filter        = None
-		
-		if orderschedule_prefetch_filter:
-			print(orderschedule_prefetch_filter,"orderfdh")
-			invoices = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).filter(orderschedule_prefetch_filter),to_attr='orderschedules2')).annotate(orderschedule_filter_count=Count(Case(When(count_orderschedule_prefetch_filter,then=1),output_field=IntegerField())), orderschedule_count=Count('order_scheduler_order'), completed_count=Count(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1)))).filter(orderschedule_filter_count__gt=0)
-
 		#filters
-		fil_payment_status       	= request.GET.get('payment_status',None)
+		fil_order_status			= request.GET.get('status')
 
-		fil_payment_policy			= request.GET.get('payment_policy',None)
+		fil_payment_status       	= request.GET.get('payment_status')
+
+		fil_payment_policy			= request.GET.get('payment_policy')
 
 		filters = []
-
 		if fil_payment_policy:
-			case2 = Q(evaluation__payment_method=fil_payment_policy)
-			filters.append(case2)
+			case1 = Q(evaluation__payment_method=fil_payment_policy)
+			filters.append(case1)
 
 		if fil_payment_status:
 			if fil_payment_status == 'PENDING':
-				case3       = Q(Q(payment_status=fil_payment_status)|Q(payment_status='ON_HOLD'))
+				case2       = Q( Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))) | Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(preamount_paid=0)) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) )
 			else:
-				case3 = Q(payment_status=fil_payment_status)
+				case2       = Q(payment_status=fil_payment_status)
+			filters.append(case2)
+
+		if fil_order_status:
+			case3       = Q(order_status=fil_order_status)
 			filters.append(case3)
 
-		if fil_payment_policy or fil_payment_status:
-			filters	= functools.reduce(operator.and_,filters)
+		if fil_payment_policy or fil_payment_status or fil_order_status:
+			filters=functools.reduce(operator.and_,filters)
 			invoices = invoices.filter(filters)
-
-		#conditional filtering using orderschedule counts
-		# invoices_list = []
-
-		# for inv in invoices:
-		# 	if fil_order_status == 'CLEANING_FULFILLED' and inv.orderschedule_count == inv.completed_count:
-		# 		invoices_list.append(inv)
-
-		# 	elif fil_order_status == 'CLEANING_TEAM_ASSIGNED' and inv.completed_count == 0 :
-		# 		invoices_list.append(inv)
-
-		# 	elif fil_order_status == 'CLEANING_IN_PROGRESS' and inv.completed_count != 0 and inv.completed_count < inv.orderschedule_count:
-		# 		invoices_list.append(inv)
-
-		# 	elif fil_payment_status == 'PENDING':
-		# 		print("deys1")
-		# 		if inv.payment_status == 'PENDING' or inv.payment_status == 'ON_HOLD':
-		# 			print("deys2")
-		# 			if inv.evaluation.payment_method == 'POSTPAID' and inv.orderschedule_count == inv.completed_count:
-		# 				print("deys3")
-		# 				invoices_list.append(inv)
-
-		# 			elif inv.evaluation.payment_method == 'PREPAID' and inv.amount_paid == 0.0 :
-		# 				invoices_list.append(inv)
-
-		# 			elif inv.evaluation.payment_method == 'BREAKDOWN':
-		# 				if inv.preamount_paid == 0.0 or inv.postamount_paid == 0.0:
-		# 					invoices_list.append(inv)
-
-		# 			else:
-		# 				pass
-
-		# 	elif fil_payment_status == 'PAID':
-		# 		if inv.payment_status == 'COMPLETED':
-		# 			invoices_list.append(inv)
-
-		# 	elif fil_order_status == None or fil_payment_policy == None or fil_payment_status == None:
-		# 		invoices_list.append(inv)
-			
-		# 	else:
-		# 		pass
-
-		# print(invoices_list,"invo")
 		
 		#PAGINATION INVOICE		
 		page = request.GET.get('page',1) 

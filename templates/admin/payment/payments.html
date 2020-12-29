@@ -100,9 +100,9 @@
                 <label for="favcity">
                 <select name="status_filter" id="status_filter_id">
                 <option value=''>---ALL---</option>
-                <option value="ORDER_CLOSED" {% if fil_order_status == 'ORDER_CLOSED' %}selected{% endif %}>COMPLETED</option>
                 <option value="APPROVED_BY_CLIENT" {% if fil_order_status == 'APPROVED_BY_CLIENT' %}selected{% endif %}>NOT STARTED</option>
-                <option value="ORDER_IN_PROGRESS" {% if fil_order_status == 'ORDER_IN_PROGRESS' %}selected{% endif %}>IN PROGRESS</option>              
+                <option value="ORDER_IN_PROGRESS" {% if fil_order_status == 'ORDER_IN_PROGRESS' %}selected{% endif %}>IN PROGRESS</option>
+                <option value="ORDER_CLOSED" {% if fil_order_status == 'ORDER_CLOSED' %}selected{% endif %}>COMPLETED</option>              
               </select>
                 </label>
   </div><!--ticket-form-right-->
@@ -163,10 +163,7 @@
 <tr>
 <th>Order Date</th>
 <th class="text-left">Order Number</th>
-<th data-hide="phone,tablet">Client Name</th>
 <th class="text-center" data-hide="phone,tablet">Payment Policy</th>
-{% comment %} <th data-hide="phone">Area</th>
-<th>Contact</th> {% endcomment %}
 <th class="text-right" data-hide="phone,tablet">Amount</th>
 <th class="text-right" data-hide="phone,tablet">Paid</th>
 <th class="text-right" data-hide="phone,tablet">Balance</th>
@@ -177,17 +174,14 @@
 <tbody>
     {% for invoice in invoices %}
     <tr>
-    <td {% if invoice.order_status == 'APPROVED_BY_CLIENT' %}
+    <td {% if invoice.order_status == 'APPROVED_BY_CLIENT' or invoice.order_status == 'ORDER_CANCELLED' %}
         class="blue-line"
         {% elif invoice.order_status == 'ORDER_IN_PROGRESS' %}
         class="yellow-line"
         {% elif invoice.order_status == 'ORDER_CLOSED' %}
         class="green-line"
-        {% elif invoice.order_status == 'ORDER_CANCELLED' %}
-        class="red-line"
         {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
     <td class="text-left"  >{{invoice.order_no}}</td>
-    <td>{{invoice.evaluation.customer.name}}</td>
     <td class="text-center">{{invoice.evaluation.payment_method}}</td>
     </td>
     <td class="text-right">{{invoice.total_amount|default_if_none:'0.00'|floatformat:'3'}}</td>
@@ -205,14 +199,12 @@
     {% endfor %}
     </td>
     <td class="clickable-row" {% if invoice %}data-href="{% url 'bleach_admin:admin-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
-        {% if invoice.order_status == 'APPROVED_BY_CLIENT' %}
+        {% if invoice.order_status == 'APPROVED_BY_CLIENT' or invoice.order_status == 'ORDER_CANCELLED' %}
         <span class="text-center blue-bg clickable-row">Not Started</span>
         {% elif invoice.order_status == 'ORDER_IN_PROGRESS' %}
         <span class="text-center yellow-bg clickable-row">IN PROGRESS</span>
         {% elif invoice.order_status == 'ORDER_CLOSED' %}
         <span class="text-center green-bg clickable-row" >COMPLETED</span>
-        {% elif invoice.order_status == 'ORDER_CANCELLED' %}
-        <span class="text-center red-bg clickable-row" >CANCELLED</span>
         {% endif %}
         </td>
     </tr>
