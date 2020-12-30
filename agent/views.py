@@ -1277,7 +1277,7 @@ class OrderDetails(IsAgent,View):
 			for evaluation in evaluations:
 				if evaluation.evaluationorder:
 					for order in evaluation.evaluationorder:
-						if (order.payment_status == 'COMPLETED' or order.preamount_paid == 0 or order.evaluation.payment_method == 'POSTPAID') and (order.evaluation.quatation_status == 'APPROVED'):				
+						if (order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID') and (order.evaluation.quatation_status == 'APPROVED'):				
 							approved_orders_count += 1
 			
 			pending_orders_count  =	evaluations.filter(Q(quatation_status='PENDING')).count()
