@@ -179,7 +179,7 @@
         <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
         <h2 class="h2">Individual Sales</h2>
         </div><!--filter-column-boxes filter-columns-left-->
-        <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+        {% comment %} <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
         
             <div class="date-wrapper"><!--date-wrapper-->
             <div class="date-wrapper-inner right-p"><!--date-wrapper-inner-->
@@ -190,6 +190,40 @@
             </div><!--date-wrapper-inner-->
             <div class="date-togglewrapper"><!--date-togglewrapper-->
             <div class="Button_wrapperChart">
+    
+            </div>
+            </div><!--date-togglewrapper-->
+            </div><!--date-wrapper-->
+        
+        
+        </div><!--filter-column-boxes filter-columns-right-->   {% endcomment %}
+
+
+
+        <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+            <!-- datepicker -->
+            <div class="date-wrapper"><!--date-wrapper-->
+            <div class="date-wrapper-inner-resource"><!--date-wrapper-inner-->
+            <div id="working_calendar">
+            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type='text' id='sales_target_datepicker' value="{{evaluation_date|date:"d-m-Y"}}" onchange="salestargetcalculation();" class="date-box date_pick">
+            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='today-date current-date'>Today</button>
+            </div>
+            
+            <!-- monthpicker -->
+            <div id="working_calendar2" hidden>
+            <button class="prev-month-resource previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type='text' id='working_calendar_month'  name='monthpicker' class="date-box month_pick_resource" >
+            <button class='next-month-resource next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='this-month-resource current-date'>Month</button>
+            </div>
+            {% comment %} <input type="text" id="resource_month" class="month_pick date-picker-resource" hidden> {% endcomment %}
+            </div><!--date-wrapper-inner-->
+            
+            <div class="date-togglewrapper"><!--date-togglewrapper-->
+            <div class="Button_wrapperChart">
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonthtoggle_resource"><div class="slider round"><span class="on">MONTH</span><span class="off">DATE</span></div></label></div>
     
             </div>
             </div><!--date-togglewrapper-->
