@@ -1457,7 +1457,7 @@ def export_users_xls(request):
 		#sales details
 		ws = wb.add_sheet('SALES DETAILS',cell_overwrite_ok = True)
 	
-		columns = ['Order No.','Cleaning Completed Date','Day','Customer','Payment Policy','Net Amount','Paid Amount','Payment Type','Payment Date','Balance Amount','Hours','Staff','Salesman']
+		columns = ['Order No.','Cleaning Completed Date','Day','Customer','Payment Policy','Net Amount','Paid Amount','Payment Type','Payment Date','Balance Amount','Service Type','Hours','Staff','Salesman']
 		
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
@@ -1466,20 +1466,61 @@ def export_users_xls(request):
 		# Sheet body, remaining rows
 		font_style = xlwt.XFStyle()
 
-		orderschedules = OrderScheduler.objects.filter(is_active=True,work_status='CLEANING_FULFILLED',end_at__range=(prev_date_start,todate_date_end)).values_list('order__order_no','end_at','id','evaluation_details__address__customer__name','evaluation_details__evaluation__payment_method','order_scheduler_book__total_cost','order__amount_paid','evaluation_details__evaluation__payment_way','end_at','order__remining_amount','order_scheduler_book__cleaning_hours','order_scheduler_book__number_of_cleaners','evaluation_details__evaluator__name').order_by('end_at')
+		orderschedules = OrderScheduler.objects.filter(is_active=True,work_status='CLEANING_FULFILLED',end_at__range=(prev_date_start,todate_date_end)).values_list('order__order_no','end_at','id','evaluation_details__address__customer__name','evaluation_details__evaluation__payment_method','order_scheduler_book__total_cost','order__amount_paid','evaluation_details__evaluation__payment_way','end_at','order__remining_amount','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_hours','order_scheduler_book__number_of_cleaners','evaluation_details__evaluator__name').order_by('end_at')
 
 		rows = []
 
 		for schedule in orderschedules:
-			#payment_date = PaymentHistory.objects.filter(is_active=True,order__id=schedule.order.id).last()
 
 			schedule_list = list(schedule)
 
-			orderschedule = OrderScheduler.objects.get( id = int(schedule_list[2]) )
-			paymenthistory = PaymentHistory.objects.filter(order__id=orderschedule.order.id).last()
+			calc_orderschedules = OrderScheduler.objects.filter( order__order_no = schedule_list[0],work_status='CLEANING_FULFILLED'  )
+			
+			orderschedules_count = calc_orderschedules.count()
+			last_orderschedule = calc_orderschedules.last()
 
+			print(orderschedules_count,last_orderschedule,"osh")
+
+			orderschedule = OrderScheduler.objects.get(id=int(schedule_list[2]))
+
+			#splitting paid amount and balance
+			if orderschedules_count > 0:
+				if schedule_list[4] == 'BREAKDOWN':
+					if last_orderschedule.id == orderschedule.id:
+						schedule_list[6] = int(schedule_list[6] / orderschedules_count) + int( schedule_list[6] % orderschedules_count )
+						
+						if schedule_list[9] > 0:
+							schedule_list[9] = int(schedule_list[9] / orderschedules_count) + int( schedule_list[9] % orderschedules_count )
+
+					else:
+						schedule_list[6] = int(schedule_list[6] / orderschedules_count)
+
+						if schedule_list[9] > 0:
+							schedule_list[9] = int(schedule_list[9] / orderschedules_count)
+
+				elif schedule_list[4] == 'PREPAID' or schedule_list[4] == 'PREPAIDUBSCRIPTION':
+					if schedule_list[9] == 0.00 :
+						schedule_list[6] = schedule_list[5]
+					else:
+						schedule_list[9] = schedule_list[5]
+
+				elif schedule_list[4] == 'POSTPAID' or schedule_list[4] == 'POSTPAIDUBSCRIPTION':
+					if schedule_list[6] == 0.00 :
+						schedule_list[9] = schedule_list[5]
+					else:
+						schedule_list[6] = schedule_list[5]
+					
+				else:
+					pass
+
+			else:
+				pass
+
+			paymenthistory = PaymentHistory.objects.filter(order__order_no=schedule_list[0]).last()
+
+			#adding payment date and payment mode
 			if orderschedule.evaluation_details.evaluator == None :
-				schedule_list[12] = orderschedule.evaluation_details.evaluation.call_attender.name
+				schedule_list[13] = orderschedule.evaluation_details.evaluation.call_attender.name
 
 			if paymenthistory:
 				if paymenthistory.payment_mode == 'ONLINECREDIT':
@@ -1510,6 +1551,72 @@ def export_users_xls(request):
 		
 		for col_num in range(len(columns2)):
 			ws2.write(row_num2, col_num, columns2[col_num], font_style)
+
+		#creating date list
+		found = set()
+
+		dates = []
+
+		for cln_date in rows:
+			ro = list(cln_date)
+
+			if ro[1] not in found:
+				dates.append(ro[1])
+				found.add(ro[1])
+
+			print(dates,"dts")
+
+		#appending data to list
+		rows2 = []
+
+		for d in dates:
+
+			grand_total = 0
+
+			general = 0
+			upholstery = 0
+			deep = 0
+			sterilization = 0
+			carpet = 0
+			kitchen = 0
+			
+			test_elem = d
+
+			#filtering rows list using date
+			res = [item for item in rows if item[1] == d ]
+
+			#calculating service totals and grand total
+			for r in res:
+				day_name = r[2]
+
+				if r[10] == 'General Cleaning':
+					general += float(r[5])
+
+				if r[10] == 'Deep Cleaning':
+					deep += float(r[5]) 
+
+				if r[10] == 'Sterilization':
+					sterilization += float(r[5]) 
+
+				if r[10] == 'Carpet Cleaning':
+					carpet += float(r[5]) 
+
+				if r[10] == 'Upholstery Cleaning':
+					upholstery += float(r[5]) 
+
+				if r[10] == 'Kitchen Cleaning':
+					kitchen += float(r[5])
+
+				grand_total += r[5]
+
+			daily_report = (d, day_name, general, deep, sterilization, carpet, upholstery, kitchen, grand_total)
+
+			rows2.append(daily_report)
+
+		for row in rows2:
+			row_num2 += 1
+			for col_num in range(len(row)):
+				ws2.write(row_num2, col_num, row[col_num], font_style)
 
 	wb.save(response)
 
