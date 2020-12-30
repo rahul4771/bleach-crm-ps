@@ -1005,8 +1005,16 @@
             {% endif %}
             <div class="payment-text"><div>Paid</div> : {{order.amount_paid|default_if_none:'0.00'|floatformat:2}} KD</div>
             <div class="payment-text"><div>Balance</div> : {{order.remining_amount|default_if_none:'0.00'|floatformat:2}} KD</div>
-            {% if order.evaluation.payment_way %}
-            <div class="payment-text"><div>Payment Type</div> : {{order.evaluation.payment_way|default_if_none:''}}</div>
+            {% if order.paymenthistory %}
+            <div class="payment-text"><div>Payment Type(s)</div> : 
+            {% for history in order.paymenthistory %}
+            {% if history.payment_mode == 'ONLINECREDIT' %}
+            {{history.payment_gateway|default_if_none:''}},
+            {% else %}
+            {{history.payment_mode|default_if_none:''}},
+            {% endif %}
+            {% endfor %}
+            </div>
             {% endif %}
             {% if order.payment_completed_date %}
             <div class="payment-text"><div>Closed Date</div> : {{order.payment_completed_date|default_if_none:''}}</div>
