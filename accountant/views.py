@@ -1479,6 +1479,8 @@ def export_users_xls(request):
 			orderschedules_count = calc_orderschedules.count()
 			last_orderschedule = calc_orderschedules.last()
 
+			print(orderschedules_count,last_orderschedule,"osh")
+
 			orderschedule = OrderScheduler.objects.get(id=int(schedule_list[2]))
 
 			#splitting paid amount and balance
@@ -1497,10 +1499,12 @@ def export_users_xls(request):
 							schedule_list[9] = int(schedule_list[9] / orderschedules_count)
 
 				elif schedule_list[4] == 'PREPAID' or schedule_list[4] == 'PREPAIDUBSCRIPTION':
-					schedule_list[6] == schedule_list[5]
+					schedule_list[6] = schedule_list[5]
 
 				elif schedule_list[4] == 'POSTPAID' or schedule_list[4] == 'POSTPAIDUBSCRIPTION':
-					schedule_list[9] == schedule_list[5]
+					print(schedule_list[9],schedule_list[5],"bef")
+					schedule_list[9] = schedule_list[5]
+					print(schedule_list[9],schedule_list[5],"aft")
 
 				else:
 					pass
