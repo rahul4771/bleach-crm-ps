@@ -360,7 +360,7 @@ class OrderDetails(IsEvaluator,View):
 			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
 
 		if evaluations:
-			approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
+			approved_orders_count = evaluations.filter(Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid=0)|Q(order__evaluation__payment_method='POSTPAID'))&Q(quatation_status='APPROVED')).count()
 			pending_orders_count  =	evaluations.filter(Q(quatation_status='PENDING')).count()
 		else:
 			approved_orders_count = 0

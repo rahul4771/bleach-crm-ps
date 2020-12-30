@@ -442,7 +442,7 @@ class OrderDetails(IsAdmin,View):
 			
 
 		if evaluations:
-			approved_orders_count = evaluations.filter(Q(quatation_status='APPROVED')).count()
+			approved_orders_count = evaluations.filter(Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid=0)|Q(order__evaluation__payment_method='POSTPAID'))&Q(quatation_status='APPROVED')).count()
 			pending_orders_count  =	evaluations.filter(Q(quatation_status='PENDING')).count()
 		else:
 			approved_orders_count = 0
