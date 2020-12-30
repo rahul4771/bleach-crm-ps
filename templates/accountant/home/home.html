@@ -15,7 +15,7 @@
 <div class="card-row"><!--card-row-->
             <div class="card-column whitebg blue-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-pending-payment-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-pending-payment-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Pending Payments</h1>
             	<h2 class="blue-text"><label>Orders<span>{{total_pending_orders|default_if_none:'0'}}</span></label> </h2>
@@ -26,7 +26,7 @@
         
             <div class="card-column whitebg green-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-week-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-week-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Week</h1>
             	<h2 class="green-text"><label>This<span>{{this_week_sales|default_if_none:'0.00'|floatformat:'2'}}KD</span></label></h2>
@@ -37,7 +37,7 @@
         
             <div class="card-column whitebg orange-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-month-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-month-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Month</h1>
             	<h2 class="orange-text"><label>This<span>{{this_month_sales|default_if_none:'0.00'|floatformat:'2'}}KD</span></label> </h2>
@@ -48,7 +48,7 @@
         
             <div class="card-column whitebg red-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-quarter-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-quarter-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Quarter</h1>
             	<h2 class="red-text"><label>This<span>{{this_quarter_sales|default_if_none:'0.00'|floatformat:'2'}}KD</span></label> </h2>
