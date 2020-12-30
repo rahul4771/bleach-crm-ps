@@ -16,7 +16,7 @@
        	<div class="clients-card-column clients-column-left"><!--clients-card-column clients-column-left-->
         <div class="card-column whitebg blue-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-pending-payment-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-pending-payment-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
               	<!--  <h1>Evaluations</h1>-->
             	<h2 class="blue-text"><label>Pending <br>Payments<span>{{total_pending_amount|default_if_none:'0.00'|floatformat:'2'}}</span><br><span class="orders">Rate</span></label> </h2>
@@ -27,7 +27,7 @@
         
             <div class="card-column whitebg green-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-pending-payment-orders-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-pending-payment-orders-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
             	<h2 class="green-text"><label>Pending<br>payments<span>{{total_pending_orders|default_if_none:'0'}}</span><br><span class="orders">Orders</span></label>  </h2>
             	</div><!--column-right-->

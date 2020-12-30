@@ -16,7 +16,7 @@
        	<div class="clients-card-column clients-column-left"><!--clients-card-column clients-column-left-->
         <div class="card-column whitebg blue-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-aproved-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-aproved-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
               	<!--  <h1>Evaluations</h1>-->
             	<h2 class="blue-text"><label>Approved<span>{{approved_orders_count}}</span></label> </h2>
@@ -27,7 +27,7 @@
         
             <div class="card-column whitebg green-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-pending-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-pending-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
             	<h2 class="green-text"><label>Pending<span>{{pending_orders_count}}</span></label>  </h2>
             	</div><!--column-right-->
@@ -264,12 +264,12 @@
         <span data-href="#" class="blue-bg clickable-row">Evaluating</span>
         {%endif%}
     </td>
-    <td class="align-center">{% if evaluation.quatation_status == 'APPROVED' %}<a href="/customer/quatation/download/{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}"><img src="{% static 'files/images/icon-download.svg' %}" align="absmiddle" class="download-icon"></a>{% else %}<img src="{% static 'files/images/icon-download-gray.svg' %}" align="absmiddle" class="download-icon">{% endif %}&nbsp &nbsp{% if evaluation.quatation_status == 'APPROVED' or evaluation.quatation_status == 'PENDING' %}
-    {% if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION' %}<a href="/customer/subscription/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.svg' %}" align="absmiddle" class="download-icon"></a>
+    <td class="align-center">{% if evaluation.quatation_status == 'APPROVED' %}<a href="/customer/quatation/download/{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}"><img src="{% static 'files/images/icon-download.png' %}" align="absmiddle" class="download-icon"></a>{% else %}<img src="{% static 'files/images/icon-download-gray.png' %}" align="absmiddle" class="download-icon">{% endif %}&nbsp &nbsp{% if evaluation.quatation_status == 'APPROVED' or evaluation.quatation_status == 'PENDING' %}
+    {% if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION' %}<a href="/customer/subscription/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>
     {% else %}
-    <a href="/customer/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.svg' %}" align="absmiddle" class="download-icon"></a>
+    <a href="/customer/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>
     {% endif %}
-    {% else %}<img src="{% static 'files/images/view-icon-gray.svg' %}" align="absmiddle" class="download-icon">{% endif %}</td>
+    {% else %}<img src="{% static 'files/images/view-icon-gray.png' %}" align="absmiddle" class="download-icon">{% endif %}</td>
     </tr>    
     {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>
