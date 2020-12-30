@@ -948,6 +948,7 @@ def export_users_xls(request):
 		columns = ['Date','Customer Name','Quotation No.','Salesman','Type of Contract','Type of location',
 		'Invoice No.','Job Status','Payment Policy','Gross Amount','Discount','Net Amount','Paid Amount',
 		'Payment Type','Date of Payment','Balance to Collect']
+
 		
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
@@ -1446,6 +1447,69 @@ def export_users_xls(request):
 			row_num4 += 1
 			for col_num in range(len(row)):
 				ws4.write(row_num4, col_num, row[col_num], font_style)	
+
+	if report_type == 'salesdetails':
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="SALES_DETAILS_'+from_date+'_'+to_date+'.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		
+		#sales details
+		ws = wb.add_sheet('SALES DETAILS',cell_overwrite_ok = True)
+	
+		columns = ['Order No.','Cleaning Completed Date','Day','Customer','Payment Policy','Net Amount','Paid Amount','Payment Type','Payment Date','Balance Amount','Hours','Staff','Salesman']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+
+		# Sheet body, remaining rows
+		font_style = xlwt.XFStyle()
+
+		orderschedules = OrderScheduler.objects.filter(is_active=True,work_status='CLEANING_FULFILLED',end_at__range=(prev_date_start,todate_date_end)).values_list('order__order_no','end_at','id','evaluation_details__address__customer__name','evaluation_details__evaluation__payment_method','order_scheduler_book__total_cost','order__amount_paid','evaluation_details__evaluation__payment_way','end_at','order__remining_amount','order_scheduler_book__cleaning_hours','order_scheduler_book__number_of_cleaners','evaluation_details__evaluator__name').order_by('end_at')
+
+		rows = []
+
+		for schedule in orderschedules:
+			#payment_date = PaymentHistory.objects.filter(is_active=True,order__id=schedule.order.id).last()
+
+			schedule_list = list(schedule)
+
+			orderschedule = OrderScheduler.objects.get( id = int(schedule_list[2]) )
+			paymenthistory = PaymentHistory.objects.filter(order__id=orderschedule.order.id).last()
+
+			if orderschedule.evaluation_details.evaluator == None :
+				schedule_list[12] = orderschedule.evaluation_details.evaluation.call_attender.name
+
+			if paymenthistory:
+				if paymenthistory.payment_mode == 'ONLINECREDIT':
+					schedule_list[7] = paymenthistory.payment_gateway
+				else:
+					schedule_list[7] = paymenthistory.payment_mode
+
+				schedule_list[8] = paymenthistory.paid_date
+			else:
+				schedule_list[7] = '-'
+				schedule_list[8] = '-'
+
+			schedule_list[2] = schedule_list[1].strftime("%A")
+			schedule = tuple(schedule_list)
+			rows.append(schedule)
+		
+		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
+
+		#sales report
+		ws2 = wb.add_sheet('SALES REPORT',cell_overwrite_ok = True)
+	
+		columns2 = ['Date','Day','General Cleaning','Deep Cleaning','Sanitization','Carpet Cleaning','Upholstery Cleaning','Kitchen Cleaning','Grand Total']
+		
+		for col_num in range(len(columns2)):
+			ws2.write(row_num2, col_num, columns2[col_num], font_style)
 
 	wb.save(response)
 
