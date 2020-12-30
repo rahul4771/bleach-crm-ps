@@ -1474,7 +1474,7 @@ def export_users_xls(request):
 
 			schedule_list = list(schedule)
 
-			calc_orderschedules = OrderScheduler.objects.filter( order__order_no = schedule_list[0] )
+			calc_orderschedules = OrderScheduler.objects.filter( order__order_no = schedule_list[0],work_status='CLEANING_FULFILLED'  )
 			
 			orderschedules_count = calc_orderschedules.count()
 			last_orderschedule = calc_orderschedules.last()
@@ -1483,19 +1483,28 @@ def export_users_xls(request):
 
 			#splitting paid amount and balance
 			if orderschedules_count > 0:
-				if last_orderschedule:
-					if schedule_list[6] != None:
+				if schedule_list[6] == 'BREAKDOWN':
+					if last_orderschedule.id == orderschedule.id:
 						schedule_list[6] = int(schedule_list[6] / orderschedules_count) + int( schedule_list[6] % orderschedules_count )
-					
-					if schedule_list[9] > 0:
-						schedule_list[9] = int(schedule_list[9] / orderschedules_count) + int( schedule_list[9] % orderschedules_count )
+						
+						if schedule_list[9] > 0:
+							schedule_list[9] = int(schedule_list[9] / orderschedules_count) + int( schedule_list[9] % orderschedules_count )
 
-				else:
-					if schedule_list[6] != None:
+					else:
 						schedule_list[6] = int(schedule_list[6] / orderschedules_count)
 
-					if schedule_list[9] > 0:
-						schedule_list[9] = int(schedule_list[9] / orderschedules_count)
+						if schedule_list[9] > 0:
+							schedule_list[9] = int(schedule_list[9] / orderschedules_count)
+
+				elif schedule_list[6] == 'PREPAID' or schedule_list[6] == 'PREPAIDUBSCRIPTION':
+					schedule_list[6] == schedule_list[5]
+
+				elif schedule_list[6] == 'POSTPAID' or schedule_list[6] == 'POSTPAIDUBSCRIPTION':
+					schedule_list[9] == schedule_list[5]
+
+				else:
+					pass
+
 
 			else:
 				pass
