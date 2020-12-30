@@ -1484,13 +1484,15 @@ def export_users_xls(request):
 			#splitting paid amount and balance
 			if orderschedules_count > 0:
 				if last_orderschedule:
-					schedule_list[6] = int(schedule_list[6] / orderschedules_count) + int( schedule_list[6] % orderschedules_count )
+					if schedule_list[6] != None:
+						schedule_list[6] = int(schedule_list[6] / orderschedules_count) + int( schedule_list[6] % orderschedules_count )
 					
 					if schedule_list[9] > 0:
 						schedule_list[9] = int(schedule_list[9] / orderschedules_count) + int( schedule_list[9] % orderschedules_count )
 
 				else:
-					schedule_list[6] = int(schedule_list[6] / orderschedules_count)
+					if schedule_list[6] != None:
+						schedule_list[6] = int(schedule_list[6] / orderschedules_count)
 
 					if schedule_list[9] > 0:
 						schedule_list[9] = int(schedule_list[9] / orderschedules_count)
