@@ -1483,7 +1483,7 @@ def export_users_xls(request):
 
 			#splitting paid amount and balance
 			if orderschedules_count > 0:
-				if schedule_list[6] == 'BREAKDOWN':
+				if schedule_list[4] == 'BREAKDOWN':
 					if last_orderschedule.id == orderschedule.id:
 						schedule_list[6] = int(schedule_list[6] / orderschedules_count) + int( schedule_list[6] % orderschedules_count )
 						
@@ -1496,15 +1496,14 @@ def export_users_xls(request):
 						if schedule_list[9] > 0:
 							schedule_list[9] = int(schedule_list[9] / orderschedules_count)
 
-				elif schedule_list[6] == 'PREPAID' or schedule_list[6] == 'PREPAIDUBSCRIPTION':
+				elif schedule_list[4] == 'PREPAID' or schedule_list[4] == 'PREPAIDUBSCRIPTION':
 					schedule_list[6] == schedule_list[5]
 
-				elif schedule_list[6] == 'POSTPAID' or schedule_list[6] == 'POSTPAIDUBSCRIPTION':
+				elif schedule_list[4] == 'POSTPAID' or schedule_list[4] == 'POSTPAIDUBSCRIPTION':
 					schedule_list[9] == schedule_list[5]
 
 				else:
 					pass
-
 
 			else:
 				pass
