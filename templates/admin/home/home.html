@@ -204,7 +204,7 @@
             <!-- datepicker -->
             <div class="date-wrapper"><!--date-wrapper-->
             <div class="date-wrapper-inner-resource"><!--date-wrapper-inner-->
-            <div id="working_calendar">
+            <div id="working_calendar" class="date-wrapper-inner">
             <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
             <input type='text' id='sales_target_datepicker' value="{{evaluation_date|date:"d-m-Y"}}" onchange="salestargetcalculation();" class="date-box date_pick">
             <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
@@ -214,7 +214,7 @@
             <!-- monthpicker -->
             <div id="working_calendar2" hidden>
             <button class="prev-month-resource previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type='text' id='working_calendar_month'  name='monthpicker' class="date-box month_pick_resource" >
+            <input type='text' id='working_calendar_month'  name='monthpicker' class="date-box month_pick_resource" onchange="salestargetcalculation();">
             <button class='next-month-resource next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
             <button class='this-month-resource current-date'>Month</button>
             </div>
@@ -251,9 +251,17 @@
                 
                 <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
                 
-                <div class="evaluator-name" align="right"><span id="submittedid{{evaluator.id}}">0.000</span> KD</div>
-                <div class="evaluator-name" ><span id="evaluatorid{{evaluator.id}}">0.0</span> <span>%</span></div>
+                <div class="evaluator-name">
+                  <span  style="float: left;">Approved : <span id="approved_count{{evaluator.id}}">0</span></span>
+                  <span  style="float: right;">Submitted : <span id="submitted_count{{evaluator.id}}">0</span></span>.</div>
+
+                {% comment %} <div class="evaluator-name" align="right"><span id="submittedid{{evaluator.id}}">0.000</span> KD</div>
+                <div class="evaluator-name" ><span id="evaluatorid{{evaluator.id}}">0.0</span> <span>%</span></div> {% endcomment %}
                     <div class="bar-chart-graybg color"><div id="color{{evaluator.id}}"></div></div>
+
+                <div class="evaluator-name">
+                <span id="approved_amount{{evaluator.id}}" style="float: left;">0.000</span>  <span></span>
+                <span id="submitted_amount{{evaluator.id}}" style="float: right;">0.000</span>  <span></span>.</div>
                 </div><!--bar-chart-items chart-column-three-->
                 
                 {% comment %} <div class="bar-chart-items chart-column-four evaluator-name"><!--bar-chart-items chart-column-four-->
@@ -279,9 +287,19 @@
                 </div><!--bar-chart-items chart-column-two-->
                 
                 <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-                <div class="evaluator-name" align="right"><span id="submittedid0">0.000</span> KD</div>
-                <div class="evaluator-name" id="agent_sales_target"><span id="evaluatorid0">0.0</span> <span>%</span></div>
+                
+                <div class="evaluator-name">
+                  <span  style="float: left;">Approved : <span id="approved_count0">0</span></span>
+                  <span  style="float: right;">Submitted : <span id="submitted_count0">0</span></span>.</div>
+
+                {% comment %} <div class="evaluator-name" align="right"><span id="submittedid0">0.000</span> KD</div> 
+                <div class="evaluator-name" id="agent_sales_target"><span id="evaluatorid0">0.0</span> <span>%</span></div>{% endcomment %}
                     <div class="bar-chart-graybg color"><div id="color0"></div></div>
+
+                <div class="evaluator-name">
+                <span id="approved_amount0" style="float: left;">0.000</span> <span></span>
+                <span id="submitted_amount0" style="float: right;">0.000</span> <span></span>.</div>
+
                 </div><!--bar-chart-items chart-column-three-->
                 
                 {% comment %} <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
@@ -618,15 +636,56 @@
 {% comment %} <script src="{% static 'files/js/charts/sales-target-chart.js' %}"></script> {% endcomment %}
 <script type="text/javascript">
 
+//set default month year in monthpicker
+function appendLeadingZeroes(n){
+    if(n <= 9){
+      return "0" + n;
+    }
+    return n
+  }
+
+var date1 = new Date();
+
+var month = appendLeadingZeroes(date1.getMonth()+1);
+var monthstring = month + "/" + date1.getFullYear();
+console.log(month,"lp")
+$('#working_calendar_month').val(monthstring);
+
+//datemonthtoggle
+$('#daymonthtoggle_resource').click(function(){
+        if($(this).is(':checked')){
+            $('#working_calendar2').attr("hidden",false);
+            $('#working_calendar').attr("hidden",true);
+            
+            $('.togglehide').attr("hidden",true);
+            
+        }else{
+            $('#working_calendar2').attr("hidden",true);
+            $('#working_calendar').attr("hidden",false);
+            
+            $('.togglehide').attr("hidden",false);
+            
+        }
+        salestargetcalculation();
+    });
+
 // sales target calculation
     function salestargetcalculation(){
         console.log($('#sales_target_datepicker').val(),"romo");
-        var target_date = $('#sales_target_datepicker').val();
+        if($('#daymonthtoggle_resource').is(':checked')){
+            var dom = 'Month'
+            var target_date = $('#working_calendar_month').val();
+        }else{
+            var dom = 'Date'
+            var target_date = $('#sales_target_datepicker').val();
+        };
+        
         
         $.ajax({
             url: '/bleach_admin/ajax/sales-target-daily/',
             data: {
             'target_date': target_date,
+            'date_or_month': dom
             },
             dataType: "json",
             type: "GET",
@@ -643,7 +702,10 @@
               
                 $('#evaluatorid'+value.evaluator_id+'').text(parseFloat(percent).toFixed(2));
 
-                $('#submittedid'+value.evaluator_id+'').text(parseFloat(value.submitted).toFixed(3));
+                $('#submitted_amount'+value.evaluator_id+'').text(parseFloat(value.submitted).toFixed(3));
+                $('#approved_amount'+value.evaluator_id+'').text(parseFloat(value.amount).toFixed(3));
+                $('#approved_count'+value.evaluator_id+'').text(value.approved_count);
+                $('#submitted_count'+value.evaluator_id+'').text(value.submitted_count);
                 
                 $('#color'+value.evaluator_id+'').attr("style",'width:'+parseFloat(percent).toFixed(2)+'%;');
 

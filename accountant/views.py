@@ -1508,7 +1508,7 @@ def export_users_xls(request):
 					
 					if multi_service_last.id == orderschedule.id:
 					
-						schedule_list[6] = int(schedule_list[6] / multi_service_count) + int( schedule_list[6] % multi_service_count )
+						schedule_list[6] = int(schedule_list[6] / multi_service_count) + float( schedule_list[6] % multi_service_count )
 
 					else:
 
@@ -1518,10 +1518,10 @@ def export_users_xls(request):
 
 				if schedule_list[5] == 'BREAKDOWN':
 					if last_orderschedule.id == orderschedule.id:
-						schedule_list[7] = int(schedule_list[7] / orderschedules_count) + int( schedule_list[7] % orderschedules_count )
+						schedule_list[7] = int(schedule_list[7] / orderschedules_count) + float( schedule_list[7] % orderschedules_count )
 						
 						if schedule_list[10] > 0:
-							schedule_list[10] = int(schedule_list[10] / orderschedules_count) + int( schedule_list[10] % orderschedules_count )
+							schedule_list[10] = int(schedule_list[10] / orderschedules_count) + float( schedule_list[10] % orderschedules_count )
 
 					else:
 						schedule_list[7] = int(schedule_list[7] / orderschedules_count)
@@ -1533,10 +1533,10 @@ def export_users_xls(request):
 					if multi_service_count > 0:
 					
 						if multi_service_last.id == orderschedule.id:
-							schedule_list[7] = int(schedule_list[7] / multi_service_count) + int( schedule_list[7] % multi_service_count )
+							schedule_list[7] = int(schedule_list[7] / multi_service_count) + float( schedule_list[7] % multi_service_count )
 						
 							if schedule_list[10] > 0:
-								schedule_list[10] = int(schedule_list[10] / multi_service_count) + int( schedule_list[10] % multi_service_count )
+								schedule_list[10] = int(schedule_list[10] / multi_service_count) + float( schedule_list[10] % multi_service_count )
 
 						else:
 							schedule_list[7] = int(schedule_list[7] / multi_service_count)
