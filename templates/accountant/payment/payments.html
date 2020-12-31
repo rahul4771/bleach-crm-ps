@@ -325,16 +325,16 @@
   <div class="ticket-form-left"><!--ticket-form-left-->
     <div class=" bold-text common-label"> <label>Report Type</label></div>
       <select class="textBox" name="report_type" id="report_type" required>
-      <option value="paymentlist">GENERAL PAYMENT SHEET</option>
+      {% comment %} <option value="paymentlist">GENERAL PAYMENT SHEET</option>
       <option value="totalsales">TOTAL SALES REPORT</option>
       <option value="acceptedjobs">ACCEPED JOB SHEET</option>
       <option value="rejectedjobs">REJECTED JOB SHEET</option>
       <option value="onetime">SALES REPORT : ONETIME CLEANING</option>
       <option value="subscription">SALES REPORT : SUBSCRIPTION</option>
       <option value="customer">CUSTOMER PAYMENT REPORT</option>
-      <option value="customeroutstanding">CUSTOMER OUTSTANDING PAYMENTS REPORT</option>
+      <option value="customeroutstanding">CUSTOMER OUTSTANDING PAYMENTS REPORT</option> {% endcomment %}
       <option value="transactionhistory">TRANSACTION HISTORY</option>
-      <option value="salesdetails">SALES DETAILS</option>
+      <option value="salesdetails">SALES REPORT</option>
       </select>
       </div>
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
