@@ -220,6 +220,9 @@
 {% endfor %}
 {% endfor %}
 <br>
+<a href="{% url 'evaluator:evaluator-addnewservice' evaluation_details.id %}">
+<input name="add" type="button" value="Add New Service" class="add-button1">
+</a>
 </div><!-- link formset end -->
  <div align="center" onclick="SubmitQuatationForm(this);"><input class="assignButton" name="submit" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>
 </form> 
