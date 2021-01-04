@@ -214,8 +214,8 @@
                 <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> <b>{{orderschedule.customer_address.apartment}}</b>: {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}}, {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}}, {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %} {{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</div>
                 <br>
 
-                {% if orderschedule.customer_address.customer.location %}
-                <div class="common-gray-text align-left"><i class="fa fa-globe fa-lg" aria-hidden="true" style="color:blue;"></i> <a href="{{orderschedule.customer_address.customer.location}}">GPS Location</a></div>
+                {% if orderschedule.customer_address.gps_location %}
+                <div class="common-gray-text align-left"><i class="fa fa-globe fa-lg" aria-hidden="true" style="color:blue;"></i> <a href="{{orderschedule.customer_address.gps_location}}">GPS Location</a></div>
                 <br>
                 {% endif %}
 
