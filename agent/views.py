@@ -2627,6 +2627,8 @@ class MakeQuatationPhase2(IsAgent,View):
 							EvaluationMedia.objects.create(
 									evaluation_book=service_form_save,
 									media=media,
+									media_type='PHOTO',
+									taken_status='AGENT_TAKEN'
 									)
 
 					#for updating cost details in evaluation details
@@ -2931,6 +2933,8 @@ class MakeQuatationPhase2Edit(IsAgent,View):
 								EvaluationMedia.objects.create(
 										evaluation_book_id=old_form_id,
 										media=media,
+										media_type='PHOTO',
+										taken_status='AGENT_TAKEN'
 										)
 
 						#for updating cost details in evaluation details and evaluation
@@ -3311,6 +3315,8 @@ class MakeQuatationPhase2DuplicateEdit(IsAgent,View):
 								EvaluationMedia.objects.create(
 										evaluation_book_id=old_form_id,
 										media=media,
+										media_type='PHOTO',
+										taken_status='AGENT_TAKEN'
 										)
 
 						#for updating cost details in evaluation details and evaluation
@@ -3497,6 +3503,8 @@ class AddNewService(IsAgent,View):
 							EvaluationMedia.objects.create(
 									evaluation_book=service_form_save,
 									media=media,
+									media_type='PHOTO',
+									taken_status='AGENT_TAKEN'
 									)
 
 					#for updating cost details in evaluation details
