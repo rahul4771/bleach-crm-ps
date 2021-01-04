@@ -15,7 +15,7 @@
 <div class="card-row"><!--card-row-->
             <div class="card-column whitebg blue-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-active-workers-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-active-workers-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Workers</h1>
             	<h2 class="blue-text"><label>Active<span>{{total_active_workers}}</span></label> </h2>
@@ -26,7 +26,7 @@
         
             <div class="card-column whitebg green-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-manhours-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-manhours-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Man Occupied Hours</h1>
             	<h2 class="green-text"><label>Today<span id="today_man_hour"></span></label>  </h2>
@@ -37,7 +37,7 @@
         
             <div class="card-column whitebg orange-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-man-average-hours-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-man-average-hours-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Man Occupied Average Hours</h1>
             	<h2 class="orange-text"><label>Today<span id="today_avg_man_hour"></span></label> </h2>
@@ -48,7 +48,7 @@
         
             <div class="card-column whitebg red-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-cleaning-red-job-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-cleaning-red-job-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Cleaning Jobs</h1>
             	<h2 class="red-text"><label>Today<span>{{today_cleaning_job_count}}</span></label> </h2>
@@ -431,7 +431,7 @@
       </div><!--ticket-form-left--> 
   </div><!--ticket-wrapper-row ticket-forms-boxes-->
      
-    <div class="edit-collapse collapsible1"><a href="#" ><img src="{% static 'files/images/edit.svg' %}"></a></div>  
+    <div class="edit-collapse collapsible1"><a href="#" ><img src="{% static 'files/images/edit.png' %}"></a></div>  
     <div class="popup-collapse popup-collapse1"><!--popup-collapse--> 
     <form method="post" enctype= "multipart/form-data">
     {%csrf_token%}  
@@ -502,7 +502,7 @@
       </div><!--ticket-form-left--> 
   </div><!--ticket-wrapper-row ticket-forms-boxes-->
      
-    <div class="edit-collapse collapsible2"><a href="#" ><img src="{% static 'files/images/edit.svg' %}"></a></div>  
+    <div class="edit-collapse collapsible2"><a href="#" ><img src="{% static 'files/images/edit.png' %}"></a></div>  
     <div class="popup-collapse popup-collapse2"><!--popup-collapse--> 
     <form method="post" enctype= "multipart/form-data">
     {%csrf_token%}  

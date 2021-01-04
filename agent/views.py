@@ -8,7 +8,9 @@ from django.http import HttpResponse,JsonResponse
 from django.conf import settings
 from bleach_crm_ps.permissions import IsAgent
 from bleach_crm_ps.utils import get_error
-
+import glob
+import os
+from os.path import splitext
 import requests
 
 import pandas as pd
@@ -607,7 +609,7 @@ def CleaningExistingDates(request):
 
 # Create your views here.
 class AgentHome(IsAgent,View):
-	def get(self,request):		
+	def get(self,request):
 
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
@@ -1527,31 +1529,25 @@ class FeedbackDetails(IsAgent,View):
 
 		#FILTER
 		fil_minimumstarring       		  = request.GET.get('minimumstarring')
-		fil_maximumstarring       		  = request.GET.get('maximumstarring')
+		
 		#filters
 		filters=[]
 		if fil_minimumstarring:
-			case1 = Q(avg_starring__gte=fil_minimumstarring)
+			if fil_minimumstarring == 'RATED':
+				case1 = Q(is_feedback_marked=True)
+			elif fil_minimumstarring == 'NOT_RATED':
+				case1 = Q(is_feedback_marked=False)
+			else:
+				case1 = Q(Q(avg_starring__gte=fil_minimumstarring)&Q(avg_starring__lt=float(fil_minimumstarring)+1))
 			filters.append(case1)
 
-		if fil_maximumstarring:
-			case2 = Q(avg_starring__lte=fil_maximumstarring)
-			filters.append(case2)
-
-		if fil_minimumstarring or fil_maximumstarring:
-			if fil_minimumstarring and fil_maximumstarring:
-				if fil_minimumstarring <= fil_maximumstarring:
-					filters              = functools.reduce(operator.and_,filters)
-					order_wise_feedbacks = order_wise_feedbacks.filter(filters)
-				else:
-					messages.error(request,"Minimum Starring Should be less than Maximum Starring")
-			else:
-				filters              = functools.reduce(operator.and_,filters)
-				order_wise_feedbacks = order_wise_feedbacks.filter(filters)
+		if fil_minimumstarring :
+			filters              = functools.reduce(operator.and_,filters)
+			order_wise_feedbacks = order_wise_feedbacks.filter(filters)
 
 		#to find starring caluculations in whole system		
-		full_order_wise_feedbacks     = order_wise_feedbacks
-		total_feedbacks               = order_wise_feedbacks.filter(is_feedback_marked=True).count()
+		full_order_wise_feedbacks     = Order.objects.select_related('evaluation__customer').filter(is_active=True).order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField())).filter(Q(is_feedback_marked=True))		
+		total_feedbacks               = full_order_wise_feedbacks.filter(is_feedback_marked=True).count()
 
 
 		#PAGINATION FEEDBACKS
@@ -1580,7 +1576,7 @@ class FeedbackDetails(IsAgent,View):
 		page_range = list(paginator.page_range)[start_index:end_index]
 		entry_per_page=(order_wise_feedbacks.end_index())-(order_wise_feedbacks.start_index())+1
 
-		return render(request,'agent/feedback/feedbacks.html',{"total_feedbacks":total_feedbacks,"order_wise_feedbacks":order_wise_feedbacks,"full_order_wise_feedbacks":full_order_wise_feedbacks,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_minimumstarring":fil_minimumstarring,"fil_maximumstarring":fil_maximumstarring,"fil_service_type":fil_service_type,})
+		return render(request,'agent/feedback/feedbacks.html',{"total_feedbacks":total_feedbacks,"order_wise_feedbacks":order_wise_feedbacks,"full_order_wise_feedbacks":full_order_wise_feedbacks,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_minimumstarring":fil_minimumstarring,"fil_service_type":fil_service_type,})
 
 class FeedbackAdvanced(IsAgent,View):
 	def get(self,request,client_id,order_id):

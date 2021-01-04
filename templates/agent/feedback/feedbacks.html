@@ -100,37 +100,7 @@
                 </label>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-<hr class="hr-dashedpad"> 
-<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-  <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>Minimum Starring</label></div>
-				<label for="favcity">
-                <select name="minimumstarring_filter" id="minimumstarring_filter_id">
-                <option value=''>---ALL---</option>
-                <option value="0" {% if fil_minimumstarring == '0' %}selected{% endif %}>0</option>
-                <option value="1" {% if fil_minimumstarring == '1' %}selected{% endif %}>1</option>
-                <option value="2" {% if fil_minimumstarring == '2' %}selected{% endif %}>2</option>
-                <option value="3" {% if fil_minimumstarring == '3' %}selected{% endif %}>3</option>
-                <option value="4" {% if fil_minimumstarring == '4' %}selected{% endif %}>4</option>
-                <option value="5" {% if fil_minimumstarring == '5' %}selected{% endif %}>5</option>                
-              </select>
-                </label>
-  </div><!--ticket-form-left-->
-  <div class="ticket-form-right"><!--ticket-form-right-->
-  				<div class=" bold-text common-label"> <label>Maximum Starring</label></div>
-                <label for="favcity">
-                <select name="maximumstarring_filter" id="maximumstarring_filter_id">
-                <option value=''>---ALL---</option>
-                <option value="0" {% if fil_maximumstarring == '0' %}selected{% endif %}>0</option>
-                <option value="1" {% if fil_maximumstarring == '1' %}selected{% endif %}>1</option>
-                <option value="2" {% if fil_maximumstarring == '2' %}selected{% endif %}>2</option>
-                <option value="3" {% if fil_maximumstarring == '3' %}selected{% endif %}>3</option>
-                <option value="4" {% if fil_maximumstarring == '4' %}selected{% endif %}>4</option>
-                <option value="5" {% if fil_maximumstarring == '5' %}selected{% endif %}>5</option>                
-              </select>
-                </label>
-  </div><!--ticket-form-right-->
-</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+
 <hr class="hr-dashedpad"> 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
@@ -144,8 +114,20 @@
               </select>
                 </label>
   </div><!--ticket-form-left-->
-  <div class="ticket-form-right hide-m"><!--ticket-form-right-->
-  				 
+  <div class="ticket-form-right"><!--ticket-form-right-->
+        <div class=" bold-text common-label"> <label>Rating</label></div>
+        <label for="favcity">
+                <select name="minimumstarring_filter" id="minimumstarring_filter_id">
+                <option value=''>---ALL---</option>
+                <option value="RATED" {% if fil_minimumstarring == 'RATED' %}selected{% endif %}>Rated</option>
+                <option value="NOT_RATED" {% if fil_minimumstarring == 'NOT_RATED' %}selected{% endif %}>Not Rated</option>
+                <option value="1" {% if fil_minimumstarring == '1' %}selected{% endif %}>1</option>
+                <option value="2" {% if fil_minimumstarring == '2' %}selected{% endif %}>2</option>
+                <option value="3" {% if fil_minimumstarring == '3' %}selected{% endif %}>3</option>
+                <option value="4" {% if fil_minimumstarring == '4' %}selected{% endif %}>4</option>
+                <option value="5" {% if fil_minimumstarring == '5' %}selected{% endif %}>5</option>                
+              </select>
+                </label>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
 <div align="center"> <input class="assignButton" name="assing" type="button" onclick="set_params_go({});" value="Submit"> <input class="cancel-Button close-btn arrow-close" name="cancel" type="button" value="Reset"></div>

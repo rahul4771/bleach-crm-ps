@@ -39,28 +39,28 @@
                 
                     <div class="order-progress-widget order-progress-widget-column1"><!--order-progress-widget order-progress-widget-column1-->
                         <div class="evaluation">Tickets</div>
-                        <div class="evaluation-icon"><img src="{% static 'files/images/tickets-green.svg' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-icon"><img src="{% static 'files/images/tickets-green.png' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
                     </div><!--order-progress-widget order-progress-widget-column1-->
                    
                     <div class="order-progress-widget order-progress-widget-column2"><!--order-progress-widget order-progress-widget-column2-->
                         <div class="evaluation">Investigation</div>
-                        <div class="evaluation-icon">{% if followup_details.status == 'INVESTIGATOR_APPROVED' or followup_details.status == 'FOLLOWUP_IN_PROGRESS' or followup_details.status == 'FOLLOWUP_CLOSED' %}<img src="{% static 'files/images/investigation-green.svg' %}" class="orderEval-icon %}"><div class="evaluation-status">Completed</div>{% else %}<img src="{% static 'files/images/investigation-gray.svg' %}" class="orderEval-icon %}">{% if followup_details.status == 'FOLLOWUP_CANCELLED' %}<div class="evaluation-status">Cancelled</div>{% else %}<div class="evaluation-status">Waiting</div>{% endif %} {% endif %}</div>
+                        <div class="evaluation-icon">{% if followup_details.status == 'INVESTIGATOR_APPROVED' or followup_details.status == 'FOLLOWUP_IN_PROGRESS' or followup_details.status == 'FOLLOWUP_CLOSED' %}<img src="{% static 'files/images/investigation-green.png' %}" class="orderEval-icon %}"><div class="evaluation-status">Completed</div>{% else %}<img src="{% static 'files/images/investigation-gray.png' %}" class="orderEval-icon %}">{% if followup_details.status == 'FOLLOWUP_CANCELLED' %}<div class="evaluation-status">Cancelled</div>{% else %}<div class="evaluation-status">Waiting</div>{% endif %} {% endif %}</div>
                     </div><!--order-progress-widget order-progress-widget-column2-->                  
                     
                     <div class="order-progress-widget order-progress-widget-column5"><!--order-progress-widget order-progress-widget-column5-->
                         <div class="evaluation">Cleaning</div>
-                        <div class="evaluation-icon">{% if followup_details.status == 'FOLLOWUP_IN_PROGRESS' or followup_details.status == 'FOLLOWUP_CLOSED' %}<img src="{% static 'files/images/order-green-cleaning.svg' %}" class="orderEval-icon"><div class="evaluation-status">Completed</div>{% else %}<img src="{% static 'files/images/order-gray-cleaning.svg' %}" class="orderEval-icon"><div class="evaluation-status">Waiting</div>{% endif %}</div>
+                        <div class="evaluation-icon">{% if followup_details.status == 'FOLLOWUP_IN_PROGRESS' or followup_details.status == 'FOLLOWUP_CLOSED' %}<img src="{% static 'files/images/order-green-cleaning.png' %}" class="orderEval-icon"><div class="evaluation-status">Completed</div>{% else %}<img src="{% static 'files/images/order-gray-cleaning.png' %}" class="orderEval-icon"><div class="evaluation-status">Waiting</div>{% endif %}</div>
                     </div><!--order-progress-widget order-progress-widget-column5-->                      
                     
                     <div class="order-progress-widget order-progress-widget-column6"><!--order-progress-widget order-progress-widget-column6-->
                         <div class="evaluation">Closed</div>
                         
                         {% if followup_details.status == 'FOLLOWUP_CLOSED' %}
-                        <div class="evaluation-icon"><img src="{% static 'files/images/closed-green.svg' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-icon"><img src="{% static 'files/images/closed-green.png' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
                         {% else %}
-                        <div class="evaluation-icon"><img src="{% static 'files/images/closed-gray.svg' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-icon"><img src="{% static 'files/images/closed-gray.png' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Waiting</div>
                         {% endif %}
 
@@ -71,7 +71,7 @@
         <div class="order-right-fixed"><!--order-right-fixed-->
             <div class="order-card-column whitebg red-border clickable-row-list" data-href="{% url 'evaluator:evaluator-client-orders' client_details.id %}"><!--order-card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-orders-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-orders-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Orders</h1>
                 <h2 class="red-text"><label>Active<span>{{active_orders_count}}</span></label> </h2>
@@ -166,7 +166,7 @@
         <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
             <div class="order-common-date">{{follow_up_scheduler.start_at}}</div>
                     <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-                        <div class="team-profile-pic"><img src="{% static 'files/images/team-leader.svg' %}"></div>
+                        <div class="team-profile-pic"><img src="{% static 'files/images/team-leader.png' %}"></div>
                     </div><!--order-clean-team-widget order-clean-team-widget-column1-->
                     
                 <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column1-->
@@ -184,7 +184,7 @@
         
         <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
             <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-                <div class="team-profile-pic"><img src="{% static 'files/images/team-member.svg' %}"></div>
+                <div class="team-profile-pic"><img src="{% static 'files/images/team-member.png' %}"></div>
             </div><!--order-clean-team-widget order-clean-team-widget-column1-->
             
             <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
@@ -203,7 +203,7 @@
 
         <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
             <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-                <div class="team-profile-pic"><img src="{% static 'files/images/driver.svg' %}"></div>
+                <div class="team-profile-pic"><img src="{% static 'files/images/driver.png' %}"></div>
             </div><!--order-clean-team-widget order-clean-team-widget-column1-->
             
             <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->

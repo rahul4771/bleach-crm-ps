@@ -702,34 +702,20 @@ class FeedbackDetails(IsAdmin,View):
 
 		#FILTER
 		fil_minimumstarring       		  = request.GET.get('minimumstarring')	
-		fil_maximumstarring       		  = request.GET.get('maximumstarring')
+		# fil_maximumstarring       		  = request.GET.get('maximumstarring')
 		#filters 	
 		filters=[] 
 		if fil_minimumstarring: 
-		    case1 = Q(avg_starring__gte=fil_minimumstarring)
+		    case1 = Q(Q(avg_starring__gte=fil_minimumstarring)&Q(avg_starring__lt=float(fil_minimumstarring)+1))
 		    filters.append(case1)
-		
-		if fil_maximumstarring: 
-		    case2 = Q(avg_starring__lte=fil_maximumstarring)
-		    filters.append(case2)
 
-		if fil_minimumstarring or fil_maximumstarring: 
-			if fil_minimumstarring and fil_maximumstarring:
-				if fil_minimumstarring <= fil_maximumstarring:
-					filters              = functools.reduce(operator.and_,filters)
-					order_wise_feedbacks = order_wise_feedbacks.filter(filters)
-				else:
-					messages.error(request,"Minimum Starring Should be less than Maximum Starring")    
-			else:
-				filters              = functools.reduce(operator.and_,filters)
-				order_wise_feedbacks = order_wise_feedbacks.filter(filters)	    
-
-
-
+		if fil_minimumstarring : 
+			filters = functools.reduce(operator.and_,filters)
+			order_wise_feedbacks = order_wise_feedbacks.filter(filters)					    
 
 		#to find starring caluculations in whole system
-		full_order_wise_feedbacks     = order_wise_feedbacks
-		total_feedbacks               = order_wise_feedbacks.filter(is_feedback_marked=True).count()
+		full_order_wise_feedbacks     = Order.objects.select_related('evaluation__customer').filter(is_active=True).order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField())).filter(Q(is_feedback_marked=True))		
+		total_feedbacks               = full_order_wise_feedbacks.filter(is_feedback_marked=True).count()
 				
 				
 		#PAGINATION FEEDBACKS		
@@ -758,7 +744,7 @@ class FeedbackDetails(IsAdmin,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(order_wise_feedbacks.end_index())-(order_wise_feedbacks.start_index())+1
 
-		return render(request,'admin/feedback/feedbacks.html',{"total_feedbacks":total_feedbacks,"order_wise_feedbacks":order_wise_feedbacks,"full_order_wise_feedbacks":full_order_wise_feedbacks,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_minimumstarring":fil_minimumstarring,"fil_maximumstarring":fil_maximumstarring,"fil_service_type":fil_service_type,})
+		return render(request,'admin/feedback/feedbacks.html',{"total_feedbacks":total_feedbacks,"order_wise_feedbacks":order_wise_feedbacks,"full_order_wise_feedbacks":full_order_wise_feedbacks,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_minimumstarring":fil_minimumstarring,"fil_service_type":fil_service_type,})
 
 class FeedbackAdvanced(IsAdmin,View):
 	def get(self,request,client_id,order_id):
@@ -1472,45 +1458,80 @@ def SalesTargetDaily(request):
 	target_dict = dict()
 	evaluators_sales_target = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
 	target_date = request.GET.get('target_date')
-	target_date = datetime.strptime(target_date, '%d-%m-%Y')
+	date_or_month = request.GET.get('date_or_month')
+	print(date_or_month,"dom")
 
-	target_date_start = target_date.replace(hour=0,minute=0,second=0,microsecond=0)
-	target_date_end= target_date+timedelta(1)
+	if date_or_month == 'Month':
+		#month year range making
+		month,year = target_date.split("/")
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+		print(monthdate1,monthdate2,"msdt")
+		daterange  = pd.date_range(monthdate1, monthdate2)
+	else:
+		target_date = datetime.strptime(target_date, '%d-%m-%Y')
+		target_date_start = target_date.replace(hour=0,minute=0,second=0,microsecond=0)
+		target_date_end= target_date+timedelta(1)
 
 	for evaluator in evaluators_sales_target:
 		# total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,order_status='ORDER_CLOSED',created__range=(target_date_start,target_date_end)).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
-		total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(target_date_start,target_date_end),evaluation__quatation_status='APPROVED').aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
-		total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(target_date_start,target_date_end)).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
 		
-		if not total_sales_approved:
-			total_sales_approved = 0.0
-		if not total_sales_submitted:
-			total_sales_submitted = 0.0
+		if date_or_month == 'Month':
+			total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(monthdate1,monthdate2),evaluation__quatation_status='APPROVED')
+			total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(monthdate1,monthdate2))
+		else:
+			total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(target_date_start,target_date_end),evaluation__quatation_status='APPROVED')
+			total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(target_date_start,target_date_end))
 
-		print(total_sales_approved,total_sales_submitted,"evat")
+		total_sales_approved_amount = total_sales_approved.aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+		total_sales_approved_count = total_sales_approved.count()
+		
+		total_sales_submitted_amount = total_sales_submitted.aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+		total_sales_submitted_count = total_sales_submitted.count()
+
+		if not total_sales_approved_amount:
+			total_sales_approved_amount = 0.0
+		if not total_sales_submitted_amount:
+			total_sales_submitted_amount = 0.0
+
+		print(total_sales_approved_amount,total_sales_submitted_amount,"evat")
 
 		evaluator_target_dict = {
 		"evaluator_id" : evaluator.id,
-		"amount" : total_sales_approved,
-		"submitted":total_sales_submitted
+		"amount" : total_sales_approved_amount,
+		"submitted":total_sales_submitted_amount,
+		"approved_count":total_sales_approved_count,
+		"submitted_count":total_sales_submitted_count
 		}
 		data.append(evaluator_target_dict)
 	print(data,"here")
 
-	agent_total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(target_date_start,target_date_end),evaluation__quatation_status='APPROVED').aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
-	agent_total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(target_date_start,target_date_end)).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+	if date_or_month == 'Month':
+		agent_total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(monthdate1,monthdate2),evaluation__quatation_status='APPROVED')
+		agent_total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(monthdate1,monthdate2))
+	else:
+		agent_total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(target_date_start,target_date_end),evaluation__quatation_status='APPROVED')
+		agent_total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(target_date_start,target_date_end))
 	
-	if not agent_total_sales_approved:
-		agent_total_sales_approved = 0.0
-	if not agent_total_sales_submitted:
-		agent_total_sales_submitted = 0.0
+	agent_sales_approved_amount = agent_total_sales_approved.aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+	agent_sales_approved_count = agent_total_sales_approved.count()
+	
+	agent_sales_submitted_amount = agent_total_sales_submitted.aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+	agent_sales_submitted_count = agent_total_sales_submitted.count()
 
-	print(agent_total_sales_approved,agent_total_sales_submitted,"aget")
+	if not agent_sales_approved_amount:
+		agent_sales_approved_amount = 0.0
+	if not agent_sales_submitted_amount:
+		agent_sales_submitted_amount = 0.0
+
+	print(agent_sales_approved_amount,agent_sales_submitted_amount,"aget")
 		
 	agent_target_dict = {
 		"evaluator_id" : 0,
-		"amount" : agent_total_sales_approved,
-		"submitted":agent_total_sales_submitted
+		"amount" : agent_sales_approved_amount,
+		"submitted":agent_sales_submitted_amount,
+		"approved_count":agent_sales_approved_count,
+		"submitted_count":agent_sales_submitted_count
 		}
 	data.append(agent_target_dict)
 	return JsonResponse(data,safe=False)

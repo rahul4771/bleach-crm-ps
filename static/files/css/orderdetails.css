@@ -20,8 +20,8 @@ a:visited:hover {color: #22a1c4; text-decoration: none;}
 .forgot-password a:hover{ color:#666;} 
 .kw-login-midwrapper label{ display:block; margin-bottom:12px;}
 .kw-login-midwrapper label ::placeholder { color:#404040; }
-.kw-login-midwrapper .login-username{ width:100%; box-sizing:border-box; background:url(../images/login-username.svg) no-repeat left; background-size: 18px 18px; background-position: 5px 5px; margin:0; padding:8px 0px 8px 30px; border:1px solid #8bd4e8; border-radius:5px; z-index:5; }
-.kw-login-midwrapper .login-password{ width:100%; box-sizing:border-box; background:url(../images/login-password.svg) no-repeat left; background-size: 18px 18px; background-position: 5px 7px; margin:0; padding:8px 0px 8px 30px; border:1px solid #8bd4e8; border-radius:5px; z-index:5; }
+.kw-login-midwrapper .login-username{ width:100%; box-sizing:border-box; background:url(../images/login-username.png) no-repeat left; background-size: 18px 18px; background-position: 5px 5px; margin:0; padding:8px 0px 8px 30px; border:1px solid #8bd4e8; border-radius:5px; z-index:5; }
+.kw-login-midwrapper .login-password{ width:100%; box-sizing:border-box; background:url(../images/login-password.png) no-repeat left; background-size: 18px 18px; background-position: 5px 7px; margin:0; padding:8px 0px 8px 30px; border:1px solid #8bd4e8; border-radius:5px; z-index:5; }
 .sign-in-button{ color:#fff; border:none; border-radius:5px; background:#2e4e85; transition: .4s; padding:8px 30px; cursor:pointer; }
 .sign-in-button:hover{background:#11bae7;}
 .kw-left-area{height: 280px; width:30%; box-sizing:border-box; background:#11bae7; position:absolute; left:0; padding:70px 25px 0 25px; margin:0 auto; text-align:center; }
@@ -137,17 +137,17 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .user-typer-wrapper .column-right .user-name{ font-size:20px; line-height:18px; margin:0; padding:0; color:#333; }
 .user-typer-wrapper .column-right .user-type{ font-size:14px; line-height:16px; margin:0; padding:0; color:#666; }*/
 .card-column:hover { box-shadow: 0 10px 28px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.10);}
-.lhs-home{background:url(../images/lhs-home.svg) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block; }
-.lhs-orders{background:url(../images/lhs-orders.svg) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-clients{background:url(../images/lhs-clients.svg) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-tickets{background:url(../images/lhs-tickets.svg) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-payments{background:url(../images/lhs-payments.svg) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-feedbacks{background:url(../images/lhs-feedbacks.svg) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-resources{background:url(../images/lhs-resources.svg) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-new-enquiry{background:url(../images/lhs-newenquiry.svg) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-addfeedback{background:url(../images/lhs-addfeedbacks.svg) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-raiseticket{background:url(../images/lhs-raietickets.svg) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-collection{background:url(../images/lhs-collections.svg) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
+.lhs-home{background:url(../images/lhs-home.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block; }
+.lhs-orders{background:url(../images/lhs-orders.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
+.lhs-clients{background:url(../images/lhs-clients.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
+.lhs-tickets{background:url(../images/lhs-tickets.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
+.lhs-payments{background:url(../images/lhs-payments.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
+.lhs-feedbacks{background:url(../images/lhs-feedbacks.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
+.lhs-resources{background:url(../images/lhs-resources.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
+.lhs-new-enquiry{background:url(../images/lhs-newenquiry.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
+.lhs-addfeedback{background:url(../images/lhs-addfeedbacks.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
+.lhs-raiseticket{background:url(../images/lhs-raietickets.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
+.lhs-collection{background:url(../images/lhs-collections.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
 .green-line{ border-left:4px solid #3cbbb1 !important; }
 .blue-line{ border-left:4px solid #528ce6;}
 .orange-line{ border-left:45px solid #ff8c56;}
@@ -217,19 +217,19 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
   border: 1px solid #999;
   padding: 6px 15px 6px 35px;
   margin-bottom: 10px;
-  background: url(../images/download.svg) no-repeat left #fff; background-size:20px; background-position: 12px; 
+  background: url(../images/download.png) no-repeat left #fff; background-size:20px; background-position: 12px; 
   cursor: pointer; transition: .4s;
  }
-#downloadorder:hover{ background: url(../images/download.svg) no-repeat left #E5E5E5; background-size:20px; background-position: 12px; }
+#downloadorder:hover{ background: url(../images/download.png) no-repeat left #E5E5E5; background-size:20px; background-position: 12px; }
 
 #printorder { font-size:15px; color:#555;
   border: 1px solid #999;
   padding: 6px 15px 6px 35px;
   margin-bottom: 10px;
-  background: url(../images/print.svg) no-repeat left #fff; background-size:20px; background-position: 12px; 
+  background: url(../images/print.png) no-repeat left #fff; background-size:20px; background-position: 12px; 
   cursor: pointer; transition: .4s;
  }
-#printorder:hover{ background: url(../images/print.svg) no-repeat left #E5E5E5; background-size:20px; background-position: 12px; }
+#printorder:hover{ background: url(../images/print.png) no-repeat left #E5E5E5; background-size:20px; background-position: 12px; }
 
 /*.divtable { border:1px solid !important;
     white-space:nowrap;
@@ -324,7 +324,7 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .leftbox-item2{flex-shrink:0; align-self:center;}
 .date-picker-resource{ border:1px solid #ccc; border-radius:120px; height:35px; line-height:35px; width:100px; text-align:center; display:inline-block; /*position:absolute; right:0px; top:18px; bottom:0;*/}
 .day-month-togggle-button{ border:1px solid #ccc; border-radius:120px; height:35px; line-height:35px; width:200px; font-size:13px; text-align:center;  display:inline-block;}
-.sort-icon{ background:url(../images/sort-icon.svg) no-repeat; width:8px; height:8px; display:block; position:absolute; right:6px; top:16px; cursor:pointer; } 
+.sort-icon{ background:url(../images/sort-icon.png) no-repeat; width:8px; height:8px; display:block; position:absolute; right:6px; top:16px; cursor:pointer; } 
 .resource-scroll {position:relative; width:100%;overflow:hidden;  margin:0 auto;}
 .resource-scroll table {width:100%;	margin:auto;border-collapse:separate;border-spacing:0; border-left:1px solid #ccc; border-bottom:1px solid #ccc;}
 .resource-scroll th{ border-top:none;border-bottom:none !important; border-left:none !important;  border:1px solid #ccc;}
@@ -349,7 +349,7 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .scrollable > div ::-webkit-scrollbar-track { background: #f0f0f0; box-shadow: 0 0 2px rgba(0, 0, 0, 0.15) inset;}
 .scrollable > div ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 6px;}
 .nav li.panel { margin-bottom: 0; background-color: #000; border: none; border-radius: 0; -webkit-box-shadow: none; box-shadow: none; }
-.active-right{ position:absolute; right:6px; top:15px; background:url(../images/active-arrow.svg) no-repeat right; display:block; background-size: 18px 18px; width:16px !important; height:16px !important; background-position: 0px 0px;}
+.active-right{ position:absolute; right:6px; top:15px; background:url(../images/active-arrow.png) no-repeat right; display:block; background-size: 18px 18px; width:16px !important; height:16px !important; background-position: 0px 0px;}
 .wrapper { position: relative; min-height: 100vh; height: auto;}
 .navbar {margin-bottom: 0;}
  .main-sidebar { box-sizing: border-box; width: 230px; position: fixed; top: 56px; left: 0; z-index:999; height: calc(100vh - 56px);/*  height: 100vh !important;*/  
@@ -754,7 +754,7 @@ label[for=favcity] select:focus {outline: 1px dotted #A9A9A9;}
 .login-inner-right .sign-button:hover{ background:#043e77;}
 .login-inner-right .reset-button{ background:#fff; margin:0; padding:6px 40px; color:#666; border:1px solid #01509f; border-radius:100px;transition: .4s;}
 .login-inner-right .reset-button:hover{ background:#666; color:#fff;}
-.delete-button{ background:url(../images/bin.svg); background-repeat:no-repeat; background-size:cover; margin:0; width:20px; height:20px; color:#666; border:none; transition: .4s;}
+.delete-button{ background:url(../images/bin.png); background-repeat:no-repeat; background-size:cover; margin:0; width:20px; height:20px; color:#666; border:none; transition: .4s;}
 .login-inner-right p{ margin:0 0 10px 0; padding:0;}
 .login-logo{ width:60px; height:60px; position:absolute; top:150px; right:-35px; border:5px solid #fff; background:#0454a5; border-radius:150px;}
 .login-logo img{ width:80%;margin:15px auto 0  5px; text-align:center; }

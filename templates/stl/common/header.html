@@ -39,7 +39,7 @@
                     {% if request.user.profile_image %}
                     <img class="profile-avatar" src="{{request.user.profile_image.url}}">
                     {% else %}
-                    <img class="profile-avatar" src="{% static 'files/images/usertype-avtar.svg' %}">
+                    <img class="profile-avatar" src="{% static 'files/images/usertype-avtar.png' %}">
                     {% endif %}
                 </li>
                 <li class="profile-name">{{request.user.name}}<br><span>Senior Team Leader</span></li>

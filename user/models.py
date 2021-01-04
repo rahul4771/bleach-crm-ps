@@ -85,6 +85,7 @@ class UserProfile(AbstractUser):
     profile_image	= models.ImageField(upload_to='profile_photo/',blank=True,null=True,validators=[FileExtensionValidator(allowed_extensions=['jpg','jpeg','png']),validate_image],)
     customer_type   = models.CharField(max_length=20,blank=True,null=True,choices=CUSTOMER_TYPE_CHOICES)
 
+    location        = models.TextField(max_length=500,blank=True,null=True)
     date_day        = models.CharField(max_length=2,blank=False,null=False)
     date_month      = models.CharField(max_length=2,blank=False,null=False)
     date_year       = models.CharField(max_length=4,blank=True,null=True)

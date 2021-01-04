@@ -41,14 +41,21 @@
       {% endif %}
 
       <div class="checkin-form-left"><!--checkin-form-left-->
+      <i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i>
         <b>{{detail.address.apartment}}</b>: {% if detail.address.floor %}{{detail.address.floor}}, {% else %}{% endif %} {{detail.address.building}}, {{detail.address.block}}, {{detail.address.street}}, {% if detail.address.avenue %}{{detail.address.avenue}}, {% else %}{% endif %} {{detail.address.area.name}}, {{detail.address.governorate.name}} 
+      
+      {% if detail.address.customer.location %}
+      <br><br>
+      <i class="fa fa-globe fa-lg" aria-hidden="true" style="color:blue;"></i>
+        <a href="{{detail.address.customer.location}}">GPS Location</a>
+      {% endif %}
       </div><!--checkin-form-left-->
       <div class="checkin-form-left align-center"><!--checkin-form-left-->
         {% if detail.total_cost == 0.0 %}
-        <div class="check-in-icons"><img src="{% static 'files/images/evaluation-pending-icon.svg' %}"></div>
+        <div class="check-in-icons"><img src="{% static 'files/images/evaluation-pending-icon.png' %}"></div>
         <div class="lg-text yellow-text">Evaluation Pending</div>
         {% else %}
-        <div class="check-in-icons"><img src="{% static 'files/images/price-icon.svg' %}"></div>
+        <div class="check-in-icons"><img src="{% static 'files/images/price-icon.png' %}"></div>
         <div class="lg-text blue-text">{{detail.total_cost|floatformat:3}} KD</div>
         {% endif %}
       </div><!--checkin-form-left-->

@@ -16,7 +16,7 @@
        	<div class="clients-card-column clients-column-left"><!--clients-card-column clients-column-left-->
         <div class="card-column whitebg blue-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-pending-payment-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-pending-payment-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
               	<!--  <h1>Evaluations</h1>-->
             	<h2 class="blue-text"><label>Pending <br>Payments<span>{{total_pending_amount|default_if_none:'0.00'|floatformat:'2'}}</span><br><span class="orders">Rate</span></label> </h2>
@@ -27,7 +27,7 @@
         
             <div class="card-column whitebg green-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-pending-payment-orders-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-pending-payment-orders-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
             	<h2 class="green-text"><label>Pending<br>payments<span>{{total_pending_orders|default_if_none:'0'}}</span><br><span class="orders">Orders</span></label>  </h2>
             	</div><!--column-right-->
@@ -36,7 +36,7 @@
 
             <div class="card-column whitebg orange-border export_btn"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-export-icon-o.svg'%}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-export-icon-o.png'%}"></div>
                 <div class="column-right"><!--column-right-->
               	<!--  <h1>Evaluations</h1>-->
             	<h2 class="orange-text"><label>Report Generator<span><i class="fa fa-download"></i> </span><br><span class="orders">Click to Export</span></label> </h2>
@@ -319,16 +319,16 @@
   <div class="ticket-form-left"><!--ticket-form-left-->
     <div class=" bold-text common-label"> <label>Report Type</label></div>
       <select class="textBox" name="report_type" id="report_type" required>
-      <option value="paymentlist">GENERAL PAYMENT SHEET</option>
+      {% comment %} <option value="paymentlist">GENERAL PAYMENT SHEET</option>
       <option value="totalsales">TOTAL SALES REPORT</option>
       <option value="acceptedjobs">ACCEPED JOB SHEET</option>
       <option value="rejectedjobs">REJECTED JOB SHEET</option>
       <option value="onetime">SALES REPORT : ONETIME CLEANING</option>
       <option value="subscription">SALES REPORT : SUBSCRIPTION</option>
       <option value="customer">CUSTOMER PAYMENT REPORT</option>
-      <option value="customeroutstanding">CUSTOMER OUTSTANDING PAYMENTS REPORT</option>
+      <option value="customeroutstanding">CUSTOMER OUTSTANDING PAYMENTS REPORT</option> {% endcomment %}
       <option value="transactionhistory">TRANSACTION HISTORY</option>
-      <option value="salesdetails">SALES DETAILS</option>
+      <option value="salesdetails">SALES REPORT</option>
       </select>
       </div>
 </div><!--ticket-wrapper-row ticket-forms-boxes-->

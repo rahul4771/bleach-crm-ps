@@ -16,7 +16,7 @@
 <div class="card-row"><!--card-row-->
             <div class="card-column whitebg blue-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-workers-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-workers-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Workers</h1>
             	<h2 class="blue-text"><label>Active<span>{{total_active_workers|default_if_none:''}}</span></label> </h2>
@@ -27,7 +27,7 @@
         
             <div class="card-column whitebg green-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-manhours-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-manhours-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Man Hours</h1>
             	<h2 class="green-text"><label>Today<span id="today_man_hour"></span></label>  </h2>
@@ -38,7 +38,7 @@
         
             <div class="card-column whitebg orange-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-man-average-hours-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-man-average-hours-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Man Average Hours</h1>
             	<h2 class="orange-text"><label>Today<span id="today_avg_man_hour"></span></label> </h2>
@@ -49,7 +49,7 @@
         
             <div class="card-column whitebg red-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-active-team-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-active-team-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Active Team</h1>
             	<h2 class="red-text"><label>Today<span>{{today_active_teams_count|default_if_none:''}}</span></label> </h2>
