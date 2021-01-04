@@ -1474,6 +1474,8 @@ class MakeQuatationPhase2(IsEvaluator,View):
 							EvaluationMedia.objects.create(
 							        evaluation_book=service_form_save,
 							        media=media,
+							        media_type='PHOTO',
+									taken_status='AGENT_TAKEN'
 							        )
 
 					#for updating cost details in evaluation details
@@ -1642,6 +1644,8 @@ class MakeQuatationPhase2Edit(IsEvaluator,View):
 								EvaluationMedia.objects.create(
 								        evaluation_book_id=old_form_id,
 								        media=media,
+								        media_type='PHOTO',
+								        taken_status='AGENT_TAKEN'
 								        )
 
 						#for updating cost details in evaluation details and evaluation
@@ -1919,9 +1923,11 @@ class MakeAssignedQuatationPhase2(IsEvaluator,View):
 					if not medias==['']:
 						for media in medias:
 							EvaluationMedia.objects.create(
-							        evaluation_book=service_form_save,
-							        media=media,
-							        )
+								        evaluation_book=service_form_save,
+								        media=media,
+								        media_type='PHOTO',
+								        taken_status='AGENT_TAKEN'
+								        )
 
 
 					#for updating cost details in evaluation details
@@ -2090,6 +2096,8 @@ class MakeAssignedQuatationPhase2Edit(IsEvaluator,View):
 								EvaluationMedia.objects.create(
 								        evaluation_book_id=old_form_id,
 								        media=media,
+								        media_type='PHOTO',
+								        taken_status='AGENT_TAKEN'
 								        )
 
 						#for updating cost details in evaluation details and evaluation
@@ -2417,6 +2425,8 @@ class AddNewService(IsEvaluator,View):
 							EvaluationMedia.objects.create(
 									evaluation_book=service_form_save,
 									media=media,
+									media_type='PHOTO',
+									taken_status='AGENT_TAKEN'
 									)
 
 					#for updating cost details in evaluation details
