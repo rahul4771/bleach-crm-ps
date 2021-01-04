@@ -210,7 +210,7 @@
                 
 <div class="details-notes align-left">Media</div>        
 <div class="row" id="id_form-{{forloop.counter0}}-media"><!--row-->
-    	<i class="fa fa-plus imgAdd"></i>
+    	<i class="fa fa-plus imgAdd id_form-{{forloop.counter0}}-media"></i>
 </div><!--row-->                  
                 
                 
@@ -220,6 +220,9 @@
 {% endfor %}
 {% endfor %}
 <br>
+<a href="{% url 'evaluator:evaluator-addnewservice' evaluation_details.id %}">
+<input name="add" type="button" value="Add New Service" class="add-button1">
+</a>
 </div><!-- link formset end -->
  <div align="center" onclick="SubmitQuatationForm(this);"><input class="assignButton" name="submit" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>
 </form> 
@@ -822,9 +825,9 @@ $("#id_form-{{forloop.counter0}}-tendative_dates").change(function(){
 
 {% for media in book.evaluationbookmedias %}
 
-  $('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview" style="background-image:url({{media.media.url}})"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="form-{{forloop.parentloop.counter0}}-media" value="{{media.media.url}}" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del" data-mediaid="{{media.id}}"></i></div>');
+  $('.id_form-{{forloop.parentloop.counter0}}-media').before('<div class="col-sm-2 imgUp"><div class="imagePreview" style="background-image:url({{media.media.url}})"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="form-{{forloop.parentloop.counter0}}-media" value="{{media.media.url}}" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del" data-mediaid="{{media.id}}"></i></div>');
 {% empty %}
-$('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="form-{{forloop.parentloop.counter0}}-media" value="File Upload" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
+$('.id_form-{{forloop.counter0}}-media').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="form-{{forloop.counter0}}-media" value="File Upload" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
 {% endfor %}
 
 $('.ui.multiple.dropdown').dropdown({

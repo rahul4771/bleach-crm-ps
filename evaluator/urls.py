@@ -33,6 +33,8 @@ urlpatterns = [
 	url(r'^makequatation/assigned/phase2/(?P<evaluation_detail_id>[-\w]+)$',views.MakeAssignedQuatationPhase2.as_view(),name='evaluator-makeassignedquatation2'),
 	url(r'^makequatation/assigned/phase2/edit/(?P<evaluation_detail_id>[-\w]+)$',views.MakeAssignedQuatationPhase2Edit.as_view(),name='evaluator-makeassignedquatation2edit'),
 
+	url(r'^makequatation/add/service/(?P<evaluation_detail_id>[-\w]+)$',views.AddNewService.as_view(),name='evaluator-addnewservice'),
+
 	url(r'^makequatation/phase1/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1Edit.as_view(),name='evaluator-makequatation1edit'),
 	url(r'^makequatation/phase2/delete/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2Delete.as_view(),name='evaluator-makequatation2delete'),
 
