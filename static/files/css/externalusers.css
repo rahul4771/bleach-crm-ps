@@ -568,19 +568,19 @@ text-align: right;
   border: 1px solid #999;
   padding: 6px 15px 6px 35px;
   margin-bottom: 10px;
-  background: url(../images/print.svg) no-repeat left #fff; background-size:20px; background-position: 12px; 
+  background: url(../images/print.png) no-repeat left #fff; background-size:20px; background-position: 12px; 
   cursor: pointer; transition: .4s;
  }
-.print:hover{ background: url(../images/print.svg) no-repeat left #E5E5E5; background-size:20px; background-position: 12px; }
+.print:hover{ background: url(../images/print.png) no-repeat left #E5E5E5; background-size:20px; background-position: 12px; }
 
 .download { font-size:15px; color:#555;
   border: 1px solid #999;
   padding: 6px 15px 6px 35px;
   margin-bottom: 10px;
-  background: url(../images/download.svg) no-repeat left #fff; background-size:20px; background-position: 12px; 
+  background: url(../images/download.png) no-repeat left #fff; background-size:20px; background-position: 12px; 
   cursor: pointer; transition: .4s;
  }
-.download:hover{ background: url(../images/download.svg) no-repeat left #E5E5E5; background-size:20px; background-position: 12px; }
+.download:hover{ background: url(../images/download.png) no-repeat left #E5E5E5; background-size:20px; background-position: 12px; }
 .bold-text{ font-weight:bold; font-family: 'Open Sans', Sans-serif;}
 
 .custom-model-main { text-align: center; overflow: hidden; position: fixed; top: 0; right: 0; bottom: 0; left: 0; /* z-index: 1050; */ -webkit-overflow-scrolling: touch; outline: 0; opacity: 0; -webkit-transition: opacity 0.15s linear, z-index 0.15; -o-transition: opacity 0.15s linear, z-index 0.15; transition: opacity 0.15s linear, z-index 0.15; z-index: -1; overflow-x: hidden; overflow-y: auto;}

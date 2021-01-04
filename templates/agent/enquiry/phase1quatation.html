@@ -33,10 +33,10 @@
       </div><!--checkin-form-left-->
       <div class="checkin-form-left align-center"><!--checkin-form-left-->
         {% if detail.total_cost == 0.0 %}
-        <div class="check-in-icons"><img src="{% static 'files/images/evaluation-pending-icon.svg' %}"></div>
+        <div class="check-in-icons"><img src="{% static 'files/images/evaluation-pending-icon.png' %}"></div>
         <div class="lg-text yellow-text">Evaluation Pending</div>
         {% else %}
-        <div class="check-in-icons"><img src="{% static 'files/images/price-icon.svg' %}"></div>
+        <div class="check-in-icons"><img src="{% static 'files/images/price-icon.png' %}"></div>
         <div class="lg-text blue-text">{{detail.total_cost|floatformat:3}} KD</div>
         {% endif %}
       </div><!--checkin-form-left-->

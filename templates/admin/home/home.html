@@ -14,7 +14,7 @@
     <div class="card-row"><!--card-row-->
             <div class="card-column whitebg blue-border"><!--card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-today-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-today-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Evaluations</h1>
                 <h2 class="blue-text"><label>Today<span>{{today_enquiry_count|default_if_none:''}}</span></label> </h2>
@@ -25,7 +25,7 @@
         
             <div class="card-column whitebg green-border"><!--card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-cleaning-job-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-cleaning-job-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Cleaning Jobs</h1>
                 <h2 class="green-text"><label>Today<span>{{today_cleaning_job_count|default_if_none:''}}</span></label>  </h2>
@@ -36,7 +36,7 @@
         
             <div class="card-column whitebg orange-border"><!--card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-followup-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-followup-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Follow-up</h1>
                 <h2 class="orange-text"><label>Today<span>{{today_follow_up_job_count|default_if_none:''}}</span></label> </h2>
@@ -47,7 +47,7 @@
         
             <div class="card-column whitebg red-border"><!--card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-rating-icon.svg' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/card-rating-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Rating</h1>
                 <h2 class="red-text"><label>Month<span>{{month_average_feedback|default_if_none:'0.0'|floatformat:1}}</span></label> </h2>

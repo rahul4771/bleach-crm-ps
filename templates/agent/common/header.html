@@ -3,7 +3,7 @@
     <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container-fluid top-bg"><!--container-fluid top-bg-->
         <div class="navbar-header"><!--navbar-header-->
-        <a class="navbar-brand" href="#"><div class="logo"><img  src="{% static 'files/images/logo.svg' %}"></div><span class="logo-text">My Bleach</span></a>
+        <a class="navbar-brand" href="#"><div class="logo"><img  src="{% static 'files/images/logo.png' %}"></div><span class="logo-text">My Bleach</span></a>
         </div><!--navbar-header-->
             <div class="three">
             <ul class="nav navbar-nav">
@@ -38,7 +38,7 @@
                     {% if request.user.profile_image %}
                     <img class="profile-avatar" src="{{request.user.profile_image.url}}">
                     {% else %}
-                    <img class="profile-avatar" src="{% static 'files/images/usertype-avtar.svg' %}">
+                    <img class="profile-avatar" src="{% static 'files/images/usertype-avtar.png' %}">
                     {% endif %}
             </li>
             <li class="profile-name">{{request.user.name}}<br><span>Agent</span></li>

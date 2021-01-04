@@ -8,7 +8,9 @@ from django.http import HttpResponse,JsonResponse
 from django.conf import settings
 from bleach_crm_ps.permissions import IsAgent
 from bleach_crm_ps.utils import get_error
-
+import glob
+import os
+from os.path import splitext
 import requests
 
 import pandas as pd
@@ -607,7 +609,7 @@ def CleaningExistingDates(request):
 
 # Create your views here.
 class AgentHome(IsAgent,View):
-	def get(self,request):		
+	def get(self,request):
 
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
