@@ -50,6 +50,7 @@
                         <div class="evaluation">Evaluation</div>
                         <div class="evaluation-icon"><img src="{% static 'files/images/evaluation-green-icon.png' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
+                        
                     </div><!--order-progress-widget order-progress-widget-column1-->
                    
                     {% if order.evaluation.payment_method == 'PREPAID' or order.evaluation.payment_method == 'BREAKDOWN' %}
@@ -58,9 +59,19 @@
                         {% if order.payment_status == 'COMPLETED' %}
                         <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.png' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
+                        {% for payment in order.paymenthistory %}
+                            {% if forloop.last %}
+                                <div class="evaluation-status">{{payment.paid_date|date:"M d, Y"}}</div>
+                            {% endif %}
+                        {% endfor %}
                         {% elif order.evaluation.before_cleaning_amount == order.preamount_paid and order.evaluation.payment_method == 'BREAKDOWN'  %}
                         <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.png' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
+                        {% for payment in order.paymenthistory %}
+                            {% if forloop.last %}
+                                <div class="evaluation-status">{{payment.paid_date|date:"M d, Y"}}</div>
+                            {% endif %}
+                        {% endfor %}
                         {% else %}
                         <div class="evaluation-icon"><img src="{% static 'files/images/order-gray-payment.png' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Waiting</div>
@@ -78,6 +89,7 @@
                         <div class="evaluation">Assigning Team</div>
                         <div class="evaluation-icon"><img id="team_assigned_image" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed <span id="team_assigned"></span>/<span>{{order.orderschedules|length}}</span></div>
+                        <div class="evaluation-status2">Waiting<span id="team_assigned"></span>/<span>{{order.orderschedules|length}}</span></div>
                     </div><!--order-progress-widget order-progress-widget-column4-->                     
                     
                     <div class="order-progress-widget order-progress-widget-column5"><!--order-progress-widget order-progress-widget-column5-->

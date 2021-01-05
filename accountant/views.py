@@ -1652,7 +1652,7 @@ def export_users_xls(request):
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		evaluations = Evaluation.objects.filter(is_active=True,evaluation_order__is_active=True,created__range=(prev_date_start,todate_date_end)).values_list('created','evaluation_id','customer__customer_id','customer__name','id','id','payment_method','id','evaluation_details__estimated_cost','evaluation_details__discount','evaluation_details__total_cost','id','evaluation_details__evaluator__name')
+		evaluations = Evaluation.objects.filter(is_active=True,evaluation_order__is_active=True,created__range=(prev_date_start,todate_date_end)).values_list('evaluation_order__created','evaluation_id','customer__customer_id','customer__name','id','id','payment_method','id','evaluation_details__estimated_cost','evaluation_details__discount','evaluation_details__total_cost','id','evaluation_details__evaluator__name')
 		
 		rows = []
 		
@@ -1699,7 +1699,7 @@ def export_users_xls(request):
 					print("last")
 				else:
 					print("raam")
-					
+
 				if detail['evaluator__name'] != None:
 					if detail['evaluator__name'] not in found:
 						evaluators.append(detail['evaluator__name'])
@@ -1730,7 +1730,7 @@ def export_users_xls(request):
 						else:
 							evaluation_list[11] = '-'
 					else:
-						evaluation_list[11] = 'Approved-Not Paid'
+						evaluation_list[11] = 'APPROVED-NOT PAID'
 
 				elif order['evaluation__quatation_status'] == 'REJECTED':
 					evaluation_list[11] = 'REJECTED'
@@ -1752,8 +1752,27 @@ def export_users_xls(request):
 			for col_num in range(len(row)):
 				ws.write(row_num, col_num, row[col_num], font_style)
 	
+	if report_type == 'staffdata':
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="STAFF_DATA.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		
+		#sales details
+		ws = wb.add_sheet('STAFF DETAILS',cell_overwrite_ok = True)
 	
-	
+		columns = ['Name','Username','password','UserType','Mobile']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+		rows = UserProfile.objects.filter(Q(user_type='AGENT')|Q(user_type='ADMIN')|Q(user_type='EVALUATOR')|Q(user_type='ACCOUNTANT')|Q(user_type='SENIORTEAMLEADER')|Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')).values_list('name','username','user_type','user_type','bleach_mobile_number')
+		
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
+
 	wb.save(response)
 
 	print(response.status_code,"resp")
