@@ -503,7 +503,7 @@ class OrderDetails(IsAccountant,View):
 		status = request.GET.get('status')
 		
 		if search:
-			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(customer__mobile_number__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
 		else:
 			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
 			
@@ -1662,13 +1662,21 @@ def export_users_xls(request):
 			#cleaning policy, service type
 			evaluationbooks = EvaluationBook.objects.filter(is_active=True,evaluation_details__evaluation__id=int(evaluation_list[11])).values('cleaning_policy','service_type__name')
 			print(evaluationbooks,"ebooks")
+
+			found = set()
 			servicetypes = []
 			cleaning_policies = []
+
 			for ebook in evaluationbooks:
-				servicetypes.append(ebook['service_type__name'])
-				servicetypes.append(', ')
-				cleaning_policies.append(ebook['cleaning_policy'])
-				cleaning_policies.append(', ')
+				if ebook['service_type__name'] not in found:
+					servicetypes.append(ebook['service_type__name'])
+					servicetypes.append(', ')
+					found.add(ebook['service_type__name'])
+				
+				if ebook['cleaning_policy'] not in found:
+					cleaning_policies.append(ebook['cleaning_policy'])
+					cleaning_policies.append(', ')
+					found.add(ebook['cleaning_policy'])
 
 			evaluation_list[4] = tuple(servicetypes)
 			evaluation_list[5] = tuple(cleaning_policies)
@@ -1681,6 +1689,31 @@ def export_users_xls(request):
 				evaluation_list[7] = orderschedule['start_at']
 			else:
 				evaluation_list[7] = '-'
+
+			#evaluator
+			evaluationdetails = EvaluationDetails.objects.filter(is_active=True,evaluation__id=int(evaluation_list[11])).values('evaluator__name','evaluation__call_attender__name')
+			
+			evaluators = []
+			for detail in evaluationdetails:
+				if evaluationdetails.last:
+					print("last")
+				else:
+					print("raam")
+					
+				if detail['evaluator__name'] != None:
+					if detail['evaluator__name'] not in found:
+						evaluators.append(detail['evaluator__name'])
+						evaluators.append(',')
+						found.add(detail['evaluator__name'])
+				else:
+					if detail['evaluation__call_attender__name'] not in found:
+						evaluators.append(detail['evaluation__call_attender__name'])
+						evaluators.append(',')
+						found.add(detail['evaluation__call_attender__name'])
+					
+				
+			evaluation_list[12] = tuple(evaluators)
+
 
 			#quotation status
 			order = Order.objects.filter(is_active=True,evaluation__id=int(evaluation_list[11])).values('evaluation__quatation_status','payment_status','preamount_paid','order_status').first()
@@ -1695,9 +1728,9 @@ def export_users_xls(request):
 						elif order['order_status'] == 'ORDER_CLOSED':
 							evaluation_list[11] = 'COMPLETED'
 						else:
-							evaluation_list[11] = 'Approved-Not Paid'
+							evaluation_list[11] = '-'
 					else:
-						evaluation_list[11] = '-'
+						evaluation_list[11] = 'Approved-Not Paid'
 
 				elif order['evaluation__quatation_status'] == 'REJECTED':
 					evaluation_list[11] = 'REJECTED'
