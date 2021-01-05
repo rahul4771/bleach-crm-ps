@@ -438,7 +438,25 @@
     <input type="hidden" name="action_type" value="edit_cleaning">
     <input type="hidden" name="cleaning_id" id="cleaning_id">  
  <hr class="hr-dashedpad">  
-  <div class="blc-number align-center">Edit Cleaning</div>    
+  <div class="blc-number align-center">Edit Cleaning</div>
+<hr class="hr-dashedpad">  
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Cleaning Date</label></div>
+        <input name="cleaning_date" type="text" class="textBox" id="cleaning_change_date">
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Starting Time</label></div>
+        <input name="cleaning_time" type="text" class="textBox" id="cleaning_change_time">
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->  
+<hr class="hr-dashedpad">
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Duration</label></div>
+        <input name="cleaning_hours" type="number" class="textBox" id="cleaning_change_duration">
+  </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-right-->
@@ -512,6 +530,13 @@
   <div class="blc-number align-center">Edit Followup Cleaning</div>    
 <hr class="hr-dashedpad">
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Duration</label></div>
+        <input name="cleaning_hours" type="text" class="textBox" id="cleaning_duration">
+  </div><!--ticket-form-left-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Team Leader</label></div>
         <label for="favcity">
@@ -561,7 +586,7 @@
 {%csrf_token%}
 <input type="hidden" name="action_type" value="confirm_orderschedules">
 <input type="hidden" name="total_schedules_to_confirm" id="total_schedules_to_confirm_id">
-        <hr class="hr-dashedpad"> 
+<hr class="hr-dashedpad"> 
 <div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
 </form>
 
@@ -1653,6 +1678,21 @@ $('document').ready(function(){
                   $('#starting_date_cleaning_id').html(data['start_at_date']);
                   $('#starting_time_cleaning_id').html(data['start_at_time']);
                   $('#duration_cleaning_id').html(data['duration']+' Hours');
+                  
+                  $('#cleaning_change_duration').val(data['duration']);
+                  $('#cleaning_change_date').val(data['start_at_date']);
+                  $('#cleaning_change_time').val(data['start_at_time']);
+                  $('#cleaning_change_date').datetimepicker({
+                      pickTime: false, 
+                      format: "DD-MM-YYYY",
+                      minDate: 1,
+                    });
+
+                  $('#cleaning_change_time').datetimepicker({
+                      pickDate:false,
+                      format: 'hh:mm A'
+                    });
+
 
                   var order_url = '/stl/order-details/'+data['order_id']+'';
                     
