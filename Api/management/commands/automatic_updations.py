@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from evaluator.models import Evaluation,EvaluationDetails
+from order.models import Order
 
 from django.utils import timezone
 from datetime import timedelta,date,datetime
@@ -17,6 +18,7 @@ class Command(BaseCommand):
 		
 		#update expiry
 		expired_evaluations = Evaluation.objects.filter(quatation_expiry_date__lte=today_end,quatation_status='PENDING').update(quatation_status='EXPIRED')
+		expired_invoices    = Order.objects.select_related('evaluation').filter(evaluation__quatation_expiry_date__lte=today_end,evaluation__quatation_status='PENDING').update(invoice_status='CANCELLED')
 
 		#remove unwanted evaluations
 		unwanted_evaluations = Evaluation.objects.filter(created__lt=today_end,quatation_status__isnull=True).prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True),to_attr='evaluationdetails')).annotate(active_evaluations_count=Sum(Case(When(Q(Q(evaluation_details__proposed_time__lt=today_end)|Q(evaluation_details__proposed_time__isnull=True)),then=1),default=0,output_field=IntegerField())),completed_evaluations_count=Sum(Case(When(evaluation_details__status='EVALUATED',then=1),default=0,output_field=IntegerField()))).exclude(active_evaluations_count=F('completed_evaluations_count')).delete()
@@ -37,6 +39,7 @@ class Command(BaseCommand):
 
 				if passed_days >= 14:
 					Evaluation.objects.filter(id=payment.evaluation.id).update(quatation_status='EXPIRED')
+					Order.objects.select_related('evaluation').filter(is_active=True,evaluation__id=payment.evaluation.id).update(invoice_status='CANCELLED')
 
 			if payment.evaluation.payment_method == 'BREAKDOWN' and payment.preamount_paid == 0:
 				very_old_cleaning   = payment.orderschedules[0]
@@ -44,6 +47,7 @@ class Command(BaseCommand):
 
 				if passed_days >= 14:
 					Evaluation.objects.filter(id=payment.evaluation.id).update(quatation_status='EXPIRED')
+					Order.objects.select_related('evaluation').filter(is_active=True,evaluation__id=payment.evaluation.id).update(invoice_status='CANCELLED')
 
 
 
