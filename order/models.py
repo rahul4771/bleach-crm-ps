@@ -98,22 +98,22 @@ class Order(models.Model):
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
 
-	# def save(self,*args, **kwargs):
-	# 	last_invoice_no  		 = Order.objects.order_by('id').last().invoice_no
-	# 	current_invoice_starting = str(timezone.now().year)		
+	def save(self,*args, **kwargs):
+		last_invoice_no  		 = Order.objects.order_by('id').last().invoice_no
+		current_invoice_starting = str(timezone.now().year)		
 			
-	# 	if current_invoice_starting == last_invoice_no[0:4] and last_invoice_no:
-	# 		new_invoice_no 		 = str(int(last_invoice_no[4:]) + 1 )
-	# 		new_invoice_no 		 = last_invoice_no[0:-(len(new_invoice_no))]+new_invoice_no
-	# 	else:
-	# 		new_invoice_no 		 = str(timezone.now().year)+'00001'
+		if current_invoice_starting == last_invoice_no[0:4] and last_invoice_no:
+			new_invoice_no 		 = str(int(last_invoice_no[4:]) + 1 )
+			new_invoice_no 		 = last_invoice_no[0:-(len(new_invoice_no))]+new_invoice_no
+		else:
+			new_invoice_no 		 = str(timezone.now().year)+'00001'
 
-	# 	#to remove changes from editting
-	# 	last_order_no = Order.objects.order_by('id').last().order_no
-	# 	if self.order_no != last_order_no:
-	# 		self.invoice_no 		 = new_invoice_no
+		#to remove changes from editting
+		last_order_no = Order.objects.order_by('id').last().order_no
+		if self.order_no != last_order_no:
+			self.invoice_no 		 = new_invoice_no
 
-	# 	super(Order, self).save(*args, **kwargs)
+		super(Order, self).save(*args, **kwargs)
 	
 	def __unicode__(self):
 		return str(self.order_no)
