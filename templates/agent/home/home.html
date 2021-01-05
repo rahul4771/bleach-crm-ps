@@ -1022,10 +1022,17 @@ $('document').ready(function(){
                         completed_calender.push('{{forloop.counter}}');
                         current_raw_timings.push([starting_time,ending_time]);
 
+                        var current_raw_timings_length = 0;
+                        for (var i = 0; i < current_raw_timings.length; i++) {
+                            if (a[i] !== undefined) {
+                            current_raw_timings_length++;
+                            }
+
                         //append raw
-                        if(current_raw_timings.length==1)
+                        if(current_raw_timings_length==1)
                         {
-                            console.log(current_raw_timings.length,"length checker")
+                            console.log(current_raw_timings.length,"length old")
+                            console.log(current_raw_timings_length,"length new")
                             console.log(old_starting_time)
                             console.log(old_ending_time)
                             console.log(starting_time)
