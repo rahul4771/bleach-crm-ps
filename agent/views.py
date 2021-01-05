@@ -611,30 +611,30 @@ def CleaningExistingDates(request):
 class AgentHome(IsAgent,View):
 	def get(self,request):
 		#temperory
-		# try:
-		# 	orders = Order.objects.filter(is_active=True).order_by('id')
-		# except:
-		# 	orders = None
+		try:
+			orders = Order.objects.filter(is_active=True).order_by('id')
+		except:
+			orders = None
 
-		# last_invoice_no = '202000001'
-		# count          = 0
-		# for order in orders:
-		# 	if count == 0:
-		# 		new_invoice_no = last_invoice_no
-		# 	else:
-		# 		new_invoice_no 		 = str(int(new_invoice_no[4:]) + 1 )
-		# 		new_invoice_no 		 = last_invoice_no[0:-(len(new_invoice_no))]+new_invoice_no
-		# 		last_invoice_no      = new_invoice_no
-		# 	print(new_invoice_no,"new_invoice_no")	
+		last_invoice_no = '202000001'
+		count          = 0
+		for order in orders:
+			if count == 0:
+				new_invoice_no = last_invoice_no
+			else:
+				new_invoice_no 		 = str(int(new_invoice_no[4:]) + 1 )
+				new_invoice_no 		 = last_invoice_no[0:-(len(new_invoice_no))]+new_invoice_no
+				last_invoice_no      = new_invoice_no
+			print(new_invoice_no,"new_invoice_no")	
 
-		# 	if order.evaluation.quatation_status == 'APPROVED':
-		# 		order.invoice_no = new_invoice_no
-		# 	elif order.evaluation.quatation_status == 'EXPIRED':
-		# 		order.invoice_no     = new_invoice_no
-		# 		order.invoice_status = 'CANCELLED'
-		# 	order.save()
+			if order.evaluation.quatation_status == 'APPROVED':
+				order.invoice_no = new_invoice_no
+			elif order.evaluation.quatation_status == 'EXPIRED':
+				order.invoice_no     = new_invoice_no
+				order.invoice_status = 'CANCELLED'
+			order.save()
 			
-		# 	count += 1
+			count += 1
 
 
 
