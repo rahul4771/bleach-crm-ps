@@ -33,6 +33,18 @@
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
+
+            <div class="card-column whitebg orange-border export_btn"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-export-icon-o.png'%}"></div>
+                <div class="column-right"><!--column-right-->
+              	<!--  <h1>Evaluations</h1>-->
+            	<h2 class="orange-text"><label>Report Generator<span><i class="fa fa-download"></i> </span><br><span class="orders">Click to Export</span></label> </h2>
+            	<!--<p><label>This Week <span>42</span></label></p>-->
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+
         </div><!--clients-card-column clients-column-left-->
       <div class="clients-card-column clients-column-right whitebg hover ltyellow-border orderchart"><!--clients-card-column clients-column-right-->
         
@@ -314,7 +326,56 @@
     </div><!--pagination-containter-->         
 </div><!--white-wrapper-pagination--> 
 </div><!--white-wrapper-->      
-             
+
+<!-- export popup -->
+<div class="overlay" id="export_popup">
+    <div class="popup-assign-eval"><!--popup-assign-eval-->
+        <a id="close_export_popup" class="close">&times;</a>
+            <div class="content"><!--content-->
+            
+<form id="excelform" method="post" action="{% url 'accountant:export_payment_xls' %}" enctype="multipart/form-data" target="_blank">{% csrf_token %}
+
+    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->  
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  <h3 align="center">Report Generator</h3>
+  </div>
+  </div>
+
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>From Date</label></div>
+        <input type="text" name="from_date" class="textBox id_from_date readonly" onchange="exportfromtodatecheck();" required readonly>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>To Date</label></div>
+                <input type="text" name="to_date" class="textBox id_to_date readonly" onchange="exportfromtodatecheck();" required readonly>
+
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+   
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    <div class=" bold-text common-label"> <label>Report Type</label></div>
+      <select class="textBox" name="report_type" id="report_type" required>
+      <option value="orderhistory">ORDER HISTORY</option>
+      </select>
+      </div>
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<div align="center"> <input class="assignButton export_payment" name="assing" type="button" value="Export" ></div>  
+
+</div><!--ticket-wrapper-full-->             
+</form>
+            </div><!--content-->
+    </div><!--popup-assign-eval-->
+</div><!--overlay-->
+<!-- export popup -->            
             
             
       </div><!--main-content-holder-->
@@ -327,6 +388,67 @@
 {% block javascript %}
 <script src="{% static 'files/js/charts/order-chart.js' %}"></script>
 <script>
+
+function appendLeadingZeroes(n){
+    if(n <= 9){
+      return "0" + n;
+    }
+    return n
+  }
+
+//append dates to export popup
+var date3 = new Date();
+date3.setDate(date3.getDate()-1)
+
+var datestring = appendLeadingZeroes(date3.getDate())  + "-" + appendLeadingZeroes(date3.getMonth()+1) + "-" + date3.getFullYear();
+
+var date4 = new Date();
+date4.setDate(date4.getDate()-30);
+
+var datestring2 = appendLeadingZeroes(date4.getDate())  + "-" + appendLeadingZeroes(date4.getMonth()+1) + "-" + date4.getFullYear();
+console.log(datestring,datestring2)
+
+$('.id_from_date').val(datestring2);
+$('.id_to_date').val(datestring);
+
+
+$('.export_btn').click(function(){
+  
+  $('#export_popup').css({'visibility':'visible','opacity':1,});
+});
+
+$("#close_export_popup").click(function () {
+    $('#export_popup').css({'visibility':'hidden','opacity':0,});
+});
+
+//EXPORT EXCEL
+$(".export_payment").click(function () {
+  console.log("poi")
+    $('#export_popup').css({'visibility':'hidden','opacity':0,});
+    
+    submitAnyForm($(this));
+
+    location.reload(true);
+
+    //document.getElementById("excelform").reset();
+    
+});
+
+// //datepicker and timepicker for popup
+    $(document).on("click", ".content", function () {
+       $('.id_from_date').datetimepicker({ 
+            pickTime: false, 
+            format: "DD-MM-YYYY", 
+            startDate: new Date(), 
+        });
+
+        $('.id_to_date').datetimepicker({ 
+            pickTime: false, 
+            format: "DD-MM-YYYY", 
+            startDate: new Date(), 
+        });
+
+    });
 
 $("#governorate_filter_id").change(function(){  
 
