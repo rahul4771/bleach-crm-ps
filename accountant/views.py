@@ -904,6 +904,9 @@ def export_users_xls(request):
 	font_style = xlwt.XFStyle()
 	font_style.font.bold = True
 
+	# Sheet body, remaining rows
+	font_style = xlwt.XFStyle()
+
 	if report_type == 'paymentlist':
 
 		response = HttpResponse(content_type='application/ms-excel')
@@ -918,9 +921,6 @@ def export_users_xls(request):
 		
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
-
-		# Sheet body, remaining rows
-		font_style = xlwt.XFStyle()
 
 		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status'),payment_type=Concat('history_order__payment_mode',Value(' '),'history_order__payment_gateway')).values_list('created','order_no','evaluation__customer__name', 'evaluation__payment_method','evaluation__total_cost','amount_paid','remining_amount','payment_type','job_status').order_by('-id')
 	
@@ -959,9 +959,6 @@ def export_users_xls(request):
 		
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
-
-		# Sheet body, remaining rows
-		font_style = xlwt.XFStyle()
 
 		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status'),payment_type=Concat('history_order__payment_mode',Value(' '),'history_order__payment_gateway')).values_list('created','evaluation__customer__name','order_no','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no' , 'job_status', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost','amount_paid','payment_type','history_order__paid_date','remining_amount').order_by('-id')
 	
@@ -1003,9 +1000,6 @@ def export_users_xls(request):
 		
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
-
-		# Sheet body, remaining rows
-		font_style = xlwt.XFStyle()
 
 		orders = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).values_list('created','evaluation__customer__name','order_no','evaluation__created','evaluation__quatation_status','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no', 'order_scheduler_order__start_at', 'job_status', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost').order_by('-id')
 
@@ -1049,9 +1043,6 @@ def export_users_xls(request):
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		# Sheet body, remaining rows
-		font_style = xlwt.XFStyle()
-
 		orders = Order.objects.filter(is_active=True,evaluation__quatation_status='REJECTED',created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status')).values_list('created','evaluation__customer__name','order_no','evaluation__created','evaluation__quatation_status','evaluation__call_attender__name', 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__cleaning_policy' , 'order_scheduler_order__evaluation_details__evaluation_book_evaluation_details__location_type' , 'order_no', 'order_scheduler_order__start_at', 'job_status', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost').order_by('-id')
 	
 		#removing duplicates
@@ -1090,9 +1081,6 @@ def export_users_xls(request):
 		
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
-
-		# Sheet body, remaining rows
-		font_style = xlwt.XFStyle()
 
 		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(total_jobs=Count('order_scheduler_order') or 0 + Count('investigation_orders') or 0 , pending_jobs=Sum(Case(When(Q(investigation_orders__followup_investigation__status='INVESTIGATOR_APPROVED')|Q(investigation_orders__followup_investigation__status='FOLLOWUP_IN_PROGRESS'),then=1),default=0,output_field=IntegerField())) + Sum(Case(When(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS'),then=1),default=0,output_field=IntegerField()))).values_list('created','evaluation__customer__name','order_no','evaluation__call_attender__name' , 'order_no', 'order_status', 'total_jobs', 'pending_jobs', 'created', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost','amount_paid','created','created','remining_amount').order_by('-id')
 	
@@ -1176,9 +1164,6 @@ def export_users_xls(request):
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		# Sheet body, remaining rows
-		font_style = xlwt.XFStyle()
-
 		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(total_jobs=Count('order_scheduler_order') or 0 + Count('investigation_orders') or 0 , pending_jobs=Sum(Case(When(Q(investigation_orders__followup_investigation__status='INVESTIGATOR_APPROVED')|Q(investigation_orders__followup_investigation__status='FOLLOWUP_IN_PROGRESS'),then=1),default=0,output_field=IntegerField())) + Sum(Case(When(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS'),then=1),default=0,output_field=IntegerField()))).values_list('created','evaluation__customer__name','order_no','evaluation__call_attender__name' , 'order_no', 'order_status', 'total_jobs', 'pending_jobs', 'created', 'evaluation__payment_method', 'evaluation__estimated_cost','evaluation__discount','evaluation__total_cost','amount_paid','created','created','remining_amount').order_by('-id')
 	
 		#removing duplicates
@@ -1254,9 +1239,6 @@ def export_users_xls(request):
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		# Sheet body, remaining rows
-		font_style = xlwt.XFStyle()
-
 		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(payment_type=Concat('history_order__payment_mode',Value(' '),'history_order__payment_gateway')).values_list('created','evaluation__customer__name','order_no', 'evaluation__payment_method','evaluation__total_cost','amount_paid','payment_type','history_order__paid_date').order_by('-id')
 
 		#removing duplicates
@@ -1292,9 +1274,6 @@ def export_users_xls(request):
 		
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
-
-		# Sheet body, remaining rows
-		font_style = xlwt.XFStyle()
 
 		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).annotate(job_status=Concat('order_scheduler_order__work_status',Value(' , '),'investigation_orders__followup_investigation__status'),payment_type=Concat('history_order__payment_mode',Value(' '),'history_order__payment_gateway')).values_list('created','evaluation__customer__name','order_no','order_no', 'job_status', 'order_scheduler_order__end_at', 'evaluation__payment_method' ,'evaluation__total_cost','amount_paid','payment_type','history_order__paid_date','remining_amount').order_by('-id')
 
@@ -1349,10 +1328,6 @@ def export_users_xls(request):
 		
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
-
-
-		# Sheet body, remaining rows
-		font_style = xlwt.XFStyle()
 
 		payments = PaymentHistory.objects.filter(is_active=True,payment_mode='ONLINECREDIT',created__range=(prev_date_start,todate_date_end)).values_list('paid_date','order__order_no','order__evaluation__payment_method','amount_paid','amount_paid','transaction_id', 'payment_gateway', 'receipt_no').order_by('-id')
 
@@ -1468,10 +1443,6 @@ def export_users_xls(request):
 		
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
-
-
-		# Sheet body, remaining rows
-		font_style = xlwt.XFStyle()
 
 		orderschedules = OrderScheduler.objects.filter(is_active=True,work_status='CLEANING_FULFILLED',end_at__range=(prev_date_start,todate_date_end)).values_list('order__order_no','end_at','end_at','id','evaluation_details__address__customer__name','evaluation_details__evaluation__payment_method','order_scheduler_book__total_cost','order__amount_paid','evaluation_details__evaluation__payment_way','order_scheduler_book__id','order__remining_amount','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__cleaning_hours','order_scheduler_book__number_of_cleaners','evaluation_details__evaluator__name').order_by('end_at')
 
@@ -1667,6 +1638,89 @@ def export_users_xls(request):
 			for col_num in range(len(row)):
 				ws2.write(row_num2, col_num, row[col_num], font_style)
 
+	if report_type == 'orderhistory':
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="ORDER_HISTORY_'+from_date+'_'+to_date+'.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		
+		#sales details
+		ws = wb.add_sheet('ORDER HISTORY',cell_overwrite_ok = True)
+	
+		columns = ['Quotation Date','Order No.','Customer ID','Customer Name','Type of Service','Cleaning Policy','Payment Policy','Job Starting Date','Quotation Amount','Discount','Net Amount','Quotation Status','Evaluator']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+		evaluations = Evaluation.objects.filter(is_active=True,evaluation_order__is_active=True,created__range=(prev_date_start,todate_date_end)).values_list('created','evaluation_id','customer__customer_id','customer__name','id','id','payment_method','id','evaluation_details__estimated_cost','evaluation_details__discount','evaluation_details__total_cost','id','evaluation_details__evaluator__name')
+		
+		rows = []
+		
+		for evaluation in evaluations:
+			evaluation_list = list(evaluation)
+			
+			#cleaning policy, service type
+			evaluationbooks = EvaluationBook.objects.filter(is_active=True,evaluation_details__evaluation__id=int(evaluation_list[11])).values('cleaning_policy','service_type__name')
+			print(evaluationbooks,"ebooks")
+			servicetypes = []
+			cleaning_policies = []
+			for ebook in evaluationbooks:
+				servicetypes.append(ebook['service_type__name'])
+				servicetypes.append(', ')
+				cleaning_policies.append(ebook['cleaning_policy'])
+				cleaning_policies.append(', ')
+
+			evaluation_list[4] = tuple(servicetypes)
+			evaluation_list[5] = tuple(cleaning_policies)
+
+			#job starting date
+			orderschedule = OrderScheduler.objects.filter(is_active=True,evaluation_details__evaluation__id=int(evaluation_list[11])).values('start_at').first()
+			
+			print(orderschedule,"osched")
+			if orderschedule:
+				evaluation_list[7] = orderschedule['start_at']
+			else:
+				evaluation_list[7] = '-'
+
+			#quotation status
+			order = Order.objects.filter(is_active=True,evaluation__id=int(evaluation_list[11])).values('evaluation__quatation_status','payment_status','preamount_paid','order_status').first()
+			
+			if order:
+				if order['evaluation__quatation_status'] == 'APPROVED':
+					if order['payment_status'] == 'COMPLETED' or order['preamount_paid'] != 0 or evaluation_list[6] == 'POSTPAID':
+						if order['order_status'] == 'APPROVED_BY_CLIENT':
+							evaluation_list[11] = 'APPROVED'
+						elif order['order_status'] == 'ORDER_IN_PROGRESS':
+							evaluation_list[11] = 'ORDER IN PROGRESS'
+						elif order['order_status'] == 'ORDER_CLOSED':
+							evaluation_list[11] = 'COMPLETED'
+						else:
+							evaluation_list[11] = 'Approved-Not Paid'
+					else:
+						evaluation_list[11] = '-'
+
+				elif order['evaluation__quatation_status'] == 'REJECTED':
+					evaluation_list[11] = 'REJECTED'
+				elif order['evaluation__quatation_status'] == 'PENDING':
+					evaluation_list[11] = 'PENDING'
+				elif order['evaluation__quatation_status'] == 'EXPIRED':
+					evaluation_list[11] = 'EXPIRED'
+				else:
+					evaluation_list[11] = 'EVALUATING'
+			else:
+				evaluation_list[11] = '-'
+
+			evaluation = tuple(evaluation_list)
+			rows.append(evaluation)
+		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
+	
+	
+	
 	wb.save(response)
 
 	print(response.status_code,"resp")
