@@ -1020,13 +1020,14 @@ $('document').ready(function(){
                 if(old_starting_time>=starting_time && old_starting_time>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0)||old_ending_time<=starting_time && old_ending_time<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0))
                     {
                         completed_calender.push('{{forloop.counter}}');
+                        console.log(current_raw_timings.length,"length before")
                         console.log(current_raw_timings,"before")
                         current_raw_timings.push([starting_time,ending_time]);
+                        console.log(current_raw_timings.length,"length after")
                         console.log(current_raw_timings,"after")
                         //append raw
                         if(current_raw_timings.length==1)
                         {
-                            console.log(current_raw_timings.length,"length old")
                             console.log(old_starting_time)
                             console.log(old_ending_time)
                             console.log(starting_time)
@@ -1119,6 +1120,11 @@ $('document').ready(function(){
        $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{spp_schedule.id}}" data-id="{{spp_schedule.id}}" data-cleaning_status="{{spp_schedule.work_status}}" {% if spp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-second edit_cleaning"{% else %}class="sp-green-box-second edit_cleaning"{% endif %} style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div {% if spp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text edit_cleaning"{% else %}class="right-value green-text edit_cleaning"{% endif %}>{% if spp_schedule.work_status == 'CLEANING_FULFILLED' %}&#10004;{% else %}{{spp_schedule.order_scheduler_book.number_of_cleaners}}{% endif %}</div></div></td></tr>')
        
        {% endfor %}
+
+
+
+
+
 
 
 
