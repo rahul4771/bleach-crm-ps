@@ -1025,8 +1025,13 @@ $('document').ready(function(){
                         //append raw
                         if(current_raw_timings.length==1)
                         {
-                            console.log(current_raw_timings)
+                            console.log(old_starting_time)
+                            console.log(starting_time)
+                            console.log(old_ending_time)
+                            console.log(ending_time)
                             console.log("appending new raw")
+                            console.log(current_raw_timings)
+                            
                             left_percentage  = 100/24*starting_time
 
                             if(ending_time == 0)
@@ -1043,8 +1048,13 @@ $('document').ready(function(){
                         //append td to the raw 
                         else
                         { 
-                           console.log(current_raw_timings)
+                           console.log(old_starting_time)
+                           console.log(starting_time)
+                           console.log(old_ending_time)
+                           console.log(ending_time)
                            console.log("appending same raw")
+                           console.log(current_raw_timings)
+                           
                            left_percentage  = 100/24*starting_time
                            
                            if(ending_time == 0)
