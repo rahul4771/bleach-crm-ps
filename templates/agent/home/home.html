@@ -996,6 +996,7 @@ $('document').ready(function(){
       //To add cleaning schedules in cleaning calender  
       console.log("callendar")
       completed_calender = []; 
+      current_raw_timings= []
       {% for old_schedule in calendar_order_schedules %}  
 
             old_starting_time_string      = '{{old_schedule.start_at|date:'H:i'}}'.replace(":",".");
@@ -1004,8 +1005,7 @@ $('document').ready(function(){
             old_starting_time             = parseInt(old_starting_time_string.split('.')[0])+parseInt(old_starting_time_string.split('.')[1])/60
             old_ending_time               = parseInt(old_ending_time_string.split('.')[0])+parseInt(
                 old_ending_time_string.split('.')[1])/60
-            current_raw_timings = []
-            console.log(current_raw_timings,"fresh")
+            
             {% for schedule in calendar_order_schedules %}
                 starting_time_string      = '{{schedule.start_at|date:'H:i'}}'.replace(":",".");
                 ending_time_string        = '{{schedule.end_at|date:'H:i'}}'.replace(":",".");
@@ -1027,7 +1027,7 @@ $('document').ready(function(){
                         console.log(current_raw_timings.length,"length after")
                         console.log(current_raw_timings,"after")
                         //append raw
-                        if(current_raw_timings.length==1)
+                    if(current_raw_timings.length==1)
                         {
                             console.log(old_starting_time)
                             console.log(old_ending_time)
@@ -1049,7 +1049,7 @@ $('document').ready(function(){
                             $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{schedule.id}}" data-id="{{schedule.id}}" data-cleaning_status="{{schedule.work_status}}" {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box edit_cleaning"{% else %}class="green-box edit_cleaning"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar">{% if schedule.cleaning_teams %}{% for team in schedule.cleaning_teams %}{% if team.team_leader.profile_image %}<img src="{{team.team_leader.profile_image.url}}" title="{{team.team_leader.name}}">{%else%}<img src="{% static 'files/images/profile-pic.jpg' %}" title="{{team.team_leader.name}}">{% endif %}{% endfor %}{% endif %}</div><center></center> <div {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{% if schedule.work_status == 'CLEANING_FULFILLED' %}&#10004;{% else %}{{schedule.order_scheduler_book.number_of_cleaners}}{% endif %}</div></div></td></tr>')
                         }
                         //append td to the raw 
-                        else
+                    else
                         { 
                            console.log(old_starting_time)
                            console.log(old_ending_time)
@@ -1071,6 +1071,11 @@ $('document').ready(function(){
                             $('#cleaning_table tr:last td').append('<div id="cleaningschedule{{schedule.id}}" data-id="{{schedule.id}}" data-cleaning_status="{{schedule.work_status}}" {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box edit_cleaning"{% else %}class="green-box edit_cleaning"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar">{% if schedule.cleaning_teams %}{% for team in schedule.cleaning_teams %}{% if team.team_leader.profile_image %}<img src="{{team.team_leader.profile_image.url}}" title="{{team.team_leader.name}}">{%else%}<img src="{% static 'files/images/profile-pic.jpg' %}" title="{{team.team_leader.name}}">{% endif %}{% endfor %}{% endif %}</div><center></center> <div {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text edit_cleaning"{% else %}class="right-value green-text edit_cleaning"{% endif %}>{% if schedule.work_status == 'CLEANING_FULFILLED' %}&#10004;{% else %}{{schedule.order_scheduler_book.number_of_cleaners}}{% endif %}</div></div>')      
                         }
                     }
+                else
+                {
+                    current_raw_timings = []
+                }
+
                 }
             {% endfor %}        
 
