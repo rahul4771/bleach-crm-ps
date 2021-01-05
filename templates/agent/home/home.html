@@ -1020,12 +1020,19 @@ $('document').ready(function(){
                 if(old_starting_time>=starting_time && old_starting_time>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0)||old_ending_time<=starting_time && old_ending_time<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0))
                     {
                         completed_calender.push('{{forloop.counter}}');
+                        console.log(current_raw_timings,"before")
                         current_raw_timings.push([starting_time,ending_time]);
-
+                        console.log(current_raw_timings,"after")
                         //append raw
                         if(current_raw_timings.length==1)
                         {
+                            console.log(current_raw_timings.length,"length old")
+                            console.log(old_starting_time)
+                            console.log(old_ending_time)
+                            console.log(starting_time)
+                            console.log(ending_time)
                             console.log("appending new raw")
+                            
                             left_percentage  = 100/24*starting_time
 
                             if(ending_time == 0)
@@ -1042,7 +1049,12 @@ $('document').ready(function(){
                         //append td to the raw 
                         else
                         { 
-                            console.log("appending same raw")
+                           console.log(old_starting_time)
+                           console.log(old_ending_time)
+                           console.log(starting_time)
+                           console.log(ending_time)
+                           console.log("appending same raw")
+                           
                            left_percentage  = 100/24*starting_time
                            
                            if(ending_time == 0)
