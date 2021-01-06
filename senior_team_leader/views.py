@@ -652,14 +652,11 @@ class StlHome(IsSeniorTeamLeader,View):
 			start_at        = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
 			end_at          = start_at + timedelta(hours=cleaning_hours)
 
-			print(start_at)
-			print(end_at)
-			print((order_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None))
-			print((order_schedule.end_at+timedelta(hours=3)).replace(tzinfo=None))
 
 			#update cleaners count
-			order_schedule.order_scheduler_book.number_of_cleaners = len(assigned_cleaners)
-			order_schedule.order_scheduler_book.save()
+			if assigned_cleaners:
+				order_schedule.order_scheduler_book.number_of_cleaners = len(assigned_cleaners)
+				order_schedule.order_scheduler_book.save()
 
 			#delete existing cleaners
 			cleaners_to_be_deleted = CleaningTeamMember.objects.filter(team__order_scheduler_id=schedule_id).delete()
