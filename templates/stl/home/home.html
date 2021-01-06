@@ -439,7 +439,7 @@
     <input type="hidden" name="cleaning_id" id="cleaning_id">  
  <hr class="hr-dashedpad">  
   <div class="blc-number align-center">Edit Cleaning</div>
-{% comment %}
+
 <hr class="hr-dashedpad">  
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
@@ -458,7 +458,8 @@
         <input name="cleaning_hours" type="number" class="textBox" id="cleaning_change_duration">
   </div><!--ticket-form-left--> 
   </div><!--ticket-wrapper-row ticket-forms-boxes-->
-  {% endcomment %}
+  
+<div class="cleaning_team">
 <hr class="hr-dashedpad">
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-right-->
@@ -478,6 +479,7 @@
     <input name="remove" type="button" class="add-button-2" value="Remove Cleaner" id="remove_cleaner_id">
   </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+</div>
    
 <div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
 </form>
@@ -727,8 +729,8 @@ $('document').ready(function(){
 
     //Function Used For Cleaning Calender    
     function isArrayInArrayOverlap(source,search)
-    {   count1=1;
-        count2=1;
+    {   count1=0;
+        count2=0;
 
 
         for(var i=0,len=source.length;i<len;i++)
@@ -737,7 +739,7 @@ $('document').ready(function(){
             {
                 count1++;
             }
-            if(source[i][1]<=search[0] && source[i][1] >= search[1])
+            if(source[i][1]<=search[0] && source[i][1] <= search[1])
             {
                 count2++;
             }
@@ -1781,15 +1783,17 @@ $('document').ready(function(){
       });
 
 //edit option toggle
+    $('.edit-collapse').css('display','block');
+
     cleaning_status = $(this).data('cleaning_status');
     
     if(cleaning_status == 'CLEANING_TEAM_ASSIGNED' || cleaning_status == 'CLEANING_IN_PROGRESS')
         {
-            $('.edit-collapse').css('display','block');
+            $('.cleaning_team').css('display','block');
     }
     else
     {
-         $('.edit-collapse').css('display','none');   
+            $('.cleaning_team').css('display','None');       
     }
 
                 //Add cleaning Cleaner Button

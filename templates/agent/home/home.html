@@ -967,22 +967,23 @@ $('document').ready(function(){
 
     //Function Used For Cleaning Calender    
     function isArrayInArrayOverlap(source,search)
-    {   count1=1;
-        count2=1;
+    {   count1=0;
+        count2=0;
 
 
         for(var i=0,len=source.length;i<len;i++)
         {
-            if(source[i][0]>=search[0] && source[i][0] >= search[1])
+            if(source[i][0] >= search[0] && source[i][0] >= search[1])
             {
                 count1++;
             }
-            if(source[i][1]<=search[0] && source[i][1] >= search[1])
+            if(source[i][1] <= search[0] && source[i][1] <= search[1])
             {
                 count2++;
             }
         
         }
+        console.log(count1,count2,source.length,search);
         if(count1==source.length || count2 == source.length)
         {
             return true;
@@ -1006,7 +1007,7 @@ $('document').ready(function(){
                 old_ending_time_string.split('.')[1])/60
             
             current_raw_timings = [];
-
+            console.log(old_starting_time,"old loop")
             {% for schedule in calendar_order_schedules %}
                 starting_time_string      = '{{schedule.start_at|date:'H:i'}}'.replace(":",".");
                 ending_time_string        = '{{schedule.end_at|date:'H:i'}}'.replace(":",".");
@@ -1014,12 +1015,16 @@ $('document').ready(function(){
                 starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
                 ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
                     ending_time_string.split('.')[1])/60
+
+                console.log(starting_time,"new loop")
+                console.log(ending_time,"new loop")
                 if(completed_calender.includes('{{forloop.counter}}'))
                 {
+                    console.log("Includes");
                 }
                 else
                 {
-                if(old_starting_time>=starting_time && old_starting_time>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0)||old_ending_time<=starting_time && old_ending_time<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0))
+                if((old_starting_time>=starting_time && old_starting_time>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true))||(old_ending_time<=starting_time && old_ending_time<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true))||(current_raw_timings.length==0))
                     {
                         completed_calender.push('{{forloop.counter}}');
                         console.log(current_raw_timings.length,"length before")

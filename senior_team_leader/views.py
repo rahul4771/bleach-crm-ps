@@ -645,9 +645,18 @@ class StlHome(IsSeniorTeamLeader,View):
 			order_schedule      = OrderScheduler.objects.get(is_active=True,id=schedule_id)
 			assigned_cleaners   = request.POST.getlist('team_member')
 
+			#new cleaning dates
+			cleaning_date 	= request.POST.get('cleaning_date')
+			cleaning_time   = request.POST.get('cleaning_time')
+			cleaning_hours 	= float(request.POST.get('cleaning_hours'))
+			start_at        = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
+			end_at          = start_at + timedelta(hours=cleaning_hours)
+
+
 			#update cleaners count
-			order_schedule.order_scheduler_book.number_of_cleaners = len(assigned_cleaners)
-			order_schedule.order_scheduler_book.save()
+			if assigned_cleaners:
+				order_schedule.order_scheduler_book.number_of_cleaners = len(assigned_cleaners)
+				order_schedule.order_scheduler_book.save()
 
 			#delete existing cleaners
 			cleaners_to_be_deleted = CleaningTeamMember.objects.filter(team__order_scheduler_id=schedule_id).delete()
@@ -660,7 +669,7 @@ class StlHome(IsSeniorTeamLeader,View):
 			check_cleaners_assigned = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id__in=assigned_cleaners)
 			check_tl_assigned       = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id=request.POST.get('team_leader'))		
 
-			if schedule_id and not check_cleaners_assigned and not check_tl_assigned:
+			if schedule_id and not check_cleaners_assigned and not check_tl_assigned and start_at == ((order_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)) and end_at == ((order_schedule.end_at+timedelta(hours=3)).replace(tzinfo=None)):
 				
 				#update cleaning team leader
 				assigned_leader  = request.POST.get('team_leader')
@@ -680,6 +689,16 @@ class StlHome(IsSeniorTeamLeader,View):
 				CleaningTeamMember.objects.bulk_create(assigned_cleaners_list)
 						
 				messages.success(request,"Cleaning Team Updated")
+
+			#update cleaning dates	
+			elif start_at != ((order_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)) and end_at != ((order_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)): 
+				CleaningTeam.objects.filter(order_scheduler=order_schedule).delete()
+				order_schedule.work_status = None
+				order_schedule.start_at    = start_at
+				order_schedule.end_at      = end_at
+				order_schedule.save()
+
+				messages.success(request,"Cleaning Date Changed Please Assign New Cleaning Team")
 			else:
 				messages.error(request,"Something Went Wrong")			
 

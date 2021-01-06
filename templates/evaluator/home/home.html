@@ -235,8 +235,8 @@
 $('document').ready(function(){    
     //Function Used For Cleaning Calender    
     function isArrayInArrayOverlap(source,search)
-    {   count1=1;
-        count2=1;
+    {   count1=0;
+        count2=0;
 
 
         for(var i=0,len=source.length;i<len;i++)
@@ -245,7 +245,7 @@ $('document').ready(function(){
             {
                 count1++;
             }
-            if(source[i][1]<=search[0] && source[i][1] >= search[1])
+            if(source[i][1]<=search[0] && source[i][1] <= search[1])
             {
                 count2++;
             }
