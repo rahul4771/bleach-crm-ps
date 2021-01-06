@@ -449,6 +449,7 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Starting Time</label></div>
         <input name="cleaning_time" type="text" class="textBox" id="cleaning_change_time">
+        <p id="cleaning_time_alert" hidden>Please Select proper date and time !</p>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->  
 <hr class="hr-dashedpad">
@@ -481,7 +482,7 @@
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
 </div>
    
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
+<div align="center"> <input class="assignButton cleaning_btn" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
 </form>
  </div><!--popup-collapse-->
 </div><!--ticket-wrapper-full--> 
@@ -665,6 +666,110 @@
 
 {% block javascript %}
 <script type="text/javascript">
+
+//previous time limit
+    function datetimecheck(ftime,fdate,mode){
+    var today = new Date();
+    console.log(ftime,fdate,"preee")
+    tentativedate = fdate;
+    
+        console.log(tentativedate,today,"dte")
+        var vals = tentativedate.split('-');
+        var day = parseInt(vals[0]);
+        var month = parseInt (vals[1]);
+        var year = parseInt (vals[2]);
+
+        var start_time = ftime;
+        start_time = start_time.split(" ");
+        time_AM_PM = start_time[1];
+        var time = start_time[0].split(":");
+
+        //splitting 0 in hour
+        if (time[0] < 10){
+            var hour_split = time[0].split('');
+            var time_hour = hour_split[1];
+            console.log(time_hour,"werry")    
+        }else{
+            time_hour = time[0];
+        }
+
+        //converting to 24 hr
+        if (time_AM_PM == 'PM'){
+          if (time_hour < 12){
+            newhour = parseInt(time_hour) + 12 ;
+          }else{
+            newhour = time_hour;
+          }
+        }else{
+          if (time_hour == 12){
+            newhour = 00 ;
+          }else{
+            newhour = time[0];
+          }
+        }
+
+        //creating datetime element
+        selecteddatetime = new Date(year,month,day,newhour,time[1]);
+        selecteddatetime.setMonth(selecteddatetime.getMonth()-1);
+        console.log(newhour,selecteddatetime,"sel")
+
+        if (selecteddatetime < today){
+          if (mode == 'followup'){
+            $('#followup_schedule_time_alert').attr("hidden",false);
+            $('.confirmdate_followup_btn').attr("disabled",true);
+          }
+          if (mode == 'order'){
+            $('#order_schedule_time_alert').attr("hidden",false);
+            $('.confirmdate_order_btn').attr("disabled",true);
+          }
+          if (mode == 'evaluation'){
+            console.log("lop1")
+            $('#appointment_time_alert').attr("hidden",false);
+            $('.appointment_btn').attr("disabled",true);
+          }
+          if (mode == 'cleaning'){
+            console.log("lop1")
+            $('#cleaning_time_alert').attr("hidden",false);
+            $('.cleaning_btn').attr("disabled",true);
+          }
+          if (mode == 'followupcleaning'){
+            console.log("lop1")
+            $('#followupcleaning_time_alert').attr("hidden",false);
+            $('.followupcleaning_btn').attr("disabled",true);
+          }
+          console.log("success")
+        }else{
+          if (mode == 'followup'){
+          $('#followup_schedule_time_alert').attr("hidden",true);
+          $('.confirmdate_followup_btn').attr("disabled",false);
+          }
+          if (mode == 'order'){
+          $('#order_schedule_time_alert').attr("hidden",true);
+          $('.confirmdate_order_btn').attr("disabled",false);
+          }
+          if (mode == 'evaluation'){
+            console.log("lop2")
+            $('#appointment_time_alert').attr("hidden",true);
+            $('.appointment_btn').attr("disabled",false);
+          }
+          if (mode == 'cleaning'){
+            console.log("lop1")
+            $('#cleaning_time_alert').attr("hidden",true);
+            $('.cleaning_btn').attr("disabled",false);
+          }
+          if (mode == 'followupcleaning'){
+            console.log("lop1")
+            $('#followupcleaning_time_alert').attr("hidden",true);
+            $('.followupcleaning_btn').attr("disabled",false);
+          }
+          console.log("fail")
+        }
+
+    }
+    //
+
+
+
 function load_workers_data(){
         console.log($('#working_calendar_month').val(),"pop")
         var month_year = $('#working_calendar_month').val();
@@ -1656,16 +1761,19 @@ $('document').ready(function(){
       $('#cleaning_id').val(schedule_id);
 
       //date picker and time picker 
-        $('#cleaning_date').datetimepicker({
+        $('#cleaning_change_date').datetimepicker({
               pickTime: false, 
               format: "DD-MM-YYYY",
               minDate: 1,
             });
 
-        $('#cleaning_time').datetimepicker({
+        $('#cleaning_change_time').datetimepicker({
               pickDate:false,
               format: 'hh:mm A'
             });
+
+        $("#cleaning_time_alert").css({'color':'red'});
+
   $.ajax({
 
         url: "{% url 'stl:ajax-getcleaninginfo' %}",
@@ -1696,6 +1804,8 @@ $('document').ready(function(){
                       pickDate:false,
                       format: 'hh:mm A'
                     });
+
+                  datetimecheck(data['start_at_time'],data['start_at_date'],'cleaning');
 
 
                   var order_url = '/stl/order-details/'+data['order_id']+'';
@@ -1780,6 +1890,15 @@ $('document').ready(function(){
                     $("#team_leader").val(data['team_leader_id'])
                  
                                   }  
+      });
+
+      $('#cleaning_change_time').change(function(){
+        datetimecheck($('#cleaning_change_time').val(),$('#cleaning_change_date').val(),'cleaning');
+      });
+
+      $('#cleaning_change_date').change(function(){
+        console.log("hui")
+        datetimecheck($('#cleaning_change_time').val(),$('#cleaning_change_date').val(),'cleaning');
       });
 
 //edit option toggle
