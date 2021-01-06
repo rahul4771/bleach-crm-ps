@@ -678,3 +678,7 @@ def receipt_html_to_pdf_view(request,payment_id):
 		response['Content-Disposition'] = 'attachment; filename="'+payment_history.order.order_no+'_receipt.pdf"'
 		return response
 	return response	
+
+
+def statement_of_account(request):
+	return render(request,"customer/statement_of_account.html")

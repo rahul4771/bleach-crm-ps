@@ -1751,27 +1751,6 @@ def export_users_xls(request):
 			row_num += 1
 			for col_num in range(len(row)):
 				ws.write(row_num, col_num, row[col_num], font_style)
-	
-	if report_type == 'staffdata':
-		response = HttpResponse(content_type='application/ms-excel')
-		response['Content-Disposition'] = 'attachment; filename="STAFF_DATA.xls"'
-
-		wb = xlwt.Workbook(encoding='utf-8')
-		
-		#sales details
-		ws = wb.add_sheet('STAFF DETAILS',cell_overwrite_ok = True)
-	
-		columns = ['Name','Username','password','UserType','Mobile']
-		
-		for col_num in range(len(columns)):
-			ws.write(row_num, col_num, columns[col_num], font_style)
-
-		rows = UserProfile.objects.filter(Q(user_type='AGENT')|Q(user_type='ADMIN')|Q(user_type='EVALUATOR')|Q(user_type='ACCOUNTANT')|Q(user_type='SENIORTEAMLEADER')|Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')).values_list('name','username','user_type','user_type','bleach_mobile_number')
-		
-		for row in rows:
-			row_num += 1
-			for col_num in range(len(row)):
-				ws.write(row_num, col_num, row[col_num], font_style)
 
 	wb.save(response)
 
