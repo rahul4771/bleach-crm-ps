@@ -1006,7 +1006,7 @@ $('document').ready(function(){
                 old_ending_time_string.split('.')[1])/60
             
             current_raw_timings = [];
-
+            console.log(old_schedule.start_at,"old loop")
             {% for schedule in calendar_order_schedules %}
                 starting_time_string      = '{{schedule.start_at|date:'H:i'}}'.replace(":",".");
                 ending_time_string        = '{{schedule.end_at|date:'H:i'}}'.replace(":",".");
@@ -1014,6 +1014,9 @@ $('document').ready(function(){
                 starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
                 ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
                     ending_time_string.split('.')[1])/60
+
+                console.log(starting_time,"new loop")
+                console.log(ending_time,"new loop")
                 if(completed_calender.includes('{{forloop.counter}}'))
                 {
                 }
