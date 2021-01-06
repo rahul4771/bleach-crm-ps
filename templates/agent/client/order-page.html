@@ -91,9 +91,9 @@
                         <div class="evaluation-status assign2">Waiting</div>
                         <div class="evaluation-status assign3">Completed</div>
 
-                        {% for orderschedule in order.orderschedules %}
-                            {% if forloop.last and orderschedule.cleaning_team %}
-                                {% for cleaning_team in orderschedule.cleaning_team %}
+                        {% for schedule in order.orderschedules|slice:":1" %}
+                            {% if  schedule.cleaning_team %}
+                                {% for cleaning_team in schedule.cleaning_team %}
                                     {% if forloop.last %}
                                         <div class="evaluation-status assign1">{{cleaning_team.created|date:"M d, Y"}}</div>
                                         <div class="evaluation-status assign3">{{cleaning_team.created|date:"M d, Y"}}</div>
