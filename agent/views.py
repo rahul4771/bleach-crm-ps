@@ -610,34 +610,7 @@ def CleaningExistingDates(request):
 # Create your views here.
 class AgentHome(IsAgent,View):
 	def get(self,request):
-		#temperory
-		# try:
-		# 	orders = Order.objects.filter(is_active=True).order_by('id')
-		# except:
-		# 	orders = None
-
-		# last_invoice_no = '202000001'
-		# count          = 0
-		# for order in orders:
-		# 	if count == 0:
-		# 		new_invoice_no = last_invoice_no
-		# 	else:
-		# 		new_invoice_no 		 = str(int(new_invoice_no[4:]) + 1 )
-		# 		new_invoice_no 		 = last_invoice_no[0:-(len(new_invoice_no))]+new_invoice_no
-		# 		last_invoice_no      = new_invoice_no
-		# 	print(new_invoice_no,"new_invoice_no")	
-
-		# 	if order.evaluation.quatation_status == 'APPROVED':
-		# 		order.invoice_no = new_invoice_no
-		# 	elif order.evaluation.quatation_status == 'EXPIRED':
-		# 		order.invoice_no     = new_invoice_no
-		# 		order.invoice_status = 'CANCELLED'
-		# 	order.save()
-			
-		# 	count += 1
-
-
-
+		
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		count_today_end   = count_today_start+timedelta(1)
