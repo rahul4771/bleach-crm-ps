@@ -1006,7 +1006,7 @@ $('document').ready(function(){
                 old_ending_time_string.split('.')[1])/60
             
             current_raw_timings = [];
-            console.log(old_schedule.start_at,"old loop")
+            console.log(old_starting_time,"old loop")
             {% for schedule in calendar_order_schedules %}
                 starting_time_string      = '{{schedule.start_at|date:'H:i'}}'.replace(":",".");
                 ending_time_string        = '{{schedule.end_at|date:'H:i'}}'.replace(":",".");
