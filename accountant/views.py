@@ -1647,12 +1647,12 @@ def export_users_xls(request):
 		#sales details
 		ws = wb.add_sheet('ORDER HISTORY',cell_overwrite_ok = True)
 	
-		columns = ['Quotation Date','Order No.','Customer ID','Customer Name','Type of Service','Cleaning Policy','Payment Policy','Job Starting Date','Quotation Amount','Discount','Net Amount','Quotation Status','Evaluator']
+		columns = ['Quotation Date','Order No.','Customer ID','Customer Name','Type of Service','Cleaning Policy','Payment Policy','Job Starting Date','Total Amount','Discount','Net Amount','Quotation Status','Evaluator']
 		
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		evaluations = Evaluation.objects.filter(is_active=True,evaluation_order__is_active=True,created__range=(prev_date_start,todate_date_end)).values_list('evaluation_order__created','evaluation_id','customer__customer_id','customer__name','id','id','payment_method','id','evaluation_details__estimated_cost','evaluation_details__discount','evaluation_details__total_cost','id','evaluation_details__evaluator__name')
+		evaluations = Evaluation.objects.filter(is_active=True,evaluation_order__is_active=True,evaluation_order__created__range=(prev_date_start,todate_date_end)).values_list('evaluation_order__created','evaluation_id','customer__customer_id','customer__name','id','id','payment_method','id','evaluation_details__estimated_cost','evaluation_details__discount','evaluation_details__total_cost','id','evaluation_details__evaluator__name')
 		
 		rows = []
 		

@@ -1874,6 +1874,53 @@ class MakeAssignedQuatationPhase1(IsEvaluator,View):
 						if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
 							schedule.payment_subscription = subscription
 							schedule.save()
+
+		#sms integration
+		evaluation = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
+		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
+		evaluationbook = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
+		language = evaluation.customer.sms_preference
+		
+		address = evaluationdetails.address
+
+		#address check for floor,avenue None
+		if address.floor == None and address.avenue == None:
+			address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		elif address.floor == None:
+			address_list = [address.apartment, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+		
+		elif address.avenue == None:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		else:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+
+		separator = ", "
+
+		if evaluation.customer.is_sms == True:
+
+			url = "https://smsapi.future-club.com/fccsms.aspx"
+
+			if language == 'ENGLISH':
+				print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
+
+				message = "Dear Customer, Please find the Revised Quotation against the order number "+str(evaluation.evaluation_id)+"  here https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" . Order Number : "+ str(evaluation.evaluation_id) +". Service Type(s) : "+ evaluationbook.service_type.name +", Address(s) : "+separator.join(address_list)+", Cost : "+ str(evaluation.total_cost) +", Due Date : "+ str(evaluation.quatation_expiry_date) +". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+
+			else:
+				message = "عزيزنا العميل نرجوا الاطلاع على عرض السعر المعدّل للطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" .رقم الطلب: "+ str(evaluation.evaluation_id) +"الخدمة: "+ evaluationbook.service_type.name +"العنوان: "+separator.join(address_list)+"السعر: "+ str(evaluation.total_cost) +" KDتاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +"لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+
+			headers = {
+				'cache-control': "no-cache"
+			}
+			
+			response = requests.request("GET", url, headers=headers, params=querystring)
+
+			print(response.text,"respo")
+		else:
+			pass
 												
 		messages.success(request,"Quatation Submitted Succesfully")		
 		return redirect('evaluator:evaluatordash-board')
