@@ -2425,7 +2425,7 @@ class MakeQuatationPhase1Edit(IsEvaluator,View):
 
 class AddNewService(IsEvaluator,View):
 	service_formset_define    = formset_factory(QuatationServiceForm)
-	def get(self,request,evaluation_detail_id):
+	def get(self,request,evaluation_detail_id,edit_type):
 		
 		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationbookmedias'),Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')).get(is_active=True,id=evaluation_detail_id)
 
@@ -2446,7 +2446,7 @@ class AddNewService(IsEvaluator,View):
 
 		return render(request,'evaluator/enquiry/addservice.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections})	
 
-	def post(self,request,evaluation_detail_id):
+	def post(self,request,evaluation_detail_id,edit_type):
 		service_formset       = self.service_formset_define(request.POST)
 		evaluation_details 	  = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
 
@@ -2497,7 +2497,11 @@ class AddNewService(IsEvaluator,View):
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
 						updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)
-						update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')+total,remining_amount=F('remining_amount')+total)
+						if edit_type == 'duplicate':
+							pass
+						else:
+							update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')+total,remining_amount=F('remining_amount')+total)
+						
 					else:
 						tendative_date  = request.POST.get('form-'+str(form_count)+'-tendative_date')
 
@@ -2508,7 +2512,11 @@ class AddNewService(IsEvaluator,View):
 
 						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
 						updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)
-						update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')+total,remining_amount=F('remining_amount')+total)
+						if edit_type == 'duplicate':
+							pass
+						else:
+							update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')+total,remining_amount=F('remining_amount')+total)
+						
 					#to save sections
 					no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))
 					section_array          = []
@@ -2583,7 +2591,12 @@ class AddNewService(IsEvaluator,View):
 
 			return render(request,'evaluator/enquiry/addservice.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,'area_types':area_types,'service_types':service_types,})		
 
-		return redirect('evaluator:evaluator-makequatation2edit',evaluation_details.id)
+		if edit_type == 'duplicate':
+			return redirect('evaluator:evaluator-makequatation2duplicateedit',evaluation_details.id)
+		elif edit_type == 'edit':
+			return redirect('evaluator:evaluator-makequatation2edit',evaluation_details.id)
+		else:
+			return redirect('evaluator:evaluator-makeassignedquatation2edit',evaluation_details.id)
 
 
 
@@ -3148,7 +3161,7 @@ class MakeQuatationPhase2DuplicateEdit(IsEvaluator,View):
 
 							updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total,status='EVALUATED')
 							updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total)
-							update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')-very_old_book.total_cost+total,remining_amount=F('remining_amount')-very_old_book.total_cost+total)							
+							update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')+total,remining_amount=F('remining_amount')+total)							
 						else:
 							tendative_dates  = request.POST.get('form-'+str(form_count)+'-tendative_date').split(',')
 
@@ -3160,7 +3173,7 @@ class MakeQuatationPhase2DuplicateEdit(IsEvaluator,View):
 
 							updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total,status='EVALUATED')
 							updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total)
-							update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')-very_old_book.total_cost+total,remining_amount=F('remining_amount')-very_old_book.total_cost+total)
+							update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')+total,remining_amount=F('remining_amount')+total)
 						#to save and update sections
 						no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))
 						section_array          = []

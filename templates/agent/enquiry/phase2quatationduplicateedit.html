@@ -220,7 +220,7 @@
 {% endfor %}
 {% endfor %}
 <br>
-<a href="{% url 'agent:agent-addnewservice' evaluation_details.id %}">
+<a href="{% url 'agent:agent-addnewservice' evaluation_details.id 'duplicate' %}">
 <input name="add" type="button" value="Add New Service" class="add-button1">
 </a>
 </div><!-- link formset end -->
