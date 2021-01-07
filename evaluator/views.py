@@ -2892,7 +2892,7 @@ class MakeQuatationDuplicate(IsEvaluator,View):
 
 			#new evaluation details
 			for duplicate_evaluation in duplicate_evaluation_details:
-				new_duplicate_evaluation_details = EvaluationDetails.objects.create(evaluation=new_evaluation,address=duplicate_evaluation.address,estimated_cost=duplicate_evaluation.estimated_cost,discount=duplicate_evaluation.discount,total_cost=duplicate_evaluation.total_cost,status=duplicate_evaluation.status)
+				new_duplicate_evaluation_details = EvaluationDetails.objects.create(evaluator=request.user,evaluation=new_evaluation,address=duplicate_evaluation.address,estimated_cost=duplicate_evaluation.estimated_cost,discount=duplicate_evaluation.discount,total_cost=duplicate_evaluation.total_cost,status=duplicate_evaluation.status)
 				
 				if duplicate_evaluation.evaluationbooks:
 					#new book
@@ -2912,7 +2912,7 @@ class MakeQuatationDuplicate(IsEvaluator,View):
 
 		messages.success(request,"Duplicate Order Created Succesfully")
 
-		return redirect('agent:agent-makequatation1duplicateedit',new_evaluation.customer.id,new_evaluation.id,)
+		return redirect('evaluator:evaluator-makequatation1duplicateedit',new_evaluation.customer.id,new_evaluation.id,)
 
 class MakeQuatationPhase1DuplicateEdit(IsEvaluator,View):	
 
@@ -2950,7 +2950,7 @@ class MakeQuatationPhase1DuplicateEdit(IsEvaluator,View):
 		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
 		total_orders_count  = orders.count()				
 
-		return render(request,'agent/enquiry/phase1quatationduplicateedit.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,})	
+		return render(request,'evaluator/enquiry/phase1quatationduplicateedit.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,})	
 
 	def post(self,request,enquiry_id,evaluation_id):
 		
@@ -3025,17 +3025,32 @@ class MakeQuatationPhase1DuplicateEdit(IsEvaluator,View):
 		
 		messages.success(request,"Quotation Edited Succesfully")
 
+		#address check for floor,avenue None
+		if evaluationdetails.address.floor == None and evaluationdetails.address.avenue == None:
+			address_list = [evaluationdetails.address.apartment, evaluationdetails.address.street, evaluationdetails.address.building, evaluationdetails.address.block, evaluationdetails.address.area.name, evaluationdetails.address.governorate.name]
+		
+		elif evaluationdetails.address.floor == None:
+			address_list = [evaluationdetails.address.apartment, evaluationdetails.address.street, evaluationdetails.address.building, evaluationdetails.address.avenue, evaluationdetails.address.block, evaluationdetails.address.area.name, evaluationdetails.address.governorate.name]
+		
+		elif evaluationdetails.address.avenue == None:
+			address_list = [evaluationdetails.address.apartment, evaluationdetails.address.floor, evaluationdetails.address.street, evaluationdetails.address.building, evaluationdetails.address.block, evaluationdetails.address.area.name, evaluationdetails.address.governorate.name]
+		
+		else:
+			address_list = [evaluationdetails.address.apartment, evaluationdetails.address.floor, evaluationdetails.address.street, evaluationdetails.address.building, evaluationdetails.address.avenue, evaluationdetails.address.block, evaluationdetails.address.area.name, evaluationdetails.address.governorate.name]
+
+		separator = ", "
+
 		if evaluation.customer.is_sms == True:
 
 			url = "https://smsapi.future-club.com/fccsms.aspx"
 
 			if evaluation.customer.sms_preference == 'ENGLISH':
 
-				message = "Dear Customer, Please find the Revised Quotation against the order number "+str(evaluation.evaluation_id)+"  here https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" . Order Number : "+ str(evaluation.evaluation_id) +". Service Type(s) : "+ evaluationbook.service_type.name +", Address(s) : "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.building+","+evaluationdetails.address.block+","+evaluationdetails.address.street+","+evaluationdetails.address.avenue+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+", Cost : "+ str(evaluation.total_cost) +", Due Date : "+ str(evaluation.quatation_expiry_date) +". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+				message = "Dear Customer, Please find the Revised Quotation against the order number "+str(evaluation.evaluation_id)+"  here https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" . Order Number : "+ str(evaluation.evaluation_id) +". Service Type(s) : "+ evaluationbook.service_type.name +", Address(s) : "+ separator.join(address_list) +", Cost : "+ str(evaluation.total_cost) +", Due Date : "+ str(evaluation.quatation_expiry_date) +". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
 				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 
 			else:
-				message = "عزيزنا العميل نرجوا الاطلاع على عرض السعر المعدّل للطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" .رقم الطلب: "+ str(evaluation.evaluation_id) +"الخدمة: "+ evaluationbook.service_type.name +"العنوان: "+evaluationdetails.address.apartment+","+evaluationdetails.address.floor+","+evaluationdetails.address.building+","+evaluationdetails.address.block+","+evaluationdetails.address.street+","+evaluationdetails.address.avenue+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+"السعر: "+ str(evaluation.total_cost) +" KDتاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +"لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+				message = "عزيزنا العميل نرجوا الاطلاع على عرض السعر المعدّل للطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" .رقم الطلب: "+ str(evaluation.evaluation_id) +"الخدمة: "+ evaluationbook.service_type.name +"العنوان: "+ separator.join(address_list) +"السعر: "+ str(evaluation.total_cost) +" KDتاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +"لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
 				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 
 			headers = {
@@ -3048,7 +3063,7 @@ class MakeQuatationPhase1DuplicateEdit(IsEvaluator,View):
 		else:
 			pass
 
-		return redirect('agent:agentdash-board')
+		return redirect('evaluator:evaluatordash-board')
 
 
 
@@ -3075,7 +3090,7 @@ class MakeQuatationPhase2DuplicateEdit(IsEvaluator,View):
 		except:
 			cleaning_sections = None
 
-		return render(request,'agent/enquiry/phase2quatationduplicateedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
+		return render(request,'evaluator/enquiry/phase2quatationduplicateedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
 
 	def post(self,request,evaluation_detail_id):
 
@@ -3135,11 +3150,13 @@ class MakeQuatationPhase2DuplicateEdit(IsEvaluator,View):
 							updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total)
 							update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')-very_old_book.total_cost+total,remining_amount=F('remining_amount')-very_old_book.total_cost+total)							
 						else:
-							tendative_date  = request.POST.get('form-'+str(form_count)+'-tendative_date')
+							tendative_dates  = request.POST.get('form-'+str(form_count)+'-tendative_date').split(',')
 
-							start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
-							end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
-							order_schedule_array.append(OrderScheduler(order=old_order,status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))
+							for date in tendative_dates:
+								print(date)
+								start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
+								end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
+								order_schedule_array.append(OrderScheduler(order=old_order,status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))
 
 							updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total,status='EVALUATED')
 							updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total)
@@ -3241,6 +3258,6 @@ class MakeQuatationPhase2DuplicateEdit(IsEvaluator,View):
 			except:
 				cleaning_sections = None
 
-			return render(request,'agent/enquiry/phase2quatationduplicateedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
+			return render(request,'evaluator/enquiry/phase2quatationduplicateedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
 
-		return redirect('agent:agent-makequatation1duplicateedit',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
+		return redirect('evaluator:evaluator-makequatation1duplicateedit',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
