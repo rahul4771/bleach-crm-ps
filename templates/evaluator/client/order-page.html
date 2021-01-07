@@ -1113,6 +1113,7 @@
         </div><!--right-bgwrapper--> 
         
         <!-- RE-ORDER -->
+        {% if order.order_status == 'ORDER_CLOSED' %}
             <br>
             <div class="order-card-column whitebg green-border clickable-cursor duplicate_order" data-id="{{order.evaluation.id}}"><!--order-card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
@@ -1126,6 +1127,7 @@
                 </div><!--column-right-->
                 </div><!--card-innerwrapper-->
             </div><!--order-card-column-->
+        {% endif %}
         <!-- RE-ORDER -->
         
     </div><!--order-details-right-fixed-->
