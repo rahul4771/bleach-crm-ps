@@ -1108,6 +1108,19 @@
         <div class="address">{% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}}, {{address.block}}, {{address.street}}, {% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} {{address.area.name}}, {{address.governorate.name}}</div>
         <br>
         {% endfor %}
+        
+        <br>
+        
+        <div class="order-card-column whitebg green-border clickable-row-list" data-href=""><!--order-card-column-->
+            <div class="card-innerwrapper"><!--card-innerwrapper-->
+            <div class="column-left"><img src="{% static "/files/images/card-soa-icon.png" %}"></div>
+            <div class="column-right"><!--column-right-->
+            <!-- <h1>Click To View</h1> -->
+            <h2 class="green-text"><label>Re-Order<span><i class="fa fa-external-link" aria-hidden="true"></i></span></label></h2>
+            </div><!--column-right-->
+            </div><!--card-innerwrapper-->
+        </div><!--order-card-column-->
+        
     </div><!--order-details-right-fixed-->
 </div><!--order-details-wrapper-->    
 </div><!--order-top-wrapper-->            
