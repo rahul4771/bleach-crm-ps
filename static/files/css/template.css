@@ -91,6 +91,8 @@ b, strong, .bold {
   font-weight: bold;
 }
 
+
+
 #container {
   font: normal 13px/1.4em 'Open Sans', Sans-serif;
   margin: 0 auto; width:820px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); background:#fff;
@@ -154,6 +156,13 @@ b, strong, .bold {
   width: 150px;
   height: 150px;
 }
+
+#memo .logo_soa img {
+  width: 120px;
+  height: 120px;
+  float: left;
+}
+
 #memo:after {
   content: '';
   display: block;
@@ -192,6 +201,17 @@ b, strong, .bold {
   font-size: 45px;
   width: 360px;
   padding: 7px;
+  font-family: Sanchez, Serif;
+  line-height: 1em;
+}
+
+#title_soa {
+  display: inline-block;
+  background: #26A8E0;
+  color: white;
+  font-size: 25px;
+  width: 360px;
+  padding: 15px;
   font-family: Sanchez, Serif;
   line-height: 1em;
 }
@@ -340,9 +360,16 @@ table th, table td {
   float: left;
   margin-top: 10px;
 }
+
+#failed-info {
+  float: left;
+  margin-top: 10px;
+}
+
 #invoice-info div {
   margin-bottom: 3px;
 }
+
 #invoice-info div span {
   display: inline-block;
   min-width: 50px;
@@ -350,6 +377,16 @@ table th, table td {
   text-transform: uppercase;
   min-height: 18px;   
 }
+
+
+#failed-info div span {
+  display: inline-block;
+  min-width: 250px;
+  font-weight: bold;
+  text-transform: uppercase;
+  min-height: 18px;   
+}
+
 #invoice-info div span:first-child {
   font-weight: normal;
   text-transform: uppercase;
@@ -363,8 +400,14 @@ table th, table td {
 
 .recipt-info{
 text-align: right;
-
 }
+
+
+.recipt-failed{
+  float: left;
+  text-align: left;
+}
+
 .recipt-info-amount{
   font-size: 25px;
   padding-top: 60px;
@@ -426,15 +469,35 @@ text-align: right;
 #sums {
   float: right;
   margin-top: 30px;
+
 }
+
+#policy {
+  float: left;
+  margin-top: 30px;
+  
+}
+
 #sums table tr th, #sums table tr td {
   min-width: 100px;
   padding: 8px 3px;
   text-align: right;
 }
+
+#policy table tr th, #policy table tr td {
+  min-width: 100px;
+  padding: 8px 3px;
+  text-align: left;
+}
+
 #sums table tr th {
   padding-right: 25px;
 }
+
+#policy table tr th {
+  padding-right: 25px;
+}
+
 #sums table tr.amount-total td {
   background: #26A8E0;
   color: white;
