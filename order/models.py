@@ -75,7 +75,7 @@ class Order(models.Model):
 	order_no   		= models.CharField(max_length=20,blank=False,null=False)
 	order_status 	= models.CharField(max_length=50,blank=True,null=True,default='ACTIVE',choices=ORDER_STATUS)
 
-	invoice_no      = models.CharField(max_length=20,blank=False,null=False)
+	invoice_no      = models.CharField(max_length=20,blank=True,null=True)
 	invoice_status  = models.CharField(max_length=50,blank=True,null=True,choices=INVOICE_CHOICES)
 
 	payment_status         = models.CharField(max_length=50,blank=True,null=True,default='PENDING',choices=PAYMENT_STATUS)
@@ -97,23 +97,6 @@ class Order(models.Model):
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
-
-	def save(self,*args, **kwargs):
-		last_invoice_no  		 = Order.objects.order_by('id').last().invoice_no
-		current_invoice_starting = str(timezone.now().year)		
-			
-		if current_invoice_starting == last_invoice_no[0:4] and last_invoice_no:
-			new_invoice_no 		 = str(int(last_invoice_no[4:]) + 1 )
-			new_invoice_no 		 = last_invoice_no[0:-(len(new_invoice_no))]+new_invoice_no
-		else:
-			new_invoice_no 		 = str(timezone.now().year)+'00001'
-
-		#to remove changes from editting
-		last_order_no = Order.objects.order_by('id').last().order_no
-		if self.order_no != last_order_no:
-			self.invoice_no 		 = new_invoice_no
-
-		super(Order, self).save(*args, **kwargs)
 	
 	def __unicode__(self):
 		return str(self.order_no)
