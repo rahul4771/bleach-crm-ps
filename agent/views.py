@@ -630,7 +630,8 @@ class AgentHome(IsAgent,View):
 			print(new_invoice_no,"new_invoice_no")	
 
 			if order.evaluation.quatation_status == 'APPROVED':
-				order.invoice_no = new_invoice_no
+				order.invoice_no     = new_invoice_no
+				order.invoice_status = 'ACTIVE'			
 			elif order.evaluation.quatation_status == 'EXPIRED':
 				order.invoice_no     = new_invoice_no
 				order.invoice_status = 'CANCELLED'
@@ -657,6 +658,7 @@ class AgentHome(IsAgent,View):
 
 			if order.evaluation.quatation_status == 'APPROVED':
 				order.invoice_no = new_invoice_no
+				order.invoice_status = 'ACTIVE'
 			elif order.evaluation.quatation_status == 'EXPIRED':
 				order.invoice_no     = new_invoice_no
 				order.invoice_status = 'CANCELLED'

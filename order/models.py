@@ -73,7 +73,7 @@ INVOICE_CHOICES = (
 class Order(models.Model):
 	evaluation 		= models.ForeignKey(Evaluation,blank=False,null=False,related_name='evaluation_order')
 	order_no   		= models.CharField(max_length=20,blank=False,null=False)
-	order_status 	= models.CharField(max_length=50,blank=True,null=True,default='ACTIVE',choices=ORDER_STATUS)
+	order_status 	= models.CharField(max_length=50,blank=True,null=True,choices=ORDER_STATUS)
 
 	invoice_no      = models.CharField(max_length=20,blank=True,null=True)
 	invoice_status  = models.CharField(max_length=50,blank=True,null=True,choices=INVOICE_CHOICES)
