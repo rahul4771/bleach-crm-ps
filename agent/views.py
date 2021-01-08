@@ -614,7 +614,7 @@ class AgentHome(IsAgent,View):
 		year_start = timezone.now().replace(day=1,month=1,year=2021,hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		#temperory 2020
 		try:
-			orders = Order.objects.filter(is_active=True).filter(evaluation__quatation_approved_date__lte=year_start).order_by('id')
+			orders = Order.objects.filter(is_active=True).filter(Q(Q(evaluation__quatation_approved_date__lte=year_start)&Q(Q(evaluation__quatation_status='APPROVED')|Q(evaluation__quatation_status='EXPIRED')))).order_by('id')
 		except:
 			orders = None
 
@@ -640,7 +640,7 @@ class AgentHome(IsAgent,View):
 
 		#temperory 2021
 		try:
-			orders = Order.objects.filter(is_active=True).filter(evaluation__quatation_approved_date__gte=year_start).order_by('id')
+			orders = Order.objects.filter(is_active=True).filter(Q(Q(evaluation__quatation_approved_date__gte=year_start)&Q(Q(evaluation__quatation_status='APPROVED')|Q(evaluation__quatation_status='EXPIRED')))).order_by('id')
 		except:
 			orders = None
 
