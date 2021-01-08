@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
-{% include "agent/common/header.html" %}
+{% include "evaluator/common/header.html" %}
     
 <section class="content"><!--content-->
 <div class="container-fluid space topspace"><!--container-fluid space topspace-->
@@ -60,10 +60,10 @@
         {% endif %}
       </div><!--checkin-form-left-->
       <div class="checkin-form-right align-right"><!--checkin-form-right-->
-        {% if detail.status == 'EVALUATED' and detail.evaluator == None %}
-        <a href="{% url 'agent:agent-makequatation2duplicateedit' detail.id %}"><div><input name="view" type="button" value="Click to Add Date" class="checkonButton"></div></a>
+        {% if detail.status == 'EVALUATED' %}
+        <a href="{% url 'evaluator:evaluator-makequatation2duplicateedit' detail.id %}"><div><input name="view" type="button" value="Click to Add Date" class="checkonButton"></div></a>
         {% elif detail.status == 'TOBEEVALUATED' and detail.evaluator == None %}
-        <a href="{% url 'agent:agent-makequatation2' detail.id %}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
+        <a href="{% url 'evaluator:evaluator-makequatation2' detail.id %}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
         {% else %}
         <div><input name="view" type="button" value="Edit" class="checkonButton" hidden></div>
         {% endif %}

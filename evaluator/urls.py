@@ -21,6 +21,10 @@ urlpatterns = [
 	url(r'^makeevaluation/(?P<enquiry_id>[-\w]+)$',views.MakeEvaluation.as_view(),name='evaluator-makeevaluation'),
 	url(r'^assignevaluator/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.AssignEvaluator.as_view(),name='evaluator-assignevaluator'),
 	
+	url(r'^makequatation/duplicate/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationDuplicate.as_view(),name='evaluator-makequatation1duplicate'),
+	url(r'^makequatation/phase1/duplicate/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1DuplicateEdit.as_view(),name='evaluator-makequatation1duplicateedit'),
+	url(r'^makequatation/phase2/duplicate/edit/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2DuplicateEdit.as_view(),name='evaluator-makequatation2duplicateedit'),
+
 	url(r'^makequatation/(?P<enquiry_id>[-\w]+)/$',views.MakeQuatationBase.as_view(),name='evaluator-makequatation'),
 	url(r'^makequatation/phase1/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1.as_view(),name='evaluator-makequatation1'),
 	url(r'^makequatation/phase2/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2.as_view(),name='evaluator-makequatation2'),
@@ -33,7 +37,7 @@ urlpatterns = [
 	url(r'^makequatation/assigned/phase2/(?P<evaluation_detail_id>[-\w]+)$',views.MakeAssignedQuatationPhase2.as_view(),name='evaluator-makeassignedquatation2'),
 	url(r'^makequatation/assigned/phase2/edit/(?P<evaluation_detail_id>[-\w]+)$',views.MakeAssignedQuatationPhase2Edit.as_view(),name='evaluator-makeassignedquatation2edit'),
 
-	url(r'^makequatation/add/service/(?P<evaluation_detail_id>[-\w]+)$',views.AddNewService.as_view(),name='evaluator-addnewservice'),
+	url(r'^makequatation/add/service/(?P<evaluation_detail_id>[-\w]+)/(?P<edit_type>[-\w]+)$',views.AddNewService.as_view(),name='evaluator-addnewservice'),
 
 	url(r'^makequatation/phase1/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1Edit.as_view(),name='evaluator-makequatation1edit'),
 	url(r'^makequatation/phase2/delete/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2Delete.as_view(),name='evaluator-makequatation2delete'),

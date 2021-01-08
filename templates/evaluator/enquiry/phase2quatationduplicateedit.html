@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="https://semantic-ui.com/dist/semantic.min.css">
 {% endblock %}
 <div class="wrapper"><!--wrapper-->
-{% include "agent/common/header.html" %}
+{% include "evaluator/common/header.html" %}
     
 <section class="content"><!--content-->
 <div class="container-fluid space topspace"><!--container-fluid space topspace-->
@@ -41,7 +41,7 @@
                 <div class="close-div close-div-service">
                 {% if evaluation_details.evaluationbooks|length == 1 and forloop.last %}
                 {% else %}
-                <a href="{% url 'agent:agent-delete-service' book.id evaluation_details.id %}"><i class="fa fa-times-circle" aria-hidden="true" ></i></a>
+                <a href="{% url 'evaluator:evaluator-delete-service' book.id evaluation_details.id %}"><i class="fa fa-times-circle" aria-hidden="true" ></i></a>
                 
                 {% endif %}
                 </div>     
@@ -220,7 +220,7 @@
 {% endfor %}
 {% endfor %}
 <br>
-<a href="{% url 'agent:agent-addnewservice' evaluation_details.id 'duplicate' %}">
+<a href="{% url 'evaluator:evaluator-addnewservice' evaluation_details.id 'duplicate' %}">
 <input name="add" type="button" value="Add New Service" class="add-button1">
 </a>
 </div><!-- link formset end -->
@@ -246,7 +246,7 @@
 </section><!--content-->
     
     
-{% include 'agent/common/footer.html' %}    
+{% include 'evaluator/common/footer.html' %}    
 </div><!--wrapper-->
 {% endblock %}
 
@@ -659,7 +659,7 @@ $('document').ready(function(){
         {
           console.log("nun")  
         }else{
-                url = "/agent/delete/section/"+section_id+"/"+{{evaluation_details.id}}+""
+                url = "/evaluator/delete/section/"+section_id+"/"+{{evaluation_details.id}}+""
                 window.location = url ;
                 console.log(url,section_id,{{evaluation_details.id}},"url")
             }
@@ -697,19 +697,20 @@ $("#id_form-TOTAL_FORMS").val("{{evaluation_details.evaluationbooks|length}}");
   {% endfor %}
 
   //tendative date initial
-  $("#id_form-{{forloop.counter0}}-tendative_date").datetimepicker({ 
-    pickTime: false, 
-    format: "DD-MM-YYYY",
-    minDate: new Date(),
-  });
+  //$("#id_form-{{forloop.counter0}}-tendative_date").datepicker({ 
+  //  multidate: true,
+  //  closeOnDateSelect: true,
+  //  format: "dd-mm-yyyy",
+  //  startDate: new Date(),
+  //});
 
 //tendative dates initial
-  $("#id_form-{{forloop.counter0}}-tendative_dates").datepicker({ 
-    multidate: true,
-    closeOnDateSelect: true,
-    format: "dd-mm-yyyy",
-    startDate: new Date(),
-  });
+  //$("#id_form-{{forloop.counter0}}-tendative_dates").datepicker({ 
+  //  multidate: true,
+  //  closeOnDateSelect: true,
+  //  format: "dd-mm-yyyy",
+  //  startDate: new Date(),
+  //});
 
 //initial time
 $("#id_form-{{forloop.counter0}}-tendative_time").datetimepicker({
@@ -744,7 +745,7 @@ $("#id_form-{{forloop.counter0}}-tendative_time, #id_form-{{forloop.counter0}}-n
                 //one time date
                 $(function () {
                 $("#id_form-{{forloop.counter0}}-tendative_date").datepicker({ 
-                    //multidate: true,
+                    multidate: true,
                     closeOnDateSelect: true,
                     format: "dd-mm-yyyy", 
 

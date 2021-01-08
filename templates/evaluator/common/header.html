@@ -49,7 +49,7 @@
             <ul id="accordion" class="nav">
                 <li class="active lhs-home"><a href="{% url 'evaluator:evaluatordash-board' %}" title="My Dashboard"><span>My Dashboard</span></a> </li>
                 <li class="lhs-orders"><a href="{% url 'evaluator:evaluator-orders' %}" title="Orders"><span>Orders</span></a></li>
-                <li class="lhs-clients"><a href="{% url 'evaluator:evaluator-clients' %}" title="Clients"><span>Clients</span></a><div></div></li>
+                {% comment %} <li class="lhs-clients"><a href="{% url 'evaluator:evaluator-clients' %}" title="Clients"><span>Clients</span></a><div></div></li> {% endcomment %}
                 <li class="lhs-tickets"><a href="{% url 'evaluator:evaluator-tickets' %}" title="Tickets"><span>Tickets</span></a></li>
                 <li class="lhs-resources border"><a href="{% url 'evaluator:resource-management' %}" title="Resources"><span>Resources</span></a></li>
                 <br> <br>
