@@ -139,7 +139,6 @@ class OrderScheduler(models.Model):
 	work_status 		 = models.CharField(max_length=50,blank=True,null=True,choices=ORDER_SHEDULER_STATUS)
 	status      		 = models.CharField(max_length=20,blank=True,null=True,default='WAITING',choices=SCHEDULER_CHOICES)
 
-	complaint            = models.CharField(max_length=5000,blank=True,null=True)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
@@ -156,6 +155,7 @@ class OrderScheduler(models.Model):
 
 class Investigation(models.Model):
 	order 				 = models.ForeignKey('Order',blank=False,null=False,related_name='investigation_orders')
+	ticket_types         = models.CharField(max_length=5000,blank=True,null=True)
 	order_schedule		 = models.ForeignKey('OrderScheduler',blank=False,null=False,related_name='investigations_orderschedule')	
 	investigator    	 = models.ForeignKey(UserProfile,blank=True,null=True)
 	assigned_by          = models.ForeignKey(UserProfile,blank=True,null=True,related_name='investigation_assigned_by')
@@ -163,7 +163,10 @@ class Investigation(models.Model):
 	check_in 		     = models.DateTimeField(blank=True,null=True)
 	check_out 		     = models.DateTimeField(blank=True,null=True)
 	notes 				 = models.CharField(max_length=5000,blank=True,null=True)
+
+
 	is_followup_approved = models.BooleanField(null=False,blank=True,default=False)
+	
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)
 	updated              = models.DateTimeField(auto_now=True)

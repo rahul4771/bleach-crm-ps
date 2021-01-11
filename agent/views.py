@@ -3764,48 +3764,38 @@ class TicketRegistration(IsAgent,View):
 		except:
 			orders = None
 
-		investigators = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='EVALUATOR')|Q(user_type='SENIORTEAMLEADER')|Q(user_type='TEAMLEADER'))))
+		investigators = UserProfile.objects.filter(user_type='QUALITYCONTROLL',is_active=True)
 
 		return render(request,'agent/ticket/ticket_registration.html',{'orders':orders,'investigators':investigators})
 
 	def post(self,request):
 		order_id           = request.POST.get('order_id')
-
-		# investigation_medias = request.FILES.getlist('investigation_media')
-
-		ticket_type        = request.POST.get('ticket_type')
-
-		print(request.POST)
-		if ticket_type == 'FOLLOWUP':
-			investigation_form = InvestigationForm(request.POST)
-			if investigation_form.is_valid():
-				investigation_form_save            = investigation_form.save(commit=False)
-				investigation_form_save.assigned_by= request.user
-				investigation_form_save.order_id   = order_id
-				investigation_form_save.save()
-
-				# if not investigation_medias == ['']:
-				# 	for image in investigation_medias:
-				# 		InvestigationMedia.objects.create(
-				# 			investigation = investigation_form_save,
-				# 			media = image,
-				# 			media_type = 'PHOTO',
-				# 			is_active = True
-				# 		)
-
-				FollowUp.objects.create(investigation=investigation_form_save,status='TICKET_RISED')
-
-				messages.success(request,"Investigation Rised Succesfully!")
-			else:
-				messages.error(request,get_error(investigation_form))
 		
-		elif ticket_type == 'COMPLAINT':
-			order_schedule_id = request.POST.get('order_schedule_complaint')
-			complaint         = request.POST.get('complaint')
+		investigation_form = InvestigationForm(request.POST)
+		if investigation_form.is_valid():
+			investigation_form_save             = investigation_form.save(commit=False)
+			investigation_form_save.assigned_by = request.user
+			investigation_form_save.order_id    = order_id
+			investigation_form_save.start_at    = timezone.now()
+			investigation_form_save.save()
 
-			OrderScheduler.objects.filter(id=order_schedule_id).update(complaint=complaint)
+			FollowUp.objects.create(investigation=investigation_form_save,status='TICKET_RISED')
 
-			messages.success(request,"Complaint Registered Succesfully")
+			#save media
+			investigation_medias = request.FILES.getlist('investigation_media')
+			if not investigation_medias == ['']:
+					for image in investigation_medias:
+						InvestigationMedia.objects.create(
+							investigation = investigation_form_save,
+							media = image,
+							media_type = 'PHOTO',
+							is_active = True
+						)
+						
+			messages.success(request,"Investigation Rised Succesfully!")
+		else:
+			messages.error(request,get_error(investigation_form))
+		
 
 		return redirect('agent:agent-ticketregister')
 
