@@ -462,28 +462,28 @@ $('.id_proposed_time').change(function(){
 
     //time limit logic
     if (time_AM_PM == 'AM'){
-        if (time_hour >= 8 && time_hour <= 11){
-            datetimecheck();
-            console.log(time_hour,"test")
-        }else{
-            $('.id_proposed_time').val('');
-            $('#time_alert').attr("hidden",false);
-            $('.dateconfirm').attr("disabled",true);
-            console.log(time_hour,"test2")
-        }
+        //if (time_hour >= 8 && time_hour <= 11){
+        datetimecheck();
+        console.log(time_hour,"test")
+        //}else{
+        //    $('.id_proposed_time').val('');
+        //    $('#time_alert').attr("hidden",false);
+        //    $('.dateconfirm').attr("disabled",true);
+        //    console.log(time_hour,"test2")
+        //}
     };
 
     if (time_AM_PM == 'PM') {
 
-        if ((time_hour == 12) || (time_hour >= 1 && time_hour < 6)){
+        //if ((time_hour == 12) || (time_hour >= 1 && time_hour < 6)){
             datetimecheck();
             console.log(time_hour,"test3")
-        }else{
-            $('.id_proposed_time').val('');
-            $('#time_alert').attr("hidden",false);
-            $('.dateconfirm').attr("disabled",true);
-            console.log(time_hour,"test4")
-        }
+        //}else{
+        //    $('.id_proposed_time').val('');
+        ///    $('#time_alert').attr("hidden",false);
+        //    $('.dateconfirm').attr("disabled",true);
+        //    console.log(time_hour,"test4")
+        //}
     };
 })
 

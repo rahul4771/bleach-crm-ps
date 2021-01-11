@@ -688,5 +688,8 @@ def receipt_html_to_pdf_view(request,payment_id):
 	return response	
 
 
-def statement_of_account(request):
-	return render(request,"customer/statement_of_account.html")
+def statement_of_account(request,client_id):
+	client = UserProfile.objects.get(is_active=True,id=int(client_id))
+	address = Address.objects.filter(customer__id=int(client_id)).first()
+	paymenthistory = PaymentHistory.objects.filter(is_active=True,order__evaluation__customer__id=int(client_id)).order_by('paid_date')
+	return render(request,"customer/statement_of_account.html",{"client":client,"address":address,"accounts":paymenthistory})

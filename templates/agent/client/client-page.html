@@ -70,11 +70,12 @@
                     <div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div>
                     {% endif %}
 
-                    {% if order.order_status == 'ORDER_CLOSED' %}
+                    {% comment %} {% if order.order_status == 'ORDER_CLOSED' %}
                     <div class="align-left">
                         <div class="yellow-bg-lg clickable-cursor duplicate_order" data-id="{{order.evaluation.id}}">Re-Order&nbsp;&nbsp;<i class="fa fa-copy" aria-hidden="true"></i></div>
                     </div>
-                    {% endif %}    
+                    {% endif %}     {% endcomment %}
+
             	</div><!--cleaning-column-widget cleaning-column-widget-column2-->
             </div><!--cleaning-column-wrapper-->
         	
@@ -129,7 +130,7 @@
 </section><!--content-->
     
 
-<div class="custom-model-main-sp"><!--custom-model-main-->
+{% comment %} <div class="custom-model-main-sp"><!--custom-model-main-->
     <div class="custom-model-inner-sp">  <!--custom-model-inner-->      
     <div class="close-btn-sp">×</div>
         <div class="custom-model-wrap-sp"><!--custom-model-wrap-->
@@ -142,14 +143,14 @@
         </div><!--custom-model-wrap-->  
     </div><!--custom-model-inner-->   
     <div class="bg-overlay-sp"></div>
-</div><!--custom-model-main-->
+</div><!--custom-model-main--> {% endcomment %}
 
 {% include 'agent/common/footer.html' %} 
 </div><!--wrapper-->
 {% endblock %}
 
 {% block javascript %}
-<script>
+{% comment %} <script>
 $(".duplicate_order").on('click', function () {
   $(".custom-model-main-sp").addClass('model-open-sp');
   evaluation_id = $(this).data('id');
@@ -158,5 +159,5 @@ $(".duplicate_order").on('click', function () {
 $(".close-btn-sp, .bg-overlay-sp").click(function () {
   $(".custom-model-main-sp").removeClass('model-open-sp');
 });
-</script>
+</script> {% endcomment %}
 {% endblock %}

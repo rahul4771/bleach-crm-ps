@@ -24,6 +24,7 @@
     
     <link href="{% static 'files/css/externalusers.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'files/css/message_wrapper.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'files/css/template.css' %}" rel="stylesheet" type="text/css">
   </head>
   <body>
     <div id="container">
@@ -43,7 +44,7 @@
       <!-- change here -->
           <div class="logo_soa"> 
 
-            <img src="img/logo.png" />
+            <img src="{% static "/files/images/bleach logo.png" %}" width="120px"/>
           </div>
         </section>
 
@@ -52,7 +53,7 @@
 
           <div class="title-top">
             <!--<span class="x-hidden"></span>-->
-            <span>Customer ID</span><span id="number">#20110001</span>
+            <span>Customer ID</span><span id="number">{{client.customer_id|default_if_none:'-'}}</span>
           </div>
         
           <div id="title_soa">STATEMENT OF ACCOUNTS<div class="invoice-name-arabic"></div></div> 
@@ -64,19 +65,23 @@
           <div class="client-name">
           <span class="billto" id="number"><b>Customer Details:</b></span>
           <br>
-            <span>John Doe</span>
+            <span>{{client.name}}</span>
           </div>
           
           <div>
-            <span>222 Rocky Way</span>
+            <span>{% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}},{{address.block}},</span>
           </div>
           
           <div>
-            <span>30000 Brdrock,Country</span>
+            <span>{{address.street}},{% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} </span>
+          </div>
+
+          <div>
+            <span>{{address.area.name}}, {{address.governorate.name}}</span>
           </div>
           
           <div>
-            <span>Contatc No: <strong>12345678</strong> </span>
+            <span>Contact No: <strong>{{client.mobile_number}}</strong> </span>
           </div>
           
             </section>
@@ -84,14 +89,14 @@
         <div class="clearfix"></div>
         
         <section id="invoice-info">
-          <div>
-            <span>From Date</span> <span>31-11-2020</span>
+          {% comment %} <div>
+            <span>From Date</span> <span>-</span>
           </div>
           <div>
-            <span>To Date</span> <span>31-11-2020</span>
-          </div>
+            <span>To Date</span> <span>-</span>
+          </div> {% endcomment %}
           <div>
-            <span>Opening Balance</span> <span>100.000 KD</span>
+            <span>Opening Balance</span> <span>0.000 KD</span>
           </div>
         
         
@@ -107,7 +112,7 @@
         
         <section >
           
-          <table cellpadding="0" cellspacing="0" class="table">
+          <table cellpadding="0" cellspacing="0" class="table" id="account-table">
           
             <tr>
               <th width="20%"class="align-left">&nbsp;&nbsp;DATE</th> <!-- Dummy cell for the row number and row commands -->
@@ -120,61 +125,38 @@
             <tr>
               <td style="text-align:left;"></td> <!-- Don't remove this column as it's needed for the row commands -->
               <td class="align-right">OPENING BALANCE</td>
-              <td class="align-right">100.000</td>
+              <td class="align-right debit_amount">0.000</td>
               <td class="align-right"></td>
-              <td class="align-right">100.000&nbsp;&nbsp;</td>
+              <td class="align-right">0.000&nbsp;&nbsp;</td>
             </tr>
             
+            {% for account in accounts %}
             <tr>
-              <td style="text-align:left;">&nbsp;&nbsp;20.02.2020</td> <!-- Don't remove this column as it's needed for the row commands -->
-              <td class="align-left">Invoice #INV201102221</td>
-              <td class="align-right">200.000</td>
-              <td class="align-right"></td>
+              <td style="text-align:left;">&nbsp;&nbsp;{{account.order.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+              <td class="align-left">Invoice #INV{{account.order.invoice_no}}</td>
+              <td class="align-right debit_amount">{{account.amount_paid|floatformat:3}}</td>
+              <td class="align-right">0.000</td>
               <td class="align-right">300.000&nbsp;&nbsp;</td>
             </tr>
+
+            {% if account.order.remining_amount > 0 %}
             <tr>
-              <td style="text-align:left;">&nbsp;&nbsp;20.02.2020</td> <!-- Don't remove this column as it's needed for the row commands -->
-              <td class="align-left">Invoice #INV201102221</td>
-              <td class="align-right">50.000</td>
-              <td class="align-right"></td>
-              <td class="align-right">350.000&nbsp;&nbsp;</td>
+              <td style="text-align:left;">&nbsp;&nbsp;{{account.paid_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+              <td class="align-left">Receipt #RES{{account.order.receipt_no}}</td>
+              <td class="align-right">0.000</td>
+              <td class="align-right credit_amount">{{account.order.remining_amount|floatformat:3}}</td>
+              <td class="align-right">300.000&nbsp;&nbsp;</td>
             </tr>
-            <tr>
-              <td style="text-align:left;">&nbsp;&nbsp;20.02.2020</td> <!-- Don't remove this column as it's needed for the row commands -->
-              <td class="align-left">Receipt #RES201102221</td>
-              <td class="align-right"></td>
-              <td class="align-right">200.000</td>
-              <td class="align-right">150.000&nbsp;&nbsp;</td>
-            </tr>
-            <tr>
-              <td style="text-align:left;">&nbsp;&nbsp;20.02.2020</td> <!-- Don't remove this column as it's needed for the row commands -->
-              <td class="align-left">INVOICE #INV201102221</td>
-              <td class="align-right">100.000</td>
-              <td class="align-right"></td>
-              <td class="align-right">250.000&nbsp;&nbsp;</td>
-            </tr>
-            <tr>
-              <td style="text-align:left;">&nbsp;&nbsp;20.02.2020</td> <!-- Don't remove this column as it's needed for the row commands -->
-              <td class="align-left">Receipt #RES201102221</td>
-              <td class="align-right"></td>
-              <td class="align-right">100.000</td>
-              <td class="align-right">150.000&nbsp;&nbsp;</td>
-            </tr>
-            <tr>
-              <td style="text-align:left;">&nbsp;&nbsp;20.02.2020</td> <!-- Don't remove this column as it's needed for the row commands -->
-              <td class="align-left">Receipt #RES201102221</td>
-              <td class="align-right"></td>
-              <td class="align-right">100.000</td>
-              <td class="align-right">50.000&nbsp;&nbsp;</td>
-            </tr>
+            {% endif %}
+            {% endfor %}
 
             <tr>
               <td style="text-align:left;"></td> <!-- Don't remove this column as it's needed for the row commands -->
               <td class="align-right" style="font-weight: bold;">TOTAL</td>
-              <td class="align-right" style="font-weight: bold;">450.000</td>
-              <td class="align-right" style="font-weight: bold;">400.000</td>
+              <td class="align-right" id="total_debit" style="font-weight: bold;">0.000</td>
+              <td class="align-right" id="total_credit" style="font-weight: bold;">0.000</td>
               <td class="align-right" style="font-weight: bold;">50.000&nbsp;&nbsp;</td>
-            </tr>
+            </tr> 
    
           </table>
           
@@ -268,11 +250,11 @@
               <td style="background-color: white;" colspan="2" >
                  <div class="socil-media">
     <ul>
-    	<li><a href="#"><img src="img/fb.svg"></a></li>
-        <li><a href="#"><img src="img/icon-twitter.svg"></a></li>
-        <li><a href="#"><img src="img/icon-insta.svg"></a></li>
-        <li><a href="#"><img src="img/icon-ut.svg"></a></li>
-        <li><a href="#"><img src="img/icon-in.svg"></a></li>
+    	<li><a href="#"><img src="{% static "/files/images/fb.png" %}"></a></li>
+        <li><a href="#"><img src="{% static "/files/images/icon-twitter.png" %}"></a></li>
+        <li><a href="#"><img src="{% static "/files/images/icon-insta.png" %}"></a></li>
+        <li><a href="#"><img src="{% static "/files/images/icon-ut.png" %}"></a></li>
+        <li><a href="#"><img src="{% static "/files/images/icon-in.png" %}"></a></li>
     </ul>
     </div>
               </td>
@@ -292,7 +274,7 @@
               </td>
             </tr>
             <tr>
-              <td colspan="2" ><input name="print" type="button" class="print" value="Print">&nbsp;<input name="download" type="button" class="download" value="Download"> </td>
+              {% comment %} <td colspan="2" ><input name="print" type="button" class="print" value="Print">&nbsp;<input name="download" type="button" class="download" value="Download"> </td> {% endcomment %}
             </tr>            
           </table>
     
@@ -319,6 +301,40 @@ $(".close-btn, .bg-overlay").click(function () {
 });
  
     </script>
+
+    <script>
+
+    $(document).ready(function(){
+      add_console();
+    });
+
+    function add_console(){
+      console.log("war")
+            var tds = document.getElementById('account-table').getElementsByTagName('td');
+            var sum1 = 0;
+            var sum2 = 0;
+
+            for(var i = 0; i < tds.length; i ++) {
+              console.log(tds[i].className,"mok")
+                if(tds[i].className == 'debit_amount') {
+                    console.log(tds[i].className,"kol")
+                    sum1 += isNaN(tds[i].innerHTML) ? 0 : parseFloat(tds[i].innerHTML)||0;
+                  
+                    alert(sum1)
+                }
+                   if(tds[i].className == 'credit_amount') {
+                    sum2 += isNaN(tds[i].innerHTML) ? 0 : parseFloat(tds[i].innerHTML)||0;
+                    alert(sum1)
+                }
+            
+            }
+            
+            document.getElementById('total_debit').innerHTML =  sum1 ;
+            document.getElementById('total_credit').innerHTML =  sum2 ;
+            
+          }
+
+          </script>
   
  
   </body>
