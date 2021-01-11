@@ -56,7 +56,7 @@
 
 <div class="narrow-head align-left">Cleaners</div>
 {% for cleaner in cleaning_team_members %}
-{% if cleaner.member.user_type == 'CLEANER' %}
+{% if cleaner.member != request.user %}
 <div class="common-gray-text align-left"><strong>{{cleaner.member.name}}</strong></div>
 {% endif %}
 {% endfor %}

@@ -466,7 +466,7 @@
   <div class="ticket-form-left"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Team Leader</label></div>
         <label for="favcity">
-                <select id="team_leader" name="team_leader">
+                <select id="team_leader" name="team_leader" class="team_leader">
                 </select>
         </label>
   </div><!--ticket-form-right-->
@@ -2214,5 +2214,32 @@ function remove_duplicate_selection(params)
   }); 
 
 }
+
+//to remove leader from cleaner
+$(".assign_leader").change(function(){
+  selected_option = this.value;
+  selected_id     = this.id;
+  //to remove selected occur in any other option
+      $('.assign_cleaner').each(function(){    
+            $('option[value='+selected_option+']',this).remove();
+      });
+  
+  //cross checking
+  $('.assign_cleaner').each(function(){
+    cross_check_selected_option = this.value;
+    cross_check_id          = this.id;
+    $('.assign_cleaner').each(function(){
+      if(cross_check_id != this.id)
+      {
+        if(cross_check_selected_option == this.value)
+        {
+          $('option:selected',this).remove();   
+        }
+      }
+    });
+  
+  });
+
+});
 </script>
 {% endblock %}
