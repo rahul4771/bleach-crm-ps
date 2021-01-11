@@ -38,6 +38,9 @@ class Signin(View):
 
 			if request.user.user_type == 'ACCOUNTANT':	
 				return redirect('accountant:accountantdash-board')
+
+			if request.user.user_type == 'QUALITYCONTROLL':	
+				return redirect('qc:qcdash-board')
 		else:		
 			return render(request,'user/login.html',{})
 
@@ -67,7 +70,10 @@ class Signin(View):
 				return redirect('tl:tldash-board')
 
 			if user.user_type == 'ACCOUNTANT':	
-				return redirect('accountant:accountantdash-board')		
+				return redirect('accountant:accountantdash-board')
+
+			if request.user.user_type == 'QUALITYCONTROLL':	
+				return redirect('qc:qcdash-board')		
 		else:
 			messages.error(request, "Username or Password Invalid")
 
