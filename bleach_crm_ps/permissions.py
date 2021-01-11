@@ -41,3 +41,10 @@ class IsAccountant(UserPassesTestMixin):
             return True
         else:
             return False
+
+class IsQualityControll(UserPassesTestMixin):
+    def test_func(self):
+        if self.request.user.is_authenticated and self.request.user.user_type=='QUALITYCONTROLL' and self.request.user.is_active==True:
+            return True
+        else:
+            return False
