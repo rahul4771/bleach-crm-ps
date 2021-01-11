@@ -1,0 +1,822 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% block css_links %}
+<link rel="stylesheet" href="https://semantic-ui.com/dist/semantic.min.css">
+{% endblock %}
+<div class="wrapper"><!--wrapper-->
+{% include "quality-control/common/header.html" %}
+    
+<section class="content"><!--content-->
+<div class="container-fluid space topspace"><!--container-fluid space topspace-->
+    <div class="welcome-wrapper"><!--welcome-wrapper-->
+        <h1 class="dashboard-head">Quotation Details</h1>
+        <p>Bleach CRM-PS Version 0.1 (Beta) developed and owned by Bleach-Kw</p>
+    </div><!--welcome-wrapper-->
+            
+        
+<div class="order-top-wrapper"><!--order-top-wrapper-->
+            
+<div class="white-wrapper"><!--white-wrapper-->
+<div class="center-formDiv"><!--center-formDiv-->
+ 
+ 
+ 			<div class="blc-number-big">{{evaluation_details.evaluation.evaluation_id}}</div>             
+        	<div class="customer-name"><i class="fa blue-text fa-user-circle-o" aria-hidden="true"></i> {{evaluation_details.evaluation.customer.name}}</div>
+        	<div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;  {{evaluation_details.evaluation.customer.mobile_number}}</div>
+        	<div class="email"><i class="fa orange-text fa-lg fa-envelope-o" aria-hidden="true"></i> &nbsp;  {{evaluation_details.evaluation.customer.email}}</div>
+            <div class="mobile-number"><i class="fa red-text fa-lg fa-home" aria-hidden="true"></i> &nbsp;  <b>{{evaluation_details.address.apartment}}</b>: {% if evaluation_details.address.floor %}{{evaluation_details.address.floor}}, {% else %}{% endif %} {{evaluation_details.address.building}}, {{evaluation_details.address.block}}, {{evaluation_details.address.street}}, {% if evaluation_details.address.avenue %}{{evaluation_details.address.avenue}}, {% else %}{% endif %} {{evaluation_details.address.area.name}}, {{evaluation_details.address.governorate.name}}</div>
+        	<hr class="div">
+<form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+
+<div class="link_formset">
+	<div class="enquiry-FullWrapper"><!--enquiry-FullWrapper-->       
+                             
+        <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+				<div class="enquiry-child-wrapper-Full form_section" id="form'+formcount+'_section'+section_count+'"><!--enquiry-child-wrapper-Full-->
+                <input type="hidden" name="form'+formcount+'_section'+section_count+'-keynote_counter" id="id_form'+formcount+'_section'+section_count+'-keynote_counter" value="0"><div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"> <label class="section_label">Section '+(section_count+1)+' ('+selected_section+')</label></div><input name="form'+formcount+'_section'+section_count+'" type="text" class="textBox section_time" placeholder=" " value="'+selected_section+'" required></div><!--enquiry-form-left--><div class="enquiry-form-right hide-m"><!--enquiry-form-right-->&nbsp;  </div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--> <hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Category</label></div><label for="favcity"><select id="favcity" name="form'+formcount+'_category'+section_count+'" required><option value="">Choose Category</option><option value="OpenArea">OpenArea</option><option value="Divided Area">Divided Area</option></select></label></div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Dirt Level</label></div><label for="favcity"><select id="favcity" name="form'+formcount+'_dirt_level'+section_count+'" required><option value="">Choose Dirt Level</option><option value="Red">Red</option><option value="Random">Random</option></select></label> </div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Size</label></div><input name="form'+formcount+'_size'+section_count+'" type="text" class="textBox OnlyNumber" maxlength="10" placeholder=" " required> </div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Unit</label></div><label for="favcity"><select id="favcity" name="form'+formcount+'_unit'+section_count+'" required><option value="">Choose Unit</option><option value="Square meter">Square meter</option><option value="Square inch">Square inch</option></select></div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"'+(selected_section == 'Floor' || selected_section == 'General Area' ? 'disabled=true': '')+'> <label>No. of Floor(s)</label></div><input name="form'+formcount+'_floor'+section_count+'" class="textBox OnlyNumber floortext" maxlength="3" placeholder=" "'+(selected_section == 'Floor' || selected_section == 'General Area' ? 'disabled=true': 'type=text required')+' > </div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp-->   </div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--><hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"'+(selected_section == 'General Area' ? 'disabled=true': '')+'> <label>No. of Room(s)</label></div><input name="form'+formcount+'_room'+section_count+'" class="textBox OnlyNumber" maxlength="2" placeholder=" "'+(selected_section == 'General Area' ? 'disabled=true': 'type=text required')+'> </div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class=" bold-text common-label"> <label>Wall Type(s)</label></div><div class="ui fluid multiple search selection dropdown"><input type="hidden" name="form'+formcount+'_walltype'+section_count+'"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">--Select Wall Type--</div><div class="menu" tabindex="-1"><div class="item" data-value="bricks">BRICKS</div><div class="item" data-value="glass">GLASS</div><div class="item" data-value="concrete">CONCRETE</div><div class="item" data-value="ceramic">CERAMIC</div><div class="item" data-value="gypsum">GYPSUM</div><div class="item" data-value="fabric">FABRIC</div><div class="item" data-value="rubber">RUBBER</div><div class="item" data-value="stone">STONE</div><div class="item" data-value="terrazo">TERRAZO</div><div class="item" data-value="stainless">STAINLESS</div><div class="item" data-value="vinyl">VINYL</div><div class="item" data-value="wooden">WOODEN</div></div></div></div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes-->  <hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"><label>Ceiling Type(s)</label></div><div class="ui fluid multiple search selection dropdown"><input type="hidden" name="form'+formcount+'_ceilingtype'+section_count+'"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">--Select Ceiling--</div><div class="menu" tabindex="-1"><div class="item" data-value="concrete">CONCRETE</div><div class="item" data-value="glass">GLASS</div><div class="item" data-value="wooden">WOODEN</div><div class="item" data-value="ceramic">CERAMIC</div><div class="item" data-value="gypsum">GYPSUM</div><div class="item" data-value="foam">FOAM</div><div class="item" data-value="plastic">PLASTIC</div><div class="item" data-value="fabric">FABRIC</div><div class="item" data-value="rubber">RUBBER</div><div class="item" data-value="stainless">STAINLESS</div><div class="item" data-value="vinyl">VINYL</div><div class="item" data-value="others">OTHERS</div></div></div></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class=" bold-text common-label"><label>Floor Type(s)</label></div><div class="ui fluid multiple search selection dropdown"><input type="hidden" name="form'+formcount+'_floortype'+section_count+'"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">--Select Floortype--</div><div class="menu" tabindex="-1"><div class="item" data-value="marble">MARBLE</div><div class="item" data-value="glass">GLASS</div><div class="item" data-value="stone">STONE</div><div class="item" data-value="ceramic">CERAMIC</div><div class="item" data-value="concrete">CONCRETE</div><div class="item" data-value="bricks">BRICKS</div><div class="item" data-value="wooden">WOODEN</div><div class="item" data-value="terrazo">TERRAZO</div><div class="item" data-value="others">OTHERS</div></div></div></div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--> <hr class="hr-dashedpad">  <div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"> <label class="section_label">Total Cost</label></div><input name="form'+formcount+'_sectioncost'+section_count+'" id="id_form'+formcount+'_sectioncost'+section_count+'" type="number" step="0.001" class="textBox OnlyNumber" placeholder="Section Cost" value="" required onkeyup="findsectiontotal(this);" min="0"></div><!--enquiry-form-left--><div class="enquiry-form-right hide-m"><!--enquiry-form-right-->&nbsp;  </div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes-->  <br><br><div class="common-sub-head align-left">Keynotes</div><div class="keynotes-wrapper-Full"><!--keynotes-wrapper-Full--> <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Sub Area</label></div><input class="keynote_field" type="text" id="id_form-'+formcount+'-section-'+section_count+'-keynote" name="select" list="keynotes"><datalist id="keynotes"><option>BEDROOMS</option><option>BATHROOMS</option><option>MAID ROOM</option><option>STORAGE ROOM</option><option>LIVING ROOM</option><option>DRESSING ROOM</option><option>CABINETS (Inside)</option><option>CABINETS (Outside)</option><option>DRIVER ROOM</option><option>LAUNDRY ROOM</option><option>MECHANICAL ROOM</option><option>ELECTRICAL ROOM</option><option>ENTERTAINMENT ROOM</option><option>DINING ROOM</option><option>ENTRANCE AREA</option><option>STAIR CASE</option><option>HAND WASH AREA</option><option>WINDOWS</option><option>WALL GLASS</option><option>BALCONY</option><option>SWIMMING POOL</option><option>FAÇADE</option><option>DUSTING</option><option>GATES & FENCE</option><option>HALL WAY</option><option>AC VENTS</option><option>COVE LIGHTS</option><option>SWITCH BOARDS</option><option>CHANDELIERS</option><option>WALL LIGHTS</option><option>CEILING LIGHTS</option><option>DOOR</option><option>ROOF TOP</option><option>FENCE</option><option>PARKING AREA</option></datalist></div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right-->
+    <div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Quantity</label></div><input name="time" type="number" class="textBox" id="id_form-'+formcount+'-section-'+section_count+'-quantity" placeholder=" "></div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label hide-m"> <label>&nbsp;</label></div><input name="add" type="button" value="Add" id="id_form-'+formcount+'-section-'+section_count+'-add" class="add-button" onclick="addKeynote(this);"></div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--><hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes" id="id_form-'+formcount+'-section-'+section_count+'-keynotecontainer"><div class="enquiry-form-left"><!--enquiry-form-left--><table width="100%" border="0" id="id_form-'+formcount+'-section-'+section_count+'-keynote-table-left" class="keynots-tble"></table></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><table width="100%" border="0" id="id_form-'+formcount+'-section-'+section_count+'-keynote-table-right" class="keynots-tble"></table></div><!--enquiry-form-right--></div><!--enquiry-form-Wrapper--></div><!--keynotes-wrapper-Full--> </div><!--enquiry-child-wrapper-Full-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+        
+        <div id="id_form-0-sectioncontainer">
+        </div><!--section-container-->
+
+<br><br>
+    
+ 		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class=" bold-text common-label"> <label>Number of Cleaners</label></div>
+                <input name="form-0-number_of_cleaners" id="id_form-0-number_of_cleaners" type="text" class="textBox OnlyNumber" maxlength="2" placeholder=" " required> 
+                </div><!--enquiry-form-left-->
+            	<div class="enquiry-form-right"><!--enquiry-form-right-->
+                
+                <div class=" bold-text common-label"> <label>Final Cost</label></div>
+                <input name="form-0-total_cost" id="id_form-0-total_cost" type="text" class="textBox OnlyNumber readonly" maxlength="10" placeholder=" " required min="0"> 
+                
+                </div><!--enquiry-form-right-->
+		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+                      
+                <hr class="hr-dashedpad">   
+                
+ 		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+            	<div class="enquiry-form-left"><!--enquiry-form-left-->
+                <div class=" bold-text common-label"> <label>Tentative Time</label></div>
+                <input name="form-0-tendative_time" id='tendative_time' type="text" class="textBox readonly" placeholder=" " autocomplete="off" required> 
+                </div><!--enquiry-form-left-->
+                <div class="enquiry-form-right"><!--enquiry-form-right-->
+                <div class=" bold-text common-label"> <label>Tentative Date</label></div>
+                <input name="form-0-tendative_date" id='tendative_date' type="text" class="textBox readonly" placeholder="" autocomplete="off"> 
+                </div><!--enquiry-form-right-->
+            	{% comment %} <div class="enquiry-form-right"><!--enquiry-form-right-->
+                <div class=" bold-text common-label"> <label>Tentative Date(S)</label></div>
+                <input name="form-0-tendative_dates" id='id_form-0-tendative_dates' type="text" class="textBox readonly" placeholder="Please select no. of cleaners, duration and time." autocomplete="off"> 
+                </div><!--enquiry-form-right--> {% endcomment %}
+		</div> <!--enquiry-form-Wrapper enquiry-boxes-->
+                
+<div class="details-notes align-left">Media</div>        
+<div class="row" id="id_form-0-media"><!--row-->
+    <div class="col-sm-2 imgUp"><!--col-sm-2 imgUp-->
+        <div class="imagePreview"></div>
+        <label class="btn btn-primary">Upload<input type="file" name="form-0-media" class="uploadFile img" value="Upload Photo" style="width: 0px;height: 0px;overflow: hidden;"></label>
+        </div><!--col-sm-2 imgUp-->
+    	<i class="fa fa-plus imgAdd"></i>
+</div><!--row-->                  
+                
+                
+                
+	</div><!--enquiry-FullWrapper enquiry-boxes-->
+<br>
+
+<br>
+</div><!-- link formset end -->
+ <div align="center" onclick="SubmitQuatationForm(this);"><input class="assignButton quotation_btn" name="submit" type="button" value="Submit"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>
+</form> 
+ 
+ 
+ 
+ 
+ 
+
+
+</div><!--center-formDiv-->
+</div><!--white-wrapper-->
+ 
+</div><!--order-top-wrapper-->  
+            
+            
+            
+            
+                 
+</div><!--container-fluid space topspace-->
+</section><!--content-->
+    
+    
+{% include 'agent/common/footer.html' %}    
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script>
+
+
+function datetimecheck(ftime,fdate,mode,x){
+        var today = new Date();
+        
+        if (mode == 'subscription'){
+            var sub_dates = fdate.split(','); //splitting subscription dates
+
+            dates = [];
+
+            //converting subscription dates to date objects and adding to list
+            for (i = 0; i < sub_dates.length; i++) {
+                console.log(i,"i")
+                var vals = sub_dates[i].split('-');
+                console.log(vals,i,"i")
+                var day = parseInt(vals[0]);
+                var month = parseInt (vals[1]);
+                var year = parseInt (vals[2]);
+                var sub_date = new Date(year,month,day);
+                
+                dates.push(sub_date);
+            }
+
+            var minimumDate=new Date(Math.min.apply(null, dates)); 
+            
+            var tentativedate = minimumDate.getDate()+"-"+minimumDate.getMonth()+"-"+minimumDate.getFullYear();
+            console.log(tentativedate,"dts")
+        }else{
+            var tentativedate = fdate;
+        }
+
+        if (tentativedate != ''){
+            console.log(tentativedate,today,"dte")
+            var vals = tentativedate.split('-');
+            var day = parseInt(vals[0]);
+            var month = parseInt (vals[1]);
+            var year = parseInt (vals[2]);
+
+            var start_time = ftime;
+            start_time = start_time.split(" ");
+            time_AM_PM = start_time[1];
+            var time = start_time[0].split(":");
+
+            //splitting 0 in hour
+            if (time[0] < 10){
+                var hour_split = time[0].split('');
+                var time_hour = hour_split[1];
+                console.log(time_hour,"werry")    
+            }else{
+                time_hour = time[0];
+            }
+
+            //converting to 24 hr
+            if (time_AM_PM == 'PM'){
+            if (time_hour < 12){
+                newhour = parseInt(time_hour) + 12 ;
+            }else{
+                newhour = time_hour;
+            }
+            }else{
+            if (time_hour == 12){
+                newhour = 00 ;
+            }else{
+                newhour = time[0];
+            }
+            }
+
+            //creating datetime element
+            selecteddatetime = new Date(year,month,day,newhour,time[1]);
+            selecteddatetime.setMonth(selecteddatetime.getMonth()-1);
+            console.log(newhour,selecteddatetime,"sel")
+
+            if (selecteddatetime < today){
+            //$('#time_alert').attr("hidden",false);
+            $('.assignButton').attr("disabled",true);
+            console.log("success")
+            }else{
+            //$('#time_alert').attr("hidden",true);
+            $('.assignButton').attr("disabled",false);
+            console.log("fail")
+            }
+        }
+        
+        //else{
+        //$("#id_form-"+x+"-tendative_time").val('');
+        //$("#id_form-"+x+"-tendative_time").attr("placeholder","Select Date !!");
+
+        //}
+
+    };
+
+
+
+$(".service-selector").change(function (){  
+id=this.id.match(/\d+/); 
+
+$.ajax({
+
+        url: "{% url 'agent:ajax-getcleaningsection' %}",
+
+        data: {'service_type_id':this.value}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+
+          ajax_ret_areas = data;
+ 
+          $("#id_form-"+id+"-section").empty();
+
+          $("#id_form-"+id+"-section").append($('<option>', {
+              value: "", 
+              text: "Choose Section"
+                                })); 
+            
+          $.each( ajax_ret_areas, function( key, values ) {
+              $("#id_form-"+id+"-section").append($('<option>', {        
+                value: values, 
+                text: values   
+                                }));   
+                                    
+                            });
+                
+                }  
+      });
+      });
+
+// add new section
+function addSectionNew(form_identifier){
+
+    var formcount = parseInt(form_identifier.id.match(/\d+/g)[0]);
+    service_type  = $("#id_form-"+formcount+"-service_type option:selected").text();
+    
+    try {
+        last_section_of_form = $('#id_form-'+formcount+'-sectioncontainer .form_section:first').attr('id');
+        section_count        = parseInt(last_section_of_form.match(/\d+/g)[1])+1;
+    }
+    catch(err) {
+        section_count = 0;   
+    }
+    //To check previous section is filled or not
+    pre_section_filled_checker        = true
+    pre_section_added_keynote_checker = true
+
+    if(section_count >0 )
+    {
+        pre_section_added_keynote_count = $('#id_form'+formcount+'_section'+(section_count-1)+'-keynote_counter').val();
+        if(pre_section_added_keynote_count == 0 && service_type != 'Carpet Cleaning' && service_type != 'Upholstery Cleaning')
+        {
+            pre_section_added_keynote_checker = false
+        }
+
+
+        var fields = $('#form'+formcount+'_section'+(section_count-1)+'').find("select, input").map(function() {
+                        return {
+                                name: $(this).attr('name'),
+                                value: $(this).val(),
+                                required: $(this).attr('required')
+                                }
+                        }).get();
+        
+        $.each(fields, function(i, field) {
+            if(field.name && field.required)
+            {
+                if(!field.value)
+                {
+                    pre_section_filled_checker = false;
+                    console.log(field.name);
+                }
+
+            }
+            });
+    }
+
+
+if(pre_section_filled_checker && pre_section_added_keynote_checker)
+{
+    selected_section = $("#id_form-"+formcount+"-section option:selected").val();
+
+    //if selected section continue else message
+ if(selected_section)
+    {
+    //for counter for backend
+    $('#id_form-'+formcount+'-section_counter').val(section_count+1);
+
+
+    if(service_type == 'General Cleaning' || service_type == 'Deep Cleaning')
+    {
+
+    appendhtml = '<div class="enquiry-child-wrapper-Full form_section" id="form'+formcount+'_section'+section_count+'"><!--enquiry-child-wrapper-Full--><input type="hidden" name="form'+formcount+'_section'+section_count+'-keynote_counter" id="id_form'+formcount+'_section'+section_count+'-keynote_counter" value="0"><div class="close-div" data-formcount="'+formcount+'"><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div><div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"> <label class="section_label">Section '+(section_count+1)+' ('+selected_section+')</label></div><input name="form'+formcount+'_section'+section_count+'" type="text" class="textBox section_time" placeholder=" " value="'+selected_section+'" required></div><!--enquiry-form-left--><div class="enquiry-form-right hide-m"><!--enquiry-form-right-->&nbsp;  </div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--> <hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Category</label></div><label for="favcity"><select id="favcity" name="form'+formcount+'_category'+section_count+'" required><option value="">Choose Category</option><option value="OpenArea">OpenArea</option><option value="Divided Area">Divided Area</option></select></label></div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Dirt Level</label></div><label for="favcity"><select id="favcity" name="form'+formcount+'_dirt_level'+section_count+'" required><option value="">Choose Dirt Level</option><option value="Red">Red</option><option value="Random">Random</option></select></label> </div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Size</label></div><input name="form'+formcount+'_size'+section_count+'" type="text" class="textBox OnlyNumber" maxlength="10" placeholder=" " required> </div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Unit</label></div><label for="favcity"><select id="favcity" name="form'+formcount+'_unit'+section_count+'" required><option value="">Choose Unit</option><option value="Square meter">Square meter</option><option value="Square inch">Square inch</option></select></div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"'+(selected_section == 'Floor' || selected_section == 'General Area' ? 'disabled=true': '')+'> <label>No. of Floor(s)</label></div><input name="form'+formcount+'_floor'+section_count+'" class="textBox OnlyNumber floortext" maxlength="3" placeholder=" "'+(selected_section == 'Floor' || selected_section == 'General Area' ? 'disabled=true': 'type=text required')+' > </div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp-->   </div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--><hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"'+(selected_section == 'General Area' ? 'disabled=true': '')+'> <label>No. of Room(s)</label></div><input name="form'+formcount+'_room'+section_count+'" class="textBox OnlyNumber" maxlength="2" placeholder=" "'+(selected_section == 'General Area' ? 'disabled=true': 'type=text required')+'> </div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class=" bold-text common-label"> <label>Wall Type(s)</label></div><div class="ui fluid multiple search selection dropdown"><input type="hidden" name="form'+formcount+'_walltype'+section_count+'"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">--Select Wall Type--</div><div class="menu" tabindex="-1"><div class="item" data-value="bricks">BRICKS</div><div class="item" data-value="glass">GLASS</div><div class="item" data-value="concrete">CONCRETE</div><div class="item" data-value="ceramic">CERAMIC</div><div class="item" data-value="gypsum">GYPSUM</div><div class="item" data-value="fabric">FABRIC</div><div class="item" data-value="rubber">RUBBER</div><div class="item" data-value="stone">STONE</div><div class="item" data-value="terrazo">TERRAZO</div><div class="item" data-value="stainless">STAINLESS</div><div class="item" data-value="vinyl">VINYL</div><div class="item" data-value="wooden">WOODEN</div></div></div></div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes-->  <hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"><label>Ceiling Type(s)</label></div><div class="ui fluid multiple search selection dropdown"><input type="hidden" name="form'+formcount+'_ceilingtype'+section_count+'"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">--Select Ceiling--</div><div class="menu" tabindex="-1"><div class="item" data-value="concrete">CONCRETE</div><div class="item" data-value="glass">GLASS</div><div class="item" data-value="wooden">WOODEN</div><div class="item" data-value="ceramic">CERAMIC</div><div class="item" data-value="gypsum">GYPSUM</div><div class="item" data-value="foam">FOAM</div><div class="item" data-value="plastic">PLASTIC</div><div class="item" data-value="fabric">FABRIC</div><div class="item" data-value="rubber">RUBBER</div><div class="item" data-value="stainless">STAINLESS</div><div class="item" data-value="vinyl">VINYL</div><div class="item" data-value="others">OTHERS</div></div></div></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class=" bold-text common-label"><label>Floor Type(s)</label></div><div class="ui fluid multiple search selection dropdown"><input type="hidden" name="form'+formcount+'_floortype'+section_count+'"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">--Select Floortype--</div><div class="menu" tabindex="-1"><div class="item" data-value="marble">MARBLE</div><div class="item" data-value="glass">GLASS</div><div class="item" data-value="stone">STONE</div><div class="item" data-value="ceramic">CERAMIC</div><div class="item" data-value="concrete">CONCRETE</div><div class="item" data-value="bricks">BRICKS</div><div class="item" data-value="wooden">WOODEN</div><div class="item" data-value="terrazo">TERRAZO</div><div class="item" data-value="others">OTHERS</div></div></div></div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--> <hr class="hr-dashedpad">  <div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"> <label class="section_label">Total Cost</label></div><input name="form'+formcount+'_sectioncost'+section_count+'" id="id_form'+formcount+'_sectioncost'+section_count+'" type="number" step="0.001" class="textBox OnlyNumber" placeholder="Section Cost" value="" required onkeyup="findsectiontotal(this);" min="0"></div><!--enquiry-form-left--><div class="enquiry-form-right hide-m"><!--enquiry-form-right-->&nbsp;  </div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes-->  <br><br><div class="common-sub-head align-left">Keynotes</div><div class="keynotes-wrapper-Full"><!--keynotes-wrapper-Full--> <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Sub Area</label></div><input class="keynote_field" type="text" id="id_form-'+formcount+'-section-'+section_count+'-keynote" name="select" list="keynotes"><datalist id="keynotes"><option>BEDROOMS</option><option>BATHROOMS</option><option>MAID ROOM</option><option>STORAGE ROOM</option><option>LIVING ROOM</option><option>DRESSING ROOM</option><option>CABINETS (Inside)</option><option>CABINETS (Outside)</option><option>DRIVER ROOM</option><option>LAUNDRY ROOM</option><option>MECHANICAL ROOM</option><option>ELECTRICAL ROOM</option><option>ENTERTAINMENT ROOM</option><option>DINING ROOM</option><option>ENTRANCE AREA</option><option>STAIR CASE</option><option>HAND WASH AREA</option><option>WINDOWS</option><option>WALL GLASS</option><option>BALCONY</option><option>SWIMMING POOL</option><option>FAÇADE</option><option>DUSTING</option><option>GATES & FENCE</option><option>HALL WAY</option><option>AC VENTS</option><option>COVE LIGHTS</option><option>SWITCH BOARDS</option><option>CHANDELIERS</option><option>WALL LIGHTS</option><option>CEILING LIGHTS</option><option>DOOR</option><option>ROOF TOP</option><option>FENCE</option><option>PARKING AREA</option></datalist></div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Quantity</label></div><input name="time" type="number" class="textBox" id="id_form-'+formcount+'-section-'+section_count+'-quantity" placeholder=" "></div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label hide-m"> <label>&nbsp;</label></div><input name="add" type="button" value="Add" id="id_form-'+formcount+'-section-'+section_count+'-add" class="add-button" onclick="addKeynote(this);"></div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--><hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes" id="id_form-'+formcount+'-section-'+section_count+'-keynotecontainer"><div class="enquiry-form-left"><!--enquiry-form-left--><table width="100%" border="0" id="id_form-'+formcount+'-section-'+section_count+'-keynote-table-left" class="keynots-tble"></table></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><table width="100%" border="0" id="id_form-'+formcount+'-section-'+section_count+'-keynote-table-right" class="keynots-tble"></table></div><!--enquiry-form-right--></div><!--enquiry-form-Wrapper--></div><!--keynotes-wrapper-Full--> </div><!--enquiry-child-wrapper-Full-->'
+
+
+    }
+
+    if(service_type == 'Carpet Cleaning')
+    {
+        appendhtml = '<div class="enquiry-child-wrapper-Full form_section" id="form'+formcount+'_section'+section_count+'"><!--enquiry-child-wrapper-Full--><input type="hidden" name="form'+formcount+'_section'+section_count+'-keynote_counter" id="id_form'+formcount+'_section'+section_count+'-keynote_counter" value="0"><div class="close-div" data-formcount="'+formcount+'"><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"> <label>Section '+(section_count+1)+' ('+selected_section+')</label></div><input name="form'+formcount+'_section'+section_count+'" type="text" class="textBox section_time" placeholder=" " value="'+selected_section+'" required></div><!--enquiry-form-left--><div class="enquiry-form-right hide-m"><!--enquiry-form-right-->&nbsp;  </div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--> <hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Dirt Level</label></div><label for="favcity"><select id="favcity" name="form'+formcount+'_dirt_level'+section_count+'" required><option value="">Choose Dirt Level</option><option value="Red">Red</option><option value="Random">Random</option></select></label> </div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Age</label></div><input name="form'+formcount+'_age'+section_count+'" type="text" class="textBox" placeholder="Age in Months" required></div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Quantity</label></div><input name="form'+formcount+'_quantity'+section_count+'" type="text" class="textBox OnlyNumber" maxlength="3" placeholder=" " required> </div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Size</label></div><input name="form'+formcount+'_size'+section_count+'" type="text" maxlength="10" class="textBox OnlyNumber" placeholder=" "></div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Unit</label></div><label for="favcity"><select id="favcity" name="form'+formcount+'_unit'+section_count+'" required><option value="">Choose Unit</option><option value="Square meter">Square meter</option><option value="Square inch">Square inch</option></select></label></div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--><hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"> <label>Material(s)</label></div><div class="ui fluid multiple search selection dropdown"><input type="hidden" name="form'+formcount+'_material'+section_count+'"><i class="dropdown icon"></i><input class="search" tabindex="0"><div class="default text">--Select Material--</div><div class="menu" tabindex="-1"><div class="item" data-value="polyester">POLYESTER</div><div class="item" data-value="natural fiber">NATURAL FIBER</div><div class="item" data-value="synthetic">SYNTHETIC</div><div class="item" data-value="leather">LEATHER</div><div class="item" data-value="olefin">OLEFIN</div><div class="item" data-value="polypropylene">POLYPROPYLENE</div><div class="item" data-value="nylon">NYLON</div><div class="item" data-value="acrylic">ACRYLIC</div></div></div></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class=" bold-text common-label"> <label>Colour(s)</label></div><div class="ui fluid multiple search selection dropdown"><input type="hidden" name="form'+formcount+'_colour'+section_count+'"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">--Select Colour--</div><div class="menu" tabindex="-1"><div class="item" data-value="green">GREEN</div><div class="item" data-value="silver">SILVER</div><div class="item" data-value="violet">VIOLET</div><div class="item" data-value="white">WHITE</div><div class="item" data-value="black">BLACK</div><div class="item" data-value="beige">BEIGE</div><div class="item" data-value="blue">BLUE</div><div class="item" data-value="grey">GREY</div><div class="item" data-value="red">RED</div><div class="item" data-value="cream">CREAM</div><div class="item" data-value="multi">MULTI</div><div class="item" data-value="off white">OFF WHITE</div><div class="item" data-value="maroon">MAROON</div><div class="item" data-value="orange">ORANGE</div><div class="item" data-value="pink">PINK</div><div class="item" data-value="gold">GOLD</div><div class="item" data-value="brown">BROWN</div><div class="item" data-value="yellow">YELLOW</div><div class="item" data-value="royal blue">ROYAL BLUE</div><div class="item" data-value="lilac">LILAC</div><div class="item" data-value="others">OTHERS</div></div></div></div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes-->        <hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"> <label>Cause of Stain(s)</label></div><div class="ui fluid multiple search selection dropdown"><input type="hidden" name="form'+formcount+'_staincause'+section_count+'"><i class="dropdown icon"></i><input class="search" tabindex="0"><div class="default text">--Select Cause of stain--</div><div class="menu" tabindex="-1"><div class="item" data-value="ink mark">INK MARK</div><div class="item" data-value="hard dust">HARD DUST</div><div class="item" data-value="coffee and tea spill">COFFEE & TEA SPILL</div><div class="item" data-value="oily matters">OIL</div><div class="item" data-value="urine">URINE</div><div class="item" data-value="grease">GREASE</div><div class="item" data-value="paint">PAINT</div><div class="item" data-value="milk spill">MILK SPILL</div><div class="item" data-value="No Stain">NO STAIN</div><div class="item" data-value="others">OTHERS</div></div></div></div><!--enquiry-form-left--><div class="enquiry-form-right hide-m"><!--enquiry-form-right-->&nbsp;</div><!--enquiry-form-right--></div><hr class="hr-dashedpad">  <div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"> <label class="section_label">Total Cost</label></div><input name="form'+formcount+'_sectioncost'+section_count+'" id="id_form'+formcount+'_sectioncost'+section_count+'" type="number"  step="0.001" class="textBox OnlyNumber" placeholder="Section Cost" value="" required onkeyup="findsectiontotal(this);" min="0"></div><!--enquiry-form-left--><div class="enquiry-form-right hide-m"><!--enquiry-form-right-->&nbsp;  </div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--> <br><br><div class="common-sub-head align-left">Keynotes</div><div class="keynotes-wrapper-Full"><!--keynotes-wrapper-Full--> <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Sub Area</label></div><input class="keynote_field" id="id_form-'+formcount+'-section-'+section_count+'-keynote" type="text" name="select" > </div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Quantity</label></div><input name="time" type="number" class="textBox" id="id_form-'+formcount+'-section-'+section_count+'-quantity" placeholder=" "></div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label hide-m"> <label>&nbsp;</label></div><input name="add" type="button" value="Add" id="id_form-'+formcount+'-section-'+section_count+'-add" class="add-button" onclick="addKeynote(this);"></div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--><hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes" id="id_form-'+formcount+'-section-'+section_count+'-keynotecontainer"><div class="enquiry-form-left"><!--enquiry-form-left--><table width="100%" border="0" id="id_form-'+formcount+'-section-'+section_count+'-keynote-table-left" class="keynots-tble"></table></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><table width="100%" border="0" id="id_form-'+formcount+'-section-'+section_count+'-keynote-table-right" class="keynots-tble"></table></div><!--enquiry-form-right--></div><!--enquiry-form-Wrapper--></div><!--keynotes-wrapper-Full--> </div><!--enquiry-child-wrapper-Full-->'
+    }
+
+    if(service_type == 'Upholstery Cleaning')
+    {
+
+        appendhtml = '<div class="enquiry-child-wrapper-Full form_section" id="form'+formcount+'_section'+section_count+'"><!--enquiry-child-wrapper-Full--><input type="hidden" name="form'+formcount+'_section'+section_count+'-keynote_counter" id="id_form'+formcount+'_section'+section_count+'-keynote_counter" value="0"><div class="close-div" data-formcount="'+formcount+'"><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"> <label>Section '+(section_count+1)+' ('+selected_section+')</label></div><input name="form'+formcount+'_section'+section_count+'" type="text" class="textBox section_time" placeholder=" " value="'+selected_section+'" required></div><!--enquiry-form-left--><div class="enquiry-form-right hide-m"><!--enquiry-form-right-->&nbsp;  </div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--> <hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Dirt Level</label></div><label for="favcity"><select id="favcity" name="form'+formcount+'_dirt_level'+section_count+'" required><option value="">Choose Dirt Level</option><option value="Red">Red</option><option value="Random">Random</option></select> </div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Age</label></div><input name="form'+formcount+'_age'+section_count+'" type="text" class="textBox" placeholder="Age in Months" required></div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Quantity</label></div><input name="form'+formcount+'_quantity'+section_count+'" type="text" class="textBox OnlyNumber" maxlength="3" placeholder=" " required> </div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Size</label></div><label for="favcity"><select id="favcity" name="form'+formcount+'_size'+section_count+'" required><option value="">Choose Size</option><option value="Small">Small</option><option value="Medium">Medium</option><option value="Large">Large</option><option value="Extra Large">Extra Large</option></select></label></div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--><hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"> <label>Material(s)</label></div><div class="ui fluid multiple search selection dropdown"><input type="hidden" name="form'+formcount+'_material'+section_count+'"><i class="dropdown icon"></i><input class="search" tabindex="0"><div class="default text">--Select Material--</div><div class="menu" tabindex="-1"><div class="item" data-value="polyester">POLYESTER</div><div class="item" data-value="natural fiber">NATURAL FIBER</div><div class="item" data-value="synthetic">SYNTHETIC</div><div class="item" data-value="leather">LEATHER</div><div class="item" data-value="olefin">OLEFIN</div><div class="item" data-value="polypropylene">POLYPROPYLENE</div><div class="item" data-value="nylon">NYLON</div><div class="item" data-value="acrylic">ACRYLIC</div></div></div></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class=" bold-text common-label"> <label>Colour(s)</label></div><div class="ui fluid multiple search selection dropdown"><input type="hidden" name="form'+formcount+'_colour'+section_count+'"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">--Select Colour--</div><div class="menu" tabindex="-1"><div class="item" data-value="green">GREEN</div><div class="item" data-value="silver">SILVER</div><div class="item" data-value="violet">VIOLET</div><div class="item" data-value="white">WHITE</div><div class="item" data-value="black">BLACK</div><div class="item" data-value="beige">BEIGE</div><div class="item" data-value="blue">BLUE</div><div class="item" data-value="grey">GREY</div><div class="item" data-value="red">RED</div><div class="item" data-value="cream">CREAM</div><div class="item" data-value="multi">MULTI</div><div class="item" data-value="off white">OFF WHITE</div><div class="item" data-value="maroon">MAROON</div><div class="item" data-value="orange">ORANGE</div><div class="item" data-value="pink">PINK</div><div class="item" data-value="gold">GOLD</div><div class="item" data-value="brown">BROWN</div><div class="item" data-value="yellow">YELLOW</div><div class="item" data-value="royal blue">ROYAL BLUE</div><div class="item" data-value="lilac">LILAC</div><div class="item" data-value="others">OTHERS</div></div></div></div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--><hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"> <label>Cause of Stain(s)</label></div><div class="ui fluid multiple search selection dropdown"><input type="hidden" name="form'+formcount+'_staincause'+section_count+'"><i class="dropdown icon"></i><input class="search" tabindex="0"><div class="default text">--Select Cause of stain--</div><div class="menu" tabindex="-1"><div class="item" data-value="ink mark">INK MARK</div><div class="item" data-value="hard dust">HARD DUST</div><div class="item" data-value="coffee and tea_spill">COFFEE & TEA SPILL</div><div class="item" data-value="oily matters">OIL</div><div class="item" data-value="urine">URINE</div><div class="item" data-value="grease">GREASE</div><div class="item" data-value="paint">PAINT</div><div class="item" data-value="milk spill">MILK SPILL</div><div class="item" data-value="No Stain">NO STAIN</div><div class="item" data-value="others">OTHERS</div></div></div></div><!--enquiry-form-left--><div class="enquiry-form-right hide-m"><!--enquiry-form-right-->&nbsp;</div><!--enquiry-form-right--></div><hr class="hr-dashedpad">  <div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"> <label class="section_label">Total Cost</label></div><input name="form'+formcount+'_sectioncost'+section_count+'" id="id_form'+formcount+'_sectioncost'+section_count+'" type="number"  step="0.001" class="textBox OnlyNumber" placeholder="Section Cost" value="" required onkeyup="findsectiontotal(this);" min="0"></div><!--enquiry-form-left--><div class="enquiry-form-right hide-m"><!--enquiry-form-right-->&nbsp;  </div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--> <br><br><div class="common-sub-head align-left">Keynotes</div><div class="keynotes-wrapper-Full"><!--keynotes-wrapper-Full--> <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Sub Area</label></div><input class="keynote_field" id="id_form-'+formcount+'-section-'+section_count+'-keynote" type="text" name="select" > </div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Quantity</label></div><input name="time" type="number" class="textBox" id="id_form-'+formcount+'-section-'+section_count+'-quantity" placeholder=" "></div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label hide-m"> <label>&nbsp;</label></div><input name="add" type="button" value="Add" id="id_form-'+formcount+'-section-'+section_count+'-add" class="add-button" onclick="addKeynote(this);"></div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--><hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes" id="id_form-'+formcount+'-section-'+section_count+'-keynotecontainer"><div class="enquiry-form-left"><!--enquiry-form-left--><table width="100%" border="0" id="id_form-'+formcount+'-section-'+section_count+'-keynote-table-left" class="keynots-tble"></table></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><table width="100%" border="0" id="id_form-'+formcount+'-section-'+section_count+'-keynote-table-right" class="keynots-tble"></table></div><!--enquiry-form-right--></div><!--enquiry-form-Wrapper--></div><!--keynotes-wrapper-Full--> </div><!--enquiry-child-wrapper-Full-->'
+
+            }
+
+    if(service_type == 'Kitchen Cleaning')
+            {
+                appendhtml = '<div class="enquiry-child-wrapper-Full form_section" id="form'+formcount+'_section'+section_count+'"><!--enquiry-child-wrapper-Full--><input type="hidden" name="form'+formcount+'_section'+section_count+'-keynote_counter" id="id_form'+formcount+'_section'+section_count+'-keynote_counter" value="0"><div class="close-div" data-formcount="'+formcount+'"><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div><div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"> <label class="section_label">Section '+(section_count+1)+' ('+selected_section+')</label></div><input name="form'+formcount+'_section'+section_count+'" type="text" class="textBox section_time" placeholder=" " value="'+selected_section+'" required></div><!--enquiry-form-left--><div class="enquiry-form-right hide-m"><!--enquiry-form-right-->&nbsp;  </div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--> <hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Category</label></div><label for="favcity"><select id="favcity" name="form'+formcount+'_category'+section_count+'" required><option value="">Choose Category</option><option value="OpenArea">OpenArea</option><option value="Divided Area">Divided Area</option></select></label></div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Dirt Level</label></div><label for="favcity"><select id="favcity" name="form'+formcount+'_dirt_level'+section_count+'" required><option value="">Choose Dirt Level</option><option value="Red">Red</option><option value="Random">Random</option></select></label> </div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Size</label></div><input name="form'+formcount+'_size'+section_count+'" type="text" class="textBox OnlyNumber" maxlength="10" placeholder=" " required> </div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Unit</label></div><label for="favcity"><select id="favcity" name="form'+formcount+'_unit'+section_count+'" required><option value="">Choose Unit</option><option value="Square meter">Square meter</option><option value="Square inch">Square inch</option></select></div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"'+(selected_section == 'Floor' || selected_section == 'General Area' ? 'disabled=true': '')+'> <label>No. of Floor(s)</label></div><input name="form'+formcount+'_floor'+section_count+'" class="textBox OnlyNumber" maxlength="3" placeholder=" "'+(selected_section == 'Floor' || selected_section == 'General Area' ? 'disabled=true': 'type=text required')+'> </div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp-->   </div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes-->          <hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"'+(selected_section == 'General Area' ? 'disabled=true': '')+'> <label>No. of Room(s)</label></div><input name="form'+formcount+'_room'+section_count+'" class="textBox OnlyNumber" maxlength="2" placeholder=" "'+(selected_section == 'General Area' ? 'disabled=true': 'type=text required')+'> </div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class=" bold-text common-label"> <label>Wall Type(s)</label></div><div class="ui fluid multiple search selection dropdown"><input type="hidden" name="form'+formcount+'_walltype'+section_count+'"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">--Select Wall Type--</div><div class="menu" tabindex="-1"><div class="item" data-value="bricks">BRICKS</div><div class="item" data-value="glass">GLASS</div><div class="item" data-value="concrete">CONCRETE</div><div class="item" data-value="ceramic">CERAMIC</div><div class="item" data-value="gypsum">GYPSUM</div><div class="item" data-value="fabric">FABRIC</div><div class="item" data-value="rubber">RUBBER</div><div class="item" data-value="stone">STONE</div><div class="item" data-value="terrazo">TERRAZO</div><div class="item" data-value="stainless">STAINLESS</div><div class="item" data-value="vinyl">VINYL</div><div class="item" data-value="wooden">WOODEN</div></div></div></div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes-->  <hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"><label>Ceiling Type(s)</label></div><div class="ui fluid multiple search selection dropdown"><input type="hidden" name="form'+formcount+'_ceilingtype'+section_count+'"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">--Select Ceiling--</div><div class="menu" tabindex="-1"><div class="item" data-value="concrete">CONCRETE</div><div class="item" data-value="glass">GLASS</div><div class="item" data-value="wooden">WOODEN</div><div class="item" data-value="ceramic">CERAMIC</div><div class="item" data-value="gypsum">GYPSUM</div><div class="item" data-value="foam">FOAM</div><div class="item" data-value="plastic">PLASTIC</div><div class="item" data-value="fabric">FABRIC</div><div class="item" data-value="rubber">RUBBER</div><div class="item" data-value="stainless">STAINLESS</div><div class="item" data-value="vinyl">VINYL</div><div class="item" data-value="others">OTHERS</div></div></div></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class=" bold-text common-label"><label>Floor Type(s)</label></div><div class="ui fluid multiple search selection dropdown"><input type="hidden" name="form'+formcount+'_floortype'+section_count+'"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">--Select Floor Type--</div><div class="menu" tabindex="-1"><div class="item" data-value="marble">MARBLE</div><div class="item" data-value="glass">GLASS</div><div class="item" data-value="stone">STONE</div><div class="item" data-value="ceramic">CERAMIC</div><div class="item" data-value="concrete">CONCRETE</div><div class="item" data-value="bricks">BRICKS</div><div class="item" data-value="wooden">WOODEN</div><div class="item" data-value="terrazo">TERRAZO</div><div class="item" data-value="others">OTHERS</div></div></div></div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--> <hr class="hr-dashedpad">  <div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"> <label class="section_label">Total Cost</label></div><input name="form'+formcount+'_sectioncost'+section_count+'" id="id_form'+formcount+'_sectioncost'+section_count+'" type="number"  step="0.001" class="textBox OnlyNumber" placeholder="Section Cost" value="" required onkeyup="findsectiontotal(this);" min="0"></div><!--enquiry-form-left--><div class="enquiry-form-right hide-m"><!--enquiry-form-right-->&nbsp;  </div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--> <br><br><div class="common-sub-head align-left">Keynotes</div><div class="keynotes-wrapper-Full"><!--keynotes-wrapper-Full--> <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Sub Area</label></div><input class="keynote_field" id="id_form-'+formcount+'-section-'+section_count+'-keynote" name="select" type="text" list="keynotes"><datalist id="keynotes"><option value="">Choose Keynotes</option><option >CABINETS (Inside)</option><option >CABINETS (Outside)</option><option >FRIDGES (Inside)</option><option >FRIDGES (Outside)</option><option >OVEN</option><option >MAIN EXHAUST</option><option >WALL</option><option >CEILING</option><option >FLOOR</option><option >STORAGE AREA</option><option >MICROWAVE</option><option >WATER DISPENSER</option><option >SMALL EQUIPMENTS</option><option >GROUT DETAILING</option><option >WINDOW</option><option >DOOR</option><option >AC VENTS</option><option >SWITCH BOARDS</option><option >CEILING LIGHTS</option><option >EXHAUST FAN</option><option >STUFFS REMOVING</option><option >STUFFS RETURNING</option><option >STUFFS CLEANING</option><option >OTHERS_SPECIFY</option></datalist> </div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Quantity</label></div><input name="time" type="text" maxlength="3" class="textBox OnlyNumber" id="id_form-'+formcount+'-section-'+section_count+'-quantity" placeholder=" "></div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label hide-m"> <label>&nbsp;</label></div><input name="add" type="button" value="Add" id="id_form-'+formcount+'-section-'+section_count+'-add" class="add-button" onclick="addKeynote(this);"></div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--><hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes" id="id_form-'+formcount+'-section-'+section_count+'-keynotecontainer"><div class="enquiry-form-left"><!--enquiry-form-left--><table width="100%" border="0" id="id_form-'+formcount+'-section-'+section_count+'-keynote-table-left" class="keynots-tble"></table></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><table width="100%" border="0" id="id_form-'+formcount+'-section-'+section_count+'-keynote-table-right" class="keynots-tble"></table></div><!--enquiry-form-right--></div><!--enquiry-form-Wrapper--></div><!--keynotes-wrapper-Full--> </div><!--enquiry-child-wrapper-Full-->'
+            }
+
+    if(service_type == 'Sterilization')  
+            {
+                appendhtml = '<div class="enquiry-child-wrapper-Full form_section" id="form'+formcount+'_section'+section_count+'"><!--enquiry-child-wrapper-Full--><input type="hidden" name="form'+formcount+'_section'+section_count+'-keynote_counter" id="id_form'+formcount+'_section'+section_count+'-keynote_counter" value="0"><div class="close-div" data-formcount="'+formcount+'"><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div><div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"> <label class="section_label">Section '+(section_count+1)+' ('+selected_section+')</label></div><input name="form'+formcount+'_section'+section_count+'" type="text" class="textBox section_time" placeholder=" " value="'+selected_section+'" required></div><!--enquiry-form-left--><div class="enquiry-form-right hide-m"><!--enquiry-form-right-->&nbsp;  </div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--> <hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Category</label></div><label for="favcity"><select id="favcity" name="form'+formcount+'_category'+section_count+'" required><option value="">Choose Category</option><option value="OpenArea">OpenArea</option><option value="Divided Area">Divided Area</option></select></label></div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Dirt Level</label></div><label for="favcity"><select id="favcity" name="form'+formcount+'_dirt_level'+section_count+'" required><option value="">Choose Dirt Level</option><option value="Red">Red</option><option value="Random">Random</option></select></label> </div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Size</label></div><input name="form'+formcount+'_size'+section_count+'" type="text" class="textBox OnlyNumber" maxlength="10" placeholder=" " required> </div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Unit</label></div><label for="favcity"><select id="favcity" name="form'+formcount+'_unit'+section_count+'" required><option value="">Choose Unit</option><option value="Square meter">Square meter</option><option value="Square inch">Square inch</option></select></div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"'+(selected_section == 'Floor' || selected_section == 'General Area' ? 'disabled=true': '')+'> <label>No. of Floor(s)</label></div><input name="form'+formcount+'_floor'+section_count+'" class="textBox OnlyNumber" maxlength="3" placeholder=" "'+(selected_section == 'Floor' || selected_section == 'General Area' ? 'disabled=true': 'type=text required')+'> </div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp-->   </div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes-->          <hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"'+(selected_section == 'General Area' ? 'disabled=true': '')+'> <label>No. of Room(s)</label></div><input name="form'+formcount+'_room'+section_count+'" class="textBox OnlyNumber" maxlength="2" placeholder=" "'+(selected_section == 'General Area' ? 'disabled=true': 'type=text required')+'> </div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class=" bold-text common-label"> <label>Wall Type(s)</label></div><div class="ui fluid multiple search selection dropdown"><input type="hidden" name="form'+formcount+'_walltype'+section_count+'" required><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">--Select Wall Type--</div><div class="menu" tabindex="-1"><div class="item" data-value="bricks">BRICKS</div><div class="item" data-value="glass">GLASS</div><div class="item" data-value="concrete">CONCRETE</div><div class="item" data-value="ceramic">CERAMIC</div><div class="item" data-value="gypsum">GYPSUM</div><div class="item" data-value="fabric">FABRIC</div><div class="item" data-value="rubber">RUBBER</div><div class="item" data-value="stone">STONE</div><div class="item" data-value="terrazo">TERRAZO</div><div class="item" data-value="stainless">STAINLESS</div><div class="item" data-value="vinyl">VINYL</div><div class="item" data-value="wooden">WOODEN</div></div></div></div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes-->  <hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"><label>Ceiling Type(s)</label></div><div class="ui fluid multiple search selection dropdown"><input type="hidden" name="form'+formcount+'_ceilingtype'+section_count+'"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">--Select Ceiling--</div><div class="menu" tabindex="-1"><div class="item" data-value="concrete">CONCRETE</div><div class="item" data-value="glass">GLASS</div><div class="item" data-value="wooden">WOODEN</div><div class="item" data-value="ceramic">CERAMIC</div><div class="item" data-value="gypsum">GYPSUM</div><div class="item" data-value="foam">FOAM</div><div class="item" data-value="plastic">PLASTIC</div><div class="item" data-value="fabric">FABRIC</div><div class="item" data-value="rubber">RUBBER</div><div class="item" data-value="stainless">STAINLESS</div><div class="item" data-value="vinyl">VINYL</div><div class="item" data-value="others">OTHERS</div></div></div></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class=" bold-text common-label"><label>Floor Type(s)</label></div><div class="ui fluid multiple search selection dropdown"><input type="hidden" name="form'+formcount+'_floortype'+section_count+'"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">--Select Floor Type--</div><div class="menu" tabindex="-1"><div class="item" data-value="marble">MARBLE</div><div class="item" data-value="glass">GLASS</div><div class="item" data-value="stone">STONE</div><div class="item" data-value="ceramic">CERAMIC</div><div class="item" data-value="concrete">CONCRETE</div><div class="item" data-value="bricks">BRICKS</div><div class="item" data-value="wooden">WOODEN</div><div class="item" data-value="terrazo">TERRAZO</div><div class="item" data-value="others">OTHERS</div></div></div></div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--> <hr class="hr-dashedpad">  <div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class=" bold-text common-label"> <label class="section_label">Total Cost</label></div><input name="form'+formcount+'_sectioncost'+section_count+'" id="id_form'+formcount+'_sectioncost'+section_count+'" type="number"  step="0.001" class="textBox OnlyNumber" placeholder="Section Cost" value="" required onkeyup="findsectiontotal(this);" min="0"></div><!--enquiry-form-left--><div class="enquiry-form-right hide-m"><!--enquiry-form-right-->&nbsp;  </div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--> <br><br><div class="common-sub-head align-left">Keynotes</div><div class="keynotes-wrapper-Full"><!--keynotes-wrapper-Full--> <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes--><div class="enquiry-form-left"><!--enquiry-form-left--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Sub Area</label></div><input class="keynote_field" id="id_form-'+formcount+'-section-'+section_count+'-keynote" name="select" type="text" list="keynotes"><datalist id="keynotes"><option value="">Choose Keynotes</option><option >BEDROOMS</option><option >BATHROOMS</option><option >MAID ROOM</option><option >STORAGE ROOM</option><option >LIVING ROOM</option><option >DRESSING ROOM</option><option >CABINETS (Inside)</option><option >CABINETS (Outside)</option><option >DRIVER ROOM</option><option >LAUNDRY ROOM</option><option >MECHANICAL ROOM</option><option >ELECTRICAL ROOM</option><option >ENTERTAINMENT ROOM</option><option >DINING ROOM</option><option >ENTRANCE AREA</option><option >STAIR CASE</option><option >HAND WASH AREA</option><option >WINDOWS</option><option >WALL GLASS</option><option >BALCONY</option><option >SWIMMING POOL</option><option >FAÇADE</option><option >DUSTING</option><option >GATES & FENCE</option><option >HALL WAY</option><option >AC VENTS</option><option >COVE LIGHTS</option><option >SWITCH BOARDS</option><option >CHANDELIERS</option><option >WALL LIGHTS</option><option >CEILING LIGHTS</option><option >DOOR</option><option >ROOF TOP</option><option >FENCE</option><option >PARKING AREA</option></datalist> </div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp --><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label"> <label>Quantity</label></div><input name="time" type="number" class="textBox" id="id_form-'+formcount+'-section-'+section_count+'-quantity" placeholder=" "></div><!--enquiry-two-col--><div class="enquiry-two-col"><!--enquiry-two-col--><div class=" bold-text common-label hide-m"> <label>&nbsp;</label></div><input name="add" type="button" value="Add" id="id_form-'+formcount+'-section-'+section_count+'-add" class="add-button" onclick="addKeynote(this);"></div><!--enquiry-two-col--></div><!--enquiry-Two-column-wrapp--></div><!--enquiry-form-right--></div> <!--enquiry-form-Wrapper enquiry-boxes--><hr class="hr-dashedpad"><div class="enquiry-form-Wrapper enquiry-boxes" id="id_form-'+formcount+'-section-'+section_count+'-keynotecontainer"><div class="enquiry-form-left"><!--enquiry-form-left--><table width="100%" border="0" id="id_form-'+formcount+'-section-'+section_count+'-keynote-table-left" class="keynots-tble"></table></div><!--enquiry-form-left--><div class="enquiry-form-right"><!--enquiry-form-right--><table width="100%" border="0" id="id_form-'+formcount+'-section-'+section_count+'-keynote-table-right" class="keynots-tble"></table></div><!--enquiry-form-right--></div><!--enquiry-form-Wrapper--></div><!--keynotes-wrapper-Full--> </div><!--enquiry-child-wrapper-Full-->'
+            }              
+    //append section
+    $('#id_form-'+formcount+'-sectioncontainer').prepend(appendhtml);
+            }
+
+    else
+    {
+        alert("Please select a Section")
+    }        
+
+}
+else
+{
+    alert("Please Fill the Last Section....Atleast One Keynote is Required");
+}
+
+
+    //assigning multiple dropdown
+    $('.ui.multiple.dropdown').dropdown({
+	});
+
+    //input number and text validation
+    $('.OnlyNumber').keypress(validateNumber);
+    $('.OnlyText').keypress(validateText);
+
+    function validateNumber(event){  
+        //var e = event || window.event;  input[type="number"]
+        var charCode = (event.which) ? event.which : event.keyCode
+        if (charCode != 46 && charCode > 31 
+        && (charCode < 48 || charCode > 57))
+            return false;
+            return true;
+    };
+
+    function validateText(evt) {
+        evt = (evt) ? evt : event;
+        var charCode = (evt.charCode) ? evt.charCode : ((evt.keyCode) ? evt.keyCode :
+        ((evt.which) ? evt.which : 0));
+        if (charCode > 31 && (charCode < 65 || charCode > 90) &&
+        (charCode < 97 || charCode > 122)) 
+            return false;
+            return true;
+    };
+
+    //close button for only last section
+    $('#id_form-'+formcount+'-sectioncontainer .close-div').attr("hidden",true);
+    $('#id_form-'+formcount+'-sectioncontainer .form_section:first .close-div').attr("hidden",false);
+}
+
+function toTitleCase(str)
+    {
+        return str.replace(/\w+/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    }
+
+//keynote add
+function addKeynote(form_identifier){
+    var formcount    = 1;
+    var sectioncount = 1;
+    
+    var quantity = $('#id_quantity').val();
+    var keynote_raw  = $('#id_keynote').val();
+
+    var keynote = toTitleCase(keynote_raw);
+
+    
+
+    if(keynote && quantity)
+    {
+    var keynoteleft = $('#id_form-'+formcount+'-section-'+sectioncount+'-keynote-table-left .keynote-left').length;
+    var keynoteright = $('#id_form-'+formcount+'-section-'+sectioncount+'-keynote-table-right .keynote-right').length;
+    //appending keynotes to left and right
+    if (keynoteleft <= keynoteright){
+        
+        try {
+            keynote_count = parseInt($('#id_form'+formcount+'_section'+sectioncount+'-keynote_counter').val());
+        }
+        catch(err) {
+            keynote_count = 0;   
+        }
+        if(!keynote_count)
+        {
+         keynote_count = 0;   
+        }
+
+        //for counter for backend
+
+
+        $('#id_keynote_counter').val(keynote_count+1);
+
+        append_keynote_left = '<tr id="id_form-'+formcount+'-section-'+sectioncount+'-keynote-'+keynote_count+'" class="form'+formcount+'_section'+sectioncount+'_keynote keynote-left" ><input type="hidden" name="form'+formcount+'_section'+sectioncount+'_keynote'+keynote_count+'" value="'+keynote+'" /><input type="hidden" name="form'+formcount+'_section'+sectioncount+'_quantity'+keynote_count+'" value="'+quantity+'" /><td align="left">'+keynote+'</td><td width="50px" align="center" class="keynote_qty">'+quantity+'</td><td width="30px" align="center" class="btn-remove" data-delete="form'+formcount+'_section'+sectioncount+'"><input name="delete" type="button" class="delete-button"></td></tr>'
+        $('#id_form-'+formcount+'-section-'+sectioncount+'-keynote-table-left').append(append_keynote_left);
+    }
+
+    else{
+        
+        try {
+            keynote_count = parseInt($('#id_keynote_counter').val());
+        }
+        catch(err) {
+            keynote_count = 0;   
+        }
+        if(!keynote_count)
+        {
+         keynote_count = 0;   
+        }
+
+
+        //for counter for backend
+        $('#id_form'+formcount+'_section'+sectioncount+'-keynote_counter').val(keynote_count+1);
+
+        append_keynote_right = '<tr id="id_form-'+formcount+'-section-'+sectioncount+'-keynote-'+keynote_count+'" class="form'+formcount+'_section'+sectioncount+'_keynote keynote-right" ><input type="hidden" name="form'+formcount+'_section'+sectioncount+'_keynote'+keynote_count+'" value="'+keynote+'" /><input type="hidden" name="form'+formcount+'_section'+sectioncount+'_quantity'+keynote_count+'" value="'+quantity+'" /><td align="left">'+keynote+'</td><td width="50px" align="center" class="keynote_qty">'+quantity+'</td><td width="30px" align="center" class="btn-remove" data-delete="form'+formcount+'_section'+sectioncount+'"><input name="delete" type="button" class="delete-button"></td></tr>'
+        $('#id_form-'+formcount+'-section-'+sectioncount+'-keynote-table-right').append(append_keynote_right);
+    }
+    
+    //clearing keynote and quantity value
+    $('#id_form-'+formcount+'-section-'+sectioncount+'-quantity').val('');
+    $('#id_form-'+formcount+'-section-'+sectioncount+'-keynote').val('');
+    }
+
+    else
+    {
+        alert("Please Insert Keynote and Quantity")
+    }    
+};
+
+//close/remove div
+function remove_div(div){
+    console.log(div,"div")
+    //div.remove();
+}
+
+x = 0;
+$('document').ready(function(){
+   
+    $("body").on("click", ".btn-remove", function(){
+        $(this).closest('tr').remove();
+        
+        keynote_count = $('#id_'+$(this).data('delete')+'-keynote_counter').val()
+        //update count
+        $('#id_'+$(this).data('delete')+'-keynote_counter').val(keynote_count-1)
+    });
+
+    $("body").on("click", ".close-div", function(){
+        //find total when we remove a section
+        var formcount    = parseInt($(this).parent('div').attr('id').match(/\d+/g)[0]);
+        var sectioncount = parseInt($(this).parent('div').attr('id').match(/\d+/g)[1]);        
+        total_estimated_cost = 0
+        for(i=0;i<sectioncount;i++)
+        {
+            cost = $('#id_form'+formcount+'_sectioncost'+i).val() 
+            if (cost == '')
+            {
+                cost = 0;
+            }
+
+            total_estimated_cost += parseFloat(cost);
+        }
+        $("#id_form-"+formcount+"-estimated_cost").val(total_estimated_cost)
+
+        discount       = $("#id_form-"+formcount+"-discount").val();
+        total_cost = total_estimated_cost-discount
+        $("#id_form-"+formcount+"-total_cost").val(total_cost);
+
+        //update section count
+        new_section_count = $('#id_form-'+formcount+'-section_counter').val()-1
+        $('#id_form-'+formcount+'-section_counter').val(new_section_count);
+        
+        //remove section
+        $(this).parent('div').remove();
+        formcount    = $(this).data('formcount');
+        $('#id_form-'+formcount+'-sectioncontainer .close-div').attr("hidden",true);
+        $('#id_form-'+formcount+'-sectioncontainer .form_section:first .close-div').attr("hidden",false);
+    });
+
+
+//tendative date initial
+//$(function () {
+//  $("#id_form-"+x+"-tendative_date").datetimepicker({ 
+//    pickTime: false, 
+//    format: "DD-MM-YYYY",
+//    minDate: new Date(),
+//  });
+//});
+
+//tendative dates initial
+//$(function () {
+//  $("#id_form-"+x+"-tendative_dates").datepicker({
+//    multidate: true,
+//    closeOnDateSelect: true,
+//    format: "dd-mm-yyyy",
+//    startDate: new Date(),
+//    minDate: new Date(),
+//  });
+//});
+
+//initial time
+$("#id_form-"+x+"-tendative_time").datetimepicker({
+    pickDate:false,
+    format: 'hh:mm A',
+    //minDate: moment({h:7}),
+    //maxDate: moment({h:17}),
+});
+
+
+
+$("#id_form-"+x+"-tendative_time, #id_form-"+x+"-number_of_cleaners , #id_form-"+x+"-cleaning_hours").change(function(){
+    var policy = $("#id_form-"+x+"-cleaning_policy").val();
+    if (policy == 'ONE TIME SERVICE'){
+        datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_date").val(),'onetime',x);
+    }else{
+        datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_dates").val(),'subscription',x);
+    }
+
+    $("#id_form-"+x+"-tendative_dates").datepicker('remove');
+    $("#id_form-"+x+"-tendative_date").datepicker('remove');
+
+    $.ajax({
+            url: "{% url 'agent:scheduled-dates' %}",
+            data: {
+            'booking_time': $("#id_form-"+x+"-tendative_time").val(),
+            'number_of_cleaners':$("#id_form-"+x+"-number_of_cleaners").val(),
+            'cleaning_duration':$("#id_form-"+x+"-cleaning_hours").val()
+            },
+            dataType: "json",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            
+            success: function(data_dates) {
+                console.log(data_dates,"dates2")
+                
+                disableSpecificDates = Object.keys(data_dates['cleaners_busy_dates']).concat(Object.keys(data_dates['leaders_busy_dates']))
+
+                //one time date
+                $(function () {
+                $("#id_form-"+x+"-tendative_date").datepicker({ 
+                    //multidate: true,
+                    closeOnDateSelect: true,
+                    format: "dd-mm-yyyy", 
+
+                    beforeShowDay: function(date){
+                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+                    if(disableSpecificDates.indexOf(dmy) != -1){
+                    return false;
+                    }
+                    else{
+                    return true;
+                    }
+                    },
+
+                    //startDate:new Date(),
+                    //minDate:new Date()
+                });
+                });
+
+                //subscription date
+                $(function () {
+                $("#id_form-"+x+"-tendative_dates").datepicker({ 
+                    multidate: true,
+                    closeOnDateSelect: true,
+                    format: "dd-mm-yyyy", 
+
+                    beforeShowDay: function(date){
+                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+                    if(disableSpecificDates.indexOf(dmy) != -1){
+                    return false;
+                    }
+                    else{
+                    return true;
+                    }
+                    },
+
+                    //startDate:new Date(),
+                    //minDate:new Date()
+                });
+                });
+                
+            }
+            
+        });
+});
+
+$("#id_form-"+x+"-tendative_date").change(function(){
+    datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_date").val(),'onetime',x);
+});
+
+$("#id_form-"+x+"-tendative_dates").change(function(){
+    datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_dates").val(),'subscription',x);
+
+    sectioncount = $("#id_form-"+x+"-section_counter").val();
+    total_estimated_cost = 0
+    for(i=0;i<sectioncount;i++)
+        {
+            cost = $('#id_form'+x+'_sectioncost'+i).val() 
+            if (cost == '')
+            {
+                cost = 0;
+            }
+
+            total_estimated_cost += parseFloat(cost);
+        }
+    subscription_dates = $("#id_form-"+x+"-tendative_dates").val().split(',').length;
+
+    total_cost = subscription_dates*total_estimated_cost;
+    discount   = $("#id_form-"+x+"-discount").val();
+    final_cost = total_cost-discount;
+    $("#id_form-"+x+"-estimated_cost").val(total_cost);
+    $("#id_form-"+x+"-total_cost").val(final_cost);
+});
+
+//Initial hiding of cleaning policy
+$("#id_form-"+x+"-tendative_date").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+x+"-tendative_dates").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+x+"-tendative_time").parents('.enquiry-form-left').css("display", "none");
+$("#id_form-"+x+"-tendative_date").val('');
+$("#id_form-"+x+"-tendative_dates").val('');
+$("#id_form-"+x+"-tendative_time").val('');
+
+});
+
+
+
+//Total cost based on discount
+$('.estimated_cost').keyup(findtotal);
+$('.discount').keyup(findtotal);
+
+function findtotal(event)
+{
+  id = $(this).attr('id').match(/\d+/);
+  estimated_cost = $("#id_form-"+id+"-estimated_cost").val();
+  discount       = $("#id_form-"+id+"-discount").val();
+  total          = estimated_cost-discount
+  $("#id_form-"+id+"-total_cost").val(total);
+}
+
+
+function findsectiontotal(event)
+{
+    var formcount    = parseInt(event.id.match(/\d+/g)[0]);
+    var sectioncount = $('#id_form-'+formcount+'-section_counter').val();
+    
+    total_estimated_cost = 0
+    for(i=0;i<sectioncount;i++)
+    {
+        cost = $('#id_form'+formcount+'_sectioncost'+i).val() 
+        if (cost == '')
+        {
+            cost = 0;
+        }
+
+        total_estimated_cost += parseFloat(cost);
+    }
+    //for subsription
+    subscription_dates    = $("#id_form-"+formcount+"-tendative_dates").val().split(',').length;
+    total_estimated_cost *= subscription_dates
+
+    $("#id_form-"+formcount+"-estimated_cost").val(total_estimated_cost)
+
+    discount       = $("#id_form-"+formcount+"-discount").val();
+    total_cost = total_estimated_cost-discount
+    $("#id_form-"+formcount+"-total_cost").val(total_cost);
+}
+
+
+
+
+
+//Trick based on Cleaning Policy
+$(".cleaning_policy").change(function (){  
+id              = this.id.match(/\d+/);
+cleaning_policy = this.value;
+if(cleaning_policy=="SUBSCRIPTION")
+{
+$("#id_form-"+id+"-tendative_date").val('');
+$("#id_form-"+id+"-tendative_dates").val('');
+$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-right').css("display", "block");
+$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-left').css("display", "block");
+$("#id_form-"+id+"-tendative_date").prop('required',false);
+$("#id_form-"+id+"-tendative_dates").prop('required',true);
+}
+else if(cleaning_policy=="ONE TIME SERVICE")
+{
+$("#id_form-"+id+"-tendative_date").val('');
+$("#id_form-"+id+"-tendative_dates").val('');
+$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-right').css("display", "block");
+$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-left').css("display", "block");
+$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+id+"-tendative_date").prop('required',true);
+$("#id_form-"+id+"-tendative_dates").prop('required',false);
+}
+else{
+$("#id_form-"+id+"-tendative_date").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+id+"-tendative_dates").parents('.enquiry-form-right').css("display", "none");
+$("#id_form-"+id+"-tendative_time").parents('.enquiry-form-left').css("display", "none");
+$("#id_form-"+id+"-tendative_date").val('');
+$("#id_form-"+id+"-tendative_dates").val('');
+$("#id_form-"+id+"-tendative_time").val('');
+$("#id_form-"+id+"-tendative_date").prop('required',true);
+$("#id_form-"+id+"-tendative_dates").prop('required',true);
+}
+
+});
+</script>
+
+<script src="{% static 'files/js/custom formset/customformset.js' %}"></script>
+
+<script id="rendered-js">
+$('.footable').footable({
+  calculateWidthOverride: function () {
+    return { width: $(window).width() };
+  } });
+
+
+// See:
+// http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
+//# sourceURL=pen.js
+    </script>
+<script id="rendered-js">
+$(".imgAdd").click(function () {
+  id=$(this).parents('.row').attr('id').match(/\d+/);
+
+  $(this).closest(".row").find('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="form-'+id+'-media" value="Upload Photo" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
+});
+$(document).on("click", "i.del", function () {
+  $(this).parent().remove();
+});
+$(function () {
+  $(document).on("change", ".uploadFile", function ()
+  {
+    var uploadFile = $(this);
+    var files = !!this.files ? this.files : [];
+    if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+
+    if (/^image/.test(files[0].type)) {// only image file
+      var reader = new FileReader(); // instance of the FileReader
+      reader.readAsDataURL(files[0]); // read the local file
+
+      reader.onloadend = function () {// set image data as background of div
+        //alert(uploadFile.closest(".upimage").find('.imagePreview').length);
+        uploadFile.closest(".imgUp").find('.imagePreview').css("background-image", "url(" + this.result + ")");
+      };
+    }
+
+  });
+});
+//# sourceURL=pen.js
+
+//Validation During Form Submission
+function SubmitQuatationForm(params)
+{
+var form = $(params).parents('form').first();
+
+total_forms       = form.find('input[id="id_form-TOTAL_FORMS"]').val()
+validation_errors = 0;
+
+
+for(i=1;i<=total_forms;i++)
+    {
+        service_type  = $("#id_form-"+(i-1)+"-service_type option:selected").text();
+        
+        no_of_sections = form.find('input[id="id_form-'+(i-1)+'-section_counter"]').val();
+        if(no_of_sections == 0)
+        {
+            validation_errors += 1 ;
+            //$("#id_form-"+(i-1)+"-sectionalert").attr("hidden",false);
+            alert("Please Add Sections in Service "+i);
+        }
+
+        for(j=1;j<=no_of_sections;j++)
+        {
+            if(service_type == 'General Cleaning' || service_type == 'Deep Cleaning' || service_type == 'Carpet Cleaning' || service_type == 'Upholstery Cleaning' || service_type == 'Kitchen Cleaning' || service_type == 'Sterilization')
+            {
+                no_of_keynotes = form.find('input[id="id_form'+(i-1)+'_section'+(j-1)+'-keynote_counter"]').val();
+                if(no_of_keynotes == 0)
+                {
+                    validation_errors += 1 ;
+                    alert("Please Add Keynote in Section "+j);           
+                }
+            }
+        }
+
+}
+if(validation_errors == 0)
+{
+ submitAnyForm(params);   
+}
+    }
+    </script>
+{% endblock %}
