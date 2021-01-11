@@ -165,7 +165,10 @@ class Investigation(models.Model):
 	notes 				 = models.CharField(max_length=5000,blank=True,null=True)
 
 
-	is_followup_approved = models.BooleanField(null=False,blank=True,default=False)
+	is_followup_approved           = models.BooleanField(null=False,blank=True,default=False)
+	is_giftpromo_approved          = models.BooleanField(null=False,blank=True,default=False)
+	is_paybackdiscount_approved    = models.BooleanField(null=False,blank=True,default=False)
+	is_internalreporting_approved  = models.BooleanField(null=False,blank=True,default=False)
 	
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)
