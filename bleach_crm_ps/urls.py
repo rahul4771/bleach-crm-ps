@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^agent/',include('agent.urls',namespace='agent')),
     url(r'^evaluator/',include('evaluator.urls',namespace='evaluator')),
     url(r'^stl/',include('senior_team_leader.urls',namespace='stl')),
+    url(r'^quality-control/',include('qualitycontrol.urls',namespace='quality-control')),
     url(r'^tl/',include('team_leader.urls',namespace='tl')),
     url(r'^accountant/',include('accountant.urls',namespace='accountant')),
     url(r'^customer/',include('customer.urls',namespace='customer')),
