@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'evaluator',
     'order',
     'senior_team_leader',
-    'qualitycontrol',
     'team_leader',
     'agent',
     'accountant',

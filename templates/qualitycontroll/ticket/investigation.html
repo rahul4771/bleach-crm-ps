@@ -48,6 +48,18 @@
                 </div><!--cleaning-column-widget cleaning-column-widget-column2-->
             </div><!--cleaning-column-wrapper-->
       </div><!--center-formDiv-->
+      <div align="center">
+<form method="POST" >{% csrf_token %}
+<select class="textBox" name="action" style="width:25%">
+<option value="">--Select Action--</option>
+<option value="followup">Follow-Up Cleaning</option>
+<option value="discount">Pay Back / Discount</option>
+<option value="gift">Gift/Promo Code</option>
+<option value="internal">Internal Reporting</option>
+</select>
+<input class="assignButton expandbutton" name="submit" type="submit" value="Submit" > 
+</form>
+</div>
     </div><!--white-wrapper-->
             <br><br>   
                       
