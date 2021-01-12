@@ -90,7 +90,108 @@ class QcHome(IsQualityControll,View):
 		today_active_teams_count = today_cleaning_active_teams.count()+today_followup_active_teams.count()
 		week_active_teams_count  = week_cleaning_active_teams.count()+week_followup_active_teams.count() 
 
+		
+		#cleaning schedule & followup schedule for cleaning calendar			
+		cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
+		
+		try:
+			schedule_date = datetime.strptime(cleaning_calendar_date,'%d-%m-%Y')
+		except:
+			schedule_date = timezone.now().replace(tzinfo=None)
+
+		schedule_date_start = schedule_date.replace(hour=0,minute=0,second=0,microsecond=0)
+		schedule_date_end   = schedule_date_start+timedelta(1)	
+
+		try:
+			calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).order_by('start_at').select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).order_by('start_at').filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(Q(order__evaluation__payment_method='PREPAIDSUBSCRIPTION')&Q(payment_subscription__is_paid=True)) | Q(Q(order__evaluation__payment_method='POSTPAIDSUBSCRIPTION')&Q(Q(payment_subscription__is_paid=True)|Q(payment_subscription__isnull=True))) ))
+		except:
+			calendar_order_schedules = None
+
+		try:
+			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).order_by('start_at').select_related('follow_up__investigation__order__evaluation__customer','customer_address').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_teams'))
+		except:
+			calendar_followup_schedules = None
 	
+		try:
+			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(Q(order__evaluation__payment_method='PREPAIDSUBSCRIPTION')&Q(payment_subscription__is_paid=True)) | Q(Q(order__evaluation__payment_method='POSTPAIDSUBSCRIPTION')&Q(Q(payment_subscription__is_paid=True)|Q(payment_subscription__isnull=True))) ))
+		except:
+			sp_calendar_order_schedules = None
+
+		try:
+			sp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_teams'))
+		except:
+			sp_calendar_followup_schedules = None							
+
+		try:
+			spp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(Q(order__evaluation__payment_method='PREPAIDSUBSCRIPTION')&Q(payment_subscription__is_paid=True)) | Q(Q(order__evaluation__payment_method='POSTPAIDSUBSCRIPTION')&Q(Q(payment_subscription__is_paid=True)|Q(payment_subscription__isnull=True))) ))
+		except:
+			spp_calendar_order_schedules = None
+
+		try:
+			spp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+		except:
+			spp_calendar_followup_schedules = None
+
+		#cleaning schedule & followup schedule for resources			
+		workers_calendar_date	= request.GET.get('workers_calendar_date')
+		search                  = request.GET.get('search')
+		
+		try:
+			workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
+		except:
+			workers_date = timezone.now().replace(tzinfo=None)
+
+		workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		workers_date_end   = workers_date_start+timedelta(1)
+
+		if search:
+			try:
+				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))&Q(name__icontains=search))
+			except:
+				workers =  None
+		else:
+			try:
+				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
+			except:
+				workers =  None
+ 
+		try:		
+			workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
+		except:
+			workers_details = None	
+
+		#Filter
+		try:
+			fil_staff = request.GET.get('staff')
+		except:
+			fil_staff = ''
+
+		try:
+			fil_minhours       = int(request.GET.get('minhours'))
+		except:
+			fil_minhours       = None
+
+		try:
+			fil_maxhours       = int(request.GET.get('maxhours'))
+		except:
+			fil_maxhours	   = None
+
+		if 	fil_minhours and fil_maxhours:
+			if fil_minhours>=fil_maxhours:
+				messages.error(request,"Minimum Duration should be less than Maximum Duration")
+				fil_minhours = None
+				fil_maxhours = None
+
+		filters=[]
+		if fil_staff:
+			case1 = Q(user_type=fil_staff)
+			filters.append(case1)
+
+		if fil_staff:
+			filters         = functools.reduce(operator.and_,filters)
+			workers_details = workers_details.filter(filters)
+
+
 		#Investigation tasks
 		investigation_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
 
@@ -103,7 +204,7 @@ class QcHome(IsQualityControll,View):
 		for investigation in investigations:
 			investigation.days_left = (timezone.now()-investigation.scheduled_at).days
 
-		return render(request,'qualitycontroll/home/home.html',{'investigations':investigations,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,})
+		return render(request,'qualitycontroll/home/home.html',{'investigations':investigations,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,"fil_staff":fil_staff})
 
 class OrderDetails(IsQualityControll,View):
 	def get(self,request):

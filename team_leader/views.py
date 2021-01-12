@@ -100,18 +100,6 @@ class TlHome(IsTeamLeader,View):
 			week_total_team_mens  = 0
 
 
-		#Investigation tasks
-		investigation_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None) 	
-
-		try:	
-			investigations  = Investigation.objects.filter(is_active=True,investigator=request.user,check_out=None).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details')).annotate(color_status=Case(When(Q(Q(sheduled_at__gte=investigation_to_date) & Q(sheduled_at__lt=investigation_to_date+timedelta(1)) & Q(sheduled_at__lte=timezone.now())), then=Value('yellow')),
-	                  When(Q(Q(sheduled_at__gte=investigation_to_date) & Q(sheduled_at__lt=investigation_to_date+timedelta(1)) & Q(sheduled_at__gt=timezone.now())), then=Value('green')),When(Q(sheduled_at__gte=investigation_to_date+timedelta(1)), then=Value('blue')),
-	                  default=Value('red'),
-	                  output_field=CharField(),))
-		except:
-			investigations  = 	None
-
-
 		#My cleanings	
 		my_cleaning_calendar_date	= request.GET.get('my_cleaning_calendar_date')
 		
@@ -133,7 +121,7 @@ class TlHome(IsTeamLeader,View):
 		except:
 			my_followups  = None		
 
-		return render(request,'tl/home/home.html',{"today_cleaning_job_count":today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_cleaning_active_teams':today_cleaning_active_teams,'week_cleaning_active_teams':week_cleaning_active_teams,'today_followup_active_teams':today_followup_active_teams,'week_followup_active_teams':week_followup_active_teams,'today_date':today_date,'weekstart_date':weekstart_date,'investigations':investigations,'today_investigation_count':today_investigation_count,'week_investigation_count':week_investigation_count,'my_cleaning_date':my_cleaning_date,"my_cleanings":my_cleanings,"my_followups":my_followups,'today_total_team_mens':today_total_team_mens,'week_total_team_mens':week_total_team_mens,})
+		return render(request,'tl/home/home.html',{"today_cleaning_job_count":today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_cleaning_active_teams':today_cleaning_active_teams,'week_cleaning_active_teams':week_cleaning_active_teams,'today_followup_active_teams':today_followup_active_teams,'week_followup_active_teams':week_followup_active_teams,'today_date':today_date,'weekstart_date':weekstart_date,'today_investigation_count':today_investigation_count,'week_investigation_count':week_investigation_count,'my_cleaning_date':my_cleaning_date,"my_cleanings":my_cleanings,"my_followups":my_followups,'today_total_team_mens':today_total_team_mens,'week_total_team_mens':week_total_team_mens,})
 
 class TicketDetails(IsTeamLeader,View):
 	def get(self,request):
@@ -256,64 +244,6 @@ class TicketAdvanced(IsTeamLeader,View):
 		total_orders_count  = orders.count()
 
 		return render(request,'tl/ticket/followup-page.html',{"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"followup_details":followup_details,})		
-
-
-
-class InvestigationTask(IsTeamLeader,View):
-	def get(self,request,investigation_id):
-		
-		try:
-			investigation_details = Investigation.objects.select_related('order_schedule__customer_address__area','order_schedule__order_scheduler_book__service_type','investigator','order__evaluation__customer').get(id=investigation_id)
-		except:
-			investigation_details = None
-
-		#save checkin_time
-		investigation_details.check_in = timezone.now()
-		investigation_details.save()
-
-		return render(request,'tl/ticket/investigation.html',{'investigation_details':investigation_details})
-
-	def post(self,request,investigation_id):
-		follow_up_approved = request.POST.get('isapproved')
-
-		try:
-			investigation = Investigation.objects.select_related('order_schedule__customer_address').get(id=investigation_id)
-		except:
-			investigation = None	
-		
-		if follow_up_approved == 'APPROVED':
-			no_of_cleaners = request.POST.get('no_of_cleaners')
-			cleaning_hours = request.POST.get('cleaning_hours')
-			
-			tendative_date = request.POST.get('tendative_date')
-			tendative_time = request.POST.get('tendative_time')
-			start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
-			end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
-
-			Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True,check_out=timezone.now(),notes=request.POST.get('notes'))
-			
-			follow_up 				 = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
-			follow_up.status         = 'INVESTIGATOR_APPROVED'
-			follow_up.no_of_cleaners = no_of_cleaners
-			follow_up.cleaning_hours = cleaning_hours
-			follow_up.save()
-
-			follow_up_scheduler = FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
-		
-		else:
-			Investigation.objects.filter(id=investigation_id).update(is_followup_approved=False,check_out=timezone.now(),notes=request.POST.get('notes'))
-			FollowUp.objects.filter(is_active=True,investigation_id=investigation_id).update(status='FOLLOWUP_CANCELLED')
-		#To Save Media
-		medias = request.FILES.getlist('media')
-		if not medias==['']:
-			for media in medias:
-				InvestigationMedia.objects.create(
-				        investigation_id=investigation_id,
-				        media=media,
-				        )
-
-		messages.success(request,"Investigation Form submitted succesfully")	
-		return redirect('tl:tldash-board')	
 
 class Cleaning(IsTeamLeader,View):
 	def get(self,request,team_id):

@@ -750,7 +750,6 @@ class AgentHome(IsAgent,View):
 	def post(self,request):
 		action_mode = request.POST.get('action_type')
 
-		print(request.POST)
 		# if action_mode =='confirm_followupchedule':
 		# 	followupscheduler_id = request.POST.get('followupscheduler')
 		# 	followup_scheduler   = FollowUpScheduler.objects.get(id=followupscheduler_id)

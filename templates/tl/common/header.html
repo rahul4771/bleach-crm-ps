@@ -48,7 +48,9 @@
             <br><br>
             <ul id="accordion" class="nav">
                 <li class="active lhs-home"><a href="{% url 'tl:tldash-board' %}" title="My Dashboard"><span>My Dashboard</span></a> <div></div></li>
+                {% comment %}
                 <li class="lhs-tickets"><a href="{% url 'tl:tl-tickets' %}" title="Tickets"><span>Tickets</span></a></li>
+                {% endcomment %}
             </ul>
         </section>
     </aside>
