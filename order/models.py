@@ -68,6 +68,11 @@ INVOICE_CHOICES = (
 	('ACTIVE','ACTIVE'),
 	)
 
+
+INVESTIGATION_CATEGORY_CHOICES = (
+	('SERVICEQUALITY','SERVICEQUALITY'),
+	('DAMAGE','DAMAGE'),
+	)
 #Store the Order Details.DownPayment,Subscription and Direct Cleaning Comes Under a Single Order
 
 class Order(models.Model):
@@ -201,6 +206,120 @@ class InvestigationMedia(models.Model):
 
 	def __str__(self):
 		return str(self.investigation.id)
+
+class Reporting(models.Model):
+	investigation   = models.ForeignKey('Investigation',blank=False,null=False,related_name='reporting_investigation')
+	title           = models.CharField(max_length=1000,blank=True,null=True)
+	notes           = models.CharField(max_length=5000,blank=True,null=True)
+	
+	is_active       = models.BooleanField(null=False,blank=True,default=True)
+	created         = models.DateTimeField(auto_now_add=True)
+	updated         = models.DateTimeField(auto_now=True)
+	
+	def __unicode__(self):
+		return str(self.investigation.id)
+
+	def __str__(self):
+		return str(self.investigation.id)
+
+class ReportingMedia(models.Model):
+	reporting                       = models.ForeignKey('Reporting',blank=False,null=False,related_name='reporting_media')
+	media                           = models.FileField(upload_to='reporting/',blank=True,null=True)
+	
+	is_active          		        = models.BooleanField(null=False,blank=True,default=True)
+	created            		        = models.DateTimeField(auto_now_add=True)
+	updated           		        = models.DateTimeField(auto_now=True)
+	def __unicode__(self):
+		return str(self.reporting.investigation.id)
+
+	def __str__(self):
+		return str(self.reporting.investigation.id)
+
+
+class PaybackDiscount(models.Model):
+	investigation   = models.ForeignKey('Investigation',blank=False,null=False,related_name='paybackdiscount_investigation')
+	total_cost      = models.FloatField(blank=True,null=True)
+	
+	is_active       = models.BooleanField(null=False,blank=True,default=True)
+	created         = models.DateTimeField(auto_now_add=True)
+	updated         = models.DateTimeField(auto_now=True)
+	
+	def __unicode__(self):
+		return str(self.investigation.id)
+
+	def __str__(self):
+		return str(self.investigation.id)
+
+class PaybackDiscountDetails(models.Model):
+	paybackdiscount = models.ForeignKey('PaybackDiscount',blank=False,null=False,related_name='paybackdiscount_details')
+	category        = models.CharField(max_length=100,blank=True,null=True,choices=INVESTIGATION_CATEGORY_CHOICES)
+	name            = models.CharField(max_length=1000,blank=True,null=True)
+	cost            = models.FloatField(blank=True,null=True)
+	
+	is_active       = models.BooleanField(null=False,blank=True,default=True)
+	created         = models.DateTimeField(auto_now_add=True)
+	updated         = models.DateTimeField(auto_now=True)
+	
+	def __unicode__(self):
+		return str(self.paybackdiscount.investigation.id)
+
+	def __str__(self):
+		return str(self.paybackdiscount.investigation.id)
+
+class PaybackDiscountDetailsMedia(models.Model):
+	paybackdiscount_details 	    = models.ForeignKey('PaybackDiscountDetails',blank=False,null=False,related_name='paybackdiscountdetails_media')
+	media                           = models.FileField(upload_to='paybackdiscount/',blank=True,null=True)
+	
+	is_active          		        = models.BooleanField(null=False,blank=True,default=True)
+	created            		        = models.DateTimeField(auto_now_add=True)
+	updated           		        = models.DateTimeField(auto_now=True)
+	def __unicode__(self):
+		return str(self.paybackdiscount_details.paybackdiscount.investigation.id)
+
+	def __str__(self):
+		return str(self.paybackdiscount_details.paybackdiscount.investigation.id)
+
+class BuybackPromocodeGift(models.Model):
+	investigation   				= models.ForeignKey('Investigation',blank=False,null=False,related_name='buybackpromocodegift_investigation')
+	total_cost      				= models.FloatField(blank=True,null=True)
+	
+	is_active          		        = models.BooleanField(null=False,blank=True,default=True)
+	created            		        = models.DateTimeField(auto_now_add=True)
+	updated           		        = models.DateTimeField(auto_now=True)
+	def __unicode__(self):
+		return str(self.investigation.id)
+
+	def __str__(self):
+		return str(self.investigation.id)
+
+class BuybackPromocodeGiftDetails(models.Model):
+	buybackpromocodegift 			= models.ForeignKey('BuybackPromocodeGift',blank=False,null=False,related_name='buybackpromocodegiftdetails')
+	category        	 			= models.CharField(max_length=100,blank=True,null=True,choices=INVESTIGATION_CATEGORY_CHOICES)
+	name            	 			= models.CharField(max_length=1000,blank=True,null=True)
+	cost       				     	= models.FloatField(blank=True,null=True)
+	
+	is_active          		        = models.BooleanField(null=False,blank=True,default=True)
+	created            		        = models.DateTimeField(auto_now_add=True)
+	updated           		        = models.DateTimeField(auto_now=True)
+	def __unicode__(self):
+		return str(self.buybackpromocodegift.investigation.id)
+
+	def __str__(self):
+		return str(self.buybackpromocodegift.investigation.id)
+
+class BuybackPromocodeGiftDetailsMedia(models.Model):
+	buybackpromocodegift_details 	= models.ForeignKey('BuybackPromocodeGiftDetails',blank=False,null=False,related_name='buybackpromocodegiftdetails_media')
+	media                           = models.FileField(upload_to='buybackpromocodegift/',blank=True,null=True)
+	
+	is_active          		        = models.BooleanField(null=False,blank=True,default=True)
+	created            		        = models.DateTimeField(auto_now_add=True)
+	updated           		        = models.DateTimeField(auto_now=True)
+	def __unicode__(self):
+		return str(self.buybackpromocodegift_details.buybackpromocodegift.investigation.id)
+
+	def __str__(self):
+		return str(self.buybackpromocodegift_details.buybackpromocodegift.investigation.id)
+
 
 #Followup details for followup order.Followup granded by Investigator
 
