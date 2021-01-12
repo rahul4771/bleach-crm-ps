@@ -164,7 +164,7 @@ class Investigation(models.Model):
 	order_schedule		 = models.ForeignKey('OrderScheduler',blank=False,null=False,related_name='investigations_orderschedule')	
 	investigator    	 = models.ForeignKey(UserProfile,blank=True,null=True)
 	assigned_by          = models.ForeignKey(UserProfile,blank=True,null=True,related_name='investigation_assigned_by')
-	sheduled_at 		 = models.DateTimeField(blank=True,null=True)
+	scheduled_at 		 = models.DateTimeField(blank=True,null=True)
 	check_in 		     = models.DateTimeField(blank=True,null=True)
 	check_out 		     = models.DateTimeField(blank=True,null=True)
 	notes 				 = models.CharField(max_length=5000,blank=True,null=True)
