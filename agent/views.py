@@ -750,7 +750,6 @@ class AgentHome(IsAgent,View):
 	def post(self,request):
 		action_mode = request.POST.get('action_type')
 
-		print(request.POST)
 		# if action_mode =='confirm_followupchedule':
 		# 	followupscheduler_id = request.POST.get('followupscheduler')
 		# 	followup_scheduler   = FollowUpScheduler.objects.get(id=followupscheduler_id)
@@ -3776,7 +3775,7 @@ class TicketRegistration(IsAgent,View):
 			investigation_form_save             = investigation_form.save(commit=False)
 			investigation_form_save.assigned_by = request.user
 			investigation_form_save.order_id    = order_id
-			investigation_form_save.start_at    = timezone.now()
+			investigation_form_save.scheduled_at= timezone.now()
 			investigation_form_save.save()
 
 			FollowUp.objects.create(investigation=investigation_form_save,status='TICKET_RISED')

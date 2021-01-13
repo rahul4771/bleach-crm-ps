@@ -989,9 +989,28 @@ var form = $(params).parents('form').first();
 total_forms       = form.find('input[id="id_form-TOTAL_FORMS"]').val()
 validation_errors = 0;
 
-
+cleaning_policy_subscription = 0
+cleaning_policy_onetime      = 0
 for(i=1;i<=total_forms;i++)
     {
+
+        //TO CHECK SUBSCRIPTION AND ONE TIME OCCURE TOGETHER
+        cleaning_policy = $("#id_form-"+(i-1)+"-cleaning_policy option:selected").text();
+        if(cleaning_policy == 'SUBSCRIPTION' )
+        {
+            cleaning_policy_subscription += 1
+        }
+        else
+        {
+            cleaning_policy_onetime +=1
+        }
+        if(cleaning_policy_subscription >= 1 && cleaning_policy_onetime >= 1)
+        {
+         validation_errors += 1 ;
+         alert('Subscription and OneTime Service Together is not Possible')   
+        }
+
+        
         service_type  = $("#id_form-"+(i-1)+"-service_type option:selected").text();
         
         no_of_sections = form.find('input[id="id_form-'+(i-1)+'-section_counter"]').val();

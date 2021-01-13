@@ -148,18 +148,7 @@ class EvaluatorHome(IsEvaluator,View):
 			spp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
 		except:
 			spp_calendar_followup_schedules = None
-	
-
-		#Investigation tasks
-		investigation_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None) 	
-
-		try:	
-			investigations  = Investigation.objects.filter(is_active=True,investigator=request.user,check_out=None).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details')).annotate(color_status=Case(When(Q(Q(sheduled_at__gte=investigation_to_date) & Q(sheduled_at__lt=investigation_to_date+timedelta(1)) & Q(sheduled_at__lte=timezone.now())), then=Value('yellow')),
-	                  When(Q(Q(sheduled_at__gte=investigation_to_date) & Q(sheduled_at__lt=investigation_to_date+timedelta(1)) & Q(sheduled_at__gt=timezone.now())), then=Value('green')),When(Q(sheduled_at__gte=investigation_to_date+timedelta(1)), then=Value('blue')),
-	                  default=Value('red'),
-	                  output_field=CharField(),))
-		except:
-			investigations  = 	None	
+		
 
 		#Evaluation details of each evaluator for evaluation table
 		evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
@@ -177,7 +166,7 @@ class EvaluatorHome(IsEvaluator,View):
 		except:
 			my_evaluations = None	
 
-		return render(request,'evaluator/home/home.html',{'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'investigations':investigations,'evaluation_date':evaluation_date,'my_evaluations':my_evaluations})
+		return render(request,'evaluator/home/home.html',{'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'evaluation_date':evaluation_date,'my_evaluations':my_evaluations})
 
 class ClientDetails(IsEvaluator,View):
 	def get(self,request):
@@ -2628,63 +2617,7 @@ class MakeQuatationPhase2Delete(IsEvaluator,View):
 			return redirect('evaluator:evaluator-orders')
 
 		return redirect('evaluator:evaluator-makequatation1edit',enquiry_id,evaluation_id)
-
-
-class InvestigationTask(View):
-	def get(self,request,investigation_id):
 		
-		try:
-			investigation_details = Investigation.objects.select_related('order_schedule__customer_address__area','order_schedule__order_scheduler_book__service_type','investigator','order__evaluation__customer').get(id=investigation_id)
-		except:
-			investigation_details = None
-
-		#save checkin_time
-		investigation_details.check_in = timezone.now()
-		investigation_details.save()
-
-		return render(request,'evaluator/ticket/investigation.html',{'investigation_details':investigation_details})
-
-	def post(self,request,investigation_id):
-		follow_up_approved = request.POST.get('isapproved')
-
-		try:
-			investigation = Investigation.objects.select_related('order_schedule__customer_address').get(id=investigation_id)
-		except:
-			investigation = None	
-		
-		if follow_up_approved == 'APPROVED':
-			no_of_cleaners = request.POST.get('no_of_cleaners')
-			cleaning_hours = request.POST.get('cleaning_hours')
-			
-			tendative_date = request.POST.get('tendative_date')
-			tendative_time = request.POST.get('tendative_time')
-			start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
-			end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
-
-			Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True,check_out=timezone.now(),notes=request.POST.get('notes'))
-			
-			follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
-			follow_up.status         = 'INVESTIGATOR_APPROVED'
-			follow_up.no_of_cleaners = no_of_cleaners
-			follow_up.cleaning_hours = cleaning_hours
-			follow_up.save()
-			
-			follow_up_scheduler = FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
-		
-		else:
-			Investigation.objects.filter(id=investigation_id).update(is_followup_approved=False,check_out=timezone.now(),notes=request.POST.get('notes'))
-			FollowUp.objects.filter(is_active=True,investigation_id=investigation_id).update(status='FOLLOWUP_CANCELLED')
-		#To Save Media
-		medias = request.FILES.getlist('media')
-		if not medias==['']:
-			for media in medias:
-				InvestigationMedia.objects.create(
-				        investigation_id=investigation_id,
-				        media=media,
-				        )
-
-		messages.success(request,"Investigation Form submitted succesfully")	
-		return redirect('evaluator:evaluatordash-board')
 
 def deleteservice(request,book_id,evaluation_detail_id):
 	
