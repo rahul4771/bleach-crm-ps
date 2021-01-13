@@ -462,7 +462,7 @@ def GetCleaningSectionInfo(request):
 
 	dropdown_methods = {}
 	service_type_id = request.GET.get('service_type_id')
-
+	print(service_type_id,"id")
 	cleaning_sections = CleaningSection.objects.filter(is_active=True,service_type_id=service_type_id)
 
 	if cleaning_sections:
