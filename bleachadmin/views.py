@@ -1020,6 +1020,28 @@ class PaymentDetails(IsAdmin,View):
 
 		return render(request,'admin/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,'no_of_entries':no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status})		
 
+
+class PaybackDiscountApprove(View):
+	def get(self,request,paybackdiscount_id):
+		
+		try:
+			paybackdiscount_details = PaybackDiscount.objects.select_related('investigation__order__evaluation__customer','investigation__order_schedule__customer_address','investigation__order_schedule__order_scheduler_book','investigation__order_schedule__evaluation_details__evaluator').prefetch_related(Prefetch('investigation__order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=paybackdiscount_id)
+		except:
+			paybackdiscount_details = None
+
+		return render(request,'admin/ticket/paybackdiscountapprove.html',{'paybackdiscount_details':paybackdiscount_details,})
+
+
+class BuybackPromocodeGiftApprove(View):
+	def get(self,request,buybackpromogift_id):
+	
+		try:
+			buybackpromogift_details = BuybackPromocodeGift.objects.select_related('investigation__order__evaluation__customer','investigation__order_schedule__customer_address','investigation__order_schedule__order_scheduler_book','investigation__order_schedule__evaluation_details__evaluator').prefetch_related(Prefetch('investigation__order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=buybackpromogift_id)
+		except:
+			buybackpromogift_details = None
+
+		return render(request,'admin/ticket/buybackpromogiftapprove.html',{'buybackpromogift_details':buybackpromogift_details})
+
 #ajax for sales charts
 def SalesLocationData(request):
 	data = []
