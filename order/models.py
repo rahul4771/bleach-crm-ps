@@ -268,17 +268,17 @@ class PaybackDiscountDetails(models.Model):
 		return str(self.paybackdiscount.investigation.id)
 
 class PaybackDiscountDetailsMedia(models.Model):
-	paybackdiscount_details 	    = models.ForeignKey('PaybackDiscountDetails',blank=False,null=False,related_name='paybackdiscountdetails_media')
+	paybackdiscount 	    		= models.ForeignKey('PaybackDiscount',blank=False,null=False,related_name='paybackdiscount_media')
 	media                           = models.FileField(upload_to='paybackdiscount/',blank=True,null=True)
 	
 	is_active          		        = models.BooleanField(null=False,blank=True,default=True)
 	created            		        = models.DateTimeField(auto_now_add=True)
 	updated           		        = models.DateTimeField(auto_now=True)
 	def __unicode__(self):
-		return str(self.paybackdiscount_details.paybackdiscount.investigation.id)
+		return str(self.paybackdiscount.investigation.id)
 
 	def __str__(self):
-		return str(self.paybackdiscount_details.paybackdiscount.investigation.id)
+		return str(self.paybackdiscount.investigation.id)
 
 class BuybackPromocodeGift(models.Model):
 	investigation   				= models.ForeignKey('Investigation',blank=False,null=False,related_name='buybackpromocodegift_investigation')
@@ -309,17 +309,17 @@ class BuybackPromocodeGiftDetails(models.Model):
 		return str(self.buybackpromocodegift.investigation.id)
 
 class BuybackPromocodeGiftDetailsMedia(models.Model):
-	buybackpromocodegift_details 	= models.ForeignKey('BuybackPromocodeGiftDetails',blank=False,null=False,related_name='buybackpromocodegiftdetails_media')
+	buybackpromocodegift 			= models.ForeignKey('BuybackPromocodeGift',blank=False,null=False,related_name='buybackpromocodegift_media')
 	media                           = models.FileField(upload_to='buybackpromocodegift/',blank=True,null=True)
 	
 	is_active          		        = models.BooleanField(null=False,blank=True,default=True)
 	created            		        = models.DateTimeField(auto_now_add=True)
 	updated           		        = models.DateTimeField(auto_now=True)
 	def __unicode__(self):
-		return str(self.buybackpromocodegift_details.id)
+		return str(self.buybackpromocodegift.id)
 
 	def __str__(self):
-		return str(self.buybackpromocodegift_details.id)
+		return str(self.buybackpromocodegift.id)
 
 
 #Followup details for followup order.Followup granded by Investigator
