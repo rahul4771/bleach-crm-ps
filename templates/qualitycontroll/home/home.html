@@ -73,7 +73,7 @@
 <table class="main-table">
 <tbody>
 {% for investigation in investigations %}
-<tr class="{% if investigation.days_left == 0 %}green-line{% elif investigation.days_left == 1 %}yellow-line{%else%}red-line{% endif %} clickable-row-list" data-href="{% url 'qc:investigation' investigation.id %}"> 
+<tr class="{% if investigation.days_left == 0 %}green-line{% elif investigation.days_left == 1 %}yellow-line{%else%}red-line{% endif %} clickable-row-list" data-href="#"> 
 <td data-label="BLC Number" class="bold-text">{{investigation.order.evaluation.evaluation_id}}</td>
 <td data-label="Proposed Time" class="bold-text">{{investigation.scheduled_at|date:"d/m/Y h:m A"}}</td>
 <td data-label="Customer">{{investigation.order.evaluation.customer.name}}</td>

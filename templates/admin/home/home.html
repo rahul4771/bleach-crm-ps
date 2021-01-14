@@ -58,8 +58,50 @@
    </div><!--card-row-->
 </div><!--main-card-->       
             
-     <div class="main-content-holder"><!--main-content-holder-->            
-          
+<div class="main-content-holder"><!--main-content-holder-->            
+
+    <div class="white-wrapper"><!--white-wrapper-->
+    <h2 class="h2">Ticket Approval Task</h2>
+    <table class="main-table">
+    <tbody>
+        {% for ticket in approve_tickets %}
+
+        {% for paybackdiscount in  ticket.paybackdiscounts %}
+        <tr class="{% if ticket.days_left == 0 %}green-line{% elif ticket.days_left == 1 %}yellow-line{%else%}red-line{% endif %} clickable-row-list" data-href="#">
+        <td data-label="Ticket Number" class="bold-text">
+        {% for followup in ticket.followup %}
+        TKT{{followup.ticket_no}}
+        {% endfor %}</td>
+        <td data-label="Ticket Types">{{ticket.ticket_types}}</td>
+        <td data-label="Action">Payback/Discount</td>
+        <td class="hide-a" data-label="">{% if ticket.investigator.profile_image %}<img src="{{ticket.investigator.profile_image.url}}" title="{{ticket.investigator.name}}" class="profile-avatar">{% endif %}</td>
+        <td data-label="" class="bold-text">{% if ticket.days_left == 0 %}<h3 class="green-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% elif ticket.days_left == 1 %}<h3 class="yellow-text-h3">{{ticket.days_left}} </h3>Days&#11014;{% else%}<h3 class="red-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% endif %}</td>
+        <td data-label="">
+        <span class="{% if ticket.days_left == 0 %}green-bg{% elif ticket.days_left == 1 %}yellow-bg{%else%}red-bg{% endif %} clickable-row-list" data-href="#">Click to Approve</span>
+        </td>
+        </tr>
+        {% endfor %}
+        
+        {% for giftpromo in ticket.buybackpromocodegifts %}
+        <tr class="{% if ticket.days_left == 0 %}green-line{% elif ticket.days_left == 1 %}yellow-line{%else%}red-line{% endif %} clickable-row-list" data-href="#">
+        <td data-label="Ticket Number" class="bold-text">{% for followup in ticket.followup %}
+        TKT{{followup.ticket_no}}
+        {% endfor %}</td>
+        <td data-label="Ticket Types">{{ticket.ticket_types}}</td>
+        <td data-label="Action">Buyback/Promocode/Gift</td>
+        <td class="hide-a" data-label="">{% if ticket.investigator.profile_image %}<img src="{{ticket.investigator.profile_image.url}}" title="{{ticket.investigator.name}}" class="profile-avatar">{% endif %}</td>
+        <td data-label="" class="bold-text">{% if ticket.days_left == 0 %}<h3 class="green-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% elif ticket.days_left == 1 %}<h3 class="yellow-text-h3">{{ticket.days_left}} </h3>Days&#11014;{% else%}<h3 class="red-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% endif %}</td>
+        <td data-label="">
+        <span class="{% if ticket.days_left == 0 %}green-bg{% elif ticket.days_left == 1 %}yellow-bg{%else%}red-bg{% endif %} clickable-row-list" data-href="#">Click to Approve</span>
+        </td>
+        </tr>
+        {% endfor %}
+        {% endfor %}
+    </tbody>
+    </table>
+    </div>
+
+
      <div class="three-col-fluid-wrapper"><!--three-col-fluid-wrapper-->
             
             <div class="three-fluid-column three-fluid-one"><!--three-fluid-column three-fluid-one-->

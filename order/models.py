@@ -212,7 +212,7 @@ class Reporting(models.Model):
 	investigation   = models.ForeignKey('Investigation',blank=False,null=False,related_name='reporting_investigation')
 	title           = models.CharField(max_length=1000,blank=True,null=True)
 	notes           = models.CharField(max_length=5000,blank=True,null=True)
-	
+
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
