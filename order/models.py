@@ -6,6 +6,7 @@ import cv2
 import os
 from bleach_crm_ps.settings import MEDIA_ROOT
 from django.utils import timezone
+from django.db.models import Max
 # Create your models here.
 
 ORDER_STATUS = (
@@ -324,6 +325,7 @@ class BuybackPromocodeGiftDetailsMedia(models.Model):
 #Followup details for followup order.Followup granded by Investigator
 
 class FollowUp(models.Model): 
+	ticket_no       = models.CharField(max_length=500,blank=True,null=True)
 	investigation   = models.ForeignKey('Investigation',blank=False,null=False,related_name='followup_investigation') 
 	instructions    = models.CharField(max_length=500,blank=True,null=True)
 	status      	= models.CharField(max_length=100,blank=True,null=True,choices=FOLLOWUP_STATUS)
@@ -333,6 +335,20 @@ class FollowUp(models.Model):
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
 
+	def save(self,*args, **kwargs):
+		last_ticket_no  		 = FollowUp.objects.filter(is_active=True).aggregate(t=Max('ticket_no'))['t']
+		current_ticket_starting = str(timezone.now().year)		
+		if current_ticket_starting == last_ticket_no[0:4] and last_ticket_no:
+			new_ticket_no 		 = str(int(last_ticket_no[4:]) + 1 )
+			new_ticket_no 		 = last_ticket_no[0:-(len(new_ticket_no))]+new_ticket_no
+		else:
+			new_ticket_no 		 = str(timezone.now().year)+'00001'
+
+		if not self.ticket_no:
+			self.ticket_no = new_ticket_no
+
+		super(FollowUp, self).save(*args, **kwargs)
+	
 	def __unicode__(self):
 		return str(self.id)
 
