@@ -133,65 +133,6 @@ class QcHome(IsQualityControll,View):
 		except:
 			spp_calendar_followup_schedules = None
 
-		#cleaning schedule & followup schedule for resources			
-		workers_calendar_date	= request.GET.get('workers_calendar_date')
-		search                  = request.GET.get('search')
-		
-		try:
-			workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
-		except:
-			workers_date = timezone.now().replace(tzinfo=None)
-
-		workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
-		workers_date_end   = workers_date_start+timedelta(1)
-
-		if search:
-			try:
-				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))&Q(name__icontains=search))
-			except:
-				workers =  None
-		else:
-			try:
-				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
-			except:
-				workers =  None
- 
-		try:		
-			workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
-		except:
-			workers_details = None	
-
-		#Filter
-		try:
-			fil_staff = request.GET.get('staff')
-		except:
-			fil_staff = ''
-
-		try:
-			fil_minhours       = int(request.GET.get('minhours'))
-		except:
-			fil_minhours       = None
-
-		try:
-			fil_maxhours       = int(request.GET.get('maxhours'))
-		except:
-			fil_maxhours	   = None
-
-		if 	fil_minhours and fil_maxhours:
-			if fil_minhours>=fil_maxhours:
-				messages.error(request,"Minimum Duration should be less than Maximum Duration")
-				fil_minhours = None
-				fil_maxhours = None
-
-		filters=[]
-		if fil_staff:
-			case1 = Q(user_type=fil_staff)
-			filters.append(case1)
-
-		if fil_staff:
-			filters         = functools.reduce(operator.and_,filters)
-			workers_details = workers_details.filter(filters)
-
 
 		#Investigation tasks
 		investigation_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
@@ -205,7 +146,7 @@ class QcHome(IsQualityControll,View):
 		for investigation in investigations:
 			investigation.days_left = (timezone.now()-investigation.scheduled_at).days
 
-		return render(request,'qualitycontroll/home/home.html',{'investigations':investigations,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,"fil_staff":fil_staff})
+		return render(request,'qualitycontroll/home/home.html',{'investigations':investigations,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,})
 
 class OrderDetails(IsQualityControll,View):
 	def get(self,request):
@@ -421,6 +362,127 @@ class ClientOrders(IsQualityControll,View):
 
 		return render(request,"qualitycontroll/client/client-page.html",{"client_details":client_details,"orders":orders,"active_orders_count":active_orders_count,})
 
+class ResourceManagement(IsQualityControll,View):
+	def get(self,request):
+
+		try:
+			staffs = UserProfile.objects.filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
+		except:
+			staffs = None
+
+		#cleaning schedule & followup schedule for cleaning calendar
+		workers_calendar_date	= request.GET.get('workers_calendar_date')
+		search                  = request.GET.get('search')
+
+		try:
+			workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
+		except:
+			workers_date = timezone.now().replace(tzinfo=None)
+
+		workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		workers_date_end   = workers_date_start+timedelta(1)
+
+		#for taking today counts
+		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		count_today_end   = count_today_start+timedelta(1)
+
+		#total workers count
+		try:
+			total_workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))).count()
+		except:
+			total_workers = 0
+
+		#total active workers
+		try:
+			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=workers_date_start)&Q(end_at__gte=workers_date_start)) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=timezone.now().replace(tzinfo=None))&Q(end_at__gte=timezone.now().replace(tzinfo=None)))) ).values_list('member',flat=True)).distinct().count()			
+		except:
+			total_active_workers = 0
+
+
+		##To find average and total men hour from script data
+		try:
+			cleaning_teams  = CleaningTeam.objects.filter(is_active=True)
+		except:
+			cleaning_teams  = None
+		try:
+			follow_up_teams = FollowUpTeam.objects.filter(is_active=True)
+		except:
+			follow_up_teams = None
+
+
+		today_cleaning_active_teams  = cleaning_teams.filter(Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lt=workers_date_end))))
+		today_followup_active_teams  = follow_up_teams.filter(Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lt=workers_date_end))))
+		week_cleaning_active_teams   = cleaning_teams.filter(Q( Q(Q(start_at__gte=workers_date_end-timedelta(7))&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_end-timedelta(7))&Q(end_at__lt=workers_date_end)) ))
+		week_followup_active_teams   = follow_up_teams.filter(Q( Q(Q(start_at__gte=workers_date_end-timedelta(7))&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_end-timedelta(7))&Q(end_at__lt=workers_date_end)) ))
+
+		today_date            = timezone.now()
+		weekstart_date        = timezone.now()-timedelta(6)
+
+
+		try:
+			today_total_team_mens = today_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_cleaning_active_teams.count() or 0+today_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_followup_active_teams.count() or 0
+		except:
+			today_total_team_mens = 0
+		try:
+			week_total_team_mens  = week_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_cleaning_active_teams.count() or 0+week_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_followup_active_teams.count() or 0
+		except:
+			week_total_team_mens  = 0
+
+
+
+		#today and weekly active team count
+		today_active_teams_count = today_cleaning_active_teams.count()+today_followup_active_teams.count()
+		week_active_teams_count  = week_cleaning_active_teams.count()+week_followup_active_teams.count()
+
+		if search:
+			try:
+				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))&Q(name__icontains=search))
+			except:
+				workers =  None
+		else:
+			try:
+				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
+			except:
+				workers =  None
+
+		try:
+			workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
+		except:
+			workers_details = None
+
+		#Filter
+		try:
+			fil_staff = request.GET.get('staff')
+		except:
+			fil_staff = ''
+
+		try:
+			fil_minhours       = int(request.GET.get('minhours'))
+		except:
+			fil_minhours       = None
+
+		try:
+			fil_maxhours       = int(request.GET.get('maxhours'))
+		except:
+			fil_maxhours	   = None
+
+		if 	fil_minhours and fil_maxhours:
+			if fil_minhours>=fil_maxhours:
+				messages.error(request,"Minimum Duration should be less than Maximum Duration")
+				fil_minhours = None
+				fil_maxhours = None
+
+		#filters
+		filters=[]
+		if fil_staff:
+			case1 = Q(user_type=fil_staff)
+			filters.append(case1)
+
+		if fil_staff:
+			filters         = functools.reduce(operator.and_,filters)
+			workers_details = workers_details.filter(filters)
+
+		return render(request,'qualitycontroll/resource/resource_management.html',{"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"staffs":staffs,"fil_staff":fil_staff,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,"staff_type":fil_staff})
 
 class TicketDetails(IsQualityControll,View):
 	def get(self,request):
