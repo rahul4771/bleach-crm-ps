@@ -75,7 +75,7 @@
 {% for investigation in investigations %}
 <tr class="{% if investigation.days_left == 0 %}green-line{% elif investigation.days_left == 1 %}yellow-line{%else%}red-line{% endif %} clickable-row-list" data-href="{% url 'qc:investigation' investigation.id %}"> 
 <td data-label="BLC Number" class="bold-text">{{investigation.order.evaluation.evaluation_id}}</td>
-<td data-label="Proposed Time" class="bold-text">{{investigation.scheduled_at|date:"d/m/Y h:m A"}}</td>
+{% comment %} <td data-label="Proposed Time" class="bold-text">{{investigation.scheduled_at|date:"d/m/Y h:m A"}}</td> {% endcomment %}
 <td data-label="Customer">{{investigation.order.evaluation.customer.name}}</td>
 <td class="hide-a" data-label="">{{investigation.order_schedule.customer_address.area.name}}</td>
 <td class="hide-a" data-label="">
@@ -97,7 +97,7 @@
 </td>
 <td data-label="" class="bold-text">{% if investigation.days_left == 0 %}<h3 class="green-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% elif investigation.days_left == 1 %}<h3 class="yellow-text-h3">{{investigation.days_left}} </h3>Days&#11014;{% else%}<h3 class="red-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% endif %}</td>
 <td data-label="">
-<span class="{% if investigation.days_left == 0 %}green-bg{% elif investigation.days_left == 1 %}yellow-bg{%else%}red-bg{% endif %} clickable-row-list" data-href="{% url 'qc:investigation' investigation.id %}">Checkin</span>
+<span class="{% if investigation.days_left == 0 %}green-bg{% elif investigation.days_left == 1 %}yellow-bg{%else%}red-bg{% endif %} clickable-row-list" data-href="{% url 'qc:investigation' investigation.id %}">View</span>
 </td>
 </tr>
 {% endfor %} 

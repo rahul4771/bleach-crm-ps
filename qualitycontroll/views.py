@@ -550,15 +550,21 @@ class InvestigationTask(IsQualityControll,View):
 	def get(self,request,investigation_id):
 		
 		try:
-			investigation_details = Investigation.objects.select_related('order_schedule__customer_address__area','order_schedule__order_scheduler_book__service_type','order_schedule__evaluation_details__evaluator','investigator','order__evaluation__customer','order__evaluation__call_attender').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=investigation_id)
+			investigation_details = Investigation.objects.select_related('order_schedule__customer_address__area','order_schedule__order_scheduler_book__service_type','order_schedule__evaluation_details__evaluator','investigator','order__evaluation__customer','order__evaluation__call_attender').prefetch_related(Prefetch('reporting_investigation',queryset=Reporting.objects.filter(is_active=True),to_attr='internalreport'), Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscount'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift'),Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=investigation_id)
 		except:
 			investigation_details = None
+
+		follow_up_scheduler = FollowUpScheduler.objects.filter(is_active=True,follow_up__investigation__id=investigation_id).first()
+		if follow_up_scheduler:
+			follow_up_scheduler_exists = True
+		else:
+			follow_up_scheduler_exists = False
 
 		#save checkin_time
 		investigation_details.check_in = timezone.now()
 		investigation_details.save()
 
-		return render(request,'qualitycontroll/ticket/investigation.html',{'investigation_details':investigation_details})
+		return render(request,'qualitycontroll/ticket/investigation.html',{'investigation_details':investigation_details,"followup_scheduler_exists":follow_up_scheduler_exists})
 
 	def post(self,request,investigation_id):
 
@@ -716,6 +722,55 @@ class Cashback(IsQualityControll,View):
 		messages.success(request,"Cash Back Added !")
 		return redirect('quality-control:investigation', investigation_id)
 
+class CashbackEdit(IsQualityControll,View):
+	def get(self,request,investigation_id):
+		return render(request,"qualitycontroll/ticket/cash-back-edit.html")
+
+	def post(self,request,investigation_id):
+
+		paybackdiscount = PaybackDiscount.objects.create(investigation=Investigation.objects.get(is_active=True,id=int(investigation_id)),
+		is_active=True
+		)
+
+		#to save sections
+		no_of_sections         = int(request.POST.get('section_counter'))
+		print(no_of_sections,"nose")
+		section_array          = []
+
+		total_cost = 0
+		section_items_total_cost = 0
+		for i in range(no_of_sections):
+			section_name  = request.POST.get('section'+str(i))
+
+			#to save keynotes
+			try:
+				no_of_keynotes = int(request.POST.get('section'+str(i)+'-keynote_counter'))
+			except:
+				no_of_keynotes = None
+
+			items_total_cost = 0
+			keynote_array = []
+			if no_of_keynotes:
+				for j in range(no_of_keynotes):
+					keynote = request.POST.get('section'+str(i)+'_keynote'+str(j))
+					quantity= request.POST.get('section'+str(i)+'_quantity'+str(j))
+					if keynote and quantity:
+						keynote_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=section_name,name=keynote,cost=quantity,is_active=True))
+					
+					items_total_cost += float(quantity)
+				#bulk_create keynote
+				PaybackDiscountDetails.objects.bulk_create(keynote_array)
+
+			section_items_total_cost += float(items_total_cost)
+
+		total_cost += float(section_items_total_cost)
+
+		paybackdiscount.total_cost = total_cost
+		paybackdiscount.save()
+
+		messages.success(request,"Cash Back Updated !")
+		return redirect('quality-control:investigation', investigation_id)
+
 
 class InternalReport(IsQualityControll,View):
 	def get(self,request,investigation_id):
@@ -744,6 +799,35 @@ class InternalReport(IsQualityControll,View):
 				)
 		
 		messages.success(request,"Internal Report Submitted !")
+		return redirect('quality-control:investigation', investigation_id)
+
+class InternalReportEdit(IsQualityControll,View):
+	def get(self,request,investigation_id):
+		internalreport = Reporting.objects.get(is_active=True,investigation__id=investigation_id)
+		internalreport_media = ReportingMedia.objects.filter(is_active=True,reporting=internalreport)
+		return render(request,"qualitycontroll/ticket/internal-report-edit.html",{"internal_report":internalreport,"report_medias":internalreport_media})
+
+	def post(self,request,investigation_id):
+		report_title = request.POST.get('title')
+		report_notes = request.POST.get('notes')
+
+		internal_report = Reporting.objects.get(is_active = True,investigation__id=investigation_id)
+		internal_report.title = report_title
+		internal_report.notes = report_notes
+		internal_report.save()
+		
+		medias = request.FILES.getlist('media')
+
+		print(medias,"medis")
+		if not medias==['']:
+			for img in medias:
+				ReportingMedia.objects.create(
+					reporting = internal_report,
+					media = img,
+					is_active = True
+				)
+		
+		messages.success(request,"Internal Report Updated !")
 		return redirect('quality-control:investigation', investigation_id)
 
 class BuyBackPromoCode(IsQualityControll,View):
@@ -804,4 +888,64 @@ class BuyBackPromoCode(IsQualityControll,View):
 		buybackpromocodegift.save()
 
 		messages.success(request,"Buy Back / Promo Code Added !")
+		return redirect('quality-control:investigation', investigation_id)
+
+class BuyBackPromoCodeEdit(IsQualityControll,View):
+	def get(self,request,investigation_id):
+		return render(request,"qualitycontroll/ticket/promocode-edit.html")
+
+	def post(self,request,investigation_id):
+
+		buybackpromocodegift = BuybackPromocodeGift.objects.create(investigation=Investigation.objects.get(is_active=True,id=int(investigation_id)),
+		is_active=True
+		)
+
+		#to save sections
+		no_of_sections         = int(request.POST.get('section_counter'))
+		
+		section_array          = []
+
+		total_cost = 0
+		section_items_total_cost = 0
+		for i in range(no_of_sections):
+			section_name  = request.POST.get('section'+str(i))
+
+			#to save keynotes
+			try:
+				no_of_keynotes = int(request.POST.get('section'+str(i)+'-keynote_counter'))
+			except:
+				no_of_keynotes = None
+
+			items_total_cost = 0
+			keynote_array = []
+			if no_of_keynotes:
+				for j in range(no_of_keynotes):
+					keynote = request.POST.get('section'+str(i)+'_keynote'+str(j))
+					quantity= request.POST.get('section'+str(i)+'_quantity'+str(j))
+					if keynote and quantity:
+						keynote_array.append(BuybackPromocodeGiftDetails(buybackpromocodegift=buybackpromocodegift,category=section_name,name=keynote,cost=quantity,is_active=True))
+					
+					items_total_cost += float(quantity)
+				#bulk_create keynote
+				BuybackPromocodeGiftDetails.objects.bulk_create(keynote_array)
+
+			# medias = request.FILES.getlist('media'+str(i))
+
+			# print('media'+str(i),medias,"medis")
+			# if not medias==['']:
+			# 	for img in medias:
+			# 		BuybackPromocodeGiftDetailsMedia.objects.create(
+			# 			buybackpromocodegift_details = buybackpromocodegift,
+			# 			media = img,
+			# 			is_active = True
+			# 		)
+
+			section_items_total_cost += float(items_total_cost)
+
+		total_cost += float(section_items_total_cost)
+
+		buybackpromocodegift.total_cost = total_cost
+		buybackpromocodegift.save()
+
+		messages.success(request,"Buy Back / Promo Code Updated !")
 		return redirect('quality-control:investigation', investigation_id)
