@@ -338,9 +338,12 @@ class FollowUp(models.Model):
 	def save(self,*args, **kwargs):
 		last_ticket_no  		 = FollowUp.objects.filter(is_active=True).aggregate(t=Max('ticket_no'))['t']
 		current_ticket_starting = str(timezone.now().year)		
-		if current_ticket_starting == last_ticket_no[0:4] and last_ticket_no:
-			new_ticket_no 		 = str(int(last_ticket_no[4:]) + 1 )
-			new_ticket_no 		 = last_ticket_no[0:-(len(new_ticket_no))]+new_ticket_no
+		if last_ticket_no:
+			if current_ticket_starting == last_ticket_no[0:4]:
+				new_ticket_no 		 = str(int(last_ticket_no[4:]) + 1 )
+				new_ticket_no 		 = last_ticket_no[0:-(len(new_ticket_no))]+new_ticket_no
+			else:
+				new_ticket_no 		 = str(timezone.now().year)+'00001'
 		else:
 			new_ticket_no 		 = str(timezone.now().year)+'00001'
 
