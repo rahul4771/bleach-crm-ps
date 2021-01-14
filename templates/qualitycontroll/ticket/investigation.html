@@ -24,15 +24,26 @@
              
                   <div class="cleaning-column-wrapper ltyellow-border"><!--cleaning-column-wrapper-->
                     <div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
-                    <div class="blc-number-big">{{investigation_details.order.evaluation.evaluation_id}}</div>
+                    <div class="blc-number-big">
+                    {% for followup in investigation_details.followup %}
+                    TKT{{followup.ticket_no}}
+                    {% endfor %}
+                    </div>
+                    <div class="mobile-number">
+                    {{investigation_details.order.evaluation.evaluation_id}}
+                    </div>
                     <div class="customer-name"><i class="fa blue-text fa-user-circle-o" aria-hidden="true"></i> {{investigation_details.order.evaluation.customer.name}}</div>
                     <div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;  {{investigation_details.order.evaluation.customer.mobile_number}}</div>
                     <div class="email"><i class="fa orange-text fa-lg fa-envelope-o" aria-hidden="true"></i> &nbsp;  {{investigation_details.order.evaluation.customer.email}}</div>
+                    <br>
+                    <div class="email"><i class="fa red-text fa-lg fa-ambulance" aria-hidden="true"></i> &nbsp;  {{investigation_details.ticket_types}}</div>
                     <br>
                     {% for cleaning_team in investigation_details.order_schedule.cleaning_teams %}
                     <div class="tl blue-text">Team Leader&nbsp;:{{cleaning_team.team_leader.name}}</div>
                     <div class="cleaner blue-text">Cleaners&nbsp;:{% for member in cleaning_team.cleaning_team_members %}{% if member.member != cleaning_team.team_leader %}{{member.member.name}},{% endif %}{% endfor %}</div>
                     {% endfor %}
+                    <br>
+                    <div class="email">Agent Notes :{{investigation_details.notes}}</div>
                 </div><!--cleaning-column-widget cleaning-column-widget-column1-->
                 
                 <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
