@@ -316,10 +316,10 @@ class BuybackPromocodeGiftDetailsMedia(models.Model):
 	created            		        = models.DateTimeField(auto_now_add=True)
 	updated           		        = models.DateTimeField(auto_now=True)
 	def __unicode__(self):
-		return str(self.buybackpromocodegift_details.buybackpromocodegift.investigation.id)
+		return str(self.buybackpromocodegift_details.id)
 
 	def __str__(self):
-		return str(self.buybackpromocodegift_details.buybackpromocodegift.investigation.id)
+		return str(self.buybackpromocodegift_details.id)
 
 
 #Followup details for followup order.Followup granded by Investigator
@@ -376,6 +376,66 @@ class FollowUpScheduler(models.Model):
 
 	def __str__(self):
 		return str(self.id)
+
+class FollowUpSection(models.Model):
+	follow_up 			= models.ForeignKey('FollowUp',blank=False,null=False,related_name='follow_up_of_section')
+	section_name 	= models.CharField(max_length=100,blank=False,null=False)
+	section_name_arabic = models.CharField(max_length=100,blank=False,null=False)
+	category		= models.CharField(max_length=100,blank=True,null=True)
+	dirt_level		= models.CharField(max_length=100,blank=True,null=True)
+
+	quantity    	= models.CharField(max_length=100,blank=True,null=True)
+	size        	= models.CharField(max_length=100,blank=True,null=True)
+	unit        	= models.CharField(max_length=100,blank=True,null=True)
+	age         	= models.CharField(max_length=100,blank=True,null=True)
+	
+	floor       	= models.CharField(max_length=100,blank=True,null=True)
+	apartment   	= models.CharField(max_length=100,blank=True,null=True)
+	room        	= models.CharField(max_length=100,blank=True,null=True)
+	
+	wall_type   	= models.CharField(max_length=100,blank=True,null=True)
+	ceiling_type	= models.CharField(max_length=100,blank=True,null=True)
+	floor_type  	= models.CharField(max_length=100,blank=True,null=True)
+	material    	= models.CharField(max_length=100,blank=True,null=True)
+	colour      	= models.CharField(max_length=100,blank=True,null=True)
+	cause_of_stain	= models.CharField(max_length=100,blank=True,null=True)
+
+	section_cost     = models.FloatField(blank=True,null=True)
+	section_cleanings= models.FloatField(blank=True,null=True)
+	section_net_cost = models.FloatField(blank=True,null=True)
+
+	is_active            = models.BooleanField(null=False,blank=True,default=True)
+	created              = models.DateTimeField(auto_now_add=True)
+	updated              = models.DateTimeField(auto_now=True)
+
+	def save(self, *args, **kwargs):
+		for field_name in ['size','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain']:
+			val = getattr(self, field_name, False)
+			if val:
+				setattr(self, field_name, val.title())
+		super(FollowUpSection, self).save(*args, **kwargs)
+
+	def __unicode__(self):
+		return str(self.follow_up)
+
+	def __str__(self):
+		return str(self.follow_up)	
+
+
+class FollowUpSectionKeynote(models.Model):
+	followup_section = models.ForeignKey('FollowUpSection',blank=False,null=False,related_name='keynotesectionsfollowup')
+	sub_area 		   = models.CharField(max_length=100,blank=True,null=True)
+	quantity 		   = models.CharField(max_length=100,blank=True,null=True)
+	completion_status  = models.BooleanField(null=False,blank=True,default=False)
+
+	is_active            = models.BooleanField(null=False,blank=True,default=True)
+	created              = models.DateTimeField(auto_now_add=True)
+	updated              = models.DateTimeField(auto_now=True)
+	def __unicode__(self):
+		return str(self.followup_section)
+
+	def __str__(self):
+		return str(self.followup_section)
 
 #Questions asked by Agent to Customer, after cleaning.
 
