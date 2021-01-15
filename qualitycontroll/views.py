@@ -592,6 +592,11 @@ class Followup(IsQualityControll,View):
 		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=investigation.order_schedule.evaluation_details.id)
 
 		service_type = investigation.order_schedule.order_scheduler_book.service_type
+		
+		# followup status change
+		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+		follow_up.status = 'FOLLOWUP_IN_PROGRESS'
+		follow_up.save()
 
 		return render(request,"qualitycontroll/ticket/follow-up.html",{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_type':service_type})
 
@@ -612,7 +617,7 @@ class Followup(IsQualityControll,View):
 		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True,check_out=timezone.now(),notes=request.POST.get('notes'))
 		
 		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
-		follow_up.status         = 'INVESTIGATOR_APPROVED'
+		follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
 		follow_up.no_of_cleaners = no_of_cleaners
 		follow_up.cleaning_hours = cleaning_hours
 		follow_up.total_cost = total_cost
@@ -696,6 +701,12 @@ class FollowupEdit(IsQualityControll,View):
 		service_type = investigation.order_schedule.order_scheduler_book.service_type
 
 		followupscheduler = FollowUpScheduler.objects.filter(follow_up__investigation__id = int(investigation_id),is_active=True)
+		
+		# followup status change
+		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+		follow_up.status = 'FOLLOWUP_IN_PROGRESS'
+		follow_up.save()
+		
 		followup_sections = FollowUpSection.objects.filter(follow_up__investigation__id=int(investigation_id),is_active=True).prefetch_related(Prefetch('keynotesectionsfollowup',queryset=FollowUpSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'))
 
 		return render(request,"qualitycontroll/ticket/follow-up-edit.html",{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_type':service_type,"followupscheduler":followupscheduler,"followupsections":followup_sections})
@@ -718,7 +729,7 @@ class FollowupEdit(IsQualityControll,View):
 		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True,check_out=timezone.now(),notes=request.POST.get('notes'))
 		
 		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
-		follow_up.status         = 'INVESTIGATOR_APPROVED'
+		follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
 		follow_up.no_of_cleaners = no_of_cleaners
 		follow_up.cleaning_hours = cleaning_hours
 		follow_up.total_cost     = total_cost
@@ -812,6 +823,10 @@ class FollowupEdit(IsQualityControll,View):
 
 class Cashback(IsQualityControll,View):
 	def get(self,request,investigation_id):
+		# followup status change
+		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+		follow_up.status = 'FOLLOWUP_IN_PROGRESS'
+		follow_up.save()
 		return render(request,"qualitycontroll/ticket/cash-back.html")
 
 	def post(self,request,investigation_id):
@@ -930,6 +945,10 @@ class CashbackEdit(IsQualityControll,View):
 
 class InternalReport(IsQualityControll,View):
 	def get(self,request,investigation_id):
+		# followup status change
+		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+		follow_up.status = 'FOLLOWUP_IN_PROGRESS'
+		follow_up.save()
 		return render(request,"qualitycontroll/ticket/internal-report.html")
 
 	def post(self,request,investigation_id):
@@ -973,6 +992,7 @@ class InternalReportEdit(IsQualityControll,View):
 		internal_report = Reporting.objects.get(is_active = True,investigation__id=investigation_id)
 		internal_report.title = report_title
 		internal_report.notes = report_notes
+		internal_report.investigation.is_internalreporting_approved = True
 		internal_report.save()
 		
 		medias = request.FILES.getlist('media')
@@ -991,6 +1011,10 @@ class InternalReportEdit(IsQualityControll,View):
 
 class BuyBackPromoCode(IsQualityControll,View):
 	def get(self,request,investigation_id):
+		# followup status change
+		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+		follow_up.status = 'FOLLOWUP_IN_PROGRESS'
+		follow_up.save()
 		return render(request,"qualitycontroll/ticket/promocode.html")
 
 	def post(self,request,investigation_id):
