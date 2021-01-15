@@ -131,7 +131,7 @@
 
     <td>
     {% if followup_scheduler_exists == True %}
-    <a href="{% url 'quality-control:cash-back-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
+    <a href="{% url 'quality-control:follow-up-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
     {% else %}
     -
     {% endif %}

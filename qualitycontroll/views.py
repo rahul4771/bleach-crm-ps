@@ -584,7 +584,7 @@ class InvestigationTask(IsQualityControll,View):
 		
 		return redirect('quality-control:investigation', investigation_id)
 
-class Followup(View):
+class Followup(IsQualityControll,View):
 	service_formset_define    = formset_factory(QuatationServiceForm)
 	def get(self,request,investigation_id):
 		investigation = Investigation.objects.get(is_active=True,id=int(investigation_id))
@@ -599,13 +599,15 @@ class Followup(View):
 		investigation = Investigation.objects.get(is_active=True,id=int(investigation_id))
 		evaluation_details 	  = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=investigation.order_schedule.evaluation_details.id)
 
+		followup_schedule_array          = []
+
+		total_cost	= request.POST.get('total_cost')
 		no_of_cleaners = request.POST.get('number_of_cleaners')
 		cleaning_hours = request.POST.get('cleaning_hours')
 		
-		tendative_date = request.POST.get('tendative_date')
+		tendative_date = request.POST.get('tendative_date').split(',')
+
 		tendative_time = request.POST.get('tendative_time')
-		start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
-		end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
 
 		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True,check_out=timezone.now(),notes=request.POST.get('notes'))
 		
@@ -613,9 +615,15 @@ class Followup(View):
 		follow_up.status         = 'INVESTIGATOR_APPROVED'
 		follow_up.no_of_cleaners = no_of_cleaners
 		follow_up.cleaning_hours = cleaning_hours
+		follow_up.total_cost = total_cost
 		follow_up.save()
 		
-		follow_up_scheduler = FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
+		for date in tendative_date:
+			print(date)
+			start_date_time = datetime.strptime(date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+			end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
+			followup_schedule_array.append(FollowUpScheduler(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address))
+		# follow_up_scheduler = FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
 		
 		
 		#To Save Media
@@ -672,7 +680,133 @@ class Followup(View):
 				#bulk_create keynote
 				FollowUpSectionKeynote.objects.bulk_create(keynote_array)
 
-			messages.success(request,"Follow Up Cleaning Succesfully Added")
+		FollowUpScheduler.objects.bulk_create(followup_schedule_array)
+
+		messages.success(request,"Follow Up Cleaning Succesfully Added")
+
+		return redirect('quality-control:investigation', investigation_id)
+
+class FollowupEdit(IsQualityControll,View):
+	service_formset_define    = formset_factory(QuatationServiceForm)
+	def get(self,request,investigation_id):
+		investigation = Investigation.objects.get(is_active=True,id=int(investigation_id))
+		print(investigation.order_schedule.evaluation_details.id,"evs")
+		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=investigation.order_schedule.evaluation_details.id)
+
+		service_type = investigation.order_schedule.order_scheduler_book.service_type
+
+		followupscheduler = FollowUpScheduler.objects.filter(follow_up__investigation__id = int(investigation_id),is_active=True)
+		followup_sections = FollowUpSection.objects.filter(follow_up__investigation__id=int(investigation_id),is_active=True).prefetch_related(Prefetch('keynotesectionsfollowup',queryset=FollowUpSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'))
+
+		return render(request,"qualitycontroll/ticket/follow-up-edit.html",{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_type':service_type,"followupscheduler":followupscheduler,"followupsections":followup_sections})
+
+	def post(self,request,investigation_id):
+		investigation = Investigation.objects.get(is_active=True,id=int(investigation_id))
+		evaluation_details 	  = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=investigation.order_schedule.evaluation_details.id)
+
+		followup_schedule_array          = []
+
+		total_cost	   = request.POST.get('total_cost')
+		no_of_cleaners = request.POST.get('number_of_cleaners')
+		cleaning_hours = request.POST.get('cleaning_hours')
+		
+		tendative_date = request.POST.get('tendative_date').split(',')
+		tendative_time = request.POST.get('tendative_time')
+		# start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+		# end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
+
+		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True,check_out=timezone.now(),notes=request.POST.get('notes'))
+		
+		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+		follow_up.status         = 'INVESTIGATOR_APPROVED'
+		follow_up.no_of_cleaners = no_of_cleaners
+		follow_up.cleaning_hours = cleaning_hours
+		follow_up.total_cost     = total_cost
+		follow_up.save()
+		
+		for date in tendative_date:
+			print(date,"dt")
+			start_date_time = datetime.strptime(date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+			end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
+			followup_schedule_array.append(FollowUpScheduler(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address))
+
+		# follow_up_scheduler = FollowUpScheduler.objects.filter(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
+		
+		
+		#To Save Media
+		medias = request.FILES.getlist('media')
+		if not medias==['']:
+			for media in medias:
+				InvestigationMedia.objects.create(
+				        investigation_id=investigation_id,
+				        media=media,
+				        )
+
+		#to save sections
+		no_of_sections         = int(request.POST.get('section_counter'))
+		section_array          = []
+		for i in range(no_of_sections):
+			section_name  = request.POST.get('section'+str(i))
+			category      = request.POST.get('category'+str(i))
+			dirt_level    = request.POST.get('dirt_level'+str(i))
+			quantity      = request.POST.get('quantity'+str(i))
+			size          = request.POST.get('size'+str(i))
+			unit          = request.POST.get('unit'+str(i))
+			age           = request.POST.get('age'+str(i))
+			floor         = request.POST.get('floor'+str(i))
+			apartment     = request.POST.get('apartment'+str(i))
+			room          = request.POST.get('room'+str(i))
+			wall_type     = request.POST.get('walltype'+str(i))
+			ceiling_type  = request.POST.get('ceilingtype'+str(i))
+			floor_type    = request.POST.get('floortype'+str(i))
+			material      = request.POST.get('material'+str(i))
+			colour        = request.POST.get('colour'+str(i))
+			cause_of_stain=request.POST.get('staincause'+str(i))
+			section_cost  = request.POST.get('sectioncost'+str(i))
+
+			old_section_id=request.POST.get('editform_section'+str(i))
+			print(old_section_id,"oisd")
+			try:
+				section_name_arabic = Translator().translate(section_name,src='en', dest='ar').text
+			except:
+				section_name_arabic = section_name
+			
+			if old_section_id:
+				print("old")
+				section = FollowUpSection.objects.filter(id=old_section_id).update(section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=len(tendative_date),section_net_cost=section_cost)
+			else:
+				print("new")
+				section = FollowUpSection.objects.create(follow_up=follow_up,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
+
+			#to save keynotes
+			try:
+				no_of_keynotes = int(request.POST.get('section'+str(i)+'-keynote_counter'))
+			except:
+				no_of_keynotes = None
+
+			keynote_array = []
+			if no_of_keynotes:
+				for j in range(no_of_keynotes):
+					old_keynote_id=request.POST.get('editform_section'+str(i)+'_keynote'+str(j))
+
+					keynote = request.POST.get('section'+str(i)+'_keynote'+str(j))
+					quantity= request.POST.get('section'+str(i)+'_quantity'+str(j))
+
+					if old_keynote_id:
+						if keynote and quantity:
+							FollowUpSectionKeynote.objects.filter(id=old_keynote_id).update(id=old_keynote_id,sub_area=keynote,quantity=quantity)
+					else:
+						if keynote and quantity:
+							keynote_array.append(FollowUpSectionKeynote(followup_section=section,sub_area=keynote,quantity=quantity))
+				#bulk_create keynote
+				FollowUpSectionKeynote.objects.bulk_create(keynote_array)
+
+		#delete old followup schedules
+		FollowUpScheduler.objects.filter(follow_up=follow_up).delete()
+
+		FollowUpScheduler.objects.bulk_create(followup_schedule_array)
+
+		messages.success(request,"Follow Up Cleaning Succesfully Updated !")
 
 		return redirect('quality-control:investigation', investigation_id)
 
@@ -743,9 +877,7 @@ class CashbackEdit(IsQualityControll,View):
 
 	def post(self,request,investigation_id):
 
-		paybackdiscount = PaybackDiscount.objects.create(investigation=Investigation.objects.get(is_active=True,id=int(investigation_id)),
-		is_active=True
-		)
+		paybackdiscount = PaybackDiscount.objects.get(investigation_id=int(investigation_id),is_active=True)
 
 		#to save sections
 		no_of_sections         = int(request.POST.get('section_counter'))
@@ -762,15 +894,24 @@ class CashbackEdit(IsQualityControll,View):
 				no_of_keynotes = int(request.POST.get('section'+str(i)+'-keynote_counter'))
 			except:
 				no_of_keynotes = None
-
+			print(range(no_of_keynotes),"keyss")
 			items_total_cost = 0
 			keynote_array = []
 			if no_of_keynotes:
 				for j in range(no_of_keynotes):
+					old_keynote_id=request.POST.get('editform_section'+str(i)+'_keynote'+str(j))
+
 					keynote = request.POST.get('section'+str(i)+'_keynote'+str(j))
 					quantity= request.POST.get('section'+str(i)+'_quantity'+str(j))
-					if keynote and quantity:
-						keynote_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=section_name,name=keynote,cost=quantity,is_active=True))
+
+					print(old_keynote_id,keynote,quantity,'section'+str(i)+'_quantity'+str(j),"datt")
+
+					if old_keynote_id:
+						if keynote and quantity:
+							PaybackDiscountDetails.objects.filter(is_active=True,id=old_keynote_id).update(id=old_keynote_id,name=keynote,cost=quantity)
+					else:
+						if keynote and quantity:
+							keynote_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=section_name,name=keynote,cost=quantity,is_active=True))
 					
 					items_total_cost += float(quantity)
 				#bulk_create keynote
