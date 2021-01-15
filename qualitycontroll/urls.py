@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^followup/(?P<investigation_id>[-\w]+)/$',views.Followup.as_view(),name='follow-up'),
     url(r'^cashback/(?P<investigation_id>[-\w]+)/$',views.Cashback.as_view(),name='cash-back'),
 	url(r'^cashback-edit/(?P<investigation_id>[-\w]+)/$',views.CashbackEdit.as_view(),name='cash-back-edit'),
+	url(r'^buyback-promocode/(?P<investigation_id>[-\w]+)/$',views.BuyBackPromoCode.as_view(),name='buy-back-promo-code'),
     url(r'^buyback-promocode-edit/(?P<investigation_id>[-\w]+)/$',views.BuyBackPromoCodeEdit.as_view(),name='buy-back-promo-code-edit'),
 
     url(r'^internal-report/(?P<investigation_id>[-\w]+)/$',views.InternalReport.as_view(),name='internal-report'),
