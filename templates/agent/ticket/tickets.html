@@ -125,10 +125,9 @@
                 <label for="favcity">
                 <select name="status_filter" id="status_filter_id">
                 <option value=''>---ALL---</option>
-                <option value="INVESTIGATOR_APPROVED" {% if fil_status == 'INVESTIGATOR_APPROVED' %}selected{%endif%}>Open</option>
-                <option value="FOLLOWUP_IN_PROGRESS" {% if fil_status == 'FOLLOWUP_IN_PROGRESS' %}selected{%endif%}>Cleaning</option>
-                <option value="FOLLOWUP_CLOSED" {% if fil_status == 'FOLLOWUP_CLOSED' %}selected{%endif%}>Closed</option>
-                <option value="FOLLOWUP_CANCELLED" {% if fil_status == 'FOLLOWUP_CANCELLED' %}selected{%endif%}>Cancelled</option>                
+                <option value="TICKET_RISED" {% if fil_status == 'TICKET_RISED' %}selected{%endif%}>In Progress</option>
+                <option value="FOLLOWUP_IN_PROGRESS" {% if fil_status == 'FOLLOWUP_IN_PROGRESS' %}selected{%endif%}>In Progress</option>
+                <option value="FOLLOWUP_CLOSED" {% if fil_status == 'FOLLOWUP_CLOSED' %}selected{%endif%}>Closed</option>                
               </select>
                 </label>
   </div><!--ticket-form-right-->
@@ -173,9 +172,7 @@
     {% for ticket in tickets %}
 	<tr>
     <td 
-    {% if ticket.status == 'INVESTIGATOR_APPROVED' %}
-    class="orange-line"
-    {% elif ticket.status == 'FOLLOWUP_IN_PROGRESS' %}
+    {% if ticket.status == 'FOLLOWUP_IN_PROGRESS' %}
     class="yellow-line"
     {% elif ticket.status == 'FOLLOWUP_CLOSED' %}
     class="green-line"
@@ -192,10 +189,8 @@
     <td>{{ticket.investigation.investigator.name}}</td>
     <td>{{ticket.investigation.order_schedule.order.evaluation.customer.mobile_number}}</td> 
     <td>
-    {% if ticket.status == 'INVESTIGATOR_APPROVED' %}
-    <span class="clickable-row orange-bg" data-href="{% url 'agent:agent-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Open</span>
-    {% elif ticket.status == 'FOLLOWUP_IN_PROGRESS' %}
-    <span class="clickable-row yellow-bg" data-href="{% url 'agent:agent-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Cleaning</span>     
+    {% if ticket.status == 'FOLLOWUP_IN_PROGRESS' %}
+    <span class="clickable-row yellow-bg" data-href="{% url 'agent:agent-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">In Progress</span>     
     {% elif ticket.status == 'FOLLOWUP_CLOSED' %}
     <span class="clickable-row green-bg" data-href="{% url 'agent:agent-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Closed</span>
     {% elif ticket.status == 'TICKET_RISED' %}

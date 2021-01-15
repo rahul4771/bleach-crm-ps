@@ -18,9 +18,10 @@ from django.db.models import Prefetch
 from django.contrib import messages
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod,ServiceType,EvaluationBookSection,EvaluationSectionKeynote,LocationType,CleaningType,AreaType
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,PaybackDiscount,BuybackPromocodeGift
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,PaybackDiscount,BuybackPromocodeGift,Promocode
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
+from order.forms import PromocodeForm
 
 from django.db.models.functions import TruncMonth as Month, TruncYear as Year
 from django.db.models import Count
@@ -318,7 +319,7 @@ class TicketDetails(IsAdmin,View):
 		else:
 			tickets 	             = FollowUp.objects.filter(is_active=True).select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').order_by('-id').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))		
 
-		follow_ups_count = FollowUp.objects.filter(Q(is_active=True)&Q(Q(status='TICKET_RISED')|Q(status='INVESTIGATOR_APPRVED')|Q(status='FOLLOWUP_IN_PROGRESS'))).count()
+		follow_ups_count = FollowUp.objects.filter(Q(is_active=True)&Q(Q(status='TICKET_RISED')|Q(status='FOLLOWUP_IN_PROGRESS'))).count()
 
 
 		#followup cleaning count	
@@ -1021,7 +1022,7 @@ class PaymentDetails(IsAdmin,View):
 		return render(request,'admin/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,'no_of_entries':no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status})		
 
 
-class PaybackDiscountApprove(View):
+class PaybackDiscountApprove(IsAdmin,View):
 	def get(self,request,paybackdiscount_id):
 		
 		try:
@@ -1032,7 +1033,7 @@ class PaybackDiscountApprove(View):
 		return render(request,'admin/ticket/paybackdiscountapprove.html',{'paybackdiscount_details':paybackdiscount_details,})
 
 
-class BuybackPromocodeGiftApprove(View):
+class BuybackPromocodeGiftApprove(IsAdmin,View):
 	def get(self,request,buybackpromogift_id):
 	
 		try:
@@ -1041,6 +1042,11 @@ class BuybackPromocodeGiftApprove(View):
 			buybackpromogift_details = None
 
 		return render(request,'admin/ticket/buybackpromogiftapprove.html',{'buybackpromogift_details':buybackpromogift_details})
+
+class PromocodeView(IsAdmin,View):
+	def get(self,request):
+
+		return render(request,'admin/promocode/promo.html',{})
 
 #ajax for sales charts
 def SalesLocationData(request):

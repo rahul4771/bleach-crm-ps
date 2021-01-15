@@ -138,24 +138,45 @@
         
         
         
-<div class="details-sub-head align-left">Investigation</div>     
+<div class="details-sub-head align-left">Ticket Details (TKT{{followup_details.ticket_no}})</div>     
 <div class="investigation-columns"><!--investigation-columns-->
     	<div class="investigation-columns-left"><!--investigation-columns-left-->
-            {% if followup_details.investigation.investigator.profile_image %}
+            {% if followup_details.investigation.assigned_by.profile_image %}
 			<div class="profile-pic"><img src="{{followup_details.investigation.investigator.profile_image.url}}"></div>
             {% else %}
             <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>            
             {% endif %}
-            <div class="client-name">{{followup_details.investigation.investigator.name}}<div class="common-gray-text">{{followup_details.investigation.investigator.user_type}}</div></div>
+            <div class="client-name">{{followup_details.investigation.assigned_by.name}}<div class="common-gray-text">{{followup_details.investigation.assigned_by.user_type}}</div></div>
     	</div><!--investigation-columns-left-->
 
         <div class="investigation-columns-middle"><!--investigation-columns-middle-->
-        <div class="order-invest-date">{{followup_details.investigation.sheduled_at}}</div>
+        <div class="order-invest-date">{{followup_details.investigation.scheduled_at}}</div>
+        <br>
+        <div class="order-invest-date"><i class="fa fa-lg fa-ambulance red-text" aria-hidden="true"></i> {{followup_details.investigation.ticket_types}}</div>
             <div class="notes">Notes</div>
             <p>{{followup_details.investigation.notes}}</p>
         </div><!--investigation-columns-middle-->
 </div><!--investigation-columns-->
-            
+<br>            
+<div class="investigation-columns"><!--investigation-columns-->
+        <div class="investigation-columns-left"><!--investigation-columns-left-->
+            {% if followup_details.investigation.investigator.profile_image %}
+            <div class="profile-pic"><img src="{{followup_details.investigation.investigator.profile_image.url}}"></div>
+            {% else %}
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>            
+            {% endif %}
+            <div class="client-name">{{followup_details.investigation.investigator.name}}<div class="common-gray-text">{{followup_details.investigation.investigator.user_type}}</div></div>
+        </div><!--investigation-columns-left-->
+
+        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
+        <div class="order-invest-date"></div>
+            <div class="notes">Ticket Followups</div>
+            <p></p>
+        </div><!--investigation-columns-middle-->
+</div><!--investigation-columns-->
+
+
+
 {% for follow_up_scheduler in followup_details.follow_up_schedules %}
 {% for team in follow_up_scheduler.followupteams %}
 

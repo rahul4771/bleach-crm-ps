@@ -600,7 +600,48 @@ right:0;
 .custom-model-inner-sp{margin-top: 45px;}
 
 
-
 /*remove button for cleaner add */
 .add-button-2{ background:#ec6262; margin:0; padding:8px 15px; color:#fff;transition: .4s; border:none;}
 .add-button-2:hover{ background:#d55757;}
+
+
+
+
+/*promocode css */
+* {
+    box-sizing: border-box;
+  }
+  
+  /* Float four columns side by side */
+  .column_coupon {
+    float: left;
+    width: 33.33%;
+    padding: 10px 10px;
+  }
+  
+  /* Remove extra left and right margins, due to padding */
+  .row_coupon {margin: 0 -5px;}
+  
+  /* Clear floats after the columns */
+  .row_coupon:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  
+  /* Responsive columns */
+  @media screen and (max-width: 600px) {
+    .column_coupon {
+      width: 100%;
+      display: block;
+      margin-bottom: 20px;
+    }
+  }
+  
+  /* Style the counter cards */
+  .card_coupon {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    text-align: center;
+    background-color: #fff;
+  }

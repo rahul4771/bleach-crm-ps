@@ -19,6 +19,8 @@ urlpatterns = [
 	url(r'^client/orders/(?P<client_id>[-\w]+)$',views.ClientOrders.as_view(),name='admin-client-orders'),
 	url(r'^client/order/details/(?P<order_id>[-\w]+)$',views.ClientOrderDetails.as_view(),name='admin-client-orderdetails'),
 
+	url(r'^promocodes/$',views.PromocodeView.as_view(),name='admin-promocode'),
+	
 
 	url(r'^payments/$',views.PaymentDetails.as_view(),name='admin-payments'),
 	url(r'^ajax/sales-data/',views.SalesLocationData,name='sales-data'),
