@@ -387,7 +387,7 @@ class FollowUpScheduler(models.Model):
 
 class FollowUpSection(models.Model):
 	follow_up 			= models.ForeignKey('FollowUp',blank=False,null=False,related_name='follow_up_of_section')
-	section_name 	= models.CharField(max_length=100,blank=False,null=False)
+	section_name 		= models.CharField(max_length=100,blank=False,null=False)
 	section_name_arabic = models.CharField(max_length=100,blank=False,null=False)
 	category		= models.CharField(max_length=100,blank=True,null=True)
 	dirt_level		= models.CharField(max_length=100,blank=True,null=True)
