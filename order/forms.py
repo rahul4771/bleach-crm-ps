@@ -1,5 +1,5 @@
 from django import forms
-from order.models import Investigation,OrderScheduler
+from order.models import Investigation,OrderScheduler,Promocode
 from user.models import UserProfile
 
 from django.db.models import Q
@@ -18,3 +18,11 @@ class InvestigationForm(forms.ModelForm):
 		    queryset=OrderScheduler.objects.filter(is_active=True),label='Cleaning Job',required=True,widget=forms.Select(attrs={'class':'order_schedule'}))
 		self.fields['investigator'] = forms.ModelChoiceField(
 			queryset=UserProfile.objects.filter(user_type='QUALITYCONTROLL',is_active=True),required=True,widget=forms.Select(attrs={'class':'userprofile'}))
+
+class PromocodeForm(forms.ModelForm):
+	class Meta:
+		model =	Promocode
+		fields= ('promocode','promocode_type','percentage','price','percentage_upto_price','starting_date','expiry_date','total_usage')	
+
+	def __init__(self,*args,**kwargs):
+		super(InvestigationForm, self).__init__(*args, **kwargs)	

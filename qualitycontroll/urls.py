@@ -4,6 +4,8 @@ from qualitycontroll import views
 urlpatterns = [
 	url(r'^dashboard/$',views.QcHome.as_view(),name='qcdash-board'),
 
+	url(r'^resources/$',views.ResourceManagement.as_view(),name='resource-management'),
+
 	url(r'^orders/$',views.OrderDetails.as_view(),name='qc-orders'),
 	url(r'^order-details/(?P<order_id>[-\w]+)$',views.ClientOrderDetails.as_view(),name='qc-order-details'),
 	url(r'^client/orders/(?P<client_id>[-\w]+)$',views.ClientOrders.as_view(),name='qc-client-orders'),

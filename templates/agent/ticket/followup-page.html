@@ -138,29 +138,110 @@
         
         
         
-<div class="details-sub-head align-left">Investigation</div>     
+<div class="details-sub-head align-left">Ticket Details (TKT{{followup_details.ticket_no}})</div>     
 <div class="investigation-columns"><!--investigation-columns-->
     	<div class="investigation-columns-left"><!--investigation-columns-left-->
-            {% if followup_details.investigation.investigator.profile_image %}
+            {% if followup_details.investigation.assigned_by.profile_image %}
 			<div class="profile-pic"><img src="{{followup_details.investigation.investigator.profile_image.url}}"></div>
             {% else %}
             <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>            
             {% endif %}
-            <div class="client-name">{{followup_details.investigation.investigator.name}}<div class="common-gray-text">{{followup_details.investigation.investigator.user_type}}</div></div>
+            <div class="client-name">{{followup_details.investigation.assigned_by.name}}<div class="common-gray-text">{{followup_details.investigation.assigned_by.user_type}}</div></div>
     	</div><!--investigation-columns-left-->
 
         <div class="investigation-columns-middle"><!--investigation-columns-middle-->
-        <div class="order-invest-date">{{followup_details.investigation.sheduled_at}}</div>
+        <div class="order-invest-date">{{followup_details.investigation.scheduled_at}}</div>
+        <br>
+        <div class="order-invest-date"><i class="fa fa-lg fa-ambulance red-text" aria-hidden="true"></i> {{followup_details.investigation.ticket_types}}</div>
             <div class="notes">Notes</div>
             <p>{{followup_details.investigation.notes}}</p>
         </div><!--investigation-columns-middle-->
 </div><!--investigation-columns-->
-            
+<br>            
+<div class="investigation-columns"><!--investigation-columns-->
+        <div class="investigation-columns-left"><!--investigation-columns-left-->
+            {% if followup_details.investigation.investigator.profile_image %}
+            <div class="profile-pic"><img src="{{followup_details.investigation.investigator.profile_image.url}}"></div>
+            {% else %}
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>            
+            {% endif %}
+            <div class="client-name">{{followup_details.investigation.investigator.name}}<div class="common-gray-text">{{followup_details.investigation.investigator.user_type}}</div></div>
+        </div><!--investigation-columns-left-->
+
+        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
+        <div class="order-invest-date"></div>
+            <div class="notes">Ticket Followups</div>
+            <p></p>
+        </div><!--investigation-columns-middle-->
+</div><!--investigation-columns-->
+
+{% if followup_details.followupsections %}
+<hr class="divider">
+<div class="details-sub-head align-left">Followup Details</div>
+{% for section in followup_details.followupsections %}
+<div class="details-sub-head align-left">Section {{forloop.counter}} : {{section.section_name}}</div>
+<br>
+<div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
+        <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left--> 
+        {% if section.category %}  
+        <div class="category-cleaning"><span class="labelcategory">Category</span> : {{section.category}}</div>
+        {% endif %}
+        <div class="category-cleaning"><span class="labelcategory">Dirt Level</span> : {{section.dirt_level}}</div>
+        {% if section.age %}
+        <div class="category-cleaning"><span class="labelcategory">Age</span> : {{section.age}}</div>
+        {% endif %}
+        <div class="category-cleaning"><span class="labelcategory">Size</span> : {{section.size}} {{section.unit|default_if_none:''}}</div>
+        {% if section.floor %}
+        <div class="category-cleaning"><span class="labelcategory">Floors</span> : {{section.floor}}</div>
+        {% endif %}
+        {% if section.apartment %}
+        <div class="category-cleaning"><span class="labelcategory">Apartments</span> : {{section.apartment}}</div>
+        {% endif %}
+        {% if section.room %}
+        <div class="category-cleaning"><span class="labelcategory">Rooms</span> : {{section.room}}</div>
+        {% endif %}
+        </div><!--filter-column-boxes filter-columns-left-->
+        <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+        {% if section.wall_type %}
+        <div class="category-cleaning"><span class="labelcategory">Wall Type</span>  : {{section.wall_type}}</div>
+        {% endif %}
+        {% if section.ceiling_type %}
+        <div class="category-cleaning"><span class="labelcategory">Celing Type</span>  : {{section.ceiling_type}}</div>
+        {% endif %}
+        {% if section.floor_type %}
+        <div class="category-cleaning"><span class="labelcategory">Floor Type</span>  : {{section.floor_type}}</div>
+        {% endif %}
+        {% if section.material %}
+        <div class="category-cleaning"><span class="labelcategory">Material</span>  : {{section.material}}</div>
+        {% endif %}
+        {% if section.colour %}
+        <div class="category-cleaning"><span class="labelcategory">Color</span>  : {{section.colour}}</div>
+        {% endif %}
+        {% if section.cause_of_stain %}
+        <div class="category-cleaning"><span class="labelcategory">Cause of Stain</span>  : {{section.cause_of_stain}}</div>
+        {% endif %}
+        <div class="category-cleaning"><span class="labelcategory">Cost</span>  : {{section.section_cost|floatformat:'3'}} KD</div>
+        </div><!--filter-column-boxes filter-columns-right-->      
+        </div><!--filter-columns-wrapper--> 
+<br> 
+<div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
+{% if section.sectionkeynotes %}
+{% for keynote in section.sectionkeynotes %}
+        <div class="evaluation-card"><!--evaluation-card-->
+        <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
+        </div><!--evaluation-card-->        
+{% endfor %}
+{% endif %}
+</div><!--evaluation-card-wrapper-->
+{% endfor %}
+{% endif %}
+
+
 {% for follow_up_scheduler in followup_details.follow_up_schedules %}
 {% for team in follow_up_scheduler.followupteams %}
 
 {% if team.followupmembers %}
-<div class="details-sub-head align-left">Follow-up Cleaning</div>
+<div class="details-sub-head align-left">Followup Cleaning Team</div>
     <div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
         <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
             <div class="order-common-date">{{follow_up_scheduler.start_at}}</div>
@@ -198,52 +279,112 @@
             </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
         </div><!--order-clean-team-wrapper-->
         
-<hr class="bar">        
-
-        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
-            <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-            	<div class="team-profile-pic"><img src="{% static 'files/images/driver.png' %}"></div>
-            </div><!--order-clean-team-widget order-clean-team-widget-column1-->
-            
-            <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
-                <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
-                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{team.drop_off_driver.name}}</div>
-                        <div class="team-profile">Dropoff Driver</div>
-                    </div><!--order-clean-inColumn-->
-                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{team.pick_up_driver.name}}</div>
-                        <div class="team-profile">Pickup Driver</div>
-                    </div><!--order-clean-inColumn-->
-                </div><!--order-clean-team-inside-wrapper-->     
-            </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
-        </div><!--order-clean-team-wrapper-->
-        
     </div><!--order-clean-outer-wrapper-->
 {% endif %}
 {% endfor %}
 {% endfor %}
 
+{% if followup_details.investigation.reports %}
+<hr class="divider">
+<div class="details-sub-head align-left">Internal Reporting</div>
+<br>
+{% for report in followup_details.investigation.reports %}
+<div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
+            <div class="bold-text lg-text red-text">{{report.title}}</div>
+            <br>
+            <div><p class="bold-text">{{report.notes}}</p></div>
+</div>
+{% endfor %}
+{% endif %}
+
+
+{% if followup_details.investigation.paybackdiscounts %}
+<hr class="divider">
+<div class="details-sub-head align-left">Payback,Discount Details</div>
+<br>
+{% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
+{% for paybackdiscountdetail in  paybackdiscount.paybackdiscountdetails %}
+<div class="evaluation-card"><!--evaluation-card-->
+    <div class="evaluation-section"><label>{{paybackdiscountdetail.name}} ({{paybackdiscountdetail.category}})</label>{{paybackdiscountdetail.cost}} KD</div> 
+</div><!--evaluation-card-->
+{% endfor %}
+<div class="evaluation-card"><!--evaluation-card-->
+    <div class="evaluation-section"><label><span class="red-text bold-text">Total</span></label><span class="red-text">{{paybackdiscount.total_cost}} KD</span></div> 
+</div><!--evaluation-card-->
+{% endfor %}
+{% endif %}
+
+
+{% if followup_details.investigation.buybackpromogifts %}
+<hr class="divider">
+<div class="details-sub-head align-left">Buyback,Promocde,Gift Details</div>
+<br>
+{% for buybackpromogift in followup_details.investigation.buybackpromogifts %}
+{% for buybackpromogiftdetail in  buybackpromogift.buybackpromogiftdetails %}
+<div class="evaluation-card"><!--evaluation-card-->
+    <div class="evaluation-section"><label>{{buybackpromogiftdetail.name}} ({{buybackpromogiftdetail.category}})</label>{{buybackpromogiftdetail.cost}} KD</div> 
+</div><!--evaluation-card-->
+{% endfor %}
+<div class="evaluation-card"><!--evaluation-card-->
+    <div class="evaluation-section"><label><span class="red-text bold-text">Total</span></label><span class="red-text">{{buybackpromogift.total_cost}} KD</span></div> 
+</div><!--evaluation-card-->
+{% endfor %}
+{% endif %}
 
 
  <div class="details-sub-head align-left">Media</div>
 <div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
 <div class="gallery-wrapper"><!--gallery-wrapper-->
-	<div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
+	
+    {% if followup_details.investigation.investigationmedias %}
+    <div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
     <div class="media-heading align-left">Investigation</div>
     <section>
-        <div id="data-pn-1" data-pn="1" data-src="{% for investigationmedia in followup_details.investigation.investigationmedias %}{% if investigationmedia.taken_status != 'CUSTOMER_SEND' %}{{investigationmedia.media.url}},{% endif %}{% endfor %}"></div>
-    </section>
-  
+        <div id="data-pn-1" data-pn="1" data-src="{% for investigationmedia in followup_details.investigation.investigationmedias %}{{investigationmedia.media.url}},{% endfor %}"></div>
+    </section>  
     </div><!--gallery-widget-column-column1-->
+    {% endif %}
     
-	<div class="gallery-widget-column-column2"><!--gallery-widget-column-column2-->
-    <div class="media-heading align-left">From Customer</div>
+    {% for report in  followup_details.investigation.reports %}
+	{% if report.reporting_medias %}
+    <div class="gallery-widget-column-column2"><!--gallery-widget-column-column2-->
+    <div class="media-heading align-left">Reporting</div>
         <section>
-        <div id="data-pn-2" data-pn="2" data-src="{% for investigationmedia in followup_details.investigation.investigationmedias %}{% if investigationmedia.taken_status == 'CUSTOMER_SEND' %}{{investigationmedia.media.url}},{% endif %}{% endfor %}"></div>
+        <div id="data-pn-2" data-pn="2" data-src="{% for report in followup_details.investigation.reports %}{% for reporting_media in report.reporting_medias %}{{reporting_media.media.url}},{% endfor %}{% endfor %}"></div>
     </section>
-    
+    </div><!--gallery-widget-column-column2-->
+    {% endif %}
+    {% endfor %}
+</div>
+
+<div class="gallery-wrapper"><!--gallery-wrapper-->
+
+{% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
+{% if paybackdiscount.paybackdiscountmedias %}
+    <div class="gallery-widget-column-column3"><!--gallery-widget-column-column2-->
+    <div class="media-heading align-left">Payback,Discount</div>
+        <section>
+        <div id="data-pn-3" data-pn="3" data-src="{% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
+{% for paybackdiscountmedia in  paybackdiscount.paybackdiscountmedias %}{{paybackdiscountmedia.media.url}},{% endfor %}{% endfor %}"></div>
+    </section>
+    </div><!--gallery-widget-column-column4-->
+{% endif %}
+{% endfor %}
+
+
+
+{% for buybackpromogift in followup_details.investigation.buybackpromogifts %}
+{% if buybackpromogift.buybackpromogiftmedias %}
+    <div class="gallery-widget-column-column4"><!--gallery-widget-column-column2-->
+    <div class="media-heading align-left">Buyback,Gift,Promocode</div>
+        <section>
+        <div id="data-pn-4" data-pn="4" data-src="{% for buybackpromogift in followup_details.investigation.buybackpromogifts %}
+{% for buybackpromogiftmedia in  buybackpromogift.buybackpromogiftmedias %}{{buybackpromogiftmedia.media.url}},{% endfor %}{% endfor %}"></div>
+    </section>
     </div><!--gallery-widget-column-column2-->    
+{% endif %}
+{% endfor %}
+
 </div><!--gallery-wrapper-->
 
  

@@ -74,6 +74,11 @@ INVESTIGATION_CATEGORY_CHOICES = (
 	('SERVICEQUALITY','SERVICEQUALITY'),
 	('DAMAGE','DAMAGE'),
 	)
+
+PROMOCODE_TYPE_CHOICES =(
+	('PERCENTAGE','PERCENTAGE'),
+	('AMOUNT','AMOUNT'),
+	)
 #Store the Order Details.DownPayment,Subscription and Direct Cleaning Comes Under a Single Order
 
 class Order(models.Model):
@@ -383,7 +388,7 @@ class FollowUpScheduler(models.Model):
 
 class FollowUpSection(models.Model):
 	follow_up 			= models.ForeignKey('FollowUp',blank=False,null=False,related_name='follow_up_of_section')
-	section_name 	= models.CharField(max_length=100,blank=False,null=False)
+	section_name 		= models.CharField(max_length=100,blank=False,null=False)
 	section_name_arabic = models.CharField(max_length=100,blank=False,null=False)
 	category		= models.CharField(max_length=100,blank=True,null=True)
 	dirt_level		= models.CharField(max_length=100,blank=True,null=True)
@@ -471,3 +476,24 @@ class FeedBack(models.Model):
 
 	def __str__(self):
 		return self.order.order_no
+
+class Promocode(models.Model):
+	promocode 				= models.CharField(max_length=500,blank=False,null=False)
+	promocode_type          = models.CharField(max_length=500,blank=True,null=True,choices=PROMOCODE_TYPE_CHOICES)
+	percentage              = models.FloatField(blank=True,null=True)
+	price 					= models.FloatField(blank=True,null=True)
+	percentage_upto_price   = models.FloatField(blank=True,null=True)
+	starting_date			= models.DateField(blank=True,null=True)
+	expiry_date  			= models.DateField(blank=True,null=True)
+	total_usage  			= models.IntegerField(blank=True,null=True)
+	total_used   			= models.IntegerField(blank=True,null=True)
+
+	is_active          	= models.BooleanField(null=False,blank=True,default=True)
+	created            	= models.DateTimeField(auto_now_add=True)
+	updated            	= models.DateTimeField(auto_now=True)
+
+	def __unicode__(self):
+		return str(self.promocode)
+
+	def __str__(self):
+		return self.promocode
