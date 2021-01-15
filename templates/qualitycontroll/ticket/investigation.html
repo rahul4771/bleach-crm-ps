@@ -39,8 +39,8 @@
                     <div class="email"><i class="fa red-text fa-lg fa-ambulance" aria-hidden="true"></i> &nbsp;  {{investigation_details.ticket_types}}</div>
                     <br>
                     {% for cleaning_team in investigation_details.order_schedule.cleaning_teams %}
-                    <div class="tl blue-text">Team Leader&nbsp;:{{cleaning_team.team_leader.name}}</div>
-                    <div class="cleaner blue-text">Cleaners&nbsp;:{% for member in cleaning_team.cleaning_team_members %}{% if member.member != cleaning_team.team_leader %}{{member.member.name}},{% endif %}{% endfor %}</div>
+                    <div class="tl blue-text" >Team Leader&nbsp;:{{cleaning_team.team_leader.name}}</div>
+                    <div class="cleaner blue-text" >Cleaners&nbsp;:{% for member in cleaning_team.cleaning_team_members %}{% if member.member != cleaning_team.team_leader %}{{member.member.name}},{% endif %}{% endfor %}</div>
                     {% endfor %}
                     <br>
                     <div class="email">Agent Notes :{{investigation_details.notes}}</div>
@@ -202,7 +202,9 @@
  
 </tfoot>
 </table>
-
+{% if followup_scheduler_exists == True or  investigation_details.paybackdiscount or investigation_details.buybackpromocodegift or investigation_details.internalreport %}
+<div align="right"><a href="/qc/dashboard/"><input class="assignButton expandbutton" name="submit" type="submit" value="DONE" ></a></div>
+{% endif %}
     </div><!--white-wrapper-->
             <br><br>   
 

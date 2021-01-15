@@ -449,6 +449,32 @@
 
 {% if orderschedule.investigations %}
 {% for investigation in orderschedule.investigations %}
+
+<div class="details-sub-head align-left" >Ticket Details</div>     
+<div class="investigation-columns whitebg clickable-row" {% for followup in investigation.followups %}data-href="{% url 'agent:agent-ticketadvanced' investigation.order_schedule.order.evaluation.customer.id followup.id %}"{% endfor %}><!--investigation-columns-->
+        <div class="investigation-columns-left"><!--investigation-columns-left-->
+            
+            {% if investigation.investigator.profile_image %}
+            <div class="profile-pic"><img src="{{investigation.investigator.profile_image.url}}"></div>
+            {% else %}
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+            {% endif %}
+
+            <div class="client-name">{{investigation.investigator.name}}<div class="common-gray-text">Investigator</div></div>
+        </div><!--investigation-columns-left-->
+
+        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
+        <div class="order-invest-date">{{investigation.sheduled_at}}</div>
+            <div class="notes">Ticket Types</div>
+            <div class="team-Name">{{investigation.ticket_types}}</div>
+        </div><!--investigation-columns-middle-->
+
+        <div class="investigation-columns-right"><!--investigation-columns-right-->
+        <i class="fa fa-angle-double-right" aria-hidden="true" style="font-size:110px;color:#2e4e85;"></i>
+        </div><!--investigation-columns-right-->
+
+</div><!--investigation-columns-->
+
 <div class="details-sub-head align-left">Investigation</div>     
 <div class="investigation-columns whitebg"><!--investigation-columns-->
         <div class="investigation-columns-left"><!--investigation-columns-left-->
@@ -640,6 +666,32 @@
 
 {% if orderschedule.investigations %}
 {% for investigation in orderschedule.investigations %}
+
+<div class="details-sub-head align-left" >Ticket Details</div>     
+<div class="investigation-columns whitebg clickable-row" {% for followup in investigation.followups %}data-href="{% url 'agent:agent-ticketadvanced' investigation.order_schedule.order.evaluation.customer.id followup.id %}"{% endfor %}><!--investigation-columns-->
+        <div class="investigation-columns-left"><!--investigation-columns-left-->
+            
+            {% if investigation.investigator.profile_image %}
+            <div class="profile-pic"><img src="{{investigation.investigator.profile_image.url}}"></div>
+            {% else %}
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+            {% endif %}
+
+            <div class="client-name">{{investigation.investigator.name}}<div class="common-gray-text">Investigator</div></div>
+        </div><!--investigation-columns-left-->
+
+        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
+        <div class="order-invest-date">{{investigation.sheduled_at}}</div>
+            <div class="notes">Ticket Types</div>
+            <div class="team-Name">{{investigation.ticket_types}}</div>
+        </div><!--investigation-columns-middle-->
+
+        <div class="investigation-columns-right"><!--investigation-columns-right-->
+        <i class="fa fa-angle-double-right" aria-hidden="true" style="font-size:110px;color:#2e4e85;"></i>
+        </div><!--investigation-columns-right-->
+
+</div><!--investigation-columns-->
+
 <div class="details-sub-head align-left">Investigation</div>     
 <div class="investigation-columns whitebg"><!--investigation-columns-->
         <div class="investigation-columns-left"><!--investigation-columns-left-->
@@ -829,7 +881,33 @@
         
         
 {% if orderschedule.investigations %}
-{% for investigation in orderschedule.investigations %}        
+{% for investigation in orderschedule.investigations %}  
+
+<div class="details-sub-head align-left" >Ticket Details</div>     
+<div class="investigation-columns whitebg clickable-row" {% for followup in investigation.followups %}data-href="{% url 'agent:agent-ticketadvanced' investigation.order_schedule.order.evaluation.customer.id followup.id %}"{% endfor %}><!--investigation-columns-->
+        <div class="investigation-columns-left"><!--investigation-columns-left-->
+            
+            {% if investigation.investigator.profile_image %}
+            <div class="profile-pic"><img src="{{investigation.investigator.profile_image.url}}"></div>
+            {% else %}
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+            {% endif %}
+
+            <div class="client-name">{{investigation.investigator.name}}<div class="common-gray-text">Investigator</div></div>
+        </div><!--investigation-columns-left-->
+
+        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
+        <div class="order-invest-date">{{investigation.sheduled_at}}</div>
+            <div class="notes">Ticket Types</div>
+            <div class="team-Name">{{investigation.ticket_types}}</div>
+        </div><!--investigation-columns-middle-->
+
+        <div class="investigation-columns-right"><!--investigation-columns-right-->
+        <i class="fa fa-angle-double-right" aria-hidden="true" style="font-size:110px;color:#2e4e85;"></i>
+        </div><!--investigation-columns-right-->
+
+</div><!--investigation-columns-->
+
 <div class="details-sub-head align-left">Investigation</div>     
 <div class="investigation-columns"><!--investigation-columns-->
     	<div class="investigation-columns-left"><!--investigation-columns-left-->
