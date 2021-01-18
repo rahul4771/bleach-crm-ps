@@ -600,8 +600,8 @@
 {% if orderschedule.investigations %}
 {% for investigation in orderschedule.investigations %}
 
-<div class="details-sub-head align-left">Ticket Details</div>     
-<div class="investigation-columns whitebg"><!--investigation-columns-->
+<div class="details-sub-head align-left" >Ticket Details</div>     
+<div class="investigation-columns whitebg clickable-row" {% for followup in investigation.followups %}data-href="{% url 'qc:qc-ticketadvanced' investigation.order_schedule.order.evaluation.customer.id followup.id %}"{% endfor %}><!--investigation-columns-->
         <div class="investigation-columns-left"><!--investigation-columns-left-->
             
             {% if investigation.investigator.profile_image %}
@@ -618,6 +618,11 @@
             <div class="notes">Ticket Types</div>
             <div class="team-Name">{{investigation.ticket_types}}</div>
         </div><!--investigation-columns-middle-->
+
+        <div class="investigation-columns-right"><!--investigation-columns-right-->
+        <i class="fa fa-angle-double-right" aria-hidden="true" style="font-size:110px;color:#2e4e85;"></i>
+        </div><!--investigation-columns-right-->
+
 </div><!--investigation-columns--> 
 
 <div class="details-sub-head align-left">Investigation</div>     
@@ -641,7 +646,7 @@
 </div><!--investigation-columns-->            
 
     
-{% for followup in investigation.followups %}
+{% comment %} {% for followup in investigation.followups %}
 {% for follow_up_scheduler in followup.follow_up_schedules %}
 {% for team in follow_up_scheduler.followupteams %}
 
@@ -705,11 +710,11 @@
             </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
         </div><!--order-clean-team-wrapper-->
         
-    </div><!--order-clean-outer-wrapper-->
+    </div><!--order-clean-outer-wrapper--> 
 {% endif %}
 {% endfor %}
 {% endfor %}
-{% endfor %}
+{% endfor %}{% endcomment %}
 
 {% endfor %}
 {% endif %}

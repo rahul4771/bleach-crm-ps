@@ -333,6 +333,7 @@ class FollowUp(models.Model):
 	investigation   = models.ForeignKey('Investigation',blank=False,null=False,related_name='followup_investigation') 
 	instructions    = models.CharField(max_length=500,blank=True,null=True)
 	status      	= models.CharField(max_length=100,blank=True,null=True,choices=FOLLOWUP_STATUS)
+	total_cost		= models.FloatField(blank=True,null=True)
 	no_of_cleaners  = models.IntegerField(blank=True,null=True)
 	cleaning_hours  = models.IntegerField(blank=True,null=True)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
