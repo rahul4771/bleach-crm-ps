@@ -25,7 +25,7 @@
 <input type="hidden" name="section_counter" id="id_section_counter" value="0"> 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  <div class=" bold-text common-label required-field"> <label>Action</label></div>
+  {% comment %} <div class=" bold-text common-label required-field"> <label>Action</label></div>
                 <label for="favcity">
                 <select name="action" id="id_section" >
                 <option value="">--Select Action--</option>
@@ -33,17 +33,22 @@
                 <option value="DAMAGE">Damage</option>
                 </select>
                 </label>
-  </div>
+  </div> {% endcomment %}
+  <input type="checkbox" name="servicequality" id="servicequality" />&nbsp&nbsp<span>SERVICE QUALITY</span>
+  <BR>
+  <input type="checkbox" name="damage" id="damage" />&nbsp&nbsp<span>DAMAGE</span>
+    </div>
 
-  <div class="ticket-form-right"><!--ticket-form-right-->
+  {% comment %} <div class="ticket-form-right"><!--ticket-form-right-->
     <input class="assignButton" type="button" value="Add" onclick="addSectionNew(this);"> 
-  </div>
+  </div> {% endcomment %}
 
   </div>
 
   <div id="id_sectioncontainer">
 
-{% comment %} <div class="enquiry-child-wrapper-Full form_section" id="section1" hidden><!--enquiry-child-wrapper-Full-->
+<!--section1-->
+<div class="enquiry-child-wrapper-Full form_section" id="section1" hidden><!--enquiry-child-wrapper-Full-->
 <input type="hidden" name="section1-keynote_counter" id="id_section1-keynote_counter" value="'+servicequality+'">
 <div class="close-div" ><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>
 
@@ -90,23 +95,78 @@
 <div class="enquiry-form-left"><!--enquiry-form-left-->
 <table width="100%" border="0" id="id_section-1-keynote-table-left" class="keynots-tble">
 
-{% for keynote in paybackdiscount_details %}{% if keynote.category == "SERVICEQUALITY" %}{% if not forloop.counter|divisibleby:2 %}<tr id="id_section-1-keynote-'+{{forloop.counter0}}+'" class="section1_keynote keynote-left" ><input type="hidden" name="editform_section1_keynote{{forloop.counter0}}" value="{{keynote.id}}"><input type="hidden" name="section1_keynote'+{{forloop.counter0}}+'" value="{{keynote.sub_area}}" /><input type="hidden" name="section1_quantity'+{{forloop.counter0}}+'" value="{{keynote.quantity}}" /><td align="left">{{keynote.name}}</td><td width="50px" align="center" class="keynote_qty">{{keynote.cost}}</td><td width="30px" align="center" class="btn-remove" data-keynoteid="{{keynote.id}}" data-delete="section1"><input name="delete" type="button" class="delete-button"></td></tr>{% endif %}{% endif %}{% endfor %}
+{% for keynote in paybackdiscount_details %}{% if keynote.category == "SERVICEQUALITY" %}<tr id="id_section-1-keynote-'+{{forloop.counter0}}+'" class="section1_keynote keynote-left" ><input type="hidden" name="editform_section1_keynote{{forloop.counter0}}" value="{{keynote.id}}"><input type="hidden" name="section1_keynote'+{{forloop.counter0}}+'" value="{{keynote.sub_area}}" /><input type="hidden" name="section1_quantity'+{{forloop.counter0}}+'" value="{{keynote.quantity}}" /><td align="left">{{keynote.name}}</td><td width="50px" align="center" class="keynote_qty">{{keynote.cost}}</td><td width="30px" align="center" class="btn-remove" data-keynoteid="{{keynote.id}}" data-delete="section1"><input name="delete" type="button" class="delete-button"></td></tr>{% endif %}{% endfor %}
 
 </table>
 </div><!--enquiry-form-left-->
-<div class="enquiry-form-right"><!--enquiry-form-right-->
-<table width="100%" border="0" id="id_section-1-keynote-table-right" class="keynots-tble">
 
-{% for keynote in paybackdiscount_details %}{% if keynote.category == "SERVICEQUALITY" %}{% if forloop.counter|divisibleby:2 %}<tr id="id_section-1-keynote-'+{{forloop.counter0}}+'" class="section1_keynote keynote-left" ><input type="hidden" name="editform_section1_keynote{{forloop.counter0}}" value="{{keynote.id}}"><input type="hidden" name="section1_keynote'+{{forloop.counter0}}+'" value="{{keynote.sub_area}}" /><input type="hidden" name="section1_quantity'+{{forloop.counter0}}+'" value="{{keynote.quantity}}" /><td align="left">{{keynote.name}}</td><td width="50px" align="center" class="keynote_qty">{{keynote.cost}}</td><td width="30px" align="center" class="btn-remove" data-keynoteid="{{keynote.id}}" data-delete="section1"><input name="delete" type="button" class="delete-button"></td></tr>{% endif %}{% endif %}{% endfor %}
-
-</table>
-</div><!--enquiry-form-right-->
 </div><!--enquiry-form-Wrapper-->
 </div><!--keynotes-wrapper-Full-->
 
-</div><!--enquiry-child-wrapper-Full--> {% endcomment %}
+</div><!--enquiry-child-wrapper-Full-->
+
+<!--section 2-->
+<div class="enquiry-child-wrapper-Full form_section" id="section2" hidden><!--enquiry-child-wrapper-Full-->
+<input type="hidden" name="section2-keynote_counter" id="id_section2-keynote_counter" value="'+servicequality+'">
+<div class="close-div" ><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>
+
+<div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes-->
+
+<div class="enquiry-form-left"><!--enquiry-form-left-->
+<div class=" bold-text common-label"> 
+<label class="section_label">Section 2 (DAMAGE)</label>
+</div>
+<input name="section2" type="hidden" class="textBox section_time" placeholder=" " value="SERVICEQUALITY" required>
+</div><!--enquiry-form-left-->
+
+<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->
+</div><!--enquiry-form-right-->
+</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+
+<br><br><div class="common-sub-head align-left">Items</div><div class="keynotes-wrapper-Full"><!--keynotes-wrapper-Full--> 
+<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+<div class="enquiry-form-left"><!--enquiry-form-left-->
+<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+<div class="enquiry-two-col"><!--enquiry-two-col-->
+<div class=" bold-text common-label"> <label>DETAILS</label></div>
+<input class="keynote_field" type="text" id="id_section-2-keynote" name="select" >
+</div><!--enquiry-two-col-->
+</div><!--enquiry-Two-column-wrapp-->
+</div><!--enquiry-form-left-->
+<div class="enquiry-form-right"><!--enquiry-form-right-->
+    <div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+<div class="enquiry-two-col"><!--enquiry-two-col-->
+<div class=" bold-text common-label"> <label>PRICE</label></div>
+<input name="time" type="number" class="textBox" id="id_section-2-quantity" placeholder=" ">
+</div><!--enquiry-two-col-->
+<div class="enquiry-two-col"><!--enquiry-two-col-->
+<div class=" bold-text common-label hide-m"> 
+<label>&nbsp;</label>
+</div>
+<input name="add" type="button" value="Add" id="id_section-2-add" class="add-button" onclick="addKeynote(this);">
+</div><!--enquiry-two-col-->
+</div><!--enquiry-Two-column-wrapp-->
+</div><!--enquiry-form-right-->
+</div> <!--enquiry-form-Wrapper enquiry-boxes-->
+<hr class="hr-dashedpad">
+<div class="enquiry-form-Wrapper enquiry-boxes" id="id_section-2-keynotecontainer">
+<div class="enquiry-form-left"><!--enquiry-form-left-->
+<table width="100%" border="0" id="id_section-2-keynote-table-left" class="keynots-tble">
+
+{% for keynote in paybackdiscount_details %}{% if keynote.category == "DAMAGE" %}<tr id="id_section-2-keynote-'+{{forloop.counter0}}+'" class="section2_keynote keynote-left" ><input type="hidden" name="editform_section2_keynote{{forloop.counter0}}" value="{{keynote.id}}"><input type="hidden" name="section2_keynote'+{{forloop.counter0}}+'" value="{{keynote.sub_area}}" /><input type="hidden" name="section2_quantity'+{{forloop.counter0}}+'" value="{{keynote.quantity}}" /><td align="left">{{keynote.name}}</td><td width="50px" align="center" class="keynote_qty">{{keynote.cost}}</td><td width="30px" align="center" class="btn-remove" data-keynoteid="{{keynote.id}}" data-delete="section2"><input name="delete" type="button" class="delete-button"></td></tr>{% endif %}{% endfor %}
+
+</table>
+</div><!--enquiry-form-left-->
+
+</div><!--enquiry-form-Wrapper-->
+</div><!--keynotes-wrapper-Full-->
+
+</div><!--enquiry-child-wrapper-Full-->
 
         </div><!--section-container-->
+
+
+
 <hr class="hr-dashedpad"> 
 
 <div align="center"><input class="assignButton" name="addevaluator" type="button" value="Submit" onclick="submitAnyForm(this);" > </div>
@@ -130,10 +190,27 @@
 <script src="{% static 'files/js/jquery.formset.js' %}"></script>
 <script>
 
+$("#servicequality").click(function(){
+    if ($(this).is(':checked')){
+        $('#section1').attr("hidden",false);
+    }else{
+        $('#section1').attr("hidden",true);
+    }
+});
+
+$("#damage").click(function(){
+    if ($(this).is(':checked')){
+        $('#section2').attr("hidden",false);
+    }else{
+        $('#section2').attr("hidden",true);
+    }
+});
+
 </script>    
 
 
 <script>
+
 $('document').ready(function(){
 
 $("body").on("click", ".btn-remove", function(){
@@ -158,8 +235,10 @@ $("body").on("click", ".close-div", function(){
     });
 });
 
+
+
 // add new section
-function addSectionNew(form_identifier){
+{% comment %} function addSectionNew(form_identifier){
     selected_section = $("#id_section option:selected").val();
 
     try {
@@ -231,7 +310,7 @@ $('#id_sectioncontainer').prepend(appendhtml);
 $('#id_sectioncontainer .close-div').attr("hidden",true);
 $('#id_sectioncontainer .form_section:first .close-div').attr("hidden",false);
 
-}
+} {% endcomment %}
 
 //keynote add
 function addKeynote(form_identifier){
@@ -307,7 +386,7 @@ $(function () {
   });
 });
 
-var servicequality = 0;
+{% comment %} var servicequality = 0;
 var damage = 0;
 
 {% for payback in paybackdiscount_details %}
@@ -477,7 +556,7 @@ appendhtml = '<div class="enquiry-child-wrapper-Full form_section" id="section'+
 
 //append section
 $('#id_sectioncontainer').prepend(appendhtml);
-}
+} {% endcomment %}
 
 </script>
 {% endblock %}

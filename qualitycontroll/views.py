@@ -618,7 +618,11 @@ class InvestigationTask(IsQualityControll,View):
 			orderschedules_count = 1
 			investigation_details = None
 
-		
+		ticket_types = investigation_details.ticket_types.split(",")
+		ticket_types_list = []
+		for type in ticket_types:
+			ticket_types_list.append(type)
+		print(ticket_types_list,"typo")
 
 		follow_up_scheduler = FollowUpScheduler.objects.filter(is_active=True,follow_up__investigation__id=investigation_id).first()
 		if follow_up_scheduler:
@@ -630,7 +634,7 @@ class InvestigationTask(IsQualityControll,View):
 		investigation_details.check_in = timezone.now()
 		investigation_details.save()
 
-		return render(request,'qualitycontroll/ticket/investigation.html',{'investigation_details':investigation_details,"followup_scheduler_exists":follow_up_scheduler_exists,"orderschedules_count":orderschedules_count})
+		return render(request,'qualitycontroll/ticket/investigation.html',{'investigation_details':investigation_details,"followup_scheduler_exists":follow_up_scheduler_exists,"orderschedules_count":orderschedules_count,"ticket_types":ticket_types_list})
 
 	def post(self,request,investigation_id):
 
@@ -965,7 +969,7 @@ class CashbackEdit(IsQualityControll,View):
 		section_items_total_cost = 0
 		for i in range(no_of_sections):
 			section_name  = request.POST.get('section'+str(i))
-
+			print(section_name,"sectionname")
 			#to save keynotes
 			try:
 				no_of_keynotes = int(request.POST.get('section'+str(i)+'-keynote_counter'))

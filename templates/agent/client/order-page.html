@@ -420,26 +420,35 @@
             </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
         </div><!--order-clean-team-wrapper-->
         
-<hr class="bar">        
-
-        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+<div class="details-sub-head align-left" >Ticket Details</div>              
+{% for investigation in orderschedule.investigations %} 
+{% for followup in investigation.followups %}
+<hr class="bar">
+        <div class="order-clean-team-wrapper clickable-row" {% for followup in investigation.followups %}data-href="{% url 'agent:agent-ticketadvanced' investigation.order_schedule.order.evaluation.customer.id followup.id %}"{% endfor %}><!--order-clean-team-wrapper-->
             <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-                <div class="team-profile-pic"><img src="{% static 'files/images/driver.png' %}"></div>
+            	{% if investigation.investigator.profile_image %}
+                <div class="team-profile-pic"><img src="{{investigation.assigned_by.profile_image.url}}"></div>
+                {% else %}
+                <div class="team-profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+                {% endif %}
+                {{investigation.assigned_by.name}}<br>
+                {{investigation.assigned_by.user_type}}
             </div><!--order-clean-team-widget order-clean-team-widget-column1-->
             
             <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
+                <span>#{{followup.ticket_no}} has been raised</span>
                 <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                    
                     <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{cleaning_team.drop_off_driver.name}}</div>
-                        <div class="team-profile">Dropoff Driver</div>
+                        <div class="team-profile">Ticket Types</div>
+                        <div class="team-Name">{{investigation.ticket_types}}</div>   
                     </div><!--order-clean-inColumn-->
-                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{cleaning_team.pick_up_driver.name}}</div>
-                        <div class="team-profile">Pickup Driver</div>
-                    </div><!--order-clean-inColumn-->
+                    
                 </div><!--order-clean-team-inside-wrapper-->     
             </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
         </div><!--order-clean-team-wrapper-->
+{% endfor %}
+{% endfor %}
         
     </div><!--order-clean-outer-wrapper-->
 {% endfor %}    
@@ -449,31 +458,6 @@
 
 {% if orderschedule.investigations %}
 {% for investigation in orderschedule.investigations %}
-
-<div class="details-sub-head align-left" >Ticket Details</div>     
-<div class="investigation-columns whitebg clickable-row" {% for followup in investigation.followups %}data-href="{% url 'agent:agent-ticketadvanced' investigation.order_schedule.order.evaluation.customer.id followup.id %}"{% endfor %}><!--investigation-columns-->
-        <div class="investigation-columns-left"><!--investigation-columns-left-->
-            
-            {% if investigation.investigator.profile_image %}
-            <div class="profile-pic"><img src="{{investigation.investigator.profile_image.url}}"></div>
-            {% else %}
-            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
-            {% endif %}
-
-            <div class="client-name">{{investigation.investigator.name}}<div class="common-gray-text">Investigator</div></div>
-        </div><!--investigation-columns-left-->
-
-        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
-        <div class="order-invest-date">{{investigation.sheduled_at}}</div>
-            <div class="notes">Ticket Types</div>
-            <div class="team-Name">{{investigation.ticket_types}}</div>
-        </div><!--investigation-columns-middle-->
-
-        <div class="investigation-columns-right"><!--investigation-columns-right-->
-        <i class="fa fa-angle-double-right" aria-hidden="true" style="font-size:110px;color:#2e4e85;"></i>
-        </div><!--investigation-columns-right-->
-
-</div><!--investigation-columns-->
 
 <div class="details-sub-head align-left">Investigation</div>     
 <div class="investigation-columns whitebg"><!--investigation-columns-->
@@ -638,26 +622,35 @@
             </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
         </div><!--order-clean-team-wrapper-->
         
-<hr class="bar">        
-
-        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+<div class="details-sub-head align-left" >Ticket Details</div>              
+{% for investigation in orderschedule.investigations %} 
+{% for followup in investigation.followups %}
+<hr class="bar">
+        <div class="order-clean-team-wrapper clickable-row" {% for followup in investigation.followups %}data-href="{% url 'agent:agent-ticketadvanced' investigation.order_schedule.order.evaluation.customer.id followup.id %}"{% endfor %}><!--order-clean-team-wrapper-->
             <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-                <div class="team-profile-pic"><img src="{% static 'files/images/driver.png' %}"></div>
+            	{% if investigation.investigator.profile_image %}
+                <div class="team-profile-pic"><img src="{{investigation.assigned_by.profile_image.url}}"></div>
+                {% else %}
+                <div class="team-profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+                {% endif %}
+                {{investigation.assigned_by.name}}<br>
+                {{investigation.assigned_by.user_type}}
             </div><!--order-clean-team-widget order-clean-team-widget-column1-->
             
             <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
+                <span>#{{followup.ticket_no}} has been raised</span>
                 <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                    
                     <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{cleaning_team.drop_off_driver.name}}</div>
-                        <div class="team-profile">Dropoff Driver</div>
+                        <div class="team-profile">Ticket Types</div>
+                        <div class="team-Name">{{investigation.ticket_types}}</div>   
                     </div><!--order-clean-inColumn-->
-                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{cleaning_team.pick_up_driver.name}}</div>
-                        <div class="team-profile">Pickup Driver</div>
-                    </div><!--order-clean-inColumn-->
+                    
                 </div><!--order-clean-team-inside-wrapper-->     
             </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
         </div><!--order-clean-team-wrapper-->
+{% endfor %}
+{% endfor %}
         
     </div><!--order-clean-outer-wrapper-->
 {% endfor %}    
@@ -666,31 +659,6 @@
 
 {% if orderschedule.investigations %}
 {% for investigation in orderschedule.investigations %}
-
-<div class="details-sub-head align-left" >Ticket Details</div>     
-<div class="investigation-columns whitebg clickable-row" {% for followup in investigation.followups %}data-href="{% url 'agent:agent-ticketadvanced' investigation.order_schedule.order.evaluation.customer.id followup.id %}"{% endfor %}><!--investigation-columns-->
-        <div class="investigation-columns-left"><!--investigation-columns-left-->
-            
-            {% if investigation.investigator.profile_image %}
-            <div class="profile-pic"><img src="{{investigation.investigator.profile_image.url}}"></div>
-            {% else %}
-            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
-            {% endif %}
-
-            <div class="client-name">{{investigation.investigator.name}}<div class="common-gray-text">Investigator</div></div>
-        </div><!--investigation-columns-left-->
-
-        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
-        <div class="order-invest-date">{{investigation.sheduled_at}}</div>
-            <div class="notes">Ticket Types</div>
-            <div class="team-Name">{{investigation.ticket_types}}</div>
-        </div><!--investigation-columns-middle-->
-
-        <div class="investigation-columns-right"><!--investigation-columns-right-->
-        <i class="fa fa-angle-double-right" aria-hidden="true" style="font-size:110px;color:#2e4e85;"></i>
-        </div><!--investigation-columns-right-->
-
-</div><!--investigation-columns-->
 
 <div class="details-sub-head align-left">Investigation</div>     
 <div class="investigation-columns whitebg"><!--investigation-columns-->
@@ -849,29 +817,36 @@
             </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
         </div><!--order-clean-team-wrapper-->
 {% endif %}        
-{% comment %}        
-<hr class="bar">        
 
-        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+<div class="details-sub-head align-left" >Ticket Details</div>              
+{% for investigation in orderschedule.investigations %} 
+{% for followup in investigation.followups %}
+<hr class="bar">
+        <div class="order-clean-team-wrapper clickable-row" {% for followup in investigation.followups %}data-href="{% url 'agent:agent-ticketadvanced' investigation.order_schedule.order.evaluation.customer.id followup.id %}"{% endfor %}><!--order-clean-team-wrapper-->
             <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-            	<div class="team-profile-pic"><img src="{% static 'files/images/driver.png' %}"></div>
+            	{% if investigation.investigator.profile_image %}
+                <div class="team-profile-pic"><img src="{{investigation.assigned_by.profile_image.url}}"></div>
+                {% else %}
+                <div class="team-profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+                {% endif %}
+                {{investigation.assigned_by.name}}<br>
+                {{investigation.assigned_by.user_type}}
             </div><!--order-clean-team-widget order-clean-team-widget-column1-->
             
             <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
+                <span>#{{followup.ticket_no}} has been raised</span>
                 <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                    
                     <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{cleaning_team.drop_off_driver.name}}</div>
-                        <div class="team-profile">Dropoff Driver</div>
+                        <div class="team-profile">Ticket Types</div>
+                        <div class="team-Name">{{investigation.ticket_types}}</div>   
                     </div><!--order-clean-inColumn-->
-                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{cleaning_team.pick_up_driver.name}}</div>
-                        <div class="team-profile">Pickup Driver</div>
-                    </div><!--order-clean-inColumn-->
+                    
                 </div><!--order-clean-team-inside-wrapper-->     
             </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
         </div><!--order-clean-team-wrapper-->
-{% endcomment %}
-
+{% endfor %}
+{% endfor %}
     </div><!--order-clean-outer-wrapper-->
 
 {% endfor %}    
@@ -882,31 +857,6 @@
         
 {% if orderschedule.investigations %}
 {% for investigation in orderschedule.investigations %}  
-
-<div class="details-sub-head align-left" >Ticket Details</div>     
-<div class="investigation-columns whitebg clickable-row" {% for followup in investigation.followups %}data-href="{% url 'agent:agent-ticketadvanced' investigation.order_schedule.order.evaluation.customer.id followup.id %}"{% endfor %}><!--investigation-columns-->
-        <div class="investigation-columns-left"><!--investigation-columns-left-->
-            
-            {% if investigation.investigator.profile_image %}
-            <div class="profile-pic"><img src="{{investigation.investigator.profile_image.url}}"></div>
-            {% else %}
-            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
-            {% endif %}
-
-            <div class="client-name">{{investigation.investigator.name}}<div class="common-gray-text">Investigator</div></div>
-        </div><!--investigation-columns-left-->
-
-        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
-        <div class="order-invest-date">{{investigation.sheduled_at}}</div>
-            <div class="notes">Ticket Types</div>
-            <div class="team-Name">{{investigation.ticket_types}}</div>
-        </div><!--investigation-columns-middle-->
-
-        <div class="investigation-columns-right"><!--investigation-columns-right-->
-        <i class="fa fa-angle-double-right" aria-hidden="true" style="font-size:110px;color:#2e4e85;"></i>
-        </div><!--investigation-columns-right-->
-
-</div><!--investigation-columns-->
 
 <div class="details-sub-head align-left">Investigation</div>     
 <div class="investigation-columns"><!--investigation-columns-->
@@ -1152,7 +1102,11 @@
             {% if order.payment_completed_date %}
             <div class="payment-text"><div>Closed Date</div> : {{order.payment_completed_date|default_if_none:''}}</div>
             {% endif %}
+            <hr class="bar"> 
+            <div class="payment-text" id="followup_amount"><div>Follow Up Total</div> : <span id="followup_total">0.000</span> KD</div>
+        
         </div><!--order-payment-widget order-payment-widget-column-->
+
         <div class="order-payment-widget order-payment-widget-column"><!--order-payment-widget order-payment-widget-column-->
         {% if order.evaluation.quatation_status == 'APPROVED' %}
         <div class="invoice-button"><a href="#" onclick="sendinvoice()">Send Invoice</a></div>
@@ -1572,6 +1526,35 @@ append_html = '{% if  orderschedule.cleaning_team %}{% for cleaning_team in orde
 {% endfor %}
 
     }
+
+//followup total amount calculation
+var followup_total = 0;
+
+{% for orderschedule in order.orderschedules%}
+{% for investigation in orderschedule.investigations %} 
+
+{% for followup in investigation.followups %}
+{% if followup.total_cost != None %}
+followup_total += parseFloat("{{followup.total_cost}}") ;
+{% endif %}
+{% endfor %}
+
+{% for paybackdiscount in investigation.paybackdiscounts %}
+{% if paybackdiscount.total_cost != None %}
+followup_total += parseFloat("{{paybackdiscount.total_cost}}") ;
+{% endif %}
+{% endfor %}
+
+{% for buybackpromocodegift in investigation.buybackpromocodegift %}
+{% if buybackpromocodegift.total_cost != None %}
+followup_total += parseFloat("{{buybackpromocodegift.total_cost}}") ;
+{% endif %}
+{% endfor %}
+
+{% endfor %}
+{% endfor %}
+
+$('#followup_total').text(parseFloat(followup_total).toFixed(3));
 
  </script>
 {% endblock %}

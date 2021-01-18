@@ -36,14 +36,22 @@
                     <div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;  {{investigation_details.order.evaluation.customer.mobile_number}}</div>
                     <div class="email"><i class="fa orange-text fa-lg fa-envelope-o" aria-hidden="true"></i> &nbsp;  {{investigation_details.order.evaluation.customer.email}}</div>
                     <br>
-                    <div class="email"><i class="fa red-text fa-lg fa-ambulance" aria-hidden="true"></i> &nbsp;  {{investigation_details.ticket_types}}</div>
+
+                    {% for tickettype in ticket_types %}
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> &nbsp;  {{tickettype}}</div>
+                    {% endfor %}
+
                     <br>
                     {% for cleaning_team in investigation_details.order_schedule.cleaning_teams %}
                     <div class="tl blue-text" >Team Leader&nbsp;:{{cleaning_team.team_leader.name}}</div>
-                    <div class="cleaner blue-text" >Cleaners&nbsp;:{% for member in cleaning_team.cleaning_team_members %}{% if member.member != cleaning_team.team_leader %}{{member.member.name}},{% endif %}{% endfor %}</div>
+                    <br>
+                    <div class="cleaner blue-text" >Cleaners&nbsp;:<br>{% for member in cleaning_team.cleaning_team_members %}{% if member.member != cleaning_team.team_leader %}{{member.member.name}},{% endif %}<br>{% endfor %}</div>
                     {% endfor %}
                     <br>
+
+                    {% if investigation_details.notes %}
                     <div class="email">Agent Notes :{{investigation_details.notes}}</div>
+                    {% endif %}
                 </div><!--cleaning-column-widget cleaning-column-widget-column1-->
                 
                 <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
@@ -101,7 +109,7 @@
 
 </select>
 </label>
-<input class="assignButton expandbutton" name="submit" type="submit" value="Submit"> 
+<input class="assignButton expandbutton" name="submit" type="submit" value="ADD"> 
 </form>
 </div>
 
@@ -112,91 +120,81 @@
 <thead>
 <tr>
 <th>Type</th>
-<th >Status</th>
-<th >Edit</th>
+<th >Worth</th>
+<th ></th>
 </tr>
 </thead>
 <tbody>
+{% if followup_scheduler_exists == True %}
 <tr>
     <td>
     Follow Up
     </td>
     <td>
-    {% if followup_scheduler_exists == True %}
-    <span class="green-text">Completed</span>
-    {% else %}
-    -
-    {% endif %}   
+    {% for followup in investigation_details.followup %}
+    <span >{{followup.total_cost|floatformat:3}} KD</span>
+    {% endfor %}
     </td>
 
     <td>
-    {% if followup_scheduler_exists == True %}
     <a href="{% url 'quality-control:follow-up-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
-    {% else %}
-    -
-    {% endif %}
     </td>
 </tr>
+{% endif %}
+
+{% if investigation_details.paybackdiscount %}
 <tr>
     <td>
     Cash Back
     </td>
     <td>
-    {% if investigation_details.paybackdiscount %}
-    <span class="green-text">Added</span>
-    {% else %}
-    -
-    {% endif %}
+    {% for payback in investigation_details.paybackdiscount|slice:":1" %}
+    <span>{{payback.total_cost|floatformat:3}} KD</span>
+    {% endfor %}
     </td>
 
     <td>
-    {% if investigation_details.paybackdiscount %}
-    {% comment %} <a href="{% url 'quality-control:cash-back-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a> {% endcomment %}
-    {% else %}
-    -
-    {% endif %}
+    <a href="{% url 'quality-control:cash-back-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
     </td>
 </tr>
+{% endif %}
+
+{% if investigation_details.buybackpromocodegift %}
 <tr>
-    <td>
+   <td>
     Buy Back / Gift / Promo Code
     </td>
     <td>
-    {% if investigation_details.buybackpromocodegift %}
-    <span class="green-text">Added</span>
-    {% else %}
-    -
-    {% endif %}
+    
+    <span>
+    {% for gift in investigation_details.buybackpromocodegift|slice:":1" %}
+    <span>{{gift.total_cost|floatformat:3}} KD</span>
+    {% endfor %}
+    </span>
+
     </td>
 
     <td>
-    {% if investigation_details.buybackpromocodegift %}
     {% comment %} <a href="{% url 'quality-control:internal-report-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a> {% endcomment %}
-    {% else %}
-    -
-    {% endif %}
     </td>
 </tr>
+{% endif %}
+
+{% if investigation_details.internalreport %}
 <tr>
     <td>
     Internal Report
     </td>
-    <td>
-    {% if investigation_details.internalreport %}
+    <td>   
     <span class="green-text">Completed</span>
-    {% else %}
-    -
-    {% endif %}
     </td>
 
     <td>
-    {% if investigation_details.internalreport %}
     <a href="{% url 'quality-control:internal-report-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
-    {% else %}
-    -
-    {% endif %}
     </td>
 </tr>
+{% endif %}
+
 </tbody>
 <tfoot>
  
