@@ -588,10 +588,12 @@ hr.div{ border: 0; margin:35px 0 35px 0; padding:0; border-bottom: 1px solid #cb
 .slider span.next { right: 0;}*/
 .gallery-wrapper { display: flex; flex-direction: row;/* align-items: center;*/ }
 .gallery-column-widget {width: 100%; padding:0px 5px; }
-.gallery-widget-column-column1 {flex: 1; margin:0 25px 0 0; padding:0 0px; }
-.gallery-widget-column-column2 {flex: 1; margin:0 0px 0 0; padding:0 0px; }
-.gallery-widget-column-column3 {flex: 1; margin:0 0px 0 0; padding:0 0px; }
+.gallery-widget-column-column1 {flex: 1; margin:0 0px 0 25px; padding:0 0px; }
+.gallery-widget-column-column2 {flex: 1; margin:0 0px 0 25px; padding:0 0px; }
+.gallery-widget-column-column3 {flex: 1; margin:0 0px 0 25px; padding:0 0px; }
 .gallery-widget-column-column4 {flex: 1; margin:0 0px 0 25px; padding:0 0px; }
+.gallery-widget-column-column5 {flex: 1; margin:0 0px 0 25px; padding:0 0px; }
+.gallery-widget-column-column6 {flex: 1; margin:0 0px 0 25px; padding:0 0px; }
 .media-heading{ font-size:20px; margin:0px 0 6px 0; padding:0; color:#255cae; font-weight:normal; position:relative;}
 .resource-table-new{ width:100%; margin:0; padding:0;border:1px solid #ccc; border-bottom:none !important; table-layout: fixed;}
 .resource-table-new tr { margin:0; padding:0; border:none !important; transition: .4s;}

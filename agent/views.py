@@ -3788,6 +3788,7 @@ class TicketRegistration(IsAgent,View):
 							investigation = investigation_form_save,
 							media = image,
 							media_type = 'PHOTO',
+							taken_status = 'CUSTOMER_SEND',
 							is_active = True
 						)
 						

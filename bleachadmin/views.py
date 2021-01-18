@@ -14,6 +14,7 @@ from datetime import timedelta,date,datetime
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField
 from django.db.models.functions import Cast 
 from django.db.models import Prefetch
+from bleach_crm_ps.utils import get_error
 
 from django.contrib import messages
 from user.models import UserProfile,Address,Governorate,Area
@@ -1044,9 +1045,45 @@ class BuybackPromocodeGiftApprove(IsAdmin,View):
 		return render(request,'admin/ticket/buybackpromogiftapprove.html',{'buybackpromogift_details':buybackpromogift_details})
 
 class PromocodeView(IsAdmin,View):
+
 	def get(self,request):
 
-		return render(request,'admin/promocode/promo.html',{})
+		try:
+			promo_codes = Promocode.objects.filter(is_active=True).order_by('-created').annotate(active=Case(When(expiry_date__gt=timezone.now().date(),then=True),default=False,output_field=BooleanField()))
+		except:
+			promo_codes = None
+
+		#counts
+		active_promocodes_count = promo_codes.filter(active=True).count()
+		used_coupons_count      = promo_codes.aggregate(total_used_count=Sum('total_used'))['total_used_count']
+
+		return render(request,'admin/promocode/promo.html',{'promo_codes':promo_codes,'active_promocodes_count':active_promocodes_count,'used_coupons_count':used_coupons_count,})
+
+	def post(self,request):
+		action = request.POST.get('action_type')
+
+		if action == 'addpromocode':
+			promocode_form = PromocodeForm(request.POST)
+			if promocode_form.is_valid():
+				promocode_form.save()
+				messages.success(request,"Promocode Successfully Added")
+			else:
+				messages.error(request,get_error(promocode_form))
+
+		if action == 'editpromocode':
+			promocode_id = request.POST.get('promocodeid')
+			promocode = Promocode.objects.get(id=promocode_id)
+
+			promocode_form = PromocodeForm(request.POST,instance=promocode)
+			
+			if promocode_form.is_valid():
+				promocode_form.save()
+				messages.success(request,"Promocode Successfully Updated")
+			else:
+				messages.error(request,get_error(promocode_form))		
+		
+		return redirect('bleach_admin:admin-promocode')		
+
 
 #ajax for sales charts
 def SalesLocationData(request):
