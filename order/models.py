@@ -18,7 +18,6 @@ ORDER_STATUS = (
 
 FOLLOWUP_STATUS = ( 
 	('TICKET_RISED','TICKET_RISED'),
-	# ('INVESTIGATOR_APPROVED','INVESTIGATOR_APPROVED'),
 	('FOLLOWUP_IN_PROGRESS','FOLLOWUP_IN_PROGRESS'),
     ('FOLLOWUP_CANCELLED','FOLLOWUP_CANCELLED'),
 	('FOLLOWUP_CLOSED','FOLLOWUP_CLOSED')
@@ -177,7 +176,7 @@ class Investigation(models.Model):
 
 
 	is_followup_approved           = models.BooleanField(null=False,blank=True,default=False)
-	is_giftpromo_approved          = models.BooleanField(null=False,blank=True,default=False)
+	is_buybackgiftpromo_approved   = models.BooleanField(null=False,blank=True,default=False)
 	is_paybackdiscount_approved    = models.BooleanField(null=False,blank=True,default=False)
 	is_internalreporting_approved  = models.BooleanField(null=False,blank=True,default=False)
 	
@@ -486,7 +485,7 @@ class Promocode(models.Model):
 	starting_date			= models.DateField(blank=True,null=True)
 	expiry_date  			= models.DateField(blank=True,null=True)
 	total_usage  			= models.IntegerField(blank=True,null=True)
-	total_used   			= models.IntegerField(blank=True,null=True)
+	total_used   			= models.IntegerField(blank=True,null=True,default=0)
 
 	is_active          	= models.BooleanField(null=False,blank=True,default=True)
 	created            	= models.DateTimeField(auto_now_add=True)
