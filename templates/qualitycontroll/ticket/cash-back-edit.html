@@ -8,7 +8,7 @@
 {% endblock %}    
 <section class="content"><!--content-->
 <div class="container-fluid space topspace"><!--container-fluid space topspace-->
-    <div class="welcome-wrapper"><!--welcome-wrapper-->
+    <div class="welcome-wrapper" id="reload_div"><!--welcome-wrapper-->
         <h1 class="dashboard-head">Cash Back Edit</h1>
         <p>Bleach CRM-PS Version 0.1 (Beta) developed and owned by Bleach-Kw</p>
     </div><!--welcome-wrapper-->
@@ -34,9 +34,6 @@
                 </select>
                 </label>
   </div> {% endcomment %}
-  <input type="checkbox" name="servicequality" id="servicequality" />&nbsp&nbsp<span>SERVICE QUALITY</span>
-  <BR>
-  <input type="checkbox" name="damage" id="damage" />&nbsp&nbsp<span>DAMAGE</span>
     </div>
 
   {% comment %} <div class="ticket-form-right"><!--ticket-form-right-->
@@ -48,15 +45,14 @@
   <div id="id_sectioncontainer">
 
 <!--section1-->
-<div class="enquiry-child-wrapper-Full form_section" id="section1" hidden><!--enquiry-child-wrapper-Full-->
+<div class="enquiry-child-wrapper-Full form_section" id="section1" ><!--enquiry-child-wrapper-Full-->
 <input type="hidden" name="section1-keynote_counter" id="id_section1-keynote_counter" value="">
-<div class="close-div" ><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>
 
 <div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes-->
 
 <div class="enquiry-form-left"><!--enquiry-form-left-->
 <div class=" bold-text common-label"> 
-<label class="section_label">Section 1 (SERVICE QUALITY)</label>
+<label class="section_label">SERVICE QUALITY</label>
 </div>
 <input name="section" type="hidden" class="textBox section_time" placeholder=" " value="SERVICEQUALITY" required>
 </div><!--enquiry-form-left-->
@@ -95,7 +91,7 @@
 <div class="enquiry-form-left"><!--enquiry-form-left-->
 <table width="100%" border="0" id="id_section-1-keynote-table-left" class="keynots-tble">
 
-{% for keynote in paybackdiscount_details %}{% if keynote.category == "SERVICEQUALITY" %}<tr id="id_section-1-keynote-'+{{forloop.counter0}}+'" class="section1_keynote keynote-left" ><input type="hidden" name="editform_section1_keynote{{forloop.counter0}}" value="{{keynote.id}}"><input type="hidden" name="section1_keynote'+{{forloop.counter0}}+'" value="{{keynote.sub_area}}" /><input type="hidden" name="section1_quantity'+{{forloop.counter0}}+'" value="{{keynote.quantity}}" /><td align="left">{{keynote.name}}</td><td width="50px" align="center" class="keynote_qty">{{keynote.cost}}</td><td width="30px" align="center" class="btn-remove" data-keynoteid="{{keynote.id}}" data-delete="section1"><input name="delete" type="button" class="delete-button"></td></tr>{% endif %}{% endfor %}
+{% for keynote in payback_servicequality %}<tr id="id_section-1-keynote-'+{{forloop.counter0}}+'" class="section1_keynote keynote-left" ><input type="hidden" name="editform_section1_keynote{{forloop.counter0}}" value="{{keynote.id}}"><input type="hidden" name="section1_keynote{{forloop.counter0}}" value="{{keynote.name}}" /><input type="hidden" name="section1_quantity{{forloop.counter0}}" value="{{keynote.cost}}" /><td align="left">{{keynote.name}}</td><td width="50px" align="center" class="keynote_qty">{{keynote.cost}}</td><td width="30px" align="center" class="btn-remove" data-keynoteid="{{keynote.id}}" data-delete="section1"><input name="delete" type="button" class="delete-button"></td></tr>{% endfor %}
 
 </table>
 </div><!--enquiry-form-left-->
@@ -106,15 +102,14 @@
 </div><!--enquiry-child-wrapper-Full-->
 
 <!--section 2-->
-<div class="enquiry-child-wrapper-Full form_section" id="section2" hidden><!--enquiry-child-wrapper-Full-->
+<div class="enquiry-child-wrapper-Full form_section" id="section2" ><!--enquiry-child-wrapper-Full-->
 <input type="hidden" name="section2-keynote_counter" id="id_section2-keynote_counter" value="">
-<div class="close-div" ><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>
 
 <div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes-->
 
 <div class="enquiry-form-left"><!--enquiry-form-left-->
 <div class=" bold-text common-label"> 
-<label class="section_label">Section 2 (DAMAGE)</label>
+<label class="section_label">DAMAGE</label>
 </div>
 <input name="section" type="hidden" class="textBox section_time" placeholder=" " value="DAMAGE" required>
 </div><!--enquiry-form-left-->
@@ -153,7 +148,7 @@
 <div class="enquiry-form-left"><!--enquiry-form-left-->
 <table width="100%" border="0" id="id_section-2-keynote-table-left" class="keynots-tble">
 
-{% for keynote in paybackdiscount_details %}{% if keynote.category == "DAMAGE" %}<tr id="id_section-2-keynote-'+{{forloop.counter0}}+'" class="section2_keynote keynote-left" ><input type="hidden" name="editform_section2_keynote{{forloop.counter0}}" value="{{keynote.id}}"><input type="hidden" name="section2_keynote'+{{forloop.counter0}}+'" value="{{keynote.sub_area}}" /><input type="hidden" name="section2_quantity'+{{forloop.counter0}}+'" value="{{keynote.quantity}}" /><td align="left">{{keynote.name}}</td><td width="50px" align="center" class="keynote_qty">{{keynote.cost}}</td><td width="30px" align="center" class="btn-remove" data-keynoteid="{{keynote.id}}" data-delete="section2"><input name="delete" type="button" class="delete-button"></td></tr>{% endif %}{% endfor %}
+{% for keynote in payback_damage %}<tr id="id_section-2-keynote-'+{{forloop.counter0}}+'" class="section2_keynote keynote-left" ><input type="hidden" name="editform_section2_keynote{{forloop.counter0}}" value="{{keynote.id}}"><input type="hidden" name="section2_keynote{{forloop.counter0}}" value="{{keynote.name}}" /><input type="hidden" name="section2_quantity{{forloop.counter0}}" value="{{keynote.cost}}" /><td align="left">{{keynote.name}}</td><td width="50px" align="center" class="keynote_qty">{{keynote.cost}}</td><td width="30px" align="center" class="btn-remove" data-keynoteid="{{keynote.id}}" data-delete="section2"><input name="delete" type="button" class="delete-button"></td></tr>{% endfor %}
 
 </table>
 </div><!--enquiry-form-left-->
@@ -182,68 +177,24 @@
 </section><!--content-->
     
     
-{% include 'agent/common/footer.html' %}
+{% include 'qualitycontroll/common/footer.html' %}
 </div><!--wrapper-->
 {% endblock %}
 
 {% block javascript %}
 <script src="{% static 'files/js/jquery.formset.js' %}"></script>
-<script>
-
-$("#servicequality").click(function(){
-    if ($(this).is(':checked')){
-        $('#section1').attr("hidden",false);
-    }else{
-        $('#section1').attr("hidden",true);
-    }
-});
-
-$("#damage").click(function(){
-    if ($(this).is(':checked')){
-        $('#section2').attr("hidden",false);
-    }else{
-        $('#section2').attr("hidden",true);
-    }
-});
-
-</script>    
-
-
+   
 <script>
 
 $('document').ready(function(){
 
-keynote_count1 = 0;
-keynote_count2 = 0;
+keynote_count1 = $('.section1_keynote').length;
+keynote_count2 = $('.section2_keynote').length;
 
-{% for keynote in paybackdiscount_details %}
-{% if keynote.category == 'SERVICEQUALITY'%}
-keynote_count1 += 1
-{% else %}
-keynote_count2 += 1
-{% endif %}
-{% endfor %}
-console.log(keynote_count1,keynote_count2,"nots")
 $('#id_section1-keynote_counter').val(keynote_count1);
 $('#id_section2-keynote_counter').val(keynote_count2);
 
-new_section_count = 0;
-
-if ($('#servicequality').is(':checked')){
-        $('#section1').attr("hidden",false);
-        new_section_count += 1
-    }else{
-        $('#section1').attr("hidden",true);
-    };
-
-if ($('#damage').is(':checked')){
-        $('#section2').attr("hidden",false);
-        new_section_count += 1
-    }else{
-        $('#section2').attr("hidden",true);
-    }
-console.log(new_section_count,"cnt")
-$('#id_section_counter').val(new_section_count);
+})
 
 $("body").on("click", ".btn-remove", function(){
         $(this).closest('tr').remove();
@@ -251,21 +202,34 @@ $("body").on("click", ".btn-remove", function(){
         keynote_count = $('#id_'+$(this).data('delete')+'-keynote_counter').val()
         //update count
         $('#id_'+$(this).data('delete')+'-keynote_counter').val(keynote_count-1)
-    });
 
-$("body").on("click", ".close-div", function(){
+        //delete ajax
+        keynote_id = $(this).data('keynoteid');
+        if(keynote_id)
+        {
+                    $.ajax({
+
+                            url: "{% url 'agent:removepaybackdiscountkeynote' %}",
+
+                            data: {'keynote_id':keynote_id}, 
+
+                            dataType: 'json',
+
+                            success: function (data) { 
+                                    if(data['success'] == true)
+                                    {
+                                        alert("Keynote Deleted Permanantlly");
+                                    }else{
+                                        alert("eror");
+                                    }
+                                    window.location.reload();
+
+                                    }  
+                            });
         
-        //update section count
-        new_section_count = $('#id_section_counter').val()-1
-        $('#id_section_counter').val(new_section_count);
-        
-        //remove section
-        $(this).parent('div').remove();
-        
-        $('#id_sectioncontainer .close-div').attr("hidden",true);
-        $('#id_sectioncontainer .form_section:first .close-div').attr("hidden",false);
+            }
+
     });
-});
 
 console.log($('#id_section1-keynote_counter').val(),$('#id_section2-keynote_counter').val(),  "keynots")
 
@@ -319,9 +283,11 @@ $(".imgAdd").click(function () {
   console.log(name,"name")
   $(this).closest(".row").find('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" name="'+name+'" class="uploadFile img" value="Upload Photo" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
 });
+
 $(document).on("click", "i.del", function () {
   $(this).parent().remove();
 });
+
 $(function () {
   $(document).on("change", ".uploadFile", function ()
   {
@@ -341,191 +307,6 @@ $(function () {
 
   });
 });
-
-var servicequality = 0;
-var damage = 0;
-
-{% for payback in paybackdiscount_details %}
-{% if payback.category == 'SERVICEQUALITY' %}
-servicequality += 1 ;
-{% else %}
-damage += 1;
-{% endif %}
-{% endfor %}
-
-if (servicequality >= 1){
-    $("#servicequality").attr("checked",true);
-}else{
-    $("#servicequality").attr("checked",false);
-};
-
-if (damage >= 1){
-    $("#damage").attr("checked",true);
-}else{
-    $("#damage").attr("checked",false);
-};
-
-console.log(servicequality,damage,"dat")
-
-{% comment %} 
-if (servicequality >= 1){
-
-selected_section = 'SERVICEQUALITY'
-
-if (damage == 0){
-    section_count = 0;
-}else{
-    section_count = 0;
-}
-
-$('#id_section_counter').val(section_count+1);
-
-try {
-            keynote_count = parseInt($('#id_section'+sectioncount+'-keynote_counter').val());
-        }
-        catch(err) {
-            keynote_count = 0;   
-        }
-        if(!keynote_count)
-        {
-         keynote_count = 0;   
-        }
-
-appendhtml = '<div class="enquiry-child-wrapper-Full form_section" id="section'+section_count+'"><!--enquiry-child-wrapper-Full-->'+
-'<input type="hidden" name="section'+section_count+'-keynote_counter" id="id_section'+section_count+'-keynote_counter" value="'+servicequality+'">'+
-'<div class="close-div" ><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>'+
-
-'<div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes-->'+
-
-'<div class="enquiry-form-left"><!--enquiry-form-left-->'+
-'<div class=" bold-text common-label"> '+
-'<label class="section_label">Section '+(section_count+1)+' ('+selected_section+')</label>'+
-'</div>'+
-'<input name="section'+section_count+'" type="hidden" class="textBox section_time" placeholder=" " value="'+selected_section+'" required>'+
-'</div><!--enquiry-form-left-->'+
-
-'<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->'+
-'</div><!--enquiry-form-right-->'+
-'</div> <!--enquiry-form-Wrapper enquiry-boxes--> '+
-
-'<br><br><div class="common-sub-head align-left">Items</div><div class="keynotes-wrapper-Full"><!--keynotes-wrapper-Full--> '+
-'<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->'+
-'<div class="enquiry-form-left"><!--enquiry-form-left-->'+
-'<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->'+
-'<div class="enquiry-two-col"><!--enquiry-two-col-->'+
-'<div class=" bold-text common-label"> <label>DETAILS</label></div>'+
-'<input class="keynote_field" type="text" id="id_section-'+section_count+'-keynote" name="select" >'+
-'</div><!--enquiry-two-col-->'+
-'</div><!--enquiry-Two-column-wrapp-->'+
-'</div><!--enquiry-form-left-->'+
-'<div class="enquiry-form-right"><!--enquiry-form-right-->'+
-    '<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->'+
-'<div class="enquiry-two-col"><!--enquiry-two-col-->'+
-'<div class=" bold-text common-label"> <label>PRICE</label></div>'+
-'<input name="time" type="number" class="textBox" id="id_section-'+section_count+'-quantity" placeholder=" ">'+
-'</div><!--enquiry-two-col-->'+
-'<div class="enquiry-two-col"><!--enquiry-two-col-->'+
-'<div class=" bold-text common-label hide-m"> '+
-'<label>&nbsp;</label>'+
-'</div>'+
-'<input name="add" type="button" value="Add" id="id_section-'+section_count+'-add" class="add-button" onclick="addKeynote(this);">'+
-'</div><!--enquiry-two-col-->'+
-'</div><!--enquiry-Two-column-wrapp-->'+
-'</div><!--enquiry-form-right-->'+
-'</div> <!--enquiry-form-Wrapper enquiry-boxes-->'+
-'<hr class="hr-dashedpad">'+
-'<div class="enquiry-form-Wrapper enquiry-boxes" id="id_section-'+section_count+'-keynotecontainer">'+
-'<div class="enquiry-form-left"><!--enquiry-form-left-->'+
-'<table width="100%" border="0" id="id_section-'+section_count+'-keynote-table-left" class="keynots-tble">'+
-
-'{% for keynote in paybackdiscount_details %}{% if keynote.category == "SERVICEQUALITY" %}<tr id="id_section-'+section_count+'-keynote-'+{{forloop.counter0}}+'" class="section'+section_count+'_keynote keynote-left" ><input type="hidden" name="editform_section'+section_count+'_keynote{{forloop.counter0}}" value="{{keynote.id}}"><input type="hidden" name="section'+section_count+'_keynote'+{{forloop.counter0}}+'" value="{{keynote.name}}" /><input type="hidden" name="section'+section_count+'_quantity'+{{forloop.counter0}}+'" value="{{keynote.cost}}" /><td align="left">{{keynote.name}}</td><td width="50px" align="center" class="keynote_qty">{{keynote.cost}}</td><td width="30px" align="center" class="btn-remove" data-keynoteid="{{keynote.id}}" data-delete="section'+section_count+'"><input name="delete" type="button" class="delete-button"></td></tr>{% endif %}{% endfor %}'+
-
-'</table>'+
-'</div><!--enquiry-form-left-->'+
-
-'</div><!--enquiry-form-Wrapper-->'+
-'</div><!--keynotes-wrapper-Full-->'+
-
-'</div><!--enquiry-child-wrapper-Full-->'
-
-//append section
-$('#id_sectioncontainer').prepend(appendhtml);
-}
-
-
-
-if (damage >= 1){
-
-selected_section = 'DAMAGE'
-
-if (servicequality == 0){
-    section_count = 0;
-}else{
-    section_count = 1;
-}
-
-$('#id_section_counter').val(section_count+1);
-
-appendhtml = '<div class="enquiry-child-wrapper-Full form_section" id="section'+section_count+'"><!--enquiry-child-wrapper-Full-->'+
-'<input type="hidden" name="section'+section_count+'-keynote_counter" id="id_section'+section_count+'-keynote_counter" value="'+damage+'">'+
-'<div class="close-div" ><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>'+
-
-'<div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes-->'+
-
-'<div class="enquiry-form-left"><!--enquiry-form-left-->'+
-'<div class=" bold-text common-label"> '+
-'<label class="section_label">Section '+(section_count+1)+' ('+selected_section+')</label>'+
-'</div>'+
-'<input name="section'+section_count+'" type="hidden" class="textBox section_time" placeholder=" " value="'+selected_section+'" required>'+
-'</div><!--enquiry-form-left-->'+
-
-'<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->'+
-'</div><!--enquiry-form-right-->'+
-'</div> <!--enquiry-form-Wrapper enquiry-boxes--> '+
-
-'<br><br><div class="common-sub-head align-left">Items</div><div class="keynotes-wrapper-Full"><!--keynotes-wrapper-Full--> '+
-'<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->'+
-'<div class="enquiry-form-left"><!--enquiry-form-left-->'+
-'<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->'+
-'<div class="enquiry-two-col"><!--enquiry-two-col-->'+
-'<div class=" bold-text common-label"> <label>DETAILS</label></div>'+
-'<input class="keynote_field" type="text" id="id_section-'+section_count+'-keynote" name="select" >'+
-'</div><!--enquiry-two-col-->'+
-'</div><!--enquiry-Two-column-wrapp-->'+
-'</div><!--enquiry-form-left-->'+
-'<div class="enquiry-form-right"><!--enquiry-form-right-->'+
-    '<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->'+
-'<div class="enquiry-two-col"><!--enquiry-two-col-->'+
-'<div class=" bold-text common-label"> <label>PRICE</label></div>'+
-'<input name="time" type="number" class="textBox" id="id_section-'+section_count+'-quantity" placeholder=" ">'+
-'</div><!--enquiry-two-col-->'+
-'<div class="enquiry-two-col"><!--enquiry-two-col-->'+
-'<div class=" bold-text common-label hide-m"> '+
-'<label>&nbsp;</label>'+
-'</div>'+
-'<input name="add" type="button" value="Add" id="id_section-'+section_count+'-add" class="add-button" onclick="addKeynote(this);">'+
-'</div><!--enquiry-two-col-->'+
-'</div><!--enquiry-Two-column-wrapp-->'+
-'</div><!--enquiry-form-right-->'+
-'</div> <!--enquiry-form-Wrapper enquiry-boxes-->'+
-'<hr class="hr-dashedpad">'+
-'<div class="enquiry-form-Wrapper enquiry-boxes" id="id_section-'+section_count+'-keynotecontainer">'+
-'<div class="enquiry-form-left"><!--enquiry-form-left-->'+
-'<table width="100%" border="0" id="id_section-'+section_count+'-keynote-table-left" class="keynots-tble">'+
-
-'{% for keynote in paybackdiscount_details %}{% if keynote.category == "DAMAGE" %}<tr id="id_section-'+section_count+'-keynote-'+{{forloop.counter0}}+'" class="section'+section_count+'_keynote keynote-left" ><input type="hidden" name="editform_section'+section_count+'_keynote{{forloop.counter0}}" value="{{keynote.id}}"><input type="hidden" name="section'+section_count+'_keynote'+{{forloop.counter0}}+'" value="{{keynote.name}}" /><input type="hidden" name="section'+section_count+'_quantity'+{{forloop.counter0}}+'" value="{{keynote.cost}}" /><td align="left">{{keynote.name}}</td><td width="50px" align="center" class="keynote_qty">{{keynote.cost}}</td><td width="30px" align="center" class="btn-remove" data-keynoteid="{{keynote.id}}" data-delete="section'+section_count+'"><input name="delete" type="button" class="delete-button"></td></tr>{% endif %}{% endfor %}'+
-
-'</table>'+
-'</div><!--enquiry-form-left-->'+
-
-'</div><!--enquiry-form-Wrapper-->'+
-'</div><!--keynotes-wrapper-Full-->'+
-
-'</div><!--enquiry-child-wrapper-Full-->'
-
-//append section
-$('#id_sectioncontainer').prepend(appendhtml);
-} {% endcomment %}
 
 </script>
 {% endblock %}

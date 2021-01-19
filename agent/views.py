@@ -501,6 +501,43 @@ def RemoveKeynote(request):
 
 	return JsonResponse(data)
 
+def RemovePaybackDiscountKeynote(request):
+
+	data ={}
+
+	keynote_id = request.GET.get('keynote_id')
+
+	try:
+		paybackdiscountdetails = PaybackDiscountDetails.objects.filter(id=keynote_id).first()
+		paybackdiscount = PaybackDiscount.objects.filter(id = paybackdiscountdetails.paybackdiscount.id).first()
+		paybackdiscount.total_cost -= float(paybackdiscountdetails.cost)
+		paybackdiscount.save()
+		PaybackDiscountDetails.objects.filter(id=keynote_id).delete()
+		data['success'] = True
+	except:
+		data['success'] = False
+
+	return JsonResponse(data)
+
+def RemoveBuyBackPromoKeynote(request):
+
+	data ={}
+
+	keynote_id = request.GET.get('keynote_id')
+
+	try:
+		BuybackPromocodeGiftDetails.objects.filter(id=keynote_id).delete()
+		buybackpromocode_details = BuybackPromocodeGiftDetails.objects.filter(id=keynote_id).first()
+		buybackpromocode = BuybackPromocodeGift.objects.filter(id = buybackpromocode_details.buybackpromocodegift.id).first()
+		buybackpromocode.total_cost -= float(buybackpromocode_details.cost)
+		buybackpromocode.save()
+		BuybackPromocodeGiftDetails.objects.filter(id=keynote_id).delete()
+		data['success'] = True
+	except:
+		data['success'] = False
+
+	return JsonResponse(data)
+
 def RemoveEvaluationMedia(request):
 
 	data ={}

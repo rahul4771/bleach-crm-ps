@@ -67,7 +67,147 @@
       </div><!--center-formDiv-->
     </div><!--white-wrapper-->
             <br><br>   
-                      
+
+    <div class="order-top-wrapper"><!--order-top-wrapper-->
+	<div class="cleaning-Order-wrapper"><!--cleaning-Order-wrapper-->
+    	<div class="cleaning--left-stretch"><!--cleaning--left-stretch-->
+         <div class="center-formDiv"><!--center-formDiv-->	    
+        
+	<div class="common-sub-head align-left">Buy Back / Promo Code /Gift</div> 
+    <br>
+<form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+<input type="hidden" name="section_counter" id="id_section_counter" value="0"> 
+
+  <div id="id_sectioncontainer">
+
+<!--section1-->
+<div class="enquiry-child-wrapper-Full form_section" id="section1" ><!--enquiry-child-wrapper-Full-->
+<input type="hidden" name="section1-keynote_counter" id="id_section1-keynote_counter" value="">
+
+<div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes-->
+
+<div class="enquiry-form-left"><!--enquiry-form-left-->
+<div class=" bold-text common-label"> 
+<label class="section_label">SERVICE QUALITY</label>
+</div>
+<input name="section" type="hidden" class="textBox section_time" placeholder=" " value="SERVICEQUALITY" required>
+</div><!--enquiry-form-left-->
+
+<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->
+</div><!--enquiry-form-right-->
+</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+
+<br><br><div class="common-sub-head align-left">Items</div><div class="keynotes-wrapper-Full"><!--keynotes-wrapper-Full--> 
+<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+<div class="enquiry-form-left"><!--enquiry-form-left-->
+<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+<div class="enquiry-two-col"><!--enquiry-two-col-->
+<div class=" bold-text common-label"> <label>DETAILS</label></div>
+<input class="keynote_field" type="text" id="id_section-1-keynote" name="select" >
+</div><!--enquiry-two-col-->
+</div><!--enquiry-Two-column-wrapp-->
+</div><!--enquiry-form-left-->
+<div class="enquiry-form-right"><!--enquiry-form-right-->
+    <div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+<div class="enquiry-two-col"><!--enquiry-two-col-->
+<div class=" bold-text common-label"> <label>PRICE</label></div>
+<input name="time" type="number" class="textBox" id="id_section-1-quantity" placeholder=" ">
+</div><!--enquiry-two-col-->
+<div class="enquiry-two-col"><!--enquiry-two-col-->
+<div class=" bold-text common-label hide-m"> 
+<label>&nbsp;</label>
+</div>
+<input name="add" type="button" value="Add" id="id_section-1-add" class="add-button" onclick="addKeynote(this);">
+</div><!--enquiry-two-col-->
+</div><!--enquiry-Two-column-wrapp-->
+</div><!--enquiry-form-right-->
+</div> <!--enquiry-form-Wrapper enquiry-boxes-->
+<hr class="hr-dashedpad">
+<div class="enquiry-form-Wrapper enquiry-boxes" id="id_section-1-keynotecontainer">
+<div class="enquiry-form-left"><!--enquiry-form-left-->
+<table width="100%" border="0" id="id_section-1-keynote-table-left" class="keynots-tble">
+
+{% for keynote in buybackpromogift_servicequality %}<tr id="id_section-1-keynote-'+{{forloop.counter0}}+'" class="section1_keynote keynote-left" ><input type="hidden" name="editform_section1_keynote{{forloop.counter0}}" value="{{keynote.id}}"><input type="hidden" name="section1_keynote{{forloop.counter0}}" value="{{keynote.name}}" /><input type="hidden" name="section1_quantity{{forloop.counter0}}" value="{{keynote.cost}}" /><td align="left">{{keynote.name}}</td><td width="50px" align="center" class="keynote_qty">{{keynote.cost}}</td><td width="30px" align="center" class="btn-remove" data-keynoteid="{{keynote.id}}" data-delete="section1"><input name="delete" type="button" class="delete-button"></td></tr>{% endfor %}
+
+</table>
+</div><!--enquiry-form-left-->
+
+</div><!--enquiry-form-Wrapper-->
+</div><!--keynotes-wrapper-Full-->
+
+</div><!--enquiry-child-wrapper-Full-->
+
+<!--section 2-->
+<div class="enquiry-child-wrapper-Full form_section" id="section2" ><!--enquiry-child-wrapper-Full-->
+<input type="hidden" name="section2-keynote_counter" id="id_section2-keynote_counter" value="">
+
+<div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes-->
+
+<div class="enquiry-form-left"><!--enquiry-form-left-->
+<div class=" bold-text common-label"> 
+<label class="section_label">DAMAGE</label>
+</div>
+<input name="section" type="hidden" class="textBox section_time" placeholder=" " value="DAMAGE" required>
+</div><!--enquiry-form-left-->
+
+<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->
+</div><!--enquiry-form-right-->
+</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+
+<br><br><div class="common-sub-head align-left">Items</div><div class="keynotes-wrapper-Full"><!--keynotes-wrapper-Full--> 
+<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+<div class="enquiry-form-left"><!--enquiry-form-left-->
+<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+<div class="enquiry-two-col"><!--enquiry-two-col-->
+<div class=" bold-text common-label"> <label>DETAILS</label></div>
+<input class="keynote_field" type="text" id="id_section-2-keynote" name="select" >
+</div><!--enquiry-two-col-->
+</div><!--enquiry-Two-column-wrapp-->
+</div><!--enquiry-form-left-->
+<div class="enquiry-form-right"><!--enquiry-form-right-->
+    <div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+<div class="enquiry-two-col"><!--enquiry-two-col-->
+<div class=" bold-text common-label"> <label>PRICE</label></div>
+<input name="time" type="number" class="textBox" id="id_section-2-quantity" placeholder=" ">
+</div><!--enquiry-two-col-->
+<div class="enquiry-two-col"><!--enquiry-two-col-->
+<div class=" bold-text common-label hide-m"> 
+<label>&nbsp;</label>
+</div>
+<input name="add" type="button" value="Add" id="id_section-2-add" class="add-button" onclick="addKeynote(this);">
+</div><!--enquiry-two-col-->
+</div><!--enquiry-Two-column-wrapp-->
+</div><!--enquiry-form-right-->
+</div> <!--enquiry-form-Wrapper enquiry-boxes-->
+<hr class="hr-dashedpad">
+<div class="enquiry-form-Wrapper enquiry-boxes" id="id_section-2-keynotecontainer">
+<div class="enquiry-form-left"><!--enquiry-form-left-->
+<table width="100%" border="0" id="id_section-2-keynote-table-left" class="keynots-tble">
+
+{% for keynote in buybackpromogift_damage %}<tr id="id_section-2-keynote-'+{{forloop.counter0}}+'" class="section2_keynote keynote-left" ><input type="hidden" name="editform_section2_keynote{{forloop.counter0}}" value="{{keynote.id}}"><input type="hidden" name="section2_keynote{{forloop.counter0}}" value="{{keynote.name}}" /><input type="hidden" name="section2_quantity{{forloop.counter0}}" value="{{keynote.cost}}" /><td align="left">{{keynote.name}}</td><td width="50px" align="center" class="keynote_qty">{{keynote.cost}}</td><td width="30px" align="center" class="btn-remove" data-keynoteid="{{keynote.id}}" data-delete="section2"><input name="delete" type="button" class="delete-button"></td></tr>{% endfor %}
+
+</table>
+</div><!--enquiry-form-left-->
+
+</div><!--enquiry-form-Wrapper-->
+</div><!--keynotes-wrapper-Full-->
+
+</div><!--enquiry-child-wrapper-Full-->
+
+        </div><!--section-container-->
+
+
+
+<hr class="hr-dashedpad"> 
+
+<div align="center"><input class="assignButton" name="addevaluator" type="button" value="Approve" onclick="submitAnyForm(this);" > </div>
+<br><br>
+
+        </div> <!--center-formDiv-->
+		</div><!--cleaning--left-stretch-->   
+	</div><!--cleaning-Order-wrapper-->
+</div><!--order-top-wrapper--> 
+
       </div><!--main-content-holder-->
         </div><!--container-fluid space-->
     </section><!--content-->
@@ -76,4 +216,129 @@
 {% endblock %}
 
 {% block javascript %} 
+<script>
+
+$('document').ready(function(){
+
+keynote_count1 = $('.section1_keynote').length;
+keynote_count2 = $('.section2_keynote').length;
+
+$('#id_section1-keynote_counter').val(keynote_count1);
+$('#id_section2-keynote_counter').val(keynote_count2);
+
+})
+
+$("body").on("click", ".btn-remove", function(){
+        $(this).closest('tr').remove();
+        
+        keynote_count = $('#id_'+$(this).data('delete')+'-keynote_counter').val()
+        //update count
+        $('#id_'+$(this).data('delete')+'-keynote_counter').val(keynote_count-1)
+
+        //delete ajax
+        keynote_id = $(this).data('keynoteid');
+        if(keynote_id)
+        {
+                    $.ajax({
+
+                            url: "{% url 'agent:removebuybackpromokeynote' %}",
+
+                            data: {'keynote_id':keynote_id}, 
+
+                            dataType: 'json',
+
+                            success: function (data) { 
+                                    if(data['success'] == true)
+                                    {
+                                        alert("Keynote Deleted Permanantlly");
+                                    }else{
+                                        alert("eror");
+                                    }
+                                    window.location.reload();
+
+                                    }  
+                            });
+        
+            }
+
+    });
+
+console.log($('#id_section1-keynote_counter').val(),$('#id_section2-keynote_counter').val(),  "keynots")
+
+//keynote add
+function addKeynote(form_identifier){
+    //var count = form_identifier.id.match(/\d+/g)      
+    //section_count        = parseInt(count[0])+1;
+    var sectioncount = parseInt(form_identifier.id.match(/\d+/g)[0]);
+    
+    var quantity = $('#id_section-'+sectioncount+'-quantity').val();
+    var keynote  = $('#id_section-'+sectioncount+'-keynote').val();
+
+    if(keynote && quantity)
+    {
+    
+    //appending keynotes
+        
+        try {
+            keynote_count = parseInt($('#id_section'+sectioncount+'-keynote_counter').val());
+        }
+        catch(err) {
+            keynote_count = 0;   
+        }
+        if(!keynote_count)
+        {
+         keynote_count = 0;   
+        }
+
+        //for counter for backend
+
+        $('#id_section'+sectioncount+'-keynote_counter').val(keynote_count+1);
+
+        append_keynote_left = '<tr id="id_section-'+sectioncount+'-keynote-'+keynote_count+'" class="section'+sectioncount+'_keynote keynote-left" ><input type="hidden" name="section'+sectioncount+'_keynote'+keynote_count+'" value="'+keynote+'" /><input type="hidden" name="section'+sectioncount+'_quantity'+keynote_count+'" value="'+quantity+'" /><td align="left">'+keynote+'</td><td width="50px" align="center" class="keynote_qty">'+quantity+'</td><td width="30px" align="center" class="btn-remove" data-delete="section'+sectioncount+'"><input name="delete" type="button" class="delete-button"></td></tr>'
+        $('#id_section-'+sectioncount+'-keynote-table-left').append(append_keynote_left);
+    
+    
+    //clearing keynote and quantity value
+    $('#id_section-'+sectioncount+'-quantity').val('');
+    $('#id_section-'+sectioncount+'-keynote').val('');
+    }
+
+    else
+    {
+        alert("Please Insert Keynote and Quantity")
+    }    
+};
+
+$(".imgAdd").click(function () {
+    console.log("testttt")
+  name=$(this).data('name');
+  console.log(name,"name")
+  $(this).closest(".row").find('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" name="'+name+'" class="uploadFile img" value="Upload Photo" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
+});
+
+$(document).on("click", "i.del", function () {
+  $(this).parent().remove();
+});
+
+$(function () {
+  $(document).on("change", ".uploadFile", function ()
+  {
+    var uploadFile = $(this);
+    var files = !!this.files ? this.files : [];
+    if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+
+    if (/^image/.test(files[0].type)) {// only image file
+      var reader = new FileReader(); // instance of the FileReader
+      reader.readAsDataURL(files[0]); // read the local file
+
+      reader.onloadend = function () {// set image data as background of div
+        //alert(uploadFile.closest(".upimage").find('.imagePreview').length);
+        uploadFile.closest(".imgUp").find('.imagePreview').css("background-image", "url(" + this.result + ")");
+      };
+    }
+
+  });
+});
+
+</script>
 {% endblock %}

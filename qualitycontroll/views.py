@@ -978,12 +978,14 @@ class CashbackEdit(IsQualityControll,View):
 	def get(self,request,investigation_id):
 		paybackdiscount = PaybackDiscount.objects.get(is_active=True,investigation__id=investigation_id)
 		paybackdiscount_details = PaybackDiscountDetails.objects.filter(is_active=True,paybackdiscount=paybackdiscount)
-		return render(request,"qualitycontroll/ticket/cash-back-edit.html",{"paybackdiscount":paybackdiscount,"paybackdiscount_details":paybackdiscount_details})
+		payback_servicequality = paybackdiscount_details.filter(category='SERVICEQUALITY')
+		payback_damage = paybackdiscount_details.filter(category='DAMAGE')
+		return render(request,"qualitycontroll/ticket/cash-back-edit.html",{"paybackdiscount":paybackdiscount,"paybackdiscount_details":paybackdiscount_details,"payback_servicequality":payback_servicequality,"payback_damage":payback_damage})
 
 	def post(self,request,investigation_id):
 
 		paybackdiscount = PaybackDiscount.objects.get(investigation_id=int(investigation_id),is_active=True)
-
+		
 		#to save sections
 		sections = request.POST.getlist('section')
 		total_cost = 0
@@ -1002,10 +1004,10 @@ class CashbackEdit(IsQualityControll,View):
 			print(no_of_keynotes,"keyss")
 			items_total_cost = 0
 			keynote_array = []
-			if int(no_of_keynotes):
+			if no_of_keynotes:
 				for j in range(no_of_keynotes):
 					old_keynote_id=request.POST.get('editform_section'+str(section_no)+'_keynote'+str(j))
-					print(old_keynote_id,"lop")
+					print(old_keynote_id,str(section_no),str(j),"lop")
 					keynote = request.POST.get('section'+str(section_no)+'_keynote'+str(j))
 					quantity= request.POST.get('section'+str(section_no)+'_quantity'+str(j))
 
@@ -1013,12 +1015,13 @@ class CashbackEdit(IsQualityControll,View):
 
 					if old_keynote_id:
 						if keynote and quantity:
-							PaybackDiscountDetails.objects.filter(is_active=True,id=old_keynote_id).update(id=old_keynote_id,name=keynote,cost=quantity)
+							PaybackDiscountDetails.objects.filter(is_active=True,id=int(old_keynote_id)).update(id=int(old_keynote_id),name=keynote,cost=quantity)
 					else:
 						if keynote and quantity:
 							keynote_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=section,name=keynote,cost=quantity,is_active=True))
 					
-					items_total_cost += float(quantity)
+					items_total_cost += float(quantity)				
+
 				#bulk_create keynote
 				PaybackDiscountDetails.objects.bulk_create(keynote_array)
 
