@@ -398,7 +398,7 @@
 	
     {% if followup_details.investigation.investigationmedias %}
     <div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
-    <div class="media-heading align-left">Customer Send/Taken</div>
+    <div class="media-heading align-left">From Customer</div>
     <section>
         <div id="data-pn-1" data-pn="1" data-src="{% for investigationmedia in followup_details.investigation.investigationmedias %}{% if investigationmedia.taken_status == 'CUSTOMER_SEND' %}{{investigationmedia.media.url}},{% endif %}{% endfor %}"></div>
     </section>  
