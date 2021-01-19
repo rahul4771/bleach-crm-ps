@@ -532,18 +532,18 @@
     reporting_img       = $('#data-pn-6').data('src');
 
 
-    if(invest_before_img == '')
+    if(invest_before_img == ' ')
     {
      $('.gallery-widget-column-column2').remove();   
     }
 
-    if(invest_after_img == '')
+    if(invest_after_img == ' ')
     {
      $('.gallery-widget-column-column3').remove();   
     }
 
     //hide media
-    if(invest_cust_img == undefined && invest_before_img == '' && invest_after_img == '' && paybackdiscount_img == undefined && buybackpromogift_img == undefined && reporting_img == undefined)
+    if(invest_cust_img == undefined && invest_before_img == ' ' && invest_after_img == ' ' && paybackdiscount_img == undefined && buybackpromogift_img == undefined && reporting_img == undefined)
     {
         $('.media-head').remove();
         $('.media-explaining').remove();
