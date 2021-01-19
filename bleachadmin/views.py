@@ -1033,22 +1033,141 @@ class PaybackDiscountApprove(IsAdmin,View):
 	def get(self,request,paybackdiscount_id):
 		
 		try:
-			paybackdiscount_details = PaybackDiscount.objects.select_related('investigation__order__evaluation__customer','investigation__order_schedule__customer_address','investigation__order_schedule__order_scheduler_book','investigation__order_schedule__evaluation_details__evaluator').prefetch_related(Prefetch('investigation__followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('investigation__order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=paybackdiscount_id)
+			paybackdiscount_details_data = PaybackDiscount.objects.select_related('investigation__order__evaluation__customer','investigation__order_schedule__customer_address','investigation__order_schedule__order_scheduler_book','investigation__order_schedule__evaluation_details__evaluator').prefetch_related(Prefetch('investigation__followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('investigation__order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=paybackdiscount_id)
 		except:
-			paybackdiscount_details = None
+			paybackdiscount_details_data = None
 
-		return render(request,'admin/ticket/paybackdiscountapprove.html',{'paybackdiscount_details':paybackdiscount_details,})
+		paybackdiscount = PaybackDiscount.objects.get(is_active=True,id=paybackdiscount_id)
+		paybackdiscount_details = PaybackDiscountDetails.objects.filter(is_active=True,paybackdiscount=paybackdiscount)
+		payback_servicequality = paybackdiscount_details.filter(category='SERVICEQUALITY')
+		payback_damage = paybackdiscount_details.filter(category='DAMAGE')
 
+		return render(request,'admin/ticket/paybackdiscountapprove.html',{"paybackdiscount":paybackdiscount,"paybackdiscount_details_data":paybackdiscount_details_data,"payback_servicequality":payback_servicequality,"payback_damage":payback_damage})
+
+	def post(self,request,paybackdiscount_id):
+
+		paybackdiscount = PaybackDiscount.objects.get(id=int(paybackdiscount_id),is_active=True)
+		
+		#to save sections
+		sections = request.POST.getlist('section')
+		total_cost = 0
+		section_items_total_cost = 0
+		for section in sections:
+			if section == 'SERVICEQUALITY':
+				section_no = 1
+			else:
+				section_no = 2
+			print(section_no,"sectionno")
+			#to save keynotes
+			try:
+				no_of_keynotes = int(request.POST.get('section'+str(section_no)+'-keynote_counter'))
+			except:
+				no_of_keynotes = None
+			print(no_of_keynotes,"keyss")
+			items_total_cost = 0
+			keynote_array = []
+			if no_of_keynotes:
+				for j in range(no_of_keynotes):
+					old_keynote_id=request.POST.get('editform_section'+str(section_no)+'_keynote'+str(j))
+					print(old_keynote_id,str(section_no),str(j),"lop")
+					keynote = request.POST.get('section'+str(section_no)+'_keynote'+str(j))
+					quantity= request.POST.get('section'+str(section_no)+'_quantity'+str(j))
+
+					print(old_keynote_id,keynote,quantity,"datt")
+
+					if old_keynote_id:
+						if keynote and quantity:
+							PaybackDiscountDetails.objects.filter(is_active=True,id=int(old_keynote_id)).update(id=int(old_keynote_id),name=keynote,cost=quantity)
+					else:
+						if keynote and quantity:
+							keynote_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=section,name=keynote,cost=quantity,is_active=True))
+					
+					items_total_cost += float(quantity)				
+
+				#bulk_create keynote
+				PaybackDiscountDetails.objects.bulk_create(keynote_array)
+
+			section_items_total_cost += float(items_total_cost)
+
+		total_cost += float(section_items_total_cost)
+
+		paybackdiscount.total_cost = total_cost
+		paybackdiscount.save()
+
+		Investigation.objects.filter(id=paybackdiscount.investigation.id).update(is_paybackdiscount_approved = True)
+		
+		messages.success(request,"Cash Back Approved !")
+		return redirect('bleach_admin:admindash-board')
 
 class BuybackPromocodeGiftApprove(IsAdmin,View):
 	def get(self,request,buybackpromogift_id):
 	
 		try:
-			buybackpromogift_details = BuybackPromocodeGift.objects.select_related('investigation__order__evaluation__customer','investigation__order_schedule__customer_address','investigation__order_schedule__order_scheduler_book','investigation__order_schedule__evaluation_details__evaluator').prefetch_related(Prefetch('investigation__followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('investigation__order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=buybackpromogift_id)
+			buybackpromogift_details_data = BuybackPromocodeGift.objects.select_related('investigation__order__evaluation__customer','investigation__order_schedule__customer_address','investigation__order_schedule__order_scheduler_book','investigation__order_schedule__evaluation_details__evaluator').prefetch_related(Prefetch('investigation__followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('investigation__order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=buybackpromogift_id)
 		except:
-			buybackpromogift_details = None
+			buybackpromogift_details_data = None
 
-		return render(request,'admin/ticket/buybackpromogiftapprove.html',{'buybackpromogift_details':buybackpromogift_details})
+		buybackpromogift = BuybackPromocodeGift.objects.get(is_active=True,id=buybackpromogift_id)
+		buybackpromogift_details = BuybackPromocodeGiftDetails.objects.filter(is_active=True,buybackpromocodegift=buybackpromogift)
+		buybackpromogift_servicequality = buybackpromogift_details.filter(category='SERVICEQUALITY')
+		buybackpromogift_damage = buybackpromogift_details.filter(category='DAMAGE')
+
+		return render(request,'admin/ticket/buybackpromogiftapprove.html',{'buybackpromogift_details':buybackpromogift_details_data,"buybackpromogift":buybackpromogift,"buybackpromogift_servicequality":buybackpromogift_servicequality,"buybackpromogift_damage":buybackpromogift_damage})
+
+	def post(self,request,buybackpromogift_id):
+
+		buybackpromogift = BuybackPromocodeGift.objects.get(id=int(buybackpromogift_id),is_active=True)
+		
+		#to save sections
+		sections = request.POST.getlist('section')
+		total_cost = 0
+		section_items_total_cost = 0
+		for section in sections:
+			if section == 'SERVICEQUALITY':
+				section_no = 1
+			else:
+				section_no = 2
+			print(section_no,"sectionno")
+			#to save keynotes
+			try:
+				no_of_keynotes = int(request.POST.get('section'+str(section_no)+'-keynote_counter'))
+			except:
+				no_of_keynotes = None
+			print(no_of_keynotes,"keyss")
+			items_total_cost = 0
+			keynote_array = []
+			if no_of_keynotes:
+				for j in range(no_of_keynotes):
+					old_keynote_id=request.POST.get('editform_section'+str(section_no)+'_keynote'+str(j))
+					print(old_keynote_id,str(section_no),str(j),"lop")
+					keynote = request.POST.get('section'+str(section_no)+'_keynote'+str(j))
+					quantity= request.POST.get('section'+str(section_no)+'_quantity'+str(j))
+
+					print(old_keynote_id,keynote,quantity,"datt")
+
+					if old_keynote_id:
+						if keynote and quantity:
+							BuybackPromocodeGiftDetails.objects.filter(is_active=True,id=int(old_keynote_id)).update(id=int(old_keynote_id),name=keynote,cost=quantity)
+					else:
+						if keynote and quantity:
+							keynote_array.append(BuybackPromocodeGiftDetails(buybackpromocodegift=buybackpromogift,category=section,name=keynote,cost=quantity,is_active=True))
+					
+					items_total_cost += float(quantity)				
+
+				#bulk_create keynote
+				BuybackPromocodeGiftDetails.objects.bulk_create(keynote_array)
+
+			section_items_total_cost += float(items_total_cost)
+
+		total_cost += float(section_items_total_cost)
+
+		buybackpromogift.total_cost = total_cost
+		buybackpromogift.save()
+
+		Investigation.objects.filter(id=buybackpromogift.investigation.id).update(is_buybackgiftpromo_approved = True)
+
+		messages.success(request,"Buy Back / Promo Code/ Gift Approved !")
+		return redirect('bleach_admin:admindash-board')
 
 class PromocodeView(IsAdmin,View):
 
