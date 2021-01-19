@@ -961,38 +961,38 @@ class CashbackEdit(IsQualityControll,View):
 		paybackdiscount = PaybackDiscount.objects.get(investigation_id=int(investigation_id),is_active=True)
 
 		#to save sections
-		no_of_sections         = int(request.POST.get('section_counter'))
-		print(no_of_sections,"nose")
-		section_array          = []
-
+		sections = request.POST.getlist('section')
 		total_cost = 0
 		section_items_total_cost = 0
-		for i in range(no_of_sections):
-			section_name  = request.POST.get('section'+str(i))
-			print(section_name,"sectionname")
+		for section in sections:
+			if section == 'SERVICEQUALITY':
+				section_no = 1
+			else:
+				section_no = 2
+			print(section_no,"sectionno")
 			#to save keynotes
 			try:
-				no_of_keynotes = int(request.POST.get('section'+str(i)+'-keynote_counter'))
+				no_of_keynotes = int(request.POST.get('section'+str(section_no)+'-keynote_counter'))
 			except:
 				no_of_keynotes = None
-			print(range(no_of_keynotes),"keyss")
+			print(no_of_keynotes,"keyss")
 			items_total_cost = 0
 			keynote_array = []
-			if no_of_keynotes:
+			if int(no_of_keynotes):
 				for j in range(no_of_keynotes):
-					old_keynote_id=request.POST.get('editform_section'+str(i)+'_keynote'+str(j))
+					old_keynote_id=request.POST.get('editform_section'+str(section_no)+'_keynote'+str(j))
+					print(old_keynote_id,"lop")
+					keynote = request.POST.get('section'+str(section_no)+'_keynote'+str(j))
+					quantity= request.POST.get('section'+str(section_no)+'_quantity'+str(j))
 
-					keynote = request.POST.get('section'+str(i)+'_keynote'+str(j))
-					quantity= request.POST.get('section'+str(i)+'_quantity'+str(j))
-
-					print(old_keynote_id,keynote,quantity,'section'+str(i)+'_quantity'+str(j),"datt")
+					print(old_keynote_id,keynote,quantity,"datt")
 
 					if old_keynote_id:
 						if keynote and quantity:
 							PaybackDiscountDetails.objects.filter(is_active=True,id=old_keynote_id).update(id=old_keynote_id,name=keynote,cost=quantity)
 					else:
 						if keynote and quantity:
-							keynote_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=section_name,name=keynote,cost=quantity,is_active=True))
+							keynote_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=section,name=keynote,cost=quantity,is_active=True))
 					
 					items_total_cost += float(quantity)
 				#bulk_create keynote
