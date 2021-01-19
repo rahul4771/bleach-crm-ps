@@ -73,7 +73,7 @@
 <table class="main-table">
 <tbody>
 {% for investigation in investigations %}
-<tr class="{% if investigation.days_left == 0 %}green-line{% elif investigation.days_left == 1 %}yellow-line{%else%}red-line{% endif %} clickable-row-list" data-href="#"> 
+<tr class="{% if investigation.days_left <= 2 %}green-line{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}yellow-line{% elif elif investigation.days_left > 5 and investigation.days_left <= 7 %}orange-line{% else %}red-line{% endif %} clickable-row-list" data-href="#"> 
 <td data-label="Ticket Number" class="bold-text">{% for followup in investigation.followup %}
         TKT{{followup.ticket_no}}
         {% endfor %}</td>
@@ -97,9 +97,9 @@
 <td class="hide-a" data-label="">
     <span class="{% if investigation.order_schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}green-text{% else %}blue-text{% endif %} bold-text">{{investigation.order_schedule.order_scheduler_book.cleaning_policy}}</span>
 </td>
-<td data-label="" class="bold-text">{% if investigation.days_left == 0 %}<h3 class="green-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% elif investigation.days_left == 1 %}<h3 class="yellow-text-h3">{{investigation.days_left}} </h3>Days&#11014;{% else%}<h3 class="red-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% endif %}</td>
+<td data-label="" class="bold-text">{% if investigation.days_left <= 2 %}<h3 class="green-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}<h3 class="yellow-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% elif elif investigation.days_left > 5 and investigation.days_left <= 7 %}<h3 class="orange-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% else %}<h3 class="red-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% endif %}</td>
 <td data-label="">
-<span class="{% if investigation.days_left == 0 %}green-bg{% elif investigation.days_left == 1 %}yellow-bg{%else%}red-bg{% endif %} clickable-row-list" data-href="{% url 'qc:investigation' investigation.id %}">View</span>
+<span class="{% if investigation.days_left <= 2 %}green-bg{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}yellow-bg{% elif elif investigation.days_left > 5 and investigation.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} clickable-row-list" data-href="{% url 'qc:investigation' investigation.id %}">View</span>
 </td>
 </tr>
 {% endfor %} 
@@ -116,16 +116,16 @@
         {% for ticket in approved_buybackgiftpromos %}
 
         {% for giftpromo in ticket.buybackgiftpromos %}
-        <tr class="{% if ticket.days_left == 0 %}green-line{% elif ticket.days_left == 1 %}yellow-line{%else%}red-line{% endif %} clickable-row-list" data-href="#">
+        <tr class="{% if ticket.days_left <= 2 %}green-line{% elif ticket.days_left > 2 and ticket.days_left <= 5 %}yellow-line{% elif elif ticket.days_left > 5 and ticket.days_left <= 7 %}orange-line{% else %}red-line{% endif %} clickable-row-list" data-href="#">
         <td data-label="Ticket Number" class="bold-text">{% for followup in ticket.followup %}
         TKT{{followup.ticket_no}}
         {% endfor %}</td>
         <td data-label="Ticket Types">{{ticket.ticket_types}}</td>
         <td data-label="Action">Buyback/Promocode/Gift</td>
         <td class="hide-a" data-label="">{% if ticket.investigator.profile_image %}<img src="{{ticket.investigator.profile_image.url}}" title="{{ticket.investigator.name}}" class="profile-avatar">{% endif %}</td>
-        <td data-label="" class="bold-text">{% if ticket.days_left == 0 %}<h3 class="green-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% elif ticket.days_left == 1 %}<h3 class="yellow-text-h3">{{ticket.days_left}} </h3>Days&#11014;{% else%}<h3 class="red-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% endif %}</td>
+        <td data-label="" class="bold-text">{% if ticket.days_left <= 2 %}<h3 class="green-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% elif ticket.days_left > 2 and ticket.days_left <= 5 %}<h3 class="yellow-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% elif elif ticket.days_left > 5 and ticket.days_left <= 7 %}<h3 class="orange-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% else %}<h3 class="red-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% endif %}</td>
         <td data-label="">
-        <span class="{% if ticket.days_left == 0 %}green-bg{% elif ticket.days_left == 1 %}yellow-bg{%else%}red-bg{% endif %} clickable-row-list" data-href="{% url 'bleach_admin:admin-buybackpromogift' giftpromo.id %}">Click to Approve</span>
+        <span class="{% if ticket.days_left <= 2 %}green-bg{% elif ticket.days_left > 2 and ticket.days_left <= 5 %}yellow-bg{% elif elif ticket.days_left > 5 and ticket.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} clickable-row-list" data-href="{% url 'bleach_admin:admin-buybackpromogift' giftpromo.id %}">Click to Approve</span>
         </td>
         </tr>
         {% endfor %}
