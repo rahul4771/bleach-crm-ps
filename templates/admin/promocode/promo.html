@@ -303,7 +303,6 @@ $(document).ready(function(){
       $('.addpromocodeamount').css('display','block');
       $('.addpromocodepercentage').css('display','none');
       $('#amount_id').prop("required",true);
-      $('#percentage_upto_price_id').prop("required",false);
       $('#price_id').prop("required",false);
     }
 
@@ -311,7 +310,6 @@ $(document).ready(function(){
     {
       $('.addpromocodepercentage').css('display','block');
       $('.addpromocodeamount').css('display','none');
-      $('#percentage_upto_price_id').prop("required",true);
       $('#percentage_id').prop("required",true);
       $('#price_id').prop("required",false);
     }
@@ -345,7 +343,6 @@ $('.edit_promocode').click(function(){
         $('#percentage_upto_priceedit_id').val($(this).data('percentage_upto_price'));
         $('#percentageedit_id').val($(this).data('percentage'));
         
-        $('#percentage_upto_priceedit_id').prop('required',true);
         $('#percentageedit_id').prop('required',true);
       }
 
@@ -364,7 +361,6 @@ $('#promocode_type_edit_id').change(function(){
       $('.editpromocodepercentage').css('display','none');
       
       $('#priceedit_id').prop("required",true);
-      $('#percentage_upto_priceedit_id').prop("required",false);
       $('#percentageedit_id').prop("required",false);
     }
 
@@ -373,7 +369,6 @@ $('#promocode_type_edit_id').change(function(){
       $('.editpromocodepercentage').css('display','block');
       $('.editpromocodeamount').css('display','none');
       
-      $('#percentage_upto_priceedit_id').prop("required",true);
       $('#percentageedit_id').prop("required",true);
       $('#priceedit_id').prop("required",false);
     }
