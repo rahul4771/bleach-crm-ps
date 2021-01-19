@@ -72,7 +72,7 @@
                     <div class="order-progress-widget order-progress-widget-column4"><!--order-progress-widget order-progress-widget-column6-->
                         <div class="evaluation">Reporting</div>
                         
-                        <div class="evaluation-icon"><img src="{% static 'files/images/order-green-feedback.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-icon"><img src="{% static 'files/images/report_green.png' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
 
                     </div><!--order-progress-widget order-progress-widget-column7-->
@@ -83,10 +83,10 @@
                         <div class="evaluation">Payback/Discount</div>
                         
                         {% if followup_details.is_paybackdiscount_approved %}
-                        <div class="evaluation-icon"><img src="{% static 'files/images/order-gray-payment.png.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-icon"><img src="{% static 'files/images/payback_green.png' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
                         {% else %}
-                        <div class="evaluation-icon"><img src="{% static 'files/images/order-gray-payment.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-icon"><img src="{% static 'files/images/payback_gray.png' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Waiting</div>
                         {% endif %}
                     </div><!--order-progress-widget order-progress-widget-column7-->
@@ -97,10 +97,10 @@
                         <div class="evaluation">Buyback/Promocode/Gift</div>
                         
                         {% if followup_details.is_buybackgiftpromo_approved %}
-                        <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-icon"><img src="{% static 'files/images/presents_green.png' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
                         {% else %}
-                        <div class="evaluation-icon"><img src="{% static 'files/images/order-gray-payment.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-icon"><img src="{% static 'files/images/presents_gray.png' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Waiting</div>
                         {% endif %}
                     </div><!--order-progress-widget order-progress-widget-column7-->

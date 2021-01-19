@@ -84,7 +84,7 @@
               {% endif %}
               <br>
               {% if promo_code.promocode_type == 'PERCENTAGE' %}
-              <div class="common-gray-text align-center  orange-text lg-text">{{promo_code.percentage}}% OFF UPTO {{promo_code.percentage_upto_price|floatformat:'3'}} KD</div>
+              <div class="common-gray-text align-center  orange-text lg-text">{{promo_code.percentage}}% OFF {% if promo_code.percentage_upto_price %}UPTO {{promo_code.percentage_upto_price|floatformat:'3'}} KD{% endif %}</div>
               {% else %}
               <div class="common-gray-text align-center gray-text lg-text">{{promo_code.price|floatformat:'3'}} KD OFF</div>
               {% endif %}
@@ -92,7 +92,7 @@
               {% if promo_code.total_usage > promo_code.total_used  and promo_code.active  %}
               <div class="check-in-icons align-right"><img src="{% static 'files/images/coupon_active.png' %}"></div>
               <div class="sm-text yellow-text">Active</div>
-              <div class=" sm-text yellow-text">Used {{promo_code.total_used}} / {{promo_code.total_usage}} Coupons &nbsp;<span class="edit_promocode" data-id="{{promo_code.id}}" data-promocode_type="{{promo_code.promocode_type}}" data-promocode="{{promo_code.promocode}}" data-price="{{promo_code.price}}" data-percentage="{{promo_code.percentage}}" data-percentage_upto_price="{{promo_code.percentage_upto_price}}" data-starting_date="{{promo_code.starting_date|date:'d-m-Y'}}" data-expiry_date="{{promo_code.expiry_date|date:'d-m-Y'}}" data-total_usage="{{promo_code.total_usage}}"><i class="fa fa-1x fa-pencil-square-o clickable-cursor" aria-hidden="true"></i></span></div>
+              <div class=" sm-text yellow-text">Used {{promo_code.total_used}} / {{promo_code.total_usage}} Coupons &nbsp;<span class="edit_promocode" data-id="{{promo_code.id}}" data-promocode_type="{{promo_code.promocode_type}}" data-promocode="{{promo_code.promocode}}" data-price="{{promo_code.price}}" data-percentage="{{promo_code.percentage}}" data-percentage_upto_price="{{promo_code.percentage_upto_price|default_if_none:''}}" data-starting_date="{{promo_code.starting_date|date:'d-m-Y'}}" data-expiry_date="{{promo_code.expiry_date|date:'d-m-Y'}}" data-total_usage="{{promo_code.total_usage}}"><i class="fa fa-1x fa-pencil-square-o clickable-cursor" aria-hidden="true"></i></span></div>
               {% else %}
               <div class="check-in-icons align-right"><img src="{% static 'files/images/coupon_expired.png' %}"></div>
               <div class="sm-text gray-text">Active</div>
@@ -302,8 +302,10 @@ $(document).ready(function(){
     {
       $('.addpromocodeamount').css('display','block');
       $('.addpromocodepercentage').css('display','none');
-      $('#amount_id').prop("required",true);
-      $('#price_id').prop("required",false);
+      $('#price_id').prop("required",true);
+      $('#percentage_id').prop("required",false);
+      $('#percentage_id').val('');
+      $('#percentage_upto_price_id').val('');
     }
 
     if(promocode_type == 'PERCENTAGE')
@@ -312,6 +314,7 @@ $(document).ready(function(){
       $('.addpromocodeamount').css('display','none');
       $('#percentage_id').prop("required",true);
       $('#price_id').prop("required",false);
+      $('#price_id').val('');
     }
   });
 
@@ -325,6 +328,16 @@ $('.edit_promocode').click(function(){
   $('#expiry_dateedit_id').val($(this).data('expiry_date'));
   $('#total_usage_edit_id').val($(this).data('total_usage'));
 
+  $('#starting_dateedit_id').datetimepicker({ 
+            pickTime: false, 
+            format: "DD-MM-YYYY",  
+        });
+      
+  $('#expiry_dateedit_id').datetimepicker({
+              pickTime: false, 
+              format: "DD-MM-YYYY",
+            });
+
   $('#edit_promocode_popup').css({'visibility':'visible','opacity':1,});
 
   promocode_type = $(this).data('promocode_type')
@@ -332,7 +345,7 @@ $('.edit_promocode').click(function(){
   if(promocode_type == 'AMOUNT')
       {
         $('.editpromocodepercentage').css({'display':'none',});
-        $('#pricedit_id').val($(this).data('amount'));
+        $('#priceedit_id').val($(this).data('price'));
         
         $('#priceedit_id').prop('required',true);
       }
@@ -362,6 +375,8 @@ $('#promocode_type_edit_id').change(function(){
       
       $('#priceedit_id').prop("required",true);
       $('#percentageedit_id').prop("required",false);
+      $('#percentageedit_id').val('');
+      $('#percentage_upto_priceedit_id').val('');
     }
 
     if(promocode_type == 'PERCENTAGE')
@@ -371,6 +386,7 @@ $('#promocode_type_edit_id').change(function(){
       
       $('#percentageedit_id').prop("required",true);
       $('#priceedit_id').prop("required",false);
+      $('#priceedit_id').val('');
     }
   });
 
