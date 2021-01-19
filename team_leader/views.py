@@ -67,8 +67,8 @@ class TlHome(IsTeamLeader,View):
 		except:
 			investigation = None	
 
-		today_investigation_count = investigation.filter(sheduled_at__gte=count_today_start,sheduled_at__lt=count_today_end).count()
-		week_investigation_count   = investigation.filter(sheduled_at__gte=count_today_end-timedelta(7),sheduled_at__lt=count_today_end).count()	
+		today_investigation_count = investigation.filter(scheduled_at__gte=count_today_start,scheduled_at__lt=count_today_end).count()
+		week_investigation_count   = investigation.filter(scheduled_at__gte=count_today_end-timedelta(7),scheduled_at__lt=count_today_end).count()	
 
 		##To find average and total hour  team leader 
 		try:
