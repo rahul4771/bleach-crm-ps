@@ -118,11 +118,11 @@
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
 <thead>
-<tr>
-<th>Type</th>
-<th >Worth</th>
+{% comment %} <tr>
+<th></th>
 <th ></th>
-</tr>
+<th ></th>
+</tr> {% endcomment %}
 </thead>
 <tbody>
 {% if followup_scheduler_exists == True %}
@@ -138,6 +138,7 @@
 
     <td>
     <a href="{% url 'quality-control:follow-up-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
+    <a href="{% url 'quality-control:follow-up-delete' investigation_details.id %}"><input type="button" class="checkonButton" value="Delete" /></a>
     </td>
 </tr>
 {% endif %}
@@ -154,7 +155,10 @@
     </td>
 
     <td>
+    {% if investigation_details.is_paybackdiscount_approved == False %}
     <a href="{% url 'quality-control:cash-back-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
+    <a href="{% url 'quality-control:cash-back-delete' investigation_details.id %}"><input type="button" class="checkonButton" value="Delete" /></a>
+    {% endif %}
     </td>
 </tr>
 {% endif %}
@@ -175,7 +179,10 @@
     </td>
 
     <td>
+    {% if investigation_details.is_buybackgiftpromo_approved == False %}
     {% comment %} <a href="{% url 'quality-control:internal-report-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a> {% endcomment %}
+    <a href="{% url 'quality-control:buy-back-promo-code-delete' investigation_details.id %}"><input type="button" class="checkonButton" value="Delete" /></a>
+    {% endif %}
     </td>
 </tr>
 {% endif %}
@@ -191,6 +198,7 @@
 
     <td>
     <a href="{% url 'quality-control:internal-report-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
+    <a href="{% url 'quality-control:internal-report-delete' investigation_details.id %}"><input type="button" class="checkonButton" value="Delete" /></a>
     </td>
 </tr>
 {% endif %}

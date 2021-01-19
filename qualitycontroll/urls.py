@@ -17,13 +17,19 @@ urlpatterns = [
 
     url(r'^followup/(?P<investigation_id>[-\w]+)/$',views.Followup.as_view(),name='follow-up'),
 	url(r'^followup-edit/(?P<investigation_id>[-\w]+)/$',views.FollowupEdit.as_view(),name='follow-up-edit'),
-    url(r'^cashback/(?P<investigation_id>[-\w]+)/$',views.Cashback.as_view(),name='cash-back'),
+	url(r'^followup-delete/(?P<investigation_id>[-\w]+)/$',views.FollowupDelete.as_view(),name='follow-up-delete'),
+    
+	url(r'^cashback/(?P<investigation_id>[-\w]+)/$',views.Cashback.as_view(),name='cash-back'),
 	url(r'^cashback-edit/(?P<investigation_id>[-\w]+)/$',views.CashbackEdit.as_view(),name='cash-back-edit'),
+	url(r'^cashback-delete/(?P<investigation_id>[-\w]+)/$',views.CashbackDelete.as_view(),name='cash-back-delete'),
+
 	url(r'^buyback-promocode/(?P<investigation_id>[-\w]+)/$',views.BuyBackPromoCode.as_view(),name='buy-back-promo-code'),
     url(r'^buyback-promocode-edit/(?P<investigation_id>[-\w]+)/$',views.BuyBackPromoCodeEdit.as_view(),name='buy-back-promo-code-edit'),
+	url(r'^buyback-promocode-delete/(?P<investigation_id>[-\w]+)/$',views.BuyBackPromoCodeDelete.as_view(),name='buy-back-promo-code-delete'),
 
     url(r'^internal-report/(?P<investigation_id>[-\w]+)/$',views.InternalReport.as_view(),name='internal-report'),
 	url(r'^internal-report-edit/(?P<investigation_id>[-\w]+)/$',views.InternalReportEdit.as_view(),name='internal-report-edit'),
+	url(r'^internal-report-delete/(?P<investigation_id>[-\w]+)/$',views.InternalReportDelete.as_view(),name='internal-report-delete'),
 ]
 
 

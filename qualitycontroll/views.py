@@ -887,6 +887,24 @@ class FollowupEdit(IsQualityControll,View):
 
 		return redirect('quality-control:investigation', investigation_id)
 
+class FollowupDelete(IsQualityControll,View):
+	def get(self,request,investigation_id):
+		FollowUpScheduler.objects.filter(follow_up__investigation__id=investigation_id).delete()
+		InvestigationMedia.objects.filter(investigation__id=investigation_id).delete()
+		FollowUpSection.objects.filter(follow_up__investigation__id=investigation_id).delete()
+		FollowUpSectionKeynote.objects.filter(followup_section__follow_up__investigation__id=investigation_id).delete()
+
+		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+		follow_up.no_of_cleaners = 0
+		follow_up.cleaning_hours = 0
+		follow_up.total_cost = 0
+		follow_up.save()
+
+		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=False)
+		
+		messages.success(request,"Follow Up Cleaning Deleted !")
+		return redirect('quality-control:investigation', investigation_id)
+
 class Cashback(IsQualityControll,View):
 	def get(self,request,investigation_id):
 		# followup status change
@@ -1008,6 +1026,14 @@ class CashbackEdit(IsQualityControll,View):
 		messages.success(request,"Cash Back Updated !")
 		return redirect('quality-control:investigation', investigation_id)
 
+class CashbackDelete(IsQualityControll,View):
+	def get(self,request,investigation_id):
+		PaybackDiscount.objects.filter(investigation__id=investigation_id).delete()
+		# PaybackDiscountDetails.objects.filter(paybackdiscount__investigation__id=investigation_id).delete()
+		# PaybackDiscountDetailsMedia.objects.filter(paybackdiscount__investigation__id=investigation_id).delete()
+		Investigation.objects.filter(id=investigation_id).update(is_paybackdiscount_approved=False)
+		messages.success(request,"Cash Back Deleted !")
+		return redirect('quality-control:investigation', investigation_id)
 
 class InternalReport(IsQualityControll,View):
 	def get(self,request,investigation_id):
@@ -1073,6 +1099,14 @@ class InternalReportEdit(IsQualityControll,View):
 				)
 		
 		messages.success(request,"Internal Report Updated !")
+		return redirect('quality-control:investigation', investigation_id)
+
+class InternalReportDelete(IsQualityControll,View):
+	def get(self,request,investigation_id):
+		Reporting.objects.filter(investigation__id=investigation_id).delete()
+		# ReportingMedia.objects.filter(reporting__investigation__id=investigation_id).delete()
+		Investigation.objects.filter(id=investigation_id).update(is_internalreporting_approved=False)
+		messages.success(request,"Internal Report Deleted !")
 		return redirect('quality-control:investigation', investigation_id)
 
 class BuyBackPromoCode(IsQualityControll,View):
@@ -1196,4 +1230,13 @@ class BuyBackPromoCodeEdit(IsQualityControll,View):
 		buybackpromocodegift.save()
 
 		messages.success(request,"Buy Back / Promo Code Updated !")
+		return redirect('quality-control:investigation', investigation_id)
+
+class BuyBackPromoCodeDelete(IsQualityControll,View):
+	def get(self,request,investigation_id):
+		BuybackPromocodeGift.objects.filter(investigation__id=investigation_id).delete()
+		# BuybackPromocodeGiftDetails.objects.filter(buybackpromocodegift__investigation__id=investigation_id).delete()
+		# BuybackPromocodeGiftDetailsMedia.objects.filter(buybackpromocodegift__investigation__id=investigation_id).delete()
+		Investigation.objects.filter(id=investigation_id).update(is_buybackgiftpromo_approved=False)
+		messages.success(request,"Cash Back Deleted !")
 		return redirect('quality-control:investigation', investigation_id)

@@ -166,6 +166,7 @@
 <th data-hide="phone,tablet">Investigator </th>
 <th>Contact</th>
 <th class="align-center" data-hide="phone,tablet">Status</th>
+<th></th>
 </tr>
 </thead>
 <tbody>
@@ -203,6 +204,7 @@
     <span class="clickable-row red-bg" data-href="{% url 'qc:qc-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Cancelled</span>
     {% endif %}
     </td>
+    <td align="center"><a href="{% url 'qc:investigation' ticket.investigation.id %}"><img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon"></a></td>
     </tr> 
     {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>
