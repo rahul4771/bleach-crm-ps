@@ -788,12 +788,9 @@
             {% if order.payment_completed_date %}
             <div class="payment-text"><div>Closed Date</div> : {{order.payment_completed_date|default_if_none:''}}</div>
             {% endif %}
-            <hr class="bar"> 
-            <div class="payment-text" ><div>Follow Up Total</div> : <span id="followup_total">0.000</span> KD</div>
-            <br>
-            <div class="payment-text" ><div>Cash Back Total</div> : <span id="cashback_total">0.000</span> KD</div>
-            <br>
-            <div class="payment-text" ><div>Buy Back/Promo Code/Gift Total</div> : <span id="buybackpromocode_total">0.000</span> KD</div>
+            <div class="ticketcash">
+                <hr class="bar">
+            </div>
         
         </div><!--order-payment-widget order-payment-widget-column-->
 
@@ -1245,17 +1242,18 @@ buybackpromocode_total += parseFloat("{{buybackpromocodegift.total_cost}}") ;
 
 {% endfor %}
 {% endfor %}
-if(parseFloat(followup_total) != 0)
+ 
+if(parseInt(followup_total) != 0)
 {
-    $('#followup_total').text(parseFloat(followup_total).toFixed(3));
+$('.ticketcash').append('<div class="payment-text" ><div>Follow Up Total</div> : <span id="followup_total">'+parseFloat(followup_total).toFixed(3)+'</span> KD</div><br>');
 }
-if(parseFloat(cashback_total) != 0)
+if(parseInt(cashback_total) != 0)
 {
-    $('#cashback_total').text(parseFloat(cashback_total).toFixed(3));
+$('.ticketcash').append('<div class="payment-text" ><div>Cash Back Total</div> : <span id="cashback_total">'+parseFloat(cashback_total).toFixed(3)+'</span> KD</div><br>')
 }
-if(parseFloat(buybackpromocode_total) != 0)
+if(parseInt(buybackpromocode_total) != 0)
 {
-    $('#buybackpromocode_total').text(parseFloat(buybackpromocode_total).toFixed(3));
+$('.ticketcash').append('<div class="payment-text" ><div>Buy Back/Promo Code/Gift Total</div> : <span id="buybackpromocode_total">'+parseFloat(buybackpromocode_total).toFixed(3)+'</span> KD</div>');
 }
 
 
