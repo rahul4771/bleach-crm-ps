@@ -74,7 +74,9 @@
 <tbody>
 {% for investigation in investigations %}
 <tr class="{% if investigation.days_left == 0 %}green-line{% elif investigation.days_left == 1 %}yellow-line{%else%}red-line{% endif %} clickable-row-list" data-href="#"> 
-<td data-label="BLC Number" class="bold-text">{{investigation.order.evaluation.evaluation_id}}</td>
+<td data-label="Ticket Number" class="bold-text">{% for followup in investigation.followup %}
+        TKT{{followup.ticket_no}}
+        {% endfor %}</td>
 {% comment %} <td data-label="Proposed Time" class="bold-text">{{investigation.scheduled_at|date:"d/m/Y h:m A"}}</td> {% endcomment %}
 <td data-label="Customer">{{investigation.order.evaluation.customer.name}}</td>
 <td class="hide-a" data-label="">{{investigation.order_schedule.customer_address.area.name}}</td>
