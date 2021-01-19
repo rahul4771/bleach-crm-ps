@@ -249,7 +249,7 @@ class AccountantHome(IsAccountant,View):
 						payment.delaydays   = ((timezone.now().replace(hour=0,minute=0,second=0,microsecond=0))-(timezone.now().replace(day=1,month=month,year=year,hour=0,minute=0,second=0,microsecond=0))).days	
 
 		#buybackgiftpromos		
-		approved_paybackdiscounts = Investigation.objects.filter(is_buybackgiftpromo_approved=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=False),to_attr='paybackdiscounts'))
+		approved_paybackdiscounts = Investigation.objects.filter(is_paybackdiscount_approved=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=True),to_attr='paybackdiscounts'))
 		#add days left
 		for ticket in approved_paybackdiscounts:
 			ticket.days_left = (timezone.now()-ticket.scheduled_at).days

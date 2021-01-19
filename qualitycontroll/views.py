@@ -147,7 +147,7 @@ class QcHome(IsQualityControll,View):
 			investigation.days_left = (timezone.now()-investigation.scheduled_at).days
 
 		#buybackgiftpromos		
-		approved_buybackgiftpromos = Investigation.objects.filter(is_buybackgiftpromo_approved=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.select_related('investigation').filter(investigation__is_buybackgiftpromo_approved=False,is_active=True),to_attr='buybackpromocodegifts'))
+		approved_buybackgiftpromos = Investigation.objects.filter(is_buybackgiftpromo_approved=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.select_related('investigation').filter(investigation__is_buybackgiftpromo_approved=True,is_active=True),to_attr='buybackgiftpromos'))
 		#add days left
 		for ticket in approved_buybackgiftpromos:
 			ticket.days_left = (timezone.now()-ticket.scheduled_at).days

@@ -113,7 +113,7 @@
     <tbody>
         {% for ticket in approved_buybackgiftpromos %}
 
-        {% for giftpromo in ticket.buybackpromocodegifts %}
+        {% for giftpromo in ticket.buybackgiftpromos %}
         <tr class="{% if ticket.days_left == 0 %}green-line{% elif ticket.days_left == 1 %}yellow-line{%else%}red-line{% endif %} clickable-row-list" data-href="#">
         <td data-label="Ticket Number" class="bold-text">{% for followup in ticket.followup %}
         TKT{{followup.ticket_no}}
