@@ -630,7 +630,11 @@ class InvestigationTask(IsQualityControll,View):
 			orderschedules_count = 1
 			investigation_details = None
 
-		
+		ticket_types = investigation_details.ticket_types.split(",")
+		ticket_types_list = []
+		for type in ticket_types:
+			ticket_types_list.append(type)
+		print(ticket_types_list,"typo")
 
 		follow_up_scheduler = FollowUpScheduler.objects.filter(is_active=True,follow_up__investigation__id=investigation_id).first()
 		if follow_up_scheduler:
@@ -642,7 +646,7 @@ class InvestigationTask(IsQualityControll,View):
 		investigation_details.check_in = timezone.now()
 		investigation_details.save()
 
-		return render(request,'qualitycontroll/ticket/investigation.html',{'investigation_details':investigation_details,"followup_scheduler_exists":follow_up_scheduler_exists,"orderschedules_count":orderschedules_count})
+		return render(request,'qualitycontroll/ticket/investigation.html',{'investigation_details':investigation_details,"followup_scheduler_exists":follow_up_scheduler_exists,"orderschedules_count":orderschedules_count,"ticket_types":ticket_types_list})
 
 	def post(self,request,investigation_id):
 
@@ -895,6 +899,24 @@ class FollowupEdit(IsQualityControll,View):
 
 		return redirect('quality-control:investigation', investigation_id)
 
+class FollowupDelete(IsQualityControll,View):
+	def get(self,request,investigation_id):
+		FollowUpScheduler.objects.filter(follow_up__investigation__id=investigation_id).delete()
+		InvestigationMedia.objects.filter(investigation__id=investigation_id).delete()
+		FollowUpSection.objects.filter(follow_up__investigation__id=investigation_id).delete()
+		FollowUpSectionKeynote.objects.filter(followup_section__follow_up__investigation__id=investigation_id).delete()
+
+		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+		follow_up.no_of_cleaners = 0
+		follow_up.cleaning_hours = 0
+		follow_up.total_cost = 0
+		follow_up.save()
+
+		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=False)
+		
+		messages.success(request,"Follow Up Cleaning Deleted !")
+		return redirect('quality-control:investigation', investigation_id)
+
 class Cashback(IsQualityControll,View):
 	def get(self,request,investigation_id):
 		# followup status change
@@ -969,38 +991,38 @@ class CashbackEdit(IsQualityControll,View):
 		paybackdiscount = PaybackDiscount.objects.get(investigation_id=int(investigation_id),is_active=True)
 
 		#to save sections
-		no_of_sections         = int(request.POST.get('section_counter'))
-		print(no_of_sections,"nose")
-		section_array          = []
-
+		sections = request.POST.getlist('section')
 		total_cost = 0
 		section_items_total_cost = 0
-		for i in range(no_of_sections):
-			section_name  = request.POST.get('section'+str(i))
-
+		for section in sections:
+			if section == 'SERVICEQUALITY':
+				section_no = 1
+			else:
+				section_no = 2
+			print(section_no,"sectionno")
 			#to save keynotes
 			try:
-				no_of_keynotes = int(request.POST.get('section'+str(i)+'-keynote_counter'))
+				no_of_keynotes = int(request.POST.get('section'+str(section_no)+'-keynote_counter'))
 			except:
 				no_of_keynotes = None
-			print(range(no_of_keynotes),"keyss")
+			print(no_of_keynotes,"keyss")
 			items_total_cost = 0
 			keynote_array = []
-			if no_of_keynotes:
+			if int(no_of_keynotes):
 				for j in range(no_of_keynotes):
-					old_keynote_id=request.POST.get('editform_section'+str(i)+'_keynote'+str(j))
+					old_keynote_id=request.POST.get('editform_section'+str(section_no)+'_keynote'+str(j))
+					print(old_keynote_id,"lop")
+					keynote = request.POST.get('section'+str(section_no)+'_keynote'+str(j))
+					quantity= request.POST.get('section'+str(section_no)+'_quantity'+str(j))
 
-					keynote = request.POST.get('section'+str(i)+'_keynote'+str(j))
-					quantity= request.POST.get('section'+str(i)+'_quantity'+str(j))
-
-					print(old_keynote_id,keynote,quantity,'section'+str(i)+'_quantity'+str(j),"datt")
+					print(old_keynote_id,keynote,quantity,"datt")
 
 					if old_keynote_id:
 						if keynote and quantity:
 							PaybackDiscountDetails.objects.filter(is_active=True,id=old_keynote_id).update(id=old_keynote_id,name=keynote,cost=quantity)
 					else:
 						if keynote and quantity:
-							keynote_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=section_name,name=keynote,cost=quantity,is_active=True))
+							keynote_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=section,name=keynote,cost=quantity,is_active=True))
 					
 					items_total_cost += float(quantity)
 				#bulk_create keynote
@@ -1016,6 +1038,14 @@ class CashbackEdit(IsQualityControll,View):
 		messages.success(request,"Cash Back Updated !")
 		return redirect('quality-control:investigation', investigation_id)
 
+class CashbackDelete(IsQualityControll,View):
+	def get(self,request,investigation_id):
+		PaybackDiscount.objects.filter(investigation__id=investigation_id).delete()
+		# PaybackDiscountDetails.objects.filter(paybackdiscount__investigation__id=investigation_id).delete()
+		# PaybackDiscountDetailsMedia.objects.filter(paybackdiscount__investigation__id=investigation_id).delete()
+		Investigation.objects.filter(id=investigation_id).update(is_paybackdiscount_approved=False)
+		messages.success(request,"Cash Back Deleted !")
+		return redirect('quality-control:investigation', investigation_id)
 
 class InternalReport(IsQualityControll,View):
 	def get(self,request,investigation_id):
@@ -1081,6 +1111,14 @@ class InternalReportEdit(IsQualityControll,View):
 				)
 		
 		messages.success(request,"Internal Report Updated !")
+		return redirect('quality-control:investigation', investigation_id)
+
+class InternalReportDelete(IsQualityControll,View):
+	def get(self,request,investigation_id):
+		Reporting.objects.filter(investigation__id=investigation_id).delete()
+		# ReportingMedia.objects.filter(reporting__investigation__id=investigation_id).delete()
+		Investigation.objects.filter(id=investigation_id).update(is_internalreporting_approved=False)
+		messages.success(request,"Internal Report Deleted !")
 		return redirect('quality-control:investigation', investigation_id)
 
 class BuyBackPromoCode(IsQualityControll,View):
@@ -1204,4 +1242,13 @@ class BuyBackPromoCodeEdit(IsQualityControll,View):
 		buybackpromocodegift.save()
 
 		messages.success(request,"Buy Back / Promo Code Updated !")
+		return redirect('quality-control:investigation', investigation_id)
+
+class BuyBackPromoCodeDelete(IsQualityControll,View):
+	def get(self,request,investigation_id):
+		BuybackPromocodeGift.objects.filter(investigation__id=investigation_id).delete()
+		# BuybackPromocodeGiftDetails.objects.filter(buybackpromocodegift__investigation__id=investigation_id).delete()
+		# BuybackPromocodeGiftDetailsMedia.objects.filter(buybackpromocodegift__investigation__id=investigation_id).delete()
+		Investigation.objects.filter(id=investigation_id).update(is_buybackgiftpromo_approved=False)
+		messages.success(request,"Cash Back Deleted !")
 		return redirect('quality-control:investigation', investigation_id)
