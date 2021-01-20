@@ -716,6 +716,7 @@ class Followup(IsQualityControll,View):
 				InvestigationMedia.objects.create(
 				        investigation_id=investigation_id,
 				        media=media,
+						taken_status = 'CUSTOMER_SEND'
 				        )
 
 		#to save sections
@@ -786,8 +787,8 @@ class FollowupEdit(IsQualityControll,View):
 		follow_up.save()
 		
 		followup_sections = FollowUpSection.objects.filter(follow_up__investigation__id=int(investigation_id),is_active=True).prefetch_related(Prefetch('keynotesectionsfollowup',queryset=FollowUpSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'))
-
-		return render(request,"qualitycontroll/ticket/follow-up-edit.html",{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_type':service_type,"followupscheduler":followupscheduler,"followupsections":followup_sections})
+		followup_medias = InvestigationMedia.objects.filter(investigation__id=investigation_id,is_active=True)
+		return render(request,"qualitycontroll/ticket/follow-up-edit.html",{"followupmedias":followup_medias,'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_type':service_type,"followupscheduler":followupscheduler,"followupsections":followup_sections})
 
 	def post(self,request,investigation_id):
 		investigation = Investigation.objects.get(is_active=True,id=int(investigation_id))
@@ -829,6 +830,7 @@ class FollowupEdit(IsQualityControll,View):
 				InvestigationMedia.objects.create(
 				        investigation_id=investigation_id,
 				        media=media,
+						taken_status = 'CUSTOMER_SEND'
 				        )
 
 		#to save sections
@@ -986,12 +988,22 @@ class CashbackEdit(IsQualityControll,View):
 		paybackdiscount_details = PaybackDiscountDetails.objects.filter(is_active=True,paybackdiscount=paybackdiscount)
 		payback_servicequality = paybackdiscount_details.filter(category='SERVICEQUALITY')
 		payback_damage = paybackdiscount_details.filter(category='DAMAGE')
-		return render(request,"qualitycontroll/ticket/cash-back-edit.html",{"paybackdiscount":paybackdiscount,"paybackdiscount_details":paybackdiscount_details,"payback_servicequality":payback_servicequality,"payback_damage":payback_damage})
+		paybackdiscountmedias = PaybackDiscountDetailsMedia.objects.filter(paybackdiscount=paybackdiscount,is_active=True)
+		return render(request,"qualitycontroll/ticket/cash-back-edit.html",{"paybackdiscountmedias":paybackdiscountmedias,"paybackdiscount":paybackdiscount,"paybackdiscount_details":paybackdiscount_details,"payback_servicequality":payback_servicequality,"payback_damage":payback_damage})
 
 	def post(self,request,investigation_id):
 
 		paybackdiscount = PaybackDiscount.objects.get(investigation_id=int(investigation_id),is_active=True)
 		
+		#To Save Media
+		medias = request.FILES.getlist('media')
+		if not medias==['']:
+			for media in medias:
+				PaybackDiscountDetailsMedia.objects.create(
+				        paybackdiscount=paybackdiscount,
+				        media=media,
+				        )
+
 		#to save sections
 		sections = request.POST.getlist('section')
 		total_cost = 0
@@ -1193,7 +1205,8 @@ class BuyBackPromoCodeEdit(IsQualityControll,View):
 		buybackpromogift_details = BuybackPromocodeGiftDetails.objects.filter(is_active=True,buybackpromocodegift=buybackpromogift)
 		buybackpromogift_servicequality = buybackpromogift_details.filter(category='SERVICEQUALITY')
 		buybackpromogift_damage = buybackpromogift_details.filter(category='DAMAGE')
-		return render(request,"qualitycontroll/ticket/promocode-edit.html",{"buybackpromogift":buybackpromogift,"buybackpromogift_details":buybackpromogift_details,"buybackpromogift_servicequality":buybackpromogift_servicequality,"buybackpromogift_damage":buybackpromogift_damage})
+		buybackpromocodemedias = BuybackPromocodeGiftDetailsMedia.objects.filter(is_active=True,buybackpromocodegift=buybackpromogift)
+		return render(request,"qualitycontroll/ticket/promocode-edit.html",{"buybackpromocodemedias":buybackpromocodemedias,"buybackpromogift":buybackpromogift,"buybackpromogift_details":buybackpromogift_details,"buybackpromogift_servicequality":buybackpromogift_servicequality,"buybackpromogift_damage":buybackpromogift_damage})
 
 	def post(self,request,investigation_id):
 

@@ -13,7 +13,6 @@ urlpatterns = [
 	url(r'^tickets/$',views.TicketDetails.as_view(),name='admin-tickets'),
 	url(r'^ticket/details/(?P<client_id>[-\w]+)/(?P<followup_id>[-\w]+)/$',views.TicketAdvanced.as_view(),name='admin-ticketadvanced'),
 	url(r'^ticket/approve/(?P<ticket_id>[-\w]+)$',views.TicketApprove.as_view(),name='admin-ticketapprove'),
-	# url(r'^ticket/buybackpromogift/approve/(?P<buybackpromogift_id>[-\w]+)$',views.BuybackPromocodeGiftApprove.as_view(),name='admin-buybackpromogift'),	
 
 	url(r'^clients/$',views.ClientDetails.as_view(),name='admin-clients'),
 	url(r'^client/orders/(?P<client_id>[-\w]+)$',views.ClientOrders.as_view(),name='admin-client-orders'),
