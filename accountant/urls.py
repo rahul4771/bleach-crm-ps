@@ -15,6 +15,8 @@ urlpatterns = [
 
 	url(r'^cash/collect/$',views.CashCollect.as_view(),name='accountant-cashcollect'),
 
+	url(r'^paybackdiscount/process/(?P<paybackdiscount_id>[-\w]+)$',views.PaybackDiscountProcessing.as_view(),name='accountant-paybackdiscountprocess'),
+
 	url(r'^export/xls/$', views.export_users_xls, name='export_payment_xls'),
 
 	url(r'^ajax/cashcollect/order/info/$',views.GetCashCollectOrderInfo,name='get-cashorderInfo'),
