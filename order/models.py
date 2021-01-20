@@ -257,7 +257,7 @@ class PaybackDiscount(models.Model):
 	approved_total_cost= models.FloatField(blank=True,null=True)
 	approved_option    = models.CharField(max_length=500,blank=True,null=True,choices=PAYBACKDISCOUNT_CHOICES)
 	accountant_notes   = models.CharField(max_length=5000,blank=True,null=True)
-	is_completed       = models.BooleanField(null=False,blank=True,default=True)
+	is_completed       = models.BooleanField(null=False,blank=True,default=False)
 
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
@@ -303,7 +303,7 @@ class BuybackPromocodeGift(models.Model):
 	total_cost      				= models.FloatField(blank=True,null=True)
 	approved_total_cost             = models.FloatField(blank=True,null=True)
 	approved_option                 = models.CharField(max_length=500,blank=True,null=True,choices=BUYBACKPROMOGIFT_CHOICES)
-	is_completed                    = models.BooleanField(null=False,blank=True,default=True)
+	is_completed                    = models.BooleanField(null=False,blank=True,default=False)
 
 	is_active          		        = models.BooleanField(null=False,blank=True,default=True)
 	created            		        = models.DateTimeField(auto_now_add=True)
