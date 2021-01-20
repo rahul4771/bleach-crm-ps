@@ -1029,26 +1029,26 @@ class PaymentDetails(IsAdmin,View):
 		return render(request,'admin/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,'no_of_entries':no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status})		
 
 
-class PaybackDiscountApprove(IsAdmin,View):
-	def get(self,request,paybackdiscount_id):
+class TicketApprove(IsAdmin,View):
+	def get(self,request,ticket_id):
 		
 		try:
-			paybackdiscount_details_data = PaybackDiscount.objects.select_related('investigation__order__evaluation__customer','investigation__order_schedule__customer_address','investigation__order_schedule__order_scheduler_book','investigation__order_schedule__evaluation_details__evaluator').prefetch_related(Prefetch('investigation__followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('investigation__order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=paybackdiscount_id)
+			investigation_details = Investigation.objects.select_related('order_schedule__customer_address__area','order_schedule__order_scheduler_book__service_type','order_schedule__evaluation_details__evaluator','investigator','order__evaluation__customer','order__evaluation__call_attender').prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'), Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscount'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift'),Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=ticket_id)
 		except:
-			paybackdiscount_details_data = None
+			investigation_details = None
 
-		ticket_types = paybackdiscount_details_data.investigation.ticket_types.split(",")
+		ticket_types = investigation_details.ticket_types.split(",")
 		ticket_types_list = []
 		for type in ticket_types:
 			ticket_types_list.append(type)
 		print(ticket_types_list,"typo")
 		
-		paybackdiscount = PaybackDiscount.objects.get(is_active=True,id=paybackdiscount_id)
-		paybackdiscount_details = PaybackDiscountDetails.objects.filter(is_active=True,paybackdiscount=paybackdiscount)
-		payback_servicequality = paybackdiscount_details.filter(category='SERVICEQUALITY')
-		payback_damage = paybackdiscount_details.filter(category='DAMAGE')
+		# paybackdiscount = PaybackDiscount.objects.get(is_active=True,investigation__id=ticket_id)
+		# paybackdiscount_details = PaybackDiscountDetails.objects.filter(is_active=True,paybackdiscount=paybackdiscount)
+		# payback_servicequality = paybackdiscount_details.filter(category='SERVICEQUALITY')
+		# payback_damage = paybackdiscount_details.filter(category='DAMAGE')
 
-		return render(request,'admin/ticket/paybackdiscountapprove.html',{"ticket_types":ticket_types,"paybackdiscount":paybackdiscount,"paybackdiscount_details_data":paybackdiscount_details_data,"payback_servicequality":payback_servicequality,"payback_damage":payback_damage})
+		return render(request,'admin/ticket/paybackdiscountapprove.html',{"ticket_types":ticket_types,"investigation_details":investigation_details})
 
 	def post(self,request,paybackdiscount_id):
 
