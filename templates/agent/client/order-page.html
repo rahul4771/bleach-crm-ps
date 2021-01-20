@@ -1199,23 +1199,42 @@
         {% endfor %}
         </div><!--right-bgwrapper--> 
 
-        <!-- RE-ORDER -->
+        <!-- raise ticket -->
         {% if order.order_status == 'ORDER_CLOSED' %}
             <br>
             <div class="order-card-column whitebg green-border clickable-cursor duplicate_order" data-id="{{order.evaluation.id}}"><!--order-card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static "/files/images/card-reorder-icon.png" %}"></div>
+                <div class="column-left"><img src="{% static "/files/images/card-ticket-icon.png" %}"></div>
                 <div class="column-right"><!--column-right-->
                 <!-- <h1>Click To View</h1> -->
-                <h2 class="green-text"><label>Re-Order<span>
+                <h2 class="green-text"><label>Raise ticket<span>
                     <!-- <i class="fa fa-repeat" aria-hidden="true"></i> -->
                 </span></label></h2>
-                <p><label>Click to Re-Order <span></span></label></p>
+                <p><label>Click to raise ticket <span></span></label></p>
                 </div><!--column-right-->
                 </div><!--card-innerwrapper-->
             </div><!--order-card-column-->
         {% endif %}
+        <!-- raise ticket -->
+
         <!-- RE-ORDER -->
+        {% if order.order_status == 'ORDER_CLOSED' %}
+            <br>
+            <div class="order-card-column whitebg blue-border clickable-cursor duplicate_order" data-id="{{order.evaluation.id}}"><!--order-card-column-->
+                    <div class="card-innerwrapper"><!--card-innerwrapper-->
+                    <div class="column-left"><img src="{% static "/files/images/card-reorder-icon.png" %}"></div>
+                    <div class="column-right"><!--column-right-->
+                    <!-- <h1>Click To View</h1> -->
+                    <h2 class="blue-text"><label>Re-Order<span>
+                        <!-- <i class="fa fa-repeat" aria-hidden="true"></i> -->
+                    </span></label></h2>
+                    <p><label>Click to Re-Order <span></span></label></p>
+                    </div><!--column-right-->
+                    </div><!--card-innerwrapper-->
+                </div><!--order-card-column-->
+            {% endif %}
+            <!-- RE-ORDER -->
+
     </div><!--order-details-right-fixed-->
 </div><!--order-details-wrapper-->    
 </div><!--order-top-wrapper-->            
