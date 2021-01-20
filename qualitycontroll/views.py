@@ -1189,53 +1189,56 @@ class BuyBackPromoCode(IsQualityControll,View):
 
 class BuyBackPromoCodeEdit(IsQualityControll,View):
 	def get(self,request,investigation_id):
-		return render(request,"qualitycontroll/ticket/promocode-edit.html")
+		buybackpromogift = BuybackPromocodeGift.objects.get(is_active=True,investigation__id=investigation_id)
+		buybackpromogift_details = BuybackPromocodeGiftDetails.objects.filter(is_active=True,buybackpromocodegift=buybackpromogift)
+		buybackpromogift_servicequality = buybackpromogift_details.filter(category='SERVICEQUALITY')
+		buybackpromogift_damage = buybackpromogift_details.filter(category='DAMAGE')
+		return render(request,"qualitycontroll/ticket/promocode-edit.html",{"buybackpromogift":buybackpromogift,"buybackpromogift_details":buybackpromogift_details,"buybackpromogift_servicequality":buybackpromogift_servicequality,"buybackpromogift_damage":buybackpromogift_damage})
 
 	def post(self,request,investigation_id):
 
-		buybackpromocodegift = BuybackPromocodeGift.objects.create(investigation=Investigation.objects.get(is_active=True,id=int(investigation_id)),
+		buybackpromocodegift = BuybackPromocodeGift.objects.get(investigation=Investigation.objects.get(is_active=True,id=int(investigation_id)),
 		is_active=True
 		)
 
 		#to save sections
-		no_of_sections         = int(request.POST.get('section_counter'))
-		
-		section_array          = []
-
+		sections = request.POST.getlist('section')
 		total_cost = 0
 		section_items_total_cost = 0
-		for i in range(no_of_sections):
-			section_name  = request.POST.get('section'+str(i))
-
+		for section in sections:
+			if section == 'SERVICEQUALITY':
+				section_no = 1
+			else:
+				section_no = 2
+			print(section_no,"sectionno")
 			#to save keynotes
 			try:
-				no_of_keynotes = int(request.POST.get('section'+str(i)+'-keynote_counter'))
+				no_of_keynotes = int(request.POST.get('section'+str(section_no)+'-keynote_counter'))
 			except:
 				no_of_keynotes = None
-
+			print(no_of_keynotes,"keyss")
 			items_total_cost = 0
 			keynote_array = []
 			if no_of_keynotes:
 				for j in range(no_of_keynotes):
-					keynote = request.POST.get('section'+str(i)+'_keynote'+str(j))
-					quantity= request.POST.get('section'+str(i)+'_quantity'+str(j))
-					if keynote and quantity:
-						keynote_array.append(BuybackPromocodeGiftDetails(buybackpromocodegift=buybackpromocodegift,category=section_name,name=keynote,cost=quantity,is_active=True))
+					old_keynote_id=request.POST.get('editform_section'+str(section_no)+'_keynote'+str(j))
+					print(old_keynote_id,str(section_no),str(j),"lop")
+					keynote = request.POST.get('section'+str(section_no)+'_keynote'+str(j))
+					quantity= request.POST.get('section'+str(section_no)+'_quantity'+str(j))
+
+					print(old_keynote_id,keynote,quantity,"datt")
+
+					if old_keynote_id:
+						if keynote and quantity:
+							BuybackPromocodeGiftDetails.objects.filter(is_active=True,id=int(old_keynote_id)).update(id=int(old_keynote_id),name=keynote,cost=quantity)
+					else:
+						if keynote and quantity:
+							keynote_array.append(BuybackPromocodeGiftDetails(buybackpromocodegift=buybackpromocodegift,category=section,name=keynote,cost=quantity,is_active=True))
 					
-					items_total_cost += float(quantity)
+					items_total_cost += float(quantity)				
+
 				#bulk_create keynote
 				BuybackPromocodeGiftDetails.objects.bulk_create(keynote_array)
-
-			# medias = request.FILES.getlist('media'+str(i))
-
-			# print('media'+str(i),medias,"medis")
-			# if not medias==['']:
-			# 	for img in medias:
-			# 		BuybackPromocodeGiftDetailsMedia.objects.create(
-			# 			buybackpromocodegift_details = buybackpromocodegift,
-			# 			media = img,
-			# 			is_active = True
-			# 		)
 
 			section_items_total_cost += float(items_total_cost)
 
@@ -1244,7 +1247,7 @@ class BuyBackPromoCodeEdit(IsQualityControll,View):
 		buybackpromocodegift.total_cost = total_cost
 		buybackpromocodegift.save()
 
-		messages.success(request,"Buy Back / Promo Code Updated !")
+		messages.success(request,"Cash Back Updated !")
 		return redirect('quality-control:investigation', investigation_id)
 
 class BuyBackPromoCodeDelete(IsQualityControll,View):

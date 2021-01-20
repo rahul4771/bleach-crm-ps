@@ -1037,12 +1037,18 @@ class PaybackDiscountApprove(IsAdmin,View):
 		except:
 			paybackdiscount_details_data = None
 
+		ticket_types = paybackdiscount_details_data.investigation.ticket_types.split(",")
+		ticket_types_list = []
+		for type in ticket_types:
+			ticket_types_list.append(type)
+		print(ticket_types_list,"typo")
+		
 		paybackdiscount = PaybackDiscount.objects.get(is_active=True,id=paybackdiscount_id)
 		paybackdiscount_details = PaybackDiscountDetails.objects.filter(is_active=True,paybackdiscount=paybackdiscount)
 		payback_servicequality = paybackdiscount_details.filter(category='SERVICEQUALITY')
 		payback_damage = paybackdiscount_details.filter(category='DAMAGE')
 
-		return render(request,'admin/ticket/paybackdiscountapprove.html',{"paybackdiscount":paybackdiscount,"paybackdiscount_details_data":paybackdiscount_details_data,"payback_servicequality":payback_servicequality,"payback_damage":payback_damage})
+		return render(request,'admin/ticket/paybackdiscountapprove.html',{"ticket_types":ticket_types,"paybackdiscount":paybackdiscount,"paybackdiscount_details_data":paybackdiscount_details_data,"payback_servicequality":payback_servicequality,"payback_damage":payback_damage})
 
 	def post(self,request,paybackdiscount_id):
 
@@ -1107,12 +1113,18 @@ class BuybackPromocodeGiftApprove(IsAdmin,View):
 		except:
 			buybackpromogift_details_data = None
 
+		ticket_types = buybackpromogift_details_data.investigation.ticket_types.split(",")
+		ticket_types_list = []
+		for type in ticket_types:
+			ticket_types_list.append(type)
+		print(ticket_types_list,"typo")
+		
 		buybackpromogift = BuybackPromocodeGift.objects.get(is_active=True,id=buybackpromogift_id)
 		buybackpromogift_details = BuybackPromocodeGiftDetails.objects.filter(is_active=True,buybackpromocodegift=buybackpromogift)
 		buybackpromogift_servicequality = buybackpromogift_details.filter(category='SERVICEQUALITY')
 		buybackpromogift_damage = buybackpromogift_details.filter(category='DAMAGE')
 
-		return render(request,'admin/ticket/buybackpromogiftapprove.html',{'buybackpromogift_details':buybackpromogift_details_data,"buybackpromogift":buybackpromogift,"buybackpromogift_servicequality":buybackpromogift_servicequality,"buybackpromogift_damage":buybackpromogift_damage})
+		return render(request,'admin/ticket/buybackpromogiftapprove.html',{"ticket_types":ticket_types,'buybackpromogift_details':buybackpromogift_details_data,"buybackpromogift":buybackpromogift,"buybackpromogift_servicequality":buybackpromogift_servicequality,"buybackpromogift_damage":buybackpromogift_damage})
 
 	def post(self,request,buybackpromogift_id):
 

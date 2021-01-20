@@ -180,7 +180,7 @@
 
     <td>
     {% if investigation_details.is_buybackgiftpromo_approved == False %}
-    {% comment %} <a href="{% url 'quality-control:internal-report-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a> {% endcomment %}
+    <a href="{% url 'quality-control:buy-back-promo-code-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
     <a href="{% url 'quality-control:buy-back-promo-code-delete' investigation_details.id %}"><input type="button" class="checkonButton" value="Delete" /></a>
     {% endif %}
     </td>
