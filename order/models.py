@@ -78,6 +78,16 @@ PROMOCODE_TYPE_CHOICES =(
 	('PERCENTAGE','PERCENTAGE'),
 	('AMOUNT','AMOUNT'),
 	)
+
+BUYBACKPROMOGIFT_CHOICES =(
+	('BUYBACK','BUYBACK'),
+	('PROMOCODE','PROMOCODE'),
+	('GIFT','GIFT')
+	)
+PAYBACKDISCOUNT_CHOICES =(
+	('PAYBACK','PAYBACK'),
+	('DISCOUNT','DISCOUNT')
+	)
 #Store the Order Details.DownPayment,Subscription and Direct Cleaning Comes Under a Single Order
 
 class Order(models.Model):
@@ -242,9 +252,13 @@ class ReportingMedia(models.Model):
 
 
 class PaybackDiscount(models.Model):
-	investigation   = models.ForeignKey('Investigation',blank=False,null=False,related_name='paybackdiscount_investigation')
-	total_cost      = models.FloatField(blank=True,null=True)
-	
+	investigation      = models.ForeignKey('Investigation',blank=False,null=False,related_name='paybackdiscount_investigation')
+	total_cost         = models.FloatField(blank=True,null=True)
+	approved_total_cost= models.FloatField(blank=True,null=True)
+	approved_option    = models.CharField(max_length=500,blank=True,null=True,choices=PAYBACKDISCOUNT_CHOICES)
+	accountant_notes   = models.CharField(max_length=5000,blank=True,null=True)
+	is_completed       = models.BooleanField(null=False,blank=True,default=True)
+
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
@@ -287,7 +301,10 @@ class PaybackDiscountDetailsMedia(models.Model):
 class BuybackPromocodeGift(models.Model):
 	investigation   				= models.ForeignKey('Investigation',blank=False,null=False,related_name='buybackpromocodegift_investigation')
 	total_cost      				= models.FloatField(blank=True,null=True)
-	
+	approved_total_cost             = models.FloatField(blank=True,null=True)
+	approved_option                 = models.CharField(max_length=500,blank=True,null=True,choices=BUYBACKPROMOGIFT_CHOICES)
+	is_completed                    = models.BooleanField(null=False,blank=True,default=True)
+
 	is_active          		        = models.BooleanField(null=False,blank=True,default=True)
 	created            		        = models.DateTimeField(auto_now_add=True)
 	updated           		        = models.DateTimeField(auto_now=True)

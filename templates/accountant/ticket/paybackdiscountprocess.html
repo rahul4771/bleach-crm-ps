@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "accountant/common/header.html" %}    
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+        <h1 class="dashboard-head">Payback,Discount Add Form</h1>
+        <p>Bleach CRM-PS Version 0.1 (Beta) developed and owned by Bleach-Kw</p>   
+            </div><!--welcome-wrapper-->
+       
+           
+<div class="main-content-holder"><!--main-content-holder-->            
+       
+<div class="white-wrapper"><!--white-wrapper-->
+<div class="center-formDiv"><!--center-formDiv-->
+
+             <div class="common-sub-head align-left">Details</div> 
+             
+                  <div class="cleaning-column-wrapper ltyellow-border"><!--cleaning-column-wrapper-->
+                    <div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
+                    <div class="blc-number-big">
+                    {% for followup in paybackdiscount_details_data.investigation.followup %}
+                    TKT{{followup.ticket_no}}
+                    {% endfor %}
+                    </div>
+                    <div class="mobile-number">
+                    {{paybackdiscount_details_data.investigation.order.evaluation.evaluation_id}}
+                    </div>
+                    <div class="customer-name"><i class="fa blue-text fa-user-circle-o" aria-hidden="true"></i> {{paybackdiscount_details_data.investigation.order.evaluation.customer.name}}</div>
+                    <div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;  {{paybackdiscount_details_data.investigation.order.evaluation.customer.mobile_number}}</div>
+                    <div class="email"><i class="fa orange-text fa-lg fa-envelope-o" aria-hidden="true"></i> &nbsp;  {{paybackdiscount_details_data.investigation.order.evaluation.customer.email}}</div>
+                    <br>
+                    {% for tickettype in ticket_types %}
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> &nbsp;  {{tickettype}}</div>
+                    {% endfor %}
+                    <br>
+                    {% for cleaning_team in paybackdiscount_details_data.investigation.order_schedule.cleaning_teams %}
+                    <div class="tl blue-text">Team Leader&nbsp;:{{cleaning_team.team_leader.name}}</div>
+                    <br>
+                    <div class="cleaner blue-text" >Cleaners&nbsp;:<br>{% for member in cleaning_team.cleaning_team_members %}{% if member.member != cleaning_team.team_leader %}<i class="fa fa-user" aria-hidden="true"></i> <span class="gray-text"> {{member.member.name}} </span>{% endif %}<br>{% endfor %}</div>
+                    {% endfor %}
+
+                    {% if paybackdiscount_details_data.investigation.notes %}
+                    <br>
+                    <div class="email">Agent Notes :{{paybackdiscount_details_data.investigation.notes}}</div>
+                    {% endif %}
+                </div><!--cleaning-column-widget cleaning-column-widget-column1-->
+                
+                <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
+                    <div class="common-gray-text align-left">
+                      <i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i>
+                      <b>
+                      {{paybackdiscount_details_data.investigation.order_schedule.start_at}}</b>
+                    </div>
+                    <br>
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i><b>{{paybackdiscount_details_data.investigation.order_schedule.customer_address.apartment}}</b>: {% if paybackdiscount_details_data.investigation.order_schedule.customer_address.floor %}{{paybackdiscount_details_data.investigation.order_schedule.customer_address.floor}}, {% else %}{% endif %} {{paybackdiscount_details_data.investigation.order_schedule.customer_address.building}}, {{paybackdiscount_details_data.investigation.order_schedule.customer_address.block}}, {{paybackdiscount_details_data.investigation.order_schedule.customer_address.street}}, {% if paybackdiscount_details_data.investigation.order_schedule.customer_address.avenue %}{{paybackdiscount_details_data.investigation.order_schedule.customer_address.avenue}}, {% else %}{% endif %} {{paybackdiscount_details_data.investigation.order_schedule.customer_address.area.name}}, {{paybackdiscount_details_data.investigation.order_schedule.customer_address.governorate.name}} </div>
+                    <br>
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i>{{paybackdiscount_details_data.investigation.order_schedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
+                    <br>
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-credit-card orange-text" aria-hidden="true"></i> {{paybackdiscount_details_data.investigation.order_schedule.order_scheduler_book.total_cost|floatformat:3}} KD</div>
+                    {% if order_schedule.evaluation_details.evaluator %}
+                    <div class="profile-pic-line"><img class="agent_image" src="{{paybackdiscount_details_data.investigation.order_schedule.evaluation_details.evaluator.profile_image.url}}" title="{{paybackdiscount_details_data.investigation.order_schedule.evaluation_details.evaluator.name}}"></div>
+                    {% else %}
+                    <div class="profile-pic-line"><img class="agent_image" src="{{paybackdiscount_details_data.investigation.order.evaluation.call_attender.profile_image.url}}" title="{{paybackdiscount_details_data.investigation.order.evaluation.call_attender.name}}"></div>
+                    {% endif %}
+                </div><!--cleaning-column-widget cleaning-column-widget-column2-->
+            </div><!--cleaning-column-wrapper-->
+      </div><!--center-formDiv-->
+    </div><!--white-wrapper-->
+
+<div class="white-wrapper"><!--white-wrapper-->
+<div class="center-formDiv"><!--center-formDiv-->
+<div class="common-sub-head align-left">Add Payback/Discount</div>
+<br> 
+<form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+                <div class=" bold-text common-label required-field"> <label>Refund Amount</label></div>
+                <input name="approved_total_cost" type="text" class="textBox OnlyText readonly" placeholder=" " required value="{{paybackdiscount_details_data.approved_total_cost|floatformat:'3'}}">
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+      <div class=" bold-text common-label required-field"> <label>Payback/Discount</label></div>
+                <label for="favcity">
+                <select name="approved_option" required>
+                <option value="PAYBACK">Payback</option>
+                <option value="DISCOUNT">Discount</option>
+                </select>
+                </label>
+  </div><!--ticket-form-right-->
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+  <hr class="hr-dashedpad">
+  <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  <div class=" bold-text common-label"> <label>Notes</label></div>
+  <textarea name="accountant_notes" class="textBox" placeholder="Recommended to add any notes if necessary"  ></textarea>
+  </div>
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<br>
+<div align="left"><input class="cancel-Button clickable-row" name="back" type="button" value="Back" data-href="{% url 'accountant:accountantdash-board' %}"></div>
+<div align="right"><input class="assignButton" name="paybackdiscount" type="submit" value="Submit"></div>
+</form>
+</div>
+</div>            
+
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+{% include 'admin/common/footer.html' %} 
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %} 
+<script>
+</script>
+{% endblock %}
