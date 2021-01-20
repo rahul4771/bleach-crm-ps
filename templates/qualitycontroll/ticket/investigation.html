@@ -132,13 +132,13 @@
     </td>
     <td>
     {% for followup in investigation_details.followup %}
-    <span >{{followup.total_cost|floatformat:3}} KD</span>
+    <span class="lg-text red-text">{{followup.total_cost|floatformat:3}} KD</span>
     {% endfor %}
     </td>
 
     <td>
     <a href="{% url 'quality-control:follow-up-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
-    <a href="{% url 'quality-control:follow-up-delete' investigation_details.id %}"><input type="button" class="checkonButton" value="Delete" /></a>
+    <a href="{% url 'quality-control:follow-up-delete' investigation_details.id %}"><input type="button" class="checkonDeleteButton" value="Delete" /></a>
     </td>
 </tr>
 {% endif %}
@@ -150,14 +150,14 @@
     </td>
     <td>
     {% for payback in investigation_details.paybackdiscount|slice:":1" %}
-    <span>{{payback.total_cost|floatformat:3}} KD</span>
+    <span class="lg-text red-text">{{payback.total_cost|floatformat:3}} KD</span>
     {% endfor %}
     </td>
 
     <td>
     {% if investigation_details.is_paybackdiscount_approved == False %}
     <a href="{% url 'quality-control:cash-back-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
-    <a href="{% url 'quality-control:cash-back-delete' investigation_details.id %}"><input type="button" class="checkonButton" value="Delete" /></a>
+    <a href="{% url 'quality-control:cash-back-delete' investigation_details.id %}"><input type="button" class="checkonDeleteButton" value="Delete" /></a>
     {% endif %}
     </td>
 </tr>
@@ -172,7 +172,7 @@
     
     <span>
     {% for gift in investigation_details.buybackpromocodegift|slice:":1" %}
-    <span>{{gift.total_cost|floatformat:3}} KD</span>
+    <span class="lg-text red-text">{{gift.total_cost|floatformat:3}} KD</span>
     {% endfor %}
     </span>
 
@@ -198,7 +198,7 @@
 
     <td>
     <a href="{% url 'quality-control:internal-report-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
-    <a href="{% url 'quality-control:internal-report-delete' investigation_details.id %}"><input type="button" class="checkonButton" value="Delete" /></a>
+    <a href="{% url 'quality-control:internal-report-delete' investigation_details.id %}"><input type="button" class="checkonDeleteButton" value="Delete" /></a>
     </td>
 </tr>
 {% endif %}

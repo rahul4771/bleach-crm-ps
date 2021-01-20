@@ -788,12 +788,9 @@
             {% if order.payment_completed_date %}
             <div class="payment-text"><div>Closed Date</div> : {{order.payment_completed_date|default_if_none:''}}</div>
             {% endif %}
-            <hr class="bar"> 
-            <div class="payment-text" ><div>Follow Up Total</div> : <span id="followup_total">0.000</span> KD</div>
-            <br>
-            <div class="payment-text" ><div>Cash Back Total</div> : <span id="cashback_total">0.000</span> KD</div>
-            <br>
-            <div class="payment-text" ><div>Buy Back/Promo Code/Gift Total</div> : <span id="buybackpromocode_total">0.000</span> KD</div>
+            <div class="ticketcash">
+                <hr class="bar">
+            </div>
         
         </div><!--order-payment-widget order-payment-widget-column-->
 
@@ -843,23 +840,42 @@
         {% endfor %}
         </div><!--right-bgwrapper--> 
 
-        <!-- RE-ORDER -->
+        <!-- raise ticket -->
         {% if order.order_status == 'ORDER_CLOSED' %}
             <br>
             <div class="order-card-column whitebg green-border clickable-cursor duplicate_order" data-id="{{order.evaluation.id}}"><!--order-card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static "/files/images/card-reorder-icon.png" %}"></div>
+                <div class="column-left"><img src="{% static "/files/images/card-ticket-icon.png" %}"></div>
                 <div class="column-right"><!--column-right-->
                 <!-- <h1>Click To View</h1> -->
-                <h2 class="green-text"><label>Re-Order<span>
+                <h2 class="green-text"><label>Raise ticket<span>
                     <!-- <i class="fa fa-repeat" aria-hidden="true"></i> -->
                 </span></label></h2>
-                <p><label>Click to Re-Order <span></span></label></p>
+                <p><label>Click to raise ticket <span></span></label></p>
                 </div><!--column-right-->
                 </div><!--card-innerwrapper-->
             </div><!--order-card-column-->
         {% endif %}
+        <!-- raise ticket -->
+
         <!-- RE-ORDER -->
+        {% if order.order_status == 'ORDER_CLOSED' %}
+            <br>
+            <div class="order-card-column whitebg blue-border clickable-cursor duplicate_order" data-id="{{order.evaluation.id}}"><!--order-card-column-->
+                    <div class="card-innerwrapper"><!--card-innerwrapper-->
+                    <div class="column-left"><img src="{% static "/files/images/card-reorder-icon.png" %}"></div>
+                    <div class="column-right"><!--column-right-->
+                    <!-- <h1>Click To View</h1> -->
+                    <h2 class="blue-text"><label>Re-Order<span>
+                        <!-- <i class="fa fa-repeat" aria-hidden="true"></i> -->
+                    </span></label></h2>
+                    <p><label>Click to Re-Order <span></span></label></p>
+                    </div><!--column-right-->
+                    </div><!--card-innerwrapper-->
+                </div><!--order-card-column-->
+            {% endif %}
+            <!-- RE-ORDER -->
+
     </div><!--order-details-right-fixed-->
 </div><!--order-details-wrapper-->    
 </div><!--order-top-wrapper-->            
@@ -1232,23 +1248,33 @@ followup_total += parseFloat("{{followup.total_cost}}") ;
 {% endfor %}
 
 {% for paybackdiscount in investigation.paybackdiscounts %}
-{% if paybackdiscount.total_cost != None %}
+{% if paybackdiscount.total_cost != None and investigation.is_paybackdiscount_approved %}
 cashback_total += parseFloat("{{paybackdiscount.total_cost}}") ;
 {% endif %}
 {% endfor %}
 
 {% for buybackpromocodegift in investigation.buybackpromocodegift %}
-{% if buybackpromocodegift.total_cost != None %}
+{% if buybackpromocodegift.total_cost != None and investigation.is_buybackgiftpromo_approved %}
 buybackpromocode_total += parseFloat("{{buybackpromocodegift.total_cost}}") ;
 {% endif %}
 {% endfor %}
 
 {% endfor %}
 {% endfor %}
-console.log(cashback_total,"cashb")
-$('#followup_total').text(parseFloat(followup_total).toFixed(3));
-$('#cashback_total').text(parseFloat(cashback_total).toFixed(3));
-$('#buybackpromocode_total').text(parseFloat(buybackpromocode_total).toFixed(3));
+ 
+if(parseInt(followup_total) != 0)
+{
+$('.ticketcash').append('<div class="payment-text" ><div>Follow Up Total</div> : <span id="followup_total">'+parseFloat(followup_total).toFixed(3)+'</span> KD</div><br>');
+}
+if(parseInt(cashback_total) != 0)
+{
+$('.ticketcash').append('<div class="payment-text" ><div>Cash Back Total</div> : <span id="cashback_total">'+parseFloat(cashback_total).toFixed(3)+'</span> KD</div><br>')
+}
+if(parseInt(buybackpromocode_total) != 0)
+{
+$('.ticketcash').append('<div class="payment-text" ><div>Buy Back/Promo Code/Gift Total</div> : <span id="buybackpromocode_total">'+parseFloat(buybackpromocode_total).toFixed(3)+'</span> KD</div>');
+}
+
 
  </script>
 {% endblock %}
