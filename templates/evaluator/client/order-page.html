@@ -1076,6 +1076,9 @@
             {% if order.payment_completed_date %}
             <div class="payment-text"><div>Closed Date</div> : {{order.payment_completed_date|default_if_none:''}}</div>
             {% endif %}
+
+            <hr class="bar"> 
+            <div class="payment-text" id="followup_amount"><div>Follow Up Total</div> : <span id="followup_total">0.000</span> KD</div>
         </div><!--order-payment-widget order-payment-widget-column-->
         <div class="order-payment-widget order-payment-widget-column"><!--order-payment-widget order-payment-widget-column-->
         {% if order.evaluation.quatation_status == 'APPROVED' %}
@@ -1461,6 +1464,35 @@ append_html = '{% if  orderschedule.cleaning_team %}{% for cleaning_team in orde
 {% endfor %}
 
     }
+
+//followup total amount calculation
+var followup_total = 0;
+
+{% for orderschedule in order.orderschedules%}
+{% for investigation in orderschedule.investigations %} 
+
+{% for followup in investigation.followups %}
+{% if followup.total_cost != None %}
+followup_total += parseFloat("{{followup.total_cost}}") ;
+{% endif %}
+{% endfor %}
+
+{% for paybackdiscount in investigation.paybackdiscounts %}
+{% if paybackdiscount.total_cost != None %}
+followup_total += parseFloat("{{paybackdiscount.total_cost}}") ;
+{% endif %}
+{% endfor %}
+
+{% for buybackpromocodegift in investigation.buybackpromocodegift %}
+{% if buybackpromocodegift.total_cost != None %}
+followup_total += parseFloat("{{buybackpromocodegift.total_cost}}") ;
+{% endif %}
+{% endfor %}
+
+{% endfor %}
+{% endfor %}
+
+$('#followup_total').text(parseFloat(followup_total).toFixed(3));
 
  </script>
 {% endblock %}

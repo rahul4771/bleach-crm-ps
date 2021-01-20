@@ -14,12 +14,13 @@ from datetime import timedelta,date,datetime
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField
 from django.db.models.functions import Cast 
 from django.db.models import Prefetch
+from bleach_crm_ps.utils import get_error
 
 from django.contrib import messages
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod,ServiceType,EvaluationBookSection,EvaluationSectionKeynote,LocationType,CleaningType,AreaType
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,PaybackDiscount,BuybackPromocodeGift,Promocode
-from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,Promocode
+from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from order.forms import PromocodeForm
 
@@ -133,7 +134,7 @@ class AdminHome(IsAdmin,View):
 			spp_calendar_followup_schedules = None
 
 		#ticket approval task		
-		approve_tickets = Investigation.objects.filter(Q(Q(is_paybackdiscount_approved=False)|Q(is_giftpromo_approved=False))).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=False),to_attr='paybackdiscounts'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.select_related('investigation').filter(investigation__is_giftpromo_approved=False,is_active=True),to_attr='buybackpromocodegifts'))
+		approve_tickets = Investigation.objects.filter(Q(Q(is_paybackdiscount_approved=False)|Q(is_buybackgiftpromo_approved=False))).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=False),to_attr='paybackdiscounts'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.select_related('investigation').filter(investigation__is_buybackgiftpromo_approved=False,is_active=True),to_attr='buybackpromocodegifts'))
 		#add days left
 		for ticket in approve_tickets:
 			ticket.days_left = (timezone.now()-ticket.scheduled_at).days
@@ -279,7 +280,7 @@ class ClientOrders(IsAdmin,View):
 class ClientOrderDetails(IsAdmin,View):
 	def get(self,request,order_id):
 
-		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationmedia'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection'),Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_team_members')),to_attr='cleaning_team'),Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('followup_investigation',queryset = FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules')),to_attr='followups')),to_attr='investigations')),to_attr='orderschedules'),Prefetch('feed_backs_order',FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks')).get(is_active=True,id=order_id)
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationmedia'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection'),Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_team_members')),to_attr='cleaning_team'),Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscounts'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift'),Prefetch('followup_investigation',queryset = FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules')),to_attr='followups')),to_attr='investigations')),to_attr='orderschedules'),Prefetch('feed_backs_order',FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks')).get(is_active=True,id=order_id)
 			
 
 		try:
@@ -315,7 +316,13 @@ class TicketDetails(IsAdmin,View):
 		
 		#Followup details
 		if search:
-			tickets 	             = FollowUp.objects.select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').filter(is_active=True).filter(Q(Q(investigation__order_schedule__order__evaluation__customer__name__icontains=search)|Q(investigation__order_schedule__order__evaluation__evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))				
+			if search.startswith('TKT'):
+				search = search[len('TKT'):]
+			
+			tickets 	             = FollowUp.objects.select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').filter(is_active=True).filter(Q(Q(investigation__order_schedule__order__evaluation__customer__name__icontains=search)|Q(ticket_no__icontains=search))).order_by('-id').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))				
+			
+			if not search.startswith('TKT'):
+				search = 'TKT'+search				
 		else:
 			tickets 	             = FollowUp.objects.filter(is_active=True).select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').order_by('-id').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))		
 
@@ -412,7 +419,7 @@ class TicketAdvanced(IsAdmin,View):
 
 		#followup info
 		
-		followup_details = FollowUp.objects.select_related('investigation__investigator','investigation__order','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate','investigation__order_schedule__order_scheduler_book').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules'),Prefetch('investigation__investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),).get(is_active=True,id=followup_id)
+		followup_details = FollowUp.objects.select_related('investigation__investigator','investigation__order','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate','investigation__order_schedule__order_scheduler_book').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_media',queryset=FollowUpTeamMedia.objects.filter(is_active=True),to_attr='followupmedias'),Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules'),Prefetch('investigation__investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('follow_up_of_section',queryset=FollowUpSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesectionsfollowup',queryset=FollowUpSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='followupsections'),Prefetch('investigation__buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True).prefetch_related(Prefetch('buybackpromocodegiftdetails',queryset=BuybackPromocodeGiftDetails.objects.filter(is_active=True),to_attr='buybackpromogiftdetails'),Prefetch('buybackpromocodegift_media',queryset=BuybackPromocodeGiftDetailsMedia.objects.filter(is_active=True),to_attr='buybackpromogiftmedias')),to_attr='buybackpromogifts'),Prefetch('investigation__paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True).prefetch_related(Prefetch('paybackdiscount_details',queryset=PaybackDiscountDetails.objects.filter(is_active=True),to_attr='paybackdiscountdetails'),Prefetch('paybackdiscount_media',queryset=PaybackDiscountDetailsMedia.objects.filter(is_active=True),to_attr='paybackdiscountmedias')),to_attr='paybackdiscounts'),Prefetch('investigation__reporting_investigation',queryset=Reporting.objects.filter(is_active=True).prefetch_related(Prefetch('reporting_media',queryset=ReportingMedia.objects.filter(is_active=True),to_attr='reporting_medias')),to_attr='reports')).get(is_active=True,id=followup_id)
 			
 			
 
@@ -1026,27 +1033,186 @@ class PaybackDiscountApprove(IsAdmin,View):
 	def get(self,request,paybackdiscount_id):
 		
 		try:
-			paybackdiscount_details = PaybackDiscount.objects.select_related('investigation__order__evaluation__customer','investigation__order_schedule__customer_address','investigation__order_schedule__order_scheduler_book','investigation__order_schedule__evaluation_details__evaluator').prefetch_related(Prefetch('investigation__followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('investigation__order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=paybackdiscount_id)
+			paybackdiscount_details_data = PaybackDiscount.objects.select_related('investigation__order__evaluation__customer','investigation__order_schedule__customer_address','investigation__order_schedule__order_scheduler_book','investigation__order_schedule__evaluation_details__evaluator').prefetch_related(Prefetch('investigation__followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('investigation__order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=paybackdiscount_id)
 		except:
-			paybackdiscount_details = None
+			paybackdiscount_details_data = None
 
-		return render(request,'admin/ticket/paybackdiscountapprove.html',{'paybackdiscount_details':paybackdiscount_details,})
+		paybackdiscount = PaybackDiscount.objects.get(is_active=True,id=paybackdiscount_id)
+		paybackdiscount_details = PaybackDiscountDetails.objects.filter(is_active=True,paybackdiscount=paybackdiscount)
+		payback_servicequality = paybackdiscount_details.filter(category='SERVICEQUALITY')
+		payback_damage = paybackdiscount_details.filter(category='DAMAGE')
 
+		return render(request,'admin/ticket/paybackdiscountapprove.html',{"paybackdiscount":paybackdiscount,"paybackdiscount_details_data":paybackdiscount_details_data,"payback_servicequality":payback_servicequality,"payback_damage":payback_damage})
+
+	def post(self,request,paybackdiscount_id):
+
+		paybackdiscount = PaybackDiscount.objects.get(id=int(paybackdiscount_id),is_active=True)
+		
+		#to save sections
+		sections = request.POST.getlist('section')
+		total_cost = 0
+		section_items_total_cost = 0
+		for section in sections:
+			if section == 'SERVICEQUALITY':
+				section_no = 1
+			else:
+				section_no = 2
+			print(section_no,"sectionno")
+			#to save keynotes
+			try:
+				no_of_keynotes = int(request.POST.get('section'+str(section_no)+'-keynote_counter'))
+			except:
+				no_of_keynotes = None
+			print(no_of_keynotes,"keyss")
+			items_total_cost = 0
+			keynote_array = []
+			if no_of_keynotes:
+				for j in range(no_of_keynotes):
+					old_keynote_id=request.POST.get('editform_section'+str(section_no)+'_keynote'+str(j))
+					print(old_keynote_id,str(section_no),str(j),"lop")
+					keynote = request.POST.get('section'+str(section_no)+'_keynote'+str(j))
+					quantity= request.POST.get('section'+str(section_no)+'_quantity'+str(j))
+
+					print(old_keynote_id,keynote,quantity,"datt")
+
+					if old_keynote_id:
+						if keynote and quantity:
+							PaybackDiscountDetails.objects.filter(is_active=True,id=int(old_keynote_id)).update(id=int(old_keynote_id),name=keynote,cost=quantity)
+					else:
+						if keynote and quantity:
+							keynote_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=section,name=keynote,cost=quantity,is_active=True))
+					
+					items_total_cost += float(quantity)				
+
+				#bulk_create keynote
+				PaybackDiscountDetails.objects.bulk_create(keynote_array)
+
+			section_items_total_cost += float(items_total_cost)
+
+		total_cost += float(section_items_total_cost)
+
+		paybackdiscount.total_cost = total_cost
+		paybackdiscount.save()
+
+		Investigation.objects.filter(id=paybackdiscount.investigation.id).update(is_paybackdiscount_approved = True)
+		
+		messages.success(request,"Cash Back Approved !")
+		return redirect('bleach_admin:admindash-board')
 
 class BuybackPromocodeGiftApprove(IsAdmin,View):
 	def get(self,request,buybackpromogift_id):
 	
 		try:
-			buybackpromogift_details = BuybackPromocodeGift.objects.select_related('investigation__order__evaluation__customer','investigation__order_schedule__customer_address','investigation__order_schedule__order_scheduler_book','investigation__order_schedule__evaluation_details__evaluator').prefetch_related(Prefetch('investigation__followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('investigation__order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=buybackpromogift_id)
+			buybackpromogift_details_data = BuybackPromocodeGift.objects.select_related('investigation__order__evaluation__customer','investigation__order_schedule__customer_address','investigation__order_schedule__order_scheduler_book','investigation__order_schedule__evaluation_details__evaluator').prefetch_related(Prefetch('investigation__followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('investigation__order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=buybackpromogift_id)
 		except:
-			buybackpromogift_details = None
+			buybackpromogift_details_data = None
 
-		return render(request,'admin/ticket/buybackpromogiftapprove.html',{'buybackpromogift_details':buybackpromogift_details})
+		buybackpromogift = BuybackPromocodeGift.objects.get(is_active=True,id=buybackpromogift_id)
+		buybackpromogift_details = BuybackPromocodeGiftDetails.objects.filter(is_active=True,buybackpromocodegift=buybackpromogift)
+		buybackpromogift_servicequality = buybackpromogift_details.filter(category='SERVICEQUALITY')
+		buybackpromogift_damage = buybackpromogift_details.filter(category='DAMAGE')
+
+		return render(request,'admin/ticket/buybackpromogiftapprove.html',{'buybackpromogift_details':buybackpromogift_details_data,"buybackpromogift":buybackpromogift,"buybackpromogift_servicequality":buybackpromogift_servicequality,"buybackpromogift_damage":buybackpromogift_damage})
+
+	def post(self,request,buybackpromogift_id):
+
+		buybackpromogift = BuybackPromocodeGift.objects.get(id=int(buybackpromogift_id),is_active=True)
+		
+		#to save sections
+		sections = request.POST.getlist('section')
+		total_cost = 0
+		section_items_total_cost = 0
+		for section in sections:
+			if section == 'SERVICEQUALITY':
+				section_no = 1
+			else:
+				section_no = 2
+			print(section_no,"sectionno")
+			#to save keynotes
+			try:
+				no_of_keynotes = int(request.POST.get('section'+str(section_no)+'-keynote_counter'))
+			except:
+				no_of_keynotes = None
+			print(no_of_keynotes,"keyss")
+			items_total_cost = 0
+			keynote_array = []
+			if no_of_keynotes:
+				for j in range(no_of_keynotes):
+					old_keynote_id=request.POST.get('editform_section'+str(section_no)+'_keynote'+str(j))
+					print(old_keynote_id,str(section_no),str(j),"lop")
+					keynote = request.POST.get('section'+str(section_no)+'_keynote'+str(j))
+					quantity= request.POST.get('section'+str(section_no)+'_quantity'+str(j))
+
+					print(old_keynote_id,keynote,quantity,"datt")
+
+					if old_keynote_id:
+						if keynote and quantity:
+							BuybackPromocodeGiftDetails.objects.filter(is_active=True,id=int(old_keynote_id)).update(id=int(old_keynote_id),name=keynote,cost=quantity)
+					else:
+						if keynote and quantity:
+							keynote_array.append(BuybackPromocodeGiftDetails(buybackpromocodegift=buybackpromogift,category=section,name=keynote,cost=quantity,is_active=True))
+					
+					items_total_cost += float(quantity)				
+
+				#bulk_create keynote
+				BuybackPromocodeGiftDetails.objects.bulk_create(keynote_array)
+
+			section_items_total_cost += float(items_total_cost)
+
+		total_cost += float(section_items_total_cost)
+
+		buybackpromogift.total_cost = total_cost
+		buybackpromogift.save()
+
+		Investigation.objects.filter(id=buybackpromogift.investigation.id).update(is_buybackgiftpromo_approved = True)
+
+		messages.success(request,"Buy Back / Promo Code/ Gift Approved !")
+		return redirect('bleach_admin:admindash-board')
 
 class PromocodeView(IsAdmin,View):
-	def get(self,request):
 
-		return render(request,'admin/promocode/promo.html',{})
+	def get(self,request):
+		
+		try:
+			promo_codes = Promocode.objects.filter(is_active=True).order_by('-created').annotate(active=Case(When(expiry_date__gt=timezone.now().date(),then=True),default=False,output_field=BooleanField()))
+		except:
+			promo_codes = None
+
+		#counts
+		try:
+			active_promocodes_count = promo_codes.filter(active=True).count()
+			used_coupons_count      = promo_codes.aggregate(total_used_count=Sum('total_used'))['total_used_count']
+		except:
+			active_promocodes_count = 0
+			used_coupons_count      = 0
+
+		return render(request,'admin/promocode/promo.html',{'promo_codes':promo_codes,'active_promocodes_count':active_promocodes_count,'used_coupons_count':used_coupons_count,})
+
+	def post(self,request):
+		action = request.POST.get('action_type')
+
+		if action == 'addpromocode':
+			promocode_form = PromocodeForm(request.POST)
+			if promocode_form.is_valid():
+				promocode_form.save()
+				messages.success(request,"Promocode Successfully Added")
+			else:
+				messages.error(request,get_error(promocode_form))
+
+		if action == 'editpromocode':
+			promocode_id = request.POST.get('promocodeid')
+			promocode = Promocode.objects.get(id=promocode_id)
+
+			promocode_form = PromocodeForm(request.POST,instance=promocode)
+			
+			if promocode_form.is_valid():
+				promocode_form.save()
+				messages.success(request,"Promocode Successfully Updated")
+			else:
+				messages.error(request,get_error(promocode_form))		
+		
+		return redirect('bleach_admin:admin-promocode')		
+
 
 #ajax for sales charts
 def SalesLocationData(request):

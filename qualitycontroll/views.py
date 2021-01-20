@@ -20,7 +20,7 @@ from googletrans import Translator
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote,EvaluationMedia,ServiceType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,FollowUpSection,FollowUpSectionKeynote,Investigation,InvestigationMedia,Reporting,ReportingMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia
-from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
+from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from senior_team_leader.forms import CleaningTeamAssignForm,FollowupTeamAssignForm
 
@@ -138,7 +138,7 @@ class QcHome(IsQualityControll,View):
 		investigation_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
 
 		try:	
-			investigations  = Investigation.objects.filter(is_active=True,investigator=request.user,check_out=None).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'))
+			investigations  = Investigation.objects.filter(is_active=True,investigator=request.user,check_out=None).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'),Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'))
 		except:
 			investigations  = 	None
 
@@ -146,7 +146,13 @@ class QcHome(IsQualityControll,View):
 		for investigation in investigations:
 			investigation.days_left = (timezone.now()-investigation.scheduled_at).days
 
-		return render(request,'qualitycontroll/home/home.html',{'investigations':investigations,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,})
+		#buybackgiftpromos		
+		approved_buybackgiftpromos = Investigation.objects.filter(is_buybackgiftpromo_approved=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.select_related('investigation').filter(investigation__is_buybackgiftpromo_approved=True,is_active=True),to_attr='buybackgiftpromos'))
+		#add days left
+		for ticket in approved_buybackgiftpromos:
+			ticket.days_left = (timezone.now()-ticket.scheduled_at).days
+
+		return render(request,'qualitycontroll/home/home.html',{'investigations':investigations,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,"approved_buybackgiftpromos":approved_buybackgiftpromos})
 
 class OrderDetails(IsQualityControll,View):
 	def get(self,request):
@@ -501,7 +507,13 @@ class TicketDetails(IsQualityControll,View):
 		
 		#Followup details
 		if search:
-			tickets 	             = FollowUp.objects.select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').filter(is_active=True).filter(Q(Q(investigation__order_schedule__order__evaluation__customer__name__icontains=search)|Q(investigation__order_schedule__order__evaluation__evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))				
+			if search.startswith('TKT'):
+				search = search[len('TKT'):]
+			
+			tickets 	             = FollowUp.objects.select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').filter(is_active=True).filter(Q(Q(investigation__order_schedule__order__evaluation__customer__name__icontains=search)|Q(ticket_no__icontains=search))).order_by('-id').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))				
+			
+			if not search.startswith('TKT'):
+				search = 'TKT'+search				
 		else:
 			tickets 	             = FollowUp.objects.filter(is_active=True).select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').order_by('-id').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))		
 
@@ -594,7 +606,7 @@ class TicketAdvanced(IsQualityControll,View):
 
 		#followup info
 		
-		followup_details = FollowUp.objects.select_related('investigation__investigator','investigation__order','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate','investigation__order_schedule__order_scheduler_book').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules'),Prefetch('investigation__investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),).get(is_active=True,id=followup_id)
+		followup_details = FollowUp.objects.select_related('investigation__investigator','investigation__order','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate','investigation__order_schedule__order_scheduler_book').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_media',queryset=FollowUpTeamMedia.objects.filter(is_active=True),to_attr='followupmedias'),Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules'),Prefetch('investigation__investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('follow_up_of_section',queryset=FollowUpSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesectionsfollowup',queryset=FollowUpSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='followupsections'),Prefetch('investigation__buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True).prefetch_related(Prefetch('buybackpromocodegiftdetails',queryset=BuybackPromocodeGiftDetails.objects.filter(is_active=True),to_attr='buybackpromogiftdetails'),Prefetch('buybackpromocodegift_media',queryset=BuybackPromocodeGiftDetailsMedia.objects.filter(is_active=True),to_attr='buybackpromogiftmedias')),to_attr='buybackpromogifts'),Prefetch('investigation__paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True).prefetch_related(Prefetch('paybackdiscount_details',queryset=PaybackDiscountDetails.objects.filter(is_active=True),to_attr='paybackdiscountdetails'),Prefetch('paybackdiscount_media',queryset=PaybackDiscountDetailsMedia.objects.filter(is_active=True),to_attr='paybackdiscountmedias')),to_attr='paybackdiscounts'),Prefetch('investigation__reporting_investigation',queryset=Reporting.objects.filter(is_active=True).prefetch_related(Prefetch('reporting_media',queryset=ReportingMedia.objects.filter(is_active=True),to_attr='reporting_medias')),to_attr='reports')).get(is_active=True,id=followup_id)
 			
 			
 
@@ -618,7 +630,11 @@ class InvestigationTask(IsQualityControll,View):
 			orderschedules_count = 1
 			investigation_details = None
 
-		
+		ticket_types = investigation_details.ticket_types.split(",")
+		ticket_types_list = []
+		for type in ticket_types:
+			ticket_types_list.append(type)
+		print(ticket_types_list,"typo")
 
 		follow_up_scheduler = FollowUpScheduler.objects.filter(is_active=True,follow_up__investigation__id=investigation_id).first()
 		if follow_up_scheduler:
@@ -630,7 +646,7 @@ class InvestigationTask(IsQualityControll,View):
 		investigation_details.check_in = timezone.now()
 		investigation_details.save()
 
-		return render(request,'qualitycontroll/ticket/investigation.html',{'investigation_details':investigation_details,"followup_scheduler_exists":follow_up_scheduler_exists,"orderschedules_count":orderschedules_count})
+		return render(request,'qualitycontroll/ticket/investigation.html',{'investigation_details':investigation_details,"followup_scheduler_exists":follow_up_scheduler_exists,"orderschedules_count":orderschedules_count,"ticket_types":ticket_types_list})
 
 	def post(self,request,investigation_id):
 
@@ -883,6 +899,24 @@ class FollowupEdit(IsQualityControll,View):
 
 		return redirect('quality-control:investigation', investigation_id)
 
+class FollowupDelete(IsQualityControll,View):
+	def get(self,request,investigation_id):
+		FollowUpScheduler.objects.filter(follow_up__investigation__id=investigation_id).delete()
+		InvestigationMedia.objects.filter(investigation__id=investigation_id).delete()
+		FollowUpSection.objects.filter(follow_up__investigation__id=investigation_id).delete()
+		FollowUpSectionKeynote.objects.filter(followup_section__follow_up__investigation__id=investigation_id).delete()
+
+		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+		follow_up.no_of_cleaners = 0
+		follow_up.cleaning_hours = 0
+		follow_up.total_cost = 0
+		follow_up.save()
+
+		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=False)
+		
+		messages.success(request,"Follow Up Cleaning Deleted !")
+		return redirect('quality-control:investigation', investigation_id)
+
 class Cashback(IsQualityControll,View):
 	def get(self,request,investigation_id):
 		# followup status change
@@ -950,47 +984,50 @@ class CashbackEdit(IsQualityControll,View):
 	def get(self,request,investigation_id):
 		paybackdiscount = PaybackDiscount.objects.get(is_active=True,investigation__id=investigation_id)
 		paybackdiscount_details = PaybackDiscountDetails.objects.filter(is_active=True,paybackdiscount=paybackdiscount)
-		return render(request,"qualitycontroll/ticket/cash-back-edit.html",{"paybackdiscount":paybackdiscount,"paybackdiscount_details":paybackdiscount_details})
+		payback_servicequality = paybackdiscount_details.filter(category='SERVICEQUALITY')
+		payback_damage = paybackdiscount_details.filter(category='DAMAGE')
+		return render(request,"qualitycontroll/ticket/cash-back-edit.html",{"paybackdiscount":paybackdiscount,"paybackdiscount_details":paybackdiscount_details,"payback_servicequality":payback_servicequality,"payback_damage":payback_damage})
 
 	def post(self,request,investigation_id):
 
 		paybackdiscount = PaybackDiscount.objects.get(investigation_id=int(investigation_id),is_active=True)
-
+		
 		#to save sections
-		no_of_sections         = int(request.POST.get('section_counter'))
-		print(no_of_sections,"nose")
-		section_array          = []
-
+		sections = request.POST.getlist('section')
 		total_cost = 0
 		section_items_total_cost = 0
-		for i in range(no_of_sections):
-			section_name  = request.POST.get('section'+str(i))
-
+		for section in sections:
+			if section == 'SERVICEQUALITY':
+				section_no = 1
+			else:
+				section_no = 2
+			print(section_no,"sectionno")
 			#to save keynotes
 			try:
-				no_of_keynotes = int(request.POST.get('section'+str(i)+'-keynote_counter'))
+				no_of_keynotes = int(request.POST.get('section'+str(section_no)+'-keynote_counter'))
 			except:
 				no_of_keynotes = None
-			print(range(no_of_keynotes),"keyss")
+			print(no_of_keynotes,"keyss")
 			items_total_cost = 0
 			keynote_array = []
 			if no_of_keynotes:
 				for j in range(no_of_keynotes):
-					old_keynote_id=request.POST.get('editform_section'+str(i)+'_keynote'+str(j))
+					old_keynote_id=request.POST.get('editform_section'+str(section_no)+'_keynote'+str(j))
+					print(old_keynote_id,str(section_no),str(j),"lop")
+					keynote = request.POST.get('section'+str(section_no)+'_keynote'+str(j))
+					quantity= request.POST.get('section'+str(section_no)+'_quantity'+str(j))
 
-					keynote = request.POST.get('section'+str(i)+'_keynote'+str(j))
-					quantity= request.POST.get('section'+str(i)+'_quantity'+str(j))
-
-					print(old_keynote_id,keynote,quantity,'section'+str(i)+'_quantity'+str(j),"datt")
+					print(old_keynote_id,keynote,quantity,"datt")
 
 					if old_keynote_id:
 						if keynote and quantity:
-							PaybackDiscountDetails.objects.filter(is_active=True,id=old_keynote_id).update(id=old_keynote_id,name=keynote,cost=quantity)
+							PaybackDiscountDetails.objects.filter(is_active=True,id=int(old_keynote_id)).update(id=int(old_keynote_id),name=keynote,cost=quantity)
 					else:
 						if keynote and quantity:
-							keynote_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=section_name,name=keynote,cost=quantity,is_active=True))
+							keynote_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=section,name=keynote,cost=quantity,is_active=True))
 					
-					items_total_cost += float(quantity)
+					items_total_cost += float(quantity)				
+
 				#bulk_create keynote
 				PaybackDiscountDetails.objects.bulk_create(keynote_array)
 
@@ -1004,6 +1041,14 @@ class CashbackEdit(IsQualityControll,View):
 		messages.success(request,"Cash Back Updated !")
 		return redirect('quality-control:investigation', investigation_id)
 
+class CashbackDelete(IsQualityControll,View):
+	def get(self,request,investigation_id):
+		PaybackDiscount.objects.filter(investigation__id=investigation_id).delete()
+		# PaybackDiscountDetails.objects.filter(paybackdiscount__investigation__id=investigation_id).delete()
+		# PaybackDiscountDetailsMedia.objects.filter(paybackdiscount__investigation__id=investigation_id).delete()
+		Investigation.objects.filter(id=investigation_id).update(is_paybackdiscount_approved=False)
+		messages.success(request,"Cash Back Deleted !")
+		return redirect('quality-control:investigation', investigation_id)
 
 class InternalReport(IsQualityControll,View):
 	def get(self,request,investigation_id):
@@ -1069,6 +1114,14 @@ class InternalReportEdit(IsQualityControll,View):
 				)
 		
 		messages.success(request,"Internal Report Updated !")
+		return redirect('quality-control:investigation', investigation_id)
+
+class InternalReportDelete(IsQualityControll,View):
+	def get(self,request,investigation_id):
+		Reporting.objects.filter(investigation__id=investigation_id).delete()
+		# ReportingMedia.objects.filter(reporting__investigation__id=investigation_id).delete()
+		Investigation.objects.filter(id=investigation_id).update(is_internalreporting_approved=False)
+		messages.success(request,"Internal Report Deleted !")
 		return redirect('quality-control:investigation', investigation_id)
 
 class BuyBackPromoCode(IsQualityControll,View):
@@ -1192,4 +1245,13 @@ class BuyBackPromoCodeEdit(IsQualityControll,View):
 		buybackpromocodegift.save()
 
 		messages.success(request,"Buy Back / Promo Code Updated !")
+		return redirect('quality-control:investigation', investigation_id)
+
+class BuyBackPromoCodeDelete(IsQualityControll,View):
+	def get(self,request,investigation_id):
+		BuybackPromocodeGift.objects.filter(investigation__id=investigation_id).delete()
+		# BuybackPromocodeGiftDetails.objects.filter(buybackpromocodegift__investigation__id=investigation_id).delete()
+		# BuybackPromocodeGiftDetailsMedia.objects.filter(buybackpromocodegift__investigation__id=investigation_id).delete()
+		Investigation.objects.filter(id=investigation_id).update(is_buybackgiftpromo_approved=False)
+		messages.success(request,"Cash Back Deleted !")
 		return redirect('quality-control:investigation', investigation_id)

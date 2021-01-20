@@ -76,7 +76,7 @@
      
      <div class="white-wrapper-search"><!--white-wrapper-search-->
      <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
-          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search BLC Number & Customer Name Here" value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search Ticket Number & Customer Name Here" value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
      </div><!--left-box leftbox-item1-->
      <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
      <input name="filter" type="button" value="Filter" id="filter" class="blue-button arrow"> 
@@ -125,7 +125,7 @@
                 <label for="favcity">
                 <select name="status_filter" id="status_filter_id">
                 <option value=''>---ALL---</option>
-                <option value="TICKET_RISED" {% if fil_status == 'TICKET_RISED' %}selected{%endif%}>In Progress</option>
+                <option value="TICKET_RISED" {% if fil_status == 'TICKET_RISED' %}selected{%endif%}>Ticket Rised</option>
                 <option value="FOLLOWUP_IN_PROGRESS" {% if fil_status == 'FOLLOWUP_IN_PROGRESS' %}selected{%endif%}>In Progress</option>
                 <option value="FOLLOWUP_CLOSED" {% if fil_status == 'FOLLOWUP_CLOSED' %}selected{%endif%}>Closed</option>                
               </select>
@@ -181,7 +181,7 @@
     {% else %}
     class="red-line"
     {% endif %}
-    >{{ticket.investigation.order.order_no}}</td>
+    >TKT{{ticket.ticket_no}}</td>
     <td>{{ticket.investigation.order_schedule.order.evaluation.customer.name}}</td>
     <td>
     {{ticket.investigation.order_schedule.customer_address.area.name}}
