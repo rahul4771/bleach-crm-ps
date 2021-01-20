@@ -128,11 +128,11 @@
 {% if followup_scheduler_exists == True %}
 <tr>
     <td>
-    Follow Up
+    <span class="lg-text common-gray-text">Follow Up</span>
     </td>
     <td>
     {% for followup in investigation_details.followup %}
-    <span class="lg-text red-text">{{followup.total_cost|floatformat:3}} KD</span>
+    <span class="lg-text blue-text">{{followup.total_cost|floatformat:3}} KD</span>
     {% endfor %}
     </td>
 
@@ -146,11 +146,11 @@
 {% if investigation_details.paybackdiscount %}
 <tr>
     <td>
-    Cash Back
+    <span class="lg-text common-gray-text">Cash Back</span>
     </td>
     <td>
     {% for payback in investigation_details.paybackdiscount|slice:":1" %}
-    <span class="lg-text red-text">{{payback.total_cost|floatformat:3}} KD</span>
+    <span class="lg-text blue-text">{{payback.total_cost|floatformat:3}} KD</span>
     {% endfor %}
     </td>
 
@@ -166,13 +166,13 @@
 {% if investigation_details.buybackpromocodegift %}
 <tr>
    <td>
-    Buy Back / Gift / Promo Code
+    <span class="lg-text common-gray-text">Buy Back / Gift / Promo Code</span>
     </td>
     <td>
     
     <span>
     {% for gift in investigation_details.buybackpromocodegift|slice:":1" %}
-    <span class="lg-text red-text">{{gift.total_cost|floatformat:3}} KD</span>
+    <span class="lg-text blue-text">{{gift.total_cost|floatformat:3}} KD</span>
     {% endfor %}
     </span>
 

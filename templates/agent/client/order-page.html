@@ -1240,13 +1240,13 @@ followup_total += parseFloat("{{followup.total_cost}}") ;
 {% endfor %}
 
 {% for paybackdiscount in investigation.paybackdiscounts %}
-{% if paybackdiscount.total_cost != None and investigation.is_paybackdiscount_approved %}
-cashback_total += parseFloat("{{paybackdiscount.total_cost}}") ;
+{% if paybackdiscount.approved_total_cost != None and investigation.is_paybackdiscount_approved and paybackdiscount.is_completed %}
+cashback_total += parseFloat("{{paybackdiscount.approved_total_cost}}") ;
 {% endif %}
 {% endfor %}
 
 {% for buybackpromocodegift in investigation.buybackpromocodegift %}
-{% if buybackpromocodegift.total_cost != None and investigation.is_buybackgiftpromo_approved %}
+{% if buybackpromocodegift.total_cost != None and investigation.is_buybackgiftpromo_approved and buybackpromocodegift.is_completed %}
 buybackpromocode_total += parseFloat("{{buybackpromocodegift.total_cost}}") ;
 {% endif %}
 {% endfor %}

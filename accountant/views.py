@@ -249,7 +249,7 @@ class AccountantHome(IsAccountant,View):
 						payment.delaydays   = ((timezone.now().replace(hour=0,minute=0,second=0,microsecond=0))-(timezone.now().replace(day=1,month=month,year=year,hour=0,minute=0,second=0,microsecond=0))).days	
 
 		#buybackgiftpromos		
-		approved_paybackdiscounts = Investigation.objects.filter(is_paybackdiscount_approved=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=True),to_attr='paybackdiscounts'))
+		approved_paybackdiscounts = Investigation.objects.filter(is_paybackdiscount_approved=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=True,is_completed=False),to_attr='paybackdiscounts'))
 		#add days left
 		for ticket in approved_paybackdiscounts:
 			ticket.days_left = (timezone.now()-ticket.scheduled_at).days
@@ -903,6 +903,37 @@ class PaybackDiscountProcessing(View):
 		payback_damage 			= paybackdiscount_details.filter(category='DAMAGE')
 
 		return render(request,'accountant/ticket/paybackdiscountprocess.html',{"ticket_types":ticket_types,"paybackdiscount":paybackdiscount,"paybackdiscount_details_data":paybackdiscount_details_data,"payback_servicequality":payback_servicequality,"payback_damage":payback_damage})
+
+	def post(self,request,paybackdiscount_id):
+		option = request.POST.get('approved_option')
+
+		if option == 'PAYBACK':
+			
+			PaybackDiscount.objects.filter(id=paybackdiscount_id).update(approved_option=option,is_completed=True,accountant_notes=request.POST.get('accountant_notes'))
+
+			messages.success(request,"Payback Succesfully Added")
+
+		if option == 'DISCOUNT':
+			
+			PaybackDiscount.objects.filter(id=paybackdiscount_id).update(approved_option=option,is_completed=True,accountant_notes=request.POST.get('accountant_notes'))
+			
+			#update order and evaluation
+			order_id      =  request.POST.get('order_id')
+			evaluation_id =  request.POST.get('evaluation_id')
+			
+			Order.objects.filter(id=order_id).update(total_amount=F('total_amount')-float(request.POST.get('approved_total_cost')),remining_amount=F('remining_amount')-float(request.POST.get('approved_total_cost')))
+			
+			evaluation = Evaluation.objects.get(id=evaluation_id)
+			evaluation.total_cost     = evaluation.total_cost-float(request.POST.get('approved_total_cost'))
+			evaluation.discount       = evaluation.discount+float(request.POST.get('approved_total_cost'))
+			evaluation.extra_discount = evaluation.extra_discount+float(request.POST.get('approved_total_cost'))
+			if evaluation.payment_method == 'BREAKDOWN':
+				evaluation.after_cleaning_amount = evaluation.after_cleaning_amount-float(request.POST.get('approved_total_cost'))
+			evaluation.save()
+
+			messages.success(request,"Discount Succesfully Added")
+
+		return redirect('accountant:accountantdash-board')
 
 #export to excel
 def export_users_xls(request):

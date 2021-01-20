@@ -65,6 +65,17 @@
                     {% else %}
                     <div class="profile-pic-line"><img class="agent_image" src="{{paybackdiscount_details_data.investigation.order.evaluation.call_attender.profile_image.url}}" title="{{paybackdiscount_details_data.investigation.order.evaluation.call_attender.name}}"></div>
                     {% endif %}
+                    
+                    <hr class="bar">
+                    <div class="details-sub-head align-left margin">Payments</div> 
+                    <br>
+                    <div class="order-payment-widget order-payment-widget-column"><!--order-payment-widget order-payment-widget-column-->
+                        <div class="payment-text"><div>Total Amount</div> : {{paybackdiscount_details_data.investigation.order.evaluation.estimated_cost|default_if_none:'0.00'|floatformat:'3'}} KD</div>
+                        <div class="payment-text"><div>Paid</div> : {{paybackdiscount_details_data.investigation.order.amount_paid|default_if_none:'0.00'|floatformat:'3'}} KD</div>
+                    <br>
+                        <div class="payment-text bold-text red-text"><div>Remaining Amount</div> : {{paybackdiscount_details_data.investigation.order.remining_amount|default_if_none:'0.00'|floatformat:'3'}} KD</div>
+                    <hr class="bar">
+
                 </div><!--cleaning-column-widget cleaning-column-widget-column2-->
             </div><!--cleaning-column-wrapper-->
       </div><!--center-formDiv-->
@@ -75,6 +86,8 @@
 <div class="common-sub-head align-left">Add Payback/Discount</div>
 <br> 
 <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+<input type="hidden" name="order_id" value="{{paybackdiscount_details_data.investigation.order.id}}">
+<input type="hidden" name="evaluation_id" value="{{paybackdiscount_details_data.investigation.order.evaluation.id}}">
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
                 <div class=" bold-text common-label required-field"> <label>Refund Amount</label></div>
@@ -85,7 +98,9 @@
                 <label for="favcity">
                 <select name="approved_option" required>
                 <option value="PAYBACK">Payback</option>
+                {% if paybackdiscount_details_data.approved_total_cost < paybackdiscount_details_data.investigation.order.remining_amount %}
                 <option value="DISCOUNT">Discount</option>
+                {% endif %}
                 </select>
                 </label>
   </div><!--ticket-form-right-->
