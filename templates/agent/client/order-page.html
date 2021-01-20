@@ -435,7 +435,7 @@
 
                     <div class="order-clean-inColumn"><!--order-clean-inColumn-->
                         <div class="team-Name" style="width:200px;">Ticket #{{followup.ticket_no}} has been raised</div>
-                        <div class="team-profile" style="width:200px;">{{investigation.ticket_types}}</div>
+                        <div class="team-profile" style="width:600px;">{{investigation.ticket_types}}</div>
                     </div><!--order-clean-inColumn-->
                     
                 </div><!--order-clean-team-inside-wrapper-->     
@@ -815,7 +815,7 @@
 
     <div class="cleaning--right-fixed"><!--order-details-right-fixed-->
 
-        <div class="right-bgwrapper"><!--right-bgwrapper-->  
+        <div class="right-bgwrapper orange-border"><!--right-bgwrapper-->  
         <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
         <div class="client-name">{{client_details.name}}</div>
         <div class="common-gray-text">{{client_details.mobile_number}}</div>
@@ -834,7 +834,7 @@
         <hr class="hr">
         <br>
         {% for address in client_details.customer_addresses %}
-        <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address {{forloop.counter}}: <b>{{address.apartment}}</b></div>
+        <div class="address-bold"><i class="fa fa-lg fa-home orange-text" aria-hidden="true"></i> Address {{forloop.counter}}: <b>{{address.apartment}}</b></div>
         <div class="address">{% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}}, {{address.block}}, {{address.street}}, {% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} {{address.area.name}}, {{address.governorate.name}}</div>
         <br>
         {% endfor %}
@@ -843,7 +843,7 @@
         <!-- raise ticket -->
         {% if order.order_status == 'ORDER_CLOSED' %}
             <br>
-            <div class="order-card-column whitebg green-border clickable-cursor duplicate_order" data-id="{{order.evaluation.id}}"><!--order-card-column-->
+            <div class="order-card-column whitebg green-border clickable-row" data-href="{% url 'agent:agent-ticketregister' %}"><!--order-card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static "/files/images/card-ticket-icon.png" %}"></div>
                 <div class="column-right"><!--column-right-->
