@@ -929,7 +929,7 @@ class PaybackDiscountProcessing(View):
 			evaluation.extra_discount = evaluation.extra_discount+float(request.POST.get('approved_total_cost'))
 			if evaluation.payment_method == 'BREAKDOWN':
 				evaluation.after_cleaning_amount = evaluation.after_cleaning_amount-float(request.POST.get('approved_total_cost'))
-				evaluation.save()
+			evaluation.save()
 
 			messages.success(request,"Discount Succesfully Added")
 

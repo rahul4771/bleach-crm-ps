@@ -98,7 +98,7 @@
                 <label for="favcity">
                 <select name="approved_option" required>
                 <option value="PAYBACK">Payback</option>
-                {% if paybackdiscount_details_data.investigation.order.remining_amount > paybackdiscount_details_data.approved_total_cost %}
+                {% if paybackdiscount_details_data.approved_total_cost < paybackdiscount_details_data.investigation.order.remining_amount %}
                 <option value="DISCOUNT">Discount</option>
                 {% endif %}
                 </select>
