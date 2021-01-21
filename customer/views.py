@@ -18,7 +18,7 @@ from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,PaymentSubscriptionDetails
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 
@@ -248,6 +248,7 @@ class CustomerInvoice(View):
 		return render(request,"customer/invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,})		
 
 	def post(self,request,evaluation_id):
+
 		action            = request.POST.get('action_type')
 		#evaluation id decryption
 		evaluation_id_encrypted = evaluation_id
@@ -281,9 +282,6 @@ class CustomerSubscriptionInvoice(View):
 
 			duplicate_schedules.append(orderschedule.order_scheduler_book)
 
-		#subscription amounts
-		subscriptions = PaymentSubscriptionDetails.objects.select_related('order__evaluation').filter(order__evaluation__evaluation_id=evaluation_id,is_paid=False)
-
 		#per completed jobs count
 		completed_jobs_count = 0 
 		for schedule in order.orderschedules:
@@ -303,7 +301,20 @@ class CustomerSubscriptionInvoice(View):
 		
 		customer_ip_address = get_client_ip(request)
 
-		return render(request,"customer/subscriptioninvoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"completed_jobs_count":completed_jobs_count,"subscriptions":subscriptions})
+		return render(request,"customer/subscriptioninvoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"completed_jobs_count":completed_jobs_count})
+
+	def post(self,request,evaluation_id):
+		action            = request.POST.get('action_type')
+		#evaluation id decryption
+		evaluation_id_encrypted = evaluation_id
+		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
+		user_name     =  evaluation_id_encrypted[14:]
+
+		if action == 'CASH/CHEQUE':
+			Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(payment_way='CASH/CHEQUE')
+
+		return redirect('customer:subscriptioninvoice',evaluation_id_encrypted)
+
 
 class PaymentResponseDebit(View):
 	def get(self,request):
@@ -337,19 +348,13 @@ class PaymentResponseDebit(View):
 				new_receipt_no = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
 
 			#payment history
-			if payment_mode == 'subscription':
-				subscription_id      = request.GET.get("udf3")
-				subscription         = PaymentSubscriptionDetails.objects.get(id=subscription_id)			
-				subscription.is_paid = True
-				subscription.save()
-				payment_history = PaymentHistory.objects.create(order=order,history_payment_subscription=subscription,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid'),receipt_no=new_receipt_no,payment_gateway='DEBITCARD')
-			else:
-				payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid'),receipt_no=new_receipt_no,payment_gateway='DEBITCARD')	
+			payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid'),receipt_no=new_receipt_no,payment_gateway='DEBITCARD')	
 
 			#payment calculations
 			if payment_mode == 'subscription':
 				order.amount_paid      += amount_paid
 				order.remining_amount  = order.remining_amount-amount_paid
+				order.subscription_topay= 0
 				#to check payment completed
 				if order.remining_amount == 0:
 					order.payment_status         = 'COMPLETED'

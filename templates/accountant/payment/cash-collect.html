@@ -55,7 +55,6 @@
 <div class="common-sub-head align-left ticket-form-head">Collection Form</div> 
 	<form method="post" action="" enctype="multipart/form-data">{% csrf_token %}
 	<input type="hidden" name="order_id" id="order_id_hidden">
-  <input type="hidden" name="subscription" id="subscription_id">  
 
 <div class="ticket-wrapper-full ltyellow-border ticket-form"><!--ticket-wrapper-full-->
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
@@ -270,15 +269,9 @@ var order_id=parseInt("{{request.GET.orderid}}");
             {
               $("#id_payment_policy").append($('<option>',{value: 'POSTPAID',text: 'POSTPAID'}));$('#id_amount').val(data['total_cost']);              
             }
-            else if(data['payment_policy'] == 'POSTPAIDSUBSCRIPTION')
+            else if(data['payment_policy'] == 'SUBSCRIPTION')
             {
-              $("#id_payment_policy").append($('<option>',{value: 'POSTPAIDSUBSCRIPTION',text: 'MONTHLYPOSTPAID'}));$('#id_amount').val(data['subscription_amount']);
-              $('#subscription_id').val(data['subscription_id']);              
-            }
-            else if(data['payment_policy'] == 'PREPAIDSUBSCRIPTION')
-            {
-              $("#id_payment_policy").append($('<option>',{value: 'PREPAIDSUBSCRIPTION',text: 'MONTHLYPREPAID'}));$('#id_amount').val(data['subscription_amount']);
-              $('#subscription_id').val(data['subscription_id']);              
+              $("#id_payment_policy").append($('<option>',{value: 'SUBSCRIPTION',text: 'SUBSCRIPTION'}));$('#id_amount').val(data['subscription_amount']);              
             }
             //to show
             $('.order-details-head').show();
@@ -444,17 +437,10 @@ function select_existing_user(event,src){
               $("#id_payment_policy").append($('<option>',{value: 'POSTPAID',text: 'POSTPAID'})); 
               $('#id_amount').val(data['total_cost']);            
             }
-            else if(data['payment_policy'] == 'POSTPAIDSUBSCRIPTION')
-            {
-              $("#id_payment_policy").append($('<option>',{value: 'POSTPAIDSUBSCRIPTION',text: 'MONTHLY POSTPAID'}));
-              $('#id_amount').val(data['subscription_amount']);
-              $('#subscription_id').val(data['subscription_id']);              
-            }
             else if(data['payment_policy'] == 'PREPAIDSUBSCRIPTION')
             {
-              $("#id_payment_policy").append($('<option>',{value: 'PREPAIDSUBSCRIPTION',text: 'MONTHLYPREPAID'}));
-              $('#id_amount').val(data['subscription_amount']);
-              $('#subscription_id').val(data['subscription_id']);              
+              $("#id_payment_policy").append($('<option>',{value: 'SUBSCRIPTION',text: 'SUBSCRIPTION'}));
+              $('#id_amount').val(data['subscription_amount']);              
             }
 
             //to show

@@ -105,7 +105,9 @@ class Order(models.Model):
 	remining_amount        = models.FloatField(blank=True,null=True,default=0)
 	preamount_paid		   = models.FloatField(blank=True,null=True,default=0)
 	postamount_paid		   = models.FloatField(blank=True,null=True,default=0)
-	
+
+	subscription_topay     = models.FloatField(blank=True,null=True,default=0)
+	subscription_topay_date= models.DateTimeField(blank=True,null=True)
 	
 	instructions		   = models.CharField(max_length=5000,blank=True,null=True)
 	
@@ -125,25 +127,6 @@ class Order(models.Model):
 		return self.order_no
 
 
-#Devide an Order into a number of Schedules.This is to handle multiple days cleaning,multiple address cleaning Subscription Cleaning etc...
-class PaymentSubscriptionDetails(models.Model):
-	order 			    = models.ForeignKey('Order',blank=False,null=False,related_name='ordersubscription')
-	actual_amount       = models.FloatField(blank=True,null=True)
-	discount            = models.FloatField(blank=True,null=True)
-	amount              = models.FloatField(blank=True,null=True)
-	is_paid             = models.BooleanField(null=False,blank=True,default=False)
-	paid_date 			= models.DateTimeField(blank=True,null=True)
-	monthyear           = models.CharField(max_length=100,blank=True,null=True)
-	
-	is_active           = models.BooleanField(null=False,blank=True,default=True)
-	created             = models.DateTimeField(auto_now_add=True)
-	updated             = models.DateTimeField(auto_now=True)
-
-	def __unicode__(self):
-		return str(self.id)
-
-	def __str__(self):
-		return str(self.id)
 
 
 
@@ -151,7 +134,6 @@ class OrderScheduler(models.Model):
 	order 			     = models.ForeignKey('Order',blank=False,null=False,related_name='order_scheduler_order')
 	evaluation_details   = models.ForeignKey(EvaluationDetails,blank=True,null=True,related_name='order_scheduler_evaluationdetails')
 	order_scheduler_book = models.ForeignKey(EvaluationBook,blank=True,null=True,related_name='order_scheduler_book_details')
-	payment_subscription = models.ForeignKey('PaymentSubscriptionDetails',blank=True,null=True,related_name='paymentsubscription')
 
 	start_at		   	 = models.DateTimeField(blank=True,null=True)
 	end_at			   	 = models.DateTimeField(blank=True,null=True)

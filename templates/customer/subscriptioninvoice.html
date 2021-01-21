@@ -93,10 +93,8 @@
         
         <section id="invoice-info">
           <div><span>Order Number</span> <span>{{order.order_no}}</span></div>
-          {% load customer_tags %}
-          <div><span>MONTHLY PAYMENT</span> <span>for {% for subscription in subscriptions %}{% if forloop.first %}{% get_month subscription.monthyear %} month of {% get_year subscription.monthyear %}{% endif %}{% endfor %}</span></div>
           <div>
-            <span>Payment Policy / نظام الدفع</span> <span>{% if order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' %}Monthly Prepaid{% elif order.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' %}Monthly Postpaid{% endif %}</span>
+            <span>Payment Policy / نظام الدفع</span> <span>{{order.evaluation.payment_method}}</span>
           </div>
         </section>
         
@@ -161,7 +159,7 @@
             <tr class="amount-total">
               <!-- {amount_total_label} -->
               <td colspan="2">Current Payment <br>
-                 {% for subscription in subscriptions %}{% if forloop.first %}{{subscription.amount}}{% endif %}{% endfor %} KD
+                 {{order.subscription_topay|floatformat:'3'}} KD
                 <!-- <div class="invoice-name-arabic">شركة بلـــيت</div></td> -->
             </tr>
             {% endif %}
@@ -211,7 +209,6 @@
               <form method="post" action="https://payment.bleachkw.com/SendPerformREQuest.php" enctype= "multipart/form-data">{% csrf_token %}
               <input type="hidden" name="price" value="{% for subscription in subscriptions %}{% if forloop.first %}{{subscription.amount|floatformat:'3'}}{% endif %}{% endfor %}">
               <input type="hidden" name="payment_mode" value="subscription">
-              <input type="hidden" name="subscription_id" value="{% for subscription in subscriptions %}{% if forloop.first %}{{subscription.id}}{% endif %}{% endfor %}">
               <input type="hidden" name="qty" value="1">
               <input type="hidden" name="evaluation_id" value="{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">
               <td colspan="2" class="align-right">
@@ -224,6 +221,7 @@
                 {% endif %}
                 {% endif %}
               </td>
+            </form>
             </tr>
 
             {% if request.user.user_type == 'AGENT' %}
@@ -231,19 +229,20 @@
             {% elif request.user.user_type == 'ADMIN' %}
             {% else %}
             {% if order.order_status == 'APPROVED_BY_CLIENT' %}
-            <tr class="table1tr2">
-            <td colspan="2" class="align-right">
             <!-- <tr class="table1tr2">
             <td colspan="2" class="align-right">
-            <input class="assignButton clickable-row" name="pay" type="submit" value="Pay by Credit Card / بطاقة الائتمان" data-href="http://payment.bleachkw.com:8085/creditcard/payment_form.php?merchant_defined_data1={{order.order_no}}{% if order.evaluation.payment_method == 'SUBSCRIPTION' %}{% for subscription in subscriptions %}{% if forloop.first %}&reference_number={{order.order_no}}{{subscription.id}}&amount={{subscription.amount|floatformat:'3'}}&merchant_defined_data2=subscription&merchant_defined_data3={{subscription.id}}{% endif %}{% endfor %}{% endif %}&currency=KWD&transaction_type=sale{% for orderschedule in order.orderschedules %}{% if forloop.first %}&bill_to_forename={{firstname}}&bill_to_surname={{lastname}}&bill_to_phone={{orderschedule.customer_address.customer.mobile_number}}&bill_to_email={{orderschedule.customer_address.customer.email}}&bill_to_address_country={{orderschedule.customer_address.customer.nationality.code}}&bill_to_address_city={{orderschedule.customer_address.area.name|default_if_none:''}}&bill_to_address_line1={{orderschedule.customer_address.governorate.name|default_if_none:''}}{% endif %}{% endfor %}&merchant_defined_data4={{order.evaluation.payment_way}}&merchant_defined_data5=NO&merchant_defined_data7=1&merchant_defined_data20=NO&customer_ip_address={{customer_ip_address}}">
+            <input class="assignButton clickable-row" name="pay" type="submit" value="Pay by Credit Card / بطاقة الائتمان" data-href="http://payment.bleachkw.com:8085/creditcard/payment_form.php?merchant_defined_data1={{order.order_no}}&reference_number={{order.order_no}}000&amount={{order.subscription_topay|floatformat:'3'}}&merchant_defined_data2=subscription&currency=KWD&transaction_type=sale{% for orderschedule in order.orderschedules %}{% if forloop.first %}&bill_to_forename={{firstname}}&bill_to_surname={{lastname}}&bill_to_phone={{orderschedule.customer_address.customer.mobile_number}}&bill_to_email={{orderschedule.customer_address.customer.email}}&bill_to_address_country={{orderschedule.customer_address.customer.nationality.code}}&bill_to_address_city={{orderschedule.customer_address.area.name|default_if_none:''}}&bill_to_address_line1={{orderschedule.customer_address.governorate.name|default_if_none:''}}{% endif %}{% endfor %}&merchant_defined_data4={{order.evaluation.payment_way}}&merchant_defined_data5=NO&merchant_defined_data7=1&merchant_defined_data20=NO&customer_ip_address={{customer_ip_address}}">
             </td>
             </tr> -->
-            </td>
-            </tr>
             {% endif %}
             {% endif %}
 
             {% endif %}
+            <tr class="table1tr3">
+              <td colspan="2" class="align-right">
+                <input class="assignButton clickable-cursor Click-here" name="pay" type="submit" value="Pay by CASH / CHEQUE">
+              </td>
+            </tr>
 
             <tr>
               <td class="align-left large" width="50%" ><div>{{order.evaluation.quatation_status}} / {% if order.evaluation.quatation_status == 'APPROVED' %}تمت الموافقة{% elif order.evaluation.quatation_status == 'REJECTED' %}مرفوض{% else%}منتهية الصلاحية
@@ -307,7 +306,23 @@
               <td colspan="2" ><input name="print" type="button" class="print" value="Print / طباعة" onclick="printDiv();">&nbsp;<a href="#"><input name="download" type="button" class="download" value="Download / تحميل"></a> </td>
             </tr>              
           </table>
-    
+  
+<div class="custom-model-main"><!--custom-model-main-->
+    <div class="custom-model-inner">  <!--custom-model-inner-->      
+    <div class="close-btn">×</div>
+        <div class="custom-model-wrap"><!--custom-model-wrap-->
+            <div class="pop-up-content-wrap"><!--pop-up-content-wrap-->
+               <div class="bold-text">You have been requested for CASH/CHEQUE Payment.Our Team Will Contact You Soon.... <br><br> لقد طُلب منك الدفع نقدًا / شيكًا ، وسيتصل بك فريقنا قريبًا </div>  
+               <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+                <input type="hidden" name="action_type" value="CASH/CHEQUE">
+               <div><input class="assignButton" name="submit" type="submit" value="Send / إرسال"></div>
+               </form>
+            </div><!--pop-up-content-wrap-->
+        </div><!--custom-model-wrap-->  
+    </div><!--custom-model-inner-->   
+    <div class="bg-overlay"></div>
+</div><!--custom-model-main-->
+  
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
   
       <script id="rendered-js" >

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from order.models import Order,OrderScheduler,FollowUp,FollowUpSection,FollowUpSectionKeynote,FollowUpScheduler,Question,FeedBack,Investigation,InvestigationMedia,PaymentSubscriptionDetails,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,Reporting,ReportingMedia,Promocode
+from order.models import Order,OrderScheduler,FollowUp,FollowUpSection,FollowUpSectionKeynote,FollowUpScheduler,Question,FeedBack,Investigation,InvestigationMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,Reporting,ReportingMedia,Promocode
 # Register your models here.
 
 class OrderAdmin(admin.ModelAdmin):
@@ -33,7 +33,6 @@ class FeedBackAdmin(admin.ModelAdmin):
 
 admin.site.register(FeedBack,FeedBackAdmin)
 admin.site.register(Question)
-admin.site.register(PaymentSubscriptionDetails)
 admin.site.register(PaybackDiscount)
 admin.site.register(PaybackDiscountDetails)
 admin.site.register(PaybackDiscountDetailsMedia)
