@@ -813,7 +813,24 @@ class NewEnquiry(IsEvaluator,View):
 						enquiry_form_save.is_email    = True
 					else:
 						enquiry_form_save.is_sms      = True
-						
+
+			#APPEND MR / MS TO NAME
+			if enquiry_form_save.gender == 'MALE':
+				prefix = 'Mr'
+			elif enquiry_form_save.gender == 'FEMALE':
+				prefix = 'Ms'
+			else:
+				pass
+
+			customer_name = enquiry_form_save.name
+
+			prefix_exists = customer_name.startswith(prefix)
+
+			if prefix_exists == False :
+				enquiry_form_save.name = prefix+'. '+customer_name
+			else:
+				pass
+
 			enquiry_form_save.save()
 
 			for address_form in address_formset:
@@ -966,6 +983,23 @@ class ExistingEnquiry(IsEvaluator,View):
 					enquiry_form_save.is_sms      = True
 				else:
 					enquiry_form_save.is_sms      = False
+
+				#APPEND MR / MS TO NAME
+				if enquiry_form_save.gender == 'MALE':
+					prefix = 'Mr'
+				elif enquiry_form_save.gender == 'FEMALE':
+					prefix = 'Ms'
+				else:
+					pass
+
+				customer_name = enquiry_form_save.name
+
+				prefix_exists = customer_name.startswith(prefix)
+
+				if prefix_exists == False :
+					enquiry_form_save.name = prefix+'. '+customer_name
+				else:
+					pass
 
 				enquiry_form_save.save()
 				messages.success(request,"Customer Details Succesfully updated")
