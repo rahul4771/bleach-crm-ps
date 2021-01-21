@@ -99,7 +99,7 @@
 </td>
 <td data-label="" class="bold-text">{% if investigation.days_left <= 2 %}<h3 class="green-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}<h3 class="yellow-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% elif investigation.days_left > 5 and investigation.days_left <= 7 %}<h3 class="orange-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% else %}<h3 class="red-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% endif %}</td>
 <td data-label="">
-<span class="{% if investigation.days_left <= 2 %}green-bg{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}yellow-bg{% elif investigation.days_left > 5 and investigation.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} clickable-row-list" data-href="{% url 'qc:investigation' investigation.id %}">Investigate</span>
+<span class="{% if investigation.days_left <= 2 %}green-bg{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}yellow-bg{% elif investigation.days_left > 5 and investigation.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} clickable-row-list" data-href="{% url 'qc:investigation' investigation.id %}">View</span>
 </td>
 </tr>
 {% endfor %} 
