@@ -20,6 +20,7 @@ from django.db.models.functions import Concat
 from django.db.models.functions import Cast 
 from django.db.models import Prefetch
 from django.contrib import messages
+from django.db.models.functions import ExtractMonth,ExtractYear
 
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType

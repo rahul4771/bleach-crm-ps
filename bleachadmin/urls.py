@@ -22,6 +22,7 @@ urlpatterns = [
 	
 
 	url(r'^payments/$',views.PaymentDetails.as_view(),name='admin-payments'),
+	url(r'^payment-policy/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.AdminPaymentEdit.as_view(),name='admin-payment-edit'),
 	url(r'^ajax/sales-data/',views.SalesLocationData,name='sales-data'),
 	url(r'^ajax/sales-data2/',views.SalesCleaningTypeData,name='sales-data2'),
 	url(r'^ajax/sales-data3/',views.SalesGovernorateData,name='sales-data3'),
