@@ -130,16 +130,21 @@
     <td>
     <span class="lg-text common-gray-text">Follow Up</span>
     </td>
-    <td>
+
     {% for followup in investigation_details.followup %}
+    <td>
     <span class="lg-text blue-text">{{followup.total_cost|floatformat:3}} KD</span>
-    {% endfor %}
     </td>
 
     <td>
+    {% if followup_cleaning_teams_exists == True %}
+    {% else %}
     <a href="{% url 'quality-control:follow-up-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
     <a href="{% url 'quality-control:follow-up-delete' investigation_details.id %}"><input type="button" class="checkonDeleteButton" value="Delete" /></a>
+    {% endif %}
     </td>
+    {% endfor %}
+
 </tr>
 {% endif %}
 
@@ -190,10 +195,10 @@
 {% if investigation_details.internalreport %}
 <tr>
     <td>
-    Internal Report
+    <span class="lg-text common-gray-text">Internal Report</span>
     </td>
     <td>   
-    <span class="green-text">Completed</span>
+    <span class="lg-text green-text">Completed</span>
     </td>
 
     <td>
@@ -208,9 +213,16 @@
  
 </tfoot>
 </table>
+
 {% if followup_scheduler_exists == True or  investigation_details.paybackdiscount or investigation_details.buybackpromocodegift or investigation_details.internalreport %}
-<div align="right"><a href="/qc/dashboard/"><input class="assignButton expandbutton" name="submit" type="submit" value="DONE" ></a></div>
+<form method="POST" name="finalform">{% csrf_token %}
+<input type="hidden" name="action" value="final_submit" />
+<div align="center"><input class="assignButton expandbutton" name="submit" type="submit" value="SUBMIT" onclick="finalform.submit();" ></div>
+</form>
 {% endif %}
+
+<div align="left"><a href="/qc/dashboard/"><input class="checkonDeleteButton" name="submit" type="submit" value="BACK" ></a></div>
+
     </div><!--white-wrapper-->
             <br><br>   
 

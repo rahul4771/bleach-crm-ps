@@ -618,7 +618,7 @@ class InvestigationTask(IsQualityControll,View):
 	def get(self,request,investigation_id):
 		
 		try:
-			investigation_details = Investigation.objects.select_related('order_schedule__customer_address__area','order_schedule__order_scheduler_book__service_type','order_schedule__evaluation_details__evaluator','investigator','order__evaluation__customer','order__evaluation__call_attender').prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('reporting_investigation',queryset=Reporting.objects.filter(is_active=True),to_attr='internalreport'), Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscount'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift'),Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=investigation_id)
+			investigation_details = Investigation.objects.select_related('order_schedule__customer_address__area','order_schedule__order_scheduler_book__service_type','order_schedule__evaluation_details__evaluator','investigator','order__evaluation__customer','order__evaluation__call_attender').prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_teams')),to_attr='followupschedulers')),to_attr='followup'),Prefetch('reporting_investigation',queryset=Reporting.objects.filter(is_active=True),to_attr='internalreport'), Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscount'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift'),Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=investigation_id)
 			orderschedules_count = OrderScheduler.objects.filter(is_active=True,order_scheduler_book__id=investigation_details.order_schedule.order_scheduler_book.id).count()
 		except:
 			orderschedules_count = 1
@@ -631,16 +631,23 @@ class InvestigationTask(IsQualityControll,View):
 		print(ticket_types_list,"typo")
 
 		follow_up_scheduler = FollowUpScheduler.objects.filter(is_active=True,follow_up__investigation__id=investigation_id).first()
+		
 		if follow_up_scheduler:
 			follow_up_scheduler_exists = True
 		else:
 			follow_up_scheduler_exists = False
 
+		followup_cleaning_teams = FollowUpTeam.objects.filter(is_active=True,followup_scheduler__follow_up__investigation__id=investigation_id)
+		if followup_cleaning_teams:
+			followup_cleaning_teams_exists = True
+		else:
+			followup_cleaning_teams_exists = False
+		
 		#save checkin_time
 		investigation_details.check_in = timezone.now()
 		investigation_details.save()
 
-		return render(request,'qualitycontroll/ticket/investigation.html',{'investigation_details':investigation_details,"followup_scheduler_exists":follow_up_scheduler_exists,"orderschedules_count":orderschedules_count,"ticket_types":ticket_types_list})
+		return render(request,'qualitycontroll/ticket/investigation.html',{'investigation_details':investigation_details,"followup_scheduler_exists":follow_up_scheduler_exists,"orderschedules_count":orderschedules_count,"ticket_types":ticket_types_list,"followup_cleaning_teams_exists":followup_cleaning_teams_exists})
 
 	def post(self,request,investigation_id):
 
@@ -653,7 +660,11 @@ class InvestigationTask(IsQualityControll,View):
 			return redirect('quality-control:buy-back-promo-code', investigation_id)
 		if form_action == "internal":
 			return redirect('quality-control:internal-report',investigation_id)
-		
+		if form_action == "final_submit":
+			Investigation.objects.filter(id=investigation_id).update(check_out=timezone.now())
+			messages.success(request,"All Investigation Tasks Submitted Successfully !!")
+			return redirect('quality-control:qcdash-board')
+
 		return redirect('quality-control:investigation', investigation_id)
 
 class Followup(IsQualityControll,View):
@@ -686,7 +697,7 @@ class Followup(IsQualityControll,View):
 
 		tendative_time = request.POST.get('tendative_time')
 
-		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True,check_out=timezone.now(),notes=request.POST.get('notes'))
+		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True,notes=request.POST.get('notes'))
 		
 		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
 		follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
@@ -799,7 +810,7 @@ class FollowupEdit(IsQualityControll,View):
 		# start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
 		# end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
 
-		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True,check_out=timezone.now(),notes=request.POST.get('notes'))
+		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True,notes=request.POST.get('notes'))
 		
 		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
 		follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
