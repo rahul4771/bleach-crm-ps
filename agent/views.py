@@ -3842,6 +3842,47 @@ class TicketRegistration(IsAgent,View):
 
 		return redirect('agent:agent-ticketregister')
 
+class OrderTicketRegistration(IsAgent,View):
+	def get(self,request,orderid):
+
+		order = Order.objects.filter(id=int(orderid)).first()
+
+		investigators = UserProfile.objects.filter(user_type='QUALITYCONTROLL',is_active=True)
+
+		return render(request,'agent/ticket/ticket_registration.html',{'order':order,'investigators':investigators})
+
+	def post(self,request,orderid):
+		order_id           = request.POST.get('order_id')
+		
+		investigation_form = InvestigationForm(request.POST)
+		if investigation_form.is_valid():
+			investigation_form_save             = investigation_form.save(commit=False)
+			investigation_form_save.assigned_by = request.user
+			investigation_form_save.order_id    = order_id
+			investigation_form_save.scheduled_at= timezone.now()
+			investigation_form_save.save()
+
+			FollowUp.objects.create(investigation=investigation_form_save,status='TICKET_RISED')
+
+			#save media
+			investigation_medias = request.FILES.getlist('investigation_media')
+			if not investigation_medias == ['']:
+					for image in investigation_medias:
+						InvestigationMedia.objects.create(
+							investigation = investigation_form_save,
+							media = image,
+							media_type = 'PHOTO',
+							taken_status = 'CUSTOMER_SEND',
+							is_active = True
+						)
+						
+			messages.success(request,"Investigation Rised Succesfully!")
+		else:
+			messages.error(request,get_error(investigation_form))
+		
+
+		return redirect('agent:agent-ticketregister')
+
 #ajax for client chart
 def ClientData(request):
 	print("lol")

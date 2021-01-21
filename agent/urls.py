@@ -15,6 +15,7 @@ urlpatterns = [
 	url(r'^tickets/$',views.TicketDetails.as_view(),name='agent-tickets'),
 	url(r'^ticket/details/(?P<client_id>[-\w]+)/(?P<followup_id>[-\w]+)/$',views.TicketAdvanced.as_view(),name='agent-ticketadvanced'),
 	url(r'^tickets/register/$',views.TicketRegistration.as_view(),name='agent-ticketregister'),
+	url(r'^tickets/order/register/(?P<orderid>[-\w]+)/$',views.OrderTicketRegistration.as_view(),name='agent-orderticketregister'),
 
 	url(r'^clients/$',views.ClientDetails.as_view(),name='agent-clients'),
 	url(r'^client/orders/(?P<client_id>[-\w]+)$',views.ClientOrders.as_view(),name='agent-client-orders'),
