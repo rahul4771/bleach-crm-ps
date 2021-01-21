@@ -421,128 +421,34 @@
             </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
         </div><!--order-clean-team-wrapper-->
         
-<hr class="bar">        
-
-        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+{% for investigation in orderschedule.investigations %} 
+{% for followup in investigation.followups %}
+<hr class="bar">
+        <div class="order-clean-team-wrapper clickable-row" {% for followup in investigation.followups %}data-href="{% url 'stl:stl-ticketadvanced' investigation.order_schedule.order.evaluation.customer.id followup.id %}"{% endfor %}><!--order-clean-team-wrapper-->
             <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-                <div class="team-profile-pic"><img src="{% static 'files/images/driver.png' %}"></div>
+            	
+                <div class="team-profile-pic"><img src="{% static 'files/images/red-card.png' %}"></div>
+                
             </div><!--order-clean-team-widget order-clean-team-widget-column1-->
             
             <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
                 <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+
                     <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{cleaning_team.drop_off_driver.name}}</div>
-                        <div class="team-profile">Dropoff Driver</div>
+                        <div class="team-Name" style="width:200px;">Ticket #{{followup.ticket_no}} has been raised</div>
+                        <div class="team-profile" style="width:200px;">{{investigation.ticket_types}}</div>
                     </div><!--order-clean-inColumn-->
-                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{cleaning_team.pick_up_driver.name}}</div>
-                        <div class="team-profile">Pickup Driver</div>
-                    </div><!--order-clean-inColumn-->
+                    
                 </div><!--order-clean-team-inside-wrapper-->     
             </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
         </div><!--order-clean-team-wrapper-->
+{% endfor %}
+{% endfor %}
         
     </div><!--order-clean-outer-wrapper-->
 {% endfor %}    
 {% endif %}
 
-
-
-{% if orderschedule.investigations %}
-{% for investigation in orderschedule.investigations %}
-<div class="details-sub-head align-left">Investigation</div>     
-<div class="investigation-columns whitebg"><!--investigation-columns-->
-        <div class="investigation-columns-left"><!--investigation-columns-left-->
-            
-            {% if investigation.investigator.profile_image %}
-            <div class="profile-pic"><img src="{{investigation.investigator.profile_image.url}}"></div>
-            {% else %}
-            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
-            {% endif %}
-
-            <div class="client-name">{{investigation.investigator.name}}<div class="common-gray-text">Investigator</div></div>
-        </div><!--investigation-columns-left-->
-
-        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
-        <div class="order-invest-date">{{investigation.sheduled_at}}</div>
-            <div class="notes">Notes</div>
-            <p>{{investigation.notes}}</p>
-        </div><!--investigation-columns-middle-->
-</div><!--investigation-columns-->            
-
-    
-{% for followup in investigation.followups %}
-{% for follow_up_scheduler in followup.follow_up_schedules %}
-{% for team in follow_up_scheduler.followupteams %}
-
-{% if team.followupmembers %}
-<div class="details-sub-head align-left small-head">Follow-up Cleaning</div>
-    <div class="order-clean-outer-wrapper whitebg"><!--order-clean-outer-wrapper-->
-        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
-            <div class="order-common-date">{{follow_up_scheduler.start_at}}</div>
-                    <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-                        <div class="team-profile-pic"><img src="{% static 'files/images/team-leader.png' %}"></div>
-                    </div><!--order-clean-team-widget order-clean-team-widget-column1-->
-                    
-                <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column1-->
-                    <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
-                        <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                            <div class="team-Name">{{team.team_leader}}</div>
-                            <div class="team-profile">Team Leader</div>
-                        </div><!--order-clean-inColumn-->                    
-                    </div> <!--order-clean-team-inside-wrapper-->
-                </div><!--order-clean-team-widget order-clean-team-widget-column2-->
-        </div><!--order-clean-team-wrapper-->
-        
-<hr class="bar">
-        
-        
-        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
-            <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-                <div class="team-profile-pic"><img src="{% static 'files/images/team-member.png' %}"></div>
-            </div><!--order-clean-team-widget order-clean-team-widget-column1-->
-            
-            <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
-                <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
-                    {% for member in team.followupmembers %}
-                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{member.member.name}}</div>
-                        <div class="team-profile">Team Member</div>
-                    </div><!--order-clean-inColumn-->
-                    {% endfor %}
-                </div><!--order-clean-team-inside-wrapper-->     
-            </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
-        </div><!--order-clean-team-wrapper-->
-        
-<hr class="bar">        
-
-        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
-            <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-                <div class="team-profile-pic"><img src="{% static 'files/images/driver.png' %}"></div>
-            </div><!--order-clean-team-widget order-clean-team-widget-column1-->
-            
-            <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
-                <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
-                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{team.drop_off_driver.name}}</div>
-                        <div class="team-profile">Dropoff Driver</div>
-                    </div><!--order-clean-inColumn-->
-                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{team.pick_up_driver.name}}</div>
-                        <div class="team-profile">Pickup Driver</div>
-                    </div><!--order-clean-inColumn-->
-                </div><!--order-clean-team-inside-wrapper-->     
-            </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
-        </div><!--order-clean-team-wrapper-->
-        
-    </div><!--order-clean-outer-wrapper-->
-{% endif %}
-{% endfor %}
-{% endfor %}
-{% endfor %}
-
-{% endfor %}
-{% endif %}
     </div><!-- Append logic -->
 </div><!--order-clean-outer-wrapper-->
 <!--subscription cleaning team end-->
@@ -613,127 +519,34 @@
             </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
         </div><!--order-clean-team-wrapper-->
         
-<hr class="bar">        
-
-        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+{% for investigation in orderschedule.investigations %} 
+{% for followup in investigation.followups %}
+<hr class="bar">
+        <div class="order-clean-team-wrapper clickable-row" {% for followup in investigation.followups %}data-href="{% url 'stl:stl-ticketadvanced' investigation.order_schedule.order.evaluation.customer.id followup.id %}"{% endfor %}><!--order-clean-team-wrapper-->
             <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-                <div class="team-profile-pic"><img src="{% static 'files/images/driver.png' %}"></div>
+            	
+                <div class="team-profile-pic"><img src="{% static 'files/images/red-card.png' %}"></div>
+                
             </div><!--order-clean-team-widget order-clean-team-widget-column1-->
             
             <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
                 <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+
                     <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{cleaning_team.drop_off_driver.name}}</div>
-                        <div class="team-profile">Dropoff Driver</div>
+                        <div class="team-Name" style="width:200px;">Ticket #{{followup.ticket_no}} has been raised</div>
+                        <div class="team-profile" style="width:200px;">{{investigation.ticket_types}}</div>
                     </div><!--order-clean-inColumn-->
-                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{cleaning_team.pick_up_driver.name}}</div>
-                        <div class="team-profile">Pickup Driver</div>
-                    </div><!--order-clean-inColumn-->
+                    
                 </div><!--order-clean-team-inside-wrapper-->     
             </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
         </div><!--order-clean-team-wrapper-->
+{% endfor %}
+{% endfor %}
         
     </div><!--order-clean-outer-wrapper-->
 {% endfor %}    
 {% endif %}
 
-
-{% if orderschedule.investigations %}
-{% for investigation in orderschedule.investigations %}
-<div class="details-sub-head align-left">Investigation</div>     
-<div class="investigation-columns whitebg"><!--investigation-columns-->
-        <div class="investigation-columns-left"><!--investigation-columns-left-->
-            
-            {% if investigation.investigator.profile_image %}
-            <div class="profile-pic"><img src="{{investigation.investigator.profile_image.url}}"></div>
-            {% else %}
-            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
-            {% endif %}
-
-            <div class="client-name">{{investigation.investigator.name}}<div class="common-gray-text">Investigator</div></div>
-        </div><!--investigation-columns-left-->
-
-        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
-        <div class="order-invest-date">{{investigation.sheduled_at}}</div>
-            <div class="notes">Notes</div>
-            <p>{{investigation.notes}}</p>
-        </div><!--investigation-columns-middle-->
-</div><!--investigation-columns-->            
-
-    
-{% for followup in investigation.followups %}
-{% for follow_up_scheduler in followup.follow_up_schedules %}
-{% for team in follow_up_scheduler.followupteams %}
-
-{% if team.followupmembers %}
-<div class="details-sub-head align-left small-head">Follow-up Cleaning</div>
-    <div class="order-clean-outer-wrapper whitebg"><!--order-clean-outer-wrapper-->
-        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
-            <div class="order-common-date">{{follow_up_scheduler.start_at}}</div>
-                    <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-                        <div class="team-profile-pic"><img src="{% static 'files/images/team-leader.png' %}"></div>
-                    </div><!--order-clean-team-widget order-clean-team-widget-column1-->
-                    
-                <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column1-->
-                    <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
-                        <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                            <div class="team-Name">{{team.team_leader}}</div>
-                            <div class="team-profile">Team Leader</div>
-                        </div><!--order-clean-inColumn-->                    
-                    </div> <!--order-clean-team-inside-wrapper-->
-                </div><!--order-clean-team-widget order-clean-team-widget-column2-->
-        </div><!--order-clean-team-wrapper-->
-        
-<hr class="bar">
-        
-        
-        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
-            <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-                <div class="team-profile-pic"><img src="{% static 'files/images/team-member.png' %}"></div>
-            </div><!--order-clean-team-widget order-clean-team-widget-column1-->
-            
-            <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
-                <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
-                    {% for member in team.followupmembers %}
-                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{member.member.name}}</div>
-                        <div class="team-profile">Team Member</div>
-                    </div><!--order-clean-inColumn-->
-                    {% endfor %}
-                </div><!--order-clean-team-inside-wrapper-->     
-            </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
-        </div><!--order-clean-team-wrapper-->
-        
-<hr class="bar">        
-
-        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
-            <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-                <div class="team-profile-pic"><img src="{% static 'files/images/driver.png' %}"></div>
-            </div><!--order-clean-team-widget order-clean-team-widget-column1-->
-            
-            <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
-                <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
-                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{team.drop_off_driver.name}}</div>
-                        <div class="team-profile">Dropoff Driver</div>
-                    </div><!--order-clean-inColumn-->
-                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{team.pick_up_driver.name}}</div>
-                        <div class="team-profile">Pickup Driver</div>
-                    </div><!--order-clean-inColumn-->
-                </div><!--order-clean-team-inside-wrapper-->     
-            </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
-        </div><!--order-clean-team-wrapper-->
-        
-    </div><!--order-clean-outer-wrapper-->
-{% endif %}
-{% endfor %}
-{% endfor %}
-{% endfor %}
-
-{% endfor %}
-{% endif %}
     </div><!-- Append logic -->
 </div><!--order-clean-outer-wrapper-->
 <!--multiple cleaning end-->
@@ -797,135 +610,36 @@
                 </div><!--order-clean-team-inside-wrapper-->     
             </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
         </div><!--order-clean-team-wrapper-->
-{% endif %}        
-{% comment %}        
-<hr class="bar">        
+{% endif %}  
 
-        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+{% for investigation in orderschedule.investigations %} 
+{% for followup in investigation.followups %}
+<hr class="bar">
+        <div class="order-clean-team-wrapper clickable-row" {% for followup in investigation.followups %}data-href="{% url 'stl:stl-ticketadvanced' investigation.order_schedule.order.evaluation.customer.id followup.id %}"{% endfor %}><!--order-clean-team-wrapper-->
             <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-            	<div class="team-profile-pic"><img src="{% static 'files/images/driver.png' %}"></div>
+            	
+                <div class="team-profile-pic"><img src="{% static 'files/images/red-card.png' %}"></div>
+                
             </div><!--order-clean-team-widget order-clean-team-widget-column1-->
             
             <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
                 <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+
                     <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{cleaning_team.drop_off_driver.name}}</div>
-                        <div class="team-profile">Dropoff Driver</div>
+                        <div class="team-Name" style="width:200px;">Ticket #{{followup.ticket_no}} has been raised</div>
+                        <div class="team-profile" style="width:200px;">{{investigation.ticket_types}}</div>
                     </div><!--order-clean-inColumn-->
-                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{cleaning_team.pick_up_driver.name}}</div>
-                        <div class="team-profile">Pickup Driver</div>
-                    </div><!--order-clean-inColumn-->
+                    
                 </div><!--order-clean-team-inside-wrapper-->     
             </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
         </div><!--order-clean-team-wrapper-->
-{% endcomment %}
+{% endfor %}
+{% endfor %}
 
     </div><!--order-clean-outer-wrapper-->
 
 {% endfor %}    
 {% endif %}        
-        
-         
-        
-        
-{% if orderschedule.investigations %}
-{% for investigation in orderschedule.investigations %}        
-<div class="details-sub-head align-left">Investigation</div>     
-<div class="investigation-columns"><!--investigation-columns-->
-    	<div class="investigation-columns-left"><!--investigation-columns-left-->
-            
-            {% if investigation.investigator.profile_image %}
-			<div class="profile-pic"><img src="{{investigation.investigator.profile_image.url}}"></div>
-            {% else %}
-            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
-            {% endif %}
-
-            <div class="client-name">{{investigation.investigator.name}}<div class="common-gray-text">Investigator</div></div>
-    	</div><!--investigation-columns-left-->
-
-        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
-        <div class="order-invest-date">{{investigation.sheduled_at}}</div>
-            <div class="notes">Notes</div>
-            <p>{{investigation.notes}}</p>
-        </div><!--investigation-columns-middle-->
-
-</div><!--investigation-columns-->            
-
-{% for followup in investigation.followups %}
-{% for follow_up_scheduler in followup.follow_up_schedules %}
-{% for team in follow_up_scheduler.followupteams %}
-
-{% if team.followupmembers %}
-<div class="details-sub-head align-left">Follow-up Cleaning</div>
-    <div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
-        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
-            <div class="order-common-date">{{follow_up_scheduler.start_at}}</div>
-                    <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-                        <div class="team-profile-pic"><img src="{% static 'files/images/team-leader.png' %}"></div>
-                    </div><!--order-clean-team-widget order-clean-team-widget-column1-->
-                    
-                <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column1-->
-                    <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
-                        <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                            <div class="team-Name">{{team.team_leader.name}}</div>
-                            <div class="team-profile">Team Leader</div>
-                        </div><!--order-clean-inColumn-->                    
-                    </div> <!--order-clean-team-inside-wrapper-->
-                </div><!--order-clean-team-widget order-clean-team-widget-column2-->
-        </div><!--order-clean-team-wrapper-->
-        
-<hr class="bar">
-        
-        
-        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
-            <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-            	<div class="team-profile-pic"><img src="{% static 'files/images/team-member.png' %}"></div>
-            </div><!--order-clean-team-widget order-clean-team-widget-column1-->
-            
-            <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
-                <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
-                    {% for member in team.followupmembers %}
-                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{member.member.name}}</div>
-                        <div class="team-profile">Team Member</div>
-                    </div><!--order-clean-inColumn-->
-                    {% endfor %}
-                </div><!--order-clean-team-inside-wrapper-->     
-            </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
-        </div><!--order-clean-team-wrapper-->
-        
-{% comment %}        
-<hr class="bar">        
-
-        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
-            <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
-            	<div class="team-profile-pic"><img src="{% static 'files/images/driver.png' %}"></div>
-            </div><!--order-clean-team-widget order-clean-team-widget-column1-->
-            
-            <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
-                <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
-                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{team.drop_off_driver.name}}</div>
-                        <div class="team-profile">Dropoff Driver</div>
-                    </div><!--order-clean-inColumn-->
-                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
-                        <div class="team-Name">{{team.pick_up_driver.name}}</div>
-                        <div class="team-profile">Pickup Driver</div>
-                    </div><!--order-clean-inColumn-->
-                </div><!--order-clean-team-inside-wrapper-->     
-            </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
-        </div><!--order-clean-team-wrapper-->
-{% endcomment %}
-        
-    </div><!--order-clean-outer-wrapper-->
-{% endif %}
-{% endfor %}
-{% endfor %}
-{% endfor %}
-
-{% endfor %}
-{% endif %}
 
 {% endif %}
 {% if order.feedbacks %}
@@ -994,15 +708,7 @@
   
     </div><!--gallery-widget-column-column1-->
     {% endif %}
-
-
-	<div class="gallery-widget-column-column2 gallery-widget-column-deletecolumn{{forloop.counter}}2"><!--gallery-widget-column-column2-->
-    <div class="media-heading align-left">Investigation</div>
-        <section>
-        <div id="media{{forloop.counter}}2" data-pn="{{forloop.counter}}2" data-src="{% for investigation in orderschedule.investigations %}{% for media in investigation.investigationmedias %}{{media.media.url}},{% endfor %}{% endfor %}"></div>
-    </section>
     
-    </div><!--gallery-widget-column-column2-->    
 </div><!--gallery-wrapper-->
 
 

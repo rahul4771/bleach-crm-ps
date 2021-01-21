@@ -707,15 +707,7 @@
   
     </div><!--gallery-widget-column-column1-->
     {% endif %}
-
-
-	<div class="gallery-widget-column-column2 gallery-widget-column-deletecolumn{{forloop.counter}}2"><!--gallery-widget-column-column2-->
-    <div class="media-heading align-left">Investigation</div>
-        <section>
-        <div id="media{{forloop.counter}}2" data-pn="{{forloop.counter}}2" data-src="{% for investigation in orderschedule.investigations %}{% for media in investigation.investigationmedias %}{{media.media.url}},{% endfor %}{% endfor %}"></div>
-    </section>
     
-    </div><!--gallery-widget-column-column2-->    
 </div><!--gallery-wrapper-->
 
 
@@ -841,7 +833,7 @@
         </div><!--right-bgwrapper--> 
 
         <!-- raise ticket -->
-        {% if order.order_status == 'ORDER_CLOSED' %}
+        {% comment %} {% if order.order_status == 'ORDER_CLOSED' %}
             <br>
             <div class="order-card-column whitebg green-border clickable-row" data-href="{% url 'agent:agent-ticketregister' %}"><!--order-card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
@@ -855,7 +847,7 @@
                 </div><!--column-right-->
                 </div><!--card-innerwrapper-->
             </div><!--order-card-column-->
-        {% endif %}
+        {% endif %} {% endcomment %}
         <!-- raise ticket -->
 
         <!-- RE-ORDER -->

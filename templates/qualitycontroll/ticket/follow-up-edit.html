@@ -109,12 +109,8 @@
                 
 <div class="details-notes align-left">Media</div>        
 <div class="row" id="id_media"><!--row-->
-    <div class="col-sm-2 imgUp"><!--col-sm-2 imgUp-->
-        <div class="imagePreview"></div>
-        <label class="btn btn-primary">Upload<input type="file" name="media" class="uploadFile img" value="Upload Photo" style="width: 0px;height: 0px;overflow: hidden;"></label>
-        </div><!--col-sm-2 imgUp-->
-    	<i class="fa fa-plus imgAdd"></i>
-</div><!--row-->                  
+        <i class="fa fa-plus imgAdd id_media"></i>
+</div><!--row-->               
                 
                 
                 
@@ -636,6 +632,15 @@ $('.footable').footable({
 //# sourceURL=pen.js
     </script>
 <script id="rendered-js">
+
+//listing previous medias
+{% for media in followupmedias %}
+
+  $('.id_media').before('<div class="col-sm-2 imgUp"><div class="imagePreview" style="background-image:url({{media.media.url}})"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="media" value="{{media.media.url}}" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del" data-mediaid="{{media.id}}"></i></div>');
+{% empty %}
+$('.id_media').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="media" value="File Upload" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
+{% endfor %}
+
 $(".imgAdd").click(function () {
   id=$(this).parents('.row').attr('id').match(/\d+/);
 
