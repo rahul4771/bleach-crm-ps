@@ -308,7 +308,7 @@ class TicketDetails(IsAdmin,View):
 			governorates = None
 
 		try:
-			investigators = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='SENIORTEAMLEADER')|Q(user_type='TEAMLEADER')|Q(user_type='EVALUATOR'))))	
+			investigators = UserProfile.objects.filter(is_active=True,user_type='QUALITYCONTROLL')
 		except:
 			investigators = None
 
@@ -1043,7 +1043,9 @@ class TicketApprove(IsAdmin,View):
 			ticket_types_list.append(type)
 		print(ticket_types_list,"typo")
 
-		return render(request,'admin/ticket/ticket-approval.html',{"ticket_types":ticket_types,"investigation_details":investigation_details})
+		promocodes = Promocode.objects.filter(is_active=True)
+
+		return render(request,'admin/ticket/ticket-approval.html',{"ticket_types":ticket_types,"investigation_details":investigation_details,"promocodes":promocodes})
 
 	def post(self,request,ticket_id):
 
@@ -1076,12 +1078,24 @@ class TicketApprove(IsAdmin,View):
 			messages.success(request,"Payback Approved !")
 
 		if approve_action == 'buyback':
-			
-			buyback_amount = request.POST.get('buyback_amount',0.0)
 
 			buyback_type = request.POST.get('buyback_type')
 
-			buybackpromocodegift.approved_total_cost = buyback_amount
+			if buyback_type == 'PROMOCODE':
+
+				promo_code = request.POST.get('promocode',None)
+
+				buybackpromocodegift.approved_promo_code = promo_code
+				
+				buybackpromocodegift.save()
+
+			else:
+
+				buyback_amount = request.POST.get('buyback_amount',0.0)
+
+				buybackpromocodegift.approved_total_cost = buyback_amount
+
+				buybackpromocodegift.save()
 
 			buybackpromocodegift.approved_option = buyback_type
 

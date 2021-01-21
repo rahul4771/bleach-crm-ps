@@ -788,7 +788,7 @@ class TicketDetails(IsSeniorTeamLeader,View):
 			governorates = None
 
 		try:
-			investigators = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='SENIORTEAMLEADER')|Q(user_type='TEAMLEADER')|Q(user_type='EVALUATOR'))))	
+			investigators = UserProfile.objects.filter(is_active=True,user_type='QUALITYCONTROLL')
 		except:
 			investigators = None
 		

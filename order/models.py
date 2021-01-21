@@ -302,6 +302,7 @@ class BuybackPromocodeGift(models.Model):
 	investigation   				= models.ForeignKey('Investigation',blank=False,null=False,related_name='buybackpromocodegift_investigation')
 	total_cost      				= models.FloatField(blank=True,null=True)
 	approved_total_cost             = models.FloatField(blank=True,null=True)
+	approved_promo_code				= models.CharField(max_length=100,blank=True,null=True)
 	approved_option                 = models.CharField(max_length=500,blank=True,null=True,choices=BUYBACKPROMOGIFT_CHOICES)
 	is_completed                    = models.BooleanField(null=False,blank=True,default=False)
 

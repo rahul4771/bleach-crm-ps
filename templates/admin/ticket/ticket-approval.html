@@ -177,20 +177,31 @@
 <input type="hidden" name="approve_action" value="buyback" type="text" />
 
 <label for="favcity" style="width:25%">
-<select name="buyback_type" class="textBox" >
+<select name="buyback_type" class="textBox buyback_type" >
 <option value="BUYBACK">Buy Back</option>
 <option value="PROMOCODE">Promo Code</option>
 <option value="GIFT">Gift</option>
 </select>
 </label>
 <input type="text" name="buyback_amount" class="textBox OnlyNumber" value="{{buybackpromogift.total_cost|floatformat:'3'}}" style="width:25%" required/>
-<input class="assignButton" type="button" value="Approve" onclick="submitAnyForm(this);" style="margin-left:10px;">
+
+<label for="favcity" style="width:25%">
+<select name="promocode" class="textBox" hidden>
+<option value="">Select PromoCode</option>
+{% for promocode in promocodes %}
+<option value="{{promocode.promocode}}">{{promocode.promocode}}</option>
+{% endfor %}
+</select>
+</label>
+
+<input class="assignButton" type="button" value="Approve" onclick="submitAnyForm(this);" >
+
 </form>
 {% endif %}
 {% endfor %}
 {% endif %}
-
-<a href="/bleach_admin/dashboard/"><input class="assignButton" type="button" value="Back"></a>
+<hr class="divider">
+<a href="/bleach_admin/dashboard/"><input class="assignButton" type="button" value="Back" ></a>
 
         </div> <!--center-formDiv-->
 		</div><!--cleaning--left-stretch-->   
@@ -206,6 +217,14 @@
 
 {% block javascript %} 
 <script>
-
+$('.buyback_type').change(function(){
+    if ($(this).val() == 'PROMOCODE'){
+        $('select[name="promocode"]').attr('hidden',false);
+        $('input[name="buyback_amount"]').attr('hidden',true);
+    }else{
+        $('input[name="buyback_amount"]').attr('hidden',false);
+        $('select[name="promocode"]').attr('hidden',true);
+    }
+})
 </script>
 {% endblock %}
