@@ -405,16 +405,19 @@
     </div><!--gallery-widget-column-column1-->
     {% endif %}
 
+{% if followup_details.follow_up_schedules %}
     <div class="gallery-widget-column-column2"><!--gallery-widget-column-column1-->
     <div class="media-heading align-left">Before Cleaning</div>
     <section>
         <div id="data-pn-2" data-pn="2" data-src="{% for follow_up_scheduler in followup_details.follow_up_schedules %}
 {% for team in follow_up_scheduler.followupteams %}{% for media in team.followupmedias %}{% if media.taken_status == 'BEFORE_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}{% endfor %}"></div>
-    </section>  
+    </section>      
     </div><!--gallery-widget-column-column1-->
+{% endif %}
 </div>
 
 <div class="gallery-wrapper"><!--gallery-wrapper-->
+{% if followup_details.follow_up_schedules %}
     <div class="gallery-widget-column-column3"><!--gallery-widget-column-column1-->
     <div class="media-heading align-left">After Cleaning</div>
     <section>
@@ -422,7 +425,7 @@
 {% for team in follow_up_scheduler.followupteams %}{% for media in team.followupmedias %}{% if media.taken_status == 'BEFORE_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}{% endfor %}"></div>
     </section>  
     </div><!--gallery-widget-column-column1-->
-    
+{% endif %}
     {% for report in  followup_details.investigation.reports %}
     {% if report.reporting_medias %}
     <div class="gallery-widget-column-column4"><!--gallery-widget-column-column2-->
