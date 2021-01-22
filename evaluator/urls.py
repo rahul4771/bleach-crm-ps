@@ -42,4 +42,6 @@ urlpatterns = [
 	url(r'^makequatation/phase1/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1Edit.as_view(),name='evaluator-makequatation1edit'),
 	url(r'^makequatation/phase2/delete/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2Delete.as_view(),name='evaluator-makequatation2delete'),
 
+	url(r'^payment-policy/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.EvaluatorPaymentEdit.as_view(),name='evaluator-payment-edit'),
+
 ]

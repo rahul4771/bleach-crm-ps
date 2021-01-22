@@ -2001,6 +2001,23 @@ class NewEnquiry(IsAgent,View):
 					else:
 						enquiry_form_save.is_sms      = True
 
+			#APPEND MR / MS TO NAME
+			if enquiry_form_save.gender == 'MALE':
+				prefix = 'Mr. '
+			elif enquiry_form_save.gender == 'FEMALE':
+				prefix = 'Ms. '
+			else:
+				pass
+
+			customer_name = enquiry_form_save.name
+
+			prefix_exists = customer_name.startswith(prefix)
+
+			if prefix_exists == False :
+				enquiry_form_save.name = prefix+customer_name
+			else:
+				pass
+
 			enquiry_form_save.save()
 
 			for address_form in address_formset:
@@ -2154,6 +2171,23 @@ class ExistingEnquiry(IsAgent,View):
 					enquiry_form_save.is_sms      = True
 				else:
 					enquiry_form_save.is_sms      = False
+
+				#APPEND MR / MS TO NAME
+				if enquiry_form_save.gender == 'MALE':
+					prefix = 'Mr. '
+				elif enquiry_form_save.gender == 'FEMALE':
+					prefix = 'Ms. '
+				else:
+					pass
+
+				customer_name = enquiry_form_save.name
+
+				prefix_exists = customer_name.startswith(prefix)
+
+				if prefix_exists == False :
+					enquiry_form_save.name = prefix+customer_name
+				else:
+					pass
 
 				enquiry_form_save.save()
 				messages.success(request,"Customer Details Succesfully updated")
@@ -3598,6 +3632,47 @@ class TicketRegistration(IsAgent,View):
 		return render(request,'agent/ticket/ticket_registration.html',{'orders':orders,'investigators':investigators})
 
 	def post(self,request):
+		order_id           = request.POST.get('order_id')
+		
+		investigation_form = InvestigationForm(request.POST)
+		if investigation_form.is_valid():
+			investigation_form_save             = investigation_form.save(commit=False)
+			investigation_form_save.assigned_by = request.user
+			investigation_form_save.order_id    = order_id
+			investigation_form_save.scheduled_at= timezone.now()
+			investigation_form_save.save()
+
+			FollowUp.objects.create(investigation=investigation_form_save,status='TICKET_RISED')
+
+			#save media
+			investigation_medias = request.FILES.getlist('investigation_media')
+			if not investigation_medias == ['']:
+					for image in investigation_medias:
+						InvestigationMedia.objects.create(
+							investigation = investigation_form_save,
+							media = image,
+							media_type = 'PHOTO',
+							taken_status = 'CUSTOMER_SEND',
+							is_active = True
+						)
+						
+			messages.success(request,"Investigation Rised Succesfully!")
+		else:
+			messages.error(request,get_error(investigation_form))
+		
+
+		return redirect('agent:agent-ticketregister')
+
+class OrderTicketRegistration(IsAgent,View):
+	def get(self,request,orderid):
+
+		order = Order.objects.filter(id=int(orderid)).first()
+
+		investigators = UserProfile.objects.filter(user_type='QUALITYCONTROLL',is_active=True)
+
+		return render(request,'agent/ticket/ticket_registration.html',{'order':order,'investigators':investigators})
+
+	def post(self,request,orderid):
 		order_id           = request.POST.get('order_id')
 		
 		investigation_form = InvestigationForm(request.POST)

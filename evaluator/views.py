@@ -7,6 +7,7 @@ from django.conf import settings
 from bleach_crm_ps.permissions import IsEvaluator
 from bleach_crm_ps.utils import get_error
 
+from django.db.models.functions import ExtractMonth,ExtractYear
 
 import random
 import string
@@ -812,7 +813,24 @@ class NewEnquiry(IsEvaluator,View):
 						enquiry_form_save.is_email    = True
 					else:
 						enquiry_form_save.is_sms      = True
-						
+
+			#APPEND MR / MS TO NAME
+			if enquiry_form_save.gender == 'MALE':
+				prefix = 'Mr. '
+			elif enquiry_form_save.gender == 'FEMALE':
+				prefix = 'Ms. '
+			else:
+				pass
+
+			customer_name = enquiry_form_save.name
+
+			prefix_exists = customer_name.startswith(prefix)
+
+			if prefix_exists == False :
+				enquiry_form_save.name = prefix+customer_name
+			else:
+				pass
+
 			enquiry_form_save.save()
 
 			for address_form in address_formset:
@@ -965,6 +983,23 @@ class ExistingEnquiry(IsEvaluator,View):
 					enquiry_form_save.is_sms      = True
 				else:
 					enquiry_form_save.is_sms      = False
+
+				#APPEND MR / MS TO NAME
+				if enquiry_form_save.gender == 'MALE':
+					prefix = 'Mr. '
+				elif enquiry_form_save.gender == 'FEMALE':
+					prefix = 'Ms. '
+				else:
+					pass
+
+				customer_name = enquiry_form_save.name
+
+				prefix_exists = customer_name.startswith(prefix)
+
+				if prefix_exists == False :
+					enquiry_form_save.name = prefix+customer_name
+				else:
+					pass
 
 				enquiry_form_save.save()
 				messages.success(request,"Customer Details Succesfully updated")
@@ -2878,3 +2913,84 @@ class MakeQuatationPhase2DuplicateEdit(IsEvaluator,View):
 			return render(request,'evaluator/enquiry/phase2quatationduplicateedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
 
 		return redirect('evaluator:evaluator-makequatation1duplicateedit',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
+
+class EvaluatorPaymentEdit(IsEvaluator,View):
+
+	def get(self,request,enquiry_id,evaluation_id):
+		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
+		
+		try:
+			evaluation = Evaluation.objects.get(id=evaluation_id)
+		except:
+			evaluation = None		
+	
+		try:
+			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation)
+		except:
+			evaluation_details = None
+
+		#allow submition	
+		evaluation_details_count         = evaluation_details.count()
+		evaluation_details_completed_count= evaluation_details.filter(status='EVALUATED').count()
+		if evaluation_details_count==evaluation_details_completed_count:
+			allow_submit = True
+		else:
+			allow_submit = False	
+
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()				
+
+		return render(request,'accountant/payment/payment_edit.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,})	
+
+	def post(self,request,enquiry_id,evaluation_id):
+		
+		payment_method 			= request.POST.get('payment_method')
+		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
+		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
+
+		#for delete previous subscription
+		evaluation      = Evaluation.objects.get(id=evaluation_id)
+		order			= Order.objects.get(evaluation_id=evaluation_id)
+
+		if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
+			OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
+			PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
+
+		#update payment method
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+
+		#update payment subscription if it is subscription
+		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
+			order           = Order.objects.get(evaluation_id=evaluation_id)
+			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id)
+
+			#create subscription model
+			cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
+			count=0
+			for month in cleaning_months:
+				count += 1
+				if len(cleaning_months) == count:
+					amount = evaluation.total_cost-round((evaluation.total_cost/len(cleaning_months)*(count-1)),3)			
+					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=amount,monthyear=(str(month[0])+'-'+str(month[1])) )
+				else:
+					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=round(evaluation.total_cost/len(cleaning_months),3),monthyear=(str(month[0])+'-'+str(month[1])) )			
+	
+				#update orderschedules
+				for schedule in order_schedules:
+					if payment_method == 'POSTPAIDSUBSCRIPTION':
+						if schedule.start_at.date().month-1 == month[0]:
+							schedule.payment_subscription = subscription
+							schedule.save()
+						elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
+							schedule.payment_subscription = subscription
+							schedule.save()
+					else:
+						if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
+							schedule.payment_subscription = subscription
+							schedule.save()
+		
+		messages.success(request,"Payment Policy Edited Succesfully")
+
+		return redirect('evaluator:evaluator-client-orderdetails',order.id)

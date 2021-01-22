@@ -1,3 +1,4 @@
+{% load mathfilters %}
 {% load static %}
 <!DOCTYPE html>
 <!--
@@ -134,9 +135,9 @@
             <tr>
               <td style="text-align:left;">&nbsp;&nbsp;{{account.order.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
               <td class="align-left">Invoice #INV{{account.order.invoice_no}}</td>
-              <td class="align-right debit_amount">{{account.amount_paid|floatformat:3}}</td>
+              <td class="debit_amount align-right">{{account.amount_paid|floatformat:3}}</td>
               <td class="align-right">0.000</td>
-              <td class="align-right">300.000&nbsp;&nbsp;</td>
+              <td class="balance_amount align-right" >0.000</td>
             </tr>
 
             {% if account.order.remining_amount > 0 %}
@@ -144,8 +145,8 @@
               <td style="text-align:left;">&nbsp;&nbsp;{{account.paid_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
               <td class="align-left">Receipt #RES{{account.order.receipt_no}}</td>
               <td class="align-right">0.000</td>
-              <td class="align-right credit_amount">{{account.order.remining_amount|floatformat:3}}</td>
-              <td class="align-right">300.000&nbsp;&nbsp;</td>
+              <td class="credit_amount align-right">{{account.order.remining_amount|floatformat:3}}</td>
+              <td class="balance_amount align-right" >0.000</td>
             </tr>
             {% endif %}
             {% endfor %}
@@ -155,7 +156,7 @@
               <td class="align-right" style="font-weight: bold;">TOTAL</td>
               <td class="align-right" id="total_debit" style="font-weight: bold;">0.000</td>
               <td class="align-right" id="total_credit" style="font-weight: bold;">0.000</td>
-              <td class="align-right" style="font-weight: bold;">50.000&nbsp;&nbsp;</td>
+              <td class="align-right" id="total_balance" style="font-weight: bold;">0.000</td>
             </tr> 
    
           </table>
@@ -167,12 +168,12 @@
           <table cellpadding="0" cellspacing="0">
             <tr>
               <th class="medium">Closing Balance</th>
-              <td class="due-amount medium"> 50.000 </td>
+              <td class="due-amount medium" id="closingbalance"> 50.000 </td>
             </tr>
             
             <tr>
               <th>Due Date</th>
-              <td class="due-amount"> 10.10.2020 </td>
+              <td class="due-amount"> - </td>
             </tr>
 <!--             
             <tr class="amount-total">
@@ -311,26 +312,38 @@ $(".close-btn, .bg-overlay").click(function () {
     function add_console(){
       console.log("war")
             var tds = document.getElementById('account-table').getElementsByTagName('td');
+            
             var sum1 = 0;
             var sum2 = 0;
+            var sum3 = 0;
 
             for(var i = 0; i < tds.length; i ++) {
               console.log(tds[i].className,"mok")
-                if(tds[i].className == 'debit_amount') {
+                if(tds[i].className == 'debit_amount align-right') {
                     console.log(tds[i].className,"kol")
                     sum1 += isNaN(tds[i].innerHTML) ? 0 : parseFloat(tds[i].innerHTML)||0;
-                  
-                    alert(sum1)
                 }
-                   if(tds[i].className == 'credit_amount') {
+                if(tds[i].className == 'credit_amount align-right') {
+                     console.log(tds[i].className,"kol2")
                     sum2 += isNaN(tds[i].innerHTML) ? 0 : parseFloat(tds[i].innerHTML)||0;
-                    alert(sum1)
+                }
+                
+
+                if (tds[i].className == 'balance_amount align-right') {
+                      var balance = parseFloat(sum1) + parseFloat(tds[i].innerHTML) - parseFloat(sum2) ;
+                      tds[i].innerHTML = parseFloat(balance).toFixed(3) ;
+                      console.log(balance,"abal")
+
+                      if (i < tds.length - 1){
+                        document.getElementById('total_balance').innerHTML =  parseFloat(balance).toFixed(3) ;
+                        document.getElementById('closingbalance').innerHTML =  parseFloat(balance).toFixed(3) ;
+                      }
                 }
             
             }
             
-            document.getElementById('total_debit').innerHTML =  sum1 ;
-            document.getElementById('total_credit').innerHTML =  sum2 ;
+            document.getElementById('total_debit').innerHTML =  parseFloat(sum1).toFixed(3) ;
+            document.getElementById('total_credit').innerHTML =  parseFloat(sum2).toFixed(3) ;
             
           }
 

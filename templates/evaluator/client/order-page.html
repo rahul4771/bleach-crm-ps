@@ -1054,7 +1054,15 @@
             {% elif order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION'  %}
             Monthly Prepaid
             {% else %}
-            {{order.evaluation.payment_method|default_if_none:''}}{% endif %}</div>
+            {{order.evaluation.payment_method|default_if_none:''}}{% endif %}
+            
+            {% if order.amount_paid == 0.00 %}
+            &nbsp;&nbsp;&nbsp;<a class="paymentedit" href="{% url 'evaluator:evaluator-payment-edit' order.evaluation.customer.id order.evaluation.id %}"><div class="edit_payment_policy"></div></a>
+            {% else %}
+            {% endif %}
+
+            </div>
+
             {% if order.evaluation.payment_method == 'BREAKDOWN' %}
             <div class="payment-text"><div>Before Cleaning Amount</div> : {{order.evaluation.before_cleaning_amount|default_if_none:''}}</div>
             <div class="payment-text"><div>After Cleaning Amount</div> : {{order.evaluation.after_cleaning_amount|default_if_none:''}}</div>
@@ -1325,6 +1333,13 @@ cleaning_completed_count += 1;
 {% endif %}
 
 {% endfor %}
+
+//payment policy edit button hide / Show
+if (teamassign_completed_count > 0){
+    $('.paymentedit').remove();
+}else{
+    $('.edit_payment_policy').append('<span style="color: blue "><i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</span>');
+}
 
 //change html
 // $("#date_confirmed").html(dateconfirm_completed_count)
