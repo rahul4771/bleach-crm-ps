@@ -250,7 +250,7 @@ class AccountantHome(IsAccountant,View):
 				if cleaning_price > 0:
 					invoice.balance=cleaning_price
 				else:
-					invoice.balance=pending_price-invoice.remining_amount
+					invoice.balance=cleaning_price-invoice.remining_amount
 
 
 		#buybackgiftpromos		
