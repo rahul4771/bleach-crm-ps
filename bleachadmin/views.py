@@ -965,8 +965,8 @@ class PaymentDetails(IsAdmin,View):
 			for payment in pending_payments:
 				if payment.evaluation.payment_method in ['PREPAID','POSTPAID','BREAKDOWN']:
 					total_pending_amount += payment.remining_amount
-
-			total_pending_amount = total_pending_amount+pending_payments.aggregate(total=Case(When(evaluation__payment_method='SUBSCRIPTION',then=Sum(F('subscription_topay'))),default=0,output_field=FloatField()))['total']		
+				if payment.evaluation.payment_method == 'SUBSCRIPTION':
+					total_pending_amount += payment.subscription_topay			
 
 			total_pending_orders = pending_payments.count()
 		else:
