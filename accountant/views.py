@@ -164,7 +164,7 @@ class AccountantHome(IsAccountant,View):
 
 		#sales amount
 		try:
-			invoices         = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',order_status__isnull=False).order_by('-id')
+			invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
 		except:
 			invoices         = None
 
@@ -185,69 +185,80 @@ class AccountantHome(IsAccountant,View):
 		this_quarter_sales=payment_history.filter(paid_date__gte=quarter_start_date,paid_date__lt=nxtmonth_start_date).aggregate(total=Sum('amount_paid'))['total']
 		last_quarter_sales=payment_history.filter(paid_date__gte=prvquarter_start_date,paid_date__lt=quarter_start_date).aggregate(total=Sum('amount_paid'))['total']	
 
-		#Pending Payment and Order Count	
-		if invoices:
-			total_pending_amount = invoices.prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(Q( Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))) | Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(preamount_paid=0)) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) )).aggregate(total=Sum(F('remining_amount')))['total']+invoices.filter(Q(Q(evaluation__payment_method = 'SUBSCRIPTION')&Q(subscription_topay_date__isnull=False))).aggregate(total=Sum(F('subscription_topay')))['total']
-			total_pending_orders = invoices.prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(Q( Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))) | Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(preamount_paid=0)) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) )).count()+invoices.filter(Q(Q(evaluation__payment_method = 'SUBSCRIPTION')&Q(subscription_topay_date__isnull=False))).count()
-		else:
-			total_pending_amount = 0
-			total_pending_orders = 0
-
 		
 		#Pending Payments
-		pending_payments = invoices.filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).order_by('start_at'),to_attr='orderschedules')).annotate(Count('order_scheduler_order'))
-			
+		pending_payments = invoices.filter(Q( Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))) | Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(preamount_paid=0)) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
+		
+
+		#Pending Payment and Order Count	
+		if pending_payments: 
+			total_pending_amount = 0
+			for payment in pending_payments:
+				if payment.evaluation.payment_method in ['PREPAID','POSTPAID','BREAKDOWN']:
+					total_pending_amount += payment.remining_amount
+
+			total_pending_amount = total_pending_amount+pending_payments.aggregate(total=Case(When(evaluation__payment_method='SUBSCRIPTION',then=Sum(F('subscription_topay'))),default=0,output_field=FloatField()))['total']		
+
+			total_pending_orders = pending_payments.count()
+		else:
+			total_pending_amount = 0
+			total_pending_orders = 0		
+
 
 		#remove object in postpaid if not last cleaning fulfilled	
 		#remove if subscription to pay date
-		for payment in pending_payments:
-			if payment.evaluation.payment_method == 'POSTPAID':
-				very_latest_cleaning=payment.orderschedules[payment.order_scheduler_order__count-1]
-				if very_latest_cleaning.work_status != 'CLEANING_FULFILLED':
-					pending_payments = pending_payments.exclude(id=payment.id)
-			if payment.evaluation.payment_method == 'SUBSCRIPTION' and not payment.subscription_topay_date:
-				pending_payments = pending_payments.exclude(id=payment.id)	
+		if pending_payments:
+			for payment in pending_payments:
+				if payment.evaluation.payment_method == 'POSTPAID':
+					very_latest_cleaning=payment.orderschedules[payment.order_scheduler_order__count-1]
+					if very_latest_cleaning.work_status != 'CLEANING_FULFILLED':
+						pending_payments = pending_payments.exclude(id=payment.id)
+				if payment.evaluation.payment_method == 'SUBSCRIPTION' and not payment.subscription_topay_date:
+					pending_payments = pending_payments.exclude(id=payment.id)	
 
 		#to find days
-		for payment in pending_payments:
-			if payment.evaluation.payment_method == 'PREPAID' and payment.orderschedules:
-				very_old_cleaning   = payment.orderschedules[0]
-				payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
-			elif payment.evaluation.payment_method == 'POSTPAID' and payment.orderschedules:
-				very_latest_cleaning=payment.orderschedules[payment.order_scheduler_order__count-1]
-				payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
-			elif payment.evaluation.payment_method == 'BREAKDOWN' and payment.orderschedules:
-			
-				very_old_cleaning   = payment.orderschedules[0]
-				very_latest_cleaning=payment.orderschedules[payment.order_scheduler_order__count-1]
-				payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
-				payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
+		if pending_payments:
+			for payment in pending_payments:
+				if payment.evaluation.payment_method == 'PREPAID' and payment.orderschedules:
+					very_old_cleaning   = payment.orderschedules[0]
+					payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
+				elif payment.evaluation.payment_method == 'POSTPAID' and payment.orderschedules:
+					very_latest_cleaning=payment.orderschedules[payment.order_scheduler_order__count-1]
+					payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
+				elif payment.evaluation.payment_method == 'BREAKDOWN' and payment.orderschedules:
+				
+					very_old_cleaning   = payment.orderschedules[0]
+					very_latest_cleaning=payment.orderschedules[payment.order_scheduler_order__count-1]
+					payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
+					payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
 
-				#to check last cleaning completed for break down after payment
-				if very_latest_cleaning.work_status == 'CLEANING_FULFILLED':
-					payment.last_completed = True	
+					#to check last cleaning completed for break down after payment
+					if very_latest_cleaning.work_status == 'CLEANING_FULFILLED':
+						payment.last_completed = True	
 
-			elif payment.evaluation.payment_method == 'SUBSCRIPTION':				
-				payment.delaydays= (timezone.now()-payment.subscription_topay_date).days	
+				elif payment.evaluation.payment_method == 'SUBSCRIPTION':				
+					payment.delaydays= (timezone.now()-payment.subscription_topay_date).days	
 
 		#subscriptions
 		subscriptions = invoices.filter(Q(Q( Q(payment_status='PENDING') |Q(payment_status='ON_HOLD') ) & Q(evaluation__payment_method='SUBSCRIPTION'))).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())) )
-		for invoice in subscriptions:
-			cleaning_price = 0
-			for scheduler in invoice.orderschedules:
-				if scheduler.work_status=='CLEANING_FULFILLED':
-					cleaning_price = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
-			if cleaning_price > 0:
-				invoice.balance=cleaning_price
-			else:
-				invoice.balance=pending_price-invoice.remining_amount
+		if subscriptions:
+			for invoice in subscriptions:
+				cleaning_price = 0
+				for scheduler in invoice.orderschedules:
+					if scheduler.work_status=='CLEANING_FULFILLED':
+						cleaning_price = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
+				if cleaning_price > 0:
+					invoice.balance=cleaning_price
+				else:
+					invoice.balance=pending_price-invoice.remining_amount
 
 
 		#buybackgiftpromos		
 		approved_paybackdiscounts = Investigation.objects.filter(is_paybackdiscount_approved=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=True,is_completed=False),to_attr='paybackdiscounts'))
 		#add days left
-		for ticket in approved_paybackdiscounts:
-			ticket.days_left = (timezone.now()-ticket.scheduled_at).days
+		if approved_paybackdiscounts:
+			for ticket in approved_paybackdiscounts:
+				ticket.days_left = (timezone.now()-ticket.scheduled_at).days
 
 		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders,"approved_paybackdiscounts":approved_paybackdiscounts,"subscriptions":subscriptions,})
 
