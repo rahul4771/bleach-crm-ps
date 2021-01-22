@@ -129,7 +129,7 @@
   <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
       <div class="ticket-form-left"><!--ticket-form-left-->
           <div class="bold-text common-label required-field"> <label>Promo-code</label></div>
-                <input type="text" name="promocode" class="textBox" required>
+                <input type="text" name="promocode" class="textBox" id="id_promocode" required>
       </div><!--ticket-form-left--> 
   </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">   
@@ -171,7 +171,7 @@
 <hr class="hr-dashedpad">
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  <div class="bold-text common-label required-field"> <label>Total Usage Count</label></div>
+  <div class="bold-text common-label required-field"> <label>Total Coupon Count</label></div>
                 <input type="text" name="total_usage" class="textBox OnlyNumber" required>
   </div><!--ticket-form-left--> 
 </div>
@@ -274,6 +274,13 @@
 {% block javascript %}
 <script>
 $(document).ready(function(){
+  //convert promo code to upper case while typing
+  $(document).ready(function(){
+      $('#id_promocode').keyup(function(){
+          $(this).val($(this).val().toUpperCase());
+      });
+  });
+
   //add promocode
   $('.add_promocode').click(function(){
 

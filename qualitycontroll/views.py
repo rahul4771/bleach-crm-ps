@@ -697,7 +697,7 @@ class Followup(IsQualityControll,View):
 
 		tendative_time = request.POST.get('tendative_time')
 
-		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True,notes=request.POST.get('notes'))
+		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True,notes=request.POST.get('investigator_notes'))
 		
 		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
 		follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
@@ -810,7 +810,7 @@ class FollowupEdit(IsQualityControll,View):
 		# start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
 		# end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
 
-		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True,notes=request.POST.get('notes'))
+		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True,notes=request.POST.get('investigator_notes'))
 		
 		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
 		follow_up.status         = 'FOLLOWUP_IN_PROGRESS'

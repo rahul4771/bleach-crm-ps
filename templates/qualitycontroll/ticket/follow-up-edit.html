@@ -106,7 +106,12 @@
                 <input name="form-0-tendative_dates" id='id_form-0-tendative_dates' type="text" class="textBox readonly" placeholder="Please select no. of cleaners, duration and time." autocomplete="off"> 
                 </div><!--enquiry-form-right--> {% endcomment %}
 		</div> <!--enquiry-form-Wrapper enquiry-boxes-->
-                
+
+        <br><br><br>
+        
+  				<div class=" bold-text common-label"> <label>Notes</label></div>
+                <textarea name="investigator_notes" class="textArea" cols="" rows="">{% for schedule in followupscheduler %}{% if forloop.first %}{{schedule.follow_up.investigation.notes}}{% endif %}{% endfor %}</textarea>
+
 <div class="details-notes align-left">Media</div>        
 <div class="row" id="id_media"><!--row-->
         <i class="fa fa-plus imgAdd id_media"></i>
