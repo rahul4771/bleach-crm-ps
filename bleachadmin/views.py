@@ -962,13 +962,12 @@ class PaymentDetails(IsAdmin,View):
 		#Pending Payment and Order Count	
 		if pending_payments: 
 			total_pending_amount = 0
+			total_pending_orders = pending_payments.count()
 			for payment in pending_payments:
 				if payment.evaluation.payment_method in ['PREPAID','POSTPAID','BREAKDOWN']:
 					total_pending_amount += payment.remining_amount
 				if payment.evaluation.payment_method == 'SUBSCRIPTION':
 					total_pending_amount += payment.subscription_topay			
-
-			total_pending_orders = pending_payments.count()
 		else:
 			total_pending_amount = 0
 			total_pending_orders = 0
