@@ -230,7 +230,17 @@ class AccountantHome(IsAccountant,View):
 				payment.delaydays= (timezone.now()-payment.subscription_topay_date).days	
 
 		#subscriptions
-		subscriptions = invoices.filter(Q(Q( Q(payment_status='PENDING') |Q(payment_status='ON_HOLD') ) & Q(evaluation__payment_method='SUBSCRIPTION'))).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'))
+		subscriptions = invoices.filter(Q(Q( Q(payment_status='PENDING') |Q(payment_status='ON_HOLD') ) & Q(evaluation__payment_method='SUBSCRIPTION'))).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())) )
+		for invoice in subscriptions:
+			cleaning_price = 0
+			for scheduler in invoice.orderschedules:
+				if scheduler.work_status=='CLEANING_FULFILLED':
+					cleaning_price = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
+			if cleaning_price > 0:
+				invoice.balance=cleaning_price
+			else:
+				invoice.balance=pending_price-invoice.remining_amount
+
 
 		#buybackgiftpromos		
 		approved_paybackdiscounts = Investigation.objects.filter(is_paybackdiscount_approved=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=True,is_completed=False),to_attr='paybackdiscounts'))
@@ -241,7 +251,7 @@ class AccountantHome(IsAccountant,View):
 		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders,"approved_paybackdiscounts":approved_paybackdiscounts,"subscriptions":subscriptions,})
 
 	def post(self,request):
-		order_id            = request.POST.get('order_id')
+		order_id            = request.POST.get('order')
 		subscription_topay  = float(request.POST.get('subscription_topay'))
 
 		Order.objects.filter(id=order_id).update(subscription_topay=subscription_topay,subscription_topay_date=timezone.now())
@@ -438,49 +448,13 @@ class PaymentEdit(IsAccountant,View):
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
 
-		#for delete previous subscription
-		evaluation      = Evaluation.objects.get(id=evaluation_id)
-		order			= Order.objects.get(evaluation_id=evaluation_id)
-
-		if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
-			OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
-			PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
-
 		#update payment method
 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
-
-		#update payment subscription if it is subscription
-		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
-			order           = Order.objects.get(evaluation_id=evaluation_id)
-			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id)
-
-			#create subscription model
-			cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
-			count=0
-			for month in cleaning_months:
-				count += 1
-				if len(cleaning_months) == count:
-					amount = evaluation.total_cost-round((evaluation.total_cost/len(cleaning_months)*(count-1)),3)			
-					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=amount,monthyear=(str(month[0])+'-'+str(month[1])) )
-				else:
-					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=round(evaluation.total_cost/len(cleaning_months),3),monthyear=(str(month[0])+'-'+str(month[1])) )			
-	
-				#update orderschedules
-				for schedule in order_schedules:
-					if payment_method == 'POSTPAIDSUBSCRIPTION':
-						if schedule.start_at.date().month-1 == month[0]:
-							schedule.payment_subscription = subscription
-							schedule.save()
-						elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
-							schedule.payment_subscription = subscription
-							schedule.save()
-					else:
-						if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
-							schedule.payment_subscription = subscription
-							schedule.save()
 		
 		messages.success(request,"Payment Policy Edited Succesfully")
 
+		order			= Order.objects.get(evaluation_id=evaluation_id)
+		
 		return redirect('accountant:accountant-client-orderdetails',order.id)
 
 class OrderDetails(IsAccountant,View):

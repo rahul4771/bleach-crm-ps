@@ -196,41 +196,22 @@
 {% if subscriptions %}
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Subscription</h2>
-<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
-<thead>
-<tr>
-<th>Order Number</th>
-<th data-hide="phone,tablet">Name</th>
-<th data-hide="phone,tablet">Service Type(s)</th>
-<th>Contact</th>
-<th data-hide="phone,tablet">Total Amount</th>
-<th data-hide="phone,tablet">Paid</th>
-<th data-hide="phone,tablet">To Pay</th>
-<th data-hide="phone,tablet">Invoice</th>
-</tr>
-</thead>
-
+<table class="main-table">
 <tbody>
 {% for invoice in subscriptions %}
 
 <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
-<td class="bold-text clickable-row" data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}">{{invoice.evaluation.evaluation_id}}</td>
-    <td>{{invoice.evaluation.customer.name}}</td>
-    <td>
-    {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
-    {% for book in evaluation_details.evaluation_books %}
-    {{book.service_type}}<br>
-    {% endfor %}
-    {% endfor %}
-    </td>
-    <td>{{invoice.evaluation.customer.mobile_number}}</td>
-    <td>{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}} KD</td>
-    <td>{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}} KD</td>
-    <form method="post" action="">
-    {%csrf_token%}
-    <input type="hidden" name="order_id" value="{{invoice.id}}">
-    <td><input type="text" name="subscription_topay" class="textBox OnlyNumber" value="{{invoice.remining_amount|floatformat:'3'}}"></input></td>
-    <td><input type="submit" value="send" class="red-text green-bg"></td>
+<td class="bold-text clickable-row" data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}" data-label="BLC NUMBER">{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="CUSTOMER">{{invoice.evaluation.customer.name}}</td>
+    <td data-label="CONTACT NUMBER">{{invoice.evaluation.customer.mobile_number}}</td>
+    <td data-label="Colmpleted Cleaning">{{invoice.completed_cleanings_count}}/{{invoice.total_cleanings_count}}</td>
+    <td data-label="Completed Payment">{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}/{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}</td>
+    {% if invoice.balance < 0 %}
+    <td data-label="Remining" class="green-text">{{invoice.balance|default_if_none:'0.000'|floatformat:'3'|cut:'-'}}</td>
+    {% else %}
+    <td data-label="Remining" class="red-text">{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}</td>
+    {% endif %}
+    <td data-label=""><span class="green-bg clickable-cursor send_invoice" data-id="{{invoice.id}}" data-blcno="{{invoice.evaluation.evaluation_id}}" data-customername="{{invoice.evaluation.customer.mobile_number}}" data-contactno="{{invoice.evaluation.customer.name}}" {% for schedule in invoice.orderschedules %}{% if forloop.first %}data-startdate="{{schedule.start_at|date:'d-m-Y'}}" {% endif %}{% if forloop.last %}data-enddate="{{schedule.start_at|date:'d-m-Y'}}"{% endif %}{% endfor %} data-totalamount="{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}" data-paidamount="{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}" data-balance="{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}" data-remining="{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}">Send Invoice</span></td>
     </form>
 </tr>
 {% endfor %}
@@ -382,6 +363,63 @@
         </div><!--container-fluid space-->
     </section><!--content-->
 
+<!-- send invoice -->
+<div class="overlay" id="send_invoice_popup">
+    <div class="popup-assign-eval"><!--popup-assign-eval-->
+        <a id="close_send_invoice_popup" class="close">&times;</a>
+            <div class="content"><!--content-->        
+<form method="post" enctype="multipart/form-data">{% csrf_token %}                      
+<input type="hidden" name="order" id="order_id">
+            <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">  
+                <tr>
+                    <td><div class="blc-number" id="blcno_invoice_id"></div></td>
+                    <td><div class="bold-text" id="customername_invoice_id"></div><div id="mobileno_invoice_id"></div></td>
+                </tr>  
+    </table>
+    
+      </div><!--ticket-form-left--> 
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+<table width="100%" border="0" class="popup-tble1">  
+            <tr>
+            <td>Start Date:&nbsp;<strong><span class="bold-text" id="starting_date_invoice_id"></span></strong></td><td>Total Price:&nbsp;<strong><span class="bold-text" id="total_price_invoice_id"></span></strong></td>
+            </tr>
+            <tr>
+            <td>End Date:&nbsp;<strong><span class="bold-text" id="ending_date_invoice_id"></span></strong></td><td>Paid:&nbsp;<strong><span class="bold-text" id="paid_invoice_id"></span></strong></td>
+            </tr>
+            <tr>
+            <td>Remining:&nbsp;<strong><span class="bold-text" id="remining_invoice_id"></span></strong></td><td>Balance:&nbsp;<strong><span class="bold-text" id="balance_invoice_id"></span></strong></td>
+            </tr>  
+            </table>
+</div><!--ticket-form-left--> 
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">     
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+      <div class="ticket-form-left"><!--ticket-form-left-->
+        <div class="bold-text common-label required-field"> <label>Invoice Amount</label></div>
+                <input type="number" name="subscription_topay" id="subscription_topay_id" class="textBox" required min="0.001" step="any">
+      </div><!--ticket-form-left-->   
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<div align="right"> <input class="assignButton dateconfirm" name="assing" type="button" value="Send Invoice" onclick="submitAnyForm(this);" ></div>  
+
+</div><!--ticket-wrapper-full-->             
+</form>
+            </div><!--content-->
+    </div><!--popup-assign-eval-->
+</div><!--overlay-->
+<!-- /send invoice -->
+
 {% include 'accountant/common/footer.html' %}
 </div><!--wrapper-->
 {% endblock %}
@@ -396,6 +434,40 @@ $('.footable').footable({
 
     </script>
 <script>
+//add promocode
+  $('.send_invoice').click(function(){
+    $('#order_id').val($(this).data('id'));
+    $('#blcno_invoice_id').text($(this).data('blcno'));
+    $('#customername_invoice_id').text($(this).data('customername'));
+    $('#mobileno_invoice_id').text($(this).data('contactno'));
+    $('#starting_date_invoice_id').text($(this).data('startdate'));
+    $('#ending_date_invoice_id').text($(this).data('enddate'));
+    $('#total_price_invoice_id').text($(this).data('totalamount'));
+    $('#paid_invoice_id').text($(this).data('paidamount'));
+    $('#balance_invoice_id').text($(this).data('balance'));
+
+    remining_amount = parseFloat($(this).data('remining'));
+    if(remining_amount < 0)
+    {
+        $('#remining_invoice_id').text((remining_amount*-1));
+        $('#remining_invoice_id').addClass('green-text');
+    }
+    else
+    {
+        $('#remining_invoice_id').text($(this).data('remining'));
+        $('#remining_invoice_id').addClass('red-text');
+    }
+
+    $('#subscription_topay_id').prop('max',parseFloat($(this).data('balance')));
+
+    $('#send_invoice_popup').css({'visibility':'visible','opacity':1,});
+});
+$('#close_send_invoice_popup').click(function(){
+      $('#send_invoice_popup').css({'visibility':'hidden','opacity':0,});
+  });
+
+
+
 function set_params_go(args)
 {
 var url='{% url 'accountant:accountantdash-board' %}';

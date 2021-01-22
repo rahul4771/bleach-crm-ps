@@ -120,7 +120,7 @@ class EvaluatorHome(IsEvaluator,View):
 		schedule_date_end   = schedule_date_start+timedelta(1)	
 
 		try:
-			calendar_order_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end)))).order_by('start_at').select_related('order__evaluation__customer','customer_address','order_scheduler_book','payment_subscription').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(Q(order__evaluation__payment_method='POSTPAIDSUBSCRIPTION')&Q(Q(payment_subscription__is_paid=True)|Q(payment_subscription=None))) | Q(Q(order__evaluation__payment_method='PREPAIDSUBSCRIPTION')&Q(payment_subscription__is_paid=True)) )) 
+			calendar_order_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end)))).order_by('start_at').select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(order__evaluation__payment_method='SUBSCRIPTION') )) 
 		except:
 			calendar_order_schedules 	= None
 
@@ -130,7 +130,7 @@ class EvaluatorHome(IsEvaluator,View):
 			calendar_followup_schedules = None
 
 		try:
-			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book','payment_subscription').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(Q(order__evaluation__payment_method='POSTPAIDSUBSCRIPTION')&Q(Q(payment_subscription__is_paid=True)|Q(payment_subscription=None))) | Q(Q(order__evaluation__payment_method='PREPAIDSUBSCRIPTION')&Q(payment_subscription__is_paid=True)) ))
+			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(order__evaluation__payment_method='SUBSCRIPTION') ))
 		except:
 			sp_calendar_order_schedules = None
 
@@ -140,7 +140,7 @@ class EvaluatorHome(IsEvaluator,View):
 			sp_calendar_followup_schedules = None
 
 		try:
-			spp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book','payment_subscription').filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(Q(order__evaluation__payment_method='POSTPAIDSUBSCRIPTION')&Q(Q(payment_subscription__is_paid=True)|Q(payment_subscription=None))) | Q(Q(order__evaluation__payment_method='PREPAIDSUBSCRIPTION')&Q(payment_subscription__is_paid=True)) ))
+			spp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(order__evaluation__payment_method='SUBSCRIPTION') ))
 		except:
 			spp_calendar_order_schedules = None
 
@@ -1320,56 +1320,6 @@ class MakeQuatationPhase1(IsEvaluator,View):
 		#update payment method
 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
 
-		#update payment subscription if it is subscription
-		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
-			order           = Order.objects.get(evaluation_id=evaluation_id)
-			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).select_related('order_scheduler_book').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
-
-			#create subscription model
-			cleaning_months = order_schedules.extra(select={'year': "EXTRACT(year FROM start_at)",'month': "EXTRACT(month FROM start_at)"}).values_list('month','year').distinct()
-			count           = 0
-
-			#for adjustment
-			append_discount = 0
-			for month in cleaning_months:
-				count += 1;
-				
-				month_start 		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)
-				month_end   		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
-				month_schedules      = order_schedules.filter(start_at__range=(month_start,month_end))
-
-				total_cost_per_month = 0
-				for schedule in month_schedules:
-					if schedule.order_scheduler_book.booksections:
-						for section in schedule.order_scheduler_book.booksections:
-							total_cost_per_month += section.section_cost
-				
-				if count == len(cleaning_months):
-					total_discount_per_month = round(evaluation.discount-append_discount,3)
-				else:
-					total_discount_per_month = round((evaluation.discount/order_schedules.count())*month_schedules.count(),3)
-
-				total_cost_per_month     = round(total_cost_per_month-total_discount_per_month,3)
-				actual_cost_per_month    = total_cost_per_month+total_discount_per_month
-				subscription             = PaymentSubscriptionDetails.objects.create(order=order,actual_amount=actual_cost_per_month,discount=total_discount_per_month,amount=total_cost_per_month,monthyear=(str(month[0])+'-'+str(month[1])) )
-
-				#for adjustment
-				append_discount          += total_discount_per_month
-
-				#update orderschedules
-				for schedule in order_schedules:
-					if payment_method == 'POSTPAIDSUBSCRIPTION':
-						if schedule.start_at.date().month-1 == month[0]:
-							schedule.payment_subscription = subscription
-							schedule.save()
-						elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
-							schedule.payment_subscription = subscription
-							schedule.save()
-					else:
-						if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
-							schedule.payment_subscription = subscription
-							schedule.save()
-
 		#sms integration
 		evaluation = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
 		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
@@ -1810,65 +1760,9 @@ class MakeAssignedQuatationPhase1(IsEvaluator,View):
 		payment_method = request.POST.get('payment_method')
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
-			
-		#for backbutton safety delete subscription
-		evaluation      = Evaluation.objects.get(id=evaluation_id)
-		if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
-			OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
-			PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
 
 		#update payment method
 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
-
-		#update payment subscription if it is subscription
-		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
-			order           = Order.objects.get(evaluation_id=evaluation_id)
-			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).select_related('order_scheduler_book').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
-
-			#create subscription model
-			cleaning_months = order_schedules.extra(select={'year': "EXTRACT(year FROM start_at)",'month': "EXTRACT(month FROM start_at)"}).values_list('month','year').distinct()
-			count           = 0
-
-			#for adjustment
-			append_discount = 0
-			for month in cleaning_months:
-				count += 1;
-				
-				month_start 		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)
-				month_end   		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
-				month_schedules      = order_schedules.filter(start_at__range=(month_start,month_end))
-
-				total_cost_per_month = 0
-				for schedule in month_schedules:
-					if schedule.order_scheduler_book.booksections:
-						for section in schedule.order_scheduler_book.booksections:
-							total_cost_per_month += section.section_cost
-				
-				if count == len(cleaning_months):
-					total_discount_per_month = round(evaluation.discount-append_discount,3)
-				else:
-					total_discount_per_month = round((evaluation.discount/order_schedules.count())*month_schedules.count(),3)
-
-				total_cost_per_month     = round(total_cost_per_month-total_discount_per_month,3)
-				actual_cost_per_month    = total_cost_per_month+total_discount_per_month
-				subscription             = PaymentSubscriptionDetails.objects.create(order=order,actual_amount=actual_cost_per_month,discount=total_discount_per_month,amount=total_cost_per_month,monthyear=(str(month[0])+'-'+str(month[1])) )
-
-				#for adjustment
-				append_discount          += total_discount_per_month
-
-				#update orderschedules
-				for schedule in order_schedules:
-					if payment_method == 'POSTPAIDSUBSCRIPTION':
-						if schedule.start_at.date().month-1 == month[0]:
-							schedule.payment_subscription = subscription
-							schedule.save()
-						elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
-							schedule.payment_subscription = subscription
-							schedule.save()
-					else:
-						if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
-							schedule.payment_subscription = subscription
-							schedule.save()
 
 		#sms integration
 		evaluation = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
@@ -2310,64 +2204,8 @@ class MakeQuatationPhase1Edit(IsEvaluator,View):
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
 
-		#for backbutton safety delete subscription
-		evaluation      = Evaluation.objects.get(id=evaluation_id)
-		if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
-			OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
-			PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
-
 		#update payment method
 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
-
-		#update payment subscription if it is subscription
-		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
-			order           = Order.objects.get(evaluation_id=evaluation_id)
-			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).select_related('order_scheduler_book').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
-
-			#create subscription model
-			cleaning_months = order_schedules.extra(select={'year': "EXTRACT(year FROM start_at)",'month': "EXTRACT(month FROM start_at)"}).values_list('month','year').distinct()
-			count           = 0
-
-			#for adjustment
-			append_discount = 0
-			for month in cleaning_months:
-				count += 1;
-				
-				month_start 		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)
-				month_end   		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
-				month_schedules      = order_schedules.filter(start_at__range=(month_start,month_end))
-
-				total_cost_per_month = 0
-				for schedule in month_schedules:
-					if schedule.order_scheduler_book.booksections:
-						for section in schedule.order_scheduler_book.booksections:
-							total_cost_per_month += section.section_cost
-				
-				if count == len(cleaning_months):
-					total_discount_per_month = round(evaluation.discount-append_discount,3)
-				else:
-					total_discount_per_month = round((evaluation.discount/order_schedules.count())*month_schedules.count(),3)
-
-				total_cost_per_month     = round(total_cost_per_month-total_discount_per_month,3)
-				actual_cost_per_month    = total_cost_per_month+total_discount_per_month
-				subscription             = PaymentSubscriptionDetails.objects.create(order=order,actual_amount=actual_cost_per_month,discount=total_discount_per_month,amount=total_cost_per_month,monthyear=(str(month[0])+'-'+str(month[1])) )
-
-				#for adjustment
-				append_discount          += total_discount_per_month
-
-				#update orderschedules
-				for schedule in order_schedules:
-					if payment_method == 'POSTPAIDSUBSCRIPTION':
-						if schedule.start_at.date().month-1 == month[0]:
-							schedule.payment_subscription = subscription
-							schedule.save()
-						elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
-							schedule.payment_subscription = subscription
-							schedule.save()
-					else:
-						if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
-							schedule.payment_subscription = subscription
-							schedule.save()
 
 		#sms integration
 		evaluation = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
@@ -2650,64 +2488,6 @@ def deleteservice(request,book_id,evaluation_detail_id):
 	orderscheduler = OrderScheduler.objects.filter(order_scheduler_book__id=book_id).delete()
 	service.delete()
 
-	#for backbutton safety delete subscription
-	evaluation_id   = service.evaluation_details.evaluation.id
-	payment_method  = service.evaluation_details.evaluation.payment_method
-	
-	if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
-		OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
-		PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
-
-	#update payment subscription if it is subscription
-	if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
-		order           = Order.objects.get(evaluation_id=evaluation_id)
-		order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).select_related('order_scheduler_book').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
-
-		#create subscription model
-		cleaning_months = order_schedules.extra(select={'year': "EXTRACT(year FROM start_at)",'month': "EXTRACT(month FROM start_at)"}).values_list('month','year').distinct()
-		count           = 0
-
-		#for adjustment
-		append_discount = 0
-		for month in cleaning_months:
-			count += 1;
-			
-			month_start 		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)
-			month_end   		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
-			month_schedules      = order_schedules.filter(start_at__range=(month_start,month_end))
-
-			total_cost_per_month = 0
-			for schedule in month_schedules:
-				if schedule.order_scheduler_book.booksections:
-					for section in schedule.order_scheduler_book.booksections:
-						total_cost_per_month += section.section_cost
-			
-			if count == len(cleaning_months):
-				total_discount_per_month = round(evaluation.discount-append_discount,3)
-			else:
-				total_discount_per_month = round((evaluation.discount/order_schedules.count())*month_schedules.count(),3)
-
-			total_cost_per_month     = round(total_cost_per_month-total_discount_per_month,3)
-			actual_cost_per_month    = total_cost_per_month+total_discount_per_month
-			subscription             = PaymentSubscriptionDetails.objects.create(order=order,actual_amount=actual_cost_per_month,discount=total_discount_per_month,amount=total_cost_per_month,monthyear=(str(month[0])+'-'+str(month[1])) )
-
-			#for adjustment
-			append_discount          += total_discount_per_month
-
-			#update orderschedules
-			for schedule in order_schedules:
-				if payment_method == 'POSTPAIDSUBSCRIPTION':
-					if schedule.start_at.date().month-1 == month[0]:
-						schedule.payment_subscription = subscription
-						schedule.save()
-					elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
-						schedule.payment_subscription = subscription
-						schedule.save()
-				else:
-					if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
-						schedule.payment_subscription = subscription
-						schedule.save()
-
 
 	messages.success(request,"Service deleted successfully!")
 	return redirect('evaluator:evaluator-makeassignedquatation2edit',evaluation_detail_id)
@@ -2748,64 +2528,6 @@ def deletesection(request,url_type,section_id,evaluation_detail_id):
 	order.save()
 
 	section.delete()
-
-	#for backbutton safety delete subscription
-	evaluation_id   = service.evaluation_details.evaluation.id
-	payment_method  = service.evaluation_details.evaluation.payment_method
-	
-	if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
-		OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
-		PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
-
-	#update payment subscription if it is subscription
-	if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
-		order           = Order.objects.get(evaluation_id=evaluation_id)
-		order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).select_related('order_scheduler_book').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
-
-		#create subscription model
-		cleaning_months = order_schedules.extra(select={'year': "EXTRACT(year FROM start_at)",'month': "EXTRACT(month FROM start_at)"}).values_list('month','year').distinct()
-		count           = 0
-
-		#for adjustment
-		append_discount = 0
-		for month in cleaning_months:
-			count += 1;
-			
-			month_start 		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)
-			month_end   		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
-			month_schedules      = order_schedules.filter(start_at__range=(month_start,month_end))
-
-			total_cost_per_month = 0
-			for schedule in month_schedules:
-				if schedule.order_scheduler_book.booksections:
-					for section in schedule.order_scheduler_book.booksections:
-						total_cost_per_month += section.section_cost
-			
-			if count == len(cleaning_months):
-				total_discount_per_month = round(evaluation.discount-append_discount,3)
-			else:
-				total_discount_per_month = round((evaluation.discount/order_schedules.count())*month_schedules.count(),3)
-
-			total_cost_per_month     = round(total_cost_per_month-total_discount_per_month,3)
-			actual_cost_per_month    = total_cost_per_month+total_discount_per_month
-			subscription             = PaymentSubscriptionDetails.objects.create(order=order,actual_amount=actual_cost_per_month,discount=total_discount_per_month,amount=total_cost_per_month,monthyear=(str(month[0])+'-'+str(month[1])) )
-
-			#for adjustment
-			append_discount          += total_discount_per_month
-
-			#update orderschedules
-			for schedule in order_schedules:
-				if payment_method == 'POSTPAIDSUBSCRIPTION':
-					if schedule.start_at.date().month-1 == month[0]:
-						schedule.payment_subscription = subscription
-						schedule.save()
-					elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
-						schedule.payment_subscription = subscription
-						schedule.save()
-				else:
-					if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
-						schedule.payment_subscription = subscription
-						schedule.save()
 						
 	messages.success(request,"Section deleted successfully!")
 
@@ -2909,66 +2631,9 @@ class MakeQuatationPhase1DuplicateEdit(IsEvaluator,View):
 		payment_method 			= request.POST.get('payment_method')
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
-		
-
-		#for backbutton safety delete subscription
-		evaluation      = Evaluation.objects.get(id=evaluation_id)
-		if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
-			OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
-			PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
 
 		#update payment method
 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
-
-		#update payment subscription if it is subscription
-		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
-			order           = Order.objects.get(evaluation_id=evaluation_id)
-			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).select_related('order_scheduler_book').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
-
-			#create subscription model
-			cleaning_months = order_schedules.extra(select={'year': "EXTRACT(year FROM start_at)",'month': "EXTRACT(month FROM start_at)"}).values_list('month','year').distinct()
-			count           = 0
-
-			#for adjustment
-			append_discount = 0
-			for month in cleaning_months:
-				count += 1;
-				
-				month_start 		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)
-				month_end   		 = datetime(day=1,month=month[0],year=month[1],hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
-				month_schedules      = order_schedules.filter(start_at__range=(month_start,month_end))
-
-				total_cost_per_month = 0
-				for schedule in month_schedules:
-					if schedule.order_scheduler_book.booksections:
-						for section in schedule.order_scheduler_book.booksections:
-							total_cost_per_month += section.section_cost
-				
-				if count == len(cleaning_months):
-					total_discount_per_month = round(evaluation.discount-append_discount,3)
-				else:
-					total_discount_per_month = round((evaluation.discount/order_schedules.count())*month_schedules.count(),3)
-
-				total_cost_per_month     = round(total_cost_per_month-total_discount_per_month,3)
-				actual_cost_per_month    = total_cost_per_month+total_discount_per_month
-				subscription             = PaymentSubscriptionDetails.objects.create(order=order,actual_amount=actual_cost_per_month,discount=total_discount_per_month,amount=total_cost_per_month,monthyear=(str(month[0])+'-'+str(month[1])) )
-
-				#for adjustment
-				append_discount          += total_discount_per_month
-
-				#update orderschedules
-				for schedule in order_schedules:
-					if payment_method == 'POSTPAIDSUBSCRIPTION':
-						if schedule.start_at.date().month-1 == month[0]:
-							schedule.payment_subscription = subscription
-							schedule.save()
-						elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
-							schedule.payment_subscription = subscription
-							schedule.save()
-					else:
-						if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
-							schedule.payment_subscription = subscription
-							schedule.save()
 
 		#sms integration
 		evaluation = Evaluation.objects.prefetch_related(Prefetch('evaluation_details',EvaluationDetails.objects.filter(is_active=True).select_related('address'),to_attr='evaluation_address')).filter(id=evaluation_id,is_active=True).get(id=evaluation_id,is_active=True)
