@@ -209,7 +209,7 @@ class AccountantHome(IsAccountant,View):
 		if pending_payments:
 			for payment in pending_payments:
 				if payment.evaluation.payment_method == 'POSTPAID':
-					very_latest_cleaning=payment.orderschedules[payment.order_scheduler_order__count-1]
+					very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
 					if very_latest_cleaning.work_status != 'CLEANING_FULFILLED':
 						pending_payments = pending_payments.exclude(id=payment.id)
 				if payment.evaluation.payment_method == 'SUBSCRIPTION' and not payment.subscription_topay_date:
@@ -222,12 +222,12 @@ class AccountantHome(IsAccountant,View):
 					very_old_cleaning   = payment.orderschedules[0]
 					payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
 				elif payment.evaluation.payment_method == 'POSTPAID' and payment.orderschedules:
-					very_latest_cleaning=payment.orderschedules[payment.order_scheduler_order__count-1]
+					very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
 					payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
 				elif payment.evaluation.payment_method == 'BREAKDOWN' and payment.orderschedules:
 				
 					very_old_cleaning   = payment.orderschedules[0]
-					very_latest_cleaning=payment.orderschedules[payment.order_scheduler_order__count-1]
+					very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
 					payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
 					payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
 
