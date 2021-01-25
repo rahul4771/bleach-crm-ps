@@ -107,7 +107,7 @@ def GetFeedbackOrderInfo(request):
 
 		order_id            = request.GET.get('order_id')
 
-		order = Order.objects.select_related('evaluation__customer','evaluation__call_attender').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('customer_address__area','customer_address','order_scheduler_book__service_type'),to_attr='order_secheduler_feedback'),Prefetch('ordersubscription',queryset=PaymentSubscriptionDetails.objects.filter(is_paid=False,is_active=True),to_attr='subscriptions')).annotate(total_cleaners=Sum('order_scheduler_order__order_scheduler_book__number_of_cleaners')).get(id=order_id,is_active=True)
+		order = Order.objects.select_related('evaluation__customer','evaluation__call_attender').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('customer_address__area','customer_address','order_scheduler_book__service_type'),to_attr='order_secheduler_feedback')).annotate(total_cleaners=Sum('order_scheduler_order__order_scheduler_book__number_of_cleaners')).get(id=order_id,is_active=True)
 		dropdown_order_info['order_id']      = order.id
 
 		##order information
@@ -130,10 +130,8 @@ def GetFeedbackOrderInfo(request):
 		dropdown_order_info['after_amount_paid']   = order.postamount_paid
 
 		#for subscription
-		if order.subscriptions and (order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' or order.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION'):
-			if order.subscriptions[0]:
-				dropdown_order_info['subscription_amount'] = order.subscriptions[0].amount
-				dropdown_order_info['subscription_id']     = order.subscriptions[0].id
+		if order.evaluation.payment_method == 'SUBSCRIPTION':
+			dropdown_order_info['subscription_amount'] = order.remining_amount
 
 
 		#for multiple order addresses
