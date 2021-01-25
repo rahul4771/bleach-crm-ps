@@ -247,8 +247,8 @@ class AccountantHome(IsAccountant,View):
 				for scheduler in invoice.orderschedules:
 					if scheduler.work_status=='CLEANING_FULFILLED':
 						cleaning_price = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
-				if cleaning_price > invoice.remining_amount:
-					invoice.balance=cleaning_price-invoice.remining_amount
+				if cleaning_price > invoice.amount_paid:
+					invoice.balance=cleaning_price-invoice.amount_paid
 				else:
 					invoice.balance=-invoice.remining_amount
 
