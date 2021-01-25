@@ -33,9 +33,6 @@ from operator import itemgetter
 
 class AdminHome(IsAdmin,View):
 	def get(self,request):
-
-		#TEMP
-		Evaluation.objects.filter(Q(Q(payment_method='PREPAIDSUBSCRIPTION')|Q(payment_method='POSTPAIDSUBSCRIPTION'))).update(payment_method='SUBSCRIPTION')
 		
 		#evaluators
 		evaluators_sales_target = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
