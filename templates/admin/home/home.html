@@ -66,7 +66,7 @@
     <table class="main-table">
     <tbody>
         {% for ticket in approve_tickets %}
-
+        {% if ticket.followup %}
         <tr class="{% if ticket.days_left <= 2 %}green-line{% elif ticket.days_left > 2 and ticket.days_left <= 5 %}yellow-line{% elif ticket.days_left > 5 and ticket.days_left <= 7 %}orange-line{% else %}red-line{% endif %} clickable-row-list" data-href="#">
         <td data-label="Ticket Number" class="bold-text">
         {% for followup in ticket.followup %}
@@ -83,7 +83,7 @@
         <span class="{% if ticket.days_left <= 2 %}green-bg{% elif ticket.days_left > 2 and ticket.days_left <= 5 %}yellow-bg{% elif ticket.days_left > 5 and ticket.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} clickable-row-list" data-href="{% url 'bleach_admin:admin-ticketapprove' ticket.id %}">Click to Approve</span>
         </td>
         </tr>
-        
+        {% endif %}
         {% endfor %}
     </tbody>
     </table>
