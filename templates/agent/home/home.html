@@ -903,6 +903,7 @@ $('document').ready(function(){
                     proposed_timing_string      = '{{evaluation.proposed_time|date:'H'}}';
                     proposed_timing             = parseInt(proposed_timing_string)
                     evaluator_timings_list.push(proposed_timing);
+                    console.log("{{evaluation.evaluation.evaluation_id}}");
                 {% endfor %}
                 for(i=8;i<=17;i++)
                 {
