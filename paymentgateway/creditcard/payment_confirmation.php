@@ -35,5 +35,5 @@
 </body>
 </html>
 <script type="text/javascript">
-    //document.getElementById('payment_confirmation').submit(); // SUBMIT FORM
+document.getElementById('payment_confirmation').submit(); // SUBMIT FORM
 </script>

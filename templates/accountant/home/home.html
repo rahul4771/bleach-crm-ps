@@ -206,12 +206,12 @@
     <td data-label="CONTACT NUMBER">{{invoice.evaluation.customer.mobile_number}}</td>
     <td data-label="Colmpleted Cleaning">{{invoice.completed_cleanings_count}}/{{invoice.total_cleanings_count}}</td>
     <td data-label="Completed Payment">{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}/{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}</td>
-    {% if invoice.balance < 0 %}
+    {% if invoice.balance <= 0 %}
     <td data-label="Remining" class="green-text">{{invoice.balance|default_if_none:'0.000'|floatformat:'3'|cut:'-'}}</td>
     {% else %}
     <td data-label="Remining" class="red-text">{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}</td>
     {% endif %}
-    <td data-label=""><span class="{% if invoice.balance < 0 %}green-bg{% else %}red-bg{% endif %} clickable-cursor send_invoice" data-id="{{invoice.id}}" data-blcno="{{invoice.evaluation.evaluation_id}}" data-customername="{{invoice.evaluation.customer.mobile_number}}" data-contactno="{{invoice.evaluation.customer.name}}" {% for schedule in invoice.orderschedules %}{% if forloop.first %}data-startdate="{{schedule.start_at|date:'d-m-Y'}}" {% endif %}{% if forloop.last %}data-enddate="{{schedule.start_at|date:'d-m-Y'}}"{% endif %}{% endfor %} data-totalamount="{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}" data-paidamount="{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}" data-balance="{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}" data-remining="{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}">Send Invoice</span></td>
+    <td data-label=""><span class="{% if invoice.balance <= 0 %}green-bg{% else %}red-bg{% endif %} clickable-cursor send_invoice" data-id="{{invoice.id}}" data-blcno="{{invoice.evaluation.evaluation_id}}" data-customername="{{invoice.evaluation.customer.mobile_number}}" data-contactno="{{invoice.evaluation.customer.name}}" {% for schedule in invoice.orderschedules %}{% if forloop.first %}data-startdate="{{schedule.start_at|date:'d-m-Y'}}" {% endif %}{% if forloop.last %}data-enddate="{{schedule.start_at|date:'d-m-Y'}}"{% endif %}{% endfor %} data-totalamount="{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}" data-paidamount="{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}" data-balance="{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}" data-remining="{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}">Send Invoice</span></td>
     </form>
 </tr>
 {% endfor %}
@@ -447,7 +447,7 @@ $('.footable').footable({
     $('#balance_invoice_id').text($(this).data('balance'));
 
     remining_amount = parseFloat($(this).data('remining'));
-    if(remining_amount < 0)
+    if(remining_amount <= 0)
     {
         $('#remining_invoice_id').text((remining_amount*-1));
         $('#remining_invoice_id').addClass('green-text');
