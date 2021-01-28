@@ -195,7 +195,7 @@
 <div class="investigation-columns"><!--investigation-columns-->
     	<div class="investigation-columns-left"><!--investigation-columns-left-->
             {% if followup_details.investigation.assigned_by.profile_image %}
-			<div class="profile-pic"><img src="{{followup_details.investigation.investigator.profile_image.url}}"></div>
+			<div class="profile-pic"><img src="{{followup_details.investigation.assigned_by.profile_image.url}}"></div>
             {% else %}
             <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>            
             {% endif %}
