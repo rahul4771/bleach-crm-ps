@@ -1204,7 +1204,11 @@ $(".pn-prev").click();
         contentType: "application/json;charset=utf-8",
         
         success: function(data) {
+            if (data == true){
             alert("Invoice Sent!")
+              }else{
+                alert("Customer not opted for SMS!")  
+              }
         }
     
     })
@@ -1221,7 +1225,11 @@ $(".pn-prev").click();
           contentType: "application/json;charset=utf-8",
           
           success: function(data) {
-              alert("Quotation Sent!")
+              if (data == true){
+            alert("Quotation Sent!")
+              }else{
+                alert("Customer not opted for SMS!")  
+              }
           }
       
       })
@@ -1239,7 +1247,11 @@ $(".pn-prev").click();
           contentType: "application/json;charset=utf-8",
           
           success: function(data) {
-              alert("Receipt Sent!")
+              if (data == true){
+            alert("Receipt Sent!")
+              }else{
+                alert("Customer not opted for SMS!")  
+              }
           }
       
       })
