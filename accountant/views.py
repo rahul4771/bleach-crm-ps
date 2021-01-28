@@ -248,9 +248,11 @@ class AccountantHome(IsAccountant,View):
 					if scheduler.work_status=='CLEANING_FULFILLED':
 						cleaning_price += scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
 				if cleaning_price > invoice.amount_paid:
-					invoice.balance=cleaning_price-invoice.amount_paid
+					invoice.balance       = cleaning_price-invoice.amount_paid
+					invoice.amount_to_pay = invoice.balance
 				else:
-					invoice.balance=-invoice.remining_amount
+					invoice.balance       = cleaning_price-invoice.amount_paid
+					invoice.amount_to_pay = -invoice.remining_amount
 
 		#buybackgiftpromos		
 		approved_paybackdiscounts = Investigation.objects.filter(is_paybackdiscount_approved=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=True,is_completed=False),to_attr='paybackdiscounts'))
