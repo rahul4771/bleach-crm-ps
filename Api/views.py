@@ -13,6 +13,7 @@ import random
 import string
 import functools
 import operator
+import requests
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone
 from datetime import timedelta,date,datetime

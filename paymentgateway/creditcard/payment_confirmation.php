@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="payment.css"/>
 </head>
 <body>
-<form id="payment_confirmation" action="https://testsecureacceptance.cybersource.com/pay" method="post"/>
+<form id="payment_confirmation" action="https://secureacceptance.cybersource.com/pay" method="post"/>
 <?php
     foreach($_REQUEST as $name => $value) {
         $params[$name] = $value;
