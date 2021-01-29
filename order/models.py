@@ -336,6 +336,7 @@ class FollowUp(models.Model):
 	total_cost		= models.FloatField(blank=True,null=True)
 	no_of_cleaners  = models.IntegerField(blank=True,null=True)
 	cleaning_hours  = models.IntegerField(blank=True,null=True)
+	followup_notes	= models.CharField(max_length=5000,blank=True,null=True)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)

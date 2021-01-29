@@ -622,6 +622,8 @@ function findsectiontotal(event)
     $("#id_total_cost").val(total_estimated_cost);
 }
 
+
+
 </script>
 
 <script src="{% static 'files/js/custom formset/customformset.js' %}"></script>
@@ -670,38 +672,34 @@ $(function () {
 //Validation During Form Submission
 function SubmitQuatationForm(params)
 {
-var form = $(params).parents('form').first();
 
-total_forms       = form.find('input[id="id_form-TOTAL_FORMS"]').val()
 validation_errors = 0;
 
+service_type  = $("#id_service_type option:selected").text();
 
-for(i=1;i<=total_forms;i++)
+no_of_sections = $('input[id="id_section_counter"]').val();
+if(no_of_sections == 0)
+{
+    validation_errors += 1 ;
+    //$("#id_form-"+(i-1)+"-sectionalert").attr("hidden",false);
+    alert("Please Add Sections in Service ");
+}
+
+for(j=1;j<=no_of_sections;j++)
+{
+    if(service_type == 'General Cleaning' || service_type == 'Deep Cleaning' || service_type == 'Carpet Cleaning' || service_type == 'Upholstery Cleaning' || service_type == 'Kitchen Cleaning' || service_type == 'Sterilization')
     {
-        service_type  = $("#id_form-"+(i-1)+"-service_type option:selected").text();
-        
-        no_of_sections = form.find('input[id="id_form-'+(i-1)+'-section_counter"]').val();
-        if(no_of_sections == 0)
+        no_of_keynotes = $('input[id="id_section'+(j)+'-keynote_counter"]').val();
+        console.log('input[id="id_section'+(j)+'-keynote_counter"]',no_of_keynotes,"keys")
+        if(no_of_keynotes == 0)
         {
             validation_errors += 1 ;
-            //$("#id_form-"+(i-1)+"-sectionalert").attr("hidden",false);
-            alert("Please Add Sections in Service "+i);
+            alert("Please Add Keynote in Section "+j);           
         }
-
-        for(j=1;j<=no_of_sections;j++)
-        {
-            if(service_type == 'General Cleaning' || service_type == 'Deep Cleaning' || service_type == 'Carpet Cleaning' || service_type == 'Upholstery Cleaning' || service_type == 'Kitchen Cleaning' || service_type == 'Sterilization')
-            {
-                no_of_keynotes = form.find('input[id="id_form'+(i-1)+'_section'+(j-1)+'-keynote_counter"]').val();
-                if(no_of_keynotes == 0)
-                {
-                    validation_errors += 1 ;
-                    alert("Please Add Keynote in Section "+j);           
-                }
-            }
-        }
-
+    }
 }
+
+
 if(validation_errors == 0)
 {
  submitAnyForm(params);   

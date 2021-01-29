@@ -55,6 +55,7 @@
                 <option value="">Choose your Gender</option>
                 <option value="MALE" {% if enquiry_user.gender == 'MALE' %}selected{% endif %}>Male</option>
                 <option value="FEMALE" {% if enquiry_user.gender == 'FEMALE' %}selected{% endif %}>Female</option>
+                <option value="OTHERS" {% if enquiry_user.gender == 'OTHERS' %}selected{% endif %}>Others</option>
                 </select>
                 </label>
   </div><!--ticket-form-left-->

@@ -815,19 +815,20 @@ class NewEnquiry(IsEvaluator,View):
 						enquiry_form_save.is_sms      = True
 
 			#APPEND MR / MS TO NAME
-			if enquiry_form_save.gender == 'MALE':
-				prefix = 'Mr. '
-			elif enquiry_form_save.gender == 'FEMALE':
-				prefix = 'Ms. '
-			else:
-				pass
-
 			customer_name = enquiry_form_save.name
 
-			prefix_exists = customer_name.startswith(prefix)
+			if enquiry_form_save.gender == 'MALE':
+				prefix = 'Mr. '
+				prefix_exists = customer_name.startswith(prefix)
 
-			if prefix_exists == False :
-				enquiry_form_save.name = prefix+customer_name
+				if prefix_exists == False :
+					enquiry_form_save.name = prefix+customer_name
+			elif enquiry_form_save.gender == 'FEMALE':
+				prefix = 'Ms. '
+				prefix_exists = customer_name.startswith(prefix)
+
+				if prefix_exists == False :
+					enquiry_form_save.name = prefix+customer_name
 			else:
 				pass
 
@@ -985,19 +986,20 @@ class ExistingEnquiry(IsEvaluator,View):
 					enquiry_form_save.is_sms      = False
 
 				#APPEND MR / MS TO NAME
-				if enquiry_form_save.gender == 'MALE':
-					prefix = 'Mr. '
-				elif enquiry_form_save.gender == 'FEMALE':
-					prefix = 'Ms. '
-				else:
-					pass
-
 				customer_name = enquiry_form_save.name
 
-				prefix_exists = customer_name.startswith(prefix)
+				if enquiry_form_save.gender == 'MALE':
+					prefix = 'Mr. '
+					prefix_exists = customer_name.startswith(prefix)
 
-				if prefix_exists == False :
-					enquiry_form_save.name = prefix+customer_name
+					if prefix_exists == False :
+						enquiry_form_save.name = prefix+customer_name
+				elif enquiry_form_save.gender == 'FEMALE':
+					prefix = 'Ms. '
+					prefix_exists = customer_name.startswith(prefix)
+
+					if prefix_exists == False :
+						enquiry_form_save.name = prefix+customer_name
 				else:
 					pass
 
