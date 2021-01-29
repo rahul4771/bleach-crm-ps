@@ -1418,7 +1418,7 @@ class OrderDetails(IsAgent,View):
 				elif fil_status == 'ORDER_CLOSED':
 					case1 = Q(order_closed_count__gte=1)
 				elif fil_status == 'APPROVED-NOT PAID':
-					case1 = Q(approved_not_paid_count__gte=1)
+					case1 = Q(Q(approved_not_paid_count__gte=1)&~Q(payment_method='SUBSCRIPTION'))
 				elif fil_status == 'EVALUATING':
 					case1 = Q(quatation_status__isnull=True)
 			else:
