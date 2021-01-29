@@ -207,7 +207,7 @@
     <td data-label="Colmpleted Cleaning">{{invoice.completed_cleanings_count}}/{{invoice.total_cleanings_count}}</td>
     <td data-label="Completed Payment">{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}/{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}</td>
     {% if invoice.balance <= 0 %}
-    <td data-label="Remining" class="green-text">{{invoice.balance|default_if_none:'0.000'|floatformat:'3'|cut:'-'}}</td>
+    <td data-label="Remining" class="green-text">{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}</td>
     {% else %}
     <td data-label="Remining" class="red-text">{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}</td>
     {% endif %}
@@ -449,7 +449,7 @@ $('.footable').footable({
     remining_amount = parseFloat($(this).data('remining'));
     if(remining_amount <= 0)
     {
-        $('#remining_invoice_id').text((remining_amount*-1));
+        $('#remining_invoice_id').text((remining_amount));
         $('#remining_invoice_id').addClass('green-text');
     }
     else

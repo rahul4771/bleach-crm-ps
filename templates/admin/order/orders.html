@@ -245,7 +245,7 @@
 
         {% for order in evaluation.evaluationorder %}
       
-        {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' %}
+        {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
         {% if order.order_status == 'APPROVED_BY_CLIENT' %}
         <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'bleach_admin:admin-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="green-bg clickable-row">Approved</span>
         {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
