@@ -206,6 +206,10 @@ class Evaluation(models.Model):
 	estimated_cost		= models.FloatField(blank=True,null=True,default=0)
 	discount			= models.FloatField(blank=True,null=True,default=0)
 	extra_discount		= models.FloatField(blank=True,null=True,default=0)
+	fine_amount         = models.FloatField(blank=True,null=True,default=0)
+	fine_created_by     = models.ForeignKey(UserProfile,blank=True,null=True,related_name='finecreatedby')
+	writeback_amount    = models.FloatField(blank=True,null=True,default=0)
+	writeback_created_by= models.ForeignKey(UserProfile,blank=True,null=True,related_name='writebackcreatedby')
 	total_cost          = models.FloatField(blank=True,null=True,default=0)
 
 	quatation_status		= models.CharField(max_length=50,blank=True,null=True,choices=QUATATION_CHOICES)

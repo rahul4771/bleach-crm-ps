@@ -149,7 +149,20 @@
               <td class="due-amount"> {{order.evaluation.discount|floatformat:'3'}} </td>
             </tr>
             {% endif %}
-            
+
+            {% if order.evaluation.fine_amount != 0 %}
+            <tr>
+              <th>Fine Amount / مبلغ الغرامة</th>
+              <td class="due-amount"> {{order.evaluation.fine_amount|floatformat:'3'}} </td>
+            </tr>
+            {% endif %}
+
+            {% if order.evaluation.writeback_amount != 0 %}
+            <tr>
+              <th>Write-Back Amount / مبلغ إعادة الكتابة</th>
+              <td class="due-amount"> {{order.evaluation.writeback_amount|floatformat:'3'}} </td>
+            </tr>
+            {% endif %}
 
             <tr>
               <th class="medium" > Total / مجموع</th>

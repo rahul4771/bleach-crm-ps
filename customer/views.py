@@ -88,6 +88,14 @@ class Quatation(View):
 				evaluation_update = Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(quatation_status='APPROVED',quatation_approved_date=timezone.now())
 				order_update      = Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='APPROVED_BY_CLIENT')
 				
+				#close payment if remining becomes zero 
+				order = Order.objects.get(order_no=evaluation_id)
+				if order.remining_amount == 0:
+					order.payment_completed_date = timezone.now()
+					order.payment_status         = 'COMPLETED'
+					order.save()
+
+				#sms				
 				evaluaation = Evaluation.objects.get(evaluation_id=evaluation_id,customer__username=user_name)
 
 				language = evaluaation.customer.sms_preference
