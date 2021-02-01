@@ -388,7 +388,7 @@
 <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
 
 <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
-<h2 class="h2">Evaluation Calender</h2>
+<h2 class="h2">Evaluation Calendar</h2>
 {% comment %} <a href='{% url 'agent:email-view'%}'>sendmail</a> {% endcomment %}
 </div>
 
@@ -411,6 +411,22 @@
 <thead>
 <tr>
 <th bgcolor="#eee" width="4.54%" class="fixed-side padding" scope="col">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">00 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">01 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">02 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">03 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">04 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">05 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">06 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">07 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
 <th class="theadbg" width="4.54%" scope="col">08 AM</th>
 <th class="theadbg" width="4.54%">&nbsp;</th>
 <th class="theadbg" width="4.54%" scope="col">09 AM</th>
@@ -432,6 +448,18 @@
 <th class="theadbg" width="4.54%" scope="col">05 PM</th>
 <th class="theadbg" width="4.54%">&nbsp;</th>
 <th class="theadbg" width="4.54%" scope="col">06 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">07 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">08 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">09 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">10 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">11 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">00 AM</th>
 </tr>
 </thead>
 <tbody>
@@ -842,7 +870,7 @@ $('document').ready(function(){
                     proposed_timing             = parseInt(proposed_timing_string)
                     evaluator_timings_list.push(proposed_timing);
                 {% endfor %}
-                for(i=8;i<=17;i++)
+                for(i=0;i<=23;i++)
                 {
                     if(evaluator_timings_list.includes(i))
                     {
@@ -871,31 +899,59 @@ $('document').ready(function(){
                     }
                     else
                     {
-                      $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">----</a></td>');  
+                      $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');  
                     }
                     $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
                 }    
             {% else %}
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
             {% endif %}
 
