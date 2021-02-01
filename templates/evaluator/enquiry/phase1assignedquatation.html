@@ -25,34 +25,6 @@
           
           <br>
 
-          {% for detail in evaluation_details %} 
-          {% if detail.attender_note %}
-
-          <div class="checkin-wrapper-row checkin-forms-boxes"><!--checkin-wrapper-row checkin-forms-boxes-->
-
-            <div class="investigation-columns"><!--investigation-columns-->
-                    <div class="investigation-columns-left"><!--investigation-columns-left-->
-                        {% if detail.evaluation.call_attender.profile_image %}
-                        <div class="profile-pic"><img src="{{detail.evaluation.call_attender.profile_image.url}}"></div>
-                        {% else %}
-                        <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>            
-                        {% endif %}
-                        <div class="client-name">{{detail.evaluation.call_attender.name}}<div class="common-gray-text">{{detail.evaluation.call_attender.user_type}}</div></div>
-                    </div><!--investigation-columns-left-->
-
-                    <div class="investigation-columns-middle"><!--investigation-columns-middle-->
-                    
-                        <div class="notes">Notes</div>
-                        <p>{{detail.attender_note}}</p>
-                    </div><!--investigation-columns-middle-->
-
-            </div><!--investigation-columns-->
-
-          </div>
-
-          {% endif %}
-          {% endfor %}
-
           <hr class="div">
           
             <div class="common-sub-head align-left">Details</div> 
@@ -107,8 +79,18 @@
         <div><input type="button" value="Cancel" class="cancel-Button cancelevaluation" data-evaluationdetail="{{detail.id}}"></div>
         {% endif %}
         {% endif %}
-      </div><!--checkin-form-right-->               
+      </div><!--checkin-form-right-->    
 </div><!--checkin-wrapper-row checkin-forms-boxes-->
+
+<div class="investigation-columns"><!--investigation-columns-->  
+<div class="investigation-columns-middle"><!--investigation-columns-middle-->
+                    
+                        <div class="notes">Notes</div>
+                        <p>{{detail.attender_note}}</p>
+                    </div><!--investigation-columns-middle-->  
+        </div>
+
+<hr class="div">
 {% endfor %}        
         
 <div class="checkin-wrapper-row checkin-forms-boxes ltblue-bg"><!--checkin-wrapper-row checkin-forms-boxes-->
