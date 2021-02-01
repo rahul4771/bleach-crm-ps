@@ -110,7 +110,7 @@
         <br><br><br>
         
   				<div class=" bold-text common-label"> <label>Notes</label></div>
-                <textarea name="investigator_notes" class="textArea" cols="" rows="">{% for schedule in followupscheduler %}{% if forloop.first %}{{schedule.follow_up.investigation.notes}}{% endif %}{% endfor %}</textarea>
+                <textarea name="investigator_notes" class="textArea" cols="" rows="">{% for schedule in followupscheduler %}{% if forloop.first %}{{schedule.follow_up.followup_notes}}{% endif %}{% endfor %}</textarea>
 
 <div class="details-notes align-left">Media</div>        
 <div class="row" id="id_media"><!--row-->
@@ -530,6 +530,34 @@ $('document').ready(function(){
         new_section_count = $('#id_section_counter').val()-1
         $('#id_section_counter').val(new_section_count);
         
+        //Remove Section from data base
+        section_id = $(this).data('sectionid');
+        if(section_id == undefined)
+        {
+          console.log("nun")  
+        }else{
+
+            $.ajax({
+
+                            url: "{% url 'qc:removefollowupbooksection' %}",
+
+                            data: {'section_id':section_id}, 
+
+                            dataType: 'json',
+
+                            success: function (data) { 
+                                    if(data['success'] == true)
+                                    {
+                                        alert("Section Deleted Permanantlly");
+                                    }
+
+                                    }  
+                            });
+
+           }
+
+
+
         //remove section
         $(this).parent('div').remove();
         
@@ -678,38 +706,33 @@ $(function () {
 //Validation During Form Submission
 function SubmitQuatationForm(params)
 {
-var form = $(params).parents('form').first();
 
-total_forms       = form.find('input[id="id_form-TOTAL_FORMS"]').val()
 validation_errors = 0;
 
+service_type  = $("#id_service_type option:selected").text();
 
-for(i=1;i<=total_forms;i++)
+no_of_sections = $('input[id="id_section_counter"]').val();
+if(no_of_sections == 0)
+{
+    validation_errors += 1 ;
+    //$("#id_form-"+(i-1)+"-sectionalert").attr("hidden",false);
+    alert("Please Add Sections in Service ");
+}
+
+for(j=1;j<=no_of_sections;j++)
+{
+    if(service_type == 'General Cleaning' || service_type == 'Deep Cleaning' || service_type == 'Carpet Cleaning' || service_type == 'Upholstery Cleaning' || service_type == 'Kitchen Cleaning' || service_type == 'Sterilization')
     {
-        service_type  = $("#id_form-"+(i-1)+"-service_type option:selected").text();
-        
-        no_of_sections = form.find('input[id="id_form-'+(i-1)+'-section_counter"]').val();
-        if(no_of_sections == 0)
+        no_of_keynotes = $('input[id="id_section'+(j)+'-keynote_counter"]').val();
+        if(no_of_keynotes == 0)
         {
             validation_errors += 1 ;
-            //$("#id_form-"+(i-1)+"-sectionalert").attr("hidden",false);
-            alert("Please Add Sections in Service "+i);
+            alert("Please Add Keynote in Section "+j);           
         }
-
-        for(j=1;j<=no_of_sections;j++)
-        {
-            if(service_type == 'General Cleaning' || service_type == 'Deep Cleaning' || service_type == 'Carpet Cleaning' || service_type == 'Upholstery Cleaning' || service_type == 'Kitchen Cleaning' || service_type == 'Sterilization')
-            {
-                no_of_keynotes = form.find('input[id="id_form'+(i-1)+'_section'+(j-1)+'-keynote_counter"]').val();
-                if(no_of_keynotes == 0)
-                {
-                    validation_errors += 1 ;
-                    alert("Please Add Keynote in Section "+j);           
-                }
-            }
-        }
-
+    }
 }
+
+
 if(validation_errors == 0)
 {
  submitAnyForm(params);   

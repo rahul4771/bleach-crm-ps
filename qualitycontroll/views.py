@@ -697,10 +697,11 @@ class Followup(IsQualityControll,View):
 
 		tendative_time = request.POST.get('tendative_time')
 
-		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True,notes=request.POST.get('investigator_notes'))
+		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True)
 		
 		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
 		follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
+		follow_up.followup_notes = request.POST.get('investigator_notes')
 		follow_up.no_of_cleaners = no_of_cleaners
 		follow_up.cleaning_hours = cleaning_hours
 		follow_up.total_cost = total_cost
@@ -810,12 +811,13 @@ class FollowupEdit(IsQualityControll,View):
 		# start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
 		# end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
 
-		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True,notes=request.POST.get('investigator_notes'))
+		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True)
 		
 		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
 		follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
 		follow_up.no_of_cleaners = no_of_cleaners
 		follow_up.cleaning_hours = cleaning_hours
+		follow_up.followup_notes = request.POST.get('investigator_notes')
 		follow_up.total_cost     = total_cost
 		follow_up.save()
 		
@@ -1276,3 +1278,18 @@ class BuyBackPromoCodeDelete(IsQualityControll,View):
 		Investigation.objects.filter(id=investigation_id).update(is_buybackgiftpromo_approved=False)
 		messages.success(request,"Cash Back Deleted !")
 		return redirect('quality-control:investigation', investigation_id)
+
+def RemoveFollowupSection(request):
+
+	data ={}
+
+	section_id = request.GET.get('section_id')
+	print(section_id,"jor")
+	try:
+		section         = FollowUpSection.objects.get(id=section_id)
+		section.delete()
+		data['success'] = True
+	except:
+		data['success'] = False
+
+	return JsonResponse(data)

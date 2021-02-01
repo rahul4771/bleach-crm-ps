@@ -15,7 +15,8 @@ urlpatterns = [
 
 	url(r'^investigation/(?P<investigation_id>[-\w]+)/$',views.InvestigationTask.as_view(),name='investigation'),
 
-    url(r'^followup/(?P<investigation_id>[-\w]+)/$',views.Followup.as_view(),name='follow-up'),
+    url(r'^ajax/removefollowupsection/',views.RemoveFollowupSection,name='removefollowupbooksection'),
+	url(r'^followup/(?P<investigation_id>[-\w]+)/$',views.Followup.as_view(),name='follow-up'),
 	url(r'^followup-edit/(?P<investigation_id>[-\w]+)/$',views.FollowupEdit.as_view(),name='follow-up-edit'),
 	url(r'^followup-delete/(?P<investigation_id>[-\w]+)/$',views.FollowupDelete.as_view(),name='follow-up-delete'),
     

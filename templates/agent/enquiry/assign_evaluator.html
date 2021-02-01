@@ -47,6 +47,22 @@
 <thead>
 <tr>
 <th  bgcolor="#eee"  width="4.54%" class="fixed-side padding" scope="col">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">00 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">01 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">02 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">03 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">04 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">05 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">06 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">07 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
 <th class="theadbg" width="4.54%" scope="col">08 AM</th>
 <th class="theadbg" width="4.54%">&nbsp;</th>
 <th class="theadbg" width="4.54%" scope="col">09 AM</th>
@@ -68,6 +84,18 @@
 <th class="theadbg" width="4.54%" scope="col">05 PM</th>
 <th class="theadbg" width="4.54%">&nbsp;</th>
 <th class="theadbg" width="4.54%" scope="col">06 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">07 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">08 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">09 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">10 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">11 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">00 AM</th>
 </tr>
 </thead>
 <tbody>    
@@ -260,7 +288,7 @@ $('document').ready(function(){
                     proposed_timing             = parseInt(proposed_timing_string)
                     evaluator_timings_list.push(proposed_timing);
                 {% endfor %}
-                for(i=8;i<=17;i++)
+                for(i=0;i<=23;i++)
                 {
                     if(evaluator_timings_list.includes(i))
                     {
@@ -300,34 +328,76 @@ $('document').ready(function(){
                 }    
             {% else %}
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');    
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="8">+</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="0">+</a></td>');
+            
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="1">+</a></td>');
+            
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="2">+</a></td>');
+            
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="3">+</a></td>');
+            
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="4">+</a></td>');
+            
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="5">+</a></td>');
+            
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="6">+</a></td>');
+            
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="7">+</a></td>');
+            
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="8">+</button></a>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="9">+</a></td>');
-            
+
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="10">+</a></td>');
-            
+
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="11">+</a></td>');
-            
+
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="12">+</a></td>');
-            
+
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="13">+</a></td>');
-            
+
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="14">+</a></td>');
-            
+
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="15">+</a></td>');
-            
+
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="16">+</button></a>');
-            
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="16">+</a></td>');
+
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="17">+</a></td>');
+
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="18">+</a></td>');
+
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="19">+</a></td>');
+
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="20">+</a></td>');
+
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="21">+</a></td>');
+
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="22">+</a></td>');
+
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="assign_evaluator_button bold-text" data-evaluator_id="{{evaluator.id}}" data-hour="23">+</a></td>');
             
             $("#evaluator{{evaluator.id}}").append('<td width="4.54%">&nbsp;</td>');
             {% endif %}
