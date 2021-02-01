@@ -933,6 +933,35 @@ class PaybackDiscountProcessing(View):
 
 		return redirect('accountant:accountantdash-board')
 
+class FineWriteBack(View):
+	def get(self,request):
+		return render(request,'accountant/payment/finewriteback.html',{})
+	def post(self,request):
+		order_id  = request.POST.get('order_id')
+		order     = Order.objects.get(id=order_id)
+
+		action = request.POST.get('finewriteback')
+		
+		#update Evaluation and fine
+		if action == 'Fine':
+			Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')),fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
+			Order.objects.filter(id=order_id).update(total_amount=F('total_amount')+float(request.POST.get('amount')),remining_amount=F('remining_amount')+float(request.POST.get('amount')))
+			messages.success(request,"Fine Amount Succesfully Added")
+		
+		if action == 'Write-Back':
+			#close payment if remining becomes zero 
+			if (order.remining_amount-float(request.POST.get('amount'))) == 0:
+				order.payment_completed_date = timezone.now()
+				order.payment_status         = 'COMPLETED'
+				order.save()
+				
+			Evaluation.objects.filter(id=order.evaluation.id).update(writeback_amount=F('writeback_amount')+float(request.POST.get('amount')),writeback_created_by=request.user,total_cost=F('total_cost')-float(request.POST.get('amount')))			
+			Order.objects.filter(id=order_id).update(total_amount=F('total_amount')-float(request.POST.get('amount')),remining_amount=F('remining_amount')-float(request.POST.get('amount')))
+			messages.success(request,"Write Back Amount Succesfully Removed")
+
+
+		return redirect('accountant:accountantdash-board')
+
 #export to excel
 def export_users_xls(request):
 

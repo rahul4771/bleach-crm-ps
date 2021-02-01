@@ -752,6 +752,12 @@
         <div class="order-payment-widget order-payment-widget-column"><!--order-payment-widget order-payment-widget-column-->
             <div class="payment-text"><div>Total Amount</div> : {{order.evaluation.estimated_cost|default_if_none:'0.00'|floatformat:'2'}} KD</div>
             <div class="payment-text"><div>Discount</div> : {{order.evaluation.discount|default_if_none:'0.00'|floatformat:'2'}} KD</div>
+            {% if order.evaluation.fine_amount != 0 %}
+            <div class="payment-text"><div>Fine Amount</div> : {{order.evaluation.fine_amount|floatformat:'3'}} KD</div>
+            {% endif %}
+            {% if order.evaluation.writeback_amount != 0 %}
+            <div class="payment-text"><div>Write-Back Amount</div> : {{order.evaluation.writeback_amount|floatformat:'3'}} KD</div>
+            {% endif %}
             <br>
             <div class="payment-text bold-text red-text"><div>Final Amount</div> : {{order.evaluation.total_cost|default_if_none:'0.00'|floatformat:'2'}} KD</div>
             <hr class="bar"> 
