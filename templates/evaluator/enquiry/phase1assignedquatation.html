@@ -82,8 +82,14 @@
       
       <div class="checkin-form-left align-center"><!--checkin-form-left-->
         {% if detail.total_cost == 0.0 %}
-        <div class="check-in-icons"><img src="{% static 'files/images/evaluation-pending-icon.png' %}"></div>
-        <div class="lg-text yellow-text">Evaluation Pending</div>
+        
+          {% if detail.status == 'CANCELLED' %}
+          <div class="lg-text red-text">Evaluation Cancelled</div>
+          {% else %}
+          <div class="check-in-icons"><img src="{% static 'files/images/evaluation-pending-icon.png' %}"></div>
+          <div class="lg-text yellow-text">Evaluation Pending</div>
+          {% endif %}
+
         {% else %}
         <div class="check-in-icons"><img src="{% static 'files/images/price-icon.png' %}"></div>
         <div class="lg-text blue-text">{{detail.total_cost|floatformat:3}} KD</div>
@@ -94,8 +100,11 @@
         {% if detail.evaluator == request.user %}
         {% if detail.status == 'EVALUATED' %}
         <a href="{% url 'evaluator:evaluator-makeassignedquatation2edit' detail.id %}"><div><input name="view" type="button" value="Edit" class="checkonButton"></div></a>
+        {% elif detail.status == 'CANCELLED' %}
+        <span >{{detail.evaluation_cancel_reason|default_if_none:''}}</span>
         {% else %}
         <a href="{% url 'evaluator:evaluator-makeassignedquatation2' detail.id %}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
+        <div><input type="button" value="Cancel" class="cancel-Button cancelevaluation" data-evaluationdetail="{{detail.id}}"></div>
         {% endif %}
         {% endif %}
       </div><!--checkin-form-right-->               
@@ -153,7 +162,35 @@
 </div><!--order-top-wrapper-->  
             
             
+<!-- cancel evaluation popup -->
+<div id="cancelevaluation_popup" class="overlay"><!--overlay-->
+    <div class="popup-assign-eval"><!--popup-assign-eval-->
+        <a class="close" id="close_add_evaluator">&times;</a>
+            <div class="content"><!--content-->
             
+<form method="post" enctype= "multipart/form-data">{% csrf_token %}                      
+<input type="hidden" name="action_type" value="cancel">
+<input type="hidden" name="evaluation_detail" value="" id="detail">
+            <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
+  
+</div><!--ticket-wrapper-row ticket-forms-boxes-->  
+  
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+      <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class="bold-text common-label"> <label>Cancellation Reason</label></div>
+                 <textarea name="cancellation_reason" cols="" rows="4" class="textArea"></textarea>
+      </div><!--ticket-form-left--> 
+        
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->  
+<div align="center"> <input class="assignButton dateconfirm" name="assing" type="button" value="Click to Cancel Evaluation" onclick="submitAnyForm(this);" /></div> 
+
+</div><!--ticket-wrapper-full-->             
+</form>
+            </div><!--content-->
+    </div><!--popup-assign-eval-->
+</div><!--overlay-->
+<!-- cancel evaluation popup -->           
             
                  
 </div><!--container-fluid space topspace-->
@@ -178,6 +215,17 @@ $('.footable').footable({
 //# sourceURL=pen.js
 </script>
 <script>
+
+$('.cancelevaluation').click(function(){
+  $('#detail').val($(this).data('evaluationdetail'));
+  console.log($(this).data('evaluationdetail'),"mass")
+  $('#cancelevaluation_popup').css({'visibility':'visible','opacity':1,});
+})
+
+$("#close_add_evaluator").click(function () {
+    $('#cancelevaluation_popup').css({'visibility':'hidden','opacity':0,});
+});
+
 var x=0; 
 
 $('document').ready(function(){
