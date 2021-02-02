@@ -135,7 +135,7 @@
           <div class="bold-text common-label"> <label >Address</label></div>
         <label for="favcity">
                 <select id="favcity" name="address" required>
-                <option value="">Choose your Address</option>
+                {% comment %} <option value="">Choose your Address</option> {% endcomment %}
                 {% for address in active_addresses %}
                 <option value="{{address.id}}">{{address.apartment}}-{{address.area.name}}</option>
                 {% endfor %}
