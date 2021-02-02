@@ -9,7 +9,7 @@
 <section class="content"><!--content-->
 	<div class="container-fluid space topspace"><!--container-fluid space-->
 		<div class="welcome-wrapper"><!--welcome-wrapper-->
-	<h1 class="dashboard-head">Fine/Write-Back</h1>
+	<h1 class="dashboard-head">Fine/Write-Off</h1>
 	<p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>  
 		</div><!--welcome-wrapper-->
 	
@@ -52,18 +52,18 @@
 		</div><!--cleaning-column-wrapper-->
 		
 		<br><br>
-<div class="common-sub-head align-left ticket-form-head">Fine/Write-Back Form</div> 
+<div class="common-sub-head align-left ticket-form-head">Fine/Write-Off Form</div> 
 	<form method="post" action="" enctype="multipart/form-data">{% csrf_token %}
 	<input type="hidden" name="order_id" id="order_id_hidden">
 
 <div class="ticket-wrapper-full ltyellow-border ticket-form"><!--ticket-wrapper-full-->
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>Fine/Write-Back</label></div>
+  				<div class=" bold-text common-label"> <label>Fine/Write-Off</label></div>
                 <label for="favcity">
                 <select id="id_finewriteback" name="finewriteback">
                   <option value="Fine">Fine</option>
-                  <option value="Write-Back">Write-Back</option>
+                  <option value="Write-Off">Write-Off</option>
                 </select>
                 </label>
   </div><!--ticket-form-left-->
@@ -409,7 +409,7 @@ function search_live(event){
 //if check -- check number
 $('#id_finewriteback').change(function(){
     action = $(this).val();
-    if(action == 'Write-Back')
+    if(action == 'Write-Off')
     {
       $('#id_amount').prop('max',remining_amount);
     }

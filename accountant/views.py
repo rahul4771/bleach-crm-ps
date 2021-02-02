@@ -948,7 +948,7 @@ class FineWriteBack(View):
 			Order.objects.filter(id=order_id).update(total_amount=F('total_amount')+float(request.POST.get('amount')),remining_amount=F('remining_amount')+float(request.POST.get('amount')))
 			messages.success(request,"Fine Amount Succesfully Added")
 		
-		if action == 'Write-Back':
+		if action == 'Write-Off':
 			#close payment if remining becomes zero 
 			if (order.remining_amount-float(request.POST.get('amount'))) == 0:
 				order.payment_completed_date = timezone.now()
