@@ -108,11 +108,13 @@
 {% endif %}</td>
 <td class="clickable-row-list" data-label=""  data-href='{% url 'evaluator:evaluator-makeassignedquatation1' evaluation.evaluation.customer.id evaluation.evaluation.id%}'>
     {% if evaluation.status == 'EVALUATING' %}
-    <span class="red-bg">Evaluating</span>
+    <span class="blue-bg">Evaluating</span>
     {% elif evaluation.status == 'EVALUATED'  %}
     <span class="green-bg">Evaluated</span>
     {% elif evaluation.status == 'TOBEEVALUATED' %}
     <span class="yellow-bg">To Be Evaluated</span>
+    {% elif evaluation.status == 'CANCELLED' %}
+    <span class="red-bg">Cancelled</span>
     {% else %}
     <span class="orange-bg">On Hold</span>    
     {% endif %}   
