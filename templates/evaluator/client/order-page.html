@@ -1052,7 +1052,7 @@
             {% endif %}
             {% if order.evaluation.writeback_amount != 0 %}
             <br>
-            <div class="payment-text"><div>Write-Back Amount</div> : {{order.evaluation.writeback_amount|floatformat:'3'}} KD</div>
+            <div class="payment-text"><div>Write-Off Amount</div> : {{order.evaluation.writeback_amount|floatformat:'3'}} KD</div>
             {% endif %}
             <br>
             <div class="payment-text bold-text red-text"><div>Final Amount</div> : {{order.evaluation.total_cost|default_if_none:'0.00'|floatformat:'2'}} KD</div>

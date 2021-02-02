@@ -154,6 +154,20 @@
             </tr>
             {% endif %}
             
+            {% if order.evaluation.fine_amount != 0 %}
+            <tr>
+              <th>Fine Amount / مبلغ الغرامة</th>
+              <td class="due-amount"> {{order.evaluation.fine_amount|floatformat:'3'}} </td>
+            </tr>
+            {% endif %}
+
+            {% if order.evaluation.writeback_amount != 0 %}
+            <tr>
+              <th>Write-Off Amount / مبلغ إعادة الكتابة</th>
+              <td class="due-amount"> {{order.evaluation.writeback_amount|floatformat:'3'}} </td>
+            </tr>
+            {% endif %}
+            
             <tr class="amount-total">
               <!-- {amount_total_label} -->
               <td colspan="2">{{order.evaluation.total_cost|floatformat:'3'}} KD
