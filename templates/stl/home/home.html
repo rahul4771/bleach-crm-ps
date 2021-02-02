@@ -1800,6 +1800,7 @@ $('document').ready(function(){
                   }         
 
                   
+                  $('#team_leader').empty();
                   $('#team_members').empty();
                   //current cleaners
                   cleaners = data['cleanersinfo'].cleaners;
@@ -2159,7 +2160,7 @@ function remove_duplicate_selection(params)
 }
 
 //to remove leader from cleaner
-$(".assign_leader").change(function(){
+$(".team_leader").change(function(){
   selected_option = this.value;
   selected_id     = this.id;
   //to remove selected occur in any other option
@@ -2167,21 +2168,14 @@ $(".assign_leader").change(function(){
             $('option[value='+selected_option+']',this).remove();
       });
   
-  //cross checking
-  $('.assign_cleaner').each(function(){
-    cross_check_selected_option = this.value;
-    cross_check_id          = this.id;
-    $('.assign_cleaner').each(function(){
-      if(cross_check_id != this.id)
-      {
-        if(cross_check_selected_option == this.value)
-        {
-          $('option:selected',this).remove();   
-        }
-      }
-    });
-  
-  });
+  no_of_cleaners = $('.assign_cleaner').length
+  //cleaners selection   
+  for(i=0;i<no_of_cleaners;i++)
+    {
+        //random selection    
+        $('#team_member'+i+' :nth-child('+(i+1)+')').prop('selected',true);
+        alert("hiiiii");
+    }
 
 });
 </script>
