@@ -304,15 +304,22 @@ $('window').ready(function(){
 $(".assign_leader").change(function(){
   selected_option = this.value;
   selected_id     = this.id;
-  //to remove selected occur in any other option
+  //to remove selected leader occur in any other option
       $('.assign_cleaner').each(function(){    
             $('option[value='+selected_option+']',this).remove();
       });
-  
+
+  //cleaners selection   
+  for(i=1;i<=no_of_cleaners;i++)
+    {
+        //random selection    
+        $('#assigned_cleaner'+i+' :nth-child('+i+')').prop('selected',true);
+    }
+
   //cross checking
   $('.assign_cleaner').each(function(){
     cross_check_selected_option = this.value;
-    cross_check_id          = this.id;
+    cross_check_id              = this.id;
     $('.assign_cleaner').each(function(){
       if(cross_check_id != this.id)
       {
@@ -344,6 +351,7 @@ $(".assign_cleaner").change(function(){
       }
     }
   });
+  
   //cross checking
   $('.assign_cleaner').each(function(){
     cross_check_selected_option = this.value;
