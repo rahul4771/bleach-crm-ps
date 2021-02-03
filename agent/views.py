@@ -610,15 +610,24 @@ def CleaningExistingDates(request):
 	team_members_busy = {}
 
 	for team_leader in team_leaders_scheduled_dates:
-		index = datetime.strftime(team_leader['start_at'],'X%d-X%m-%Y').replace('X0','X').replace('X','')
-
+		try:
+			index = datetime.strftime(team_leader['start_at'],'X%d-X%m-%Y').replace('X0','X').replace('X','')
+			print("actual leader",index)
+		except:
+			index = datetime.strftime(datetime.strptime(team_leader['start_at'],'%Y-%m-%d'),'X%d-X%m-%Y').replace('X0','X').replace('X','')
+			print("except leader",index)
 		if index in team_leaders_busy:
 			team_leaders_busy[index] += team_leader['created_count']
 		else:	
 			team_leaders_busy[index] = team_leader['created_count']
 
 	for team_member in team_members_scheduled_dates:
-		index = datetime.strftime(team_member['start_at'],'X%d-X%m-%Y').replace('X0','X').replace('X','')
+		try:
+			index = datetime.strftime(team_member['start_at'],'X%d-X%m-%Y').replace('X0','X').replace('X','')
+			print("actual member",index)
+		except:
+			index = datetime.strftime(datetime.strptime(team_member['start_at'],'%Y-%m-%d'),'X%d-X%m-%Y').replace('X0','X').replace('X','')
+			print("except member",index)
 
 		if index in team_members_busy:
 			team_members_busy[index] +=  team_member['created_count'] 
