@@ -116,15 +116,20 @@ class Quatation(View):
 
 						url = "https://smsapi.future-club.com/fccsms.aspx"
 
+						if evaluaation.payment_method == 'SUBSCRIPTION':
+							smsurl = "https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluaation.tracking_no)+""+str(evaluaation.customer.username)+""
+						else:
+							smsurl = "https://my.bleachkw.com/customer/invoice/prw"+str(evaluaation.tracking_no)+""+str(evaluaation.customer.username)+""
+
 						if language == 'ENGLISH':
 
-							message = "Dear Customer, Please find the Invoice against the order number "+str(evaluaation.evaluation_id)+"  here https://my.bleachkw.com/customer/invoice/prw"+str(evaluaation.tracking_no)+""+str(evaluaation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+							message = "Dear Customer, Please find the Invoice against the order number "+str(evaluaation.evaluation_id)+"  here "+smsurl+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 					
 							querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluaation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 						
 						else:
 
-							message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluaation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/invoice/prw"+str(evaluaation.tracking_no)+""+str(evaluaation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+							message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluaation.evaluation_id)+" في هذا الرابط "+smsurl+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
 					
 							querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluaation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 						
@@ -447,13 +452,18 @@ class PaymentResponseDebit(View):
 
 				url = "https://smsapi.future-club.com/fccsms.aspx"
 
+				if order.evaluation.payment_method == 'SUBSCRIPTION':
+					smsurl = "https://my.bleachkw.com/customer/subscription/invoice/prw"+str(order.evaluation.tracking_no)+""+str(order.evaluation.customer.username)+""
+				else:
+					smsurl = "https://my.bleachkw.com/customer/invoice/prw"+str(order.evaluation.tracking_no)+""+str(order.evaluation.customer.username)+""
+
 				if order.evaluation.customer.sms_preference == 'ENGLISH':
 
-					message = "Dear Customer, Your payment against the order number "+ order.order_no +" has failed (Payment ID : "+str(request.GET.get('paymentid'))+", Ref. ID: "+ str(request.GET.get('ref')) +"). Click here to try again https://my.bleachkw.com/customer/invoice/prw"+str(order.evaluation.tracking_no)+""+str(order.evaluation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+					message = "Dear Customer, Your payment against the order number "+ order.order_no +" has failed (Payment ID : "+str(request.GET.get('paymentid'))+", Ref. ID: "+ str(request.GET.get('ref')) +"). Click here to try again "+smsurl+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 				
 				else:
-					message = "عزيزي العميلفشل الدفع الخاص بك مقابل رقم الطلب "+ order.order_no +". اضغط هنا للمحاولة مرة أخرى https://my.bleachkw.com/customer/invoice/prw"+str(order.evaluation.tracking_no)+""+str(order.evaluation.customer.username)+" أي مساعدة يرجى الاتصال بنا على . +9651882707 شكرا لاختيارك بليتش الكويت"
+					message = "عزيزي العميلفشل الدفع الخاص بك مقابل رقم الطلب "+ order.order_no +". اضغط هنا للمحاولة مرة أخرى "+smsurl+" أي مساعدة يرجى الاتصال بنا على . +9651882707 شكرا لاختيارك بليتش الكويت"
 
 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 
@@ -605,7 +615,10 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 		duplicate_schedules.append(orderschedule.order_scheduler_book)
     
 
-	html_string = render_to_string('customer/newquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
+	if order.evaluation.payment_method == 'SUBSCRIPTION':
+		html_string = render_to_string('customer/subscriptionquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
+	else:
+		html_string = render_to_string('customer/newquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 
 	html = HTML(string=html_string,base_url=request.build_absolute_uri())
 	html.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');

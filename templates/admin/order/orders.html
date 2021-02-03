@@ -268,9 +268,10 @@
         {%endif%}
     </td>
     <td class="align-center">{% if evaluation.quatation_status == 'APPROVED' %}<a href="/customer/quatation/download/{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}"><img src="{% static 'files/images/icon-download.png' %}" align="absmiddle" class="download-icon"></a>{% else %}<img src="{% static 'files/images/icon-download-gray.png' %}" align="absmiddle" class="download-icon">{% endif %}&nbsp &nbsp{% if evaluation.quatation_status == 'APPROVED' or evaluation.quatation_status == 'PENDING' %}
-    {% if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION' %}<a href="/customer/subscription/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>
+    {% if evaluation.payment_method == 'SUBSCRIPTION' %}
+      <a href="/customer/subscription/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>
     {% else %}
-    <a href="/customer/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>
+      <a href="/customer/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>
     {% endif %}
     {% else %}<img src="{% static 'files/images/view-icon-gray.png' %}" align="absmiddle" class="download-icon">{% endif %}</td>
     </tr>    
