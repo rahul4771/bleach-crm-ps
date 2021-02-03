@@ -695,9 +695,26 @@ def CleaningExistingDates(request):
 # Create your views here.
 class AgentHome(IsAgent,View):
 	def get(self,request):
-		
-		# cleaners = UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMLEADER'))).update(is_general_skill=True)
-		
+		invoice_no = 202100034
+		for i in range(460,762):
+			try:
+				order = Order.objects.get(id=i)
+			except:
+				order = None
+			
+			if order:
+				if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS' or order.order_status == 'ORDER_CLOSED':
+					invoice_no += 1
+					order.invoice_no     = invoice_no
+					order.invoice_status = 'ACTIVE'
+					order.save()
+
+				if order.order_status == 'ORDER_CANCELLED':
+					invoice_no += 1
+					order.invoice_no     = invoice_no
+					order.invoice_status = 'CANCELLED'
+					order.save()
+
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		count_today_end   = count_today_start+timedelta(1)
