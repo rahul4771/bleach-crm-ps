@@ -606,7 +606,10 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 		duplicate_schedules.append(orderschedule.order_scheduler_book)
     
 
-	html_string = render_to_string('customer/subscriptionquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
+	if order.evaluation.payment_mehtod == 'SUBSCRIPTION':
+		html_string = render_to_string('customer/subscriptionquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
+	else:
+		html_string = render_to_string('customer/newquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 
 	html = HTML(string=html_string,base_url=request.build_absolute_uri())
 	html.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');
