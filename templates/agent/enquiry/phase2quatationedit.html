@@ -744,7 +744,8 @@ $("#id_form--tendative_time, #id_form--number_of_cleaners , #id_form--cleaning_h
             data: {
             'booking_time': $("#id_form-{{forloop.counter0}}-tendative_time").val(),
             'number_of_cleaners':$("#id_form-{{forloop.counter0}}-number_of_cleaners").val(),
-            'cleaning_duration':$("#id_form-{{forloop.counter0}}-cleaning_hours").val()
+            'cleaning_duration':$("#id_form-{{forloop.counter0}}-cleaning_hours").val(),
+            'service_type':$("#id_form-{{forloop.counter0}}-service_type").val(),
             },
             dataType: "json",
             type: "GET",

@@ -727,7 +727,8 @@ $("#id_form-{{forloop.counter0}}-tendative_time").datetimepicker({
             data: {
             'booking_time': $("#id_form-{{forloop.counter0}}-tendative_time").val(),
             'number_of_cleaners':$("#id_form-{{forloop.counter0}}-number_of_cleaners").val(),
-            'cleaning_duration':order_duration[0]
+            'cleaning_duration':order_duration[0],
+            'service_type':$("#id_form-{{forloop.counter0}}-service_type").val(),
             },
             dataType: "json",
             type: "GET",
