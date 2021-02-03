@@ -86,7 +86,16 @@ class Quatation(View):
 			termsandconditions = request.POST.get('termsandconditions')
 			if termsandconditions:
 				evaluation_update = Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(quatation_status='APPROVED',quatation_approved_date=timezone.now())
-				order_update      = Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='APPROVED_BY_CLIENT')
+				
+				last_invoice_no  		 = Order.objects.filter(is_active=True).aggregate(t=Max('invoice_no'))['t']
+				current_invoice_starting = str(timezone.now().year)		
+				if current_invoice_starting == last_invoice_no[0:4] and last_invoice_no:
+					new_invoice_no 		 = str(int(last_invoice_no[4:]) + 1 )
+					new_invoice_no 		 = last_invoice_no[0:-(len(new_invoice_no))]+new_invoice_no
+				else:
+					new_invoice_no 		 = str(timezone.now().year)+'00001'
+
+				order_update      = Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='APPROVED_BY_CLIENT',invoice_no=new_invoice_no)
 				
 				#close payment if remining becomes zero 
 				order = Order.objects.get(order_no=evaluation_id)

@@ -695,9 +695,7 @@ def CleaningExistingDates(request):
 # Create your views here.
 class AgentHome(IsAgent,View):
 	def get(self,request):
-		
-		# cleaners = UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMLEADER'))).update(is_general_skill=True)
-		
+
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		count_today_end   = count_today_start+timedelta(1)
