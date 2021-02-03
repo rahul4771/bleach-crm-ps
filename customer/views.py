@@ -606,7 +606,7 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 		duplicate_schedules.append(orderschedule.order_scheduler_book)
     
 
-	if order.evaluation.payment_mehtod == 'SUBSCRIPTION':
+	if order.evaluation.payment_method == 'SUBSCRIPTION':
 		html_string = render_to_string('customer/subscriptionquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 	else:
 		html_string = render_to_string('customer/newquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
