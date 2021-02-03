@@ -577,13 +577,34 @@ def CleaningExistingDates(request):
 	booking_time      = request.GET.get('booking_time')
 	no_of_cleaners    = request.GET.get('number_of_cleaners')
 	cleaning_duration = int(request.GET.get('cleaning_duration'))
+	service_type      = request.GET.get('service_type')
+	print(service_type)
 	
 	start_at          = datetime.strptime(request.GET.get('booking_time'),'%I:%M %p').time()
 	end_at            = (datetime.strptime(request.GET.get('booking_time'),'%I:%M %p')+timedelta(hours=cleaning_duration)).time()
 
 
-	active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
-	active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
+	if service_type == 'General Cleaning':		
+		active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(member__is_general_skill=True).filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
+		active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(member__is_general_skill=True).filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
+	elif service_type == 'Upholstery Cleaning':
+		active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(member__is_upholstery_skill=True).filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
+		active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(member__is_upholstery_skill=True).filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
+	elif service_type == 'Kitchen Cleaning':
+		active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(member__is_kitchen_skill=True).filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
+		active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(member__is_kitchen_skill=True).filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
+	elif service_type == 'Carpet Cleaning':
+		active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(member__is_carpet_skill=True).filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
+		active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(member__is_carpet_skill=True).filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
+	elif service_type == 'Sterilization':
+		active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(member__is_sterilization_skill=True).filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
+		active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(member__is_sterilization_skill=True).filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
+	elif service_type == 'Deep Cleaning':
+		active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(member__is_deep_skill=True).filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
+		active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(member__is_deep_skill=True).filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
+	else:
+		active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
+		active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
 
 	cleaning_active_team_leaders = active_cleaners1.filter(member__user_type='TEAMLEADER')
 	cleaning_active_cleaners     = active_cleaners1.filter(member__user_type='CLEANER')
@@ -636,8 +657,27 @@ def CleaningExistingDates(request):
 
 
 	#remove available dates
-	total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER').count()
-	total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').count()		
+	if service_type == 'General Cleaning':
+		total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER',is_general_skill=True).count()
+		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER',is_general_skill=True).count()		
+	elif service_type == 'Upholstery Cleaning':
+		total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER',is_upholstery_skill=True).count()
+		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER',is_upholstery_skill=True).count()
+	elif service_type == 'Kitchen Cleaning':
+		total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER',is_kitchen_skill=True).count()
+		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER',is_kitchen_skill=True).count()
+	elif service_type == 'Carpet Cleaning':
+		total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER',is_carpet_skill=True).count()
+		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER',is_carpet_skill=True).count()
+	elif service_type == 'Sterilization':
+		total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER',is_sterilization_skill=True).count()
+		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER',is_sterilization_skill=True).count()
+	elif service_type == 'Deep Cleaning':
+		total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER',is_deep_skill=True).count()
+		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER',is_deep_skill=True).count()
+	else:
+		total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER').count()
+		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').count()
 
 	for k, v in list(team_leaders_busy.items()):
 		if v < total_leaders:

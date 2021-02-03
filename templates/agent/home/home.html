@@ -1192,11 +1192,6 @@ $('document').ready(function(){
 
 
 
-
-
-
-
-
       //To add followup schedules in cleaning calender  
       completed_calender_followup = []; 
       {% for old_schedule in calendar_followup_schedules %} 
@@ -1774,7 +1769,7 @@ $('.collapsible0-close').click(function(){
     //edit option toggle
         cleaning_status = $(this).data('cleaning_status');
         
-        if(cleaning_status == 'CLEANING_FULFILLED')
+        if(cleaning_status == 'CLEANING_FULFILLED' || cleaning_status == 'CLEANING_TEAM_ASSIGNED' || cleaning_status == 'CLEANING_IN_PROGRESS')
             {
                 $('.edit-collapse').css('display','none');
         }

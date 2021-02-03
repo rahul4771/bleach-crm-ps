@@ -687,7 +687,8 @@ $('document').ready(function(){
             data: {
             'booking_time': $("#id_form-"+x+"-tendative_time").val(),
             'number_of_cleaners':$("#id_form-"+x+"-number_of_cleaners").val(),
-            'cleaning_duration':$("#id_form-"+x+"-cleaning_hours").val()
+            'cleaning_duration':$("#id_form-"+x+"-cleaning_hours").val(),
+            'service_type':$("#id_form-"+x+"-service_type").val(),
             },
             dataType: "json",
             type: "GET",
@@ -827,7 +828,8 @@ $("#id_form-"+x+"-tendative_time, #id_form-"+x+"-number_of_cleaners , #id_form-"
             data: {
             'booking_time': $("#id_form-"+x+"-tendative_time").val(),
             'number_of_cleaners':$("#id_form-"+x+"-number_of_cleaners").val(),
-            'cleaning_duration':$("#id_form-"+x+"-cleaning_hours").val()
+            'cleaning_duration':$("#id_form-"+x+"-cleaning_hours").val(),
+            'service_type':$("#id_form-"+x+"-service_type").val(),
             },
             dataType: "json",
             type: "GET",
