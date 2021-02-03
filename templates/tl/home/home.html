@@ -94,8 +94,10 @@
 <td data-label="Contact Number">{{cleaning.order_scheduler.order.evaluation.customer.mobile_number}}</td>
 <td data-label="Service Type">{{cleaning.order_scheduler.order_scheduler_book.service_type}}</td>
 <td data-label="">
-{% if cleaning.order_scheduler.work_status == 'CLEANING_TEAM_ASSIGNED' or cleaning.order_scheduler.work_status == 'CLEANING_IN_PROGRESS' %}
-<span class="{% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}blue-bg{% else %}green-bg{% endif %} clickable-row-list" data-href="{% url 'tl:cleaning' cleaning.id %}?my_cleaning_calendar_date={{my_cleaning_date|date:'d-m-Y'}}">Checkin</span>
+{% if cleaning.order_scheduler.work_status == 'CLEANING_TEAM_ASSIGNED' %}
+<span class="{% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}blue-bg{% else %}green-bg{% endif %} clickable-row-list" data-href="{% url 'tl:cleaning' cleaning.id %}?my_cleaning_calendar_date={{my_cleaning_date|date:'d-m-Y'}}">Check In</span>
+{% elif cleaning.order_scheduler.work_status == 'CLEANING_IN_PROGRESS' %}
+<span class="{% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}blue-bg{% else %}green-bg{% endif %} clickable-row-list" data-href="{% url 'tl:cleaning' cleaning.id %}?my_cleaning_calendar_date={{my_cleaning_date|date:'d-m-Y'}}">Check Out</span>
 {% elif cleaning.order_scheduler.work_status == 'CLEANING_FULFILLED' %}
 <span class="{% if cleaning.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}blue-bg{% else %}green-bg{% endif %}">Cleaning Completed</span>
 {% endif %}
