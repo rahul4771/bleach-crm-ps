@@ -812,6 +812,7 @@ $("#id_form-"+x+"-tendative_time").datetimepicker({
 
 
 $("#id_form-"+x+"-tendative_time, #id_form-"+x+"-number_of_cleaners , #id_form-"+x+"-cleaning_hours").change(function(){
+    alert("hiiiiiiiiiiii");
     var policy = $("#id_form-"+x+"-cleaning_policy").val();
     if (policy == 'ONE TIME SERVICE'){
         datetimecheck($("#id_form-"+x+"-tendative_time").val(),$("#id_form-"+x+"-tendative_date").val(),'onetime',x);
