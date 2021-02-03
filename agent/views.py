@@ -2645,7 +2645,7 @@ class MakeQuatationPhase1(IsAgent,View):
 			
 			response = requests.request("GET", url, headers=headers, params=querystring)
 
-			print(response.text,"respo")
+			print(message,response.text,"respondd")
 		
 		else:
 			pass
