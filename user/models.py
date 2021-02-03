@@ -97,6 +97,12 @@ class UserProfile(AbstractUser):
     is_email        = models.BooleanField(null=False,blank=True,default=False)
     customer_id     = models.CharField(max_length=12,blank=True,null=True)
 
+    is_general_skill       = models.BooleanField(null=True,blank=True,default=False)
+    is_deep_skill          = models.BooleanField(null=True,blank=True,default=False)
+    is_upholstery_skill    = models.BooleanField(null=True,blank=True,default=False)
+    is_kitchen_skill       = models.BooleanField(null=True,blank=True,default=False)
+    is_sterilization_skill = models.BooleanField(null=True,blank=True,default=False)
+
     created_by      = models.ForeignKey('self',blank=True,null=True)
     is_active       = models.BooleanField(null=False,blank=True,default=True)
     created         = models.DateTimeField(auto_now_add=True)
