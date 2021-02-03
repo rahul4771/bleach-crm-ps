@@ -152,7 +152,7 @@
 
 
  </div><!--commnDiv-border--> 
-<div align="center"><input class="assignButton expandbutton" name="submit" type="button" value="Check-in"> </div>
+{% comment %} <div align="center"><input class="assignButton expandbutton" name="submit" type="button" value="Check-in"> </div> {% endcomment %}
 
     <br><br>
 
@@ -163,8 +163,8 @@
     <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
 
 {% for section in  cleaning_team_detail.order_scheduler.order_scheduler_book.sections %} 
-<div class="narrow-head align-left">Section {{forloop.counter}} : {{section.section_name}}</div>
-<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+<div class="narrow-head align-left cleaningsection">Section {{forloop.counter}} : {{section.section_name}}</div>
+<div class="ticket-wrapper-row ticket-forms-boxes cleaningkeynotes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   {% for keynote in section.keynotes %}  
   {% if not forloop.counter|divisibleby:2 %}
@@ -182,14 +182,14 @@
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
-<hr class="hr-dashedpad">
+<hr class="hr-dashedpad hr1">
 {% endfor %}
 
 {% endif %}
 
 <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
 
-<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+<div class="ticket-wrapper-row ticket-forms-boxes beforecleaning"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left--> 
   <div class="details-notes align-left">Before Cleaning Photos</div>        
         <div class="row"><!--row-->
@@ -202,7 +202,7 @@
   </div><!--ticket-form-left--> 
   </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
-<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+<div class="ticket-wrapper-row ticket-forms-boxes aftercleaning"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left--> 
   <div class="details-notes align-left">After Cleaning Photos</div>        
         <div class="row"><!--row-->
@@ -223,7 +223,9 @@
  </div><!--commnDiv-border--> 
 <br>
  
- <div align="center"><input class="assignButton" name="assign" type="submit" value="Checkout"> <!-- <input class="cancel-Button" name="assign" type="submit" value="Submit"></div> --> </form>    	
+ <div align="center"><input class="assignButton checkoutbutton" name="assign" type="submit" value="Check Out">
+ <input class="assignButton checkinbutton" name="assign" type="submit" value="Check In">
+  <!-- <input class="cancel-Button" name="assign" type="submit" value="Submit"></div> --> </form>    	
 <br> <br>      
         
         </div><!--center-formDiv-->
@@ -243,11 +245,33 @@
 <script>
 $(document).ready(function(){
 
-  $('.checklist').css('display','none');
+  {% if cleaning_team_detail.order_scheduler.work_status == 'CLEANING_IN_PROGRESS' %}
+    $('input[name="mediaafter"]').attr("required",true);
+    $('input[name="mediabefore"]').attr("required",false);
+    $('.checkinbutton').attr("hidden",true);
+    $('.checkoutbutton').attr("hidden",false);
+    $('.aftercleaning').attr("hidden",false);
+    $('.beforecleaning').attr("hidden",true);
+    $('.cleaningsection').attr("hidden",false);
+    $('.cleaningkeynotes').attr("hidden",false);
+    $('.hr1').attr("hidden",false);
+  {% else %}
+    $('input[name="mediaafter"]').attr("required",false);
+    $('input[name="mediabefore"]').attr("required",true);
+    $('.checkinbutton').attr("hidden",false);
+    $('.checkoutbutton').attr("hidden",true);
+    $('.beforecleaning').attr("hidden",false);
+    $('.aftercleaning').attr("hidden",true);
+    $('.cleaningsection').attr("hidden",true);
+    $('.cleaningkeynotes').attr("hidden",true);
+    $('.hr1').attr("hidden",true);
+  {% endif %}
 
-  $('.expandbutton').click(function(){
-    $('.checklist').css('display','block');  
-  });
+  //$('.checklist').css('display','none');
+
+  //$('.expandbutton').click(function(){
+  //  $('.checklist').css('display','block');  
+  //});
 
   //update address status
 $(".keynote").change(function(){
