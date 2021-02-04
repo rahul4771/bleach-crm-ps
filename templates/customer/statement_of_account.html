@@ -130,26 +130,18 @@
               <td class="align-right"></td>
               <td class="align-right">0.000&nbsp;&nbsp;</td>
             </tr>
-            
-            {% for account in accounts %}
-            <tr>
-              <td style="text-align:left;">&nbsp;&nbsp;{{account.order.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
-              <td class="align-left">Invoice #INV{{account.order.invoice_no}}</td>
-              <td class="debit_amount align-right">{{account.amount_paid|floatformat:3}}</td>
-              <td class="align-right">0.000</td>
-              <td class="balance_amount align-right" >0.000</td>
-            </tr>
+
 
             {% for invoice in pending_payments %}
-            {% if invoice.id == account.order.id %}
+            
 
             {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
 
               {% if invoice.evaluation.payment_method == 'PREPAID' %}
                 {% if invoice.reminigdays >= 1 %}
                 <tr>
-                  <td style="text-align:left;">&nbsp;&nbsp;{{account.order.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
-                  <td class="align-left">Invoice #INVq{{account.order.invoice_no}}</td>
+                  <td style="text-align:left;">&nbsp;&nbsp;{{invoice.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+                  <td class="align-left">Invoice #INV{{invoice.invoice_no}}</td>
                   <td class="debit_amount align-right">{{invoice.total_amount|floatformat:3}}</td>
                   <td class="align-right">0.000</td>
                   <td class="balance_amount align-right" >0.000</td>
@@ -158,8 +150,8 @@
 
               {% else %}
               <tr>
-                <td style="text-align:left;">&nbsp;&nbsp;{{account.order.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
-                <td class="align-left">Invoice #INVw{{account.order.invoice_no}}</td>
+                <td style="text-align:left;">&nbsp;&nbsp;{{invoice.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+                <td class="align-left">Invoice #INV{{invoice.invoice_no}}</td>
                 <td class="debit_amount align-right">{{invoice.total_amount|floatformat:3}}</td>
                 <td class="align-right">0.000</td>
                 <td class="balance_amount align-right" >0.000</td>
@@ -171,8 +163,8 @@
               {% if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount %}
               {% if invoice.reminigdays >= 1 %}
               <tr>
-                <td style="text-align:left;">&nbsp;&nbsp;{{account.order.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
-                <td class="align-left">Invoice #INVe{{account.order.invoice_no}}</td>
+                <td style="text-align:left;">&nbsp;&nbsp;{{invoice.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+                <td class="align-left">Invoice #INV{{invoice.invoice_no}}</td>
                 <td class="debit_amount align-right">{{invoice.evaluation.before_cleaning_amount|floatformat:3}}</td>
                 <td class="align-right">0.000</td>
                 <td class="balance_amount align-right" >0.000</td>
@@ -182,8 +174,8 @@
 
               {% if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount %}
               <tr>
-                <td style="text-align:left;">&nbsp;&nbsp;{{account.order.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
-                <td class="align-left">Invoice #INVr{{account.order.invoice_no}}</td>
+                <td style="text-align:left;">&nbsp;&nbsp;{{invoice.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+                <td class="align-left">Invoice #INV{{invoice.invoice_no}}</td>
                 <td class="debit_amount align-right">{{invoice.evaluation.after_cleaning_amount|floatformat:3}}</td>
                 <td class="align-right">0.000</td>
                 <td class="balance_amount align-right" >0.000</td>
@@ -193,8 +185,8 @@
             {% elif invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
             {% if invoice.subscription_topay != 0 %}
             <tr>
-                <td style="text-align:left;">&nbsp;&nbsp;{{account.order.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
-                <td class="align-left">Invoice #INVt{{account.order.invoice_no}}</td>
+                <td style="text-align:left;">&nbsp;&nbsp;{{invoice.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+                <td class="align-left">Invoice #INV{{invoice.invoice_no}}</td>
                 <td class="debit_amount align-right">{{invoice.subscription_topay|floatformat:3}}</td>
                 <td class="align-right">0.000</td>
                 <td class="balance_amount align-right" >0.000</td>
@@ -202,20 +194,30 @@
             {% endif %}
             {% endif %}
           
-            {% endif %}
-            {% endfor %}
 
-            
+            {% if invoice.amount_paid != 0 %}
+
             <tr>
-              <td style="text-align:left;">&nbsp;&nbsp;{{account.paid_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
-              <td class="align-left">Receipt #RES{{account.receipt_no}}</td>
+              <td style="text-align:left;">&nbsp;&nbsp;{{invoice.order.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+              <td class="align-left">Invoice #INV{{invoice.order.invoice_no}}</td>
+              <td class="debit_amount align-right">{{invoice.amount_paid|floatformat:3}}</td>
               <td class="align-right">0.000</td>
-              <td class="credit_amount align-right">{{account.amount_paid|floatformat:3}}</td>
               <td class="balance_amount align-right" >0.000</td>
             </tr>
+
+            <tr>
+              <td style="text-align:left;">&nbsp;&nbsp;{{invoice.paid_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+              <td class="align-left">Receipt #RES{{invoice.receipt_no}}</td>
+              <td class="align-right">0.000</td>
+              <td class="credit_amount align-right">{{invoice.amount_paid|floatformat:3}}</td>
+              <td class="balance_amount align-right" >0.000</td>
+            </tr>
+            {% endif %}
+
             
             {% endfor %}
-
+            
+            
             <tr>
               <td style="text-align:left;"></td> <!-- Don't remove this column as it's needed for the row commands -->
               <td class="align-right" style="font-weight: bold;">TOTAL</td>
@@ -252,6 +254,109 @@
           </table> 
         </section>       
 
+        {% for invoice in pending_payments %}
+        
+    {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
+    <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+    
+    <td data-label="BLC Number" class="bold-text clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+    {% for history in invoice.paymenthistory %}
+        <span>uio</span>
+        {% endfor %}
+    <td data-label="Service Type(s)">
+    {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+    {% for book in evaluation_details.evaluation_books %}
+    {{book.service_type}}<br>
+    {% endfor %}
+    {% endfor %}
+    </td>
+    
+    <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+    <td data-label="Total Amount">{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+    <td class="{% if invoice.evaluation.payment_method == 'PREPAID' %}indigo-text{% else %}rose-text{% endif %}"  data-label="Payment Method">
+    {{invoice.evaluation.payment_method|default_if_none:''}}
+    </td>
+    <td data-label="" class="bold-text">
+    {% if invoice.evaluation.payment_method == 'PREPAID' %}
+    {% if invoice.reminigdays < 0 %}
+    <h3 class="red-text-h3">Exp</h3>
+    {% else %}
+    <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}">{{invoice.reminigdays}}</h3> Days&#11015;
+    {% endif %}
+
+    {% elif invoice.evaluation.payment_method == 'POSTPAID' %}
+    <h3 class="{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;
+    {% endif %}
+    </td>
+    </tr>
+
+    {% elif invoice.evaluation.payment_method == 'BREAKDOWN' %}
+    
+    {% if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount %}
+    <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+    <td data-label="BLC Number" class="bold-text clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+    <td data-label="Service Type(s)">
+    {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+    {% for book in evaluation_details.evaluation_books %}
+    {{book.service_type}}<br>
+    {% endfor %}
+    {% endfor %}
+    </td>
+    <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+    <td data-label="Total Amount">{{invoice.evaluation.before_cleaning_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+    <td class="violet-text" data-label="Payment Method">{{invoice.evaluation.payment_method|default_if_none:''}}</td>
+    <td data-label="" class="bold-text">{% if invoice.reminigdays <= 0 %}
+    <h3 class="red-text-h3">Exp</h3>
+    {% else %}
+    <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}">{{invoice.reminigdays}}</h3> Days&#11015;
+    {% endif %}</td>
+    </tr>
+    {% endif %}
+
+    {% if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount %}
+    <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+    <td data-label="BLC Number" class="bold-text clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+    <td data-label="Service Type(s)">
+    {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+    {% for book in evaluation_details.evaluation_books %}
+    {{book.service_type}}<br>
+    {% endfor %}
+    {% endfor %}
+    </td>
+    <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+    <td data-label="Total Amount">{{invoice.evaluation.after_cleaning_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+    <td data-label="Payment Method">{{invoice.evaluation.payment_method|default_if_none:''}}</td>
+    <td data-label="" class="bold-text"><h3 class="{% if invoice.delaydays >= 14 %}green-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}orange-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
+    </tr>
+    {% endif %}
+
+
+    {% elif invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
+    {% if invoice.subscription_topay != 0 %}
+    <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+    <td data-label="BLC Number" class="bold-text clickable-row" data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}">{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+    <td data-label="Service Type(s)">
+    {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+    {% for book in evaluation_details.evaluation_books %}
+    {{book.service_type}}<br>
+    {% endfor %}
+    {% endfor %}
+    </td>
+    <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+    <td data-label="Total Amount">{{invoice.subscription_topay|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+    <td class="green-text"  data-label="Payment Method">
+    {{invoice.evaluation.payment_method|default_if_none:''}}
+    </td>
+    <td data-label="" class="bold-text">
+    <h3 class="{% if invoice.delaydays == 0 %}green-text-h3{% elif invoice.delaydays >= 1 and invoice.delaydays <= 3 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}orange-text-h3{% elif invoice.delaydays >= 8 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;
+    {% endif %}
+    {% endif %}
+
+    {% endfor %}
 
         <!-- <section id="policy">
         
