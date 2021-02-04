@@ -768,9 +768,18 @@ def statement_of_account(request,client_id):
 
 	paymenthistory = PaymentHistory.objects.filter(is_active=True,order__evaluation__customer__id=int(client_id)).order_by('paid_date')
 	
-	result_list = list(
-    chain(pending_payments, paymenthistory))
+	accounts_list = []
+	for payment in pending_payments:
+		accounts_list.append(payment)
 
-	print(result_list,"relist")
+	for history in paymenthistory:
+		# print(history.order.id,payment.id,"idds")
+		# if history.paid_date < payment.evaluation.quatation_approved_date:
+		accounts_list.append(history)
+		
+		
+
+
+	print(accounts_list,"relist")
 	
-	return render(request,"customer/statement_of_account.html",{"client":client,"address":address,"accounts":paymenthistory,"pending_payments":result_list})
+	return render(request,"customer/statement_of_account.html",{"client":client,"address":address,"accounts":paymenthistory,"pending_payments":accounts_list})
