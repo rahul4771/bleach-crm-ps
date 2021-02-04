@@ -1,0 +1,434 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "salesadmin/common/header.html" %}
+    
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Feedback</h1>
+                <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>    
+            </div><!--welcome-wrapper-->
+       
+     <div class="clients-top-card-wrapper"><!--clients-top-card-wrapper-->
+      <div class="feedback-card-wrapper "><!--feedback-card-wrapper -->
+        <div class="feedback-card-column feedback-column-left whitebg"><!--feedback-card-column feedback-column-left-->
+
+<div class="rating-containter"><!--rating-containter-->
+  <div class="rating-column column-left-rating"><!--column-left-rating-->
+        <p class="rating-range"></p>
+        <div class="rating-star">
+        </div>
+        <p><span class="fa fa-user"></span>&nbsp{{total_feedbacks}} total </p>
+     </div><!--column-left-rating-->
+     <div class="rating-column column-right-rating"><!--column-right-rating-->
+            <div class="row">
+            </div>
+        </div><!--column-right-rating-->
+</div><!--rating-containter-->
+        </div><!--feedback-card-column feedback-column-left-->
+
+      <div class="clients-card-column clients-column-right whitebg hover ltyellow-border"><!--clients-card-column clients-column-right-->
+                 
+    <div class="chart_boxDiv"><!--chart_boxDiv-->
+        <div class="chart_box_Right"><!--chart_box_Right-->
+        <!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
+              <div id="chart_div" ></div>
+        </div><!--chart_box_Right-->
+    </div><!--chart_boxDiv-->   
+            
+        <div class="chart_boxDiv"><!--chart_boxDiv-->    
+        
+         <div class="chart_box_Left"><!--chart_box_Left-->
+         <div class="legend-wrapper"><!--legend-wrapper--> 
+            <div class="legend-result count_div"><label class="legend-label">Total Ratings </label> <b class="legend-result-blue" id="total_submitted">0</b></div>
+            <div class="legend-result count_div visible"><label class="legend-label">Approved </label> <b class="legend-result-red" id="total_approved"></b></div>
+         </div><!--legend-wrapper-->
+      </div><!--chart_box_Left-->
+        <div class="chart_box_Left"><!--chart_box_Left-->        
+        <div class="Button_wrapperChart">
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonthtoggle"><div class="slider round"><span class="on">MONTH</span><span class="off">DATE</span></div></label></div>
+            <input type="text" id="ord_fromdate" class="date_pick_chart_from date_pick2 date-picker set1 date-pick-left" >
+            <input type="text" id="ord_todate" class="date_pick_chart_to date_pick2 date-picker set1 date-pick-right"  >
+            <input type="text" id="month1" class="month_pick set2 date-pick-left" hidden>
+            <input type="text" id="month2" class="month_pick set2 date-pick-right" hidden>
+            <div><button id="reset_feedbacks" class="green-button-chart">Reset</button></div>
+            </div>
+                           
+        </div><!--chart_box_Left-->
+            
+        </div><!--chart_boxDiv-->    
+            
+        </div><!--lients-card-column clients-column-right-->
+
+      </div><!--feedback-card-wrapper -->
+
+</div><!--clients-top-card-wrapper-->       
+            
+     <div class="main-content-holder"><!--main-content-holder-->            
+     
+     <div class="white-wrapper-search"><!--white-wrapper-search-->
+     <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
+          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search BLC Number & Customer Name Here" value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+     </div><!--left-box leftbox-item1-->
+     <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
+     <input name="filter" type="button" value="Filter" id="filter" class="blue-button arrow"> 
+     <div class="menu-filter ltgreen-border" style="display:none;"><!--menu-filter ltgreen-border-->
+     
+    
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Governorate</label></div>
+                <label for="favcity">
+                <select name="governorate_filter" id="governorate_filter_id">
+                <option value=''>---ALL---</option>
+                {% for governorate in governorates %}
+          <option value='{{governorate.id}}' {% if governorate.id == fil_governorate %}selected{%endif%}>{{governorate.name}}</option>
+                {% endfor %}                
+              </select>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Area</label></div>
+                <label for="favcity">
+                <select name="area_filter" id="area_filter_id">
+                <option value=''>---ALL---</option> 
+                {% for area in areas %}
+                <option value='{{area.id}}' {% if fil_area == area.id %}selected{% endif %}>{{area.name}}</option>
+                {% endfor %}               
+              </select>
+                </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<hr class="hr-dashedpad"> 
+{% comment %} <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<hr class="hr-dashedpad">  {% endcomment %}
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Service Type</label></div>
+        <label for="favcity">
+                <select name="service_type_filter" id="service_type_filter_id">
+                <option value=''>---ALL---</option>
+                {% for service_type in service_types %}
+                <option value="{{service_type.id}}" {% if service_type.id == fil_service_type %}selected{% endif %}>{{service_type.name}}</option>
+                {% endfor %}                
+              </select>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+         <div class=" bold-text common-label"> <label>Rating</label></div>
+        <label for="favcity">
+                <select name="minimumstarring_filter" id="minimumstarring_filter_id">
+                <option value=''>---ALL---</option>
+                {% comment %} <option value="RATED" {% if fil_minimumstarring == 'RATED' %}selected{% endif %}>Rated</option>
+                <option value="NOT_RATED" {% if fil_minimumstarring == 'NOT_RATED' %}selected{% endif %}>Not Rated</option> {% endcomment %}
+                <option value="1" {% if fil_minimumstarring == '1' %}selected{% endif %}>One Star</option>
+                <option value="2" {% if fil_minimumstarring == '2' %}selected{% endif %}>Two Star</option>
+                <option value="3" {% if fil_minimumstarring == '3' %}selected{% endif %}>Three Star</option>
+                <option value="4" {% if fil_minimumstarring == '4' %}selected{% endif %}>Four Star</option>
+                <option value="5" {% if fil_minimumstarring == '5' %}selected{% endif %}>Five Star</option>                
+              </select>
+                </label>  
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<div align="center"> <input class="assignButton" name="assing" type="button" onclick="set_params_go({});" value="Submit"> <input class="cancel-Button close-btn arrow-close" name="cancel" type="button" value="Reset"></div>
+
+     
+     </div><!--menu-filter ltgreen-border-->
+     </div><!--right-box leftbox-item1-->     
+     
+     
+ 
+     </div><!--white-wrapper-search-->
+     
+            
+<div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Feedback List</h2>
+<div class="page-entries">Show {{entry_per_page}} entries</div>
+
+<label for="favcity" style="width:20%;"> 
+<select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
+<option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+<option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+<option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+</select>
+</label>
+
+<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+ 
+<thead>
+<tr>
+<th>Order Number</th>
+<th data-hide="phone,tablet">Name</th>
+<th data-hide="phone">Area</th>
+<th data-hide="phone,tablet">Service Type</th>
+<th>Contact</th>
+<th data-hide="phone,tablet" style="text-align:center;">Ratings</th>
+</tr>
+</thead>
+<tbody>
+  {% for order in order_wise_feedbacks %}
+    <tr>
+    <td {% if order.is_feedback_marked == True %} class="yellow-line" {% else %} class="gray-line" {% endif %}>{{order.evaluation.evaluation_id}}</td>
+    <td>{{order.evaluation.customer.name}}</td>
+    <td>
+    {% for evaluation_detail in order.evaluation.order_evaluation_details %}
+    {{evaluation_detail.address.area.name}}<br>
+    {% endfor %}</td>
+    <td>
+     {% for evaluation_detail in order.evaluation.order_evaluation_details %}     
+     {% for evaluation_book in evaluation_detail.evaluation_book %}
+     {{evaluation_book.service_type.name}},    
+     {% endfor %}
+     <br>
+     {% endfor %}
+    </td>
+    <td>{{order.evaluation.customer.mobile_number}}</td>
+    <td>
+      <div class="clickable-row-list" {% if order.is_feedback_marked %}data-href="{% url 'bleach_salesadmin:salesadmin-feedbackadvanced' order.evaluation.customer.id order.id %}"{% else %}data-href=""{% endif %} align="center"> 
+      {% if order.avg_starring >= 4.5 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        {% elif order.avg_starring < 4.5 and order.avg_starring >= 3.5 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        {% elif order.avg_starring < 3.5 and order.avg_starring >= 2.5 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% elif order.avg_starring < 2.5 and order.avg_starring >= 1.5 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% elif order.avg_starring < 1.5 and order.avg_starring >= .5 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% else %}
+        <span class="gray-bg">Not Rated</span>
+        {% endif %}
+        </div>
+    </td>
+    </tr>
+  {% empty %}
+    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>    
+  {% endfor %}  
+     
+</tbody>
+<tfoot>
+ 
+</tfoot>
+</table>
+
+<div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
+    <div class="pagination-containter"><!--pagination-containter-->
+      <div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
+        Showing {{order_wise_feedbacks.start_index}} to {{order_wise_feedbacks.end_index}} of {{order_wise_feedbacks.paginator.count}} entries
+        </div><!--pagination-column pagination-column-left-->
+        
+        <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
+            <!--paginated-->
+   {% if order_wise_feedbacks.has_other_pages %}
+   <nav aria-label="Page navigation example">
+  <ul class="pagination">
+     {% if order_wise_feedbacks.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ order_wise_feedbacks.previous_page_number }}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&service_type={{request.GET.service_type}}&minimumstarring={{request.GET.minimumstarring}}&maximumstarring={{request.GET.maximumstarring}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% endif %}
+    {% for pg in page_range %}
+    {% if vus.number == pg %}
+            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&service_type={{request.GET.service_type}}&minimumstarring={{request.GET.minimumstarring}}&maximumstarring={{request.GET.maximumstarring}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
+    {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&service_type={{request.GET.service_type}}&minimumstarring={{request.GET.minimumstarring}}&maximumstarring={{request.GET.maximumstarring}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
+    {% endif %}
+    {% endfor %}
+    {% if order_wise_feedbacks.has_next %}        
+    <li class="page-item">
+      <a class="page-link" href="?page={{ order_wise_feedbacks.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&service_type={{request.GET.service_type}}&minimumstarring={{request.GET.minimumstarring}}&maximumstarring={{request.GET.maximumstarring}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link disabled" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+    {% endif %}
+    <!--paginated-->
+        </div><!--pagination-column pagination-column-right-->
+    </div><!--pagination-containter-->         
+</div><!--white-wrapper-pagination--> 
+</div><!--white-wrapper-->      
+             
+            
+            
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+{% include 'salesadmin/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'files/js/charts/feedback-chart.js' %}"></script>
+<script>
+$(document).ready(function(){
+//whole starring calculations  
+total_no_feedbacks = {{total_feedbacks}};
+
+starring_count = [0,0,0,0,0];
+{% for order in full_order_wise_feedbacks %}
+
+{% if order.avg_starring >= 4.5 %}
+starring_count[4] += 1;
+{% elif order.avg_starring >= 3.5 and order.avg_starring < 4.5 %}
+starring_count[3] += 1;
+{% elif order.avg_starring >= 2.5 and order.avg_starring < 3.5 %}
+starring_count[2] += 1;
+{% elif order.avg_starring >= 1.5 and order.avg_starring < 2.5 %}
+starring_count[1] += 1;
+{% elif order.avg_starring >= .5 and order.avg_starring < 1.5 %}
+starring_count[0] +=1;
+{% endif %}
+
+{% endfor %}
+
+for(i=starring_count.length-1;i>=0;i--)
+{
+
+$('.row').append('<div class="side"><div><span class="fa fa-star"></span>&nbsp'+(i+1)+'</div></div><div class="middle"><div class="bar-container"><div class="bar-n" style="width:'+(starring_count[i]/total_no_feedbacks*100)+'%;background-color:'+(i == 0 ? '#f44336':i == 1 ? '#2196F3':i == 2 ? '#00bcd4':i == 3 ? '#ff9800':i == 4 ? '#4CAF50':'')+';"></div></div></div><div class="side right"><div>'+(Math.round((starring_count[i]/total_no_feedbacks*100)*10)/10 || '0.0')+'%</div></div>');
+}
+
+average_total_feedback = (Math.round((starring_count[0]*1+starring_count[1]*2+starring_count[2]*3+starring_count[3]*4+starring_count[4]*5)/total_no_feedbacks*100)/100);
+
+if(average_total_feedback >= 4.5)
+{
+$('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span>');
+  $('.rating-range').html(parseFloat(average_total_feedback).toFixed(1));
+}
+else if(average_total_feedback >= 3.5 && average_total_feedback < 4.5)
+{
+$('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span>');
+$('.rating-range').html(parseFloat(average_total_feedback).toFixed(1));
+}
+else if(average_total_feedback >= 2.5 && average_total_feedback < 3.5)
+{
+$('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span>');
+$('.rating-range').html(parseFloat(average_total_feedback).toFixed(1));
+}
+else if(average_total_feedback >= 1.5 && average_total_feedback < 2.5)
+{
+$('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span>');
+$('.rating-range').html(parseFloat(average_total_feedback).toFixed(1));
+}
+else if(average_total_feedback >= 0.5 && average_total_feedback < 1.5 )
+{
+$('.rating-star').append('<span class="fa fa-star checked"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span>');
+  $('.rating-range').html(parseFloat(average_total_feedback).toFixed(1));
+}
+else
+{
+$('.rating-star').append('<span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span>');
+$('.rating-range').html('0.0');
+}
+
+
+});
+
+
+$("#governorate_filter_id").change(function(){  
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getarea' %}",
+
+        data: {'governorate_id':this.value}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+
+          ajax_ret_areas = data;     
+
+       $("#area_filter_id").empty();
+
+       $("#area_filter_id").append($('<option>', {
+
+            value: "", 
+
+           text: "---ALL---"
+
+        })); 
+
+        $.each( ajax_ret_areas, function( key, values ) {
+
+              $("#area_filter_id").append($('<option>', {        
+
+              value: key, 
+
+              text: values   
+
+            }));   
+        });
+
+                                  }  
+
+      }); 
+
+});
+
+
+function set_params_go(args)
+{
+var url='{% url 'bleach_salesadmin:salesadmin-feedbacks' %}';
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),service_type:$('#service_type_filter_id').val(),minimumstarring:$('#minimumstarring_filter_id').val(),maximumstarring:$('#maximumstarring_filter_id').val(),
+};
+for(key in args) 
+    params[key]=args[key];
+var query='';
+for(key in params)
+    if(params[key]) 
+        query+='&'+key+'='+params[key].toString();
+query=query.replace('&','?');
+window.location.href=url+query;  
+}    
+</script>
+
+{% endblock %}

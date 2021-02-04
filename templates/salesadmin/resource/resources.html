@@ -1,0 +1,715 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper">
+{% include "salesadmin/common/header.html" %} 
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Resources</h1>
+                <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>    
+            </div><!--welcome-wrapper--> 
+        
+     <div class="main-card"><!--main-card-->
+<div class="card-row"><!--card-row-->
+            <div class="card-column whitebg blue-border"><!--card-column-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-workers-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Workers</h1>
+                <h2 class="blue-text"><label>Active<span>{{total_active_workers|default_if_none:''}}</span></label> </h2>
+                <p><label>Total <span>{{total_workers|default_if_none:''}}</span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg green-border"><!--card-column-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-manhours-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Man Hours</h1>
+                <h2 class="green-text"><label>Today<span id="today_man_hour"></span></label>  </h2>
+                <p><label>This Week <span id="week_man_hour"></span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg orange-border"><!--card-column-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-man-average-hours-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Man Average Hours</h1>
+                <h2 class="orange-text"><label>Today<span id="today_avg_man_hour"></span></label> </h2>
+                <p><label>This Week <span id="week_avg_man_hour"></span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg red-border"><!--card-column-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-active-team-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Active Team</h1>
+                <h2 class="red-text"><label>Today<span>{{today_active_teams_count|default_if_none:''}}</span></label> </h2>
+                <p><label>This Week <span>{{week_active_teams_count|default_if_none:''}}</span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
+            </div><!--card-column-->
+   </div><!--card-row-->
+</div><!--main-card-->       
+            
+     <div class="main-content-holder"><!--main-content-holder-->            
+
+<div class="white-wrapper"><!--white-wrapper-->
+<div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
+		<div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->
+        
+        
+        <div class="filter-button arrow-left"><span>Filter</span></div> 
+<div class="menu-filter-left ltgreen-border" style="display:none;"><!--menu-filter-left ltgreen-border-->
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Type of Staff</label></div>
+				<label for="favcity">
+                <select name="staff_filter" id="staff_type_filter">
+                <option value=''>---ALL---</option>
+                <option value='TEAMLEADER' {% if staff_type == 'TEAMLEADER' %}selected{% endif %}>TEAMLEADER</option>
+                <option value='CLEANER' {% if staff_type == 'CLEANER' %}selected{% endif %}>CLEANER</option>
+                </select>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<hr class="hr-dashedpad"> 
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Minimum Cleaning Hours</label></div>
+                <input type="text" name="minimumhour_filter" id="minimumhour_filter_id" max='24' min='0' value="{{fil_minhours|default_if_none:''}}" style="width:160px;" class="textBox OnlyNumber">
+                
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label"> <label>Maximum Cleaning Hours</label></div>
+                <input type="text" name="maximumhour_filter" id="maximumhour_filter_id" max='24' min='0' value="{{fil_maxhours|default_if_none:''}}" style="width:160px;" class="textBox OnlyNumber">
+
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+
+<div align="center"> 
+<button type="button" class="red-btn assignButton" onclick="set_params_go({});">Submit</button> 
+<button type="button" class="red-btn2 assignButton" onclick="load_workers_data();" hidden>Submit</button>
+<button type="button" class="cancel-Button arrow-left-close">Reset</button>
+</div>
+</div><!--menu-filter-left ltgreen-border-->
+
+ <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search Worker Name Here" value="{{search_query|default_if_none:''}}" onchange ="set_params_go()">
+<span id="resource_search"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></span>
+<a id="resource_search2" onclick="load_workers_data();" hidden><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a>
+</span>
+        
+        
+        </div><!--filter-column-boxes filter-columns-left-->
+		<div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+            <!-- datepicker -->
+            <div class="date-wrapper"><!--date-wrapper-->
+            <div class="date-wrapper-inner-resource"><!--date-wrapper-inner-->
+            <div id="working_calendar">
+            <button class="prev-day-resource previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type='text' id='working_calendar_date'  name='datepicker' class="date-box resource_date_pick" value="{{workers_date|date:"d-m-Y"}}" onchange="set_params_go()" >
+            <button class='next-day-resource next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='today-date-resource current-date'>Today</button>
+            </div>
+            
+            <!-- monthpicker -->
+            <div id="working_calendar2" hidden>
+            <button class="prev-month-resource previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type='text' id='working_calendar_month'  name='monthpicker' class="date-box month_pick_resource" >
+            <button class='next-month-resource next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='this-month-resource current-date'>Month</button>
+            </div>
+            {% comment %} <input type="text" id="resource_month" class="month_pick date-picker-resource" hidden> {% endcomment %}
+            </div><!--date-wrapper-inner-->
+            
+            <div class="date-togglewrapper"><!--date-togglewrapper-->
+            <div class="Button_wrapperChart">
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonthtoggle_resource"><div class="slider round"><span class="on">MONTH</span><span class="off">DATE</span></div></label></div>
+    
+            </div>
+            </div><!--date-togglewrapper-->
+            </div><!--date-wrapper-->
+        
+        
+        </div><!--filter-column-boxes filter-columns-right-->        
+	</div><!--filter-columns-wrapper-->
+
+<div id="resource-scroll" class="resource-scroll">
+<div class="table-wrap" id="table_date">
+<table class="resource-table" id="myTable" >
+<thead>
+<tr class="resource-graybg">
+<th colspan="2" class="fixed-side resource-graybg" scope="col">&nbsp;</th>
+<th onclick="sortTable(0)" class="resource-graybg align-left" width="200" scope="col">Name<div class="sort-icon"></div></th>
+<th onclick="sortTable(1)" class="resource-graybg align-center" width="90" scope="col">Working Time<div class="sort-icon"></div></th>
+	<th class="border-right" width="11"> </td>
+    <th class="border-right" width="58">2 AM</th>
+    <th class="border-right" width="58">4 AM</th>
+    <th class="border-right" width="58">6 AM</th>
+    <th class="border-right" width="58">8 AM</th>
+    <th class="border-right" width="58">10 AM</th>
+    <th class="border-right" width="54">12 PM</th>
+    <th class="border-right" width="54">2 PM</th>
+    <th class="border-right" width="54">4 PM</th>
+    <th class="border-right" width="54">6 PM</th>
+    <th class="border-right" width="54">8 PM</th>
+    <th class="border-right" width="54">10 PM</th>
+    <th  width="25"></th>
+</tr>
+</thead>
+<tbody>
+{% for details in workers_details %}
+    <tr id="worker{{details.id}}">
+    <th width="25"  class="fixed-side togglehide dot-image"><img src="{% static 'files/images/green-dot.png' %}"></th>
+    <th width="40" class="profile fixed-side"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} align="absmiddle"></th>
+    <td><div class="name-bold">{{details.name}}<div class="position">{{details.user_type}}</div></div></td>
+    {% comment %} <td class="align-center">8h 0m</td>
+    <td colspan="13"><div class="red-box"> <center>AREA</center></div> <div class="green-box"><center>AREA</center></div></td> {% endcomment %}
+    </tr>
+    {% empty %}
+    <tr><td></td><td></td><td></td><td>No Data</td></tr>
+    {% endfor %}
+ </tbody>
+</table>
+</div>
+
+
+<div class="resource-table-scroll-containter" id="table_month" hidden>
+ 
+
+<div class="scrollable-div">
+	<div>
+ 
+<table cellpadding="0" cellspacing="0" border="0" summary="" align="center" class="resource-table-scroll" id="myTable2">
+ 
+<thead>
+<tr>
+<th class="align-left">Staff</th>
+<th class="align-center" data-hide="phone">Ratings</th>
+<th class="align-center" data-hide="tablet">Worked Days</th>
+<th class="align-center" data-hide="tablet">Man Hours</th>
+<th class="align-center" data-hide="tablet">Man Avg Hours</th>
+
+</tr>
+</thead>
+<tbody>
+       {% include 'agent/resource/resource-month.html' %}                
+</tbody>
+ <tfoot>
+ 
+</tfoot>
+</table>
+ 
+</div>
+</div>
+</div>
+
+</div>
+
+
+</div><!--white-wrapper-->            
+            
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+{% include 'salesadmin/common/footer.html' %}    
+</div><!--wrapper-->
+{% endblock %}
+{% block javascript %}
+<script type="text/javascript">
+
+    var date1 = new Date();
+    var previous_month = ("0" + (date1.getMonth()+1)).slice(-2);
+    
+    console.log(previous_month,"lp")
+    var datestring = previous_month + "/" + date1.getFullYear();
+    $('#working_calendar_month').val(datestring);
+
+    //load monthly workers data on toggle
+    function load_workers_data(){
+        console.log("pop")
+        var month_year = $('#working_calendar_month').val();
+        var staff_type = $('#staff_type_filter').val();
+        console.log(staff_type,"stp");
+        search = $('#search-bar').val();
+
+        $.ajax({
+                url: '/agent/ajax/resourcestoggle/',
+                data: {
+                'month_year': month_year,'staff_type':staff_type,'search':search
+                
+                },
+                dataType: 'json',
+            
+                success: function(data) { 
+
+                console.log(data.html_workers_list);
+                $("#myTable2 tbody ").html(data.html_workers_list);
+
+                }
+            })
+        }
+
+    $("#working_calendar_month").on("change", function(){
+        load_workers_data();
+    });
+
+    $('#daymonthtoggle_resource').click(function(){
+        if($(this).is(':checked')){
+            $('#working_calendar2').attr("hidden",false);
+            $('#working_calendar').attr("hidden",true);
+            $('#table_month').attr("hidden",false);
+            $('#table_date').attr("hidden",true);
+            $('.togglehide').attr("hidden",true);
+            $('.red-btn').attr("hidden",true);
+            $('.red-btn2').attr("hidden",false);
+            $('#resource_search').attr("hidden",true);
+            $('#resource_search2').attr("hidden",false);
+            load_workers_data();
+        }else{
+            $('#working_calendar2').attr("hidden",true);
+            $('#working_calendar').attr("hidden",false);
+            $('#table_month').attr("hidden",true);
+            $('#table_date').attr("hidden",false);
+            $('.togglehide').attr("hidden",false);
+            $('.red-btn').attr("hidden",false);
+            $('.red-btn2').attr("hidden",true);
+            $('#resource_search').attr("hidden",false);
+            $('#resource_search2').attr("hidden",true);
+        }
+    });
+
+    $('document').ready(function(){
+        //To find total and avergae man hour weekly and today
+        //to find today man hour
+        total_today_hours = 0
+        {% for cleaning_team in today_cleaning_active_teams %}
+        
+        starting_time_string      = '{{cleaning_team.start_at|date:'H:i'}}'.replace(":",".");
+        ending_time_string        = '{{cleaning_team.end_at|date:'H:i'}}'.replace(":",".");
+
+        starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+        ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
+
+        
+        if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.end_at|date:'d'}}')))
+                {
+                        total_today_hours += ending_time*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
+                }
+
+                else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.start_at|date:'d'}}')))
+                    {
+                    
+                    total_today_hours += (24-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
+                    }
+                else
+                {
+                    total_today_hours += (ending_time-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);    
+                }
+
+        {% endfor %}
+        
+        {% for followup_team in today_followup_active_teams %}
+            
+        starting_time_string      = '{{followup_team.start_at|date:'H:i'}}'.replace(":",".");
+        ending_time_string        = '{{followup_team.end_at|date:'H:i'}}'.replace(":",".");
+
+        starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+        ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
+
+
+        if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{followup_team.end_at|date:'d'}}')))
+                {
+                        total_today_hours += ending_time*(parseInt('{{followup_team.no_of_cleaners}}')+1)
+                
+                }
+
+        else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{followup_team.start_at|date:'d'}}')))
+            {
+            
+            total_today_hours += (24-starting_time)*(parseInt('{{followup_team.no_of_cleaners}}')+1);
+            
+            }
+        else
+        {
+            total_today_hours += (ending_time-starting_time)*(parseInt('{{followup_team.no_of_cleaners}}')+1);   
+        }
+
+        {% endfor %}
+        average_today_hours = total_today_hours/parseInt('{{today_total_team_mens}}')
+        
+        //to find week man hour
+        total_week_hours = 0
+        {% for cleaning_team in week_cleaning_active_teams %}
+        
+        starting_time_string      = '{{cleaning_team.start_at|date:'H:i'}}'.replace(":",".");
+        ending_time_string        = '{{cleaning_team.end_at|date:'H:i'}}'.replace(":",".");
+
+        starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+        ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
+
+        
+        if((ending_time<starting_time)&(parseInt('{{weekstart_date|date:'d'}}')==parseInt('{{cleaning_team.end_at|date:'d'}}')))
+                {
+                        total_week_hours += ending_time*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
+                    console.log(total_week_hours,"cleaning")
+                }
+
+                else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.start_at|date:'d'}}')))
+                    {
+                    
+                    total_week_hours += (24-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
+                    console.log(total_week_hours,"cleaning")
+                    }
+                else
+                {
+                    if(ending_time<starting_time)
+                        {
+                        total_week_hours += ((24-starting_time)+ending_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);        
+                        } 
+                    else{
+                        total_week_hours += (ending_time-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
+                    } 
+                    console.log(total_week_hours,"cleaning")   
+                }
+
+        {% endfor %}
+        
+        {% for followup_team in week_followup_active_teams %}
+            
+        starting_time_string      = '{{followup_team.start_at|date:'H:i'}}'.replace(":",".");
+        ending_time_string        = '{{followup_team.end_at|date:'H:i'}}'.replace(":",".");
+
+        starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+        ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
+
+
+        if((ending_time<starting_time)&(parseInt('{{weekstart_date|date:'d'}}')==parseInt('{{followup_team.end_at|date:'d'}}')))
+                {
+                        total_week_hours += ending_time*(parseInt('{{followup_team.no_of_cleaners}}')+1)
+                console.log(total_week_hours,"followup")
+                }
+
+        else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{followup_team.start_at|date:'d'}}')))
+            {
+            
+            total_week_hours += (24-starting_time)*(parseInt('{{followup_team.no_of_cleaners}}')+1);
+            console.log(total_week_hours,"followup")
+            }
+        else
+        {   if(ending_time<starting_time)
+                {
+                total_week_hours += ((24-starting_time)+ending_time)*parseInt('{{followup_team.no_of_cleaners}}')+1;        
+                } 
+            else{
+                total_week_hours += (ending_time-starting_time)*(parseInt('{{followup_team.no_of_cleaners}}')+1);
+            }    
+            console.log(total_week_hours,"followup")   
+        }
+
+        {% endfor %}
+
+        average_week_hours = total_week_hours/parseInt('{{week_total_team_mens}}')
+        
+
+        $("#today_man_hour").html(total_today_hours.toFixed(2));
+        $("#week_man_hour").html(total_week_hours.toFixed(2));
+
+        if (Number.isNaN(average_today_hours))
+        {
+            $("#today_avg_man_hour").html('0.00');
+        }
+        else
+        {
+            $("#today_avg_man_hour").html(average_today_hours.toFixed(2));   
+        }
+        if (Number.isNaN(average_week_hours))
+        {
+            $("#week_avg_man_hour").html('0.00');
+        }
+        else
+        {
+            $("#week_avg_man_hour").html(average_week_hours.toFixed(2));   
+        }
+
+
+
+
+
+
+        //To Find Total working Hours of each user
+        {% for details in workers_details %}
+
+            //cleaning
+            {% if details.cleaning_member_details %}
+                
+                total_cleaning_duration = 0
+
+                {% for cleaning_details in details.cleaning_member_details %}
+                    
+                    starting_time_string      = '{{cleaning_details.start_at|date:'H:i'}}'.replace(":",".");
+                    ending_time_string        = '{{cleaning_details.end_at|date:'H:i'}}'.replace(":",".");
+
+                    starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                    ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
+
+
+                    if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{cleaning_details.end_at|date:'d'}}')))
+                        {
+                            total_cleaning_duration += ending_time;
+                    }
+
+                    else if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{cleaning_details.start_at|date:'d'}}')))
+                        {
+                        
+                        total_cleaning_duration += 24-starting_time;
+                    
+                        }
+                    else
+                    {
+                        total_cleaning_duration += ending_time-starting_time;    
+                    }    
+
+
+                {% endfor %}
+            {% else %}
+            total_cleaning_duration = 0
+            {% endif %}
+
+            //follow up 
+            {% if details.followup_member_details %}
+                total_followup_duration = 0
+                {% for followup_details in details.followup_member_details %}
+                    
+                    starting_time_string      = '{{followup_details.start_at|date:'H:i'}}'.replace(":",".");
+                    ending_time_string        = '{{followup_details.end_at|date:'H:i'}}'.replace(":",".");
+
+                    starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                    ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
+
+
+                    if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{followup_details.end_at|date:'d'}}')))
+                        {
+                            total_followup_duration += ending_time;
+                    }
+
+                    else if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{followup_details.start_at|date:'d'}}')))
+                        {
+                        
+                        total_followup_duration += 24-starting_time;
+                    
+                        }
+                    else
+                    {
+                        total_followup_duration += ending_time-starting_time;    
+                    }    
+
+
+                {% endfor %}
+            {% else %}
+            total_followup_duration = 0.0
+            {% endif %}
+
+            
+            total_duration = total_followup_duration+total_cleaning_duration
+            hours   = (total_duration+"").split('.')[0]
+            minutes = parseInt((total_duration+"").split('.')[1])*6
+            if(Number.isNaN(minutes))
+            {
+                minutes = '00';
+            }
+            else
+            {
+                minutes = String(minutes)[0]+String(minutes)[1]
+            }
+
+            //append gray dot
+            if(total_duration == 0)
+            {
+                $("#worker{{details.id}} .dot-image img").attr("src","{% static 'files/images/gray-dot.png' %}");
+            }
+
+            None = null;
+            min_duration = {{fil_minhours}}
+            max_duration = {{fil_maxhours}}
+
+
+            if(min_duration && max_duration)
+            {
+                if(min_duration <= total_duration && max_duration >= total_duration)
+                {
+                    //append total hours to working table
+                    $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes.toString().substring(0,2)+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
+                 }
+
+                else
+                {
+                    $("#worker{{details.id}}").remove();
+                }
+
+            } 
+
+            else if(min_duration)
+            {
+                if(min_duration <= total_duration)
+                {
+                    //append total hours to working table
+                    $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
+                 }
+
+                else
+                {
+                    $("#worker{{details.id}}").remove();
+                }                
+            }
+
+            else if(max_duration)
+            {
+                if(max_duration >= total_duration)
+                {
+                    //append total hours to working table
+                    $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
+                 }
+
+                else
+                {
+                    $("#worker{{details.id}}").remove();
+                }   
+            }
+
+            else
+            {
+                //append total hours to working table
+                $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
+            }
+
+        {% endfor %}
+
+
+
+
+
+
+
+
+
+
+        //To Draw Work Details of each worker
+        {% for details in workers_details %}
+
+            //cleaning
+            {% if details.cleaning_member_details %}
+                {% for cleaning_details in details.cleaning_member_details %}
+                
+                starting_time_string      = '{{cleaning_details.start_at|date:'H:i'}}'.replace(":",".");
+                ending_time_string        = '{{cleaning_details.end_at|date:'H:i'}}'.replace(":",".");         
+                starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+                    ending_time_string.split('.')[1])/60  
+
+
+                if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{cleaning_details.end_at|date:'d'}}')))
+                {
+                    left_percentage = 0
+                    width_percentage= 100/24*ending_time
+                    if((left_percentage==0)&(width_percentage==0))
+                    {
+
+                    }
+                    else
+                    {
+                     $("#calendar{{details.id}}").append('<div {% if cleaning_details.team.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %} class="sp-blue-box-second" {% else %}class="sp-green-box-second" {% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{cleaning_details.team.order_scheduler.customer_address.area.name}}</center></div>');   
+                    }
+                }
+                else if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{cleaning_details.start_at|date:'d'}}')))
+                {
+                    left_percentage = 100/24*starting_time
+                    width_percentage= 100-100/24*starting_time
+                    $("#calendar{{details.id}}").append('<div {% if cleaning_details.team.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %} class="sp-blue-box-first" {% else %}class="sp-green-box-first" {% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{cleaning_details.team.order_scheduler.customer_address.area.name}}</center></div>');
+                }
+                else
+                {
+                     left_percentage  = 100/24*starting_time;
+                     width_percentage = 100/24*ending_time-100/24*starting_time
+
+                     $("#calendar{{details.id}}").append('<div {% if cleaning_details.team.order_scheduler.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %} class="blue-box" {% else %}class="green-box" {% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{cleaning_details.team.order_scheduler.customer_address.area.name}}</center></div>');         
+                  
+                }    
+
+                {% endfor %}
+            {% else %}
+            {% endif %}
+
+            //Follow up
+            {% if details.followup_member_details %}
+                {% for followup_details in details.followup_member_details %}
+                
+                starting_time_string      = '{{followup_details.start_at|date:'H:i'}}'.replace(":",".");
+                ending_time_string        = '{{followup_details.end_at|date:'H:i'}}'.replace(":",".");         
+                starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+                    ending_time_string.split('.')[1])/60  
+
+
+                if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{followup_details.end_at|date:'d'}}')))
+                {
+                    left_percentage = 0
+                    width_percentage= 100/24*ending_time
+                    if((left_percentage==0)&(width_percentage==0))
+                    {
+
+                    }
+                    else{
+                        $("#calendar{{details.id}}").append('<div class="sp-yellow-box-second" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{followup_details.team.followup_scheduler.customer_address.area.name}}</center></div>');
+                    }
+        
+                }
+                else if((ending_time<starting_time)&(parseInt('{{workers_date|date:'d'}}')==parseInt('{{followup_details.start_at|date:'d'}}')))
+                {
+                    left_percentage = 100/24*starting_time
+                    width_percentage= 100-100/24*starting_time
+                    $("#calendar{{details.id}}").append('<div class="sp-yellow-box-first" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{followup_details.team.followup_scheduler.customer_address.area.name}}</center></div>');
+                }
+                else
+                {
+                     left_percentage  = 100/24*starting_time;
+                     width_percentage = 100/24*ending_time-100/24*starting_time
+
+                     $("#calendar{{details.id}}").append('<div class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"> <center>{{followup_details.team.followup_scheduler.customer_address.area.name}}</center></div>');         
+                  
+                }    
+
+                {% endfor %}
+            {% else %}
+            {% endif %}
+
+    {% endfor %}        
+    });
+
+function set_params_go(args)
+{
+var url='{% url 'bleach_salesadmin:resource-management' %}';
+var params={workers_calendar_date:$('#working_calendar_date').val(),search:$('#search-bar').val(),staff:$('#staff_type_filter').val(),minhours:$('#minimumhour_filter_id').val(),maxhours:$('#maximumhour_filter_id').val(),
+};
+for(key in args) 
+    params[key]=args[key];
+var query='';
+for(key in params)
+    if(params[key]) 
+        query+='&'+key+'='+params[key].toString();
+query=query.replace('&','?');
+window.location.href=url+query;  
+}
+
+</script>
+{% endblock %}    

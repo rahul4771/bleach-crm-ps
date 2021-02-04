@@ -41,6 +41,9 @@ class Signin(View):
 
 			if request.user.user_type == 'QUALITYCONTROLL':	
 				return redirect('qc:qcdash-board')
+
+			if request.user.user_type == 'SALESADMIN':	
+				return redirect('bleach_salesadmin:salesadmindash-board')
 		else:		
 			return render(request,'user/login.html',{})
 

@@ -48,3 +48,10 @@ class IsQualityControll(UserPassesTestMixin):
             return True
         else:
             return False
+
+class IsSalesAdmin(UserPassesTestMixin):
+    def test_func(self):
+        if self.request.user.is_authenticated and self.request.user.user_type=='SALESADMIN' and self.request.user.is_active==True:
+            return True
+        else:
+            return False
