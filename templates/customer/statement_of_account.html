@@ -149,7 +149,7 @@
                 {% if invoice.reminigdays >= 1 %}
                 <tr>
                   <td style="text-align:left;">&nbsp;&nbsp;{{account.order.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
-                  <td class="align-left">Invoice #INV{{account.order.invoice_no}}</td>
+                  <td class="align-left">Invoice #INVq{{account.order.invoice_no}}</td>
                   <td class="debit_amount align-right">{{invoice.total_amount|floatformat:3}}</td>
                   <td class="align-right">0.000</td>
                   <td class="balance_amount align-right" >0.000</td>
@@ -159,7 +159,7 @@
               {% else %}
               <tr>
                 <td style="text-align:left;">&nbsp;&nbsp;{{account.order.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
-                <td class="align-left">Invoice #INV{{account.order.invoice_no}}</td>
+                <td class="align-left">Invoice #INVw{{account.order.invoice_no}}</td>
                 <td class="debit_amount align-right">{{invoice.total_amount|floatformat:3}}</td>
                 <td class="align-right">0.000</td>
                 <td class="balance_amount align-right" >0.000</td>
@@ -172,7 +172,7 @@
               {% if invoice.reminigdays >= 1 %}
               <tr>
                 <td style="text-align:left;">&nbsp;&nbsp;{{account.order.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
-                <td class="align-left">Invoice #INV{{account.order.invoice_no}}</td>
+                <td class="align-left">Invoice #INVe{{account.order.invoice_no}}</td>
                 <td class="debit_amount align-right">{{invoice.evaluation.before_cleaning_amount|floatformat:3}}</td>
                 <td class="align-right">0.000</td>
                 <td class="balance_amount align-right" >0.000</td>
@@ -183,7 +183,7 @@
               {% if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount %}
               <tr>
                 <td style="text-align:left;">&nbsp;&nbsp;{{account.order.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
-                <td class="align-left">Invoice #INV{{account.order.invoice_no}}</td>
+                <td class="align-left">Invoice #INVr{{account.order.invoice_no}}</td>
                 <td class="debit_amount align-right">{{invoice.evaluation.after_cleaning_amount|floatformat:3}}</td>
                 <td class="align-right">0.000</td>
                 <td class="balance_amount align-right" >0.000</td>
@@ -194,7 +194,7 @@
             {% if invoice.subscription_topay != 0 %}
             <tr>
                 <td style="text-align:left;">&nbsp;&nbsp;{{account.order.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
-                <td class="align-left">Invoice #INV{{account.order.invoice_no}}</td>
+                <td class="align-left">Invoice #INVt{{account.order.invoice_no}}</td>
                 <td class="debit_amount align-right">{{invoice.subscription_topay|floatformat:3}}</td>
                 <td class="align-right">0.000</td>
                 <td class="balance_amount align-right" >0.000</td>
