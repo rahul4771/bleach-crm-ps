@@ -130,27 +130,94 @@
               <td class="align-right"></td>
               <td class="align-right">0.000&nbsp;&nbsp;</td>
             </tr>
+
+
+            {% for invoice in pending_payments %}
             
-            {% for account in accounts %}
+
+            {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
+
+              {% if invoice.evaluation.payment_method == 'PREPAID' %}
+                {% if invoice.reminigdays >= 1 %}
+                <tr>
+                  <td style="text-align:left;">&nbsp;&nbsp;{{invoice.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+                  <td class="align-left">Invoice #INV{{invoice.invoice_no}}</td>
+                  <td class="debit_amount align-right">{{invoice.total_amount|floatformat:3}}</td>
+                  <td class="align-right">0.000</td>
+                  <td class="balance_amount align-right" >0.000</td>
+                </tr>
+                {% endif %}
+
+              {% else %}
+              <tr>
+                <td style="text-align:left;">&nbsp;&nbsp;{{invoice.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+                <td class="align-left">Invoice #INV{{invoice.invoice_no}}</td>
+                <td class="debit_amount align-right">{{invoice.total_amount|floatformat:3}}</td>
+                <td class="align-right">0.000</td>
+                <td class="balance_amount align-right" >0.000</td>
+              </tr>
+              {% endif %}
+
+            {% elif invoice.evaluation.payment_method == 'BREAKDOWN' %}
+
+              {% if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount %}
+              {% if invoice.reminigdays >= 1 %}
+              <tr>
+                <td style="text-align:left;">&nbsp;&nbsp;{{invoice.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+                <td class="align-left">Invoice #INV{{invoice.invoice_no}}</td>
+                <td class="debit_amount align-right">{{invoice.evaluation.before_cleaning_amount|floatformat:3}}</td>
+                <td class="align-right">0.000</td>
+                <td class="balance_amount align-right" >0.000</td>
+              </tr>
+              {% endif %}
+              {% endif %}
+
+              {% if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount %}
+              <tr>
+                <td style="text-align:left;">&nbsp;&nbsp;{{invoice.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+                <td class="align-left">Invoice #INV{{invoice.invoice_no}}</td>
+                <td class="debit_amount align-right">{{invoice.evaluation.after_cleaning_amount|floatformat:3}}</td>
+                <td class="align-right">0.000</td>
+                <td class="balance_amount align-right" >0.000</td>
+              </tr>
+              {% endif %}
+
+            {% elif invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
+            {% if invoice.subscription_topay != 0 %}
             <tr>
-              <td style="text-align:left;">&nbsp;&nbsp;{{account.order.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
-              <td class="align-left">Invoice #INV{{account.order.invoice_no}}</td>
-              <td class="debit_amount align-right">{{account.amount_paid|floatformat:3}}</td>
+                <td style="text-align:left;">&nbsp;&nbsp;{{invoice.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+                <td class="align-left">Invoice #INV{{invoice.invoice_no}}</td>
+                <td class="debit_amount align-right">{{invoice.subscription_topay|floatformat:3}}</td>
+                <td class="align-right">0.000</td>
+                <td class="balance_amount align-right" >0.000</td>
+              </tr>
+            {% endif %}
+            {% endif %}
+          
+
+            {% if invoice.amount_paid != 0 %}
+
+            <tr>
+              <td style="text-align:left;">&nbsp;&nbsp;{{invoice.order.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+              <td class="align-left">Invoice #INV{{invoice.order.invoice_no}}</td>
+              <td class="debit_amount align-right">{{invoice.amount_paid|floatformat:3}}</td>
               <td class="align-right">0.000</td>
               <td class="balance_amount align-right" >0.000</td>
             </tr>
 
-            
             <tr>
-              <td style="text-align:left;">&nbsp;&nbsp;{{account.paid_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
-              <td class="align-left">Receipt #RES{{account.receipt_no}}</td>
+              <td style="text-align:left;">&nbsp;&nbsp;{{invoice.paid_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+              <td class="align-left">Receipt #RES{{invoice.receipt_no}}</td>
               <td class="align-right">0.000</td>
-              <td class="credit_amount align-right">{{account.order.remining_amount|floatformat:3}}</td>
+              <td class="credit_amount align-right">{{invoice.amount_paid|floatformat:3}}</td>
               <td class="balance_amount align-right" >0.000</td>
             </tr>
+            {% endif %}
+
             
             {% endfor %}
-
+            
+            
             <tr>
               <td style="text-align:left;"></td> <!-- Don't remove this column as it's needed for the row commands -->
               <td class="align-right" style="font-weight: bold;">TOTAL</td>
@@ -186,7 +253,6 @@
             
           </table> 
         </section>       
-
 
         <!-- <section id="policy">
         
