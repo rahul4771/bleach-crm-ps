@@ -43,7 +43,7 @@
 
                     <br>
                     {% for cleaning_team in investigation_details.order_schedule.cleaning_teams %}
-                    <div class="tl blue-text" >Team Leader&nbsp;:{{cleaning_team.team_leader.name}}</div>
+                    <div class="tl blue-text" >Team Incharge&nbsp;:{{cleaning_team.team_leader.name}}</div>
                     <br>
                     <div class="cleaner blue-text" >Cleaners&nbsp;:<br>{% for member in cleaning_team.cleaning_team_members %}{% if member.member != cleaning_team.team_leader %}<i class="fa fa-user" aria-hidden="true"></i> <span class="gray-text"> {{member.member.name}}, </span>{% endif %}<br>{% endfor %}</div>
                     {% endfor %}

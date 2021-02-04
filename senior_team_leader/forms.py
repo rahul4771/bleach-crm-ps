@@ -14,7 +14,7 @@ class CleaningTeamAssignForm(forms.ModelForm):
 	def __init__(self,*args,**kwargs):
 		super(CleaningTeamAssignForm, self).__init__(*args, **kwargs)
 		self.fields['team_leader'] = forms.ModelChoiceField(
-		    queryset=UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER'),required=True,widget=forms.Select(attrs={'required':'required'}))
+		    queryset=UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE'),required=True,widget=forms.Select(attrs={'required':'required'}))
 		# self.fields['drop_off_driver'] = forms.ModelChoiceField(
 		#     queryset=UserProfile.objects.filter(is_active=True,user_type='DRIVER'),widget=forms.Select(attrs={'class':'drop_off_driver'}))
 		# self.fields['pick_up_driver'] = forms.ModelChoiceField(
@@ -32,7 +32,7 @@ class FollowupTeamAssignForm(forms.ModelForm):
 	def __init__(self,*args,**kwargs):
 		super(FollowupTeamAssignForm, self).__init__(*args, **kwargs)
 		self.fields['team_leader'] = forms.ModelChoiceField(
-		    queryset=UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER'),required=True,widget=forms.Select(attrs={'required':'required'}))
+		    queryset=UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE'),required=True,widget=forms.Select(attrs={'required':'required'}))
 		# self.fields['drop_off_driver'] = forms.ModelChoiceField(
 		#     queryset=UserProfile.objects.filter(is_active=True,user_type='DRIVER'),widget=forms.Select(attrs={'class':'drop_off_driver'}))
 		# self.fields['pick_up_driver'] = forms.ModelChoiceField(

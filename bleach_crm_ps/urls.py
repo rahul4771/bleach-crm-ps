@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^test_data/$',testcalendar,name='test_data'),
 
     url(r'^bleach_admin/',include('bleachadmin.urls',namespace='bleach_admin')),
+    url(r'^bleach_salesadmin/',include('salesadmin.urls',namespace='bleach_salesadmin')),
     url(r'^agent/',include('agent.urls',namespace='agent')),
     url(r'^evaluator/',include('evaluator.urls',namespace='evaluator')),
     url(r'^stl/',include('senior_team_leader.urls',namespace='stl')),

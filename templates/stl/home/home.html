@@ -196,7 +196,7 @@
 				<label for="favcity">
                 <select name="staff_filter" id="staff_type_filter">
                 <option value=''>---ALL---</option>
-                <option value='TEAMLEADER' {% if fil_staff == 'TEAMLEADER' %}selected{% endif %}>TEAMLEADER</option>
+                <option value='TEAMINCHARGE' {% if fil_staff == 'TEAMINCHARGE' %}selected{% endif %}>TEAMINCHARGE</option>
                 <option value='CLEANER' {% if fil_staff == 'CLEANER' %}selected{% endif %}>CLEANER</option>
                 </select>
                 </label>
@@ -415,7 +415,7 @@
 <hr class="hr-dashedpad">
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-right-->
-          <div class=" bold-text common-label"> <label>Team Leader</label></div>
+          <div class=" bold-text common-label"> <label>Team Incharge</label></div>
         <label for="favcity">
                 <select id="team_leader" name="team_leader" class="team_leader">
                 </select>
@@ -494,7 +494,7 @@
 <hr class="hr-dashedpad">
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-right-->
-          <div class=" bold-text common-label"> <label>Team Leader</label></div>
+          <div class=" bold-text common-label"> <label>Team Incharge</label></div>
         <label for="favcity">
                 <select id="followup_leader" name="team_leader">
                 </select>
@@ -1763,10 +1763,10 @@ $('document').ready(function(){
                     
                   $('#order_url').attr('href',order_url);
 
-                  //Append Team Leader and team members Based on Conditions
+                  //Append Team Incharge and team members Based on Conditions
                   if(data['team_leader'] || data['stl'])
                   {
-                    $('#team_leader_cleaning_id').html('<td colspan="3">Team Leader:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
+                    $('#team_leader_cleaning_id').html('<td colspan="3">Team Incharge:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Incharge:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
                   }     
                   else
                   {
@@ -1966,10 +1966,10 @@ $('.collapsible1-close').click(function(){
                   $('#starting_time_followup_id').html(data['start_at_time']);
                   $('#duration_followup_id').html(data['duration']+' Hours');
 
-                  //Append Team Leader and team members Based on Conditions
+                  //Append Team Incharge and team members Based on Conditions
                   if(data['team_leader'] || data['stl'])
                   {
-                    $('#team_leader_followup_id').html('<td colspan="3">Team Leader:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
+                    $('#team_leader_followup_id').html('<td colspan="3">Team Incharge:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Incharge:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
                   }     
                   else
                   {

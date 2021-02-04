@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "salesadmin/common/header.html" %}
+    
+<section class="content"><!--content-->
+<div class="container-fluid space topspace"><!--container-fluid space topspace-->
+    <div class="welcome-wrapper"><!--welcome-wrapper-->
+        <h1 class="dashboard-head">Quotation Details</h1>
+        <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>
+    </div><!--welcome-wrapper-->
+            
+        
+<div class="order-top-wrapper"><!--order-top-wrapper-->
+            
+<div class="white-wrapper"><!--white-wrapper-->
+<div class="center-formDiv"><!--center-formDiv-->
+ 
+ 
+      <div class="blc-number-big">{{evaluation.evaluation_id}}</div>             
+          <div class="customer-name"><i class="fa blue-text fa-user-circle-o" aria-hidden="true"></i> {{enquiry_user.name}}</div>
+          <div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;  {{enquiry_user.mobile_number}}</div>
+          <div class="email"><i class="fa orange-text fa-lg fa-envelope-o" aria-hidden="true"></i> &nbsp;  {{enquiry_user.email}}</div>
+          <hr class="div">
+          
+            <div class="common-sub-head align-left">Details</div> 
+ 
+{% for detail in evaluation_details %} 
+<div class="checkin-wrapper-row checkin-forms-boxes"><!--checkin-wrapper-row checkin-forms-boxes-->
+      <div class="checkin-form-left"><!--checkin-form-left-->
+        <b>{{detail.address.apartment}}</b>: {% if detail.address.floor %}{{detail.address.floor}}, {% else %}{% endif %} {{detail.address.building}}, {{detail.address.block}}, {{detail.address.street}}, {% if detail.address.avenue %}{{detail.address.avenue}}, {% else %}{% endif %} {{detail.address.area.name}}, {{detail.address.governorate.name}} 
+      </div><!--checkin-form-left-->
+      <div class="checkin-form-left align-center"><!--checkin-form-left-->
+        {% if detail.total_cost == 0.0 %}
+        <div class="check-in-icons"><img src="{% static 'files/images/evaluation-pending-icon.png' %}"></div>
+        <div class="lg-text yellow-text">Evaluation Pending</div>
+        {% else %}
+        <div class="check-in-icons"><img src="{% static 'files/images/price-icon.png' %}"></div>
+        <div class="lg-text blue-text">{{detail.total_cost|floatformat:3}} KD</div>
+        {% endif %}
+      </div><!--checkin-form-left-->
+                   
+</div><!--checkin-wrapper-row checkin-forms-boxes-->
+{% endfor %}        
+        
+<div class="checkin-wrapper-row checkin-forms-boxes ltblue-bg"><!--checkin-wrapper-row checkin-forms-boxes-->
+      <div class="checkin-form-left align-right"><!--checkin-form-left-->
+        <div class="total-text">Total Amount</div>
+        <br>
+      </div><!--checkin-form-left-->
+      <div class="checkin-form-right align-left"><!--checkin-form-right-->
+        <div class="total-Amount">{{evaluation.total_cost}} KD</div>
+        <input type="hidden" name='total_amount' id="total_amount_id" value="{{evaluation.total_cost}}">
+        <br>
+      </div><!--checkin-form-right-->               
+</div><!--checkin-wrapper-row checkin-forms-boxes-->         
+        
+<br><br><br><br>
+ 
+{% if allow_submit %} 
+<form method="post" action="" enctype= "multipart/form-data">{% csrf_token %} 
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Payment Policy</label></div>
+                <label for="favcity">
+                <select id="payment_method_id" name="payment_method" class="payment_method" required>
+                <option value="">Choose Payment Method</option>
+                <option value="PREPAID" {% if evaluation.payment_method == "PREPAID" %}selected{% endif %}>Prepaid</option>
+                <option value="POSTPAID" {% if evaluation.payment_method == "POSTPAID" %}selected{% endif %}>Post Paid</option>
+                <option value="BREAKDOWN" {% if evaluation.payment_method == "BREAKDOWN" %}selected{% endif %}>Break-Down</option>
+                <option value="SUBSCRIPTION" {% if evaluation.payment_method == "SUBSCRIPTION" %}selected{% endif %}>SUBSCRIPTION</option>
+                </select>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right payment_track"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Before Cleaning Amount</label></div>
+                <input name="before_cleaning_amount" id="before_cleaning_amount_id" type="number" step="0.001" class="textBox" placeholder=" ">
+  </div><!--ticket-form-right-->
+    <div class="ticket-form-right payment_track"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>After Cleaning Amount</label></div>
+                <input name="after_cleaning_amount" id="after_cleaning_amount_id" type="number" step="0.001" class="textBox" placeholder=" ">
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<br>
+<div align="center"><input class="assignButton" name="submitquatation" type="button" value="Update" onclick="CheckForm(this);">
+</div>
+<br><br>
+</form>
+{% endif %}
+
+</div><!--center-formDiv-->
+</div><!--white-wrapper-->
+
+ 
+</div><!--order-top-wrapper-->  
+            
+            
+            
+            
+                 
+</div><!--container-fluid space topspace-->
+</section><!--content-->
+    
+{% include 'salesadmin/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}
+
+
+{% block javascript %} 
+<script src="{% static 'files/js/jquery.formset.js' %}"></script>
+<script id="rendered-js">
+$('.footable').footable({
+  calculateWidthOverride: function () {
+    return { width: $(window).width() };
+  } });
+
+
+// See:
+// http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
+//# sourceURL=pen.js
+</script>
+<script>
+var x=0; 
+
+$('document').ready(function(){
+
+//Initial Hiding of payment Breakdown
+$('.payment_track').hide();
+
+});
+
+//hide shw formset with payment method
+$('.payment_method').change(function(){
+  payment_method = this.value;
+
+  if(payment_method == 'BREAKDOWN')
+  {
+    $('.payment_track').show();
+  }
+  else
+  {
+    $('.payment_track').hide();
+    $("#after_cleaning_amount_id").val('');
+    $("#before_cleaning_amount_id").val('');
+  }
+
+  });
+
+//total adjustment
+total_cost = parseFloat("{{evaluation.total_cost}}")
+$("#after_cleaning_amount_id").keyup(function(){
+  after_amount  =  $("#after_cleaning_amount_id").val();
+  before_amount =  $("#before_cleaning_amount_id").val();
+
+  before_cleaning_amount = parseFloat(parseFloat(total_cost)-parseFloat(after_amount)).toFixed(3)
+  $("#before_cleaning_amount_id").val(before_cleaning_amount) 
+
+  if(after_amount > total_cost)
+  {
+    $("#after_cleaning_amount_id").val("0");
+    $("#before_cleaning_amount_id").val("0");
+  } 
+})
+
+$("#before_cleaning_amount_id").keyup(function(){
+  after_amount  =  $("#after_cleaning_amount_id").val();
+  before_amount =  $("#before_cleaning_amount_id").val();
+
+  after_cleaning_amount = parseFloat(parseFloat(total_cost)-parseFloat(before_amount)).toFixed(3)
+  $("#after_cleaning_amount_id").val(after_cleaning_amount)  
+
+  if(before_amount > total_cost)
+  {
+    $("#before_cleaning_amount_id").val("0");
+    $("#after_cleaning_amount_id").val("0");
+  }
+})
+
+//Check Breakdown Amounts
+function CheckForm(params1){
+  params = params1;
+  if($('.payment_method').val() == 'BREAKDOWN')
+  {
+        before_cleaning_amount = $("#before_cleaning_amount_id").val();
+        after_cleaning_amount  = $("#after_cleaning_amount_id").val();
+        manual_total           = parseFloat(before_cleaning_amount)+parseFloat(after_cleaning_amount)
+        total                  = $("#total_amount_id").val();
+        if(total == manual_total)
+        {
+          submitAnyForm(params);
+        }
+        else
+        {
+          alert("Please Enter the Breakdown Amount Correctlly")
+        }
+  }
+  else
+    {
+    submitAnyForm(params);
+  }
+}
+</script>
+{% endblock %}

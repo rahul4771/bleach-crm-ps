@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'bleachadmin',
     'customer',
     'qualitycontroll',
+    'salesadmin',
     'Api',
     'mathfilters' 
 ]

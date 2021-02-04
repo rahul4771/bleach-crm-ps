@@ -1,0 +1,2282 @@
+from django.shortcuts import render,redirect
+from django.template.loader import render_to_string
+from django.forms import formset_factory,modelformset_factory
+from django.views import View
+from django.http import JsonResponse
+from django.conf import settings
+from bleach_crm_ps.permissions import IsSalesAdmin
+from dateutil.relativedelta import relativedelta
+import pandas as pd
+import functools
+import operator
+import requests
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.utils import timezone 
+from datetime import timedelta,date,datetime
+from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField
+from django.db.models.functions import Cast 
+from django.db.models import Prefetch
+from bleach_crm_ps.utils import get_error
+from django.db.models.functions import ExtractMonth,ExtractYear
+
+from django.contrib import messages
+from user.models import UserProfile,Address,Governorate,Area
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod,ServiceType,EvaluationBookSection,EvaluationSectionKeynote,LocationType,CleaningType,AreaType
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,Promocode
+from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
+from accountant.models import PaymentHistory
+from order.forms import PromocodeForm
+
+from django.db.models.functions import TruncMonth as Month, TruncYear as Year
+from django.db.models import Count
+from operator import itemgetter
+
+from evaluator.forms import QuatationServiceForm
+
+# Create your views here.
+
+class AdminHome(IsSalesAdmin,View):
+	def get(self,request):
+		
+		#evaluators
+		evaluators_sales_target = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
+		#for taking today counts
+		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		count_today_end   = count_today_start+timedelta(1)
+
+		#Enquiry Details count
+		try:
+			enquiry = EvaluationDetails.objects.filter(is_active=True)
+		except:
+			enquiry	= None
+
+		today_enquiry_count = enquiry.filter(proposed_time__gte=count_today_start,proposed_time__lt=count_today_end,).count()
+		week_enquiry_count  = enquiry.filter(proposed_time__gte=count_today_end-timedelta(7),proposed_time__lt=count_today_end).count()	
+
+		#Cleaning Jobs count
+		try:
+			cleaning_job	= CleaningTeam.objects.filter(is_active=True)
+		except:
+			cleaning_job    = None
+
+		today_cleaning_job_count = cleaning_job.filter(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))).count() 
+		week_cleaning_job_count  = cleaning_job.filter(Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end))).count()		
+		
+		#Followup jobs count
+		try:
+			follow_up_job    = FollowUpTeam.objects.filter(is_active=True)
+		except:
+			follow_up_job	 = None
+
+		today_follow_up_job_count = follow_up_job.filter(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))).count() 
+		week_follow_up_job_count  = follow_up_job.filter(Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end))).count()		
+
+		#Feedback Staring count
+		try:
+			feedbacks                 = FeedBack.objects.filter(is_active=True)
+		except:
+			feedbacks				  = None
+
+		month_average_feedback		  = feedbacks.filter(response_date__gte=count_today_end-timedelta(30)).aggregate(Avg('rating'))['rating__avg']
+		lastmonth_average_feedback		  = feedbacks.filter(response_date__gte=count_today_end-timedelta(60),response_date__lte=count_today_end-timedelta(30)).aggregate(Avg('rating'))['rating__avg']	
+		
+
+		#Evaluation details of each evaluator for evaluation table
+		evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
+		
+		try:
+			evaluation_date = datetime.strptime(evaluation_calendar_date,'%d-%m-%Y')
+		except:
+			evaluation_date = timezone.now().replace(tzinfo=None)	
+
+		evaluation_date_start  = evaluation_date.replace(hour=0,minute=0,second=0,microsecond=0)
+		evaluation_date_end    = evaluation_date_start+timedelta(1)	
+		
+		try:
+			evaluation_details		  = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').prefetch_related(Prefetch('evaluator_evaluation',queryset=EvaluationDetails.objects.filter(is_active=True,proposed_time__gte=evaluation_date_start,proposed_time__lte=evaluation_date_end),to_attr='evaluation_details'))
+		except:
+			evaluation_details 		  = None
+
+
+		#cleaning schedule & followup schedule for cleaning calendar			
+		cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
+		
+		try:
+			schedule_date = datetime.strptime(cleaning_calendar_date,'%d-%m-%Y')
+		except:
+			schedule_date = timezone.now().replace(tzinfo=None)
+
+		schedule_date_start = schedule_date.replace(hour=0,minute=0,second=0,microsecond=0)
+		schedule_date_end   = schedule_date_start+timedelta(1)		
+
+		try:
+			calendar_order_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end)))).order_by('start_at').select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(order__evaluation__payment_method='SUBSCRIPTION') )) 
+		except:
+			calendar_order_schedules 	= None
+
+		try:
+			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end)))).order_by('start_at').select_related('follow_up__investigation__order__evaluation__customer','customer_address').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_teams'))
+		except:
+			calendar_followup_schedules = None
+
+		try:
+			sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(order__evaluation__payment_method='SUBSCRIPTION') ))
+		except:
+			sp_calendar_order_schedules = None
+
+		try:
+			sp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end)))).select_related('follow_up__investigation__order__evaluation__customer','customer_address').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_teams'))
+		except:
+			sp_calendar_followup_schedules = None
+
+		try:
+			spp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(order__evaluation__payment_method='SUBSCRIPTION') ))
+		except:
+			spp_calendar_order_schedules = None
+
+		try:
+			spp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+		except:
+			spp_calendar_followup_schedules = None
+
+		#ticket approval task		
+		approve_tickets = Investigation.objects.filter(Q(Q(is_paybackdiscount_approved=False)|Q(is_buybackgiftpromo_approved=False))).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True,status='FOLLOWUP_IN_PROGRESS'),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=False),to_attr='paybackdiscounts'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.select_related('investigation').filter(investigation__is_buybackgiftpromo_approved=False,is_active=True),to_attr='buybackpromocodegifts'))
+		#add days left
+		if approve_tickets:
+			for ticket in approve_tickets:
+				ticket.days_left = (timezone.now()-ticket.scheduled_at).days
+
+		return render(request,'salesadmin/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'evaluators_sales_targets':evaluators_sales_target,'approve_tickets':approve_tickets,})
+
+class ClientDetails(IsSalesAdmin,View):
+	def get(self,request):
+
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
+		
+		search                  = request.GET.get('search')
+
+		if search:
+			try:
+				client_details = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True,name__icontains=search).order_by('-id').prefetch_related(Prefetch('customer_evaluation',queryset=Evaluation.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True).filter(Q(Q(order_status='ORDER_IN_PROGRESS')|Q(order_status='APPROVED_BY_CLIENT')|Q(order_status__isnull=True))),to_attr='order_evaluation')),to_attr='customer_evaluations'))
+			except:
+				client_details = None
+		else:
+			client_details = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True).order_by('-id').prefetch_related(Prefetch('customer_evaluation',queryset=Evaluation.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True).filter(Q(Q(order_status='ORDER_IN_PROGRESS')|Q(order_status='APPROVED_BY_CLIENT')|Q(order_status__isnull=True))),to_attr='order_evaluation')),to_attr='customer_evaluations'))			
+
+
+
+		fil_status                = request.GET.get('status')			
+					
+
+		#To Find active and new client
+		try:
+			orders = Order.objects.filter(is_active=True).select_related('evaluation__customer')
+		except:
+			orders = None	
+
+		new_clients_count    = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True,created__gte=timezone.now().date()-timedelta(30)).count()
+		
+
+		#Prefetch filters
+		try:
+			fil_governorate       = int(request.GET.get('governorate'))
+			areas                 = Area.objects.filter(governorate_id=fil_governorate) 
+		except:
+			fil_governorate       = None
+			areas                 = None
+
+		try:	
+			fil_area			  = int(request.GET.get('area'))
+		except:
+			fil_area              = None	
+
+
+
+		customer_address_filter       = []
+		count_customer_address_filter = [] 
+		if fil_governorate: 
+		    case1       = Q(is_active=True,governorate_id=fil_governorate)
+		    count_case1 = Q(address_customer__governorate_id=fil_governorate)
+		    customer_address_filter.append(case1)
+		    count_customer_address_filter.append(count_case1)
+		
+		if fil_area:
+		    case2 		= Q(is_active=True,area_id=fil_area)
+		    count_case2 = Q(address_customer__area_id=fil_area)
+		    customer_address_filter.append(case2)
+		    count_customer_address_filter.append(count_case2)
+
+		if fil_governorate or fil_area: 
+			customer_address_prefetch_filter              = functools.reduce(operator.and_,customer_address_filter)
+			count_customer_address_prefetch_filter        = functools.reduce(operator.and_,count_customer_address_filter)
+		else:
+			customer_address_prefetch_filter              = None
+			count_customer_address_prefetch_filter        = None	
+
+		#Apply prefetch filter
+		if customer_address_prefetch_filter:
+			
+			client_details = client_details.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(customer_address_prefetch_filter).select_related('area'),to_attr='customer_address')).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)	
+
+		else:
+			client_details = client_details.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area'),to_attr='customer_address'))		
+
+
+		#FILTER	
+		fil_customertype          = request.GET.get('customertype')
+		fil_status                = request.GET.get('status')
+
+		filters = []
+		if fil_customertype: 
+		    case1 = Q(customer_type=fil_customertype)
+		    filters.append(case1)
+		
+
+		if fil_customertype: 
+		    filters            = functools.reduce(operator.and_,filters)
+		    client_details     = client_details.filter(filters)
+		
+		#PAGINATION CLIENTS		
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
+		page = request.GET.get('page',1) 
+		paginator=Paginator(client_details,no_of_entries)
+		try: 
+			client_details=paginator.page(page) 
+		except PageNotAnInteger:
+			client_details=paginator.page(1)
+		except EmptyPage:
+			client_details = paginator.page(paginator.num_pages) 
+
+		# Get the index of the current page
+		index = client_details.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns 
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(client_details.end_index())-(client_details.start_index())+1
+
+
+		return render(request,'salesadmin/client/clients.html',{"client_details":client_details,"search_query":search,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_customertype":fil_customertype,"fil_status":fil_status})		
+
+class ClientOrders(IsSalesAdmin,View):
+	def get(self,request,client_id):
+
+		try:
+			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=client_id)
+		except:
+			client_details = None
+	
+		orders = Order.objects.filter(evaluation__customer_id=client_id).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(total_cleaners=Sum('evaluation__evaluation_details__evaluation_book_evaluation_details__number_of_cleaners'))
+					
+		#COUNT			
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+
+		return render(request,"salesadmin/client/client-page.html",{"client_details":client_details,"orders":orders,"active_orders_count":active_orders_count,})
+
+class ClientOrderDetails(IsSalesAdmin,View):
+	def get(self,request,order_id):
+
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationmedia'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection'),Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_team_members')),to_attr='cleaning_team'),Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscounts'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift'),Prefetch('followup_investigation',queryset = FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules')),to_attr='followups')),to_attr='investigations')),to_attr='orderschedules'),Prefetch('feed_backs_order',FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks')).get(is_active=True,id=order_id)
+			
+
+		try:
+			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=order.evaluation.customer_id)
+		except:
+			client_details = None
+
+		#orders count
+		orders = Order.objects.filter(is_active=True,evaluation__customer_id=order.evaluation.customer_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()
+					
+				
+		return render(request,"salesadmin/client/order-page.html",{"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count})
+
+
+
+
+class TicketDetails(IsSalesAdmin,View):
+	def get(self,request):
+
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
+		try:
+			investigators = UserProfile.objects.filter(is_active=True,user_type='QUALITYCONTROLL')
+		except:
+			investigators = None
+
+		search                  = request.GET.get('search')
+		
+		#Followup details
+		if search:
+			if search.startswith('TKT'):
+				search = search[len('TKT'):]
+			
+			tickets 	             = FollowUp.objects.select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').filter(is_active=True).filter(Q(Q(investigation__order_schedule__order__evaluation__customer__name__icontains=search)|Q(ticket_no__icontains=search))).order_by('-id').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))				
+			
+			if not search.startswith('TKT'):
+				search = 'TKT'+search				
+		else:
+			tickets 	             = FollowUp.objects.filter(is_active=True).select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').order_by('-id').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))		
+
+		follow_ups_count = FollowUp.objects.filter(Q(is_active=True)&Q(Q(status='TICKET_RISED')|Q(status='FOLLOWUP_IN_PROGRESS'))).count()
+
+
+		#followup cleaning count	
+		try:
+			follow_up_cleaning_count = FollowUpScheduler.objects.filter(is_active=True,work_status='FOLLOW_UP_CLEANING_FULFILLED').count()
+		except:
+			follow_up_cleaning_count = 0
+
+
+
+		#FILTER	
+		try:
+			fil_governorate     = int(request.GET.get('governorate')) 
+			areas               = Area.objects.filter(is_active=True,governorate_id=fil_governorate)
+		except:
+			fil_governorate     = None
+			areas               = None
+
+		try:	
+			fil_area            = int(request.GET.get('area'))
+		except:
+			fil_area            = None
+		
+		fil_status              = request.GET.get('status')
+		
+		try:
+			fil_investigator    = int(request.GET.get('investigator'))
+		except:
+			fil_investigator    = None
+
+		#filters
+		filters=[] 
+		if fil_governorate: 
+		    case1 = Q(investigation__order_schedule__customer_address__governorate_id=fil_governorate)
+		    filters.append(case1)
+		if fil_area: 
+		    case2 = Q(investigation__order_schedule__customer_address__area_id=fil_area)
+		    filters.append(case2)
+		if fil_status: 
+		    case3 = Q(status=fil_status)
+		    filters.append(case3)
+		if fil_investigator: 
+		    case4 = Q(investigation__investigator_id=fil_investigator)
+		    filters.append(case4)            
+	
+		if fil_governorate or fil_area or fil_status or fil_investigator: 
+		    filters     = functools.reduce(operator.and_,filters)
+		    tickets = tickets.filter(filters)
+
+
+
+
+		#PAGINATION TICKETS		
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
+		page = request.GET.get('page',1) 
+		paginator=Paginator(tickets,no_of_entries)
+		try: 
+			tickets=paginator.page(page) 
+		except PageNotAnInteger:
+			tickets=paginator.page(1)
+		except EmptyPage:
+			tickets = paginator.page(paginator.num_pages) 
+
+		# Get the index of the current page
+		index = tickets.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns 
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(tickets.end_index())-(tickets.start_index())+1
+
+		return render(request,'salesadmin/ticket/tickets.html',{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"investigators":investigators,"fil_governorate":fil_governorate,'fil_area':fil_area,"fil_investigator":fil_investigator,"fil_status":fil_status,})		
+
+
+class TicketAdvanced(IsSalesAdmin,View):
+	def get(self,request,client_id,followup_id):
+
+		#client info
+		try:
+			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=client_id)
+		except:
+			client_details = None
+
+		#followup info
+		
+		followup_details = FollowUp.objects.select_related('investigation__investigator','investigation__order','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate','investigation__order_schedule__order_scheduler_book').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_media',queryset=FollowUpTeamMedia.objects.filter(is_active=True),to_attr='followupmedias'),Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules'),Prefetch('investigation__investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('follow_up_of_section',queryset=FollowUpSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesectionsfollowup',queryset=FollowUpSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='followupsections'),Prefetch('investigation__buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True).prefetch_related(Prefetch('buybackpromocodegiftdetails',queryset=BuybackPromocodeGiftDetails.objects.filter(is_active=True),to_attr='buybackpromogiftdetails'),Prefetch('buybackpromocodegift_media',queryset=BuybackPromocodeGiftDetailsMedia.objects.filter(is_active=True),to_attr='buybackpromogiftmedias')),to_attr='buybackpromogifts'),Prefetch('investigation__paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True).prefetch_related(Prefetch('paybackdiscount_details',queryset=PaybackDiscountDetails.objects.filter(is_active=True),to_attr='paybackdiscountdetails'),Prefetch('paybackdiscount_media',queryset=PaybackDiscountDetailsMedia.objects.filter(is_active=True),to_attr='paybackdiscountmedias')),to_attr='paybackdiscounts'),Prefetch('investigation__reporting_investigation',queryset=Reporting.objects.filter(is_active=True).prefetch_related(Prefetch('reporting_media',queryset=ReportingMedia.objects.filter(is_active=True),to_attr='reporting_medias')),to_attr='reports')).get(is_active=True,id=followup_id)
+			
+			
+
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=client_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()
+
+		return render(request,'salesadmin/ticket/followup-page.html',{"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"followup_details":followup_details,})
+
+
+class OrderDetails(IsSalesAdmin,View):
+	def get(self,request):
+		
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
+		try:
+			service_types = ServiceType.objects.filter(is_active=True) 
+		except:
+			service_types =	None
+
+		#Evaluation Details
+		search                  = request.GET.get('search')
+		#for order filtering
+		status = request.GET.get('status')
+		
+		if search:
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(customer__mobile_number__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
+		else:
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
+			
+
+		if evaluations:
+			#approved count should change code
+			approved_orders_count = 0
+			for evaluation in evaluations:
+				if evaluation.evaluationorder and evaluation.quatation_status == 'APPROVED':
+					for order in evaluation.evaluationorder:
+						if (order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID') and (order.order_status == 'APPROVED_BY_CLIENT'):				
+							approved_orders_count += 1
+							
+			pending_orders_count  =	evaluations.filter(Q(quatation_status='PENDING')).count()
+		else:
+			approved_orders_count = 0
+			pending_orders_count  = 0	
+
+
+
+		#Prefetch filters
+		try:
+			fil_governorate       = int(request.GET.get('governorate'))
+			areas                 = Area.objects.filter(governorate_id=fil_governorate) 
+		except:
+			fil_governorate       = None
+			areas                 = None
+
+		try:	
+			fil_area			  = int(request.GET.get('area'))
+		except:
+			fil_area              = None
+
+		fil_cleaning_policy       = request.GET.get('cleaning_policy')
+		
+		try:
+			fil_service_type      = int(request.GET.get('service_type'))
+		except:
+			fil_service_type      = None
+			
+
+		customer_address_filter       = []
+		count_customer_address_filter = [] 
+		if fil_governorate: 
+		    case1       = Q(address__governorate_id=fil_governorate)
+		    count_case1 = Q(evaluation_details__address__governorate_id=fil_governorate)
+		    customer_address_filter.append(case1)
+		    count_customer_address_filter.append(count_case1)
+		
+		if fil_area:
+		    case2 		= Q(address__area_id=fil_area)
+		    count_case2 = Q(evaluation_details__address__area_id=fil_area)
+		    customer_address_filter.append(case2)
+		    count_customer_address_filter.append(count_case2)
+
+		if fil_governorate or fil_area: 
+			customer_address_prefetch_filter              = functools.reduce(operator.and_,customer_address_filter)
+			count_customer_address_prefetch_filter        = functools.reduce(operator.and_,count_customer_address_filter)
+		else:
+			customer_address_prefetch_filter              = None
+			count_customer_address_prefetch_filter        = None
+
+		
+		evaluation_book_filter       = []
+		count_evaluation_book_filter = []
+		if fil_cleaning_policy:
+			case1       = Q(cleaning_policy=fil_cleaning_policy)
+			count_case1 = Q(evaluation_details__evaluation_book_evaluation_details__cleaning_policy=fil_cleaning_policy)
+			evaluation_book_filter.append(case1)
+			count_evaluation_book_filter.append(count_case1)
+		if fil_service_type:     
+			case2       = Q(service_type_id=fil_service_type)
+			count_case2 = Q(evaluation_details__evaluation_book_evaluation_details__service_type_id=fil_service_type)
+			evaluation_book_filter.append(case2)              
+			count_evaluation_book_filter.append(count_case2)
+
+		if fil_cleaning_policy or fil_service_type:
+			evaluation_book_prefetch_filter              = functools.reduce(operator.and_,evaluation_book_filter)
+			count_evaluation_book_prefetch_filter        = functools.reduce(operator.and_,count_evaluation_book_filter)
+		else:
+			evaluation_book_prefetch_filter              = None	
+			count_evaluation_book_prefetch_filter        = None
+
+		#Apply prefetch filter
+		if evaluation_book_prefetch_filter and customer_address_prefetch_filter: 
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter & count_customer_address_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)		 
+			print("both")
+		elif evaluation_book_prefetch_filter and not customer_address_prefetch_filter:
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(book_count=Count(Case(When( count_evaluation_book_prefetch_filter,then=1),output_field=IntegerField()))).filter(book_count__gt=0)
+			print("book only")
+		elif not evaluation_book_prefetch_filter and customer_address_prefetch_filter:
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)
+			print("address only") 
+		else:
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))		
+			print("not at all")
+		
+		#exclude atleast 1 not completed evaluation
+		exclude_ids = []	
+		for evaluation in evaluations:
+			if not evaluation.completed_evaluations:
+				exclude_ids.append(evaluation.id)
+		evaluations = evaluations.exclude(id__in=exclude_ids)
+		
+		fil_status         = request.GET.get('status')
+		fil_payment_policy = request.GET.get('payment_policy')
+		#filters
+		filters=[]
+		if fil_status:
+			if fil_status == 'ORDER_IN_PROGRESS' or fil_status == 'ORDER_CLOSED' or fil_status == 'APPROVED-NOT PAID' or fil_status == 'EVALUATING':
+				if fil_status == 'ORDER_IN_PROGRESS':
+					case1 = Q(order_in_progress_count__gte=1)
+				elif fil_status == 'ORDER_CLOSED':
+					case1 = Q(order_closed_count__gte=1)
+				elif fil_status == 'APPROVED-NOT PAID':
+					case1 = Q(Q(approved_not_paid_count__gte=1)&~Q(payment_method='SUBSCRIPTION'))
+				elif fil_status == 'EVALUATING':
+					case1 = Q(quatation_status__isnull=True)
+			else:
+				if fil_status == 'APPROVED':
+					case1 = Q(Q(quatation_status=fil_status)&~Q(order_in_progress_count__gte=1)&~Q(order_closed_count__gte=1)&~Q(approved_not_paid_count__gte=1))
+				else:
+					case1 = Q(quatation_status=fil_status)
+			filters.append(case1)
+
+		if fil_payment_policy:
+			case2 = Q(payment_method=fil_payment_policy)
+			filters.append(case2)
+			
+		if fil_status or fil_payment_policy: 
+		    filters     = functools.reduce(operator.and_,filters)
+		    evaluations = evaluations.filter(filters)
+
+		#PAGINATION ORDERS		
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
+		page = request.GET.get('page',1) 
+		paginator=Paginator(evaluations,no_of_entries)
+		try: 
+			evaluations=paginator.page(page) 
+		except PageNotAnInteger:
+			evaluations=paginator.page(1)
+		except EmptyPage:
+			evaluations = paginator.page(paginator.num_pages) 
+
+		# Get the index of the current page
+		index = evaluations.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns 
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
+
+		return render(request,'salesadmin/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_status":fil_status,"fil_cleaning_policy":fil_cleaning_policy,"fil_service_type":fil_service_type,"fil_payment_policy":fil_payment_policy,})		
+
+
+class FeedbackDetails(IsSalesAdmin,View):
+	def get(self,request):
+		
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
+		try:
+			service_types = ServiceType.objects.filter(is_active=True) 
+		except:
+			service_types =	None
+
+
+
+		search                  = request.GET.get('search')
+
+		#order wise feedback
+		if search:
+			try:
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True).filter(Q(Q(evaluation__evaluation_id__icontains=search)|Q(evaluation__customer__name__icontains=search))).order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(Q(is_feedback_marked=True))		
+			except:
+				order_wise_feedbacks = None		
+		else:
+			try:
+				order_wise_feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True).order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(Q(is_feedback_marked=True))						
+			except:	
+				order_wise_feedbacks = None
+
+		#Prefetch filters
+		try:
+			fil_governorate       = int(request.GET.get('governorate'))
+			areas                 = Area.objects.filter(governorate_id=fil_governorate) 
+		except:
+			fil_governorate       = None
+			areas                 = None
+
+		try:	
+			fil_area			  = int(request.GET.get('area'))
+		except:
+			fil_area              = None
+
+		
+		try:
+			fil_service_type      = int(request.GET.get('service_type'))
+		except:
+			fil_service_type      = None
+		
+
+		customer_address_filter       = []
+		count_customer_address_filter = [] 
+		if fil_governorate: 
+		    case1       = Q(address__governorate_id=fil_governorate)
+		    count_case1 = Q(evaluation__evaluation_details__address__governorate_id=fil_governorate)
+		    customer_address_filter.append(case1)
+		    count_customer_address_filter.append(count_case1)
+		
+		if fil_area:
+		    case2 		= Q(address__area_id=fil_area)
+		    count_case2 = Q(evaluation__evaluation_details__address__area_id=fil_area)
+		    customer_address_filter.append(case2)
+		    count_customer_address_filter.append(count_case2)
+
+		if fil_governorate or fil_area: 
+			customer_address_prefetch_filter              = functools.reduce(operator.and_,customer_address_filter)
+			count_customer_address_prefetch_filter        = functools.reduce(operator.and_,count_customer_address_filter)
+		else:
+			customer_address_prefetch_filter              = None
+			count_customer_address_prefetch_filter        = None
+
+		
+		evaluation_book_filter       = []
+		count_evaluation_book_filter = []
+		if fil_service_type:     
+			case1       = Q(service_type_id=fil_service_type)
+			count_case1 = Q(evaluation__evaluation_details__evaluation_book_evaluation_details__service_type_id=fil_service_type)
+			evaluation_book_filter.append(case1)              
+			count_evaluation_book_filter.append(count_case1)
+
+		if fil_service_type:
+			evaluation_book_prefetch_filter              = functools.reduce(operator.and_,evaluation_book_filter)
+			count_evaluation_book_prefetch_filter        = functools.reduce(operator.and_,count_evaluation_book_filter)
+		else:
+			evaluation_book_prefetch_filter              = None	
+			count_evaluation_book_prefetch_filter        = None	
+
+
+		#Apply prefetch filter
+		if evaluation_book_prefetch_filter and customer_address_prefetch_filter: 
+			order_wise_feedbacks = order_wise_feedbacks.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField())).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter & count_customer_address_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)
+			print("both")
+		elif evaluation_book_prefetch_filter and not customer_address_prefetch_filter:
+			order_wise_feedbacks = order_wise_feedbacks.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField())).annotate(book_count=Count(Case(When( count_evaluation_book_prefetch_filter,then=1),output_field=IntegerField()))).filter(book_count__gt=0)
+			print("book only")
+		elif not evaluation_book_prefetch_filter and customer_address_prefetch_filter:
+			order_wise_feedbacks = order_wise_feedbacks.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField())).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)
+			print("address only") 
+		else:
+			order_wise_feedbacks = order_wise_feedbacks.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))		
+			print("not at all")	
+
+		#FILTER
+		fil_minimumstarring       		  = request.GET.get('minimumstarring')	
+		# fil_maximumstarring       		  = request.GET.get('maximumstarring')
+		#filters 	
+		filters=[] 
+		if fil_minimumstarring: 
+		    case1 = Q(Q(avg_starring__gte=fil_minimumstarring)&Q(avg_starring__lt=float(fil_minimumstarring)+1))
+		    filters.append(case1)
+
+		if fil_minimumstarring : 
+			filters = functools.reduce(operator.and_,filters)
+			order_wise_feedbacks = order_wise_feedbacks.filter(filters)					    
+
+		#to find starring caluculations in whole system
+		full_order_wise_feedbacks     = Order.objects.select_related('evaluation__customer').filter(is_active=True).order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField())).filter(Q(is_feedback_marked=True))		
+		total_feedbacks               = full_order_wise_feedbacks.filter(is_feedback_marked=True).count()
+				
+				
+		#PAGINATION FEEDBACKS		
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
+		page = request.GET.get('page',1) 
+		paginator=Paginator(order_wise_feedbacks,no_of_entries)
+		try: 
+			order_wise_feedbacks=paginator.page(page) 
+		except PageNotAnInteger:
+			order_wise_feedbacks=paginator.page(1)
+		except EmptyPage:
+			order_wise_feedbacks = paginator.page(paginator.num_pages) 
+
+		# Get the index of the current page
+		index = order_wise_feedbacks.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns 
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(order_wise_feedbacks.end_index())-(order_wise_feedbacks.start_index())+1
+
+		return render(request,'salesadmin/feedback/feedbacks.html',{"total_feedbacks":total_feedbacks,"order_wise_feedbacks":order_wise_feedbacks,"full_order_wise_feedbacks":full_order_wise_feedbacks,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_minimumstarring":fil_minimumstarring,"fil_service_type":fil_service_type,})
+
+class FeedbackAdvanced(IsSalesAdmin,View):
+	def get(self,request,client_id,order_id):
+		
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationmedia'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection'),Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_team_members')),to_attr='cleaning_team'),Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('followup_investigation',queryset = FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules')),to_attr='followups')),to_attr='investigations')),to_attr='orderschedules'),Prefetch('feed_backs_order',FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks')).get(is_active=True,id=order_id)
+
+		#client info
+		try:
+			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=client_id)
+		except:
+			client_details = None
+
+		#feedback_info
+		try:
+			feedback_details   = Order.objects.prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks')).get(id=order_id)		
+		except:
+			feedback_details   = None
+
+		#total feedback
+		try:
+			feedbacks = Order.objects.select_related('evaluation__customer').filter(is_active=True,evaluation__customer_id=client_id).prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='order_evaluation_details')).annotate(avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))		
+		except:
+			feedbacks = None
+
+		#total_feedback_rating
+		average_feedback  = feedbacks.filter(id=order_id).aggregate(Sum('avg_starring'))['avg_starring__sum']
+		
+		#other feedbacks
+		try:
+			other_feedbacks = feedbacks.exclude(id=order_id).filter(is_feedback_marked=True)
+		except:	
+			other_feedbacks = None
+
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=client_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()	
+
+		return render(request,'salesadmin/feedback/feedback-page.html',{"order":order,"client_details":client_details,"feedback_details":feedback_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"other_feedbacks":other_feedbacks,"average_feedback":average_feedback,})
+
+
+
+
+class ResourceManagement(IsSalesAdmin,View):
+	def get(self,request):
+		
+		try:
+			staffs = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER')))
+		except:
+			staffs = None	
+
+
+		#for taking today counts
+		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		count_today_end   = count_today_start+timedelta(1)
+
+
+		#total workers count
+		try:
+			total_workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).count()
+		except:
+			total_workers = 0
+		
+		#total active workers
+		try:
+			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=count_today_start)&Q(end_at__gte=count_today_start)) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=timezone.now().replace(tzinfo=None))&Q(end_at__gte=timezone.now().replace(tzinfo=None)))) ).values_list('member',flat=True)).distinct().count()
+		except:
+			total_active_workers = 0	
+	
+	
+		##To find average and total men hour from script data
+		try:
+			cleaning_teams  = CleaningTeam.objects.filter(is_active=True)
+		except:
+			cleaning_teams  = None
+		try:
+			follow_up_teams = FollowUpTeam.objects.filter(is_active=True)
+		except:
+			follow_up_teams = None
+
+
+		today_cleaning_active_teams  = cleaning_teams.filter(Q(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))))
+		today_followup_active_teams  = follow_up_teams.filter(Q(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))))
+		week_cleaning_active_teams   = cleaning_teams.filter(Q( Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end)) ))
+		week_followup_active_teams   = follow_up_teams.filter(Q( Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end)) ))
+		
+
+		today_date            = timezone.now()
+		weekstart_date        = timezone.now()-timedelta(6)
+
+
+		try:
+			today_total_team_mens = today_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_cleaning_active_teams.count() or 0+today_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_followup_active_teams.count() or 0
+		except:
+			today_total_team_mens = 0
+		try:	
+			week_total_team_mens  = week_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_cleaning_active_teams.count() or 0+week_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_followup_active_teams.count() or 0
+		except:	
+			week_total_team_mens  = 0
+
+
+
+		#today and weekly active team count
+		today_active_teams_count = today_cleaning_active_teams.count()+today_followup_active_teams.count()
+		week_active_teams_count  = week_cleaning_active_teams.count()+week_followup_active_teams.count() 
+
+
+		#cleaning schedule & followup schedule for cleaning calendar			
+		workers_calendar_date	= request.GET.get('workers_calendar_date')
+		search                  = request.GET.get('search')
+		
+		try:
+			workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
+		except:
+			workers_date = timezone.now().replace(tzinfo=None)
+
+		workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		workers_date_end   = workers_date_start+timedelta(1)		
+
+		if search:
+			try:
+				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))&Q(name__icontains=search))
+			except:
+				workers =  None
+		else:
+			try:
+				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER')))
+			except:
+				workers =  None
+ 
+		try:		
+			workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
+		except:
+			workers_details = None
+
+		#Filter
+		try:
+			fil_staff = int(request.GET.get('staff'))
+		except:
+			fil_staff = ''
+
+		try:
+			fil_minhours       = int(request.GET.get('minhours'))
+		except:
+			fil_minhours       = None
+
+		try:
+			fil_maxhours       = int(request.GET.get('maxhours'))	
+		except:
+			fil_maxhours	   = None
+
+		if 	fil_minhours and fil_maxhours:
+			if fil_minhours>=fil_maxhours:
+				messages.error(request,"Minimum Duration should be less than Maximum Duration")
+				fil_minhours = None
+				fil_maxhours = None
+				
+		#filters 	
+		filters=[] 
+		if fil_staff: 
+		    case1 = Q(id=fil_staff)
+		    filters.append(case1)
+	
+		if fil_staff: 
+		    filters         = functools.reduce(operator.and_,filters)
+		    workers_details = workers_details.filter(filters)
+
+		return render(request,'salesadmin/resource/resources.html',{"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"staffs":staffs,"fil_staff":fil_staff,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,})
+
+class PaymentDetails(IsSalesAdmin,View):
+	def get(self,request):
+
+		try:
+			service_types = ServiceType.objects.filter(is_active=True) 
+		except:
+			service_types =	None
+		
+		#Evaluation Details
+		search                  = request.GET.get('search')
+		
+		#sales amount
+		if search:
+			try:
+				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
+			except:
+				invoices         = None
+		else:
+			try:
+				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
+			except:
+				invoices         = None
+				
+		#Pending Payments
+		try:
+			pending_payments = invoices.filter(Q( Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))) | Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(preamount_paid=0)) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
+		except:
+			pending_payments = None
+
+		#Pending Payment and Order Count	
+		if pending_payments: 
+			total_pending_amount = 0
+			total_pending_orders = pending_payments.count()
+			for payment in pending_payments:
+				if payment.evaluation.payment_method in ['PREPAID','POSTPAID','BREAKDOWN']:
+					total_pending_amount += payment.remining_amount
+				if payment.evaluation.payment_method == 'SUBSCRIPTION':
+					total_pending_amount += payment.subscription_topay			
+		else:
+			total_pending_amount = 0
+			total_pending_orders = 0
+
+		#filters
+
+		fil_order_status			= request.GET.get('status')
+
+		fil_payment_status       	= request.GET.get('payment_status')
+
+		fil_payment_policy			= request.GET.get('payment_policy')
+
+		filters = []
+		if fil_payment_policy:
+			case1 = Q(evaluation__payment_method=fil_payment_policy)
+			filters.append(case1)
+
+		if fil_payment_status:
+			if fil_payment_status == 'PENDING':
+				case2       = Q( Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))) | Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(preamount_paid=0)) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))|Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0))) )
+			else:
+				case2       = Q(payment_status=fil_payment_status)
+			filters.append(case2)
+			
+		if fil_order_status:
+			if fil_order_status == 'NOT STARTED':
+				case3 = Q(Q(cleaning_in_progress_count=0)&Q(completed_cleaning_count=0))
+			elif fil_order_status == 'IN PROGRESS':
+				case3 = Q(cleaning_in_progress_count__gte=1)
+			elif fil_order_status == 'COMPLETED':
+				case3 = Q(completed_cleaning_count=F('cleaning_count'))
+
+			filters.append(case3)
+
+		if fil_payment_policy or fil_payment_status or fil_order_status:
+			filters=functools.reduce(operator.and_,filters)
+			invoices = invoices.filter(filters)
+			
+
+		#PAGINATION INVOICE	
+		no_of_entries = request.GET.get('no_of_entries')	
+		if not no_of_entries:
+			no_of_entries = 20
+
+		page = request.GET.get('page',1) 
+		paginator=Paginator(invoices,no_of_entries)
+		try: 
+			invoices=paginator.page(page) 
+		except PageNotAnInteger:
+			invoices=paginator.page(1)
+		except EmptyPage:
+			invoices = paginator.page(paginator.num_pages) 
+
+		# Get the index of the current page
+		index = invoices.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns 
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(invoices.end_index())-(invoices.start_index())+1	
+
+		return render(request,'salesadmin/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,'no_of_entries':no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status})		
+
+
+class TicketApprove(IsSalesAdmin,View):
+	def get(self,request,ticket_id):
+		
+		try:
+			investigation_details = Investigation.objects.select_related('order_schedule__customer_address__area','order_schedule__order_scheduler_book__service_type','order_schedule__evaluation_details__evaluator','investigator','order__evaluation__customer','order__evaluation__call_attender').prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True),to_attr='follow_up_schedules')),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True).prefetch_related(Prefetch('paybackdiscount_details',queryset=PaybackDiscountDetails.objects.filter(is_active=True),to_attr='paybackdiscountdetails')),to_attr='paybackdiscount'),Prefetch('reporting_investigation',queryset=Reporting.objects.filter(is_active=True),to_attr='reports'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True).prefetch_related(Prefetch('buybackpromocodegiftdetails',queryset=BuybackPromocodeGiftDetails.objects.filter(is_active=True),to_attr='buybackpromogiftdetails')),to_attr='buybackpromocodegift'),Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=ticket_id)
+		except:
+		 	investigation_details = None
+
+		ticket_types = investigation_details.ticket_types.split(",")
+		ticket_types_list = []
+		for type in ticket_types:
+			ticket_types_list.append(type)
+		print(ticket_types_list,"typo")
+
+		promocodes = Promocode.objects.filter(is_active=True)
+
+		return render(request,'salesadmin/ticket/ticket-approval.html',{"ticket_types":ticket_types,"investigation_details":investigation_details,"promocodes":promocodes})
+
+	def post(self,request,ticket_id):
+
+		try:
+			paybackdiscount = PaybackDiscount.objects.get(investigation__id=int(ticket_id),is_active=True)
+		except:
+			paybackdiscount = None
+
+		try:	
+			buybackpromocodegift = BuybackPromocodeGift.objects.get(investigation__id=int(ticket_id),is_active=True)
+		except:
+			buybackpromocodegift = None
+
+		investigation = Investigation.objects.get(id=ticket_id)
+		
+		approve_action = request.POST.get('approve_action')
+
+		if approve_action == 'payback':
+			
+			payback_amount = request.POST.get('payback_amount',0.0)
+
+			paybackdiscount.approved_total_cost = payback_amount
+
+			paybackdiscount.save()
+
+			investigation.is_paybackdiscount_approved = True
+
+			investigation.save()
+
+			messages.success(request,"Payback Approved !")
+
+		if approve_action == 'buyback':
+
+			buyback_type = request.POST.get('buyback_type')
+
+			if buyback_type == 'PROMOCODE':
+
+				promo_code = request.POST.get('promocode',None)
+
+				buybackpromocodegift.approved_promo_code = promo_code
+				
+				buybackpromocodegift.save()
+
+			else:
+
+				buyback_amount = request.POST.get('buyback_amount',0.0)
+
+				buybackpromocodegift.approved_total_cost = buyback_amount
+
+				buybackpromocodegift.save()
+
+			buybackpromocodegift.approved_option = buyback_type
+
+			buybackpromocodegift.is_completed = True
+			
+			buybackpromocodegift.save()
+
+			investigation.is_buybackgiftpromo_approved = True
+
+			investigation.save()
+
+			messages.success(request,"BuyBack/PromoCode/Gift Approved !")
+		
+		return redirect('bleach_salesadmin:salesadmin-ticketapprove', ticket_id)
+
+class PromocodeView(IsSalesAdmin,View):
+
+	def get(self,request):
+		
+		try:
+			promo_codes = Promocode.objects.filter(is_active=True).order_by('-created').annotate(active=Case(When(expiry_date__gt=timezone.now().date(),then=True),default=False,output_field=BooleanField()))
+		except:
+			promo_codes = None
+
+		#counts
+		try:
+			active_promocodes_count = promo_codes.filter(active=True).count()
+			used_coupons_count      = promo_codes.aggregate(total_used_count=Sum('total_used'))['total_used_count']
+		except:
+			active_promocodes_count = 0
+			used_coupons_count      = 0
+
+		return render(request,'salesadmin/promocode/promo.html',{'promo_codes':promo_codes,'active_promocodes_count':active_promocodes_count,'used_coupons_count':used_coupons_count,})
+
+	def post(self,request):
+		action = request.POST.get('action_type')
+
+		if action == 'addpromocode':
+			promocode_form = PromocodeForm(request.POST)
+			if promocode_form.is_valid():
+				promocode_form.save()
+				messages.success(request,"Promocode Successfully Added")
+			else:
+				messages.error(request,get_error(promocode_form))
+
+		if action == 'editpromocode':
+			promocode_id = request.POST.get('promocodeid')
+			promocode = Promocode.objects.get(id=promocode_id)
+
+			promocode_form = PromocodeForm(request.POST,instance=promocode)
+			
+			if promocode_form.is_valid():
+				promocode_form.save()
+				messages.success(request,"Promocode Successfully Updated")
+			else:
+				messages.error(request,get_error(promocode_form))		
+		
+		return redirect('bleach_salesadmin:salesadmin-promocode')		
+
+
+#ajax for sales charts
+def SalesLocationData(request):
+	data = []
+	
+	dom = request.GET.get('dom', None)
+	prevdate  = request.GET.get('fromdate', None)
+	todate  = request.GET.get('todate', None)
+	print(dom,prevdate,todate,"pop")
+	location_types = AreaType.objects.all()
+	if dom == 'Month':
+		print("derr")
+		month,year = prevdate.split("/")
+		month2,year2 = todate.split("/")
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=28,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+timedelta(1)
+		locationcount = 0
+		others_count = 0
+
+		# appending each location counts
+		for location in location_types:			
+			
+			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(monthdate1,monthdate2),evaluation__evaluation_details__evaluation_book_evaluation_details__area_type=location.name).count()
+			if not sales_location_count:
+				sales_location_count = 0
+
+			location_dict = {
+					"location" : location.name,
+					"count" : sales_location_count,
+					}
+			data.append(location_dict)
+
+		data_sorted = sorted(data, key = itemgetter('count'),reverse=True)
+
+		data_list = data_sorted[:5]
+
+		others_sum = 0 
+
+		for d in data_sorted[5:] :
+			others_sum += int(d['count'])
+		
+		others_dict = {
+			"location" : 'Others',
+			"count" : others_sum,
+		}
+
+		data_list.append(others_dict)
+
+		print(data_list,"sortt")
+
+	else:
+		print("war")
+		try:
+			prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+			todate = datetime.strptime(todate, '%Y-%m-%d')
+		except:
+			todate = date.today() - timedelta(days=1)
+			prevdate = todate - timedelta(days=30)
+		print(prevdate,todate,"testdt")
+
+		prevdate_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
+		todate_date_end  = todate.replace(hour=0,minute=0,second=0,microsecond=0)+timedelta(1)
+
+		# appending each location counts
+		for location in location_types:
+			
+			sales_location_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate_date_start,todate_date_end),evaluation__evaluation_details__evaluation_book_evaluation_details__area_type=location.name).count()
+			if not sales_location_count:
+				sales_location_count = 0
+				
+			location_dict = {
+					"location" : location.name,
+					"count" : sales_location_count,
+					}
+			data.append(location_dict)
+
+		data_sorted = sorted(data, key = itemgetter('count'),reverse=True)
+
+		data_list = data_sorted[:5]
+
+		others_sum = 0 
+
+		for d in data_sorted[5:] :
+			others_sum += int(d['count'])
+		
+		others_dict = {
+			"location" : 'Others',
+			"count" : others_sum,
+		}
+
+		data_list.append(others_dict)
+
+		print(data_list,"sortt2")
+ 
+	return JsonResponse(data_list,safe=False)
+
+#ajax for sales charts
+def SalesCleaningTypeData(request):
+	print("ram")
+	data = []
+	dom = request.GET.get('dom',None)
+	prevdate  = request.GET.get('fromdate', None)
+	todate  = request.GET.get('todate', None)
+	print(prevdate,todate,"pop")
+	cleaning_types = ServiceType.objects.all()
+	if dom == 'Month':
+		print("derr")
+		month,year = prevdate.split("/")
+		month2,year2 = todate.split("/")
+
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=28,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+timedelta(1)
+
+		for clean in cleaning_types:
+			sales_cleaningtype_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(monthdate1,monthdate2),evaluation__evaluation_details__evaluation_book_evaluation_details__service_type=clean).count()
+			if sales_cleaningtype_count > 0:
+				clean_dict = {
+				"cleaning_type" : clean.name,
+				"count" : sales_cleaningtype_count,
+				}
+				data.append(clean_dict)
+	else:
+		try:
+			prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+			todate = datetime.strptime(todate, '%Y-%m-%d')
+		except:
+			todate = date.today() - timedelta(days=1)
+			prevdate = todate - timedelta(days=30)
+		print(prevdate,todate,"testdt")
+
+		prevdate_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
+		todate_date_end  = todate.replace(hour=0,minute=0,second=0,microsecond=0)+timedelta(1)
+	
+		for clean in cleaning_types:
+			sales_cleaningtype_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate_date_start,todate_date_end),evaluation__evaluation_details__evaluation_book_evaluation_details__service_type=clean).count()
+			if sales_cleaningtype_count > 0:
+				clean_dict = {
+				"cleaning_type" : clean.name,
+				"count" : sales_cleaningtype_count,
+				}
+				data.append(clean_dict)
+		print(data)
+	return JsonResponse(data,safe=False)
+
+#ajax for sales charts
+def SalesGovernorateData(request):
+	data = []
+	dom = request.GET.get('dom',None)
+	prevdate  = request.GET.get('fromdate', None)
+	todate  = request.GET.get('todate', None)
+	print(prevdate,todate,"pop")
+	governorates = Governorate.objects.all()
+	if dom == 'Month':
+		print("derr")
+		month,year = prevdate.split("/")
+		month2,year2 = todate.split("/")
+
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=28,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+timedelta(1)
+
+		for gov in governorates:
+			print(gov,"govrt")
+			sales_governorate_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(monthdate1,monthdate2),evaluation__customer__address_customer__governorate=gov).count()
+			if sales_governorate_count >0:
+				gov_dict = {
+				"governorate" : gov.name,
+				"count" : sales_governorate_count,
+				}
+				data.append(gov_dict)
+	else:
+
+		try:
+			prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+			todate = datetime.strptime(todate, '%Y-%m-%d')
+		except:
+			todate = date.today() - timedelta(days=1)
+			prevdate = todate - timedelta(days=60)
+		print(prevdate,todate,"testdt")
+
+		prevdate_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
+		todate_date_end  = todate.replace(hour=0,minute=0,second=0,microsecond=0)+timedelta(1)
+	
+		for gov in governorates:
+			sales_governorate_count = Order.objects.filter(evaluation__quatation_status='APPROVED',evaluation__quatation_approved_date__range=(prevdate_date_start,todate_date_end),evaluation__customer__address_customer__governorate=gov).count()
+			if sales_governorate_count > 0:
+				print(sales_governorate_count,"sgc")		
+				gov_dict = {
+				"governorate" : gov.name,
+				"count" : sales_governorate_count,
+				}
+				data.append(gov_dict)
+		print(data)
+	return JsonResponse(data,safe=False)
+
+#ajax for sales charts
+def SalesData(request):
+	data = []
+	dom = request.GET.get('dom', None)
+	prevdate  = request.GET.get('fromdate', None)
+	todate  = request.GET.get('todate', None)
+	print(dom,prevdate,todate,"pop")
+	sales_dict = dict()
+
+	if dom == 'Month':
+		print("derr")
+		month,year = prevdate.split("/")
+		month2,year2 = todate.split("/")
+
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=1,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+
+		sales = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,created__range=(monthdate1,monthdate2))   #.values('created').values('created').annotate(month=Month('created'),).values('month').annotate(count=Sum('evaluation__total_cost'))
+
+		sales_month = sales.dates('created','month')
+		print(sales,"po")
+		for sale in sales_month:
+			month_start = datetime(day=1,month=sale.month,year=sale.year,hour=0,minute=0,second=0,microsecond=0)
+			month_end = datetime(day=1,month=sale.month,year=sale.year,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+
+			total_sales = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(month_start,month_end)).aggregate(count=Sum('evaluation__total_cost'))['count']
+
+			sales_dict = {
+			"date" : sale.month,
+			"amount" : total_sales or 0.0,
+			}
+			data.append(sales_dict)
+	else:
+		print("njk")
+		try:
+			prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+			todate = datetime.strptime(todate, '%Y-%m-%d')
+		except:
+			todate = date.today() - timedelta(days=1)
+			prevdate = todate - timedelta(days=30)
+		print(prevdate,todate,"testdt310")
+		daterange = pd.date_range(prevdate, todate)
+
+		for single_date in daterange:
+			sale_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
+			sale_date_end    = single_date+timedelta(1)
+
+			total_sales = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(sale_date_start,sale_date_end)).aggregate(Sum('evaluation__total_cost'))['evaluation__total_cost__sum'] or 0.0
+
+			print(total_sales,"qtc")
+			sales_dict = {
+			"date" : single_date,
+			"amount" : total_sales,
+			}
+			data.append(sales_dict)
+	print(data,"sdt")
+	return JsonResponse(data,safe=False)
+
+#ajax for sales target charts
+def SalesTargetData(request):
+	data = []
+	dom = request.GET.get('dom', None)
+	evaluator_id = request.GET.get('evaluator',None)
+	prevdate  = request.GET.get('fromdate', None)
+	todate  = request.GET.get('todate', None)
+	print(dom,prevdate,todate,evaluator_id,"pop333")
+	sales_dict = dict()
+	
+	if dom == 'Month':
+		print("derr")
+		month,year = prevdate.split("/")
+		month2,year2 = todate.split("/")
+
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=1,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+
+		if evaluator_id == 0 :
+			sales = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=None,evaluation__quatation_status__isnull=False,created__range=(monthdate1,monthdate2))
+		else:
+			sales = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_status__isnull=False,created__range=(monthdate1,monthdate2))
+		print(sales,evaluator_id,"po")
+
+		sales_month = sales.dates('created','month')
+		
+		for sale in sales_month:
+			month_start = datetime(day=1,month=sale.month,year=sale.year,hour=0,minute=0,second=0,microsecond=0)
+			month_end = datetime(day=1,month=sale.month,year=sale.year,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+			
+			total_sales = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_status__isnull=False,order_status='ORDER_CLOSED',created__range=(monthdate1,monthdate2)).aggregate(count=Sum('evaluation__total_cost'))['count'] or 0.0
+			total_orders = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_status__isnull=False,created__range=(monthdate1,monthdate2)).aggregate(count2=Sum('evaluation__total_cost'))['count2'] or 0.0
+			print(total_sales,total_orders,"totsal")
+			
+			sales_dict = {
+			"date" : sale.month,
+			"amount" : total_sales,
+			"total" : total_orders,
+			}
+			data.append(sales_dict)
+	else:
+		print("njk")
+		try:
+			prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+			todate = datetime.strptime(todate, '%Y-%m-%d')
+		except:
+			todate = date.today() - timedelta(days=1)
+			prevdate = todate - timedelta(days=30)
+		print(prevdate,todate,"testdt")
+		daterange = pd.date_range(prevdate, todate)
+
+		testvar = 0
+		for single_date in daterange:
+			saletarget_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
+			saletarget_date_end    = single_date+timedelta(1)
+
+			if evaluator_id == '0' :
+				total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=None,evaluation__quatation_status__isnull=False,order_status='ORDER_CLOSED',created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)			
+
+				total_orders = Order.objects.filter(is_active=True,evaluation__evaluation_details__evaluator=None,evaluation__quatation_status__isnull=False,created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+			else:
+				total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_status__isnull=False,order_status='ORDER_CLOSED',created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)			
+
+				total_orders = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator_id,evaluation__quatation_status__isnull=False,created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+			
+			testvar += total_orders or 0.0
+			print(total_sales,total_orders,evaluator_id,"red2")
+			sales_dict = {
+			"date" : single_date,
+			"amount" : total_sales or 0.0,
+			"total" : total_orders or 0.0,
+			}
+			data.append(sales_dict)
+		print(testvar,"warria")
+	print(data,"sdt")
+	return JsonResponse(data,safe=False)
+
+#ajax for sales target charts
+def PaymentData(request):
+	data = []
+	dom = request.GET.get('dom', None)
+	prevdate  = request.GET.get('fromdate', None)
+	todate  = request.GET.get('todate', None)
+	print(dom,prevdate,todate,"pop333")
+	sales_dict = dict()
+	
+	if dom == 'Month':
+		print("derr")
+		month,year = prevdate.split("/")
+		month2,year2 = todate.split("/")
+
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=1,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+
+		sales = Order.objects.filter(is_active=True,created__range=(monthdate1,monthdate2)).filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD')|Q(payment_status='COMPLETED')))
+		print(sales,"po")
+
+		sales_month = sales.dates('created','month')
+		
+		for sale in sales_month:
+			month_start = datetime(day=1,month=sale.month,year=sale.year,hour=0,minute=0,second=0,microsecond=0)
+			month_end = datetime(day=1,month=sale.month,year=sale.year,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+			
+			paid_orders = Order.objects.filter(is_active=True,payment_status='COMPLETED',created__range=(monthdate1,monthdate2)).aggregate(count=Sum('evaluation__total_cost'))['count'] or 0.0
+			pending_orders = Order.objects.filter(is_active=True,created__range=(monthdate1,monthdate2)).filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).aggregate(count2=Sum('evaluation__total_cost'))['count2'] or 0.0
+			print(paid_orders,pending_orders,"totsal")
+			
+			sales_dict = {
+			"date" : sale.month,
+			"paid" : paid_orders,
+			"pending" : pending_orders,
+			}
+			data.append(sales_dict)
+	else:
+		print("njk")
+		try:
+			prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+			todate = datetime.strptime(todate, '%Y-%m-%d')
+		except:
+			todate = date.today() - timedelta(days=1)
+			prevdate = todate - timedelta(days=30)
+		print(prevdate,todate,"testdt")
+		daterange = pd.date_range(prevdate, todate)
+
+		for single_date in daterange:
+			saletarget_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
+			saletarget_date_end    = single_date+timedelta(1)
+
+			paid_orders = Order.objects.filter(is_active=True,payment_status='COMPLETED',created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(count=Sum('evaluation__total_cost'))['count'] or 0.0
+			pending_orders = Order.objects.filter(is_active=True,created__gte=saletarget_date_start,created__lte=saletarget_date_end).filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).aggregate(count2=Sum('evaluation__total_cost'))['count2'] or 0.0
+			
+			print(paid_orders,pending_orders,"red2")
+			sales_dict = {
+			"date" : single_date,
+			"paid" : paid_orders or 0.0,
+			"pending" : pending_orders or 0.0,
+			}
+			data.append(sales_dict)
+	print(data,"sdt")
+	return JsonResponse(data,safe=False)
+
+def cleaningcalendardate(request):
+	data = dict()
+	cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
+		
+	try:
+		schedule_date = datetime.strptime(cleaning_calendar_date,'%d-%m-%Y')
+	except:
+		schedule_date = timezone.now().replace(tzinfo=None)
+
+	schedule_date_start = schedule_date.replace(hour=0,minute=0,second=0,microsecond=0)
+	schedule_date_end   = schedule_date_start+timedelta(1)		
+
+	try:
+		calendar_order_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
+	except:
+		calendar_order_schedules 	= None
+
+	try:
+		calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+	except:
+		calendar_followup_schedules = None
+
+	try:
+		sp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
+	except:
+		sp_calendar_order_schedules = None
+
+	try:
+		sp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+	except:
+		sp_calendar_followup_schedules = None							
+
+	try:
+		spp_calendar_order_schedules = OrderScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start))&Q(status='CONFIRMED'))).select_related('order__evaluation__customer','customer_address','order_scheduler_book')
+	except:
+		spp_calendar_order_schedules = None
+
+	try:
+		spp_calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start))&Q(status='CONFIRMED'))).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
+	except:
+		spp_calendar_followup_schedules = None
+
+	context = {'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules}
+	data['cleaningdetails'] = render_to_string('salesadmin/home/cleaning-calendar-snippet.html',context)	
+	return JsonResponse(data)
+
+def SalesTargetDaily(request):
+	data = []
+	data2 = []
+	target_dict = dict()
+	evaluators_sales_target = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
+	target_date = request.GET.get('target_date')
+	date_or_month = request.GET.get('date_or_month')
+	print(date_or_month,"dom")
+
+	if date_or_month == 'Month':
+		#month year range making
+		month,year = target_date.split("/")
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+		print(monthdate1,monthdate2,"msdt")
+		daterange  = pd.date_range(monthdate1, monthdate2)
+	else:
+		target_date = datetime.strptime(target_date, '%d-%m-%Y')
+		target_date_start = target_date.replace(hour=0,minute=0,second=0,microsecond=0)
+		target_date_end= target_date+timedelta(1)
+
+	for evaluator in evaluators_sales_target:
+		# total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,order_status='ORDER_CLOSED',created__range=(target_date_start,target_date_end)).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+		
+		if date_or_month == 'Month':
+			total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(monthdate1,monthdate2),evaluation__quatation_status='APPROVED')
+			total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(monthdate1,monthdate2))
+		else:
+			total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(target_date_start,target_date_end),evaluation__quatation_status='APPROVED')
+			total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(target_date_start,target_date_end))
+
+		total_sales_approved_amount = total_sales_approved.aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+		total_sales_approved_count = total_sales_approved.count()
+		
+		total_sales_submitted_amount = total_sales_submitted.aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+		total_sales_submitted_count = total_sales_submitted.count()
+
+		if not total_sales_approved_amount:
+			total_sales_approved_amount = 0.0
+		if not total_sales_submitted_amount:
+			total_sales_submitted_amount = 0.0
+
+		print(total_sales_approved_amount,total_sales_submitted_amount,"evat")
+
+		evaluator_target_dict = {
+		"evaluator_id" : evaluator.id,
+		"amount" : total_sales_approved_amount,
+		"submitted":total_sales_submitted_amount,
+		"approved_count":total_sales_approved_count,
+		"submitted_count":total_sales_submitted_count
+		}
+		data.append(evaluator_target_dict)
+	print(data,"here")
+
+	if date_or_month == 'Month':
+		agent_total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(monthdate1,monthdate2),evaluation__quatation_status='APPROVED')
+		agent_total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(monthdate1,monthdate2))
+	else:
+		agent_total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(target_date_start,target_date_end),evaluation__quatation_status='APPROVED')
+		agent_total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(target_date_start,target_date_end))
+	
+	agent_sales_approved_amount = agent_total_sales_approved.aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+	agent_sales_approved_count = agent_total_sales_approved.count()
+	
+	agent_sales_submitted_amount = agent_total_sales_submitted.aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+	agent_sales_submitted_count = agent_total_sales_submitted.count()
+
+	if not agent_sales_approved_amount:
+		agent_sales_approved_amount = 0.0
+	if not agent_sales_submitted_amount:
+		agent_sales_submitted_amount = 0.0
+
+	print(agent_sales_approved_amount,agent_sales_submitted_amount,"aget")
+		
+	agent_target_dict = {
+		"evaluator_id" : 0,
+		"amount" : agent_sales_approved_amount,
+		"submitted":agent_sales_submitted_amount,
+		"approved_count":agent_sales_approved_count,
+		"submitted_count":agent_sales_submitted_count
+		}
+	data.append(agent_target_dict)
+	return JsonResponse(data,safe=False)
+
+def evaluationcalendardate(request):
+	data = dict()
+	evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
+		
+	try:
+		evaluation_date = datetime.strptime(evaluation_calendar_date,'%d-%m-%Y')
+	except:
+		evaluation_date = timezone.now().replace(tzinfo=None)	
+
+	evaluation_date_start  = evaluation_date.replace(hour=0,minute=0,second=0,microsecond=0)
+	evaluation_date_end    = evaluation_date_start+timedelta(1)	
+	
+	try:
+		evaluation_details		  = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').prefetch_related(Prefetch('evaluator_evaluation',queryset=EvaluationDetails.objects.filter(is_active=True,proposed_time__gte=evaluation_date_start,proposed_time__lte=evaluation_date_end),to_attr='evaluation_details'))
+	except:
+		evaluation_details 		  = None
+
+	try:
+		workers = UserProfile.objects.filter(is_active=True)
+	except:
+		workers = None
+
+	context = {'evaluation_details':evaluation_details,"workers":workers}
+	data['evaluationdetails'] = render_to_string('salesadmin/home/evaluation-calendar-snippet.html',context)
+	return JsonResponse(data)
+
+class AdminPaymentEdit(IsSalesAdmin,View):
+
+	def get(self,request,enquiry_id,evaluation_id):
+		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
+		
+		try:
+			evaluation = Evaluation.objects.get(id=evaluation_id)
+		except:
+			evaluation = None		
+	
+		try:
+			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation)
+		except:
+			evaluation_details = None
+
+		#allow submition	
+		evaluation_details_count         = evaluation_details.count()
+		evaluation_details_completed_count= evaluation_details.filter(status='EVALUATED').count()
+		if evaluation_details_count==evaluation_details_completed_count:
+			allow_submit = True
+		else:
+			allow_submit = False	
+
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()				
+
+		return render(request,'salesadmin/payment/payment_edit.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,})	
+
+	def post(self,request,enquiry_id,evaluation_id):
+		
+		payment_method 			= request.POST.get('payment_method')
+		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
+		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
+
+		#for delete previous subscription
+		evaluation      = Evaluation.objects.get(id=evaluation_id)
+		order			= Order.objects.get(evaluation_id=evaluation_id)
+
+		if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
+			OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
+			PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
+
+		#update payment method
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+
+		#update payment subscription if it is subscription
+		if payment_method == 'POSTPAIDSUBSCRIPTION' or payment_method == 'PREPAIDSUBSCRIPTION':
+			order           = Order.objects.get(evaluation_id=evaluation_id)
+			order_schedules = OrderScheduler.objects.filter(order__evaluation__id=evaluation_id)
+
+			#create subscription model
+			cleaning_months = order_schedules.annotate(month=ExtractMonth('start_at'),year=ExtractYear('start_at')).values_list('month','year').distinct()
+			count=0
+			for month in cleaning_months:
+				count += 1
+				if len(cleaning_months) == count:
+					amount = evaluation.total_cost-round((evaluation.total_cost/len(cleaning_months)*(count-1)),3)			
+					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=amount,monthyear=(str(month[0])+'-'+str(month[1])) )
+				else:
+					subscription = PaymentSubscriptionDetails.objects.create(order=order,amount=round(evaluation.total_cost/len(cleaning_months),3),monthyear=(str(month[0])+'-'+str(month[1])) )			
+	
+				#update orderschedules
+				for schedule in order_schedules:
+					if payment_method == 'POSTPAIDSUBSCRIPTION':
+						if schedule.start_at.date().month-1 == month[0]:
+							schedule.payment_subscription = subscription
+							schedule.save()
+						elif schedule.start_at.date().month == 1 and schedule.start_at.date().year-1 == month[1] and month[0] == 12:	
+							schedule.payment_subscription = subscription
+							schedule.save()
+					else:
+						if schedule.start_at.date().month == month[0] and schedule.start_at.date().year == month[1]:
+							schedule.payment_subscription = subscription
+							schedule.save()
+		
+		messages.success(request,"Payment Policy Edited Succesfully")
+
+		return redirect('bleach_salesadmin:salesadmin-client-orderdetails',order.id)
+
+
+
+class MakeQuatationPhase1Edit(IsSalesAdmin,View):	
+
+	def get(self,request,enquiry_id,evaluation_id):
+		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
+		
+		try:
+			evaluation = Evaluation.objects.get(id=evaluation_id)
+		except:
+			evaluation = None		
+	
+		try:
+			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation)
+		except:
+			evaluation_details = None
+
+		#allow submition	
+		evaluation_details_count         = evaluation_details.count()
+		evaluation_details_completed_count= evaluation_details.filter(status='EVALUATED').count()
+		if evaluation_details_count==evaluation_details_completed_count:
+			allow_submit = True
+		else:
+			allow_submit = False	
+
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()				
+
+		return render(request,'salesadmin/enquiry/phase1quatationedit.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,})	
+
+	def post(self,request,enquiry_id,evaluation_id):
+		
+		payment_method 			= request.POST.get('payment_method')
+		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
+		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
+
+		#update payment method
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+
+
+		#sms integration
+		evaluation = Evaluation.objects.prefetch_related(Prefetch('evaluation_details',EvaluationDetails.objects.filter(is_active=True).select_related('address'),to_attr='evaluation_address')).filter(id=evaluation_id,is_active=True).get(id=evaluation_id,is_active=True)	
+		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
+		if evaluationdetails.address.floor == None:
+			address_floor = '-'
+		else:
+			address_floor = evaluationdetails.address.floor
+
+		if evaluationdetails.address.avenue == None:
+			address_avenue = '-'
+		else:
+			address_avenue = evaluationdetails.address.avenue
+
+		evaluationbook = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
+		
+		messages.success(request,"Quatation Edited Succesfully")
+
+		if evaluation.customer.is_sms == True:
+
+			url = "https://smsapi.future-club.com/fccsms.aspx"
+
+			if evaluation.payment_method == 'SUBSCRIPTION':
+				smsurl = "https://my.bleachkw.com/customer/subscription/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+			else:
+				smsurl = "https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+
+			if evaluation.customer.sms_preference == 'ENGLISH':
+
+				message = "Dear Customer, Please find the Revised Quotation against the order number "+str(evaluation.evaluation_id)+"  here "+smsurl+" . Order Number : "+ str(evaluation.evaluation_id) +". Service Type(s) : "+ evaluationbook.service_type.name +", Address(s) : "+evaluationdetails.address.apartment+","+address_floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+address_avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+", Cost : "+ str(evaluation.total_cost) +", Due Date : "+ str(evaluation.quatation_expiry_date) +". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+
+			else:
+				message = "عزيزنا العميل نرجوا الاطلاع على عرض السعر المعدّل للطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط "+smsurl+" .رقم الطلب: "+ str(evaluation.evaluation_id) +"الخدمة: "+ evaluationbook.service_type.name +"العنوان: "+evaluationdetails.address.apartment+","+address_floor+","+evaluationdetails.address.street+","+evaluationdetails.address.building+","+address_avenue+","+evaluationdetails.address.block+","+evaluationdetails.address.area.name+","+evaluationdetails.address.governorate.name+"السعر: "+ str(evaluation.total_cost) +" KDتاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +"لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+
+			headers = {
+				'cache-control': "no-cache"
+			}
+
+			response = requests.request("GET", url, headers=headers, params=querystring)
+
+			print(response.text,"respo")
+		else:
+			pass
+
+		return redirect('bleach_salesadmin:salesadmindash-board')
+
+
+class MakeQuatationPhase2Edit(IsSalesAdmin,View):
+	service_formset_define    = formset_factory(QuatationServiceForm)
+	service_formset_store     = modelformset_factory(EvaluationBook,QuatationServiceForm)
+	def get(self,request,evaluation_detail_id):
+
+		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationbookmedias'),Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')).get(is_active=True,id=evaluation_detail_id)
+
+		try:
+			service_types = ServiceType.objects.filter(is_active=True)
+		except:
+			service_types = None
+
+		try:
+			area_types = AreaType.objects.filter(is_active=True)
+		except:
+			area_types = None
+
+		try:
+			cleaning_sections = CleaningSection.objects.filter(is_active=True)
+		except:
+			cleaning_sections = None
+
+		return render(request,'salesadmin/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
+
+	def post(self,request,evaluation_detail_id):
+		
+		evaluation_details 	  = EvaluationDetails.objects.select_related('evaluation__customer','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationbookmedias'),Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')).get(is_active=True,id=evaluation_detail_id)
+		service_formset       = self.service_formset_store(request.POST)
+
+		if service_formset.is_valid() :
+			form_count = 0
+			#old order update
+			old_order = Order.objects.get(evaluation=evaluation_details.evaluation)
+
+			order_schedule_array          = []
+			#Save Service Form
+			for service_form in service_formset:
+				if service_form.is_valid():
+					old_form_id                                 = request.POST.get('editform'+str(form_count))
+					if old_form_id:
+						old_form_id								= int(old_form_id)
+						very_old_book                           = EvaluationBook.objects.get(id=old_form_id)
+
+						#update book
+						EvaluationBook.objects.filter(id=service_form['id'].value()).update(cleaning_policy=service_form['cleaning_policy'].value(),service_type=service_form['service_type'].value(),area_type=service_form['area_type'].value(),cleaning_method=service_form['cleaning_method'].value(),location_type=service_form['location_type'].value(),number_of_cleaners=service_form['number_of_cleaners'].value(),estimated_cost=service_form['estimated_cost'].value(),discount=service_form['discount'].value(),total_cost=service_form['total_cost'].value(),cleaning_hours=service_form['cleaning_hours'].value(),evaluator_note=service_form['evaluator_note'].value())
+
+						#To Save Media
+						medias = request.FILES.getlist('newform-'+str(form_count)+'-media')
+						if not medias==['']:
+							for media in medias:
+								EvaluationMedia.objects.create(
+										evaluation_book_id=old_form_id,
+										media=media,
+										media_type='PHOTO',
+										taken_status='AGENT_TAKEN'
+										)
+
+						#for updating cost details in evaluation details and evaluation
+						cost     = float(request.POST.get('form-'+str(form_count)+'-estimated_cost'))
+						discount = float(request.POST.get('form-'+str(form_count)+'-discount'))
+						total    = float(request.POST.get('form-'+str(form_count)+'-total_cost'))
+
+						#for creating cleaning schedules and corresponding cleanings
+						cleaning_policy = request.POST.get('form-'+str(form_count)+'-cleaning_policy')
+						start_time      = request.POST.get('form-'+str(form_count)+'-tendative_time')
+						cleaning_hours  = request.POST.get('form-'+str(form_count)+'-cleaning_hours')
+
+						old_book      =  EvaluationBook.objects.get(id=old_form_id)
+
+						if cleaning_policy == 'SUBSCRIPTION':
+							tendative_dates = request.POST.get('form-'+str(form_count)+'-tendative_dates').split(',')
+							for date in tendative_dates:
+								print(date)
+								start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
+								end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
+								order_schedule_array.append(OrderScheduler(order=old_order,status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))
+
+
+							updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total,status='EVALUATED')
+							updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total)
+							update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')-very_old_book.total_cost+total,remining_amount=F('remining_amount')-very_old_book.total_cost+total)							
+						else:
+							tendative_date  = request.POST.get('form-'+str(form_count)+'-tendative_date')
+
+							start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
+							end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
+							order_schedule_array.append(OrderScheduler(order=old_order,status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))
+
+							updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total,status='EVALUATED')
+							updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total)
+							update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')-very_old_book.total_cost+total,remining_amount=F('remining_amount')-very_old_book.total_cost+total)
+						#to save and update sections
+						no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))
+						section_array          = []
+						for i in range(no_of_sections):
+							section_name  = request.POST.get('form'+str(form_count)+'_section'+str(i))
+							category      = request.POST.get('form'+str(form_count)+'_category'+str(i))
+							dirt_level    = request.POST.get('form'+str(form_count)+'_dirt_level'+str(i))
+							quantity      = request.POST.get('form'+str(form_count)+'_quantity'+str(i))
+							size          = request.POST.get('form'+str(form_count)+'_size'+str(i))
+							unit          = request.POST.get('form'+str(form_count)+'_unit'+str(i))
+							age           = request.POST.get('form'+str(form_count)+'_age'+str(i))
+							floor         = request.POST.get('form'+str(form_count)+'_floor'+str(i))
+							apartment     = request.POST.get('form'+str(form_count)+'_apartment'+str(i))
+							room          = request.POST.get('form'+str(form_count)+'_room'+str(i))
+							wall_type     = request.POST.get('form'+str(form_count)+'_walltype'+str(i))
+							ceiling_type  = request.POST.get('form'+str(form_count)+'_ceilingtype'+str(i))
+							floor_type    = request.POST.get('form'+str(form_count)+'_floortype'+str(i))
+							material      = request.POST.get('form'+str(form_count)+'_material'+str(i))
+							colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
+							cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
+							section_cost  = request.POST.get('form'+str(form_count)+'_sectioncost'+str(i))
+
+							old_section_id=request.POST.get('editform'+str(form_count)+'_section'+str(i))
+							
+							try:
+								section_name_arabic = Translator().translate(section_name,src='en', dest='ar').text
+							except:
+								section_name_arabic = section_name
+							
+							if old_section_id:
+								#edit section
+								if cleaning_policy == 'SUBSCRIPTION':
+									section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=len(tendative_dates),section_net_cost=len(tendative_dates)*float(section_cost))
+								else:
+									section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
+							else:
+								#save section
+								if cleaning_policy == 'SUBSCRIPTION':
+									section = EvaluationBookSection.objects.create(evaluation_book=old_book,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=len(tendative_dates),section_net_cost=len(tendative_dates)*float(section_cost))
+								else:
+									section = EvaluationBookSection.objects.create(evaluation_book=old_book,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
+
+							#to save and update keynotes
+							try:
+								no_of_keynotes = int(request.POST.get('form'+str(form_count)+'_section'+str(i)+'-keynote_counter'))
+							except:
+								no_of_keynotes = None
+
+							keynote_array = []
+							if no_of_keynotes:
+								for j in range(no_of_keynotes):
+									old_keynote_id=request.POST.get('editform'+str(form_count)+'_section'+str(i)+'_keynote'+str(j))
+
+									keynote = request.POST.get('form'+str(form_count)+'_section'+str(i)+'_keynote'+str(j))
+									quantity= request.POST.get('form'+str(form_count)+'_section'+str(i)+'_quantity'+str(j))
+
+									if old_keynote_id:
+										if keynote and quantity:
+											EvaluationSectionKeynote.objects.filter(id=old_keynote_id).update(id=old_keynote_id,sub_area=keynote,quantity=quantity)
+									else:
+										if old_section_id and keynote and quantity:
+											old_section = EvaluationBookSection.objects.get(id=old_section_id)
+											keynote_array.append(EvaluationSectionKeynote(evaluation_section=old_section,sub_area=keynote,quantity=quantity))
+										elif keynote and quantity:
+											keynote_array.append(EvaluationSectionKeynote(evaluation_section=section,sub_area=keynote,quantity=quantity))
+								#bulk_create keynote
+								EvaluationSectionKeynote.objects.bulk_create(keynote_array)
+							
+						#delete old order schedules
+						OrderScheduler.objects.filter(order_scheduler_book_id=old_form_id).delete()	
+				
+				form_count = form_count+1
+
+			#bulk_create order schedules
+			OrderScheduler.objects.bulk_create(order_schedule_array)
+
+			messages.success(request,"Services Succesfully Updated")
+
+		else:
+			if not service_formset.is_valid():
+				messages.error(request,"An Error Occured")
+
+			try:
+				service_types = ServiceType.objects.filter(is_active=True)
+			except:
+				service_types = None
+
+			try:
+				area_types = AreaType.objects.filter(is_active=True)
+			except:
+				area_types = None
+
+			try:
+				cleaning_sections = CleaningSection.objects.filter(is_active=True)
+			except:
+				cleaning_sections = None
+
+			return render(request,'salesadmin/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
+
+		return redirect('bleach_salesadmin:salesadmin-makequatation1edit',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
+
+
+class MakeQuatationPhase2Delete(IsSalesAdmin,View):
+	def post(self,request,evaluation_detail_id):
+		
+		enquiry_id    = request.POST.get('enquiry_id')
+		evaluation_id = request.POST.get('evaluation_id')
+
+		evaluation_details = EvaluationDetails.objects.get(id=evaluation_detail_id)
+
+		#update cost
+		update_evaluation 		  = Evaluation.objects.filter(is_active=True,id=evaluation_id).update(estimated_cost=F('estimated_cost')-evaluation_details.estimated_cost,discount=F('discount')-evaluation_details.discount,total_cost=F('total_cost')-evaluation_details.total_cost,)
+		update_order              = Order.objects.filter(is_active=True,evaluation__id=evaluation_id).update(total_amount=F('total_amount')-evaluation_details.total_cost)
+
+		#delete evaluation details
+		evaluation_details.delete()
+
+
+		#delete full order if no other evaluations exists
+		try:
+			updated_evaluation = Evaluation.objects.prefetch_related('evaluation_details').get(is_active=True,id=evaluation_id)
+		except:
+			updated_evaluation = None
+
+		if not updated_evaluation.evaluation_details.exists():
+			updated_evaluation.delete()
+			Order.objects.filter(is_active=True,evaluation__id=evaluation_id).delete()
+			return redirect('bleach_salesadmin:salesadmin-orders')
+
+		return redirect('bleach_salesadmin:salesadmin-makequatation1edit',enquiry_id,evaluation_id)		
+
+
+class AddNewService(IsSalesAdmin,View):
+	service_formset_define    = formset_factory(QuatationServiceForm)
+	def get(self,request,evaluation_detail_id,edit_type):
+		
+		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationbookmedias'),Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')).get(is_active=True,id=evaluation_detail_id)
+
+		try:
+			service_types = ServiceType.objects.filter(is_active=True)
+		except:
+			service_types = None
+
+		try:
+			area_types = AreaType.objects.filter(is_active=True)
+		except:
+			area_types = None
+
+		try:
+			cleaning_sections = CleaningSection.objects.filter(is_active=True)
+		except:
+			cleaning_sections = None
+
+		return render(request,'salesadmin/enquiry/addservice.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections})	
+
+	def post(self,request,evaluation_detail_id,edit_type):
+		service_formset       = self.service_formset_define(request.POST)
+		evaluation_details 	  = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
+
+		if service_formset.is_valid() :
+			form_count = 0
+			#create order roughly
+			new_order 				= Order.objects.get_or_create(evaluation=evaluation_details.evaluation,order_no=evaluation_details.evaluation.evaluation_id)
+
+			order_schedule_array = []
+			#Save Service Form
+			for service_form in service_formset:
+
+				if service_form.is_valid():
+					service_form_save 					    = service_form.save(commit=False)
+					service_form_save.evaluation_details_id = evaluation_detail_id
+					service_form_save.save()
+
+
+					#To Save Media
+					medias = request.FILES.getlist('form-'+str(form_count)+'-media')
+					if not medias==['']:
+						for media in medias:
+							EvaluationMedia.objects.create(
+									evaluation_book=service_form_save,
+									media=media,
+									media_type='PHOTO',
+									taken_status='AGENT_TAKEN'
+									)
+
+					#for updating cost details in evaluation details
+					cost     = float(request.POST.get('form-'+str(form_count)+'-estimated_cost'))
+					discount = float(request.POST.get('form-'+str(form_count)+'-discount'))
+					total    = float(request.POST.get('form-'+str(form_count)+'-total_cost'))
+
+					#for creating cleaning schedules and corresponding cleanings
+
+					cleaning_policy = request.POST.get('form-'+str(form_count)+'-cleaning_policy')
+					start_time      = request.POST.get('form-'+str(form_count)+'-tendative_time')
+					cleaning_hours  = request.POST.get('form-'+str(form_count)+'-cleaning_hours')
+
+					if cleaning_policy == 'SUBSCRIPTION':
+						tendative_dates = request.POST.get('form-'+str(form_count)+'-tendative_dates').split(',')
+						for date in tendative_dates:
+							start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
+							end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
+							order_schedule_array.append(OrderScheduler(order=new_order[0],status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))
+
+
+						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
+						updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)
+						if edit_type == 'duplicate':
+							pass
+						else:
+							update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')+total,remining_amount=F('remining_amount')+total)
+					else:
+						tendative_date  = request.POST.get('form-'+str(form_count)+'-tendative_date')
+
+						start_date_time = datetime.strptime(tendative_date+' '+start_time,'%d-%m-%Y %I:%M %p')
+						end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
+						order_schedule_array.append(OrderScheduler(order=new_order[0],status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))
+
+
+						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
+						updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)
+						if edit_type == 'duplicate':
+							pass
+						else:
+							update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')+total,remining_amount=F('remining_amount')+total)
+					#to save sections
+					no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))
+					section_array          = []
+					for i in range(no_of_sections):
+						section_name  = request.POST.get('form'+str(form_count)+'_section'+str(i))
+						category      = request.POST.get('form'+str(form_count)+'_category'+str(i))
+						dirt_level    = request.POST.get('form'+str(form_count)+'_dirt_level'+str(i))
+						quantity      = request.POST.get('form'+str(form_count)+'_quantity'+str(i))
+						size          = request.POST.get('form'+str(form_count)+'_size'+str(i))
+						unit          = request.POST.get('form'+str(form_count)+'_unit'+str(i))
+						age           = request.POST.get('form'+str(form_count)+'_age'+str(i))
+						floor         = request.POST.get('form'+str(form_count)+'_floor'+str(i))
+						apartment     = request.POST.get('form'+str(form_count)+'_apartment'+str(i))
+						room          = request.POST.get('form'+str(form_count)+'_room'+str(i))
+						wall_type     = request.POST.get('form'+str(form_count)+'_walltype'+str(i))
+						ceiling_type  = request.POST.get('form'+str(form_count)+'_ceilingtype'+str(i))
+						floor_type    = request.POST.get('form'+str(form_count)+'_floortype'+str(i))
+						material      = request.POST.get('form'+str(form_count)+'_material'+str(i))
+						colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
+						cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
+						section_cost  = request.POST.get('form'+str(form_count)+'_sectioncost'+str(i))
+
+						
+						try:
+							section_name_arabic = Translator().translate(section_name,src='en', dest='ar').text
+						except:
+							section_name_arabic = section_name
+
+						#save section
+						if cleaning_policy == 'SUBSCRIPTION':
+							section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=len(tendative_dates),section_net_cost=len(tendative_dates)*float(section_cost))
+						else:
+							section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
+
+						#to save keynotes
+						try:
+							no_of_keynotes = int(request.POST.get('form'+str(form_count)+'_section'+str(i)+'-keynote_counter'))
+						except:
+							no_of_keynotes = None
+
+						keynote_array = []
+						if no_of_keynotes:
+							for j in range(no_of_keynotes):
+								keynote = request.POST.get('form'+str(form_count)+'_section'+str(i)+'_keynote'+str(j))
+								quantity= request.POST.get('form'+str(form_count)+'_section'+str(i)+'_quantity'+str(j))
+								if keynote and quantity:
+									keynote_array.append(EvaluationSectionKeynote(evaluation_section=section,sub_area=keynote,quantity=quantity))
+							#bulk_create keynote
+							EvaluationSectionKeynote.objects.bulk_create(keynote_array)
+
+					form_count = form_count+1
+			#bulk_create order schedules
+			now = timezone.now()
+			OrderScheduler.objects.bulk_create(order_schedule_array)
+
+
+			messages.success(request,"Services Succesfully Added")
+
+		else:
+			if not service_formset.is_valid():
+				messages.error(request,"An Error Occured")
+
+			try:
+				service_types = ServiceType.objects.filter(is_active=True)
+			except:
+				service_types = None
+
+			try:
+				area_types = AreaType.objects.filter(is_active=True)
+			except:
+				area_types = None
+
+			return render(request,'salesadmin/enquiry/addservice.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,'area_types':area_types,'service_types':service_types,})		
+
+		if edit_type == 'duplicate':
+			return redirect('agent:agent-makequatation2duplicateedit',evaluation_details.id)
+		else:
+			return redirect('bleach_salesadmin:salesadmin-makequatation2edit',evaluation_details.id)
