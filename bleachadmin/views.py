@@ -809,7 +809,7 @@ class ResourceManagement(IsAdmin,View):
 	def get(self,request):
 		
 		try:
-			staffs = UserProfile.objects.filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
+			staffs = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER')))
 		except:
 			staffs = None	
 
@@ -821,7 +821,7 @@ class ResourceManagement(IsAdmin,View):
 
 		#total workers count
 		try:
-			total_workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))).count()
+			total_workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).count()
 		except:
 			total_workers = 0
 		
@@ -883,12 +883,12 @@ class ResourceManagement(IsAdmin,View):
 
 		if search:
 			try:
-				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))&Q(name__icontains=search))
+				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))&Q(name__icontains=search))
 			except:
 				workers =  None
 		else:
 			try:
-				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
+				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER')))
 			except:
 				workers =  None
  

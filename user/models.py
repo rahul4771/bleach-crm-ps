@@ -12,8 +12,8 @@ USER_TYPE_CHOICES=(
     ('ADMIN','ADMIN'), 
     ('AGENT','AGENT'),
     ('EVALUATOR','EVALUATOR'),
-    ('SENIORTEAMLEADER','SENIORTEAMLEADER'),
-    ('TEAMLEADER','TEAMLEADER'),
+    ('SENIORTEAMINCHARGE','SENIORTEAMINCHARGE'),
+    ('TEAMINCHARGE','TEAMINCHARGE'),
     ('CLEANER','CLEANER'),
     ('CUSTOMER','CUSTOMER'),
     ('DRIVER','DRIVER'),
@@ -78,7 +78,7 @@ class UserProfile(AbstractUser):
     name			= models.CharField(max_length=100,blank=False,null=False)
     name_arabic     = models.CharField(max_length=100,blank=True,null=True)
     bleach_mobile_number = models.CharField(max_length=10,blank=True,null=True)
-    user_type 		= models.CharField(max_length=20,blank=True,null=True,choices=USER_TYPE_CHOICES)
+    user_type 		= models.CharField(max_length=20,blank=True,null=True,choices=USER_TYPE_CHOICES,default='TEAMINCHARGE')
     gender 	  		= models.CharField(max_length=20,blank=True,null=True,choices=GENDER_CHOICES)
     nationality		= CountryField(null=True,blank=True)
     company 		= models.CharField(max_length=100,blank=True,null=True)

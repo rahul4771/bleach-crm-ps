@@ -30,10 +30,10 @@ class Signin(View):
 			if request.user.user_type == 'EVALUATOR':
 				return redirect('evaluator:evaluatordash-board')
 
-			if request.user.user_type == 'SENIORTEAMLEADER':	
+			if request.user.user_type == 'SENIORTEAMINCHARGE':	
 				return redirect('stl:stldash-board')
 
-			if request.user.user_type == 'TEAMLEADER':	
+			if request.user.user_type == 'TEAMINCHARGE':	
 				return redirect('tl:tldash-board')
 
 			if request.user.user_type == 'ACCOUNTANT':	
@@ -66,10 +66,10 @@ class Signin(View):
 			if user.user_type == 'EVALUATOR':
 				return redirect('evaluator:evaluatordash-board')
 
-			if user.user_type == 'SENIORTEAMLEADER':	
+			if user.user_type == 'SENIORTEAMINCHARGE':	
 				return redirect('stl:stldash-board')
 
-			if user.user_type == 'TEAMLEADER':	
+			if user.user_type == 'TEAMINCHARGE':	
 				return redirect('tl:tldash-board')
 
 			if user.user_type == 'ACCOUNTANT':	
@@ -171,7 +171,7 @@ def adddata(request):
 	# 	random_cust_type = list_function(customer_types)
 	# 	customers.append(UserProfile(
 	# 	name = 'STL'+str(i),
-	# 	user_type = 'SENIORTEAMLEADER',
+	# 	user_type = 'SENIORTEAMINCHARGE',
 	# 	username = 'stl'+str(i),
 	# 	gender = random_gender,
 	# 	nationality = 'Kuwait',
@@ -183,7 +183,7 @@ def adddata(request):
 	# 	random_cust_type = list_function(customer_types)
 	# 	customers.append(UserProfile(
 	# 	name = 'TL'+str(i),
-	# 	user_type = 'TEAMLEADER',
+	# 	user_type = 'TEAMINCHARGE',
 	# 	username = 'tl'+str(i),
 	# 	gender = random_gender,
 	# 	nationality = 'Kuwait',
@@ -387,7 +387,7 @@ def adddata(request):
 	# 	print(t.investigation.order.evaluation.quatation_approved_date,"pl")
 	# cleanteam = []
 	# teamleaders = []
-	# tl = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER')
+	# tl = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE')
 	# for t in tl:
 	# 	teamleaders.append(t)
 	

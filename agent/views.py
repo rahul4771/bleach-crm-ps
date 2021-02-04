@@ -606,10 +606,10 @@ def CleaningExistingDates(request):
 		active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
 		active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
 
-	cleaning_active_team_leaders = active_cleaners1.filter(member__user_type='TEAMLEADER')
+	cleaning_active_team_leaders = active_cleaners1.filter(member__user_type='TEAMINCHARGE')
 	cleaning_active_cleaners     = active_cleaners1.filter(member__user_type='CLEANER')
 
-	followup_active_team_leaders = active_cleaners2.filter(member__user_type='TEAMLEADER')
+	followup_active_team_leaders = active_cleaners2.filter(member__user_type='TEAMINCHARGE')
 	followup_active_cleaners     = active_cleaners2.filter(member__user_type='CLEANER')
 
 	#merging
@@ -659,25 +659,25 @@ def CleaningExistingDates(request):
 	#remove available dates
 	if service_type == 'General Cleaning':
 		total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER',is_general_skill=True).count()
-		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER',is_general_skill=True).count()		
+		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE',is_general_skill=True).count()		
 	elif service_type == 'Upholstery Cleaning':
 		total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER',is_upholstery_skill=True).count()
-		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER',is_upholstery_skill=True).count()
+		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE',is_upholstery_skill=True).count()
 	elif service_type == 'Kitchen Cleaning':
 		total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER',is_kitchen_skill=True).count()
-		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER',is_kitchen_skill=True).count()
+		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE',is_kitchen_skill=True).count()
 	elif service_type == 'Carpet Cleaning':
 		total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER',is_carpet_skill=True).count()
-		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER',is_carpet_skill=True).count()
+		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE',is_carpet_skill=True).count()
 	elif service_type == 'Sterilization':
 		total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER',is_sterilization_skill=True).count()
-		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER',is_sterilization_skill=True).count()
+		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE',is_sterilization_skill=True).count()
 	elif service_type == 'Deep Cleaning':
 		total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER',is_deep_skill=True).count()
-		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER',is_deep_skill=True).count()
+		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE',is_deep_skill=True).count()
 	else:
 		total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER').count()
-		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMLEADER').count()
+		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').count()
 
 	for k, v in list(team_leaders_busy.items()):
 		if v < total_leaders:
@@ -1212,7 +1212,7 @@ class ResourceManagement(IsAgent,View):
 	def get(self,request):
 
 		try:
-			staffs = UserProfile.objects.filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
+			staffs = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER')))
 		except:
 			staffs = None
 
@@ -1234,7 +1234,7 @@ class ResourceManagement(IsAgent,View):
 
 		#total workers count
 		try:
-			total_workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))).count()
+			total_workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).count()
 		except:
 			total_workers = 0
 
@@ -1282,12 +1282,12 @@ class ResourceManagement(IsAgent,View):
 
 		if search:
 			try:
-				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))&Q(name__icontains=search))
+				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))&Q(name__icontains=search))
 			except:
 				workers =  None
 		else:
 			try:
-				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))
+				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER')))
 			except:
 				workers =  None
 
@@ -3975,9 +3975,9 @@ def ResourcesToggle(request):
 	search = request.GET.get('search',None)
 
 	if search:
-		workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER'))&Q(name__icontains=search))#.prefetch_related( Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__order_scheduler__order__feed_backs_order').filter(is_active=True,team__check_out__isnull=False),to_attr='cleaningmembers'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__followup_scheduler__follow_up__investigation__order').filter(is_active=True,team__check_out__isnull=False),to_attr='followupmembers'))
+		workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))&Q(name__icontains=search))#.prefetch_related( Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__order_scheduler__order__feed_backs_order').filter(is_active=True,team__check_out__isnull=False),to_attr='cleaningmembers'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__followup_scheduler__follow_up__investigation__order').filter(is_active=True,team__check_out__isnull=False),to_attr='followupmembers'))
 	else:
-		workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMLEADER')|Q(user_type='CLEANER')))#.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__order_scheduler__order__feed_backs_order').filter(is_active=True,team__check_out__isnull=False),to_attr='cleaningmembers'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__followup_scheduler__follow_up__investigation__order').filter(is_active=True,team__check_out__isnull=False),to_attr='followupmembers'))
+		workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER')))#.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__order_scheduler__order__feed_backs_order').filter(is_active=True,team__check_out__isnull=False),to_attr='cleaningmembers'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__followup_scheduler__follow_up__investigation__order').filter(is_active=True,team__check_out__isnull=False),to_attr='followupmembers'))
 
 	if staff_type:
 		workers =  workers.filter(user_type=staff_type)

@@ -23,14 +23,14 @@ class IsEvaluator(UserPassesTestMixin):
 
 class IsSeniorTeamLeader(UserPassesTestMixin):
     def test_func(self):
-        if self.request.user.is_authenticated and self.request.user.user_type=='SENIORTEAMLEADER' and self.request.user.is_active==True:
+        if self.request.user.is_authenticated and self.request.user.user_type=='SENIORTEAMINCHARGE' and self.request.user.is_active==True:
             return True
         else:
             return False
 
 class IsTeamLeader(UserPassesTestMixin):
     def test_func(self):
-        if self.request.user.is_authenticated and self.request.user.user_type=='TEAMLEADER' and self.request.user.is_active==True:
+        if self.request.user.is_authenticated and self.request.user.user_type=='TEAMINCHARGE' and self.request.user.is_active==True:
             return True
         else:
             return False            
