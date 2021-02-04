@@ -620,7 +620,7 @@ class OrderDetails(IsAccountant,View):
 
 		
 		
-		fil_status = request.GET.get('status')
+		fil_status 				= request.GET.get('status')
 		fil_payment_policy		= request.GET.get('payment_policy')
 		#filters
 		filters=[]
