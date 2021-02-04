@@ -140,7 +140,7 @@
               <td class="balance_amount align-right" >0.000</td>
             </tr>
 
-            {% if account.order.remining_amount > 0 %}
+            
             <tr>
               <td style="text-align:left;">&nbsp;&nbsp;{{account.paid_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
               <td class="align-left">Receipt #RES{{account.receipt_no}}</td>
@@ -148,7 +148,7 @@
               <td class="credit_amount align-right">{{account.order.remining_amount|floatformat:3}}</td>
               <td class="balance_amount align-right" >0.000</td>
             </tr>
-            {% endif %}
+            
             {% endfor %}
 
             <tr>
