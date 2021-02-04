@@ -726,5 +726,45 @@ def receipt_html_to_pdf_view(request,payment_id):
 def statement_of_account(request,client_id):
 	client = UserProfile.objects.get(is_active=True,id=int(client_id))
 	address = Address.objects.filter(customer__id=int(client_id)).first()
+
+	invoices         = Order.objects.filter(is_active=True).filter(evaluation__customer__id=int(client_id),evaluation__quatation_status='APPROVED',order_status__isnull=False).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
+	
+	#Pending Payments
+	pending_payments = invoices.filter(Q( Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))) | Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(preamount_paid=0)) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
+	
+	#remove object in postpaid if not last cleaning fulfilled	
+	#remove if subscription to pay date
+	if pending_payments:
+		for payment in pending_payments:
+			if payment.evaluation.payment_method == 'POSTPAID':
+				very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
+				if very_latest_cleaning.work_status != 'CLEANING_FULFILLED':
+					pending_payments = pending_payments.exclude(id=payment.id)
+			if payment.evaluation.payment_method == 'SUBSCRIPTION' and not payment.subscription_topay_date:
+				pending_payments = pending_payments.exclude(id=payment.id)	
+
+	#to find days
+	if pending_payments:
+		for payment in pending_payments:
+			if payment.evaluation.payment_method == 'PREPAID' and payment.orderschedules:
+				very_old_cleaning   = payment.orderschedules[0]
+				payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
+			elif payment.evaluation.payment_method == 'POSTPAID' and payment.orderschedules:
+				very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
+				payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
+			elif payment.evaluation.payment_method == 'BREAKDOWN' and payment.orderschedules:
+			
+				very_old_cleaning   = payment.orderschedules[0]
+				very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
+				payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
+				payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
+
+				#to check last cleaning completed for break down after payment
+				if very_latest_cleaning.work_status == 'CLEANING_FULFILLED':
+					payment.last_completed = True	
+
+			elif payment.evaluation.payment_method == 'SUBSCRIPTION':				
+				payment.delaydays= (timezone.now()-payment.subscription_topay_date).days	
+
 	paymenthistory = PaymentHistory.objects.filter(is_active=True,order__evaluation__customer__id=int(client_id)).order_by('paid_date')
-	return render(request,"customer/statement_of_account.html",{"client":client,"address":address,"accounts":paymenthistory})
+	return render(request,"customer/statement_of_account.html",{"client":client,"address":address,"accounts":paymenthistory,"pending_payments":pending_payments})
