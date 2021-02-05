@@ -770,6 +770,7 @@ def statement_of_account(request,client_id):
 	
 	accounts_list = []
 
+	#appending items to list after multiple filters
 	for invoice in pending_payments:
 		if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID':
 			if invoice.evaluation.payment_method == 'PREPAID':
@@ -780,6 +781,8 @@ def statement_of_account(request,client_id):
 						"invoice_no":invoice.invoice_no,
 						"amount":invoice.total_amount,
 					})
+				else:
+					pass
 
 			else:
 				accounts_list.append({
@@ -796,6 +799,8 @@ def statement_of_account(request,client_id):
 						"invoice_no":invoice.invoice_no,
 						"amount":invoice.evaluation.before_cleaning_amount
 					})
+				else:
+					pass
 
 			if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount:
 				accounts_list.append({
