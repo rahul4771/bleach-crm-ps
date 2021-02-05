@@ -769,17 +769,69 @@ def statement_of_account(request,client_id):
 	paymenthistory = PaymentHistory.objects.filter(is_active=True,order__evaluation__customer__id=int(client_id)).order_by('paid_date')
 	
 	accounts_list = []
-	for payment in pending_payments:
-		accounts_list.append(payment)
+
+	for invoice in pending_payments:
+		if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID':
+			if invoice.evaluation.payment_method == 'PREPAID':
+				if invoice.reminigdays >= 1 :
+
+					accounts_list.append({
+						"account_date":invoice.evaluation.quatation_approved_date.date(),
+						"invoice_no":invoice.invoice_no,
+						"amount":invoice.total_amount,
+					})
+
+			else:
+				accounts_list.append({
+						"account_date":invoice.evaluation.quatation_approved_date.date(),
+						"invoice_no":invoice.invoice_no,
+						"amount":invoice.total_amount,
+					})
+
+		elif invoice.evaluation.payment_method == 'BREAKDOWN':
+			if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount:
+				if invoice.reminigdays >= 1:
+					accounts_list.append({
+						"account_date":invoice.evaluation.quatation_approved_date.date(),
+						"invoice_no":invoice.invoice_no,
+						"amount":invoice.evaluation.before_cleaning_amount
+					})
+
+			if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount:
+				accounts_list.append({
+						"account_date":invoice.evaluation.quatation_approved_date.date(),
+						"invoice_no":invoice.invoice_no,
+						"amount":invoice.evaluation.after_cleaning_amount
+					})
+
+		elif invoice.evaluation.payment_method == 'SUBSCRIPTION':
+			if invoice.subscription_topay != 0:
+				accounts_list.append({
+						"account_date":invoice.evaluation.quatation_approved_date.date(),
+						"invoice_no":invoice.invoice_no,
+						"amount":invoice.subscription_topay
+					})
+
+		else:
+			pass
 
 	for history in paymenthistory:
-		# print(history.order.id,payment.id,"idds")
-		# if history.paid_date < payment.evaluation.quatation_approved_date:
-		accounts_list.append(history)
-		
-		
 
+		accounts_list.append({
+						"account_date":history.order.evaluation.quatation_approved_date.date(),
+						"invoice_no":history.order.invoice_no,
+						"amount":history.amount_paid
+					})
 
-	print(accounts_list,"relist")
+		accounts_list.append({
+						"account_date":history.paid_date.date(),
+						"receipt_no":history.receipt_no,
+						"amount":history.amount_paid
+					})
+
+	accounts_list=sorted(accounts_list, key=lambda x: datetime.strptime(str(x["account_date"]), "%Y-%m-%d"))
+
+	print(accounts_list,"listo")
+
 	
-	return render(request,"customer/statement_of_account.html",{"client":client,"address":address,"accounts":paymenthistory,"pending_payments":accounts_list})
+	return render(request,"customer/statement_of_account.html",{"client":client,"address":address,"accounts":accounts_list,"pending_payments":pending_payments})

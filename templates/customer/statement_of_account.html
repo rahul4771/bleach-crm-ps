@@ -132,10 +132,10 @@
             </tr>
 
 
-            {% for invoice in pending_payments %}
+            {% for invoice in accounts %}
             
 
-            {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
+            {% comment %} {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
 
               {% if invoice.evaluation.payment_method == 'PREPAID' %}
                 {% if invoice.reminigdays >= 1 %}
@@ -192,27 +192,29 @@
                 <td class="balance_amount align-right" >0.000</td>
               </tr>
             {% endif %}
-            {% endif %}
+            {% endif %} {% endcomment %}
           
 
-            {% if invoice.amount_paid != 0 %}
+            {% comment %} {% if invoice.amount_paid != 0 %} {% endcomment %}
 
+            {% if invoice.receipt_no == None %}
             <tr>
-              <td style="text-align:left;">&nbsp;&nbsp;{{invoice.order.evaluation.quatation_approved_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
-              <td class="align-left">Invoice #INV{{invoice.order.invoice_no}}</td>
-              <td class="debit_amount align-right">{{invoice.amount_paid|floatformat:3}}</td>
+              <td style="text-align:left;">&nbsp;&nbsp;{{invoice.account_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+              <td class="align-left">Invoice #INV{{invoice.invoice_no}}</td>
+              <td class="debit_amount align-right">{{invoice.amount|floatformat:3}}</td>
               <td class="align-right">0.000</td>
               <td class="balance_amount align-right" >0.000</td>
             </tr>
-
+            {% else %}
             <tr>
-              <td style="text-align:left;">&nbsp;&nbsp;{{invoice.paid_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
+              <td style="text-align:left;">&nbsp;&nbsp;{{invoice.account_date|date:'d-m-Y'}}</td> <!-- Don't remove this column as it's needed for the row commands -->
               <td class="align-left">Receipt #RES{{invoice.receipt_no}}</td>
               <td class="align-right">0.000</td>
-              <td class="credit_amount align-right">{{invoice.amount_paid|floatformat:3}}</td>
+              <td class="credit_amount align-right">{{invoice.amount|floatformat:3}}</td>
               <td class="balance_amount align-right" >0.000</td>
             </tr>
             {% endif %}
+            {% comment %} {% endif %} {% endcomment %}
 
             
             {% endfor %}
