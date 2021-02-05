@@ -493,7 +493,7 @@ class TicketDetails(IsQualityControll,View):
 			governorates = None
 
 		try:
-			investigators = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='SENIORTEAMINCHARGE')|Q(user_type='TEAMINCHARGE')|Q(user_type='EVALUATOR'))))	
+			investigators = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='SENIORTEAMLEADER')|Q(user_type='TEAMINCHARGE')|Q(user_type='EVALUATOR'))))	
 		except:
 			investigators = None
 		

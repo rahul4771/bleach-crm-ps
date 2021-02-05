@@ -30,7 +30,7 @@ class Signin(View):
 			if request.user.user_type == 'EVALUATOR':
 				return redirect('evaluator:evaluatordash-board')
 
-			if request.user.user_type == 'SENIORTEAMINCHARGE':	
+			if request.user.user_type == 'SENIORTEAMLEADER':	
 				return redirect('stl:stldash-board')
 
 			if request.user.user_type == 'TEAMINCHARGE':	
@@ -66,7 +66,7 @@ class Signin(View):
 			if user.user_type == 'EVALUATOR':
 				return redirect('evaluator:evaluatordash-board')
 
-			if user.user_type == 'SENIORTEAMINCHARGE':	
+			if user.user_type == 'SENIORTEAMLEADER':	
 				return redirect('stl:stldash-board')
 
 			if user.user_type == 'TEAMINCHARGE':	
@@ -171,7 +171,7 @@ def adddata(request):
 	# 	random_cust_type = list_function(customer_types)
 	# 	customers.append(UserProfile(
 	# 	name = 'STL'+str(i),
-	# 	user_type = 'SENIORTEAMINCHARGE',
+	# 	user_type = 'SENIORTEAMLEADER',
 	# 	username = 'stl'+str(i),
 	# 	gender = random_gender,
 	# 	nationality = 'Kuwait',
