@@ -115,8 +115,10 @@
 <td data-label="Service Type">{{followup.followup_scheduler.follow_up.investigation.order_schedule.order_scheduler_book.service_type.name}}</td>
 
 <td data-label="">
-{% if followup.followup_scheduler.work_status == 'FOLLOW_UP_TEAM_ASSIGNED' or followup.followup_scheduler.work_status == 'FOLLOW_UP_CLEANING_IN_PROGRESS' %}
-    <span class="yellow-bg clickable-row-list" data-href="{% url 'tl:followupcleaning' followup.id %}?my_cleaning_calendar_date={{my_cleaning_date|date:'d-m-Y'}}">Checkin</span>
+{% if followup.followup_scheduler.work_status == 'FOLLOW_UP_TEAM_ASSIGNED' %}
+    <span class="yellow-bg clickable-row-list" data-href="{% url 'tl:followupcleaning' followup.id %}?my_cleaning_calendar_date={{my_cleaning_date|date:'d-m-Y'}}">Check In</span>
+{% elif followup.followup_scheduler.work_status == 'FOLLOW_UP_CLEANING_IN_PROGRESS' %}
+    <span class="yellow-bg clickable-row-list" data-href="{% url 'tl:followupcleaning' followup.id %}?my_cleaning_calendar_date={{my_cleaning_date|date:'d-m-Y'}}">Check Out</span>
 {% elif followup.followup_scheduler.work_status == 'FOLLOW_UP_CLEANING_FULFILLED' %}
 <span class="yellow-bg">Cleaning Completed</span>
 {% endif %}
