@@ -2,7 +2,7 @@
 {% load mathfilters %}
 {% for details in workers_details_month %}
 <tr>
-<td  class="yellow-line"><div class="profile-pic-inline"><img {% if details.worker_photo %}src="/media/{{details.worker_photo}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %}></div><div class="client-name-inline">{{details.worker}}<div class="common-gray-text align-left">{{details.user_type}}</div></div></td>
+<td  class="yellow-line"><div class="profile-pic-inline"><img {% if details.worker_photo %}src="/media/{{details.worker_photo}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %}></div><div class="client-name-inline">{{details.worker}}<div class="common-gray-text align-left">{% if details.user_type == 'TEAMINCHARGE' %}TEAM INCHARGE{% else %}{{details.user_type}}{% endif %}</div></div></td>
 <td class="align-center"> <div class="client-name">{{ details.rating | default_if_none:0.0 |floatformat:1}}</div>
 {% if details.rating <= 5 and details.rating >= 4.5 %}
         <span class="fa fa-star checked"></span>

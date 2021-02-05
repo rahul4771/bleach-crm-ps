@@ -26,6 +26,9 @@ urlpatterns = [
 	url(r'^makequatation/phase2/delete/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2Delete.as_view(),name='salesadmin-makequatation2delete'),
 	url(r'^makequatation/add/service/(?P<evaluation_detail_id>[-\w]+)/(?P<edit_type>[-\w]+)$',views.AddNewService.as_view(),name='salesadmin-addnewservice'),
 
+	url(r'^delete/service/(?P<book_id>[-\w]+)/(?P<evaluation_detail_id>[-\w]+)/$',views.deleteservice,name='salesadmin-delete-service'),
+	url(r'^delete/section/(?P<section_id>[-\w]+)/(?P<evaluation_detail_id>[-\w]+)/$',views.deletesection,name='salesadmin-delete-section'),
+
 	url(r'^payments/$',views.PaymentDetails.as_view(),name='salesadmin-payments'),
 	url(r'^payment-policy/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.AdminPaymentEdit.as_view(),name='salesadmin-payment-edit'),
 	url(r'^ajax/sales-data/',views.SalesLocationData,name='sales-data'),
