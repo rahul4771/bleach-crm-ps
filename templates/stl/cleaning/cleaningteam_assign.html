@@ -96,18 +96,16 @@
   {% endif %}  
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
-
-{% if section.keynotes %}
 <br>
-<div class="narrow-head align-left">Keynotes</div>
-<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-<div class="ticket-form-left"><!--ticket-form-left-->
+<div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
+{% if section.keynotes %}
 {% for keynote in section.keynotes %}
-<div class="common-gray-text align-left"><label class="common-labels">{{keynote.sub_area}}</label> : <strong>{{keynote.quantity}}</strong></div>
+		<div class="evaluation-card"><!--evaluation-card-->
+        <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
+        </div><!--evaluation-card-->        
 {% endfor %}
-</div>
-</div><!--ticket-wrapper-row ticket-forms-boxes-->
 {% endif %}
+</div><!--evaluation-card-wrapper-->
 
 <hr class="hr-dashedpad">
 {% endfor %}
