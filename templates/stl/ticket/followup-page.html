@@ -211,6 +211,7 @@
         </div><!--investigation-columns-middle-->
 </div><!--investigation-columns-->
 
+{% if followup_details.investigation.check_out %}
 <div class="details-sub-head align-left">Actions</div>
 <div class="investigation-columns"><!--investigation-columns-->
         <div class="investigation-columns-left"><!--investigation-columns-left-->
@@ -237,6 +238,7 @@
             <p>{{followup_details.followup_notes}}</p>
         </div><!--investigation-columns-middle-->
 </div><!--investigation-columns-->
+{% endif %}
 
 {% if followup_details.followupsections %}
 <hr class="divider">
@@ -553,7 +555,7 @@
     }
 
     //hide media
-    if(invest_cust_img == undefined && invest_before_img == '' && invest_after_img == '' && paybackdiscount_img == undefined && buybackpromogift_img == undefined && reporting_img == undefined)
+    if((invest_cust_img == undefined || invest_cust_img == '') && (invest_before_img == undefined || invest_before_img == '') && (invest_after_img == undefined || invest_after_img == '') && (paybackdiscount_img == undefined || paybackdiscount_img == '') && (buybackpromogift_img == undefined || buybackpromogift_img == undefined) && (reporting_img == undefined || reporting_img == ''))
     {
         $('.media-head').remove();
         $('.media-explaining').remove();
