@@ -175,7 +175,7 @@
     <tr id="worker{{details.id}}">
     <th width="25"  class="fixed-side togglehide dot-image"><img src="{% static 'files/images/green-dot.png' %}"></th>
     <th width="40" class="profile fixed-side"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} align="absmiddle"></th>
-    <td><div class="name-bold">{{details.name}}<div class="position">{{details.user_type}}</div></div></td>
+    <td><div class="name-bold">{{details.name}}<div class="position">{% if details.user_type == 'TEAMINCHARGE' %}TEAM INCHARGE{% else %}{{details.user_type}}{% endif %}</div></div></td>
 
     </tr>
     {% empty %}
