@@ -60,12 +60,8 @@
         {% endif %}
       </div><!--checkin-form-left-->
       <div class="checkin-form-right align-right"><!--checkin-form-right-->
-        {% if detail.status == 'EVALUATED' and detail.evaluator == None %}
+        {% if detail.status == 'EVALUATED' %}
         <a href="{% url 'bleach_salesadmin:salesadmin-makequatation2edit' detail.id %}"><div><input name="view" type="button" value="Edit" class="checkonButton"></div></a>
-        {% elif detail.status == 'TOBEEVALUATED' and detail.evaluator == None %}
-        <a href="{% url 'bleach_salesadmin:salesadmin-makequatation2' detail.id %}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
-        {% else %}
-        <div><input name="view" type="button" value="Edit" class="checkonButton" hidden></div>
         {% endif %}
       </div><!--checkins-form-right--> 
       <div class="checkin-form-right align-right"><!--checkin-form-right-->
