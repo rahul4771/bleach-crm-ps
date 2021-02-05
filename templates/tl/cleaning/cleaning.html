@@ -183,10 +183,9 @@
   {% endfor %}
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-  {% for keynote in section.keynotes %}  
+  {% for keynote in section.sectionkeynotes %}  
   {% if forloop.counter|divisibleby:2 %}
-  <div class="narrow-label"><input class="keynote" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if keynote.completion_status %}checked{% endif %}> 
-  {{keynote.sub_area}} {{keynote.quantity}}</div>
+  <div class="narrow-label"><input class="keynote" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if keynote.completion_status %}checked{% endif %}> {{keynote.sub_area}} {{keynote.quantity}}</div>
   {% endif %}
   {% endfor %}
   </div><!--ticket-form-right-->
