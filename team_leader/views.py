@@ -16,7 +16,7 @@ from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote,EvaluationMedia
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Investigation,InvestigationMedia
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Investigation,InvestigationMedia,FollowUpSection,FollowUpSectionKeynote
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 
 import requests
@@ -28,11 +28,20 @@ from django.http import HttpResponse,JsonResponse
 def UpdateKeynoteStatus(request):
 	keynote_id     = request.GET.get('keynote_id')
 	keynote_status = request.GET.get('status')
+	keynote_type = request.GET.get('keynote_type')
 
-	if keynote_status == 'true':
-		EvaluationSectionKeynote.objects.filter(id=keynote_id).update(completion_status=True)
+	print(keynote_type,"ktype")
+
+	if keynote_type == 'followupcleaning':
+		if keynote_status == 'true':
+			FollowUpSectionKeynote.objects.filter(id=keynote_id).update(completion_status=True)
+		else:
+			FollowUpSectionKeynote.objects.filter(id=keynote_id).update(completion_status=False)
 	else:
-		EvaluationSectionKeynote.objects.filter(id=keynote_id).update(completion_status=False)
+		if keynote_status == 'true':
+			EvaluationSectionKeynote.objects.filter(id=keynote_id).update(completion_status=True)
+		else:
+			EvaluationSectionKeynote.objects.filter(id=keynote_id).update(completion_status=False)
 		
 	data = {}
 
@@ -417,18 +426,11 @@ class FollowupCleaning(IsTeamLeader,View):
 		followup_team_detail = FollowUpTeam.objects.select_related('team_leader','drop_off_driver','pick_up_driver','followup_scheduler__follow_up__investigation__investigator','followup_scheduler__follow_up__investigation__order__evaluation','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book','followup_scheduler__customer_address').prefetch_related(Prefetch('followup_scheduler__follow_up__investigation__investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr="investigationmedias"),Prefetch('followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='sections')).get(is_active=True,id=team_id)
 		followup_team_members= FollowUpTeamMember.objects.filter(team=team_id,is_active=True)			
 
-		#checkin save
-		if followup_team_detail: 
-			if not followup_team_detail.check_in:
-				followup_team_detail.check_in                       = timezone.now()
-			if not followup_team_detail.check_out:
-				followup_team_detail.followup_scheduler.work_status     = 'FOLLOW_UP_CLEANING_IN_PROGRESS'
-				followup_team_detail.followup_scheduler.follow_up.status= 'FOLLOWUP_IN_PROGRESS'
-			followup_team_detail.save()	
-			followup_team_detail.followup_scheduler.save()
-			followup_team_detail.followup_scheduler.follow_up.save()
+		followupsections = FollowUpSection.objects.filter(follow_up__id = followup_team_detail.followup_scheduler.follow_up.id,is_active=True )
+		followupsectionkeynotes = FollowUpSectionKeynote.objects.filter(followup_section__follow_up__id = followup_team_detail.followup_scheduler.follow_up.id,is_active=True)
 		
-		return render(request,'tl/cleaning/followup_cleaning.html',{"followup_team_detail":followup_team_detail,"followup_team_members":followup_team_members,})
+		
+		return render(request,'tl/cleaning/followup_cleaning.html',{"followup_team_detail":followup_team_detail,"followup_team_members":followup_team_members,"sections":followupsections,"keynotes":followupsectionkeynotes})
 
 	def post(self,request,team_id):
 		
@@ -437,79 +439,94 @@ class FollowupCleaning(IsTeamLeader,View):
 			followup_team_detail = FollowUpTeam.objects.select_related('followup_scheduler__follow_up').get(is_active=True,id=team_id)
 		except:	
 			followup_team_detail = None
-
+		
 		#checkin save	
 		if followup_team_detail: 
 			submit_status = request.POST.get('assign')
-			if submit_status == 'Checkout':
+
+			#checkin save
+			if submit_status == 'Check In':
+				if not followup_team_detail.check_in:
+					followup_team_detail.check_in                       = timezone.now()
+				if not followup_team_detail.check_out:
+					followup_team_detail.followup_scheduler.work_status     = 'FOLLOW_UP_CLEANING_IN_PROGRESS'
+					followup_team_detail.followup_scheduler.follow_up.status= 'FOLLOWUP_IN_PROGRESS'
+				followup_team_detail.save()	
+				followup_team_detail.followup_scheduler.save()
+				followup_team_detail.followup_scheduler.follow_up.save()
+
+				#To Save Media
+				medias = request.FILES.getlist('mediabefore')
+				if not medias==['']:
+					for media in medias:
+						FollowUpTeamMedia.objects.create(
+								team_id=team_id,
+								media=media,
+								taken_status='BEFORE_CLEANING'
+								)
+				messages.success(request,"Check In Completed Successfully !")
+
+
+			if submit_status == 'Check Out':
+				
 				followup_team_detail.check_out                          = timezone.now()
 				followup_team_detail.followup_scheduler.work_status     = 'FOLLOW_UP_CLEANING_FULFILLED'
-			followup_team_detail.save()
-			followup_team_detail.followup_scheduler.save()	
+				followup_team_detail.save()
+				followup_team_detail.followup_scheduler.save()	
 
-		#To Save Media
-		medias = request.FILES.getlist('mediabefore')
-		if not medias==['']:
-			for media in medias:
-				FollowUpTeamMedia.objects.create(
-				        team_id=team_id,
-				        media=media,
-				        taken_status='BEFORE_CLEANING'
-				        )
+				#To Save Media
+				medias = request.FILES.getlist('mediaafter')
+				if not medias==['']:
+					for media in medias:
+						FollowUpTeamMedia.objects.create(
+								team_id=team_id,
+								media=media,
+								taken_status='AFTER_CLEANING'
+								)
 
-		#To Save Media
-		medias = request.FILES.getlist('mediaafter')
-		if not medias==['']:
-			for media in medias:
-				FollowUpTeamMedia.objects.create(
-				        team_id=team_id,
-				        media=media,
-				        taken_status='AFTER_CLEANING'
-				        )
+				messages.success(request,"Checkout Succesfully")
 
-		messages.success(request,"Checkout Succesfully")
+				#feedback sms
+				order = Order.objects.select_related('evaluation__customer').filter(is_active=True,order_no=followup_team_detail.followup_scheduler.follow_up.investigation.order.order_no).order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
 
-		#feedback sms
-		order = Order.objects.select_related('evaluation__customer').filter(is_active=True,order_no=followup_team_detail.followup_scheduler.follow_up.investigation.order.order_no).order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+				for ord in order:
+					order_data = ord
+				
+				if order and order_data.evaluation.customer.is_sms == True:
 
-		for ord in order:
-			order_data = ord
-		
-		if order and order_data.evaluation.customer.is_sms == True:
+					url = "https://smsapi.future-club.com/fccsms.aspx"
 
-			url = "https://smsapi.future-club.com/fccsms.aspx"
+					if order_data.evaluation.customer.sms_preference == 'ENGLISH':
 
-			if order_data.evaluation.customer.sms_preference == 'ENGLISH':
+						message = "Dear Customer, Thank you for choosing Bleach Kuwait. Kindly share your feedback for the order number "+ order_data.order_no +" here https://my.bleachkw.com/customer/feedback-page/"+str(order_data.id)+". For any assistance please contact us on +9651882707."
+					
+						querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+order_data.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 
-				message = "Dear Customer, Thank you for choosing Bleach Kuwait. Kindly share your feedback for the order number "+ order_data.order_no +" here https://my.bleachkw.com/customer/feedback-page/"+str(order_data.id)+". For any assistance please contact us on +9651882707."
-			
-				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+order_data.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+					else:
+						message = "عزيزينا العميل نرجوا أن تكون خدماتنا خازت على رضاكم و شكراً لاختياركم بليتش لخدمات التنظيف.  نرجوا التكرم بإنجاز الاستبيان الخاص بالطلب رقم "+ order_data.order_no +" https://my.bleachkw.com/customer/feedback-page/"+str(order_data.id)+" وذلك لضمان جودة الخدمة. لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
 
-			else:
-				message = "عزيزينا العميل نرجوا أن تكون خدماتنا خازت على رضاكم و شكراً لاختياركم بليتش لخدمات التنظيف.  نرجوا التكرم بإنجاز الاستبيان الخاص بالطلب رقم "+ order_data.order_no +" https://my.bleachkw.com/customer/feedback-page/"+str(order_data.id)+" وذلك لضمان جودة الخدمة. لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+						querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+order_data.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 
-				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+order_data.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+					headers = {
+						'cache-control': "no-cache"
+					}
 
-			headers = {
-				'cache-control': "no-cache"
-			}
+					response = requests.request("GET", url, headers=headers, params=querystring)
 
-			response = requests.request("GET", url, headers=headers, params=querystring)
+					print(response.text,",ess")
 
-			print(response.text,",ess")
+				else:
+					pass
 
-		else:
-			pass
-
-		####to close order
-		try:
-			closing_order	= Order.objects.get(is_active=True,order_no=followup_team_detail.followup_scheduler.follow_up.investigation.order.order_no,payment_status='COMPLETED')
-		except:
-			closing_order   = None
-			
-		if closing_order and order:
-			closing_order.order_status = 'ORDER_CLOSED'
-			closing_order.save()
+				####to close order
+				try:
+					closing_order	= Order.objects.get(is_active=True,order_no=followup_team_detail.followup_scheduler.follow_up.investigation.order.order_no,payment_status='COMPLETED')
+				except:
+					closing_order   = None
+					
+				if closing_order and order:
+					closing_order.order_status = 'ORDER_CLOSED'
+					closing_order.save()
 					
 		my_cleaning_calendar_date = request.GET.get('my_cleaning_calendar_date') or ''
 				

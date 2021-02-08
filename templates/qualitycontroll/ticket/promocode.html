@@ -54,7 +54,7 @@
     	<i class="fa fa-plus imgAdd" data-name="media"></i>
 </div><!--row--> 
 
-<div align="center"><input class="assignButton" name="addevaluator" type="button" value="Submit" onclick="submitAnyForm(this);" > </div>
+<div align="center"><input class="assignButton promocodesubmit" name="addevaluator" type="button" value="Submit" > </div>
 <br><br>
 
         </div> <!--center-formDiv-->
@@ -80,6 +80,17 @@
 
 <script>
 $('document').ready(function(){
+
+$('.promocodesubmit').click(function(){
+    console.log($('#id_section0-keynote_counter').val(),$('#id_section1-keynote_counter').val(),"lolll")
+    if ($('#id_section0-keynote_counter').val() > 0 || $('#id_section1-keynote_counter').val() > 0){
+        console.log('dre')
+        submitAnyForm(this);
+    }else{
+        console.log('drekk')
+        alert('Please add items in section !');
+    }
+})
 
 $("body").on("click", ".btn-remove", function(){
         $(this).closest('tr').remove();

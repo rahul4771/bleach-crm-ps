@@ -19,11 +19,13 @@
             
 <div class="white-wrapper"><!--white-wrapper-->
 <div class="center-formDiv"><!--center-formDiv-->
-            <div class="common-sub-head align-left">FollowUp Details</div> 
+            <div class="common-sub-head align-left">Details</div> 
     <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
     <div class="ticket-form-left"><!--ticket-form-left-->
-    <div class="blc-number-big">{{followup_schedule.follow_up.investigation.order}}</div>
+    <div class="blc-number-big">TKT{{followup_schedule.follow_up.ticket_no}}</div>
+    
+    <div class="common-gray-text align-left">{{followup_schedule.follow_up.investigation.order}}</div>
     <br>
         <div class="green-bg-lg">{% if followup_schedule.follow_up.investigation.order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}One-Time{% else %}Subscription{% endif %}</div><div class="blue-bg-lg">{% if followup_schedule.follow_up.investigation.order_schedule.order.payment_status == 'COMPLETED' %}Paid{% elif followup_schedule.follow_up.investigation.order_schedule.order.payment_status == 'ON_HOLD' %}ON HOLD<{% else %}Pending{% endif %}</div>
         <div class="customer-name"> {{followup_schedule.follow_up.investigation.order_schedule.order_scheduler_book.service_type.name}}</div>
@@ -112,6 +114,39 @@
 <hr class="hr-dashedpad">
 {% endif %}
 {% endfor %}
+
+<div class="eval-note-columns border"><!--eval-note-columns-->
+      <div class="eval-note-columns-left"><!--eval-note-columns-left-->
+      <div class="profile-pic">
+      {% if followup_schedule.follow_up.investigation.investigator.profile_image %}
+      <img src="{{followup_schedule.follow_up.investigation.investigator.profile_image.url}}" title="{{followup_schedule.follow_up.investigation.investigator.name}}"></div>
+      {% else %}
+        <img src="{% static 'files/images/profile-pic.png' %}"></div>
+      {% endif %}
+
+            <div class="client-name"><div class="common-gray-text">{{followup_schedule.follow_up.investigation.investigator.name}}</div>Investigator</div>
+      </div><!--eval-note-columns-left-->
+
+        <div class="eval-note-columns-middle"><!--eval-note-columns-middle-->
+            <div class="notes">Investigation Notes</div>
+            <p>{{followup_schedule.follow_up.investigation.notes|default_if_none:'-'}}</p>
+        </div><!--eval-note-columns-middle-->
+</div><!--eval-note-columns-->
+
+{% if followup_schedule.follow_up.investigation.investigationmedias %}
+<div class="details-sub-head align-left">Media</div>
+<div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
+<div class="gallery-wrapper"><!--gallery-wrapper-->
+  <div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
+    <div class="media-heading align-left">Investigation</div>
+        <section>
+        <div id="data-pn-1" data-pn="1" data-src="{% for media in followup_schedule.follow_up.investigation.investigationmedias %}{{media.media.url}},{% endfor %}"></div>
+    </section>
+    
+    </div><!--gallery-widget-column-column1-->    
+</div><!--gallery-wrapper-->
+{% endif %}
+
 </div>
 <br><br>
  
