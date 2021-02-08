@@ -624,10 +624,11 @@ class InvestigationTask(IsQualityControll,View):
 			orderschedules_count = 1
 			investigation_details = None
 
-		ticket_types = investigation_details.ticket_types.split(",")
 		ticket_types_list = []
-		for type in ticket_types:
-			ticket_types_list.append(type)
+		if investigation_details.ticket_types:
+			ticket_types = investigation_details.ticket_types.split(",")
+			for type in ticket_types:
+				ticket_types_list.append(type)
 		print(ticket_types_list,"typo")
 
 		follow_up_scheduler = FollowUpScheduler.objects.filter(is_active=True,follow_up__investigation__id=investigation_id).first()
@@ -661,7 +662,17 @@ class InvestigationTask(IsQualityControll,View):
 		if form_action == "internal":
 			return redirect('quality-control:internal-report',investigation_id)
 		if form_action == "final_submit":
-			Investigation.objects.filter(id=investigation_id).update(check_out=timezone.now())
+			investigation                              = Investigation.objects.prefetch_related(Prefetch('reporting_investigation',queryset=Reporting.objects.filter(is_active=True),to_attr='internalreportings'),Prefetch('followup_investigation',queryset=FollowUp.objects.filter(no_of_cleaners__gte=1),to_attr="followups")).get(id=investigation_id)
+			investigation.check_out                    = timezone.now()
+			investigation.is_casesandcomplaints_submit = True
+			
+			if investigation.internalreportings:
+				investigation.is_internalreporting_approved = True
+			if investigation.followups:
+				investigation.is_followup_approved  = True 
+
+			investigation.save()
+
 			messages.success(request,"All Investigation Tasks Submitted Successfully !!")
 			return redirect('quality-control:qcdash-board')
 
@@ -696,8 +707,6 @@ class Followup(IsQualityControll,View):
 		tendative_date = request.POST.get('tendative_date').split(',')
 
 		tendative_time = request.POST.get('tendative_time')
-
-		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True)
 		
 		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
 		follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
@@ -1087,9 +1096,6 @@ class InternalReport(IsQualityControll,View):
 			notes = report_notes,
 			is_active = True
 		)
-
-		internal_report.investigation.is_internalreporting_approved = True
-		internal_report.save()
 
 		medias = request.FILES.getlist('media')
 

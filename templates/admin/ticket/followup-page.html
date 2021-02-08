@@ -336,10 +336,12 @@
             <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
                 <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
                     {% for member in team.followupmembers %}
+                    {% if team.team_leader.id != member.member.id %}
                     <div class="order-clean-inColumn"><!--order-clean-inColumn-->
                         <div class="team-Name">{{member.member.name}}</div>
                         <div class="team-profile">Team Member</div>
                     </div><!--order-clean-inColumn-->
+                    {% endif %}
                     {% endfor %}
                 </div><!--order-clean-team-inside-wrapper-->     
             </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
