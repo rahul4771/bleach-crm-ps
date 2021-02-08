@@ -19,7 +19,7 @@
             
 <div class="white-wrapper"><!--white-wrapper-->
 <div class="center-formDiv"><!--center-formDiv-->
-            <div class="common-sub-head align-left">Details</div> 
+            <div class="common-sub-head align-left">FollowUp Details</div> 
     <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
     <div class="ticket-form-left"><!--ticket-form-left-->
@@ -45,7 +45,8 @@
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">
-{% for section in followup_schedule.follow_up.investigation.order_schedule.order_scheduler_book.sections %}
+{% for section in sections %}
+{% if section %}
 <div class="narrow-head align-left">Section {{forloop.counter}} : {{section.section_name}}</div>
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -96,17 +97,20 @@
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <br>
 <div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
-{% if section.keynotes %}
-{% for keynote in section.keynotes %}
+
+{% for keynote in keynotes %}
+{% if keynote %}
 		<div class="evaluation-card"><!--evaluation-card-->
         <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
-        </div><!--evaluation-card-->        
-{% endfor %}
+        </div><!--evaluation-card-->      
 {% endif %}
+{% endfor %}
+
 </div><!--evaluation-card-wrapper-->
 
 
 <hr class="hr-dashedpad">
+{% endif %}
 {% endfor %}
 </div>
 <br><br>

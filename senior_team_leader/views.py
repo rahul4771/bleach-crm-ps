@@ -994,8 +994,11 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 	def get(self,request,scheduler_id):
 
 		#shceduled order details
-		followup_schedule = FollowUpScheduler.objects.select_related('follow_up__investigation__order','follow_up__investigation__order_schedule__order_scheduler_book__service_type','customer_address').prefetch_related(Prefetch('follow_up__investigation__investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr="investigationmedias"),Prefetch('follow_up__investigation__order_schedule__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections')).get(is_active=True,id=scheduler_id)
+		followup_schedule = FollowUpScheduler.objects.select_related('follow_up','follow_up__investigation__order','follow_up__investigation__order_schedule__order_scheduler_book__service_type','customer_address').prefetch_related(Prefetch('follow_up__investigation__investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr="investigationmedias")).get(is_active=True,id=scheduler_id)
 	
+		followupsections = FollowUpSection.objects.filter(follow_up=followup_schedule.follow_up,is_active=True)
+		followupkeynotes = FollowUpSectionKeynote.objects.filter(followup_section__follow_up=followup_schedule.follow_up,is_active=True)
+
 		follow_up_team_assign_form = FollowupTeamAssignForm()
 		
 
@@ -1006,7 +1009,7 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 		cleaners            = UserProfile.objects.filter(is_active=True,user_type='CLEANER').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
 		drivers             = UserProfile.objects.filter(is_active=True,user_type='DRIVER')
 
-		return render(request,'stl/cleaning/followupteam_assign.html',{'follow_up_team_assign_form':follow_up_team_assign_form,'followup_schedule':followup_schedule,'cleaners':cleaners,'leaders':leaders,'drivers':drivers,})
+		return render(request,'stl/cleaning/followupteam_assign.html',{'follow_up_team_assign_form':follow_up_team_assign_form,'followup_schedule':followup_schedule,'cleaners':cleaners,'leaders':leaders,'drivers':drivers,"sections":followupsections,"keynotes":followupkeynotes})
 
 	def post(self,request,scheduler_id):
 	
