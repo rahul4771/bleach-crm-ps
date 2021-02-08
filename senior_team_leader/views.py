@@ -446,7 +446,7 @@ class StlHome(IsSeniorTeamLeader,View):
 		
 		#total active workers
 		try:
-			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=timezone.now())&Q(end_at__gte=timezone.now())) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=timezone.now())&Q(end_at__gte=timezone.now()))) ).values_list('member',flat=True)).distinct().count()
+			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q( Q(Q(start_at__lt=count_today_end)&Q(start_at__gte=count_today_start)) | Q(Q(end_at__lt=count_today_end)&Q(end_at__gte=count_today_start)) ) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q( Q(Q(start_at__lt=count_today_end)&Q(start_at__gte=count_today_start)) | Q(Q(end_at__lt=count_today_end)&Q(end_at__gte=count_today_start)) )) ).values_list('member',flat=True)).distinct().count()
 		except:
 			total_active_workers = 0	
 	
