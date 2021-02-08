@@ -23,7 +23,7 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   <div class=" bold-text common-label required-field"> <label>Title</label></div>
-        <input type="text" name="title" class="textBox" value="{{internal_report.title}}" />
+        <input type="text" name="title" class="textBox" value="{{internal_report.title}}" required />
   </div>
 
   <div class="ticket-form-right hide-m"><!--ticket-form-right-->
@@ -36,7 +36,7 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   <div class=" bold-text common-label required-field"> <label>Notes</label></div>
-        <textarea class="textBox" name="notes" maxlength="5000">{{internal_report.notes}}</textarea>
+        <textarea class="textBox" name="notes" maxlength="5000" required>{{internal_report.notes}}</textarea>
   </div>
 
   </div><!--ticket-wrapper-row ticket-forms-boxes-->
