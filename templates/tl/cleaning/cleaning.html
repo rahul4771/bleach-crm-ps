@@ -289,7 +289,7 @@ $(".keynote").change(function(){
 
         url: "{% url 'tl:ajax-updatekeynote' %}",
 
-        data: {'keynote_id':this.value,'status':this.checked}, 
+        data: {'keynote_id':this.value,'status':this.checked,'keynote_type':"cleaning"}, 
 
         dataType: 'json',
 

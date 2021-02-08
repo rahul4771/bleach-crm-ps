@@ -169,7 +169,7 @@
         <i class="fa fa-plus imgAdd id_media"></i>
 </div><!--row--> 
 
-<div align="center"><input class="assignButton" name="addevaluator" type="button" value="Submit" onclick="submitAnyForm(this);" > </div>
+<div align="center"><input class="assignButton cashbacksubmit" name="addevaluator" type="button" value="Submit" > </div>
 <br><br>
 
         </div> <!--center-formDiv-->
@@ -198,6 +198,17 @@ keynote_count2 = $('.section2_keynote').length;
 
 $('#id_section1-keynote_counter').val(keynote_count1);
 $('#id_section2-keynote_counter').val(keynote_count2);
+
+$('.cashbacksubmit').click(function(){
+    console.log($('#id_section1-keynote_counter').val(),$('#id_section2-keynote_counter').val(),"lolll")
+    if ($('#id_section1-keynote_counter').val() > 0 || $('#id_section2-keynote_counter').val() > 0){
+        console.log('dre')
+        submitAnyForm(this);
+    }else{
+        console.log('drekk')
+        alert('Please add items in section !');
+    }
+})
 
 })
 

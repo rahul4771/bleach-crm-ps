@@ -36,7 +36,7 @@
   </div>
 
   <div class="ticket-form-right"><!--ticket-form-right-->
-    <input class="assignButton" type="button" value="Add" onclick="addSectionNew(this);"> 
+    <input class="assignButton addsectionbutton" type="button" value="Add" onclick="addSectionNew(this);"> 
   </div>
 
   </div>
@@ -54,7 +54,7 @@
     	<i class="fa fa-plus imgAdd" data-name="media"></i>
 </div><!--row--> 
 
-<div align="center"><input class="assignButton" name="addevaluator" type="button" value="Submit" onclick="submitAnyForm(this);" > </div>
+<div align="center"><input class="assignButton cashbacksubmit" name="addevaluator" type="button" value="Submit" > </div>
 <br><br>
 
         </div> <!--center-formDiv-->
@@ -81,6 +81,17 @@
 <script>
 $('document').ready(function(){
 
+$('.cashbacksubmit').click(function(){
+    console.log($('#id_section0-keynote_counter').val(),$('#id_section1-keynote_counter').val(),"lolll")
+    if ($('#id_section0-keynote_counter').val() > 0 || $('#id_section1-keynote_counter').val() > 0){
+        console.log('dre')
+        submitAnyForm(this);
+    }else{
+        console.log('drekk')
+        alert('Please add items in section !');
+    }
+})
+
 $("body").on("click", ".btn-remove", function(){
         $(this).closest('tr').remove();
         
@@ -95,17 +106,28 @@ $("body").on("click", ".close-div", function(){
         new_section_count = $('#id_section_counter').val()-1
         $('#id_section_counter').val(new_section_count);
         
+        console.log($(this).parents('.form_section').find('.section_name').val(),"sname")
+        if ($("#id_section option").val() == 
         //remove section
         $(this).parent('div').remove();
         
         $('#id_sectioncontainer .close-div').attr("hidden",true);
         $('#id_sectioncontainer .form_section:first .close-div').attr("hidden",false);
+
+        //hiding add section button
+        if ($('#id_section_counter').val() == 2){
+            $('.addsectionbutton').attr("hidden",true);
+        }else{
+            $('.addsectionbutton').attr("hidden",false);
+        }
     });
 });
 
 // add new section
 function addSectionNew(form_identifier){
     selected_section = $("#id_section option:selected").val();
+
+    $("#id_section option:selected").attr("hidden",true);
 
     try {
         last_section_of_form = $('#id_sectioncontainer .form_section:first').attr('id');
@@ -118,6 +140,13 @@ function addSectionNew(form_identifier){
 
     $('#id_section_counter').val(section_count+1);
 
+    //hiding add section button
+    if ($('#id_section_counter').val() == 2){
+        $('.addsectionbutton').attr("hidden",true);
+    }else{
+        $('.addsectionbutton').attr("hidden",false);
+    }
+
     appendhtml = '<div class="enquiry-child-wrapper-Full form_section" id="section'+section_count+'"><!--enquiry-child-wrapper-Full-->'+
 '<input type="hidden" name="section'+section_count+'-keynote_counter" id="id_section'+section_count+'-keynote_counter" value="0">'+
 '<div class="close-div" ><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>'+
@@ -128,7 +157,7 @@ function addSectionNew(form_identifier){
 '<div class=" bold-text common-label"> '+
 '<label class="section_label">Section '+(section_count+1)+' ('+selected_section+')</label>'+
 '</div>'+
-'<input name="section'+section_count+'" type="hidden" class="textBox section_time" placeholder=" " value="'+selected_section+'" required>'+
+'<input name="section'+section_count+'" type="hidden" class="textBox section_time section_name" placeholder=" " value="'+selected_section+'" required>'+
 '</div><!--enquiry-form-left-->'+
 
 '<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->'+
