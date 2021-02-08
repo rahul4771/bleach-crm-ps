@@ -1894,7 +1894,7 @@ $('.collapsible1-close').click(function(){
         //edit option toggle
         followup_status = $(this).data('followup_status');
         
-        if(followup_status == 'FOLLOW_UP_CLEANING_FULFILLED')
+        if(followup_status == 'FOLLOW_UP_CLEANING_FULFILLED' || followup_status == 'FOLLOW_UP_TEAM_ASSIGNED' || followup_status == 'FOLLOW_UP_CLEANING_IN_PROGRESS')
             {
                 $('.edit-collapse').css('display','none');
         }

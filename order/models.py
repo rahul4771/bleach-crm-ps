@@ -171,6 +171,7 @@ class Investigation(models.Model):
 	is_buybackgiftpromo_approved   = models.BooleanField(null=False,blank=True,default=False)
 	is_paybackdiscount_approved    = models.BooleanField(null=False,blank=True,default=False)
 	is_internalreporting_approved  = models.BooleanField(null=False,blank=True,default=False)
+	is_casesandcomplaints_submit   = models.BooleanField(null=False,blank=True,default=False)
 	
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)

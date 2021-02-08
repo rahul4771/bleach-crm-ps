@@ -487,16 +487,29 @@
 <hr class="hr-dashedpad">
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Cleaning Date</label></div>
+        <input name="followup_date" type="text" class="textBox" id="followup_change_date">
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Starting Time</label></div>
+        <input name="followup_time" type="text" class="textBox" id="followup_change_time">
+        <p id="followupcleaning_time_alert" hidden>Please Select proper date and time !</p>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Duration</label></div>
-        <input name="cleaning_hours" type="text" class="textBox" id="cleaning_duration">
+        <input name="followup_hours" type="text" class="textBox" id="followup_change_duration">
   </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
+<div class="followup_team">
 <hr class="hr-dashedpad">
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Team Incharge</label></div>
         <label for="favcity">
-                <select id="followup_leader" name="team_leader">
+                <select id="followup_leader" name="team_leader" class="followup_leader">
                 </select>
         </label>
   </div><!--ticket-form-right-->
@@ -510,6 +523,7 @@
     <input name="remove" type="button" class="add-button-2" value="Remove Cleaner" id="remove_cleanerfollowup_id">
   </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+</div>
 
 <div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
 </form>
@@ -1979,6 +1993,22 @@ $('.collapsible1-close').click(function(){
                   $('#starting_time_followup_id').html(data['start_at_time']);
                   $('#duration_followup_id').html(data['duration']+' Hours');
 
+                  $('#followup_change_duration').val(data['duration']);
+                  $('#followup_change_date').val(data['start_at_date']);
+                  $('#followup_change_time').val(data['start_at_time']);
+                  $('#followup_change_date').datetimepicker({
+                      pickTime: false, 
+                      format: "DD-MM-YYYY",
+                      minDate: 1,
+                    });
+
+                  $('#followup_change_time').datetimepicker({
+                      pickDate:false,
+                      format: 'hh:mm A'
+                    });
+
+                  datetimecheck(data['start_at_time'],data['start_at_date'],'followupcleaning');
+
                   //Append Team Incharge and team members Based on Conditions
                   if(data['team_leader'] || data['stl'])
                   {
@@ -1990,7 +2020,6 @@ $('.collapsible1-close').click(function(){
                   }
 
                   cleaners = data['cleanersinfo'].cleaners;
-                  
                   if(cleaners != '')
                   {
                     $('#team_member_followup_id').html('<td colspan="3">Team Members:<strong><span class="blue-text"></span></strong> &nbsp;</td>');
@@ -2014,13 +2043,14 @@ $('.collapsible1-close').click(function(){
                         $('#team_member_followup_id').html('');
                   }
 
+                  $("#followup_leader").empty();
                   $('#followup_members').empty();
                   //current cleaners
                   cleaners = data['cleanersinfo'].cleaners;
                   for(i=0;i<cleaners.length;++i)
                   {   
                     //append main select 
-                    $('#followup_members').append('<label for="favcity"><select name="team_member" id="followup_member'+i+'" class="assign_cleaner"></select></label><br>');
+                    $('#followup_members').append('<label for="favcity"><select name="team_member" id="followup_member'+i+'" class="assign_cleaner" onchange="remove_duplicate_selection(this);"></select></label><br>');
 
                     //append available cleaners
                       available_cleaners = data['availablecleanersinfo'].available_cleaners;
@@ -2056,17 +2086,39 @@ $('.collapsible1-close').click(function(){
                         
                                   }  
       });
+
+    $('#followup_change_time').change(function(){
+        datetimecheck($('#followup_change_time').val(),$('#followup_change_date').val(),'followupcleaning');
+      });
+
+    $('#followup_change_date').change(function(){
+        console.log("hui")
+        datetimecheck($('#followup_change_time').val(),$('#followup_change_date').val(),'followupcleaning');
+      });
+
         //edit option toggle
+        $('.edit-collapse').css('display','block');
+
         followup_status = $(this).data('followup_status');
         
-        
+        //edit cleaning team
         if(followup_status == 'FOLLOW_UP_TEAM_ASSIGNED' || followup_status == 'FOLLOW_UP_CLEANING_IN_PROGRESS')
             {
-                $('.edit-collapse').css('display','block');
+                $('.followup_team').css('display','block');
         }
         else
         {
-                $('.edit-collapse').css('display','none');
+                $('.followup_team').css('display','none');
+        }
+
+        //hide edit icon
+        if(followup_status == 'FOLLOW_UP_CLEANING_FULFILLED')
+        {
+            $('.edit-collapse').css('display','None');
+        }
+        else
+        {
+            $('.edit-collapse').css('display','block');
         }
 
 
@@ -2189,7 +2241,25 @@ $(".team_leader").change(function(){
     {
         //random selection    
         $('#team_member'+i+' :nth-child('+(i+1)+')').prop('selected',true);
-        alert("hiiiii");
+    }
+
+});
+
+//to remove leader from cleaner
+$(".followup_leader").change(function(){
+  selected_option = this.value;
+  selected_id     = this.id;
+  //to remove selected occur in any other option
+      $('.assign_cleaner').each(function(){    
+            $('option[value='+selected_option+']',this).remove();
+      });
+  
+  no_of_cleaners = $('.assign_cleaner').length
+  //cleaners selection   
+  for(i=0;i<no_of_cleaners;i++)
+    {
+        //random selection    
+        $('#followup_member'+i+' :nth-child('+(i+1)+')').prop('selected',true);
     }
 
 });

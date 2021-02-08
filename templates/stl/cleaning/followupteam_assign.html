@@ -160,7 +160,7 @@
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>Team Incharge</label></div>
                 <label for="favcity">
-                <select id="favcity" name="team_leader" required=>
+                <select id="favcity" name="team_leader" class="assign_leader" required=>
                 <option value="">Choose Leader</option>  
                 {% for leader in leaders %}  
                 <option value="{{leader.id}}">{{leader.name}}</option>
@@ -344,6 +344,41 @@
 
 
 $('window').ready(function(){
+
+//to remove leader from cleaner
+$(".assign_leader").change(function(){
+  selected_option = this.value;
+  selected_id     = this.id;
+  //to remove selected leader occur in any other option
+      $('.assign_cleaner').each(function(){    
+            $('option[value='+selected_option+']',this).remove();
+      });
+
+  //cleaners selection   
+  for(i=1;i<=no_of_cleaners;i++)
+    {
+        //random selection    
+        $('#assigned_cleaner'+i+' :nth-child('+i+')').prop('selected',true);
+    }
+
+  //cross checking
+  $('.assign_cleaner').each(function(){
+    cross_check_selected_option = this.value;
+    cross_check_id              = this.id;
+    $('.assign_cleaner').each(function(){
+      if(cross_check_id != this.id)
+      {
+        if(cross_check_selected_option == this.value)
+        {
+          $('option:selected',this).remove();   
+        }
+      }
+    });
+  
+  });
+
+});
+
 
 //to remove duplicate selection
 $(".assign_cleaner").change(function(){

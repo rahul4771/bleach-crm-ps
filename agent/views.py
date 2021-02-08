@@ -255,7 +255,7 @@ def GetFollowupInfo(request):
 
 	scheduler_id  = request.GET.get('schedule_id')
 
-	schedule  = FollowUpScheduler.objects.select_related('customer_address__customer','follow_up__investigation__order').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_member')),to_attr='cleaning_team')).get(id=scheduler_id)
+	schedule  = FollowUpScheduler.objects.select_related('customer_address__customer','follow_up__investigation__order').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.select_related('member').filter(Q(Q(is_active=True)&Q(Q(member__user_type='CLEANER')|Q(member__user_type='TEAMINCHARGE')))),to_attr='cleaning_member')),to_attr='cleaning_team')).get(id=scheduler_id)
 
 	cleaning_dict['order_no'] 		 = schedule.follow_up.investigation.order.order_no
 	cleaning_dict['address']  		 = schedule.customer_address.apartment+', '+schedule.customer_address.block+', '+schedule.customer_address.street+', '+schedule.customer_address.avenue+', '+schedule.customer_address.building+', '+schedule.customer_address.area.name+', '+schedule.customer_address.governorate.name
@@ -285,8 +285,9 @@ def GetFollowupInfo(request):
 		for cleaner in team.cleaning_member:
 			cleaner_dict = {}
 
-			cleaner_dict["member_name"] 	= cleaner.member.name
-			cleaner_dict["member_id"] 		= cleaner.member.id
+			if cleaner.member.id != team.team_leader.id:
+				cleaner_dict["member_name"] 	= cleaner.member.name
+				cleaner_dict["member_id"] 		= cleaner.member.id
 
 			cleaners_info['cleaners'].append(cleaner_dict)
 
