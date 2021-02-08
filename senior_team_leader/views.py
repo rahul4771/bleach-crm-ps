@@ -128,7 +128,7 @@ def GetFollowupInfo(request):
 
 	scheduler_id  = request.GET.get('schedule_id')
 
-	schedule  = FollowUpScheduler.objects.select_related('customer_address__customer','follow_up__investigation__order').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_member')),to_attr='cleaning_team')).get(id=scheduler_id)
+	schedule  = FollowUpScheduler.objects.select_related('customer_address__customer','follow_up__investigation__order').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.select_related('member').filter(Q(Q(is_active=True)&Q(Q(member__user_type='CLEANER')|Q(member__user_type='TEAMINCHARGE')))),to_attr='cleaning_member')),to_attr='cleaning_team')).get(id=scheduler_id)
 
 	cleaning_dict['order_no'] 		 = schedule.follow_up.investigation.order.order_no
 	cleaning_dict['address']  		 = schedule.customer_address.apartment+', '+schedule.customer_address.block+', '+schedule.customer_address.street+', '+schedule.customer_address.avenue+', '+schedule.customer_address.building+', '+schedule.customer_address.area.name+', '+schedule.customer_address.governorate.name
@@ -158,10 +158,10 @@ def GetFollowupInfo(request):
 		for cleaner in team.cleaning_member:
 			cleaner_dict = {}
 
-			cleaner_dict["member_name"] 	= cleaner.member.name
-			cleaner_dict["member_id"] 		= cleaner.member.id
-
-			cleaners_info['cleaners'].append(cleaner_dict)
+			if cleaner.member.id != team.team_leader.id:
+				cleaner_dict["member_name"] 	= cleaner.member.name
+				cleaner_dict["member_id"] 		= cleaner.member.id
+				cleaners_info['cleaners'].append(cleaner_dict)
 
 	cleaning_dict['cleanersinfo'] =	cleaners_info
 	
@@ -171,7 +171,7 @@ def GetFollowupInfo(request):
 	active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at))|Q(Q(end_at__gte=schedule.start_at)&Q(end_at__lte=schedule.end_at))|Q(Q(start_at__lte=schedule.start_at)&Q(end_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at)&Q(end_at__gte=schedule.end_at))|Q(Q(start_at__gte=schedule.start_at)&Q(end_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at)&Q(end_at__lte=schedule.end_at)))).values_list("member",flat=True)
 
 	leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
-	cleaners            = UserProfile.objects.filter(is_active=True,user_type='CLEANER').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
+	cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
 
 	#available leaders
 	available_leaders_info = {}
@@ -661,8 +661,7 @@ class StlHome(IsSeniorTeamLeader,View):
 			active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).exclude(member__id__in=sameblc_cleaners).values_list('member',flat=True)
 			active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list('member',flat=True)	
 
-
-			check_cleaners_assigned = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id__in=assigned_cleaners)
+			check_cleaners_assigned = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id__in=assigned_cleaners)
 			check_tl_assigned       = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id=request.POST.get('team_leader'))		
 
 			if schedule_id and not check_cleaners_assigned and not check_tl_assigned and start_at == ((order_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)) and end_at == ((order_schedule.end_at+timedelta(hours=3)).replace(tzinfo=None)):
@@ -703,9 +702,17 @@ class StlHome(IsSeniorTeamLeader,View):
 			followup_schedule = FollowUpScheduler.objects.get(is_active=True,id=schedule_id)
 			assigned_cleaners   = request.POST.getlist('team_member')
 
+			#new cleaning dates
+			cleaning_date 	= request.POST.get('followup_date')
+			cleaning_time   = request.POST.get('followup_time')
+			cleaning_hours 	= float(request.POST.get('followup_hours'))
+			start_at        = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
+			end_at          = start_at + timedelta(hours=cleaning_hours)
+
 			#update followup count
-			followup_schedule.follow_up.no_of_cleaners = len(assigned_cleaners)
-			followup_schedule.follow_up.save()
+			if assigned_cleaners:
+				followup_schedule.follow_up.no_of_cleaners = len(assigned_cleaners)
+				followup_schedule.follow_up.save()
 
 			#delete existing cleaners
 			cleaners_to_be_deleted = FollowUpTeamMember.objects.filter(team__followup_scheduler_id=schedule_id).delete()
@@ -714,10 +721,10 @@ class StlHome(IsSeniorTeamLeader,View):
 			active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at))|Q(Q(end_at__gte=followup_schedule.start_at)&Q(end_at__lte=followup_schedule.end_at))|Q(Q(start_at__lte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__gte=followup_schedule.end_at))|Q(Q(start_at__gte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__lte=followup_schedule.end_at)))).values_list('member',flat=True)
 			active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at))|Q(Q(end_at__gte=followup_schedule.start_at)&Q(end_at__lte=followup_schedule.end_at))|Q(Q(start_at__lte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__gte=followup_schedule.end_at))|Q(Q(start_at__gte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__lte=followup_schedule.end_at)))).values_list('member',flat=True)	
 
-			check_cleaners_assigned = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id__in=assigned_cleaners)
+			check_cleaners_assigned = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id__in=assigned_cleaners)
 			check_tl_assigned       = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id=request.POST.get('team_leader'))
 
-			if schedule_id and not check_cleaners_assigned and not check_tl_assigned:
+			if schedule_id and not check_cleaners_assigned and not check_tl_assigned and start_at == ((followup_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)) and end_at == ((followup_schedule.end_at+timedelta(hours=3)).replace(tzinfo=None)):
 				#update followup team leader
 				assigned_leader  = request.POST.get('team_leader')
 				
@@ -738,6 +745,15 @@ class StlHome(IsSeniorTeamLeader,View):
 				FollowUpScheduler.objects.filter(id=schedule_id).update(work_status='FOLLOW_UP_TEAM_ASSIGNED')
 				
 				messages.success(request,"Follow Up Team Updated")		
+			#update cleaning dates	
+			elif start_at != ((followup_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)) and end_at != ((followup_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)): 
+				FollowUpTeam.objects.filter(followup_scheduler=followup_schedule).delete()
+				followup_schedule.work_status = None
+				followup_schedule.start_at    = start_at
+				followup_schedule.end_at      = end_at
+				followup_schedule.save()
+
+				messages.success(request,"Followup Cleaning Date Changed Please Assign New Followup Cleaning Team")
 			else:
 				messages.error(request,"Something Went Wrong")				
 
@@ -1003,7 +1019,7 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 		active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at))|Q(Q(end_at__gte=followup_schedule.start_at)&Q(end_at__lte=followup_schedule.end_at))|Q(Q(start_at__lte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__gte=followup_schedule.end_at))|Q(Q(start_at__gte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__lte=followup_schedule.end_at)))).values_list('member',flat=True)
 
 		leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
-		cleaners            = UserProfile.objects.filter(is_active=True,user_type='CLEANER').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
+		cleaners            = UserProfile.objects.filter(Q(Q(is_active=True) & Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
 		drivers             = UserProfile.objects.filter(is_active=True,user_type='DRIVER')
 
 		return render(request,'stl/cleaning/followupteam_assign.html',{'follow_up_team_assign_form':follow_up_team_assign_form,'followup_schedule':followup_schedule,'cleaners':cleaners,'leaders':leaders,'drivers':drivers,})
@@ -1024,11 +1040,11 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 		active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at))|Q(Q(end_at__gte=followup_schedule.start_at)&Q(end_at__lte=followup_schedule.end_at))|Q(Q(start_at__lte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__gte=followup_schedule.end_at))|Q(Q(start_at__gte=followup_schedule.start_at)&Q(end_at__gte=followup_schedule.start_at)&Q(start_at__lte=followup_schedule.end_at)&Q(end_at__lte=followup_schedule.end_at)))).values_list('member',flat=True)
 	
 		leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
-		cleaners            = UserProfile.objects.filter(is_active=True,user_type='CLEANER').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
+		cleaners            = UserProfile.objects.filter(Q(Q(is_active=True) & Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
 		drivers             = UserProfile.objects.filter(is_active=True,user_type='DRIVER')
 
 		#validation
-		check_cleaners_assigned = UserProfile.objects.filter(is_active=True,user_type='CLEANER').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id__in=assigned_cleaners)
+		check_cleaners_assigned = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id__in=assigned_cleaners)
 		check_tl_assigned       = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id=request.POST.get('team_leader'))
 		
 
