@@ -121,7 +121,7 @@ function initialize() {
                 var ord_date = new Date(year,month,day)
                 ord_date.setMonth(ord_date.getMonth()-1);
 
-            quotations.push([ord_date,value.submitted_qt,value.approved_qt]);
+                quotations.push([ord_date,value.submitted_qt,value.approved_qt]);
                 submitted_total += parseInt(value.submitted_qt);
                 approved_total += parseInt(value.approved_qt);
             });
@@ -129,6 +129,7 @@ function initialize() {
                 quotations.push(['',0,0]);
             }
             console.log(submitted_total,approved_total,"war ");
+            console.log(quotations,"qts")
             $('#total_submitted').text(submitted_total);
             $('#total_approved').text(approved_total);
 
