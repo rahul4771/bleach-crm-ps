@@ -257,8 +257,24 @@ def GetFollowupInfo(request):
 
 	schedule  = FollowUpScheduler.objects.select_related('customer_address__customer','follow_up__investigation__order').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.select_related('member').filter(Q(Q(is_active=True)&Q(Q(member__user_type='CLEANER')|Q(member__user_type='TEAMINCHARGE')))),to_attr='cleaning_member')),to_attr='cleaning_team')).get(id=scheduler_id)
 
+	
+	if schedule.customer_address.floor == None and schedule.customer_address.avenue == None:
+		address_list = [schedule.customer_address.apartment, schedule.customer_address.street, schedule.customer_address.building, schedule.customer_address.block, schedule.customer_address.area.name, schedule.customer_address.governorate.name]
+	
+	elif schedule.customer_address.floor == None:
+		address_list = [schedule.customer_address.apartment, schedule.customer_address.street, schedule.customer_address.building, schedule.customer_address.avenue, schedule.customer_address.block, schedule.customer_address.area.name, schedule.customer_address.governorate.name]
+	
+	elif schedule.customer_address.avenue == None:
+		address_list = [schedule.customer_address.apartment, schedule.customer_address.floor, schedule.customer_address.street, schedule.customer_address.building, schedule.customer_address.block, schedule.customer_address.area.name, schedule.customer_address.governorate.name]
+	
+	else:
+		address_list = [schedule.customer_address.apartment, schedule.customer_address.floor, schedule.customer_address.street, schedule.customer_address.building, schedule.customer_address.avenue, schedule.customer_address.block, schedule.customer_address.area.name, schedule.customer_address.governorate.name]
+
+	separator = ", "
+
+
 	cleaning_dict['order_no'] 		 = schedule.follow_up.investigation.order.order_no
-	cleaning_dict['address']  		 = schedule.customer_address.apartment+', '+schedule.customer_address.block+', '+schedule.customer_address.street+', '+schedule.customer_address.avenue+', '+schedule.customer_address.building+', '+schedule.customer_address.area.name+', '+schedule.customer_address.governorate.name
+	cleaning_dict['address']  		 = separator.join(address_list)
 	cleaning_dict['customer'] 		 = schedule.customer_address.customer.name
 	cleaning_dict['customer_mobile'] = schedule.customer_address.customer.mobile_number
 	cleaning_dict['start_at_date']   = (schedule.start_at+timedelta(hours=3)).strftime('%d-%m-%Y')
