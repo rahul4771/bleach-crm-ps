@@ -274,6 +274,7 @@ def GetFollowupInfo(request):
 
 
 	cleaning_dict['order_no'] 		 = schedule.follow_up.investigation.order.order_no
+	cleaning_dict['ticket_no']       = schedule.follow_up.ticket_no
 	cleaning_dict['address']  		 = separator.join(address_list)
 	cleaning_dict['customer'] 		 = schedule.customer_address.customer.name
 	cleaning_dict['customer_mobile'] = schedule.customer_address.customer.mobile_number
@@ -304,10 +305,11 @@ def GetFollowupInfo(request):
 			if cleaner.member.id != team.team_leader.id:
 				cleaner_dict["member_name"] 	= cleaner.member.name
 				cleaner_dict["member_id"] 		= cleaner.member.id
-
-			cleaners_info['cleaners'].append(cleaner_dict)
+				cleaners_info['cleaners'].append(cleaner_dict)
 
 	cleaning_dict['cleanersinfo'] =	cleaners_info
+
+	print(cleaning_dict)
 	return JsonResponse(cleaning_dict)
 
 

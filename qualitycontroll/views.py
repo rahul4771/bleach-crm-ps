@@ -692,7 +692,7 @@ class Followup(IsQualityControll,View):
 		follow_up.status = 'FOLLOWUP_IN_PROGRESS'
 		follow_up.save()
 
-		return render(request,"qualitycontroll/ticket/follow-up.html",{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_type':service_type})
+		return render(request,"qualitycontroll/ticket/follow-up.html",{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_type':service_type,'follow_up':follow_up,})
 
 	def post(self,request,investigation_id):
 		investigation = Investigation.objects.get(is_active=True,id=int(investigation_id))
@@ -803,7 +803,7 @@ class FollowupEdit(IsQualityControll,View):
 		
 		followup_sections = FollowUpSection.objects.filter(follow_up__investigation__id=int(investigation_id),is_active=True).prefetch_related(Prefetch('keynotesectionsfollowup',queryset=FollowUpSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'))
 		followup_medias = InvestigationMedia.objects.filter(investigation__id=investigation_id,is_active=True)
-		return render(request,"qualitycontroll/ticket/follow-up-edit.html",{"followupmedias":followup_medias,'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_type':service_type,"followupscheduler":followupscheduler,"followupsections":followup_sections})
+		return render(request,"qualitycontroll/ticket/follow-up-edit.html",{"followupmedias":followup_medias,'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_type':service_type,"followupscheduler":followupscheduler,"followupsections":followup_sections,"follow_up":follow_up,})
 
 	def post(self,request,investigation_id):
 		investigation = Investigation.objects.get(is_active=True,id=int(investigation_id))

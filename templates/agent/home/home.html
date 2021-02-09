@@ -656,7 +656,7 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
     
     <table width="100%" border="0" class="popup-tble1">  
                 <tr>
-                    <td valign="center"><div class="blc-number" id="blcno_followup_id"></div><span id="address_followup_id"></span></td>
+                    <td valign="center"><div class="blc-number" id="ticketno_followup_id"></div><div class="mobile_number" id="blcno_followup_id"></div><div class="blc-number" id="status_followup_id"></div><span id="address_followup_id"></span></td>
                     <td><div class="bold-text" id="customername_followup_id"></div><div id="mobileno_followup_id"></div></td>
                 </tr>
  
@@ -1880,7 +1880,9 @@ $('.collapsible1-close').click(function(){
         dataType: 'json',
 
         success: function (data) { 
-                  $('#blcno_followup_id').html(data['order_no']+'<br><br>'+data['status']);
+                  $('#ticketno_followup_id').html('TKT'+data['ticket_no']);
+                  $('#blcno_followup_id').html(data['order_no']+'<br><br>');
+                  $('#status_followup_id').html(data['status']);
                   $('#address_followup_id').html(data['address']);
                   $('#customername_followup_id').html(data['customer']);
                   $('#mobileno_followup_id').html(data['customer_mobile']);  

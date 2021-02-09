@@ -1045,10 +1045,14 @@ class TicketApprove(IsAdmin,View):
 		except:
 		 	investigation_details = None
 
-		ticket_types = investigation_details.ticket_types.split(",")
 		ticket_types_list = []
-		for type in ticket_types:
-			ticket_types_list.append(type)
+		if investigation_details.ticket_types:
+			ticket_types = investigation_details.ticket_types.split(",")
+			for type in ticket_types:
+				ticket_types_list.append(type)
+		else:
+			ticket_types = None
+
 		print(ticket_types_list,"typo")
 
 		promocodes = Promocode.objects.filter(is_active=True)

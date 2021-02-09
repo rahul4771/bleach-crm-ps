@@ -146,6 +146,7 @@ def GetFollowupInfo(request):
 
 
 	cleaning_dict['order_no'] 		 = schedule.follow_up.investigation.order.order_no
+	cleaning_dict['ticket_no']       = schedule.follow_up.ticket_no
 	cleaning_dict['address']  		 = separator.join(address_list)
 	cleaning_dict['customer'] 		 = schedule.customer_address.customer.name
 	cleaning_dict['customer_mobile'] = schedule.customer_address.customer.mobile_number
