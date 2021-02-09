@@ -112,6 +112,7 @@ function initialize() {
 
             if(data_date.length > 0){
             $.each(data_date,function(key,value){
+                console.log(data_date,"dtss")
                 var vals = value.date.split('-');
                 var year = parseInt(vals[0]);
                 var month = parseInt (vals[1]);
