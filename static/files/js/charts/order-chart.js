@@ -119,9 +119,14 @@ function initialize() {
                 console.log(year,month,day,value.submitted_qt,value.approved_qt,"ter")
 
                 var ord_date = new Date(year,month,day)
+                console.log(ord_date,"ord")
                 ord_date.setMonth(ord_date.getMonth()-1);
+                console.log(ord_date,"ord2")
+
+                console.log(quotations,"qts_test")
 
                 quotations.push([ord_date,value.submitted_qt,value.approved_qt]);
+                console.log(quotations,"qts_test2")
                 submitted_total += parseInt(value.submitted_qt);
                 approved_total += parseInt(value.approved_qt);
             });
