@@ -107,7 +107,7 @@
 
 {% for followup in my_followups %}
 <tr class="yellow-line">
-<td data-label="BLC Number" class="bold-text">{{followup.followup_scheduler.follow_up.investigation.order.order_no}}</td>
+<td data-label="BLC Number" class="bold-text">TKT{{followup.followup_scheduler.follow_up.ticket_no}}</td>
 <td data-label="Time" class="bold-text">{{followup.start_at|time:"P"}}</td>
 <td data-label="Customer Name">{{followup.followup_scheduler.follow_up.investigation.order.evaluation.customer.name}}</td>
 <td class="hide-a" data-label="">{{followup.followup_scheduler.customer_address.area.name}}</td>
