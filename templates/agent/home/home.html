@@ -74,7 +74,7 @@
 <table class="main-table">
 <tbody>
 {% for follow_up in followup_to_be_closed %}
-{% if follow_up.followupcount|add:follow_up.paybackcount|add:follow_up.buybackpromocodecount == follow_up.followupcount|add:follow_up.paybackcompletedcount|add:follow_up.buybackpromocodecompletedcount %}
+{% if follow_up.followupcount|add:follow_up.paybackcount|add:follow_up.buybackpromocodecount > 0 and follow_up.followupcount|add:follow_up.paybackcount|add:follow_up.buybackpromocodecount == follow_up.followupcount|add:follow_up.paybackcompletedcount|add:follow_up.buybackpromocodecompletedcount %}
 <tr class="green-line">
 <td data-label="BLC Number" class="bold-text">TKT{{follow_up.ticket_no}}</td>
 <td>
