@@ -114,6 +114,7 @@ function initialize() {
             $.each(data_date,function(key,value){
                 console.log(data_date,"dtss")
                 var vals = value.date.split('-');
+                console.log(vals,vals[2],vals[1],vals[0],"datev")
                 var year = parseInt(vals[0]);
                 var month = parseInt (vals[1]);
                 var day = parseInt (vals[2]);
