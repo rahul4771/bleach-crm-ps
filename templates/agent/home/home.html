@@ -101,9 +101,9 @@ BuyBack / Promocode /Gift
 <td class="hide-a" data-label=""><img src="{{follow_up.investigation.investigator.profile_image.url}}" class="profile-avatar" title="{{follow_up.investigation.investigator.name}}"></td>
 
 <td data-label="" class="followup_schedule_close clickable-cursor" data-blcno="{{follow_up.investigation.order.order_no}}" data-tktno="{{follow_up.ticket_no}}" 
-{% for followup in follow_up.followupschedulers %}{% if forloop.first %}data-followup="FollowUp Cleaning"{% endif %}{% endfor %}
-{% for payback in follow_up.investigation.paybackdiscount %}{% if forloop.first %}data-paybacktype="{{payback.approved_option|default_if_none:""}}"{% endif %}{% endfor %} 
-{% for buyback in follow_up.investigation.buybackpromocodegift %}{% if forloop.first %}data-buybacktype="{{buyback.approved_option|default_if_none:""}}"{% endif %}{% endfor %}
+{% for followup in follow_up.followupschedulers %}{% if forloop.first %}data-followup="FollowUp Cleaning"{% else %}data-followup=""{% endif %}{% endfor %}
+{% for payback in follow_up.investigation.paybackdiscount %}{% if forloop.first %}data-paybacktype="{{payback.approved_option|default_if_none:""}}"{% else %}data-paybacktype=""{% endif %}{% endfor %} 
+{% for buyback in follow_up.investigation.buybackpromocodegift %}{% if forloop.first %}data-buybacktype="{{buyback.approved_option|default_if_none:""}}"{% else %}data-buybacktype=""{% endif %}{% endfor %}
 data-assigner="{{follow_up.investigation.assigned_by.name}}" data-investigator="{{follow_up.investigation.investigator.name}}"
 data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" data-mobile_no="{{follow_up.investigation.order.evaluation.customer.mobile_number}}" data-area="{{follow_up.investigation.order_schedule.customer_address.area.name}}" data-service_type="{{follow_up.investigation.order_schedule.order_scheduler_book.service_type.name}}" data-id="{{follow_up.id}}"><span class="green-bg">Click to Close</span></td>
 
