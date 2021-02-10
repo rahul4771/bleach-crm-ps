@@ -274,7 +274,7 @@
                 <br>
                 <div class="common-gray-text align-left"><i class="fa fa-lg fa-clock-o blue-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.cleaning_hours}} Hour(s)</div>
                 <br>
-                <div class="common-gray-text align-left"><i class="fa fa-lg fa-credit-card orange-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.total_cost|floatformat:2}} KD</div>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-credit-card orange-text" aria-hidden="true"></i> {{orderschedule.order_scheduler_book.total_cost|floatformat:3}} KD</div>
             </div><!--order-clean-Details-widget order-clean-Details-widget-column3-->                        
         </div><!--order-clean-Details-wrapper--> 
         <div class="order-admin-wrapper"><!--order-admin-wrapper-->
@@ -1094,8 +1094,8 @@
     <div class="order-payment-wrapper"><!--order-payment-wrapper-->
     
         <div class="order-payment-widget order-payment-widget-column"><!--order-payment-widget order-payment-widget-column-->
-            <div class="payment-text"><div>Total Amount</div> : {{order.evaluation.estimated_cost|default_if_none:'0.00'|floatformat:2}} KD</div>
-            <div class="payment-text"><div>Discount</div> : {{order.evaluation.discount|default_if_none:'0.00'|floatformat:2}} KD</div>
+            <div class="payment-text"><div>Total Amount</div> : {{order.evaluation.estimated_cost|default_if_none:'0.000'|floatformat:3}} KD</div>
+            <div class="payment-text"><div>Discount</div> : {{order.evaluation.discount|default_if_none:'0.000'|floatformat:3}} KD</div>
             {% if order.evaluation.fine_amount != 0 %}
             <div class="payment-text"><div>Fine Amount</div> : {{order.evaluation.fine_amount|floatformat:'3'}} KD</div>
             {% endif %}
@@ -1103,11 +1103,11 @@
             <div class="payment-text"><div>Write-Off Amount</div> : {{order.evaluation.writeback_amount|floatformat:'3'}} KD</div>
             {% endif %}
             <br>
-            <div class="payment-text bold-text red-text"><div>Final Amount</div> : {{order.evaluation.total_cost|default_if_none:'0.00'|floatformat:2}} KD</div>
+            <div class="payment-text bold-text red-text"><div>Final Amount</div> : {{order.evaluation.total_cost|default_if_none:'0.000'|floatformat:3}} KD</div>
             <hr class="bar"> 
             <div class="payment-text"><div>Payment Policy</div> : 
             {{order.evaluation.payment_method|default_if_none:''}}
-            {% if order.amount_paid == 0.00 %}
+            {% if order.amount_paid == 0.000 %}
             &nbsp;&nbsp;&nbsp;<a class="paymentedit" href="{% url 'accountant:accountant-payment-edit' order.evaluation.customer.id order.evaluation.id %}"><div class="edit_payment_policy"></div></a>
             {% else %}
             {% endif %}
@@ -1118,8 +1118,8 @@
             <div class="payment-text"><div>After Cleaning Amount</div> : {{order.evaluation.after_cleaning_amount|default_if_none:''}}</div>
             <br>
             {% endif %}
-            <div class="payment-text"><div>Paid</div> : {{order.amount_paid|default_if_none:'0.00'|floatformat:2}} KD</div>
-            <div class="payment-text"><div>Balance</div> : {{order.remining_amount|default_if_none:'0.00'|floatformat:2}} KD</div>
+            <div class="payment-text"><div>Paid</div> : {{order.amount_paid|default_if_none:'0.000'|floatformat:3}} KD</div>
+            <div class="payment-text"><div>Balance</div> : {{order.remining_amount|default_if_none:'0.000'|floatformat:3}} KD</div>
             {% if order.paymenthistory %}
             <div class="payment-text"><div>Payment Type(s)</div> : 
             {% for history in order.paymenthistory %}
