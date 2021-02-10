@@ -106,34 +106,41 @@ function initialize() {
             contentType: "application/json;charset=utf-8",
             
             success: function(data_date) {
-            var quotations = [['Date', 'Submitted', 'Approved']];
+            var quotations_area = [['Date', 'Submitted', 'Approved']];
             var submitted_total = 0;
             var approved_total = 0;
 
             if(data_date.length > 0){
             $.each(data_date,function(key,value){
+                console.log(data_date,"dtss")
                 var vals = value.date.split('-');
+                console.log(vals,vals[2],vals[1],vals[0],"datev")
                 var year = parseInt(vals[0]);
                 var month = parseInt (vals[1]);
                 var day = parseInt (vals[2]);
                 console.log(year,month,day,value.submitted_qt,value.approved_qt,"ter")
 
                 var ord_date = new Date(year,month,day)
+                console.log(ord_date,"ord")
                 ord_date.setMonth(ord_date.getMonth()-1);
+                console.log(ord_date,"ord2")
 
-                quotations.push([ord_date,value.submitted_qt,value.approved_qt]);
+                console.log(quotations_area,"qts_test")
+
+                quotations_area.push([ord_date,value.submitted_qt,value.approved_qt]);
+                console.log(quotations_area,"qts_test2")
                 submitted_total += parseInt(value.submitted_qt);
                 approved_total += parseInt(value.approved_qt);
             });
             }else{
-                quotations.push(['',0,0]);
+                quotations_area.push(['',0,0]);
             }
             console.log(submitted_total,approved_total,"war ");
-            console.log(quotations,"qts")
+            console.log(quotations_area,"qts")
             $('#total_submitted').text(submitted_total);
             $('#total_approved').text(approved_total);
 
-            data[1] = new google.visualization.arrayToDataTable(quotations);
+            data[1] = new google.visualization.arrayToDataTable(quotations_area);
 
             chart.setChartType('AreaChart');
             chart.setDataTable(data[1]);
