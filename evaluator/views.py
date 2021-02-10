@@ -575,7 +575,9 @@ class ResourceManagement(IsEvaluator,View):
 		week_active_teams_count  = week_cleaning_active_teams.count()+week_followup_active_teams.count() 
 
 
-		#cleaning schedule & followup schedule for cleaning calendar			
+
+		#Resources
+		#date			
 		workers_calendar_date	= request.GET.get('workers_calendar_date')
 		search                  = request.GET.get('search')
 		
@@ -585,7 +587,8 @@ class ResourceManagement(IsEvaluator,View):
 			workers_date = timezone.now().replace(tzinfo=None)
 
 		workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
-		workers_date_end   = workers_date_start+timedelta(1)		
+		workers_date_end   = workers_date_start+timedelta(1)
+
 
 		if search:
 			try:
@@ -603,39 +606,67 @@ class ResourceManagement(IsEvaluator,View):
 		except:
 			workers_details = None
 
+
 		#Filter
 		try:
-			fil_staff = int(request.GET.get('staff'))
+			fil_staff = request.GET.get('staff')
 		except:
 			fil_staff = ''
 
 		try:
-			fil_minhours       = int(request.GET.get('minhours'))
+			service_type = request.GET.get('service_type')
 		except:
-			fil_minhours       = None
-
-		try:
-			fil_maxhours       = int(request.GET.get('maxhours'))	
-		except:
-			fil_maxhours	   = None
-
-		if 	fil_minhours and fil_maxhours:
-			if fil_minhours>=fil_maxhours:
-				messages.error(request,"Minimum Duration should be less than Maximum Duration")
-				fil_minhours = None
-				fil_maxhours = None
+			service_type = None
 				
 		#filters 	
 		filters=[] 
 		if fil_staff: 
-		    case1 = Q(id=fil_staff)
+		    case1 = Q(user_type=fil_staff)
 		    filters.append(case1)
-	
-		if fil_staff: 
+		
+		if service_type:
+			if service_type == 'is_general_skill':
+				case2 = Q(is_general_skill=True)
+			if service_type == 'is_deep_skill':
+				case2 = Q(is_deep_skill=True)
+			if service_type == 'is_upholstery_skill':
+				case2 = Q(is_upholstery_skill=True)
+			if service_type == 'is_carpet_skill':
+				case2 = Q(is_carpet_skill=True)
+			if service_type == 'is_kitchen_skill':
+				case2 = Q(is_kitchen_skill=True)
+			if service_type == 'is_sterilization_skill':
+				case2 = Q(is_sterilization_skill=True)
+			filters.append(case2)
+
+		if fil_staff or service_type: 
 		    filters         = functools.reduce(operator.and_,filters)
 		    workers_details = workers_details.filter(filters)
 
-		return render(request,'evaluator/resource/resources.html',{"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"staffs":staffs,"fil_staff":fil_staff,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,})
+		#time filter
+		try:
+			fil_startingtime       = request.GET.get('fil_startingtime')
+		except:
+			fil_startingtime       = None
+
+		try:
+			fil_endingtime         = request.GET.get('fil_endingtime')	
+		except:
+			fil_endingtime	       = None
+
+		if fil_startingtime and fil_endingtime:
+			actual_starting_time     = datetime.strptime(fil_startingtime,'%I:%M %p')
+			actual_ending_time       = datetime.strptime(fil_endingtime,'%I:%M %p')
+
+			if actual_starting_time > actual_ending_time:
+				messages.error(request,"Starting Time should be less than Ending Time !")
+			else:
+				actual_starting_datetime = workers_date.replace(hour=actual_starting_time.hour,minute=actual_starting_time.minute,second=0,microsecond=0,tzinfo=None)
+				actual_ending_datetime   = workers_date.replace(hour=actual_ending_time.hour,minute=actual_ending_time.minute,second=0,microsecond=0,tzinfo=None)
+		
+				workers_details = workers_details.annotate(cleaningbusy=Sum(Case(When(Q(Q(Q(cleaning_member_user__start_at__gte=actual_starting_datetime)&Q(cleaning_member_user__start_at__lte=actual_ending_datetime))|Q(Q(cleaning_member_user__end_at__gte=actual_starting_datetime)&Q(cleaning_member_user__end_at__lte=actual_ending_datetime))),then=1),default=0,output_field=IntegerField())),followupbusy=Sum(Case(When(Q(Q(Q(followup_member__start_at__gte=actual_starting_datetime)&Q(followup_member__start_at__lte=actual_ending_datetime))|Q(Q(followup_member__end_at__gte=actual_starting_datetime)&Q(followup_member__end_at__lte=actual_ending_datetime))),then=1),default=0,output_field=IntegerField()))).exclude(Q(Q(cleaningbusy__gte=1)|Q(followupbusy__gte=1)))
+
+		return render(request,'evaluator/resource/resources.html',{"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"staffs":staffs,"fil_staff":fil_staff,"fil_endingtime":fil_endingtime,"fil_startingtime":fil_startingtime,'service_type':service_type})
 
 class TicketDetails(IsEvaluator,View):
 	def get(self,request):
