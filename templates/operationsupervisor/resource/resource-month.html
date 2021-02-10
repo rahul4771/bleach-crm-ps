@@ -1,0 +1,53 @@
+{% load static %}
+{% load mathfilters %}
+{% for details in workers_details_month %}
+<tr>
+<td  class="yellow-line"><div class="profile-pic-inline"><img {% if details.worker_photo %}src="/media/{{details.worker_photo}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %}></div><div class="client-name-inline">{{details.worker}}<div class="common-gray-text align-left">{% if details.user_type == 'TEAMINCHARGE' %}TEAM INCHARGE{% else %}{{details.user_type}}{% endif %}</div></div></td>
+<td class="align-center"> <div class="client-name">{{ details.rating | default_if_none:0.0 |floatformat:1}}</div>
+{% if details.rating <= 5 and details.rating >= 4.5 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        {% elif details.rating < 4.5 and details.rating >= 3.5 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        {% elif details.rating < 3.5 and details.rating >= 2.5 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% elif details.rating < 2.5 and details.rating >= 1.5 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% elif details.rating < 1.5 and details.rating >= .5 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% else %}
+        <span>Not Rated</span>
+        {% endif %}
+ </td>
+<td  class="align-center ">{{details.worked_days}}</td>
+<td class="align-center ">{{details.total_hours}}</td>
+<td class="align-center ">
+{% if details.total_hours == 0 %} 0 {% else %}
+{{details.total_hours |div:details.worked_days |floatformat:2}} {% endif %}
+</td>
+</tr>
+{% endfor %}
+
+{% block xtra_css %}
+<link rel="stylesheet" href="{% static 'files/css/resources.css' %}">
+ {% endblock %}
+    

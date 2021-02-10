@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "operationsupervisor/common/header.html" %}
+{% block css_links %}
+<link rel="stylesheet" href="https://semantic-ui.com/dist/semantic.min.css">
+{% endblock %}    
+<section class="content"><!--content-->
+<div class="container-fluid space topspace"><!--container-fluid space topspace-->
+    <div class="welcome-wrapper"><!--welcome-wrapper-->
+        <h1 class="dashboard-head">Buy Back / Promo Code/ Gift</h1>
+        <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>
+    </div><!--welcome-wrapper-->
+            
+<div class="order-top-wrapper"><!--order-top-wrapper-->
+	<div class="cleaning-Order-wrapper"><!--cleaning-Order-wrapper-->
+    	<div class="cleaning--left-stretch"><!--cleaning--left-stretch-->
+         <div class="center-formDiv"><!--center-formDiv-->	    
+        
+        <hr class="div">
+	<div class="common-sub-head align-left">Buy Back / Promo Code/ Gift</div> 
+    <br>
+<form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+<input type="hidden" name="section_counter" id="id_section_counter" value="0"> 
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  <div class=" bold-text common-label required-field"> <label>Action</label></div>
+                <label for="favcity">
+                <select name="action" id="id_section" required>
+                <option value="">--Select Action--</option>
+                <option value="SERVICEQUALITY">Service Quality</option>
+                <option value="DAMAGE">Damage</option>
+                </select>
+                </label>
+  </div>
+
+  <div class="ticket-form-right"><!--ticket-form-right-->
+    <input class="assignButton" name="addevaluator" type="button" value="Add" onclick="addSectionNew(this);"> 
+  </div>
+
+  </div>
+
+  <div id="id_sectioncontainer">
+        </div><!--section-container-->
+<hr class="hr-dashedpad"> 
+
+<div class="details-notes align-left">Media</div>       
+<div class="row" id="id_media"><!--row-->
+    <div class="col-sm-2 imgUp"><!--col-sm-2 imgUp-->
+        <div class="imagePreview"></div>
+        <label class="btn btn-primary">Upload<input type="file" name="media" class="uploadFile img" value="Upload Photo" style="width: 0px;height: 0px;overflow: hidden;"></label>
+        </div><!--col-sm-2 imgUp-->
+    	<i class="fa fa-plus imgAdd" data-name="media"></i>
+</div><!--row--> 
+
+<div align="center"><input class="assignButton promocodesubmit" name="addevaluator" type="button" value="Submit" > </div>
+<br><br>
+
+        </div> <!--center-formDiv-->
+		</div><!--cleaning--left-stretch-->   
+	</div><!--cleaning-Order-wrapper-->
+</div><!--order-top-wrapper-->  
+            
+                             
+</div><!--container-fluid space topspace-->
+</section><!--content-->
+    
+    
+{% include 'agent/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'files/js/jquery.formset.js' %}"></script>
+<script>
+
+</script>    
+
+
+<script>
+$('document').ready(function(){
+
+$('.promocodesubmit').click(function(){
+    console.log($('#id_section0-keynote_counter').val(),$('#id_section1-keynote_counter').val(),"lolll")
+    if ($('#id_section0-keynote_counter').val() > 0 || $('#id_section1-keynote_counter').val() > 0){
+        console.log('dre')
+        submitAnyForm(this);
+    }else{
+        console.log('drekk')
+        alert('Please add items in section !');
+    }
+})
+
+$("body").on("click", ".btn-remove", function(){
+        $(this).closest('tr').remove();
+        
+        keynote_count = $('#id_'+$(this).data('delete')+'-keynote_counter').val()
+        //update count
+        $('#id_'+$(this).data('delete')+'-keynote_counter').val(keynote_count-1)
+    });
+
+$("body").on("click", ".close-div", function(){
+        
+        //update section count
+        new_section_count = $('#id_section_counter').val()-1
+        $('#id_section_counter').val(new_section_count);
+        
+        //remove section
+        $(this).parent('div').remove();
+        
+        $('#id_sectioncontainer .close-div').attr("hidden",true);
+        $('#id_sectioncontainer .form_section:first .close-div').attr("hidden",false);
+    });
+});
+
+// add new section
+function addSectionNew(form_identifier){
+    selected_section = $("#id_section option:selected").val();
+
+    try {
+        last_section_of_form = $('#id_sectioncontainer .form_section:first').attr('id');
+        count = last_section_of_form.match(/\d+/g)      
+        section_count        = parseInt(count[0])+1;
+    }
+    catch(err) {
+        section_count = 0;   
+    }
+
+    $('#id_section_counter').val(section_count+1);
+
+    appendhtml = '<div class="enquiry-child-wrapper-Full form_section" id="section'+section_count+'"><!--enquiry-child-wrapper-Full-->'+
+'<input type="hidden" name="section'+section_count+'-keynote_counter" id="id_section'+section_count+'-keynote_counter" value="0">'+
+'<div class="close-div" ><a href="#"><i class="fa fa-times-circle" aria-hidden="true"></i></a></div>'+
+
+'<div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes-->'+
+
+'<div class="enquiry-form-left"><!--enquiry-form-left-->'+
+'<div class=" bold-text common-label"> '+
+'<label class="section_label">Section '+(section_count+1)+' ('+selected_section+')</label>'+
+'</div>'+
+'<input name="section'+section_count+'" type="hidden" class="textBox section_time" placeholder=" " value="'+selected_section+'" required>'+
+'</div><!--enquiry-form-left-->'+
+
+'<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->'+
+'</div><!--enquiry-form-right-->'+
+'</div> <!--enquiry-form-Wrapper enquiry-boxes--> '+
+
+'<br><br><div class="common-sub-head align-left">Items</div><div class="keynotes-wrapper-Full"><!--keynotes-wrapper-Full--> '+
+'<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->'+
+'<div class="enquiry-form-left"><!--enquiry-form-left-->'+
+'<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->'+
+'<div class="enquiry-two-col"><!--enquiry-two-col-->'+
+'<div class=" bold-text common-label"> <label>DETAILS</label></div>'+
+'<input class="keynote_field" type="text" id="id_section-'+section_count+'-keynote" name="select" >'+
+'</div><!--enquiry-two-col-->'+
+'</div><!--enquiry-Two-column-wrapp-->'+
+'</div><!--enquiry-form-left-->'+
+'<div class="enquiry-form-right"><!--enquiry-form-right-->'+
+    '<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->'+
+'<div class="enquiry-two-col"><!--enquiry-two-col-->'+
+'<div class=" bold-text common-label"> <label>PRICE</label></div>'+
+'<input name="time" type="number" class="textBox" id="id_section-'+section_count+'-quantity" placeholder=" ">'+
+'</div><!--enquiry-two-col-->'+
+'<div class="enquiry-two-col"><!--enquiry-two-col-->'+
+'<div class=" bold-text common-label hide-m"> '+
+'<label>&nbsp;</label>'+
+'</div>'+
+'<input name="add" type="button" value="Add" id="id_section-'+section_count+'-add" class="add-button" onclick="addKeynote(this);">'+
+'</div><!--enquiry-two-col-->'+
+'</div><!--enquiry-Two-column-wrapp-->'+
+'</div><!--enquiry-form-right-->'+
+'</div> <!--enquiry-form-Wrapper enquiry-boxes-->'+
+'<hr class="hr-dashedpad">'+
+'<div class="enquiry-form-Wrapper enquiry-boxes" id="id_section-'+section_count+'-keynotecontainer">'+
+'<div class="enquiry-form-left"><!--enquiry-form-left-->'+
+'<table width="100%" border="0" id="id_section-'+section_count+'-keynote-table-left" class="keynots-tble"></table>'+
+'</div><!--enquiry-form-left-->'+
+'<div class="enquiry-form-right"><!--enquiry-form-right-->'+
+'<table width="100%" border="0" id="id_section-'+section_count+'-keynote-table-right" class="keynots-tble"></table>'+
+'</div><!--enquiry-form-right-->'+
+'</div><!--enquiry-form-Wrapper-->'+
+'</div><!--keynotes-wrapper-Full-->'+
+
+'</div><!--enquiry-child-wrapper-Full-->'
+
+$('#id_sectioncontainer').prepend(appendhtml);
+
+//close button for only last section
+$('#id_sectioncontainer .close-div').attr("hidden",true);
+$('#id_sectioncontainer .form_section:first .close-div').attr("hidden",false);
+
+}
+
+//keynote add
+function addKeynote(form_identifier){
+    //var count = form_identifier.id.match(/\d+/g)      
+    //section_count        = parseInt(count[0])+1;
+    var sectioncount = parseInt(form_identifier.id.match(/\d+/g)[0]);
+    
+    var quantity = $('#id_section-'+sectioncount+'-quantity').val();
+    var keynote  = $('#id_section-'+sectioncount+'-keynote').val();
+
+    if(keynote && quantity)
+    {
+    var keynoteleft = $('#id_section-'+sectioncount+'-keynote-table-left .keynote-left').length;
+    var keynoteright = $('#id_section-'+sectioncount+'-keynote-table-right .keynote-right').length;
+    //appending keynotes to left and right
+    if (keynoteleft <= keynoteright){
+        
+        try {
+            keynote_count = parseInt($('#id_section'+sectioncount+'-keynote_counter').val());
+        }
+        catch(err) {
+            keynote_count = 0;   
+        }
+        if(!keynote_count)
+        {
+         keynote_count = 0;   
+        }
+
+        //for counter for backend
+
+
+        $('#id_section'+sectioncount+'-keynote_counter').val(keynote_count+1);
+
+        append_keynote_left = '<tr id="id_section-'+sectioncount+'-keynote-'+keynote_count+'" class="section'+sectioncount+'_keynote keynote-left" ><input type="hidden" name="section'+sectioncount+'_keynote'+keynote_count+'" value="'+keynote+'" /><input type="hidden" name="section'+sectioncount+'_quantity'+keynote_count+'" value="'+quantity+'" /><td align="left">'+keynote+'</td><td width="50px" align="center" class="keynote_qty">'+quantity+'</td><td width="30px" align="center" class="btn-remove" data-delete="section'+sectioncount+'"><input name="delete" type="button" class="delete-button"></td></tr>'
+        $('#id_section-'+sectioncount+'-keynote-table-left').append(append_keynote_left);
+    }
+
+    else{
+        
+        try {
+            keynote_count = parseInt($('#id_section'+sectioncount+'-keynote_counter').val());
+        }
+        catch(err) {
+            keynote_count = 0;   
+        }
+        if(!keynote_count)
+        {
+         keynote_count = 0;   
+        }
+
+
+        //for counter for backend
+        $('#id_section'+sectioncount+'-keynote_counter').val(keynote_count+1);
+
+        append_keynote_right = '<tr id="id_section-'+sectioncount+'-keynote-'+keynote_count+'" class="section'+sectioncount+'_keynote keynote-right" ><input type="hidden" name="section'+sectioncount+'_keynote'+keynote_count+'" value="'+keynote+'" /><input type="hidden" name="section'+sectioncount+'_quantity'+keynote_count+'" value="'+quantity+'" /><td align="left">'+keynote+'</td><td width="50px" align="center" class="keynote_qty">'+quantity+'</td><td width="30px" align="center" class="btn-remove" data-delete="section'+sectioncount+'"><input name="delete" type="button" class="delete-button"></td></tr>'
+        $('#id_section-'+sectioncount+'-keynote-table-right').append(append_keynote_right);
+    }
+    
+    //clearing keynote and quantity value
+    $('#id_section-'+sectioncount+'-quantity').val('');
+    $('#id_section-'+sectioncount+'-keynote').val('');
+    }
+
+    else
+    {
+        alert("Please Insert Keynote and Quantity")
+    }    
+};
+
+
+$(".imgAdd").click(function () {
+    console.log("testttt")
+  name=$(this).data('name');
+  console.log(name,"name")
+  $(this).closest(".row").find('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" name="'+name+'" class="uploadFile img" value="Upload Photo" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
+});
+$(document).on("click", "i.del", function () {
+  $(this).parent().remove();
+});
+$(function () {
+  $(document).on("change", ".uploadFile", function ()
+  {
+    var uploadFile = $(this);
+    var files = !!this.files ? this.files : [];
+    if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+
+    if (/^image/.test(files[0].type)) {// only image file
+      var reader = new FileReader(); // instance of the FileReader
+      reader.readAsDataURL(files[0]); // read the local file
+
+      reader.onloadend = function () {// set image data as background of div
+        //alert(uploadFile.closest(".upimage").find('.imagePreview').length);
+        uploadFile.closest(".imgUp").find('.imagePreview').css("background-image", "url(" + this.result + ")");
+      };
+    }
+
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,386 @@
+{% extends "base.html" %}
+{% load mathfilters %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "operationsupervisor/common/header.html" %}    
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+        <h1 class="dashboard-head">Investigation Form</h1>
+        <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>   
+            </div><!--welcome-wrapper-->
+       
+           
+            
+     <div class="main-content-holder"><!--main-content-holder-->            
+     
+      
+            
+<div class="white-wrapper"><!--white-wrapper-->
+<div class="center-formDiv"><!--center-formDiv-->
+
+             <div class="common-sub-head align-left">Details</div> 
+             
+                  <div class="cleaning-column-wrapper ltyellow-border"><!--cleaning-column-wrapper-->
+                    <div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
+                    <div class="blc-number-big">
+                    {% for followup in investigation_details.followup %}
+                    TKT{{followup.ticket_no}}
+                    {% endfor %}
+                    </div>
+                    <div class="mobile-number">
+                    {{investigation_details.order.evaluation.evaluation_id}}
+                    </div>
+                    <div class="customer-name"><i class="fa blue-text fa-user-circle-o" aria-hidden="true"></i> {{investigation_details.order.evaluation.customer.name}}</div>
+                    <div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;  {{investigation_details.order.evaluation.customer.mobile_number}}</div>
+                    <div class="email"><i class="fa orange-text fa-lg fa-envelope-o" aria-hidden="true"></i> &nbsp;  {{investigation_details.order.evaluation.customer.email}}</div>
+                    <br>
+
+                    {% for tickettype in ticket_types %}
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> &nbsp;  {{tickettype}}</div>
+                    {% endfor %}
+
+                    <br>
+                    {% for cleaning_team in investigation_details.order_schedule.cleaning_teams %}
+                    <div class="tl blue-text" >Team Incharge&nbsp;:{{cleaning_team.team_leader.name}}</div>
+                    <br>
+                    <div class="cleaner blue-text" >Cleaners&nbsp;:<br>{% for member in cleaning_team.cleaning_team_members %}{% if member.member != cleaning_team.team_leader %}<i class="fa fa-user" aria-hidden="true"></i> <span class="gray-text"> {{member.member.name}}, </span>{% endif %}<br>{% endfor %}</div>
+                    {% endfor %}
+                    <br>
+
+                    {% if investigation_details.notes %}
+                    <div class="email">Agent Notes :{{investigation_details.notes}}</div>
+                    {% endif %}
+                </div><!--cleaning-column-widget cleaning-column-widget-column1-->
+                
+                <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
+                    <div class="common-gray-text align-left">
+                    <i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> 
+                    <b>{{investigation_details.order_schedule.start_at}}</b>
+                    </div>
+                    <br>
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> <b>{{investigation_details.order_schedule.customer_address.apartment}}</b>: {% if investigation_details.order_schedule.customer_address.floor %}{{investigation_details.order_schedule.customer_address.floor}}, {% else %}{% endif %} {{investigation_details.order_schedule.customer_address.building}}, {{investigation_details.order_schedule.customer_address.block}}, {{investigation_details.order_schedule.customer_address.street}}, {% if investigation_details.order_schedule.customer_address.avenue %}{{investigation_details.order_schedule.customer_address.avenue}}, {% else %}{% endif %} {{investigation_details.order_schedule.customer_address.area.name}}, {{investigation_details.order_schedule.customer_address.governorate.name}} </div>
+                    <br>
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{investigation_details.order_schedule.order_scheduler_book.number_of_cleaners}} Cleaners </div>
+                    <br>
+
+                    {% if investigation_details.order_schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-credit-card orange-text" aria-hidden="true"></i> {{investigation_details.order_schedule.order_scheduler_book.total_cost|div:orderschedules_count|floatformat:3}} KD</div>
+                    {% else %}
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-credit-card orange-text" aria-hidden="true"></i> {{investigation_details.order_schedule.order_scheduler_book.total_cost|floatformat:3}} KD</div>
+                    {% endif %}
+
+                    <br>
+                    {% if order_schedule.evaluation_details.evaluator %}
+                    <div class="profile-pic-line"><img class="agent_image" src="{{investigation_details.order_schedule.evaluation_details.evaluator.profile_image.url}}" title="{{investigation_details.order_schedule.evaluation_details.evaluator.name}}"></div>
+                    {% else %}
+                    <div class="profile-pic-line"><img class="agent_image" src="{{investigation_details.order.evaluation.call_attender.profile_image.url}}" title="{{investigation_details.order.evaluation.call_attender.name}}"></div>
+                    {% endif %}
+                </div><!--cleaning-column-widget cleaning-column-widget-column2-->
+            </div><!--cleaning-column-wrapper-->
+      </div><!--center-formDiv-->
+      <br>
+      <div align="center">
+<form method="POST" >{% csrf_token %}
+<label for="favcity" style="width:25%">
+<select class="textBox" name="action" >
+<option value="">--Select Action--</option>
+
+{% if followup_scheduler_exists == True %}
+{% else %}
+<option value="followup">Follow-Up Cleaning</option>
+{% endif %}
+
+{% if investigation_details.paybackdiscount %}
+{% else %}
+<option value="discount">Pay Back / Discount</option>
+{% endif %}
+
+{% if investigation_details.buybackpromocodegift %}
+{% else %}
+<option value="gift">Gift/Promo Code</option>
+{% endif %}
+
+{% if investigation_details.internalreport %}
+{% else %}
+<option value="internal">Internal Reporting</option>
+{% endif %}
+
+</select>
+</label>
+<input class="assignButton expandbutton" name="submit" type="submit" value="ADD"> 
+</form>
+</div>
+
+<br>
+<hr class="hr-dashedpad">
+<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+ 
+<thead>
+{% comment %} <tr>
+<th></th>
+<th ></th>
+<th ></th>
+</tr> {% endcomment %}
+</thead>
+<tbody>
+{% if followup_scheduler_exists == True %}
+<tr>
+    <td>
+    <span class="lg-text common-gray-text">Follow Up</span>
+    </td>
+
+    {% for followup in investigation_details.followup %}
+    <td>
+    <span class="lg-text blue-text">{{followup.total_cost|floatformat:3}} KD</span>
+    </td>
+
+    <td>
+    {% if followup_cleaning_teams_exists == True %}
+    {% else %}
+    <a href="{% url 'op-supervisor:follow-up-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
+    <a href="{% url 'op-supervisor:follow-up-delete' investigation_details.id %}"><input type="button" class="checkonDeleteButton" value="Delete" /></a>
+    {% endif %}
+    </td>
+    {% endfor %}
+
+</tr>
+{% endif %}
+
+{% if investigation_details.paybackdiscount %}
+<tr>
+    <td>
+    <span class="lg-text common-gray-text">Cash Back / Discount</span>
+    </td>
+    <td>
+    {% for payback in investigation_details.paybackdiscount|slice:":1" %}
+    <span class="lg-text blue-text">{{payback.total_cost|floatformat:3}} KD</span>
+    {% endfor %}
+    </td>
+
+    <td>
+    {% if investigation_details.is_paybackdiscount_approved == False %}
+    <a href="{% url 'op-supervisor:cash-back-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
+    <a href="{% url 'op-supervisor:cash-back-delete' investigation_details.id %}"><input type="button" class="checkonDeleteButton" value="Delete" /></a>
+    {% endif %}
+    </td>
+</tr>
+{% endif %}
+
+{% if investigation_details.buybackpromocodegift %}
+<tr>
+   <td>
+    <span class="lg-text common-gray-text">Buy Back / Gift / Promo Code</span>
+    </td>
+    <td>
+    
+    <span>
+    {% for gift in investigation_details.buybackpromocodegift|slice:":1" %}
+    <span class="lg-text blue-text">{{gift.total_cost|floatformat:3}} KD</span>
+    {% endfor %}
+    </span>
+
+    </td>
+
+    <td>
+    {% if investigation_details.is_buybackgiftpromo_approved == False %}
+    <a href="{% url 'op-supervisor:buy-back-promo-code-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
+    <a href="{% url 'op-supervisor:buy-back-promo-code-delete' investigation_details.id %}"><input type="button" class="checkonDeleteButton" value="Delete" /></a>
+    {% endif %}
+    </td>
+</tr>
+{% endif %}
+
+{% if investigation_details.internalreport %}
+<tr>
+    <td>
+    <span class="lg-text common-gray-text">Internal Report</span>
+    </td>
+    <td>   
+    <span class="lg-text green-text">Completed</span>
+    </td>
+
+    <td>
+    <a href="{% url 'op-supervisor:internal-report-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
+    <a href="{% url 'op-supervisor:internal-report-delete' investigation_details.id %}"><input type="button" class="checkonDeleteButton" value="Delete" /></a>
+    </td>
+</tr>
+{% endif %}
+
+</tbody>
+<tfoot>
+ 
+</tfoot>
+</table>
+
+{% if followup_scheduler_exists == True or  investigation_details.paybackdiscount or investigation_details.buybackpromocodegift or investigation_details.internalreport %}
+<form method="POST" name="finalform">{% csrf_token %}
+<input type="hidden" name="action" value="final_submit" />
+<div align="center"><input class="assignButton expandbutton" name="submit" type="submit" value="SUBMIT" onclick="finalform.submit();" ></div>
+</form>
+{% endif %}
+
+<div align="left"><a href="/qc/dashboard/"><input class="checkonDeleteButton" name="submit" type="submit" value="BACK" ></a></div>
+
+    </div><!--white-wrapper-->
+            <br><br>   
+
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+{% include 'operationsupervisor/common/footer.html' %} 
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %} 
+<script>
+
+
+    $('document').ready(function(){
+        //Initial hiding
+        $("#tendative_date_id").parents('.ticket-form-left').css("display", "none");
+        $("#tendative_time_id").parents('.ticket-form-right').css("display", "none");
+        $("#no_of_cleaners_id").parents('.ticket-form-right').css("display", "none");
+        $("#cleaning_hours_id").parents('.ticket-form-left').css("display", "none");
+    });
+
+    $('#tendative_date_id').datetimepicker({ 
+            pickTime: false, 
+            format: "DD-MM-YYYY", 
+            minDate: new Date(),
+        });
+
+    //hide and show tendative date & time
+    $('#approval_status_id').change(function(){
+        follow_up_approved =this.value;
+        console.log(follow_up_approved,"fop")
+
+        if(follow_up_approved=='APPROVED')
+        {
+          //Initial hiding
+        $("#tendative_date_id").parents('.ticket-form-left').css("display", "block");
+        $("#tendative_time_id").parents('.ticket-form-right').css("display", "block");
+        $("#no_of_cleaners_id").parents('.ticket-form-right').css("display", "block");
+        $("#cleaning_hours_id").parents('.ticket-form-left').css("display", "block");
+        $("#tendative_date_id").val('');
+        $("#tendative_time_id").val('');
+        $("#no_of_cleaners_id").val('');
+        $("#cleaning_hours_id").val('');
+        $("#no_of_cleaners_id").attr("required",true);
+        $("#cleaning_hours_id").attr("required",true);
+        $("#tendative_date_id").attr("required",true);
+        $("#tendative_time_id").attr("required",true);
+        
+        }    
+        else
+        {
+          $("#tendative_date_id").parents('.ticket-form-left').css("display", "none");
+          $("#tendative_time_id").parents('.ticket-form-right').css("display", "none");
+          $("#no_of_cleaners_id").parents('.ticket-form-right').css("display", "none");
+          $("#cleaning_hours_id").parents('.ticket-form-left').css("display", "none");
+          $("#tendative_date_id").val('');
+          $("#tendative_time_id").val('');
+          $("#no_of_cleaners_id").val('');
+          $("#cleaning_hours_id").val('');
+          $("#no_of_cleaners_id").attr("required",false);
+          $("#cleaning_hours_id").attr("required",false);
+          $("#tendative_date_id").attr("required",false);
+          $("#tendative_time_id").attr("required",false);
+          
+        }
+    });
+
+//previous time limit
+$('#tendative_time_id').change(function(){
+    var today = new Date();
+
+    tentativedate = $('#tendative_date_id').val();
+    if (tentativedate != ''){
+        console.log(tentativedate,today,"dte")
+        var vals = tentativedate.split('-');
+        var day = parseInt(vals[0]);
+        var month = parseInt (vals[1]);
+        var year = parseInt (vals[2]);
+
+        var start_time = $(this).val();
+        start_time = start_time.split(" ");
+        time_AM_PM = start_time[1];
+        var time = start_time[0].split(":");
+
+        //splitting 0 in hour
+        if (time[0] < 10){
+            var hour_split = time[0].split('');
+            var time_hour = hour_split[1];
+            console.log(time_hour,"werry")    
+        }else{
+            time_hour = time[0];
+        }
+
+        //converting to 24 hr
+        if (time_AM_PM == 'PM'){
+          if (time_hour < 12){
+            newhour = parseInt(time_hour) + 12 ;
+          }else{
+            newhour = time_hour;
+          }
+        }else{
+          if (time_hour == 12){
+            newhour = 00 ;
+          }else{
+            newhour = time[0];
+          }
+        }
+
+        //creating datetime element
+        selecteddatetime = new Date(year,month,day,newhour,time[1]);
+        selecteddatetime.setMonth(selecteddatetime.getMonth()-1);
+        console.log(newhour,selecteddatetime,"sel")
+
+        if (selecteddatetime < today){
+          $('#time_alert').attr("hidden",false);
+          $('.assignButton').attr("disabled",true);
+          console.log("success")
+        }else{
+          $('#time_alert').attr("hidden",true);
+          $('.assignButton').attr("disabled",false);
+          console.log("fail")
+        }
+    }else{
+      $('#tendative_time_id').val('');
+      $('#tendative_time_id').attr("placeholder","Select Date !!");
+
+    }
+
+})
+
+
+//multiple image add and delete
+$(".imgAdd").click(function () {
+  $(this).closest(".row").find('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="media" value="Upload Photo" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
+});
+$(document).on("click", "i.del", function () {
+  $(this).parent().remove();
+});
+$(function () {
+  $(document).on("change", ".uploadFile", function ()
+  {
+    var uploadFile = $(this);
+    var files = !!this.files ? this.files : [];
+    if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+
+    if (/^image/.test(files[0].type)) {// only image file
+      var reader = new FileReader(); // instance of the FileReader
+      reader.readAsDataURL(files[0]); // read the local file
+
+      reader.onloadend = function () {// set image data as background of div
+        //alert(uploadFile.closest(".upimage").find('.imagePreview').length);
+        uploadFile.closest(".imgUp").find('.imagePreview').css("background-image", "url(" + this.result + ")");
+      };
+    }
+
+  });
+});
+
+</script>
+{% endblock %}

@@ -17,7 +17,7 @@ class InvestigationForm(forms.ModelForm):
 		self.fields['order_schedule'] = forms.ModelChoiceField(
 		    queryset=OrderScheduler.objects.filter(is_active=True),label='Cleaning Job',required=True,widget=forms.Select(attrs={'class':'order_schedule'}))
 		self.fields['investigator'] = forms.ModelChoiceField(
-			queryset=UserProfile.objects.filter(user_type='QUALITYCONTROLL',is_active=True),required=True,widget=forms.Select(attrs={'class':'userprofile'}))
+			queryset=UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')),is_active=True),required=True,widget=forms.Select(attrs={'class':'userprofile'}))
 
 class PromocodeForm(forms.ModelForm):
 	starting_date = forms.DateField(widget=forms.DateInput(format = '%d/%m/%Y'), 

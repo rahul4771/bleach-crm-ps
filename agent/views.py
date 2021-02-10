@@ -3716,7 +3716,7 @@ class TicketRegistration(IsAgent,View):
 		except:
 			orders = None
 
-		investigators = UserProfile.objects.filter(user_type='QUALITYCONTROLL',is_active=True)
+		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')),is_active=True)
 
 		return render(request,'agent/ticket/ticket_registration.html',{'orders':orders,'investigators':investigators})
 
@@ -3745,7 +3745,7 @@ class TicketRegistration(IsAgent,View):
 							is_active = True
 						)
 						
-			messages.success(request,"Investigation Rised Succesfully!")
+			messages.success(request,"Investigation Raised Succesfully!")
 		else:
 			messages.error(request,get_error(investigation_form))
 		
@@ -3757,7 +3757,7 @@ class OrderTicketRegistration(IsAgent,View):
 
 		order = Order.objects.filter(id=int(orderid)).first()
 
-		investigators = UserProfile.objects.filter(user_type='QUALITYCONTROLL',is_active=True)
+		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')),is_active=True)
 
 		return render(request,'agent/ticket/ticket_registration.html',{'order':order,'investigators':investigators})
 
@@ -3786,7 +3786,7 @@ class OrderTicketRegistration(IsAgent,View):
 							is_active = True
 						)
 						
-			messages.success(request,"Investigation Rised Succesfully!")
+			messages.success(request,"Investigation Raised Succesfully!")
 		else:
 			messages.error(request,get_error(investigation_form))
 		
