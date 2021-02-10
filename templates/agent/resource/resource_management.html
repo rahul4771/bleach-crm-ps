@@ -1,10 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-
 <div class="wrapper">
 {% include "agent/common/header.html" %} 
-
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
@@ -15,47 +13,47 @@
      <div class="main-card"><!--main-card-->
 <div class="card-row"><!--card-row-->
             <div class="card-column whitebg blue-border"><!--card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-workers-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Workers</h1>
-            	<h2 class="blue-text"><label>Active<span>{{total_active_workers|default_if_none:''}}</span></label> </h2>
-            	<p><label>Total <span>{{total_workers|default_if_none:''}}</span></label></p>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
+                <h2 class="blue-text"><label>Active<span>{{total_active_workers|default_if_none:''}}</span></label> </h2>
+                <p><label>Total <span>{{total_workers|default_if_none:''}}</span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
             </div><!--card-column-->
         
             <div class="card-column whitebg green-border"><!--card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-manhours-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Man Hours</h1>
-            	<h2 class="green-text"><label>Today<span id="today_man_hour"></span></label>  </h2>
-            	<p><label>This Week <span id="week_man_hour"></span></label></p>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
+                <h2 class="green-text"><label>Today<span id="today_man_hour"></span></label>  </h2>
+                <p><label>This Week <span id="week_man_hour"></span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
             </div><!--card-column-->
         
             <div class="card-column whitebg orange-border"><!--card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-man-average-hours-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Man Average Hours</h1>
-            	<h2 class="orange-text"><label>Today<span id="today_avg_man_hour"></span></label> </h2>
-            	<p><label>This Week <span id="week_avg_man_hour"></span></label></p>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
+                <h2 class="orange-text"><label>Today<span id="today_avg_man_hour"></span></label> </h2>
+                <p><label>This Week <span id="week_avg_man_hour"></span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
             </div><!--card-column-->
         
             <div class="card-column whitebg red-border"><!--card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-active-team-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Active Team</h1>
-            	<h2 class="red-text"><label>Today<span>{{today_active_teams_count|default_if_none:''}}</span></label> </h2>
-            	<p><label>This Week <span>{{week_active_teams_count|default_if_none:''}}</span></label></p>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
+                <h2 class="red-text"><label>Today<span>{{today_active_teams_count|default_if_none:''}}</span></label> </h2>
+                <p><label>This Week <span>{{week_active_teams_count|default_if_none:''}}</span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
             </div><!--card-column-->
    </div><!--card-row-->
 </div><!--main-card-->       
@@ -64,7 +62,7 @@
 
 <div class="white-wrapper"><!--white-wrapper-->
 <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
-		<div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->
+        <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->
         
         
         <div class="filter-button arrow-left"><span>Filter</span></div> 
@@ -72,28 +70,40 @@
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>Type of Staff</label></div>
-				<label for="favcity">
-                <select name="staff_filter" id="staff_type_filter">
+                <div class=" bold-text common-label"> <label>Type of Staff</label></div>
+                <label for="favcity">
+                <select name="staff_filter" id="staff_type_filter_id">
                 <option value=''>---ALL---</option>
-                <option value='TEAMINCHARGE' {% if staff_type == 'TEAMINCHARGE' %}selected{% endif %}>TEAMINCHARGE</option>
-                <option value='CLEANER' {% if staff_type == 'CLEANER' %}selected{% endif %}>CLEANER</option>
+                <option value='TEAMINCHARGE' {% if fil_staff == 'TEAMINCHARGE' %}selected{% endif %}>TEAMINCHARGE</option>
+                <option value='CLEANER' {% if fil_staff == 'CLEANER' %}selected{% endif %}>CLEANER</option>
                 </select>
                 </label>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-  				
+                <div class=" bold-text common-label"> <label>Service Type</label></div>
+                <label for="favcity">
+                <select name="servicetype_filter" id="service_type_filter_id">
+                <option value=''>---ALL---</option>
+                <option value='is_general_skill' {% if service_type == 'is_general_skill' %}selected{% endif %}>General Cleaning</option>
+                <option value='is_deep_skill' {% if service_type == 'is_deep_skill' %}selected{% endif %}>Deep Cleaning</option>
+                <option value='is_upholstery_skill' {% if service_type == 'is_upholstery_skill' %}selected{% endif %}>Upholstery Cleaning</option>
+                <option value='is_carpet_skill' {% if service_type == 'is_carpet_skill' %}selected{% endif %}>Carpet Cleaning</option>
+                <option value='is_kitchen_skill' {% if service_type == 'is_kitchen_skill' %}selected{% endif %}>Kitchen Cleaning</option>
+                <option value='is_sterilization_skill' {% if service_type == 'is_sterilization_skill' %}selected{% endif %}>Sterilization</option>
+                </select>
+                </label>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
 <hr class="hr-dashedpad"> 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>Minimum Cleaning Hours</label></div>
-                <input type="text" name="minimumhour_filter" id="minimumhour_filter_id" max='24' min='0' value="{{fil_minhours|default_if_none:''}}" style="width:160px;" class="textBox OnlyNumber">
+                <div class=" bold-text common-label"> <label>Cleaning Starting Time</label></div>
+                <input type="text" name="startingtime_filter" id="startingtime_filter_id" max='24' min='0' value="{{fil_startingtime|default_if_none:''}}" style="width:160px;" class="textBox readonly time_pick">
+                
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-  				<div class=" bold-text common-label"> <label>Maximum Cleaning Hours</label></div>
-                <input type="text" name="maximumhour_filter" id="maximumhour_filter_id" max='24' min='0' value="{{fil_maxhours|default_if_none:''}}" style="width:160px;" class="textBox OnlyNumber">
+                <div class=" bold-text common-label"> <label>Cleaning Ending Time</label></div>
+                <input type="text" name="endingtime_filter" id="endingtime_filter_id" value="{{fil_endingtime|default_if_none:''}}" style="width:160px;" class="textBox readonly time_pick">
 
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
@@ -112,17 +122,17 @@
         
         
         </div><!--filter-column-boxes filter-columns-left-->
-		<div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
-        
+        <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+            <!-- datepicker -->
             <div class="date-wrapper"><!--date-wrapper-->
             <div class="date-wrapper-inner-resource"><!--date-wrapper-inner-->
             <div id="working_calendar">
             <button class="prev-day-resource previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type="text" id="working_calendar_date" value="{{workers_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box resource_date_pick">
+            <input type='text' id='working_calendar_date'  name='datepicker' class="date-box resource_date_pick" value="{{workers_date|date:"d-m-Y"}}" onchange="set_params_go()" >
             <button class='next-day-resource next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
             <button class='today-date-resource current-date'>Today</button>
             </div>
-
+            
             <!-- monthpicker -->
             <div id="working_calendar2" hidden>
             <button class="prev-month-resource previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
@@ -143,9 +153,7 @@
         
         
         </div><!--filter-column-boxes filter-columns-right-->        
-	</div><!--filter-columns-wrapper-->
-
-
+    </div><!--filter-columns-wrapper-->
 
 <div id="resource-scroll" class="resource-scroll">
 <div class="table-wrap" id="table_date">
@@ -155,7 +163,7 @@
 <th colspan="2" class="fixed-side resource-graybg" scope="col">&nbsp;</th>
 <th onclick="sortTable(0)" class="resource-graybg align-left" width="200" scope="col">Name<div class="sort-icon"></div></th>
 <th onclick="sortTable(1)" class="resource-graybg align-center" width="90" scope="col">Working Time<div class="sort-icon"></div></th>
-	<th class="border-right" width="11"> </td>
+    <th class="border-right" width="11"> </td>
     <th class="border-right" width="58">2 AM</th>
     <th class="border-right" width="58">4 AM</th>
     <th class="border-right" width="58">6 AM</th>
@@ -176,7 +184,8 @@
     <th width="25"  class="fixed-side togglehide dot-image"><img src="{% static 'files/images/green-dot.png' %}"></th>
     <th width="40" class="profile fixed-side"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} align="absmiddle"></th>
     <td><div class="name-bold">{{details.name}}<div class="position">{% if details.user_type == 'TEAMINCHARGE' %}TEAM INCHARGE{% else %}{{details.user_type}}{% endif %}</div></div></td>
-
+    {% comment %} <td class="align-center">8h 0m</td>
+    <td colspan="13"><div class="red-box"> <center>AREA</center></div> <div class="green-box"><center>AREA</center></div></td> {% endcomment %}
     </tr>
     {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td></tr>
@@ -190,7 +199,7 @@
  
 
 <div class="scrollable-div">
-	<div>
+    <div>
  
 <table cellpadding="0" cellspacing="0" border="0" summary="" align="center" class="resource-table-scroll" id="myTable2">
  
@@ -218,8 +227,9 @@
 
 </div>
 
+
 </div><!--white-wrapper-->            
-          
+            
       </div><!--main-content-holder-->
         </div><!--container-fluid space-->
     </section><!--content-->
@@ -238,7 +248,7 @@
 
     //load monthly workers data on toggle
     function load_workers_data(){
-        console.log($('#working_calendar_month').val(),"pop")
+        console.log("pop")
         var month_year = $('#working_calendar_month').val();
         var staff_type = $('#staff_type_filter').val();
         console.log(staff_type,"stp");
@@ -301,7 +311,7 @@
 
         starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
         ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(ending_time_string.split('.')[1])/60
-        console.log(starting_time,ending_time,"tdt");
+
         
         if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.end_at|date:'d'}}')))
                 {
@@ -363,14 +373,14 @@
         if((ending_time<starting_time)&(parseInt('{{weekstart_date|date:'d'}}')==parseInt('{{cleaning_team.end_at|date:'d'}}')))
                 {
                         total_week_hours += ending_time*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
-                    console.log('{{cleaning_team.no_of_cleaners}}',"cl")
+                    console.log(total_week_hours,"cleaning")
                 }
 
                 else if((ending_time<starting_time)&(parseInt('{{today_date|date:'d'}}')==parseInt('{{cleaning_team.start_at|date:'d'}}')))
                     {
                     
                     total_week_hours += (24-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
-
+                    console.log(total_week_hours,"cleaning")
                     }
                 else
                 {
@@ -380,7 +390,8 @@
                         } 
                     else{
                         total_week_hours += (ending_time-starting_time)*(parseInt('{{cleaning_team.no_of_cleaners}}')+1);
-                    }    
+                    } 
+                    console.log(total_week_hours,"cleaning")   
                 }
 
         {% endfor %}
@@ -441,6 +452,9 @@
         {
             $("#week_avg_man_hour").html(average_week_hours.toFixed(2));   
         }
+
+
+
 
 
 
@@ -534,63 +548,15 @@
             if(total_duration == 0)
             {
                 $("#worker{{details.id}} .dot-image img").attr("src","{% static 'files/images/gray-dot.png' %}");
-                console.log("zerooooo condition","{{details.id}}");
             }
 
             None = null;
-            min_duration = {{fil_minhours}} 
-            max_duration = {{fil_maxhours}}
 
-            if(min_duration && max_duration)
-            {
-                if(min_duration <= total_duration && max_duration >= total_duration)
-                {
-                    //append total hours to working table
-                    $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes.toString().substring(0,2)+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
-                 }
-
-                else
-                {
-                    $("#worker{{details.id}}").remove();
-                }
-
-            } 
-
-            else if(min_duration)
-            {
-                if(min_duration <= total_duration)
-                {
-                    //append total hours to working table
-                    $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
-                 }
-
-                else
-                {
-                    $("#worker{{details.id}}").remove();
-                }                
-            }
-
-            else if(max_duration)
-            {
-                if(max_duration >= total_duration)
-                {
-                    //append total hours to working table
-                    $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
-                 }
-
-                else
-                {
-                    $("#worker{{details.id}}").remove();
-                }   
-            }
-
-            else
-            {
-                //append total hours to working table
-                $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
-            }
+            //append total hours to working table
+            $("#worker{{details.id}}").append('<td class="align-center">'+hours+'h '+minutes+'m</td><td colspan="13" id="calendar{{details.id}}"></td>');
 
         {% endfor %}
+
 
         //To Draw Work Details of each worker
         {% for details in workers_details %}
@@ -682,13 +648,12 @@
             {% endif %}
 
     {% endfor %}        
-
     });
 
 function set_params_go(args)
 {
 var url='{% url 'agent:resource-management' %}';
-var params={workers_calendar_date:$('#working_calendar_date').val(),search:$('#search-bar').val(),staff:$('#staff_type_filter').val(),minhours:$('#minimumhour_filter_id').val(),maxhours:$('#maximumhour_filter_id').val(),
+var params={workers_calendar_date:$('#working_calendar_date').val(),search:$('#search-bar').val(),staff:$('#staff_type_filter_id').val(),fil_startingtime:$('#startingtime_filter_id').val(),fil_endingtime:$('#endingtime_filter_id').val(),service_type:$('#service_type_filter_id').val(),
 };
 for(key in args) 
     params[key]=args[key];
@@ -699,5 +664,6 @@ for(key in params)
 query=query.replace('&','?');
 window.location.href=url+query;  
 }
+
 </script>
 {% endblock %}    
