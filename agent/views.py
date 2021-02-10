@@ -4053,8 +4053,8 @@ def ResourcesToggle(request):
 	daterange = pd.date_range(monthdate1, monthdate2)
 
 	for d in workers_list:
-		cleanings = CleaningTeamMember.objects.filter(is_active=True,member_id=d['id']).filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__order_scheduler__order__feed_backs_order').filter(team__check_out__isnull=False).values('team__order_scheduler__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at')
-		followups = FollowUpTeamMember.objects.filter(is_active=True,member_id=d['id']).filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__followup_scheduler__follow_up__investigation__order__feed_backs_order').filter(team__check_out__isnull=False).values('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at')		
+		cleanings = CleaningTeamMember.objects.filter(is_active=True,member_id=d['id']).filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__order_scheduler__order__feed_backs_order').values('team__order_scheduler__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at')
+		followups = FollowUpTeamMember.objects.filter(is_active=True,member_id=d['id']).filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).select_related('team__followup_scheduler__follow_up__investigation__order__feed_backs_order').values('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at')		
 
 		#to find worked days
 		for date in daterange:
