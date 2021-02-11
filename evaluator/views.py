@@ -4,7 +4,7 @@ from django.forms import formset_factory,modelformset_factory
 from django.http import HttpResponse,JsonResponse
 
 from django.conf import settings
-from bleach_crm_ps.permissions import IsEvaluator
+from bleach_crm_ps.permissions import IsEvaluator,IsAgentEvaluatorSalesAdmin
 from bleach_crm_ps.utils import get_error
 
 from django.db.models.functions import ExtractMonth,ExtractYear
@@ -1456,7 +1456,7 @@ class MakeQuatationPhase1(IsEvaluator,View):
 		return redirect('evaluator:evaluatordash-board')
 
 		
-class MakeQuatationPhase2(IsEvaluator,View):
+class MakeQuatationPhase2(View):
 	service_formset_define    = formset_factory(QuatationServiceForm)
 	def get(self,request,evaluation_detail_id):
 
@@ -1539,7 +1539,7 @@ class MakeQuatationPhase2(IsEvaluator,View):
 							order_schedule_array.append(OrderScheduler(order=new_order[0],status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))
 						
 
-						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED',evaluator=request.user)
+						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
 						updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)	
 						update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')+total,remining_amount=F('remining_amount')+total)
 					#to save sections
@@ -1611,13 +1611,18 @@ class MakeQuatationPhase2(IsEvaluator,View):
 				area_types = AreaType.objects.filter(is_active=True)
 			except:
 				area_types = None
+			
+			if request.user.user_type == 'EVALUATOR':
+				return render(request,'evaluator/enquiry/phase2quatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,})	
+			if request.user.user_type == 'AGENT':
+				return render(request,'agent/enquiry/phase2quatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,'area_types':area_types,'service_types':service_types,})
+	
+		if request.user.user_type == 'EVALUATOR':
+			return redirect('evaluator:evaluator-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
+		if request.user.user_type == 'AGENT':
+			return redirect('agent:agent-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
 
-			return render(request,'evaluator/enquiry/phase2quatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,})	
-
-		return redirect('evaluator:evaluator-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
-
-
-class MakeQuatationPhase2Edit(IsEvaluator,View):
+class MakeQuatationPhase2Edit(View):
 	service_formset_define    = formset_factory(QuatationServiceForm)
 	service_formset_store     = modelformset_factory(EvaluationBook,QuatationServiceForm)
 	def get(self,request,evaluation_detail_id):
@@ -1805,11 +1810,20 @@ class MakeQuatationPhase2Edit(IsEvaluator,View):
 				cleaning_sections = CleaningSection.objects.filter(is_active=True)
 			except:
 				cleaning_sections = None
-			
-			return render(request,'evaluator/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})	
 
-		return redirect('evaluator:evaluator-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
+			if request.user.user_type == 'EVALUATOR':
+				return render(request,'evaluator/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})	
+			if request.user.user_type == 'AGENT':
+				return render(request,'agent/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
+			if request.user.user_type == 'SALESADMIN':
+				return render(request,'salesadmin/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
 
+		if request.user.user_type == 'EVALUATOR':
+			return redirect('evaluator:evaluator-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
+		if request.user.user_type == 'AGENT':
+			return redirect('agent:agent-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
+		if request.user.user_type == 'SALESADMIN':
+			return redirect('bleach_salesadmin:salesadmin-makequatation1edit',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
 
 
 class MakeAssignedQuatationPhase1(IsEvaluator,View):
@@ -2361,7 +2375,7 @@ class MakeQuatationPhase1Edit(IsEvaluator,View):
 			pass
 		return redirect('evaluator:evaluatordash-board')
 
-class AddNewService(IsEvaluator,View):
+class AddNewService(View):
 	service_formset_define    = formset_factory(QuatationServiceForm)
 	def get(self,request,evaluation_detail_id,edit_type):
 		
@@ -2530,12 +2544,19 @@ class AddNewService(IsEvaluator,View):
 			return render(request,'evaluator/enquiry/addservice.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,'area_types':area_types,'service_types':service_types,})		
 
 		if edit_type == 'duplicate':
-			return redirect('evaluator:evaluator-makequatation2duplicateedit',evaluation_details.id)
-		elif edit_type == 'edit':
+			if request.user.user_type == 'EVALUATOR':
+				return redirect('evaluator:evaluator-makequatation2duplicateedit',evaluation_details.id)
+			if request.user.user_type == 'AGENT': 
+				return redirect('agent:agent-makequatation2duplicateedit',evaluation_details.id)
+		
+		elif edit_type == 'edit': 
 			return redirect('evaluator:evaluator-makequatation2edit',evaluation_details.id)
-		else:
-			return redirect('evaluator:evaluator-makeassignedquatation2edit',evaluation_details.id)
 
+		else:
+			if request.user.user_type == 'EVALUATOR':
+				return redirect('evaluator:evaluator-makeassignedquatation2edit',evaluation_details.id)
+			if request.user.user_type == 'AGENT' or request.user.user_type == 'SALESADMIN':
+				return redirect('evaluator:evaluator-makequatation2edit',evaluation_details.id)
 
 
 class MakeQuatationPhase2Delete(IsEvaluator,View):
@@ -2795,7 +2816,7 @@ class MakeQuatationPhase1DuplicateEdit(IsEvaluator,View):
 
 
 
-class MakeQuatationPhase2DuplicateEdit(IsEvaluator,View):
+class MakeQuatationPhase2DuplicateEdit(View):
 	service_formset_define    = formset_factory(QuatationServiceForm)
 	service_formset_store     = modelformset_factory(EvaluationBook,QuatationServiceForm)
 	def get(self,request,evaluation_detail_id):
@@ -2985,9 +3006,16 @@ class MakeQuatationPhase2DuplicateEdit(IsEvaluator,View):
 			except:
 				cleaning_sections = None
 
-			return render(request,'evaluator/enquiry/phase2quatationduplicateedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
+			if request.user.user_type == 'EVALUATOR':
+				return render(request,'evaluator/enquiry/phase2quatationduplicateedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
+			elif request.user.user_type == 'AGENT':
+				return render(request,'agent/enquiry/phase2quatationduplicateedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
+		
+		if request.user.user_type == 'EVALUATOR':
+			return redirect('evaluator:evaluator-makequatation1duplicateedit',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
+		elif request.user.user_type == 'AGENT':
+			return redirect('agent:agent-makequatation1duplicateedit',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
 
-		return redirect('evaluator:evaluator-makequatation1duplicateedit',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
 
 class EvaluatorPaymentEdit(IsEvaluator,View):
 
