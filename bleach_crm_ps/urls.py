@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^evaluator/',include('evaluator.urls',namespace='evaluator')),
     url(r'^stl/',include('senior_team_leader.urls',namespace='stl')),
     url(r'^operation-supervisor/',include('operationsupervisor.urls',namespace='op-supervisor')),
+    url(r'^technical-supervisor/',include('technicalsupervisor.urls',namespace='tech-supervisor')),
     url(r'^quality-control/',include('qualitycontroll.urls',namespace='quality-control')),
     url(r'^tl/',include('team_leader.urls',namespace='tl')),
     url(r'^accountant/',include('accountant.urls',namespace='accountant')),

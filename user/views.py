@@ -72,6 +72,9 @@ class Signin(View):
 			if user.user_type == 'OPERATIONSUPERVISOR':	
 				return redirect('op-supervisor:op-supervisor-dash-board')
 
+			if user.user_type == 'TECHNICALSUPERVISOR':	
+				return redirect('tech-supervisor:tech-supervisor-dash-board')
+
 			if user.user_type == 'TEAMINCHARGE':	
 				return redirect('tl:tldash-board')
 

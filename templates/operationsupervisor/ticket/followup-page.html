@@ -211,6 +211,27 @@
         </div><!--investigation-columns-middle-->
 </div><!--investigation-columns-->
 
+{% if followup_details.investigation.is_secondary_investigation_completed == True %}
+<div class="details-sub-head align-left">Investigation</div>     
+<div class="investigation-columns"><!--investigation-columns-->
+        <div class="investigation-columns-left"><!--investigation-columns-left-->
+            {% if followup_details.investigation.secondary_investigator.profile_image %}
+            <div class="profile-pic"><img src="{{followup_details.investigation.secondary_investigator.profile_image.url}}"></div>
+            {% else %}
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>            
+            {% endif %}
+            <div class="client-name">{{followup_details.investigation.secondary_investigator.name}}<div class="common-gray-text">{{followup_details.investigation.secondary_investigator.user_type}}</div></div>
+        </div><!--investigation-columns-left-->
+
+        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
+        {% comment %} <div class="order-invest-date">{{followup_details.investigation.scheduled_at}}</div> {% endcomment %}
+        <br>
+        <div class="notes">{{followup_details.investigation.title}}</div>
+        <p>{{followup_details.investigation.secondary_investigation_notes}}</p>
+        </div><!--investigation-columns-middle-->
+</div><!--investigation-columns-->
+{% endif %}
+
 {% if followup_details.investigation.check_out %}
 <div class="details-sub-head align-left">Actions</div>
 <div class="investigation-columns"><!--investigation-columns-->

@@ -68,7 +68,7 @@
 <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
 
 <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->
-<h2 class="h2">Investigation Task</h2>
+<h2 class="h2">Cases & Complaints</h2>
 </div>
 
 </div>
@@ -95,13 +95,22 @@
 <img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avatar" title="{{team_detail.team_leader.name}}">
 {% endif %}
 {% endfor %}
+{% if investigation.secondary_investigator.profile_image %}
+<img src="{{investigation.secondary_investigator.profile_image.url}}" class="profile-avatar" title="{{investigation.secondary_investigator.name}}">
+{% else %}
+<img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avatar" title="{{investigation.secondary_investigator.name}}">
+{% endif %}
 </td>
 <td class="hide-a" data-label="">
     <span class="{% if investigation.order_schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}green-text{% else %}blue-text{% endif %} bold-text">{{investigation.order_schedule.order_scheduler_book.cleaning_policy}}</span>
 </td>
 <td data-label="" class="bold-text">{% if investigation.days_left <= 2 %}<h3 class="green-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}<h3 class="yellow-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% elif investigation.days_left > 5 and investigation.days_left <= 7 %}<h3 class="orange-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% else %}<h3 class="red-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% endif %}</td>
 <td data-label="">
+{% if investigation.secondary_investigator == None and investigation.is_secondary_investigation_completed == False or investigation.is_secondary_investigation_completed == True %}
 <span class="{% if investigation.days_left <= 2 %}green-bg{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}yellow-bg{% elif investigation.days_left > 5 and investigation.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} clickable-row-list" data-href="{% url 'op-supervisor:investigation' investigation.id %}">View</span>
+{% else %}
+<span class="{% if investigation.days_left <= 2 %}green-bg{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}yellow-bg{% elif investigation.days_left > 5 and investigation.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} " >In Progress</span>
+{% endif %}
 </td>
 </tr>
 {% endfor %} 
