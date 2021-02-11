@@ -1456,7 +1456,7 @@ class MakeQuatationPhase1(IsEvaluator,View):
 		return redirect('evaluator:evaluatordash-board')
 
 		
-class MakeQuatationPhase2(View):
+class MakeQuatationPhase2(IsAgentEvaluatorSalesAdmin,View):
 	service_formset_define    = formset_factory(QuatationServiceForm)
 	def get(self,request,evaluation_detail_id):
 
@@ -1622,7 +1622,7 @@ class MakeQuatationPhase2(View):
 		if request.user.user_type == 'AGENT':
 			return redirect('agent:agent-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
 
-class MakeQuatationPhase2Edit(View):
+class MakeQuatationPhase2Edit(IsAgentEvaluatorSalesAdmin,View):
 	service_formset_define    = formset_factory(QuatationServiceForm)
 	service_formset_store     = modelformset_factory(EvaluationBook,QuatationServiceForm)
 	def get(self,request,evaluation_detail_id):
@@ -2375,7 +2375,7 @@ class MakeQuatationPhase1Edit(IsEvaluator,View):
 			pass
 		return redirect('evaluator:evaluatordash-board')
 
-class AddNewService(View):
+class AddNewService(IsAgentEvaluatorSalesAdmin,View):
 	service_formset_define    = formset_factory(QuatationServiceForm)
 	def get(self,request,evaluation_detail_id,edit_type):
 		
@@ -2816,7 +2816,7 @@ class MakeQuatationPhase1DuplicateEdit(IsEvaluator,View):
 
 
 
-class MakeQuatationPhase2DuplicateEdit(View):
+class MakeQuatationPhase2DuplicateEdit(IsAgentEvaluatorSalesAdmin,View):
 	service_formset_define    = formset_factory(QuatationServiceForm)
 	service_formset_store     = modelformset_factory(EvaluationBook,QuatationServiceForm)
 	def get(self,request,evaluation_detail_id):
