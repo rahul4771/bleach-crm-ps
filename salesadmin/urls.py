@@ -22,9 +22,7 @@ urlpatterns = [
 	url(r'^promocodes/$',views.PromocodeView.as_view(),name='salesadmin-promocode'),
 
 	url(r'^makequatation/phase1/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1Edit.as_view(),name='salesadmin-makequatation1edit'),
-	url(r'^makequatation/phase2/edit/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2Edit.as_view(),name='salesadmin-makequatation2edit'),
 	url(r'^makequatation/phase2/delete/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2Delete.as_view(),name='salesadmin-makequatation2delete'),
-	url(r'^makequatation/add/service/(?P<evaluation_detail_id>[-\w]+)/(?P<edit_type>[-\w]+)$',views.AddNewService.as_view(),name='salesadmin-addnewservice'),
 
 	url(r'^delete/service/(?P<book_id>[-\w]+)/(?P<evaluation_detail_id>[-\w]+)/$',views.deleteservice,name='salesadmin-delete-service'),
 	url(r'^delete/section/(?P<section_id>[-\w]+)/(?P<evaluation_detail_id>[-\w]+)/$',views.deletesection,name='salesadmin-delete-section'),

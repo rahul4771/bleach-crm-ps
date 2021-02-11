@@ -35,17 +35,12 @@ urlpatterns = [
 	url(r'^makequatation/phase1/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1Edit.as_view(),name='agent-makequatation1edit'),
 	url(r'^makequatation/phase1/duplicate/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1DuplicateEdit.as_view(),name='agent-makequatation1duplicateedit'),
 	
-	url(r'^makequatation/phase2/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2.as_view(),name='agent-makequatation2'),
-	url(r'^makequatation/phase2/edit/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2Edit.as_view(),name='agent-makequatation2edit'),
-	url(r'^makequatation/phase2/duplicate/edit/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2DuplicateEdit.as_view(),name='agent-makequatation2duplicateedit'),
 	url(r'^makequatation/phase2/delete/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2Delete.as_view(),name='agent-makequatation2delete'),
 
 	url(r'^delete/service/(?P<book_id>[-\w]+)/(?P<evaluation_detail_id>[-\w]+)/$',views.deleteservice,name='agent-delete-service'),
 	url(r'^delete/section/(?P<section_id>[-\w]+)/(?P<evaluation_detail_id>[-\w]+)/$',views.deletesection,name='agent-delete-section'),		
 
-	url(r'^makequatation/duplicate/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationDuplicate.as_view(),name='agent-makequatation1duplicate'),
-	url(r'^makequatation/add/service/(?P<evaluation_detail_id>[-\w]+)/(?P<edit_type>[-\w]+)$',views.AddNewService.as_view(),name='agent-addnewservice'),
-	
+	url(r'^makequatation/duplicate/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationDuplicate.as_view(),name='agent-makequatation1duplicate'),	
 
 
 	url(r'^ajax/address/status/$',views.UpdateAddressStatus,name='ajax-updateaddress'),

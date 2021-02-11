@@ -5,7 +5,13 @@
 <link rel="stylesheet" href="https://semantic-ui.com/dist/semantic.min.css">
 {% endblock %}
 <div class="wrapper"><!--wrapper-->
+{% if request.user.user_type == 'AGENT' %}
+{% include "agent/common/header.html" %}
+{% elif request.user.user_type == 'EVALUATOR' %}
 {% include "evaluator/common/header.html" %}
+{% elif request.user.user_type == 'SALESADMIN' %}
+{% include "salesadmin/common/header.html" %}
+{% endif %}
     
 <section class="content"><!--content-->
 <div class="container-fluid space topspace"><!--container-fluid space topspace-->

@@ -61,15 +61,15 @@
       </div><!--checkin-form-left-->
       <div class="checkin-form-right align-right"><!--checkin-form-right-->
         {% if detail.status == 'EVALUATED' and detail.evaluator == None %}
-        <a href="{% url 'agent:agent-makequatation2edit' detail.id %}"><div><input name="view" type="button" value="Edit" class="checkonButton"></div></a>
+        <a href="{% url 'evaluator:evaluator-makequatation2edit' detail.id %}"><div><input name="view" type="button" value="Edit" class="checkonButton"></div></a>
         {% elif detail.status == 'TOBEEVALUATED' and detail.evaluator == None %}
-        <a href="{% url 'agent:agent-makequatation2' detail.id %}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
+        <a href="{% url 'evaluator:evaluator-makequatation2' detail.id %}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
         {% else %}
         <div><input name="view" type="button" value="Edit" class="checkonButton" hidden></div>
         {% endif %}
       </div><!--checkins-form-right--> 
       <div class="checkin-form-right align-right"><!--checkin-form-right-->
-        <div><input name="view" type="button" value="Delete" class="checkonDeleteButton delete_evaluation_button" data-evaluation_id="{{detail.evaluation.id}}" data-enquiry_id="{{detail.evaluation.customer.id}}" data-url="{% url 'agent:agent-makequatation2delete' detail.id %}"></div>
+        <div><input name="view" type="button" value="Delete" class="checkonDeleteButton delete_evaluation_button" data-evaluation_id="{{detail.evaluation.id}}" data-enquiry_id="{{detail.evaluation.customer.id}}" data-url="{% url 'evaluator:evaluator-makequatation2delete' detail.id %}"></div>
 
       </div><!--checkins-form-right-->               
 </div><!--checkin-wrapper-row checkin-forms-boxes-->
