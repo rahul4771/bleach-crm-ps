@@ -194,7 +194,7 @@ class InvestigationMedia(models.Model):
 	investigation 			 = models.ForeignKey('Investigation',blank=False,null=False,related_name='investigation_media')
 	media                    = models.FileField(upload_to='investigation/',blank=True,null=True)
 	media_type 				 = models.CharField(max_length=20,blank=True,null=True,choices=MEDIA_CHOICES)
-	taken_status 			 = models.CharField(max_length=20,blank=True,null=True,choices=MEDIA_TAKEN_CHOICES)
+	taken_status 			 = models.CharField(max_length=50,blank=True,null=True,choices=MEDIA_TAKEN_CHOICES)
 	is_active            	 = models.BooleanField(null=False,blank=True,default=True)
 	
 	def save(self,*args, **kwargs):

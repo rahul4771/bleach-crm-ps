@@ -112,8 +112,8 @@ function initialize() {
                 var day = parseInt (vals[2]);
                 console.log(year,month,day,value.total,value.followup,"ter")
 
-                var tkt_date = new Date(year,month,day)
-                tkt_date.setMonth(tkt_date.getMonth()-1);
+                var tkt_date = new Date(value.date+"Z")
+                //tkt_date.setMonth(tkt_date.getMonth()-1);
 
             quotes.push([tkt_date,value.total,value.followup]);
                 tkt_tot += parseInt(value.total);

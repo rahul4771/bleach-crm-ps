@@ -118,8 +118,8 @@ function initialize() {
                 var day = parseInt (vals[2]);
                 console.log(year,month,day,value.paid,value.pending,"ter")
 
-                var payment_date = new Date(year,month,day)
-                payment_date.setMonth(payment_date.getMonth()-1);
+                var payment_date = new Date(value.date+"Z")
+                //payment_date.setMonth(payment_date.getMonth()-1);
 
             quotations.push([payment_date,value.paid]);
                 submitted_total += parseInt(value.paid);

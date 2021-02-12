@@ -118,8 +118,8 @@ function initialize() {
                 var day = parseInt (vals[2]);
                 console.log(year,month,day,value.avg_rating,"ter")
 
-                var fb_date = new Date(year,month,day)
-                fb_date.setMonth(fb_date.getMonth()-1);
+                var fb_date =  new Date(value.date+"Z")
+                //fb_date.setMonth(fb_date.getMonth()-1);
 
             quotations.push([fb_date,parseFloat((value.avg_rating).toFixed(2))]);
                 tot_ratings += parseFloat((value.avg_rating).toFixed(1));
