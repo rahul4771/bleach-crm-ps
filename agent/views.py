@@ -2721,7 +2721,7 @@ class MakeQuatationPhase1Edit(IsAgent,View):
 			evaluation = None		
 	
 		try:
-			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation)
+			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True,cleaning_policy='SUBSCRIPTION'),to_attr='evaluationbooks'))
 		except:
 			evaluation_details = None
 
@@ -2860,7 +2860,7 @@ class MakeQuatationPhase1DuplicateEdit(IsAgent,View):
 			evaluation = None		
 	
 		try:
-			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation)
+			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True,cleaning_policy='SUBSCRIPTION'),to_attr='evaluationbooks'))
 		except:
 			evaluation_details = None
 

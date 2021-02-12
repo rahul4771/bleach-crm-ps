@@ -1840,7 +1840,7 @@ class MakeAssignedQuatationPhase1(IsEvaluator,View):
 			evaluation = None		
 	
 		try:
-			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation)
+			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True,cleaning_policy='SUBSCRIPTION'),to_attr='evaluationbooks'))
 		except:
 			evaluation_details = None
 
@@ -2295,7 +2295,7 @@ class MakeQuatationPhase1Edit(IsEvaluator,View):
 		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
 		
 		try:
-			evaluation = Evaluation.objects.get(id=evaluation_id)
+			evaluation = Evaluation.objects.get(id=evaluation_id).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True,cleaning_policy='SUBSCRIPTION'),to_attr='evaluationbooks'))
 		except:
 			evaluation = None		
 	
@@ -2727,7 +2727,7 @@ class MakeQuatationPhase1DuplicateEdit(IsEvaluator,View):
 			evaluation = None		
 	
 		try:
-			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation)
+			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True,cleaning_policy='SUBSCRIPTION'),to_attr='evaluationbooks'))
 		except:
 			evaluation_details = None
 

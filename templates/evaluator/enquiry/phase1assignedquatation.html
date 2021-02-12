@@ -127,7 +127,11 @@
                 <option value="PREPAID">Prepaid</option>
                 <option value="POSTPAID">Post Paid</option>
                 <option value="BREAKDOWN">Break-Down</option>
+                {% for evaluationdetail in evaluation_details %}
+                {% if evaluationdetail.evaluationbooks %}
                 <option value="SUBSCRIPTION">Subscription</option>
+                {% endif %}
+                {% endfor %}
                 </select>
                 </label>
   </div><!--ticket-form-left-->
