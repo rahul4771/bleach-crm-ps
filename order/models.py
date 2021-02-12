@@ -46,7 +46,8 @@ PAYMENT_STATUS = (
 MEDIA_TAKEN_CHOICES = (
 	('CUSTOMER_SEND','CUSTOMER_SEND'),
 	('BEFORE_CLEANING','BEFORE_CLEANING'),
-	('AFTER_CLEANING','AFTER_CLEANING')
+	('AFTER_CLEANING','AFTER_CLEANING'),
+	('SECONDARY_INVESTIGATION','SECONDARY_INVESTIGATION')
 	)
 
 MEDIA_CHOICES = (
@@ -166,12 +167,16 @@ class Investigation(models.Model):
 	check_out 		     = models.DateTimeField(blank=True,null=True)
 	notes 				 = models.CharField(max_length=5000,blank=True,null=True)
 
+	title				 = models.CharField(max_length=500,blank=True,null=True)
+	secondary_investigation_notes  = models.CharField(max_length=5000,blank=True,null=True)
+	secondary_investigator		 = models.ForeignKey(UserProfile,blank=True,null=True,related_name='second_investigator')
 
 	is_followup_approved           = models.BooleanField(null=False,blank=True,default=False)
 	is_buybackgiftpromo_approved   = models.BooleanField(null=False,blank=True,default=False)
 	is_paybackdiscount_approved    = models.BooleanField(null=False,blank=True,default=False)
 	is_internalreporting_approved  = models.BooleanField(null=False,blank=True,default=False)
 	is_casesandcomplaints_submit   = models.BooleanField(null=False,blank=True,default=False)
+	is_secondary_investigation_completed   = models.BooleanField(null=False,blank=True,default=False)
 	
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)
@@ -189,7 +194,7 @@ class InvestigationMedia(models.Model):
 	investigation 			 = models.ForeignKey('Investigation',blank=False,null=False,related_name='investigation_media')
 	media                    = models.FileField(upload_to='investigation/',blank=True,null=True)
 	media_type 				 = models.CharField(max_length=20,blank=True,null=True,choices=MEDIA_CHOICES)
-	taken_status 			 = models.CharField(max_length=20,blank=True,null=True,choices=MEDIA_TAKEN_CHOICES)
+	taken_status 			 = models.CharField(max_length=50,blank=True,null=True,choices=MEDIA_TAKEN_CHOICES)
 	is_active            	 = models.BooleanField(null=False,blank=True,default=True)
 	
 	def save(self,*args, **kwargs):

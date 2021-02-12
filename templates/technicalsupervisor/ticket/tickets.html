@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
-{% include "operationsupervisor/common/header.html" %}
+{% include "technicalsupervisor/common/header.html" %}
     
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
@@ -166,7 +166,6 @@
 <th data-hide="phone,tablet">Investigator </th>
 <th>Contact</th>
 <th data-hide="phone,tablet">Status</th>
-<th></th>
 </tr>
 </thead>
 <tbody>
@@ -191,16 +190,15 @@
     <td>{{ticket.investigation.order_schedule.order.evaluation.customer.mobile_number}}</td> 
     <td>
     {% if ticket.status == 'FOLLOWUP_IN_PROGRESS' %}
-    <span class="clickable-row yellow-bg" data-href="{% url 'op-supervisor:op-supervisor-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">In Progress</span>     
+    <span class="clickable-row yellow-bg" data-href="{% url 'tech-supervisor:tech-supervisor-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">In Progress</span>     
     {% elif ticket.status == 'FOLLOWUP_CLOSED' %}
-    <span class="clickable-row green-bg" data-href="{% url 'op-supervisor:op-supervisor-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Closed</span>
+    <span class="clickable-row green-bg" data-href="{% url 'tech-supervisor:tech-supervisor-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Closed</span>
     {% elif ticket.status == 'TICKET_RISED' %}
-    <span class="clickable-row blue-bg" data-href="{% url 'op-supervisor:op-supervisor-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Ticket Rised</span>
+    <span class="clickable-row blue-bg" data-href="{% url 'tech-supervisor:tech-supervisor-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Ticket Rised</span>
     {% else %}
-    <span class="clickable-row red-bg" data-href="{% url 'op-supervisor:op-supervisor-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Cancelled</span>
+    <span class="clickable-row red-bg" data-href="{% url 'tech-supervisor:tech-supervisor-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Cancelled</span>
     {% endif %}
     </td>
-    <td align="center"><a href="{% url 'op-supervisor:investigation' ticket.investigation.id %}"><img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon"></a></td>
     </tr> 
     {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>    
@@ -328,7 +326,7 @@ $("#governorate_filter_id").change(function(){
 
 function set_params_go(args)
 {
-var url='{% url 'op-supervisor:op-supervisor-tickets' %}';
+var url='{% url 'tech-supervisor:tech-supervisor-tickets' %}';
 var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),investigator:$('#investigator_filter_id').val(),
 };
 for(key in args) 

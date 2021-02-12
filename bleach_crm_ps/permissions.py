@@ -35,6 +35,13 @@ class IsOperationSupervisor(UserPassesTestMixin):
         else:
             return False
 
+class IsTechnicalSupervisor(UserPassesTestMixin):
+    def test_func(self):
+        if self.request.user.is_authenticated and self.request.user.user_type=='TECHNICALSUPERVISOR' and self.request.user.is_active==True:
+            return True
+        else:
+            return False
+
 class IsTeamLeader(UserPassesTestMixin):
     def test_func(self):
         if self.request.user.is_authenticated and self.request.user.user_type=='TEAMINCHARGE' and self.request.user.is_active==True:

@@ -122,8 +122,8 @@ function salestarget(evaluator_id){
                         var month = parseInt (vals[1]);
                         var day = parseInt (vals[2]);
 
-                        var st_date = new Date(year,month,day)
-                        st_date.setMonth(st_date.getMonth()-1);
+                        var st_date = new Date(value.date+"Z")
+                        //st_date.setMonth(st_date.getMonth()-1);
                         
                         sales.push([st_date,value.amount]);
                         sale_sum += parseInt(value.amount);

@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "technicalsupervisor/common/header.html" %}
+    
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Welcome to Dashboard</h1>
+                <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>    
+            </div><!--welcome-wrapper-->
+       
+     <div class="main-card"><!--main-card-->
+<div class="card-row"><!--card-row-->
+            <div class="card-column whitebg blue-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-active-workers-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Workers</h1>
+            	<h2 class="blue-text"><label>Active<span>{{total_active_workers}}</span></label> </h2>
+            	<p><label>Total <span>{{total_workers}}</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg green-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-manhours-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Man Occupied Hours</h1>
+            	<h2 class="green-text"><label>Today<span id="today_man_hour"></span></label>  </h2>
+            	<p><label>This Week <span id="week_man_hour"></span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg orange-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-man-average-hours-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Man Occupied Average Hours</h1>
+            	<h2 class="orange-text"><label>Today<span id="today_avg_man_hour"></span></label> </h2>
+            	<p><label>This Week <span id="week_avg_man_hour"></span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg red-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-cleaning-red-job-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Cleaning Jobs</h1>
+            	<h2 class="red-text"><label>Today<span>{{today_cleaning_job_count}}</span></label> </h2>
+            	<p><label>This Week <span>{{week_cleaning_job_count}}</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+   </div><!--card-row-->
+</div><!--main-card-->       
+
+<div class="main-content-holder"><!--main-content-holder-->  
+
+<div class="white-wrapper"><!--white-wrapper-->
+
+<div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
+
+<div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->
+<h2 class="h2">Investigation Task</h2>
+</div>
+
+</div>
+<table class="main-table">
+<tbody>
+{% for investigation in investigations %}
+<tr class="{% if investigation.days_left <= 2 %}green-line{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}yellow-line{% elif investigation.days_left > 5 and investigation.days_left <= 7 %}orange-line{% else %}red-line{% endif %} clickable-row-list" data-href="#"> 
+<td data-label="Ticket Number" class="bold-text">{% for followup in investigation.followup %}
+        TKT{{followup.ticket_no}}
+        {% endfor %}</td>
+{% comment %} <td data-label="Proposed Time" class="bold-text">{{investigation.scheduled_at|date:"d/m/Y h:m A"}}</td> {% endcomment %}
+<td data-label="Customer">{{investigation.order.evaluation.customer.name}}</td>
+<td class="hide-a" data-label="">{{investigation.order_schedule.customer_address.area.name}}</td>
+<td class="hide-a" data-label="">
+{% if investigation.assigned_by.profile_image %}
+<img src="{{investigation.assigned_by.profile_image.url}}" class="profile-avatar" title="{{investigation.assigned_by.name}}">
+{% else %}
+<img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avatar" title="{{investigation.assigned_by.name}}">
+{% endif %}
+{% if investigation.investigator.profile_image %}
+<img src="{{investigation.investigator.profile_image.url}}" class="profile-avatar" title="{{investigation.investigator.name}}">
+{% else %}
+<img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avatar" title="{{investigation.investigator.name}}">
+{% endif %}
+</td>
+<td class="hide-a" data-label="">
+    <span class="{% if investigation.order_schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}green-text{% else %}blue-text{% endif %} bold-text">{{investigation.order_schedule.order_scheduler_book.cleaning_policy}}</span>
+</td>
+<td data-label="" class="bold-text">{% if investigation.days_left <= 2 %}<h3 class="green-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}<h3 class="yellow-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% elif investigation.days_left > 5 and investigation.days_left <= 7 %}<h3 class="orange-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% else %}<h3 class="red-text-h3">{{investigation.days_left}}</h3> Days&#11014;{% endif %}</td>
+<td data-label="">
+<span class="{% if investigation.days_left <= 2 %}green-bg{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}yellow-bg{% elif investigation.days_left > 5 and investigation.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} clickable-row-list" data-href="{% url 'tech-supervisor:investigation' investigation.id %}">View</span>
+</td>
+</tr>
+{% empty %}
+<div class="no-task-today"><img src="{% static 'files/images/no-tasknew.png' %}"> No Tasks</div>
+{% endfor %} 
+</tbody>
+</table>
+</div><!--white-wrapper-->   
+      
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+{% include 'stl/common/footer.html' %} 
+</div><!--wrapper-->
+
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+  
+</script>
+{% endblock %}

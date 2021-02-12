@@ -1273,7 +1273,10 @@ class InvestigationTask(IsOperationSupervisor,View):
 		investigation_details.check_in = timezone.now()
 		investigation_details.save()
 
-		return render(request,'operationsupervisor/ticket/investigation.html',{'investigation_details':investigation_details,"followup_scheduler_exists":follow_up_scheduler_exists,"orderschedules_count":orderschedules_count,"ticket_types":ticket_types_list,"followup_cleaning_teams_exists":followup_cleaning_teams_exists})
+		#get technical supervisors
+		technicalsupervisors = UserProfile.objects.filter(is_active=True,user_type='TECHNICALSUPERVISOR')
+
+		return render(request,'operationsupervisor/ticket/investigation.html',{'investigation_details':investigation_details,"followup_scheduler_exists":follow_up_scheduler_exists,"orderschedules_count":orderschedules_count,"ticket_types":ticket_types_list,"followup_cleaning_teams_exists":followup_cleaning_teams_exists,"technicalsupervisors":technicalsupervisors})
 
 	def post(self,request,investigation_id):
 
@@ -1286,6 +1289,17 @@ class InvestigationTask(IsOperationSupervisor,View):
 			return redirect('op-supervisor:buy-back-promo-code', investigation_id)
 		if form_action == "internal":
 			return redirect('op-supervisor:internal-report',investigation_id)
+		if form_action == "assign_investigator":
+			secondary_investigator = request.POST.get('secondary_investigator')
+			
+			investigator = UserProfile.objects.get(id=int(secondary_investigator))
+			investigationdata = Investigation.objects.get(id=investigation_id,is_active=True)
+			
+			investigationdata.secondary_investigator = investigator
+			investigationdata.save()
+			
+			messages.success(request,"Investigator Assigned !")
+			return redirect('op-supervisor:op-supervisor-dash-board')
 		if form_action == "final_submit":
 			investigation                              = Investigation.objects.prefetch_related(Prefetch('reporting_investigation',queryset=Reporting.objects.filter(is_active=True),to_attr='internalreportings'),Prefetch('followup_investigation',queryset=FollowUp.objects.filter(no_of_cleaners__gte=1),to_attr="followups")).get(id=investigation_id)
 			investigation.check_out                    = timezone.now()

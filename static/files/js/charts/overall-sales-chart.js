@@ -116,8 +116,8 @@ function initialize() {
                     var day = parseInt (vals[2]);
                     // console.log(year,month,day)
 
-                    var os_date = new Date(year,month,day)
-                    os_date.setMonth(os_date.getMonth()-1);
+                    var os_date = new Date(value.date+"Z")
+                    //os_date.setMonth(os_date.getMonth()-1);
 
                 sales.push([os_date,value.amount]);
                     sale_sum += parseInt(value.amount);

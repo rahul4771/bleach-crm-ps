@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
-{% include "tl/common/header.html" %}
+{% include "technicalsupervisor/common/header.html" %}
     
 <section class="content"><!--content-->
     <div class="container-fluid space topspace"><!--container-fluid space topspace-->
@@ -122,7 +122,7 @@
             </div><!--order-left-stretch-->
             
         <div class="order-right-fixed"><!--order-right-fixed-->
-            <div class="order-card-column whitebg red-border clickable-row-list" data-href="#"><!--order-card-column-->
+            <div class="order-card-column whitebg red-border clickable-row-list" data-href="{% url 'tech-supervisor:tech-supervisor-client-orders' client_details.id %}"><!--order-card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-orders-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
@@ -255,8 +255,10 @@
                 {% if followup_details.investigation.paybackdiscounts %}{% if followup_details.is_paybackdiscount_approved  %}<i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i>{% else %}<i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i>{% endif %}  &nbsp;Payback/Discount{% endif %}</p>
             </div>
 
+        {% if followup_details.followup_notes %}
         <div class="notes">Followup Cleaning Notes</div>
             <p>{{followup_details.followup_notes}}</p>
+        {% endif %}
         </div><!--investigation-columns-middle-->
 </div><!--investigation-columns-->
 {% endif %}
@@ -548,7 +550,7 @@
     </div><!--container-fluid space topspace-->
 </section><!--content-->
     
-{% include 'tl/common/footer.html' %} 
+{% include 'stl/common/footer.html' %} 
 </div><!--wrapper-->
 {% endblock %}
 {% block javascript %}

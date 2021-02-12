@@ -120,10 +120,10 @@ function initialize() {
                 var day = parseInt (vals[2]);
                 console.log(year,month,day,value.submitted_qt,value.approved_qt,"ter")
 
-                var ord_date = new Date(year,month,day)
+                var ord_date = new Date(value.date+"Z")
                 console.log(ord_date,"ord")
-                ord_date.setMonth(ord_date.getMonth()-1);
-                console.log(ord_date,"ord2")
+                // ord_date.setMonth(ord_date.getMonth()-1);
+                // console.log(ord_date,"ord2")
 
                 console.log(quotations_area,"qts_test")
 
