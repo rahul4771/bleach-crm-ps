@@ -1368,7 +1368,7 @@ class MakeQuatationPhase1(IsEvaluator,View):
 			evaluation = None		
 	
 		try:
-			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation)
+			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True,cleaning_policy='SUBSCRIPTION'),to_attr='evaluationbooks'))
 		except:
 			evaluation_details = None
 
@@ -1556,14 +1556,17 @@ class MakeQuatationPhase2(IsAgentEvaluatorSalesAdmin,View):
 						floor         = request.POST.get('form'+str(form_count)+'_floor'+str(i))
 						apartment     = request.POST.get('form'+str(form_count)+'_apartment'+str(i))
 						room          = request.POST.get('form'+str(form_count)+'_room'+str(i))
-						wall_type     = request.POST.get('form'+str(form_count)+'_wall_type'+str(i))
-						ceiling_type  = request.POST.get('form'+str(form_count)+'_ceiling_type'+str(i))
-						floor_type    = request.POST.get('form'+str(form_count)+'_floor_type'+str(i))
+						wall_type     = request.POST.get('form'+str(form_count)+'_walltype'+str(i))
+						ceiling_type  = request.POST.get('form'+str(form_count)+'_ceilingtype'+str(i))
+						floor_type    = request.POST.get('form'+str(form_count)+'_floortype'+str(i))
 						material      = request.POST.get('form'+str(form_count)+'_material'+str(i))
 						colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
 						cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
 						section_cost  = request.POST.get('form'+str(form_count)+'_sectioncost'+str(i))
-
+						print("hereeeeeeeeeeeeeeeeeeeeeee")
+						print(wall_type)
+						print(ceiling_type)
+						print(floor_type)
 						try:
 							section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
 						except:
@@ -2031,9 +2034,9 @@ class MakeAssignedQuatationPhase2(IsEvaluator,View):
 						floor         = request.POST.get('form'+str(form_count)+'_floor'+str(i))
 						apartment     = request.POST.get('form'+str(form_count)+'_apartment'+str(i))
 						room          = request.POST.get('form'+str(form_count)+'_room'+str(i))
-						wall_type     = request.POST.get('form'+str(form_count)+'_wall_type'+str(i))
-						ceiling_type  = request.POST.get('form'+str(form_count)+'_ceiling_type'+str(i))
-						floor_type    = request.POST.get('form'+str(form_count)+'_floor_type'+str(i))
+						wall_type     = request.POST.get('form'+str(form_count)+'_walltype'+str(i))
+						ceiling_type  = request.POST.get('form'+str(form_count)+'_ceilingtype'+str(i))
+						floor_type    = request.POST.get('form'+str(form_count)+'_floortype'+str(i))
 						material      = request.POST.get('form'+str(form_count)+'_material'+str(i))
 						colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
 						cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
@@ -2206,7 +2209,6 @@ class MakeAssignedQuatationPhase2Edit(IsEvaluator,View):
 							colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
 							cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
 							section_cost  = request.POST.get('form'+str(form_count)+'_sectioncost'+str(i))
-
 							old_section_id=request.POST.get('editform'+str(form_count)+'_section'+str(i)) 
 							
 							try:
