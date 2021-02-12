@@ -372,7 +372,7 @@
 {% endfor %}
 {% endfor %}
 
-{% if followup_details.investigation.reports %}
+{% if followup_details.investigation.is_internalreporting_approved == True %}
 <hr class="divider">
 <div class="details-sub-head align-left">Internal Reporting</div>
 <br>

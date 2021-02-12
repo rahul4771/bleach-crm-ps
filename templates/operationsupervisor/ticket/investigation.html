@@ -47,11 +47,14 @@
                     <br>
                     <div class="cleaner blue-text" >Cleaners&nbsp;:<br>{% for member in cleaning_team.cleaning_team_members %}{% if member.member != cleaning_team.team_leader %}<i class="fa fa-user" aria-hidden="true"></i> <span class="gray-text"> {{member.member.name}}, </span>{% endif %}<br>{% endfor %}</div>
                     {% endfor %}
-                    <br>
 
                     {% if investigation_details.notes %}
-                    <div class="email">Agent Notes :{{investigation_details.notes}}</div>
+                    <hr class="hr-dashedpad" />
+                    <div class="blue-text"><b>Agent Notes</b></div>
+                    <div class="email">{{investigation_details.notes}}</div>
                     {% endif %}
+
+
                 </div><!--cleaning-column-widget cleaning-column-widget-column1-->
                 
                 <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
@@ -76,6 +79,22 @@
                     <div class="profile-pic-line"><img class="agent_image" src="{{investigation_details.order_schedule.evaluation_details.evaluator.profile_image.url}}" title="{{investigation_details.order_schedule.evaluation_details.evaluator.name}}"></div>
                     {% else %}
                     <div class="profile-pic-line"><img class="agent_image" src="{{investigation_details.order.evaluation.call_attender.profile_image.url}}" title="{{investigation_details.order.evaluation.call_attender.name}}"></div>
+                    {% endif %}
+
+                    {% if investigation_details.title %}
+                    <hr class="hr-dashedpad" />
+
+                    {% if investigation_details.secondary_investigator.profile_image %}
+                    <div class="profile-pic-line"><img class="agent_image" src="{{investigation_details.secondary_investigator.profile_image.url}}" title="{{investigation_details.secondary_investigator.name}}"></div>
+                    {% else %}
+                    <div class="profile-pic-line"><img class="agent_image" src="{{investigation_details.secondary_investigator.profile_image.url}}" title="{{investigation_details.secondary_investigator.name}}"></div>
+                    {% endif %}
+
+                    <div class="blue-text"><b>{{investigation_details.title}}</b></div>
+                    {% endif %}
+
+                    {% if investigation_details.secondary_investigation_notes %}
+                    <div class="email">{{investigation_details.secondary_investigation_notes}}</div>
                     {% endif %}
                 </div><!--cleaning-column-widget cleaning-column-widget-column2-->
             </div><!--cleaning-column-wrapper-->
@@ -239,7 +258,7 @@
 </form>
 {% endif %}
 
-<div align="left"><a href="/qc/dashboard/"><input class="checkonDeleteButton" name="submit" type="submit" value="BACK" ></a></div>
+<div align="left"><a href="/operation-supervisor/dashboard/"><input class="checkonDeleteButton" name="submit" type="submit" value="BACK" ></a></div>
 
     </div><!--white-wrapper-->
             <br><br>   
