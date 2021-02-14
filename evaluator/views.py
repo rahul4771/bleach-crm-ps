@@ -2295,10 +2295,10 @@ class MakeQuatationPhase1Edit(IsEvaluator,View):
 		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
 		
 		try:
-			evaluation = Evaluation.objects.get(id=evaluation_id).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True,cleaning_policy='SUBSCRIPTION'),to_attr='evaluationbooks'))
+			evaluation = Evaluation.objects.get(id=evaluation_id)
 		except:
-			evaluation = None		
-	
+			evaluation = None
+			
 		try:
 			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation)
 		except:
