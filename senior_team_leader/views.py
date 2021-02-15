@@ -93,6 +93,11 @@ def GetCleaningInfo(request):
 	leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
 	cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
 
+	print(sameblc_cleaners,"same blc")
+	print(active_cleaners1,"active cleaners")
+	print(active_cleaners2,"followup cleaners")
+	print(leaders,"leaders")
+	print(cleaners,"cleaners")
 	#available leaders
 	available_leaders_info = {}
 	available_leaders_info['available_leaders']   = []
@@ -120,7 +125,9 @@ def GetCleaningInfo(request):
 
 	cleaning_dict['availablecleanersinfo'] =	available_cleaners_info
 
-	print(cleaning_dict)
+	print(cleaning_dict['availableleadersinfo'])
+	print(cleaning_dict['availablecleanersinfo'])
+
 	return JsonResponse(cleaning_dict)
 
 def GetFollowupInfo(request):
