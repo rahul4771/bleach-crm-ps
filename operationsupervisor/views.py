@@ -668,6 +668,7 @@ class OperationSupervisorHome(IsOperationSupervisor,View):
 			schedule_id    = request.POST.get('cleaning_id')	
 			order_schedule      = OrderScheduler.objects.select_related('evaluation_details__evaluation').get(is_active=True,id=schedule_id)
 			assigned_cleaners   = request.POST.getlist('team_member')
+			cleaningteamstatus  = request.POST.get('cleaningteamstatus')
 
 			#new cleaning dates
 			cleaning_date 	= request.POST.get('cleaning_date')
@@ -694,7 +695,7 @@ class OperationSupervisorHome(IsOperationSupervisor,View):
 			check_cleaners_assigned = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id__in=assigned_cleaners)
 			check_tl_assigned       = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id=request.POST.get('team_leader'))		
 
-			if schedule_id and not check_cleaners_assigned and not check_tl_assigned and start_at == ((order_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)) and end_at == ((order_schedule.end_at+timedelta(hours=3)).replace(tzinfo=None)):
+			if schedule_id and not check_cleaners_assigned and not check_tl_assigned and start_at == ((order_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)) and end_at == ((order_schedule.end_at+timedelta(hours=3)).replace(tzinfo=None)) and cleaningteamstatus == 'ASSIGNED':
 				
 				#update cleaning team leader
 				assigned_leader  = request.POST.get('team_leader')
@@ -716,21 +717,31 @@ class OperationSupervisorHome(IsOperationSupervisor,View):
 				messages.success(request,"Cleaning Team Updated")
 
 			#update cleaning dates	
-			elif start_at != ((order_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)) and end_at != ((order_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)): 
+			elif (start_at != ((order_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)) or end_at != ((order_schedule.end_at+timedelta(hours=3)).replace(tzinfo=None))) and cleaningteamstatus == 'NOTASSIGNED': 
 				CleaningTeam.objects.filter(order_scheduler=order_schedule).delete()
 				order_schedule.work_status = None
 				order_schedule.start_at    = start_at
 				order_schedule.end_at      = end_at
+				order_schedule.order_scheduler_book.cleaning_hours     = cleaning_hours
+				order_schedule.order_scheduler_book.save()
 				order_schedule.save()
 
 				messages.success(request,"Cleaning Date Changed Please Assign New Cleaning Team")
 			else:
-				messages.error(request,"Something Went Wrong")			
+				try:
+					cleaning_team = CleaningTeam.objects.filter(order_scheduler=order_schedule).delete()
+				except:
+					cleaning_team = None
+				order_schedule.work_status = None
+				order_schedule.save()
+
+				messages.success(request,"Cleaning Date Changed Please Assign New Cleaning Team")			
 
 		if action == 'edit_followup':
-			schedule_id    = request.POST.get('followup_id')
-			followup_schedule = FollowUpScheduler.objects.get(is_active=True,id=schedule_id)
+			schedule_id         = request.POST.get('followup_id')
+			followup_schedule   = FollowUpScheduler.objects.get(is_active=True,id=schedule_id)
 			assigned_cleaners   = request.POST.getlist('team_member')
+			followupteamstatus  = request.POST.get('followupteamstatus')
 
 			#new cleaning dates
 			cleaning_date 	= request.POST.get('followup_date')
@@ -754,7 +765,7 @@ class OperationSupervisorHome(IsOperationSupervisor,View):
 			check_cleaners_assigned = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id__in=assigned_cleaners)
 			check_tl_assigned       = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').filter(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id=request.POST.get('team_leader'))
 
-			if schedule_id and not check_cleaners_assigned and not check_tl_assigned and start_at == ((followup_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)) and end_at == ((followup_schedule.end_at+timedelta(hours=3)).replace(tzinfo=None)):
+			if schedule_id and not check_cleaners_assigned and not check_tl_assigned and start_at == ((followup_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)) and end_at == ((followup_schedule.end_at+timedelta(hours=3)).replace(tzinfo=None)) and followupteamstatus == 'ASSIGNED':
 				#update followup team leader
 				assigned_leader  = request.POST.get('team_leader')
 				
@@ -776,7 +787,7 @@ class OperationSupervisorHome(IsOperationSupervisor,View):
 				
 				messages.success(request,"Follow Up Team Updated")		
 			#update cleaning dates	
-			elif start_at != ((followup_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)) and end_at != ((followup_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)): 
+			elif (start_at != ((followup_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)) or end_at != ((followup_schedule.end_at+timedelta(hours=3)).replace(tzinfo=None))) and followupteamstatus == 'NOTASSIGNED': 
 				FollowUpTeam.objects.filter(followup_scheduler=followup_schedule).delete()
 				followup_schedule.work_status = None
 				followup_schedule.start_at    = start_at
@@ -785,7 +796,14 @@ class OperationSupervisorHome(IsOperationSupervisor,View):
 
 				messages.success(request,"Followup Cleaning Date Changed Please Assign New Followup Cleaning Team")
 			else:
-				messages.error(request,"Something Went Wrong")				
+				try:
+					followupteam = FollowUpTeam.objects.filter(followup_scheduler=followup_schedule).delete()
+				except:
+					followupteam = None
+				followup_schedule.work_status = None
+				followup_schedule.save()
+
+				messages.success(request,"Followup Cleaning Date Changed Please Assign New Followup Cleaning Team")				
 
 		if action =='confirm_followupchedule':
 			followupscheduler_id = request.POST.get('followupscheduler')
