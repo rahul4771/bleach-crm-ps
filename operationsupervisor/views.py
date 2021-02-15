@@ -963,37 +963,27 @@ class ResourceManagement(IsOperationSupervisor,View):
 		try:
 			staffs = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER')))
 		except:
-			staffs = None
+			staffs = None	
 
-		#cleaning schedule & followup schedule for cleaning calendar
-		workers_calendar_date	= request.GET.get('workers_calendar_date')
-		search                  = request.GET.get('search')
-
-		try:
-			workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
-		except:
-			workers_date = timezone.now().replace(tzinfo=None)
-
-		workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
-		workers_date_end   = workers_date_start+timedelta(1)
 
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		count_today_end   = count_today_start+timedelta(1)
+
 
 		#total workers count
 		try:
 			total_workers = UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).count()
 		except:
 			total_workers = 0
-
+		
 		#total active workers
 		try:
-			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=workers_date_start)&Q(end_at__gte=workers_date_start)) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=timezone.now().replace(tzinfo=None))&Q(end_at__gte=timezone.now().replace(tzinfo=None)))) ).values_list('member',flat=True)).distinct().count()			
+			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=count_today_start)&Q(end_at__gte=count_today_start)) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__lte=timezone.now().replace(tzinfo=None))&Q(end_at__gte=timezone.now().replace(tzinfo=None)))) ).values_list('member',flat=True)).distinct().count()
 		except:
-			total_active_workers = 0
-
-
+			total_active_workers = 0	
+	
+	
 		##To find average and total men hour from script data
 		try:
 			cleaning_teams  = CleaningTeam.objects.filter(is_active=True)
@@ -1005,10 +995,11 @@ class ResourceManagement(IsOperationSupervisor,View):
 			follow_up_teams = None
 
 
-		today_cleaning_active_teams  = cleaning_teams.filter(Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lt=workers_date_end))))
-		today_followup_active_teams  = follow_up_teams.filter(Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lt=workers_date_end))))
-		week_cleaning_active_teams   = cleaning_teams.filter(Q( Q(Q(start_at__gte=workers_date_end-timedelta(7))&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_end-timedelta(7))&Q(end_at__lt=workers_date_end)) ))
-		week_followup_active_teams   = follow_up_teams.filter(Q( Q(Q(start_at__gte=workers_date_end-timedelta(7))&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_end-timedelta(7))&Q(end_at__lt=workers_date_end)) ))
+		today_cleaning_active_teams  = cleaning_teams.filter(Q(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))))
+		today_followup_active_teams  = follow_up_teams.filter(Q(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))))
+		week_cleaning_active_teams   = cleaning_teams.filter(Q( Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end)) ))
+		week_followup_active_teams   = follow_up_teams.filter(Q( Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end)) ))
+		
 
 		today_date            = timezone.now()
 		weekstart_date        = timezone.now()-timedelta(6)
@@ -1018,16 +1009,32 @@ class ResourceManagement(IsOperationSupervisor,View):
 			today_total_team_mens = today_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_cleaning_active_teams.count() or 0+today_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_followup_active_teams.count() or 0
 		except:
 			today_total_team_mens = 0
-		try:
+		try:	
 			week_total_team_mens  = week_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_cleaning_active_teams.count() or 0+week_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_followup_active_teams.count() or 0
-		except:
+		except:	
 			week_total_team_mens  = 0
 
 
 
 		#today and weekly active team count
 		today_active_teams_count = today_cleaning_active_teams.count()+today_followup_active_teams.count()
-		week_active_teams_count  = week_cleaning_active_teams.count()+week_followup_active_teams.count()
+		week_active_teams_count  = week_cleaning_active_teams.count()+week_followup_active_teams.count() 
+
+
+
+		#Resources
+		#date			
+		workers_calendar_date	= request.GET.get('workers_calendar_date')
+		search                  = request.GET.get('search')
+		
+		try:
+			workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
+		except:
+			workers_date = timezone.now().replace(tzinfo=None)
+
+		workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		workers_date_end   = workers_date_start+timedelta(1)
+
 
 		if search:
 			try:
@@ -1039,11 +1046,12 @@ class ResourceManagement(IsOperationSupervisor,View):
 				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER')))
 			except:
 				workers =  None
-
-		try:
+ 
+		try:		
 			workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
 		except:
 			workers_details = None
+
 
 		#Filter
 		try:
@@ -1052,32 +1060,57 @@ class ResourceManagement(IsOperationSupervisor,View):
 			fil_staff = ''
 
 		try:
-			fil_minhours       = int(request.GET.get('minhours'))
+			service_type = request.GET.get('service_type')
 		except:
-			fil_minhours       = None
+			service_type = None
+				
+		#filters 	
+		filters=[] 
+		if fil_staff: 
+		    case1 = Q(user_type=fil_staff)
+		    filters.append(case1)
+		
+		if service_type:
+			if service_type == 'is_general_skill':
+				case2 = Q(is_general_skill=True)
+			if service_type == 'is_deep_skill':
+				case2 = Q(is_deep_skill=True)
+			if service_type == 'is_upholstery_skill':
+				case2 = Q(is_upholstery_skill=True)
+			if service_type == 'is_carpet_skill':
+				case2 = Q(is_carpet_skill=True)
+			if service_type == 'is_kitchen_skill':
+				case2 = Q(is_kitchen_skill=True)
+			if service_type == 'is_sterilization_skill':
+				case2 = Q(is_sterilization_skill=True)
+			filters.append(case2)
+
+		if fil_staff or service_type: 
+		    filters         = functools.reduce(operator.and_,filters)
+		    workers_details = workers_details.filter(filters)
+
+		#time filter
+		try:
+			fil_startingtime       = request.GET.get('fil_startingtime')
+		except:
+			fil_startingtime       = None
 
 		try:
-			fil_maxhours       = int(request.GET.get('maxhours'))
+			fil_endingtime         = request.GET.get('fil_endingtime')	
 		except:
-			fil_maxhours	   = None
+			fil_endingtime	       = None
 
-		if 	fil_minhours and fil_maxhours:
-			if fil_minhours>=fil_maxhours:
-				messages.error(request,"Minimum Duration should be less than Maximum Duration")
-				fil_minhours = None
-				fil_maxhours = None
+		
+		if fil_startingtime and fil_endingtime:
+			actual_starting_datetime     = datetime.strptime(fil_startingtime,'%I:%M %p').replace(day=workers_date.day,month=workers_date.month,year=workers_date.year)+timedelta(hours=3)
+			actual_ending_datetime       = datetime.strptime(fil_endingtime,'%I:%M %p').replace(day=workers_date.day,month=workers_date.month,year=workers_date.year)+timedelta(hours=3)
+			
+			if actual_starting_datetime > actual_ending_datetime:
+				messages.error(request,"Starting Time should be less than Ending Time !")
+			else:
+				workers_details = workers_details.annotate(cleaningbusy=Sum(Case(When(Q(Q(Q(cleaning_member_user__start_at__gte=actual_starting_datetime)&Q(cleaning_member_user__start_at__lte=actual_ending_datetime))|Q(Q(cleaning_member_user__end_at__gte=actual_starting_datetime)&Q(cleaning_member_user__end_at__lte=actual_ending_datetime))),then=1),default=0,output_field=IntegerField())),followupbusy=Sum(Case(When(Q(Q(Q(followup_member__start_at__gte=actual_starting_datetime)&Q(followup_member__start_at__lte=actual_ending_datetime))|Q(Q(followup_member__end_at__gte=actual_starting_datetime)&Q(followup_member__end_at__lte=actual_ending_datetime))),then=1),default=0,output_field=IntegerField()))).exclude(Q(Q(cleaningbusy__gte=1)|Q(followupbusy__gte=1)))
 
-		#filters
-		filters=[]
-		if fil_staff:
-			case1 = Q(user_type=fil_staff)
-			filters.append(case1)
-
-		if fil_staff:
-			filters         = functools.reduce(operator.and_,filters)
-			workers_details = workers_details.filter(filters)
-
-		return render(request,'operationsupervisor/resource/resource_management.html',{"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"staffs":staffs,"fil_staff":fil_staff,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,"staff_type":fil_staff})
+		return render(request,'operationsupervisor/resource/resource_management.html',{"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"staffs":staffs,"fil_staff":fil_staff,"fil_endingtime":fil_endingtime,"fil_startingtime":fil_startingtime,'service_type':service_type})
 
 class AssigncleaningTeam(IsOperationSupervisor,View):
 	def get(self,request,scheduler_id):
@@ -1156,7 +1189,7 @@ class AssigncleaningTeam(IsOperationSupervisor,View):
 		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
 		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
 
-		return redirect('/operation-supervisor/dashboard/?cleaning_calendar_date ='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)	
+		return redirect('/operationsupervisor/dashboard/?cleaning_calendar_date ='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)	
 
 class AssignFollowupTeam(IsOperationSupervisor,View):
 	def get(self,request,scheduler_id):
