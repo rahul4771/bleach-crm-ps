@@ -290,7 +290,8 @@
     <form method="post" enctype= "multipart/form-data">
     {%csrf_token%}  
     <input type="hidden" name="action_type" value="edit_cleaning">
-    <input type="hidden" name="cleaning_id" id="cleaning_id">  
+    <input type="hidden" name="cleaning_id" id="cleaning_id">
+    <input type="hidden" name="cleaningteamstatus" id="cleaningteamstatus_id">  
  <hr class="hr-dashedpad">  
   <div class="blc-number align-center">Edit Cleaning</div>
 
@@ -385,6 +386,7 @@
     {%csrf_token%}  
     <input type="hidden" name="action_type" value="edit_followup">
     <input type="hidden" name="followup_id" id="followup_id">  
+    <input type="hidden" name="followupteamstatus" id="followupteamstatus_id">
  <hr class="hr-dashedpad">  
   <div class="blc-number align-center">Edit Followup Cleaning</div>    
 <hr class="hr-dashedpad">
@@ -1308,10 +1310,12 @@ $('document').ready(function(){
     if(cleaning_status == 'CLEANING_TEAM_ASSIGNED' || cleaning_status == 'CLEANING_IN_PROGRESS')
         {
             $('.cleaning_team').css('display','block');
+            $('#cleaningteamstatus_id').val('ASSIGNED');
     }
     else
     {
-            $('.cleaning_team').css('display','None');       
+            $('.cleaning_team').css('display','None');
+            $('#cleaningteamstatus_id').val('NOTASSIGNED');       
     }
 
 
@@ -1324,9 +1328,10 @@ $('document').ready(function(){
     {
         $('.edit-collapse').css('display','block');
     }
+      
+});
 
-
-                //Add cleaning Cleaner Button
+//Add cleaning Cleaner Button
                   $('#add_cleaner_id').click(function(){
                     if(i<(available_cleaners.length+assigned_cleaners.length))
                     {   
@@ -1372,8 +1377,6 @@ $('document').ready(function(){
                     $("#team_member"+i).parents('label').next("br").remove()
                     $("#team_member"+i).parents('label').remove();
                   })
-      
-});
 
 var coll = document.getElementsByClassName("collapsible1");
 var i;
@@ -1545,10 +1548,12 @@ $('.collapsible1-close').click(function(){
         if(followup_status == 'FOLLOW_UP_TEAM_ASSIGNED' || followup_status == 'FOLLOW_UP_CLEANING_IN_PROGRESS')
             {
                 $('.followup_team').css('display','block');
+                $('#followupteamstatus_id').val('ASSIGNED');
         }
         else
         {
                 $('.followup_team').css('display','none');
+                $('#followupteamstatus_id').val('NOTASSIGNED');
         }
 
         //hide edit icon
@@ -1561,55 +1566,54 @@ $('.collapsible1-close').click(function(){
             $('.edit-collapse').css('display','block');
         }
 
-
-                  //Add cleaning Cleaner Button
-                  $('#add_cleanerfollowup_id').click(function(){
-                    if(i<(available_cleaners.length+assigned_cleaners.length))
-                    {   
-
-                        //append main select 
-                        $('#followup_members').append('<label for="favcity"><select name="team_member" id="followup_member'+i+'" class="assign_cleaner" onchange="remove_duplicate_selection(this);"></select></label><br>');
-
-                        //append available cleaners
-                          for(k=0;k<available_cleaners.length;k++)
-                          {   
-                            $("#followup_member"+i).append('<option value="'+available_cleaners[k].cleaner_id+'">'+available_cleaners[k].cleaner_name+'</option>');
-
-                                }
-
-                        //append assigned cleaners
-                          for(l=0;l<assigned_cleaners.length;l++)
-                          {   
-                            $("#followup_member"+i).append('<option value="'+assigned_cleaners[l].member_id+'">'+assigned_cleaners[l].member_name+'</option>');
-
-                                }        
-                        //main  cleaner select selection
-                        if(i<=(cleaners.length-1))
-                        {
-                            $("#followup_member"+i).val(cleaners[i].member_id);
-                        } 
-                        else
-                        {
-                            $("#followup_member"+i).val(available_cleaners[(i-cleaners.length)].cleaner_id);
-                        }
-
-                        i++;        
-                    }
-
-                    else
-                    {
-                      alert("No More Available Cleaners !!")
-                    }
-                  })
-
-                  //Remove Cleaner Button
-                  $('#remove_cleanerfollowup_id').click(function(){
-                    i--;
-                    $("#followup_member"+i).parents('label').next("br").remove()
-                    $("#followup_member"+i).parents('label').remove();
-                  })
-
 });
+
+//Add cleaning Cleaner Button
+$('#add_cleanerfollowup_id').click(function(){
+if(i<(available_cleaners.length+assigned_cleaners.length))
+{   
+
+    //append main select 
+    $('#followup_members').append('<label for="favcity"><select name="team_member" id="followup_member'+i+'" class="assign_cleaner" onchange="remove_duplicate_selection(this);"></select></label><br>');
+
+    //append available cleaners
+      for(k=0;k<available_cleaners.length;k++)
+      {   
+        $("#followup_member"+i).append('<option value="'+available_cleaners[k].cleaner_id+'">'+available_cleaners[k].cleaner_name+'</option>');
+
+            }
+
+    //append assigned cleaners
+      for(l=0;l<assigned_cleaners.length;l++)
+      {   
+        $("#followup_member"+i).append('<option value="'+assigned_cleaners[l].member_id+'">'+assigned_cleaners[l].member_name+'</option>');
+
+            }        
+    //main  cleaner select selection
+    if(i<=(cleaners.length-1))
+    {
+        $("#followup_member"+i).val(cleaners[i].member_id);
+    } 
+    else
+    {
+        $("#followup_member"+i).val(available_cleaners[(i-cleaners.length)].cleaner_id);
+    }
+
+    i++;        
+}
+
+else
+{
+  alert("No More Available Cleaners !!")
+}
+})
+
+//Remove Cleaner Button
+$('#remove_cleanerfollowup_id').click(function(){
+i--;
+$("#followup_member"+i).parents('label').next("br").remove()
+$("#followup_member"+i).parents('label').remove();
+})
 
 var coll = document.getElementsByClassName("collapsible2");
 var i;
