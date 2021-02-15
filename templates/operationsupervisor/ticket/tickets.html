@@ -200,7 +200,11 @@
     <span class="clickable-row red-bg" data-href="{% url 'op-supervisor:op-supervisor-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Cancelled</span>
     {% endif %}
     </td>
+    {% if ticket.status == 'FOLLOWUP_CLOSED' %}
+    <td align="center"><img src="{% static 'files/images/edit-gray.png' %}" align="absmiddle" class="download-icon"></td>
+    {% else %}
     <td align="center"><a href="{% url 'op-supervisor:investigation' ticket.investigation.id %}"><img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon"></a></td>
+    {% endif %}
     </tr> 
     {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>    

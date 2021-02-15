@@ -30,7 +30,7 @@
                     {% endfor %}
                     </div>
                     <div class="mobile-number">
-                    {{investigation_details.order.evaluation.evaluation_id}}
+                    <a href="{% url 'op-supervisor:op-supervisor-order-details' investigation_details.order.id %}" target="_blank">{{investigation_details.order.evaluation.evaluation_id}}</a>
                     </div>
                     <div class="customer-name"><i class="fa blue-text fa-user-circle-o" aria-hidden="true"></i> {{investigation_details.order.evaluation.customer.name}}</div>
                     <div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;  {{investigation_details.order.evaluation.customer.mobile_number}}</div>
@@ -50,6 +50,13 @@
 
                     {% if investigation_details.notes %}
                     <hr class="hr-dashedpad" />
+
+                    {% if investigation_details.assigned_by.profile_image %}
+                    <div class="profile-pic-line"><img class="agent_image" src="{{investigation_details.order.evaluation.call_attender.profile_image.url}}" title="{{investigation_details.assigned_by.name}}"></div>
+                    {% else %}
+                    <div class="profile-pic-line"><img class="agent_image" src="{% static 'files/images/profile-pic.png' %}" title="{{investigation_details.assigned_by.name}}"></div>
+                    {% endif %}
+
                     <div class="blue-text"><b>Agent Notes</b></div>
                     <div class="email">{{investigation_details.notes}}</div>
                     {% endif %}
@@ -87,7 +94,7 @@
                     {% if investigation_details.secondary_investigator.profile_image %}
                     <div class="profile-pic-line"><img class="agent_image" src="{{investigation_details.secondary_investigator.profile_image.url}}" title="{{investigation_details.secondary_investigator.name}}"></div>
                     {% else %}
-                    <div class="profile-pic-line"><img class="agent_image" src="{{investigation_details.secondary_investigator.profile_image.url}}" title="{{investigation_details.secondary_investigator.name}}"></div>
+                    <div class="profile-pic-line"><img class="agent_image" src="{% static 'files/images/profile-pic.png' %}" title="{{investigation_details.secondary_investigator.name}}"></div>
                     {% endif %}
 
                     <div class="blue-text"><b>{{investigation_details.title}}</b></div>
@@ -97,7 +104,25 @@
                     <div class="email">{{investigation_details.secondary_investigation_notes}}</div>
                     {% endif %}
                 </div><!--cleaning-column-widget cleaning-column-widget-column2-->
+
             </div><!--cleaning-column-wrapper-->
+
+            <div class="details-sub-head align-left media-head">Media</div>
+            <div class="order-clean-outer-wrapper media-explaining"><!--order-clean-outer-wrapper-->
+            <div class="gallery-wrapper"><!--gallery-wrapper-->
+                
+                {% if investigation_details.investigationmedias %}
+                <div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
+                <div class="media-heading align-left">From Customer</div>
+                <section>
+                    <div id="data-pn-1" data-pn="1" data-src="{% for investigationmedia in investigation_details.investigationmedias %}{% if investigationmedia.taken_status == 'CUSTOMER_SEND' %}{{investigationmedia.media.url}},{% endif %}{% endfor %}"></div>
+                </section>  
+                </div><!--gallery-widget-column-column1-->
+                {% endif %}
+
+            </div><!--gallery-wrapper-->
+            </div><!--order-clean-outer-wrapper-->
+
       </div><!--center-formDiv-->
       <br>
       <div align="center">
@@ -272,7 +297,18 @@
 
 {% block javascript %} 
 <script>
+//to remove black in media
+    $(".pn-prev").click();
 
+    //To Hide Images 
+    invest_cust_img     = $('#data-pn-1').data('src');
+
+    //hide media
+    if(invest_cust_img == undefined || invest_cust_img == '')
+    {
+        $('.media-head').remove();
+        $('.media-explaining').remove();
+    }
 
     $('document').ready(function(){
         //Initial hiding

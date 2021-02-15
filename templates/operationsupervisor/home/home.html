@@ -76,8 +76,8 @@
 <tbody>
 {% for investigation in investigations %}
 <tr class="{% if investigation.days_left <= 2 %}green-line{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}yellow-line{% elif investigation.days_left > 5 and investigation.days_left <= 7 %}orange-line{% else %}red-line{% endif %} clickable-row-list" data-href="#"> 
-<td data-label="Ticket Number" class="bold-text">{% for followup in investigation.followup %}
-        TKT{{followup.ticket_no}}
+<td data-label="Ticket Number" class="bold-text" >{% for followup in investigation.followup %}
+        <a href="{% url 'op-supervisor:op-supervisor-ticketadvanced' investigation.order_schedule.order.evaluation.customer.id followup.id %}" target="_blank">TKT{{followup.ticket_no}}</a>
         {% endfor %}</td>
 {% comment %} <td data-label="Proposed Time" class="bold-text">{{investigation.scheduled_at|date:"d/m/Y h:m A"}}</td> {% endcomment %}
 <td data-label="Customer">{{investigation.order.evaluation.customer.name}}</td>
