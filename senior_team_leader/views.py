@@ -727,24 +727,17 @@ class StlHome(IsSeniorTeamLeader,View):
 				messages.success(request,"Cleaning Team Updated")
 
 			#update cleaning dates	
-			elif (start_at != ((order_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)) or end_at != ((order_schedule.end_at+timedelta(hours=3)).replace(tzinfo=None))) and cleaningteamstatus == 'NOTASSIGNED': 
-				CleaningTeam.objects.filter(order_scheduler=order_schedule).delete()
-				order_schedule.work_status = None
-				order_schedule.start_at    = start_at
-				order_schedule.end_at      = end_at
-				order_schedule.order_scheduler_book.cleaning_hours     = cleaning_hours
-				order_schedule.order_scheduler_book.save()
-				order_schedule.save()
-
-				messages.success(request,"Cleaning Date Changed Please Assign New Cleaning Team")
 			else:
 				try:
 					cleaning_team = CleaningTeam.objects.filter(order_scheduler=order_schedule).delete()
 				except:
 					cleaning_team = None
 				order_schedule.work_status = None
+				order_schedule.start_at    = start_at
+				order_schedule.end_at      = end_at
+				order_schedule.order_scheduler_book.cleaning_hours     = cleaning_hours
+				order_schedule.order_scheduler_book.save()
 				order_schedule.save()
-
 				messages.success(request,"Cleaning Date Changed Please Assign New Cleaning Team")			
 
 		if action == 'edit_followup':
@@ -797,20 +790,16 @@ class StlHome(IsSeniorTeamLeader,View):
 				
 				messages.success(request,"Follow Up Team Updated")		
 			#update cleaning dates	
-			elif (start_at != ((followup_schedule.start_at+timedelta(hours=3)).replace(tzinfo=None)) or end_at != ((followup_schedule.end_at+timedelta(hours=3)).replace(tzinfo=None))) and followupteamstatus == 'NOTASSIGNED': 
-				FollowUpTeam.objects.filter(followup_scheduler=followup_schedule).delete()
-				followup_schedule.work_status = None
-				followup_schedule.start_at    = start_at
-				followup_schedule.end_at      = end_at
-				followup_schedule.save()
-
-				messages.success(request,"Followup Cleaning Date Changed Please Assign New Followup Cleaning Team")
 			else:
 				try:
 					followupteam = FollowUpTeam.objects.filter(followup_scheduler=followup_schedule).delete()
 				except:
 					followupteam = None
 				followup_schedule.work_status = None
+				followup_schedule.start_at    = start_at
+				followup_schedule.end_at      = end_at
+				followup_schedule.follow_up.cleaning_hours = cleaning_hours
+				followup_schedule.follow_up.save()
 				followup_schedule.save()
 
 				messages.success(request,"Followup Cleaning Date Changed Please Assign New Followup Cleaning Team")				
