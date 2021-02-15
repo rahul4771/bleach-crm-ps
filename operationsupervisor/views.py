@@ -1196,7 +1196,7 @@ class AssigncleaningTeam(IsOperationSupervisor,View):
 		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
 		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
 
-		return redirect('/operationsupervisor/dashboard/?cleaning_calendar_date ='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)	
+		return redirect('/operation-supervisor/dashboard/?cleaning_calendar_date ='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)	
 
 class AssignFollowupTeam(IsOperationSupervisor,View):
 	def get(self,request,scheduler_id):
