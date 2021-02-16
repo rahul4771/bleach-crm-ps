@@ -1787,7 +1787,14 @@ $('document').ready(function(){
                         $("#team_member"+i).append('<option value="'+available_cleaners[j].cleaner_id+'">'+available_cleaners[j].cleaner_name+'</option>');
 
                             }
-        
+                    //append current cleaners
+                      current_cleaners   = data['cleanersinfo'].cleaners
+                      for(k=0;k<current_cleaners.length;k++)
+                      {   
+                        $("#team_member"+i).append('<option value="'+current_cleaners[k].member_id+'">'+current_cleaners[k].member_name+'</option>');
+
+                            }
+
                     //main  cleaner select selection
                     $("#team_member"+i).val(cleaners[i].member_id);
                       
@@ -1795,7 +1802,7 @@ $('document').ready(function(){
 
                     assigned_cleaners = data['cleanersinfo'].cleaners;
 
-                    //team leader append
+                    //available team leader append
                     available_leaders = data['availableleadersinfo'].available_leaders;
                     for(j=0;j<available_leaders.length;j++)
                       {   
@@ -1803,6 +1810,9 @@ $('document').ready(function(){
 
                             }
 
+                    //current team leader append 
+                    $("#team_leader").append('<option value="'+data['team_leader_id']+'">'+data['team_leader']+'</option>');
+                    
                     //team leader select
                     $("#team_leader").val(data['team_leader_id'])
                  
@@ -1849,7 +1859,6 @@ $('document').ready(function(){
 });
 //Add cleaning Cleaner Button
 $('#add_cleaner_id').click(function(){
-alert("hiiiiii")
 if(i<(available_cleaners.length+assigned_cleaners.length))
 {   
 

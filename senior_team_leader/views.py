@@ -84,7 +84,9 @@ def GetCleaningInfo(request):
 	cleaning_dict['cleanersinfo'] =	cleaners_info
 
 	#same blc cleaners for excluding
-	sameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=schedule.evaluation_details.evaluation).values_list("member",flat=True)
+	excludesameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=schedule.evaluation_details.evaluation).filter(Q(Q(Q(start_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at))|Q(Q(end_at__gte=schedule.start_at)&Q(end_at__lte=schedule.end_at))|Q(Q(start_at__lte=schedule.start_at)&Q(end_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at)&Q(end_at__gte=schedule.end_at))|Q(Q(start_at__gte=schedule.start_at)&Q(end_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at)&Q(end_at__lte=schedule.end_at)))).values_list("member",flat=True)
+	includesameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=schedule.evaluation_details.evaluation)
+	sameblc_cleaners           = includesameblc_cleaners.exclude(member__id__in=excludesameblc_cleaners).values_list("member",flat=True)
 
 	#free slotes
 	active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at))|Q(Q(end_at__gte=schedule.start_at)&Q(end_at__lte=schedule.end_at))|Q(Q(start_at__lte=schedule.start_at)&Q(end_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at)&Q(end_at__gte=schedule.end_at))|Q(Q(start_at__gte=schedule.start_at)&Q(end_at__gte=schedule.start_at)&Q(start_at__lte=schedule.end_at)&Q(end_at__lte=schedule.end_at)))).exclude(member__id__in=sameblc_cleaners).values_list("member",flat=True)
@@ -93,11 +95,6 @@ def GetCleaningInfo(request):
 	leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
 	cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
 
-	print(sameblc_cleaners,"same blc")
-	print(active_cleaners1,"active cleaners")
-	print(active_cleaners2,"followup cleaners")
-	print(leaders,"leaders")
-	print(cleaners,"cleaners")
 	#available leaders
 	available_leaders_info = {}
 	available_leaders_info['available_leaders']   = []
@@ -124,9 +121,6 @@ def GetCleaningInfo(request):
 		available_cleaners_info['available_cleaners'].append(available_cleaners_dict)
 
 	cleaning_dict['availablecleanersinfo'] =	available_cleaners_info
-
-	print(cleaning_dict['availableleadersinfo'])
-	print(cleaning_dict['availablecleanersinfo'])
 
 	return JsonResponse(cleaning_dict)
 
@@ -988,8 +982,10 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		order_schedule = OrderScheduler.objects.select_related('evaluation_details__evaluation','order_scheduler_book__service_type').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections')).get(is_active=True,id=scheduler_id)
 
 		#same blc cleaners for excluding
-		sameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).values_list("member",flat=True)
-		
+		excludesameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
+		includesameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=order_schedule.evaluation_details.evaluation)
+		sameblc_cleaners           = includesameblc_cleaners.exclude(member__id__in=excludesameblc_cleaners).values_list("member",flat=True)
+
 		active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).exclude(member__id__in=sameblc_cleaners).values_list("member",flat=True)
 		active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
 			
@@ -1015,7 +1011,9 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		order_schedule.order_scheduler_book.save()
 
 		#same blc cleaners for excluding
-		sameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).values_list("member",flat=True)
+		excludesameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
+		includesameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=order_schedule.evaluation_details.evaluation)
+		sameblc_cleaners           = includesameblc_cleaners.exclude(member__id__in=excludesameblc_cleaners).values_list("member",flat=True)
 
 		active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).exclude(member__id__in=sameblc_cleaners).values_list('member',flat=True)
 		active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list('member',flat=True)	
