@@ -68,6 +68,38 @@
 
 <div class="main-content-holder"><!--main-content-holder-->
 
+{% if investigations %}
+    <div class="white-wrapper"><!--white-wrapper-->
+    <h2 class="h2">Internal Report Approval Task</h2>
+    <table class="main-table">
+    <tbody>
+        {% for item in investigations %}
+        {% if item.internalreports %}
+        <form method="POST">{% csrf_token %}
+        <input type="hidden" name="investigationid" value="{{item.id}}" />
+        <input type="hidden" name="action_type" value="report_approve" />
+        <tr class="green-line">       
+        
+        <td class="hide-a" data-label="">{% if item.investigator.profile_image %}<img src="{{item.investigator.profile_image.url}}" title="{{item.investigator.name}}" class="profile-avatar">{% endif %}</td>
+
+        <td data-label="Ticket Number" class="bold-text">
+        {% for followup in item.followup %}
+        TKT{{followup.ticket_no}}
+        {% endfor %}</td>
+
+        <td onclick="submitAnyForm(this);"><button class="green-bg">Approve Internal Report</button></td>
+        
+        </tr>
+        </form>
+
+        {% endif %}
+        {% endfor %}
+    </tbody>
+    </table>
+    </div>
+
+{% endif %}
+
 {% if followup_to_be_closed %}
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Case Closing Task</h2>

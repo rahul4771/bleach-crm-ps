@@ -1307,8 +1307,8 @@ class InvestigationTask(IsOperationSupervisor,View):
 			investigation.check_out                    = timezone.now()
 			investigation.is_casesandcomplaints_submit = True
 			
-			if investigation.internalreportings:
-				investigation.is_internalreporting_approved = True
+			# if investigation.internalreportings:
+			# 	investigation.is_internalreporting_approved = True
 			if investigation.followups:
 				investigation.is_followup_approved  = True 
 
