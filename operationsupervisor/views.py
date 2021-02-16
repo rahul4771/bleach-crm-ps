@@ -505,64 +505,23 @@ class OperationSupervisorHome(IsOperationSupervisor,View):
 		week_active_teams_count  = week_cleaning_active_teams.count()+week_followup_active_teams.count() 
 
 
-		#cleaning schedule & followup schedule for resources			
-		workers_calendar_date	= request.GET.get('workers_calendar_date')
-		search                  = request.GET.get('search')
+		#cleaning schedule & followup schedule for header bars			
 		
-		try:
-			workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
-		except:
-			workers_date = timezone.now().replace(tzinfo=None)
+		workers_date = timezone.now().replace(tzinfo=None)
 
 		workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		workers_date_end   = workers_date_start+timedelta(1)
 
-		if search:
-			try:
-				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))&Q(name__icontains=search))
-			except:
-				workers =  None
-		else:
-			try:
-				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER')))
-			except:
-				workers =  None
+		
+		try:
+			workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER')))
+		except:
+			workers =  None
  
 		try:		
 			workers_details = workers.prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(Q(start_at__gte=workers_date_start)&Q(start_at__lte=workers_date_end))|Q(Q(end_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end))) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
 		except:
 			workers_details = None	
-
-		#Filter
-		try:
-			fil_staff = request.GET.get('staff')
-		except:
-			fil_staff = ''
-
-		try:
-			fil_minhours       = int(request.GET.get('minhours'))
-		except:
-			fil_minhours       = None
-
-		try:
-			fil_maxhours       = int(request.GET.get('maxhours'))
-		except:
-			fil_maxhours	   = None
-
-		if 	fil_minhours and fil_maxhours:
-			if fil_minhours>=fil_maxhours:
-				messages.error(request,"Minimum Duration should be less than Maximum Duration")
-				fil_minhours = None
-				fil_maxhours = None
-
-		filters=[]
-		if fil_staff:
-			case1 = Q(user_type=fil_staff)
-			filters.append(case1)
-
-		if fil_staff:
-			filters         = functools.reduce(operator.and_,filters)
-			workers_details = workers_details.filter(filters)	
 
 			
 		#cleaning schedule & followup schedule for cleaning calendar			
@@ -659,7 +618,7 @@ class OperationSupervisorHome(IsOperationSupervisor,View):
 		for investigation in investigations:
 			investigation.days_left = (timezone.now()-investigation.scheduled_at).days
 
-		return render(request,'operationsupervisor/home/home.html',{'investigations':investigations,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"fil_minhours":fil_minhours,"fil_maxhours":fil_maxhours,"fil_staff":fil_staff,'assign_order_schedules':assign_order_schedules,'assign_followup_schedules':assign_followup_schedules})
+		return render(request,'operationsupervisor/home/home.html',{'investigations':investigations,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,'assign_order_schedules':assign_order_schedules,'assign_followup_schedules':assign_followup_schedules})
 
 	def post(self,request):
 		action = request.POST.get('action_type')
@@ -832,9 +791,8 @@ class OperationSupervisorHome(IsOperationSupervisor,View):
 		# 	messages.success(request,"Cleaning Date(s) Confirmed/Changed Successfully")
 
 		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
-		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
 
-		return redirect('/operationsupervisor/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)
+		return redirect('/operation-supervisor/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)
 
 
 class TicketDetails(IsOperationSupervisor,View):
@@ -1144,7 +1102,7 @@ class AssigncleaningTeam(IsOperationSupervisor,View):
 		
 		#to block back button submission
 		if order_schedule.work_status=='CLEANING_TEAM_ASSIGNED':
-			return redirect('agent:agentdash-board')
+			return redirect('op-supervisor:op-supervisor-dash-board')
 
 		cleaning_team_assign_form = CleaningTeamAssignForm(request.POST)
 		assigned_cleaners         = request.POST.getlist('assigned_cleaner')
@@ -1196,9 +1154,8 @@ class AssigncleaningTeam(IsOperationSupervisor,View):
 		messages.success(request,"Cleaning Team Succesfully Assigned")
 
 		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
-		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
 
-		return redirect('/operation-supervisor/dashboard/?cleaning_calendar_date ='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)	
+		return redirect('/operation-supervisor/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)	
 
 class AssignFollowupTeam(IsOperationSupervisor,View):
 	def get(self,request,scheduler_id):
@@ -1273,9 +1230,8 @@ class AssignFollowupTeam(IsOperationSupervisor,View):
 		messages.success(request,"FollowupTeam Team Succesfully Assigned")
 
 		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
-		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
 
-		return redirect('/operation-supervisor/dashboard/?cleaning_calendar_date ='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)
+		return redirect('/operation-supervisor/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)
 
 
 
