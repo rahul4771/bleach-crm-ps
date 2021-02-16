@@ -1374,8 +1374,7 @@ class ResourceManagement(IsAgent,View):
 		if fil_startingtime and fil_endingtime:
 			actual_starting_datetime     = datetime.strptime(fil_startingtime,'%I:%M %p').replace(day=workers_date.day,month=workers_date.month,year=workers_date.year)
 			actual_ending_datetime       = datetime.strptime(fil_endingtime,'%I:%M %p').replace(day=workers_date.day,month=workers_date.month,year=workers_date.year)
-			print(actual_starting_datetime)
-			print(actual_ending_datetime)
+			
 			if actual_starting_datetime > actual_ending_datetime:
 				messages.error(request,"Starting Time should be less than Ending Time !")
 			else:

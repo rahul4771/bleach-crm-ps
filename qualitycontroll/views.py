@@ -507,8 +507,8 @@ class ResourceManagement(IsQualityControll,View):
 
 		
 		if fil_startingtime and fil_endingtime:
-			actual_starting_datetime     = datetime.strptime(fil_startingtime,'%I:%M %p').replace(day=workers_date.day,month=workers_date.month,year=workers_date.year)+timedelta(hours=3)
-			actual_ending_datetime       = datetime.strptime(fil_endingtime,'%I:%M %p').replace(day=workers_date.day,month=workers_date.month,year=workers_date.year)+timedelta(hours=3)
+			actual_starting_datetime     = datetime.strptime(fil_startingtime,'%I:%M %p').replace(day=workers_date.day,month=workers_date.month,year=workers_date.year)
+			actual_ending_datetime       = datetime.strptime(fil_endingtime,'%I:%M %p').replace(day=workers_date.day,month=workers_date.month,year=workers_date.year)
 			
 			if actual_starting_datetime > actual_ending_datetime:
 				messages.error(request,"Starting Time should be less than Ending Time !")
