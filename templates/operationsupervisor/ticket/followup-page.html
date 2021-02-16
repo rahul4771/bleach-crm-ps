@@ -395,7 +395,7 @@
 {% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
 {% for paybackdiscountdetail in  paybackdiscount.paybackdiscountdetails %}
 <div class="evaluation-card"><!--evaluation-card-->
-    <div class="evaluation-section"><label>{{paybackdiscountdetail.name}} ({{paybackdiscountdetail.name}} ({% if paybackdiscountdetail.category == 'SERVICEQUALITY' %}Service Quality{% else %}{{paybackdiscountdetail.category|title}}{% endif %})</label>{{paybackdiscountdetail.cost|floatformat:'3'}} KD</div> 
+    <div class="evaluation-section"><label>{{paybackdiscountdetail.name}} ({% if paybackdiscountdetail.category == 'SERVICEQUALITY' %}Service Quality{% else %}{{paybackdiscountdetail.category|title}}{% endif %})</label>{{paybackdiscountdetail.cost|floatformat:'3'}} KD</div> 
 </div><!--evaluation-card-->
 {% endfor %}
 <div class="evaluation-card"><!--evaluation-card-->
@@ -421,6 +421,12 @@
 {% endfor %}
 {% endif %}
 
+{% for follow_up_scheduler in followup_details.follow_up_schedules %}
+{% for team in follow_up_scheduler.followupteams %}
+
+<h5>{{team}}</h5>
+<h5>redtt</h5>
+{% endfor %}{% endfor %}
 
  <div class="details-sub-head align-left media-head">Media</div>
 <div class="order-clean-outer-wrapper media-explaining"><!--order-clean-outer-wrapper-->
@@ -436,6 +442,8 @@
     {% endif %}
 
 {% if followup_details.follow_up_schedules %}
+{% for follow_up_scheduler in followup_details.follow_up_schedules %}
+{% if follow_up_scheduler.followupteams %}
     <div class="gallery-widget-column-column2"><!--gallery-widget-column-column1-->
     <div class="media-heading align-left">Before Cleaning</div>
     <section>
@@ -444,10 +452,14 @@
     </section>  
     </div><!--gallery-widget-column-column1-->
 {% endif %}
+{% endfor %}
+{% endif %}
 </div>
 
 <div class="gallery-wrapper"><!--gallery-wrapper-->
 {% if followup_details.follow_up_schedules %}
+{% for follow_up_scheduler in followup_details.follow_up_schedules %}
+{% if follow_up_scheduler.followupteams %}
     <div class="gallery-widget-column-column3"><!--gallery-widget-column-column1-->
     <div class="media-heading align-left">After Cleaning</div>
     <section>
@@ -455,6 +467,8 @@
 {% for team in follow_up_scheduler.followupteams %}{% for media in team.followupmedias %}{% if media.taken_status == 'BEFORE_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}{% endfor %}"></div>
     </section>  
     </div><!--gallery-widget-column-column1-->
+{% endif %}
+{% endfor %}
 {% endif %}
 
     {% for report in  followup_details.investigation.reports %}
@@ -568,6 +582,7 @@
     buybackpromogift_img= $('#data-pn-5').data('src');
     reporting_img       = $('#data-pn-6').data('src');
 
+    console.log(invest_before_img,invest_after_img,"lop")
 
     if(invest_before_img == '')
     {
@@ -578,10 +593,11 @@
     {
      $('.gallery-widget-column-column3').remove();   
     }
-
+    
     //hide media
     if((invest_cust_img == undefined || invest_cust_img == '') && (invest_before_img == undefined || invest_before_img == '') && (invest_after_img == undefined || invest_after_img == '') && (paybackdiscount_img == undefined || paybackdiscount_img == '') && (buybackpromogift_img == undefined || buybackpromogift_img == undefined) && (reporting_img == undefined || reporting_img == ''))
     {
+        console.log("koyui")
         $('.media-head').remove();
         $('.media-explaining').remove();
     }
