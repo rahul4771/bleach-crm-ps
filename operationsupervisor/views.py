@@ -1182,6 +1182,10 @@ class AssignFollowupTeam(IsOperationSupervisor,View):
 	
 		#shceduled order details
 		followup_schedule = FollowUpScheduler.objects.select_related('follow_up__investigation__order','follow_up__investigation__order_schedule__order_scheduler_book__service_type','customer_address').get(is_active=True,id=scheduler_id)	
+		
+		#to block back button submission
+		if followup_schedule.work_status=='FOLLOW_UP_TEAM_ASSIGNED':
+			return redirect('op-supervisor:op-supervisor-dash-board')
 
 		follow_up_team_assign_form = FollowupTeamAssignForm(request.POST)
 		assigned_cleaners          = request.POST.getlist('assigned_cleaner')

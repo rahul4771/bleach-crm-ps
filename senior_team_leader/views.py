@@ -998,7 +998,7 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		
 		#to block back button submission
 		if order_schedule.work_status=='CLEANING_TEAM_ASSIGNED':
-			return redirect('agent:agentdash-board')
+			return redirect('stl:stldash-board')
 
 		cleaning_team_assign_form = CleaningTeamAssignForm(request.POST)
 		assigned_cleaners         = request.POST.getlist('assigned_cleaner')
@@ -1052,7 +1052,7 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
 		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
 
-		return redirect('/stl/dashboard/?cleaning_calendar_date ='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)	
+		return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)	
 
 class AssignFollowupTeam(IsSeniorTeamLeader,View):
 	def get(self,request,scheduler_id):
@@ -1079,6 +1079,10 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 	
 		#shceduled order details
 		followup_schedule = FollowUpScheduler.objects.select_related('follow_up__investigation__order','follow_up__investigation__order_schedule__order_scheduler_book__service_type','customer_address').get(is_active=True,id=scheduler_id)	
+		
+		#to block back button submission
+		if followup_schedule.work_status=='FOLLOW_UP_TEAM_ASSIGNED':
+			return redirect('stl:stldash-board')
 
 		follow_up_team_assign_form = FollowupTeamAssignForm(request.POST)
 		assigned_cleaners          = request.POST.getlist('assigned_cleaner')
@@ -1129,5 +1133,5 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
 		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
 
-		return redirect('/stl/dashboard/?cleaning_calendar_date ='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)
+		return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)
 
