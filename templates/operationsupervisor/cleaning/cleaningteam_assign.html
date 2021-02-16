@@ -251,12 +251,12 @@
 
     if(i%2 == 1)  
     {
-        $('.team_members').append('<div class="ticket-wrapper-row ticket-forms-boxes box'+i+'"><!--ticket-wrapper-row ticket-forms-boxes--><div class="ticket-form-left"><!--ticket-form-left--><div class=" bold-text common-label"> <label>Cleaner '+i+'</label></div><label for="favcity"><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner" required>{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select></label> </div><!--ticket-form-left--></div><!--ticket-wrapper-row ticket-forms-boxes--><hr class="hr-dashedpad">');
+        $('.team_members').append('<div class="ticket-wrapper-row ticket-forms-boxes box'+i+'"><!--ticket-wrapper-row ticket-forms-boxes--><div class="ticket-form-left"><!--ticket-form-left--><div class=" bold-text common-label"> <label>Cleaner '+i+'</label></div><label for="favcity"><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner" required onchange="add_duplicateremovel(this);">{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select></label> </div><!--ticket-form-left--></div><!--ticket-wrapper-row ticket-forms-boxes--><hr class="hr-dashedpad">');
     }
 
     else
     {
-        $('.box'+(i-1)+'').append('<div class="ticket-form-right"><!--ticket-form-right--><div class=" bold-text common-label"> <label>Cleaner '+i+'</label></div><label for="favcity"><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner" required>{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select></label></div><!--ticket-form-right-->');
+        $('.box'+(i-1)+'').append('<div class="ticket-form-right"><!--ticket-form-right--><div class=" bold-text common-label"> <label>Cleaner '+i+'</label></div><label for="favcity"><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner" required onchange="add_duplicateremovel(this);">{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select></label></div><!--ticket-form-right-->');
 
     }
     //random selection
@@ -367,8 +367,32 @@ $(".assign_cleaner").change(function(){
   }); 
 
 });
-
 })
+
+
+//Add Cleaner Duplicate Removal
+function add_duplicateremovel(params)
+{
+  selected_option = params.value;
+  selected_id     = params.id;
+  //to remove selected occur in any other option
+  $('.assign_cleaner').each(function(){
+    
+    if(this.id != selected_id)
+    {
+      if(selected_option == this.value)
+      {
+        no_of_cleaners = $('.assign_cleaner').length;
+        //cleaners selection   
+        for(i=1;i<=no_of_cleaners;i++)
+          {
+              //random selection    
+              $('#assigned_cleaner'+i+' :nth-child('+i+')').prop('selected',true);
+          }
+      }
+    }
+  });
+}
 
 </script>
 {% endblock %}
