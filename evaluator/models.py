@@ -370,6 +370,16 @@ class EvaluationBookSection(models.Model):
 	def __str__(self):
 		return str(self.evaluation_book)	
 
+	def dropzerossectioncost(self):
+		if self.section_cost == int(self.section_cost):
+			self.section_cost = int(self.section_cost)
+		return self.section_cost
+
+	def dropzerossectionnetcost(self):
+		if self.section_net_cost == int(self.section_net_cost):
+			self.section_net_cost = int(self.section_net_cost)
+		return self.section_net_cost
+
 
 class EvaluationSectionKeynote(models.Model):
 	evaluation_section = models.ForeignKey('EvaluationBookSection',blank=False,null=False,related_name='keynotesections')
