@@ -4,6 +4,7 @@ from accountant import views
 urlpatterns = [
 
 	url(r'^dashboard/$',views.AccountantHome.as_view(),name='accountantdash-board'),
+	url(r'^active-subscriptions/$',views.ActiveSubscriptions.as_view(),name='accountant-active-subscriptions'),
 	url(r'^payments/$',views.PaymentDetails.as_view(),name='accountant-payments'),
 	url(r'^orders/$',views.OrderDetails.as_view(),name='accountant-orders'),
 

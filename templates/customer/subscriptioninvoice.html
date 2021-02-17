@@ -124,9 +124,9 @@
               <td style="text-align: left;"><a href="{% url 'customer:customer-order-details' order.id section.evaluation_book.id section.id %}">{{orderschedule.order_scheduler_book.service_type}}-{{orderschedule.customer_address.area.name}}-{{section.section_name}} <br> {{orderschedule.order_scheduler_book.service_type.name_arabic}}-{{orderschedule.customer_address.area.name_arabic}}-{{section.section_name_arabic}}</a></td>
               
               <td style="text-align: center;">{{section.dirt_level}}<br> {% if section.dirt_level == 'Red' %}أحمر{% endif %}{% if section.dirt_level == 'Random' %}وسط{%endif%}</td>
-              <td style="text-align: center;">{{section.section_cost|floatformat:'3'}}</td>
+              <td style="text-align: center;">{{section.dropzerossectioncost}}</td>
               <td style="text-align: center;">{{section.section_cleanings|floatformat:'0'}}</td>
-              <td class="align-right">{{section.section_net_cost|floatformat:'3'}}</td>
+              <td class="align-right">{{section.dropzerossectionnetcost}}</td>
             </tr>
             {% endfor %}
             {% endfor %}
@@ -140,39 +140,39 @@
           <table cellpadding="0" cellspacing="0">
             <tr>
               <th class="medium">Subtotal / المجموع</th>
-              <td class="due-amount medium"> {{order.evaluation.estimated_cost|floatformat:'3'}} </td>
+              <td class="due-amount medium"> {{order.dropzerosestimatedcost}} </td>
             </tr>
             
             {% if order.evaluation.discount != 0 %}
             <tr>
               <th>Discount / الخصم</th>
-              <td class="due-amount"> {{order.evaluation.discount|floatformat:'3'}} </td>
+              <td class="due-amount"> {{order.dropzerosdiscount}} </td>
             </tr>
             {% endif %}
 
             {% if order.evaluation.fine_amount != 0 %}
             <tr>
               <th>Fine Amount / مبلغ الغرامة</th>
-              <td class="due-amount"> {{order.evaluation.fine_amount|floatformat:'3'}} </td>
+              <td class="due-amount"> {{order.dropzerosfineamount}} </td>
             </tr>
             {% endif %}
 
             {% if order.evaluation.writeback_amount != 0 %}
             <tr>
               <th>Write-Off Amount / مبلغ إعادة الكتابة</th>
-              <td class="due-amount"> {{order.evaluation.writeback_amount|floatformat:'3'}} </td>
+              <td class="due-amount"> {{order.dropzeroswritebackamount}} </td>
             </tr>
             {% endif %}
 
             <tr>
               <th class="medium" > Total / مجموع</th>
-              <td class="due-amount medium" > {{order.evaluation.total_cost|floatformat:'3'}} KD </td>
+              <td class="due-amount medium" > {{order.dropzerostotalcost}} KD </td>
             </tr>
             {% if order.payment_status != 'COMPLETED' %}
             <tr class="amount-total">
               <!-- {amount_total_label} -->
               <td colspan="2">Current Payment <br>
-                 {{order.subscription_topay|floatformat:'3'}} KD
+                 {{order.dropzerossubscriptiontopay}} KD
                 <!-- <div class="invoice-name-arabic">شركة بلـــيت</div></td> -->
             </tr>
             {% endif %}
@@ -182,12 +182,12 @@
                  For example Invoicebus doesn't need amount paid and amount due on quotes  -->
             <tr >
               <th>Paid / تم الدفع</th>
-              <td><strong>{{order.amount_paid|floatformat:'3'}} KD</strong></td>
+              <td><strong>{{order.dropzerosamountpaid}} KD</strong></td>
             </tr>
             
             <tr>
               <th class="medium">Amount Due / المبلغ المستحق</th>
-              <td class="medium"> {{order.remining_amount|floatformat:'3'}} KD </td>
+              <td class="medium"> {{order.dropzerosremainingamount}} KD </td>
             </tr>  
           </table>
         </section>    
