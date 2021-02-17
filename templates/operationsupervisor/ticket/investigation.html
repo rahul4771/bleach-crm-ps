@@ -115,7 +115,16 @@
                 <div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
                 <div class="media-heading align-left">From Customer</div>
                 <section>
-                    <div id="data-pn-1" data-pn="1" data-src="{% for investigationmedia in investigation_details.investigationmedias %}{% if investigationmedia.taken_status == 'CUSTOMER_SEND' %}{{investigationmedia.media.url}},{% endif %}{% endfor %}"></div>
+                    <div id="data-pn-1" data-pn="1" data-src="{% for investigationmedia in investigation_details.investigationmedias %}{% if investigationmedia.taken_status == 'CUSTOMER_SEND' %}{{investigationmedia.media.url}},{% else %}undefined{% endif %}{% endfor %}"></div>
+                </section>  
+                </div><!--gallery-widget-column-column1-->
+                {% endif %}
+
+                {% if investigation_details.investigationmedias %}
+                <div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
+                <div class="media-heading align-left">From Technical Supervisor</div>
+                <section>
+                    <div id="data-pn-2" data-pn="2" data-src="{% for investigationmedia in investigation_details.investigationmedias %}{% if investigationmedia.taken_status == 'SECONDARY_INVESTIGATION' %}{{investigationmedia.media.url}},{% endif %}{% endfor %}"></div>
                 </section>  
                 </div><!--gallery-widget-column-column1-->
                 {% endif %}
@@ -302,9 +311,10 @@
 
     //To Hide Images 
     invest_cust_img     = $('#data-pn-1').data('src');
+    invest_secondary_img     = $('#data-pn-2').data('src');
 
     //hide media
-    if(invest_cust_img == undefined || invest_cust_img == '')
+    if((invest_cust_img == undefined || invest_cust_img == '') && (invest_secondary_img == undefined || invest_secondary_img == ''))
     {
         $('.media-head').remove();
         $('.media-explaining').remove();

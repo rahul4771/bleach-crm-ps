@@ -299,6 +299,22 @@ class AccountantHome(IsAccountant,View):
 
 		return redirect('accountant:accountantdash-board')
 
+class ActiveSubscriptions(IsAccountant,View):
+	def get(self,request):
+		#subscriptions
+		subscriptions = Order.objects.filter(Q(Q( Q(payment_status='PENDING') |Q(payment_status='ON_HOLD') ) & Q(evaluation__payment_method='SUBSCRIPTION'))).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())) )
+		if subscriptions:
+			for invoice in subscriptions:
+				cleaning_price = 0
+				for scheduler in invoice.orderschedules:
+					if scheduler.work_status=='CLEANING_FULFILLED':
+						cleaning_price += scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
+				if cleaning_price > invoice.amount_paid:
+					invoice.balance       = cleaning_price-invoice.amount_paid
+				else:
+					invoice.balance       = cleaning_price-invoice.amount_paid
+		return render(request,'accountant/subscription/active_subscriptions.html',{"subscriptions":subscriptions})
+
 class ClientDetails(IsAccountant,View):
 	def get(self,request):
 
