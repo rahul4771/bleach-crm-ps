@@ -1849,36 +1849,38 @@ $('document').ready(function(){
 });
 //Add cleaning Cleaner Button
 $('#add_cleaner_id').click(function(){
-if(i<(available_cleaners.length+assigned_cleaners.length))
+if(i<(available_cleaners.length))
 {   
 
-    //append main select 
-    $('#team_members').append('<label for="favcity"><select name="team_member" id="team_member'+i+'" class="assign_cleaner" onchange="remove_duplicate_selection(this);"></select></label><br>');
+    if(cleaners.length != (available_cleaners.length-1))
+        {
+        //append main select 
+        $('#team_members').append('<label for="favcity"><select name="team_member" id="team_member'+i+'" class="assign_cleaner" onchange="add_duplicateremovel(this);"></select></label><br>');
 
-    //append available cleaners
-      for(k=0;k<available_cleaners.length;k++)
-      {   
-        $("#team_member"+i).append('<option value="'+available_cleaners[k].cleaner_id+'">'+available_cleaners[k].cleaner_name+'</option>');
+        //append available cleaners
+          for(k=0;k<available_cleaners.length;k++)
+          {   
+            $("#team_member"+i).append('<option value="'+available_cleaners[k].cleaner_id+'">'+available_cleaners[k].cleaner_name+'</option>');
 
-            }
+                }
+            
+        //main  cleaner select selection
+        if(i<=(cleaners.length-1))
+        {
+            $("#team_member"+i).val(cleaners[i].member_id);
+        } 
+        else
+        {
+            $("#team_member"+i).val(available_cleaners[(i-cleaners.length)].cleaner_id);
+        }
 
-    //append assigned cleaners
-      for(l=0;l<assigned_cleaners.length;l++)
-      {   
-        $("#team_member"+i).append('<option value="'+assigned_cleaners[l].member_id+'">'+assigned_cleaners[l].member_name+'</option>');
-
-            }        
-    //main  cleaner select selection
-    if(i<=(cleaners.length-1))
-    {
-        $("#team_member"+i).val(cleaners[i].member_id);
-    } 
+        i++;
+    
+    }
     else
     {
-        $("#team_member"+i).val(available_cleaners[(i-cleaners.length)].cleaner_id);
+        alert("No More Available Cleaners !!")        
     }
-
-    i++;
 }
 
 else
@@ -2224,5 +2226,30 @@ $(".followup_leader").change(function(){
     }
 
 });
+
+
+//Add Cleaner Duplicate Removal
+function add_duplicateremovel(params)
+{
+  selected_option = params.value;
+  selected_id     = params.id;
+  //to remove selected occur in any other option
+  $('.assign_cleaner').each(function(){  
+    if(this.id != selected_id)
+    {
+      if(selected_option == this.value)
+      {
+        no_of_cleaners = $('.assign_cleaner').length;
+        alert(no_of_cleaners)
+        //cleaners selection   
+        for(i=0;i<no_of_cleaners;i++)
+          {
+              //random selection    
+              $('#team_member'+i+' :nth-child('+(i+1)+')').prop('selected',true);
+          }
+      }
+    }
+  });
+}
 </script>
 {% endblock %}
