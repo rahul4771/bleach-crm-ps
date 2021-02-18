@@ -2,9 +2,18 @@
 <head>
     <title>Secure Acceptance - Payment Form Example</title>
     <link rel="stylesheet" type="text/css" href="payment.css"/>
+    <link rel="stylesheet" type="text/css" href="./loader.css"/>
     <script type="text/javascript" src="jquery-1.7.min.js"></script>
 </head>
 <body>
+    <div class="ld-screen-loader">
+    <div class="ld-payment-message">
+        Please <b>do not refresh the page</b> and wait while we are
+
+          processing your payment. This can take a few minutes.
+    </div>
+    <div class="loader"></div>
+</div>
 <form id="payment_form" action="https://payment.bleachkw.com/creditcard/payment_confirmation.php" method="post">
     <input type="hidden" name="access_key" value="ca2827c2741d3f77bcf7df34658dafe2">
     <input type="hidden" name="profile_id" value="E8E365C4-A6F3-4249-B3E2-BC8FF0350820">
@@ -44,6 +53,8 @@
 </html>
 
 <script type="text/javascript">
+
    document.getElementById('payment_form').submit(); // SUBMIT FORM
 </script>
+
 
