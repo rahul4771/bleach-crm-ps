@@ -188,7 +188,7 @@
 </select>
 </label>
 <div class="page-entries">Show {{entry_per_page}} entries</div>
-<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable main-table">
+<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
 <thead>
 <tr>
@@ -204,8 +204,8 @@
 </thead>
 <tbody>
     {% for invoice in subscriptions %}
-    <tr {% if invoice.dropzerosamountpaid == invoice.dropzerostotalamount %}class="gray-line"{% else %} {% if invoice.balance <= 0 %}class="green-line"{% else %}class="red-line" {% endif %} {% endif %}>
-    <td class="bold-text" data-label="BLC NUMBER">{{invoice.evaluation.evaluation_id}}</td>
+    <tr >
+    <td {% if invoice.dropzerosamountpaid == invoice.dropzerostotalamount %}class="gray-line"{% else %} {% if invoice.balance <= 0 %}class="green-line"{% else %}class="red-line" {% endif %} {% endif %} data-label="BLC NUMBER">{{invoice.evaluation.evaluation_id}}</td>
     <td data-label="CUSTOMER" style="text-align:center;">{{invoice.evaluation.customer.name}}</td>
     <td data-label="CONTACT NUMBER" style="text-align:center;">{{invoice.evaluation.customer.mobile_number}}</td>
     <td data-label="Colmpleted Cleaning" style="text-align:center;">{{invoice.completed_cleanings_count}}/{{invoice.total_cleanings_count}}</td>
