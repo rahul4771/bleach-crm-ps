@@ -661,7 +661,7 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
   </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
    
-<div align="center"> <input class="assignButton cleaning_btn" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"> &nbsp<input class="cancel-Button close-btn delete_cleaning" name="delete" type="button" value="Delete"></div>
+<div align="center"> <input class="assignButton cleaning_btn" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"> {% comment %}&nbsp<input class="cancel-Button close-btn delete_cleaning" name="delete" type="button" value="Delete">{% endcomment %}</div>
 </form>
  </div><!--popup-collapse-->
 </div><!--ticket-wrapper-full--> 
@@ -742,6 +742,76 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
     </div><!--modal-wrapper modal-transition-->
 </div><!--modal-popup-wrapper-->
 <!--edit followup popup -->
+
+
+<!-- edit_notapprovedcleaning_popup -->
+<div class="modal-popup-wrapper6"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+        <div class="modal-header"><!--modal-header-->
+        <button class="modal-close notapprovededit_cleaning collapsible6-close">X</button>
+        </div><!--modal-header-->
+    <div class="modal-body"><!--modal-body-->
+    <div class="modal-content"><!--modal-content-->
+    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">  
+                <tr>
+                    <td><a id="notapprovedorder_url"><div class="blc-number" id="blcno_notapprovedcleaning_id"></div></a><span id="address_notapprovedcleaning_id"></span></td>
+                    <td><div class="bold-text" id="customername_notapprovedcleaning_id"></div><div id="mobileno_notapprovedcleaning_id"></div></td>
+                </tr>
+ 
+            <tr>
+            <td colspan="3">Cleaning Date:<strong><span class="blue-text" id="starting_date_notapprovedcleaning_id"></span></strong> &nbsp;Starting Time:<strong><span class="blue-text" id="starting_time_notapprovedcleaning_id"></span></strong> &nbsp;Duration:<strong><span class="blue-text" id="duration_notapprovedcleaning_id"></span></strong></td>
+            </tr>  
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+     
+    <div class="edit-collapse collapsible1"><a href="#" ><img src="{% static 'files/images/edit.png' %}" width="30px"></a></div>  
+    <div class="popup-collapse popup-collapse1"><!--popup-collapse--> 
+    <form method="post" enctype= "multipart/form-data">
+    {%csrf_token%}  
+    <input type="hidden" name="action_type" value="notapprovededit_cleaning">
+    <input type="hidden" name="notapprovedcleaning_id" id="notapprovedcleaning_id">  
+ <hr class="hr-dashedpad">  
+  <div class="blc-number align-center">Edit Cleaning</div>    
+  <br>   
+<hr class="hr-dashedpad">  
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Cleaning Date</label></div>
+        <input name="notapprovedcleaning_date" type="text" class="textBox" id="notapprovedcleaning_date">
+        <p id="notapprovedcleaning_date_alert" hidden>Please Select a new date !</p>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Starting Time</label></div>
+        <input name="notapprovedcleaning_time" type="text" class="textBox" id="notapprovedcleaning_time">
+        <p id="notapprovedcleaning_time_alert">Please Select proper date and time !</p>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Duration</label></div>
+        <input name="notapprovedcleaning_hours" type="text" class="textBox" id="notapprovedcleaning_duration">
+  </div><!--ticket-form-left-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+   
+<div align="center"> <input class="assignButton notapprovedcleaning_btn" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"> {% comment %}&nbsp<input class="cancel-Button close-btn delete_notapprovedcleaning" name="delete" type="button" value="Delete">{% endcomment %}</div>
+</form>
+ </div><!--popup-collapse-->
+</div><!--ticket-wrapper-full--> 
+        
+    </div><!--modal-content-->
+    </div><!--modal-body-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--modal-popup-wrapper-->
+<!-- /edit_notapprovedcleaning_popup -->
 
 
 
@@ -893,6 +963,53 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
 </div><!--modal-popup-wrapper-->
 <!-- /delete_followup_popup -->
 
+
+<!-- delete_cleaning_popup -->
+<div class="modal-popup-wrapper7"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+        <div class="modal-header"><!--modal-header-->
+        <button class="modal-close delete_notapprovedcleaning">X</button>
+        </div><!--modal-header-->
+    <div class="modal-body"><!--modal-body-->
+    <div class="modal-content"><!--modal-content-->
+    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">  
+                <tr>
+                    <td valign="center"><div class="blc-number" id="delete_blcno_notapprovedcleaning_id"></div><span id="delete_address_notapprovedcleaning_id"></span></td>
+                    <td><div class="bold-text" id="delete_customername_notapprovedcleaning_id"></div><div id="delete_mobileno_notapprovedcleaning_id"></div></td>
+                </tr>
+ 
+            <tr>
+            <td colspan="3">Cleaning Date:<strong><span class="blue-text" id="delete_starting_date_notapprovedcleaning_id"></span></strong> &nbsp;Starting Time:<strong><span class="blue-text" id="delete_starting_time_notapprovedcleaning_id"></span></strong> &nbsp;Duration:<strong><span class="blue-text" id="delete_duration_notapprovedcleaning_id"></span></strong></td>
+            </tr>  
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->  
+  <hr class="hr-dashedpad">
+  <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    <div align="center"><h3>Do you want to delete this Cleaning?</h3></div>
+    <form method="post" enctype= "multipart/form-data">
+    {%csrf_token%}  
+    <input type="hidden" name="action_type" value="delete_notapprovedcleaning">
+    <input type="hidden" name="delete_notapprovedcleaning_id" id="delete_notapprovedcleaning_id" value="">
+    <div align="right"><input class="cancel-Button close-btn delete_notapprovedcleaning" name="delete" type="button" value="No"> &nbsp<input class="cancel-Button close-btn delete_notapprovedcleaning" name="delete" type="button" value="Yes" onclick="submitAnyForm(this);"></div>
+    </form>
+  </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div><!--ticket-wrapper-full--> 
+        
+    </div><!--modal-content-->
+    </div><!--modal-body-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--modal-popup-wrapper-->
+<!-- /delete_cleaning_popup -->
+
 {% endblock %}
 {% block javascript %}
 <script type="text/javascript">
@@ -962,6 +1079,11 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
             $('#cleaning_time_alert').attr("hidden",false);
             $('.cleaning_btn').attr("disabled",true);
           }
+          if (mode == 'notapprovedcleaning'){
+            console.log("lop1")
+            $('#notapprovedcleaning_time_alert').attr("hidden",false);
+            $('.notapprovedcleaning_btn').attr("disabled",true);
+          }
           if (mode == 'followupcleaning'){
             console.log("lop1")
             $('#followupcleaning_time_alert').attr("hidden",false);
@@ -986,6 +1108,11 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
             console.log("lop1")
             $('#cleaning_time_alert').attr("hidden",true);
             $('.cleaning_btn').attr("disabled",false);
+          }
+          if (mode == 'notapprovedcleaning'){
+            console.log("lop1")
+            $('#notapprovedcleaning_time_alert').attr("hidden",true);
+            $('.notapprovedcleaning_btn').attr("disabled",false);
           }
           if (mode == 'followupcleaning'){
             console.log("lop1")
@@ -1436,7 +1563,7 @@ $('document').ready(function(){
                               width_percentage = 100/24*ending_time-100/24*starting_time;
                             }
                             
-                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{schedule.id}}" data-id="{{schedule.id}}" class="gray-box notapproved_cleaning" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"></div><center></center> <div {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.order_scheduler_book.number_of_cleaners}}</div></div></td></tr>')
+                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{schedule.id}}" data-id="{{schedule.id}}" class="gray-box notapprovededit_cleaning" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"></div><center></center> <div {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.order_scheduler_book.number_of_cleaners}}</div></div></td></tr>')
                         }
                         //append td to the raw 
                     else
@@ -1458,7 +1585,7 @@ $('document').ready(function(){
                               width_percentage = 100/24*ending_time-100/24*starting_time;
                             } 
                             
-                            $('#cleaning_table tr:last td').append('<div id="cleaningschedule{{schedule.id}}" data-id="{{schedule.id}}" class="gray-box notapproved_cleaning" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"></div><center></center> <div {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.order_scheduler_book.number_of_cleaners}}</div></div>')      
+                            $('#cleaning_table tr:last td').append('<div id="cleaningschedule{{schedule.id}}" data-id="{{schedule.id}}" class="gray-box notapprovededit_cleaning" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"></div><center></center> <div {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.order_scheduler_book.number_of_cleaners}}</div></div>')      
                         }
                     }
 
@@ -1488,7 +1615,7 @@ $('document').ready(function(){
        console.log(first_raw_left_percentage)
        console.log(first_raw_width_percentage)
 
-       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{sp_schedule.id}}" data-id="{{sp_schedule.id}}" class="sp-gray-box-first notapproved_cleaning" style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"></div><center></center> </div></td></tr>')
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{sp_schedule.id}}" data-id="{{sp_schedule.id}}" class="sp-gray-box-first notapprovededit_cleaning" style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"></div><center></center> </div></td></tr>')
        
        {% endfor %}
 
@@ -1509,7 +1636,7 @@ $('document').ready(function(){
        second_raw_width_percentage = 100/24*ending_time;
 
 
-       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{spp_schedule.id}}" data-id="{{spp_schedule.id}}" class="sp-gray-box-second notapproved_cleaning" style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div {% if spp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{spp_schedule.order_scheduler_book.number_of_cleaners}}</div></div></td></tr>')
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{spp_schedule.id}}" data-id="{{spp_schedule.id}}" class="sp-gray-box-second notapprovededit_cleaning" style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div {% if spp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{spp_schedule.order_scheduler_book.number_of_cleaners}}</div></div></td></tr>')
        
        {% endfor %}
 
@@ -1894,7 +2021,6 @@ $('.collapsible0-close').click(function(){
       e.preventDefault();
       $('.modal-popup-wrapper1').toggleClass('is-visible');
       schedule_id         = $(this).data('id'); 
-      console.log(schedule_id,"scheduleiddddddd");
       $('#cleaning_id').val(schedule_id);
 
       //date picker and time picker 
@@ -2146,6 +2272,95 @@ $('.collapsible2-close').click(function(){
     $(".popup-collapse2").css('display','none');
 })
 
+
+
+//not approved Cleaning Edit
+    $('.notapprovededit_cleaning').on('click', function (e) {
+      e.preventDefault();
+      $('.modal-popup-wrapper6').toggleClass('is-visible');
+      schedule_id         = $(this).data('id'); 
+      $('#notapprovedcleaning_id').val(schedule_id);
+
+      //date picker and time picker 
+        $('#notapprovedcleaning_date').datetimepicker({
+              pickTime: false, 
+              format: "DD-MM-YYYY",
+              minDate: new Date(),
+            });
+
+        $('#notapprovedcleaning_time').datetimepicker({
+              pickDate:false,
+              format: 'hh:mm A'
+            });
+
+        $("#notapprovedcleaning_date_alert").css({'color':'red'});
+        $("#notapprovedcleaning_time_alert").css({'color':'red'});
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getcleaninginfo' %}",
+
+        data: {'schedule_id':schedule_id}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+                  $('#blcno_notapprovedcleaning_id').html(data['order_no']+'<br><br>'+'Quatation Not Approved');
+                  $('#address_notapprovedcleaning_id').html(data['address']);
+                  $('#customername_notapprovedcleaning_id').html(data['customer']);
+                  $('#mobileno_notapprovedcleaning_id').html(data['customer_mobile']);  
+                  $('#starting_date_notapprovedcleaning_id').html(data['start_at_date']);
+                  $('#starting_time_notapprovedcleaning_id').html(data['start_at_time']);
+                  $('#duration_notapprovedcleaning_id').html(data['duration']+' Hours');
+
+                  var order_url = '/agent/client/order/details/'+data['order_id']+'';
+                  $('#notapprovedorder_url').attr('href',order_url);  
+
+
+                  //form
+                  $('#notapprovedcleaning_date').val(data['start_at_date']);
+                  $('#notapprovedcleaning_time').val(data['start_at_time']);
+                  $('#notapprovedcleaning_duration').val(data['duration']);                        
+                                  }  
+      });
+
+      datetimecheck($('#notapprovedcleaning_time').val(),$('#notapprovedcleaning_date').val(),'notapprovedcleaning');
+
+        $('#notapprovedcleaning_time').change(function(){
+          datetimecheck($('#notapprovedcleaning_time').val(),$('#notapprovedcleaning_date').val(),'notapprovedcleaning');
+        });
+
+        $('#notapprovedcleaning_date').change(function(){
+          datetimecheck($('#notapprovedcleaning_time').val(),$('#notapprovedcleaning_date').val(),'notapprovedcleaning');
+        });
+
+    //edit option toggle
+        
+    $('.edit-collapse').css('display','block');
+    
+});
+
+var coll = document.getElementsByClassName("collapsible6");
+var i;
+for (i = 0; i < coll.length; i++) {  
+  coll[i].addEventListener("click", function() {
+    console.log(this);
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+  }
+
+$('.collapsible6-close').click(function(){
+    $(".popup-collapse6").css('display','none');
+})
+
+
+
 // Evaluation Delete
     $('.delete_evaluation').on('click', function (e) {
       e.preventDefault();
@@ -2200,6 +2415,22 @@ $('.delete_followup').on('click', function (e) {
       $('#delete_team_member_followup_id').html($('#team_member_followup_id').html());
       //form data
       $('#delete_followup_id').val($('#followup_id').val());
+  });
+
+// Delete Cleaning
+$('.delete_notapprovedcleaning').on('click', function (e) {
+      e.preventDefault();
+      $('.modal-popup-wrapper7').toggleClass('is-visible');
+
+      $('#delete_blcno_notapprovedcleaning_id').html($('#blcno_notapprovedcleaning_id').html());
+      $('#delete_address_notapprovedcleaning_id').html($('#address_notapprovedcleaning_id').html());
+      $('#delete_customername_notapprovedcleaning_id').html($('#customername_notapprovedcleaning_id').html());
+      $('#delete_mobileno_notapprovedcleaning_id').html($('#mobileno_notapprovedcleaning_id').html());  
+      $('#delete_starting_date_notapprovedcleaning_id').html($('#starting_date_notapprovedcleaning_id').html());
+      $('#delete_starting_time_notapprovedcleaning_id').html($('#starting_time_notapprovedcleaning_id').html());
+      $('#delete_duration_notapprovedcleaning_id').html($('#duration_notapprovedcleaning_id').html());
+      //form data
+      $('#delete_notapprovedcleaning_id').val($('#notapprovedcleaning_id').val());
   });
 
 

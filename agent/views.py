@@ -1125,6 +1125,35 @@ class AgentHome(IsAgent,View):
 
 			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
 
+
+		elif action_mode == 'notapprovededit_cleaning':
+			schedule_id     = request.POST.get('notapprovedcleaning_id')
+
+			cleaning_date 	= request.POST.get('notapprovedcleaning_date')
+			cleaning_time   = request.POST.get('notapprovedcleaning_time')
+			cleaning_hours 	= float(request.POST.get('notapprovedcleaning_hours'))
+
+			start_at        = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
+			end_at          = start_at + timedelta(hours=cleaning_hours)
+
+
+			#update schedule
+			order_scheduler  = OrderScheduler.objects.select_related('order_scheduler_book').get(id=schedule_id)
+			order_scheduler.start_at 							= start_at
+			order_scheduler.end_at   							= end_at
+			order_scheduler.order_scheduler_book.cleaning_hours = cleaning_hours
+
+			order_scheduler.save()
+			order_scheduler.order_scheduler_book.save()
+
+			messages.success(request,'Quatation Cleaning Date Changed Succesfully')
+
+			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
+			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
+
+			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
+
+
 		elif action_mode == 'delete_evaluation':
 			evaluation_id = request.POST.get('delete_evaluation_id')
 
@@ -1242,6 +1271,20 @@ class AgentHome(IsAgent,View):
 			FollowUpScheduler.objects.filter(id=followup_id).delete()
 
 			messages.success(request,"Followup Deleted Succesfully")
+
+			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
+			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
+
+			return redirect('/agent/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&evaluation_calendar_date='+evaluation_calendar_date)
+
+		elif action_mode == 'delete_notapprovedcleaning':
+			cleaning_id = request.POST.get('delete_notapprovedcleaning_id')
+
+			#Delete Cleaning Schedule
+			OrderScheduler.objects.filter(id=cleaning_id).delete()
+
+			messages.success(request,"Quatation Cleaning Deleted Succesfully")
+
 
 			evaluation_calendar_date	= request.GET.get('evaluation_calendar_date') or ''
 			cleaning_calendar_date	    = request.GET.get('cleaning_calendar_date') or ''
