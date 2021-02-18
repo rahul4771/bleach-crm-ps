@@ -188,23 +188,23 @@
 </select>
 </label>
 <div class="page-entries">Show {{entry_per_page}} entries</div>
-<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable main-table">
  
 <thead>
 <tr>
 <th>BLC Number</th>
 <th data-hide="phone,tablet" style="text-align:center;">Name</th>
 <th data-hide="phone" style="text-align:center;">Mobile</th>
-<th data-hide="phone" style="text-align:center;">Complete/Total</th>
-<th data-hide="phone,tablet" style="text-align:center;">Paid/Total</th>
+<th data-hide="phone" style="text-align:center;">Completed/Total</th>
+<th data-hide="phone,tablet" style="text-align:center;">Paid/Total (in KD)</th>
 {% comment %} <th>Contact</th> {% endcomment %}
-<th style="text-align:center;" data-hide="phone,tablet">Status</th>
+<th style="text-align:center;" data-hide="phone,tablet">Debit/Credit</th>
 <th data-hide="phone,tablet"></th>
 </tr>
 </thead>
 <tbody>
     {% for invoice in subscriptions %}
-    <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+    <tr {% if invoice.dropzerosamountpaid == invoice.dropzerostotalamount %}class="gray-line"{% else %} {% if invoice.balance <= 0 %}class="green-line"{% else %}class="red-line" {% endif %} {% endif %}>
     <td class="bold-text" data-label="BLC NUMBER">{{invoice.evaluation.evaluation_id}}</td>
     <td data-label="CUSTOMER" style="text-align:center;">{{invoice.evaluation.customer.name}}</td>
     <td data-label="CONTACT NUMBER" style="text-align:center;">{{invoice.evaluation.customer.mobile_number}}</td>
@@ -217,13 +217,11 @@
     <td data-label="Remining" class="red-text" style="text-align:center;font-size:19px;">{{invoice.balance|default_if_none:'0'}}</td>
     {% endif %}
     
-    <td data-label="">
-    &nbsp
-    <img src="{% static 'files/images/order_blue.png' %}" align="absmiddle" class="download-icon clickable-row" data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}">&nbsp
-    <img {% if invoice.balance <= 0 %}src="{% static 'files/images/send_invoice_green.png' %}"{% elif invoice.balance == 0%}src="{% static 'files/images/send_invoice_greay.png' %}"{% else %}src="{% static 'files/images/send_invoice_red.png' %}" {% endif %} align="absmiddle" class="download-icon clickable-cursor send_invoice" data-id="{{invoice.id}}" data-blcno="{{invoice.evaluation.evaluation_id}}" data-customername="{{invoice.evaluation.customer.mobile_number}}" data-contactno="{{invoice.evaluation.customer.name}}" {% for schedule in invoice.orderschedules %}{% if forloop.first %}data-startdate="{{schedule.start_at|date:'d-m-Y'}}" {% endif %}{% if forloop.last %}data-enddate="{{schedule.start_at|date:'d-m-Y'}}"{% endif %}{% endfor %} data-totalamount="{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}" data-paidamount="{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}" data-balance="{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}" data-remining="{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}">
+    <td data-label="" style="text-align:center;">
+    <img {% if invoice.dropzerosamountpaid == invoice.dropzerostotalamount %}src="{% static 'files/images/send_invoice_greay.png' %}"{% else %} {% if invoice.balance <= 0 %}src="{% static 'files/images/send_invoice_green.png' %}"{% else %}src="{% static 'files/images/send_invoice_red.png' %}" {% endif %} {% endif %} align="absmiddle" class="clickable-cursor send_invoice" data-id="{{invoice.id}}" data-blcno="{{invoice.evaluation.evaluation_id}}" data-customername="{{invoice.evaluation.customer.mobile_number}}" data-contactno="{{invoice.evaluation.customer.name}}" {% for schedule in invoice.orderschedules %}{% if forloop.first %}data-startdate="{{schedule.start_at|date:'d-m-Y'}}" {% endif %}{% if forloop.last %}data-enddate="{{schedule.start_at|date:'d-m-Y'}}"{% endif %}{% endfor %} data-totalamount="{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}" data-paidamount="{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}" data-balance="{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}" data-remining="{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}" width="32.5px" height="32.5px">&nbsp&nbsp
+    <img src="{% static 'files/images/order_blue.png' %}" align="absmiddle" class="clickable-row" data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}" width="32.5px" height="32.5px">
     </td>
-    </form>
-</tr>
+    </tr>
 {% endfor %}
 </tbody>
 <tfoot>
