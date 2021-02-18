@@ -322,6 +322,9 @@ class ActiveSubscriptions(IsAccountant,View):
 				else:
 					invoice.balance       = cleaning_price-invoice.amount_paid
 
+				if invoice.balance == int(invoice.balance):
+					invoice.balance = int(invoice.balance)
+
 		#PAGINATION CLIENTS
 		no_of_entries = request.GET.get('no_of_entries')
 		if not no_of_entries:
