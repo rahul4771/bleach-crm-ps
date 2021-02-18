@@ -127,50 +127,15 @@ class Order(models.Model):
 	def __str__(self):
 		return self.order_no
 
-	def dropzerostotalcost(self):
-		if self.evaluation.total_cost == int(self.evaluation.total_cost):
-			self.evaluation.total_cost = int(self.evaluation.total_cost)
-		return self.evaluation.total_cost
-
-	def dropzerossubscriptiontopay(self):
-		if self.subscription_topay == int(self.subscription_topay):
-			self.subscription_topay = int(self.subscription_topay)
-		return self.subscription_topay
+	def dropzerostotalamount(self):
+		if self.total_amount == int(self.total_amount):
+			self.total_amount = int(self.total_amount)
+		return self.total_amount
 
 	def dropzerosamountpaid(self):
 		if self.amount_paid == int(self.amount_paid):
 			self.amount_paid = int(self.amount_paid)
 		return self.amount_paid
-
-	def dropzerosremainingamount(self):
-		if self.remining_amount == int(self.remining_amount):
-			self.remining_amount = int(self.remining_amount)
-		return self.remining_amount
-
-	def dropzerosestimatedcost(self):
-		if self.evaluation.estimated_cost == int(self.evaluation.estimated_cost):
-			self.evaluation.estimated_cost = int(self.evaluation.estimated_cost)
-		return self.evaluation.estimated_cost
-
-	def dropzerosfineamount(self):
-		if self.evaluation.fine_amount == int(self.evaluation.fine_amount):
-			self.evaluation.fine_amount = int(self.evaluation.fine_amount)
-		return self.evaluation.fine_amount
-
-	def dropzerosdiscount(self):
-		if self.evaluation.discount == int(self.evaluation.discount):
-			self.evaluation.discount = int(self.evaluation.discount)
-		return self.evaluation.discount
-
-	def dropzeroswritebackamount(self):
-		if self.evaluation.writeback_amount == int(self.evaluation.writeback_amount):
-			self.evaluation.writeback_amount = int(self.evaluation.writeback_amount)
-		return self.evaluation.writeback_amount
-
-	
-	
-
-
 
 
 
