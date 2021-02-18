@@ -24,6 +24,14 @@
 .sp-yellow-box-first:hover{ background:#e7ab03; cursor:pointer;}
 .sp-yellow-box-second:hover{ background:#e7ab03; cursor:pointer;}
 
+.gray-box{ background:#D3D3D3; position:absolute; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:20px;  font-size:12px; padding:0 20px; text-shadow: 1px 2px 3px #00000045;}
+.sp-gray-box-first{ background:#D3D3D3; position:absolute;right:; top:9px; color:#fff; border-bottom-left-radius: 100px; border-top-left-radius: 100px;display:inline-block; height:25px; line-height:20px; font-size:12px; padding:0 20px;}
+.sp-gray-box-second{ background:#D3D3D3; position:absolute;right:; top:9px; color:#fff; border-bottom-right-radius: 100px; border-top-right-radius: 100px;display:inline-block; height:25px; line-height:20px; font-size:12px; padding:0 20px;}
+.gray-box:hover{ background:#bbb; cursor:pointer;}
+.sp-gray-box-first:hover{ background:#bbb; cursor:pointer;}
+.sp-gray-box-second:hover{ background:#bbb; cursor:pointer;}
+
+
 .red-box:hover{ background:#d55757; cursor:pointer;}
 .left-avatar{width:22px; height:22px; position:absolute; left:1px; top:1px; border-radius:50px; text-align:center; }
 .left-avatar img{ width:100%; border-radius:50px;height:22px;}
