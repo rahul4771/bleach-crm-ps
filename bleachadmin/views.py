@@ -136,6 +136,22 @@ class AdminHome(IsAdmin,View):
 		except:
 			spp_calendar_followup_schedules = None
 
+		#for not approved quatations cleaning in cleaning callendar
+		try:
+			calendar_notapprovedorder_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end)))).order_by('start_at').select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='PENDING') 
+		except:
+			calendar_notapprovedorder_schedules 	= None
+
+		try:
+			sp_calendar_notapprovedorder_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='PENDING')
+		except:
+			sp_calendar_notapprovedorder_schedules = None
+
+		try:
+			spp_calendar_notapprovedorder_schedules = OrderScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='PENDING')
+		except:
+			spp_calendar_notapprovedorder_schedules = None
+
 		#ticket approval task		
 		approve_tickets = Investigation.objects.filter(Q(Q(is_casesandcomplaints_submit=True)&Q(Q(is_buybackgiftpromo_approved=False)|Q(is_paybackdiscount_approved=False)))).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=False),to_attr='paybackdiscounts'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.select_related('investigation').filter(investigation__is_buybackgiftpromo_approved=False,is_active=True),to_attr='buybackpromocodegifts')).annotate(paybackdiscount_count=Case(When(paybackdiscount_investigation__is_completed=False,then=1),default=0,output_field=IntegerField()),buybackpromocodegift_count=Case(When(buybackpromocodegift_investigation__is_completed=False,then=1),default=0,output_field=IntegerField())).filter( Q(Q(paybackdiscount_count__gte=1)|Q(buybackpromocodegift_count__gte=1)) )
 		#add days left
@@ -143,7 +159,7 @@ class AdminHome(IsAdmin,View):
 			for ticket in approve_tickets:
 				ticket.days_left = (timezone.now()-ticket.scheduled_at).days
 
-		return render(request,'admin/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'evaluators_sales_targets':evaluators_sales_target,'approve_tickets':approve_tickets,})
+		return render(request,'admin/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'evaluators_sales_targets':evaluators_sales_target,'approve_tickets':approve_tickets,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules,})
 
 
 
