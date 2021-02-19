@@ -853,7 +853,9 @@
         <!-- raise ticket -->
 
         <!-- RE-ORDER -->
-        {% if order.order_status == 'ORDER_CLOSED' %}
+        {% comment %} {% if order.order_status == 'ORDER_CLOSED'  or order.orderschedules|length > 1 %} {% endcomment %}
+        {% for schedule in order.orderschedules %}
+        {% if forloop.first and schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' or order.order_status == 'ORDER_CLOSED'%}
             <br>
             <div class="order-card-column whitebg blue-border clickable-cursor duplicate_order" data-id="{{order.evaluation.id}}"><!--order-card-column-->
                     <div class="card-innerwrapper"><!--card-innerwrapper-->
@@ -868,6 +870,7 @@
                     </div><!--card-innerwrapper-->
                 </div><!--order-card-column-->
             {% endif %}
+            {% endfor %}
             <!-- RE-ORDER -->
 
     </div><!--order-details-right-fixed-->

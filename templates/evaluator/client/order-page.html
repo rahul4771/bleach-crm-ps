@@ -1134,7 +1134,8 @@
         </div><!--right-bgwrapper--> 
         
         <!-- RE-ORDER -->
-        {% if order.order_status == 'ORDER_CLOSED' %}
+        {% for schedule in order.orderschedules %}
+        {% if forloop.first and schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' or order.order_status == 'ORDER_CLOSED'%}
             <br>
             <div class="order-card-column whitebg green-border clickable-cursor duplicate_order" data-id="{{order.evaluation.id}}"><!--order-card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
@@ -1149,6 +1150,7 @@
                 </div><!--card-innerwrapper-->
             </div><!--order-card-column-->
         {% endif %}
+        {% endfor %}
         <!-- RE-ORDER -->
         
     </div><!--order-details-right-fixed-->
