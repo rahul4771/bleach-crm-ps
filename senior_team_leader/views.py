@@ -425,6 +425,9 @@ class ActiveSubscriptions(IsSeniorTeamLeader,View):
 				if invoice.balance == int(invoice.balance):
 					invoice.balance = int(invoice.balance)
 
+				for detail in invoice.evaluation.invoice_evaluation_details:
+					invoice.area = detail.address.area.name
+
 		#PAGINATION CLIENTS
 		no_of_entries = request.GET.get('no_of_entries')
 		if not no_of_entries:
