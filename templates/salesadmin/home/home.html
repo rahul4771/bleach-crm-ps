@@ -61,6 +61,7 @@
 <div class="main-content-holder"><!--main-content-holder-->            
 
     {% if approve_tickets %}
+    {% if paybackdiscount_count >= 1 and buybackpromocodegift_count >= 1 %}
     <div class="white-wrapper"><!--white-wrapper-->
     <h2 class="h2">Ticket Approval Task</h2>
     <table class="main-table">
@@ -88,6 +89,7 @@
     </tbody>
     </table>
     </div>
+    {% endif %}
     {% endif %}
 
 
