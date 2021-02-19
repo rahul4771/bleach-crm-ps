@@ -540,6 +540,22 @@ class StlHome(IsSeniorTeamLeader,View):
 		except:
 			spp_calendar_followup_schedules = None
 
+		#for not approved quatations cleaning in cleaning callendar
+		try:
+			calendar_notapprovedorder_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end)))).order_by('start_at').select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='PENDING') 
+		except:
+			calendar_notapprovedorder_schedules 	= None
+
+		try:
+			sp_calendar_notapprovedorder_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='PENDING')
+		except:
+			sp_calendar_notapprovedorder_schedules = None
+
+		try:
+			spp_calendar_notapprovedorder_schedules = OrderScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='PENDING')
+		except:
+			spp_calendar_notapprovedorder_schedules = None
+
 
 		#cleaning team assignment task
 		teamassign_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
@@ -668,7 +684,7 @@ class StlHome(IsSeniorTeamLeader,View):
 			else:
 				workers_details = workers_details.annotate(cleaningbusy=Sum(Case(When(Q( Q(Q(cleaning_member_user__start_at__gte=actual_starting_datetime)&Q(cleaning_member_user__start_at__lte=actual_ending_datetime)) | Q(Q(cleaning_member_user__end_at__gte=actual_starting_datetime)&Q(cleaning_member_user__end_at__lte=actual_ending_datetime)) | Q(Q(cleaning_member_user__start_at__lte=actual_starting_datetime)&Q(cleaning_member_user__end_at__gte=actual_starting_datetime)&Q(cleaning_member_user__start_at__lte=actual_ending_datetime)&Q(cleaning_member_user__end_at__gte=actual_ending_datetime)) | Q(Q(cleaning_member_user__start_at__gte=actual_starting_datetime)&Q(cleaning_member_user__end_at__gte=actual_starting_datetime)&Q(cleaning_member_user__start_at__lte=actual_ending_datetime)&Q(cleaning_member_user__end_at__lte=actual_ending_datetime)) ),then=1),default=0,output_field=IntegerField())),followupbusy=Sum(Case(When(Q(Q(Q(followup_member__start_at__gte=actual_starting_datetime)&Q(followup_member__start_at__lte=actual_ending_datetime))|Q(Q(followup_member__end_at__gte=actual_starting_datetime)&Q(followup_member__end_at__lte=actual_ending_datetime))|Q(Q(followup_member__start_at__lte=actual_starting_datetime)&Q(followup_member__end_at__gte=actual_starting_datetime)&Q(followup_member__start_at__lte=actual_ending_datetime)&Q(followup_member__end_at__gte=actual_ending_datetime)) | Q(Q(followup_member__start_at__gte=actual_starting_datetime)&Q(followup_member__end_at__gte=actual_starting_datetime)&Q(followup_member__start_at__lte=actual_ending_datetime)&Q(followup_member__end_at__lte=actual_ending_datetime))),then=1),default=0,output_field=IntegerField()))).exclude(Q(Q(cleaningbusy__gte=1)|Q(followupbusy__gte=1)))
 
-		return render(request,'stl/home/home.html',{'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"fil_staff":fil_staff,'assign_order_schedules':assign_order_schedules,'assign_followup_schedules':assign_followup_schedules,"fil_endingtime":fil_endingtime,"fil_startingtime":fil_startingtime,'service_type':service_type})
+		return render(request,'stl/home/home.html',{'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,"fil_staff":fil_staff,'assign_order_schedules':assign_order_schedules,'assign_followup_schedules':assign_followup_schedules,"fil_endingtime":fil_endingtime,"fil_startingtime":fil_startingtime,'service_type':service_type,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules,})
 
 	def post(self,request):
 		action = request.POST.get('action_type')
@@ -802,6 +818,29 @@ class StlHome(IsSeniorTeamLeader,View):
 				followup_schedule.save()
 
 				messages.success(request,"Followup Cleaning Date Changed Please Assign New Followup Cleaning Team")				
+
+		elif action == 'notapprovededit_cleaning':
+			schedule_id     = request.POST.get('notapprovedcleaning_id')
+
+			cleaning_date 	= request.POST.get('notapprovedcleaning_date')
+			cleaning_time   = request.POST.get('notapprovedcleaning_time')
+			cleaning_hours 	= float(request.POST.get('notapprovedcleaning_hours'))
+
+			start_at        = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
+			end_at          = start_at + timedelta(hours=cleaning_hours)
+
+
+			#update schedule
+			order_scheduler  = OrderScheduler.objects.select_related('order_scheduler_book').get(id=schedule_id)
+			order_scheduler.start_at 							= start_at
+			order_scheduler.end_at   							= end_at
+			order_scheduler.order_scheduler_book.cleaning_hours = cleaning_hours
+
+			order_scheduler.save()
+			order_scheduler.order_scheduler_book.save()
+
+			messages.success(request,'Quatation Cleaning Date Changed Succesfully')
+
 
 		if action =='confirm_followupchedule':
 			followupscheduler_id = request.POST.get('followupscheduler')

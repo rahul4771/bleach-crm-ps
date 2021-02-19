@@ -150,6 +150,21 @@ class EvaluatorHome(IsEvaluator,View):
 		except:
 			spp_calendar_followup_schedules = None
 		
+		#for not approved quatations cleaning in cleaning callendar
+		try:
+			calendar_notapprovedorder_schedules 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end)))).order_by('start_at').select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='PENDING') 
+		except:
+			calendar_notapprovedorder_schedules 	= None
+
+		try:
+			sp_calendar_notapprovedorder_schedules = OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='PENDING')
+		except:
+			sp_calendar_notapprovedorder_schedules = None
+
+		try:
+			spp_calendar_notapprovedorder_schedules = OrderScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='PENDING')
+		except:
+			spp_calendar_notapprovedorder_schedules = None
 
 		#Evaluation details of each evaluator for evaluation table
 		evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
@@ -167,7 +182,7 @@ class EvaluatorHome(IsEvaluator,View):
 		except:
 			my_evaluations = None	
 
-		return render(request,'evaluator/home/home.html',{'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'evaluation_date':evaluation_date,'my_evaluations':my_evaluations})
+		return render(request,'evaluator/home/home.html',{'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'evaluation_date':evaluation_date,'my_evaluations':my_evaluations,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules,})
 
 class ClientDetails(IsEvaluator,View):
 	def get(self,request):

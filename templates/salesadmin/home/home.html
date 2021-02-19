@@ -688,12 +688,195 @@
 </div><!--modal-popup-wrapper-->
 <!--edit followup popup -->
 
+
+<!-- edit_notapprovedcleaning_popup -->
+<div class="modal-popup-wrapper6"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+        <div class="modal-header"><!--modal-header-->
+        <button class="modal-close notapprovededit_cleaning collapsible6-close">X</button>
+        </div><!--modal-header-->
+    <div class="modal-body"><!--modal-body-->
+    <div class="modal-content"><!--modal-content-->
+    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">  
+                <tr>
+                    <td><a id="notapprovedorder_url"><div class="blc-number" id="blcno_notapprovedcleaning_id"></div></a><span id="address_notapprovedcleaning_id"></span></td>
+                    <td><div class="bold-text" id="customername_notapprovedcleaning_id"></div><div id="mobileno_notapprovedcleaning_id"></div></td>
+                </tr>
+ 
+            <tr>
+            <td colspan="3">Cleaning Date:<strong><span class="blue-text" id="starting_date_notapprovedcleaning_id"></span></strong> &nbsp;Starting Time:<strong><span class="blue-text" id="starting_time_notapprovedcleaning_id"></span></strong> &nbsp;Duration:<strong><span class="blue-text" id="duration_notapprovedcleaning_id"></span></strong></td>
+            </tr>  
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+     
+    <div class="edit-collapse collapsible1"><a href="#" ><img src="{% static 'files/images/edit.png' %}" width="30px"></a></div>  
+    <div class="popup-collapse popup-collapse1"><!--popup-collapse--> 
+    <form method="post" enctype= "multipart/form-data">
+    {%csrf_token%}  
+    <input type="hidden" name="action_type" value="notapprovededit_cleaning">
+    <input type="hidden" name="notapprovedcleaning_id" id="notapprovedcleaning_id">  
+ <hr class="hr-dashedpad">  
+  <div class="blc-number align-center">Edit Cleaning</div>    
+  <br>   
+<hr class="hr-dashedpad">  
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Cleaning Date</label></div>
+        <input name="notapprovedcleaning_date" type="text" class="textBox" id="notapprovedcleaning_date">
+        <p id="notapprovedcleaning_date_alert" hidden>Please Select a new date !</p>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Starting Time</label></div>
+        <input name="notapprovedcleaning_time" type="text" class="textBox" id="notapprovedcleaning_time">
+        <p id="notapprovedcleaning_time_alert">Please Select proper date and time !</p>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Duration</label></div>
+        <input name="notapprovedcleaning_hours" type="text" class="textBox" id="notapprovedcleaning_duration">
+  </div><!--ticket-form-left-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+   
+<div align="center"> <input class="assignButton notapprovedcleaning_btn" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
+</form>
+ </div><!--popup-collapse-->
+</div><!--ticket-wrapper-full--> 
+        
+    </div><!--modal-content-->
+    </div><!--modal-body-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--modal-popup-wrapper-->
+<!-- /edit_notapprovedcleaning_popup -->
+
 {% endblock %}
 {% block javascript %}
 <script src="{% static 'files/js/charts/sales-pie-charts.js' %}"></script>
 <script src="{% static 'files/js/charts/overall-sales-chart.js' %}"></script>
 {% comment %} <script src="{% static 'files/js/charts/sales-target-chart.js' %}"></script> {% endcomment %}
 <script type="text/javascript">
+//previous time limit
+    function datetimecheck(ftime,fdate,mode){
+    var today = new Date();
+    console.log(ftime,fdate,"preee")
+    tentativedate = fdate;
+    
+        console.log(tentativedate,today,"dte")
+        var vals = tentativedate.split('-');
+        var day = parseInt(vals[0]);
+        var month = parseInt (vals[1]);
+        var year = parseInt (vals[2]);
+
+        var start_time = ftime;
+        start_time = start_time.split(" ");
+        time_AM_PM = start_time[1];
+        var time = start_time[0].split(":");
+
+        //splitting 0 in hour
+        if (time[0] < 10){
+            var hour_split = time[0].split('');
+            var time_hour = hour_split[1];
+            console.log(time_hour,"werry")    
+        }else{
+            time_hour = time[0];
+        }
+
+        //converting to 24 hr
+        if (time_AM_PM == 'PM'){
+          if (time_hour < 12){
+            newhour = parseInt(time_hour) + 12 ;
+          }else{
+            newhour = time_hour;
+          }
+        }else{
+          if (time_hour == 12){
+            newhour = 00 ;
+          }else{
+            newhour = time[0];
+          }
+        }
+
+        //creating datetime element
+        selecteddatetime = new Date(year,month,day,newhour,time[1]);
+        selecteddatetime.setMonth(selecteddatetime.getMonth()-1);
+        console.log(newhour,selecteddatetime,"sel")
+
+        if (selecteddatetime < today){
+          if (mode == 'followup'){
+            $('#followup_schedule_time_alert').attr("hidden",false);
+            $('.confirmdate_followup_btn').attr("disabled",true);
+          }
+          if (mode == 'order'){
+            $('#order_schedule_time_alert').attr("hidden",false);
+            $('.confirmdate_order_btn').attr("disabled",true);
+          }
+          if (mode == 'evaluation'){
+            console.log("lop1")
+            $('#appointment_time_alert').attr("hidden",false);
+            $('.appointment_btn').attr("disabled",true);
+          }
+          if (mode == 'cleaning'){
+            console.log("lop1")
+            $('#cleaning_time_alert').attr("hidden",false);
+            $('.cleaning_btn').attr("disabled",true);
+          }
+          if (mode == 'followupcleaning'){
+            console.log("lop1")
+            $('#followupcleaning_time_alert').attr("hidden",false);
+            $('.followupcleaning_btn').attr("disabled",true);
+          }
+          if (mode == 'notapprovedcleaning'){
+            console.log("lop1")
+            $('#notapprovedcleaning_time_alert').attr("hidden",false);
+            $('.notapprovedcleaning_btn').attr("disabled",true);
+          }
+          console.log("success")
+        }else{
+          if (mode == 'followup'){
+          $('#followup_schedule_time_alert').attr("hidden",true);
+          $('.confirmdate_followup_btn').attr("disabled",false);
+          }
+          if (mode == 'order'){
+          $('#order_schedule_time_alert').attr("hidden",true);
+          $('.confirmdate_order_btn').attr("disabled",false);
+          }
+          if (mode == 'evaluation'){
+            console.log("lop2")
+            $('#appointment_time_alert').attr("hidden",true);
+            $('.appointment_btn').attr("disabled",false);
+          }
+          if (mode == 'cleaning'){
+            console.log("lop1")
+            $('#cleaning_time_alert').attr("hidden",true);
+            $('.cleaning_btn').attr("disabled",false);
+          }
+          if (mode == 'followupcleaning'){
+            console.log("lop1")
+            $('#followupcleaning_time_alert').attr("hidden",true);
+            $('.followupcleaning_btn').attr("disabled",false);
+          }
+          if (mode == 'notapprovedcleaning'){
+            console.log("lop1")
+            $('#notapprovedcleaning_time_alert').attr("hidden",true);
+            $('.notapprovedcleaning_btn').attr("disabled",false);
+          }
+          console.log("fail")
+        }
+
+    }
+    //
+
+
+
 
 //set default month year in monthpicker
 function appendLeadingZeroes(n){
@@ -1203,6 +1386,142 @@ $('document').ready(function(){
        {% endfor %}
 
 
+
+       //To add not confirmed cleaning schedules in cleaning calender  
+      console.log("callendar")
+      completed_calender = []; 
+      {% for old_schedule in calendar_notapprovedorder_schedules %}  
+
+            old_starting_time_string      = '{{old_schedule.start_at|date:'H:i'}}'.replace(":",".");
+            old_ending_time_string        = '{{old_schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+            old_starting_time             = parseInt(old_starting_time_string.split('.')[0])+parseInt(old_starting_time_string.split('.')[1])/60
+            old_ending_time               = parseInt(old_ending_time_string.split('.')[0])+parseInt(
+                old_ending_time_string.split('.')[1])/60
+            
+            current_raw_timings = [];
+            console.log(old_starting_time,"old loop")
+            {% for schedule in calendar_notapprovedorder_schedules %}
+                starting_time_string      = '{{schedule.start_at|date:'H:i'}}'.replace(":",".");
+                ending_time_string        = '{{schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+                starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+                    ending_time_string.split('.')[1])/60
+
+                console.log(starting_time,"new loop")
+                console.log(ending_time,"new loop")
+                if(completed_calender.includes('{{forloop.counter}}'))
+                {
+                    console.log("Includes");
+                }
+                else
+                {
+                if((old_starting_time>=starting_time && old_starting_time>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true))||(old_ending_time<=starting_time && old_ending_time<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true))||(current_raw_timings.length==0))
+                    {
+                        completed_calender.push('{{forloop.counter}}');
+                        console.log(current_raw_timings.length,"length before")
+                        console.log(current_raw_timings,"before")
+                        current_raw_timings.push([starting_time,ending_time]);
+                        console.log(current_raw_timings.length,"length after")
+                        console.log(current_raw_timings,"after")
+                        //append raw
+                    if(current_raw_timings.length==1)
+                        {
+                            console.log(old_starting_time)
+                            console.log(old_ending_time)
+                            console.log(starting_time)
+                            console.log(ending_time)
+                            console.log("appending new raw")
+                            
+                            left_percentage  = 100/24*starting_time
+
+                            if(ending_time == 0)
+                            {
+                              width_percentage = 100/24*24-100/24*starting_time;
+                            }
+                            else
+                            {
+                              width_percentage = 100/24*ending_time-100/24*starting_time;
+                            }
+                            
+                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{schedule.id}}" data-id="{{schedule.id}}" class="gray-box notapprovededit_cleaning" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"></div><center></center> <div {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.order_scheduler_book.number_of_cleaners}}</div></div></td></tr>')
+                        }
+                        //append td to the raw 
+                    else
+                        { 
+                           console.log(old_starting_time)
+                           console.log(old_ending_time)
+                           console.log(starting_time)
+                           console.log(ending_time)
+                           console.log("appending same raw")
+                           
+                           left_percentage  = 100/24*starting_time
+                           
+                           if(ending_time == 0)
+                            {
+                              width_percentage = 100/24*24-100/24*starting_time;
+                            }
+                            else
+                            {
+                              width_percentage = 100/24*ending_time-100/24*starting_time;
+                            } 
+                            
+                            $('#cleaning_table tr:last td').append('<div id="cleaningschedule{{schedule.id}}" data-id="{{schedule.id}}" class="gray-box notapprovededit_cleaning" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"></div><center></center> <div {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.order_scheduler_book.number_of_cleaners}}</div></div>')      
+                        }
+                    }
+
+                }
+            {% endfor %}        
+
+       {% endfor %}
+       console.log("Callendar ends")
+
+       //for special cases like 2 days cleanings
+       {% for sp_schedule in sp_calendar_notapprovedorder_schedules %}
+
+       starting_time_string      = '{{sp_schedule.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{sp_schedule.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+       console.log("special")
+       console.log(first_raw_left_percentage)
+       console.log(first_raw_width_percentage)
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{sp_schedule.id}}" data-id="{{sp_schedule.id}}" class="sp-gray-box-first notapprovededit_cleaning" style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"></div><center></center> </div></td></tr>')
+       
+       {% endfor %}
+
+       //for special cases like 2 days cleanings
+       {% for spp_schedule in spp_calendar_notapprovedorder_schedules %}
+
+       starting_time_string      = '{{spp_schedule.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{spp_schedule.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{spp_schedule.id}}" data-id="{{spp_schedule.id}}" class="sp-gray-box-second notapprovededit_cleaning" style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div {% if spp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{spp_schedule.order_scheduler_book.number_of_cleaners}}</div></div></td></tr>')
+       
+       {% endfor %}
+
 });
 
 
@@ -1479,6 +1798,91 @@ $('.collapsible2-close').click(function(){
     $(".popup-collapse2").css('display','none');
 })
 
+
+//not approved Cleaning Edit
+    $('.notapprovededit_cleaning').on('click', function (e) {
+      e.preventDefault();
+      $('.modal-popup-wrapper6').toggleClass('is-visible');
+      schedule_id         = $(this).data('id'); 
+      $('#notapprovedcleaning_id').val(schedule_id);
+
+      //date picker and time picker 
+        $('#notapprovedcleaning_date').datetimepicker({
+              pickTime: false, 
+              format: "DD-MM-YYYY",
+              minDate: new Date(),
+            });
+
+        $('#notapprovedcleaning_time').datetimepicker({
+              pickDate:false,
+              format: 'hh:mm A'
+            });
+
+        $("#notapprovedcleaning_date_alert").css({'color':'red'});
+        $("#notapprovedcleaning_time_alert").css({'color':'red'});
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getcleaninginfo' %}",
+
+        data: {'schedule_id':schedule_id}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+                  $('#blcno_notapprovedcleaning_id').html(data['order_no']+'<br><br>'+'Quatation Not Approved');
+                  $('#address_notapprovedcleaning_id').html(data['address']);
+                  $('#customername_notapprovedcleaning_id').html(data['customer']);
+                  $('#mobileno_notapprovedcleaning_id').html(data['customer_mobile']);  
+                  $('#starting_date_notapprovedcleaning_id').html(data['start_at_date']);
+                  $('#starting_time_notapprovedcleaning_id').html(data['start_at_time']);
+                  $('#duration_notapprovedcleaning_id').html(data['duration']+' Hours');
+
+                  var order_url = '/agent/client/order/details/'+data['order_id']+'';
+                  $('#notapprovedorder_url').attr('href',order_url);  
+
+
+                  //form
+                  $('#notapprovedcleaning_date').val(data['start_at_date']);
+                  $('#notapprovedcleaning_time').val(data['start_at_time']);
+                  $('#notapprovedcleaning_duration').val(data['duration']);                        
+                                  }  
+      });
+
+      datetimecheck($('#notapprovedcleaning_time').val(),$('#notapprovedcleaning_date').val(),'notapprovedcleaning');
+
+        $('#notapprovedcleaning_time').change(function(){
+          datetimecheck($('#notapprovedcleaning_time').val(),$('#notapprovedcleaning_date').val(),'notapprovedcleaning');
+        });
+
+        $('#notapprovedcleaning_date').change(function(){
+          datetimecheck($('#notapprovedcleaning_time').val(),$('#notapprovedcleaning_date').val(),'notapprovedcleaning');
+        });
+
+    //edit option toggle
+        
+    $('.edit-collapse').css('display','block');
+    
+});
+
+var coll = document.getElementsByClassName("collapsible6");
+var i;
+for (i = 0; i < coll.length; i++) {  
+  coll[i].addEventListener("click", function() {
+    console.log(this);
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+  }
+
+$('.collapsible6-close').click(function(){
+    $(".popup-collapse6").css('display','none');
+})
 
 });
 
