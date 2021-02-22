@@ -165,7 +165,8 @@
 <th data-hide="phone">Area</th>
 <th data-hide="phone,tablet">Investigator </th>
 <th>Contact</th>
-<th data-hide="phone,tablet">Status</th>
+<th data-hide="phone,tablet" class="align-center">Status</th>
+<th data-hide="phone,tablet"></th>
 </tr>
 </thead>
 <tbody>
@@ -198,6 +199,9 @@
     {% else %}
     <span class="clickable-row red-bg" data-href="{% url 'agent:agent-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Cancelled</span>
     {% endif %}
+    </td>
+    <td class="align-center">
+    {% if ticket.status == 'FOLLOWUP_CLOSED' %}<img src="{% static 'files/images/edit-gray.png' %}" align="absmiddle" class="download-icon">{% else %}<a href="{% url 'agent:agent-tickets-edit' ticket.id ticket.investigation.order_schedule.order.id %}"><img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon"></a>{% endif %}
     </td>
     </tr> 
     {% empty %}

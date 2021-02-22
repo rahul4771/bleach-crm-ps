@@ -9,7 +9,7 @@
 <section class="content"><!--content-->
 	<div class="container-fluid space topspace"><!--container-fluid space-->
 		<div class="welcome-wrapper"><!--welcome-wrapper-->
-	<h1 class="dashboard-head">Raise Ticket</h1>
+	<h1 class="dashboard-head">Edit Ticket</h1>
 	<p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>  
 		</div><!--welcome-wrapper-->
 	
@@ -17,15 +17,10 @@
 		
 	<div class="main-content-holder"><!--main-content-holder-->            
 	
-	
+  <input type="hidden" name="orderid" class="searchbox" data-orderid="{{order.id}}" />
 		
 <div class="white-wrapper"><!--white-wrapper-->
 <div class="center-formDiv"><!--center-formDiv-->
-
-		<div class="order-Number bold-text"> <label>Order Number</label></div>
-    <div id="search_box">
-                <input name="time" type="text" id="search_box" class="textBox auto-complete-input searchbox" placeholder="Search here existing clients or BLC Number..." data-min-size="2" data-pattern="[a-zA-Z0-9\s]" data-result-onclick="select_existing_user" data-auto-suggest-url="{% url 'agent:get-customerorderInfo' %}" data-orderid="{{order.id}}" value="{{order.order_no}}" >
-    </div>
 
 		<hr class="div">
 		
@@ -33,7 +28,8 @@
 			
 				<div class="cleaning-column-wrapper ltyellow-border order-details"><!--cleaning-column-wrapper-->
 				<div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
-        <div class="details-head align-left order_blc_no"></div>
+        <div class="details-head align-left">TKT{{ticket.ticket_no}}</div>
+        <div class="inside-head align-left order_blc_no"></div><br>
 				<div class="inside-head align-left order_customer_name"></div>
 				<p class="paragraph order_customer_mobile"></p>
 				
@@ -55,14 +51,14 @@
 		
 		<br><br>
 <div class="common-sub-head align-left ticket-form-head">Ticket Form</div> 
-	<form method="post" action="{% url 'agent:agent-ticketregister' %}" enctype="multipart/form-data">{% csrf_token %}
+	<form method="post" action="{% url 'agent:agent-tickets-edit' ticket.id order.id%}" enctype="multipart/form-data">{% csrf_token %}
 	<input type="hidden" name="order_id" id="order_id_hidden">
 
 <div class="ticket-wrapper-full ltyellow-border ticket-form"><!--ticket-wrapper-full-->
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Ticket Type(s)</label></div>
-                  <div class="ui fluid dropdown multiple search selection"><input type="hidden" name="ticket_types" id="ticket_types_id"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">Select Ticket Type</div><div class="menu" tabindex="-1"><div class="item" data-value="Damage">Damage</div><div class="item" data-value="Service Quality">Service Quality</div><div class="item" data-value="Staff Behaviour">Staff Behaviour</div><div class="item" data-value="Punctuality">Punctuality</div><div class="item" data-value="Hygene">Hygene</div></div>
+                  <div class="ui fluid dropdown multiple search selection"><input type="hidden" name="ticket_types" id="ticket_types_id" value="{{ticket.investigation.ticket_types}}"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">Select Ticket Type</div><div class="menu" tabindex="-1"><div class="item" data-value="Damage">Damage</div><div class="item" data-value="Service Quality">Service Quality</div><div class="item" data-value="Staff Behaviour">Staff Behaviour</div><div class="item" data-value="Punctuality">Punctuality</div><div class="item" data-value="Hygene">Hygene</div></div>
                 </div>
                 <p class="ticket_types_alert" style="color:Red;"></p>
   </div><!--ticket-form-left-->
@@ -75,6 +71,13 @@
   				<div class=" bold-text common-label"> <label>Cleaning Job</label></div>
                 <label for="favcity">
                 <select class="id_order_schedule" id="id_order_schedule_followup" name="order_schedule" required>
+                {% for schedule in order.orderschedules %}
+		               
+                <option value="{{schedule.id}}" {% if schedule.id == ticket.investigation.order_schedule.id %}selected{% endif %}>
+                {{schedule.customer_address.area.name}}-{{schedule.order_scheduler_book.service_type.name}}/{{schedule.start_at|date:'d-m-Y H:i'}}
+                </option>
+                
+                {% endfor %}
                 </select>
                 </label>
   </div><!--ticket-form-left-->
@@ -84,7 +87,7 @@
                 <select id="id_investigator" name="investigator" required>
                 <option value="">--Choose Investigator--</option>
 				{% for investigator in investigators %}
-                <option value="{{investigator.id}}">{{investigator.name}}</option>
+                <option value="{{investigator.id}}" {% if ticket.investigation.investigator.id == investigator.id %}selected{% endif %}>{{investigator.name}}</option>
                 {% endfor %}
                 </select>
                 </label>
@@ -92,20 +95,16 @@
 </div><!--ticket-wrapper-row ticket-forms-boxes-->  
 <hr class="hr-dashedpad">
 				<div class="bold-text common-label"> <label>Notes</label></div>
-                 <textarea name="notes" cols="" rows="4" class="textArea"></textarea>
+                 <textarea name="notes" cols="" rows="4" class="textArea">{{ticket.investigation.notes|default_if_none:''}}</textarea>
 </div>
 
 <div class="details-notes align-left">Media</div>        
-<div class="row"><!--row-->
-    <div class="col-sm-2 imgUp"><!--col-sm-2 imgUp-->
-        <div class="imagePreview"></div>
-        <label class="btn btn-primary">Upload<input type="file" name="investigation_media" class="uploadFile img" value="Upload Photo" style="width: 0px;height: 0px;overflow: hidden;"></label>
-        </div><!--col-sm-2 imgUp-->
-      <i class="fa fa-plus imgAdd"></i>
-</div><!--row--> 
+<div class="row" id="id_media"><!--row-->
+        <i class="fa fa-plus imgAdd id_media"></i>
+</div><!--row-->  
 </div><!--ticket-wrapper-full--> 
 
-<div align="center" class="ticket-form-button"><input class="assignButton" name="submit" type="submit" value="Submit" onclick='SubmitNewTicket(this);'></div>   	
+<div align="center" class="ticket-form-button"><input class="assignButton" name="submit" type="submit" value="Update" onclick='SubmitNewTicket(this);'></div>   	
 </form>
 <br> <br>
 	</div><!--center-formDiv-->
@@ -138,15 +137,6 @@ $('document').ready(function(){
   var src = $('.searchbox').data('orderid');
   select_existing_user_data_order(src);
   console.log(src,"lop")
-
-	$('.id_order_schedule').empty();
-	$(".id_order_schedule").append($('<option>', {
-
-          value: "", 
-
-         text: "--Select Cleaning Job--"
-
-      }));
 
 //multiple dropdown
 $(".ui.fluid.dropdown").dropdown({
@@ -182,6 +172,15 @@ else
 }
 
 }
+
+
+//listing previous medias
+{% for media in investigationmedias %}
+
+  $('.id_media').before('<div class="col-sm-2 imgUp"><div class="imagePreview" style="background-image:url({{media.media.url}})"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="investigation_media" value="{{media.media.url}}" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del" data-mediaid="{{media.id}}"></i></div>');
+{% empty %}
+$('.id_media').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" name="investigation_media" value="File Upload" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
+{% endfor %}
 
 //multiple image add and delete
 $(".imgAdd").click(function () {
@@ -234,150 +233,6 @@ $(window).ready(function(){
 }); 
 
 
-
-function autoSuggestionOnFocusOut(event)
-{
-  
-    setTimeout(function(){
-
-      $(event.target).siblings('.auto-complete-results').first().hide();
-      },1000);
-
-}
-
-//load user data on search box entry
-function select_existing_user(event,src){
-          
-          var order_id=$(src).attr('data-id');
-
-          if(order_id!=0)
-          {
-              $.ajax({
-
-        url: "{% url 'agent:get-feedbackorderinfo' %}",
-
-        data: {'order_id':order_id}, 
-
-        dataType: 'json',
-
-        success: function (data) {
-
-            ajax_ret_orders = data;
-            $("#order_id_hidden").val(data['order_id']);
-
-            //to add order info
-            $('.order_blc_no').html(data['blc_no']);
-            $('.order_customer_name').html(data['name'])
-            $('.order_customer_mobile').html(data['mobile_number']);
-            $('.order_cost').html(+data['total_cost']+' KD');
-            $('.order_total_cleaners').html(+data['total_cleaners']+' Cleaners');
-            $('.order_date').html(data['date']);
-            $('.agent_image').prop('src',data['agent_image_url']);
-            $('.agent_image').prop('title',data['agent_name']);
-            $('#id_ticket_type').val('FOLLOWUP');
-
-
-            order_status   = data['order_status']
-            payment_status = data['payment_status']
-
-            $('.order_payment_status').empty();
-            if(payment_status == 'COMPLETED')
-            {
-                $('.order_payment_status').append('<div class="green-bg-lg payment_status">Paid</div>');
-            }
-            else if(payment_status == 'PENDING')
-            {
-                $('.order_payment_status').append('<div class="yellow-bg-lg payment_status">Pending</div>');
-            }
-            else if(payment_status == 'ON_HOLD')
-            {
-                $('.order_payment_status').append('<div class="red-bg-lg payment_status">On Hold</div>');
-            }
-            else
-            {
-                $('.order_payment_status').append('<div class="yellow-bg-lg payment_atatus">Waiting</div>');
-            }    
-
-
-            if(order_status == 'APPROVED_BY_CLIENT')
-            {
-                $('.order_payment_status').append('<div class="blue-bg-lg">Approved</div>');
-            }
-            else if(order_status == 'ORDER_IN_PROGRESS')
-            {
-                $('.order_payment_status').append('<div class="yellow-bg-lg">On-going</div>');
-            }
-            else if(order_status == 'ORDER_CANCELLED')
-            {
-                $('.order_payment_status').append('<div class="red-bg-lg">Cancelled</div>');   
-            }
-            else if(order_status == 'ORDER_CLOSED')
-            {
-                $('.order_payment_status').append('<div class="green-bg-lg">Closed</div>');
-            }
-            else
-            {
-                $('.order_payment_status').append('<div class="yellow-bg-lg">Waiting</div>');
-            }    
-
-
-            addresses = data['order_address'];
-            
-            $(".order_addresses").empty();
-            for(i=0;i<addresses.length;++i)
-            {
-                $(".order_addresses").append('<div class="area-bold">'+addresses[i][0]+'</div><div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle '+(addresses[i][3] == 'CLEANING_FULFILLED' ? 'green-text' : 'yellow-text' )+'" aria-hidden="true"></i> '+addresses[i][1]+'-'+addresses[i][2]+'</div>');
-            }
-
-            //to show
-            $('.order-details-head').show();
-            $('.order-details').show();
-            $('.ticket-form-head').show();
-            $('.ticket-form').show();
-            $('.ticket-form-button').show();
-            
-        }
-
-    });
-
-    //order schedule dropdown 
-    $.ajax({
-
-      url: "{% url 'agent:get-orderscheduleticketInfo' %}",
-
-      data: {'order_id':order_id}, 
-
-      dataType: 'json',
-
-      success: function (data) {
-        
-        order_schedules = data['schedules'];
-        $('.id_order_schedule').empty();
-        $(".id_order_schedule").append($('<option>', {
-
-            value: "", 
-
-            text: "--Select Cleaning Job--"
-
-                  }));
-        $.each( order_schedules, function( key, values ) {
-
-        $(".id_order_schedule").append($('<option>', {        
-
-          value: key, 
-
-          text: values   
-
-                      }));   
-
-          });
-      }
-
-    });          
-
-          }
-          
-}
 
 //for data load when redirected from order details page
 function select_existing_user_data_order(src){
@@ -475,119 +330,42 @@ function select_existing_user_data_order(src){
     });
 
     //order schedule dropdown 
-    $.ajax({
+    //$.ajax({
 
-      url: "{% url 'agent:get-orderscheduleticketInfo' %}",
+    //  url: "{% url 'agent:get-orderscheduleticketInfo' %}",
 
-      data: {'order_id':order_id}, 
+    //  data: {'order_id':order_id}, 
 
-      dataType: 'json',
+    //  dataType: 'json',
 
-      success: function (data) {
+    //  success: function (data) {
         
-        order_schedules = data['schedules'];
-        $('.id_order_schedule').empty();
-        $(".id_order_schedule").append($('<option>', {
+    //    order_schedules = data['schedules'];
+    //    $('.id_order_schedule').empty();
+    //    $(".id_order_schedule").append($('<option>', {
 
-            value: "", 
+    //        value: "", 
 
-            text: "--Select Cleaning Job--"
+    //        text: "--Select Cleaning Job--"
 
-                  }));
-        $.each( order_schedules, function( key, values ) {
+    //              }));
+    //    $.each( order_schedules, function( key, values ) {
 
-        $(".id_order_schedule").append($('<option>', {        
+    //    $(".id_order_schedule").append($('<option>', {        
 
-          value: key, 
+    //      value: key, 
 
-          text: values   
+    //      text: values   
 
-                      }));   
+    //                  }));   
 
-          });
-      }
+    //      });
+    //  }
 
-    });          
+    //});          
 
           }
           
-}
-
-
-function autoSuggestionOnSelect(event){
-    eval($(this).data('select-result'))(event,$(this));
-    $(this).parents('.auto-complete-results').first().hide().siblings('.auto-complete-input').val('');
-}
-
-
-//Keyup condition
-function search_live(event){
-    var src=$(this);
-    var min_size=src.data('min-size');
-
-    var test_pattern=src.data('pattern');
-    if(test_pattern)
-        {
-        test_pattern=RegExp(test_pattern);
-        var inp = String.fromCharCode(event.keyCode);
-        if (! test_pattern.test(inp)) return;
-        }
-        var val=src.val();
-    if(min_size)
-        {
-        if(val.length<min_size) return;
-        }
-    var fetch_params_fn_name=eval(src.data('fetch-params'));
-    var data={};
-    if(fetch_params_fn_name)
-        data=fetch_params_fn_name();
-    data['keyword']=val;//typed key words
-    var url=src.data('auto-suggest-url');//list fetching url
-    var on_result_click=src.data('result-onclick');//after result url
-
-
-    var ajax={type:'get',url:url,data:data,
-  
-    success:function (data){
-      var listOfObjects = [];
-        if( data['order_details'])
-            {
-
-            $res=src.siblings('.auto-complete-results').first();
-            $res.contents().remove();
-            
-
-
-            $.each( data['order_details'],(i,v)=>{
-              $('<div/>',{class:'auto-complete-result-item','data-id':i,
-                text:v}).appendTo($res).
-                on('click',autoSuggestionOnSelect).
-                data('select-result',on_result_click).
-                attr('tabindex',-1);
-            });
-            $res.css('position','absolute');
-            $res.outerWidth(src.outerWidth());
-            $res.css('top',(src.position().top+src.outerHeight()).toString()+'px');
-          
-                $res.show();
-            }
-          if(data['status'] == 'false'){
-            $res=src.siblings('.auto-complete-results').first();
-            $res.contents().remove();
-          
-            $('<div/>',{class:'auto-complete-result-item','data-id':0,
-                text:"No result Found"}).appendTo($res).
-                on('click',autoSuggestionOnSelect).
-                data('select-result',on_result_click).
-                attr('tabindex',-1);
-            $res.outerWidth(src.outerWidth());
-            $res.css('top',(src.position().top+src.outerHeight()).toString()+'px');
-          
-                $res.show();
-          }
-          }
-        };
-        $.ajax(ajax);
 }
 
 </script>
