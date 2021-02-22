@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Order
+from .models import Order,OrderScheduler,EvaluationBook
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
 from datetime import datetime,date,timedelta,timezone
 from django.http import JsonResponse
@@ -73,6 +73,68 @@ def quotation_data(request):
             data.append(qt_dict)
 
     return JsonResponse(data,safe=False)
+
+#for onetime , subscription based charts
+def quotation_data_policy(request):
+    data = []
+    dom = request.GET.get('dom',None)
+    prevdate  = request.GET.get('fromdate', None)
+    todate  = request.GET.get('todate', None)
+    print(prevdate,todate,"pop")
+    
+    if dom == 'Month':
+        month,year = prevdate.split("/")
+        month2,year2 = todate.split("/")
+
+        monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+        monthdate2 = datetime(day=1,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+        print(monthdate1,monthdate2,"mod")
+
+        orderschedules = OrderScheduler.objects.filter(is_active=True,start_at__range=(monthdate1,monthdate2))
+        schedules = orderschedules.dates('start_at','month').distinct() #.values('created').annotate(month=Month('created')).values('month').annotate(count=Count('pk'))
+
+        for month in schedules:
+            month_start = datetime(day=1,month=month.month,year=month.year,hour=0,minute=0,second=0,microsecond=0)
+            month_end = datetime(day=1,month=month.month,year=month.year,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+            onetimeservices = OrderScheduler.objects.filter(is_active=True,order_scheduler_book__cleaning_policy='ONE TIME SERVICE',work_status='CLEANING_FULFILLED',start_at__range=(month_start,month_end)).count()
+            subscriptions = OrderScheduler.objects.filter(is_active=True,order_scheduler_book__cleaning_policy='SUBSCRIPTION',work_status='CLEANING_FULFILLED',start_at__range=(month_start,month_end)).count()
+            
+            print(month.month, onetimeservices, subscriptions,'dats')
+            qt_dict = {
+            "date" : month.month,
+            "onetime_qt" : onetimeservices,
+            "subscription_qt" : subscriptions
+            }
+            data.append(qt_dict)
+
+    else:
+        print("kab")
+        try:
+            prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+            todate = datetime.strptime(todate, '%Y-%m-%d')
+        except:
+            todate = date.today() - timedelta(days=1)
+            prevdate = todate - timedelta(days=30)
+        print(prevdate,todate,"testdt")
+        daterange = pd.date_range(prevdate, todate)
+
+        for single_date in daterange:
+            quotation_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
+            quotation_date_end    = single_date+timedelta(1)	
+            
+            onetime_qtns = OrderScheduler.objects.filter(is_active=True,order_scheduler_book__cleaning_policy='ONE TIME SERVICE',work_status='CLEANING_FULFILLED',start_at__range=(quotation_date_start,quotation_date_end)).count()
+            subscription_qtns = OrderScheduler.objects.filter(is_active=True,order_scheduler_book__cleaning_policy='SUBSCRIPTION',work_status='CLEANING_FULFILLED',start_at__range=(quotation_date_start,quotation_date_end)).count()
+            print(onetime_qtns,subscription_qtns,"qtc")
+
+            qt_dict = {
+                "date" : single_date,
+                "onetime_qt" : onetime_qtns,
+                "subscription_qt" : subscription_qtns
+            }
+            data.append(qt_dict)
+
+    return JsonResponse(data,safe=False)
+
 
 def sendinvoice(request):
     order_no = request.GET.get('order_no')
