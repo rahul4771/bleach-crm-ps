@@ -1,0 +1,447 @@
+{% load static %}
+<!doctype html>
+<html lang="en" xml:lang="en" >
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" id="viewportMeta" />
+
+    
+    <meta name="description" content="Bleach Voucher">
+    <meta name="author" content="Voucher">
+
+    
+
+   
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="{% static 'files/externalfiles/css/main.css' %}">
+    <title>Bleach Cleaning Services | Booking</title>
+
+  </head>
+  <body id="printableArea">
+    <form method="post" action="">
+      {%csrf_token%}
+  <div class="container mt-4 bk-card h-100 mb-4">
+      <div class="row pt-4">
+          <div class="col-md-10 mx-auto">
+             
+              <div class="row">
+          <div class="col-md-6 pt-4">
+           
+                <div class="form-group required"><label class="control-label">Name</label><input class="form-control" id="name" placeholder="Name" type="text" name="name" required /></div>
+
+             
+          </div>
+          <div class="col-md-6 pt-4">
+            <div class="form-group ">
+               <label for="name-arabic" class="control-label" >Name (Arabic )</label>
+                <input type="text" class="form-control" placeholder="Name (Arabic)" aria-label="Username" aria-describedby="basic-addon1" id="name-arabic" name="name_arabic">
+              </div>
+          </div>
+          
+      </div>
+      <div class="row">
+        <div class="col-md-6 pt-4">
+            <div class="form-group required">
+                
+                    <label for="gender" class="control-label">Gender</label>
+                    <select class="form-select" id="gender" name="gender" required>
+                        <option selected disabled>Choose Gender</option>
+                        <option value="MALE">Male</option>
+                        <option value="FEMALE">Female</option>
+                        <option value="OTHERS">Others</option>
+                        
+                      </select>
+                
+
+              </div>
+          </div>
+          <div class="col-md-6 pt-4">
+            <div class="form-group required">
+               <label for="bk-dob" class="control-label">Date of Birth</label>
+               <input name="date_day" id="id_date_day" type="text" class="dateBox OnlyNumber" minlength="2" placeholder="DD" onkeyup="daterange();" required>
+              <input name="date_month" id="id_date_month" type="text" class="dateBox OnlyNumber" minlength="2" placeholder="MM" onkeyup="monthrange();" required>
+              <input name="date_year" id="id_date_year" type="text" class="dateBox OnlyNumber" minlength="4" placeholder="YYYY" onkeyup="yearrange();">
+              </div>
+          </div>
+      </div>
+      <div class="row ">
+        <div class="col-md-6 pt-4">
+         
+              <div class="form-group required"><label class="control-label">Email</label><input class="form-control" id="name" placeholder="Email" type="email" name="email" required/></div>
+
+           
+        </div>
+        <div class="col-md-6 pt-4">
+          <div class="form-group required">
+             <label for="name-arabic" class="control-label">Phone</label>
+              <input type="text" class="form-control" placeholder="Phone" aria-label="phone" aria-describedby="basic-addon1" id="id_mobile" name="mobile_number" maxlength="8" required oninput="remove_duplicate_mobile(this);">
+              <p class="phone_alert" style="color:Red;"></p>
+            </div>
+        </div>
+        
+    </div>
+    <div class="row ">
+        <div class="col-md-6 pt-4">
+         
+            <div class="form-group required">
+                
+                <label for="gender" class="control-label">Nationality</label>
+                {% load countries %}
+                {% get_countries as countries %}
+                  <select class="form-select" id="nationality" name="nationality" required>
+                    <option value="">Choose Country</option> 
+                    {% for country in countries %}
+                    <option value="{{country.code}}" {% if country.code == 'KW' %}selected{% endif %}>{{country.name}}</option>
+                    {% endfor %}
+                  </select>
+            
+
+          </div>
+
+           
+        </div>
+        <div class="col-md-6 pt-4">
+            <div class="form-group required">
+                
+                <label for="gender" class="control-label">Customer Type</label>
+                <select class="form-select" id="id_customer_type" name="customer_type" required>
+                    <option value="">Choose Customer Type</option>
+                    <option value="INDIVIDUAL">INDIVIDUAL</option>
+                    <option value="RETAIL">RETAIL</option>
+                    <option value="CORPORATE">CORPORATE</option>
+                  </select>
+            
+
+          </div>
+        </div>
+        
+    </div>
+    <div class="row" id="id_customer_type_expand">
+        <div class="col-md-6 pt-4">        
+              <div class="form-group required"><label class="control-label">Company</label><input class="form-control" id="id_company" placeholder="Company Name" type="text" name="company"/></div>
+        </div>
+        <div class="col-md-6 pt-4">
+             <div class="form-group required"><label class="control-label">Job Title</label><input class="form-control" id="id_job_title" placeholder="Job" type="text" name="job_title"/></div>
+         </div>
+    </div>
+
+    <div class="row ">
+        <div class="col-md-6 pt-4">
+         
+            <div class="form-group required">
+                
+                <label for="gender" class="control-label">Sms Language</label>
+                <select class="form-select" id="sms-language" name="sms_preference" required>
+                    <option value="">Choose Languages</option>
+                    <option value="ENGLISH">ENGLISH</option>
+                    <option value="ARABIC">ARABIC</option>
+                  </select>
+            
+
+          </div>
+
+           
+        </div>
+        <div class="col-md-6 pt-4">
+            <div class="form-group required">
+                
+                <label for="gender" class="control-label">Contact Platform</label>
+                <select class="form-select" id="contact-platform" name="contact_platform" required>
+                    <option value="">Choose Languages</option>
+                  <option value="SMS">SMS</option>
+                  <option value="Email">Email</option>
+                  <option value="Whatsapp">Whatsapp</option>
+                    
+                    
+                  </select>
+            
+
+          </div>
+          
+        </div>
+        
+    </div>
+    <h3 class="pt-4">Client Address</h3>
+    <div class="row ">
+        <div class="col-md-12 pt-4">
+         
+            <div class="form-group required">
+                
+                <label for="location" class="control-label">Location</label>
+                <select class="form-select" id="location" name="location" required>
+                    <option  value="" selected disabled>Choose Location</option>
+                    {% for location in locations %}
+                    <option value="{{location.name}}">{{location.name}}</option>
+                    {% endfor %}
+                </select>
+            
+
+          </div>
+
+           
+        </div>
+        <div class="col-md-12 pt-4">
+            <div class="form-group ">
+                
+                <label for="gps" class="control-label">GPS Location</label>
+               
+                    <textarea class="form-control" id="gps" rows="3" name="gps_location"></textarea>
+                 
+            
+
+          </div>
+          
+        </div>
+        
+    </div>
+    <div class="row ">
+        <div class="col-md-6 pt-4">
+            <div class="form-group required">
+                
+                <label for="gender" class="control-label">Gevernorate</label>
+                <select class="form-select governorate" id="id_governorate" name="governorate" required>
+                    <option  selected disabled>Choose Gevernorate</option>
+                    {% for governorate in governorates %}
+                    <option value="{{governorate.id}}">{{governorate.name}}</option>
+                    {% endfor %}
+                  </select>
+            
+
+          </div>
+          
+        </div>
+        <div class="col-md-6 pt-4">
+            <div class="form-group required">
+                
+                <label for="gender" class="control-label">Area</label>
+                <select class="form-select" id="id_area" name="area" required>
+                    <option  selected disabled>Choose Area</option>
+                  </select>
+            
+
+          </div>
+          
+        </div>
+        
+        
+    </div>
+    <div class="row ">
+        <div class="col-md-6 pt-4">
+         
+              <div class="form-group required"><label class="control-label">Address Title</label><input class="form-control" id="address" placeholder="Address Title" type="text" name="apartment" required/></div>
+
+           
+        </div>
+        <div class="col-md-6 pt-4">
+          <div class="form-group ">
+             <label for="name-arabic" class="control-label">Floor/Flat/House</label>
+              <input type="text" class="form-control" placeholder="Floor/Flat/House" aria-label="phone" aria-describedby="basic-addon1" id="floor" name="floor">
+            </div>
+        </div>
+        
+    </div>
+    <div class="row ">
+        <div class="col-md-6 pt-4">
+         
+              <div class="form-group required"><label class="control-label">Building</label><input class="form-control" id="building" placeholder="Building" type="text" name="building" required/></div>
+
+           
+        </div>
+        <div class="col-md-6 pt-4">
+          <div class="form-group required">
+             <label for="name-arabic" class="control-label">Block</label>
+              <input type="text" class="form-control" placeholder="Block" aria-label="phone" aria-describedby="basic-addon1" id="block" name="block" required>
+            </div>
+        </div>
+        
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-6 pt-4">
+         
+              <div class="form-group required"><label class="control-label">Street</label><input class="form-control" id="street" placeholder="Street" type="text" name="street" required/></div>
+
+           
+        </div>
+        <div class="col-md-6 pt-4">
+          <div class="form-group ">
+             <label for="name-arabic" class="control-label">Avenue</label>
+              <input type="text" class="form-control" placeholder="Avenue" aria-label="phone" aria-describedby="basic-addon1" id="avenue" name="avenue">
+            </div>
+        </div>
+        
+    </div>
+    
+ 
+    </div>
+</div>
+    
+<div class="row mt-4 mb-4">
+    <div class="col-md-1 mx-auto mt-4">
+        <input type="submit"  class="btn btn-primary" value="Next">
+    </div>
+</div>
+  </div>
+</form>
+      
+   
+
+   
+   <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>   
+     <script src="{% static 'files/externalfiles/js/booking.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+<script>
+$(document).ready(function(){
+
+//initial hiding of job type and company
+$("#id_customer_type_expand").css('display','none');
+
+
+//Date month year check
+function daterange(){
+  var date = $('#id_date_day').val();
+  if (date > 31){
+    $('#id_date_day').val('');
+  }else{
+    console.log("all good")
+  }
+};
+
+
+function monthrange(){
+  var month = $('#id_date_month').val();
+  if (month > 12){
+    $('#id_date_month').val('');
+  }else{
+    console.log("all good")
+  }
+};
+
+
+function yearrange(){
+  var year = $('#id_date_year').val();
+  if (year > new Date().getFullYear()){
+    $('#id_date_year').val('');
+  }
+  else{
+    console.log("all good")
+  }
+};
+
+
+//Jobtitle and company based on customer type
+$("#id_customer_type").change(function(){
+    customer_type=this.value;
+
+    if(customer_type=='CORPORATE')
+      {
+          $("#id_customer_type_expand").css('display','block');  
+          $("#id_company").attr('required',true);
+          $("#id_job_title").attr('required',true);
+    }
+
+    else
+      {
+          $("#id_customer_type_expand").css('display','none');
+          $("#id_company").val('');
+          $("#id_job_title").val('');
+          $("#id_company").attr('required',false);
+          $("#id_job_title").attr('required',false);
+    }
+
+});
+
+
+
+
+//Append area for governorate change
+$(".governorate").change(function(){ 
+
+  id=this.id.match(/\d+/); 
+  console.log(id);
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getarea' %}",
+
+        data: {'governorate_id':this.value}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+
+          ajax_ret_areas = data;     
+          $("#id_area").empty();
+
+        $("#id_area").append($('<option>', {
+                      value: "", 
+                      text: "Choose Area"
+                    })); 
+
+        $.each( ajax_ret_areas, function( key, values ) {
+
+              $("#id_area").append($('<option>', {        
+                      value: key,   
+                      text: values   
+                    }));   
+
+        });
+
+
+        }  
+
+      }); 
+
+});
+
+});
+
+
+//Remove registration using same mobile number
+function remove_duplicate_mobile(input_mobile)
+{
+  var mobileno_validator = /^\d{8}$/;
+  if((input_mobile.value.match(mobileno_validator)) || (input_mobile.value == ""))
+    {
+
+        $.ajax({
+
+                url: "{% url 'agent:mobilenumber-validate' %}",
+
+                data: {'mobile_number':input_mobile.value,}, 
+
+                dataType: 'json',
+
+                success: function (data) { 
+
+                  if(data['validation'] == false)
+                    { 
+                        $('.phone_alert').text("Mobile Number Allready Registered...");
+                        $('#id_mobile').val('');
+                    }
+                  else
+                    {
+                        $('.phone_alert').text('');
+                    }
+                }  
+
+              });
+            
+            }
+}
+
+
+    </script>
+  </body>
+{% include 'common_messages.html' %}
+</html>

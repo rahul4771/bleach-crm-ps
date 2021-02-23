@@ -1,0 +1,362 @@
+{% load static %}
+<!doctype html>
+<html lang="en" xml:lang="en" >
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" id="viewportMeta" />
+
+    
+    <meta name="description" content="Bleach Voucher">
+    <meta name="author" content="Voucher">
+
+    
+
+   
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
+   
+    <link rel="stylesheet" href="{% static 'files/externalfiles/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'files/externalfiles/css/chosen.css' %}">
+  
+
+    <title>Bleach Cleaning Services | Booking</title>
+
+  </head>
+  <body>
+  <div class="container mt-4 bk-card h-100 mb-4">
+    
+      <div class="row">
+          <div class="col-md-8 mx-auto mt-4" id="bk-main-form">
+              <div>
+            <select class="form-select form-select-lg mb-3 bk-select" aria-label=".form-select-lg example " onchange="selectCheck()" name="service" id="bk-service">
+                <option selected disabled>Select Service</option>
+                <option value="general cleaning">General Cleaning</option>
+                <option value="sofa matress cleaning">Sofa Matress Cleaning</option>
+                <option value="deep cleaning">Deep Cleaning</option>
+                <option value="kitchen cleaning">Kitchen Cleaning</option>
+                <option value="sanitisation">Sanitisation</option>
+                <option value="carpet cleaning">Carpet
+                    Cleaning</option>
+                <option value="upolstry">Upolstry</option>
+              </select>
+            </div>
+            <div >
+                <div class="btn-group" role="group" aria-label="Basic radio toggle button group" onchange="showEvaluation()">
+                    <button type="button"  class="btn btn-outline-primary "  id="bk-evaluation-btn" onclick="showEvaluation()">
+                        Evaluation
+                    </button>
+                    <button type="button"  class="btn btn-outline-primary " id="bk-job-booking-btn" onclick="showJobBooking()">
+                       Job Booking
+                    </button>
+                  
+                  </div>
+                 
+                 
+                
+            </div>
+
+            <!--        Evaluation      -->
+            <form method="post" action="">
+                {%csrf_token%}
+            <input type="hidden" name="action_type" value="bookevaluation">
+            <div class="row mt-4 bk-evaluation-form">
+                <div class="col-md-6 pt-2">
+                    <label for="bk-date">Evaluation Date</label>
+                    <input  type="date" placeholder="Evaluation Date" class="bk-date" id="bk-date" name="booking_date" required>
+                </div>
+                <div class="col-md-6 pt-2">
+                    <label for="bk-slot">Time Slot</label>
+                    <select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-slot" name="booking_time" required>
+                        <option selected disabled>Select Time Slot</option>
+                      </select>
+                </div>
+                <div class="col-md-12 pt-2">
+                    <div class="form-group">
+                        <label for="bk-notes">Notes</label>
+                        <textarea class="form-control" id="bk-notes" rows="3" name="notes"></textarea>
+                      </div>
+                </div>
+                <div class="col-md-4 mx-auto mt-4">
+                    <input type="submit"  class="btn btn-primary " id="bk-job-booking-btn" value="Next">
+                </div>
+            </div>
+            <!--        Evaluation Ends      -->
+          </form>
+             
+
+<!--        Job Booking   Begins   -->
+            <div class="row mt-4 bk-job-booking-form">
+               
+                <div class="col-md-6 pt-2">
+                    <label for="bk-slot">Area Type</label>
+                    <select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-slot" name="area-type">
+                        <option selected disabled>Area Type</option>
+                        <option value="1">Area 1 </option>
+                        <option value="2">Area 2</option>
+                       
+                      </select>
+                </div>
+                <div class="col-md-6 pt-2">
+                    <label for="bk-slot">Location Type</label>
+                    <select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-location" name="location-type">
+                        <option selected disabled>Location Type</option>
+                        <option value="1">Location 1 </option>
+                        <option value="2">Location 2</option>
+                     
+                      </select>
+                </div>
+               
+                
+                
+            </div>
+            
+           <!--     Repeating Form 
+             
+
+          id,name =>  bk-size-{{formcount}}  - size   eg: bk-size-2,bk-size-3....
+           id,name =>    bk-age-{{formcount}}  - age   eg: bk-age-2,bk-age-3....
+           id,name =>   bk-material-{{formcount}}  - material   eg: bk-material-2,bk-material-3....
+           id,name =>    bk-color-{{formcount}}  - color   eg: bk-color-2,bk-color-3....
+            name =>    bk-stain-{{formcount}}  - stain   eg: bk-stain-2,bk-stain-3....
+            id =>    bk-stain-{{formcount}}-1  - yes  eg: bk-stain-2-1,bk-stain-3-1....
+            id =>    bk-stain-{{formcount}}-2  - no  eg: bk-stain-2-2,bk-stain-3-2....
+            id,name => bk-stain-reason-{{formcount}} -  reason for stain   eg: bk-stain-reason-2,bk-stain-reason-3....
+
+           
+
+        
+        
+        -->     
+
+
+
+            <div class="row bk-item-card mt-4" id="bk-item-1">
+                <h5 class="bk-item-title" id="bk-title-1"> </h5>
+                <div class="col-md-6 pt-2">
+                    <div class="input-group mb-3">
+                        <input type="number" class="form-control" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1">
+                        <span class="input-group-text" id="basic-addon2">Seater</span>
+                      </div>
+                </div>
+                <div class="col-md-6 pt-2">
+                    <div class="input-group mb-3">
+                        <input type="number" class="form-control" placeholder="Age" aria-label="Age" aria-describedby="basic-addon2" id="bk-age-1" name="bk-age-1">
+                        <span class="input-group-text" id="basic-addon2">Months</span>
+                      </div>
+                </div>
+                <div class="col-md-6 pt-2 bk-material">
+                    <select data-placeholder="Choose a Material"  id="bk-material-1" name="bk-material-1" multiple class="chosen-select w-100">
+                        <option value="Material 1">Material 1</option>
+                        <option value="Material 2">Material 2</option>
+                        <option value="Material 3">Material 3</option>
+                        <option value="Material 4">Material 4</option>
+                        <option value="Material 5">Material 5</option>
+                        <option value="Material 6">Material 6</option>
+                    </select>
+                   
+                </div>
+                <div class="col-md-6 pt-2">
+                    <select id="bk-color-1" data-placeholder="Choose a Color"  multiple  name="bk-color-1" class="chosen-select w-100">
+                        <option value="Color 1">Color 1</option>
+                        <option value="Color 2">Color 2</option>
+                        <option value="Color 3">Color 3</option>
+                        <option value="Color 4">Color 4</option>
+                        <option value="Color 5">Color 5</option>
+                        <option value="Color 6">Color 6</option>
+                        
+                    </select>
+                    
+                </div>
+                <div class="col-md-12 pt-4">
+                    
+                    <div class="d-flex w-100" >
+                        <div class="px-2">Any stain?</div>
+                        <input type="radio"  name="bk-stain-1" id="bk-stain-1-1"  onchange="checkStain(this)" value="yes" checked>
+                            <label for="bk-stain-1-1">yes</label><br>
+                        <input type="radio"  name="bk-stain-1" id="bk-stain-1-2"  value="no" onchange="checkStain(this)">
+                        <label for="bk-stain-1-2">no</label><br>
+                        
+                          
+                        
+                    </div>
+                    
+                    
+                </div>
+                <div class="col-md-12 pt-2">
+                    <div class="bk-stain-reason w-100">
+                        <select id="bk-stain-reason-1" data-placeholder="Cause of stain" multiple class="chosen-select w-50" name="bk-stain-reason-1" >
+                          <option value="Color 1">Reason 1</option>
+                          <option value="Color 2">Reason 2</option>
+                          <option value="Color 3">Reason 3</option>
+                      
+                          
+                      </select>
+                  </div>
+                </div>
+                
+                <button type="button"  class="btn btn-danger w-50 mx-auto mt-4" id="bk-del-btn-1" onclick="removeDiv(this)">
+                    remove
+                  </button>
+               
+                    
+                    
+               
+
+            </div>
+
+
+
+              <!--     Repeating Form Ends-->     
+        
+                      
+              
+          </div>
+          <div class="container bk-item-form">
+          <div class="row">
+            <div class="col-md-1 offset-md-3  mt-4 mb-4">
+                <button type="button"  class="btn btn-primary bk-add-item-btn" id="bk-job-booking-btn" onclick="addItem()">
+                   Add 
+                 </button>   <!--  To clone form-->
+            </div>
+        </div>
+
+ 
+        <div class="row">
+            <div class="col-md-6 offset-md-3 mb-4">
+                <div class="row">
+                <div class="col-md-12 pt-2">
+                    <div class="form-group">
+                        <label for="bk-notes" >Notes</label>
+                        <textarea class="form-control" id="bk-notes" rows="3" name="notes"></textarea>
+                      </div>
+                </div>
+                <div class="col-md-4 pt-4 mt-2">
+                    
+                    <label for="bk-time"> Time</label>
+                    <input  type="time" placeholder="Date" class="bk-date-job" id="bk-time" name="time">
+              
+            </div>
+                <div class="col-md-4 pt-2">
+                    
+                        <label for="bk-slot">Duration</label>
+                        <select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-slot" name="duration">
+                            <option selected disabled>Duration</option>
+                            <option value="1"> 1 </option>
+                            <option value="2"> 2</option>
+                           
+                          </select>
+                    </div>
+                <div class="col-md-4 pt-2">
+                    
+                        <label for="bk-date-job"> Date</label>
+                        <input  type="date" placeholder="Date" class="bk-date-job" id="bk-date-job" name="date">
+                  
+                </div>
+                
+                
+                   
+                
+            </div>
+           
+            </div>
+        </div>
+        </div>
+        <br><div class="container bk-image-container">
+            <div class="row">
+            <div class="col-sm-3  col-xl-2 offset-md-3 imgUp">
+              <div class="imagePreview"></div>
+          <label class="btn btn-primary">
+                                                                  Upload<input type="file" class="uploadFile img" value="Upload Photo" style="width: 0px;height: 0px;overflow: hidden;">
+                          </label>
+            </div><!-- col-2 -->
+            <i class="fa fa-plus imgAdd"></i>
+           </div><!-- row -->
+           <div class="col-md-12  mt-4 mb-4">
+            <button type="button"  class="btn btn-primary mx-auto" id="bk-job-booking-btn" onclick="location.href = './jobbooking/address.html';">
+                Next
+             </button>
+        </div>
+          </div><!-- container -->
+      </div>
+  </div>
+      
+   
+  
+   
+   <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script> 
+   <script src="{% static 'files/externalfiles/js/chosen.jquery.js' %}"></script>
+  
+     <script src="{% static 'files/externalfiles/js/booking.js' %}"></script>
+     <script src="{% static 'files/externalfiles/js/formClone.js' %}"></script>
+     <script src="{% static 'files/externalfiles/js/imagepreview.js' %}"></script>
+
+     
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+  $('#bk-date').change(function(){
+    $('#bk-slot').empty();
+    $.ajax({
+
+        url: "{% url 'customer:ajax-getevaluationslotes' %}",
+
+        data: {'evaluation_booking_date':this.value}, 
+
+        dataType: 'json',
+
+        success: function (data) {
+            available_slotes = data['slotes'];
+            for(i=0;i<available_slotes.length;i++)
+            {
+              switch (available_slotes[i]) {
+                    case 8:
+                      $('#bk-slot').append('<option value="08:00 AM">08 am to 09 am</option>');
+                      break;
+                    case 9:
+                      $('#bk-slot').append('<option value="09:00 AM">09 am to 10 am</option>');
+                      break;
+                    case 10:
+                      $('#bk-slot').append('<option value="10:00 AM">10 am to 11 am</option>');
+                      break;
+                    case 11:
+                      $('#bk-slot').append('<option value="11:00 AM">11 am to 12 pm</option>');
+                      break;
+                    case 12:
+                      $('#bk-slot').append('<option value="12:00 PM">12 pm to 01 pm</option>');
+                      break;
+                    case 13:
+                      $('#bk-slot').append('<option value="01:00 PM">01 pm to 02 pm</option>');
+                      break;
+                    case 14:
+                      $('#bk-slot').append('<option value="02:00 PM">02 pm to 03 pm</option>');
+                    case 15:
+                      $('#bk-slot').append('<option value="03:00 PM">03 pm to 04 pm</option>');
+                      break;
+                    case 16:
+                      $('#bk-slot').append('<option value="04:00 PM">04 pm to 05 pm</option>');
+                      break;
+                    case 17:
+                      $('#bk-slot').append('<option value="05:00 PM">05 pm to 06 pm</option>');
+                      break;
+                  }
+            }
+        }
+      });
+
+  });
+</script>
+    
+
+<!--<script src="https://res.cloudinary.com/dxfq3iotg/raw/upload/v1569006273/BBBootstrap/choices.min.js?version=7.0.0"></script>-->
+
+  </body>
+{% include 'common_messages.html' %}
+</html>

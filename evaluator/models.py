@@ -200,8 +200,8 @@ class Evaluation(models.Model):
 	evaluation_id		= models.CharField(max_length=100,blank=False,null=False)
 	tracking_no         = models.CharField(max_length=20,blank=False,null=False)
 
-	call_attender 		= models.ForeignKey(UserProfile,blank=False,null=False,related_name='attender_evaluation')
-	customer			= models.ForeignKey(UserProfile,blank=False,null=False,related_name='customer_evaluation')
+	call_attender 		= models.ForeignKey(UserProfile,blank=True,null=True,related_name='attender_evaluation')
+	customer			= models.ForeignKey(UserProfile,blank=True,null=True,related_name='customer_evaluation')
 
 	estimated_cost		= models.FloatField(blank=True,null=True,default=0)
 	discount			= models.FloatField(blank=True,null=True,default=0)
