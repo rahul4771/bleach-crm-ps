@@ -46,8 +46,8 @@
 
         <div class="chart_box_Left"><!--chart_box_Left-->
         <div class="legend-wrapper"><!--legend-wrapper--> 
-        <div class="legend-result count_div"><label class="legend-label">Submitted </label> <b class="legend-result-blue" id="total_submitted">0</b></div>
-        <div class="legend-result count_div"><label class="legend-label">Approved </label> <b class="legend-result-red" id="total_approved">0</b></div>
+        <div class="legend-result count_div"><label class="legend-label">One Time Service </label> <b class="legend-result-blue" id="total_submitted">0</b></div>
+        <div class="legend-result count_div"><label class="legend-label">Subscription </label> <b class="legend-result-red" id="total_approved">0</b></div>
         </div><!--legend-wrapper-->
         </div><!--chart_box_Left-->
 
@@ -323,7 +323,7 @@
 {% endblock %}
 
 {% block javascript %}
-<script src="{% static 'files/js/charts/order-chart.js' %}"></script>
+<script src="{% static 'files/js/charts/order-chart-policy.js' %}"></script>
 <script>
 
 $("#governorate_filter_id").change(function(){  

@@ -1938,6 +1938,52 @@ class TicketDetails(IsAgent,View):
 		return render(request,"agent/ticket/tickets.html",{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"investigators":investigators,"fil_governorate":fil_governorate,'fil_area':fil_area,"fil_investigator":fil_investigator,"fil_status":fil_status,})
 
 
+class TicketDetailsEdit(IsAgent,View):
+	def get(self,request,ticket_id,order_id):
+
+		order = Order.objects.filter(id=int(order_id)).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True,work_status='CLEANING_FULFILLED').select_related('customer_address__area','order_scheduler_book').prefetch_related(Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(check_out__isnull=True),to_attr='assigned_investigations')),to_attr='orderschedules')).first()
+		ticket = FollowUp.objects.filter(is_active=True,id=int(ticket_id)).first()
+		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')),is_active=True)
+		investigationmedias = InvestigationMedia.objects.filter(investigation__id=ticket.investigation.id,taken_status = 'CUSTOMER_SEND',is_active=True)
+		
+		return render(request,"agent/ticket/ticket_registration_edit.html",{'order':order,'investigators':investigators,"ticket":ticket,"investigationmedias":investigationmedias})
+
+	def post(self,request,ticket_id,order_id):
+		
+		investigation_form = InvestigationForm(request.POST)
+		
+		if investigation_form.is_valid():
+			investigation_form_save = investigation_form.save(commit=False)
+			
+			ticket = FollowUp.objects.get(is_active=True,id=ticket_id)
+			investigation = Investigation.objects.filter(is_active=True,id=ticket.investigation.id).first()
+			
+			investigation.assigned_by = request.user
+			investigation.ticket_types = investigation_form_save.ticket_types
+			investigation.notes = investigation_form_save.notes
+			investigation.order_schedule = investigation_form_save.order_schedule
+			investigation.investigator = investigation_form_save.investigator
+			investigation.scheduled_at= timezone.now()
+			investigation.save()
+
+			#save media
+			investigation_medias = request.FILES.getlist('investigation_media')
+			if not investigation_medias == ['']:
+					for image in investigation_medias:
+						InvestigationMedia.objects.create(
+							investigation = investigation,
+							media = image,
+							media_type = 'PHOTO',
+							taken_status = 'CUSTOMER_SEND',
+							is_active = True
+						)
+						
+			messages.success(request,"Ticket Updated Succesfully!")
+		else:
+			messages.error(request,get_error(investigation_form))
+
+		return redirect('agent:agent-tickets')
+
 class TicketAdvanced(IsAgent,View):
 	def get(self,request,client_id,followup_id):
 
