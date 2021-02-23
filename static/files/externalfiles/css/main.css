@@ -67,6 +67,12 @@ body{
     
     min-height:500px;
 }
+.bk-search-btn{
+    height: 40px;
+    margin-top: 22px !important;
+    margin-left: 20px;
+    border-radius: 5px !important;
+}
 .inv-logo{
     height:84px;
 }
