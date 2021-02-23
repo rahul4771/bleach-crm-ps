@@ -28,6 +28,7 @@ urlpatterns = [
 
 
 		url(r'^ajax/evaluationslotes$',views.GetEvaluationBookingSlotes,name='ajax-getevaluationslotes'),
+		url(r'^ajax/customerdetails$',views.GetCustomerDetails,name='ajax-customerdetails'),
 
 		url(r'^booking/phase1$',views.CustomerBookingPhase1.as_view(),name='customerbookingphase1'),
 		url(r'^booking/evaluation/phase2/(?P<evaluationdetails_id>[-\w]+)/(?P<customerbooking_id>[-\w]+)$',views.CustomerBookingEvaluationPhase2.as_view(),name='customerbookingevaluationphase2'),

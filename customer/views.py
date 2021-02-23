@@ -848,6 +848,46 @@ def statement_of_account(request,client_id):
 	return render(request,"customer/statement_of_account.html",{"client":client,"address":address,"accounts":accounts_list,"pending_payments":pending_payments})
 
 ####Customer Booking########
+from django.forms.models import model_to_dict
+def GetCustomerDetails(request):
+	customer_information = {}
+	mobile_no            = request.GET.get('search_mobile')
+	
+	client_details       = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(currently_active=True),to_attr='customer_addresses')).get(mobile_number=mobile_no)
+
+	customer_information['name']          = client_details.name
+	customer_information['name_arabic']   = client_details.name_arabic
+	customer_information['gender']        = client_details.gender
+	customer_information['email']         = client_details.email
+	customer_information['mobile']        = client_details.mobile_number
+	customer_information['other_number']  = client_details.phone_number
+	customer_information['nationality']   = client_details.nationality.code
+	customer_information['customer_type'] = client_details.customer_type
+	customer_information['company']       = client_details.company
+	customer_information['job_title']     = client_details.job_title
+	customer_information['sms_preference']= client_details.sms_preference
+	customer_information['is_sms']        = client_details.is_sms
+	customer_information['is_email']      = client_details.is_email
+	customer_information['is_whatsapp']   = client_details.is_whatsapp
+
+	#for multiple customer addresses
+	customer_information['customer_address']   = []
+	for address in client_details.customer_addresses:
+		customer_address = {}
+
+		customer_address['governorate'] 	= address.governorate.name
+		customer_address['area'] 			= address.area.name
+		customer_address['block'] 			= address.block
+		customer_address['avenue'] 			= address.avenue
+		customer_address['building'] 		= address.building
+		customer_address['street'] 			= address.street
+		customer_address['floor'] 			= address.floor
+		customer_address['apartment'] 		= address.apartment
+
+		customer_information['customer_address'].append(customer_address)
+	
+	return JsonResponse(customer_information)
+
 def GetEvaluationBookingSlotes(request):
 	dropdown_slotes  = {}
 	evaluation_date  = datetime.strptime(request.GET.get('evaluation_booking_date'),'%Y-%m-%d')

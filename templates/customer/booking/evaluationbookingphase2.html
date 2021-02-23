@@ -34,9 +34,9 @@
              <div class="row">
                <div class="col-md-4 mx-auto">
                  <div class="d-flex">
-                  <div class="form-group required "><label >Existing Customer ?</label><input class="form-control" id="name" placeholder="User Id" type="text" name="userid" required /></div>
+                  <div class="form-group required "><label >Existing Customer ?</label><input class="form-control" id="search_mobile_id" placeholder="Mobile Number" type="text" name="search_mobile" maxlength="8" /></div>
 
-                  <input type="submit"  class="btn btn-primary bk-search-btn" value="Search">
+                  <input type="submit"  class="btn btn-primary bk-search-btn" id="search_mobile_btn" value="Search">
                  </div>
               
                </div>
@@ -98,7 +98,7 @@
       <div class="row ">
         <div class="col-md-6 pt-4">
          
-              <div class="form-group required"><label class="control-label">Email</label><input class="form-control" id="name" placeholder="Email" type="email" name="email" required/></div>
+              <div class="form-group required"><label class="control-label">Email</label><input class="form-control" id="email_id" placeholder="Email" type="email" name="email" required/></div>
 
            
         </div>
@@ -162,7 +162,7 @@
             <div class="form-group required">
                 
                 <label for="gender" class="control-label">Sms Language</label>
-                <select class="form-select" id="sms-language" name="sms_preference" required>
+                <select class="form-select" id="sms_preference" name="sms_preference" required>
                     <option value="">Choose Languages</option>
                     <option value="ENGLISH">ENGLISH</option>
                     <option value="ARABIC">ARABIC</option>
@@ -396,7 +396,6 @@ $("#id_customer_type").change(function(){
 $(".governorate").change(function(){ 
 
   id=this.id.match(/\d+/); 
-  console.log(id);
 
   $.ajax({
 
@@ -469,6 +468,47 @@ function remove_duplicate_mobile(input_mobile)
 }
 
 
+//Existing customer
+$('#search_mobile_btn').click(function(){
+
+  search_mobile = $('#search_mobile_id').val();
+
+  $.ajax({
+
+        url: "{% url 'customer:ajax-customerdetails' %}",
+
+        data: {'search_mobile':search_mobile}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+          alert(data);
+          $('#name').val(data['name']);
+          $('#name-arabic').val(data['name_arabic']);
+          $('#gender').val(data['gender']);
+          $('#email_id').val(data['email']);
+          $('#id_mobile').val(data['mobile']);
+          $('#nationality').val(data['nationality']);
+          $('#id_customer_type').val(data['customer_type']);
+          
+          customer_type = data['customer_type'];
+          
+          if(customer_type=='CORPORATE')
+              {
+          $("#id_customer_type_expand").show();  
+          $("#id_company").attr('required',true);
+          $("#id_job_title").attr('required',true);
+
+          $("#id_company").val(data['company']);
+          $("#id_job_title").val(data['job_title']);
+                  }
+
+          $('#sms_preference').val(data['sms_preference']);
+        }  
+
+      });
+
+})
     </script>
   </body>
 {% include 'common_messages.html' %}
