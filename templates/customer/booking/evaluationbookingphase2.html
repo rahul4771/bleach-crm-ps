@@ -48,14 +48,14 @@
               <div class="row">
           <div class="col-md-6 pt-4">
            
-                <div class="form-group required"><label class="control-label">Name</label><input class="form-control" id="name" placeholder="Name" type="text" name="name" required /></div>
+                <div class="form-group required"><label class="control-label">Name</label><input class="form-control" id="name" placeholder="Name" type="text" name="name" required onkeypress="return /^[A-Za-z ]+$/i.test(event.key)"/></div>
 
              
           </div>
           <div class="col-md-6 pt-4">
             <div class="form-group ">
                <label for="name-arabic" class="control-label" >Name (Arabic )</label>
-                <input type="text" class="form-control" placeholder="Name (Arabic)" aria-label="Username" aria-describedby="basic-addon1" id="name-arabic" name="name_arabic">
+                <input type="text" class="form-control" placeholder="Name (Arabic)" aria-label="Username" aria-describedby="basic-addon1" id="name-arabic" name="name_arabic" onkeypress="return /^[A-Za-z ]+$/i.test(event.key)">
               </div>
           </div>
           
@@ -79,9 +79,19 @@
           <div class="col-md-6 pt-4">
             <div class="form-group required">
                <label for="bk-dob" class="control-label">Date of Birth</label>
-               <input name="date_day" id="id_date_day" type="text" class="dateBox OnlyNumber" minlength="2" placeholder="DD" onkeyup="daterange();" required>
-              <input name="date_month" id="id_date_month" type="text" class="dateBox OnlyNumber" minlength="2" placeholder="MM" onkeyup="monthrange();" required>
-              <input name="date_year" id="id_date_year" type="text" class="dateBox OnlyNumber" minlength="4" placeholder="YYYY" onkeyup="yearrange();">
+               
+               <div class="row">
+                <div class="col-3">
+                  <input name="date_day" id="id_date_day" type="text" class="dateBox OnlyNumber" minlength="2" placeholder="DD" onkeyup="daterange();" required>
+                </div>
+                <div class="col-3 offset-1">
+                  <input name="date_month" id="id_date_month" type="text" class="dateBox OnlyNumber" minlength="2" placeholder="MM" onkeyup="monthrange();" required>
+                </div>
+                <div class="col-4 offset-1">
+                  <input name="date_year" id="id_date_year" type="text" class="dateBox OnlyNumber" minlength="4" placeholder="YYYY" onkeyup="yearrange();" style="max-width:100%">
+                </div>
+               </div>
+              
               </div>
           </div>
       </div>
@@ -94,8 +104,8 @@
         </div>
         <div class="col-md-6 pt-4">
           <div class="form-group required">
-             <label for="name-arabic" class="control-label">Phone</label>
-              <input type="text" class="form-control" placeholder="Phone" aria-label="phone" aria-describedby="basic-addon1" id="id_mobile" name="mobile_number" maxlength="8" required oninput="remove_duplicate_mobile(this);">
+             <label for="name-arabic" class="control-label" >Phone</label>
+              <input type="text" onkeypress="return /^[0-9]*$/i.test(event.key)" class="form-control" placeholder="Phone" aria-label="phone" aria-describedby="basic-addon1" id="id_mobile" name="mobile_number" maxlength="8" required oninput="remove_duplicate_mobile(this);">
               <p class="phone_alert" style="color:Red;"></p>
             </div>
         </div>
@@ -166,15 +176,20 @@
         <div class="col-md-6 pt-4">
             <div class="form-group required">
                 
-                <label for="gender" class="control-label">Contact Platform</label>
-                <select class="form-select" id="contact-platform" name="contact_platform" required>
-                    <option value="">Choose Languages</option>
-                  <option value="SMS">SMS</option>
-                  <option value="Email">Email</option>
-                  <option value="Whatsapp">Whatsapp</option>
-                    
-                    
-                  </select>
+                <label  class="control-label">Contact Platforms</label><br>
+                
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="SMS">
+                    <label class="form-check-label" for="inlineCheckbox1">SMS</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="Email">
+                    <label class="form-check-label" for="inlineCheckbox2">Email</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Whatsapp" >
+                    <label class="form-check-label" for="inlineCheckbox3">Whatsapp</label>
+                  </div>
             
 
           </div>
@@ -358,14 +373,14 @@ $("#id_customer_type").change(function(){
 
     if(customer_type=='CORPORATE')
       {
-          $("#id_customer_type_expand").css('display','block');  
+          $("#id_customer_type_expand").show();  
           $("#id_company").attr('required',true);
           $("#id_job_title").attr('required',true);
     }
 
     else
       {
-          $("#id_customer_type_expand").css('display','none');
+          $("#id_customer_type_expand").hide();
           $("#id_company").val('');
           $("#id_job_title").val('');
           $("#id_company").attr('required',false);

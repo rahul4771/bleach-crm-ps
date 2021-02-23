@@ -8,6 +8,23 @@ $(".bk-item-form").hide();
 $(".bk-image-container").hide();
 $("#bk-del-btn-1").hide();
 
+
+/* Date picker restriction */
+var dtToday = new Date();
+
+    var month = dtToday.getMonth() + 1;
+    var day = dtToday.getDate();
+    var year = dtToday.getFullYear();
+
+    if(month < 10)
+        month = '0' + month.toString();
+    if(day < 10)
+        day = '0' + day.toString();
+
+    var minDate = year + '-' + month + '-' + day;    
+    $('#bk-date-job').attr('min', minDate);
+    $('#bk-date').attr('min', minDate);
+
 function selectCheck(){
     destroyAll();
     $(".bk-evaluation-form").hide();
