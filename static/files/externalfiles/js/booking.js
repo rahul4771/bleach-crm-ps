@@ -122,7 +122,7 @@ function selectAddress(addr){
    if($('#bk-check-box-'+addrIndex).hasClass('bk-check-box-active')){
     
             $('#bk-check-box-'+addrIndex).removeClass('bk-check-box-active');
-            $('#location').val('');
+       $('#location').val('');
        $('#gps').val('');
        $('#location').val('');
        $('#governorate').val('');
@@ -132,6 +132,14 @@ function selectAddress(addr){
        $('#building').val('');
        $('#block').val('');
        $('#street').val('');
+       $('#address_id').val('');
+       $('#id_governorate').val('');
+       $('#id_area').empty();
+       $("#id_area").append($('<option>', {
+                      value: "", 
+                      text: "Choose Area"
+                    }));
+       $('#id_area').val('');
 }
 else{
     if($('.bk-check-box').hasClass('bk-check-box-active')){
@@ -153,7 +161,51 @@ else{
        $('#building').val($('#bk-building-'+addrIndex).text());
        $('#block').val($('#bk-block-'+addrIndex).text());
        $('#street').val($('#bk-street-'+addrIndex).text());
+       
+       governorate_id = $('#bk-governorateID-'+addrIndex).text();
+       area_id        = $('#bk-areaID-'+addrIndex).text();
+       $.ajax({
 
+        url: "/agent/ajax/getarea/",
+
+        data: {'governorate_id':governorate_id}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+
+          ajax_ret_areas = data;     
+          $("#id_area").empty();
+
+        $("#id_area").append($('<option>', {
+                      value: "", 
+                      text: "Choose Area"
+                    })); 
+
+        $.each( ajax_ret_areas, function( key, values ) {
+
+            if(area_id == key)
+            {
+              $("#id_area").append($('<option>', {        
+                      value: key,   
+                      text: values,
+                      selected: true  
+                    }));   
+            }
+            else
+            {
+              $("#id_area").append($('<option>', {        
+                      value: key,   
+                      text: values   
+                    })); 
+            }
+
+        });
+        }  
+              });
+
+       $('#address_id').val($('#bk-addressID-'+addrIndex).text());
+       $('#id_governorate').val($('#bk-governorateID-'+addrIndex).text());
 }
    
    

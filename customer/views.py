@@ -1070,8 +1070,7 @@ class CustomerBookingEvaluationPhase3(View):
 
 
 		active_addresses = Address.objects.filter(is_active=True,currently_active=True,customer=customer_booking.evaluation.customer)
-				
-		print(active_addresses)
+
 
 		return render(request,'customer/booking/evaluationbookingphase3.html',{'governorates':governorates,'locations':locations,'active_addresses':active_addresses,})
 
@@ -1088,7 +1087,7 @@ class CustomerBookingEvaluationPhase3(View):
 			address_form              = AddressForm(request.POST,instance=update_address)
 		else:
 			address_form              = AddressForm(request.POST)
-			
+
 
 		if address_form.is_valid():
 			###save address details###
