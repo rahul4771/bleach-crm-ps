@@ -858,9 +858,11 @@ def GetCustomerDetails(request):
 	customer_information['name']          = client_details.name
 	customer_information['name_arabic']   = client_details.name_arabic
 	customer_information['gender']        = client_details.gender
+	customer_information['date_day']        = client_details.date_day
+	customer_information['date_month']        = client_details.date_month
+	customer_information['date_year']        = client_details.date_year
 	customer_information['email']         = client_details.email
 	customer_information['mobile']        = client_details.mobile_number
-	customer_information['other_number']  = client_details.phone_number
 	customer_information['nationality']   = client_details.nationality.code
 	customer_information['customer_type'] = client_details.customer_type
 	customer_information['company']       = client_details.company
@@ -968,24 +970,18 @@ class CustomerBookingPhase1(View):
 class CustomerBookingEvaluationPhase2(View):
 	
 	def get(self,request,evaluationdetails_id,customerbooking_id):
-		
-		try:
-			governorates = Governorate.objects.filter(is_active=True)
-		except:
-			governorates = None
-
-		try:
-			locations = AreaType.objects.filter(is_active=True)
-		except:
-			locations = None
-
-		return render(request,'customer/booking/evaluationbookingphase2.html',{'governorates':governorates,'locations':locations,})
+		return render(request,'customer/booking/evaluationbookingphase2.html',{})
 	
 	def post(self,request,evaluationdetails_id,customerbooking_id):
-		customer_form             = UserProfileForm(request.POST)
-		address_form              = AddressForm(request.POST)
+		existing_user = UserProfile.objects.get(mobile_number=request.POST.get('mobile_number'))
 		
-		if customer_form.is_valid() and address_form.is_valid():
+		if existing_user:
+			customer_form    = UserProfileForm(request.POST,instance=existing_user)			
+		else:
+			customer_form    = UserProfileForm(request.POST)
+
+
+		if customer_form.is_valid():
 			###save customer details###
 			customer_form_save            = customer_form.save(commit=False)
 			customer_form_save.username    = generate_random_username()
@@ -1002,16 +998,20 @@ class CustomerBookingEvaluationPhase2(View):
 			customer_form_save.customer_id = new_customer_id
 
 			#To Save Contact Platform
-			contact_platforms 			 = request.POST.get('contact_platform')
-			contact_platform_list 		 = contact_platforms.split(",")
-			if contact_platform_list:
-				for contact_platform in contact_platform_list:
-					if contact_platform == 'Whatsapp':
-						customer_form_save.is_whatsapp = True
-					elif contact_platform == 'Email':
-						customer_form_save.is_email    = True
-					else:
-						customer_form_save.is_sms      = True
+			if request.POST.get('is_whatsapp'):
+				customer_form_save.is_whatsapp = True
+			else:
+				customer_form_save.is_whatsapp = False
+
+			if request.POST.get('is_email'):
+				customer_form_save.is_email    = True
+			else:
+				customer_form_save.is_email    = False
+
+			if request.POST.get('is_sms'):
+				customer_form_save.is_sms      = True
+			else:
+				customer_form_save.is_sms      = False
 
 			#APPEND MR / MS TO NAME
 			customer_name = customer_form_save.name
@@ -1032,11 +1032,47 @@ class CustomerBookingEvaluationPhase2(View):
 				pass
 
 			customer_form_save.save()
+		
+			###update Evaluation###
+			evaluation_details = EvaluationDetails.objects.select_related('evaluation').get(id=evaluationdetails_id)
+			evaluation_details.evaluation.customer = customer_form_save
+			evaluation_details.evaluation.save()
 
-			
+			messages.success(request,"Customer Details Succesfully Added")
+
+			return redirect('customer:customerbookingevaluationphase3',evaluationdetails_id,customerbooking_id)
+
+		else:
+			messages.error(request,get_error(customer_form))
+			return render(request,'customer/booking/evaluationbookingphase2.html',{})
+	
+		return redirect('customer:customerbookingevaluationphase2',evaluationdetails_id,customerbooking_id)
+
+class CustomerBookingEvaluationPhase3(View):
+	
+	def get(self,request,evaluationdetails_id,customerbooking_id):
+		
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
+		try:
+			locations = AreaType.objects.filter(is_active=True)
+		except:
+			locations = None
+
+		return render(request,'customer/booking/evaluationbookingphase3.html',{'governorates':governorates,'locations':locations,})
+
+	def post(self,request,evaluationdetails_id,customerbooking_id):
+		evaluation_details = EvaluationDetails.objects.select_related('evaluation').get(id=evaluationdetails_id)
+
+		address_form              = AddressForm(request.POST)
+
+		if address_form.is_valid():
 			###save address details###
 			address_form_save                   = address_form.save(commit=False)
-			address_form_save.customer          = customer_form_save
+			address_form_save.customer          = evaluation_details.evaluation.customer
 			address_form_save.currently_active  = True
 
 			#string check
@@ -1088,26 +1124,16 @@ class CustomerBookingEvaluationPhase2(View):
 				pass
 
 			address_form_save.save()
-		
-			###update Evaluation and evaluation details and bookingdetails###
-			evaluation_details = EvaluationDetails.objects.select_related('evaluation').get(id=evaluationdetails_id)
-			evaluation_details.evaluation.customer = customer_form_save
+	
+			###update evaluation details and bookingdetails###
 			evaluation_details.address    = address_form_save
-			evaluation_details.evaluation.save()
 			evaluation_details.save()
-
 			CustomerBooking.objects.filter(id=customerbooking_id).update(is_bookingcompleted=True)
-			
-			messages.success(request,"Evaluation Booking Succesfully Completed ")
 
-			return redirect('customer:customerbookingevaluationphase3',evaluationdetails_id,customerbooking_id)
+			messages.success(request,"Evaluation Booking Succesfully Completed")
 
+			return redirect('customer:customerbookingevaluationphase4',evaluationdetails_id,customerbooking_id)
 		else:
-			if not customer_form.is_valid():
-				messages.error(request,get_error(customer_form))
-			if not address_form.is_valid():
-				messages.error(request,get_error(address_form))
-			
 			try:
 				governorates = Governorate.objects.filter(is_active=True)
 			except:
@@ -1118,15 +1144,15 @@ class CustomerBookingEvaluationPhase2(View):
 			except:
 				locations = None
 
-			return render(request,'customer/booking/evaluationbookingphase2.html',{'governorates':governorates,'locations':locations,})
-	
-		return redirect('customer:customerbookingevaluationphase2',evaluationdetails_id,customerbooking_id)
+			return render(request,'customer/booking/evaluationbookingphase3.html',{'governorates':governorates,'locations':locations,})			
 
-class CustomerBookingEvaluationPhase3(View):
+		return redirect('customer:customerbookingevaluationphase3',evaluationdetails_id,customerbooking_id)
+
+class CustomerBookingEvaluationPhase4(View):
 	
 	def get(self,request,evaluationdetails_id,customerbooking_id):
 		
 		evaluation_details = EvaluationDetails.objects.select_related('evaluator','evaluation').get(id=evaluationdetails_id)
 		booking_details    = CustomerBooking.objects.get(id=customerbooking_id)
 
-		return render(request,'customer/booking/evaluationbookingphase3.html',{'evaluation_details':evaluation_details,'booking_details':booking_details,})
+		return render(request,'customer/booking/evaluationbookingphase4.html',{'evaluation_details':evaluation_details,'booking_details':booking_details,})
