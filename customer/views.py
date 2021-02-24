@@ -1,7 +1,10 @@
 from django.shortcuts import render,redirect
 from django.template.loader import render_to_string
+from django.http import HttpResponse,JsonResponse
 
 from django.views import View
+
+from bleach_crm_ps.utils import get_error
 
 import random
 import string
@@ -21,6 +24,8 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,Evaluat
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
+from customer.models import CustomerBooking
+from agent.forms import UserProfileForm,AddressForm
 from itertools import chain
 from agent.views import generate_random_username
 
@@ -585,6 +590,7 @@ class CustomerFeedback(View):
 		
 		return redirect('customer:customer-feedback', order_id)
 
+
 #for download
 
 from django.core.files.storage import FileSystemStorage
@@ -840,3 +846,324 @@ def statement_of_account(request,client_id):
 
 	
 	return render(request,"customer/statement_of_account.html",{"client":client,"address":address,"accounts":accounts_list,"pending_payments":pending_payments})
+
+####Customer Booking########
+from django.forms.models import model_to_dict
+def GetCustomerDetails(request):
+	customer_information = {}
+	mobile_no            = request.GET.get('search_mobile')
+	
+	client_details       = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(currently_active=True),to_attr='customer_addresses')).get(mobile_number=mobile_no)
+
+	customer_information['name']          = client_details.name
+	customer_information['name_arabic']   = client_details.name_arabic
+	customer_information['gender']        = client_details.gender
+	customer_information['date_day']        = client_details.date_day
+	customer_information['date_month']        = client_details.date_month
+	customer_information['date_year']        = client_details.date_year
+	customer_information['email']         = client_details.email
+	customer_information['mobile']        = client_details.mobile_number
+	customer_information['nationality']   = client_details.nationality.code
+	customer_information['customer_type'] = client_details.customer_type
+	customer_information['company']       = client_details.company
+	customer_information['job_title']     = client_details.job_title
+	customer_information['sms_preference']= client_details.sms_preference
+	customer_information['is_sms']        = client_details.is_sms
+	customer_information['is_email']      = client_details.is_email
+	customer_information['is_whatsapp']   = client_details.is_whatsapp
+
+	#for multiple customer addresses
+	customer_information['customer_address']   = []
+	for address in client_details.customer_addresses:
+		customer_address = {}
+
+		customer_address['governorate'] 	= address.governorate.name
+		customer_address['area'] 			= address.area.name
+		customer_address['block'] 			= address.block
+		customer_address['avenue'] 			= address.avenue
+		customer_address['building'] 		= address.building
+		customer_address['street'] 			= address.street
+		customer_address['floor'] 			= address.floor
+		customer_address['apartment'] 		= address.apartment
+
+		customer_information['customer_address'].append(customer_address)
+	
+	return JsonResponse(customer_information)
+
+def GetEvaluationBookingSlotes(request):
+	dropdown_slotes  = {}
+	evaluation_date  = datetime.strptime(request.GET.get('evaluation_booking_date'),'%Y-%m-%d')
+	
+	available_slotes = []
+	for slote in range(8,18):
+		slote_datetime 			  = evaluation_date.replace(hour=slote,minute=0,second=0,microsecond=0)
+		checkavailability         = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').prefetch_related('evaluator_evaluation').annotate(busyevaluationcount=Sum(Case(When(evaluator_evaluation__proposed_time=slote_datetime,then=1),default=0,output_field=IntegerField()))).filter(busyevaluationcount__lt=2)
+		if checkavailability:
+			available_slotes.append(slote)
+
+	dropdown_slotes['slotes']=available_slotes
+	
+	return JsonResponse(dropdown_slotes)
+
+
+
+class CustomerBookingPhase1(View):
+	def get(self,request):
+		return render(request,'customer/booking/bookingphase1.html',{})
+	def post(self,request):
+		print(request.POST)
+		proposed_date                     = request.POST.get('booking_date')
+		proposed_time                     = request.POST.get('booking_time')
+		converted_proposed_time           = datetime.strptime(proposed_date+" "+proposed_time,'%Y-%m-%d %I:%M %p')	
+		#available evaluator
+		availableevaluators               = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').prefetch_related('evaluator_evaluation').annotate(busyevaluationcount=Sum(Case(When(evaluator_evaluation__proposed_time=converted_proposed_time,then=1),default=0,output_field=IntegerField()))).filter(busyevaluationcount__lt=2)
+	
+
+		if availableevaluators:
+			#create Main Evaluation
+			tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+
+			current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
+			
+			if current_blc_starting == int(str(tracking_no)[:6]):
+				new_tracking_no = int(tracking_no)+1
+				evaluation_no   = 'BLC'+str(new_tracking_no)
+			else:
+				evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
+				tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+			
+			evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,quatation_expiry_date=timezone.now()+timedelta(14))
+			
+			#Booking Number
+			booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
+			current_booking_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
+
+			if current_booking_starting == int(str(booking_id)[:4]):
+				new_booking_id = int(booking_id)+1
+			else:
+				new_booking_id = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
+			
+
+			action = request.POST.get('action_type')
+
+			if action == 'bookevaluation':
+				#booking save
+				customerbooking = CustomerBooking.objects.create(booking_id=new_booking_id,booking_type='EVALUATIONBOOKING',evaluation=evaluation)
+				
+				#evaluation details save
+				##select evaluator
+				if availableevaluators.filter(busyevaluationcount=0):
+					evaluator = availableevaluators.filter(busyevaluationcount=0).first()
+				elif availableevaluators.filter(busyevaluationcount=1):
+					evaluator = availableevaluators.filter(busyevaluationcount=1).first()
+
+				evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation,evaluator=evaluator,attender_note=request.POST.get('notes'),proposed_time=converted_proposed_time)		
+
+				return redirect('customer:customerbookingevaluationphase2',evaluation_details.id,customerbooking.id)
+		
+		else:
+			if not availableevaluators:
+				messages.error(request,"Evaluators not Available...Please Change date or Slote !")
+
+		return redirect('customer:customerbookingphase1')	
+
+class CustomerBookingEvaluationPhase2(View):
+	
+	def get(self,request,evaluationdetails_id,customerbooking_id):
+		return render(request,'customer/booking/evaluationbookingphase2.html',{})
+	
+	def post(self,request,evaluationdetails_id,customerbooking_id):
+		try:
+			existing_user = UserProfile.objects.get(mobile_number=request.POST.get('mobile_number'))
+		except:
+			existing_user = None
+			
+
+		if existing_user:
+			customer_form    = UserProfileForm(request.POST,instance=existing_user)			
+		else:
+			customer_form    = UserProfileForm(request.POST)
+
+
+		if customer_form.is_valid():
+			###save customer details###
+			customer_form_save            = customer_form.save(commit=False)
+			customer_form_save.username    = generate_random_username()
+			customer_form_save.user_type   = 'CUSTOMER'
+
+			#customer id generation
+			customer_id                  = UserProfile.objects.filter(is_active=True,customer_id__isnull=False).aggregate(t=Max('customer_id'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'1000')
+			current_customer_id_starting = int(str(timezone.now().year)[2:]+str(timezone.now().month).zfill(2))					
+			if current_customer_id_starting == int(str(customer_id)[:4]):
+				new_customer_id = int(customer_id)+1
+			else:
+				new_customer_id   = int(str(timezone.now().year)[2:]+str(timezone.now().month).zfill(2)+'1001')
+
+			customer_form_save.customer_id = new_customer_id
+
+			#To Save Contact Platform
+			if request.POST.get('is_whatsapp'):
+				customer_form_save.is_whatsapp = True
+			else:
+				customer_form_save.is_whatsapp = False
+
+			if request.POST.get('is_email'):
+				customer_form_save.is_email    = True
+			else:
+				customer_form_save.is_email    = False
+
+			if request.POST.get('is_sms'):
+				customer_form_save.is_sms      = True
+			else:
+				customer_form_save.is_sms      = False
+
+			#APPEND MR / MS TO NAME
+			customer_name = customer_form_save.name
+
+			if customer_form_save.gender == 'MALE':
+				prefix = 'Mr. '
+				prefix_exists = customer_name.startswith(prefix)
+
+				if prefix_exists == False :
+					customer_form_save.name = prefix+customer_name
+			elif customer_form_save.gender == 'FEMALE':
+				prefix = 'Ms. '
+				prefix_exists = customer_name.startswith(prefix)
+
+				if prefix_exists == False :
+					customer_form_save.name = prefix+customer_name
+			else:
+				pass
+
+			customer_form_save.save()
+		
+			###update Evaluation###
+			evaluation_details = EvaluationDetails.objects.select_related('evaluation').get(id=evaluationdetails_id)
+			evaluation_details.evaluation.customer = customer_form_save
+			evaluation_details.evaluation.save()
+
+			messages.success(request,"Customer Details Succesfully Added")
+
+			return redirect('customer:customerbookingevaluationphase3',evaluationdetails_id,customerbooking_id)
+
+		else:
+			messages.error(request,get_error(customer_form))
+			return render(request,'customer/booking/evaluationbookingphase2.html',{})
+	
+		return redirect('customer:customerbookingevaluationphase2',evaluationdetails_id,customerbooking_id)
+
+class CustomerBookingEvaluationPhase3(View):
+	
+	def get(self,request,evaluationdetails_id,customerbooking_id):
+		
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
+		try:
+			locations = AreaType.objects.filter(is_active=True)
+		except:
+			locations = None
+
+		customer_booking = CustomerBooking.objects.select_related('evaluation__customer').get(id=customerbooking_id)		
+
+
+		active_addresses = Address.objects.filter(is_active=True,currently_active=True,customer=customer_booking.evaluation.customer)
+				
+		print(active_addresses)
+
+		return render(request,'customer/booking/evaluationbookingphase3.html',{'governorates':governorates,'locations':locations,'active_addresses':active_addresses,})
+
+	def post(self,request,evaluationdetails_id,customerbooking_id):
+		evaluation_details = EvaluationDetails.objects.select_related('evaluation').get(id=evaluationdetails_id)
+
+		address_form              = AddressForm(request.POST)
+
+		if address_form.is_valid():
+			###save address details###
+			address_form_save                   = address_form.save(commit=False)
+			address_form_save.customer          = evaluation_details.evaluation.customer
+			address_form_save.currently_active  = True
+
+			#string check
+			block_text = address_form_save.block
+			floor_text = address_form_save.floor
+			street_text = address_form_save.street
+			avenue_text = address_form_save.avenue
+
+			is_block = block_text.find("Block")
+			is_street= street_text.find("Street")
+
+			if floor_text:
+				is_floor = floor_text.find("Floor")
+
+				if is_floor == -1 :
+					floor_text += ' '
+					floor_text += 'Floor'
+					address_form_save.floor = floor_text
+				else:
+					pass
+			else: 
+				pass
+
+			if avenue_text:
+				is_avenue = avenue_text.find("Avenue")
+
+				if is_avenue == -1 :
+					avenue_text += ' '
+					avenue_text += 'Avenue'
+					address_form_save.avenue = avenue_text
+				else:
+					pass
+			else:
+				pass
+
+
+			if is_block == -1 :
+				block_text += ' '
+				block_text += 'Block'
+				address_form_save.block = block_text
+			else:
+				pass
+
+			if is_street == -1 :
+				street_text += ' '
+				street_text += 'Street'
+				address_form_save.street = street_text
+			else:
+				pass
+
+			address_form_save.save()
+	
+			###update evaluation details and bookingdetails###
+			evaluation_details.address    = address_form_save
+			evaluation_details.save()
+			CustomerBooking.objects.filter(id=customerbooking_id).update(is_bookingcompleted=True)
+
+			messages.success(request,"Evaluation Booking Succesfully Completed")
+
+			return redirect('customer:customerbookingevaluationphase4',evaluationdetails_id,customerbooking_id)
+		else:
+			try:
+				governorates = Governorate.objects.filter(is_active=True)
+			except:
+				governorates = None
+
+			try:
+				locations = AreaType.objects.filter(is_active=True)
+			except:
+				locations = None
+
+			return render(request,'customer/booking/evaluationbookingphase3.html',{'governorates':governorates,'locations':locations,})			
+
+		return redirect('customer:customerbookingevaluationphase3',evaluationdetails_id,customerbooking_id)
+
+class CustomerBookingEvaluationPhase4(View):
+	
+	def get(self,request,evaluationdetails_id,customerbooking_id):
+		
+		evaluation_details = EvaluationDetails.objects.select_related('evaluator','evaluation').get(id=evaluationdetails_id)
+		booking_details    = CustomerBooking.objects.get(id=customerbooking_id)
+
+		return render(request,'customer/booking/evaluationbookingphase4.html',{'evaluation_details':evaluation_details,'booking_details':booking_details,})

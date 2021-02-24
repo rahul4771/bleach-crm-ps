@@ -177,7 +177,7 @@ class Address(models.Model):
         super(Address, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return str(self.area.name)
+        return str(self.area.name+self.customer.name)
 
     def __str__(self):
-        return self.area.name    
+        return self.area.name+self.customer.name    
