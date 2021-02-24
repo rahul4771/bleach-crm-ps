@@ -973,8 +973,12 @@ class CustomerBookingEvaluationPhase2(View):
 		return render(request,'customer/booking/evaluationbookingphase2.html',{})
 	
 	def post(self,request,evaluationdetails_id,customerbooking_id):
-		existing_user = UserProfile.objects.get(mobile_number=request.POST.get('mobile_number'))
-		
+		try:
+			existing_user = UserProfile.objects.get(mobile_number=request.POST.get('mobile_number'))
+		except:
+			existing_user = None
+			
+
 		if existing_user:
 			customer_form    = UserProfileForm(request.POST,instance=existing_user)			
 		else:
