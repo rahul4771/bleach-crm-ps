@@ -1062,7 +1062,14 @@ class CustomerBookingEvaluationPhase3(View):
 		except:
 			locations = None
 
-		return render(request,'customer/booking/evaluationbookingphase3.html',{'governorates':governorates,'locations':locations,})
+		customer_booking = CustomerBooking.objects.select_related('evaluation__customer').get(id=customerbooking_id)		
+
+
+		active_addresses = Address.objects.filter(is_active=True,currently_active=True,customer=customer_booking.evaluation.customer)
+				
+		print(active_addresses)
+
+		return render(request,'customer/booking/evaluationbookingphase3.html',{'governorates':governorates,'locations':locations,'active_addresses':active_addresses,})
 
 	def post(self,request,evaluationdetails_id,customerbooking_id):
 		evaluation_details = EvaluationDetails.objects.select_related('evaluation').get(id=evaluationdetails_id)
