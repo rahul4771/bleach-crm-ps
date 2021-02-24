@@ -809,7 +809,8 @@
        
     </div><!--order-details-left-stretch-->
 
-    <div class="order-details-right-fixed"><!--order-details-right-fixed-->
+    <div class="cleaning--right-fixed"><!--order-details-right-fixed-->
+        <div class="right-bgwrapper orange-border"><!--right-bgwrapper-->  
         <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
         <div class="client-name">{{client_details.name}}</div>
         <div class="common-gray-text">{{client_details.mobile_number}}</div>
@@ -817,7 +818,7 @@
         <br>
         <hr class="hr">
         {% if client_details.company  %}
-        <div class="common-gray-text">Comapany Name : <span class="bold-text">{{client_details.company}}</span></div>
+        <div class="common-gray-text">Company Name : <span class="bold-text">{{client_details.company}}</span></div>
         {% endif %}
         {% if client_details.nationality %}
         <div class="common-gray-text">Nationality : <span class="bold-text">{{client_details.nationality}}</span></div>
@@ -828,23 +829,70 @@
         <hr class="hr">
         <br>
         {% for address in client_details.customer_addresses %}
-        <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address {{forloop.counter}}: <b>{{address.apartment}}</b></div>
+        <div class="address-bold"><i class="fa fa-lg fa-home orange-text" aria-hidden="true"></i> Address {{forloop.counter}}: <b>{{address.apartment}}</b></div>
         <div class="address">{% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}}, {{address.block}}, {{address.street}}, {% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} {{address.area.name}}, {{address.governorate.name}}</div>
         <br>
         {% endfor %}
+        </div><!--right-bgwrapper--> 
+
+        <!-- RE-ORDER -->
+        {% comment %} {% if order.order_status == 'ORDER_CLOSED'  or order.orderschedules|length > 1 %} {% endcomment %}
+        {% for schedule in order.orderschedules|slice:"1" %}
+        {% if schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' and schedule.work_status == 'CLEANING_FULFILLED' or order.order_status == 'ORDER_CLOSED'%}
+            <br>
+            <div class="order-card-column whitebg blue-border clickable-cursor duplicate_order" data-id="{{order.evaluation.id}}"><!--order-card-column-->
+                    <div class="card-innerwrapper"><!--card-innerwrapper-->
+                    <div class="column-left"><img src="{% static "/files/images/card-reorder-icon.png" %}"></div>
+                    <div class="column-right"><!--column-right-->
+                    <!-- <h1>Click To View</h1> -->
+                    <h2 class="blue-text"><label>Re-Order<span>
+                        <!-- <i class="fa fa-repeat" aria-hidden="true"></i> -->
+                    </span></label></h2>
+                    <p><label>Click to Re-Order <span></span></label></p>
+                    </div><!--column-right-->
+                    </div><!--card-innerwrapper-->
+                </div><!--order-card-column-->
+            {% endif %}
+            {% endfor %}
+            <!-- RE-ORDER -->
+
     </div><!--order-details-right-fixed-->
 </div><!--order-details-wrapper-->    
 </div><!--order-top-wrapper-->            
-
                  
     </div><!--container-fluid space topspace-->
 </section><!--content-->
-    
+
+<div class="custom-model-main-sp"><!--custom-model-main-->
+    <div class="custom-model-inner-sp">  <!--custom-model-inner-->      
+    <div class="close-btn-sp">×</div>
+        <div class="custom-model-wrap-sp"><!--custom-model-wrap-->
+            <div class="pop-up-content-wrap"><!--pop-up-content-wrap-->
+               <div class="bold-text">Click 'Continue' to proceed with Re-order</div>  
+               <form method="get" action="" enctype= "multipart/form-data" id="duplicate_form_id">{% csrf_token %}
+               <div><input class="assignButton" name="submit" type="submit" value="Continue"></div>
+               </form>
+            </div><!--pop-up-content-wrap-->
+        </div><!--custom-model-wrap-->  
+    </div><!--custom-model-inner-->   
+    <div class="bg-overlay-sp"></div>
+</div><!--custom-model-main-->    
     
 {% include 'salesadmin/common/footer.html' %} 
 </div><!--wrapper-->
 {% endblock %}
 {% block javascript %}
+<script>
+$(".duplicate_order").on('click', function () {
+  $(".custom-model-main-sp").addClass('model-open-sp');
+  evaluation_id = $(this).data('id');
+  $("#duplicate_form_id").attr('action','/bleach_salesadmin/makequatation/duplicate/'+evaluation_id)
+});
+$(".close-btn-sp, .bg-overlay-sp").click(function () {
+  $(".custom-model-main-sp").removeClass('model-open-sp');
+});
+</script>
+
 <script>
 
 $(document).ready(function(){
