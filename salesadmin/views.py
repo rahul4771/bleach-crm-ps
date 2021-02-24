@@ -15,7 +15,7 @@ from django.utils import timezone
 from datetime import timedelta,date,datetime
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField
 from django.db.models.functions import Cast 
-from django.db.models import Prefetch
+from django.db.models import Prefetch,Max
 from bleach_crm_ps.utils import get_error
 from django.db.models.functions import ExtractMonth,ExtractYear
 
@@ -406,6 +406,158 @@ class ClientOrderDetails(IsSalesAdmin,View):
 		return render(request,"salesadmin/client/order-page.html",{"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count})
 
 
+
+class MakeQuatationDuplicate(IsSalesAdmin,View):
+	
+	def get(self,request,evaluation_id):
+		
+
+		duplicate_evaluation = Evaluation.objects.get(id=evaluation_id)
+		
+		duplicate_evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=duplicate_evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks'))
+		
+
+		#duplicate the order
+		tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+
+		current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
+		
+		if current_blc_starting == int(str(tracking_no)[:6]):
+			new_tracking_no = int(tracking_no)+1
+			evaluation_no   = 'BLC'+str(new_tracking_no)
+		else:
+			evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
+			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+		
+		new_evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=duplicate_evaluation.customer,call_attender=request.user,quatation_expiry_date=timezone.now()+timedelta(7),estimated_cost=duplicate_evaluation.estimated_cost,discount=duplicate_evaluation.discount,total_cost=duplicate_evaluation.total_cost)
+		new_order      = Order.objects.get_or_create(evaluation=new_evaluation,order_no=new_evaluation.evaluation_id)
+		
+		if duplicate_evaluation_details:
+			
+			#new evaluation details
+			for duplicate_evaluation in duplicate_evaluation_details:
+				
+				new_duplicate_evaluation_details = EvaluationDetails.objects.create(evaluation=new_evaluation,address=duplicate_evaluation.address,estimated_cost=duplicate_evaluation.estimated_cost,discount=duplicate_evaluation.discount,total_cost=duplicate_evaluation.total_cost,status=duplicate_evaluation.status,evaluator=duplicate_evaluation.evaluator)
+				
+				if duplicate_evaluation.evaluationbooks:
+					#new book
+					for duplicate_book in duplicate_evaluation.evaluationbooks:
+						new_duplicate_book = EvaluationBook.objects.create(evaluation_details=new_duplicate_evaluation_details,cleaning_policy=duplicate_book.cleaning_policy,service_type=duplicate_book.service_type,area_type=duplicate_book.area_type,cleaning_method=duplicate_book.cleaning_method,location_type=duplicate_book.location_type,number_of_cleaners=duplicate_book.number_of_cleaners,estimated_cost=duplicate_book.estimated_cost,discount=duplicate_book.discount,total_cost=duplicate_book.total_cost,cleaning_hours=duplicate_book.cleaning_hours,evaluator_note=duplicate_book.evaluator_note)
+
+						if duplicate_book.booksections:
+							#new booksection
+							for duplicate_book_section in duplicate_book.booksections:
+								new_duplicate_section = EvaluationBookSection.objects.create(evaluation_book=new_duplicate_book,section_name=duplicate_book_section.section_name,section_name_arabic=duplicate_book_section.section_name_arabic,category=duplicate_book_section.category,dirt_level=duplicate_book_section.dirt_level,quantity=duplicate_book_section.quantity,size=duplicate_book_section.size,unit=duplicate_book_section.unit,age=duplicate_book_section.age,floor=duplicate_book_section.floor,apartment=duplicate_book_section.apartment,room=duplicate_book_section.room,wall_type=duplicate_book_section.wall_type,ceiling_type=duplicate_book_section.ceiling_type,floor_type=duplicate_book_section.floor_type,material=duplicate_book_section.material,colour=duplicate_book_section.colour,cause_of_stain=duplicate_book_section.cause_of_stain,section_cost=duplicate_book_section.section_cost)
+						
+							
+								if duplicate_book_section.sectionkeynotes:
+									#new keynotes
+									for duplicate_keynote in duplicate_book_section.sectionkeynotes:	
+										new_duplicate_keynote = EvaluationSectionKeynote.objects.create(evaluation_section=new_duplicate_section,sub_area=duplicate_keynote.sub_area,quantity=duplicate_keynote.quantity,)
+
+		messages.success(request,"Duplicate Order Created Succesfully")
+
+		return redirect('bleach_salesadmin:salesadmin-makequatation1duplicateedit',new_evaluation.customer.id,new_evaluation.id,)
+
+
+class MakeQuatationPhase1DuplicateEdit(IsSalesAdmin,View):	
+
+	def get(self,request,enquiry_id,evaluation_id):
+		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
+		
+		try:
+			evaluation = Evaluation.objects.get(id=evaluation_id)
+		except:
+			evaluation = None		
+	
+		try:
+			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True,cleaning_policy='SUBSCRIPTION'),to_attr='evaluationbooks'))
+		except:
+			evaluation_details = None
+
+		#allow submition	
+		evaluation_details_count           = evaluation_details.count()
+		evaluation_details_completed_count = evaluation_details.filter(status='EVALUATED').count()
+
+		if evaluation_details_count==evaluation_details_completed_count:
+			allow_submit = True
+		else:
+			allow_submit = False	
+
+		#allow submit only after date addition
+		evaluation_books           = EvaluationBook.objects.select_related('evaluation_details__evaluation').filter(evaluation_details__evaluation=evaluation).prefetch_related('order_scheduler_book_details').annotate(individual_schedules=Count('order_scheduler_book_details'))
+		scheduled_evaluation_books = evaluation_books.filter(individual_schedules__gt=0)
+
+		if evaluation_books.count() != scheduled_evaluation_books.count():
+			allow_submit = False
+
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()				
+
+		return render(request,'salesadmin/enquiry/phase1quatationduplicateedit.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,})	
+
+	def post(self,request,enquiry_id,evaluation_id):
+		
+		payment_method 			= request.POST.get('payment_method')
+		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
+		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
+
+		#update payment method
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+
+		#sms integration
+		evaluation = Evaluation.objects.prefetch_related(Prefetch('evaluation_details',EvaluationDetails.objects.filter(is_active=True).select_related('address'),to_attr='evaluation_address')).filter(id=evaluation_id,is_active=True).get(id=evaluation_id,is_active=True)
+		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
+		evaluationbook = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
+		
+		messages.success(request,"Quotation Edited Succesfully")
+
+		#address check for floor,avenue None
+		if evaluationdetails.address.floor == None and evaluationdetails.address.avenue == None:
+			address_list = [evaluationdetails.address.apartment, evaluationdetails.address.street, evaluationdetails.address.building, evaluationdetails.address.block, evaluationdetails.address.area.name, evaluationdetails.address.governorate.name]
+		
+		elif evaluationdetails.address.floor == None:
+			address_list = [evaluationdetails.address.apartment, evaluationdetails.address.street, evaluationdetails.address.building, evaluationdetails.address.avenue, evaluationdetails.address.block, evaluationdetails.address.area.name, evaluationdetails.address.governorate.name]
+		
+		elif evaluationdetails.address.avenue == None:
+			address_list = [evaluationdetails.address.apartment, evaluationdetails.address.floor, evaluationdetails.address.street, evaluationdetails.address.building, evaluationdetails.address.block, evaluationdetails.address.area.name, evaluationdetails.address.governorate.name]
+		
+		else:
+			address_list = [evaluationdetails.address.apartment, evaluationdetails.address.floor, evaluationdetails.address.street, evaluationdetails.address.building, evaluationdetails.address.avenue, evaluationdetails.address.block, evaluationdetails.address.area.name, evaluationdetails.address.governorate.name]
+
+		separator = ", "
+
+		if evaluation.customer.is_sms == True:
+
+			url = "https://smsapi.future-club.com/fccsms.aspx"
+
+			if evaluation.payment_method == 'SUBSCRIPTION':
+				smsurl = "https://my.bleachkw.com/customer/subscription/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+			else:
+				smsurl = "https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+
+			if evaluation.customer.sms_preference == 'ENGLISH':
+
+				message = "Dear Customer, Please find the Revised Quotation against the order number "+str(evaluation.evaluation_id)+"  here "+smsurl+" . Order Number : "+ str(evaluation.evaluation_id) +". Service Type(s) : "+ evaluationbook.service_type.name +", Address(s) : "+separator.join(address_list)+", Cost : "+ str(evaluation.total_cost) +", Due Date : "+ str(evaluation.quatation_expiry_date) +". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+
+			else:
+				message = "عزيزنا العميل نرجوا الاطلاع على عرض السعر المعدّل للطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط "+smsurl+" .رقم الطلب: "+ str(evaluation.evaluation_id) +"الخدمة: "+ evaluationbook.service_type.name +"العنوان: "+separator.join(address_list)+"السعر: "+ str(evaluation.total_cost) +" KDتاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +"لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+
+			headers = {
+				'cache-control': "no-cache"
+			}
+
+			response = requests.request("GET", url, headers=headers, params=querystring)
+
+			print(response.text,"respo")
+		else:
+			pass
+
+		return redirect('bleach_salesadmin:salesadmindash-board')
 
 
 class TicketDetails(IsSalesAdmin,View):
