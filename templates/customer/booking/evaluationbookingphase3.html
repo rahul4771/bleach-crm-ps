@@ -32,8 +32,95 @@
       <div class="row pt-4">
           <div class="col-md-10 mx-auto">
              <div class="row">
+
                 
     <h3 class="pt-4">Client Address</h3>
+    <div class="row mt-4">
+      <!-- Card 1-->
+      <div class="col-md-4" onclick="selectAddress(this)" id="address-card-1">
+        <div class="bk-address-card">
+          <div class="bk-check-box mt-2 mb-2 mx-auto " id="bk-check-box-1" >
+            <i class="fa fa-check bk-check-icon " ></i>
+          </div>
+        <div class="d-flex">
+          <div class="w-50">Location</div>:<div class="w-50 text-right" id="bk-location-1">OFFICE</div>
+        </div>
+        <div class="d-flex d-none">
+          <div class="w-50">GPS Location</div>:<div class="w-50 text-right" id="bk-gps-1"></div>
+        </div>
+        <div class="d-flex">
+          <div class="w-50">Gevernorate</div>:<div class="w-50 text-right" id="bk-governorate-1">Al Asimah</div>
+        </div>
+        <div class="d-flex d-none">
+          <div class="w-50">Gevernorate ID</div>:<div class="w-50 text-right" id="bk-governorateID-1">Al Asimah</div><!-- GIVE GOVERNORATE ID HERE-->
+        </div>
+        <div class="d-flex ">
+          <div class="w-50">Area</div>:<div class="w-50 text-right" id="bk-area-1">Adiliya</div> 
+        </div>
+        <div class="d-flex d-none">
+          <div class="w-50">Area ID</div>:<div class="w-50 text-right" id="bk-areaId-1">Adiliya</div> <!-- GIVE AREA ID HERE-->
+        </div>
+        <div class="d-flex">
+          <div class="w-50">Address Title</div>:<div class="w-50 text-right" id="bk-address-1">sample address</div>
+        </div>
+        <div class="d-flex d-none">
+          <div class="w-50">Floor</div>:<div class="w-50 text-right" id="bk-floor-1">sample floor</div>
+        </div>
+        <div class="d-flex">
+          <div class="w-50">Building</div>:<div class="w-50 text-right" id="bk-building-1">2222 rocky way building</div>
+        </div>
+        <div class="d-flex">
+          <div class="w-50">Block</div>:<div class="w-50 text-right" id="bk-block-1">29</div>
+        </div>
+        <div class="d-flex">
+          <div class="w-50">Street</div>:<div class="w-50 text-right" id="bk-street-1">sample street</div>
+        </div>
+        <div class="d-flex d-none">
+          <div class="w-50">Avenue</div>:<div class="w-50 text-right" id="bk-avenue-1">sample avenue</div>
+        </div>
+      </div>
+      </div>
+       <!-- Card 1 ends-->
+       <!-- Card 2-->
+       <div class="col-md-4" onclick="selectAddress(this)" id="address-card-2">
+        <div class="bk-address-card">
+          <div class="bk-check-box mt-2 mb-2 mx-auto " id="bk-check-box-2" >
+            <i class="fa fa-check bk-check-icon " ></i>
+          </div>
+          <div class="d-flex">
+            <div class="w-50">Location</div>:<div class="w-50 text-right" id="bk-location-2">HOUSE</div>
+          </div>
+          <div class="d-flex d-none">
+            <div class="w-50">GPS Location</div>:<div class="w-50 text-right" id="bk-gps-2"></div>
+          </div>
+          <div class="d-flex">
+            <div class="w-50">Gevernorate</div>:<div class="w-50 text-right" id="bk-governorate-2">Ahmadi</div>
+          </div>
+          <div class="d-flex ">
+            <div class="w-50">Area</div>:<div class="w-50 text-right" id="bk-area-2">Abu Halifa</div>
+          </div>
+          <div class="d-flex">
+            <div class="w-50">Address Title</div>:<div class="w-50 text-right" id="bk-address-2">222 Rocky Way 30000 Brdrock</div>
+          </div>
+          <div class="d-flex d-none">
+            <div class="w-50">Floor</div>:<div class="w-50 text-right" id="bk-floor-2">sample</div>
+          </div>
+          <div class="d-flex">
+            <div class="w-50">Building</div>:<div class="w-50 text-right" id="bk-building-2">2222 rocky way</div>
+          </div>
+          <div class="d-flex">
+            <div class="w-50">Block</div>:<div class="w-50 text-right" id="bk-block-2">26</div>
+          </div>
+          <div class="d-flex">
+            <div class="w-50">Street</div>:<div class="w-50 text-right" id="bk-street-2">Cobblestone</div>
+          </div>
+          <div class="d-flex d-none">
+            <div class="w-50">Avenue</div>:<div class="w-50 text-right" id="bk-avenue-2">sample</div>
+          </div>
+      </div>
+      </div>
+       <!-- Card 2 ends-->
+    </div>
     <div class="row ">
         <div class="col-md-12 pt-4">
          
@@ -159,7 +246,8 @@
 
    
    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>   
-     <script src="{% static 'files/externalfiles/js/booking.js' %}"></script>
+   <script src="{% static 'files/externalfiles/js/chosen.jquery.js' %}"></script>  
+   <script src="{% static 'files/externalfiles/js/booking.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>

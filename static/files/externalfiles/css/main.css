@@ -324,6 +324,40 @@ outline: none !important;
     color: #ffffff;
     display:none;
 }
+.bk-check-box{
+    height:15px;
+    width:15px;
+    border-radius:15px;   
+    border: 1px solid #e0e0e0;
+    
+}
+.bk-check-box-active{
+    background-color: #30ab23de;
+    height: 20px;
+    width: 20px;
+    border-radius: 15px;
+    border:none; 
+    text-align: center;
+}
+.bk-check-icon{
+    font-size: 11px;
+    margin: auto;
+    position: relative;
+  
+    color: #ffffff;
+   
+}
+.bk-address-card{
+    font-size: 12px;
+    border:1px solid #a8a8a8;
+    border-radius:20px;
+    padding: 20px;
+    cursor:pointer;
+    height:100%;
+}
+.d-none{
+  display: none;
+}
 
 @media print{
  .no-print{
@@ -654,3 +688,4 @@ height: 42px;
     }
 
 }
+

@@ -115,6 +115,52 @@ function destroyAll(){
        counter=1;
         
 }
+function selectAddress(addr){
+    var addrId=$(addr).attr('id');
+   var addrIndex=addrId.split('-')[2];
+   console.log("addrr index is "+addrIndex);
+   if($('#bk-check-box-'+addrIndex).hasClass('bk-check-box-active')){
+    
+            $('#bk-check-box-'+addrIndex).removeClass('bk-check-box-active');
+            $('#location').val('');
+       $('#gps').val('');
+       $('#location').val('');
+       $('#governorate').val('');
+       $('#area').val('');
+       $('#address').val('');
+       $('#floor').val('');
+       $('#building').val('');
+       $('#block').val('');
+       $('#street').val('');
+}
+else{
+    if($('.bk-check-box').hasClass('bk-check-box-active')){
+       
+        $('.bk-check-box').removeClass('bk-check-box-active');
+        $('#bk-check-box-'+addrIndex).addClass('bk-check-box-active');
+       }
+       
+       else{
+             $('#bk-check-box-'+addrIndex).addClass('bk-check-box-active');
+       }
+       $('#location').val($('#bk-location-'+addrIndex).text());
+       $('#gps').val($('#bk-gps-'+addrIndex).text());
+       $('#location').val($('#bk-location-'+addrIndex).text());
+       $('#governorate').val($('#bk-governorateId-'+addrIndex).text());
+       $('#area').val($('#bk-areaId-'+addrIndex).text());
+       $('#address').val($('#bk-address-'+addrIndex).text());
+       $('#floor').val($('#bk-floor-'+addrIndex).text());
+       $('#building').val($('#bk-building-'+addrIndex).text());
+       $('#block').val($('#bk-block-'+addrIndex).text());
+       $('#street').val($('#bk-street-'+addrIndex).text());
+
+}
+   
+   
+  
+   
+
+}  
 
   
  
