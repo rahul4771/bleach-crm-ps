@@ -1,12 +1,12 @@
 from django.shortcuts import render
 
-from user.models import UserProfile,Address,Governorate,Area
+from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 
-from Api.serializers import UserProfileSerializer, EvaluationSerializer
+from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer
 from agent.views import generate_random_username
 
 import random
@@ -213,4 +213,50 @@ class PaymentResponseCredit(APIView):
 				closing_order.order_status = 'ORDER_CLOSED'
 				closing_order.save()
 
-		return Response(HTTP_200_OK)		
+		return Response(HTTP_200_OK)	
+
+class LeaveUsersList(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {"success":False}
+
+		try:
+			staffs = UserProfile.objects.filter(is_active=True).filter(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))
+		except:
+			staffs = None
+
+		staff_serializer = LeaveUsersSerializer(staffs,many=True).data
+		response_dict["staffs"]=staff_serializer
+		return Response(response_dict,HTTP_200_OK)
+
+class LeaveSchedule(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {"success":False}
+
+		try:
+			leaveschedules = LeaveSchedule.objects.filter(is_active=True)
+		except:
+			leaveschedules = None
+	
+	def post(self,request):
+		response_dict = {'success':False}
+		serializer = LeaveScheduleSerializer(data=request.data)
+
+		if serializer.is_valid():   
+			serializer.save(username=generate_random_username(),user_type='CUSTOMER')
+
+			response_dict['success']  = True 
+			response_dict['customer'] = serializer.data    
+		else: 
+		    errors= serializer.errors   
+		    key=tuple(errors.keys())[0] 
+		    error=errors[key]
+		    response_dict['Error']=key +':'+ error[0]
+		    response_dict['Error_List'] = serializer.errors
+
+		return Response(response_dict,HTTP_200_OK)
