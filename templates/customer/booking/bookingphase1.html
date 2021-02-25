@@ -29,7 +29,7 @@
     <title>Bleach Cleaning Services | Booking</title>
 
   </head>
-  <body>
+  <body >
   <div class="container mt-4 bk-card h-100 mb-4">
     
       <div class="row">
@@ -38,7 +38,8 @@
             <select class="form-select form-select-lg mb-3 bk-select" aria-label=".form-select-lg example " onchange="selectCheck()" name="service" id="bk-service">
                 <option selected disabled>Select Service</option>
                 <option value="general cleaning">General Cleaning</option>
-                <option value="sofa matress cleaning">Sofa Matress Cleaning</option>
+                <option value="sofa cleaning">Sofa Cleaning</option>
+                <option value="matress cleaning">Matress Cleaning</option>
                 <option value="deep cleaning">Deep Cleaning</option>
                 <option value="kitchen cleaning">Kitchen Cleaning</option>
                 <option value="sanitisation">Sanitisation</option>
@@ -178,9 +179,9 @@
                     
                     <div class="d-flex w-100" >
                         <div class="px-2">Any stain?</div>
-                        <input type="radio"  name="bk-stain-1" id="bk-stain-1-1"  onchange="checkStain(this)" value="yes" checked>
+                        <input type="radio"  name="bk-stain-1" id="bk-stain-1-1"  onchange="checkStain(this)" value="yes" >
                             <label for="bk-stain-1-1">yes</label><br>
-                        <input type="radio"  name="bk-stain-1" id="bk-stain-1-2"  value="no" onchange="checkStain(this)">
+                        <input type="radio"  name="bk-stain-1" id="bk-stain-1-2"  value="no" onchange="checkStain(this)" checked>
                         <label for="bk-stain-1-2">no</label><br>
                         
                           
@@ -225,6 +226,11 @@
                    Add 
                  </button>   <!--  To clone form-->
             </div>
+        </div>
+        <div class="row">
+          <div class="col-md-8 offset-md-2 text-right bk-total-price">
+            Total : <b>200 </b>KD
+          </div>
         </div>
 
  
