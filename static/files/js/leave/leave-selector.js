@@ -7,20 +7,7 @@ $(".lv-result-box").hide();
 $(".lv-conf").hide();
 var modalBox=false;
 var DateTime = luxon.DateTime;
-var selectedDates = [
-    {
-        name:'',
-        dates:[]
-    },
-    {
-        name:'',
-        dates:[]
-    },
-    {
-        name:'',
-        dates:[]
-    }
-];
+
 var selectedId = [];
 /*console.log("testing :"+DateTime.fromObject({ weekYear: 2016, weekNumber: 2, weekday: 3 }).toISODate());
 console.log("testing :"+DateTime.local(2016, 1).daysInMonth);
@@ -32,7 +19,7 @@ var currentDay=DateTime.local(2017, 10, 30).weekday; //CURRENT DAY
 
 $('#lv-month-select').text(DateTime.local().monthLong+' '+ DateTime.local().year);
 var resources=['Amanediel','Michael','Eve'];
-
+var selectedDates=[];
 var resourceList=[
     {
         name:'Amanediel',
@@ -60,7 +47,84 @@ var resourceList=[
             }
         ]
     },
+    {
+        name:'Chloe',
+        leave:[
+            {
+                date:'14-1-2021',
+                type:'Sick Leave'
+            }
+        ]
+    },
+    {
+        name:'Ella Lopez',
+        leave:[
+            {
+                date:'26-2-2021',
+                type:'Sick Leave'
+            },
+            {
+                date:'28-2-2021',
+                type:'Sick Leave'
+            }
+        ]
+    },
+    {
+        name:'Daniel',
+        leave:[
+            {
+                date:'12-3-2021',
+                type:'Sick Leave'
+            }
+        ]
+    },
+    {
+        name:'Charlie',
+        leave:[
+            {
+                date:'18-2-2021',
+                type:'Sick Leave'
+            }
+        ]
+    },
+    {
+        name:'Trixie',
+        leave:[
+            {
+                date:'7-2-2021',
+                type:'Maternity Leave'
+            },
+            {
+                date:'12-3-2021',
+                type:'Annual Leave'
+            }
+        ]
+    },
+    {
+        name:'Linda',
+        leave:[
+            {
+                date:'19-2-2021',
+                type:'Annual Leave'
+            }
+        ]
+    },
+    {
+        name:'Maze',
+        leave:[
+            {
+                date:'22-2-2021',
+                type:'Weekly Off'
+            }
+        ]
+    }
+
+   
+   
 ];
+for(var i=0;i<resourceList.length;i++){
+    selectedDates.push({name:'',dates:[]})
+}
 
 var noOfDays = DateTime.local(2021, currentMonth).daysInMonth;
 var found=false;
@@ -74,7 +138,7 @@ for (var k=1;k<=noOfDays;k++){
 console.log("testing :"+noOfDays);
 for (var j=0;j<resourceList.length;j++){
     var rsid=j+1;
-    $('#leave-table').append('<tr class="lv-rows" id="row-'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex ">  <img src="images/profile-picblack.jpg" align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">Sales</div></div></td></tr>');
+    $('#lv-body-head').append('<tr class="lv-rows" id="row-'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"><span class="counter-text">'+resourceList[j].leave.length+'</span></div> <img src="images/profile-picblack.jpg" align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">Sales</div></div></td></tr>');
    
     for(var i=1;i<=noOfDays;i++){
         found=false;
@@ -163,10 +227,10 @@ for (var k=1;k<=noOfDays;k++){
   
     $('#lv-head-'+k).after('<th class="noBorder day-head" id="lv-head-'+(k+1)+'"> <div class="lv-day">'+DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)+'</div></th>');
 }
-console.log("testing :"+noOfDays);
-for (var j=0;j<resources.length;j++){
+console.log("resource liST IS"+JSON.stringify(resourceList));
+for (var j=0;j<resourceList.length;j++){
     var rsid=j+1;
-    $('#leave-table').append('<tr class="lv-rows" id="row-'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex ">  <img src="images/profile-picblack.jpg" align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">Sales</div></div></td></tr>');
+    $('#lv-body-head').append('<tr class="lv-rows" id="row-'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"><span class="counter-text">'+resourceList[j].leave.length+'</span></div> <img src="images/profile-picblack.jpg" align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">Sales</div></div></td></tr>');
     for(var i=1;i<=noOfDays;i++){
         found=false;
         var today = i.toString()+'-'+currentMonth.toString()+'-'+currentYear.toString();
@@ -224,21 +288,10 @@ for(var sel=0;sel<selectedId.length;sel++){
 
 }
 function reinitVal(){
-    
-         selectedDates = [
-            {
-                name:'',
-                dates:[]
-            },
-            {
-                name:'',
-                dates:[]
-            },
-            {
-                name:'',
-                dates:[]
-            }
-        ];
+    seletedDates=[];
+    for(var i=0;i<resourceList.length;i++){
+        selectedDates.push({name:'',dates:[]});
+    }
 
 }
 function selectDay(el){
@@ -333,7 +386,7 @@ function applyLeave(){
         }
     }
     console.log("val is"+JSON.stringify( resourceList));
-    
+    selectedDates=[];
     reCalc();
     reinitVal();
     $(".lv-result-box").hide();
