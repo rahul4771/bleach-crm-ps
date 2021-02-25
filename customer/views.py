@@ -977,7 +977,7 @@ class CustomerBookingEvaluationPhase2(View):
 			existing_user = UserProfile.objects.get(mobile_number=request.POST.get('mobile_number'))
 		except:
 			existing_user = None
-			
+
 
 		if existing_user:
 			customer_form    = UserProfileForm(request.POST,instance=existing_user)			
@@ -1070,15 +1070,24 @@ class CustomerBookingEvaluationPhase3(View):
 
 
 		active_addresses = Address.objects.filter(is_active=True,currently_active=True,customer=customer_booking.evaluation.customer)
-				
-		print(active_addresses)
+
 
 		return render(request,'customer/booking/evaluationbookingphase3.html',{'governorates':governorates,'locations':locations,'active_addresses':active_addresses,})
 
 	def post(self,request,evaluationdetails_id,customerbooking_id):
 		evaluation_details = EvaluationDetails.objects.select_related('evaluation').get(id=evaluationdetails_id)
 
-		address_form              = AddressForm(request.POST)
+		#EXISTING ADDRESS OR NEW address
+		try:
+			update_address = Address.objects.get(id=request.POST.get('address_id'))
+		except:
+			update_address = None
+
+		if update_address:
+			address_form              = AddressForm(request.POST,instance=update_address)
+		else:
+			address_form              = AddressForm(request.POST)
+
 
 		if address_form.is_valid():
 			###save address details###
