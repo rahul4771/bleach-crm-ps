@@ -1,31 +1,9 @@
-<!DOCTYPE html>
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="Author" content="Bleach Kuwait">
-<meta name="Email" content="contact@bleach-kw.com">
-<meta name="Copyright" content="http://bleach-kw.com">
-<meta name="Distribution" content="Global">
-<meta name="Rating" content="General">
-<meta name="Language" content="en">
-<meta name="Description" content="Home - Bleach Housekeepin">
-<meta name="Keywords" content="We at Bleach always strive to meet our customers need for exceptional housecleaning and housekeeping services in their homes, apartments and offices">
-<meta name="Robots" content="index, follow">
-<title>Bleach - KW | Dashboard Senior Team Leader</title>
-<link href="css/main.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
-<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<link rel="stylesheet" href="./css/leave-selector.css">
-<link rel="stylesheet" href="./css/select-box.css">
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "stl/common/header.html" %} 
 
-
- 
-</head>
-<body >
 <div class="wrapper"><!--wrapper-->
     <div class="modal fade" id="myModal" role="dialog">
         <div class="modal-dialog">
@@ -214,18 +192,5 @@
         </div><!--container-fluid space-->
     </section><!--content-->
 </div><!--wrapper-->
+{% endblock %}
 
-<script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-157cd5b220a5c80d4ff8e0e70ac069bffd87a61252088146915e8726e5d9f147.js"></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
-<script src='js/toggle-menu.js'></script> 
-<script src='js/hyperlink.js'></script> 
-<script src='js/hor-scroll.js'></script>  
-<script src='js/evaluation-tableScroll.js'></script> 
-<script src='js/date-conf-task-scroll.js'></script>
-
-<script src="https://cdn.jsdelivr.net/npm/luxon@1.26.0/build/global/luxon.js"></script>
-<script src="./js/leave-selector.js"> </script>
-<script src="./js/select-box.js"> </script>
-</body>
-</html>

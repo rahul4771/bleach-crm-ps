@@ -59,6 +59,11 @@
 <link href='https://fonts.googleapis.com/css?family=Roboto:300italic,400italic,400,100,300,600,700' rel='stylesheet' type='text/css'>
 <!--new message wrapper-->
 
+<!-- leave selector -->
+<link rel="stylesheet" href="{% static 'files/css/leave/leave-selector.css' %}">
+<link rel="stylesheet" href="{% static 'files/css/leave/leave-box.css' %}">
+<!-- leave selector -->
+
 {% block css_links %}
 {% endblock %}
 {% block xtra_css %}
@@ -103,7 +108,13 @@
 <!--gallery javascript-->
 <script src="{% static 'files/js/main.js' %}"></script>
 <!--gallery javascript-->
- 
+
+<!-- leave selector js -->
+<script src="https://cdn.jsdelivr.net/npm/luxon@1.26.0/build/global/luxon.js"></script>
+<script src="{% static 'files/js/leave/leave-selector.js' %}"> </script>
+<script src="{% static 'files/js/leave/select-box.js' %}"> </script>
+<!-- leave selector js -->
+
 <script src="{% static 'files/js/hyperlink.js' %}"></script> 
 <script src="{% static 'files/js/hor-scroll.js' %}"></script>
 <script src="{% static 'files/js/date-conf-task-scroll.js' %}"></script>
