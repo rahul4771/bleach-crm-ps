@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="Author" content="Bleach Kuwait">
+<meta name="Email" content="contact@bleach-kw.com">
+<meta name="Copyright" content="http://bleach-kw.com">
+<meta name="Distribution" content="Global">
+<meta name="Rating" content="General">
+<meta name="Language" content="en">
+<meta name="Description" content="Home - Bleach Housekeepin">
+<meta name="Keywords" content="We at Bleach always strive to meet our customers need for exceptional housecleaning and housekeeping services in their homes, apartments and offices">
+<meta name="Robots" content="index, follow">
+<title>Bleach - KW | Dashboard Senior Team Leader</title>
+<link href="css/main.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="./css/leave-selector.css">
+<link rel="stylesheet" href="./css/select-box.css">
+
+
+ 
+</head>
+<body >
+<div class="wrapper"><!--wrapper-->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+        
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+              <div class="modal-date"></div>
+              <div class="modal-resource"></div>
+             
+            </div>
+            <div class="modal-footer ">
+                <div class="text-left lv-conf">
+                    Are you sure to cancel the leave ? 
+                    <button type="button" class="btn btn-default"  onclick="cancelLeave()">Yes</button>
+                    <button type="button" class="btn btn-default"  onclick="closeConf()">No</button>
+
+                </div>
+                <button type="button" class="btn btn-danger"  onclick="openConf()" id="lv-cancel-btn">Cancel Leave</button>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+	<header class="header">
+        <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid top-bg"><!--container-fluid top-bg-->
+            <div class="navbar-header"><!--navbar-header-->
+            <a class="navbar-brand" href="#"><div class="logo"><img  src="images/logo.svg"></div><span class="logo-text">Bleach-Kw</span></a>
+            </div><!--navbar-header-->
+                <div class="three">
+                <ul class="nav navbar-nav">
+                <li class="nav-item"><a class="nav-link " href="#" role="button" data-toggle-sidebar ><i class="fa fa-fw fa-bars three-line"></i><span class="sr-only">Toggle navigation</span></a></li>
+                </ul>
+                </div>
+            <div >
+            <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+            <a href="#" class="dropdown-toggle  white-text" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user  white-text"></i> <span class="white-text">Profile</span> 
+            <span class="caret  white-text"></span></a>
+            <ul class="dropdown-menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Sign out</a></li>
+            </ul>
+            </li>
+            <li><a href="#"><i class="fa fa-bell-o white-text"></i><span class="sr-only">Notifications</span></a></li>
+            </ul>
+            </div>
+        </div><!--container-fluid top-bg-->
+        </nav>
+    </header>    
+
+     	<aside class="main-sidebar">
+        <section>
+        	<div class="user-type-wrapper"><!--user-type-wrapper-->
+        	<br>
+                <ul id="accordion" class="">
+                <li class="profile-avatar"><img src="images/usertype-avtar.svg"></li>
+                <li class="profile-name">Johndoe<br><span>Senior Team Leader</span></li>
+                </ul>
+            </div><!--user-type-wrapper-->
+            <br><br>
+            <ul id="accordion" class="nav">
+                <li class="active lhs-home"><a href="dashboard-agent.html" title="My Dashboard"><span>My Dashboard</span></a> <div class="active-right"></div></li>
+                <li class="lhs-tickets"><a href="tickets.html" title="Tickets"><span>Tickets</span></a></li>
+                <li class="lhs-tickets"><a href="leave.html" title="Tickets"><span>Leave Management</span></a></li>
+            </ul>
+        </section>
+    </aside>
+    
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Welcome to Dashboard</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+            </div><!--welcome-wrapper-->
+          
+            
+     <div class="main-content-holder"><!--main-content-holder-->            
+          
+     
+
+<div class="white-wrapper" style="overflow:auto"><!--white-wrapper-->
+    
+  <div class="lv-month d-flex">
+    <div class="select-container">
+       
+      
+          <div class="lv-dropdown">
+            <div class="select">
+              <span>Select category</span>
+              <i class="fa fa-chevron-left"></i>
+            </div>
+            <input type="hidden" name="gender">
+            <ul class="lv-dropdown-menu">
+              <li id="all">ALL</li>
+              <li id="team-leader">TEAM LEADER</li>
+              <li id="team-incharge">TEAM INCHARGE</li>
+            </ul>
+          </div>
+      
+    </div>
+     <!--<div>
+    
+    <select class="form-control lv-category" style="max-width:100%">
+      <option value="ALL">ALL</option>
+      <option value="TEAM LEADER">TEAM LEADER</option>
+      <option value="TEAM INCHARGE">TEAM INCHARGE</option>
+   
+     
+    </select>
+</div>-->
+    <span class="material-icons next-arrow"  onclick="previousMonth()">
+        arrow_backward
+        </span>
+        <span class="material-icons next-arrow"  onclick="nextMonth()">
+            arrow_forward
+            </span>
+    <span class="lv-month-select" id="lv-month-select">JANUARY 2021</span>
+    <div class="lv-add-btn" onclick="openForm()">
+      +
+    </div>
+    <div class="lv-result-box">
+     
+           <!-- <div class="lv-form-group">
+              <label for="lv-result-content" class="lv-result-label">Type</label>
+            <select class="form-control" id="lv-result-content" style="max-width:100%">
+                <option value="Annual Leave">Annual Leave</option>
+                <option value="Weekly Off">Weekly Off</option>
+                <option value="Sick Leave">Sick Leave</option>
+                <option value="Maternity/Paternity">Maternity/Paternity</option>
+               
+              </select>
+            </div>-->
+            <div class="select-container" style="width:auto">
+       
+      
+                <div class="lv-dropdown" style="width:80%;margin:10%">
+                  <div class="select" style="width:100%;" >
+                    <span id="lv-result-content">Leave Type</span>
+                    <i class="fa fa-chevron-left"></i>
+                  </div>
+                  <input type="hidden" name="leave-type">
+                  <ul class="lv-dropdown-menu">
+                    <li  >Annual Leave</li>
+                    <li >Weekly Off</li>
+                    <li >Sick Leave</li>
+                    <li >Maternity/Paternity</li>
+                  </ul>
+                </div>
+            
+          </div>
+
+           
+            <div class="d-flex">
+            <div class="lv-submit-btn" onclick="applyLeave()">
+              Apply
+            </div>
+            <div class="lv-submit-btn"  onclick="closeForm()">
+              Cancel
+            </div>
+          </div>
+     
+    </div>
+  </div>
+<table cellspacing="0" cellpadding="0" id="leave-table" >
+  <th width="200" class="noBorder " id="lv-head-1"  >
+
+  </th>
+ 
+</table>
+
+</div>
+            
+            
+            
+       
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+</div><!--wrapper-->
+
+<script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-157cd5b220a5c80d4ff8e0e70ac069bffd87a61252088146915e8726e5d9f147.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
+<script src='js/toggle-menu.js'></script> 
+<script src='js/hyperlink.js'></script> 
+<script src='js/hor-scroll.js'></script>  
+<script src='js/evaluation-tableScroll.js'></script> 
+<script src='js/date-conf-task-scroll.js'></script>
+
+<script src="https://cdn.jsdelivr.net/npm/luxon@1.26.0/build/global/luxon.js"></script>
+<script src="./js/leave-selector.js"> </script>
+<script src="./js/select-box.js"> </script>
+</body>
+</html>
