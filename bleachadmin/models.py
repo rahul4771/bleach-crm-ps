@@ -1,3 +1,16 @@
 from django.db import models
+from evaluator.models import ServiceType
 
-# Create your models here.
+class ServiceProductivity(models.Model):
+	service_type     = models.ForeignKey(ServiceType,blank=True,null=True,related_name='productivity_service_type')
+	perhour_cleaning = models.CharField(max_length=100,blank=True,null=True)
+	perunit_price    = models.FloatField(blank=True,null=True)
+
+	is_active    = models.BooleanField(null=False,blank=True,default=True)
+	created      = models.DateTimeField(auto_now_add=True)
+	updated      = models.DateTimeField(auto_now=True)
+	def __unicode__(self):
+		return str(self.service_type.name)
+
+	def __str__(self):
+		return self.service_type.name
