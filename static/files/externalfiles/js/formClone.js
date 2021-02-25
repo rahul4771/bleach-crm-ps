@@ -8,9 +8,10 @@ var counter = 1;
         var el = $('#bk-item-1').clone().attr({'id': 'bk-item-' + ++counter}).appendTo('#bk-main-form');
        
         $('#bk-item-'+counter).find('#bk-title-1').attr('id', 'bk-title-'+counter);  /*To change title id */
+        
        
         $('#bk-item-'+counter).find('#bk-del-btn-1').attr('id', 'bk-del-btn-'+counter);
-        $('#bk-title-'+counter).html($(".bk-select").val()+counter); /* To change title */
+        $('#bk-title-'+counter).html($(".bk-select").val().split(' ')[0]+' '+counter); /* To change title */
         $('#bk-item-'+counter).find('#bk-size-1').attr({'id': 'bk-size-'+counter,'name': 'bk-size-'+counter}).val(''); /*To change name & id of size*/ 
         $('#bk-item-'+counter).find('#bk-age-1').attr({'id': 'bk-age-'+counter,'name': 'bk-age-'+counter}).val(''); /*To change name & id of age*/
         $('#bk-item-'+counter).find("#bk-material-1").attr({'id': 'bk-material-'+counter,'name': 'bk-material-'+counter}).val(''); /*To change name of material*/
@@ -52,7 +53,7 @@ var counter = 1;
     $('#bk-title-'+nextVal).attr('id', 'bk-title-'+currentVal);
     $('#bk-del-btn-'+nextVal).attr('id', 'bk-del-btn-'+currentVal);
     $('#bk-del-btn-'+currentVal).show()
-    $('#bk-title-'+currentVal).html($(".bk-select").val()+' '+currentVal); /* To change title */
+    $('#bk-title-'+currentVal).html($(".bk-select").val().split(' ')[0]+' '+currentVal); /* To change title */
     $('#bk-size-'+nextVal).attr({'id': 'bk-size-'+currentVal,'name': 'bk-size-'+currentVal});
     $('#bk-age-'+nextVal).attr({'id': 'bk-age-'+currentVal,'name': 'bk-age-'+currentVal});
     $('#bk-material-'+nextVal).attr({'id': 'bk-material-'+currentVal,'name': 'bk-material-'+currentVal});

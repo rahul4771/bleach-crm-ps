@@ -355,6 +355,10 @@ outline: none !important;
     cursor:pointer;
     height:100%;
 }
+.bk-total-price{
+    font-size:18px;
+    
+}
 .d-none{
   display: none;
 }
