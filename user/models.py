@@ -121,6 +121,19 @@ class UserProfile(AbstractUser):
     	return self.username
 
 
+class LeaveSchedule(models.Model):
+    staff           = models.ForeignKey('UserProfile',blank=False,null=False,related_name='leave_staff')
+    leave_date      = models.DateField(blank=True,null=True)
+    created_by      = models.ForeignKey('UserProfile',blank=True,null=True,related_name='stl_user')
+    is_active       = models.BooleanField(null=False,blank=True,default=True)
+    created         = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+    	return str(self.staff.username+self.leave_date)
+
+    def __str__(self):
+    	return self.staff.username+self.leave_date
+
 class Governorate(models.Model):
     name            = models.CharField(max_length=100,blank=False,null=False)
     name_arabic     = models.CharField(max_length=100,blank=False,null=False)

@@ -1234,3 +1234,6 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 
 		return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)
 
+class LeaveScheduler(IsSeniorTeamLeader,View):
+	def get(self,request):
+		return render(request,'stl/leavescheduler/leave.html',{})
