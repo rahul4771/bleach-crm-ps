@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.admin import UserAdmin
 
-from user.models import UserProfile,Governorate,Area,Address
+from user.models import UserProfile,Governorate,Area,Address,LeaveSchedule
 # Register your models here.
 
 
@@ -49,4 +49,5 @@ class GovernorateAdmin(admin.ModelAdmin):
 admin.site.register(UserProfile,CustomUserAdmin)
 admin.site.register(Governorate,GovernorateAdmin)
 admin.site.register(Area)
-admin.site.register(Address)       
+admin.site.register(Address)    
+admin.site.register(LeaveSchedule)       

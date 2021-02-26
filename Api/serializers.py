@@ -23,7 +23,7 @@ class LeaveUsersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model  = UserProfile
-        fields = ('id','name','photo_url') 
+        fields = ('id','name','user_type','photo_url') 
 
     def get_photo_url(self, car):
         request = self.context.get('request')
