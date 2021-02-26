@@ -10,28 +10,90 @@
                 <h1 class="dashboard-head">Leave Scheduler</h1>
                 <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>    
             </div><!--welcome-wrapper-->
-          
+            <!-- Modal -->
+            <!-- Button trigger modal -->
+
             
      <div class="main-content-holder"><!--main-content-holder-->            
           
-     
+  
 
 <div class="white-wrapper" style="overflow:auto"><!--white-wrapper-->
+ 
+  <!--<div id="myModal" class="lv-modal" >
+    <div class="modal-dialog">
+    
+     
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body">
+          <div class="modal-date"></div>
+          <div class="modal-resource"></div>
+         
+        </div>
+        <div class="modal-footer ">
+            <div class="text-left lv-conf">
+                Are you sure to cancel the leave ? 
+                <button type="button" class="btn btn-default"  onclick="cancelLeave()">Yes</button>
+                <button type="button" class="btn btn-default"  onclick="closeConf()">No</button>
+
+            </div>
+            <button type="button" class="btn btn-danger"  onclick="openConf()" id="lv-cancel-btn">Cancel Leave</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>-->
+  <div id="cancelModal" class="lv-modal" >
+    <div class="lv-modal-dialog">
+    
+     
+      <div class="lv-modal-content">
+        <div class="lv-modal-header">
+          <div class="lv-close" onclick="closeCancelModal()">
+            <span class="modal-title "></span>
+            <i class="fa fa-close lv-close-btn" style="float:right"></i>
+            
+          </div>
+        
+          
+        </div>
+        <div class="lv-modal-body " >
+          <div class="modal-date"></div>
+          <div class="modal-resource"></div>
+         
+        </div>
+        <div class="lv-modal-footer ">
+            <div class="text-left lv-conf">
+                Are you sure to cancel the leave ? 
+                <button type="button" class="btn btn-default"  onclick="cancelLeave()">Yes</button>
+                <button type="button" class="btn btn-default"  onclick="closeConf()">No</button>
+
+            </div>
+            <button type="button" class="btn btn-danger lv-modal-btn"  onclick="openConf()" id="lv-cancel-btn">Cancel Leave</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
     
   <div class="lv-month d-flex">
     <div class="select-container">
        
       
           <div class="lv-dropdown">
-            <div class="select">
-              <span>Select category</span>
+            <div class="select" >
+              <span id="lv-category">ALL</span>
               <i class="fa fa-chevron-left"></i>
             </div>
-            <input type="hidden" name="gender">
-            <ul class="lv-dropdown-menu">
-              <li id="all">ALL</li>
-              <li id="team-incharge">TEAM INCHARGE</li>
-              <li id="team-leader">CLEANER</li>        
+            <input type="hidden" name="user-type"  >
+            <ul class="lv-dropdown-menu" >
+              <li id="all" onclick="resetResources('ALL')">ALL</li>
+              <li id="team-incharge" onclick="resetResources('TEAM IN CHARGE')">TEAM IN CHARGE</li>
+              <li id="cleaner" onclick="resetResources('CLEANER')">CLEANER</li>        
             </ul>
           </div>
       
@@ -71,12 +133,12 @@
             <div class="select-container" style="width:auto">
        
       
-                <div class="lv-dropdown" style="width:80%;margin:10%">
+                <div class="lv-dropdown" style="width:80%;margin:10%" >
                   <div class="select" style="width:100%;" >
-                    <span id="lv-result-content">Leave Type</span>
+                    <span id="lv-result-content" >Leave Type</span>
                     <i class="fa fa-chevron-left"></i>
                   </div>
-                  <input type="hidden" name="leave-type">
+                  <input type="hidden" name="leave-type" >
                   <ul class="lv-dropdown-menu">
                     <li  >Annual Leave</li>
                     <li >Weekly Off</li>
@@ -120,6 +182,7 @@
        
       </div><!--main-content-holder-->
         </div><!--container-fluid space-->
+        
     </section><!--content-->
 
 {% endblock %}
