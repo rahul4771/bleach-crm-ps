@@ -1,5 +1,5 @@
 
-var url='http://localhost:8000';
+var url='https://test.bleach-kw.com';
 var resourceList=[];
 var cleanerList=[];
 var teamLeaderList=[];
