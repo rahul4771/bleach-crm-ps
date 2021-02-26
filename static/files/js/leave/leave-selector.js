@@ -6,6 +6,7 @@ var teamLeaderList=[];
 var leaveSheet=[];
 var leaveId='';
 var modaluser='';
+var newResource=[];
 
 getUsers();
 
@@ -22,7 +23,7 @@ var currentYear=DateTime.local().year;   //CURRENT YEAR
 var currentDay=DateTime.local(2017, 10, 30).weekday; //CURRENT DAY
 
 $('#lv-month-select').text(DateTime.local().monthLong+' '+ DateTime.local().year);
-var resources=['Amanediel','Michael','Eve'];
+var resources=[];
 var selectedDates=[];
 var resourceLeave=[];
 
@@ -48,7 +49,7 @@ for (var k=1;k<=noOfDays;k++){
 console.log("testing :"+noOfDays);
 for (var j=0;j<resourceList.length;j++){
     var rsid=j+1;
-    $('#lv-body-head').append('<tr class="lv-rows" id="row-'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"><span class="counter-text">'+resourceList[j].leave.length+'</span></div> <img src="'+resourceList[j].photo_url+'"align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">Sales</div></div></td></tr>');
+    $('#lv-body-head').append('<tr class="lv-rows" id="row-'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"><span class="counter-text">'+resourceList[j].leave.length+'</span></div> <img src="'+resourceList[j].photo_url+'"align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">'+resourceList[j].user_type+'</div></div></td></tr>');
    
     for(var i=1;i<=noOfDays;i++){
         found=false;
@@ -141,7 +142,7 @@ for (var k=1;k<=noOfDays;k++){
 console.log("resource liST IS"+JSON.stringify(resourceList));
 for (var j=0;j<resourceList.length;j++){
     var rsid=j+1;
-    $('#lv-body-head').append('<tr class="lv-rows" id="row-'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"><span class="counter-text">'+resourceList[j].leave.length+'</span></div> <img src="images/profile-picblack.jpg" align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">Sales</div></div></td></tr>');
+    $('#lv-body-head').append('<tr class="lv-rows" id="row-'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"><span class="counter-text">'+resourceList[j].leave.length+'</span></div> <img src="images/profile-picblack.jpg" align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">'+resourceList[j].user_type+'</div></div></td></tr>');
     for(var i=1;i<=noOfDays;i++){
         found=false;
         var today = i.toString()+'-'+currentMonth.toString()+'-'+currentYear.toString();
@@ -358,6 +359,7 @@ function getUsers(){
     
     
       resourceList=[];
+      resources=[];
    console.log("called me");
     axios.get(url+'/api/leave-users-list/')
 .then(function (response) {
@@ -374,6 +376,7 @@ function getUsers(){
   
      
         resourceList.push(staffData);
+        resources.push(staffData);
    
     
    
@@ -381,6 +384,7 @@ function getUsers(){
 
     
 }
+
 getLeave();
 
 })
@@ -390,8 +394,9 @@ getLeave();
 })
 }
 function resetResources(category){
-    
-    var newResource=[];
+    console.log("category is"+category);
+    resourceList=resources;
+    newResource=[];
     if(category=='ALL')
         {  
             for(var i=0;i<resourceList.length;i++){
@@ -425,7 +430,7 @@ function resetResources(category){
        
     }
     resourceList=newResource;
-    console.log("new list is "+JSON.stringify(resourceList));
+    reCalc();
    
 }
 function getLeave(){
@@ -452,6 +457,7 @@ function getLeave(){
     }
     resourceList[userIndex].leave.push({date:gt_day+'-'+gt_month+'-'+gt_year,type:response.data.staffs[i].leave_type,leave_id:response.data.staffs[i].id});
     }
+    
    
     getInitDatas();
    

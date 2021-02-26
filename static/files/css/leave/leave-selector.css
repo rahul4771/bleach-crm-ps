@@ -278,6 +278,9 @@
   .modal-resource{
       padding-top:20px;
   }
+  .lv-modal{
+      display:none;
+  }
   
   @media only screen and (max-width: 600px) {
       .lv-month{
