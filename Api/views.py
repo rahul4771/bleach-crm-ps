@@ -249,18 +249,22 @@ class LeaveScheduleAPI(APIView):
 	
 	def post(self,request):
 		response_dict = {'success':False}
-		serializer = LeaveScheduleSerializer(data=request.data)
+		print(request.data,"dattt")
 
-		if serializer.is_valid():   
-			serializer.save()
+		for schedule in request.data:
+			serializer = LeaveScheduleSerializer(data=schedule)
+			
+			if serializer.is_valid(): 
+				print(serializer,"serial")  
+				serializer.save()
 
-			response_dict['success']  = True 
-			response_dict['customer'] = serializer.data    
-		else: 
-		    errors= serializer.errors   
-		    key=tuple(errors.keys())[0] 
-		    error=errors[key]
-		    response_dict['Error']=key +':'+ error[0]
-		    response_dict['Error_List'] = serializer.errors
+				response_dict['success']  = True 
+				response_dict['customer'] = serializer.data    
+			else: 
+				errors= serializer.errors   
+				key=tuple(errors.keys())[0] 
+				error=errors[key]
+				response_dict['Error']=key +':'+ error[0]
+				response_dict['Error_List'] = serializer.errors
 
 		return Response(response_dict,HTTP_200_OK)
