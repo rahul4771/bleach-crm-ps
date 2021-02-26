@@ -227,7 +227,7 @@ class LeaveUsersList(APIView):
 			staffs = UserProfile.objects.filter(is_active=True).filter(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))
 		except:
 			staffs = None
-
+		
 		staff_serializer = LeaveUsersSerializer(staffs,many=True).data
 		response_dict["staffs"]=staff_serializer
 		return Response(response_dict,HTTP_200_OK)
