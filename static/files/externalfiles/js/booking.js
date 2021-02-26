@@ -38,25 +38,25 @@ function selectCheck(){
     deactivateEval();
     $("#bk-evaluation-btn").show();
     var selectedVal=$(".bk-select").val();
-    if(selectedVal=='sofa cleaning'||selectedVal=='matress cleaning'||selectedVal=='kitchen cleaning'||selectedVal=='carpet cleaning'||selectedVal=='sanitisation'){
+    if(selectedVal=='Sofa Cleaning'||selectedVal=='Mattress Cleaning'||selectedVal=='Kitchen Cleaning'||selectedVal=='Carpet Cleaning'||selectedVal=='Sterilization'){
         $('#bk-title-1').html(selectedVal.split(' ')[0]+' 1')
         $("#bk-job-booking-btn").show();
-        if(selectedVal=='matress cleaning'){
-            $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-size-1" name="bk-size-1"><option selected disabled>Select Size</option><option value="single">Single</option><option value="queen">Queen </option><option value="queen">King </option> </select></div>')
+        if(selectedVal=='Mattress Cleaning'){
+            $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><select class="form-select  mb-3 bk-select size" aria-label=".form-select-lg example " id="bk-size-1" name="bk-size-1" onchange="durationcalculation(this);"><option selected disabled>Select Size</option><option value="single">Single</option><option value="queen">Queen </option><option value="queen">King </option> </select></div>')
         }
         else {
-            if(selectedVal=='sofa cleaning')
+            if(selectedVal=='Sofa Cleaning')
             {
-                $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1"><span class="input-group-text" id="basic-addon2">Seater</span> </div>')
+                $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control size" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1" onkeyup="durationcalculation(this);"><span class="input-group-text" id="basic-addon2">Seater</span> </div>')
 
             }
             else{
-                $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1"><span class="input-group-text" id="basic-addon2">㎡</span> </div>')
+                $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control size" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1" onkeyup="durationcalculation(this);"><span class="input-group-text" id="basic-addon2">㎡</span> </div>')
 
             }
 
         }
-        if(selectedVal=='kitchen cleaning'){
+        if(selectedVal=='Kitchen Cleaning'){
           
             $('#bk-stain-1-1').parent().replaceWith('<div class="d-flex w-100" ><div class="px-2">Oil residue ?</div><input type="radio"  name="bk-stain-1" id="bk-stain-1-1"   value="yes"><label for="bk-stain-1-1">yes</label><br><input type="radio"  name="bk-stain-1" id="bk-stain-1-2"  value="no" checked><label for="bk-stain-1-2">no</label><br> </div>');
 
@@ -240,3 +240,135 @@ else{
 
   
  
+//Cleaning booking scripts
+function durationcalculation(params)
+  {
+    //to find total size
+    sectioncounter = $('#sectioncounter_id').val();
+    total_estimated_size = 0
+    for(i=1;i<=sectioncounter;i++)
+    {
+        size = $('#bk-size-'+i).val() 
+        if (size == '')
+        {
+            size = 0;
+        }
+
+        total_estimated_size += parseFloat(size);
+    }
+
+    //Ajax for finding productivity of perticular service
+    selected_service = $('#bk-service').val();
+    $.ajax({
+
+        url: "/customer/ajax/getserviceproductivity",
+
+        data: {'service_type':selected_service}, 
+
+        dataType: 'json',
+
+        success: function (data) {
+            //find duration and no of cleaners based on productivity
+            total_estimated_size = total_estimated_size
+            productivity         = data['perhour_cleaning'];
+            
+            //optimal manhour finding
+            manhour = parseInt(total_estimated_size/productivity)
+            r       = 2 ** (manhour.toString().length-1)
+            mod     = manhour%r
+            
+            if (mod > parseInt(r/2))
+            {
+              n= manhour+(r-mod);
+            }
+            else
+            {
+              n = manhour-mod;
+            }
+            console.log(n,"n");
+            for(i=1;i<parseInt(n ** (1/2))+1;i++)
+            {
+              if(n%i == 0)
+                {
+                  pair = [i,n/i];
+                }
+            }
+            console.log(pair,"pair");
+            max_cleaners = data['max_cleaners']
+            max_cleaners = 10
+
+            duration_list = [];
+            upper_loop    = 2;
+            lower_loop    = 2;
+            middle_element=pair[0]
+
+            if(middle_element<=max_cleaners)
+            {
+              duration_list.push(pair);
+              //upperloop and lowerloop setup
+              for(i=1;i<=2;i++)
+              {
+                if((middle_element-i)<=0)
+                {
+                  upper_loop = upper_loop+(2-i)+1;
+                  lower_loop = lower_loop-((2-i)+1)
+                } 
+                if((middle_element+i) > max_cleaners)
+                {
+                  lower_loop = lower_loop+(2-i)+1;
+                  upper_loop = upper_loop-((2-i)+1)
+                }
+              }
+              console.log(upper_loop,"upperloop")
+              console.log(lower_loop,"lowerloop")
+              //lower
+              for(i=1;i<=lower_loop;i++)
+              {
+                if((middle_element-i)>0 && (middle_element-i) <= max_cleaners)
+                {
+                  duration_list.push([(middle_element-i),n/(middle_element-i)])
+                }
+              }
+              //upper
+              for(i=1;i<=upper_loop;i++)
+              {
+                if((middle_element+i)>0 && (middle_element+i) <= max_cleaners)
+                {
+                  duration_list.push([(middle_element+i),n/(middle_element+i)])
+                } 
+              }
+            }
+
+            
+            else
+            {
+              middle_element = max_cleaners;
+              duration_list.push([(middle_element),n/(middle_element)])
+              for(i=1;i<=5;i++)
+              {
+                if((middle_element-i)>0)
+                {
+                  duration_list.push([(middle_element-i),n/(middle_element-i)])
+                }
+              }
+            }
+            console.log(duration_list)
+
+            //APPEND SLOTE
+            $("#bk-duration").empty()
+            for(i=0;i<duration_list.length;i++)
+              {
+                $("#bk-duration").append($('<option>', {        
+                      value: duration_list[i][1],   
+                      text: duration_list[i][0]+" Cleaners "+duration_list[i][1]+" Hours"  
+                    }));
+                }
+            //total price calculation
+            totalprice = total_estimated_size*data['perunit_price'];
+            $('#bk-total-price').html(totalprice);
+
+                   }
+         });
+
+  }
+

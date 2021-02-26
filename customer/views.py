@@ -25,6 +25,7 @@ from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investi
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
+from bleachadmin.models import ServiceProductivity
 from agent.forms import UserProfileForm,AddressForm
 from itertools import chain
 from agent.views import generate_random_username
@@ -906,10 +907,46 @@ def GetEvaluationBookingSlotes(request):
 	return JsonResponse(dropdown_slotes)
 
 
+def GetServiceProductivity(request):
+	service_productivity = {}
+	service_type = request.GET.get('service_type')
+
+	serviceproductivity = ServiceProductivity.objects.select_related('service_type').get(service_type__name=service_type)
+	service_productivity['perhour_cleaning'] = serviceproductivity.perhour_cleaning
+	service_productivity['perunit_price']    = serviceproductivity.perunit_price
+
+	if service_type == 'Kitchen Cleaning':
+		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_kitchen_skill=True).count()
+	elif service_type == 'Carpet Cleaning':
+		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_carpet_skill=True).count()
+	elif service_type == 'Sterilization':
+		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_sterilization_skill=True).count()
+	elif service_type == 'Mattress Cleaning':
+		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_deep_skill=True).count()
+	elif service_type == 'Sofa Cleaning':
+		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_sofa_skill=True).count()
+	if total_cleaners > 0:
+		total_cleaners = total_cleaners-1
+	service_productivity['max_cleaners'] = total_cleaners
+
+	return JsonResponse(service_productivity)
+
 
 class CustomerBookingPhase1(View):
 	def get(self,request):
-		return render(request,'customer/booking/bookingphase1.html',{})
+		
+		try:
+			service_types = ServiceType.objects.filter(is_active=True)
+		except:
+			service_types = None
+
+		try:
+			area_types = AreaType.objects.filter(is_active=True)
+		except:
+			area_types = None
+
+		return render(request,'customer/booking/bookingphase1.html',{"service_types":service_types,"area_types":area_types,})
+	
 	def post(self,request):
 		print(request.POST)
 		proposed_date                     = request.POST.get('booking_date')

@@ -26,9 +26,11 @@ urlpatterns = [
 		url(r'^order-detail/download/(?P<order_id>[-\w]+)/(?P<service_id>[-\w]+)/(?P<section_id>[-\w]+)$',views.orderdetail_html_to_pdf_view,name='order-detail-download'),
 		url(r'^terms-and-conditions/download$',views.termsandconditions_to_pdf,name='terms-conditions-download'),
 
-
+		##booking related uls
 		url(r'^ajax/evaluationslotes$',views.GetEvaluationBookingSlotes,name='ajax-getevaluationslotes'),
 		url(r'^ajax/customerdetails$',views.GetCustomerDetails,name='ajax-customerdetails'),
+
+		url(r'^ajax/getserviceproductivity$',views.GetServiceProductivity,name='ajax-serviceproductivity'),
 
 		url(r'^booking/phase1$',views.CustomerBookingPhase1.as_view(),name='customerbookingphase1'),
 
