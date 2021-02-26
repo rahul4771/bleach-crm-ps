@@ -199,4 +199,4 @@ class LeaveSchedule(models.Model):
     	return str(self.staff.username+self.leave_date)
 
     def __str__(self):
-    	return self.staff.username+self.leave_date
+    	return self.staff.username+str(self.leave_date)

@@ -231,24 +231,28 @@ class LeaveUsersList(APIView):
 		response_dict["staffs"]=staff_serializer
 		return Response(response_dict,HTTP_200_OK)
 
-class LeaveSchedule(APIView):
+class LeaveScheduleAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
 
 	def get(self,request):
 		response_dict = {"success":False}
 
-		try:
-			leaveschedules = LeaveSchedule.objects.filter(is_active=True)
-		except:
-			leaveschedules = None
+		# try:
+		leaveschedules = LeaveSchedule.objects.all()
+		# except:
+		# 	leaveschedules = None
+		print(leaveschedules,"lvsched")
+		leaveschedule_serializer = LeaveScheduleSerializer(leaveschedules,many=True).data
+		response_dict["staffs"]=leaveschedule_serializer
+		return Response(response_dict,HTTP_200_OK)
 	
 	def post(self,request):
 		response_dict = {'success':False}
 		serializer = LeaveScheduleSerializer(data=request.data)
 
 		if serializer.is_valid():   
-			serializer.save(username=generate_random_username(),user_type='CUSTOMER')
+			serializer.save()
 
 			response_dict['success']  = True 
 			response_dict['customer'] = serializer.data    

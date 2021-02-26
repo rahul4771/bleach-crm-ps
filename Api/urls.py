@@ -7,6 +7,6 @@ urlpatterns = [
 	url(r'^basicdetails/$',views.ApiBasicDetails.as_view(),name='api-basicdetails'),
 	url(r'^evaluation-booking/$',views.EvaluationBooking.as_view(),name='api-evaluationbooking'),
 	url(r'^leave-users-list/$',views.LeaveUsersList.as_view(),name='api-leave-users-list'),
-	url(r'^leave-scheduler/$',views.LeaveSchedule.as_view(),name='api-leaveschedule'),
+	url(r'^leave-scheduler/$',views.LeaveScheduleAPI.as_view(),name='api-leaveschedule'),
 	url(r'^payment/response/credit/$',views.PaymentResponseCredit.as_view(),name='api-responsecredit'),
 ]
