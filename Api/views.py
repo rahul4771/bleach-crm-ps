@@ -238,10 +238,11 @@ class LeaveScheduleAPI(APIView):
 	def get(self,request):
 		response_dict = {"success":False}
 
-		# try:
-		leaveschedules = LeaveSchedule.objects.all()
-		# except:
-		# 	leaveschedules = None
+		try:
+			leaveschedules = LeaveSchedule.objects.filter(is_active=True)
+		except:
+			leaveschedules = None
+
 		print(leaveschedules,"lvsched")
 		leaveschedule_serializer = LeaveScheduleSerializer(leaveschedules,many=True).data
 		response_dict["staffs"]=leaveschedule_serializer
@@ -249,17 +250,13 @@ class LeaveScheduleAPI(APIView):
 	
 	def post(self,request):
 		response_dict = {'success':False}
-		print(request.data,"dattt")
 
 		for schedule in request.data:
 			serializer = LeaveScheduleSerializer(data=schedule)
 			
 			if serializer.is_valid(): 
-				print(serializer,"serial")  
 				serializer.save()
-
-				response_dict['success']  = True 
-				response_dict['customer'] = serializer.data    
+   
 			else: 
 				errors= serializer.errors   
 				key=tuple(errors.keys())[0] 
@@ -267,4 +264,28 @@ class LeaveScheduleAPI(APIView):
 				response_dict['Error']=key +':'+ error[0]
 				response_dict['Error_List'] = serializer.errors
 
+		response_dict['success']  = True  
+
 		return Response(response_dict,HTTP_200_OK)
+
+class DeleteLeaveSchedule(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request,leave_id):
+		response_dict = {'success':False}
+
+		try:
+			leavescehdule = LeaveSchedule.objects.get(is_active=True,id=int(leave_id))
+		except:
+			leaveschedule = None
+
+		if leavescehdule:
+			leavescehdule.delete()
+			response_dict = {'success':True}  
+			return Response(response_dict, HTTP_200_OK)
+		else:
+			response_dict['reason'] = 'Invalid Id' 
+
+		return Response(response_dict,HTTP_200_OK)
+		
