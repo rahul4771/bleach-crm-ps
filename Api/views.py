@@ -222,8 +222,16 @@ class LeaveUsersList(APIView):
 	def get(self,request):
 		response_dict = {"success":False}
 
+		user_type = request.GET.get('user_type')
+		month = request.GET.get('month')
+
 		try:
-			staffs = UserProfile.objects.filter(is_active=True).filter(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))
+			if user_type == 'TEAM INCHARGE':
+				staffs = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE')
+			elif user_type == 'CLEANER':
+				staffs = UserProfile.objects.filter(is_active=True,user_type='CLEANER')
+			else:
+				staffs = UserProfile.objects.filter(is_active=True).filter(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))
 		except:
 			staffs = None
 
