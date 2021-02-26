@@ -215,6 +215,7 @@ class PaymentResponseCredit(APIView):
 
 		return Response(HTTP_200_OK)	
 
+#get list of staff for leave scheduler
 class LeaveUsersList(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
@@ -231,6 +232,7 @@ class LeaveUsersList(APIView):
 		response_dict["staffs"]=staff_serializer
 		return Response(response_dict,HTTP_200_OK)
 
+#get existing leave schedules and add new leaveschedules
 class LeaveScheduleAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
