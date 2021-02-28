@@ -6,6 +6,7 @@
 }
 #leave-table{
     width:100%;
+    height:100%;
 }
 .lv-date{
     cursor:pointer;
@@ -104,6 +105,7 @@
 }
 .lv-month-select{
     padding-left:20px;
+    padding-top:10px;
 }
 .lv-add-btn{
     text-align: center;
@@ -112,7 +114,7 @@
     border-radius: 50px;
     height: 50px;
     width: 50px;
-    padding: -7px;
+    padding-top: 10px;
     color: #ffffff;
     font-weight: 300;
     font-size: 32px;
@@ -128,7 +130,7 @@
     border-radius: 20px;
     position: absolute;
     right: 7%;
-    top: 25%;
+    
     border: 1px solid #eeeeee;
 }
 
@@ -197,9 +199,104 @@
       font-weight:300;
       font-size:14px;
   }
+  #table-wrapper {
+    position: relative;
+    max-height: 70vh;
+    overflow: auto;
+
+  }
+  #table-scroll {
+    
+    overflow:auto;  
+    margin-top:20px;
+  }
+  #table-wrapper table {
+    width:100%;
+  
+  }
+  #table-wrapper table * {
+   
+   
+  }
+  #table-wrapper table thead th .text {
+    position:absolute;   
+    top:-20px;
+    z-index:2;
+    height:20px;
+    width:35%;
+    border:1px solid red;
+  }
+  .lv-counter{
+    text-align: center;
+    height: 20px;
+    width: 26px;
+    font-size: 13px;
+    color: #ffffff;
+    left: 0%;
+    
+    top: 4px;
+    position: absolute;
+    border-radius: 14px;
+    background-color: #426ec8;
+  }
+  .select{
+    border: 1px solid #3968c6;
+  }
+  .lv-modal{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    background-color:#ffffff;
+    width:30%;
+    z-index:999;
+    border:1px solid #000000;
+    border-radius:20px;
+  }
+  .lv-close{
+      padding:10px;
+     
+  }
+  .lv-close-btn{
+    cursor:pointer;
+  }
+  .lv-modal-body{
+      padding:10px;
+  }
+  #lv-cancel-btn{
+      float: right;
+      margin:20px;
+  }
+  .lv-modal-footer{
+      padding:10px;
+  }
+  .modal-title{
+      font-size:24px;
+      
+  }
+  .modal-resource{
+      padding-top:20px;
+  }
+  .lv-modal{
+      display:none;
+  }
+  
   @media only screen and (max-width: 600px) {
       .lv-month{
         width: 200%;
+      }
+      .lv-modal{
+        position: absolute;
+        
+        top: 30%;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        background-color:#ffffff;
+        width:100%;
+        z-index:999;
+        border:1px solid #000000;
+        border-radius:20px;
       }
   }
   
