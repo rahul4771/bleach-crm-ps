@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from user.models import UserProfile,Address,Governorate,Area
+from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule
 from evaluator.models import Evaluation
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -17,7 +17,26 @@ class UserProfileSerializer(serializers.ModelSerializer):
         self.fields['date_of_birth'].required = True
         self.fields['mobile_number'].required = True
         self.fields['nationality'].required   = True  
-        
+
+class LeaveUsersSerializer(serializers.ModelSerializer):
+    photo_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model  = UserProfile
+        fields = ('id','name','user_type','photo_url') 
+
+    def get_photo_url(self, car):
+        request = self.context.get('request')
+        try:
+            photo_url = car.profile_image.url
+            return photo_url
+        except:
+            return None
+
+class LeaveScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LeaveSchedule
+        fields = ('id','staff','leave_date','leave_type')      
 
 class GovernorateSerializer(serializers.ModelSerializer):
     class Meta:      

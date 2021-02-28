@@ -42,6 +42,13 @@ CUSTOMER_TYPE_CHOICES = (
     ('CORPORATE','CORPORATE')
     )
 
+LEAVE_TYPES = (
+    ('ANNUAL LEAVE','ANNUAL_LEAVE'),
+    ('WEEKLY OFF','WEEKLY_OFF'),
+    ('SICK LEAVE','SICK_LEAVE'),
+    ('MATERNITY/PATERNITY','MATERNITY_PATERNITY')
+)
+
 #profile image Size Validator
 def validate_image(image):
     file_size = image.file.size
@@ -120,20 +127,6 @@ class UserProfile(AbstractUser):
     def __str__(self):
     	return self.username
 
-
-class LeaveSchedule(models.Model):
-    staff           = models.ForeignKey('UserProfile',blank=False,null=False,related_name='leave_staff')
-    leave_date      = models.DateField(blank=True,null=True)
-    created_by      = models.ForeignKey('UserProfile',blank=True,null=True,related_name='stl_user')
-    is_active       = models.BooleanField(null=False,blank=True,default=True)
-    created         = models.DateTimeField(auto_now_add=True)
-
-    def __unicode__(self):
-    	return str(self.staff.username+self.leave_date)
-
-    def __str__(self):
-    	return self.staff.username+self.leave_date
-
 class Governorate(models.Model):
     name            = models.CharField(max_length=100,blank=False,null=False)
     name_arabic     = models.CharField(max_length=100,blank=False,null=False)
@@ -194,3 +187,16 @@ class Address(models.Model):
 
     def __str__(self):
         return self.area.name+self.customer.name    
+
+class LeaveSchedule(models.Model):
+    staff           = models.ForeignKey('UserProfile',blank=False,null=False,related_name='leave_staff')
+    leave_date      = models.DateField(blank=False,null=False)
+    leave_type      = models.CharField(max_length=50,blank=False,null=False,choices=LEAVE_TYPES)
+    is_active       = models.BooleanField(null=False,blank=True,default=True)
+    created         = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+    	return str(self.staff.username+self.leave_date)
+
+    def __str__(self):
+    	return self.staff.username+str(self.leave_date)
