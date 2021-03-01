@@ -566,6 +566,8 @@ class OrderDetails(IsAdmin,View):
 		except:
 			fil_area              = None
 
+		fil_evaluator	   		  = request.GET.get('evaluator')
+
 		fil_cleaning_policy       = request.GET.get('cleaning_policy')
 		
 		try:
@@ -587,8 +589,14 @@ class OrderDetails(IsAdmin,View):
 		    count_case2 = Q(evaluation_details__address__area_id=fil_area)
 		    customer_address_filter.append(case2)
 		    count_customer_address_filter.append(count_case2)
+
+		if fil_evaluator:
+		    case3 		= Q(evaluator=fil_evaluator)
+		    count_case3 = Q(evaluation_details__evaluator=fil_evaluator)
+		    customer_address_filter.append(case3)
+		    count_customer_address_filter.append(count_case3)
 		
-		if fil_governorate or fil_area: 
+		if fil_governorate or fil_area or fil_evaluator: 
 			customer_address_prefetch_filter              = functools.reduce(operator.and_,customer_address_filter)
 			count_customer_address_prefetch_filter        = functools.reduce(operator.and_,count_customer_address_filter)
 		else:
@@ -639,7 +647,7 @@ class OrderDetails(IsAdmin,View):
 		
 		fil_status         = request.GET.get('status')
 		fil_payment_policy = request.GET.get('payment_policy')
-		fil_evaluator	   = request.GET.get('evaluator')
+		
 		#filters
 		filters=[]
 		if fil_status:
@@ -662,12 +670,8 @@ class OrderDetails(IsAdmin,View):
 		if fil_payment_policy:
 			case2 = Q(payment_method=fil_payment_policy)
 			filters.append(case2)
-			
-		if fil_evaluator:
-			case3 = Q(evaluation_details__evaluator=fil_evaluator)
-			filters.append(case3)
 
-		if fil_status or fil_payment_policy or fil_evaluator: 
+		if fil_status or fil_payment_policy : 
 		    filters     = functools.reduce(operator.and_,filters)
 		    evaluations = evaluations.filter(filters)
 
