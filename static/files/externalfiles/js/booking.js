@@ -42,7 +42,7 @@ function selectCheck(){
         $('#bk-title-1').html(selectedVal.split(' ')[0]+' 1')
         $("#bk-job-booking-btn").show();
         if(selectedVal=='matress cleaning'){
-            $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-size-1" name="bk-size-1"><option selected disabled>Select Size</option><option value="single">Single</option><option value="queen">Queen </option><option value="queen">King </option> </select></div>')
+            $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-size-1" name="bk-size-1"><option selected disabled>Select Size</option><option value="1">Single</option><option value="2">Queen </option><option value="3">King </option> </select></div>')
         }
         else {
             if(selectedVal=='sofa cleaning')
