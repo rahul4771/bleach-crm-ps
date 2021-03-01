@@ -1,5 +1,6 @@
 
-var url='https://test.bleach-kw.com';
+//var url='https://test.bleach-kw.com';
+var url='http://localhost:8000';
 var resourceList=[];
 var cleanerList=[];
 var teamLeaderList=[];
@@ -7,7 +8,7 @@ var leaveSheet=[];
 var leaveId='';
 var modaluser='';
 var newResource=[];
-
+var dateCounter=0;
 getUsers();
 
 $(".lv-result-box").hide();
@@ -38,6 +39,7 @@ for(var i=0;i<resourceList.length;i++){
 }
 
 var noOfDays = DateTime.local(2021, currentMonth).daysInMonth;
+
 var found=false;
 //var noOfWeek=noOfDays/7;
 for (var k=1;k<=noOfDays;k++){
@@ -48,8 +50,9 @@ for (var k=1;k<=noOfDays;k++){
 }
 console.log("testing :"+noOfDays);
 for (var j=0;j<resourceList.length;j++){
+    var noOfLeave=0;
     var rsid=j+1;
-    $('#lv-body-head').append('<tr class="lv-rows" id="row-'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"><span class="counter-text">'+resourceList[j].leave.length+'</span></div> <img src="'+resourceList[j].photo_url+'"align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">'+resourceList[j].user_type+'</div></div></td></tr>');
+    $('#lv-body-head').append('<tr class="lv-rows" id="row-'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"><span class="counter-text" id="no-leave-'+j+'">'+noOfLeave+'</span></div> <img src="'+resourceList[j].photo_url+'"align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">'+resourceList[j].user_type+'</div></div></td></tr>');
    
     for(var i=1;i<=noOfDays;i++){
         found=false;
@@ -77,14 +80,17 @@ for (var j=0;j<resourceList.length;j++){
                                         $('#row-'+rsid).append('<td class="noBorder text-center lv-date" onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-sick" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
                     
                                        }
+                                       
                                    }
                                }
                         }
                        
                        
                        
+                       
      
                         found=true;
+                        noOfLeave=noOfLeave+1;
                      }
                 }
               
@@ -97,11 +103,16 @@ for (var j=0;j<resourceList.length;j++){
         if(found==false)
         {
             $('#row-'+rsid).append('<td class="noBorder text-center lv-date" onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
+            if(DateTime.local(currentYear, currentMonth, i).weekdayShort.substring(0,1)=='F'){
+                $('#lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('lv-weekend');
+                $('#lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('is-weekend');
 
+            }
         }
       
     
     }
+    $('#no-leave-'+j).text(noOfLeave);
 
 }
 }
@@ -133,6 +144,7 @@ function reCalc(){
     $('.lv-rows').remove();
     var noOfDays = DateTime.local(2021, currentMonth).daysInMonth;
 //var noOfWeek=noOfDays/7;
+
 for (var k=1;k<=noOfDays;k++){
     var day=DateTime.local(currentYear, currentMonth, k).weekday-1;
 
@@ -142,7 +154,8 @@ for (var k=1;k<=noOfDays;k++){
 console.log("resource liST IS"+JSON.stringify(resourceList));
 for (var j=0;j<resourceList.length;j++){
     var rsid=j+1;
-    $('#lv-body-head').append('<tr class="lv-rows" id="row-'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"><span class="counter-text">'+resourceList[j].leave.length+'</span></div> <img src="images/profile-picblack.jpg" align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">'+resourceList[j].user_type+'</div></div></td></tr>');
+    var noOfLeave=0;
+    $('#lv-body-head').append('<tr class="lv-rows" id="row-'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"><span class="counter-text" id="no-leave-'+j+'">'+noOfLeave+'</span></div> <img src="'+resourceList[j].photo_url+'" align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">'+resourceList[j].user_type+'</div></div></td></tr>');
     for(var i=1;i<=noOfDays;i++){
         found=false;
         var today = i.toString()+'-'+currentMonth.toString()+'-'+currentYear.toString();
@@ -175,6 +188,7 @@ for (var j=0;j<resourceList.length;j++){
                    
 
                    found=true;
+                   noOfLeave=noOfLeave+1;
                 }
               
                 
@@ -186,12 +200,17 @@ for (var j=0;j<resourceList.length;j++){
         if(found==false)
         {
             $('#row-'+rsid).append('<td class="noBorder text-center lv-date" onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
+            if(DateTime.local(currentYear, currentMonth, i).weekdayShort.substring(0,1)=='F'){
+                $('#lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('lv-weekend');
+                $('#lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('is-weekend');
 
+            }
         }
       
        // console.log('i am running')
        // $('#row-1').append('<p>testing</p>')
     }
+    $('#no-leave-'+j).text(noOfLeave);
 
 }
 for(var sel=0;sel<selectedId.length;sel++){
@@ -200,7 +219,7 @@ for(var sel=0;sel<selectedId.length;sel++){
 
 }
 function reinitVal(){
-    seletedDates=[];
+    selectedDates=[];
     for(var i=0;i<resourceList.length;i++){
         selectedDates.push({name:'',dates:[]});
     }
@@ -208,6 +227,7 @@ function reinitVal(){
 }
 function selectDay(el){
     var dayId=$(el).attr('id');
+    dateCounter=dateCounter+1;
     console.log("my id is "+dayId);
     var userId=dayId.split('-')[2];
     var user=resourceList[userId].name;
@@ -216,6 +236,9 @@ function selectDay(el){
     selectedDates[userId].name=user;
     leaveId=getLeaveId($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString(),userId);
     console.log("day id is "+dayId);
+    if($('#'+dayId).find('.lv-date').hasClass('lv-weekend')){
+        $('#'+dayId).find('.lv-date').removeClass('lv-weekend');
+    }
     if($('#'+dayId).find('.lv-date').hasClass('lv-annual')){
       
         $('.modal-title').text('Annual Leave');
@@ -263,7 +286,7 @@ function selectDay(el){
         $('.lv-modal').show();
     }
     else{
-    if($('#'+dayId).find('.lv-date').hasClass('lv-selected-date')||$('#'+dayId).find('.lv-date').hasClass('lv-annual')||$('#'+dayId).find('.lv-date').hasClass('lv-weekly')||$('#'+dayId).find('.lv-date').hasClass('lv-maternity')||$('#'+dayId).find('.lv-date').hasClass('lv-sick')){
+    if($('#'+dayId).find('.lv-date').hasClass('lv-selected-date')||$('#'+dayId).find('.lv-date').hasClass('lv-weekly')||$('#'+dayId).find('.lv-date').hasClass('lv-maternity')||$('#'+dayId).find('.lv-date').hasClass('lv-sick')||$('#'+dayId).find('.lv-date').hasClass('lv-annual')){
         $('#'+dayId).find('.lv-date').removeClass('lv-selected-date');
         var index = selectedId.indexOf(dayId);
         var selectedIndex=selectedDates[userId].dates.indexOf($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
@@ -272,16 +295,35 @@ function selectDay(el){
               //  selectedData.dates.splice(selectedIndex,1);
                 selectedDates[userId].dates.splice(selectedIndex,1);
         }
+        dateCounter=dateCounter-1;
+       if($('#'+dayId).find('.lv-date').hasClass('is-weekend')){
+            $('#'+dayId).find('.lv-date').addClass('lv-weekend');
+        
+        }
+        
      
     }
     else{
+       
         $('#'+dayId).find('.lv-date').addClass('lv-selected-date');
         selectedId.push(dayId);
        // selectedData.dates.push($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString())
         selectedDates[userId].dates.push($('#'+dayId).find('.lv-date').text()+'-'+currentMonth.toString()+'-'+currentYear.toString());
     }
 }
-    console.log("selected dates are "+ JSON.stringify(selectedDates));
+    console.log("counter is "+ dateCounter);
+    $('#select-counter').text(dateCounter);
+}
+function clearAll(){
+    
+    dateCounter=0;
+    $('#select-counter').text(dateCounter);
+    selectedId=[];
+    resourceLeave=[];
+    selectedDates=[];
+    resourceList=[];
+    reinitVal();
+    getUsers();
 }
 function openForm(){
   
@@ -342,9 +384,11 @@ function applyLeave(){
     
     console.log("leave selected is"+JSON.stringify( resourceLeave ));
     selectedDates=[];
-   // reCalc();
-   // reinitVal();
+ 
     $(".lv-result-box").hide();
+    dateCounter=0;
+      $('#select-counter').text(dateCounter);
+  
 }
 function openConf(){
     $(".lv-conf").show();
@@ -505,6 +549,8 @@ function cancelLeave(){
        
       leaveId='';
       $('.lv-modal').hide();
+      dateCounter=0;
+      $('#select-counter').text(dateCounter);
       })
       .catch(function (error) {
         // handle error
