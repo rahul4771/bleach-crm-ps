@@ -113,6 +113,8 @@ class UserProfile(AbstractUser):
     is_kitchen_skill       = models.BooleanField(null=False,blank=True,default=False)
     is_sterilization_skill = models.BooleanField(null=False,blank=True,default=False)
     is_carpet_skill        = models.BooleanField(null=False,blank=True,default=False)
+    is_mattress_skill      = models.BooleanField(null=False,blank=True,default=False)
+    is_sofa_skill          = models.BooleanField(null=False,blank=True,default=False)
 
     created_by      = models.ForeignKey('self',blank=True,null=True)
     is_active       = models.BooleanField(null=False,blank=True,default=True)

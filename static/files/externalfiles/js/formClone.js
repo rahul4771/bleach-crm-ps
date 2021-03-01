@@ -29,6 +29,7 @@ var counter = 1;
         $('.chosen-select').chosen();
         $('#bk-del-btn-'+counter).show()
 
+        $('#sectioncounter_id').val(counter);
  }
 
 
@@ -91,6 +92,7 @@ var counter = 1;
         if(counter>1){
             counter=parseInt(itemId)-1;
             console.log('counter is '+counter);
+            $('#sectioncounter_id').val(counter);
         }
        
        

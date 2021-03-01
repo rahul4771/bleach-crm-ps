@@ -23,7 +23,10 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,Evaluat
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,Promocode
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
+from bleachadmin.models import ServiceProductivity
+
 from order.forms import PromocodeForm
+from bleachadmin.forms import ProductivityForm
 
 from django.db.models.functions import TruncMonth as Month, TruncYear as Year
 from django.db.models import Count
@@ -1271,6 +1274,48 @@ class PromocodeView(IsAdmin,View):
 		
 		return redirect('bleach_admin:admin-promocode')		
 
+class ProductivityView(IsAdmin,View):
+
+	def get(self,request):
+		
+		try:
+			productivities = ServiceProductivity.objects.filter(is_active=True).order_by('-created')
+		except:
+			productivities = None
+
+
+		added_services = productivities.values_list('service_type',flat=True)
+		try:
+			service_types = ServiceType.objects.filter(is_active=True).exclude(id__in=added_services)
+		except:
+			service_types = None
+
+		return render(request,'admin/productivity/productivity.html',{'productivities':productivities,'service_types':service_types,})
+
+	def post(self,request):
+		action = request.POST.get('action_type')
+
+		if action == 'addproductivity':
+			productivity_form = ProductivityForm(request.POST)
+			if productivity_form.is_valid():
+				productivity_form.save()
+				messages.success(request,"Service Productivity Successfully Added")
+			else:
+				messages.error(request,get_error(productivity_form))
+
+		if action == 'editproductivity':
+			productivity_id = request.POST.get('productivityid')
+			productivity    = ServiceProductivity.objects.get(id=productivity_id)
+
+			productivity_form = ProductivityForm(request.POST,instance=productivity)
+			
+			if productivity_form.is_valid():
+				productivity_form.save()
+				messages.success(request,"Service Productivity Successfully Updated")
+			else:
+				messages.error(request,get_error(productivity_form))		
+		
+		return redirect('bleach_admin:admin-productivity')
 
 #ajax for sales charts
 def SalesLocationData(request):

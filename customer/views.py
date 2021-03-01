@@ -25,7 +25,9 @@ from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investi
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
+from bleachadmin.models import ServiceProductivity
 from agent.forms import UserProfileForm,AddressForm
+from evaluator.forms import QuatationServiceForm
 from itertools import chain
 from agent.views import generate_random_username
 
@@ -93,10 +95,13 @@ class Quatation(View):
 				evaluation_update = Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(quatation_status='APPROVED',quatation_approved_date=timezone.now())
 				
 				last_invoice_no  		 = Order.objects.filter(is_active=True).aggregate(t=Max('invoice_no'))['t']
-				current_invoice_starting = str(timezone.now().year)		
-				if current_invoice_starting == last_invoice_no[0:4] and last_invoice_no:
-					new_invoice_no 		 = str(int(last_invoice_no[4:]) + 1 )
-					new_invoice_no 		 = last_invoice_no[0:-(len(new_invoice_no))]+new_invoice_no
+				current_invoice_starting = str(timezone.now().year)
+				if last_invoice_no:		
+					if current_invoice_starting == last_invoice_no[0:4]:
+						new_invoice_no 		 = str(int(last_invoice_no[4:]) + 1 )
+						new_invoice_no 		 = last_invoice_no[0:-(len(new_invoice_no))]+new_invoice_no
+					else:
+						new_invoice_no 		 = str(timezone.now().year)+'00001'
 				else:
 					new_invoice_no 		 = str(timezone.now().year)+'00001'
 
@@ -906,47 +911,81 @@ def GetEvaluationBookingSlotes(request):
 	return JsonResponse(dropdown_slotes)
 
 
+def GetServiceProductivity(request):
+	service_productivity = {}
+	service_type = request.GET.get('service_type')
+
+	serviceproductivity = ServiceProductivity.objects.select_related('service_type').get(service_type__name=service_type)
+	service_productivity['perhour_cleaning'] = serviceproductivity.perhour_cleaning
+	service_productivity['perunit_price']    = serviceproductivity.perunit_price
+
+	if service_type == 'Kitchen Cleaning':
+		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_kitchen_skill=True).count()
+	elif service_type == 'Carpet Cleaning':
+		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_carpet_skill=True).count()
+	elif service_type == 'Sterilization':
+		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_sterilization_skill=True).count()
+	elif service_type == 'Mattress Cleaning':
+		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_deep_skill=True).count()
+	elif service_type == 'Sofa Cleaning':
+		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_sofa_skill=True).count()
+	if total_cleaners > 0:
+		total_cleaners = total_cleaners-1
+	service_productivity['max_cleaners'] = total_cleaners
+
+	return JsonResponse(service_productivity)
+
 
 class CustomerBookingPhase1(View):
 	def get(self,request):
-		return render(request,'customer/booking/bookingphase1.html',{})
-	def post(self,request):
-		print(request.POST)
-		proposed_date                     = request.POST.get('booking_date')
-		proposed_time                     = request.POST.get('booking_time')
-		converted_proposed_time           = datetime.strptime(proposed_date+" "+proposed_time,'%Y-%m-%d %I:%M %p')	
-		#available evaluator
-		availableevaluators               = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').prefetch_related('evaluator_evaluation').annotate(busyevaluationcount=Sum(Case(When(evaluator_evaluation__proposed_time=converted_proposed_time,then=1),default=0,output_field=IntegerField()))).filter(busyevaluationcount__lt=2)
+		
+		try:
+			service_types = ServiceType.objects.filter(is_active=True)
+		except:
+			service_types = None
+
+		try:
+			area_types = AreaType.objects.filter(is_active=True)
+		except:
+			area_types = None
+
+		return render(request,'customer/booking/bookingphase1.html',{"service_types":service_types,"area_types":area_types,})
 	
+	def post(self,request):
+		action = request.POST.get('action_type')
 
-		if availableevaluators:
-			#create Main Evaluation
-			tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+		if action == 'bookevaluation':
+			proposed_date                     = request.POST.get('booking_date')
+			proposed_time                     = request.POST.get('booking_time')
+			converted_proposed_time           = datetime.strptime(proposed_date+" "+proposed_time,'%Y-%m-%d %I:%M %p')	
+			#available evaluator
+			availableevaluators               = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').prefetch_related('evaluator_evaluation').annotate(busyevaluationcount=Sum(Case(When(evaluator_evaluation__proposed_time=converted_proposed_time,then=1),default=0,output_field=IntegerField()))).filter(busyevaluationcount__lt=2)
+		
 
-			current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
-			
-			if current_blc_starting == int(str(tracking_no)[:6]):
-				new_tracking_no = int(tracking_no)+1
-				evaluation_no   = 'BLC'+str(new_tracking_no)
-			else:
-				evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
-				tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
-			
-			evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,quatation_expiry_date=timezone.now()+timedelta(14))
-			
-			#Booking Number
-			booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
-			current_booking_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
+			if availableevaluators:
+				#create Main Evaluation
+				tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 
-			if current_booking_starting == int(str(booking_id)[:4]):
-				new_booking_id = int(booking_id)+1
-			else:
-				new_booking_id = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
-			
+				current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
+				
+				if current_blc_starting == int(str(tracking_no)[:6]):
+					new_tracking_no = int(tracking_no)+1
+					evaluation_no   = 'BLC'+str(new_tracking_no)
+				else:
+					evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
+					tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+				
+				evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,quatation_expiry_date=timezone.now()+timedelta(14))
+				
+				#Booking Number
+				booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
+				current_booking_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
 
-			action = request.POST.get('action_type')
-
-			if action == 'bookevaluation':
+				if current_booking_starting == int(str(booking_id)[:4]):
+					new_booking_id = int(booking_id)+1
+				else:
+					new_booking_id = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
+				
 				#booking save
 				customerbooking = CustomerBooking.objects.create(booking_id=new_booking_id,booking_type='EVALUATIONBOOKING',evaluation=evaluation)
 				
@@ -960,11 +999,15 @@ class CustomerBookingPhase1(View):
 				evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation,evaluator=evaluator,attender_note=request.POST.get('notes'),proposed_time=converted_proposed_time)		
 
 				return redirect('customer:customerbookingevaluationphase2',evaluation_details.id,customerbooking.id)
-		
-		else:
-			if not availableevaluators:
-				messages.error(request,"Evaluators not Available...Please Change date or Slote !")
+			
+			else:
+				if not availableevaluators:
+					messages.error(request,"Evaluators not Available...Please Change date or Slote !")
 
+		if action == 'bookcleaning':
+			service_form  = QuatationServiceForm(request.POST)
+			print(request.POST)
+			print(service_form)
 		return redirect('customer:customerbookingphase1')	
 
 class CustomerBookingEvaluationPhase2(View):

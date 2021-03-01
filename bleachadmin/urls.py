@@ -20,6 +20,8 @@ urlpatterns = [
 	url(r'^client/order/details/(?P<order_id>[-\w]+)$',views.ClientOrderDetails.as_view(),name='admin-client-orderdetails'),
 
 	url(r'^promocodes/$',views.PromocodeView.as_view(),name='admin-promocode'),
+
+	url(r'^productivity/$',views.ProductivityView.as_view(),name='admin-productivity'),
 	
 
 	url(r'^payments/$',views.PaymentDetails.as_view(),name='admin-payments'),

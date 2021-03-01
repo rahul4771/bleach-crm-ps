@@ -39,20 +39,20 @@ function selectCheck(){
     $("#bk-evaluation-btn").show();
     var selectedVal=$( "#bk-service option:selected" ).text();
    
-    if(selectedVal=='Sofa Cleaning'||selectedVal=='Matress Cleaning'||selectedVal=='Kitchen Cleaning'||selectedVal=='Carpet Cleaning'||selectedVal=='Sanitisation'){
+    if(selectedVal=='Sofa Cleaning'||selectedVal=='Mattress'||selectedVal=='Kitchen Cleaning'||selectedVal=='Carpet Cleaning'||selectedVal=='Sanitization Services'){
         $('#bk-title-1').html(selectedVal.split(' ')[0]+' 1')
         $("#bk-job-booking-btn").show();
-        if(selectedVal=='Matress Cleaning'){
+        if(selectedVal=='Mattress'){
             $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-size-1" name="bk-size-1"><option selected disabled>Select Size</option><option value="single">Single</option><option value="queen">Queen </option><option value="queen">King </option> </select></div>')
         }
         else {
             if(selectedVal=='Sofa Cleaning')
             {
-                $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1"><span class="input-group-text" id="basic-addon2">Seater</span> </div>')
+                $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control size" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1" onkeyup="durationcalculation(this);"><span class="input-group-text" id="basic-addon2">Seater</span> </div>')
 
             }
             else{
-                $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1"><span class="input-group-text" id="basic-addon2">㎡</span> </div>')
+                $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control size" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1" onkeyup="durationcalculation(this);"><span class="input-group-text" id="basic-addon2">㎡</span> </div>')
 
             }
 
@@ -241,3 +241,153 @@ else{
 
   
  
+//Cleaning booking scripts
+function durationcalculation(params)
+  {
+    //to find total size
+    sectioncounter = $('#sectioncounter_id').val();
+    total_estimated_size = 0
+    for(i=1;i<=sectioncounter;i++)
+    {
+        size = $('#bk-size-'+i).val() 
+        if (size == '')
+        {
+            size = 0;
+        }
+
+        total_estimated_size += parseFloat(size);
+    }
+
+    //Ajax for finding productivity of perticular service
+    selected_service = $('#bk-service').val();
+    $.ajax({
+
+        url: "/customer/ajax/getserviceproductivity",
+
+        data: {'service_type':selected_service}, 
+
+        dataType: 'json',
+
+        success: function (data) {
+            //find duration and no of cleaners based on productivity
+            total_estimated_size = total_estimated_size
+            productivity         = data['perhour_cleaning'];
+            
+            //optimal manhour finding
+            manhour = parseInt(total_estimated_size/productivity)
+            r       = 2 ** (manhour.toString().length-1)
+            mod     = manhour%r
+            
+            if (mod > parseInt(r/2))
+            {
+              n= manhour+(r-mod);
+            }
+            else
+            {
+              n = manhour-mod;
+            }
+            console.log(n,"n");
+            for(i=1;i<parseInt(n ** (1/2))+1;i++)
+            {
+              if(n%i == 0)
+                {
+                  pair = [i,n/i];
+                }
+            }
+            console.log(pair,"pair");
+            max_cleaners = data['max_cleaners']
+            max_cleaners = 10
+
+            duration_list = [];
+            upper_loop    = 2;
+            lower_loop    = 2;
+            middle_element=pair[0]
+
+            if(middle_element<=max_cleaners)
+            {
+              duration_list.push(pair);
+              //upperloop and lowerloop setup
+              for(i=1;i<=2;i++)
+              {
+                if((middle_element-i)<=0)
+                {
+                  upper_loop = upper_loop+(2-i)+1;
+                  lower_loop = lower_loop-((2-i)+1)
+                } 
+                if((middle_element+i) > max_cleaners)
+                {
+                  lower_loop = lower_loop+(2-i)+1;
+                  upper_loop = upper_loop-((2-i)+1)
+                }
+              }
+              console.log(upper_loop,"upperloop")
+              console.log(lower_loop,"lowerloop")
+              //lower
+              for(i=1;i<=lower_loop;i++)
+              {
+                if((middle_element-i)>0 && (middle_element-i) <= max_cleaners)
+                {
+                  duration_list.push([(middle_element-i),n/(middle_element-i)])
+                }
+              }
+              //upper
+              for(i=1;i<=upper_loop;i++)
+              {
+                if((middle_element+i)>0 && (middle_element+i) <= max_cleaners)
+                {
+                  duration_list.push([(middle_element+i),n/(middle_element+i)])
+                } 
+              }
+            }
+
+            
+            else
+            {
+              middle_element = max_cleaners;
+              duration_list.push([(middle_element),n/(middle_element)])
+              for(i=1;i<=5;i++)
+              {
+                if((middle_element-i)>0)
+                {
+                  duration_list.push([(middle_element-i),n/(middle_element-i)])
+                }
+              }
+            }
+            console.log(duration_list)
+
+            //APPEND SLOTE
+            $("#bk-duration").empty()
+            for(i=0;i<duration_list.length;i++)
+              {
+                if(duration_list[i][1]>10)
+                {
+                  total_days      = parseInt(duration_list[i][1]/10)+1;
+                  total_duration  = duration_list[i][1]/total_days;
+                  total_cleaners  = parseInt(duration_list[i][0]/total_days);
+                }
+                else
+                {
+                  total_days      = 1
+                  total_duration  = duration_list[i][1];
+                  total_cleaners  = duration_list[i][0];
+                }
+                //show to users
+                total_minutes     = (total_duration.toFixed(2)*60).toFixed(0)
+                converted_hours   = Math.floor(total_minutes / 60);          
+                converted_minutes = total_minutes % 60;
+
+                $("#bk-duration").append($('<option>', {        
+                      value: total_cleaners+"_cleaners-"+total_duration.toFixed(2)+"_Hours-"+total_days+"_Days",   
+                      text: converted_hours+" Hours "+converted_minutes+" Minutes "+total_days+" Days "  
+                    }));
+                }
+            //total price calculation
+            totalprice = total_estimated_size*data['perunit_price'];
+            $('#bk-total-price').html(totalprice);
+            $('bk-total-cost').val(totalprice);
+
+                   }
+         });
+
+  }
+
