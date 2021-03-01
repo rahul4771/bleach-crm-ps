@@ -83,7 +83,9 @@ function showJobBooking() {
     activateJob();
     deactivateEval();
     
-
+    //update service type
+    service_type = $('#bk-service').val();
+    $('#service_type_id').val(service_type);
 };
 function activateEval(){
     $(".bk-evaluation-form").show();
@@ -259,7 +261,7 @@ function durationcalculation(params)
     }
 
     //Ajax for finding productivity of perticular service
-    selected_service = $('#bk-service').val();
+    selected_service = $("#bk-service option:selected" ).text();
     $.ajax({
 
         url: "/customer/ajax/getserviceproductivity",

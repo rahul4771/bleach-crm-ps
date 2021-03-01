@@ -88,12 +88,13 @@
           <form method="post" action="">
                 {%csrf_token%} 
           <input type="hidden" name="action_type" value="bookcleaning">
+          <input type="hidden" id="service_type_id" name="service_type" value="">
 <!--        Job Booking   Begins   -->
             <div class="row mt-4 bk-job-booking-form">
                
                 <div class="col-md-6 pt-2">
                     <label for="bk-slot">Area Type</label>
-                    <select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-slot" name="area-type">
+                    <select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-slot" name="area_type">
                         <option selected disabled value="">Area Type</option>
                         {% for area_type in area_types %}
                         <option value="{{area_type.name}}">{{area_type.name}}</option>
@@ -103,7 +104,7 @@
                 </div>
                 <div class="col-md-6 pt-2">
                     <label for="bk-slot">Location Type</label>
-                    <select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-location" name="location-type">
+                    <select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-location" name="location_type">
                         <option selected disabled value="">Location Type</option>
                         <option value="Post Construction">Post Construction</option>
                         <option value="Post Renovation">Post Renovation</option>
@@ -113,7 +114,7 @@
                 </div>            
             </div>
 
-            <input type="hidden" name="sectioncounter" id="sectioncounter_id" value="1">
+            <input type="hidden" name="section_counter" id="sectioncounter_id" value="1">
             
            <!--     Repeating Form 
              
@@ -246,7 +247,7 @@
         <div class="row">
           <div class="col-md-8 offset-md-2 text-right">
             Total : <b id="bk-total-price">000 </b>KD
-            <input type="hidden" id="bk-total-cost" name="total-cost" value="0">
+            <input type="hidden" id="bk-total-cost" name="total_cost" value="0">
           </div>
         </div>
 
@@ -257,13 +258,13 @@
                 <div class="col-md-12 pt-2">
                     <div class="form-group">
                         <label for="bk-notes" >Notes</label>
-                        <textarea class="form-control" id="bk-notes" rows="3" name="notes"></textarea>
+                        <textarea class="form-control" id="bk-notes" rows="3" name="evaluator_note"></textarea>
                       </div>
                 </div>
                 <div class="col-md-4 pt-4 mt-2">
                     
                     <label for="bk-time"> Time</label>
-                    <input  type="time" placeholder="Time" class="bk-date-job" id="bk-time" name="time">
+                    <input  type="time" placeholder="Time" class="bk-date-job" id="bk-time" name="tendative_time">
               
             </div>
                 <div class="col-md-4 pt-2">
@@ -276,7 +277,7 @@
                 <div class="col-md-4 pt-2">
                     
                         <label for="bk-date-job"> Date</label>
-                        <input  type="date" placeholder="Date" class="bk-date-job" id="bk-date-job" name="date" >
+                        <input  type="date" placeholder="Date" class="bk-date-job" id="bk-date-job" name="tendative_date" >
                   
                 </div>
                 
