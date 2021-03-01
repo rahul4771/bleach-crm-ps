@@ -114,7 +114,11 @@
     border-radius: 50px;
     height: 50px;
     width: 50px;
+<<<<<<< HEAD
+    padding: 12px;
+=======
     padding-top: 10px;
+>>>>>>> 89b2373c0aa33fef503d0da84160cff3fa188379
     color: #ffffff;
     font-weight: 300;
     font-size: 32px;
@@ -243,6 +247,49 @@
     border: 1px solid #3968c6;
   }
   .lv-modal{
+<<<<<<< HEAD
+   
+        width: 30%;
+        height:30%;
+       border:1px solid #000000;
+        background:#ffffff;
+        position: absolute;
+        top:0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+          z-index:999;
+        margin: auto;
+        border-radius:20px;
+    
+  }
+  .modal-title{
+      padding-left:10px;
+  }
+  .lv-modal-body{
+      margin-top:30px;
+      padding-left:10px;
+  }
+  .lv-close{
+  
+    font-size: 20px;
+    padding-right: 20px;
+    padding-top: 20px;
+    cursor:pointer;
+  }
+  .lv-modal-btn{
+      float:right;
+      margin-right:20px;
+  }
+  .lv-conf{
+      padding-left:10px;
+     
+  }
+  .modal-resource{
+    padding-left:10px;
+    padding-top:20px;
+    font-size:16px;
+=======
     position: absolute;
     left: 50%;
     top: 50%;
@@ -280,6 +327,7 @@
   }
   .lv-modal{
       display:none;
+>>>>>>> 89b2373c0aa33fef503d0da84160cff3fa188379
   }
   
   @media only screen and (max-width: 600px) {
@@ -287,6 +335,12 @@
         width: 200%;
       }
       .lv-modal{
+<<<<<<< HEAD
+   
+        width: 100%;
+        height:50%;
+        padding:5%;
+=======
         position: absolute;
         
         top: 30%;
@@ -298,5 +352,7 @@
         border:1px solid #000000;
         border-radius:20px;
       }
+>>>>>>> 89b2373c0aa33fef503d0da84160cff3fa188379
   }
+}
   

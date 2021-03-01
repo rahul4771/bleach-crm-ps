@@ -37,12 +37,13 @@ function selectCheck(){
     deactivateJob();
     deactivateEval();
     $("#bk-evaluation-btn").show();
-    var selectedVal=$(".bk-select").val();
-    if(selectedVal=='Sofa Cleaning'||selectedVal=='Mattress Cleaning'||selectedVal=='Kitchen Cleaning'||selectedVal=='Carpet Cleaning'||selectedVal=='Sterilization'){
+    var selectedVal=$( "#bk-service option:selected" ).text();
+   
+    if(selectedVal=='Sofa Cleaning'||selectedVal=='Mattress'||selectedVal=='Kitchen Cleaning'||selectedVal=='Carpet Cleaning'||selectedVal=='Sanitization Services'){
         $('#bk-title-1').html(selectedVal.split(' ')[0]+' 1')
         $("#bk-job-booking-btn").show();
-        if(selectedVal=='Mattress Cleaning'){
-            $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><select class="form-select  mb-3 bk-select size" aria-label=".form-select-lg example " id="bk-size-1" name="bk-size-1" onchange="durationcalculation(this);"><option selected disabled value="">Select Size</option><option value="1">Single</option><option value="2">Queen </option><option value="3">King </option> </select></div>')
+        if(selectedVal=='Mattress'){
+            $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-size-1" name="bk-size-1"><option selected disabled>Select Size</option><option value="single">Single</option><option value="queen">Queen </option><option value="queen">King </option> </select></div>')
         }
         else {
             if(selectedVal=='Sofa Cleaning')
