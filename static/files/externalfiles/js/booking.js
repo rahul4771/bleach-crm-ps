@@ -42,7 +42,7 @@ function selectCheck(){
         $('#bk-title-1').html(selectedVal.split(' ')[0]+' 1')
         $("#bk-job-booking-btn").show();
         if(selectedVal=='Mattress Cleaning'){
-            $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><select class="form-select  mb-3 bk-select size" aria-label=".form-select-lg example " id="bk-size-1" name="bk-size-1" onchange="durationcalculation(this);"><option selected disabled>Select Size</option><option value="single">Single</option><option value="queen">Queen </option><option value="queen">King </option> </select></div>')
+            $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><select class="form-select  mb-3 bk-select size" aria-label=".form-select-lg example " id="bk-size-1" name="bk-size-1" onchange="durationcalculation(this);"><option selected disabled value="">Select Size</option><option value="1">Single</option><option value="2">Queen </option><option value="3">King </option> </select></div>')
         }
         else {
             if(selectedVal=='Sofa Cleaning')
@@ -358,14 +358,32 @@ function durationcalculation(params)
             $("#bk-duration").empty()
             for(i=0;i<duration_list.length;i++)
               {
+                if(duration_list[i][1]>10)
+                {
+                  total_days      = parseInt(duration_list[i][1]/10)+1;
+                  total_duration  = duration_list[i][1]/total_days;
+                  total_cleaners  = parseInt(duration_list[i][0]/total_days);
+                }
+                else
+                {
+                  total_days      = 1
+                  total_duration  = duration_list[i][1];
+                  total_cleaners  = duration_list[i][0];
+                }
+                //show to users
+                total_minutes     = (total_duration.toFixed(2)*60).toFixed(0)
+                converted_hours   = Math.floor(total_minutes / 60);          
+                converted_minutes = total_minutes % 60;
+
                 $("#bk-duration").append($('<option>', {        
-                      value: duration_list[i][1],   
-                      text: duration_list[i][0]+" Cleaners "+duration_list[i][1]+" Hours"  
+                      value: total_cleaners+"_cleaners-"+total_duration.toFixed(2)+"_Hours-"+total_days+"_Days",   
+                      text: converted_hours+" Hours "+converted_minutes+" Minutes "+total_days+" Days "  
                     }));
                 }
             //total price calculation
             totalprice = total_estimated_size*data['perunit_price'];
             $('#bk-total-price').html(totalprice);
+            $('bk-total-cost').val(totalprice);
 
                    }
          });

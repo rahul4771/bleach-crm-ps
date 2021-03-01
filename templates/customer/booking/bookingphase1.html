@@ -38,7 +38,7 @@
             <select class="form-select form-select-lg mb-3 bk-select" aria-label=".form-select-lg example " onchange="selectCheck()" name="service" id="bk-service">
                 <option selected disabled>Select Service</option>
                 {% for service_type in service_types %}
-                <option value="{{service_type.name}}">{{service_type.name}}</option>
+                <option value="{{service_type.id}}">{{service_type.name}}</option>
                 {% endfor %}
               </select>
             </div>
@@ -84,8 +84,10 @@
             </div>
             <!--        Evaluation Ends      -->
           </form>
-             
-
+            
+          <form method="post" action="">
+                {%csrf_token%} 
+          <input type="hidden" name="action_type" value="bookcleaning">
 <!--        Job Booking   Begins   -->
             <div class="row mt-4 bk-job-booking-form">
                
@@ -203,11 +205,15 @@
                 <div class="col-md-12 pt-2">
                     <div class="bk-stain-reason w-100">
                         <select id="bk-stain-reason-1" data-placeholder="Cause of stain" multiple class="chosen-select w-50" name="bk-stain-reason-1" >
-                          <option value="Color 1">Reason 1</option>
-                          <option value="Color 2">Reason 2</option>
-                          <option value="Color 3">Reason 3</option>
-                      
-                          
+                          <option value="ink mark">INK MARK</option>
+                          <option value="hard dust">HARD DUST</option>
+                          <option value="coffee and tea spill">COFFEE & TEA SPILL</option>
+                          <option value="oily matters">OIL</option>
+                          <option value="urine">URINE</option>
+                          <option value="grease">GREASE</option>
+                          <option value="paint">PAINT</option>
+                          <option value="milk spill">MILK SPILL</option>
+                          <option value="others">OTHERS</option>
                       </select>
                   </div>
                 </div>
@@ -240,6 +246,7 @@
         <div class="row">
           <div class="col-md-8 offset-md-2 text-right">
             Total : <b id="bk-total-price">000 </b>KD
+            <input type="hidden" id="bk-total-cost" name="total-cost" value="0">
           </div>
         </div>
 
@@ -292,13 +299,12 @@
             <i class="fa fa-plus imgAdd"></i>
            </div><!-- row -->
            <div class="col-md-12  mt-4 mb-4">
-            <button type="button"  class="btn btn-primary mx-auto" id="bk-job-booking-btn" onclick="location.href = './jobbooking/address.html';">
-                Next
-             </button>
+            <input type="submit"  class="btn btn-primary mx-auto" id="bk-job-booking-btn" value="Next">
         </div>
           </div><!-- container -->
       </div>
   </div>
+</form>
       
    
   
