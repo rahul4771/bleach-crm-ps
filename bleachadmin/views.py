@@ -567,7 +567,7 @@ class OrderDetails(IsAdmin,View):
 			fil_area              = None
 
 		fil_evaluator	   		  = request.GET.get('evaluator')
-
+		print(fil_evaluator,"kio")
 		fil_cleaning_policy       = request.GET.get('cleaning_policy')
 		
 		try:
