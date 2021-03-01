@@ -27,7 +27,7 @@ from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
 from bleachadmin.models import ServiceProductivity
 from agent.forms import UserProfileForm,AddressForm
-from evaluator.forms import QuatationServiceForm
+from evaluator.forms import QuatationServiceFormCustomer
 from itertools import chain
 from agent.views import generate_random_username
 
@@ -1005,9 +1005,11 @@ class CustomerBookingPhase1(View):
 					messages.error(request,"Evaluators not Available...Please Change date or Slote !")
 
 		if action == 'bookcleaning':
-			service_form  = QuatationServiceForm(request.POST)
+			service_form  = QuatationServiceFormCustomer(request.POST)
 			print(request.POST)
 			print(service_form)
+			if service_form.is_valid():
+				print("valid form")
 		return redirect('customer:customerbookingphase1')	
 
 class CustomerBookingEvaluationPhase2(View):

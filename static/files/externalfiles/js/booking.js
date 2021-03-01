@@ -82,7 +82,9 @@ function showJobBooking() {
     activateJob();
     deactivateEval();
     
-
+    //update service type
+    service_type = $('#bk-service').val();
+    $('#service_type_id').val(service_type);
 };
 function activateEval(){
     $(".bk-evaluation-form").show();
