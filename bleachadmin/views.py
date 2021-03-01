@@ -566,8 +566,11 @@ class OrderDetails(IsAdmin,View):
 		except:
 			fil_area              = None
 
-		fil_evaluator	   		  = int(request.GET.get('evaluator'))
-		
+		try:
+			fil_evaluator	   		  = int(request.GET.get('evaluator'))
+		except:
+			fil_evaluator 			  = None
+
 		fil_cleaning_policy       = request.GET.get('cleaning_policy')
 		
 		try:
