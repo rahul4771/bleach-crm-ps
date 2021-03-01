@@ -6,6 +6,8 @@ from django.views import View
 
 from bleach_crm_ps.utils import get_error
 
+from googletrans import Translator
+
 import random
 import string
 import functools
@@ -1006,10 +1008,97 @@ class CustomerBookingPhase1(View):
 
 		if action == 'bookcleaning':
 			service_form  = QuatationServiceFormCustomer(request.POST)
-			print(request.POST)
-			print(service_form)
+
 			if service_form.is_valid():
-				print("valid form")
+				#create Main Evaluation
+				tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+
+				current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
+				
+				if current_blc_starting == int(str(tracking_no)[:6]):
+					new_tracking_no = int(tracking_no)+1
+					evaluation_no   = 'BLC'+str(new_tracking_no)
+				else:
+					evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
+					tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+				
+				evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,quatation_expiry_date=timezone.now()+timedelta(14))
+				
+				#create order					
+				new_order = Order.objects.get_or_create(evaluation=evaluation,order_no=evaluation.evaluation_id)
+
+				#Booking Number and booking save
+				booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
+				current_booking_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
+
+				if current_booking_starting == int(str(booking_id)[:4]):
+					new_booking_id = int(booking_id)+1
+				else:
+					new_booking_id = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
+				
+				customerbooking = CustomerBooking.objects.create(booking_id=new_booking_id,booking_type='CLEANINGBOOKING',evaluation=evaluation)
+
+				#Evaluation Details save
+				evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation)				
+
+				#service book saving
+				service_form_save                    = service_form.save(commit=False)
+
+				service_form_save.evaluation_details = evaluation_details
+
+				service_form_save.estimated_cost     = float(request.POST.get('total_cost'))
+				duration = request.POST.get('duration').split('-')
+				service_form_save.number_of_cleaners =	duration[0].replace("_cleaners","")
+				service_form_save.cleaning_hours     =  float(duration[1].replace("_Hours",""))
+				
+				service_form_save.cleaning_policy	 = 'ONE TIME SERVICE'
+				service_form_save.cleaning_method	 = 'Method1'
+				service_form_save.save()
+
+				#To Save Media
+				medias = request.FILES.getlist('media')
+				if not medias==['']:
+					for media in medias:
+						EvaluationMedia.objects.create(
+						        evaluation_book=service_form_save,
+						        media=media,
+						        media_type='PHOTO',
+								taken_status='CUSTOMER_SEND'
+						        )
+
+				#to save schedules
+				tendative_dates = request.POST.get('tendative_date').split(',')
+						
+				for date in tendative_dates:
+					start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
+					end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours)) 	
+
+					order_schedule_array.append(OrderScheduler(order=new_order[0],status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book=service_form_save))
+				OrderScheduler.objects.bulk_create(order_schedule_array)
+
+				#to save sections
+				no_of_sections         = int(request.POST.get('section_counter'))
+				section_array          = []
+				for i in range(no_of_sections):
+					section_name  = 'Section'+str(i)
+					size          = request.POST.get('bk-size-'+str(i))
+					unit          = request.POST.get('bk-unit-'+str(i))
+					age           = request.POST.get('bk-age-'+str(i))
+					material      = request.POST.get('bk-material-'+str(i))
+					colour        = request.POST.get('bk-color-'+str(i))
+					cause_of_stain=request.POST.get('bk-stain-reason-'+str(i))
+					service_productivity = ServiceProductivity.objects.get(service_type=service_form_save.service_type)
+					section_cost  = service_productivity.perunit_price*int(request.POST.get('bk-size-'+str(i)))
+					
+					try:
+						section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
+					except:
+						section_name_arabic = section_name
+
+					#save section
+					section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
+		
+			print(request.POST)
 		return redirect('customer:customerbookingphase1')	
 
 class CustomerBookingEvaluationPhase2(View):

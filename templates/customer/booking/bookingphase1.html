@@ -38,7 +38,7 @@
             <select class="form-select form-select-lg mb-3 bk-select" aria-label=".form-select-lg example " onchange="selectCheck()" name="service" id="bk-service">
                 <option selected disabled>Select Service</option>
                 {% for service_type in service_types %}
-                <option value="{{service_type.name}}">{{service_type.name}}</option>
+                <option value="{{service_type.id}}">{{service_type.name}}</option>
                 {% endfor %}
               </select>
             </div>

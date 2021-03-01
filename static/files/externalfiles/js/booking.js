@@ -261,7 +261,7 @@ function durationcalculation(params)
     }
 
     //Ajax for finding productivity of perticular service
-    selected_service = $('#bk-service').val();
+    selected_service = $("#bk-service option:selected" ).text();
     $.ajax({
 
         url: "/customer/ajax/getserviceproductivity",
