@@ -44,9 +44,14 @@ var found=false;
 //var noOfWeek=noOfDays/7;
 for (var k=1;k<=noOfDays;k++){
     var day=DateTime.local(currentYear, currentMonth, k).weekday-1;
+    if(DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)=='F'){
+        $('#lv-head-'+k).after('<th class="noBorder day-head" id="lv-head-'+(k+1)+'"> <div class="lv-day lv-friday">'+DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)+'</div></th>');
 
-  
+    }
+   else{
     $('#lv-head-'+k).after('<th class="noBorder day-head" id="lv-head-'+(k+1)+'"> <div class="lv-day">'+DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)+'</div></th>');
+
+   }
 }
 console.log("testing :"+noOfDays);
 for (var j=0;j<resourceList.length;j++){
@@ -103,11 +108,12 @@ for (var j=0;j<resourceList.length;j++){
         if(found==false)
         {
             $('#row-'+rsid).append('<td class="noBorder text-center lv-date" onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
-            if(DateTime.local(currentYear, currentMonth, i).weekdayShort.substring(0,1)=='F'){
-                $('#lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('lv-weekend');
-                $('#lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('is-weekend');
+            
+        }
+        if(DateTime.local(currentYear, currentMonth, i).weekdayShort.substring(0,1)=='F'){
+            $('#lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('lv-weekend');
+            $('#lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('is-weekend');
 
-            }
         }
       
     
@@ -147,9 +153,15 @@ function reCalc(){
 
 for (var k=1;k<=noOfDays;k++){
     var day=DateTime.local(currentYear, currentMonth, k).weekday-1;
+    if(DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)=='F'){
+        $('#lv-head-'+k).after('<th class="noBorder day-head" id="lv-head-'+(k+1)+'"> <div class="lv-day lv-friday">'+DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)+'</div></th>');
 
-  
+    }
+   else{
     $('#lv-head-'+k).after('<th class="noBorder day-head" id="lv-head-'+(k+1)+'"> <div class="lv-day">'+DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)+'</div></th>');
+
+   }
+  
 }
 console.log("resource liST IS"+JSON.stringify(resourceList));
 for (var j=0;j<resourceList.length;j++){
@@ -200,11 +212,12 @@ for (var j=0;j<resourceList.length;j++){
         if(found==false)
         {
             $('#row-'+rsid).append('<td class="noBorder text-center lv-date" onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
-            if(DateTime.local(currentYear, currentMonth, i).weekdayShort.substring(0,1)=='F'){
-                $('#lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('lv-weekend');
-                $('#lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('is-weekend');
+           
+        }
+        if(DateTime.local(currentYear, currentMonth, i).weekdayShort.substring(0,1)=='F'){
+            $('#lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('lv-weekend');
+            $('#lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('is-weekend');
 
-            }
         }
       
        // console.log('i am running')
@@ -294,6 +307,7 @@ function selectDay(el){
                 selectedId.splice(index, 1);
               //  selectedData.dates.splice(selectedIndex,1);
                 selectedDates[userId].dates.splice(selectedIndex,1);
+                dateCounter=dateCounter-1;
         }
         dateCounter=dateCounter-1;
        if($('#'+dayId).find('.lv-date').hasClass('is-weekend')){
