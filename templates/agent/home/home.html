@@ -68,7 +68,7 @@
 
 <div class="main-content-holder"><!--main-content-holder-->
 
-{% if followup_to_be_closed %}
+{% if follow_up.followupcount|add:follow_up.paybackcount|add:follow_up.buybackpromocodecount|add:follow_up.internalreportcount > 0 %}
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Case Closing Task</h2>
 <table class="main-table">
