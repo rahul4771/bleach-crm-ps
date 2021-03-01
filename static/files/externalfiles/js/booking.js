@@ -7,6 +7,7 @@ $(".bk-item-card").hide();
 $(".bk-item-form").hide();
 $(".bk-image-container").hide();
 $("#bk-del-btn-1").hide();
+$(".bk-stain-reason").hide();
 
 
 /* Date picker restriction */
@@ -37,9 +38,32 @@ function selectCheck(){
     deactivateEval();
     $("#bk-evaluation-btn").show();
     var selectedVal=$(".bk-select").val();
-    if(selectedVal=='sofa matress cleaning'||selectedVal=='kitchen cleaning'||selectedVal=='carpet cleaning'||selectedVal=='sanitisation'){
-        $('#bk-title-1').html(selectedVal+' 1')
+    if(selectedVal=='sofa cleaning'||selectedVal=='matress cleaning'||selectedVal=='kitchen cleaning'||selectedVal=='carpet cleaning'||selectedVal=='sanitisation'){
+        $('#bk-title-1').html(selectedVal.split(' ')[0]+' 1')
         $("#bk-job-booking-btn").show();
+        if(selectedVal=='matress cleaning'){
+            $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-size-1" name="bk-size-1"><option selected disabled>Select Size</option><option value="single">Single</option><option value="queen">Queen </option><option value="queen">King </option> </select></div>')
+        }
+        else {
+            if(selectedVal=='sofa cleaning')
+            {
+                $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1"><span class="input-group-text" id="basic-addon2">Seater</span> </div>')
+
+            }
+            else{
+                $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1"><span class="input-group-text" id="basic-addon2">㎡</span> </div>')
+
+            }
+
+        }
+        if(selectedVal=='kitchen cleaning'){
+          
+            $('#bk-stain-1-1').parent().replaceWith('<div class="d-flex w-100" ><div class="px-2">Oil residue ?</div><input type="radio"  name="bk-stain-1" id="bk-stain-1-1"   value="yes"><label for="bk-stain-1-1">yes</label><br><input type="radio"  name="bk-stain-1" id="bk-stain-1-2"  value="no" checked><label for="bk-stain-1-2">no</label><br> </div>');
+
+        }
+        else{
+            $('#bk-stain-1-1').parent().replaceWith('<div class="d-flex w-100" ><div class="px-2">Any stain?</div><input type="radio"  name="bk-stain-1" id="bk-stain-1-1"  onchange="checkStain(this)" value="yes" ><label for="bk-stain-1-1">yes</label><br><input type="radio"  name="bk-stain-1" id="bk-stain-1-2"  value="no" onchange="checkStain(this)" checked><label for="bk-stain-1-2">no</label><br></div>');
+        }
        
     }
     else{

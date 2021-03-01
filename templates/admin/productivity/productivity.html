@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "admin/common/header.html" %}
+    
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Productivity</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+            </div><!--welcome-wrapper-->       
+            
+<div class="main-content-holder"><!--main-content-holder-->            
+
+<div class="search-middle"><!--search-middle-->
+<div class="filter-button"><span class="add_productivity">Add Productivity </span></div>
+</div><!--search-middle-->
+<br>
+
+<div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Productivity List</h2>
+<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+ 
+<thead>
+<tr>
+<th>Service Type</th>
+<th data-hide="phone,tablet">Productivity/Cleaner/Hr</th>
+<th data-hide="phone">Price/Unit</th>
+<th data-hide="phone,tablet">&nbsp;</th>
+</tr>
+</thead>
+<tbody>
+  {% for productivity in productivities %}
+  <tr>
+    <td>{{productivity.service_type.name}}</td>
+    <td class="align-center">{{productivity.perhour_cleaning}}</td>
+    <td>{{productivity.perunit_price|floatformat:'3'}}</td>
+    <td>
+    <img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon edit_productivity clickable-cursor" data-id="{{productivity.id}}" data-service_typeid="{{productivity.service_type.id}}" data-service_typename="{{productivity.service_type.name}}" data-perhour_cleaning="{{productivity.perhour_cleaning}}" data-perunit_price="{{productivity.perunit_price|floatformat:'3'}}">
+  </td>
+  </tr>
+  {% empty %}
+  <tr>
+    <td></td>
+    <td></td>
+    <td>No Data</td>
+    <td></td>
+  </tr>
+  {% endfor %}
+
+
+</tbody>
+</table>
+</div><!--main-content-holder-->            
+{% include 'admin/common/footer.html' %}
+<!-- add_productivity_popup -->
+<div class="overlay" id="add_productivity_popup">
+    <div class="popup-assign-eval"><!--popup-assign-eval-->
+        <a id="close_add_productivity_popup" class="close">&times;</a>
+            <div class="content"><!--content-->
+            
+<form method="post" enctype="multipart/form-data">{% csrf_token %}                      
+<input type="hidden" name="action_type" value="addproductivity">
+            <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
+  
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class="bold-text common-label required-field"> <label >Service Type</label></div>
+        <label for="favcity">
+                <select id="id_service_type" name="service_type" required>
+                {% for servicetype in service_types %}
+                <option value="{{servicetype.id}}">{{servicetype.name}}</option>
+                {% endfor %}
+                </select>
+                </label>
+  </div><!--ticket-form-left--> 
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">   
+  <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+      <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class="bold-text common-label required-field"> <label>Productivity/cleaner/Hr</label></div>
+                <input type="text" name="perhour_cleaning" class="textBox OnlyNumber" id="id_perhour_cleaning" required>
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+ 
+<hr class="hr-dashedpad">     
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+      <div class="ticket-form-left"><!--ticket-form-left-->
+        <div class="bold-text common-label required-field"> <label>Price/Unit</label></div>
+                <input type="text" name="perunit_price" id="id_perunit_price" class="textBox OnlyNumber" required>
+      </div><!--ticket-form-left-->   
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<div align="center"> <input class="assignButton dateconfirm" name="assing" type="button" value="Assign" onclick="submitAnyForm(this);" ></div>  
+
+</div><!--ticket-wrapper-full-->             
+</form>
+            </div><!--content-->
+    </div><!--popup-assign-eval-->
+</div><!--overlay-->
+<!-- /add_productivity_popup -->
+
+<!-- edit_promocode_popup -->
+<div class="overlay" id="edit_productivity_popup">
+    <div class="popup-assign-eval"><!--popup-assign-eval-->
+        <a id="close_edit_productivity_popup" class="close">&times;</a>
+            <div class="content"><!--content-->
+            
+<form method="post" enctype="multipart/form-data">{% csrf_token %}                      
+<input type="hidden" name="action_type" value="editproductivity">
+<input type="hidden" name="productivityid" id="productivity_id" value="">
+            <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
+  
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class="bold-text common-label required-field"> <label >Service Type</label></div>
+        <label for="favcity">
+                <select id="service_type_edit_id" name="service_type" required>
+                </select>
+                </label>
+  </div><!--ticket-form-left--> 
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class="bold-text common-label required-field"> <label >Productivity/cleaner/Hr</label></div>
+          <input type="text" name="perhour_cleaning" id="perhour_cleaning_edit_id" class="textBox OnlyNumber" required>
+  </div><!--ticket-form-left--> 
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">   
+  <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+      <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class="bold-text common-label required-field"> <label>Price/Unit</label></div>
+                <input type="text" name="perunit_price" id="perunit_price_edit_id" class="textBox OnlyNumber" required>
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<div align="center"> <input class="assignButton dateconfirm" name="assing" type="button" value="Assign" onclick="submitAnyForm(this);" ></div>  
+
+</div><!--ticket-wrapper-full-->             
+</form>
+            </div><!--content-->
+    </div><!--popup-assign-eval-->
+</div><!--overlay-->
+<!-- /edit_promocode_popup -->
+
+
+</div><!--wrapper-->
+{% endblock %}  
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+
+  //add promocode
+  $('.add_productivity').click(function(){
+
+      $('#add_productivity_popup').css({'visibility':'visible','opacity':1,});
+  });
+
+
+  $('#close_add_productivity_popup').click(function(){
+      $('#add_productivity_popup').css({'visibility':'hidden','opacity':0,});
+  });
+
+
+
+//EDIT PROMOCODE
+$('.edit_productivity').click(function(){
+  $('#productivity_id').val($(this).data('id'));
+  $('#perhour_cleaning_edit_id').val($(this).data('perhour_cleaning'));
+  $('#perunit_price_edit_id').val($(this).data('perunit_price'));
+  $("#service_type_edit_id").empty();
+  service_typeid   = $(this).data('service_typeid');
+  service_typename = $(this).data('service_typename');
+  $("#service_type_edit_id").append($('<option>', {
+                      value: service_typeid, 
+                      text: service_typename,
+                      selected: true
+                    }));
+
+  $('#edit_productivity_popup').css({'visibility':'visible','opacity':1,});
+
+
+})
+
+$('#close_edit_productivity_popup').click(function(){
+      $('#edit_productivity_popup').css({'visibility':'hidden','opacity':0,});
+  });
+
+
+})
+</script>
+{% endblock %}
+</body>
+</html>
