@@ -37,15 +37,16 @@ function selectCheck(){
     deactivateJob();
     deactivateEval();
     $("#bk-evaluation-btn").show();
-    var selectedVal=$(".bk-select").val();
-    if(selectedVal=='sofa cleaning'||selectedVal=='matress cleaning'||selectedVal=='kitchen cleaning'||selectedVal=='carpet cleaning'||selectedVal=='sanitisation'){
+    var selectedVal=$( "#bk-service option:selected" ).text();
+   
+    if(selectedVal=='Sofa Cleaning'||selectedVal=='Matress Cleaning'||selectedVal=='Kitchen Cleaning'||selectedVal=='Carpet Cleaning'||selectedVal=='Sanitisation'){
         $('#bk-title-1').html(selectedVal.split(' ')[0]+' 1')
         $("#bk-job-booking-btn").show();
-        if(selectedVal=='matress cleaning'){
+        if(selectedVal=='Matress Cleaning'){
             $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-size-1" name="bk-size-1"><option selected disabled>Select Size</option><option value="single">Single</option><option value="queen">Queen </option><option value="queen">King </option> </select></div>')
         }
         else {
-            if(selectedVal=='sofa cleaning')
+            if(selectedVal=='Sofa Cleaning')
             {
                 $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1"><span class="input-group-text" id="basic-addon2">Seater</span> </div>')
 
@@ -56,7 +57,7 @@ function selectCheck(){
             }
 
         }
-        if(selectedVal=='kitchen cleaning'){
+        if(selectedVal=='Kitchen Cleaning'){
           
             $('#bk-stain-1-1').parent().replaceWith('<div class="d-flex w-100" ><div class="px-2">Oil residue ?</div><input type="radio"  name="bk-stain-1" id="bk-stain-1-1"   value="yes"><label for="bk-stain-1-1">yes</label><br><input type="radio"  name="bk-stain-1" id="bk-stain-1-2"  value="no" checked><label for="bk-stain-1-2">no</label><br> </div>');
 
