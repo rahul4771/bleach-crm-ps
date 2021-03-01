@@ -176,6 +176,20 @@
               </label>		 
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<hr class="hr-dashedpad"> 
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    <div class=" bold-text common-label"> <label>Evaluator</label></div>
+				<label for="favcity">
+                <select name="evaluator_filter" id="evaluator_filter_id">
+                <option value=''>---ALL---</option>
+                {% for evaluator in evaluators %}
+                <option value="{{evaluator.id}}" {% if evaluator.id == fil_evaluator %}selected{% endif %}>{{evaluator.name}}</option>
+                {% endfor %}                
+              </select>
+                </label>
+  </div><!--ticket-form-left-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->   
 <div align="center"> <input class="assignButton" name="assing" type="button" onclick="set_params_go({});" value="Submit"> <input class="cancel-Button close-btn arrow-close" name="cancel" type="button" value="Reset"></div>
 
      
@@ -517,7 +531,7 @@ $("#governorate_filter_id").change(function(){
 function set_params_go(args)
 {
 var url='{% url 'bleach_admin:admin-orders' %}';
-var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val()
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val(),evaluator:$('#evaluator_filter_id')
 };
 for(key in args) 
     params[key]=args[key];
