@@ -595,7 +595,7 @@ class OrderDetails(IsAdmin,View):
 
 		if fil_evaluator:
 		    case3 		= Q(evaluator__id=fil_evaluator)
-		    count_case3 = Q(evaluation_details__evaluator__id=fil_evaluator)
+		    count_case3 = Q(Q(evaluation_details__evaluator__id=fil_evaluator) | Q(Q(evaluation_details__evaluation__call_attender__id=fil_evaluator) & Q(evaluation_details__evaluator__id=None)))
 		    customer_address_filter.append(case3)
 		    count_customer_address_filter.append(count_case3)
 		
