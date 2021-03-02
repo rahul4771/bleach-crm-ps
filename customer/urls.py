@@ -37,4 +37,6 @@ urlpatterns = [
 		url(r'^booking/evaluation/phase2/(?P<evaluationdetails_id>[-\w]+)/(?P<customerbooking_id>[-\w]+)$',views.CustomerBookingEvaluationPhase2.as_view(),name='customerbookingevaluationphase2'),
 		url(r'^booking/evaluation/phase3/(?P<evaluationdetails_id>[-\w]+)/(?P<customerbooking_id>[-\w]+)$',views.CustomerBookingEvaluationPhase3.as_view(),name='customerbookingevaluationphase3'),
 		url(r'^booking/evaluation/phase4/(?P<evaluationdetails_id>[-\w]+)/(?P<customerbooking_id>[-\w]+)$',views.CustomerBookingEvaluationPhase4.as_view(),name='customerbookingevaluationphase4'),
+	
+		url(r'^booking/cleaning/phase2/$',views.CustomerBookingCleaningPhase2.as_view(),name='customerbookingcleaningphase2'),
 	]
