@@ -8,6 +8,7 @@ $(".bk-item-form").hide();
 $(".bk-image-container").hide();
 $("#bk-del-btn-1").hide();
 $(".bk-stain-reason").hide();
+$('.timepicker-12-hr').wickedpicker(); 
 
 
 /* Date picker restriction */
