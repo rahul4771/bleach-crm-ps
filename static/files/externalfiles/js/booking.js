@@ -365,7 +365,7 @@ function durationcalculation(params)
                 {
                   total_days      = parseInt(duration_list[i][1]/10)+1;
                   total_duration  = duration_list[i][1]/total_days;
-                  total_cleaners  = parseInt(duration_list[i][0]/total_days);
+                  total_cleaners  = duration_list[i][0];
                 }
                 else
                 {

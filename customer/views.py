@@ -1041,6 +1041,12 @@ class CustomerBookingPhase1(View):
 				#Evaluation Details save
 				evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation)				
 
+
+
+
+
+
+
 				#service book saving
 				service_form_save                    = service_form.save(commit=False)
 
@@ -1068,9 +1074,10 @@ class CustomerBookingPhase1(View):
 
 				#to save schedules
 				tendative_dates = request.POST.get('tendative_date').split(',')
-						
+				start_time      = request.POST.get('tendative_time')
+
 				for date in tendative_dates:
-					start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
+					start_date_time = datetime.strptime(date+' '+start_time,'%Y-%m-%d %I:%M %p')
 					end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours)) 	
 
 					order_schedule_array.append(OrderScheduler(order=new_order[0],status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book=service_form_save))
@@ -1097,8 +1104,15 @@ class CustomerBookingPhase1(View):
 
 					#save section
 					section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
+				
+				#set cookie
+				response = HttpResponse()
+				response.set_cookie(key='booking_id', value=customerbooking.booking_id)
+
+				messages.success(request,"Service Added Succesfully")
+			else:
+				messages.error(request,get_error(service_form))
 		
-			print(request.POST)
 		return redirect('customer:customerbookingphase1')	
 
 class CustomerBookingEvaluationPhase2(View):
@@ -1310,3 +1324,16 @@ class CustomerBookingEvaluationPhase4(View):
 		booking_details    = CustomerBooking.objects.get(id=customerbooking_id)
 
 		return render(request,'customer/booking/evaluationbookingphase4.html',{'evaluation_details':evaluation_details,'booking_details':booking_details,})
+
+class CustomerBookingCleaningPhase2(View):
+	def get(self,request):
+		try:
+			booking_id = request.COOKIES['booking_id']
+		except KeyError:
+			booking_id = None
+
+		print(booking_id,"booking id")
+
+		if booking_id:
+			booking_details = None
+		return render(request,'customer/booking/cleaningbookingphase2.html',{'booking_details':booking_details,})
