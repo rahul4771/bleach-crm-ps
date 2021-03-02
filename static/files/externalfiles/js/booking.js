@@ -392,5 +392,11 @@ function durationcalculation(params)
                    }
          });
 
+  } 
+  function timeParser(val){
+   var trimmedString= val.split(" ")[0]+val.split(" ")[1]+val.split(" ")[2]+' '+val.split(" ")[3].toLowerCase();
+   return trimmedString;
   }
+  
+  
 
