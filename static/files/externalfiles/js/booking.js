@@ -49,11 +49,11 @@ function selectCheck(){
         else {
             if(selectedVal=='Sofa Cleaning')
             {
-                $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control size" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1" onkeyup="durationcalculation(this);"><span class="input-group-text" id="basic-addon2">Seater</span><input type="text" value="seater" name="bk-unit" style="display:none;"/> </div>')
+                $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control size" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1" onkeyup="durationcalculation(this);"><span class="input-group-text" id="basic-addon2">Seater</span><input type="text" value="seater" name="bk-unit-1" id="bk-unit-1" style="display:none;"/> </div>')
 
             }
             else{
-                $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control size" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1" onkeyup="durationcalculation(this);"><span class="input-group-text" id="basic-addon2">㎡</span><input type="text" value="square meter" name="bk-unit" style="display:none;"/> </div>')
+                $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control size" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1" onkeyup="durationcalculation(this);"><span class="input-group-text" id="basic-addon2">㎡</span><input type="text" value="square meter" name="bk-unit-1" id="bk-unit-1"  style="display:none;"/> </div>')
 
             }
 
