@@ -36,7 +36,7 @@ function drawlocationChart() {
         contentType: "application/json;charset=utf-8",
         
         success: function(data_location) {
-
+            console.log(data_location,"dataloc")
             if (data_location.length == 0){
                 $('#donutchart1').attr("hidden",true);
                 $('#locationnodata').attr("hidden",false);
@@ -89,8 +89,9 @@ function drawlocationChart() {
                     var value = data.getValue(i, 1);
                     var percent = Number(100 * value / total).toFixed(1);
                     if (isNaN(percent)) percent = 0.0; 
-                    console.log(percent,"perc")
+                    console.log(percent,"percdf")
                     // This will create legend list for the display
+                    if (percent > 0){
                     legItem[i] = document.createElement('div');
                     legItem[i].className = 'donut-char-legend';
                     legItem[i].id = 'legend_' + data.getValue(i, 0);
@@ -98,6 +99,7 @@ function drawlocationChart() {
                     legItem[i].innerHTML = '<i class="fa fa-square" style="color:'+colors[i]+'"></i> <div class="chart-stat">' + label + '</div><span>' + percent + ' %</span>';
 
                     legend.appendChild(legItem[i]);
+                    }
                 }
                 }
 
@@ -220,6 +222,7 @@ function drawcleaningtypeChart() {
             $('#donutchart2').attr("hidden",true);
             $('#cleaningnodata').attr("hidden",false);
             $("#legend_cleaning").empty();
+            $('#cleaning_loader').attr("hidden",true);
         }else{
             $('#donutchart2').attr("hidden",false);
             $('#cleaningnodata').attr("hidden",true);
@@ -381,6 +384,7 @@ function drawgovernorateChart() {
             $('#donutchart3').attr("hidden",true);
             $('#governoratenodata').attr("hidden",false);
             $("#legend_governorate").empty();
+            $('#governorate_loader').attr("hidden",true);
         }else{
             $('#donutchart3').attr("hidden",false);
             $('#governoratenodata').attr("hidden",true);
