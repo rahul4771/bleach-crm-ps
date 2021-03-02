@@ -48,46 +48,48 @@
                 <th scope="col">Service name</th>
                 <th scope="col">Area Type</th>
                 <th scope="col">Location Type</th>
-                <th scope="col">Date</th>
-                <th scope="col">Time</th>
+                <th scope="col">Cleaning Duration</th>
+                <th scope="col">Cost</th>
               </tr>
             </thead>
             <tbody>
+              {% for evaluationdetail in booking_details.evaluation.evaluationdetails %}
+              {% for evaluationbook in evaluationdetail.evaluationbooks%}
               <tr>
-                <th scope="row">1</th>
-                <td>Mattress Cleaning</td>
-                <td>Apartment</td>
-                <td>Post Construction</td>
-                <td>12-03-2021</td>
-                <td>11:20 am</td>
+                <th scope="row">{{forloop.counter}}</th>
+                <td>{{evaluationbook.service_type.name}}</td>
+                <td>{{evaluationbook.area_type}}</td>
+                <td>{{evaluationbook.location_type}}</td>
+                <td>{{evaluationbook.cleaning_hours}} Hours</td>
+                <td class="book-cost">{{evaluationbook.total_cost}} KD</td>
               </tr>
-              <tr>
-                <th scope="row">2</th>
-                <td>Kitchen Cleaning</td>
-                <td>Apartment</td>
-                <td>Fully furnished</td>
-                <td>16-08-2021</td>
-                <td>01:10 pm</td>
-              </tr>
-              
+              {% endfor %}
+              {% endfor %}
             </tbody>
           </table>
+          
           <div class="text-right">
-             <h4> Total :<span><b> 200 KD</b></span></h4> 
+             <h4> Total Cost:<span><b> 200 KD</b></span></h4> 
           </div>
         </div>
      </div>
+     <form method="post" action="">
+      {%csrf_token%}
      <div class="row">
         <div class="col-md-12  mt-4 mb-4">
-            <button type="button"  class="btn btn-primary mx-auto"  onclick="location.href = './jobbooking/address.html';">
-                Next
-             </button>
+            <input type="submit"  class="btn btn-primary mx-auto"  value="Next">
         </div>
      </div>
+   </form>
   </div>
       
    
-  
+<script>
+//To find total cost
+  $('document').ready(function(){
+
+  });
+</script>
    
    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script> 
      

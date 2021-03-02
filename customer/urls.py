@@ -39,4 +39,7 @@ urlpatterns = [
 		url(r'^booking/evaluation/phase4/(?P<evaluationdetails_id>[-\w]+)/(?P<customerbooking_id>[-\w]+)$',views.CustomerBookingEvaluationPhase4.as_view(),name='customerbookingevaluationphase4'),
 	
 		url(r'^booking/cleaning/phase2/$',views.CustomerBookingCleaningPhase2.as_view(),name='customerbookingcleaningphase2'),
+		url(r'^booking/cleaning/phase3/$',views.CustomerBookingCleaningPhase3.as_view(),name='customerbookingcleaningphase3'),
+		url(r'^booking/cleaning/phase4/$',views.CustomerBookingCleaningPhase4.as_view(),name='customerbookingcleaningphase4'),
+		url(r'^booking/cleaning/phase5/$',views.CustomerBookingCleaningPhase5.as_view(),name='customerbookingcleaningphase5'),
 	]

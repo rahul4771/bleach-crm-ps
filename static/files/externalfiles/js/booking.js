@@ -387,7 +387,7 @@ function durationcalculation(params)
             //total price calculation
             totalprice = total_estimated_size*data['perunit_price'];
             $('#bk-total-price').html(totalprice);
-            $('bk-total-cost').val(totalprice);
+            $('#bk-total-cost').val(totalprice);
 
                    }
          });
