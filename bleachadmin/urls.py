@@ -7,6 +7,7 @@ urlpatterns = [
 	url(r'^active-subscriptions/$',views.ActiveSubscriptions.as_view(),name='admin-active-subscriptions'),
 	url(r'^resources/$',views.ResourceManagement.as_view(),name='resource-management'),
 	url(r'^orders/$',views.OrderDetails.as_view(),name='admin-orders'),
+	url(r'^leave-scheduler/$',views.LeaveScheduler.as_view(),name='admin-leave-scheduler'),
 
 	url(r'^feedbacks/$',views.FeedbackDetails.as_view(),name='admin-feedbacks'),
 	url(r'^feedback/details/(?P<client_id>[-\w]+)/(?P<order_id>[-\w]+)/$',views.FeedbackAdvanced.as_view(),name='admin-feedbackadvanced'),	

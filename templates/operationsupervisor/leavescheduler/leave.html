@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "operationsupervisor/common/header.html" %} 
+    
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Leave Scheduler</h1>
+                <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>    
+            </div><!--welcome-wrapper-->
+            <!-- Modal -->
+            <!-- Button trigger modal -->
+
+            
+     <div class="main-content-holder"><!--main-content-holder-->            
+          
+  
+
+<div class="white-wrapper" style="overflow:auto"><!--white-wrapper-->
+ 
+  
+  <div id="cancelModal" class="lv-modal" >
+    <div class="lv-modal-dialog">
+    
+     
+      <div class="lv-modal-content">
+        <div class="lv-modal-header">
+          <div class="lv-close" onclick="closeCancelModal()">
+            <span class="modal-title "></span>
+            <i class="fa fa-close lv-close-btn" style="float:right"></i>
+            
+          </div>
+        
+          
+        </div>
+        <div class="lv-modal-body " >
+          <div class="modal-date"></div>
+          <div class="modal-resource"></div>
+         
+        </div>
+        <div class="lv-modal-footer ">
+            <div class="text-left lv-conf">
+                Are you sure to cancel the leave ? 
+                <button type="button" class="btn btn-default"  onclick="cancelLeave()">Yes</button>
+                <button type="button" class="btn btn-default"  onclick="closeConf()">No</button>
+
+            </div>
+            <button type="button" class="btn btn-danger lv-modal-btn"  onclick="openConf()" id="lv-cancel-btn">Cancel Leave</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+    
+  <div class="lv-month d-flex">
+    <div class="select-container">
+       
+      
+          <div class="lv-dropdown">
+            <div class="select" >
+              <span id="lv-category">ALL</span>
+              <i class="fa fa-chevron-left"></i>
+            </div>
+            <input type="hidden" name="user-type"  >
+            <ul class="lv-dropdown-menu" >
+              <li id="all" onclick="resetResources('ALL')">ALL</li>
+              <li id="team-incharge" onclick="resetResources('TEAM IN CHARGE')">TEAM IN CHARGE</li>
+              <li id="cleaner" onclick="resetResources('CLEANER')">CLEANER</li>        
+            </ul>
+          </div>
+      
+    </div>
+    
+  
+    <span class="material-icons next-arrow"  onclick="previousMonth()">
+        arrow_backward
+        </span>
+        <span class="material-icons next-arrow"  onclick="nextMonth()">
+            arrow_forward
+            </span>
+    <span class="lv-month-select" id="lv-month-select">JANUARY 2021</span>
+    
+    <div class="lv-clear-btn d-flex" onclick="clearAll()">
+      <div class="lv-select-counter" id="select-counter">0</div>
+    <div class="pr-20" > Clear All</div> 
+    </div>
+    <div class="lv-add-btn" onclick="openForm()">
+      +
+    </div>
+    <div class="lv-result-box">
+     
+         
+            <div class="select-container" style="width:auto">
+       
+      
+                <div class="lv-dropdown" style="width:80%;margin:10%" >
+                  <div class="select" style="width:100%;" >
+                    <span id="lv-result-content" >Leave Type</span>
+                    <i class="fa fa-chevron-left"></i>
+                  </div>
+                  <input type="hidden" name="leave-type" >
+                  <ul class="lv-dropdown-menu">
+                    <li  >Annual Leave</li>
+                    <li >Weekly Off</li>
+                    <li >Sick Leave</li>
+                    <li >Maternity/Paternity</li>
+                  </ul>
+                </div>
+            
+          </div>
+
+           
+            <div class="d-flex">
+            <div class="lv-submit-btn" onclick="applyLeave()">
+              Apply
+            </div>
+            <div class="lv-submit-btn"  onclick="closeForm()">
+              Cancel
+            </div>
+          </div>
+     
+    </div>
+  </div>
+  <div  id="table-wrapper">
+    <div id="#table-scroll " style="max-height:100vh;">
+<table cellspacing="0" cellpadding="0" id="leave-table" >
+  <th width="200" class="noBorder " id="lv-head-1"  >
+
+  </th>
+  <tbody id="lv-body-head">
+
+  </tbody>
+ 
+</table>
+</div>
+</div>
+
+</div>
+            
+            
+            
+       
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+        
+    </section><!--content-->
+
+{% endblock %}
+

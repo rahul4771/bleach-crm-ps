@@ -1958,3 +1958,7 @@ class AdminPaymentEdit(IsAdmin,View):
 		messages.success(request,"Payment Policy Edited Succesfully")
 
 		return redirect('bleach_admin:admin-client-orderdetails',order.id)
+
+class LeaveScheduler(IsAdmin,View):
+	def get(self,request):
+		return render(request,'admin/leavescheduler/leave.html',{})
