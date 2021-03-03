@@ -1,3 +1,13 @@
+$('#timepicker1').timepicker({icons: {
+  time: "fa fa-clock",
+  date: "fa fa-calendar",
+  up: "fa fa-arrow-up",
+  down: "fa fa-arrow-down",
+  previous: "fa fa-chevron-left",
+  next: "fa fa-chevron-right",
+  today: "fa fa-clock",
+  clear: "fa fa-trash-o"
+}});
 $(".chosen-select").chosen();
 $("#bk-job-booking-btn").hide();
 $("#bk-evaluation-btn").hide();
@@ -393,10 +403,7 @@ function durationcalculation(params)
          });
 
   } 
-  function timeParser(val){
-   var trimmedString= val.split(" ")[0]+val.split(" ")[1]+val.split(" ")[2]+' '+val.split(" ")[3].toLowerCase();
-   return trimmedString;
-  }
+  
   
   
 

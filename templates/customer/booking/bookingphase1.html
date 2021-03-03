@@ -21,7 +21,8 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
-   
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/css/bootstrap-timepicker.min.css" integrity="sha512-/Ae8qSd9X8ajHk6Zty0m8yfnKJPlelk42HTJjOHDWs1Tjr41RfsSkceZ/8yyJGLkxALGMIYd5L2oGemy/x1PLg==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap-grid.min.css" integrity="sha512-cKoGpmS4czjv58PNt1YTHxg0wUDlctZyp9KUxQpdbAft+XqnyKvDvcGX0QYCgCohQenOuyGSl8l1f7/+axAqyg==" crossorigin="anonymous" />
     <link rel="stylesheet" href="{% static 'files/externalfiles/css/main.css' %}">
     <link rel="stylesheet" href="{% static 'files/externalfiles/css/chosen.css' %}">
     <link rel="stylesheet" href="{% static 'files/externalfiles/css/wickedpicker.min.css' %}">
@@ -263,11 +264,12 @@
                       </div>
                 </div>
                 <div class="col-md-4 pt-2 ">
-                    
-                    <label for="bk-time"> Time</label>
-                    <input type="text" id="bk-time" name="tendative_time" class="timepicker-12-hr bk-date-job">
+                  <div class="input-group bootstrap-timepicker timepicker">
+                    <input id="timepicker1" type="text" class="form-control input-small bk-date-job" id="bk-time" name="tendative_time" >
+                    <span class="input-group-addon bk-timepicker"><i class="fa fa-clock"></i></span>
+                </div>
+                   
 
-                   <!-- <input  type="time" placeholder="Time" class="bk-date-job" id="bk-time" name="tendative_time">-->
               
             </div>
                 <div class="col-md-4 pt-2">
@@ -314,6 +316,10 @@
   
    
    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script> 
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/js/bootstrap-timepicker.min.js" integrity="sha512-2xXe2z/uA+2SyT/sTSt9Uq4jDKsT0lV4evd3eoE/oxKih8DSAsOF6LUb+ncafMJPAimWAXdu9W+yMXGrCVOzQA==" crossorigin="anonymous"></script>
+
    <script src="{% static 'files/externalfiles/js/chosen.jquery.js' %}"></script>
    <script src="{% static 'files/externalfiles/js/wickedpicker.js' %}"></script>
 
@@ -326,7 +332,6 @@
      
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
   $('#bk-date').change(function(){
     $('#bk-slot').empty();
