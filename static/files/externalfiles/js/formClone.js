@@ -4,7 +4,7 @@ var counter = 1;
 /* Clone Form*/
  function addItem(){
         
-      
+      var checkVal=$("input[name='bk-stain-1']:checked").val();
         var el = $('#bk-item-1').clone().attr({'id': 'bk-item-' + ++counter}).appendTo('#bk-form');
        
         $('#bk-item-'+counter).find('#bk-title-1').attr('id', 'bk-title-'+counter);  /*To change title id */
@@ -22,8 +22,8 @@ var counter = 1;
         $('#bk-item-'+counter).find('#bk-stain-1-2').attr({'id': 'bk-stain-'+counter+'-2','name': 'bk-stain-'+counter,'value':'no'}); /*To change name & id of stain (no) */
        // $("input[name='bk-stain-"+counter+"']:checked").val('no');
         $("input[name='bk-stain-"+counter+"']")[1].checked=true;
-        console.log("value i s"+$("input[name='bk-stain-"+counter+"']:checked").val());
-        $('#bk-item-'+counter).find("#bk-stain-reason-1").attr({'id': 'bk-stain-reason-'+counter,'name': 'bk-stain-reason-'+counter}).val(''); /*To change name of reason for stain*/
+     
+        $('#bk-item-'+counter).find("#bk-stain-reason-1").attr({'id': 'bk-stain-reason-'+counter,'name': 'bk-stain-reason-'+counter}); /*To change name of reason for stain*/
        
         $("[name='bk-stain-reason-"+counter+"'"+"]").parent('.bk-stain-reason').hide();
 
@@ -39,6 +39,17 @@ var counter = 1;
         $('#bk-del-btn-'+counter).show()
 
         $('#sectioncounter_id').val(counter);
+        if(checkVal=='yes'){
+            $("input[name='bk-stain-1']:checked").val('yes');
+            $("input[name='bk-stain-1']")[0].checked=true;
+            $("input[name='bk-stain-1']")[1].checked=false;
+           
+             
+         }
+         else{
+            $("input[name='bk-stain-1']")[0].checked=false;
+            $("input[name='bk-stain-1']")[1].checked=true;
+         }
  }
 
 

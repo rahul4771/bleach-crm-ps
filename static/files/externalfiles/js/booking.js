@@ -128,16 +128,21 @@ function deactivateJob(){
 }
 
 function checkStain(elem){
-    console.log("parent is "+$(elem).attr('id'));
+   
+  
     let stain_id=$(elem).attr('id').split('-')[2];
     console.log("elem is "+$(elem).val());
     if($(elem).val()=='yes'){
        console.log("id is"+stain_id)
+       $("input[name='bk-stain-"+stain_id+"']")[0].checked=true;
+       $("input[name='bk-stain-"+stain_id+"']")[1].checked=false;
         $("[name='bk-stain-reason-"+stain_id+"'"+"]").parent('.bk-stain-reason').show();
         
     }
     else{
        /* $("#bk-stain-reason-"+stain_id).parent('.bk-stain-reason').hide();*/
+       $("input[name='bk-stain-"+stain_id+"']")[1].checked=true;
+       $("input[name='bk-stain-"+stain_id+"']")[0].checked=false;
        $("[name='bk-stain-reason-"+stain_id+"'"+"]").parent('.bk-stain-reason').hide();
     }
 }
