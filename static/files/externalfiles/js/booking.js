@@ -44,16 +44,16 @@ function selectCheck(){
         $('#bk-title-1').html(selectedVal.split(' ')[0]+' 1')
         $("#bk-job-booking-btn").show();
         if(selectedVal=='Mattress'){
-            $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-size-1" name="bk-size-1"><option selected disabled>Select Size</option><option value="single">Single</option><option value="queen">Queen </option><option value="queen">King </option> </select></div>')
+            $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-size-1" name="bk-size-1" required><option selected disabled>Select Size</option><option value="single">Single</option><option value="queen">Queen </option><option value="queen">King </option> </select></div>')
         }
         else {
             if(selectedVal=='Sofa Cleaning')
             {
-                $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control size" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1" onkeyup="durationcalculation(this);"><span class="input-group-text" id="basic-addon2">Seater</span><input type="text" value="seater" name="bk-unit-1" id="bk-unit-1" style="display:none;"/> </div>')
+                $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control size" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1" onkeyup="durationcalculation(this);" required><span class="input-group-text" id="basic-addon2">Seater</span><input type="text" value="seater" name="bk-unit-1" id="bk-unit-1" style="display:none;"/> </div>')
 
             }
             else{
-                $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control size" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1" onkeyup="durationcalculation(this);"><span class="input-group-text" id="basic-addon2">㎡</span><input type="text" value="square meter" name="bk-unit-1" id="bk-unit-1"  style="display:none;"/> </div>')
+                $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><input type="number" class="form-control size" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1" onkeyup="durationcalculation(this);" required><span class="input-group-text" id="basic-addon2">㎡</span><input type="text" value="square meter" name="bk-unit-1" id="bk-unit-1"  style="display:none;"/> </div>')
 
             }
 

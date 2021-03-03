@@ -95,7 +95,7 @@
                
                 <div class="col-md-6 pt-2">
                     <label for="bk-slot">Area Type</label>
-                    <select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-slot" name="area_type">
+                    <select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-slot" name="area_type" required>
                         <option selected disabled value="">Area Type</option>
                         {% for area_type in area_types %}
                         <option value="{{area_type.name}}">{{area_type.name}}</option>
@@ -105,7 +105,7 @@
                 </div>
                 <div class="col-md-6 pt-2">
                     <label for="bk-slot">Location Type</label>
-                    <select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-location" name="location_type">
+                    <select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-location" name="location_type" required>
                         <option selected disabled value="">Location Type</option>
                         <option value="Post Construction">Post Construction</option>
                         <option value="Post Renovation">Post Renovation</option>
@@ -141,7 +141,7 @@
                 <h5 class="bk-item-title" id="bk-title-1"> </h5>
                 <div class="col-md-6 pt-2">
                     <div class="input-group mb-3">
-                        <input type="number" class="form-control size" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1" onkeyup="durationcalculation(this);">
+                        <input type="number" class="form-control size" placeholder="Size" aria-label="Size" aria-describedby="basic-addon2" id="bk-size-1" name="bk-size-1" onkeyup="durationcalculation(this);" required>
                         <span class="input-group-text" id="basic-addon2">Seater</span>
                       </div>
                 </div>
@@ -265,7 +265,7 @@
                 <div class="col-md-4 pt-2 ">
                     
                     <label for="bk-time"> Time</label>
-                    <input type="text" id="bk-time" name="tendative_time" class="timepicker-12-hr bk-date-job">
+                    <input type="text" id="bk-time" name="tendative_time" class="timepicker-12-hr bk-date-job" required>
 
                    <!-- <input  type="time" placeholder="Time" class="bk-date-job" id="bk-time" name="tendative_time">-->
               
@@ -273,14 +273,14 @@
                 <div class="col-md-4 pt-2">
                     
                         <label for="bk-slot">Duration</label>
-                        <select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-duration" name="duration">
+                        <select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-duration" name="duration" required>
                             <option selected disabled value="">Duration</option>
                           </select>
                     </div>
                 <div class="col-md-4 pt-2">
                     
                         <label for="bk-date-job"> Date</label>
-                        <input  type="date" placeholder="Date" class="bk-date-job" id="bk-date-job" name="tendative_date" >
+                        <input  type="date" placeholder="Date" class="bk-date-job" id="bk-date-job" name="tendative_date" required>
                   
                 </div>
                 
