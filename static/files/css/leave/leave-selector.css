@@ -35,14 +35,14 @@
 }
 .profile-icon{
     vertical-align: middle;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     margin-right:5%;
 }
 .lv-selected-date{
-    background-color: #555;
-    color: #ffffff;
+   
+    border:2px solid #555555;
     
 }
 .lv-annual{
@@ -109,18 +109,27 @@
 }
 .lv-add-btn{
     text-align: center;
-    margin-left: auto;
+    margin-left: 30px;
     background-color: #3968c6;
     border-radius: 50px;
     height: 50px;
     width: 50px;
-    padding-top: 10px;
+    padding-top: 13px;
     color: #ffffff;
     font-weight: 300;
-    font-size: 32px;
+    font-size: 30px;
     cursor: pointer;
 }
-
+.lv-clear-btn{
+    margin-left:auto !important;
+    padding:10px;
+    cursor:pointer;
+    background-color: #3968c6;
+    color: #ffffff;
+    border-radius:20px;
+    font-size:14px;
+    height:100%;
+}
 .lv-result-box{
    
  
@@ -197,7 +206,7 @@
   .lv-position{
       color:#1F2B4A;
       font-weight:300;
-      font-size:14px;
+      font-size:12px;
   }
   #table-wrapper {
     position: relative;
@@ -281,6 +290,27 @@
   .lv-modal{
       display:none;
   }
+  .resource-name{
+      font-size:14px;
+  }
+  .lv-select-counter{
+    background-color: #333;
+ 
+    border-radius: 14px;
+    height: 20px;
+    text-align: center;
+    margin-right: 10px;
+    width: 30px;
+  }
+  .pr-20{
+      padding-right:20px;
+  }
+  .lv-weekend{
+      background-color:#f2f2f2;
+  }
+  .lv-friday{
+    background-color:#f2f2f2;
+}
   
   @media only screen and (max-width: 600px) {
       .lv-month{
