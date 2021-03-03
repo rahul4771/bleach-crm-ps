@@ -139,20 +139,20 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .user-typer-wrapper .column-right .user-name{ font-size:20px; line-height:18px; margin:0; padding:0; color:#333; }
 .user-typer-wrapper .column-right .user-type{ font-size:14px; line-height:16px; margin:0; padding:0; color:#666; }*/
 .card-column:hover { box-shadow: 0 10px 28px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.10);}
-.lhs-home{background:url(../images/lhs-home.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block; }
-.lhs-orders{background:url(../images/lhs-orders.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-clients{background:url(../images/lhs-clients.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-tickets{background:url(../images/lhs-tickets.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-payments{background:url(../images/lhs-payments.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-activesubscriptions{background:url(../images/lhs_subscription.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-feedbacks{background:url(../images/lhs-feedbacks.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-resources{background:url(../images/lhs-resources.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-new-enquiry{background:url(../images/lhs-newenquiry.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-addfeedback{background:url(../images/lhs-addfeedbacks.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-raiseticket{background:url(../images/lhs-raietickets.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-collection{background:url(../images/lhs-collections.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-promocodes{background:url(../images/lhs-promo-code.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
-.lhs-finewriteoff{background:url(../images/lhs_fine_woff.png) no-repeat left; background-size: 22px 22px; background-position: 18px 7px; display:block;}
+.lhs-home{background:url(../images/lhs-home.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block; }
+.lhs-orders{background:url(../images/lhs-orders.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block;}
+.lhs-clients{background:url(../images/lhs-clients.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block;}
+.lhs-tickets{background:url(../images/lhs-tickets.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block;}
+.lhs-payments{background:url(../images/lhs-payments.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block;}
+.lhs-activesubscriptions{background:url(../images/lhs_subscription.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block;}
+.lhs-feedbacks{background:url(../images/lhs-feedbacks.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block;}
+.lhs-resources{background:url(../images/lhs-resources.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block;}
+.lhs-new-enquiry{background:url(../images/lhs-newenquiry.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block;}
+.lhs-addfeedback{background:url(../images/lhs-addfeedbacks.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block;}
+.lhs-raiseticket{background:url(../images/lhs-raietickets.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block;}
+.lhs-collection{background:url(../images/lhs-collections.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block;}
+.lhs-promocodes{background:url(../images/lhs-promo-code.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block;}
+.lhs-finewriteoff{background:url(../images/lhs_fine_woff.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block;}
 .green-line{ border-left:4px solid #3cbbb1 !important; }
 .blue-line{ border-left:4px solid #528ce6 !important;}
 .orange-line{ border-left:4px solid #ff8c56;}
@@ -346,8 +346,8 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .navbar {margin-bottom: 0;}
  .main-sidebar { box-sizing: border-box; width: 230px; position: fixed; top: 56px; left: 0; z-index:999; height: calc(100vh - 56px);/*  height: 100vh !important;*/  
  background: #fff; box-shadow: 0 25px 12px 0px rgba(31, 73, 125, 0.8);/*  -webkit-backface-visibility: hidden;*/}
-.main-sidebar .nav li { white-space: nowrap;  height:40px;border-bottom:1px solid #dedede; position:relative;}
-.main-sidebar .nav li a { position: relative; padding-left:46px; display:block; height:40px; color:#6a6a6a; transition: .4s; }
+.main-sidebar .nav li { white-space: nowrap;  height:50px;border-bottom:1px solid #dedede; position:relative;}
+.main-sidebar .nav li a { position: relative; padding-left:60px;padding-top: 15px; display:block; height:50px; color:#6a6a6a; transition: .4s; }
 .main-sidebar .nav li a:hover { background:none; color:#2e4e85;}
 .main-sidebar .nav li a[aria-expanded="true"] > span + i { transform: rotate(180deg); }
 .main-sidebar .nav li a > span + i { position: absolute; right: 5px; margin-top: 2px; transition: transform .1s;}

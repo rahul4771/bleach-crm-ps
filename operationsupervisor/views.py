@@ -1964,6 +1964,10 @@ class BuyBackPromoCodeDelete(IsOperationSupervisor,View):
 		messages.success(request,"Cash Back Deleted !")
 		return redirect('op-supervisor:investigation', investigation_id)
 
+class LeaveScheduler(IsOperationSupervisor,View):
+	def get(self,request):
+		return render(request,'operationsupervisor/leavescheduler/leave.html',{})
+
 def RemoveFollowupSection(request):
 
 	data ={}

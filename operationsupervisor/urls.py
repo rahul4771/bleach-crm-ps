@@ -12,6 +12,8 @@ urlpatterns = [
 	url(r'^tickets/$',views.TicketDetails.as_view(),name='op-supervisor-tickets'),
 	url(r'^ticket/details/(?P<client_id>[-\w]+)/(?P<followup_id>[-\w]+)/$',views.TicketAdvanced.as_view(),name='op-supervisor-ticketadvanced'),
 	
+	url(r'^leave-scheduler/$',views.LeaveScheduler.as_view(),name='op-supervisor-leave-scheduler'),
+
 	url(r'^assigncleaning/team/(?P<scheduler_id>[-\w]+)/$',views.AssigncleaningTeam.as_view(),name='op-supervisor-assign-cleaningteam'),
 	url(r'^assignfollowup/team/(?P<scheduler_id>[-\w]+)/$',views.AssignFollowupTeam.as_view(),name='op-supervisor-assign-followupteam'),
 	url(r'^resources/$',views.ResourceManagement.as_view(),name='resource-management'),
