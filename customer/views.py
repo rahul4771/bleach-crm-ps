@@ -1010,40 +1010,45 @@ class CustomerBookingPhase1(View):
 			service_form  = QuatationServiceFormCustomer(request.POST)
 
 			if service_form.is_valid():
-				#create Main Evaluation
-				tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+				booking_id=request.COOKIES['booking_id']
 
-				current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
-				
-				if current_blc_starting == int(str(tracking_no)[:6]):
-					new_tracking_no = int(tracking_no)+1
-					evaluation_no   = 'BLC'+str(new_tracking_no)
+				if not booking_id:
+					#create Main Evaluation
+					tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+
+					current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
+					
+					if current_blc_starting == int(str(tracking_no)[:6]):
+						new_tracking_no = int(tracking_no)+1
+						evaluation_no   = 'BLC'+str(new_tracking_no)
+					else:
+						evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
+						tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+					
+					evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no)
+					
+					#create order
+					new_order = Order.objects.get_or_create(evaluation=evaluation,order_no=evaluation.evaluation_id)
+
+					#Booking Number and booking save
+					booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
+					current_booking_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
+
+					if current_booking_starting == int(str(booking_id)[:4]):
+						new_booking_id = int(booking_id)+1
+					else:
+						new_booking_id = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
+					
+					customerbooking = CustomerBooking.objects.create(booking_id=new_booking_id,booking_type='CLEANINGBOOKING',evaluation=evaluation)
+
+					#Evaluation Details save
+					evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation)				
+
 				else:
-					evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
-					tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
-				
-				evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,quatation_expiry_date=timezone.now()+timedelta(14))
-				
-				#create order
-				new_order = Order.objects.get_or_create(evaluation=evaluation,order_no=evaluation.evaluation_id)
-
-				#Booking Number and booking save
-				booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
-				current_booking_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
-
-				if current_booking_starting == int(str(booking_id)[:4]):
-					new_booking_id = int(booking_id)+1
-				else:
-					new_booking_id = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
-				
-				customerbooking = CustomerBooking.objects.create(booking_id=new_booking_id,booking_type='CLEANINGBOOKING',evaluation=evaluation)
-
-				#Evaluation Details save
-				evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation)				
-
-
-
-
+					customerbooking    = CustomerBooking.objects.select_related('evaluation__customer').get(booking_id=booking_id)
+					
+					evaluation_details = EvaluationDetails.objects.get(evaluation=customerbooking.evaluation)
+					new_order          = Order.objects.get_or_create(evaluation=customerbooking.evaluation)					
 
 				#service book saving
 				service_form_save                    = service_form.save(commit=False)
@@ -1070,22 +1075,55 @@ class CustomerBookingPhase1(View):
 								taken_status='CUSTOMER_SEND'
 						        )
 
-				#to save schedules
+				#to save schedule cleaning team and cleaning team members
 				tendative_dates       = request.POST.get('tendative_date').split(',')
 				start_time            = request.POST.get('tendative_time')
-				order_schedule_array  = []
 				
 				for date in tendative_dates:
 					start_date_time = datetime.strptime(date+' '+start_time,'%Y-%m-%d %I:%M %p')
 					end_date_time   = start_date_time + timedelta(hours=int(service_form_save.cleaning_hours)) 	
 
-					order_schedule_array.append(OrderScheduler(order=new_order[0],status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book=service_form_save))
-				OrderScheduler.objects.bulk_create(order_schedule_array)
+					#schedule
+					order_schedule = OrderScheduler.objects.create(order=new_order[0],status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book=service_form_save)
+					
+					#same blc cleaners for excluding
+					sameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
+
+					active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).exclude(member__id__in=sameblc_cleaners).values_list("member",flat=True)
+					active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
+			
+					leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
+					cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
+					
+					if service_type == 'Kitchen Cleaning':
+						leaders = leaders.filter(is_kitchen_skill=True)
+						cleaners= cleaners.filter(is_kitchen_skill=True)
+					elif service_type == 'Carpet Cleaning':
+						leaders = leaders.filter(is_carpet_skill=True)
+						cleaners= cleaners.filter(is_carpet_skill=True)
+					elif service_type == 'Sterilization':
+						leaders = leaders.filter(is_sterilization_skill=True)
+						cleaners= cleaners.filter(is_sterilization_skill=True)
+					elif service_type == 'Mattress Cleaning':
+						leaders = leaders.filter(is_mattress_skill=True)
+						cleaners= cleaners.filter(is_mattress_skill=True)
+					elif service_type == 'Sofa Cleaning':
+						leaders = leaders.filter(is_sofa_skill=True)
+						cleaners= cleaners.filter(is_sofa_skill=True)
+					
+					#cleaning team
+					cleaning_team  = CleaningTeam.objects.create(order_scheduler=order_schedule,team_leader=leaders.first(),start_at=start_date_time,end_at=end_date_time)
+					#cleaning team members
+					no_of_cleaners = (service_form_save.number_of_cleaners-1)
+					cleaning_team_member_array = []
+					for i in range(no_of_cleaners):
+						cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=cleaners[i],start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
+					CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
 
 				#to save sections
 				no_of_sections         = int(request.POST.get('section_counter'))
 				section_array          = []
-				for i in range(1,no_of_sections):
+				for i in range(1,(no_of_sections+1)):
 					section_name  = 'Section'+str(i)
 					size          = request.POST.get('bk-size-'+str(i))
 					unit          = request.POST.get('bk-unit-'+str(i))
@@ -1102,7 +1140,7 @@ class CustomerBookingPhase1(View):
 						section_name_arabic = section_name
 
 					#save section
-					section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
+					section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,size=size,unit=unit,age=age,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
 				
 				#set cookie
 				httpresponse = redirect('customer:customerbookingcleaningphase2')
@@ -1533,7 +1571,7 @@ class CustomerBookingCleaningPhase4(View):
 			OrderScheduler.objects.filter(order__evaluation=booking_details.evaluation).update(customer_address=address_form_save)
 
 			###update Evaluation and Order###
-			Evaluation.objects.filter(id=booking_details.evaluation.id).update(quatation_status='APPROVED',quatation_approved_date=timezone.now(),payment_method='PREPAID',payment_way='ONLINE')
+			Evaluation.objects.filter(id=booking_details.evaluation.id).update(quatation_status='APPROVED',quatation_approved_date=timezone.now(),payment_method='PREPAID',payment_way='ONLINE',quatation_expiry_date=timezone.now()+timedelta(14))
 			
 			last_invoice_no  		 = Order.objects.filter(is_active=True).aggregate(t=Max('invoice_no'))['t']
 			current_invoice_starting = str(timezone.now().year)

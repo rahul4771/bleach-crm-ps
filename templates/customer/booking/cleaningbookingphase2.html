@@ -37,7 +37,7 @@
          </div>
          <div class="col-md-10 offset-md-1 mt-4">
              <div >
-                <button type="button"  class="btn btn-primary " style="margin-left:auto;"  onclick="location.href = '';">
+                <button type="button"  class="btn btn-primary " style="margin-left:auto;"  onclick="location.href = '{% url 'customer:customerbookingphase1' %}';">
                   Add Service
                  </button>
              </div>
@@ -61,7 +61,7 @@
                 <td>{{evaluationbook.area_type}}</td>
                 <td>{{evaluationbook.location_type}}</td>
                 <td>{{evaluationbook.cleaning_hours}} Hours</td>
-                <td class="book-cost">{{evaluationbook.total_cost}} KD</td>
+                <td class="book-cost">{{evaluationbook.total_cost}}</td>
               </tr>
               {% endfor %}
               {% endfor %}
@@ -69,7 +69,7 @@
           </table>
           
           <div class="text-right">
-             <h4> Total Cost:<span><b> 200 KD</b></span></h4> 
+             <h4> Total Cost:<span><b class="total_cost"></b></span></h4> 
           </div>
         </div>
      </div>
@@ -82,22 +82,26 @@
      </div>
    </form>
   </div>
-      
-   
-<script>
-//To find total cost
-  $('document').ready(function(){
-
-  });
-</script>
    
    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script> 
      
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    
-    
+
+<script>
+//To find total cost
+  $('document').ready(function(){
+  
+    //Total Cost findings
+    var total_cost = 0;
+    $('.book-cost').each(function(){
+        total_cost += parseFloat(this.innerText);
+    });
+    $('.total_cost').html(total_cost +"KD");
+  
+  });
+</script>
 
 <!--<script src="https://res.cloudinary.com/dxfq3iotg/raw/upload/v1569006273/BBBootstrap/choices.min.js?version=7.0.0"></script>-->
 
