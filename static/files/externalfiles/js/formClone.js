@@ -11,7 +11,7 @@ var counter = 1;
         
        
         $('#bk-item-'+counter).find('#bk-del-btn-1').attr('id', 'bk-del-btn-'+counter);
-        $('#bk-title-'+counter).html($(".bk-select").val().split(' ')[0]+' '+counter); /* To change title */
+        $('#bk-title-'+counter).html($("#bk-service option:selected").text().split(' ')[0]+' '+counter); /* To change title */
         $('#bk-item-'+counter).find('#bk-size-1').attr({'id': 'bk-size-'+counter,'name': 'bk-size-'+counter}).val(''); /*To change name & id of size*/ 
         
         $('#bk-item-'+counter).find('#bk-unit-1').attr({'id': 'bk-unit-'+counter,'name': 'bk-unit-'+counter}).val(''); /*To change name & id of unit*/ 
@@ -56,7 +56,7 @@ var counter = 1;
     $('#bk-title-'+nextVal).attr('id', 'bk-title-'+currentVal);
     $('#bk-del-btn-'+nextVal).attr('id', 'bk-del-btn-'+currentVal);
     $('#bk-del-btn-'+currentVal).show()
-    $('#bk-title-'+currentVal).html($(".bk-select").val().split(' ')[0]+' '+currentVal); /* To change title */
+    $('#bk-title-'+currentVal).html($("#bk-service option:selected").text().split(' ')[0]+' '+currentVal); /* To change title */
     $('#bk-size-'+nextVal).attr({'id': 'bk-size-'+currentVal,'name': 'bk-size-'+currentVal});
     $('#bk-unit-'+nextVal).attr({'id': 'bk-unit-'+currentVal,'name': 'bk-unit-'+currentVal});
 
@@ -81,7 +81,7 @@ var counter = 1;
                 $('#bk-title-'+itemId).attr('id', 'bk-title-'+(parseInt(itemId)-1));
                 $('#bk-del-btn-'+itemId).attr('id', 'bk-del-btn-'+(parseInt(itemId)-1));
                 $('#bk-del-btn-'+(parseInt(itemId)-1)).show();
-                $('#bk-title-'+(parseInt(itemId)-1)).html($(".bk-select").val()+(parseInt(itemId)-1)); /* To change title */
+                $('#bk-title-'+(parseInt(itemId)-1)).html($("#bk-service option:selected").text().split(' ')[0]+' '+(parseInt(itemId)-1)); /* To change title */
                 $('#bk-size-'+itemId).attr({'id': 'bk-size-'+(parseInt(itemId)-1),'name': 'bk-size-'+(parseInt(itemId)-1)});
                 $('#bk-unit-'+itemId).attr({'id': 'bk-unit-'+(parseInt(itemId)-1),'name': 'bk-unit-'+(parseInt(itemId)-1)});
 
