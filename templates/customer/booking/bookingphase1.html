@@ -60,7 +60,7 @@
             </div>
 
             <!--        Evaluation      -->
-            <form method="post" action="">
+            <form method="post" action="" >
                 {%csrf_token%}
             <input type="hidden" name="action_type" value="bookevaluation">
             <div class="row mt-4 bk-evaluation-form">
@@ -87,7 +87,7 @@
             <!--        Evaluation Ends      -->
           </form>
             
-          <form method="post" action="">
+          <form method="post" action="" id="bk-form">
                 {%csrf_token%} 
           <input type="hidden" name="action_type" value="bookcleaning">
           <input type="hidden" id="service_type_id" name="service_type" value="">

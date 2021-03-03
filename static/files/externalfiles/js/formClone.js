@@ -5,7 +5,7 @@ var counter = 1;
  function addItem(){
         
       
-        var el = $('#bk-item-1').clone().attr({'id': 'bk-item-' + ++counter}).appendTo('#bk-main-form');
+        var el = $('#bk-item-1').clone().attr({'id': 'bk-item-' + ++counter}).appendTo('#bk-form');
        
         $('#bk-item-'+counter).find('#bk-title-1').attr('id', 'bk-title-'+counter);  /*To change title id */
         
@@ -48,7 +48,7 @@ var counter = 1;
       /* To find Children */
     
     var childDiv = [];
-    $("#bk-main-form > div").each((index, elem) => {
+    $("#bk-form > div").each((index, elem) => {
         childDiv.push(elem.id);
    });
     if ($(elem).parent('div').attr('id') != 'bk-item-1')
