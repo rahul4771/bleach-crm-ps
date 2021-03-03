@@ -1,7 +1,7 @@
 
 //var url='https://test.bleach-kw.com';
 //var url = 'https://my.bleachkw.com';
-
+var url="http://localhost:8000";
 var resourceList=[];
 var cleanerList=[];
 var teamLeaderList=[];
@@ -300,9 +300,10 @@ function selectDay(el){
         $('.modal-date').text($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
         $('.lv-modal').show();
+        dateCounter=dateCounter-1;
     }
     else{
-    if($('#'+dayId).find('.lv-date').hasClass('lv-selected-date')||$('#'+dayId).find('.lv-date').hasClass('lv-weekly')||$('#'+dayId).find('.lv-date').hasClass('lv-maternity')||$('#'+dayId).find('.lv-date').hasClass('lv-sick')||$('#'+dayId).find('.lv-date').hasClass('lv-annual')){
+    if(($('#'+dayId).find('.lv-date').hasClass('lv-selected-date'))||($('#'+dayId).find('.lv-date').hasClass('lv-maternity'))||($('#'+dayId).find('.lv-date').hasClass('lv-sick'))||($('#'+dayId).find('.lv-date').hasClass('lv-annual'))){
         $('#'+dayId).find('.lv-date').removeClass('lv-selected-date');
         var index = selectedId.indexOf(dayId);
         var selectedIndex=selectedDates[userId].dates.indexOf($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
