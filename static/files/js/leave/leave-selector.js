@@ -1,8 +1,7 @@
 
 //var url='https://test.bleach-kw.com';
 var url = 'https://my.bleachkw.com';
-//var url='http://localhost:8000';
-//var url='http://127.0.0.1:8000';
+
 var resourceList=[];
 var cleanerList=[];
 var teamLeaderList=[];
@@ -59,7 +58,9 @@ console.log("testing :"+noOfDays);
 for (var j=0;j<resourceList.length;j++){
     var noOfLeave=0;
     var rsid=j+1;
+    
     $('#lv-body-head').append('<tr class="lv-rows" id="row-'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"><span class="counter-text" id="no-leave-'+j+'">'+noOfLeave+'</span></div> <img src="'+resourceList[j].photo_url+'"align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">'+resourceList[j].user_type+'</div></div></td></tr>');
+
    
     for(var i=1;i<=noOfDays;i++){
         found=false;
@@ -419,7 +420,6 @@ function getUsers(){
     
     
       resourceList=[];
-      resources=[];
    console.log("called me");
     axios.get(url+'/api/leave-users-list/')
 .then(function (response) {
@@ -436,7 +436,6 @@ function getUsers(){
   
      
         resourceList.push(staffData);
-        resources.push(staffData);
    
     
    
@@ -444,7 +443,6 @@ function getUsers(){
 
     
 }
-
 getLeave();
 
 })
@@ -454,9 +452,8 @@ getLeave();
 })
 }
 function resetResources(category){
-    console.log("category is"+category);
-    resourceList=resources;
-    newResource=[];
+    
+    var newResource=[];
     if(category=='ALL')
         {  
             for(var i=0;i<resourceList.length;i++){
@@ -490,7 +487,7 @@ function resetResources(category){
        
     }
     resourceList=newResource;
-    reCalc();
+    console.log("new list is "+JSON.stringify(resourceList));
    
 }
 function getLeave(){
@@ -517,7 +514,6 @@ function getLeave(){
     }
     resourceList[userIndex].leave.push({date:gt_day+'-'+gt_month+'-'+gt_year,type:response.data.staffs[i].leave_type,leave_id:response.data.staffs[i].id});
     }
-    
    
     getInitDatas();
    

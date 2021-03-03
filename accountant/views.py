@@ -914,7 +914,8 @@ class CashCollect(IsAccountant,View):
 					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date,receipt_no=new_receipt_no)
 				elif payment_policy == 'SUBSCRIPTION':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,subscription_topay=0)
-				
+					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date,receipt_no=new_receipt_no)
+
 				messages.success(request,"Payment Received thruogh Cash")
 
 			if payment_method == 'CHEQUE':
@@ -932,7 +933,7 @@ class CashCollect(IsAccountant,View):
 					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date,receipt_no=new_receipt_no)
 				elif payment_policy == 'SUBSCRIPTION':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,subscription_topay=0)
-				
+					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date,receipt_no=new_receipt_no)
 				
 				messages.success(request,"Payment Received thruogh Cheque")
 
@@ -951,7 +952,7 @@ class CashCollect(IsAccountant,View):
 					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
 				elif payment_policy == 'SUBSCRIPTION':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,subscription_topay=0)
-				
+					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
 
 				messages.success(request,"Payment Received through Bank")
 
