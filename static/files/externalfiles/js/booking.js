@@ -1,3 +1,13 @@
+$('#timepicker1').timepicker({icons: {
+  time: "fa fa-clock",
+  date: "fa fa-calendar",
+  up: "fa fa-arrow-up",
+  down: "fa fa-arrow-down",
+  previous: "fa fa-chevron-left",
+  next: "fa fa-chevron-right",
+  today: "fa fa-clock",
+  clear: "fa fa-trash-o"
+}});
 $(".chosen-select").chosen();
 $("#bk-job-booking-btn").hide();
 $("#bk-evaluation-btn").hide();
@@ -118,14 +128,21 @@ function deactivateJob(){
 }
 
 function checkStain(elem){
-    console.log("parent is "+$(elem).attr('id'));
+   
+  
     let stain_id=$(elem).attr('id').split('-')[2];
+    console.log("elem is "+$(elem).val());
     if($(elem).val()=='yes'){
        console.log("id is"+stain_id)
+       $("input[name='bk-stain-"+stain_id+"']")[0].checked=true;
+       $("input[name='bk-stain-"+stain_id+"']")[1].checked=false;
         $("[name='bk-stain-reason-"+stain_id+"'"+"]").parent('.bk-stain-reason').show();
+        
     }
     else{
        /* $("#bk-stain-reason-"+stain_id).parent('.bk-stain-reason').hide();*/
+       $("input[name='bk-stain-"+stain_id+"']")[1].checked=true;
+       $("input[name='bk-stain-"+stain_id+"']")[0].checked=false;
        $("[name='bk-stain-reason-"+stain_id+"'"+"]").parent('.bk-stain-reason').hide();
     }
 }
@@ -393,10 +410,7 @@ function durationcalculation(params)
          });
 
   } 
-  function timeParser(val){
-   var trimmedString= val.split(" ")[0]+val.split(" ")[1]+val.split(" ")[2]+' '+val.split(" ")[3].toLowerCase();
-   return trimmedString;
-  }
+  
   
   
 

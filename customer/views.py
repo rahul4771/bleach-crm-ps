@@ -1010,9 +1010,13 @@ class CustomerBookingPhase1(View):
 			service_form  = QuatationServiceFormCustomer(request.POST)
 
 			if service_form.is_valid():
-				booking_id=request.COOKIES['booking_id']
+				booking_id         = request.COOKIES['booking_id']
+				try:
+					customerbooking    = CustomerBooking.objects.select_related('evaluation__customer').get(booking_id=booking_id)
+				except:
+					customerbooking    = None
 
-				if not booking_id:
+				if not customerbooking:
 					#create Main Evaluation
 					tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 
@@ -1045,7 +1049,6 @@ class CustomerBookingPhase1(View):
 					evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation)				
 
 				else:
-					customerbooking    = CustomerBooking.objects.select_related('evaluation__customer').get(booking_id=booking_id)
 					
 					evaluation_details = EvaluationDetails.objects.get(evaluation=customerbooking.evaluation)
 					new_order          = Order.objects.get_or_create(evaluation=customerbooking.evaluation)					
@@ -1095,6 +1098,7 @@ class CustomerBookingPhase1(View):
 					leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
 					cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
 					
+					service_type = service_form_save.service_type.name
 					if service_type == 'Kitchen Cleaning':
 						leaders = leaders.filter(is_kitchen_skill=True)
 						cleaners= cleaners.filter(is_kitchen_skill=True)
@@ -1114,7 +1118,7 @@ class CustomerBookingPhase1(View):
 					#cleaning team
 					cleaning_team  = CleaningTeam.objects.create(order_scheduler=order_schedule,team_leader=leaders.first(),start_at=start_date_time,end_at=end_date_time)
 					#cleaning team members
-					no_of_cleaners = (service_form_save.number_of_cleaners-1)
+					no_of_cleaners = int(service_form_save.number_of_cleaners)-1
 					cleaning_team_member_array = []
 					for i in range(no_of_cleaners):
 						cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=cleaners[i],start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
@@ -1583,7 +1587,7 @@ class CustomerBookingCleaningPhase4(View):
 					new_invoice_no 		 = str(timezone.now().year)+'00001'
 			else:
 				new_invoice_no 		 = str(timezone.now().year)+'00001'
-			Order.objects.filter(evaluation=evaluation).update(payment_status='PENDING',invoice_no=new_invoice_no,order_status='APPROVED_BY_CLIENT')
+			Order.objects.filter(evaluation=booking_details.evaluation).update(payment_status='PENDING',invoice_no=new_invoice_no,order_status='APPROVED_BY_CLIENT')
 			
 			messages.success(request,"Cleaning Booking Succesfully Completed")
 
@@ -1607,4 +1611,19 @@ class CustomerBookingCleaningPhase4(View):
 
 class CustomerBookingCleaningPhase5(View):
 	def get(self,request):
-		return render(request,'customer/booking/cleaningbookingphase5.html',{})
+		customer_booking = CustomerBooking.objects.select_related('evaluation__customer').get(booking_id=request.COOKIES['booking_id'])		
+
+		#invoice data		
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(evaluation=customer_booking.evaluation,is_active=True)
+		nonduplicate_schedules = []
+		#Remove duplicates for subscription
+		duplicate_schedules    = []
+		for orderschedule in order.orderschedules:
+			if orderschedule.order_scheduler_book in duplicate_schedules:
+				pass
+			else:	
+				nonduplicate_schedules.append(orderschedule)	
+
+			duplicate_schedules.append(orderschedule.order_scheduler_book)
+
+		return render(request,'customer/booking/cleaningbookingphase5.html',{'order':order,'nonduplicate_schedules':nonduplicate_schedules,})

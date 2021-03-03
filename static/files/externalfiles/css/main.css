@@ -362,6 +362,10 @@ outline: none !important;
 .d-none{
   display: none;
 }
+.bk-timepicker{
+    padding: 10px;
+    background-color: #ebebeb;
+}
 
 @media print{
  .no-print{
