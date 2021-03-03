@@ -52,3 +52,22 @@ class QuatationServiceForm(forms.ModelForm):
 		self.fields['cleaning_hours'].required 		= True
 		self.fields['estimated_cost'].required 		= True
 		self.fields['total_cost'].required      	= True
+
+
+class QuatationServiceFormCustomer(forms.ModelForm):
+	tendative_date = forms.CharField(required=True)
+	tendative_time = forms.CharField(required=True)
+	duration       = forms.CharField(required=True)
+	section_counter= forms.CharField(required=True)      
+
+	class Meta:
+		model = EvaluationBook
+		fields = ('service_type','area_type','location_type','total_cost','evaluator_note')
+	
+	def __init__(self,*args,**kwargs):
+		super(QuatationServiceFormCustomer, self).__init__(*args, **kwargs)	
+		self.fields['service_type'].required    	= True
+		self.fields['area_type'].required 			= True
+		self.fields['location_type'].required 	    = True
+		self.fields['location_type'].required 	    = True
+		self.fields['total_cost'].required          = True

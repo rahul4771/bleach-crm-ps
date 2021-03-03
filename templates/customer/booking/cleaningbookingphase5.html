@@ -1,0 +1,333 @@
+{% load static %}
+<!doctype html>
+<html lang="en" xml:lang="en" >
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" id="viewportMeta" />
+
+    
+    <meta name="description" content="Bleach Invoice">
+    <meta name="author" content="Invoice">
+
+    
+
+   
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="{% static 'files/externalfiles/css/main.css' %}">
+    <title>Bleach Cleaning Services | Invoice</title>
+
+  </head>
+  <body id="printableArea">
+   <div class="container mb-4 mt-4" id="content" >
+      <div class="row" id="printableArea">
+        <div class="col-md-8 col-print-12" id="canvas" >
+          
+          <div class="inv-card mb-4">
+            <div class="d-flex p-4">
+           <div >
+            <img src="{% static 'files/externalfiles/img/logo.png' %}" class="inv-logo mr-4"/>
+          </div>
+            <div  class="text-center">
+            <div  class="inv-company-title notranslate">BLEACH</div>
+            <div class="inv-company-subtitle ">CLEANING SERVICES</div>
+          </div>
+          <div class=" pt-4 inv-translator " data-html2canvas-ignore="true">
+            <div class="form-check form-switch inv-form-switch select-language">
+              <input type="checkbox"  id="lang-selector" />
+              <!--<input class="form-check-input" type="checkbox"  id="lang-selector" >--> 
+              <label class="form-check-label notranslate" for="flexSwitchCheckChecked" id="lang-label" data-html2canvas-ignore="true">English</label>
+            </div>
+           
+            
+            <div id="google_translate_element" style="display: none;"></div>
+          </div>
+          
+            </div>
+            
+          <div class="container">
+          {% for orderschedule in order.orderschedules %}
+          {% if forloop.first %}
+          <div class="row ">
+            <div class="col-md-5 col-print-5 inv-customer-details order-2 order-md-1 mt-4 mt-md-0">
+              <div class="">
+              <div class="inv-content inv-text-color">Invoice To</div>
+              <h4 class="inv-content pt-2 inv-heading-light inv-text-color">{{orderschedule.customer_address.customer.name}}</h4>
+              <div class="inv-content inv-text-color"> {{orderschedule.customer_address.apartment}}
+                ,{% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}},
+                {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}}, {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %}
+                {{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}<br>
+              
+                Contact No : {{orderschedule.customer_address.customer.mobile_number}} <br>
+              
+                Email : {{orderschedule.customer_address.customer.email}}<br>
+              </div>
+              </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+
+            <div class="col-md-5 col-print-5 offset-md-2 order-md-2 order-1 inv-invoice-card" >
+              <div class="inv-content-card">
+              <h1 class="text-center inv-invoice-title">INVOICE</h1>
+              <div>
+              <div class="d-flex pt-2  inv-invoice-details">
+                <div class="w-50 inv-text-left">
+                  Invoice Number
+                </div>:
+                <div class="w-50 inv-text-right">
+                   INV{{order.invoice_no}}
+                </div>
+              </div>
+              <div class="d-flex pt-1 inv-invoice-details">
+                <div class="w-50 inv-text-left">
+                  Invoice Date
+                </div>:
+                <div class="w-50 inv-text-right">
+                   {{order.evaluation.created|date:'d-m-Y'}}
+                </div>
+              </div>
+              <div class="d-flex pt-1 inv-invoice-details">
+                <div class="w-50 inv-text-left">
+                  Payment Policy
+                </div>:
+                <div class="w-50 inv-text-right">
+                   {{order.evaluation.payment_method}}
+                </div>
+              </div>
+              <div class="d-flex pt-1 inv-invoice-details pb-4">
+                <div class="w-50 inv-text-left">
+                  Order Number
+                </div>:
+                <div class="w-50 inv-text-right">
+                  {{order.evaluation.evaluation_id}}
+                </div>
+              </div>
+            </div>
+            </div>
+              
+              
+              
+            </div>
+            {% for orderschedule in nonduplicate_schedules %}            
+            {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
+            <div class="col-md-12 col-print-12 order-3">
+              <div class="inv-price-card mt-4 row">
+                <div class="col-md-8 col-print-8">
+                  <div class="inv-service-title p-2 inv-text-bold">
+                    {{orderschedule.order_scheduler_book.service_type}} - {{section.section_name}} 
+                  </div>
+                  <div class="d-md-flex d-print-flex">
+                    <div class="p-2">
+                      Size :<span class="inv-text-bold">{{section.size}} {{section.unit|default_if_none:''}}</span>
+                    </div>
+                    <div class="p-2">
+                      Quantity : <span class="inv-text-bold">{{section.quantity|default_if_none:'1'}}</span>
+                    </div>
+                    <div class="p-2">
+                      Unit Price :<span class="inv-text-bold">{{section.section_cost}}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3 col-print-3 offset-md-1 p-2">
+                  <div class="p-2">
+                    NET PRICE
+                  </div>
+                  <div class="inv-price p-1 ">
+                 
+                    <span class="inv-text-bold">{{section.section_cost|floatformat:'3'}}</span> KD
+                 
+                  </div>
+                  <div>
+
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+            {% endfor %}
+            {% endfor %}
+           
+          
+          </div>
+         <!-- <hr class="mt-3 mb-3 pl-2 pr-2 inv-divider"/>-->
+          <div class="row mt-2">
+            <div class=" col-md-6 col-print-6 offset-md-6">
+             <div class="d-flex pt-2">
+                <div class="inv-text-left w-50">
+                  Sub Total
+                </div>
+                <div class="inv-text-right w-50">
+                  <span class="inv-text-bold">{{order.total_amount}}</span> KD
+                </div>
+              </div>
+              <div class="inv-total-payment p-2 mt-4 mb-4">
+                <div class="inv-text-left  pt-1">
+              Grand Total
+                </div>
+                <div class="inv-text-right inv-text-lg pb-4 ">
+                 
+                  <span class="inv-heading ">{{order.total_amount}}</span> KD
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+         
+         
+          </div>
+          
+        </div>
+        <div class="col-md-4 col-print-4 mb-4" id="inv-payment">
+          <div class="container inv-payment-container">
+            <div class="row ">
+              <div class="col-12">
+              <h3 class="text-center mt-4 inv-text-color">
+                Payment
+              </h3>
+            </div>
+            <div class="col-6 pt-4 inv-text-secondary">
+              Current Payment
+            </div>
+            <div class="col-6 inv-text-right pt-4 inv-text-secondary">
+               <b> {{order.total_amount|floatformat:'3'}}</b> KD
+            </div>
+            <div class="col-6 pt-1">
+              Paid
+            </div>
+            <div class="col-6 inv-text-right pt-1 inv-text-secondary">
+               <b>{{order.amount_paid|floatformat:'3'}}</b> KD
+            </div>
+            <div class="col-6 pt-1 ">
+              Amount Due
+            </div>
+            <div class="col-6 inv-text-right pt-1 inv-text-secondary">
+              <b>{{order.remining_amount|floatformat:'3'}}</b> KD
+            </div>
+            <div class="col-12">
+              <div class="inv-current-payment p-2 mt-4 mb-4">
+                <div class="inv-text-left  pt-1">
+               Payable Amount
+                </div>
+                <div class="inv-text-right inv-text-lg pb-4 ">
+                 
+                  <span class="inv-heading ">{{order.remining_amount|floatformat:'3'}}</span> KD
+                </div>
+              </div>
+            </div>
+              <div class="col-12 mt-4 inv-text-color ">
+                Payment Option
+              </div>
+              <div class="col-12">
+                <div class="d-flex">
+                  <div class="inv-payment-card mt-4 text-center" id="inv-debit" onclick="selectPayment('debit')">
+                   
+                    <img src="{% static 'files/externalfiles/icons/knet-icon.png' %}" class="inv-card-icon " id="inv-knet" />
+                    <div class="inv-payment-text" >
+                      Debit Card
+                    </div>
+                    <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-debit-check-box">
+                      <i class="fa fa-check inv-check-icon " id="inv-check-debit"></i>
+                    </div>
+                  </div>
+                  <div class="inv-payment-card mt-4 text-center " id="inv-credit" onclick="selectPayment('credit')"><!-- to disable click add class inv-click-disable -->
+                    <img src="{% static 'files/externalfiles/icons/debit-card.png' %}" class="inv-card-icon" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
+                    <div class="inv-payment-text "> <!-- to disable  add class inv-payment-disabled -->
+                      Credit Card
+                    </div>
+                    <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-credit-check-box">
+                      <i class="fa fa-check inv-check-icon " id="inv-check-credit"></i>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              
+              <div class="col-12   text-center text-white mt-4">
+                <div class="inv-btn">
+                Proceed
+              </div>
+              </div>
+              <div class="col-5 offset-1 inv-white-btn text-center  mt-4 mb-4 " id="download">
+                <i class="fa fa-download" ></i>
+                Download
+              </div> 
+              <div class="col-5 offset-1  inv-white-btn text-center  mt-4 mb-4 " onclick="printDiv()">
+                <i class="fa fa-print"></i>
+                Print
+              </div> 
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+   </div>
+   <div class="inv-footer ">
+     <div class="container">
+       <div class="row">
+         <div class="col-md-4">
+          <div class="d-flex pt-4 pb-4">
+            <div class="p-2">
+              <img src="{% static 'files/externalfiles/icons/placeholder.png' %}" class="inv-icon"/>
+            </div>
+           
+            <div class="p-2">
+              <b>Bleach International Contracting Company for Cleaning Building & Cities WLL</b><br>
+              Office No. 3, Building No. 8, Block 13 Qibila Building, Mohammed AL Ghanim Street Kuwait City,<br> PO Box 4489, Safat 13045 CR No.362934
+            </div>
+          </div>
+         </div>
+         <div class="col-md-4">
+          <div class="d-flex pt-4 pb-4">
+            <div class="p-2">
+              <img src="{% static 'files/externalfiles/icons/contact.png' %}" class="inv-icon"/>
+            </div>
+           
+            <div class="p-2">
+              Tel : +965 1882707 <br>Email: customercare@bleach-kw.com <br>Website : www.bleach-kw.com
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 offset-md-1 ">
+          <div class="pt-4 pb-4 text-center">
+           <a href="https://www.facebook.com/BleachKw/" target="_blank" class="inv-link"> <i class="fab fa-facebook-f text-white p-2 inv-cp"></i> </a>
+            <!-- https://www.facebook.com/BleachKw/ -->
+            <a href="https://twitter.com/bleachkw?lang=en" target="_blank" class="inv-link">  <i class="fab fa-twitter text-white p-2 inv-cp"></i></a>
+            <!-- https://twitter.com/bleachkw?lang=en -->
+            <a href="https://www.instagram.com/bleachkw/?hl=en" target="_blank" class="inv-link"><i class="fab fa-instagram text-white p-2 inv-cp"></i></a>
+            <!-- https://www.instagram.com/bleachkw/?hl=en -->
+            <a href="https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw" target="_blank" class="inv-link"> <i class="fab fa-youtube text-white p-2 inv-cp"></i></a>
+            <!-- https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw -->
+            <a href="https://www.linkedin.com/company/bleachkw" target="_blank" class="inv-link"><i class="fab fa-linkedin text-white p-2 inv-cp"></i></a>
+            <!-- https://www.linkedin.com/company/bleachkw -->
+            
+          </div>
+        </div>
+       </div>
+     </div>
+   </div>
+
+   
+   <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/pdfmake.js" integrity="sha512-rn5JpU98RtYVMtZeQJfzmJ67rl4/dqDpGZ393z5f9WMYHXEU4+8Stm/PQAma2gbsLbpClmUHJzT0DaG32OmEyQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js" integrity="sha512-jzL0FvPiDtXef2o2XZJWgaEpVAihqquZT/tT89qCVaxVuHwJ/1DFcJ+8TBMXplSJXE8gLbVAUv+Lj20qHpGx+A==" crossorigin="anonymous"></script>
+    <script src="./js/convertToPdf.js"></script>
+   
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" type="text/javascript"></script>
+        <script src="./js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+  </body>
+</html>

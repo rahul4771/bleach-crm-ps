@@ -1,12 +1,11 @@
 
-var url='https://test.bleach-kw.com';
+var url='http://localhost:8000';
 var resourceList=[];
 var cleanerList=[];
 var teamLeaderList=[];
 var leaveSheet=[];
 var leaveId='';
 var modaluser='';
-var newResource=[];
 
 getUsers();
 
@@ -49,7 +48,7 @@ for (var k=1;k<=noOfDays;k++){
 console.log("testing :"+noOfDays);
 for (var j=0;j<resourceList.length;j++){
     var rsid=j+1;
-    $('#lv-body-head').append('<tr class="lv-rows" id="row-'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"><span class="counter-text">'+resourceList[j].leave.length+'</span></div> <img src="'+resourceList[j].photo_url+'"align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">'+resourceList[j].user_type+'</div></div></td></tr>');
+    $('#lv-body-head').append('<tr class="lv-rows" id="row-'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"><span class="counter-text">'+resourceList[j].leave.length+'</span></div> <img src="http://localhost:8000'+resourceList[j].photo_url+'"align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">Sales</div></div></td></tr>');
    
     for(var i=1;i<=noOfDays;i++){
         found=false;
@@ -359,7 +358,6 @@ function getUsers(){
     
     
       resourceList=[];
-      resources=[];
    console.log("called me");
     axios.get(url+'/api/leave-users-list/')
 .then(function (response) {
@@ -376,7 +374,6 @@ function getUsers(){
   
      
         resourceList.push(staffData);
-        resources.push(staffData);
    
     
    
@@ -384,7 +381,6 @@ function getUsers(){
 
     
 }
-
 getLeave();
 
 })
@@ -394,9 +390,8 @@ getLeave();
 })
 }
 function resetResources(category){
-    console.log("category is"+category);
-    resourceList=resources;
-    newResource=[];
+    
+    var newResource=[];
     if(category=='ALL')
         {  
             for(var i=0;i<resourceList.length;i++){
@@ -430,7 +425,7 @@ function resetResources(category){
        
     }
     resourceList=newResource;
-    reCalc();
+    console.log("new list is "+JSON.stringify(resourceList));
    
 }
 function getLeave(){
@@ -457,7 +452,6 @@ function getLeave(){
     }
     resourceList[userIndex].leave.push({date:gt_day+'-'+gt_month+'-'+gt_year,type:response.data.staffs[i].leave_type,leave_id:response.data.staffs[i].id});
     }
-    
    
     getInitDatas();
    
