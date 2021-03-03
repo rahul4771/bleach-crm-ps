@@ -1,6 +1,6 @@
 
 //var url='https://test.bleach-kw.com';
-var url = 'https://my.bleachkw.com';
+//var url = 'https://my.bleachkw.com';
 
 var resourceList=[];
 var cleanerList=[];

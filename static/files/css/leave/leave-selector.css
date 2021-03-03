@@ -164,6 +164,7 @@
     margin-bottom: 30px;
 
 }
+
 #lv-result-content{
     margin-top:10px;
 }
@@ -193,7 +194,7 @@
     vertical-align: middle;
   }
   .modal-date{
-      font-size:24px;
+      font-size:18px;
       font-weight:600;
   }
   .close{
@@ -258,30 +259,56 @@
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
     background-color:#ffffff;
-    width:30%;
+    min-width: 300px;
     z-index:999;
-    border:1px solid #000000;
+    border: 1px solid #eeeeee;
     border-radius:20px;
   }
   .lv-close{
       padding:10px;
      
   }
+  .lv-conf{
+    padding: 10px;
+  }
+  .lv-option-btn{
+    background-color: #3968c6;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: none;
+    color:#ffffff;
+  }
+  .lv-option-btn:hover{
+      color:#000000;
+  }
   .lv-close-btn{
     cursor:pointer;
   }
   .lv-modal-body{
       padding:10px;
+      
   }
   #lv-cancel-btn{
-      float: right;
-      margin:20px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+  }
+  .lv-modal-btn{
+    background-color: #d20e36;
+    color: #ffffff;
+    text-align: center;
+    margin: auto;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 20px;
+    padding: 8px;
+    width: 130px;
+    margin-bottom: 30px;
   }
   .lv-modal-footer{
-      padding:10px;
+      
   }
   .modal-title{
-      font-size:24px;
+      font-size:18px;
       
   }
   .modal-resource{
@@ -323,9 +350,9 @@
         -webkit-transform: translate(-50%, -50%);
         transform: translate(-50%, -50%);
         background-color:#ffffff;
-        width:100%;
+        width:80%;
         z-index:999;
-        border:1px solid #000000;
+        border: 1px solid #eeeeee;
         border-radius:20px;
       }
   }

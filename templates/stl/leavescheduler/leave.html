@@ -55,7 +55,7 @@
         <div class="lv-modal-header">
           <div class="lv-close" onclick="closeCancelModal()">
             <span class="modal-title "></span>
-            <i class="fa fa-close" style="float:right"></i>
+            <i class="fa fa-close lv-close-btn" style="float:right"></i>
             
           </div>
         
@@ -67,13 +67,14 @@
          
         </div>
         <div class="lv-modal-footer ">
-            <div class="text-left lv-conf">
-                Are you sure to cancel the leave ? 
-                <button type="button" class="btn btn-default"  onclick="cancelLeave()">Yes</button>
-                <button type="button" class="btn btn-default"  onclick="closeConf()">No</button>
+            <div class="text-left lv-conf p-2">
+               <div> Are you sure to cancel the leave ? </div> 
+
+                <button type="button" class="btn  btn-sm  lv-option-btn"  onclick="cancelLeave()">Yes</button>
+                <button type="button" class="btn  btn-sm lv-option-btn"  onclick="closeConf()">No</button>
 
             </div>
-            <button type="button" class="btn btn-danger lv-modal-btn"  onclick="openConf()" id="lv-cancel-btn">Cancel Leave</button>
+            <div class=" lv-modal-btn"  onclick="openConf()" id="lv-cancel-btn">Cancel Leave</div>
         </div>
       </div>
       
