@@ -1010,8 +1010,8 @@ class CustomerBookingPhase1(View):
 			service_form  = QuatationServiceFormCustomer(request.POST)
 
 			if service_form.is_valid():
-				booking_id         = request.COOKIES['booking_id']
 				try:
+					booking_id         = request.COOKIES['booking_id']
 					customerbooking    = CustomerBooking.objects.select_related('evaluation__customer').get(booking_id=booking_id)
 				except:
 					customerbooking    = None
@@ -1105,9 +1105,6 @@ class CustomerBookingPhase1(View):
 					elif service_type == 'Carpet Cleaning':
 						leaders = leaders.filter(is_carpet_skill=True)
 						cleaners= cleaners.filter(is_carpet_skill=True)
-					elif service_type == 'Sterilization':
-						leaders = leaders.filter(is_sterilization_skill=True)
-						cleaners= cleaners.filter(is_sterilization_skill=True)
 					elif service_type == 'Mattress Cleaning':
 						leaders = leaders.filter(is_mattress_skill=True)
 						cleaners= cleaners.filter(is_mattress_skill=True)
@@ -1626,4 +1623,69 @@ class CustomerBookingCleaningPhase5(View):
 
 			duplicate_schedules.append(orderschedule.order_scheduler_book)
 
-		return render(request,'customer/booking/cleaningbookingphase5.html',{'order':order,'nonduplicate_schedules':nonduplicate_schedules,})
+		return render(request,'customer/booking/cleaningbookingphase5.html',{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'customer_booking':customer_booking,})
+
+
+class CustomerBookingCleaningDebitPay(View):
+	def get(self,request):
+		#evaluation id decryption
+		evaluation_id_encrypted = request.GET.get("udf1")
+		payment_mode      		= request.GET.get("udf2")
+		booking_id 		  		= request.GET.get("udf3")
+		amount_paid       		= float(request.GET.get("amt"))
+		payment_result    		= request.GET.get("result")
+	
+		try:
+			bookingdetails = CustomerBooking.objects.select_related('evaluation').get(booking_id=booking_id)
+		except:
+			bookingdetails = None
+		
+		try:
+			order = Order.objects.get(evaluation=bookingdetails.evaluation)
+		except:
+			order = None
+
+		#To Check Payment Done 
+		payment_history_check = PaymentHistory.objects.filter(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid')).exists()	
+		
+
+		if order and payment_result == 'CAPTURED' and not payment_history_check:
+
+			#Receipt Number
+			receipt_no               = PaymentHistory.objects.filter(is_active=True,receipt_no__isnull=False).aggregate(t=Max('receipt_no'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
+			current_receipt_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
+
+			if current_receipt_starting == int(str(receipt_no)[:4]):
+				new_receipt_no = int(receipt_no)+1
+			else:
+				new_receipt_no = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
+
+			#payment history
+			payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid'),receipt_no=new_receipt_no,payment_gateway='DEBITCARD')	
+			#payment calculations
+			if payment_mode == 'postpaid' and order.amount_paid != order.total_amount:
+				order.amount_paid      = amount_paid
+				order.remining_amount  = order.remining_amount-amount_paid
+
+				order.payment_status         = 'COMPLETED'
+				order.payment_completed_date = timezone.now()
+
+			order.save()		
+			
+
+			#scheduler update
+			order_scheduler             = OrderScheduler.objects.filter(order=order).update(work_status = 'CLEANING_TEAM_ASSIGNED')
+
+			#update booking details
+			bookingdetails.is_bookingcompleted = True
+			bookingdetails.save()
+
+			#delete cookies data
+			response = HttpResponse()
+			response.delete_cookie('booking_id')
+
+			return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
+
+		else:
+
+			return redirect('/customer/payment/failed/?udf1='+evaluation_id_encrypted+'&paymentid='+request.GET.get('paymentid')+'&ref='+request.GET.get('ref'))

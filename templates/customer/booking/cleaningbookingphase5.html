@@ -250,12 +250,23 @@
 
                 </div>
               </div>
-              
+              <form method="get" action="{% url 'customer:customerbookingdebitpay' %}" enctype= "multipart/form-data">{% csrf_token %}
+              <input type="hidden" name="udf1" value="{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">
+              <input type="hidden" name="udf2" value="prepaid">
+              <input type="hidden" name="udf3" value="{{customer_booking.booking_id}}">
+              <input type="hidden" name="amt" value="{{order.evaluation.total_cost|floatformat:'3'}}">
+              <input type="hidden" name="result" value="CAPTURED">
+              <input type="hidden" name="paymentid" value="paymentid">
+              <input type="hidden" name="ref" value="ref">
+              <input type="hidden" name="postdate" value="postdate">
+              <input type="hidden" name="trackid" value="trackid">
+              <input type="hidden" name="tranid" value="tranid">
               <div class="col-12   text-center text-white mt-4">
                 <div class="inv-btn">
-                Proceed
+                <input type="submit" value="Proceed">
               </div>
               </div>
+            </form>
               <div class="col-5 offset-1 inv-white-btn text-center  mt-4 mb-4 " id="download">
                 <i class="fa fa-download" ></i>
                 Download

@@ -42,4 +42,6 @@ urlpatterns = [
 		url(r'^booking/cleaning/phase3/$',views.CustomerBookingCleaningPhase3.as_view(),name='customerbookingcleaningphase3'),
 		url(r'^booking/cleaning/phase4/$',views.CustomerBookingCleaningPhase4.as_view(),name='customerbookingcleaningphase4'),
 		url(r'^booking/cleaning/phase5/$',views.CustomerBookingCleaningPhase5.as_view(),name='customerbookingcleaningphase5'),
+	
+		url(r'^booking/cleaning/debitpay/$',views.CustomerBookingCleaningDebitPay.as_view(),name='customerbookingdebitpay'),
 	]
