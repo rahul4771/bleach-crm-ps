@@ -253,7 +253,7 @@ class AccountantHome(IsAccountant,View):
 					invoice.balance       = cleaning_price-invoice.amount_paid
 
 		#buybackgiftpromos		
-		approved_paybackdiscounts = Investigation.objects.filter(is_paybackdiscount_approved=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=True,is_completed=False),to_attr='paybackdiscounts'))
+		approved_paybackdiscounts = Investigation.objects.filter(is_paybackdiscount_approved=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=True,is_completed=False),to_attr='paybackdiscounts')).annotate(paybackdiscount_count=Case(When(Q( Q(investigation__is_active=True) & Q(investigation__is_paybackdiscount_approved=True) & Q(paybackdiscount_investigation__is_completed=False) ),then=1),default=0,output_field=IntegerField()))
 		#add days left
 		if approved_paybackdiscounts:
 			for ticket in approved_paybackdiscounts:
