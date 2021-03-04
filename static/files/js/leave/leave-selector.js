@@ -1,7 +1,7 @@
 
 //var url='https://test.bleach-kw.com';
-var url = 'https://my.bleachkw.com';
-
+//var url = 'https://my.bleachkw.com';
+var url="http://localhost:8000";
 var resourceList=[];
 var cleanerList=[];
 var teamLeaderList=[];
