@@ -257,7 +257,6 @@ class AccountantHome(IsAccountant,View):
 		
 		#add days left
 		if approved_paybackdiscounts:
-			print(approved_paybackdiscounts.paybackdiscount_count,"count")
 			for ticket in approved_paybackdiscounts:
 				ticket.days_left = (timezone.now()-ticket.scheduled_at).days
 
