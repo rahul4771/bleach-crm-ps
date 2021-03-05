@@ -1,4 +1,3 @@
-
 var doc = new jsPDF();
 var specialElementHandlers = {
     '#editor': function (element, renderer) {
@@ -6,8 +5,17 @@ var specialElementHandlers = {
     }
 };
 
-$('#download').click(function () {
-    var doc = new jsPDF();
+$('#download').click(async function () {
+  
+       
+        let scrollPromise = new Promise(function(myResolve, myReject) {
+            // "Producing Code" (May take some time)
+            window.scrollTo(0, 0);
+              myResolve(); // when successful
+              myReject();  // when error
+            });
+            scrollPromise.then(function () {
+                var doc = new jsPDF();
     var vp = document.getElementById("viewportMeta").getAttribute("content");
 
     document.getElementById("viewportMeta").setAttribute("content", "width=1280");
@@ -28,6 +36,9 @@ $('#download').click(function () {
         }
      
         })
+            })
+     
+       
        
     
         
@@ -39,3 +50,10 @@ $('#download').click(function () {
 
 
 
+
+    
+    // "Consuming Code" (Must wait for a fulfilled Promise)
+    myPromise.then(
+      function(value) { /* code if successful */ },
+      function(error) { /* code if some error */ }
+    );
