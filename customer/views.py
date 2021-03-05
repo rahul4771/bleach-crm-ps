@@ -1083,7 +1083,7 @@ class CustomerBookingPhase1(View):
 				start_time            = request.POST.get('tendative_time')
 				
 				for date in tendative_dates:
-					start_date_time = datetime.strptime(date+' '+start_time,'%Y-%m-%d %I:%M %p')
+					start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
 					end_date_time   = start_date_time + timedelta(hours=int(service_form_save.cleaning_hours)) 	
 
 					#schedule
@@ -1101,16 +1101,16 @@ class CustomerBookingPhase1(View):
 					service_type = service_form_save.service_type.name
 					if service_type == 'Kitchen Cleaning':
 						leaders = leaders.filter(is_kitchen_skill=True)
-						cleaners= cleaners.filter(is_kitchen_skill=True)
+						cleaners= cleaners.filter(is_kitchen_skill=True).order_by('user_type')
 					elif service_type == 'Carpet Cleaning':
 						leaders = leaders.filter(is_carpet_skill=True)
-						cleaners= cleaners.filter(is_carpet_skill=True)
+						cleaners= cleaners.filter(is_carpet_skill=True).order_by('user_type')
 					elif service_type == 'Mattress Cleaning':
 						leaders = leaders.filter(is_mattress_skill=True)
-						cleaners= cleaners.filter(is_mattress_skill=True)
+						cleaners= cleaners.filter(is_mattress_skill=True).order_by('user_type')
 					elif service_type == 'Sofa Cleaning':
 						leaders = leaders.filter(is_sofa_skill=True)
-						cleaners= cleaners.filter(is_sofa_skill=True)
+						cleaners= cleaners.filter(is_sofa_skill=True).order_by('user_type')
 					
 					#cleaning team
 					cleaning_team  = CleaningTeam.objects.create(order_scheduler=order_schedule,team_leader=leaders.first(),start_at=start_date_time,end_at=end_date_time)
@@ -1125,15 +1125,16 @@ class CustomerBookingPhase1(View):
 				no_of_sections         = int(request.POST.get('section_counter'))
 				section_array          = []
 				for i in range(1,(no_of_sections+1)):
-					section_name  = 'Section'+str(i)
-					size          = request.POST.get('bk-size-'+str(i))
-					unit          = request.POST.get('bk-unit-'+str(i))
-					age           = request.POST.get('bk-age-'+str(i))
-					material      = request.POST.get('bk-material-'+str(i))
-					colour        = request.POST.get('bk-color-'+str(i))
-					cause_of_stain=request.POST.get('bk-stain-reason-'+str(i))
+					section_name         = 'Section'+str(i)
+					size                 = request.POST.get('bk-size-'+str(i))
+					unit                 = request.POST.get('bk-unit-'+str(i))
+					age                  = request.POST.get('bk-age-'+str(i))
+					material             = request.POST.get('bk-material-'+str(i))
+					colour               = request.POST.get('bk-color-'+str(i))
+					cause_of_stain       = request.POST.get('bk-stain-reason-'+str(i))
+					oil_resedue          = request.POST.get('bk-oil_resedue-'+str(i))
 					service_productivity = ServiceProductivity.objects.get(service_type=service_form_save.service_type)
-					section_cost  = service_productivity.perunit_price*int(request.POST.get('bk-size-'+str(i)))
+					section_cost         = service_productivity.perunit_price*int(request.POST.get('bk-size-'+str(i)))
 					
 					try:
 						section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
