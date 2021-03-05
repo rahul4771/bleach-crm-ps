@@ -1840,7 +1840,7 @@ $('.collapsible2-close').click(function(){
                   $('#starting_time_notapprovedcleaning_id').html(data['start_at_time']);
                   $('#duration_notapprovedcleaning_id').html(data['duration']+' Hours');
 
-                  var order_url = '/agent/client/order/details/'+data['order_id']+'';
+                  var order_url = '/bleach_salesadmin/client/order/details/'+data['order_id']+'';
                   $('#notapprovedorder_url').attr('href',order_url);  
 
 

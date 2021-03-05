@@ -71,7 +71,7 @@ class Quatation(View):
 
 			duplicate_schedules.append(orderschedule.order_scheduler_book)
 
-		return render(request,"customer/newquatation.html",{"order":order,"nonduplicate_schedules":nonduplicate_schedules})
+		return render(request,"customer/quotation.html",{"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 
 	def post(self,request,evaluation_id):
 

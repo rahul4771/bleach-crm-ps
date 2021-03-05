@@ -62,6 +62,7 @@
      <div class="main-content-holder"><!--main-content-holder-->            
 
 {% if approved_paybackdiscounts %}
+{% if approved_paybackdiscounts.paybackdiscount_count > 1 %}
     <div class="white-wrapper"><!--white-wrapper-->
     <h2 class="h2">Payback/Discount Task</h2>
     <table class="main-table">
@@ -88,6 +89,7 @@
     </tbody>
     </table>
     </div>
+    {% endif %}
     {% endif %}
 
 <div class="white-wrapper"><!--white-wrapper-->

@@ -61,6 +61,7 @@
 <div class="main-content-holder"><!--main-content-holder-->            
 
     {% if approve_tickets %}
+    {% if paybackdiscount_count >= 1 and buybackpromocodegift_count >= 1 %}
     <div class="white-wrapper"><!--white-wrapper-->
     <h2 class="h2">Ticket Approval Task</h2>
     <table class="main-table">
@@ -88,6 +89,7 @@
     </tbody>
     </table>
     </div>
+    {% endif %}
     {% endif %}
 
 
@@ -1604,7 +1606,7 @@ $('.collapsible1-close').click(function(){
                   $('#starting_time_notapprovedcleaning_id').html(data['start_at_time']);
                   $('#duration_notapprovedcleaning_id').html(data['duration']+' Hours');
 
-                  var order_url = '/agent/client/order/details/'+data['order_id']+'';
+                  var order_url = '/bleach_admin/client/order/details/'+data['order_id']+'';
                   $('#notapprovedorder_url').attr('href',order_url);  
 
 
@@ -1777,6 +1779,4 @@ $('.chart-toggle3').click(function(){
 
 </script>
 
-//# sourceURL=pen.js
-    </script>
 {% endblock %}
