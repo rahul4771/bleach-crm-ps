@@ -365,6 +365,17 @@
                     </div>
                 </div>
                 {% endif %}
+
+                {% if order.evaluation.payment_method == 'SUBSCRIPTION' %}
+                <div class="d-flex mt-2 ">
+                    <div class="text-left w-70 qt-sub-text">
+                        Subscription To Pay
+                    </div>
+                    <div class="text-right  qt-sub-text  w-30">
+                       <b>{{order.subscription_topay|floatformat:"3"}}</b>   KD
+                    </div>
+                </div>
+                {% endif %}
                  
                </div>
             <div class=" col-md-5 offset-md-1 col-print-5 order-1 order-md-2">
