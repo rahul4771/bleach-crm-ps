@@ -45,10 +45,14 @@
     <p>Note : </p>
     </div>
     <div class="d-flex mt-4 mb-4 mx-auto qt-reject-btn-container">
-      <div class="inv-btn text-center text-white"  id="bk-reject-yes">
-         Yes
-        </div>
-       
+    <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+      <input type="hidden" name="order_id" value="{{order.id}}">
+      <input type="hidden" name="action_type" value="Reject">
+      <input class="inv-btn text-center text-white" id="bk-reject-yes" name="submit" type="submit" value="Yes">
+      {% comment %} <div class="inv-btn text-center text-white"  id="bk-reject-yes">
+         
+        </div> {% endcomment %}
+    </form>   
 
         <div class="inv-btn text-center  text-white" onclick="closeRejectModal()">
          No
@@ -148,8 +152,8 @@
             <div class="text-center p-2">
                 <div class="d-flex mx-auto">
                     <div style="margin-left: auto;">
-                    <div class="inv-btn text-center text-white mx-auto"  id="bk-approve"  style="max-width:200px">
-                      <a href="/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}"> Agree </a>
+                    <div class="inv-btn text-center text-white mx-auto"  id="bk-approve"  style="max-width:200px" onclick="location.href='/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';">
+                      Agree
                       </div>
                     </div>
                     <div style="margin-right: auto;">
@@ -355,6 +359,17 @@
                     </div>
                 </div>
                 {% endif %}
+
+                {% if order.evaluation.payment_method == 'SUBSCRIPTION' %}
+                <div class="d-flex mt-2 ">
+                    <div class="text-left w-70 qt-sub-text">
+                        Subscription To Pay
+                    </div>
+                    <div class="text-right  qt-sub-text  w-30">
+                       <b>{{order.subscription_topay|floatformat:"3"}}</b>   KD
+                    </div>
+                </div>
+                {% endif %}
                  
                </div>
             <div class=" col-md-5 offset-md-1 col-print-5 order-1 order-md-2">
@@ -422,7 +437,8 @@
           <div class="row pt-2 pb-2" data-html2canvas-ignore="true">
         
               <div class="col-md-5 offset-md-7 no-print">
-               
+
+                  {% if request.user.user_type != 'AGENT' and request.user.user_type != 'ADMIN' and request.user.user_type != 'EVALUATOR' %} {% if order.evaluation.quatation_status != 'APPROVED' and order.evaluation.quatation_status != 'REJECTED' %}
                   <div class="d-flex mt-4 mb-4">
                     <div class="inv-btn text-center text-white"  id="bk-approve" onclick="openModal()">
                        Approve
@@ -435,9 +451,12 @@
                      
                    
                   </div>
-                  <div class="inv-btn text-center text-white mt-4 mb-4"  id="bk-invoice-btn" >
+                  {% else %}
+                  <div class="inv-btn text-center text-white mt-4 mb-4"  id="bk-invoice-btn" onclick="location.href='/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';">
                     Invoice
                    </div>
+                  {% endif %}
+                  {% endif %}
                   
               </div>
           </div>
