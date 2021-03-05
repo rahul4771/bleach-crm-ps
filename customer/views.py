@@ -279,7 +279,7 @@ class CustomerInvoice(View):
 		
 		customer_ip_address = get_client_ip(request)
 
-		return render(request,"customer/invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,})		
+		return render(request,"customer/customer_invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,})		
 
 	def post(self,request,evaluation_id):
 
