@@ -1,10 +1,30 @@
 $(".inv-coupon").hide();
 //$(".inv-coupon-error").hide();
+selectPayment('debit');
+var cashcounter=false;
 function addCoupon(){
     $(".inv-coupon").show();
     $(".inv-coupon-code").hide();
     
 
+}
+function proceedInvoice(){
+  
+  if($('#inv-debit').hasClass('inv-payment-card-active')){
+   
+    $('#debit-form').submit();
+   
+  }
+  else{
+  
+    
+    openCashModal()
+  }
+}
+function nextStepCash(){
+ 
+  $('#cash-step-2').hide();
+  $('#cash-step-1').show();
 }
 function selectPayment(pay){
    if(pay=='debit')
