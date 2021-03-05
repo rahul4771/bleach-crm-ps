@@ -3,6 +3,9 @@
      if (event.target ==  $('#bk-approve')) {
        $('#termsModal').hide();
      }
+     if (event.target ==  $('#bk-reject')) {
+      $('#rejectModal').hide();
+    }
    }
 
    function openModal(){  
@@ -10,4 +13,10 @@
    }
    function closeModal(){  
     $('#termsModal').hide();    
+}
+function openRejectModal(){  
+  $('#rejectModal').show();    
+}
+function closeRejectModal(){  
+  $('#rejectModal').hide();    
 }
