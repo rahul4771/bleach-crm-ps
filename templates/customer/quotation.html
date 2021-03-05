@@ -48,9 +48,10 @@
     <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
       <input type="hidden" name="order_id" value="{{order.id}}">
       <input type="hidden" name="action_type" value="Reject">
-      <div class="inv-btn text-center text-white"  id="bk-reject-yes" onclick="submitAnyForm(this);">
-         <input class="assignButton" name="submit" type="submit" value="Yes">
-        </div>
+      <input class="inv-btn text-center text-white" id="bk-reject-yes" name="submit" type="submit" value="Yes">
+      {% comment %} <div class="inv-btn text-center text-white"  id="bk-reject-yes">
+         
+        </div> {% endcomment %}
     </form>   
 
         <div class="inv-btn text-center  text-white" onclick="closeRejectModal()">
