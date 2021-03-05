@@ -214,7 +214,7 @@
               </div>
               {% endif %}
 
-              {% if order.evaluation.writeback_amount != 0 %}
+              {% if order.evaluation.discount != 0 %}
               <div class="d-flex pt-2 inv-highlight-text">
                 <div class="inv-text-left w-50 ">
                   Discount
@@ -225,7 +225,7 @@
               </div>
               {% endif %}
 
-              {% if order.evaluation.discount != 0 %}
+              {% if order.evaluation.writeback_amount != 0 %}
               <div class="d-flex pt-2 inv-highlight-text">
                 <div class="inv-text-left w-50 ">
                   Write-Off Amount
@@ -357,7 +357,7 @@
 
                 {% if order.evaluation.quatation_status == 'APPROVED' %}
                   <div class="inv-payment-card mt-4 text-center" id="inv-debit" onclick="selectPayment('debit')">
-                    <input class="assignButton clickable-cursor debitcardbtn" name="pay" type="submit" value="">
+                    <input class="assignButton clickable-cursor debitcardbtn d-none" name="pay" type="submit" value="">
                     <img src="{% static 'files/icons/knet-icon.png' %}" class="inv-card-icon " id="inv-knet" />
                     <div class="inv-payment-text" >
                       Debit Card
@@ -412,7 +412,7 @@
               </div>-->
               
               <div class="col-12   text-center text-white mt-4">
-                <div class="inv-btn">
+                <div class="inv-btn" onclick="proceedInvoice()">
                 Proceed
               </div>
               </div>

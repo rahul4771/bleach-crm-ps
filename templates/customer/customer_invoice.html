@@ -246,7 +246,7 @@
               </div>
               {% endif %}
 
-              {% if order.evaluation.writeback_amount != 0 %}
+              {% if order.evaluation.discount != 0 %}
               <div class="d-flex pt-2 inv-highlight-text">
                 <div class="inv-text-left w-50 ">
                   Discount
@@ -257,7 +257,7 @@
               </div>
               {% endif %}
 
-              {% if order.evaluation.discount != 0 %}
+              {% if order.evaluation.writeback_amount != 0 %}
               <div class="d-flex pt-2 inv-highlight-text">
                 <div class="inv-text-left w-50 ">
                   Write-Off Amount
