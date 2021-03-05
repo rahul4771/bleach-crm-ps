@@ -380,7 +380,7 @@
                 </div>
                 <div class="inv-text-right inv-text-lg  ">
                   
-                  <span class="inv-heading ">{{order.estimated_amount|sub:order.evaluation.writeback_amount|add:order.evaluation.fine_amount|floatformat:"3"}}</span> KD
+                  <span class="inv-heading ">{{order.total_amount|sub:order.evaluation.writeback_amount|add:order.evaluation.fine_amount|floatformat:"3"}}</span> KD
                 </div>
               </div>
               
