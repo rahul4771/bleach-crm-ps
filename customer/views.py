@@ -205,7 +205,7 @@ class SubscriptionQuatation(View):
 			for section in orderschedule.order_scheduler_book.evaluationbooksection:
 				per_job_cost += section.section_cost
 		
-		return render(request,"customer/subscriptionquatation.html",{"order":order,"nonduplicate_schedules":nonduplicate_schedules,"per_job_cost":per_job_cost})
+		return render(request,"customer/quotation.html",{"order":order,"nonduplicate_schedules":nonduplicate_schedules,"per_job_cost":per_job_cost})
  
 	def post(self,request,evaluation_id):
 		order_id 		  = request.POST.get('order_id')

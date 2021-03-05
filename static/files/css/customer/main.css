@@ -3,7 +3,7 @@
     position: relative;
     width: 50px;
     height: 25px;
-    background-image: url('../icons/united-kingdom.png');
+    background-image: url('../../icons/united-kingdom.png');
     background-size: cover;
     border-radius: 12.5px;
     outline: none;
@@ -26,7 +26,7 @@
   }
   
   #lang-selector:checked {
-    background-image: url('../icons/kuwait.png');
+    background-image: url('../../icons/kuwait.png');
     transition: background-image .90s;
     
   

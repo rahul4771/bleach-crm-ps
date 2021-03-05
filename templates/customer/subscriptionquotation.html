@@ -153,12 +153,11 @@
           </div>
           
             </div>
-
-          <div class="container">
+            <div class="container">
           <div class="row ">
 
-          {% for orderschedule in order.orderschedules %}
-          {% if forloop.first %}
+            {% for orderschedule in order.orderschedules %}
+            {% if forloop.first %}
             <div class="col-md-5 col-print-5 inv-customer-details order-2 order-md-1 mt-4 mt-md-0">
               <div class="">
               <div class="inv-content inv-text-color">To</div>
@@ -227,7 +226,7 @@
               
             </div>
 
-            {% for orderschedule in nonduplicate_schedules %}            
+            {% for orderschedule in nonduplicate_schedules|slice:"1" %}            
             {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
             <div class="col-md-12 col-print-12 order-3">
               <div class="inv-price-card mt-4 row">
@@ -254,13 +253,7 @@
                   </div>
                   <div class="inv-price p-1 ">
                    
-                    <span class="inv-text-bold" style="text-align:right"> 
-                    {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
-                    {{section.section_cost|floatformat:'3'}}
-                    {% else %}
-                    {{section.section_cost|mul:section.section_cleanings|floatformat:'3'}}
-                    {% endif %}
-                    </span> KD
+                    <span class="inv-text-bold" style="text-align:right">{{section.section_cost|mul:section.section_cleanings|floatformat:'3'}}</span> KD
                  
                   </div>
                   <div>
@@ -333,8 +326,7 @@
                   <span class="inv-text-bold">{{order.evaluation.estimated_cost|floatformat:'3'}}</span> 
                 </div>
               </div>
-
-            {% if order.evaluation.discount != 0 %}
+              {% if order.evaluation.discount != 0 %}
               <div class="d-flex pt-2">
                 <div class="inv-text-left w-50">
                 <b>Discount</b>
