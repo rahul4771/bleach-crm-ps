@@ -45,10 +45,13 @@
     <p>Note : </p>
     </div>
     <div class="d-flex mt-4 mb-4 mx-auto qt-reject-btn-container">
-      <div class="inv-btn text-center text-white"  id="bk-reject-yes">
+    <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+      <input type="hidden" name="order_id" value="{{order.id}}">
+      <input type="hidden" name="action_type" value="Reject">
+      <div class="inv-btn text-center text-white"  id="bk-reject-yes" onclick="submitAnyForm(this);">
          Yes
         </div>
-       
+    </form>   
 
         <div class="inv-btn text-center  text-white" onclick="closeRejectModal()">
          No
