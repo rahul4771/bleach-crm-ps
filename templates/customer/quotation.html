@@ -431,7 +431,8 @@
           <div class="row pt-2 pb-2">
         
               <div class="col-md-5 offset-md-7 no-print">
-               
+
+                  {% if request.user.user_type != 'AGENT' and request.user.user_type != 'ADMIN' and request.user.user_type != 'EVALUATOR' %} {% if order.evaluation.quatation_status != 'APPROVED' and order.evaluation.quatation_status != 'REJECTED' %}
                   <div class="d-flex mt-4 mb-4">
                     <div class="inv-btn text-center text-white"  id="bk-approve" onclick="openModal()">
                        Approve
@@ -444,9 +445,11 @@
                      
                    
                   </div>
-                  <div class="inv-btn text-center text-white mt-4 mb-4"  id="bk-invoice-btn" >
+                  {% else %}
+                  <div class="inv-btn text-center text-white mt-4 mb-4"  id="bk-invoice-btn" onclick="location.href='/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';">
                     Invoice
                    </div>
+                  {% endif %}
                   
               </div>
           </div>
