@@ -172,10 +172,11 @@
                 Email : {{orderschedule.customer_address.customer.email}}<br>
               </div>
               </div>
+              </div>
               {% endif %}
               {% endfor %}
 
-            </div>
+            
             <div class="col-md-5 col-print-5 offset-md-2 order-md-2 order-1 inv-invoice-card" >
               <div class="inv-content-card">
               <h1 class="text-center qt-title">QUOTATION</h1>
@@ -270,11 +271,12 @@
                 
               </div>
             </div>
+            </div>
             {% endfor %}
             {% endfor %}        
            
           
-          </div>
+          
         <!--  <hr class="mt-3 mb-3 pl-2 pr-2 inv-divider"/>-->
           <div class="row mt-4">
             <div class=" col-md-6 col-print-6 order-2 order-md-1">
@@ -378,7 +380,7 @@
                 </div>
                 <div class="inv-text-right inv-text-lg  ">
                   
-                  <span class="inv-heading ">{{order.total_amount|sub:order.evaluation.discount|sub:order.evaluation.writeback_amount|add:order.evaluation.fine_amount|floatformat:"3"}}</span> KD
+                  <span class="inv-heading ">{{order.estimated_amount|sub:order.evaluation.writeback_amount|add:order.evaluation.fine_amount|floatformat:"3"}}</span> KD
                 </div>
               </div>
               
