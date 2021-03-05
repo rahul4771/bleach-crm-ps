@@ -71,7 +71,7 @@ function selectCheck(){
         }
         if(selectedVal=='Kitchen Cleaning'){
           
-            $('#bk-stain-1-1').parent().replaceWith('<div class="d-flex w-100" ><div class="px-2">Oil residue ?</div><input type="radio"  name="bk-stain-1" id="bk-stain-1-1"   value="yes"><label for="bk-stain-1-1">yes</label><br><input type="radio"  name="bk-stain-1" id="bk-stain-1-2"  value="no" checked><label for="bk-stain-1-2">no</label><br> </div>');
+            $('#bk-stain-1-1').parent().replaceWith('<div class="d-flex w-100" ><div class="px-2">Oil residue ?</div><input type="radio"  name="bk-oil_residue-1" id="bk-stain-1-1"   value="true"><label for="bk-stain-1-1">yes</label><br><input type="radio"  name="bk-oil_residue-1" id="bk-stain-1-2"  value="false" checked><label for="bk-stain-1-2">no</label><br> </div>');
 
         }
         else{
