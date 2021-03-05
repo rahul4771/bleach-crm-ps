@@ -23,48 +23,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
     <link rel="stylesheet" href="{% static 'files/css/customer/main.css' %}">
-    
     <title>Bleach Cleaning Services | Invoice</title>
 
   </head>
- 
   <body id="printableArea">
-   <!-- Reject Modal-->
- <div class="qt-reject-modal " id="rejectModal">
-   <div class="container">
-   <div class=" row">
-     <div class="col-md-6 mx-auto ">
-       <div class="qt-reject-modal-content p-4">
-    <div class="text-center" >
-      <i class="fa fa-times-circle qt-modal-icon" aria-hidden="true"></i>
-    </div>
-    <div class="pt-2 text-center">
-      <h4>
-      Are you sure want to reject  ?
-    </h4>
-    <p>Note : </p>
-    </div>
-    <div class="d-flex mt-4 mb-4 mx-auto qt-reject-btn-container">
-      <div class="inv-btn text-center text-white"  id="bk-reject-yes">
-         Yes
-        </div>
-       
-
-        <div class="inv-btn text-center  text-white" onclick="closeRejectModal()">
-         No
-        </div>
-       
-     
-    </div>
-  </div>
-  </div>
-   </div>
-  </div>
-  
-</div>
-
-
-    <div id="termsModal" class="qt-modal" >
+    <div id="termsModal" class="qt-modal">
 
         <!-- Modal content -->
         <div class="qt-modal-content">
@@ -148,7 +111,7 @@
             <div class="text-center p-2">
                 <div class="d-flex mx-auto">
                     <div style="margin-left: auto;">
-                    <div class="inv-btn text-center text-white mx-auto"  id="bk-approve"  style="max-width:200px">
+                    <div class="inv-btn text-center text-white mx-auto" data-toggle="modal" data-target="#exampleModalCenter" id="bk-approve"  style="max-width:200px">
                       <a href="/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}"> Agree </a>
                       </div>
                     </div>
@@ -190,12 +153,11 @@
           </div>
           
             </div>
-
-          <div class="container">
+            <div class="container">
           <div class="row ">
 
-          {% for orderschedule in order.orderschedules %}
-          {% if forloop.first %}
+            {% for orderschedule in order.orderschedules %}
+            {% if forloop.first %}
             <div class="col-md-5 col-print-5 inv-customer-details order-2 order-md-1 mt-4 mt-md-0">
               <div class="">
               <div class="inv-content inv-text-color">To</div>
@@ -209,11 +171,10 @@
                 Email : {{orderschedule.customer_address.customer.email}}<br>
               </div>
               </div>
-              </div>
               {% endif %}
               {% endfor %}
 
-            
+            </div>
             <div class="col-md-5 col-print-5 offset-md-2 order-md-2 order-1 inv-invoice-card" >
               <div class="inv-content-card">
               <h1 class="text-center qt-title">QUOTATION</h1>
@@ -265,7 +226,7 @@
               
             </div>
 
-            {% for orderschedule in nonduplicate_schedules %}            
+            {% for orderschedule in nonduplicate_schedules|slice:"1" %}            
             {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
             <div class="col-md-12 col-print-12 order-3">
               <div class="inv-price-card mt-4 row">
@@ -292,13 +253,7 @@
                   </div>
                   <div class="inv-price p-1 ">
                    
-                    <span class="inv-text-bold" style="text-align:right"> 
-                    {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
-                    {{section.section_cost|floatformat:'3'}}
-                    {% else %}
-                    {{section.section_cost|mul:section.section_cleanings|floatformat:'3'}}
-                    {% endif %}
-                    </span> KD
+                    <span class="inv-text-bold" style="text-align:right">{{section.section_cost|mul:section.section_cleanings|floatformat:'3'}}</span> KD
                  
                   </div>
                   <div>
@@ -308,13 +263,11 @@
                 
               </div>
             </div>
-            
             {% endfor %}
-            {% endfor %} 
-                   
-           </div>
+            {% endfor %}        
+           
           
-          
+          </div>
         <!--  <hr class="mt-3 mb-3 pl-2 pr-2 inv-divider"/>-->
           <div class="row mt-4">
             <div class=" col-md-6 col-print-6 order-2 order-md-1">
@@ -373,8 +326,7 @@
                   <span class="inv-text-bold">{{order.evaluation.estimated_cost|floatformat:'3'}}</span> 
                 </div>
               </div>
-
-            {% if order.evaluation.discount != 0 %}
+              {% if order.evaluation.discount != 0 %}
               <div class="d-flex pt-2">
                 <div class="inv-text-left w-50">
                 <b>Discount</b>
@@ -418,7 +370,7 @@
                 </div>
                 <div class="inv-text-right inv-text-lg  ">
                   
-                  <span class="inv-heading ">{{order.total_amount|sub:order.evaluation.writeback_amount|add:order.evaluation.fine_amount|floatformat:"3"}}</span> KD
+                  <span class="inv-heading ">{{order.total_amount|sub:order.evaluation.discount|sub:order.evaluation.writeback_amount|add:order.evaluation.fine_amount|floatformat:"3"}}</span> KD
                 </div>
               </div>
               
@@ -430,20 +382,16 @@
               <div class="col-md-5 offset-md-7 no-print">
                
                   <div class="d-flex mt-4 mb-4">
-                    <div class="inv-btn text-center text-white"  id="bk-approve" onclick="openModal()">
+                    <div class="inv-btn text-center text-white" data-toggle="modal" data-target="#exampleModalCenter" id="bk-approve" onclick="openModal()">
                        Approve
                       </div>
                      
 
-                      <div class="inv-btn text-center  text-white"  onclick="openRejectModal()">
+                      <div class="inv-btn text-center  text-white">
                         Reject
                       </div>
-                     
                    
                   </div>
-                  <div class="inv-btn text-center text-white mt-4 mb-4"  id="bk-invoice-btn" >
-                    Invoice
-                   </div>
                   
               </div>
           </div>
