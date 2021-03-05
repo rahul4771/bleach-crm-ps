@@ -20,3 +20,12 @@ function openRejectModal(){
 function closeRejectModal(){  
   $('#rejectModal').hide();    
 }
+function openCashModal(){  
+  $('#cashModal').show();    
+}
+function closeCashModal(){  
+  $('#cashModal').hide(); 
+  $('#cash-step-1').hide();
+  $('#cash-step-2').show();
+  
+}

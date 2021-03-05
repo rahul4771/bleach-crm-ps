@@ -28,7 +28,7 @@ $('#download').click(async function () {
         var img=canvas.toDataURL("image/png");
        
        
-        doc.addImage(img, 'PNG',10,10,190,200);
+        doc.addImage(img, 'PNG',10,10,190,180);
         
       
         doc.save('invoice.pdf');
