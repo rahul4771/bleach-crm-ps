@@ -217,15 +217,9 @@
             <div class="col-md-5 col-print-5 offset-md-2 order-md-2 order-1 inv-invoice-card" >
               <div class="inv-content-card">
               <h1 class="text-center qt-title">QUOTATION</h1>
+              <h6 class="text-center">{{order.order_no}}</h6>
               <div>
-              <div class="d-flex pt-2  inv-invoice-details">
-                <div class="w-70 inv-text-left">
-                    Quotation Number
-                </div>:
-                <div class="w-50 inv-text-right">
-                   {{order.order_no}}
-                </div>
-              </div>
+              
               <div class="d-flex pt-1 inv-invoice-details">
                 <div class="w-70 inv-text-left">
                     Initiated Date
@@ -425,7 +419,7 @@
             </div>
             
           </div>
-          <div class="row pt-2 pb-2">
+          <div class="row pt-2 pb-2" data-html2canvas-ignore="true">
         
               <div class="col-md-5 offset-md-7 no-print">
                

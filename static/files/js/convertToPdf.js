@@ -1,4 +1,3 @@
-
 var doc = new jsPDF();
 var specialElementHandlers = {
     '#editor': function (element, renderer) {
@@ -7,6 +6,10 @@ var specialElementHandlers = {
 };
 
 $('#download').click(function () {
+    setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 2000)
+   
     var doc = new jsPDF();
     var vp = document.getElementById("viewportMeta").getAttribute("content");
 
