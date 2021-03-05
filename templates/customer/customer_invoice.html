@@ -319,7 +319,7 @@
                 <div class="d-flex">
                   <div class="inv-payment-card mt-4 text-center" id="inv-debit" onclick="selectPayment('debit')">
                    
-                    <img src="./icons/knet-icon.png" class="inv-card-icon " id="inv-knet" />
+                    <img src="{% static 'files/icons/knet-icon.png' %}" class="inv-card-icon " id="inv-knet" />
                     <div class="inv-payment-text" >
                       Debit Card
                     </div>
@@ -328,7 +328,7 @@
                     </div>
                   </div>
                   <div class="inv-payment-card mt-4 text-center" id="inv-cash" onclick="selectPayment('cash')">
-                    <img src="./icons/wallet.png" class="inv-card-icon "  id="inv-cash-img"/>
+                    <img src="{% static 'files/icons/wallet.png' %}" class="inv-card-icon "  id="inv-cash-img"/>
                     <div class="inv-payment-text">
                      Cash 
                     </div>
@@ -336,15 +336,15 @@
                       <i class="fa fa-check inv-check-icon " id="inv-check-cash"></i>
                     </div>
                   </div>
-                  <div class="inv-payment-card mt-4 text-center inv-click-disable" id="inv-credit" onclick="selectPayment('credit')"><!-- to disable click add class inv-click-disable -->
-                    <img src="./icons/debit-card.png" class="inv-card-icon inv-payment-disabled" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
+                  {% comment %} <div class="inv-payment-card mt-4 text-center inv-click-disable" id="inv-credit" onclick="selectPayment('credit')"><!-- to disable click add class inv-click-disable -->
+                    <img src="{% static 'files/icons/debit-card.png' %}" class="inv-card-icon inv-payment-disabled" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
                     <div class="inv-payment-text inv-payment-disabled"> <!-- to disable  add class inv-payment-disabled -->
                       Credit Card
                     </div>
                     <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-credit-check-box">
                       <i class="fa fa-check inv-check-icon " id="inv-check-credit"></i>
                     </div>
-                  </div>
+                  </div> {% endcomment %}
 
                 </div>
               </div>
