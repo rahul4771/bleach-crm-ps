@@ -335,7 +335,7 @@ class CustomerSubscriptionInvoice(View):
 		
 		customer_ip_address = get_client_ip(request)
 
-		return render(request,"customer/subscriptioninvoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"completed_jobs_count":completed_jobs_count})
+		return render(request,"customer/customer_invoice_subscription.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"completed_jobs_count":completed_jobs_count})
 
 	def post(self,request,evaluation_id):
 		action            = request.POST.get('action_type')
