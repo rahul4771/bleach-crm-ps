@@ -50,12 +50,12 @@ function selectCheck(){
     $("#bk-evaluation-btn").show();
     var selectedVal=$( "#bk-service option:selected" ).text();
    
-    if(selectedVal=='Sofa Cleaning'||selectedVal=='Mattress'||selectedVal=='Kitchen Cleaning'||selectedVal=='Carpet Cleaning'||selectedVal=='Sanitization Services'){
+    if(selectedVal=='Sofa Cleaning'||selectedVal=='Mattress Cleaning'||selectedVal=='Kitchen Cleaning'||selectedVal=='Carpet Cleaning'||selectedVal=='Sterilization'){
         $('#bk-title-1').html(selectedVal.split(' ')[0]+' 1')
         $("#bk-job-booking-btn").show();
         
-        if(selectedVal=='matress cleaning'){
-            $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example " id="bk-size-1" name="bk-size-1"><option selected disabled>Select Size</option><option value="1">Single</option><option value="2">Queen </option><option value="3">King </option> </select></div>')
+        if(selectedVal=='Mattress Cleaning'){
+            $('#bk-size-1').parent().replaceWith('<div class="input-group mb-3"><select class="form-select  mb-3 size" aria-label=".form-select-lg example " id="bk-size-1" name="bk-size-1" onchange="durationcalculation(this);"><option selected disabled>Select Size</option><option value="single">Single</option><option value="queen">Queen </option><option value="king">King </option> </select></div>')
         }
         else {
             if(selectedVal=='Sofa Cleaning')
@@ -71,7 +71,7 @@ function selectCheck(){
         }
         if(selectedVal=='Kitchen Cleaning'){
           
-            $('#bk-stain-1-1').parent().replaceWith('<div class="d-flex w-100" ><div class="px-2">Oil residue ?</div><input type="radio"  name="bk-stain-1" id="bk-stain-1-1"   value="yes"><label for="bk-stain-1-1">yes</label><br><input type="radio"  name="bk-stain-1" id="bk-stain-1-2"  value="no" checked><label for="bk-stain-1-2">no</label><br> </div>');
+            $('#bk-stain-1-1').parent().replaceWith('<div class="d-flex w-100" ><div class="px-2">Oil residue ?</div><input type="radio"  name="bk-oil_residue-1" id="bk-stain-1-1"   value="true"><label for="bk-stain-1-1">yes</label><br><input type="radio"  name="bk-oil_residue-1" id="bk-stain-1-2"  value="false" checked><label for="bk-stain-1-2">no</label><br> </div>');
 
         }
         else{
@@ -275,6 +275,18 @@ function durationcalculation(params)
         {
             size = 0;
         }
+        else if(size == 'single')
+        {
+          size = 1;
+        }
+        else if(size == 'king')
+        {
+          size = 2;
+        }
+        else if(size == 'queen')
+        {
+          size = 3;
+        }
 
         total_estimated_size += parseFloat(size);
     }
@@ -317,8 +329,7 @@ function durationcalculation(params)
             }
             console.log(pair,"pair");
             max_cleaners = data['max_cleaners']
-            max_cleaners = 10
-
+            
             duration_list = [];
             upper_loop    = 2;
             lower_loop    = 2;
@@ -378,6 +389,10 @@ function durationcalculation(params)
 
             //APPEND SLOTE
             $("#bk-duration").empty()
+            $("#bk-duration").append($('<option>', {        
+                      value: "",   
+                      text: "Duration"  
+                    }));
             for(i=0;i<duration_list.length;i++)
               {
                 if(duration_list[i][1]>10)
@@ -413,5 +428,56 @@ function durationcalculation(params)
   } 
   
   
+//to mark busy dates
+$('#bk-duration,#timepicker1').change(function()
+{
+  booking_time      = $("#timepicker1").val();
+  duration_cleaners = $('#bk-duration').val().split('-');
+  cleaning_duration = duration_cleaners[0].replace("_cleaners","");
+  number_of_cleaner = duration_cleaners[1].replace("_Hours","");
+  number_of_days    = duration_cleaners[2].replace("_Days","");
+
+  service_type      = $("#bk-service option:selected" ).text();
   
+  $.ajax({
+            url: "/agent/ajax/scheduled/dates/",
+            data: {
+                'booking_time':booking_time,
+                'cleaning_duration':cleaning_duration,
+                'number_of_cleaner':number_of_cleaner,  
+                'service_type':service_type,
+            },
+            dataType: "json",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            
+            success: function(data_dates) {
+                console.log(data_dates,"dates1")
+                disableSpecificDates = Object.keys(data_dates['cleaners_busy_dates']).concat(Object.keys(data_dates['leaders_busy_dates']))
+
+                //disable date
+                $(function () {
+                $("#bk-date-job").datepicker({ 
+                    multidate: number_of_days,
+                    closeOnDateSelect: true,
+                    format: "dd-mm-yyyy",
+                    minDate:new Date(),
+                    startDate:new Date(), 
+
+                    beforeShowDay: function(date){
+                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+                    if(disableSpecificDates.indexOf(dmy) != -1){
+                    return false;
+                    }
+                    else{
+                    return true;
+                    }
+                    },
+
+                });
+                });
+            }
+            
+        });
+})
 
