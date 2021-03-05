@@ -316,7 +316,7 @@
         <!--  <hr class="mt-3 mb-3 pl-2 pr-2 inv-divider"/>-->
           <div class="row mt-4">
             <div class=" col-md-6 col-print-6 order-2 order-md-1">
-                <div class="qt-subheading">{{order.evaluation.payment_method}} Payment Mode</div>
+            {% if order.evaluation.payment_method == 'SUBSCRIPTION' %}{% else %}<div class="qt-subheading">{{order.evaluation.payment_method}} Payment Mode</div>{% endif %}
 
                 {% if order.evaluation.payment_method == 'BREAKDOWN' %}
                 <div class="d-flex mt-2 ">
@@ -427,7 +427,7 @@
                 </div>
                 <div class="inv-text-right inv-text-lg  ">
                   
-                  <span class="inv-heading ">{{order.total_amount|sub:order.evaluation.writeback_amount|add:order.evaluation.fine_amount|floatformat:"3"}}</span> KD
+                  <span class="inv-heading ">{{order.total_amount|floatformat:"3"}}</span> KD
                 </div>
               </div>
               
@@ -452,7 +452,7 @@
                    
                   </div>
                   {% else %}
-                  <div class="inv-btn text-center text-white mt-4 mb-4"  id="bk-invoice-btn" onclick="location.href='/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';">
+                  <div class="inv-btn text-center text-white mt-4 mb-4"  id="bk-invoice-btn" {% if order.evaluation.payment_method == 'SUBSCRIPTION' %}onclick="location.href='/customer/subscription/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';"{% else %}onclick="location.href='/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';"{% endif %}>
                     Invoice
                    </div>
                   {% endif %}
