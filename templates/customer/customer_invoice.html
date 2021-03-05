@@ -127,13 +127,13 @@
                   </div>
                   <div class="d-md-flex d-print-flex">
                     <div class="p-2">
-                      Size :<span class="inv-text-bold">{{section.size}} {{section.unit|default_if_none:''}}</span>
+                      Size : <span class="inv-text-bold">{{section.size}} {{section.unit|default_if_none:''}}</span>
                     </div>
                     <div class="p-2">
                       Quantity : <span class="inv-text-bold">{% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</span>
                     </div>
                     <div class="p-2">
-                      Unit Price :<span class="inv-text-bold">{{section.section_cost|floatformat:'3'}}</span>
+                      Unit Price : <span class="inv-text-bold">{{section.section_cost|floatformat:'3'}}</span>
                     </div>
                   </div>
                 </div>
@@ -308,7 +308,7 @@
                 </div>
                 <div class="inv-text-right inv-text-lg pb-4 ">
                  
-                  <span class="inv-heading ">200.000</span> KD
+                  <span class="inv-heading ">{{order.remining_amount|floatformat:'3'}}</span> KD
                 </div>
               </div>
             </div>
@@ -317,8 +317,33 @@
               </div>
               <div class="col-12">
                 <div class="d-flex">
+
+
+                <form method="post" action="https://payment.bleachkw.com/SendPerformREQuest.php" enctype= "multipart/form-data">{% csrf_token %} 
+                {% if order.evaluation.payment_method == 'BREAKDOWN' %}
+                {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
+                <input type="hidden" name="price" value="{{order.evaluation.before_cleaning_amount}}">
+                <input type="hidden" name="payment_mode" value="before_cleaning">
+                {% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}
+                <input type="hidden" name="price" value="{{order.evaluation.after_cleaning_amount}}">
+                <input type="hidden" name="payment_mode" value="after_cleaning">
+                {% endif %}
+                {% elif order.evaluation.payment_method == 'PREPAID' %}
+                <input type="hidden" name="price" value="{{order.evaluation.total_cost|floatformat:'3'}}">
+                <input type="hidden" name="payment_mode" value="prepaid">
+                {% elif order.evaluation.payment_method == 'POSTPAID' %}
+                <input type="hidden" name="price" value="{{order.evaluation.total_cost}}">
+                <input type="hidden" name="payment_mode" value="postpaid">
+                {% endif %}
+                <input type="hidden" name="qty" value="1">
+                <input type="hidden" name="evaluation_id" value="{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">
+                {% if request.user.user_type == 'AGENT' %}
+                {% elif request.user.user_type == 'EVALUATOR' %}
+                {% else %}
+
+                {% if order.evaluation.quatation_status == 'APPROVED' %}
                   <div class="inv-payment-card mt-4 text-center" id="inv-debit" onclick="selectPayment('debit')">
-                   
+                    <input class="assignButton clickable-cursor debitcardbtn" name="pay" type="submit" value="">
                     <img src="{% static 'files/icons/knet-icon.png' %}" class="inv-card-icon " id="inv-knet" />
                     <div class="inv-payment-text" >
                       Debit Card
@@ -327,6 +352,12 @@
                       <i class="fa fa-check inv-check-icon " id="inv-check-debit"></i>
                     </div>
                   </div>
+                {% endif %}
+
+                {% endif %}
+                </form>
+
+                {% if order.evaluation.payment_method == 'POSTPAID' %}
                   <div class="inv-payment-card mt-4 text-center" id="inv-cash" onclick="selectPayment('cash')">
                     <img src="{% static 'files/icons/wallet.png' %}" class="inv-card-icon "  id="inv-cash-img"/>
                     <div class="inv-payment-text">
@@ -336,6 +367,7 @@
                       <i class="fa fa-check inv-check-icon " id="inv-check-cash"></i>
                     </div>
                   </div>
+                {% endif %}
                   {% comment %} <div class="inv-payment-card mt-4 text-center inv-click-disable" id="inv-credit" onclick="selectPayment('credit')"><!-- to disable click add class inv-click-disable -->
                     <img src="{% static 'files/icons/debit-card.png' %}" class="inv-card-icon inv-payment-disabled" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
                     <div class="inv-payment-text inv-payment-disabled"> <!-- to disable  add class inv-payment-disabled -->
