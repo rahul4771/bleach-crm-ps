@@ -42,7 +42,7 @@
       <h4>
       Are you sure want to reject  ?
     </h4>
-    <p>Note : </p>
+    <p>Note : You can contact bleach 24x7 customer care for re-opening the quotation later. </p>
     </div>
     <div class="d-flex mt-4 mb-4 mx-auto qt-reject-btn-container">
     <form method="post" action="" enctype= "multipart/form-data" class="mx-auto">{% csrf_token %}
@@ -178,10 +178,7 @@
            <div >
             <img src="{% static 'files/images/customer/logo.png' %}" class="inv-logo mr-4"/>
           </div>
-            <div  class="text-justify ml-5">
-            <div  class="inv-company-title notranslate" id="company-name">BLEACH</div>
-            <div class="inv-company-subtitle ">CLEANING SERVICES</div>
-          </div>
+            
           <div class=" pt-4 inv-translator " data-html2canvas-ignore="true">
             <div class="form-check form-switch inv-form-switch select-language">
               <input type="checkbox"  id="lang-selector" />
@@ -203,7 +200,7 @@
             <div class="col-md-5 col-print-5 inv-customer-details order-2 order-md-1 mt-4 mt-md-0">
               <div class="">
               <div class="inv-content inv-text-color">To</div>
-              <h4 class="inv-content pt-2 inv-heading-light inv-text-color">{{orderschedule.customer_address.customer.name}}</h4>
+              <h4 class="inv-content pt-2 inv-heading-light inv-text-color inv-primary-text">{{orderschedule.customer_address.customer.name}}</h4>
               <div class="inv-content inv-text-color"> 
                 {{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}},<br>
                 {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}}, {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %}<br>
@@ -220,7 +217,7 @@
             
             <div class="col-md-5 col-print-5 offset-md-2 order-md-2 order-1 inv-invoice-card" >
               <div class="inv-content-card">
-              <h1 class="text-center qt-title">QUOTATION</h1>
+              <h1 class="text-center qt-title inv-primary-text">QUOTATION</h1>
               <h6 class="text-center">{{order.order_no}}</h6>
               <div>
               
@@ -373,7 +370,7 @@
                  
                </div>
             <div class=" col-md-5 offset-md-1 col-print-5 order-1 order-md-2">
-             <div class="d-flex pt-2">
+             <div class="d-flex pt-4">
                 <div class="inv-text-left w-50">
                 <b>Sub Total</b>  
                 </div>

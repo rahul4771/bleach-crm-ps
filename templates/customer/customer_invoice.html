@@ -38,7 +38,7 @@
        </div>
        <div class="pt-2 text-center">
          <h4>
-          You have requested for CASH/CHEQUE Payment. Our Team Will Contact You Soon
+          You have requested for cash/cheque payment. Our team will contact you soon
        </h4>
       
        </div>
@@ -92,10 +92,7 @@
            <div >
             <img src="{% static 'files/images/customer/logo.png' %}" class="inv-logo mr-4"/>
           </div>
-            <div  class="text-center">
-            <div  class="inv-company-title notranslate">BLEACH</div>
-            <div class="inv-company-subtitle ">CLEANING SERVICES</div>
-          </div>
+           
           <div class=" pt-4 inv-translator " data-html2canvas-ignore="true">
             <div class="form-check form-switch inv-form-switch select-language">
               <input type="checkbox"  id="lang-selector" />
@@ -117,7 +114,7 @@
             <div class="col-md-5 col-print-5 inv-customer-details order-2 order-md-1 mt-4 mt-md-0">
               <div class="">
               <div class="inv-content inv-text-color">To</div>
-              <h4 class="inv-content pt-2 inv-heading-light inv-text-color">{{orderschedule.customer_address.customer.name}}</h4>
+              <h4 class="inv-content pt-2 inv-heading-light inv-text-color inv-primary-text">{{orderschedule.customer_address.customer.name}}</h4>
               <div class="inv-content inv-text-color"> 
                 {{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}},<br>
                 {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}}, {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %}<br>
@@ -131,7 +128,7 @@
             </div>
             <div class="col-md-5 col-print-5 offset-md-2 order-md-2 order-1 inv-invoice-card" >
               <div class="inv-content-card">
-              <h1 class="text-center inv-invoice-title">INVOICE</h1>
+              <h1 class="text-center inv-invoice-title inv-primary-text">INVOICE</h1>
               <div>
               <div class="d-flex pt-2  inv-invoice-details">
                 <div class="w-50 inv-text-left">
@@ -375,7 +372,7 @@
                 <div class="d-flex">
 
 
-                <form method="post" action="https://payment.bleachkw.com/SendPerformREQuest.php" enctype= "multipart/form-data" id="debit-form">{% csrf_token %} 
+                <form method="post" class="inv-payment-box" action="https://payment.bleachkw.com/SendPerformREQuest.php" enctype= "multipart/form-data" id="debit-form">{% csrf_token %} 
                 {% if order.evaluation.payment_method == 'BREAKDOWN' %}
                 {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
                 <input type="hidden" name="price" value="{{order.evaluation.before_cleaning_amount}}">
@@ -414,6 +411,7 @@
                 </form>
 
                 {% if order.evaluation.payment_method == 'POSTPAID' %}
+                <div class="inv-payment-box">
                   <div class="inv-payment-card mt-4 text-center" id="inv-cash" onclick="selectPayment('cash')">
                     <img src="{% static 'files/icons/wallet.png' %}" class="inv-card-icon "  id="inv-cash-img"/>
                     <div class="inv-payment-text">
@@ -423,7 +421,9 @@
                       <i class="fa fa-check inv-check-icon " id="inv-check-cash"></i>
                     </div>
                   </div>
+                </div>
                 {% endif %}
+                <div class="inv-payment-box">
                   <div class="inv-payment-card mt-4 text-center inv-click-disable" id="inv-credit" onclick="selectPayment('credit')"><!-- to disable click add class inv-click-disable -->
                     <img src="{% static 'files/icons/debit-card.png' %}" class="inv-card-icon inv-payment-disabled" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
                     <div class="inv-payment-text inv-payment-disabled"> <!-- to disable  add class inv-payment-disabled -->
@@ -432,6 +432,7 @@
                     <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-credit-check-box">
                       <i class="fa fa-check inv-check-icon " id="inv-check-credit"></i>
                     </div>
+                  </div>
                   </div>
 
                 </div>
