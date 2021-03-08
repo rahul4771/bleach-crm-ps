@@ -365,6 +365,9 @@ outline: none !important;
 .inv-icon{
     height:24px;
 }
+.inv-social{
+    font-size:20px;
+}
 .inv-cp{
     cursor: pointer;
 }
