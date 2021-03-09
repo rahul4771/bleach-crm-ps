@@ -1,5 +1,6 @@
 from django.contrib import admin
-from bleachadmin.models import ServiceProductivity
+from bleachadmin.models import ServiceProductivity,ServicePriceRange
 
 # Register your models here.
 admin.site.register(ServiceProductivity)
+admin.site.register(ServicePriceRange)

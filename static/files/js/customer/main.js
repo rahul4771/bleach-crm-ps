@@ -131,7 +131,7 @@ function printDiv() {
      //  $(".inv-customer-details").css({"border-right":"20px solid #F3F3F3","border-left":"0px"});
        $(".inv-customer-details").addClass("offset-md-2");
        $(".inv-invoice-card").removeClass("offset-md-2");
-      
+      $(".inv-logo").attr("src","/static/files/images/customer/logo-arabic.png")
      //  $(".inv-price-card").css({"border-right": "20px solid #f2f2f2","border-left":"1px solid #E6E6E6"});
        $(".inv-text-left").css({"text-align": "right",});
        $(".inv-text-right").css({"text-align": "left",});
@@ -177,7 +177,8 @@ function printDiv() {
        $(".inv-receipt-customer-details").removeClass("offset-md-3");     
        $(".inv-receipt-card").addClass("offset-md-2");
        $(".inv-invoice").removeClass("offset-md-9");
-       
+       $(".inv-logo").attr("src","/static/files/images/customer/logo.png")
+
       // $(".inv-price-card").css({"border-left": "20px solid #f2f2f2","border-right":"1px solid #E6E6E6"})
        $(".inv-text-left").css({"text-align": "left",})
        $(".inv-text-right").css({"text-align": "right",})

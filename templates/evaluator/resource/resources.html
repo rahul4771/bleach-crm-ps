@@ -545,7 +545,13 @@
             }
 
             //append gray dot
-            if(total_duration == 0)
+            {% if details.leave %}
+            leave_status = true;
+            {% else %}
+            leave_status = false;
+            {% endif %}
+            
+            if(total_duration == 0 && leave_status == false)
             {
                 $("#worker{{details.id}} .dot-image img").attr("src","{% static 'files/images/gray-dot.png' %}");
             }
