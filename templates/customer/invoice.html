@@ -21,6 +21,7 @@
     <link href="{% static 'files/css/externalusers.css' %}" rel="stylesheet" type="text/css">
   </head>
   <body>
+ 
     <div id="container">
       <!-- <div class="left-stripes"> -->
       <div>
@@ -360,7 +361,7 @@
     <div class="close-btn">×</div>
         <div class="custom-model-wrap"><!--custom-model-wrap-->
             <div class="pop-up-content-wrap"><!--pop-up-content-wrap-->
-               <div class="bold-text">You have been requested for CASH/CHEQUE Payment.Our Team Will Contact You Soon.... <br><br> لقد طُلب منك الدفع نقدًا / شيكًا ، وسيتصل بك فريقنا قريبًا </div>  
+               <div class="bold-text">You have requested for CASH/CHEQUE Payment. Our Team Will Contact You Soon... <br><br> لقد طُلب منك الدفع نقدًا / شيكًا ، وسيتصل بك فريقنا قريبًا </div>  
                <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
                 <input type="hidden" name="action_type" value="CASH/CHEQUE">
                <div><input class="assignButton" name="submit" type="submit" value="Send / إرسال"></div>

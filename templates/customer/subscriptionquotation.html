@@ -23,52 +23,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
     <link rel="stylesheet" href="{% static 'files/css/customer/main.css' %}">
-    
     <title>Bleach Cleaning Services | Invoice</title>
 
   </head>
- 
   <body id="printableArea">
-   <!-- Reject Modal-->
- <div class="qt-reject-modal " id="rejectModal">
-   <div class="container">
-   <div class=" row">
-     <div class="col-md-6 mx-auto ">
-       <div class="qt-reject-modal-content p-4">
-    <div class="text-center" >
-      <i class="fa fa-times-circle qt-modal-icon" aria-hidden="true"></i>
-    </div>
-    <div class="pt-2 text-center">
-      <h4>
-      Are you sure want to reject  ?
-    </h4>
-    <p>Note : You can contact bleach 24x7 customer care for re-opening the quotation later. </p>
-    </div>
-    <div class="d-flex mt-4 mb-4 mx-auto qt-reject-btn-container">
-    <form method="post" action="" enctype= "multipart/form-data" class="mx-auto">{% csrf_token %}
-      <input type="hidden" name="order_id" value="{{order.id}}">
-      <input type="hidden" name="action_type" value="Reject">
-      <input class="inv-btn text-center text-white" id="bk-reject-yes" name="submit" type="submit" value="Yes">
-      {% comment %} <div class="inv-btn text-center text-white"  id="bk-reject-yes">
-         
-        </div> {% endcomment %}
-    </form>   
-
-        <div class="inv-btn text-center  text-white" onclick="closeRejectModal()">
-         No
-        </div>
-       
-     
-    </div>
-  </div>
-  </div>
-   </div>
-  </div>
-  
-</div>
-
-
-    <div id="termsModal" class="qt-modal" >
+    <div id="termsModal" class="qt-modal">
 
         <!-- Modal content -->
         <div class="qt-modal-content">
@@ -81,7 +40,7 @@
           </div>
           <div class="qt-modal-desc">
               <div class="container">
-                <div class="row text-justify">
+                <div class="row">
                     
                     <div class="col-12">
                         <div class="inv-modal-heading mt-4"> 1.	Warranty conditions</div>
@@ -152,8 +111,8 @@
             <div class="text-center p-2">
                 <div class="d-flex mx-auto">
                     <div style="margin-left: auto;">
-                    <div class="inv-btn text-center text-white mx-auto"  id="bk-approve"  style="max-width:200px" onclick="location.href='/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';">
-                      Agree
+                    <div class="inv-btn text-center text-white mx-auto" data-toggle="modal" data-target="#exampleModalCenter" id="bk-approve"  style="max-width:200px">
+                      <a href="/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}"> Agree </a>
                       </div>
                     </div>
                     <div style="margin-right: auto;">
@@ -178,7 +137,10 @@
            <div >
             <img src="{% static 'files/images/customer/logo.png' %}" class="inv-logo mr-4"/>
           </div>
-            
+            <div  class="text-justify ml-5">
+            <div  class="inv-company-title notranslate" id="company-name">BLEACH</div>
+            <div class="inv-company-subtitle ">CLEANING SERVICES</div>
+          </div>
           <div class=" pt-4 inv-translator " data-html2canvas-ignore="true">
             <div class="form-check form-switch inv-form-switch select-language">
               <input type="checkbox"  id="lang-selector" />
@@ -191,16 +153,15 @@
           </div>
           
             </div>
-
-          <div class="container">
+            <div class="container">
           <div class="row ">
 
-          {% for orderschedule in order.orderschedules %}
-          {% if forloop.first %}
+            {% for orderschedule in order.orderschedules %}
+            {% if forloop.first %}
             <div class="col-md-5 col-print-5 inv-customer-details order-2 order-md-1 mt-4 mt-md-0">
               <div class="">
               <div class="inv-content inv-text-color">To</div>
-              <h4 class="inv-content pt-2 inv-heading-light inv-text-color inv-primary-text">{{orderschedule.customer_address.customer.name}}</h4>
+              <h4 class="inv-content pt-2 inv-heading-light inv-text-color">{{orderschedule.customer_address.customer.name}}</h4>
               <div class="inv-content inv-text-color"> 
                 {{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}},<br>
                 {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}}, {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %}<br>
@@ -210,17 +171,22 @@
                 Email : {{orderschedule.customer_address.customer.email}}<br>
               </div>
               </div>
-              </div>
               {% endif %}
               {% endfor %}
 
-            
+            </div>
             <div class="col-md-5 col-print-5 offset-md-2 order-md-2 order-1 inv-invoice-card" >
               <div class="inv-content-card">
-              <h1 class="text-center qt-title inv-primary-text">QUOTATION</h1>
-              <h6 class="text-center">{{order.order_no}}</h6>
+              <h1 class="text-center qt-title">QUOTATION</h1>
               <div>
-              
+              <div class="d-flex pt-2  inv-invoice-details">
+                <div class="w-70 inv-text-left">
+                    Quotation Number
+                </div>:
+                <div class="w-50 inv-text-right">
+                   {{order.order_no}}
+                </div>
+              </div>
               <div class="d-flex pt-1 inv-invoice-details">
                 <div class="w-70 inv-text-left">
                     Initiated Date
@@ -260,7 +226,7 @@
               
             </div>
 
-            {% for orderschedule in nonduplicate_schedules %}            
+            {% for orderschedule in nonduplicate_schedules|slice:"1" %}            
             {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
             <div class="col-md-12 col-print-12 order-3">
               <div class="inv-price-card mt-4 row">
@@ -287,13 +253,7 @@
                   </div>
                   <div class="inv-price p-1 ">
                    
-                    <span class="inv-text-bold" style="text-align:right"> 
-                    {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
-                    {{section.section_cost|floatformat:'3'}}
-                    {% else %}
-                    {{section.section_cost|mul:section.section_cleanings|floatformat:'3'}}
-                    {% endif %}
-                    </span> KD
+                    <span class="inv-text-bold" style="text-align:right">{{section.section_cost|mul:section.section_cleanings|floatformat:'3'}}</span> KD
                  
                   </div>
                   <div>
@@ -303,17 +263,15 @@
                 
               </div>
             </div>
-            
             {% endfor %}
-            {% endfor %} 
-                   
-           </div>
+            {% endfor %}        
+           
           
-          
+          </div>
         <!--  <hr class="mt-3 mb-3 pl-2 pr-2 inv-divider"/>-->
           <div class="row mt-4">
             <div class=" col-md-6 col-print-6 order-2 order-md-1">
-            {% if order.evaluation.payment_method == 'SUBSCRIPTION' %}{% else %}<div class="qt-subheading">{{order.evaluation.payment_method}} Payment Mode</div>{% endif %}
+                <div class="qt-subheading">{{order.evaluation.payment_method}} Payment Mode</div>
 
                 {% if order.evaluation.payment_method == 'BREAKDOWN' %}
                 <div class="d-flex mt-2 ">
@@ -356,21 +314,10 @@
                     </div>
                 </div>
                 {% endif %}
-
-                {% comment %} {% if order.evaluation.payment_method == 'SUBSCRIPTION' %}
-                <div class="d-flex mt-2 ">
-                    <div class="text-left w-70 qt-sub-text">
-                        Subscription To Pay
-                    </div>
-                    <div class="text-right  qt-sub-text  w-30">
-                       <b>{{order.subscription_topay|floatformat:"3"}}</b>   KD
-                    </div>
-                </div>
-                {% endif %} {% endcomment %}
                  
                </div>
             <div class=" col-md-5 offset-md-1 col-print-5 order-1 order-md-2">
-             <div class="d-flex pt-4">
+             <div class="d-flex pt-2">
                 <div class="inv-text-left w-50">
                 <b>Sub Total</b>  
                 </div>
@@ -379,8 +326,7 @@
                   <span class="inv-text-bold">{{order.evaluation.estimated_cost|floatformat:'3'}}</span> 
                 </div>
               </div>
-
-            {% if order.evaluation.discount != 0 %}
+              {% if order.evaluation.discount != 0 %}
               <div class="d-flex pt-2">
                 <div class="inv-text-left w-50">
                 <b>Discount</b>
@@ -424,36 +370,28 @@
                 </div>
                 <div class="inv-text-right inv-text-lg  ">
                   
-                  <span class="inv-heading ">{{order.total_amount|floatformat:"3"}}</span> KD
+                  <span class="inv-heading ">{{order.total_amount|sub:order.evaluation.discount|sub:order.evaluation.writeback_amount|add:order.evaluation.fine_amount|floatformat:"3"}}</span> KD
                 </div>
               </div>
               
             </div>
             
           </div>
-          <div class="row pt-2 pb-2" data-html2canvas-ignore="true">
+          <div class="row pt-2 pb-2">
         
               <div class="col-md-5 offset-md-7 no-print">
-
-                  {% if request.user.user_type != 'AGENT' and request.user.user_type != 'ADMIN' and request.user.user_type != 'EVALUATOR' %} {% if order.evaluation.quatation_status != 'APPROVED' and order.evaluation.quatation_status != 'REJECTED' %}
+               
                   <div class="d-flex mt-4 mb-4">
-                    <div class="inv-btn text-center text-white"  id="bk-approve" onclick="openModal()">
+                    <div class="inv-btn text-center text-white" data-toggle="modal" data-target="#exampleModalCenter" id="bk-approve" onclick="openModal()">
                        Approve
                       </div>
                      
 
-                      <div class="inv-btn text-center  text-white"  onclick="openRejectModal()">
+                      <div class="inv-btn text-center  text-white">
                         Reject
                       </div>
-                     
                    
                   </div>
-                  {% else %}
-                  <div class="inv-btn text-center text-white mt-4 mb-4"  id="bk-invoice-btn" {% if order.evaluation.payment_method == 'SUBSCRIPTION' %}onclick="location.href='/customer/subscription/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';"{% else %}onclick="location.href='/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';"{% endif %}>
-                    Invoice
-                   </div>
-                  {% endif %}
-                  {% endif %}
                   
               </div>
           </div>
@@ -505,15 +443,15 @@
         </div>
         <div class="col-md-3 offset-md-1 ">
           <div class="pt-4 pb-4 text-center">
-           <a href="https://www.facebook.com/BleachKw/" target="_blank" class="inv-link"> <i class="fab fa-facebook-f text-white p-2 inv-cp inv-social"></i> </a>
+           <a href="https://www.facebook.com/BleachKw/" target="_blank" class="inv-link"> <i class="fab fa-facebook-f text-white p-2 inv-cp"></i> </a>
             <!-- https://www.facebook.com/BleachKw/ -->
-            <a href="https://twitter.com/bleachkw?lang=en" target="_blank" class="inv-link">  <i class="fab fa-twitter text-white p-2 inv-cp inv-social"></i></a>
+            <a href="https://twitter.com/bleachkw?lang=en" target="_blank" class="inv-link">  <i class="fab fa-twitter text-white p-2 inv-cp"></i></a>
             <!-- https://twitter.com/bleachkw?lang=en -->
-            <a href="https://www.instagram.com/bleachkw/?hl=en" target="_blank" class="inv-link"><i class="fab fa-instagram text-white p-2 inv-cp inv-social"></i></a>
+            <a href="https://www.instagram.com/bleachkw/?hl=en" target="_blank" class="inv-link"><i class="fab fa-instagram text-white p-2 inv-cp"></i></a>
             <!-- https://www.instagram.com/bleachkw/?hl=en -->
-            <a href="https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw" target="_blank" class="inv-link"> <i class="fab fa-youtube text-white p-2 inv-cp inv-social"></i></a>
+            <a href="https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw" target="_blank" class="inv-link"> <i class="fab fa-youtube text-white p-2 inv-cp"></i></a>
             <!-- https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw -->
-            <a href="https://www.linkedin.com/company/bleachkw" target="_blank" class="inv-link"><i class="fab fa-linkedin text-white p-2 inv-cp inv-social"></i></a>
+            <a href="https://www.linkedin.com/company/bleachkw" target="_blank" class="inv-link"><i class="fab fa-linkedin text-white p-2 inv-cp"></i></a>
             <!-- https://www.linkedin.com/company/bleachkw -->
             
           </div>
