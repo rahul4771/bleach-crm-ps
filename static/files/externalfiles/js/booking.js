@@ -297,7 +297,7 @@ function durationcalculation(params)
 
         url: "/customer/ajax/getserviceproductivity",
 
-        data: {'service_type':selected_service}, 
+        data: {'service_type':selected_service,'total_estimated_size':total_estimated_size}, 
 
         dataType: 'json',
 
@@ -407,18 +407,25 @@ function durationcalculation(params)
                   total_duration  = duration_list[i][1];
                   total_cleaners  = duration_list[i][0];
                 }
+                //round off total duration
+                var inv        = 1.0 / .5;
+                total_duration = Math.round(total_duration * inv) / inv;
+                
                 //show to users
                 total_minutes     = (total_duration.toFixed(2)*60).toFixed(0)
                 converted_hours   = Math.floor(total_minutes / 60);          
                 converted_minutes = total_minutes % 60;
 
-                $("#bk-duration").append($('<option>', {        
-                      value: total_cleaners+"_cleaners-"+total_duration.toFixed(2)+"_Hours-"+total_days+"_Days",   
-                      text: converted_hours+" Hours "+converted_minutes+" Minutes "+total_days+" Days "  
-                    }));
+                if(converted_hours >= 1)
+                    {
+                        $("#bk-duration").append($('<option>', {        
+                            value: total_cleaners+"_cleaners-"+total_duration.toFixed(2)+"_Hours-"+total_days+"_Days",   
+                            text: converted_hours+" Hours "+converted_minutes+" Minutes "+total_days+" Days "  
+                          }));
+                    }
                 }
-            //total price calculation
-            totalprice = total_estimated_size*data['perunit_price'];
+            //total price
+            totalprice = data['total_price'];
             $('#bk-total-price').html(totalprice);
             $('#bk-total-cost').val(totalprice);
 

@@ -27,7 +27,7 @@ from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investi
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
-from bleachadmin.models import ServiceProductivity
+from bleachadmin.models import ServiceProductivity,ServicePriceRange
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import QuatationServiceFormCustomer
 from itertools import chain
@@ -915,12 +915,15 @@ def GetEvaluationBookingSlotes(request):
 
 def GetServiceProductivity(request):
 	service_productivity = {}
-	service_type = request.GET.get('service_type')
+	service_type         = request.GET.get('service_type')
+	total_estimated_size = request.GET.get('total_estimated_size')
 
 	serviceproductivity = ServiceProductivity.objects.select_related('service_type').get(service_type__name=service_type)
 	service_productivity['perhour_cleaning'] = serviceproductivity.perhour_cleaning
-	service_productivity['perunit_price']    = serviceproductivity.perunit_price
 
+	service_pricerange                       = ServicePriceRange.objects.select_related('service_type').get(service_type__name=service_type,minimum_area__lte=total_estimated_size,maximum_area__gte=total_estimated_size)
+	service_productivity['total_price']      = service_pricerange.price
+	print(service_productivity['total_price'])
 	if service_type == 'Kitchen Cleaning':
 		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_kitchen_skill=True).count()
 	elif service_type == 'Carpet Cleaning':
@@ -1664,7 +1667,7 @@ class CustomerBookingCleaningDebitPay(View):
 			#payment history
 			payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid'),receipt_no=new_receipt_no,payment_gateway='DEBITCARD')	
 			#payment calculations
-			if payment_mode == 'postpaid' and order.amount_paid != order.total_amount:
+			if payment_mode == 'prepaid' and order.amount_paid != order.total_amount:
 				order.amount_paid      = amount_paid
 				order.remining_amount  = order.remining_amount-amount_paid
 
