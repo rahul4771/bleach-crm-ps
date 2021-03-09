@@ -17,6 +17,7 @@ class ServiceProductivity(models.Model):
 
 class ServicePriceRange(models.Model):
 	service_type     = models.ForeignKey(ServiceType,blank=True,null=True,related_name='pricerange_service_type')
+	name             = models.CharField(max_length=100,blank=True,null=True)
 	minimum_area     = models.FloatField(blank=True,null=True)
 	maximum_area     = models.FloatField(blank=True,null=True)
 	price            = models.FloatField(blank=True,null=True)
