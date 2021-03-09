@@ -152,9 +152,14 @@
             <div class="text-center p-2">
                 <div class="d-flex mx-auto">
                     <div style="margin-left: auto;">
-                    <div class="inv-btn text-center text-white mx-auto"  id="bk-approve"  style="max-width:200px" onclick="location.href='/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';">
-                      Agree
+                    <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+                    <input type="hidden" name="order_id" value="{{order.id}}">
+                    <input type="checkbox" name="termsandconditions" checked="true" hidden>
+                    <input type="hidden" name="action_type" value="Approve">
+                    <div class="inv-btn text-center text-white mx-auto"  id="bk-approve"  style="max-width:200px" >
+                      <input class="assignButton clickable-cursor" name="submit" type="submit" value="Agree">
                       </div>
+                    </form>
                     </div>
                     <div style="margin-right: auto;">
                       <div class="inv-btn text-center  text-white ml-2" onclick="closeModal()" style="max-width:200px;margin-left:10px">
