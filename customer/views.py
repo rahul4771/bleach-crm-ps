@@ -501,9 +501,9 @@ class PaymentFailedResponse(View):
 		evaluation_id_encrypted = request.GET.get("udf1")
 
 		#for back to invoice
-		order = Order.objects.select_related('evaluation__customer').get(order_no='BLC'+evaluation_id_encrypted[0:11])
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate'),to_attr='orderschedules')).get(order_no='BLC'+evaluation_id_encrypted[0:11])
 	
-		return render(request,"customer/paymentfailed.html",{'payment_id':payment_id,'evaluation_id_encrypted':evaluation_id_encrypted,'reference_id':reference_id,'order':order})			
+		return render(request,"customer/paymentfail.html",{'payment_id':payment_id,'evaluation_id_encrypted':evaluation_id_encrypted,'reference_id':reference_id,"order":order})			
 
 class PaymentReceipt(View):
 	def get(self,request,payment_id):
@@ -527,7 +527,7 @@ class PaymentReceipt(View):
 
 			duplicate_schedules.append(orderschedule.order_scheduler_book)
 
-		return render(request,"customer/receipt-voucher.html",{'payment_history':payment_history,'nonduplicate_schedules':nonduplicate_schedules,})
+		return render(request,"customer/voucher.html",{'payment_history':payment_history,'nonduplicate_schedules':nonduplicate_schedules,})
 
 class CustomerOrderDetails(View):
 	def get(self,request,order_id,service_id,section_id):
