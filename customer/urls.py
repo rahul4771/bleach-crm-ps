@@ -29,6 +29,7 @@ urlpatterns = [
 		##booking related uls
 		url(r'^ajax/evaluationslotes$',views.GetEvaluationBookingSlotes,name='ajax-getevaluationslotes'),
 		url(r'^ajax/customerdetails$',views.GetCustomerDetails,name='ajax-customerdetails'),
+		url(r'^ajax/cleaningtimeslotes$',views.GetCleaningTimeSlotes,name='ajax-getcleaningtimeslotes'),
 
 		url(r'^ajax/getserviceproductivity$',views.GetServiceProductivity,name='ajax-serviceproductivity'),
 
