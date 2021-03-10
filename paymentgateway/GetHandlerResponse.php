@@ -46,14 +46,14 @@
 		//Decryption logice starts
 		$decrytedData=decrypt($ResTranData,$termResourceKey);
 		//header("Location: https://my.bleachkw.com/customer/payment/response/?".$decrytedData);
-		 header("Location: https://test.bleachkw.com/customer/payment/response/?".$decrytedData);
+		 header("Location: https://test.bleach-kw.com/customer/payment/response/?".$decrytedData);
                 exit();
 		}
 	}
 	else{
 				
 				//header("Location: https://my.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
-				 header("Location: https://test.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
+				 header("Location: https://test.bleach-kw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
                 exit();
 	}
 	  
