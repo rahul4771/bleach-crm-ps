@@ -243,7 +243,7 @@
             {% if request.user.user_type != 'AGENT' and request.user.user_type != 'ADMIN' and request.user.user_type != 'EVALUATOR' and order.payment_status != 'COMPLETED' %}
             <tr class="table1tr1">
               <td colspan="2" class="align-right">
-                <form method="post" action="https://testpay.bleachkw.com/SendPerformREQuest.php" enctype= "multipart/form-data">{% csrf_token %} 
+                <form method="post" action="https://payment.bleachkw.com/SendPerformREQuest.php" enctype= "multipart/form-data">{% csrf_token %} 
                 {% if order.evaluation.payment_method == 'BREAKDOWN' %}
                 {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
                 <input type="hidden" name="price" value="{{order.evaluation.before_cleaning_amount}}">
