@@ -59,8 +59,8 @@
               <div class="inv-content inv-text-color">Receipt To</div>
               <h4 class="inv-content pt-2 inv-receipt-heading inv-text-color">{{orderschedule.customer_address.customer.name}}</h4>
               {% if orderschedule.customer_address.customer.customer_type == 'CORPORATE' %}
-              <h1 class="inv-text-right inv-receipt-heading text-center">{{orderschedule.customer_address.customer.company}}</h1>
-              <h1 class="inv-text-right inv-receipt-heading text-center">{{orderschedule.customer_address.customer.job_title}}</h1>
+              <h4 class="inv-content pt-2 inv-receipt-heading inv-text-color">{{orderschedule.customer_address.customer.company}}</h4>
+              <h4 class="inv-content pt-2 inv-receipt-heading inv-text-color">{{orderschedule.customer_address.customer.job_title}}</h4>
               {% endif %}
               <div class="inv-content inv-text-color"> 
                 {{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}},<br>
