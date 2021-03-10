@@ -267,12 +267,11 @@
                         <textarea class="form-control" id="bk-notes" rows="3" name="evaluator_note"></textarea>
                       </div>
                 </div>
-                <div class="col-md-4 pt-2 ">
-                  <label for="bk-time">Time</label>
-                  <div class="input-group bootstrap-timepicker timepicker">
-                    <input id="timepicker1" type="text" class="form-control input-small bk-date-job" id="bk-time" name="tendative_time" required>
-                    <span class="input-group-addon bk-timepicker"><i class="fa fa-clock"></i></span>
-                  </div>             
+                <div class="col-md-4 pt-2">
+                    
+                        <label for="bk-date-job"> Date</label>
+                        <input  type="text" placeholder="Date" class="bk-date-job" id="bk-date-job" name="tendative_date" required>
+                  
                 </div>
                 <div class="col-md-4 pt-2">
                     
@@ -281,11 +280,12 @@
                             <option selected value="">Duration</option>
                           </select>
                     </div>
-                <div class="col-md-4 pt-2">
-                    
-                        <label for="bk-date-job"> Date</label>
-                        <input  type="text" placeholder="Date" class="bk-date-job" id="bk-date-job" name="tendative_date" required>
-                  
+
+                <div class="col-md-4 pt-2 ">
+                  <label for="bk-time">Time</label>
+                  <select class="form-select  mb-3 bk-select" aria-label=".form-select-lg example" id="bk-time" name="tendative_time" required>
+                            <option selected value="">Time Slote</option>
+                  </select>             
                 </div>
                 
                 
@@ -340,6 +340,14 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 
 <script>
+  //cleaning booking callendar
+  $("#bk-date-job").datepicker({ 
+                    closeOnDateSelect: true,
+                    format: "dd-mm-yyyy",
+                    startDate:new Date(), 
+                });
+
+  //evaluation booking slotes              
   $('#bk-date').change(function(){
     $('#bk-slot').empty();
     $.ajax({

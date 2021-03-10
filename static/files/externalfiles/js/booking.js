@@ -436,53 +436,77 @@ function durationcalculation(params)
   
   
 //to mark busy dates
-$('#bk-duration,#timepicker1').change(function()
+$('#bk-duration,#bk-date-job').change(function()
 {
-  booking_time      = $("#timepicker1").val();
-  duration_cleaners = $('#bk-duration').val().split('-');
-  cleaning_duration = duration_cleaners[0].replace("_cleaners","");
-  number_of_cleaner = duration_cleaners[1].replace("_Hours","");
-  number_of_days    = duration_cleaners[2].replace("_Days","");
-
+  booking_date      = $("#bk-date-job").val();
   service_type      = $("#bk-service option:selected" ).text();
+
+  duration_cleaners = $('#bk-duration').val().split('-');
+  number_of_cleaners = duration_cleaners[0].replace("_cleaners","");
+  cleaning_duration = duration_cleaners[1].replace("_Hours","");
+  number_of_days    = duration_cleaners[2].replace("_Days","");
   
+  //time slote empty 
+  $('#bk-time').empty();
+  $('#bk-time').append('<option value="">Time Slote</option>');
   $.ajax({
-            url: "/agent/ajax/scheduled/dates/",
+            url: "/customer/ajax/cleaningtimeslotes",
             data: {
-                'booking_time':booking_time,
+                'booking_date':booking_date,
                 'cleaning_duration':cleaning_duration,
-                'number_of_cleaner':number_of_cleaner,  
+                'number_of_cleaners':number_of_cleaners,  
                 'service_type':service_type,
             },
             dataType: "json",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             
-            success: function(data_dates) {
-                console.log(data_dates,"dates1")
-                disableSpecificDates = Object.keys(data_dates['cleaners_busy_dates']).concat(Object.keys(data_dates['leaders_busy_dates']))
-
-                //disable date
-                $(function () {
-                $("#bk-date-job").datepicker({ 
-                    multidate: number_of_days,
-                    closeOnDateSelect: true,
-                    format: "dd-mm-yyyy",
-                    minDate:new Date(),
-                    startDate:new Date(), 
-
-                    beforeShowDay: function(date){
-                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
-                    if(disableSpecificDates.indexOf(dmy) != -1){
-                    return false;
-                    }
-                    else{
-                    return true;
-                    }
-                    },
-
-                });
-                });
+            success: function(time_slotes) {
+                  available_slotes = time_slotes['slotes'];
+                  for(i=0;i<available_slotes.length;i++)
+                  {
+                    switch (available_slotes[i]) {
+                          case 8:
+                            $('#bk-time').append('<option value="08:00 AM">08:00 AM</option>');
+                            break;
+                          case 9:
+                            $('#bk-time').append('<option value="09:00 AM">09:00 AM</option>');
+                            break;
+                          case 10:
+                            $('#bk-time').append('<option value="10:00 AM">10:00 AM</option>');
+                            break;
+                          case 11:
+                            $('#bk-time').append('<option value="11:00 AM">11:00 AM</option>');
+                            break;
+                          case 12:
+                            $('#bk-time').append('<option value="12:00 PM">12:00 PM</option>');
+                            break;
+                          case 13:
+                            $('#bk-time').append('<option value="01:00 PM">01:00 PM</option>');
+                            break;
+                          case 14:
+                            $('#bk-time').append('<option value="02:00 PM">02:00 PM</option>');
+                            break;
+                          case 15:
+                            $('#bk-time').append('<option value="03:00 PM">03:00 PM</option>');
+                            break;
+                          case 16:
+                            $('#bk-time').append('<option value="04:00 PM">04:00 PM</option>');
+                            break;
+                          case 17:
+                            $('#bk-time').append('<option value="05:00 PM">05:00 PM</option>');
+                            break;
+                          case 18:
+                            $('#bk-time').append('<option value="06:00 PM">06:00 PM</option>');
+                            break;
+                          case 19:
+                            $('#bk-time').append('<option value="07:00 PM">07:00 PM</option>');
+                            break;
+                          case 20:
+                            $('#bk-time').append('<option value="08:00 PM">08:00 PM</option>');
+                            break;
+                        }
+                  }
             }
             
         });
