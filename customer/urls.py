@@ -30,7 +30,7 @@ urlpatterns = [
 		url(r'^ajax/evaluationslotes$',views.GetEvaluationBookingSlotes,name='ajax-getevaluationslotes'),
 		url(r'^ajax/customerdetails$',views.GetCustomerDetails,name='ajax-customerdetails'),
 		url(r'^ajax/cleaningtimeslotes$',views.GetCleaningTimeSlotes,name='ajax-getcleaningtimeslotes'),
-
+		url(r'^add-promocode/$',views.addpromocode,name='add-promocode'),
 		url(r'^ajax/getserviceproductivity$',views.GetServiceProductivity,name='ajax-serviceproductivity'),
 
 		url(r'^booking/phase1$',views.CustomerBookingPhase1.as_view(),name='customerbookingphase1'),

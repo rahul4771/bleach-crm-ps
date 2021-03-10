@@ -223,6 +223,9 @@ class Evaluation(models.Model):
 	before_cleaning_amount	= models.FloatField(blank=True,null=True)
 	after_cleaning_amount	= models.FloatField(blank=True,null=True)
 
+	promocode_amount		= models.FloatField(blank=True,null=True,default=0)
+	is_promocode_applied	= models.BooleanField(null=False,blank=True,default=False)
+
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)
 	updated              = models.DateTimeField(auto_now=True)

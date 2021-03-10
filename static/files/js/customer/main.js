@@ -3,11 +3,58 @@ $(".inv-coupon").hide();
 selectPayment('debit');
 var cashcounter=false;
 function addCoupon(){
-    $(".inv-coupon").show();
-    $(".inv-coupon-code").hide();
+  console.log($('.couponcode').val(),$('.orderId').val(),"runnns")
     
 
+    $.ajax({
+      url: "/customer/add-promocode",
+      data: {
+      'promocode': $('.couponcode').val(),'orderId':$('.orderId').val(),
+      },
+      dataType: "json",
+      type: "GET",
+      contentType: "application/json;charset=utf-8",
+      
+      success: function(data) {
+          console.log(data.remainingamount,data.amount,data.alert,"all")
+
+          if (data.amount > 0){
+            $('.couponamount').text(data.amount);
+            $('.finalamount').text(data.discount_amount);
+            $('.beforecleaningamount').val(data.preamount);
+            $('.preamount').text(data.preamount);
+            $('.aftercleaningamount').val(data.postamount);
+            $('.postamount').text(data.postamount);
+            $('.evaluationtotalcost').val(data.evaluationtotalcost);
+            $('.evaluationtotalamount').text(data.evaluationtotalcost);
+            $('.remainingamount').text(data.remainingamount);
+            $(".inv-coupon").show();
+            $(".inv-coupon-code").hide();
+          }
+
+          if (data.alert == 'Invalid'){
+            $('.couponcode').val('');
+            $('.inv-coupon-error').attr("hidden",false);
+            $('.inv-coupon-error').text("Invalid Coupon. Please Try Again !");
+          }
+
+          if (data.alert == 'expired'){
+            $('.couponcode').val('');
+            $('.inv-coupon-error').attr("hidden",false);
+            $('.inv-coupon-error').text("Coupon Expired !");
+          }
+
+          if (data.alert == 'exists'){
+            $('.couponcode').val('');
+            $('.inv-coupon-error').attr("hidden",false);
+            $('.inv-coupon-error').text("This order already has a coupon applied !");
+          }
+
+      }
+
+})
 }
+
 function proceedInvoice(){
   
   if($('#inv-debit').hasClass('inv-payment-card-active')){
