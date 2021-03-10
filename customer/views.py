@@ -527,7 +527,7 @@ class PaymentReceipt(View):
 
 			duplicate_schedules.append(orderschedule.order_scheduler_book)
 
-		return render(request,"customer/receipt-voucher.html",{'payment_history':payment_history,'nonduplicate_schedules':nonduplicate_schedules,})
+		return render(request,"customer/voucher.html",{'payment_history':payment_history,'nonduplicate_schedules':nonduplicate_schedules,})
 
 class CustomerOrderDetails(View):
 	def get(self,request,order_id,service_id,section_id):

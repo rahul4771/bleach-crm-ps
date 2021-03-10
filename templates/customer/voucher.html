@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en" xml:lang="en" >
   <head>
@@ -20,7 +21,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="{% static 'files/css/customer/main.css' %}">
     <title>Bleach Cleaning Services | Voucher</title>
 
   </head>
@@ -50,20 +51,32 @@
             
             <div class="container">
           <div class="row ">
+
+          {% for orderschedule in order.orderschedules %}
+          {% if forloop.first %}
             <div class="col-md-5 col-print-5 inv-receipt-customer-details mt-4 mt-md-0"> 
               <div class="">
               <div class="inv-content inv-text-color">Receipt To</div>
-              <h4 class="inv-content pt-2 inv-receipt-heading inv-text-color">John Doe</h4>
+              <h4 class="inv-content pt-2 inv-receipt-heading inv-text-color">{{orderschedule.customer_address.customer.name}}</h4>
+              {% if orderschedule.customer_address.customer.customer_type == 'CORPORATE' %}
+              <h4 class="inv-content pt-2 inv-receipt-heading inv-text-color">{{orderschedule.customer_address.customer.company}}</h4>
+              <h4 class="inv-content pt-2 inv-receipt-heading inv-text-color">{{orderschedule.customer_address.customer.job_title}}</h4>
+              {% endif %}
               <div class="inv-content inv-text-color"> 
-                222 Rocky Way 30000 Brdrock, Cobblestone Country<br>
+                {{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}},<br>
+                {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}}, {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %}<br>
+                {{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}<br>
               
-                Contact No : 123456789 <br>
+                Contact No : {{orderschedule.customer_address.customer.mobile_number}} <br>
               
-                Email : johndoe@example.com<br>
+                Email : {{orderschedule.customer_address.customer.email}}<br>
               </div>
               </div>
 
             </div>
+            {% endif %}
+            {% endfor %}
+
             <div class="col-md-5 col-print-5 offset-md-2 inv-receipt-card mt-4" >
               <div class="inv-content-card">
                 <h1 class="inv-text-right inv-receipt-heading text-center">RECEIPT VOUCHER</h1>
@@ -72,7 +85,7 @@
                   Order Number
                 </div>:
                 <div class="w-50 inv-text-right">
-                  242424
+                  {{payment_history.order.order_no}}
                 </div>
               </div>
               <div class="d-flex pt-1 inv-invoice-details">
@@ -80,7 +93,7 @@
                   Invoice Number
                 </div>:
                 <div class="w-50 inv-text-right">
-                    12121212
+                    {{payment_history.order.order_no|slice:"9:"}}
                 </div>
               </div>
               <div class="d-flex pt-1 inv-invoice-details">
@@ -88,7 +101,7 @@
                   Invoice Date
                 </div>:
                 <div class="w-50 inv-text-right">
-                   12-12-2020
+                   {{order.evaluation.created|date:'d-m-Y'}}
                 </div>
               </div>
               
@@ -115,7 +128,7 @@
                         </div>
                         <div class="inv-text-right inv-text-lg pb-4 ">
                         
-                          <span class="inv-heading-lg ">120.000</span> KD
+                          <span class="inv-heading-lg ">{{payment_history.amount_paid}}</span> KD
                         </div>
                       </div>
                   </div>
@@ -125,7 +138,7 @@
                         Received Date
                        </div>
                        <div class="inv-text-right w-50">
-                         <span class="inv-text-bold">18/12/2020</span> 
+                         <span class="inv-text-bold">{{payment_history.paid_date|date:'d-m-Y'}}</span> 
                        </div>
                      </div>
                      <div class="d-flex pt-2">
@@ -133,7 +146,7 @@
                         Mode of Payment
                         </div>
                        <div class="inv-text-right w-50">
-                         <span class="inv-text-bold">Cheque</span>  
+                         <span class="inv-text-bold">{{payment_history.payment_mode}}</span>  
                        </div>
                      </div>
                      <div class="d-flex pt-2">
@@ -141,7 +154,7 @@
                          Cheque Date
                         </div>
                         <div class="inv-text-right w-50">
-                          <span class="inv-text-bold">16/12/2020</span>  
+                          <span class="inv-text-bold">{{payment_history.cheack_date}}</span>  
                         </div>
                       </div>
                       <div class="d-flex pt-2">
@@ -149,7 +162,7 @@
                             Bank Name
                         </div>
                         <div class="inv-text-right w-50">
-                          <span class="inv-text-bold">ABC BANK</span>  
+                          <span class="inv-text-bold">{{payment_history.bank_name}}</span>  
                         </div>
                       </div>
                    
@@ -224,7 +237,7 @@
          <div class="col-md-4">
           <div class="d-flex pt-4 pb-4">
             <div class="p-2">
-              <img src="./icons/placeholder.png" class="inv-icon"/>
+              <img src="{% static 'files/icons/placeholder.png' %}" class="inv-icon"/>
             </div>
            
             <div class="p-2">
@@ -236,7 +249,7 @@
          <div class="col-md-4">
           <div class="d-flex pt-4 pb-4">
             <div class="p-2">
-              <img src="./icons/contact.png" class="inv-icon"/>
+              <img src="{% static 'files/icons/contact.png' %}" class="inv-icon"/>
             </div>
            
             <div class="p-2">
@@ -270,10 +283,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js" integrity="sha512-jzL0FvPiDtXef2o2XZJWgaEpVAihqquZT/tT89qCVaxVuHwJ/1DFcJ+8TBMXplSJXE8gLbVAUv+Lj20qHpGx+A==" crossorigin="anonymous"></script>
     <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
 
-    <script src="./js/convertToPdf.js"></script>
+    <script src="{% static 'files/js/convertToPdf.js' %}"></script>
    
     <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" type="text/javascript"></script>
-        <script src="./js/main.js"></script>
+        <script src="{% static 'files/js/customer/main.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
