@@ -1795,7 +1795,7 @@ class CustomerBookingCleaningDebitPay(View):
 
 
 def addpromocode(request):
-	response_dict = {'success':False,'alert':'Invalid'}
+	
 	orderId = request.GET.get('orderId')
 	couponcode = request.GET.get('promocode')
 
@@ -1878,6 +1878,7 @@ def addpromocode(request):
 				print("in")
 		except:
 			promocode = None
+			response_dict = {'success':False,'alert':'Invalid'}
 
 	else:
 		response_dict = {'success':False,'alert':'exists'}
