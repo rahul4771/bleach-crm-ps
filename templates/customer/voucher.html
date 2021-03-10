@@ -52,7 +52,7 @@
             <div class="container">
           <div class="row ">
 
-          {% for orderschedule in order.orderschedules %}
+          {% for orderschedule in payment_history.order.orderschedules %}
           {% if forloop.first %}
             <div class="col-md-5 col-print-5 inv-receipt-customer-details mt-4 mt-md-0"> 
               <div class="">
@@ -149,6 +149,8 @@
                          <span class="inv-text-bold">{{payment_history.payment_mode}}</span>  
                        </div>
                      </div>
+
+                     {% if payment_history.cheack_date %}
                      <div class="d-flex pt-2">
                         <div class="inv-text-left w-50">
                          Cheque Date
@@ -157,6 +159,9 @@
                           <span class="inv-text-bold">{{payment_history.cheack_date}}</span>  
                         </div>
                       </div>
+                      {% endif %}
+
+                      {% if payment_history.bank_name %}
                       <div class="d-flex pt-2">
                         <div class="inv-text-left w-50">
                             Bank Name
@@ -165,6 +170,7 @@
                           <span class="inv-text-bold">{{payment_history.bank_name}}</span>  
                         </div>
                       </div>
+                      {% endif %}
                    
                    
                     
