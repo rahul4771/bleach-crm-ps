@@ -43,10 +43,12 @@
       
        </div>
        <div class="d-flex mt-4 mb-4 mx-auto qt-reject-btn-container">
+       <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+        <input type="hidden" name="action_type" value="CASH/CHEQUE">
         <div class="inv-btn text-center  text-white" >
-        Send
+        <input class="assignButton clickable-cursor qt-input-btn" name="submit" type="submit" value="Send" >
          </div>      
-   
+        </form>
            
           
         
@@ -371,7 +373,15 @@
               Balance Payment
             </div>
             <div class="col-6 inv-text-right pt-1 inv-text-secondary">
+            {% if order.evaluation.payment_method == 'BREAKDOWN' %}
+                {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
+                <b class="preamount">{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</b> KD
+                {% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}
+                <b class="postamount">{{order.evaluation.after_cleaning_amount|floatformat:'3'}}</b> KD
+                {% endif %}
+            {% else %}
               <b class="remainingamount">{{order.remining_amount|floatformat:'3'}}</b> KD
+            {% endif %}
             </div>
 
         {% if order.remining_amount == 0 %}
