@@ -367,6 +367,9 @@
                 </div>
               </div>
             </div>
+
+            {% if order.remining_amount == 0 %}
+            {% else %}
               <div class="col-12 mt-4 inv-text-color ">
                 Payment Option
               </div>
@@ -461,6 +464,8 @@
                 Proceed
               </div>
               </div>
+              {% endif %}
+              
               <div class="col-5 offset-1 inv-white-btn text-center  mt-4 mb-4 " id="download">
                 <i class="fa fa-download" ></i>
                 Download
