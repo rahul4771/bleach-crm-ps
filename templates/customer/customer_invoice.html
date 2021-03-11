@@ -377,18 +377,18 @@
                 <form method="post" class="inv-payment-box" action="https://testpay.bleach-kw.com/SendPerformREQuest.php" enctype= "multipart/form-data" id="debit-form">{% csrf_token %} 
                 {% if order.evaluation.payment_method == 'BREAKDOWN' %}
                 {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
-                <input type="hidden" name="price" class="beforecleaningamount" value="{{order.evaluation.before_cleaning_amount}}">
-                <input type="hidden" name="payment_mode" value="before_cleaning">
+                <input type="text" name="price" class="beforecleaningamount" value="{{order.evaluation.before_cleaning_amount}}">
+                <input type="text" name="payment_mode" value="before_cleaning">
                 {% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}
-                <input type="hidden" name="price" class="aftercleaningamount" value="{{order.evaluation.after_cleaning_amount}}">
-                <input type="hidden" name="payment_mode" value="after_cleaning">
+                <input type="text" name="price" class="aftercleaningamount" value="{{order.evaluation.after_cleaning_amount}}">
+                <input type="text" name="payment_mode" value="after_cleaning">
                 {% endif %}
                 {% elif order.evaluation.payment_method == 'PREPAID' %}
-                <input type="hidden" name="price" class="evaluationtotalcost" value="{{order.evaluation.total_cost|floatformat:'3'}}">
-                <input type="hidden" name="payment_mode" value="prepaid">
+                <input type="text" name="price" class="evaluationtotalcost" value="{{order.evaluation.total_cost|floatformat:'3'}}">
+                <input type="text" name="payment_mode" value="prepaid">
                 {% elif order.evaluation.payment_method == 'POSTPAID' %}
-                <input type="hidden" name="price" class="evaluationtotalcost" value="{{order.evaluation.total_cost}}">
-                <input type="hidden" name="payment_mode" value="postpaid">
+                <input type="text" name="price" class="evaluationtotalcost" value="{{order.evaluation.total_cost}}">
+                <input type="text" name="payment_mode" value="postpaid">
                 {% endif %}
                 <input type="hidden" name="qty" value="1">
                 <input type="hidden" name="evaluation_id" value="{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">
