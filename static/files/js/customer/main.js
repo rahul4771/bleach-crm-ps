@@ -16,7 +16,7 @@ function addCoupon(){
       contentType: "application/json;charset=utf-8",
       
       success: function(data) {
-          console.log(data.remainingamount,data.amount,data.alert,"all")
+          console.log(data,"all")
 
           if (data.amount > 0){
             $('.couponamount').text(data.amount);
