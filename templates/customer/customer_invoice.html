@@ -373,15 +373,7 @@
               Balance Payment
             </div>
             <div class="col-6 inv-text-right pt-1 inv-text-secondary">
-            {% if order.evaluation.payment_method == 'BREAKDOWN' %}
-                {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
-                <b class="preamount">{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</b> KD
-                {% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}
-                <b class="postamount">{{order.evaluation.after_cleaning_amount|floatformat:'3'}}</b> KD
-                {% endif %}
-            {% else %}
-              <b class="remainingamount">{{order.remining_amount|floatformat:'3'}}</b> KD
-            {% endif %}
+            <b class="remainingamount">{{order.remining_amount|floatformat:'3'}}</b> KD
             </div>
 
         {% if order.remining_amount == 0 %}
@@ -400,8 +392,17 @@
                Payable Amount
                 </div>
                 <div class="inv-text-right inv-text-lg pb-4 ">
-                 
+
+                {% if order.evaluation.payment_method == 'BREAKDOWN' %}
+                  {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
+                    <span class="inv-heading preamount">{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</span> KD
+                  {% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}
+                    <span class="inv-heading postamount">{{order.evaluation.after_cleaning_amount|floatformat:'3'}}</span> KD
+                  {% endif %}
+
+                {% else %}
                   <span class="inv-heading remainingamount">{{order.remining_amount|floatformat:'3'}}</span> KD
+                {% endif %}
                 </div>
               </div>
             </div>
