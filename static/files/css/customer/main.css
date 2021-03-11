@@ -196,6 +196,19 @@ cursor: pointer;
     max-height: 60px;
     padding: 10px;
 }
+.inv-success-icon{
+    max-height: 60px;
+    padding: 10px;
+}
+.inv-success-text{
+   
+}
+.inv-completed{
+    border: 1px dotted #348695;
+    border-radius: 10px;
+    font-size:21px;
+    font-weight:500;
+}
 .inv-payment-text{
     font-size:12px;
     font-weight:600;
