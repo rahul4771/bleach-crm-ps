@@ -251,9 +251,10 @@
                   <span class="inv-text-bold">0</span>  KD
                 </div>
               </div> -->
-              {% comment %} <div class="d-flex pt-2 inv-highlight-text ">
+              <div class="d-flex pt-2 inv-highlight-text ">
                 <div class="inv-text-left w-100 inv-coupon-code" data-html2canvas-ignore="true" >
-                  <input type="text"  class="inv-input w-100" placeholder="Enter Coupon Code" />
+                <input type="hidden" name="orderId" class="orderId" value="{{order.id}}" />
+                  <input type="text"  class="inv-input w-100 couponcode" placeholder="Enter Coupon Code" />
                 </div>
                 <div class="inv-text-right inv-coupon-code" data-html2canvas-ignore="true" >
                   <button class="inv-add-coupon" onclick="addCoupon()">Add</button>
@@ -263,19 +264,19 @@
                 </div>
                 
                 <div class="inv-text-right w-50 inv-coupon">
-                  <span class="inv-text-bold inv-highlight-text">-10.000</span> KD
+                  <span class="inv-text-bold inv-highlight-text couponamount">-0.000</span> KD
                 </div>
-              </div> {% endcomment %}
-              {% comment %} <div class="text-center pt-2 inv-coupon-error no-print" data-html2canvas-ignore="true">
-                Invalid Coupon. Please Try Again.
-                </div> {% endcomment %}
+              </div>
+              <div class="text-center pt-2 inv-coupon-error no-print" data-html2canvas-ignore="true">
+                
+                </div>
               <div class="inv-total-payment p-2 mt-4 mb-4">
                 <div class="inv-text-left  pt-1">
               Grand Total
                 </div>
                 <div class="inv-text-right inv-text-lg pb-4 ">
                  
-                  <span class="inv-heading " >{{order.total_amount|floatformat:"3"}}</span> KD
+                  <span class="inv-heading finalamount" >{{order.total_amount|floatformat:"3"}}</span> KD
                 </div>
               </div>
               
@@ -299,7 +300,7 @@
               Current Payment
             </div>
             <div class="col-6 inv-text-right pt-4 inv-text-secondary">
-               <b>
+               <b class="subscriptiontopay">
                {{order.subscription_topay|floatformat:'3'}}
                </b> KD
             </div>
@@ -313,7 +314,7 @@
               Amount Due
             </div>
             <div class="col-6 inv-text-right pt-1 inv-text-secondary">
-              <b>{{order.remining_amount|floatformat:'3'}}</b> KD
+              <b class="remainingamount">{{order.remining_amount|floatformat:'3'}}</b> KD
             </div>
             <div class="col-12">
               <div class="inv-current-payment p-2 mt-4 mb-4">
@@ -322,7 +323,7 @@
                 </div>
                 <div class="inv-text-right inv-text-lg pb-4 ">
                  
-                  <span class="inv-heading ">{{order.subscription_topay|floatformat:'3'}}</span> KD
+                  <span class="inv-heading subscriptiontopay">{{order.subscription_topay|floatformat:'3'}}</span> KD
                 </div>
               </div>
             </div>
@@ -333,20 +334,20 @@
                 <div class="d-flex">
 
 
-                <form method="post" action="https://testpay.bleach-kw.com/SendPerformREQuest.php" enctype= "multipart/form-data">{% csrf_token %} 
+                <form method="post" action="https://testpay.bleach-kw.com/SendPerformREQuest.php" enctype= "multipart/form-data" id="debit-form">{% csrf_token %} 
                 {% if order.evaluation.payment_method == 'BREAKDOWN' %}
                 {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
-                <input type="hidden" name="price" value="{{order.evaluation.before_cleaning_amount}}">
+                <input type="hidden" name="price" class="beforecleaningamount" value="{{order.evaluation.before_cleaning_amount}}">
                 <input type="hidden" name="payment_mode" value="before_cleaning">
                 {% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}
-                <input type="hidden" name="price" value="{{order.evaluation.after_cleaning_amount}}">
+                <input type="hidden" name="price" class="aftercleaningamount" value="{{order.evaluation.after_cleaning_amount}}">
                 <input type="hidden" name="payment_mode" value="after_cleaning">
                 {% endif %}
                 {% elif order.evaluation.payment_method == 'PREPAID' %}
-                <input type="hidden" name="price" value="{{order.evaluation.total_cost|floatformat:'3'}}">
+                <input type="hidden" name="price" class="evaluationtotalcost" value="{{order.evaluation.total_cost|floatformat:'3'}}">
                 <input type="hidden" name="payment_mode" value="prepaid">
                 {% elif order.evaluation.payment_method == 'POSTPAID' %}
-                <input type="hidden" name="price" value="{{order.evaluation.total_cost}}">
+                <input type="hidden" name="price" class="evaluationtotalcost" value="{{order.evaluation.total_cost}}">
                 <input type="hidden" name="payment_mode" value="postpaid">
                 {% endif %}
                 <input type="hidden" name="qty" value="1">

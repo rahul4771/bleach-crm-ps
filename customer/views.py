@@ -1827,11 +1827,11 @@ def addpromocode(request):
 					print(percentage,order_amount,percentage_amount,discount_amount,"disc")
 
 					#rounding odd decimal ending digit to even digit
-					if(discount_amount%2==0):
-						print(discount_amount," Is an even")
-					else:
-						print(discount_amount," is an odd")
-						discount_amount = float(discount_amount)+float(.001)
+					# if(discount_amount%2==0):
+					# 	print(discount_amount," Is an even")
+					# else:
+					# 	print(discount_amount," is an odd")
+					# 	discount_amount = float(discount_amount)+float(.001)
 
 					#splitting offer amount into two and applying to before cleaning and after cleaning amount
 					if evaluation.payment_method == 'BREAKDOWN':
@@ -1840,7 +1840,7 @@ def addpromocode(request):
 						evaluation.save()
 
 					order.total_amount = discount_amount
-					order.remining_amount = discount_amount
+					order.remining_amount = float(discount_amount) - float(order.amount_paid)
 					order.save()
 
 					evaluation.total_cost = discount_amount
@@ -1851,8 +1851,8 @@ def addpromocode(request):
 					promocode.total_used += 1
 					promocode.save()
 					
-					response_dict = {'success':True,'amount':percentage_amount,'discount_amount':discount_amount,'preamount':round(evaluation.before_cleaning_amount,3),
-					'postamount':round(evaluation.after_cleaning_amount,3),'evaluationtotalcost':round(evaluation.total_cost,3),'remainingamount':round(order.remining_amount,3)}
+					response_dict = {'success':True,'amount':percentage_amount,'discount_amount':discount_amount,'preamount':evaluation.before_cleaning_amount,
+					'postamount':evaluation.after_cleaning_amount,'evaluationtotalcost':evaluation.total_cost,'remainingamount':order.remining_amount}
 				
 				if promocode.price:
 					discount_amount = float(order.total_amount) - float(promocode.price)
@@ -1860,11 +1860,11 @@ def addpromocode(request):
 					print(promocode.price,discount_amount,"disc")
 
 					#rounding odd decimal ending digit to even digit
-					if(discount_amount%2==0):
-						print(discount_amount," Is an even")
-					else:
-						print(discount_amount," is an odd")
-						discount_amount = float(discount_amount)+float(.001)
+					# if(discount_amount%2==0):
+					# 	print(discount_amount," Is an even")
+					# else:
+					# 	print(discount_amount," is an odd")
+					# 	discount_amount = float(discount_amount)+float(.001)
 
 					#splitting offer amount into two and applying to before cleaning and after cleaning amount
 					if evaluation.payment_method == 'BREAKDOWN':
@@ -1873,17 +1873,18 @@ def addpromocode(request):
 						evaluation.save()
 
 					order.total_amount = discount_amount
-					order.remining_amount = discount_amount
+					order.remining_amount = float(discount_amount) - float(order.amount_paid)
 					order.save()
 					
+					evaluation.total_cost = discount_amount
 					evaluation.is_promocode_applied = True
 					evaluation.promocode_amount = round(promocode.price, 3)
 					evaluation.save()
 
 					promocode.total_used += 1
 					promocode.save()
-					response_dict = {'success':True,'amount':promocode.price,'discount_amount':discount_amount,'preamount':round(evaluation.before_cleaning_amount,3),
-					'postamount':round(evaluation.after_cleaning_amount,3),'evaluationtotalcost':round(evaluation.total_cost,3),'remainingamount':round(order.remining_amount,3)}
+					response_dict = {'success':True,'amount':promocode.price,'discount_amount':discount_amount,'preamount':evaluation.before_cleaning_amount,
+					'postamount':evaluation.after_cleaning_amount,'evaluationtotalcost':evaluation.total_cost,'remainingamount':order.remining_amount}
 					print("price")
 
 				print("in")
