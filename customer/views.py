@@ -1805,7 +1805,7 @@ def addpromocode(request):
 	#check if evaluation already has a promocode applied
 	if evaluation.is_promocode_applied == False:
 	
-		
+		try:
 			promocode = Promocode.objects.filter(promocode=couponcode,is_active=True).first()
 			
 			#checking if promocode usage count is completed or date expired
@@ -1851,8 +1851,8 @@ def addpromocode(request):
 					promocode.total_used += 1
 					promocode.save()
 					
-					response_dict = {'success':True,'amount':percentage_amount,'discount_amount':discount_amount,'preamount':round(order.evaluation.before_cleaning_amount,3),
-					'postamount':round(order.evaluation.after_cleaning_amount,3),'evaluationtotalcost':round(order.evaluation.total_cost,3),'remainingamount':round(order.remining_amount,3)}
+					response_dict = {'success':True,'amount':percentage_amount,'discount_amount':discount_amount,'preamount':round(evaluation.before_cleaning_amount,3),
+					'postamount':round(evaluation.after_cleaning_amount,3),'evaluationtotalcost':round(evaluation.total_cost,3),'remainingamount':round(order.remining_amount,3)}
 				
 				if promocode.price:
 					discount_amount = float(order.total_amount) - float(promocode.price)
@@ -1882,14 +1882,14 @@ def addpromocode(request):
 
 					promocode.total_used += 1
 					promocode.save()
-					response_dict = {'success':True,'amount':promocode.price,'discount_amount':discount_amount,'preamount':round(order.evaluation.before_cleaning_amount,3),
-					'postamount':round(order.evaluation.after_cleaning_amount,3),'evaluationtotalcost':round(order.evaluation.total_cost,3),'remainingamount':round(order.remining_amount,3)}
+					response_dict = {'success':True,'amount':promocode.price,'discount_amount':discount_amount,'preamount':round(evaluation.before_cleaning_amount,3),
+					'postamount':round(evaluation.after_cleaning_amount,3),'evaluationtotalcost':round(evaluation.total_cost,3),'remainingamount':round(order.remining_amount,3)}
 					print("price")
 
 				print("in")
-		# except:
-		# 	promocode = None
-		# 	response_dict = {'success':False,'alert':'Invalid'}
+		except:
+			promocode = None
+			response_dict = {'success':False,'alert':'Invalid'}
 
 	else:
 		response_dict = {'success':False,'alert':'exists'}
