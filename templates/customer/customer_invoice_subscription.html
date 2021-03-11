@@ -245,6 +245,17 @@
                    <span class="inv-text-bold">0</span>  KD
                  </div>
                </div> -->
+              {% if order.remining_amount == 0 or order.evaluation.is_promocode_applied == True %}
+              <div class="d-flex pt-2 inv-highlight-text ">
+                <div class="inv-text-left w-50">
+                  Coupon Added
+                  </div>
+                  
+                  <div class="inv-text-right w-50 ">
+                    <span class="inv-text-bold inv-highlight-text couponamount">-{{order.evaluation.promocode_amount|floatformat:"3"}}</span> KD
+                  </div>
+              </div>
+              {% else %}
                <div class="d-flex pt-2 inv-highlight-text ">
                  <div class="inv-text-left w-100 inv-coupon-code" data-html2canvas-ignore="true" >
                  <input type="hidden" name="orderId" class="orderId" value="{{order.id}}" />
@@ -264,6 +275,8 @@
                <div class="text-center pt-2 inv-coupon-error no-print" data-html2canvas-ignore="true">
                  
                  </div>
+              {% endif %}
+
                <div class="inv-total-payment p-2 mt-4 mb-4">
                  <div class="inv-text-left  pt-1">
                Grand Total
@@ -314,6 +327,18 @@
             <div class="col-6 inv-text-right pt-1 inv-text-secondary">
               <b class="remainingamount">{{order.remining_amount|floatformat:'3'}}</b> KD
             </div>
+
+        {% if order.remining_amount == 0 %}
+            <br><br><br><br>
+            <div class="col-12 payment-success text-center">
+                    <div class="mx-auto inv-completed">
+                      <img src="{% static 'files/icons/checked.png' %}"  class="inv-success-icon"/> Payment Completed
+
+                    </div>
+                  </div><br><br><br><br>
+
+        {% else %}
+
             <div class="col-12">
               <div class="inv-current-payment p-2 mt-4 mb-4">
                 <div class="inv-text-left  pt-1">
@@ -326,8 +351,6 @@
               </div>
             </div>
 
-            {% if order.remining_amount == 0 %}
-            {% else %}
               <div class="col-12 mt-4 inv-text-color ">
                 Payment Option
               </div>
@@ -373,7 +396,8 @@
                 {% endif %}
                 </form>
 
-                {% if order.evaluation.payment_method == 'POSTPAID' %}
+                
+                <div class="inv-payment-box">
                   <div class="inv-payment-card mt-4 text-center" id="inv-cash" onclick="selectPayment('cash')">
                     <img src="{% static 'files/icons/wallet.png' %}" class="inv-card-icon "  id="inv-cash-img"/>
                     <div class="inv-payment-text">
@@ -383,7 +407,10 @@
                       <i class="fa fa-check inv-check-icon " id="inv-check-cash"></i>
                     </div>
                   </div>
-                {% endif %}
+                </div>
+                
+
+                <div class="inv-payment-box">
                   <div class="inv-payment-card mt-4 text-center inv-click-disable" id="inv-credit" onclick="selectPayment('credit')"><!-- to disable click add class inv-click-disable -->
                     <img src="{% static 'files/icons/debit-card.png' %}" class="inv-card-icon inv-payment-disabled" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
                     <div class="inv-payment-text inv-payment-disabled"> <!-- to disable  add class inv-payment-disabled -->
@@ -393,15 +420,11 @@
                       <i class="fa fa-check inv-check-icon " id="inv-check-credit"></i>
                     </div>
                   </div>
-
+                </div>
+                
                 </div>
               </div>
-              <div class="col-12 payment-success text-center">
-                <div class="mx-auto inv-completed">
-                  <img src="{% static 'files/icons/checked.png' %}"  class="inv-success-icon"/> Payment Completed
-
-                </div>
-              </div>
+              
              <!-- <div class="col-4 ">
                 <div class="inv-payment-card mt-4 text-center" id="inv-debit" onclick="selectPayment('debit')">
                   <img src="./icons/knet-icon.png" class="inv-card-icon " id="inv-knet" />
@@ -424,7 +447,7 @@
                 Proceed
               </div>
               </div>
-              {% endif %}
+          {% endif %}
 
 
               <div class="col-5 offset-1 inv-white-btn text-center  mt-4 mb-4 " id="download">

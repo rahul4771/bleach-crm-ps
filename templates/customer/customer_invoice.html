@@ -280,7 +280,16 @@
                   <span class="inv-text-bold">0</span>  KD
                 </div>
               </div> -->
-              {% if order.remining_amount == 0 %}
+              {% if order.remining_amount == 0 or order.evaluation.is_promocode_applied == True %}
+              <div class="d-flex pt-2 inv-highlight-text ">
+                <div class="inv-text-left w-50">
+                  Coupon Added
+                  </div>
+                  
+                  <div class="inv-text-right w-50 ">
+                    <span class="inv-text-bold inv-highlight-text couponamount">-{{order.evaluation.promocode_amount|floatformat:"3"}}</span> KD
+                  </div>
+              </div>
               {% else %}
               <div class="d-flex pt-2 inv-highlight-text ">
                 <div class="inv-text-left w-100 inv-coupon-code" data-html2canvas-ignore="true" >
@@ -329,6 +338,9 @@
                 Payment
               </h3>
             </div>
+
+            {% if order.remining_amount == 0 %}
+            {% else %}
             <div class="col-6 pt-4 inv-text-secondary">
               Current Payment
             </div>
@@ -347,6 +359,8 @@
                 {% endif %}
                </b> KD
             </div>
+            {% endif %}
+
             <div class="col-6 pt-1">
               Paid
             </div>

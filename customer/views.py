@@ -1823,14 +1823,16 @@ def addpromocode(request):
 						promocode_amount = promocode.percentage_upto_price
 
 				elif promocode.price:
+					print("warr")
 					promocode_amount = promocode.price
 
 				else:
 					pass
 
+				print(promocode_amount,"proamount")
 				discount_amount = float(order.total_amount) - float(promocode_amount)
 				discount_amount = round(discount_amount, 3)
-				print(percentage,order_amount,promocode_amount,discount_amount,"disc")
+				print(promocode_amount,discount_amount,"disc")
 
 				#rounding odd decimal ending digit to even digit
 				# if(discount_amount%2==0):
@@ -1840,25 +1842,36 @@ def addpromocode(request):
 				# 	discount_amount = float(discount_amount)+float(.001)
 
 				#splitting offer amount into two and applying to before cleaning and after cleaning amount
-				if discount_amount < 1:
+				if discount_amount <= 0:
 					if evaluation.payment_method == 'BREAKDOWN':
 						evaluation.before_cleaning_amount = 0.000
 						evaluation.after_cleaning_amount = 0.000
 						evaluation.save()
 
-					order.total_amount = 0.000
-					order.remining_amount = 0.000
-					order.save()
-
 					evaluation.total_cost = 0.000
 					evaluation.is_promocode_applied = True
 					evaluation.promocode_amount = order.total_amount
-					evaluation.save()					
+					evaluation.save()
+
+					promocode_amount = 0.000
+					discount_amount = 0.000
+
+					order.total_amount = 0.000
+					order.remining_amount = 0.000
+					order.payment_status = 'COMPLETED'
+					order.save()					
+					
+					invoice_redirect = 'yes'
+
+					response_dict = {'success':True,'amount':promocode_amount,'discount_amount':discount_amount,'preamount':evaluation.before_cleaning_amount,'redirect':invoice_redirect,
+					'postamount':evaluation.after_cleaning_amount,'evaluationtotalcost':evaluation.total_cost,'remainingamount':order.remining_amount,'subscriptiontopay':order.subscription_topay}
 
 				else:
 					if evaluation.payment_method == 'BREAKDOWN':
-						evaluation.before_cleaning_amount -= round(float(promocode_amount/2),3)
-						evaluation.after_cleaning_amount -= round(float(promocode_amount/2),3)
+						amount1	= round(float(discount_amount/2),3)
+						amount2 = round(float(discount_amount)-float(amount1),3)
+						evaluation.before_cleaning_amount = amount1
+						evaluation.after_cleaning_amount = amount2
 						evaluation.save()
 
 					order.total_amount = discount_amount
@@ -1868,49 +1881,17 @@ def addpromocode(request):
 					evaluation.total_cost = discount_amount
 					evaluation.is_promocode_applied = True
 					evaluation.promocode_amount = round(promocode_amount, 3)
-					evaluation.save()					
+					evaluation.save()	
+
+					invoice_redirect = 'no'
+
+					response_dict = {'success':True,'amount':promocode_amount,'discount_amount':discount_amount,'preamount':evaluation.before_cleaning_amount,'redirect':invoice_redirect,
+					'postamount':evaluation.after_cleaning_amount,'evaluationtotalcost':evaluation.total_cost,'remainingamount':order.remining_amount,'subscriptiontopay':order.subscription_topay}				
 
 				promocode.total_used += 1
 				promocode.save()
 				
-				response_dict = {'success':True,'amount':promocode_amount,'discount_amount':discount_amount,'preamount':evaluation.before_cleaning_amount,
-				'postamount':evaluation.after_cleaning_amount,'evaluationtotalcost':evaluation.total_cost,'remainingamount':order.remining_amount,'subscriptiontopay':order.subscription_topay}
-				
-				# if promocode.price:
-				# 	promocode_amount = promocode.price
-				# 	discount_amount = float(order.total_amount) - float(promocode_amount)
-				# 	discount_amount = round(discount_amount, 3)
-				# 	print(promocode_amount,discount_amount,"disc")
-
-				# 	#rounding odd decimal ending digit to even digit
-				# 	# if(discount_amount%2==0):
-				# 	# 	print(discount_amount," Is an even")
-				# 	# else:
-				# 	# 	print(discount_amount," is an odd")
-				# 	# 	discount_amount = float(discount_amount)+float(.001)
-
-				# 	#splitting offer amount into two and applying to before cleaning and after cleaning amount
-				# 	if evaluation.payment_method == 'BREAKDOWN':
-				# 		evaluation.before_cleaning_amount -= round(float(promocode_amount/2),3)
-				# 		evaluation.after_cleaning_amount -= round(float(promocode_amount/2),3)
-				# 		evaluation.save()
-
-				# 	order.total_amount = discount_amount
-				# 	order.remining_amount = float(discount_amount) - float(order.amount_paid)
-				# 	order.save()
-					
-				# 	evaluation.total_cost = discount_amount
-				# 	evaluation.is_promocode_applied = True
-				# 	evaluation.promocode_amount = round(promocode_amount, 3)
-				# 	evaluation.save()
-
-				# 	promocode.total_used += 1
-				# 	promocode.save()
-				# 	response_dict = {'success':True,'amount':promocode_amount,'discount_amount':discount_amount,'preamount':evaluation.before_cleaning_amount,
-				# 	'postamount':evaluation.after_cleaning_amount,'evaluationtotalcost':evaluation.total_cost,'remainingamount':order.remining_amount,'subscriptiontopay':order.subscription_topay}
-				# 	print("price")
-
-				print("in")
+				print(response_dict,"in")
 		except:
 			promocode = None
 			response_dict = {'success':False,'alert':'Invalid'}

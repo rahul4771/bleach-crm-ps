@@ -16,9 +16,17 @@ function addCoupon(){
       contentType: "application/json;charset=utf-8",
       
       success: function(data) {
-          console.log(data,"all")
+          console.log(data.redirect,"all")
 
-          if (data.amount > 0){
+          if (data.success == true){
+            if (data.redirect == 'yes'){
+              window.location.reload();
+            }
+
+            if (data.redirect == 'no'){
+            $(".inv-coupon").show();
+            $(".inv-coupon-code").hide();
+            $('.inv-coupon-error').attr("hidden",true);
             $('.couponamount').text(parseFloat(data.amount).toFixed(3));
             $('.finalamount').text(parseFloat(data.discount_amount).toFixed(3));
             $('.beforecleaningamount').val(parseFloat(data.preamount).toFixed(3));
@@ -29,8 +37,7 @@ function addCoupon(){
             $('.evaluationtotalamount').text(parseFloat(data.evaluationtotalcost).toFixed(3));
             $('.remainingamount').text(parseFloat(data.remainingamount).toFixed(3));
             $('.subscriptiontopay').text(parseFloat(data.subscriptiontopay).toFixed(3));
-            $(".inv-coupon").show();
-            $(".inv-coupon-code").hide();
+            }
           }
 
           if (data.alert == 'Invalid'){
