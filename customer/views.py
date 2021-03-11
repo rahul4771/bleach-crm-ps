@@ -1852,7 +1852,7 @@ def addpromocode(request):
 					promocode.save()
 					
 					response_dict = {'success':True,'amount':percentage_amount,'discount_amount':discount_amount,'preamount':evaluation.before_cleaning_amount,
-					'postamount':evaluation.after_cleaning_amount,'evaluationtotalcost':evaluation.total_cost,'remainingamount':order.remining_amount}
+					'postamount':evaluation.after_cleaning_amount,'evaluationtotalcost':evaluation.total_cost,'remainingamount':order.remining_amount,'subscriptiontopay':order.subscription_topay}
 				
 				if promocode.price:
 					discount_amount = float(order.total_amount) - float(promocode.price)
@@ -1884,7 +1884,7 @@ def addpromocode(request):
 					promocode.total_used += 1
 					promocode.save()
 					response_dict = {'success':True,'amount':promocode.price,'discount_amount':discount_amount,'preamount':evaluation.before_cleaning_amount,
-					'postamount':evaluation.after_cleaning_amount,'evaluationtotalcost':evaluation.total_cost,'remainingamount':order.remining_amount}
+					'postamount':evaluation.after_cleaning_amount,'evaluationtotalcost':evaluation.total_cost,'remainingamount':order.remining_amount,'subscriptiontopay':order.subscription_topay}
 					print("price")
 
 				print("in")

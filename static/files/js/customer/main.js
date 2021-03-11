@@ -28,6 +28,7 @@ function addCoupon(){
             $('.evaluationtotalcost').val(parseFloat(data.evaluationtotalcost).toFixed(3));
             $('.evaluationtotalamount').text(parseFloat(data.evaluationtotalcost).toFixed(3));
             $('.remainingamount').text(parseFloat(data.remainingamount).toFixed(3));
+            $('.subscriptiontopay').text(parseFloat(data.subscriptiontopay).toFixed(3));
             $(".inv-coupon").show();
             $(".inv-coupon-code").hide();
           }
