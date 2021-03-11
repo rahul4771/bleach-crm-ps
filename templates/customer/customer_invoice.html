@@ -280,6 +280,8 @@
                   <span class="inv-text-bold">0</span>  KD
                 </div>
               </div> -->
+              {% if order.remining_amount == 0 %}
+              {% else %}
               <div class="d-flex pt-2 inv-highlight-text ">
                 <div class="inv-text-left w-100 inv-coupon-code" data-html2canvas-ignore="true" >
                   <input type="hidden" name="orderId" class="orderId" value="{{order.id}}" />
@@ -300,6 +302,7 @@
               <div class="text-center pt-2 inv-coupon-error no-print" data-html2canvas-ignore="true" hidden>
                 
                 </div>
+              {% endif %}
               <div class="inv-total-payment p-2 mt-4 mb-4">
                 <div class="inv-text-left  pt-1">
               Grand Total
@@ -351,11 +354,22 @@
                <b>{{order.amount_paid|floatformat:'3'}}</b> KD
             </div>
             <div class="col-6 pt-1 ">
-              Amount Due
+              Balance Payment
             </div>
             <div class="col-6 inv-text-right pt-1 inv-text-secondary">
               <b class="remainingamount">{{order.remining_amount|floatformat:'3'}}</b> KD
             </div>
+
+        {% if order.remining_amount == 0 %}
+        <br><br><br><br>
+        <div class="col-12 payment-success text-center">
+                <div class="mx-auto inv-completed">
+                  <img src="{% static 'files/icons/checked.png' %}"  class="inv-success-icon"/> Payment Completed
+
+                </div>
+              </div><br><br><br><br>
+
+        {% else %}
             <div class="col-12">
               <div class="inv-current-payment p-2 mt-4 mb-4">
                 <div class="inv-text-left  pt-1">
@@ -367,9 +381,7 @@
                 </div>
               </div>
             </div>
-
-            {% if order.remining_amount == 0 %}
-            {% else %}
+        
               <div class="col-12 mt-4 inv-text-color ">
                 Payment Option
               </div>
@@ -442,12 +454,7 @@
 
                 </div>
               </div>
-              <div class="col-12 payment-success text-center">
-                <div class="mx-auto inv-completed">
-                  <img src="{% static 'files/icons/checked.png' %}"  class="inv-success-icon"/> Payment Completed
-
-                </div>
-              </div>
+              
               
              <!-- <div class="col-4 ">
                 <div class="inv-payment-card mt-4 text-center" id="inv-debit" onclick="selectPayment('debit')">
@@ -471,8 +478,8 @@
                 Proceed
               </div>
               </div>
-              {% endif %}
-              
+        {% endif %}
+
               <div class="col-5 offset-1 inv-white-btn text-center  mt-4 mb-4 " id="download">
                 <i class="fa fa-download" ></i>
                 Download
