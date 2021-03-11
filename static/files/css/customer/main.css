@@ -668,7 +668,16 @@ height: 42px;
 }
 
 /* Modal */
-
+.qt-input-btn{
+    background: none;
+    border: none;
+    color: #ffffff;
+    width: 100%;
+    padding: 0px;
+}
+.qt-input-btn:focus {
+    outline: none;
+  }
 .qt-modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
