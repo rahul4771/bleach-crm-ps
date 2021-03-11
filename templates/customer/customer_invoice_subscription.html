@@ -333,7 +333,7 @@
                 <div class="d-flex">
 
 
-                <form method="post" action="https://payment.bleachkw.com/SendPerformREQuest.php" enctype= "multipart/form-data">{% csrf_token %} 
+                <form method="post" action="https://testpay.bleach-kw.com/SendPerformREQuest.php" enctype= "multipart/form-data">{% csrf_token %} 
                 {% if order.evaluation.payment_method == 'BREAKDOWN' %}
                 {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
                 <input type="hidden" name="price" value="{{order.evaluation.before_cleaning_amount}}">
