@@ -765,7 +765,7 @@ class StlHome(IsSeniorTeamLeader,View):
 
 			#update cleaners count
 			if assigned_cleaners:
-				order_schedule.order_scheduler_book.number_of_cleaners = len(assigned_cleaners)
+				order_schedule.order_scheduler_book.number_of_cleaners = len(assigned_cleaners)+1
 				order_schedule.order_scheduler_book.save()
 
 			#delete existing cleaners
@@ -830,7 +830,7 @@ class StlHome(IsSeniorTeamLeader,View):
 
 			#update followup count
 			if assigned_cleaners:
-				followup_schedule.follow_up.no_of_cleaners = len(assigned_cleaners)
+				followup_schedule.follow_up.no_of_cleaners = len(assigned_cleaners)+1
 				followup_schedule.follow_up.save()
 
 			#delete existing cleaners
@@ -1102,7 +1102,7 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		cleaning_team_assign_form = CleaningTeamAssignForm(request.POST)
 		assigned_cleaners         = request.POST.getlist('assigned_cleaner')
 		#update cleaners count
-		order_schedule.order_scheduler_book.number_of_cleaners = len(assigned_cleaners)
+		order_schedule.order_scheduler_book.number_of_cleaners = len(assigned_cleaners)+1
 		order_schedule.order_scheduler_book.save()
 
 		#same blc cleaners for excluding
@@ -1186,7 +1186,7 @@ class AssignFollowupTeam(IsSeniorTeamLeader,View):
 		follow_up_team_assign_form = FollowupTeamAssignForm(request.POST)
 		assigned_cleaners          = request.POST.getlist('assigned_cleaner')
 		#update cleaners count
-		followup_schedule.follow_up.no_of_cleaners = len(assigned_cleaners)
+		followup_schedule.follow_up.no_of_cleaners = len(assigned_cleaners)+1
 		followup_schedule.follow_up.save()
 
 
