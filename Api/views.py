@@ -290,4 +290,5 @@ class DeleteLeaveSchedule(APIView):
 			response_dict['reason'] = 'Invalid Id' 
 
 		return Response(response_dict,HTTP_200_OK)
+
 		

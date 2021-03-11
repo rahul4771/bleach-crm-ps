@@ -23,7 +23,7 @@ from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,Promocode
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
@@ -1792,3 +1792,108 @@ class CustomerBookingCleaningDebitPay(View):
 		else:
 
 			return redirect('/customer/payment/failed/?udf1='+evaluation_id_encrypted+'&paymentid='+request.GET.get('paymentid')+'&ref='+request.GET.get('ref'))
+
+
+def addpromocode(request):
+	
+	orderId = request.GET.get('orderId')
+	couponcode = request.GET.get('promocode')
+
+	order = Order.objects.get(is_active=True,id=int(orderId))
+	evaluation = order.evaluation
+
+	#check if evaluation already has a promocode applied
+	if evaluation.is_promocode_applied == False:
+	
+		try:
+			promocode = Promocode.objects.filter(promocode=couponcode,is_active=True).first()
+			
+			#checking if promocode usage count is completed or date expired
+			if promocode.total_usage == promocode.total_used or promocode.expiry_date <= date.today() :
+				print("out")
+				response_dict = {'success':False,'alert':'expired'}
+			else:
+				if promocode.percentage:
+					print("wa")
+					percentage = promocode.percentage
+					order_amount = order.total_amount
+					percentage_amount = float(promocode.percentage/100) * float(order_amount)
+
+					if percentage_amount > promocode.percentage_upto_price:
+						percentage_amount = promocode.percentage_upto_price
+
+					discount_amount = float(order.total_amount) - float(percentage_amount)
+					discount_amount = round(discount_amount, 3)
+					print(percentage,order_amount,percentage_amount,discount_amount,"disc")
+
+					#rounding odd decimal ending digit to even digit
+					# if(discount_amount%2==0):
+					# 	print(discount_amount," Is an even")
+					# else:
+					# 	print(discount_amount," is an odd")
+					# 	discount_amount = float(discount_amount)+float(.001)
+
+					#splitting offer amount into two and applying to before cleaning and after cleaning amount
+					if evaluation.payment_method == 'BREAKDOWN':
+						evaluation.before_cleaning_amount -= round(float(percentage_amount/2),3)
+						evaluation.after_cleaning_amount -= round(float(percentage_amount/2),3)
+						evaluation.save()
+
+					order.total_amount = discount_amount
+					order.remining_amount = float(discount_amount) - float(order.amount_paid)
+					order.save()
+
+					evaluation.total_cost = discount_amount
+					evaluation.is_promocode_applied = True
+					evaluation.promocode_amount = round(percentage_amount, 3)
+					evaluation.save()					
+
+					promocode.total_used += 1
+					promocode.save()
+					
+					response_dict = {'success':True,'amount':percentage_amount,'discount_amount':discount_amount,'preamount':evaluation.before_cleaning_amount,
+					'postamount':evaluation.after_cleaning_amount,'evaluationtotalcost':evaluation.total_cost,'remainingamount':order.remining_amount,'subscriptiontopay':order.subscription_topay}
+				
+				if promocode.price:
+					discount_amount = float(order.total_amount) - float(promocode.price)
+					discount_amount = round(discount_amount, 3)
+					print(promocode.price,discount_amount,"disc")
+
+					#rounding odd decimal ending digit to even digit
+					# if(discount_amount%2==0):
+					# 	print(discount_amount," Is an even")
+					# else:
+					# 	print(discount_amount," is an odd")
+					# 	discount_amount = float(discount_amount)+float(.001)
+
+					#splitting offer amount into two and applying to before cleaning and after cleaning amount
+					if evaluation.payment_method == 'BREAKDOWN':
+						evaluation.before_cleaning_amount -= round(float(promocode.price/2),3)
+						evaluation.after_cleaning_amount -= round(float(promocode.price/2),3)
+						evaluation.save()
+
+					order.total_amount = discount_amount
+					order.remining_amount = float(discount_amount) - float(order.amount_paid)
+					order.save()
+					
+					evaluation.total_cost = discount_amount
+					evaluation.is_promocode_applied = True
+					evaluation.promocode_amount = round(promocode.price, 3)
+					evaluation.save()
+
+					promocode.total_used += 1
+					promocode.save()
+					response_dict = {'success':True,'amount':promocode.price,'discount_amount':discount_amount,'preamount':evaluation.before_cleaning_amount,
+					'postamount':evaluation.after_cleaning_amount,'evaluationtotalcost':evaluation.total_cost,'remainingamount':order.remining_amount,'subscriptiontopay':order.subscription_topay}
+					print("price")
+
+				print("in")
+		except:
+			promocode = None
+			response_dict = {'success':False,'alert':'Invalid'}
+
+	else:
+		response_dict = {'success':False,'alert':'exists'}
+	print(orderId,couponcode,"codesss")
+
+	return JsonResponse(response_dict)

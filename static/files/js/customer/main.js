@@ -3,11 +3,59 @@ $(".inv-coupon").hide();
 selectPayment('debit');
 var cashcounter=false;
 function addCoupon(){
-    $(".inv-coupon").show();
-    $(".inv-coupon-code").hide();
+  console.log($('.couponcode').val(),$('.orderId').val(),"runnns")
     
 
+    $.ajax({
+      url: "/customer/add-promocode",
+      data: {
+      'promocode': $('.couponcode').val(),'orderId':$('.orderId').val(),
+      },
+      dataType: "json",
+      type: "GET",
+      contentType: "application/json;charset=utf-8",
+      
+      success: function(data) {
+          console.log(data,"all")
+
+          if (data.amount > 0){
+            $('.couponamount').text(parseFloat(data.amount).toFixed(3));
+            $('.finalamount').text(parseFloat(data.discount_amount).toFixed(3));
+            $('.beforecleaningamount').val(parseFloat(data.preamount).toFixed(3));
+            $('.preamount').text(parseFloat(data.preamount).toFixed(3));
+            $('.aftercleaningamount').val(parseFloat(data.postamount).toFixed(3));
+            $('.postamount').text(parseFloat(data.postamount).toFixed(3));
+            $('.evaluationtotalcost').val(parseFloat(data.evaluationtotalcost).toFixed(3));
+            $('.evaluationtotalamount').text(parseFloat(data.evaluationtotalcost).toFixed(3));
+            $('.remainingamount').text(parseFloat(data.remainingamount).toFixed(3));
+            $('.subscriptiontopay').text(parseFloat(data.subscriptiontopay).toFixed(3));
+            $(".inv-coupon").show();
+            $(".inv-coupon-code").hide();
+          }
+
+          if (data.alert == 'Invalid'){
+            $('.couponcode').val('');
+            $('.inv-coupon-error').attr("hidden",false);
+            $('.inv-coupon-error').text("Invalid Coupon. Please Try Again !");
+          }
+
+          if (data.alert == 'expired'){
+            $('.couponcode').val('');
+            $('.inv-coupon-error').attr("hidden",false);
+            $('.inv-coupon-error').text("Coupon Expired !");
+          }
+
+          if (data.alert == 'exists'){
+            $('.couponcode').val('');
+            $('.inv-coupon-error').attr("hidden",false);
+            $('.inv-coupon-error').text("This order already has a coupon applied !");
+          }
+
+      }
+
+})
 }
+
 function proceedInvoice(){
   
   if($('#inv-debit').hasClass('inv-payment-card-active')){

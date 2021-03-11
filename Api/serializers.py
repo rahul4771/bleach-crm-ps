@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule
 from evaluator.models import Evaluation
+from order.models import Promocode
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
