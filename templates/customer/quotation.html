@@ -204,17 +204,45 @@
           {% if forloop.first %}
             <div class="col-md-5 col-print-5 inv-customer-details order-2 order-md-1 mt-4 mt-md-0">
               <div class="">
-              <div class="inv-content inv-text-color">To</div>
-              <h4 class="inv-content pt-2 inv-heading-light inv-text-color inv-primary-text">{{orderschedule.customer_address.customer.name}}</h4>
-              <div class="inv-content inv-text-color"> 
-                {{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}},<br>
-                {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}}, {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %}<br>
-                {{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}<br>
-                Contact No : {{orderschedule.customer_address.customer.mobile_number}} <br>
+          
+
+                <h4 class="inv-content pt-2 inv-heading-light inv-primary-text"></h4>
+                
+                <div class="d-flex pt-1 inv-invoice-details ">
+                  <div class="w-30 inv-text-left">
+                   <b>Customer</b> 
+                  </div>
+                  <div class="w-70 inv-text-right">
+                    <b>{{orderschedule.customer_address.customer.name}}</b>
+                  </div>
+                </div>
               
-                Email : {{orderschedule.customer_address.customer.email}}<br>
+              <div class="d-flex pt-1 inv-invoice-details">
+                <div class="w-30 inv-text-left">
+                 Address
+                </div>
+                <div class="w-70 inv-text-right">
+                  {{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}} {% else %}{% endif %} {{orderschedule.customer_address.building}},{{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},{% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}} {% else %}{% endif %}<br>{{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}
+                </div>
               </div>
+           
+              <div class="d-flex pt-1 inv-invoice-details ">
+                <div class="w-30 inv-text-left">
+                Contact No
+                </div>
+                <div class="w-70 inv-text-right">
+                  {{orderschedule.customer_address.customer.mobile_number}}
+                </div>
               </div>
+              <div class="d-flex pt-1 inv-invoice-details pb-4">
+                <div class="w-30 inv-text-left">
+                Email
+                </div>
+                <div class="w-70 inv-text-right">
+                  {{orderschedule.customer_address.customer.email}}
+                </div>
+              </div>
+                </div>
               </div>
               {% endif %}
               {% endfor %}
@@ -223,13 +251,20 @@
             <div class="col-md-5 col-print-5 offset-md-2 order-md-2 order-1 inv-invoice-card" >
               <div class="inv-content-card">
               <h1 class="text-center qt-title inv-primary-text">QUOTATION</h1>
-              <h6 class="text-center">{{order.order_no}}</h6>
+              <h6 class="text-center"></h6>
               <div>
-              
+                <div class="d-flex pt-1 inv-invoice-details">
+                  <div class="w-70 inv-text-left">
+                      Quotation Number
+                  </div>
+                  <div class="w-50 inv-text-right">
+                    {{order.order_no}}
+                  </div>
+                </div>
               <div class="d-flex pt-1 inv-invoice-details">
                 <div class="w-70 inv-text-left">
                     Initiated Date
-                </div>:
+                </div>
                 <div class="w-50 inv-text-right">
                    {{order.evaluation.created|date:'d-m-Y'}}
                 </div>
@@ -237,7 +272,7 @@
               <div class="d-flex pt-1 inv-invoice-details">
                 <div class="w-70 inv-text-left">
                     Due Date
-                </div>:
+                </div>
                 <div class="w-50 inv-text-right">
                    {{order.evaluation.quatation_expiry_date|date:'d-m-Y'}}
                 </div>
@@ -245,7 +280,7 @@
               <div class="d-flex pt-1 inv-invoice-details">
                 <div class="w-70 inv-text-left">
                     Evaluator
-                </div>:
+                </div>
                 <div class="w-50 inv-text-right">
                    {% for orderschedule in nonduplicate_schedules %}{% if orderschedule.evaluation_details.evaluator %}{% ifchanged orderschedule.evaluation_details.evaluator.name %}{{orderschedule.evaluation_details.evaluator.name}}, {% endifchanged %}{% else %}{% if forloop.last %}{{orderschedule.evaluation_details.evaluation.call_attender.name}}{% endif %}{% endif %}{% endfor %}
                 </div>
@@ -253,7 +288,7 @@
               <div class="d-flex pt-1 inv-invoice-details pb-4">
                 <div class="w-70 inv-text-left">
                     Payment Policy
-                </div>:
+                </div>
                 <div class="w-50 inv-text-right">
                     {{order.evaluation.payment_method}}
                 </div>
@@ -493,49 +528,50 @@
       
    </div>
    <div class="inv-footer ">
-     <div class="container">
-       <div class="row">
-         <div class="col-md-4">
-          <div class="d-flex pt-4 pb-4">
-            <div class="p-2">
-              <img src="{% static 'files/icons/placeholder.png' %}" class="inv-icon"/>
-            </div>
-           
-            <div class="p-2">
-              <b>Bleach International Contracting Company for Cleaning Building & Cities WLL</b><br>
-              Office No. 3, Building No. 8, Block 13 Qibila Building, Mohammed AL Ghanim Street Kuwait City,<br> PO Box 4489, Safat 13045 CR No.362934
-            </div>
-          </div>
-         </div>
-         <div class="col-md-4">
-          <div class="d-flex pt-4 pb-4">
-            <div class="p-2">
-              <img src="{% static 'files/icons/contact.png' %}" class="inv-icon"/>
-            </div>
-           
-            <div class="p-2">
-              Tel : +965 1882707 <br>Email: customercare@bleach-kw.com <br>Website : www.bleach-kw.com
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 offset-md-1 ">
-          <div class="pt-4 pb-4 text-center">
-           <a href="https://www.facebook.com/BleachKw/" target="_blank" class="inv-link"> <i class="fab fa-facebook-f text-white p-2 inv-cp inv-social"></i> </a>
-            <!-- https://www.facebook.com/BleachKw/ -->
-            <a href="https://twitter.com/bleachkw?lang=en" target="_blank" class="inv-link">  <i class="fab fa-twitter text-white p-2 inv-cp inv-social"></i></a>
-            <!-- https://twitter.com/bleachkw?lang=en -->
-            <a href="https://www.instagram.com/bleachkw/?hl=en" target="_blank" class="inv-link"><i class="fab fa-instagram text-white p-2 inv-cp inv-social"></i></a>
-            <!-- https://www.instagram.com/bleachkw/?hl=en -->
-            <a href="https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw" target="_blank" class="inv-link"> <i class="fab fa-youtube text-white p-2 inv-cp inv-social"></i></a>
-            <!-- https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw -->
-            <a href="https://www.linkedin.com/company/bleachkw" target="_blank" class="inv-link"><i class="fab fa-linkedin text-white p-2 inv-cp inv-social"></i></a>
-            <!-- https://www.linkedin.com/company/bleachkw -->
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+         <div class="d-flex pt-4 pb-4">
+           <div class="p-2">
+             <img src="{% static 'files/icons/placeholder.png' %}" class="inv-icon"/>
+           </div>
+          
+           <div class="p-2" style="text-align: justify;">
             
-          </div>
+             <b>Bleach International Contracting Company<br> for Cleaning Building & Cities WLL</b>, 
+             Qibla area, Block 14 Usama Bin Mongith St. AlMashora Tower 8th Floor.
+           </div>
+         </div>
         </div>
+        <div class="col-md-4  ">
+         <div class="d-flex pt-4 pb-4 ">
+           <div class="p-2">
+             <img src="{% static 'files/icons/contact.png' %}" class="inv-icon"/>
+           </div>
+          
+           <div class="p-2 w-100">
+            <span> Tel</span> <span class="float-right">+965 1882707</span> <br><span>Email</span><span class="float-right">customercare@bleach-kw.com</span>  <br><span>Website</span> <span class="float-right"> www.bleach-kw.com</span>
+           </div>
+         </div>
        </div>
-     </div>
-   </div>
+       <div class="col-md-3 offset-md-1 ">
+         <div class="pt-4 pb-4 text-center">
+          <a href="https://www.facebook.com/BleachKw/" target="_blank" class="inv-link"> <i class="fab fa-facebook-f text-white p-2 inv-cp inv-social"></i> </a>
+           <!-- https://www.facebook.com/BleachKw/ -->
+           <a href="https://twitter.com/bleachkw?lang=en" target="_blank" class="inv-link">  <i class="fab fa-twitter text-white p-2 inv-cp inv-social"></i></a>
+           <!-- https://twitter.com/bleachkw?lang=en -->
+           <a href="https://www.instagram.com/bleachkw/?hl=en" target="_blank" class="inv-link"><i class="fab fa-instagram text-white p-2 inv-cp inv-social"></i></a>
+           <!-- https://www.instagram.com/bleachkw/?hl=en -->
+           <a href="https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw" target="_blank" class="inv-link"> <i class="fab fa-youtube text-white p-2 inv-cp inv-social"></i></a>
+           <!-- https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw -->
+           <a href="https://www.linkedin.com/company/bleachkw" target="_blank" class="inv-link"><i class="fab fa-linkedin text-white p-2 inv-cp inv-social"></i></a>
+           <!-- https://www.linkedin.com/company/bleachkw -->
+           
+         </div>
+       </div>
+      </div>
+    </div>
+  </div>
 
    
    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>   

@@ -266,14 +266,17 @@ margin: auto;
   
    
     height: 100%;
-    padding: 10px;
+   
   
    
   
 }
+#coupon-added{
+    display: none;
+}
 .inv-invoice-title{
     font-weight:700;
-    font-size:3.5rem;
+    font-size:2.5rem;
 }
 .inv-text-bold{
     font-weight:600;
@@ -314,11 +317,11 @@ outline: none !important;
 }
 .html2canvas-container { width: 3000px !important; height: 3000px !important; }
 .inv-invoice-details{
-    margin-right: 15%;
-    width: 70%;
+   /* margin-right: 15%;*/
+    width: 100%;
     
     float: right;
-    font-size: 12px;
+    font-size: 16px;
   
 }
 .text-right{
@@ -381,8 +384,11 @@ outline: none !important;
     background: #616161;
     color: #ffffff;
     font-size: 14px;
-    margin-top:5%;
+    margin-top:8%;
     width: 100%;
+}
+.inv-heading-light-medium{
+    font-size:18px;
 }
 .inv-icon{
     height:24px;
