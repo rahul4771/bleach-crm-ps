@@ -221,12 +221,13 @@
           <div class="row mt-4">
             <div class=" col-md-5 col-print-5 order-2 order-md-1 mb-2 ">
 
+            {% if order.evaluation.payment_method == 'BREAKDOWN' %}
               <div class="d-flex mt-2 ">
                   <div class="text-left w-50 qt-sub-text">
                       Payment Before Cleaning
                   </div>
                   <div class="qt-sub-text  w-50 text-center">
-                      <b>{{order.evaluation.before_cleaning_amount|floatformat:"3"}}</b> KD
+                      <b class="preamount">{{order.evaluation.before_cleaning_amount|floatformat:"3"}}</b> KD
                   </div>
               </div>
   
@@ -235,9 +236,10 @@
                      Payment After Cleaning
                   </div>
                   <div class="  qt-sub-text  w-50 text-center">
-                      <b>{{order.evaluation.after_cleaning_amount|floatformat:"3"}}</b> KD
+                      <b class="postamount">{{order.evaluation.after_cleaning_amount|floatformat:"3"}}</b> KD
                   </div>
               </div>
+            {% endif %}
   
               </div>
             <div class="col-md-5 col-print-5 offset-md-1 order-1 order-md-2">

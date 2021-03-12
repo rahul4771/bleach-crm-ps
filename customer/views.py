@@ -1843,7 +1843,7 @@ def addpromocode(request):
 
 				#splitting offer amount into two and applying to before cleaning and after cleaning amount
 				#if after coupon apply amount is 0 or less
-				if discount_amount <= 0:
+				if discount_amount <= 0 and evaluation.payment_method != 'BREAKDOWN':
 					if evaluation.payment_method == 'BREAKDOWN':
 						evaluation.before_cleaning_amount = 0.000
 						evaluation.after_cleaning_amount = 0.000
@@ -1869,9 +1869,11 @@ def addpromocode(request):
 
 				else:
 					if evaluation.payment_method == 'BREAKDOWN':
+						print("wa")
 						#breakdown 2nd payment and coupon price
 						if order.preamount_paid > 0 and promocode.price:
 							postamount = float(evaluation.after_cleaning_amount) - float(promocode_amount)
+							print(postamount,"postt")
 							#if coupon amount is greater than payable amount
 							if postamount <= 0 :
 								order.total_amount = evaluation.before_cleaning_amount
@@ -1934,7 +1936,14 @@ def addpromocode(request):
 							amount2 = round(float(discount_amount)-float(amount1),3)
 							evaluation.before_cleaning_amount = amount1
 							evaluation.after_cleaning_amount = amount2
+							evaluation.total_cost = discount_amount
+							evaluation.is_promocode_applied = True
+							evaluation.promocode_amount = round(promocode_amount, 3)
 							evaluation.save()
+
+							order.total_amount = discount_amount
+							order.remining_amount = float(discount_amount) - float(order.amount_paid)
+							order.save()
 
 							invoice_redirect = 'no'
 
