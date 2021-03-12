@@ -257,23 +257,25 @@
           <div class="row mt-4">
             <div class=" col-md-5 col-print-5 order-2 order-md-1 mb-2 ">
 
+            {% if order.evaluation.payment_method == 'BREAKDOWN' %}
               <div class="d-flex mt-2 ">
                   <div class="text-left w-50 qt-sub-text">
-                      Completed Jobs
+                      Payment Before Cleaning
                   </div>
                   <div class="qt-sub-text  w-50 text-center">
-                      <b>0</b>
+                      <b class="preamount">{{order.evaluation.before_cleaning_amount|floatformat:"3"}}</b> KD
                   </div>
               </div>
   
               <div class="d-flex mt-2 ">
                   <div class="text-left w-50 qt-sub-text">
-                     Total Jobs
+                     Payment After Cleaning
                   </div>
                   <div class="  qt-sub-text  w-50 text-center">
-                      <b>0</b>
+                      <b class="postamount">{{order.evaluation.after_cleaning_amount|floatformat:"3"}}</b> KD
                   </div>
               </div>
+            {% endif %}
   
               </div>
             <div class="col-md-5 col-print-5 offset-md-1 order-1 order-md-2">
@@ -504,7 +506,7 @@
                 {% endif %}
                 </form>
 
-                {% if order.evaluation.payment_method == 'POSTPAID' %}
+                {% if order.evaluation.payment_method == 'POSTPAID' or order.preamount_paid > 0 %}
                 <div class="inv-payment-box">
                   <div class="inv-payment-card mt-4 text-center" id="inv-cash" onclick="selectPayment('cash')">
                     <img src="{% static 'files/icons/wallet.png' %}" class="inv-card-icon "  id="inv-cash-img"/>
@@ -558,6 +560,7 @@
         {% endif %}
 
               <div class="col-5 offset-1 inv-white-btn text-center  mt-4 mb-4 " id="download">
+              <input type="hidden" class="filename" value="Invoice_INV{{order.invoice_no}}" />
                 <i class="fa fa-download" ></i>
                 Download
               </div> 

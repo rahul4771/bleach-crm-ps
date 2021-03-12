@@ -257,6 +257,7 @@
           </div>
           <div class="d-flex text-center">
           <div class="inv-white-btn text-center  mt-4 mb-4 inv-receipt-download" id="download">
+            <input type="hidden" class="filename" value="Payment_INV{{order.invoice_no}}" />
             <i class="fa fa-download" ></i>
             Download
           </div> 
@@ -281,7 +282,8 @@
            
             <div class="p-2">
               <b>Bleach International Contracting Company for Cleaning Building & Cities WLL</b><br>
-              Office No. 3, Building No. 8, Block 13 Qibila Building, Mohammed AL Ghanim Street Kuwait City,<br> PO Box 4489, Safat 13045 CR No.362934
+              {% comment %} Office No. 3, Building No. 8, Block 13 Qibila Building, Mohammed AL Ghanim Street Kuwait City,<br> PO Box 4489, Safat 13045 CR No.362934 {% endcomment %}
+              Qibla area, Block 14, Usama Bin Mongith,<br> St. AlMashora Tower, 8th Floor
             </div>
           </div>
          </div>
