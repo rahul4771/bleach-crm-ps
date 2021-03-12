@@ -27,6 +27,64 @@
 
   </head>
   <body id="printableArea">
+    <div class="qt-cash-modal " id="cashModal">
+      <div class="container">
+      <div class=" row">
+        <div class="col-md-6 mx-auto " id="cash-step-1">
+          <div class="qt-reject-modal-content p-4">
+            <i class="fa fa-times float-right pointer " aria-hidden="true" onclick="closeCashModal()"></i>
+       <div class="text-center" >
+        <img src="{% static 'files/icons/wallet.png' %}" class="inv-card-icon "  id="inv-cash-img"/>
+       </div>
+       <div class="pt-2 text-center">
+         <h4>
+          You have requested for cash/cheque payment. Our team will contact you soon
+       </h4>
+      
+       </div>
+       <div class="d-flex mt-4 mb-4 mx-auto qt-reject-btn-container">
+       <form method="post" class="mx-auto" action="" enctype= "multipart/form-data">{% csrf_token %}
+        <input type="hidden" name="action_type" value="CASH/CHEQUE">
+        <div class="inv-btn text-center  text-white" >
+        <input class="assignButton clickable-cursor qt-input-btn" name="submit" type="submit" value="Send" >
+         </div>      
+        </form>
+           
+          
+        
+       </div>
+     </div>
+     </div>
+     <div class="col-md-6 mx-auto " id="cash-step-2">
+      <div class="qt-reject-modal-content p-4">
+        <i class="fa fa-times float-right pointer " aria-hidden="true" onclick="closeCashModal()"></i>
+   <div class="text-center" >
+    <img src="{% static 'files/icons/wallet.png' %}" class="inv-card-icon "  id="inv-cash-img"/>
+   </div>
+   <div class="pt-2 text-center">
+     <h4>
+      Do you want to proceed with cash/cheque payment ?
+   </h4>
+  
+   </div>
+   <div class="d-flex mt-4 mb-4 mx-auto qt-reject-btn-container">
+    <div class="inv-btn text-center  text-white" onclick="nextStepCash()">
+   yes
+     </div>
+     <div class="inv-btn text-center  text-white"  onclick="closeCashModal()">
+      no
+        </div>      
+
+       
+      
+    
+   </div>
+ </div>
+ </div>
+      </div>
+     </div>
+     
+   </div>
    <div class="container mb-4 mt-4" id="content" >
       <div class="row" id="printableArea">
         <div class="col-md-8 col-print-12" id="canvas" >
@@ -58,7 +116,7 @@
             <div class="col-md-5 col-print-5 inv-customer-details order-2 order-md-1 mt-4 mt-md-0">
               <div class="">
               <div class="inv-content inv-text-color">To</div>
-              <h4 class="inv-content pt-2 inv-heading-light inv-text-color">{{orderschedule.customer_address.customer.name}}</h4>
+              <h4 class="inv-content pt-2 inv-heading-light inv-primary-text">{{orderschedule.customer_address.customer.name}}</h4>
               <div class="inv-content inv-text-color"> 
                 {{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}},<br>
                 {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}}, {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %}<br>
@@ -72,16 +130,10 @@
             </div>
             <div class="col-md-5 col-print-5 offset-md-2 order-md-2 order-1 inv-invoice-card" >
               <div class="inv-content-card">
-              <h1 class="text-center inv-invoice-title">INVOICE</h1>
+              <h1 class="text-center inv-invoice-title inv-primary-text">INVOICE</h1>
+              <h6 class="text-center">INV{{order.invoice_no}}</h6>
               <div>
-              <div class="d-flex pt-2  inv-invoice-details">
-                <div class="w-50 inv-text-left">
-                  Invoice Number
-                </div>:
-                <div class="w-50 inv-text-right">
-                   INV{{order.invoice_no}}
-                </div>
-              </div>
+              
               <div class="d-flex pt-1 inv-invoice-details">
                 <div class="w-50 inv-text-left">
                   Invoice Date
@@ -358,7 +410,7 @@
                 <div class="d-flex">
 
 
-                <form method="post" action="https://testpay.bleach-kw.com/SendPerformREQuest.php" enctype= "multipart/form-data" id="debit-form">{% csrf_token %} 
+                <form method="post" class="inv-payment-box" action="https://testpay.bleach-kw.com/SendPerformREQuest.php" enctype= "multipart/form-data" id="debit-form">{% csrf_token %} 
                 {% if order.evaluation.payment_method == 'BREAKDOWN' %}
                 {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
                 <input type="hidden" name="price" class="beforecleaningamount" value="{{order.evaluation.before_cleaning_amount}}">
@@ -451,6 +503,7 @@
 
 
               <div class="col-5 offset-1 inv-white-btn text-center  mt-4 mb-4 " id="download">
+              <input type="hidden" class="filename" value="Subscription_Invoice_INV{{order.invoice_no}}" />
                 <i class="fa fa-download" ></i>
                 Download
               </div> 
@@ -513,17 +566,17 @@
 
    
    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>   
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/pdfmake.js" integrity="sha512-rn5JpU98RtYVMtZeQJfzmJ67rl4/dqDpGZ393z5f9WMYHXEU4+8Stm/PQAma2gbsLbpClmUHJzT0DaG32OmEyQ==" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js" integrity="sha512-jzL0FvPiDtXef2o2XZJWgaEpVAihqquZT/tT89qCVaxVuHwJ/1DFcJ+8TBMXplSJXE8gLbVAUv+Lj20qHpGx+A==" crossorigin="anonymous"></script>
-    <script src="{% static 'files/js/convertToPdf.js' %}"></script>
-    <script src="{% static 'files/js/modal.js' %}"> </script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/pdfmake.js" integrity="sha512-rn5JpU98RtYVMtZeQJfzmJ67rl4/dqDpGZ393z5f9WMYHXEU4+8Stm/PQAma2gbsLbpClmUHJzT0DaG32OmEyQ==" crossorigin="anonymous"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js" integrity="sha512-jzL0FvPiDtXef2o2XZJWgaEpVAihqquZT/tT89qCVaxVuHwJ/1DFcJ+8TBMXplSJXE8gLbVAUv+Lj20qHpGx+A==" crossorigin="anonymous"></script>
+   <script src="{% static 'files/js/convertToPdf.js' %}"></script>
+   <script src="{% static 'files/js/modal.js' %}"> </script>
 
-    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" type="text/javascript"></script>
-        <script src="{% static 'files/js/customer/main.js' %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+   <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" type="text/javascript"></script>
+       <script src="{% static 'files/js/customer/main.js' %}"></script>
+   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
   </body>
 </html>

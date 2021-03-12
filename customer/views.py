@@ -1880,9 +1880,10 @@ def addpromocode(request):
 								order.save()
 
 								evaluation.total_cost = evaluation.before_cleaning_amount
+								evaluation.promocode_amount = evaluation.after_cleaning_amount
 								evaluation.after_cleaning_amount = 0.000
 								evaluation.is_promocode_applied = True
-								evaluation.promocode_amount = round(promocode_amount, 3)
+								
 								evaluation.save()
 								invoice_redirect = 'yes'
 							else:
@@ -1909,10 +1910,10 @@ def addpromocode(request):
 								order.payment_status = 'COMPLETED'
 								order.save()
 
-								evaluation.total_cost = evaluation.after_cleaning_amount
+								evaluation.total_cost = evaluation.before_cleaning_amount
+								evaluation.promocode_amount = evaluation.after_cleaning_amount
 								evaluation.after_cleaning_amount = 0.000
 								evaluation.is_promocode_applied = True
-								evaluation.promocode_amount = round(promocode_amount, 3)
 								evaluation.save()
 								invoice_redirect = 'yes'
 							
@@ -1934,6 +1935,8 @@ def addpromocode(request):
 							evaluation.before_cleaning_amount = amount1
 							evaluation.after_cleaning_amount = amount2
 							evaluation.save()
+							
+					#prepaid, postpaid, subscription
 					else:
 						order.total_amount = discount_amount
 						order.remining_amount = float(discount_amount) - float(order.amount_paid)

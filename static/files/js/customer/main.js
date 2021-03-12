@@ -72,10 +72,11 @@ function proceedInvoice(){
   }
   else{
   
-    
-    openCashModal()
+  
+    openCashModal();
   }
 }
+
 function nextStepCash(){
  
   $('#cash-step-2').hide();
@@ -216,6 +217,7 @@ function printDiv() {
       $('.fb-header').addClass('offset-md-2');
       $('.fb-end-card').removeClass('offset-md-1');
       $('.fb-middle-card').addClass('offset-md-1');
+      $('body').css('font-family','FarCasablanca');
 
        
     
@@ -258,6 +260,7 @@ function printDiv() {
       $('.fb-header').removeClass('offset-md-2');
       $('.fb-end-card').addClass('offset-md-1');
       $('.fb-middle-card').removeClass('offset-md-1');
+      $('body').css('font-family','AvenirLTStd');
        
     }
     googleTranslateElementInit();
