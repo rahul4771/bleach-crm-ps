@@ -1842,6 +1842,7 @@ def addpromocode(request):
 				# 	discount_amount = float(discount_amount)+float(.001)
 
 				#splitting offer amount into two and applying to before cleaning and after cleaning amount
+				#if after coupon apply amount is 0 or less
 				if discount_amount <= 0:
 					if evaluation.payment_method == 'BREAKDOWN':
 						evaluation.before_cleaning_amount = 0.000
@@ -1868,22 +1869,82 @@ def addpromocode(request):
 
 				else:
 					if evaluation.payment_method == 'BREAKDOWN':
-						amount1	= round(float(discount_amount/2),3)
-						amount2 = round(float(discount_amount)-float(amount1),3)
-						evaluation.before_cleaning_amount = amount1
-						evaluation.after_cleaning_amount = amount2
-						evaluation.save()
+						#breakdown 2nd payment and coupon price
+						if order.preamount_paid > 0 and promocode.price:
+							postamount = float(evaluation.after_cleaning_amount) - float(promocode_amount)
+							#if coupon amount is greater than payable amount
+							if postamount <= 0 :
+								order.total_amount = evaluation.before_cleaning_amount
+								order.remining_amount = 0.000
+								order.payment_status = 'COMPLETED'
+								order.save()
 
-					order.total_amount = discount_amount
-					order.remining_amount = float(discount_amount) - float(order.amount_paid)
-					order.save()
+								evaluation.total_cost = evaluation.before_cleaning_amount
+								evaluation.after_cleaning_amount = 0.000
+								evaluation.is_promocode_applied = True
+								evaluation.promocode_amount = round(promocode_amount, 3)
+								evaluation.save()
+								invoice_redirect = 'yes'
+							else:
+								evaluation.after_cleaning_amount = float(evaluation.after_cleaning_amount) - float(promocode_amount)
+								evaluation.total_cost = float(evaluation.total_cost) - float(promocode_amount)
+								evaluation.is_promocode_applied = True
+								evaluation.promocode_amount = round(promocode_amount, 3)
+								evaluation.save()
 
-					evaluation.total_cost = discount_amount
-					evaluation.is_promocode_applied = True
-					evaluation.promocode_amount = round(promocode_amount, 3)
-					evaluation.save()	
+								order.total_amount = float(order.total_amount) - float(promocode_amount)
+								order.remining_amount = evaluation.after_cleaning_amount
+								order.save()
+								invoice_redirect = 'no'
 
-					invoice_redirect = 'no'
+						#breakdown 2nd payment and coupon percentage
+						elif order.preamount_paid > 0 and promocode.percentage:
+							promocode_amount = float(promocode.percentage/100) * float(order.total_amount)
+							postamount = float(evaluation.after_cleaning_amount) - float(promocode_amount)
+
+							#if coupon amount is greater than payable amount
+							if postamount <= 0 :
+								order.total_amount = evaluation.before_cleaning_amount
+								order.remining_amount = 0.000
+								order.payment_status = 'COMPLETED'
+								order.save()
+
+								evaluation.total_cost = evaluation.after_cleaning_amount
+								evaluation.after_cleaning_amount = 0.000
+								evaluation.is_promocode_applied = True
+								evaluation.promocode_amount = round(promocode_amount, 3)
+								evaluation.save()
+								invoice_redirect = 'yes'
+							
+							else:
+								evaluation.after_cleaning_amount = float(evaluation.after_cleaning_amount) - float(promocode_amount)
+								evaluation.total_cost = float(evaluation.total_cost) - float(promocode_amount)
+								evaluation.is_promocode_applied = True
+								evaluation.promocode_amount = round(promocode_amount, 3)
+								evaluation.save()
+
+								order.total_amount = float(order.total_amount) - float(promocode_amount)
+								order.remining_amount = evaluation.after_cleaning_amount
+								order.save()
+								invoice_redirect = 'no'
+						#if promo code is applied at first payment of breakdown
+						else:
+							amount1	= round(float(discount_amount/2),3)
+							amount2 = round(float(discount_amount)-float(amount1),3)
+							evaluation.before_cleaning_amount = amount1
+							evaluation.after_cleaning_amount = amount2
+							evaluation.save()
+					else:
+						order.total_amount = discount_amount
+						order.remining_amount = float(discount_amount) - float(order.amount_paid)
+						order.save()
+
+						evaluation.total_cost = discount_amount
+						evaluation.is_promocode_applied = True
+						evaluation.promocode_amount = round(promocode_amount, 3)
+						evaluation.save()	
+
+						invoice_redirect = 'no'
 
 					response_dict = {'success':True,'amount':promocode_amount,'discount_amount':discount_amount,'preamount':evaluation.before_cleaning_amount,'redirect':invoice_redirect,
 					'postamount':evaluation.after_cleaning_amount,'evaluationtotalcost':evaluation.total_cost,'remainingamount':order.remining_amount,'subscriptiontopay':order.subscription_topay}				
