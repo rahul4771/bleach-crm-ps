@@ -1935,7 +1935,9 @@ def addpromocode(request):
 							evaluation.before_cleaning_amount = amount1
 							evaluation.after_cleaning_amount = amount2
 							evaluation.save()
-							
+
+							invoice_redirect = 'no'
+
 					#prepaid, postpaid, subscription
 					else:
 						order.total_amount = discount_amount
