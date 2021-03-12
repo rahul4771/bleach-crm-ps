@@ -196,8 +196,8 @@ function printDiv() {
        $(".inv-invoice").addClass("offset-md-9");
        $(".inv-translator").css({"margin-left":"0","margin-right":"auto"});
        $("#lang-label").html("Arabic");
-       $(".inv-cp").removeClass("float-left");
-       $(".inv-cp").addClass("float-right");
+      // $(".inv-cp").removeClass("float-left");
+     //  $(".inv-cp").addClass("float-right");
        
   /* Receipt*/
   $(".inv-receipt-customer-details").addClass("offset-md-2");     
@@ -226,8 +226,8 @@ function printDiv() {
 
       $('#company-name').text('Bleach');
       $("html").css("direction","ltr");
-      $(".inv-cp").addClass("float-left");
-      $(".inv-cp").removeClass("float-right");
+     // $(".inv-cp").addClass("float-left");
+     // $(".inv-cp").removeClass("float-right");
      // $(".inv-customer-details").css({"border-left":"20px solid #F3F3F3","border-right":"0px"});
        $(".inv-customer-details").removeClass("offset-md-2");
        $(".inv-invoice-card").addClass("offset-md-2");
