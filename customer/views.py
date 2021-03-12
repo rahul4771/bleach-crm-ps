@@ -1834,20 +1834,9 @@ def addpromocode(request):
 				discount_amount = round(discount_amount, 3)
 				print(promocode_amount,discount_amount,"disc")
 
-				#rounding odd decimal ending digit to even digit
-				# if(discount_amount%2==0):
-				# 	print(discount_amount," Is an even")
-				# else:
-				# 	print(discount_amount," is an odd")
-				# 	discount_amount = float(discount_amount)+float(.001)
-
 				#splitting offer amount into two and applying to before cleaning and after cleaning amount
 				#if after coupon apply amount is 0 or less
 				if discount_amount <= 0 and evaluation.payment_method != 'BREAKDOWN':
-					if evaluation.payment_method == 'BREAKDOWN':
-						evaluation.before_cleaning_amount = 0.000
-						evaluation.after_cleaning_amount = 0.000
-						evaluation.save()
 
 					evaluation.total_cost = 0.000
 					evaluation.is_promocode_applied = True
@@ -1860,7 +1849,14 @@ def addpromocode(request):
 					order.total_amount = 0.000
 					order.remining_amount = 0.000
 					order.payment_status = 'COMPLETED'
-					order.save()					
+					order.save()
+
+					####to close order
+					order_closing_check = Order.objects.select_related('evaluation__customer').filter(is_active=True,id=order.id,payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+					if order_closing_check:
+						closing_order	= Order.objects.get(is_active=True,order_no=order.order_no)
+						closing_order.order_status = 'ORDER_CLOSED'
+						closing_order.save()					
 					
 					invoice_redirect = 'yes'
 
@@ -1885,8 +1881,15 @@ def addpromocode(request):
 								evaluation.promocode_amount = evaluation.after_cleaning_amount
 								evaluation.after_cleaning_amount = 0.000
 								evaluation.is_promocode_applied = True
-								
 								evaluation.save()
+
+								####to close order
+								order_closing_check = Order.objects.select_related('evaluation__customer').filter(is_active=True,id=order.id,payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+								if order_closing_check:
+									closing_order	= Order.objects.get(is_active=True,order_no=order.order_no)
+									closing_order.order_status = 'ORDER_CLOSED'
+									closing_order.save()
+
 								invoice_redirect = 'yes'
 							else:
 								evaluation.after_cleaning_amount = float(evaluation.after_cleaning_amount) - float(promocode_amount)
@@ -1917,6 +1920,14 @@ def addpromocode(request):
 								evaluation.after_cleaning_amount = 0.000
 								evaluation.is_promocode_applied = True
 								evaluation.save()
+
+								####to close order
+								order_closing_check = Order.objects.select_related('evaluation__customer').filter(is_active=True,id=order.id,payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+								if order_closing_check:
+									closing_order	= Order.objects.get(is_active=True,order_no=order.order_no)
+									closing_order.order_status = 'ORDER_CLOSED'
+									closing_order.save()
+									
 								invoice_redirect = 'yes'
 							
 							else:
