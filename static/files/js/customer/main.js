@@ -16,9 +16,17 @@ function addCoupon(){
       contentType: "application/json;charset=utf-8",
       
       success: function(data) {
-          console.log(data,"all")
+          console.log(data.redirect,"all")
 
-          if (data.amount > 0){
+          if (data.success == true){
+            if (data.redirect == 'yes'){
+              window.location.reload();
+            }
+
+            if (data.redirect == 'no'){
+            $(".inv-coupon").show();
+            $(".inv-coupon-code").hide();
+            $('.inv-coupon-error').attr("hidden",true);
             $('.couponamount').text(parseFloat(data.amount).toFixed(3));
             $('.finalamount').text(parseFloat(data.discount_amount).toFixed(3));
             $('.beforecleaningamount').val(parseFloat(data.preamount).toFixed(3));
@@ -29,8 +37,7 @@ function addCoupon(){
             $('.evaluationtotalamount').text(parseFloat(data.evaluationtotalcost).toFixed(3));
             $('.remainingamount').text(parseFloat(data.remainingamount).toFixed(3));
             $('.subscriptiontopay').text(parseFloat(data.subscriptiontopay).toFixed(3));
-            $(".inv-coupon").show();
-            $(".inv-coupon-code").hide();
+            }
           }
 
           if (data.alert == 'Invalid'){
@@ -65,10 +72,11 @@ function proceedInvoice(){
   }
   else{
   
-    
-    openCashModal()
+  
+    openCashModal();
   }
 }
+
 function nextStepCash(){
  
   $('#cash-step-2').hide();
@@ -188,8 +196,8 @@ function printDiv() {
        $(".inv-invoice").addClass("offset-md-9");
        $(".inv-translator").css({"margin-left":"0","margin-right":"auto"});
        $("#lang-label").html("Arabic");
-       $(".inv-cp").removeClass("float-left");
-       $(".inv-cp").addClass("float-right");
+      // $(".inv-cp").removeClass("float-left");
+     //  $(".inv-cp").addClass("float-right");
        
   /* Receipt*/
   $(".inv-receipt-customer-details").addClass("offset-md-2");     
@@ -209,6 +217,7 @@ function printDiv() {
       $('.fb-header').addClass('offset-md-2');
       $('.fb-end-card').removeClass('offset-md-1');
       $('.fb-middle-card').addClass('offset-md-1');
+      $('body').css('font-family','FarCasablanca');
 
        
     
@@ -217,8 +226,8 @@ function printDiv() {
 
       $('#company-name').text('Bleach');
       $("html").css("direction","ltr");
-      $(".inv-cp").addClass("float-left");
-      $(".inv-cp").removeClass("float-right");
+     // $(".inv-cp").addClass("float-left");
+     // $(".inv-cp").removeClass("float-right");
      // $(".inv-customer-details").css({"border-left":"20px solid #F3F3F3","border-right":"0px"});
        $(".inv-customer-details").removeClass("offset-md-2");
        $(".inv-invoice-card").addClass("offset-md-2");
@@ -251,6 +260,7 @@ function printDiv() {
       $('.fb-header').removeClass('offset-md-2');
       $('.fb-end-card').addClass('offset-md-1');
       $('.fb-middle-card').removeClass('offset-md-1');
+      $('body').css('font-family','AvenirLTStd');
        
     }
     googleTranslateElementInit();

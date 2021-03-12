@@ -291,7 +291,7 @@ class CustomerInvoice(View):
 
 		if action == 'CASH/CHEQUE':
 			Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(payment_way='CASH/CHEQUE')
-
+			messages.success(request,"Cash/Cheque payment method approved !")
 		return redirect('customer:invoice',evaluation_id_encrypted)
 
 
@@ -346,7 +346,7 @@ class CustomerSubscriptionInvoice(View):
 
 		if action == 'CASH/CHEQUE':
 			Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(payment_way='CASH/CHEQUE')
-
+			messages.success(request,"Cash/Cheque payment method approved !")
 		return redirect('customer:subscriptioninvoice',evaluation_id_encrypted)
 
 
@@ -1817,77 +1817,167 @@ def addpromocode(request):
 					print("wa")
 					percentage = promocode.percentage
 					order_amount = order.total_amount
-					percentage_amount = float(promocode.percentage/100) * float(order_amount)
+					promocode_amount = float(promocode.percentage/100) * float(order_amount)
 
-					if percentage_amount > promocode.percentage_upto_price:
-						percentage_amount = promocode.percentage_upto_price
+					if promocode_amount > promocode.percentage_upto_price:
+						promocode_amount = promocode.percentage_upto_price
 
-					discount_amount = float(order.total_amount) - float(percentage_amount)
-					discount_amount = round(discount_amount, 3)
-					print(percentage,order_amount,percentage_amount,discount_amount,"disc")
+				elif promocode.price:
+					print("warr")
+					promocode_amount = promocode.price
 
-					#rounding odd decimal ending digit to even digit
-					# if(discount_amount%2==0):
-					# 	print(discount_amount," Is an even")
-					# else:
-					# 	print(discount_amount," is an odd")
-					# 	discount_amount = float(discount_amount)+float(.001)
+				else:
+					pass
 
-					#splitting offer amount into two and applying to before cleaning and after cleaning amount
-					if evaluation.payment_method == 'BREAKDOWN':
-						evaluation.before_cleaning_amount -= round(float(percentage_amount/2),3)
-						evaluation.after_cleaning_amount -= round(float(percentage_amount/2),3)
-						evaluation.save()
+				print(promocode_amount,"proamount")
+				discount_amount = float(order.total_amount) - float(promocode_amount)
+				discount_amount = round(discount_amount, 3)
+				print(promocode_amount,discount_amount,"disc")
 
-					order.total_amount = discount_amount
-					order.remining_amount = float(discount_amount) - float(order.amount_paid)
-					order.save()
+				#splitting offer amount into two and applying to before cleaning and after cleaning amount
+				#if after coupon apply amount is 0 or less
+				if discount_amount <= 0 and evaluation.payment_method != 'BREAKDOWN':
 
-					evaluation.total_cost = discount_amount
+					evaluation.total_cost = 0.000
 					evaluation.is_promocode_applied = True
-					evaluation.promocode_amount = round(percentage_amount, 3)
-					evaluation.save()					
-
-					promocode.total_used += 1
-					promocode.save()
-					
-					response_dict = {'success':True,'amount':percentage_amount,'discount_amount':discount_amount,'preamount':evaluation.before_cleaning_amount,
-					'postamount':evaluation.after_cleaning_amount,'evaluationtotalcost':evaluation.total_cost,'remainingamount':order.remining_amount,'subscriptiontopay':order.subscription_topay}
-				
-				if promocode.price:
-					discount_amount = float(order.total_amount) - float(promocode.price)
-					discount_amount = round(discount_amount, 3)
-					print(promocode.price,discount_amount,"disc")
-
-					#rounding odd decimal ending digit to even digit
-					# if(discount_amount%2==0):
-					# 	print(discount_amount," Is an even")
-					# else:
-					# 	print(discount_amount," is an odd")
-					# 	discount_amount = float(discount_amount)+float(.001)
-
-					#splitting offer amount into two and applying to before cleaning and after cleaning amount
-					if evaluation.payment_method == 'BREAKDOWN':
-						evaluation.before_cleaning_amount -= round(float(promocode.price/2),3)
-						evaluation.after_cleaning_amount -= round(float(promocode.price/2),3)
-						evaluation.save()
-
-					order.total_amount = discount_amount
-					order.remining_amount = float(discount_amount) - float(order.amount_paid)
-					order.save()
-					
-					evaluation.total_cost = discount_amount
-					evaluation.is_promocode_applied = True
-					evaluation.promocode_amount = round(promocode.price, 3)
+					evaluation.promocode_amount = order.total_amount
 					evaluation.save()
 
-					promocode.total_used += 1
-					promocode.save()
-					response_dict = {'success':True,'amount':promocode.price,'discount_amount':discount_amount,'preamount':evaluation.before_cleaning_amount,
-					'postamount':evaluation.after_cleaning_amount,'evaluationtotalcost':evaluation.total_cost,'remainingamount':order.remining_amount,'subscriptiontopay':order.subscription_topay}
-					print("price")
+					promocode_amount = 0.000
+					discount_amount = 0.000
 
-				print("in")
+					order.total_amount = 0.000
+					order.remining_amount = 0.000
+					order.payment_status = 'COMPLETED'
+					order.save()
+
+					####to close order
+					order_closing_check = Order.objects.select_related('evaluation__customer').filter(is_active=True,id=order.id,payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+					if order_closing_check:
+						closing_order	= Order.objects.get(is_active=True,order_no=order.order_no)
+						closing_order.order_status = 'ORDER_CLOSED'
+						closing_order.save()					
+					
+					invoice_redirect = 'yes'
+
+					response_dict = {'success':True,'amount':promocode_amount,'discount_amount':discount_amount,'preamount':evaluation.before_cleaning_amount,'redirect':invoice_redirect,
+					'postamount':evaluation.after_cleaning_amount,'evaluationtotalcost':evaluation.total_cost,'remainingamount':order.remining_amount,'subscriptiontopay':order.subscription_topay}
+
+				else:
+					if evaluation.payment_method == 'BREAKDOWN':
+						print("wa")
+						#breakdown 2nd payment and coupon price
+						if order.preamount_paid > 0 and promocode.price:
+							postamount = float(evaluation.after_cleaning_amount) - float(promocode_amount)
+							print(postamount,"postt")
+							#if coupon amount is greater than payable amount
+							if postamount <= 0 :
+								order.total_amount = evaluation.before_cleaning_amount
+								order.remining_amount = 0.000
+								order.payment_status = 'COMPLETED'
+								order.save()
+
+								evaluation.total_cost = evaluation.before_cleaning_amount
+								evaluation.promocode_amount = evaluation.after_cleaning_amount
+								evaluation.after_cleaning_amount = 0.000
+								evaluation.is_promocode_applied = True
+								evaluation.save()
+
+								####to close order
+								order_closing_check = Order.objects.select_related('evaluation__customer').filter(is_active=True,id=order.id,payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+								if order_closing_check:
+									closing_order	= Order.objects.get(is_active=True,order_no=order.order_no)
+									closing_order.order_status = 'ORDER_CLOSED'
+									closing_order.save()
+
+								invoice_redirect = 'yes'
+							else:
+								evaluation.after_cleaning_amount = float(evaluation.after_cleaning_amount) - float(promocode_amount)
+								evaluation.total_cost = float(evaluation.total_cost) - float(promocode_amount)
+								evaluation.is_promocode_applied = True
+								evaluation.promocode_amount = round(promocode_amount, 3)
+								evaluation.save()
+
+								order.total_amount = float(order.total_amount) - float(promocode_amount)
+								order.remining_amount = evaluation.after_cleaning_amount
+								order.save()
+								invoice_redirect = 'no'
+
+						#breakdown 2nd payment and coupon percentage
+						elif order.preamount_paid > 0 and promocode.percentage:
+							promocode_amount = float(promocode.percentage/100) * float(order.total_amount)
+							postamount = float(evaluation.after_cleaning_amount) - float(promocode_amount)
+
+							#if coupon amount is greater than payable amount
+							if postamount <= 0 :
+								order.total_amount = evaluation.before_cleaning_amount
+								order.remining_amount = 0.000
+								order.payment_status = 'COMPLETED'
+								order.save()
+
+								evaluation.total_cost = evaluation.before_cleaning_amount
+								evaluation.promocode_amount = evaluation.after_cleaning_amount
+								evaluation.after_cleaning_amount = 0.000
+								evaluation.is_promocode_applied = True
+								evaluation.save()
+
+								####to close order
+								order_closing_check = Order.objects.select_related('evaluation__customer').filter(is_active=True,id=order.id,payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+								if order_closing_check:
+									closing_order	= Order.objects.get(is_active=True,order_no=order.order_no)
+									closing_order.order_status = 'ORDER_CLOSED'
+									closing_order.save()
+									
+								invoice_redirect = 'yes'
+							
+							else:
+								evaluation.after_cleaning_amount = float(evaluation.after_cleaning_amount) - float(promocode_amount)
+								evaluation.total_cost = float(evaluation.total_cost) - float(promocode_amount)
+								evaluation.is_promocode_applied = True
+								evaluation.promocode_amount = round(promocode_amount, 3)
+								evaluation.save()
+
+								order.total_amount = float(order.total_amount) - float(promocode_amount)
+								order.remining_amount = evaluation.after_cleaning_amount
+								order.save()
+								invoice_redirect = 'no'
+						#if promo code is applied at first payment of breakdown
+						else:
+							amount1	= round(float(discount_amount/2),3)
+							amount2 = round(float(discount_amount)-float(amount1),3)
+							evaluation.before_cleaning_amount = amount1
+							evaluation.after_cleaning_amount = amount2
+							evaluation.total_cost = discount_amount
+							evaluation.is_promocode_applied = True
+							evaluation.promocode_amount = round(promocode_amount, 3)
+							evaluation.save()
+
+							order.total_amount = discount_amount
+							order.remining_amount = float(discount_amount) - float(order.amount_paid)
+							order.save()
+
+							invoice_redirect = 'no'
+
+					#prepaid, postpaid, subscription
+					else:
+						order.total_amount = discount_amount
+						order.remining_amount = float(discount_amount) - float(order.amount_paid)
+						order.save()
+
+						evaluation.total_cost = discount_amount
+						evaluation.is_promocode_applied = True
+						evaluation.promocode_amount = round(promocode_amount, 3)
+						evaluation.save()	
+
+						invoice_redirect = 'no'
+
+					response_dict = {'success':True,'amount':promocode_amount,'discount_amount':discount_amount,'preamount':evaluation.before_cleaning_amount,'redirect':invoice_redirect,
+					'postamount':evaluation.after_cleaning_amount,'evaluationtotalcost':evaluation.total_cost,'remainingamount':order.remining_amount,'subscriptiontopay':order.subscription_topay}				
+
+				promocode.total_used += 1
+				promocode.save()
+				
+				print(response_dict,"in")
 		except:
 			promocode = None
 			response_dict = {'success':False,'alert':'Invalid'}

@@ -1096,6 +1096,9 @@
         <div class="order-payment-widget order-payment-widget-column"><!--order-payment-widget order-payment-widget-column-->
             <div class="payment-text"><div>Total Amount</div> : {{order.evaluation.estimated_cost|default_if_none:'0.000'|floatformat:3}} KD</div>
             <div class="payment-text"><div>Discount</div> : {{order.evaluation.discount|default_if_none:'0.000'|floatformat:3}} KD</div>
+            {% if order.evaluation.is_promocode_applied == True %}
+            <div class="payment-text"><div>Coupon Applied</div> : {{order.evaluation.promocode_amount|default_if_none:'0.000'|floatformat:3}} KD</div>
+            {% endif %}
             {% if order.evaluation.fine_amount != 0 %}
             <div class="payment-text"><div>Fine Amount</div> : {{order.evaluation.fine_amount|floatformat:'3'}} KD</div>
             {% endif %}
@@ -1107,7 +1110,7 @@
             <hr class="bar"> 
             <div class="payment-text"><div>Payment Policy</div> : 
             {{order.evaluation.payment_method|default_if_none:''}}
-            {% if order.amount_paid == 0.000 %}
+            {% if order.amount_paid == 0.000 and order.evaluation.is_promocode_applied == False %}
             &nbsp;&nbsp;&nbsp;<a class="paymentedit" href="{% url 'accountant:accountant-payment-edit' order.evaluation.customer.id order.evaluation.id %}"><div class="edit_payment_policy"></div></a>
             {% else %}
             {% endif %}
