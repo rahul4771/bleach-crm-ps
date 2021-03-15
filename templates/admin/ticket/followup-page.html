@@ -57,7 +57,7 @@
                         {% elif follow_up_scheduler.work_status == 'FOLLOW_UP_CLEANING_IN_PROGRESS' %}
                         <div class="evaluation-icon"><img src="{% static 'files/images/order-cleaning.png' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Cleaning in Progress</div>
-                        {% elif 'FOLLOW_UP_CLEANING_FULFILLED' %}
+                        {% elif follow_up_scheduler.work_status == 'FOLLOW_UP_CLEANING_FULFILLED' %}
                         <div class="evaluation-icon"><img src="{% static 'files/images/order-green-cleaning.png' %}" class="orderEval-icon"></div>
                         <div class="evaluation-status">Completed</div>
                         {% else %}
@@ -436,47 +436,57 @@
     </div><!--gallery-widget-column-column1-->
     {% endif %}
 
-{% if followup_details.follow_up_schedules %}
+    {% if followup_details.investigation.investigationmedias %}
     <div class="gallery-widget-column-column2"><!--gallery-widget-column-column1-->
-    <div class="media-heading align-left">Before Cleaning</div>
+    <div class="media-heading align-left">From Technical Supervisor</div>
     <section>
-        <div id="data-pn-2" data-pn="2" data-src="{% for follow_up_scheduler in followup_details.follow_up_schedules %}
-{% for team in follow_up_scheduler.followupteams %}{% for media in team.followupmedias %}{% if media.taken_status == 'BEFORE_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}{% endfor %}"></div>
-    </section>      
+        <div id="data-pn-2" data-pn="2" data-src="{% for investigationmedia in followup_details.investigation.investigationmedias %}{% if investigationmedia.taken_status == 'SECONDARY_INVESTIGATION' %}{{investigationmedia.media.url}},{% endif %}{% endfor %}"></div>
+    </section>  
     </div><!--gallery-widget-column-column1-->
-{% endif %}
+    {% endif %}
+
 </div>
 
 <div class="gallery-wrapper"><!--gallery-wrapper-->
-{% if followup_details.follow_up_schedules %}
+    {% if followup_details.follow_up_schedules %}
     <div class="gallery-widget-column-column3"><!--gallery-widget-column-column1-->
-    <div class="media-heading align-left">After Cleaning</div>
+    <div class="media-heading align-left">Before Cleaning</div>
     <section>
-        <div id="data-pn-3" data-pn="3" data-src="{% for follow_up_scheduler in followup_details.follow_up_schedules %}
-{% for team in follow_up_scheduler.followupteams %}{% for media in team.followupmedias %}{% if media.taken_status == 'BEFORE_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}{% endfor %}"></div>
+        <div id="data-pn-3" data-pn="3" data-src="{% for follow_up_scheduler in followup_details.follow_up_schedules %}{% for team in follow_up_scheduler.followupteams %}{% for media in team.followupmedias %}{% if media.taken_status == 'BEFORE_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}{% endfor %}"></div>
     </section>  
     </div><!--gallery-widget-column-column1-->
-{% endif %}
-    {% for report in  followup_details.investigation.reports %}
+    {% endif %}
+
+    {% if followup_details.follow_up_schedules %}
+    <div class="gallery-widget-column-column4"><!--gallery-widget-column-column1-->
+    <div class="media-heading align-left">After Cleaning</div>
+    <section>
+        <div id="data-pn-4" data-pn="4" data-src="{% for follow_up_scheduler in followup_details.follow_up_schedules %}{% for team in follow_up_scheduler.followupteams %}{% for media in team.followupmedias %}{% if media.taken_status == 'BEFORE_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}{% endfor %}"></div>
+    </section>  
+    </div><!--gallery-widget-column-column1-->
+    {% endif %}
+    
+</div>
+
+
+<div class="gallery-wrapper"><!--gallery-wrapper-->
+{% for report in  followup_details.investigation.reports %}
     {% if report.reporting_medias %}
-    <div class="gallery-widget-column-column4"><!--gallery-widget-column-column2-->
+    <div class="gallery-widget-column-column5"><!--gallery-widget-column-column2-->
     <div class="media-heading align-left">Reporting</div>
         <section>
-        <div id="data-pn-4" data-pn="4" data-src="{% for report in followup_details.investigation.reports %}{% for reporting_media in report.reporting_medias %}{{reporting_media.media.url}},{% endfor %}{% endfor %}"></div>
+        <div id="data-pn-5" data-pn="5" data-src="{% for report in followup_details.investigation.reports %}{% for reporting_media in report.reporting_medias %}{{reporting_media.media.url}},{% endfor %}{% endfor %}"></div>
     </section>
     </div><!--gallery-widget-column-column2-->
     {% endif %}
     {% endfor %}
-</div>
-
-<div class="gallery-wrapper"><!--gallery-wrapper-->
 
 {% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
 {% if paybackdiscount.paybackdiscountmedias %}
-    <div class="gallery-widget-column-column5"><!--gallery-widget-column-column2-->
+    <div class="gallery-widget-column-column6"><!--gallery-widget-column-column2-->
     <div class="media-heading align-left">Payback/Discount</div>
         <section>
-        <div id="data-pn-5" data-pn="5" data-src="{% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
+        <div id="data-pn-6" data-pn="6" data-src="{% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
 {% for paybackdiscountmedia in  paybackdiscount.paybackdiscountmedias %}{{paybackdiscountmedia.media.url}},{% endfor %}{% endfor %}"></div>
     </section>
     </div><!--gallery-widget-column-column4-->
@@ -487,10 +497,10 @@
 
 {% for buybackpromogift in followup_details.investigation.buybackpromogifts %}
 {% if buybackpromogift.buybackpromogiftmedias %}
-    <div class="gallery-widget-column-column6"><!--gallery-widget-column-column2-->
+    <div class="gallery-widget-column-column7"><!--gallery-widget-column-column2-->
     <div class="media-heading align-left">Buyback/Gift/Promocode</div>
         <section>
-        <div id="data-pn-6" data-pn="6" data-src="{% for buybackpromogift in followup_details.investigation.buybackpromogifts %}
+        <div id="data-pn-7" data-pn="7" data-src="{% for buybackpromogift in followup_details.investigation.buybackpromogifts %}
 {% for buybackpromogiftmedia in  buybackpromogift.buybackpromogiftmedias %}{{buybackpromogiftmedia.media.url}},{% endfor %}{% endfor %}"></div>
     </section>
     </div><!--gallery-widget-column-column2-->    
@@ -555,37 +565,49 @@
 {% endblock %}
 {% block javascript %}
 <script>
- $('document').ready(function(){
-
-    //to remove black in media
-    $(".pn-prev").click();
+$('document').ready(function(){
     
     //To Hide Images 
     invest_cust_img     = $('#data-pn-1').data('src');
-    invest_before_img   = $('#data-pn-2').data('src');
-    invest_after_img    = $('#data-pn-3').data('src');
-    paybackdiscount_img = $('#data-pn-4').data('src');
-    buybackpromogift_img= $('#data-pn-5').data('src');
-    reporting_img       = $('#data-pn-6').data('src');
+    invest_secondary_img= $('#data-pn-2').data('src');
+    invest_before_img   = $('#data-pn-3').data('src');
+    invest_after_img    = $('#data-pn-4').data('src');
+    paybackdiscount_img = $('#data-pn-5').data('src');
+    buybackpromogift_img= $('#data-pn-6').data('src');
+    reporting_img       = $('#data-pn-7').data('src');
 
 
-    if(invest_before_img == '')
+    if(invest_cust_img == '' || invest_cust_img == undefined)
+    {
+     $('.gallery-widget-column-column1').remove();   
+    }
+
+    if(invest_secondary_img == '' || invest_secondary_img == undefined)
     {
      $('.gallery-widget-column-column2').remove();   
     }
 
-    if(invest_after_img == '')
+    if(invest_before_img == '' || invest_before_img == undefined)
     {
      $('.gallery-widget-column-column3').remove();   
     }
 
+    if(invest_after_img == '' || invest_after_img == undefined)
+    {
+     $('.gallery-widget-column-column4').remove();   
+    }
+
+
     //hide media
-    if((invest_cust_img == undefined || invest_cust_img == '') && (invest_before_img == undefined || invest_before_img == '') && (invest_after_img == undefined || invest_after_img == '') && (paybackdiscount_img == undefined || paybackdiscount_img == '') && (buybackpromogift_img == undefined || buybackpromogift_img == undefined) && (reporting_img == undefined || reporting_img == ''))
+    if((invest_cust_img == undefined || invest_cust_img == '') && (invest_secondary_img == undefined || invest_secondary_img == '') && (invest_before_img == undefined || invest_before_img == '') && (invest_after_img == undefined || invest_after_img == '') && (paybackdiscount_img == undefined || paybackdiscount_img == '') && (buybackpromogift_img == undefined || buybackpromogift_img == undefined) && (reporting_img == undefined || reporting_img == ''))
     {
         $('.media-head').remove();
         $('.media-explaining').remove();
     }
 
+    //to remove black in media
+    $(".pn-prev").click();
+    
     //Bar
     {% if followup_details.status == 'TICKET_RISED' %}
     $('.bar-loader').css('width','33.33%');

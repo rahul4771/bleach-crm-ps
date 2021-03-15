@@ -121,7 +121,7 @@
                 {% endif %}
 
                 {% if investigation_details.investigationmedias %}
-                <div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
+                <div class="gallery-widget-column-column2"><!--gallery-widget-column-column1-->
                 <div class="media-heading align-left">From Technical Supervisor</div>
                 <section>
                     <div id="data-pn-2" data-pn="2" data-src="{% for investigationmedia in investigation_details.investigationmedias %}{% if investigationmedia.taken_status == 'SECONDARY_INVESTIGATION' %}{{investigationmedia.media.url}},{% endif %}{% endfor %}"></div>
@@ -306,12 +306,20 @@
 
 {% block javascript %} 
 <script>
-//to remove black in media
-    $(".pn-prev").click();
 
     //To Hide Images 
-    invest_cust_img     = $('#data-pn-1').data('src');
+    invest_cust_img          = $('#data-pn-1').data('src');
     invest_secondary_img     = $('#data-pn-2').data('src');
+
+    if(invest_cust_img == undefined || invest_cust_img == '')
+    {
+        $('.gallery-widget-column-column1').remove();
+    }
+
+    if(invest_secondary_img == undefined || invest_secondary_img == '')
+    {
+        $('.gallery-widget-column-column2').remove();
+    }
 
     //hide media
     if((invest_cust_img == undefined || invest_cust_img == '') && (invest_secondary_img == undefined || invest_secondary_img == ''))
@@ -319,6 +327,9 @@
         $('.media-head').remove();
         $('.media-explaining').remove();
     }
+
+    //to remove black in media
+    $(".pn-prev").click();
 
     $('document').ready(function(){
         //Initial hiding
