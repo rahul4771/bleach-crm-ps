@@ -1035,6 +1035,8 @@ teamassign_completed_count  = 0
 cleaning_completed_count    = 0
 total_schedules = parseInt("{{order.orderschedules|length}}")
 
+console.log(teamassign_completed_count,cleaning_completed_count,total_schedules,"wave1")
+
 {% for orderschedule in order.orderschedules %}
 
 //To Hide Images 
@@ -1042,6 +1044,8 @@ total_schedules = parseInt("{{order.orderschedules|length}}")
     investigation_img   = $('#media{{forloop.counter}}2').data('src');
     before_img          = $('#media{{forloop.counter}}3').data('src');
     after_img           = $('#media{{forloop.counter}}4').data('src');
+
+    console.log(evaluation_img,investigation_img,before_img,after_img,"wave2")
 
     if(investigation_img == '')
     {
@@ -1085,7 +1089,7 @@ cleaning_completed_count += 1;
 
 {% endfor %}
 
-console.log(teamassign_completed_count,cleaning_completed_count,"testdata")
+console.log(teamassign_completed_count,cleaning_completed_count,"wave3")
 //feedback button hide/show
 if (cleaning_completed_count == total_schedules){
     $('.send_feedback').attr("hidden",false);
