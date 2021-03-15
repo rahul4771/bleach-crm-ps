@@ -381,7 +381,7 @@
                         Payment Before Cleaning
                     </div>
                     <div class="text-right  qt-sub-text  w-30">
-                       <b>{{order.remining_amount|floatformat:"3"}}</b>   KD
+                       <b>{{order.total_amount|floatformat:"3"}}</b>   KD
                     </div>
                 </div>
                 {% endif %}
@@ -392,7 +392,7 @@
                         Payment After Cleaning
                     </div>
                     <div class="text-right  qt-sub-text  w-30">
-                       <b>{{order.remining_amount|floatformat:"3"}}</b> KD 
+                       <b>{{order.total_amount|floatformat:"3"}}</b> KD 
                     </div>
                 </div>
                 {% endif %}
