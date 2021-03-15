@@ -568,12 +568,12 @@
     reporting_img       = $('#data-pn-6').data('src');
 
 
-    if(invest_before_img == '')
+    if(invest_before_img == '' || invest_before_img == undefined)
     {
      $('.gallery-widget-column-column2').remove();   
     }
 
-    if(invest_after_img == '')
+    if(invest_after_img == '' || invest_after_img == undefined)
     {
      $('.gallery-widget-column-column3').remove();   
     }
