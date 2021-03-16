@@ -68,8 +68,10 @@
 
 <div class="main-content-holder"><!--main-content-holder-->
 
+{% if followup_to_be_closed|length > 0 %}
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Case Closing Task</h2>
+
 <table class="main-table">
 <tbody>
 {% for follow_up in followup_to_be_closed %}
@@ -118,7 +120,7 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
 </tbody>
 </table>
 </div><!--white-wrapper-->
-
+{% endif %}
 
 <!-- As per the requirement date confirmation task commeneted -->
 {% comment %}
