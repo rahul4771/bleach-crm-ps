@@ -157,6 +157,8 @@ class AdminHome(IsAdmin,View):
 
 		#ticket approval task		
 		approve_tickets = Investigation.objects.filter(Q(Q(is_casesandcomplaints_submit=True)&Q(Q(is_buybackgiftpromo_approved=False)|Q(is_paybackdiscount_approved=False)))).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=False),to_attr='paybackdiscounts'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.select_related('investigation').filter(investigation__is_buybackgiftpromo_approved=False,is_active=True),to_attr='buybackpromocodegifts')).annotate(paybackdiscount_count=Case(When(paybackdiscount_investigation__is_completed=False,then=1),default=0,output_field=IntegerField()),buybackpromocodegift_count=Case(When(buybackpromocodegift_investigation__is_completed=False,then=1),default=0,output_field=IntegerField())).filter( Q(Q(paybackdiscount_count__gte=1)|Q(buybackpromocodegift_count__gte=1)) )
+		for ticket in approve_tickets:
+			print(ticket.paybackdiscount_count,ticket.buybackpromocodegift_count,"appp")
 		#add days left
 		if approve_tickets:
 			for ticket in approve_tickets:
@@ -1188,7 +1190,7 @@ class TicketApprove(IsAdmin,View):
 			paybackdiscount = PaybackDiscount.objects.get(investigation__id=int(ticket_id),is_active=True)
 		except:
 			paybackdiscount = None
-
+		
 		try:	
 			buybackpromocodegift = BuybackPromocodeGift.objects.get(investigation__id=int(ticket_id),is_active=True)
 		except:
@@ -1203,6 +1205,8 @@ class TicketApprove(IsAdmin,View):
 			payback_amount = request.POST.get('payback_amount',0.0)
 
 			paybackdiscount.approved_total_cost = payback_amount
+
+			paybackdiscount.is_completed = True
 
 			paybackdiscount.save()
 

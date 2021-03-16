@@ -68,8 +68,6 @@
 
 <div class="main-content-holder"><!--main-content-holder-->
 
-{% for follow_up in followup_to_be_closed|slice:"1" %}
-{% if follow_up.followupcount|add:follow_up.paybackcount|add:follow_up.buybackpromocodecount|add:follow_up.internalreportcount > 0 and follow_up.followupcompletedcount|add:follow_up.paybackcount|add:follow_up.buybackpromocodecount|add:follow_up.internalreportcount == follow_up.followupcount|add:follow_up.paybackcompletedcount|add:follow_up.buybackpromocodecompletedcount|add:follow_up.internalreportcount %}
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Case Closing Task</h2>
 <table class="main-table">
@@ -120,8 +118,6 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
 </tbody>
 </table>
 </div><!--white-wrapper-->
-{% endif %}
-{% endfor %}
 
 
 <!-- As per the requirement date confirmation task commeneted -->
