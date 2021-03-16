@@ -61,14 +61,13 @@
 
 <div class="main-content-holder"><!--main-content-holder-->  
 
-{% if followup_close_count > 0 %}
-<div class="white-wrapper"><!--white-wrapper-->
+<div class="white-wrapper closetickets"><!--white-wrapper-->
 <h2 class="h2">Case Closing Task</h2>
 <table class="main-table">
 <tbody>
 {% for follow_up in followup_to_be_closed %}
 {% if follow_up.followupcount|add:follow_up.paybackcount|add:follow_up.buybackpromocodecount|add:follow_up.internalreportcount > 0 and follow_up.followupcount|add:follow_up.paybackcount|add:follow_up.buybackpromocodecount|add:follow_up.internalreportcount == follow_up.followupcompletedcount|add:follow_up.paybackcompletedcount|add:follow_up.buybackpromocodecompletedcount|add:follow_up.internalreportcount %}
-<tr class="green-line">
+<tr class="green-line ticketcount">
 <td data-label="BLC Number" class="bold-text"><a href="{% url 'agent:agent-ticketadvanced' follow_up.investigation.order_schedule.order.evaluation.customer.id follow_up.id %}" target="_blank">TKT{{follow_up.ticket_no}}</a></td>
 <td>
 {% for followup in follow_up.followupschedulers %}
@@ -112,7 +111,7 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
 </tbody>
 </table>
 </div><!--white-wrapper-->
-{% endif %}
+
 
 <!-- comment date confirmation task-->
 {% comment %}       
@@ -356,7 +355,11 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
 <tbody>
 {% for details in workers_details %}
     <tr id="worker{{details.id}}">
+    {% if details.leave == 1 %}
+    <th width="25"  class="fixed-side togglehide dot-image"><img src="{% static 'files/images/red-dot.png' %}"></th>
+    {% else %}
     <th width="25"  class="fixed-side togglehide dot-image"><img src="{% static 'files/images/green-dot.png' %}"></th>
+    {% endif %}
     <th width="40" class="profile fixed-side"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} align="absmiddle"></th>
     <td><div class="name-bold">{{details.name}}<div class="position">{{details.user_type}}</div></div></td>
     {% comment %} <td class="align-center">8h 0m</td>
@@ -1659,7 +1662,13 @@ $('document').ready(function(){
                 minutes = String(minutes)[0]+String(minutes)[1]
             }
             //append gray dot
-            if(total_duration == 0)
+            {% if details.leave == 1 %}
+            leave_status = true;
+            {% else %}
+            leave_status = false;
+            {% endif %}
+            
+            if(total_duration == 0 && leave_status == false)
             {
                 $("#worker{{details.id}} .dot-image img").attr("src","{% static 'files/images/gray-dot.png' %}");
             }
@@ -2048,6 +2057,14 @@ window.location.href=url+query;
 }
 
 $('document').ready(function(){
+  //hiding ticket closing tab if empty
+    var ticketcount = $('.ticketcount').length ;
+
+    if (ticketcount > 0){
+      $('.closetickets').show();
+    }else{
+      $('.closetickets').hide();
+    }
 
     // Cleaning Edit
     $('.edit_cleaning').on('click', function (e) {

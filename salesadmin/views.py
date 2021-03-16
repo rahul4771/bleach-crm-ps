@@ -164,20 +164,26 @@ class AdminHome(IsSalesAdmin,View):
 
 		#followup confirmation for special user
 		followup_to_be_closed = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_IN_PROGRESS').select_related('investigation','investigation__order_schedule__customer_address__area','investigation__order_schedule__order_scheduler_book__service_type','investigation__investigator','investigation__order__evaluation__customer').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True),to_attr='followupschedulers'),Prefetch('investigation__paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscount'),Prefetch('investigation__reporting_investigation',queryset=Reporting.objects.filter(is_active=True),to_attr='internalreports'),Prefetch('investigation__buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift')).annotate(followupcount=Case(When(follow_up_of_scheduler__is_active=True,then=1),default=0,output_field=IntegerField()), followupcompletedcount=Case(When(follow_up_of_scheduler__work_status='FOLLOW_UP_CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()), paybackcount=Case(When(investigation__paybackdiscount_investigation__is_active=True,then=1),default=0,output_field=IntegerField()), paybackcompletedcount=Case(When(investigation__paybackdiscount_investigation__is_completed=True,then=1),default=0,output_field=IntegerField()), buybackpromocodecount=Case(When(investigation__buybackpromocodegift_investigation__is_active=True,then=1),default=0,output_field=IntegerField()), buybackpromocodecompletedcount=Case(When(investigation__buybackpromocodegift_investigation__is_completed=True,then=1),default=0,output_field=IntegerField()) ,internalreportcount=Case(When(investigation__reporting_investigation__is_active=True,then=1),default=0,output_field=IntegerField()))
-				
-		followup_close_count = 0
-		if followup_to_be_closed:
-			for follow_up in followup_to_be_closed:
-				total_count = follow_up.followupcount+follow_up.paybackcount+follow_up.buybackpromocodecount+follow_up.internalreportcount
-				total_completed_count = follow_up.followupcompletedcount+follow_up.paybackcompletedcount+follow_up.buybackpromocodecompletedcount+follow_up.internalreportcount
-				
-				if total_count > 0 and total_count == total_completed_count:
-					followup_close_count += 1 
 
-		return render(request,'salesadmin/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'evaluators_sales_targets':evaluators_sales_target,'approve_tickets':approve_tickets,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules,"followup_to_be_closed":followup_to_be_closed,"followup_close_count":followup_close_count})
+		return render(request,'salesadmin/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'evaluators_sales_targets':evaluators_sales_target,'approve_tickets':approve_tickets,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules,"followup_to_be_closed":followup_to_be_closed})
 
 	def post(self,request):
 		action = request.POST.get('action_type')
+
+		if action == 'followup_close':
+			followup = FollowUp.objects.filter(id=request.POST.get('followup')).first()
+			investigationid = followup.investigation.id
+			followup.status = 'FOLLOWUP_CLOSED'
+			followup.save()
+
+			report = request.POST.get('internalreport')
+			
+			if report == 'Internal Report':
+				investigation = Investigation.objects.filter(is_active=True,id=int(investigationid)).first()
+				investigation.is_internalreporting_approved = True
+				investigation.save()
+
+			messages.success(request,"Followup Closed Successfully")
 
 		if action == 'notapprovededit_cleaning':
 			schedule_id     = request.POST.get('notapprovedcleaning_id')
@@ -1156,12 +1162,12 @@ class ResourceManagement(IsSalesAdmin,View):
 
 		if search:
 			try:
-				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))&Q(name__icontains=search)).prefetch_related('leave_staff').annotate(leave=Case( When( Q(Q(leave_staff__leave_date__gte=workers_date_start.date())&Q(leave_staff__leave_date__lt=workers_date_end.date())),then=True),default=False,output_field=BooleanField()))
+				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))&Q(name__icontains=search)).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( Q(Q(leave_staff__leave_date__gte=workers_date_start.date())&Q(leave_staff__leave_date__lt=workers_date_end.date())),then=1),default=0,output_field=IntegerField())) )
 			except:
 				workers =  None
 		else:
 			try:
-				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Case( When( Q(Q(leave_staff__leave_date__gte=workers_date_start.date())&Q(leave_staff__leave_date__lt=workers_date_end.date())),then=True),default=False,output_field=BooleanField()))
+				workers =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( Q(Q(leave_staff__leave_date__gte=workers_date_start.date())&Q(leave_staff__leave_date__lt=workers_date_end.date())),then=1),default=0,output_field=IntegerField())) )
 			except:
 				workers =  None
  

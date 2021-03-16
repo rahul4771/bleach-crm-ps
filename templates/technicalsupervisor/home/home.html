@@ -62,14 +62,13 @@
 <div class="main-content-holder"><!--main-content-holder-->  
 
 
-{% if followup_close_count > 0 %}
-<div class="white-wrapper"><!--white-wrapper-->
+<div class="white-wrapper closetickets"><!--white-wrapper-->
 <h2 class="h2">Case Closing Task</h2>
 <table class="main-table">
 <tbody>
 {% for follow_up in followup_to_be_closed %}
 {% if follow_up.followupcount|add:follow_up.paybackcount|add:follow_up.buybackpromocodecount|add:follow_up.internalreportcount > 0 and follow_up.followupcount|add:follow_up.paybackcount|add:follow_up.buybackpromocodecount|add:follow_up.internalreportcount == follow_up.followupcompletedcount|add:follow_up.paybackcompletedcount|add:follow_up.buybackpromocodecompletedcount|add:follow_up.internalreportcount %}
-<tr class="green-line">
+<tr class="green-line ticketcount">
 <td data-label="BLC Number" class="bold-text"><a href="{% url 'agent:agent-ticketadvanced' follow_up.investigation.order_schedule.order.evaluation.customer.id follow_up.id %}" target="_blank">TKT{{follow_up.ticket_no}}</a></td>
 <td>
 {% for followup in follow_up.followupschedulers %}
@@ -113,7 +112,6 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
 </tbody>
 </table>
 </div><!--white-wrapper-->
-{% endif %}
 
 
 <div class="white-wrapper"><!--white-wrapper-->
@@ -239,6 +237,18 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
 
 {% block javascript %}
 <script type="text/javascript">
+
+$('document').ready(function(){
+    //hiding ticket closing tab if empty
+    var ticketcount = $('.ticketcount').length ;
+
+    if (ticketcount > 0){
+      $('.closetickets').show();
+    }else{
+      $('.closetickets').hide();
+    }
+})
+
 //Close followup by special users
 $(".followup_schedule_close").click(function(){
     $('#followup_schedule_close_id').val($(this).data('id'));

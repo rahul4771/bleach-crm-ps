@@ -16,7 +16,7 @@ from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote,EvaluationMedia
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Investigation,InvestigationMedia,FollowUpSection,FollowUpSectionKeynote
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Investigation,InvestigationMedia,FollowUpSection,FollowUpSectionKeynote,PaybackDiscount,BuybackPromocodeGift,Reporting
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 
 import requests
@@ -131,18 +131,29 @@ class TlHome(IsTeamLeader,View):
 			my_followups  = None	
 
 		#followup confirmation for special user
-		followup_to_be_closed = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_IN_PROGRESS').select_related('investigation','investigation__order_schedule__customer_address__area','investigation__order_schedule__order_scheduler_book__service_type','investigation__investigator','investigation__order__evaluation__customer').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True),to_attr='followupschedulers'),Prefetch('investigation__paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscount'),Prefetch('investigation__reporting_investigation',queryset=Reporting.objects.filter(is_active=True),to_attr='internalreports'),Prefetch('investigation__buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift')).annotate(followupcount=Case(When(follow_up_of_scheduler__is_active=True,then=1),default=0,output_field=IntegerField()), followupcompletedcount=Case(When(follow_up_of_scheduler__work_status='FOLLOW_UP_CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()), paybackcount=Case(When(investigation__paybackdiscount_investigation__is_active=True,then=1),default=0,output_field=IntegerField()), paybackcompletedcount=Case(When(investigation__paybackdiscount_investigation__is_completed=True,then=1),default=0,output_field=IntegerField()), buybackpromocodecount=Case(When(investigation__buybackpromocodegift_investigation__is_active=True,then=1),default=0,output_field=IntegerField()), buybackpromocodecompletedcount=Case(When(investigation__buybackpromocodegift_investigation__is_completed=True,then=1),default=0,output_field=IntegerField()) ,internalreportcount=Case(When(investigation__reporting_investigation__is_active=True,then=1),default=0,output_field=IntegerField()))
-				
-		followup_close_count = 0
-		if followup_to_be_closed:
-			for follow_up in followup_to_be_closed:
-				total_count = follow_up.followupcount+follow_up.paybackcount+follow_up.buybackpromocodecount+follow_up.internalreportcount
-				total_completed_count = follow_up.followupcompletedcount+follow_up.paybackcompletedcount+follow_up.buybackpromocodecompletedcount+follow_up.internalreportcount
-				
-				if total_count > 0 and total_count == total_completed_count:
-					followup_close_count += 1 
+		followup_to_be_closed = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_IN_PROGRESS').select_related('investigation','investigation__order_schedule__customer_address__area','investigation__order_schedule__order_scheduler_book__service_type','investigation__investigator','investigation__order__evaluation__customer').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True),to_attr='followupschedulers'),Prefetch('investigation__paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscount'),Prefetch('investigation__reporting_investigation',queryset=Reporting.objects.filter(is_active=True),to_attr='internalreports'),Prefetch('investigation__buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift')).annotate(followupcount=Case(When(follow_up_of_scheduler__is_active=True,then=1),default=0,output_field=IntegerField()), followupcompletedcount=Case(When(follow_up_of_scheduler__work_status='FOLLOW_UP_CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()), paybackcount=Case(When(investigation__paybackdiscount_investigation__is_active=True,then=1),default=0,output_field=IntegerField()), paybackcompletedcount=Case(When(investigation__paybackdiscount_investigation__is_completed=True,then=1),default=0,output_field=IntegerField()), buybackpromocodecount=Case(When(investigation__buybackpromocodegift_investigation__is_active=True,then=1),default=0,output_field=IntegerField()), buybackpromocodecompletedcount=Case(When(investigation__buybackpromocodegift_investigation__is_completed=True,then=1),default=0,output_field=IntegerField()) ,internalreportcount=Case(When(investigation__reporting_investigation__is_active=True,then=1),default=0,output_field=IntegerField())) 
 
-		return render(request,'tl/home/home.html',{"today_cleaning_job_count":today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_cleaning_active_teams':today_cleaning_active_teams,'week_cleaning_active_teams':week_cleaning_active_teams,'today_followup_active_teams':today_followup_active_teams,'week_followup_active_teams':week_followup_active_teams,'today_date':today_date,'weekstart_date':weekstart_date,'today_investigation_count':today_investigation_count,'week_investigation_count':week_investigation_count,'my_cleaning_date':my_cleaning_date,"my_cleanings":my_cleanings,"my_followups":my_followups,'today_total_team_mens':today_total_team_mens,'week_total_team_mens':week_total_team_mens,"followup_to_be_closed":followup_to_be_closed,"followup_close_count":followup_close_count})
+		return render(request,'tl/home/home.html',{"today_cleaning_job_count":today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_cleaning_active_teams':today_cleaning_active_teams,'week_cleaning_active_teams':week_cleaning_active_teams,'today_followup_active_teams':today_followup_active_teams,'week_followup_active_teams':week_followup_active_teams,'today_date':today_date,'weekstart_date':weekstart_date,'today_investigation_count':today_investigation_count,'week_investigation_count':week_investigation_count,'my_cleaning_date':my_cleaning_date,"my_cleanings":my_cleanings,"my_followups":my_followups,'today_total_team_mens':today_total_team_mens,'week_total_team_mens':week_total_team_mens,"followup_to_be_closed":followup_to_be_closed})
+
+	def post(self,request):
+		action = request.POST.get('action_type')
+
+		if action == 'followup_close':
+			followup = FollowUp.objects.filter(id=request.POST.get('followup')).first()
+			investigationid = followup.investigation.id
+			followup.status = 'FOLLOWUP_CLOSED'
+			followup.save()
+
+			report = request.POST.get('internalreport')
+			
+			if report == 'Internal Report':
+				investigation = Investigation.objects.filter(is_active=True,id=int(investigationid)).first()
+				investigation.is_internalreporting_approved = True
+				investigation.save()
+
+			messages.success(request,"Followup Closed Successfully")
+
+		return redirect('tl:tldash-board')
 
 class TicketDetails(IsTeamLeader,View):
 	def get(self,request):

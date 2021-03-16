@@ -181,7 +181,11 @@
 <tbody>
 {% for details in workers_details %}
     <tr id="worker{{details.id}}">
+    {% if details.leave == 1 %}
+    <th width="25"  class="fixed-side togglehide dot-image"><img src="{% static 'files/images/red-dot.png' %}"></th>
+    {% else %}
     <th width="25"  class="fixed-side togglehide dot-image"><img src="{% static 'files/images/green-dot.png' %}"></th>
+    {% endif %}
     <th width="40" class="profile fixed-side"><img {% if details.profile_image %}src="{{details.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %} align="absmiddle"></th>
     <td><div class="name-bold">{{details.name}}<div class="position">{% if details.user_type == 'TEAMINCHARGE' %}TEAM INCHARGE{% else %}{{details.user_type}}{% endif %}</div></div></td>
     {% comment %} <td class="align-center">8h 0m</td>
@@ -545,7 +549,7 @@
             }
 
             //append gray dot
-            {% if details.leave %}
+            {% if details.leave == 1 %}
             leave_status = true;
             {% else %}
             leave_status = false;

@@ -262,53 +262,61 @@ class AccountantHome(IsAccountant,View):
 
 		#followup confirmation for special user
 		followup_to_be_closed = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_IN_PROGRESS').select_related('investigation','investigation__order_schedule__customer_address__area','investigation__order_schedule__order_scheduler_book__service_type','investigation__investigator','investigation__order__evaluation__customer').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True),to_attr='followupschedulers'),Prefetch('investigation__paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscount'),Prefetch('investigation__reporting_investigation',queryset=Reporting.objects.filter(is_active=True),to_attr='internalreports'),Prefetch('investigation__buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift')).annotate(followupcount=Case(When(follow_up_of_scheduler__is_active=True,then=1),default=0,output_field=IntegerField()), followupcompletedcount=Case(When(follow_up_of_scheduler__work_status='FOLLOW_UP_CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()), paybackcount=Case(When(investigation__paybackdiscount_investigation__is_active=True,then=1),default=0,output_field=IntegerField()), paybackcompletedcount=Case(When(investigation__paybackdiscount_investigation__is_completed=True,then=1),default=0,output_field=IntegerField()), buybackpromocodecount=Case(When(investigation__buybackpromocodegift_investigation__is_active=True,then=1),default=0,output_field=IntegerField()), buybackpromocodecompletedcount=Case(When(investigation__buybackpromocodegift_investigation__is_completed=True,then=1),default=0,output_field=IntegerField()) ,internalreportcount=Case(When(investigation__reporting_investigation__is_active=True,then=1),default=0,output_field=IntegerField()))
-				
-		followup_close_count = 0
-		if followup_to_be_closed:
-			for follow_up in followup_to_be_closed:
-				total_count = follow_up.followupcount+follow_up.paybackcount+follow_up.buybackpromocodecount+follow_up.internalreportcount
-				total_completed_count = follow_up.followupcompletedcount+follow_up.paybackcompletedcount+follow_up.buybackpromocodecompletedcount+follow_up.internalreportcount
-				
-				if total_count > 0 and total_count == total_completed_count:
-					followup_close_count += 1 
 
-		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders,"approved_paybackdiscounts":approved_paybackdiscounts,"subscriptions":subscriptions,"followup_to_be_closed":followup_to_be_closed,"followup_close_count":followup_close_count})
+		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders,"approved_paybackdiscounts":approved_paybackdiscounts,"subscriptions":subscriptions,"followup_to_be_closed":followup_to_be_closed})
 
 	def post(self,request):
-		order_id            = request.POST.get('order')
-		subscription_topay  = float(request.POST.get('subscription_topay'))
+		action_mode = request.POST.get('action_type')
 
-		Order.objects.filter(id=order_id).update(subscription_topay=subscription_topay,subscription_topay_date=timezone.now())
+		if action_mode == 'followup_close':
+			followup = FollowUp.objects.filter(id=request.POST.get('followup')).first()
+			investigationid = followup.investigation.id
+			followup.status = 'FOLLOWUP_CLOSED'
+			followup.save()
 
-		order = Order.objects.filter(id=order_id).first()
-
-		evaluaation = order.evaluation
-
-		if evaluaation.customer.is_sms == True:
-
-			url = "https://smsapi.future-club.com/fccsms.aspx"
-
-			if evaluaation.customer.sms_preference == 'ENGLISH':
-
-				message = "Dear Customer, Please find the Invoice against the order number "+str(evaluaation.evaluation_id)+"  here https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluaation.evaluation_id[3:])+""+str(evaluaation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
-		
-				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluaation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+			report = request.POST.get('internalreport')
 			
-			else:
+			if report == 'Internal Report':
+				investigation = Investigation.objects.filter(is_active=True,id=int(investigationid)).first()
+				investigation.is_internalreporting_approved = True
+				investigation.save()
 
-				message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluaation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluaation.evaluation_id[3:])+""+str(evaluaation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+			messages.success(request,"Followup Closed Successfully")
+
+		# order_id            = request.POST.get('order')
+		# subscription_topay  = float(request.POST.get('subscription_topay'))
+
+		# Order.objects.filter(id=order_id).update(subscription_topay=subscription_topay,subscription_topay_date=timezone.now())
+
+		# order = Order.objects.filter(id=order_id).first()
+
+		# evaluaation = order.evaluation
+
+		# if evaluaation.customer.is_sms == True:
+
+		# 	url = "https://smsapi.future-club.com/fccsms.aspx"
+
+		# 	if evaluaation.customer.sms_preference == 'ENGLISH':
+
+		# 		message = "Dear Customer, Please find the Invoice against the order number "+str(evaluaation.evaluation_id)+"  here https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluaation.evaluation_id[3:])+""+str(evaluaation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 		
-				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluaation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+		# 		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluaation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 			
-			headers = {
-				'cache-control': "no-cache"
-			}
+		# 	else:
 
-			response = requests.request("GET", url, headers=headers, params=querystring)
+		# 		message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluaation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluaation.evaluation_id[3:])+""+str(evaluaation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+		
+		# 		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluaation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+			
+		# 	headers = {
+		# 		'cache-control': "no-cache"
+		# 	}
 
-			print(message,response.text,"respo")
+		# 	response = requests.request("GET", url, headers=headers, params=querystring)
 
-		messages.success(request,"Invoice has been Sent !")
+		# 	print(message,response.text,"respo")
+
+		# messages.success(request,"Invoice has been Sent !")
 
 		return redirect('accountant:accountantdash-board')
 
