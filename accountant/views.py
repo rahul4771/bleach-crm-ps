@@ -260,7 +260,19 @@ class AccountantHome(IsAccountant,View):
 			for ticket in approved_paybackdiscounts:
 				ticket.days_left = (timezone.now()-ticket.scheduled_at).days
 
-		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders,"approved_paybackdiscounts":approved_paybackdiscounts,"subscriptions":subscriptions,})
+		#followup confirmation for special user
+		followup_to_be_closed = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_IN_PROGRESS').select_related('investigation','investigation__order_schedule__customer_address__area','investigation__order_schedule__order_scheduler_book__service_type','investigation__investigator','investigation__order__evaluation__customer').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True),to_attr='followupschedulers'),Prefetch('investigation__paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscount'),Prefetch('investigation__reporting_investigation',queryset=Reporting.objects.filter(is_active=True),to_attr='internalreports'),Prefetch('investigation__buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift')).annotate(followupcount=Case(When(follow_up_of_scheduler__is_active=True,then=1),default=0,output_field=IntegerField()), followupcompletedcount=Case(When(follow_up_of_scheduler__work_status='FOLLOW_UP_CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()), paybackcount=Case(When(investigation__paybackdiscount_investigation__is_active=True,then=1),default=0,output_field=IntegerField()), paybackcompletedcount=Case(When(investigation__paybackdiscount_investigation__is_completed=True,then=1),default=0,output_field=IntegerField()), buybackpromocodecount=Case(When(investigation__buybackpromocodegift_investigation__is_active=True,then=1),default=0,output_field=IntegerField()), buybackpromocodecompletedcount=Case(When(investigation__buybackpromocodegift_investigation__is_completed=True,then=1),default=0,output_field=IntegerField()) ,internalreportcount=Case(When(investigation__reporting_investigation__is_active=True,then=1),default=0,output_field=IntegerField()))
+				
+		followup_close_count = 0
+		if followup_to_be_closed:
+			for follow_up in followup_to_be_closed:
+				total_count = follow_up.followupcount+follow_up.paybackcount+follow_up.buybackpromocodecount+follow_up.internalreportcount
+				total_completed_count = follow_up.followupcompletedcount+follow_up.paybackcompletedcount+follow_up.buybackpromocodecompletedcount+follow_up.internalreportcount
+				
+				if total_count > 0 and total_count == total_completed_count:
+					followup_close_count += 1 
+
+		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders,"approved_paybackdiscounts":approved_paybackdiscounts,"subscriptions":subscriptions,"followup_to_be_closed":followup_to_be_closed,"followup_close_count":followup_close_count})
 
 	def post(self,request):
 		order_id            = request.POST.get('order')

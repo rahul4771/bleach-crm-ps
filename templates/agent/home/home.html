@@ -74,7 +74,7 @@
 <table class="main-table">
 <tbody>
 {% for follow_up in followup_to_be_closed %}
-{% if follow_up.followupcount|add:follow_up.paybackcount|add:follow_up.buybackpromocodecount|add:follow_up.internalreportcount > 0 and follow_up.followupcompletedcount|add:follow_up.paybackcount|add:follow_up.buybackpromocodecount|add:follow_up.internalreportcount == follow_up.followupcount|add:follow_up.paybackcompletedcount|add:follow_up.buybackpromocodecompletedcount|add:follow_up.internalreportcount %}
+{% if follow_up.followupcount|add:follow_up.paybackcount|add:follow_up.buybackpromocodecount|add:follow_up.internalreportcount > 0 and follow_up.followupcount|add:follow_up.paybackcount|add:follow_up.buybackpromocodecount|add:follow_up.internalreportcount == follow_up.followupcompletedcount|add:follow_up.paybackcompletedcount|add:follow_up.buybackpromocodecompletedcount|add:follow_up.internalreportcount %}
 <tr class="green-line">
 <td data-label="BLC Number" class="bold-text"><a href="{% url 'agent:agent-ticketadvanced' follow_up.investigation.order_schedule.order.evaluation.customer.id follow_up.id %}" target="_blank">TKT{{follow_up.ticket_no}}</a></td>
 <td>
