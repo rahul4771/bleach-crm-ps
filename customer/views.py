@@ -1987,3 +1987,20 @@ def addpromocode(request):
 	print(orderId,couponcode,"codesss")
 
 	return JsonResponse(response_dict)
+
+
+######Client Booking#####
+class ClientCleaningBookingPhase1(View):
+	def get(self,request):
+		
+		try:
+			service_types = ServiceType.objects.filter(is_active=True)
+		except:
+			service_types = None
+
+		try:
+			area_types = AreaType.objects.filter(is_active=True)
+		except:
+			area_types = None
+
+		return render(request,'customer/booking/clientcleaningbookingphase1.html',{"service_types":service_types,"area_types":area_types,})

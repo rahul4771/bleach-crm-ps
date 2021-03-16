@@ -351,7 +351,15 @@ class EvaluationBookSection(models.Model):
 	material    	= models.CharField(max_length=100,blank=True,null=True)
 	colour      	= models.CharField(max_length=100,blank=True,null=True)
 	cause_of_stain	= models.CharField(max_length=100,blank=True,null=True)
-	oil_resedue     = models.BooleanField(null=False,blank=True,default=False)
+
+	cement_residue   = models.BooleanField(null=False,blank=True,default=False)
+	oil_resedue      = models.BooleanField(null=False,blank=True,default=False)
+	hall_size        = models.CharField(max_length=100,blank=True,null=True)
+	hall_size_unit   = models.CharField(max_length=100,blank=True,null=True)
+	window_side      = models.CharField(max_length=100,blank=True,null=True)
+	new_kitchen      = models.BooleanField(null=False,blank=True,default=False)
+	vacuuming        = models.BooleanField(null=False,blank=True,default=False)
+	deep             = models.BooleanField(null=False,blank=True,default=False)
 
 	section_cost     = models.FloatField(blank=True,null=True)
 	section_cleanings= models.FloatField(blank=True,null=True)

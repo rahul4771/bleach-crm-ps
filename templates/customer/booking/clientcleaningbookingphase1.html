@@ -1,0 +1,459 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="{% static 'files/externalfiles/css/material-form.css' %}">
+
+    <link rel="stylesheet" href="{% static 'files/externalfiles/css/vanillaSelectBox.css' %}">
+    <link rel="stylesheet" href="{% static 'files/externalfiles/css/services.css' %}">
+    
+    <link rel="stylesheet" href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.min.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="{% static 'files/externalfiles/plugins/date-picker/mc-calendar.min.css' %}" />
+    <title>Bleach Cleaning Services | Invoice</title>
+  </head>
+  <body>
+   
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 ">
+                
+                <div class="sr-card mb-4 p-4 mt-4">
+                 
+                    <div >Need an evaluator to do it for you ? <a href="#" class="sr-link">Click here</a></div>
+                    <div class="d-flex sr-tabs " >
+                        <div class="p-3 sr-tab-active" id="tab-1" onclick="activateTab(this)">
+                            Services
+                        </div>
+                        
+                        <div class="p-3   sr-tab" id="tab-2" onclick="activateTab(this)">
+                            Schedule
+                        </div>
+                        <div class="p-3 sr-tab" id="tab-3" onclick="activateTab(this)">
+                            Address
+                        </div>
+                        <div class="p-3 sr-tab" id="tab-4" onclick="activateTab(this)">
+                            Payment Method
+                        </div>
+                        <div class="sr-tab"></div>
+                    </div>
+                    <div class="tab-content mt-4" id="tab-1-content">
+                        <h5 class="pt-2">Service Type</h5>
+                        <div class="owl-carousel owl-theme mt-4">
+                            <div class="sr-service-card p-2" id="service-1" onclick="selectService(this)"> 
+                              <i class="far fa-circle inactive-icon"></i>
+                                <img src="{% static 'files/externalfiles/icons/vacuum.png' %}" class="service-icon"/>
+                                <div class="text-center pt-2 service-title">Deep Cleaning</div>     
+                            </div>
+                            <div class="sr-service-card p-2" id="service-2" onclick="selectService(this)"> 
+                              <i class="far fa-circle inactive-icon"></i>
+                                <img src="{% static 'files/externalfiles/icons/household.png' %}" class="service-icon"/>
+                                <div class="text-center pt-2 service-title">General Cleaning</div>     
+                            </div>
+                            <div class="sr-service-card p-2" id="service-3" onclick="selectService(this)"> 
+                              <i class="far fa-circle inactive-icon"></i>
+                                <img src="{% static 'files/externalfiles/icons/facade.png' %}" class="service-icon"/>
+                                <div class="text-center pt-2 service-title">Facade Cleaning</div>     
+                            </div>
+                            <div class="sr-service-card p-2" id="service-4" onclick="selectService(this)"> 
+                              <i class="far fa-circle inactive-icon"></i>
+                                <img src="{% static 'files/externalfiles/icons/storage.png' %}" class="service-icon"/>
+                                <div class="text-center pt-2 service-title">Storage Area</div>     
+                            </div>
+                            <div class="sr-service-card p-2" id="service-5" onclick="selectService(this)"> 
+                              <i class="far fa-circle inactive-icon"></i>
+                                <img src="{% static 'files/externalfiles/icons/car.png' %}" class="service-icon"/>
+                                <div class="text-center pt-2 service-title">Car Parking Umbrella</div>     
+                            </div>
+                            <div class="sr-service-card p-2" id="service-6" onclick="selectService(this)"> 
+                              <i class="far fa-circle inactive-icon"></i>
+                                <img src="{% static 'files/externalfiles/icons/windows.png' %}" class="service-icon"/>
+                                <div class="text-center pt-2 service-title">Window Cleaning</div>     
+                            </div>
+                            <div class="sr-service-card p-2" id="service-7" onclick="selectService(this)"> 
+                              <i class="far fa-circle inactive-icon"></i>
+                                <img src="{% static 'files/externalfiles/icons/outdoor.png' %}" class="service-icon"/>
+                                <div class="text-center pt-2 service-title">Outdoor Cleaning</div>     
+                            </div>
+                            <div class="sr-service-card p-2" id="service-8" onclick="selectService(this)"> 
+                              <i class="far fa-circle inactive-icon"></i>
+                                <img src="{% static 'files/externalfiles/icons/sofa.png' %}" class="service-icon"/>
+                                <div class="text-center pt-2 service-title">Upholstery Cleaning</div>     
+                            </div>
+                            <div class="sr-service-card p-2" id="service-9" onclick="selectService(this)"> 
+                              <i class="far fa-circle inactive-icon"></i>
+                                <img src="{% static 'files/externalfiles/icons/carpet2.png' %}" class="service-icon"/>
+                                <div class="text-center pt-2 service-title">Carpet Cleaning</div>     
+                            </div>
+                            <div class="sr-service-card p-2" id="service-10" onclick="selectService(this)"> 
+                              <i class="far fa-circle inactive-icon"></i>
+                                <img src="{% static 'files/externalfiles/icons/hand-sanitizer.png' %}" class="service-icon"/>
+                                <div class="text-center pt-2 service-title">Sanitization</div>     
+                            </div>
+                            <div class="sr-service-card p-2" id="service-11" onclick="selectService(this)"> 
+                              <i class="far fa-circle inactive-icon"></i>
+                                <img src="{% static 'files/externalfiles/icons/bed.png' %}" class="service-icon"/>
+                                <div class="text-center pt-2 service-title">Mattress Cleaning</div>     
+                            </div>
+                            
+                            <div class="sr-service-card p-2" id="service-12" onclick="selectService(this)"> 
+                              <i class="far fa-circle inactive-icon"></i>
+                                <img src="{% static 'files/externalfiles/icons/kitchen.png' %}" class="service-icon"/>
+                                <div class="text-center pt-2 service-title">Kitchen Cleaning</div>     
+                            </div>
+                           
+                          </div>
+
+                          <div><h5 class="pt-2">What's your place like ?</h5> </div>
+                          <div class="row ">
+
+                            <div class="col-md-4 mt-2 common-field" id="field-area-type">
+                               <select id="area-type" name="area-type" >
+                                   <option value="APARTMENT">APARTMENT</option>
+                                   <option value="HOUSE">HOUSE</option>
+                                   <option value="VILLA">VILLA</option>
+                                   <option value="OFFICE">OFFICE</option>
+                                   <option value="PALACE">PALACE</option>
+                                   <option value="DIWANIYA">DIWANIYA</option>
+                                   <option value="MALL">MALL</option>
+                                   <option value="WAREHOUSE">WAREHOUSE</option>
+                                   <option value="CHALET">CHALET</option>
+                                   <option value="YATH">YATH</option>
+                                   <option value="GYM">GYM</option>
+                                   <option value="CLINIC">CLINIC</option>
+                                   <option value="SALON">SALON</option>
+                                   <option value="RETAIL SHOP">RETAIL SHOP</option>
+                                   <option value="STUDIO">STUDIO</option>
+                                   <option value="PHARMACY">PHARMACY</option>
+                                   <option value="TAILORING">TAILORING</option>
+                                   <option value="RESTAURANT">RESTAURANT</option>
+                                   <option value="COFFEE SHOP">COFFEE SHOP</option>
+                                   <option value="EDUCATIONAL INSTITUTE">EDUCATIONAL INSTITUTE</option>
+                                   <option value="HOSPITAL">HOSPITAL</option>
+                              </select>
+                            </div>
+                            <div class="col-md-4 mt-2 common-field" id="field-location-type">
+                               <select id="location-type" name="location-type" onchange="changeLocation()">
+                                   <option value="Post Construction">Post Construction</option>
+                                   <option value="Post Renovation">Post Renovation</option>
+                                   <option value="Fully Furnished">Fully Furnished</option>
+                                   <option value="Empty Area">Empty Area</option>
+                                 
+                              </select>
+                            </div>
+                            <div class="col-md-4 mt-2 common-field" id="field-no-of-buildings">
+                                <select id="no-of-buildings" onchange="addTabs()" name="no-of-buildings">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                  
+                               </select>
+                             </div>
+                             <div class="col-md-4 mt-2 common-field" id="field-wall-type">
+                              <select id="wall-type" multiple name="wall-type">
+                                  <option value="1">1</option>
+                                  <option value="2">2</option>
+                                  <option value="3">3</option>
+                                  <option value="4">4</option>
+                                
+                             </select>
+                           </div>
+                           <div class="col-md-4 mt-2 common-field" id="field-floor-type">
+                            <select id="floor-type" multiple name="floor-type">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                              
+                           </select>
+                         </div>
+                         <div class="col-md-4 mt-2 common-field" id="field-ceiling-type">
+                          <select id="ceiling-type" multiple name="ceiling-type">
+                              <option value="1">1</option>
+                              <option value="2">2</option>
+                              <option value="3">3</option>
+                              <option value="4">4</option>
+                            
+                         </select>
+                       </div>
+                       <div class="col-md-4 mt-2 common-field" id="field-rack-type">
+                        <select id="rack-type" multiple name="rack-type">
+                            <option value="1">WOODEN</option>
+                            <option value="2">METAL</option>
+                            <option value="3">CONCRETE</option>
+                           
+                          
+                       </select>
+                     </div>
+                     <div class="col-md-4 mt-2 common-field" id="field-no-of-racks">
+                      <input type="number" id="no-of-racks" name="no-of-racks" placeholder="No of Racks" class="sr-input"/>
+
+                   </div>
+                           <div class="col-md-4 mt-2 common-field" id="field-size">
+                            <select id="size"  name="size">
+                                <option value="1">Small</option>
+                                <option value="2">Medium</option>
+                                <option value="3">Large</option>
+                               
+                              
+                           </select>
+                         </div>
+                         <div class="col-md-4 mt-2 common-field" id="field-hallway-size">
+                          <select id="hallway-size"  name="hallway-size">
+                              <option value="1">Small</option>
+                              <option value="2">Medium</option>
+                              <option value="3">Large</option>
+                             
+                            
+                         </select>
+                       </div>
+
+                        </div>   
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="tabset mt-4">
+                                  
+                                
+                                    
+                                    <div class="tab-panels">
+                                  
+                                    </div>
+                                    
+                                  </div>
+                                
+                            </div>
+                        </div>  
+                        <div class="row">
+                            <div class="col-md-12">
+                          
+                            </div>
+                            <div class="col-md-12">
+                                
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- Tab 1 Contents end here -->
+                    <!-- Tab 2 Begins here-->
+                    
+                    <!-- Tab 2 ends here-->
+                    <div class="tab-content" id="tab-2-content">
+                       <!-- <h6 class="mt-4">Select Duration</h6>
+                        <select id="duration" >
+                            <option value="opt1">Option 1</option>
+                            <option value="opt2">Option 2</option>
+                            <option value="opt3">Option 3</option>
+                            <option value="opt4">Option 4</option>
+                            <option value="opt5">Option 5</option>
+                       </select>-->
+                      <h6 class="mt-4">Select Date</h6>
+                      <input id="example" type="text" name="sr-date"/>
+                      
+                    </div>
+                    <div class="tab-content" id="tab-3-content">
+                        <div >
+                          
+                            <form class="p-2">
+                              <label class="radio-inline mr-2 ">
+                                <input type="radio" name="optradio"  class="m-2">New User
+                              </label>
+                              <label class="radio-inline ">
+                                <input type="radio" name="optradio" class="m-2" checked>Existing User
+                              </label>
+                             
+                            </form>
+                        </div>
+                        <div class="form-group">
+                            <label for="#phone">Phone Number</label><br>
+                            <input type="text" placeholder="0000-0000-0000" id="phone"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="#OTP">OTP</label><br>
+                            <input type="text" placeholder="0000" id="OTP"/> 
+                            <button class="sr-button ml-4 mt-2">Submit</button>
+                        </div>
+                        <div>
+                            <a href="#" class="sr-link">Resend Otp</a>
+                        </div>
+                        <div>
+                            Need cleaning for new address ? <a href="#" class="sr-link"> Click here</a>
+                        </div>
+                       
+                            <div class="d-flex w-50 mx-auto text-center mt-4">
+                          <div class="sr-prev-btn">
+                              Back
+                            </div>
+                          <div class="sr-next-btn ml-2">
+                          Next
+                        </div>
+                      </div>
+                       
+                    </div>
+                    <div class="tab-content" id="tab-4-content">
+                        <h4 class="mt-4 ">Services</h4>
+                        <div class="sr-price-card mt-4 row">
+                            <div class="col-md-8 col-print-8">
+                              <div class="inv-service-title p-2 inv-text-bold">
+                                General cleaning - First Floor
+                              </div>
+                              <div class="d-md-flex d-print-flex">
+                                <div class="p-2">
+                                  Size :<span class="inv-text-bold">200 m&sup2</span>
+                                </div>
+                                <div class="p-2">
+                                  Quantity : <span class="inv-text-bold">1</span>
+                                </div>
+                                <div class="p-2">
+                                  Unit Price :<span class="inv-text-bold">120.000</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-3 col-print-3 offset-md-1 p-2">
+                              <div class="p-2">
+                                NET PRICE
+                              </div>
+                              <div class="inv-price p-1 ">
+                             
+                                <span class="inv-text-bold">120.000</span> KD
+                             
+                              </div>
+                              <div>
+            
+                              </div>
+                            </div>
+                            
+                          </div>
+
+                         
+                            <div class="sr-price-card mt-4 row">
+                              <div class="col-md-8 col-print-8">
+                                <div class="inv-service-title p-2 inv-text-bold">
+                                  General cleaning - Second Floor
+                                </div>
+                                <div class="d-md-flex d-print-flex">
+                                  <div class="p-2">
+                                    Size :<span class="inv-text-bold">150 m&sup2</span>
+                                  </div>
+                                  <div class="p-2">
+                                    Quantity : <span class="inv-text-bold">1</span>
+                                  </div>
+                                  <div class="p-2">
+                                    Unit Price :<span class="inv-text-bold">100.000 </span>KD
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-md-3 col-print-3 offset-md-1 p-2">
+                                <div class="p-2">
+                                  NET PRICE
+                                </div>
+                                <div class="inv-price p-1  ">
+                                 
+                                  <span class="inv-text-bold"> 100.000</span> KD
+                               
+                                </div>
+                                <div>
+              
+                                </div>
+                              </div>
+                              
+                            </div>
+                            <div class="sr-add-btn mt-2">
+                                +
+                               </div>
+                               <h4 class="mt-4 ">Payment Option</h4>
+                               <div class="row">
+                                <div class="col-12">
+                                    <div class="d-flex">
+                                      <div class="inv-payment-card mt-4 text-center" id="inv-debit" onclick="selectPayment('debit')">
+                                       
+                                        <img src="./icons/knet-icon.png" class="inv-card-icon " id="inv-knet" />
+                                        <div class="inv-payment-text" >
+                                          Debit Card
+                                        </div>
+                                        <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-debit-check-box">
+                                          <i class="fa fa-check inv-check-icon " id="inv-check-debit"></i>
+                                        </div>
+                                      </div>
+                                      <div class="inv-payment-card mt-4 text-center" id="inv-cash" onclick="selectPayment('cash')">
+                                        <img src="./icons/wallet.png" class="inv-card-icon "  id="inv-cash-img"/>
+                                        <div class="inv-payment-text">
+                                         Cash 
+                                        </div>
+                                        <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-cash-check-box">
+                                          <i class="fa fa-check inv-check-icon " id="inv-check-cash"></i>
+                                        </div>
+                                      </div>
+                                      <div class="inv-payment-card mt-4 text-center inv-click-disable" id="inv-credit" onclick="selectPayment('credit')"><!-- to disable click add class inv-click-disable -->
+                                        <img src="./icons/debit-card.png" class="inv-card-icon inv-payment-disabled" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
+                                        <div class="inv-payment-text inv-payment-disabled"> <!-- to disable  add class inv-payment-disabled -->
+                                          Credit Card
+                                        </div>
+                                        <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-credit-check-box">
+                                          <i class="fa fa-check inv-check-icon " id="inv-check-credit"></i>
+                                        </div>
+                                      </div>
+                    
+                                    </div>
+                                  </div>
+                                  <div class="col-12   text-center text-white mt-4">
+                                      <div class="d-flex w-50 mx-auto">
+                                    <div class="sr-prev-btn">
+                                        Back
+                                      </div>
+                                    <div class="sr-next-btn ml-2">
+                                    Next
+                                  </div>
+                                </div>
+                                  </div>
+                               </div>
+                    </div>
+                 
+                    
+                
+                
+                </div>
+            </div>
+            <div class="col-md-4 ">
+              
+                <div class="sr-card p-4 mt-4 mb-4 payment-section">
+                    <h4>Booking Summary</h4>
+                    <div class="mt-4">Service Type <span style="float: right;"><b>General Cleaning</b></span> </div>
+                    <div class="pt-2">Estimated Time  <span style="float: right;"><b>9 hrs</b></span> </div>
+                    <div class="pt-2">Date  <span style="float: right;"><b>_ _ _</b></span> </div>
+                    <div class="sr-calculation p-4">
+                        <div >Sub Total<span style="float: right;"><b>240.000 </b>KD</div>
+                            <div class="pt-2">Fine<span style="float: right;"><b>0</b>KD</div> 
+                                <div class="pt-2">Discount<span style="float: right;"><b>-10.000</b>KD</div>  
+                               <div class="sr-total mt-4 text-white">
+                                   <div class="p-2">Total</div>
+                                   <div><h3 class="p-2 text-right">230.000</h3></div>
+                               </div>      
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    </div>
+
+    <script src="{% static 'files/externalfiles/plugins/date-picker/mc-calendar.min.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
+    <script src="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'files/externalfiles/js/vanillaSelectBox.js' %}"></script>
+    <script src="{% static 'files/externalfiles/js/services.js' %}"></script>
+    
+
+  </body>
+</html>
