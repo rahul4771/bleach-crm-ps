@@ -1341,6 +1341,55 @@ class PaymentDetails(IsSalesAdmin,View):
 
 		return render(request,'salesadmin/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,'no_of_entries':no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status})		
 
+class DailySales(IsSalesAdmin,View):
+	def get(self,request):
+		# for monthly tab and daily sales tab
+		today = datetime.now()
+		
+		monthdate1 = today.replace(day=1,hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = today.replace(day=1,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+		daterange  = pd.date_range(monthdate1, monthdate2)
+		print(daterange,"dr")
+
+		monthly_sales = 0
+		daily_sales = 0
+
+		for date in daterange:
+			start_date_day = date
+			end_date_day   = date+timedelta(1)
+
+			print(date.strftime("%A"),"dt")
+
+			cleaning_amount = 0
+
+			orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',start_at__range=(start_date_day,end_date_day)).values_list('order__order_no','order_scheduler_book__total_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id').order_by('end_at')
+
+			found = set()
+			schedules_list = []
+
+			for schedule in orderschedules:
+
+				if schedule[4] not in found:
+					schedules_list.append(schedule)
+				found.add(schedule[4])
+			print(found,schedules_list,"kio")
+
+			for schedule in schedules_list:
+
+				schedule_count = OrderScheduler.objects.filter(order__order_no=schedule[0],order_scheduler_book__id=schedule[4]).count()
+
+				order_amount = schedule[1]
+				cleaning_amount += float(order_amount/schedule_count)
+
+			todate = datetime.now().replace(hour=0,minute=0,second=0,microsecond=0)
+
+			if date == todate:
+				print("now is")
+				daily_sales = cleaning_amount
+
+			monthly_sales += cleaning_amount
+
+		return render(request,'salesadmin/dailysales/daily-sales.html',{"dailysales":daily_sales,"monthlysales":monthly_sales})
 
 class TicketApprove(IsSalesAdmin,View):
 	def get(self,request,ticket_id):
