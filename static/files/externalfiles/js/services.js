@@ -28,6 +28,12 @@ var materialSelectBox=[];
 var colorSelectBox=[];
 var sizeSelectBox=[];
 var reasonSelectBox=[];
+var floorSelectBox=[];
+var wallSelectBox=[];
+var ceilingSelectBox=[];
+var sizeSelectBox=[];
+var hallwaySelectBox=[];
+var sidesSelectBox=[];
 var items=[];
 const myDatePicker = MCDatepicker.create({ 
     el: '#example' 
@@ -706,7 +712,7 @@ function selectService(elem){
         $('.storage-fields').hide();
         $('.items-card').remove();
        
-        upholsteryCount=0;
+        itemCount=0;
         
     }
     else{
@@ -721,14 +727,19 @@ function selectService(elem){
     buildingNumber=0;
     let noOfBuilding = new vanillaSelectBox("#no-of-buildings",{placeHolder: "No of buildings"});
     if(cleaningType=='Facade Cleaning'){
-        $('.item-add-btn').hide();
+        $('.item-add-btn').remove();
+        $('.items-card').remove();
+        $('#field-area-type').show();
+        itemCount=0;
+        addItem('Facade');
+       /* $('.item-add-btn').hide();
         $('#field-wall-type').show();
         $('#field-size').show();
         $('#field-hallway-size').show();
         $('#field-location-type').hide();
         $('.storage-fields').hide();
         $('.items-card').remove();
-        upholsteryCount=0;
+        itemCount=0;*/
         
     }
     else{
@@ -752,45 +763,68 @@ function selectService(elem){
             $('#field-area-type').show();
             $('.storage-fields').show();
             $('.items-card').remove();
-            upholsteryCount=0;
+            itemCount=0;
         }
         else{
             if(cleaningType=='Car Parking Umbrella'){
-                $('.item-add-btn').hide();
+               /* $('.item-add-btn').hide();
                 $('#field-floor-type').show();
                 $('#field-ceiling-type').show();
                 $('#field-size').show();
                 $('.items-card').remove();
-                upholsteryCount=0;
+                itemCount=0;*/
+                $('#field-area-type').hide();
+                $('#field-location-type').hide();
+              
+                $('.item-add-btn').remove();
+                   $('.items-card').remove();
+                   itemCount=0;
+                   addItem('Umbrella');
             }
             else{
                 if(cleaningType=='Outdoor Cleaning'){
-                    $('.item-add-btn').hide();
+                   /* $('.item-add-btn').hide();
                     $('#field-area-type').show();
                     $('#field-size').show();
                     $('.items-card').remove();
-                    upholsteryCount=0;
+                    itemCount=0;*/
+                    $('#field-area-type').show();
+                    $('#field-location-type').hide();
+                  
+                    $('.item-add-btn').remove();
+                       $('.items-card').remove();
+                       itemCount=0;
+                       addItem('Outdoor');
                 }
                 else{
                     if(cleaningType=='Window Cleaning'){
-                        $('.item-add-btn').hide();
                         $('#field-area-type').show();
-                        $('#field-location-type').show();
-                        $('#field-size').show();
-                        $('.items-card').remove();
-                        upholsteryCount=0;
+                    $('#field-location-type').show();
+              
+                $('.item-add-btn').remove();
+                   $('.items-card').remove();
+                   itemCount=0;
+                   addItem('Window');
                     }
                     else{
                         if(cleaningType=='Kitchen Cleaning'){
-                            $('.item-add-btn').hide();
-                            $('#field-area-type').show();
-                            $('#field-location-type').show();
+                       /*     $('.item-add-btn').hide();
+                            
                             $('#field-floor-type').show();
                             $('#field-wall-type').show();
                             $('#field-ceiling-type').show();
                             $('#field-size').show();
                             $('.items-card').remove();
-                            upholsteryCount=0;
+                            itemCount=0;*/
+                         //   $('.item-add-btn').hide();
+                         $('#field-area-type').show();
+                         $('#field-location-type').show();
+                       
+                         $('.item-add-btn').remove();
+                            $('.items-card').remove();
+                            itemCount=0;
+                            addItem('Kitchen');
+
 
                         }
                         else{
@@ -831,7 +865,8 @@ function addItem(item){
     let prev=itemCount;
     itemCount=itemCount+1;
     if(prev==0){
-
+        if(item=='Mattress'||item=='Carpet'||item=='Upholstery')
+        {
         $('.item-add-btn').remove();
           $('#field-area-type').show();
 
@@ -840,7 +875,7 @@ function addItem(item){
 
              <h6 class="text-center pt-4" id="item-title-`+itemCount+`">`+item+` `+itemCount+`</h6>
               <div class="row mb-4">
-              <div class="col-md-12">
+              <div class="col-md-12 item-cleaningtype">
               <div class="form-radio d-flex mt-4 mx-auto">
 
               <div class="radio">
@@ -922,22 +957,178 @@ function addItem(item){
 
           </div>
           `);
+
           $('.item-add-btn').show();
          
           materialSelectBox[itemCount]= new vanillaSelectBox("#item-"+itemCount+"-material",{placeHolder: "Material"});
           colorSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-color",{placeHolder: "Color"});
           sizeSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-size",{placeHolder: "Size"});
           reasonSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-type",{placeHolder: "Stain Type"});
+        }
+        else{
+            if(item=='Kitchen'||item=='Facade'||item=='Umbrella'||item=='Window'||item=='Outdoor'){
+                $('#field-location-type').after(`<div class="col-md-12 mt-4 items-card" id="item-`+itemCount+`">
+                <i class="fas fa-trash-alt sr-close-btn" onclick="delItem('`+item+`',this)" id="del-1"></i>
+      
+                   <h6 class="text-center pt-4" id="item-title-`+itemCount+`">`+item+` `+itemCount+`</h6>
+                    <div class="row mb-4">
+                    <div class="col-md-12 item-cleaningtype">
+                    <div class="form-radio d-flex mt-4 mx-auto">
+      
+                    <div class="radio">
+                      <label>
+                        <input type="radio" name="item-condition-`+itemCount+`" value="used"  id="item-condition-`+itemCount+`"/><i class="helper"></i>Used
+                      </label>
+                    </div>
+                    <div class="radio ml-4">
+                      <label>
+                        <input type="radio" name="item-condition-`+itemCount+`" checked="checked" value="new"/><i class="helper"></i>New
+                      </label>
+                    </div>
+                  </div>
+                    </div>
+                    <div class="col-md-6 mt-4 " id="item-age-`+itemCount+`">
+                    <input type="number" placeholder="Age  (Months) " id="item-`+itemCount+`-age"  name="item-`+itemCount+`-age" class="sr-input"/>
+                   
+                    </div>
+                    <div class="col-md-6 mt-4">
+                    <select id="item-`+itemCount+`-size"  name="item-`+itemCount+`-size">
+                    <option value="1">Small</option>
+                    <option value="2">Medium</option>
+                    <option value="3">Large</option>
+                   
+                  
+               </select>
+               </div>
+                    <div class="col-md-6 mt-4">
+                    <select id="item-`+itemCount+`-floor" multiple  name="item-`+itemCount+`-floor">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  
+               </select>
+                    </div>
+                    <div class="col-md-6 mt-4 ">
+                    <select id="item-`+itemCount+`-wall"  name="item-`+itemCount+`-wall">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  
+               </select>
+                    </div>
+                    <div class="col-md-6 mt-4">
+                    <select id="item-`+itemCount+`-ceiling"  name="item-`+itemCount+`-ceiling">
+                    <option value="small">small</option>
+                    <option value="medium">medium</option>
+                    <option value="large">large</option>
+                    
+                  
+               </select>
+                    </div>
+                    <div class="col-md-6 oil-residue">
+                    <div class="form-radio d-flex mt-4 ">
+                      Oil Residue ?<br>
+                    <div class="radio ml-4" >
+                      <label>
+                        <input type="radio" name="item-oil-residue-`+itemCount+`" value="vaccum"  id="item-oil-residue-`+itemCount+`"  /><i class="helper"></i>Yes
+                      </label>
+                    </div>
+                    <div class="radio ml-4" >
+                      <label>
+                        <input type="radio" name="item-oil-residue-`+itemCount+`" checked="checked" value="deep" /><i class="helper"></i>No
+                      </label>
+                    </div>
+                  </div>
+                    </div>
+                   
+                    
+      
+                    </div>
+                </div>
+                <div class="item-add-btn" onclick="addItem('`+item+`')" id="item-btn-`+itemCount+`">
+                <i class="fa fa-plus-circle" aria-hidden="true"></i>
+      
+                </div>
+                `);
+               
+      
+                $('.item-add-btn').show();
+                floorSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-floor",{placeHolder: "Floor type"});
+                wallSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-wall",{placeHolder: "Wall Type"});
+                sizeSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-size",{placeHolder: "Size"});
+                 ceilingSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-ceiling",{placeHolder: "Ceiling Type"});
+                 if(item=='Facade'){
+                    $('#item-'+itemCount+'-floor').parent().remove();
+                    $('#item-'+itemCount+'-ceiling').parent().remove();
+                    // $('#item-'+itemCount+'-ceiling').parent().remove();
+                     $('.item-cleaningtype').remove();
+                     $('.oil-residue').remove();
+                    $('#item-age-'+itemCount).replaceWith(`
+                    <div class="col-md-6 mt-4">
+                    <select id="item-`+itemCount+`-hallway-size"  name="item-`+itemCount+`-hallway-size">
+                         <option value="1">Small</option>
+                         <option value="2">Medium</option>
+                         <option value="3">Large</option>    
+                     </select>
+                     </div>
+                    `);
+                    hallwaySelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-hallway-size",{placeHolder: "Hallway Size"});
+                }
+                else{
+                    if(item=='Umbrella'){
+                        $('#item-'+itemCount+'-wall').parent().remove();
+                        $('.item-cleaningtype').remove();
+                     $('.oil-residue').remove();
+                     $('#item-age-'+itemCount).remove();
+                    }
+                    else{
+                        if(item=='Window'){
+                            $('.item-cleaningtype').remove();
+                            $('#item-'+itemCount+'-floor').parent().remove();
+                            $('#item-'+itemCount+'-ceiling').parent().remove();
+                            $('#item-'+itemCount+'-wall').parent().remove();
+                            $('#item-'+itemCount+'-size').parent().parent().append(`
+                            <div class="col-md-6 mt-4 ">
+                            <select id="item-`+itemCount+`-sides"  name="item-`+itemCount+`-sides">
+                            <option value="1">Outside & Inside</option>
+                            <option value="2">Outside</option>
+                            <option value="3">Inside</option>
+                            </select>
+                            </div>
+                            `);
+                             $('.oil-residue').remove();
+                             $('#item-age-'+itemCount).remove();
+                             sidesSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-sides",{placeHolder: "Sides"});
+                        }
+                        else{
+                            if(item=='Outdoor'){
+                                $('.item-cleaningtype').remove();
+                                $('#item-'+itemCount+'-floor').parent().remove();
+                                 $('#item-'+itemCount+'-ceiling').parent().remove();
+                                $('#item-'+itemCount+'-wall').parent().remove();
+                                $('.oil-residue').remove();
+                             $('#item-age-'+itemCount).remove();
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }
           
  }
   else{
+    if(item=='Mattress'||item=='Carpet'||item=='Upholstery')
+    {
     $('#item-btn-'+prev).after(`<div class="col-md-12 mt-4 items-card" id="item-`+itemCount+`">
     <i class="fas fa-trash-alt sr-close-btn" onclick="delItem('`+item+`',this)"></i>
     
        <h6 class="text-center pt-4" id="item-title-`+itemCount+`">`+item+` `+itemCount+`</h6>
       
               <div class="row mb-4">
-        <div class="col-md-12">
+        <div class="col-md-12 item-cleaningtype">
         <div class="form-radio d-flex mt-4 ">
 
         <div class="radio">
@@ -1028,7 +1219,158 @@ function addItem(item){
     /* $("#item-"+prev+'-material').show();
      $("#item-"+prev+'-color').show();
      $("#item-"+prev+'-size').show();*/
+    }
+    else{
+        if(item=='Kitchen'||item=='Facade'||item=='Window'||item=='Umbrella'||item=='Outdoor'){
+            $('#item-btn-'+prev).after(`<div class="col-md-12 mt-4 items-card" id="item-`+itemCount+`">
+            <i class="fas fa-trash-alt sr-close-btn" onclick="delItem('`+item+`',this)" id="del-1"></i>
+  
+               <h6 class="text-center pt-4" id="item-title-`+itemCount+`">`+item+` `+itemCount+`</h6>
+                <div class="row mb-4">
+                <div class="col-md-12 item-cleaningtype">
+                <div class="form-radio d-flex mt-4 mx-auto">
+  
+                <div class="radio">
+                  <label>
+                    <input type="radio" name="item-condition-`+itemCount+`" value="used"  id="item-material-`+itemCount+`"/><i class="helper"></i>Used
+                  </label>
+                </div>
+                <div class="radio ml-4">
+                  <label>
+                    <input type="radio" name="item-condition-`+itemCount+`" checked="checked" value="new"/><i class="helper"></i>New
+                  </label>
+                </div>
+              </div>
+                </div>
+                <div class="col-md-6 mt-4 " id="item-age-`+itemCount+`">
+                <input type="number" placeholder="Age  (Months) " id="item-`+itemCount+`-age"  name="item-`+itemCount+`-age" class="sr-input"/>
+               
+                </div>
+                <div class="col-md-6 mt-4">
+                <select id="item-`+itemCount+`-size"  name="item-`+itemCount+`-size">
+                <option value="1">Small</option>
+                <option value="2">Medium</option>
+                <option value="3">Large</option>    
+           </select>
+           </div>
+                <div class="col-md-6 mt-4">
+                <select id="item-`+itemCount+`-floor" multiple  name="item-`+itemCount+`-floor">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              
+           </select>
+                </div>
+                <div class="col-md-6 mt-4 ">
+                <select id="item-`+itemCount+`-wall"  name="item-`+itemCount+`-wall">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              
+           </select>
+                </div>
+                <div class="col-md-6 mt-4">
+                <select id="item-`+itemCount+`-ceiling"  name="item-`+itemCount+`-ceiling">
+                <option value="small">small</option>
+                <option value="medium">medium</option>
+                <option value="large">large</option>
+                
+              
+           </select>
+                </div>
+                <div class="col-md-6 oil-residue">
+                <div class="form-radio d-flex mt-4 ">
+                  Oil Residue ?<br>
+                <div class="radio ml-4" >
+                  <label>
+                    <input type="radio" name="item-stain-`+itemCount+`" value="vaccum"  id="item-material-`+itemCount+`"  /><i class="helper"></i>Yes
+                  </label>
+                </div>
+                <div class="radio ml-4" >
+                  <label>
+                    <input type="radio" name="item-stain-`+itemCount+`" checked="checked" value="deep" /><i class="helper"></i>No
+                  </label>
+                </div>
+              </div>
+                </div>
+            
+  
+                </div>
+            </div>
+            <div class="item-add-btn" onclick="addItem('`+item+`')" id="item-btn-`+itemCount+`">
+            <i class="fa fa-plus-circle" aria-hidden="true"></i>
+  
+            </div>
+            `);
+  
+            $('.item-add-btn').show();
+            $('#item-btn-'+prev).remove();
+            floorSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-floor",{placeHolder: "Floor type"});
+            wallSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-wall",{placeHolder: "Wall Type"});
+            sizeSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-size",{placeHolder: "Size"});
+             ceilingSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-ceiling",{placeHolder: "Ceiling Type"});
+             $('.item-cleaningtype').remove();
+             if(item=='Facade'){
+                $('#item-'+itemCount+'-floor').parent().remove();
+                $('#item-'+itemCount+'-ceiling').parent().remove();
+                $('#item-age-'+itemCount).replaceWith(`
+                <div class="col-md-6 mt-4">
+                <select id="item-`+itemCount+`-hallway-size"  name="item-`+itemCount+`-hallway-size">
+                     <option value="1">Small</option>
+                     <option value="2">Medium</option>
+                     <option value="3">Large</option>    
+                 </select>
+                 </div>
+                `);
+                $('.oil-residue').remove();
+                hallwaySelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-hallway-size",{placeHolder: "Hallway Size"});
+            }
+            else{
+                if(item=='Umbrella'){
+                    $('#item-'+itemCount+'-wall').parent().remove();
+                    $('.item-cleaningtype').remove();
+                 $('.oil-residue').remove();
+                 $('#item-age-'+itemCount).remove();
+                }
+                else{
+                    if(item=='Window'){
+                        $('.item-cleaningtype').remove();
+                        $('#item-'+itemCount+'-floor').parent().remove();
+                        $('#item-'+itemCount+'-ceiling').parent().remove();
+                        $('#item-'+itemCount+'-wall').parent().remove();
+                        $('#item-'+itemCount+'-size').parent().parent().append(`
+                        <div class="col-md-6 mt-4 ">
+                        <select id="item-`+itemCount+`-sides"  name="item-`+itemCount+`-sides">
+                        <option value="1">Outside & Inside</option>
+                        <option value="2">Outside</option>
+                        <option value="3">Inside</option>
+                        </select>
+                        </div>
+                        `);
+                         $('.oil-residue').remove();
+                         $('#item-age-'+itemCount).remove();
+                         sidesSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-sides",{placeHolder: "Sides"});
+                    }
+                    else{
+                        if(item=='Outdoor'){
+                            $('.item-cleaningtype').remove();
+                            $('#item-'+itemCount+'-floor').parent().remove();
+                             $('#item-'+itemCount+'-ceiling').parent().remove();
+                            $('#item-'+itemCount+'-wall').parent().remove();
+                            $('.oil-residue').remove();
+                         $('#item-age-'+itemCount).remove();
+                        }
+                    }
+                }
+            }
+        }
 
+  }
+}
+  if(cleaningType=='Mattress Cleaning'){
+        $('.item-cleaningtype').hide();
   }
  
   
@@ -1071,7 +1413,7 @@ function changeLocation(){
 
     location_type=$('#location-type').val();
     if(cleaningType=='Deep Cleaning' && location_type=='Post Construction'){
-        console.log('called me');
+       
         $('.paint-residue').show();
     }
     else{
