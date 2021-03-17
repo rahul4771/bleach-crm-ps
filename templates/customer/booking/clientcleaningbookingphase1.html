@@ -56,7 +56,7 @@
                                 {% elif service.name == '' %}
                                 <img src="{% static 'files/externalfiles/icons/facade.png' %}" class="service-icon"/>
                                 {% elif service.name == 'Facade Cleaning' %}
-                                <img src="{% static 'files/externalfiles/icons/storage.png' %}" class="service-icon"/>
+                                <img src="{% static 'files/externalfiles/icons/facade.png' %}" class="service-icon"/>
                                 {% elif service.name == 'Storage Area' %}
                                 <img src="{% static 'files/externalfiles/icons/storage.png' %}" class="service-icon"/>
                                 {% elif service.name == 'Car Parking Umbrella' %}
@@ -82,7 +82,7 @@
                           {% endfor %}                           
                           </div>
 
-                          <div><h5 class="pt-2">What's your place like ?</h5> </div>
+                          <div><h5 class="pt-2 questions">What's your place like ?</h5> </div>
                           <div class="row ">
 
                             <div class="col-md-4 mt-2 common-field" id="field-area-type">
@@ -94,6 +94,7 @@
                             </div>
                             <div class="col-md-4 mt-2 common-field" id="field-location-type">
                                <select id="location-type" name="location-type" onchange="changeLocation()">
+                                <option value="Location Type" disabled selected>Location Type</option>
                                    <option value="Post Construction">Post Construction</option>
                                    <option value="Post Renovation">Post Renovation</option>
                                    <option value="Fully Furnished">Fully Furnished</option>
@@ -399,6 +400,7 @@
     
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="{% static 'files/externalfiles/plugins/date-picker/mc-calendar.min.js' %}"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
