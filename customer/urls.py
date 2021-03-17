@@ -47,6 +47,7 @@ urlpatterns = [
 		url(r'^booking/cleaning/debitpay/$',views.CustomerBookingCleaningDebitPay.as_view(),name='customerbookingdebitpay'),
 		
 		##actual booking related urls
+		url(r'^ajax/getservicesizeprice$',views.GetServiceSizePrice,name='ajax-getservicesizeprice'),
 		url(r'^booking$',views.ClientCleaningBookingPhase1.as_view(),name='clientcleaningbookingphase1'),
 
 	]

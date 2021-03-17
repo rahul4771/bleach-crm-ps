@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.min.css' %}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
     <link rel="stylesheet" href="{% static 'files/externalfiles/plugins/date-picker/mc-calendar.min.css' %}" />
-    <title>Bleach Cleaning Services | Invoice</title>
+    <title>Bleach Cleaning Services | Booking</title>
   </head>
   <body>
    
@@ -46,105 +46,59 @@
                     <div class="tab-content mt-4" id="tab-1-content">
                         <h5 class="pt-2">Service Type</h5>
                         <div class="owl-carousel owl-theme mt-4">
-                            <div class="sr-service-card p-2" id="service-1" onclick="selectService(this)"> 
+                          {% for service in service_types %}
+                            <div class="sr-service-card p-2" id="service-{{forloop.counter}}" onclick="selectService(this)"> 
                               <i class="far fa-circle inactive-icon"></i>
-                                <img src="{% static 'files/externalfiles/icons/vacuum.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Deep Cleaning</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-2" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% if service.name == 'General Cleaning' %}
                                 <img src="{% static 'files/externalfiles/icons/household.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">General Cleaning</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-3" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Deep Cleaning' %}
+                                <img src="{% static 'files/externalfiles/icons/vacuum.png' %}" class="service-icon"/>
+                                {% elif service.name == '' %}
                                 <img src="{% static 'files/externalfiles/icons/facade.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Facade Cleaning</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-4" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Facade Cleaning' %}
+                                <img src="{% static 'files/externalfiles/icons/facade.png' %}" class="service-icon"/>
+                                {% elif service.name == 'Storage Area' %}
                                 <img src="{% static 'files/externalfiles/icons/storage.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Storage Area</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-5" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Car Parking Umbrella' %}
                                 <img src="{% static 'files/externalfiles/icons/car.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Car Parking Umbrella</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-6" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Window Cleaning' %}
                                 <img src="{% static 'files/externalfiles/icons/windows.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Window Cleaning</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-7" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Outdoor Cleaning' %}
                                 <img src="{% static 'files/externalfiles/icons/outdoor.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Outdoor Cleaning</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-8" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Upholstery Cleaning' %}
                                 <img src="{% static 'files/externalfiles/icons/sofa.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Upholstery Cleaning</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-9" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Carpet Cleaning' %}
                                 <img src="{% static 'files/externalfiles/icons/carpet2.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Carpet Cleaning</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-10" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Sterilization' %}
                                 <img src="{% static 'files/externalfiles/icons/hand-sanitizer.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Sanitization</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-11" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Mattress Cleaning' %}
                                 <img src="{% static 'files/externalfiles/icons/bed.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Mattress Cleaning</div>     
-                            </div>
-                            
-                            <div class="sr-service-card p-2" id="service-12" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Kitchen Cleaning' %}
                                 <img src="{% static 'files/externalfiles/icons/kitchen.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Kitchen Cleaning</div>     
+                                {% endif %}
+
+                                <div class="text-center pt-2 service-title">{{service.name}}</div>     
                             </div>
-                           
+                          {% endfor %}                           
                           </div>
 
-                          <div><h5 class="pt-2">What's your place like ?</h5> </div>
+                          <div><h5 class="pt-2 questions">What's your place like ?</h5> </div>
                           <div class="row ">
 
                             <div class="col-md-4 mt-2 common-field" id="field-area-type">
                                <select id="area-type" name="area-type" >
-                                   <option value="APARTMENT">APARTMENT</option>
-                                   <option value="HOUSE">HOUSE</option>
-                                   <option value="VILLA">VILLA</option>
-                                   <option value="OFFICE">OFFICE</option>
-                                   <option value="PALACE">PALACE</option>
-                                   <option value="DIWANIYA">DIWANIYA</option>
-                                   <option value="MALL">MALL</option>
-                                   <option value="WAREHOUSE">WAREHOUSE</option>
-                                   <option value="CHALET">CHALET</option>
-                                   <option value="YATH">YATH</option>
-                                   <option value="GYM">GYM</option>
-                                   <option value="CLINIC">CLINIC</option>
-                                   <option value="SALON">SALON</option>
-                                   <option value="RETAIL SHOP">RETAIL SHOP</option>
-                                   <option value="STUDIO">STUDIO</option>
-                                   <option value="PHARMACY">PHARMACY</option>
-                                   <option value="TAILORING">TAILORING</option>
-                                   <option value="RESTAURANT">RESTAURANT</option>
-                                   <option value="COFFEE SHOP">COFFEE SHOP</option>
-                                   <option value="EDUCATIONAL INSTITUTE">EDUCATIONAL INSTITUTE</option>
-                                   <option value="HOSPITAL">HOSPITAL</option>
+                                   {% for area_type in area_types %}
+                                   <option value="{{area_type.name}}">{{area_type.name}}</option>
+                                   {% endfor %}
                               </select>
                             </div>
                             <div class="col-md-4 mt-2 common-field" id="field-location-type">
                                <select id="location-type" name="location-type" onchange="changeLocation()">
+                                <option value="Location Type" disabled selected>Location Type</option>
                                    <option value="Post Construction">Post Construction</option>
                                    <option value="Post Renovation">Post Renovation</option>
                                    <option value="Fully Furnished">Fully Furnished</option>
                                    <option value="Empty Area">Empty Area</option>
-                                 
                               </select>
                             </div>
                             <div class="col-md-4 mt-2 common-field" id="field-no-of-buildings">
@@ -446,6 +400,7 @@
     
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="{% static 'files/externalfiles/plugins/date-picker/mc-calendar.min.js' %}"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
@@ -453,7 +408,129 @@
     <script src="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.min.js' %}"></script>
     <script src="{% static 'files/externalfiles/js/vanillaSelectBox.js' %}"></script>
     <script src="{% static 'files/externalfiles/js/services.js' %}"></script>
-    
+    <script>
+    function durationcalculation(params)
+  {
+    //to find total size
+    sectioncounter = $('#sectioncounter_id').val();
+    total_estimated_size = 0
+    for(i=1;i<=sectioncounter;i++)
+    {
+        size = $('#bk-size-'+i).val() 
+        total_estimated_size += parseFloat(size);
+    }
+
+    //Ajax for finding productivity of perticular service
+    selected_service = $("#bk-service option:selected" ).text();
+    $.ajax({
+
+        url: "/customer/ajax/getserviceproductivity",
+
+        data: {'service_type':selected_service}, 
+
+        dataType: 'json',
+
+        success: function (data) {
+            //find duration and no of cleaners based on productivity
+            total_estimated_size = total_estimated_size
+            productivity         = data['perhour_cleaning'];
+            
+            //optimal manhour finding
+            manhour = parseInt(total_estimated_size/productivity)
+            r       = 2 ** (manhour.toString().length-1)
+            mod     = manhour%r
+            
+            if (mod > parseInt(r/2))
+            {
+              n= manhour+(r-mod);
+            }
+            else
+            {
+              n = manhour-mod;
+            }
+            for(i=1;i<parseInt(n ** (1/2))+1;i++)
+            {
+              if(n%i == 0)
+                {
+                  pair = [i,n/i];
+                }
+            }
+            max_cleaners = data['max_cleaners']
+            
+            duration_list = [];
+            upper_loop    = 2;
+            lower_loop    = 2;
+            middle_element=pair[0]
+
+            if(middle_element<=max_cleaners)
+            {
+              duration_list.push(pair);
+              //upperloop and lowerloop setup
+              for(i=1;i<=2;i++)
+              {
+                if((middle_element-i)<=0)
+                {
+                  upper_loop = upper_loop+(2-i)+1;
+                  lower_loop = lower_loop-((2-i)+1)
+                } 
+                if((middle_element+i) > max_cleaners)
+                {
+                  lower_loop = lower_loop+(2-i)+1;
+                  upper_loop = upper_loop-((2-i)+1)
+                }
+              }
+
+              //lower
+              for(i=1;i<=lower_loop;i++)
+              {
+                if((middle_element-i)>0 && (middle_element-i) <= max_cleaners)
+                {
+                  duration_list.push([(middle_element-i),n/(middle_element-i)])
+                }
+              }
+              //upper
+              for(i=1;i<=upper_loop;i++)
+              {
+                if((middle_element+i)>0 && (middle_element+i) <= max_cleaners)
+                {
+                  duration_list.push([(middle_element+i),n/(middle_element+i)])
+                } 
+              }
+            }
+
+            
+            else
+            {
+              middle_element = max_cleaners;
+              duration_list.push([(middle_element),n/(middle_element)])
+              for(i=1;i<=5;i++)
+              {
+                if((middle_element-i)>0)
+                {
+                  duration_list.push([(middle_element-i),n/(middle_element-i)])
+                }
+              }
+            }
+            console.log(duration_list)
+
+            for(i=0;i<duration_list.length;i++)
+              {
+                
+                total_duration  = duration_list[i][1];
+                //show to users
+                total_minutes     = (total_duration.toFixed(2)*60).toFixed(0)
+                converted_hours   = Math.floor(total_minutes / 60);          
+                converted_minutes = total_minutes % 60;
+                total_cleaners    = duration_list[i][0];
+                console.log(converted_hours,"converted_hours")
+                console.log(converted_minutes,"converted_minutes")
+                console.log(total_cleaners,"total_cleaners")
+                }
+                   }
+         });
+
+  }
+  </script>
 
   </body>
 </html>

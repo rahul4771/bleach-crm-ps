@@ -1,4 +1,8 @@
-$('.paint-residue').hide();
+
+getSize('General Cleaning');
+var generalCleaningSize={};
+var deepCleaningSize={};
+var storageAreaCleaningSize={};
 
 var noOfBuildings=0;
 var buildingData=[];
@@ -28,6 +32,12 @@ var materialSelectBox=[];
 var colorSelectBox=[];
 var sizeSelectBox=[];
 var reasonSelectBox=[];
+var floorSelectBox=[];
+var wallSelectBox=[];
+var ceilingSelectBox=[];
+var sizeSelectBox=[];
+var hallwaySelectBox=[];
+var sidesSelectBox=[];
 var items=[];
 const myDatePicker = MCDatepicker.create({ 
     el: '#example' 
@@ -161,268 +171,320 @@ function addTabs(){
 }
 function addFloors(elem){
     
-    if(elem){
+  if(elem){
+    
+      floorCount=$(elem).val();
+       buildingNumber=$(elem).attr('id').split('-')[3];
+       currentFloor=1;
+       
       
-        floorCount=$(elem).val();
-         buildingNumber=$(elem).attr('id').split('-')[3];
-         currentFloor=1;
+  }
+  else{
+      floorCount=$('#no-of-floors-'+buildingNumber).val();
+      console.log("i m here");
+      var prevFloor=currentFloor-1;
+      let floor_size=$('#floor-'+buildingNumber+"-"+prevFloor+'-size').val();
+      let noOfRooms=$('#floor-'+buildingNumber+"-"+prevFloor+'-room').val();
+      let wallType=$('#floor-'+buildingNumber+"-"+prevFloor+'-walltype').val();
+      let ceilingType=$('#floor-'+buildingNumber+"-"+prevFloor+'-ceilingType').val();
+      let noOfBathrooms=$('#floor-'+buildingNumber+"-"+prevFloor+'-bathroom').val();
+      let noOfWindows=$('#floor-'+buildingNumber+"-"+prevFloor+'-window').val();
+      let noOfApartments=$('#floor-'+buildingNumber+'-'+prevFloor+'-no-of-apartment').val();
+      buildingData[buildingNumber-1].floors.push({
+          floor:prevFloor,
+          size:floor_size,
+          room:noOfRooms,
+          apartments:[]
+      });
+      serviceData.building[buildingNumber-1].floors.push({
+          floor:prevFloor,
+          size:floor_size,
+          wall_type:wallType,
+          ceiling_type:ceilingType,
+          no_of_bathrooms:noOfBathrooms,
+          no_of_windows:noOfWindows,
+          no_of_rooms:noOfRooms,
+          apartments:[]
+      })
+      console.log("no of apart is "+noOfApartments);
+      if(noOfApartments>0){
+          for(var i=1;i<=noOfApartments;i++){
+               floor_size=$('#apartment-'+buildingNumber+"-"+prevFloor+'-'+i+'-size').val();
+               noOfRooms=$('#apartment-'+buildingNumber+"-"+prevFloor+'-'+i+'-room').val();
+               wallType=$('#apartment-'+buildingNumber+"-"+prevFloor+'-'+i+'-walltype').val();
+               ceilingType=$('#apartment-'+buildingNumber+"-"+prevFloor+'-'+i+'-ceilingType').val();
+               noOfBathrooms=$('#apartment-'+buildingNumber+"-"+prevFloor+'-'+i+'-bathroom').val();
+               noOfWindows=$('#apartment-'+buildingNumber+"-"+prevFloor+'-'+i+'-window').val();
+               noOfApartments=$('#apartment-'+buildingNumber+'-'+prevFloor+'-'+i+'-no-of-apartment').val();
+              serviceData.building[buildingNumber-1].floors[prevFloor-1].apartments.push({
+                  size:floor_size,
+                  wall_type:wallType,
+                  ceiling_type:ceilingType,
+                  no_of_bathrooms:noOfBathrooms,
+                   no_of_windows:noOfWindows,
+                   no_of_rooms:noOfRooms,
+              })
+          }
+      }
+     
+      
+      console.log("service data is "+JSON.stringify(serviceData));
+      $('#floors-count-'+buildingNumber).append(`
+      <div class="floors-card mt-4 mb-2 col-md-12" id="floor-result-`+buildingNumber+`-`+prevFloor+`">
+       <div class="row">
+          <div class="col-md-8">
+              <div class="p-2">
+                  <div class="sr-sub-heading">
+                     Floor
+                  </div>
+                  <div id="result-floor-`+buildingNumber+`-`+prevFloor+`">
+                     Floor `+prevFloor+`
+                  </div>
+              </div>
+          </div>
+          
          
-        
-    }
-    else{
-        floorCount=$('#no-of-floors-'+buildingNumber).val();
-        console.log("i m here");
-        var prevFloor=currentFloor-1;
-        let floor_size=$('#floor-'+buildingNumber+"-"+prevFloor+'-size').val();
-        let noOfRooms=$('#floor-'+buildingNumber+"-"+prevFloor+'-room').val();
-        let wallType=$('#floor-'+buildingNumber+"-"+prevFloor+'-walltype').val();
-        let ceilingType=$('#floor-'+buildingNumber+"-"+prevFloor+'-ceilingType').val();
-        let noOfBathrooms=$('#floor-'+buildingNumber+"-"+prevFloor+'-bathroom').val();
-        let noOfWindows=$('#floor-'+buildingNumber+"-"+prevFloor+'-window').val();
-        let noOfApartments=$('#floor-'+buildingNumber+'-'+prevFloor+'-no-of-apartment').val();
-        buildingData[buildingNumber-1].floors.push({
-            floor:prevFloor,
-            size:floor_size,
-            room:noOfRooms,
-            apartments:[]
-        });
-        serviceData.building[buildingNumber-1].floors.push({
-            floor:prevFloor,
-            size:floor_size,
-            wall_type:wallType,
-            ceiling_type:ceilingType,
-            no_of_bathrooms:noOfBathrooms,
-            no_of_windows:noOfWindows,
-            no_of_rooms:noOfRooms,
-            apartments:[]
-        })
-        console.log("no of apart is "+noOfApartments);
-        if(noOfApartments>0){
-            for(var i=1;i<=noOfApartments;i++){
-                 floor_size=$('#apartment-'+buildingNumber+"-"+prevFloor+'-'+i+'-size').val();
-                 noOfRooms=$('#apartment-'+buildingNumber+"-"+prevFloor+'-'+i+'-room').val();
-                 wallType=$('#apartment-'+buildingNumber+"-"+prevFloor+'-'+i+'-walltype').val();
-                 ceilingType=$('#apartment-'+buildingNumber+"-"+prevFloor+'-'+i+'-ceilingType').val();
-                 noOfBathrooms=$('#apartment-'+buildingNumber+"-"+prevFloor+'-'+i+'-bathroom').val();
-                 noOfWindows=$('#apartment-'+buildingNumber+"-"+prevFloor+'-'+i+'-window').val();
-                 noOfApartments=$('#apartment-'+buildingNumber+'-'+prevFloor+'-'+i+'-no-of-apartment').val();
-                serviceData.building[buildingNumber-1].floors[prevFloor-1].apartments.push({
-                    size:floor_size,
-                    wall_type:wallType,
-                    ceiling_type:ceilingType,
-                    no_of_bathrooms:noOfBathrooms,
-                     no_of_windows:noOfWindows,
-                     no_of_rooms:noOfRooms,
-                })
-            }
-        }
-       
-        
-        console.log("service data is "+JSON.stringify(serviceData));
-        $('#floors-count-'+buildingNumber).append(`
-        <div class="floors-card mt-4 mb-2 col-md-12" id="floor-result-`+buildingNumber+`-`+prevFloor+`">
-         <div class="row">
-            <div class="col-md-8">
-                <div class="p-2">
-                    <div class="sr-sub-heading">
-                       Floor
-                    </div>
-                    <div id="result-floor-`+buildingNumber+`-`+prevFloor+`">
-                       Floor `+prevFloor+`
-                    </div>
-                </div>
-            </div>
-            
-           
-           
-            <div class="col-md-4">
-                <div class="p-2"><div class="sr-sub-heading">
-                   Actions
-                </div>
-                <div>
-                    <i class="far fa-edit edit-icon" id="edit-`+buildingNumber+`-`+prevFloor+`" onclick="editFloor(this)"></i>
-                    <i class="far fa-trash-alt pl-2 del-icon" id="delete-`+buildingNumber+`-`+prevFloor+`" onclick="deleteFloor(this)"></i>
-                </div>
-            </div>
-            </div>
-            </div>
-        </div>
-       
-    </div>
-        `);
-        $('#floor-'+buildingNumber+"-"+prevFloor).hide();
-    }
-    if(buildingData[buildingNumber-1].floors.length>0){
-        currentFloor=buildingData[buildingNumber-1].floors.length+1;
-    }
-   
-   
-  /* <div class="col-md-3">
-                <div class="p-2"><div class="sr-sub-heading">
-                    No of rooms
-                </div>
-                <div id="result-floor-room-`+buildingNumber+`-`+prevFloor+`">`
-                +floor_room+
-               ` </div>
-            </div>
-            
-              <div class="col-md-5 ">
-            <div class="form-group m-2">
-                <input type="number" required="required" id="floor-`+buildingNumber+`-`+currentFloor+`-room"/>
-                <label for="input" class="control-label" >No of Rooms</label><i class="bar"></i>
+         
+          <div class="col-md-4">
+              <div class="p-2"><div class="sr-sub-heading">
+                 Actions
               </div>
-            
-            
-        </div>
-            */
-    
-    if(currentFloor<=floorCount){
-
-    
-   
-    $('#'+'tab-building-'+buildingNumber).append(`<div class="floor-card mt-4" id="floor-`+buildingNumber+`-`+currentFloor+`">
-    <div class="p-2"><h5 class="text-center">Floor `+currentFloor+`</h5></div>
-    <div class="row">
-    <div class="col-md-5 offset-md-1  mt-2">
-            <div class="m-2">
-            <h6 >Any Apartments ?</h6>
-            <div class="form-radio d-flex">
-               
-                <div class="radio">
-                  <label>
-                    <input type="radio" name="floor-`+buildingNumber+`-`+currentFloor+`-apartment" value="yes" onclick="apartmentStat(this)"/><i class="helper"></i>Yes
-                  </label>
-                </div>
-                <div class="radio ml-4">
-                  <label>
-                    <input type="radio" name="floor-`+buildingNumber+`-`+currentFloor+`-apartment" checked="checked" value="no" onclick="apartmentStat(this)"/><i class="helper"></i>No
-                  </label>
-                </div>
+              <div>
+                  <i class="far fa-edit edit-icon" id="edit-`+buildingNumber+`-`+prevFloor+`" onclick="editFloor(this)"></i>
+                  <i class="far fa-trash-alt pl-2 del-icon" id="delete-`+buildingNumber+`-`+prevFloor+`" onclick="deleteFloor(this)"></i>
               </div>
-              </div>
-            
-            
-        </div>
-        <div class="col-md-5 mt-4 floor-option-`+buildingNumber+`-`+currentFloor+`">
-            
-              <div class="form-group m-2 ">
-        <select required="required" id="floor-`+buildingNumber+`-`+currentFloor+`-size" name="floor-`+buildingNumber+`-`+currentFloor+`-size"  >
-          <option> Small</option>
-          <option>Medium</option>
-          <option>Large</option>
-        
-        </select>
-        <label for="select" class="control-label">Size</label><i class="bar"></i>
+          </div>
+          </div>
+          </div>
       </div>
-           
-        </div>
-        <div class="col-md-5  offset-md-1 mt-2 floor-option-`+buildingNumber+`-`+currentFloor+`">
-            
-              <div class="form-group m-2 ">
-        <select required="required" id="floor-`+buildingNumber+`-`+currentFloor+`-walltype" name="floor-`+buildingNumber+`-`+currentFloor+`-walltype"  >
-          <option> Small</option>
-          <option>Medium</option>
-          <option>Large</option>
-        
-        </select>
-        <label for="select" class="control-label">Wall Type</label><i class="bar"></i>
-      </div>
-           
-        </div>
-        <div class="col-md-5  mt-2 floor-option-`+buildingNumber+`-`+currentFloor+`">
-            
-              <div class="form-group m-2 ">
-        <select required="required" id="floor-`+buildingNumber+`-`+currentFloor+`-ceilingtype" name="floor-`+buildingNumber+`-`+currentFloor+`-ceilingtype"  >
-          <option> Small</option>
-          <option>Medium</option>
-          <option>Large</option>
-        
-        </select>
-        <label for="select" class="control-label">Ceiling Type</label><i class="bar"></i>
-      </div>
-           
-        </div>
-        <div class="col-md-5  mt-2 offset-md-1 storage-fields floor-option-`+buildingNumber+`-`+currentFloor+`">
-            
-        <div class="form-group m-2 ">
-  <select required="required" id="floor-`+buildingNumber+`-`+currentFloor+`-racktype" name="floor-`+buildingNumber+`-`+currentFloor+`-racktype"  >
-    <option> Wooden</option>
-    <option>Metal</option>
-    <option>Concrete</option>
-  
-  </select>
-  <label for="select" class="control-label">Rack Type</label><i class="bar"></i>
-</div>
      
   </div>
-  <div class="col-md-5  mt-2 storage-fields floor-option-`+buildingNumber+`-`+currentFloor+`">
-  <div class="form-group m-2">
-      <input type="number" required="required" id="floor-`+buildingNumber+`-`+currentFloor+`-racks"/>
-      <label for="input" class="control-label" >No of Racks</label><i class="bar"></i>
-    </div>
-  
-  
-</div>   
-       
-    <div class="col-md-5 offset-md-1 mt-2 floor-option-`+buildingNumber+`-`+currentFloor+`">
-        <div class="form-group m-2">
-            <input type="number" required="required" id="floor-`+buildingNumber+`-`+currentFloor+`-room"/>
-            <label for="input" class="control-label" >No of Rooms</label><i class="bar"></i>
+      `);
+      $('#floor-'+buildingNumber+"-"+prevFloor).hide();
+  }
+  if(buildingData[buildingNumber-1].floors.length>0){
+      currentFloor=buildingData[buildingNumber-1].floors.length+1;
+  }
+ 
+ 
+/* <div class="col-md-3">
+              <div class="p-2"><div class="sr-sub-heading">
+                  No of rooms
+              </div>
+              <div id="result-floor-room-`+buildingNumber+`-`+prevFloor+`">`
+              +floor_room+
+             ` </div>
           </div>
-        
-        
-    </div>
-    <div class="col-md-5 mt-2 floor-option-`+buildingNumber+`-`+currentFloor+`">
-    <div class="form-group m-2">
-        <input type="number" required="required" id="floor-`+buildingNumber+`-`+currentFloor+`-bathroom"/>
-        <label for="input" class="control-label" >No of Bathrooms</label><i class="bar"></i>
+          
+            <div class="col-md-5 ">
+          <div class="form-group m-2">
+              <input type="number" required="required" id="floor-`+buildingNumber+`-`+currentFloor+`-room"/>
+              <label for="input" class="control-label" >No of Rooms</label><i class="bar"></i>
+            </div>
+          
+          
       </div>
-    
-    
+          */
+  
+  if(currentFloor<=floorCount){
+
+  
+ if($('#floor-'+buildingNumber+'-'+currentFloor).length==0){
+  $('#'+'tab-building-'+buildingNumber).append(`<div class="floor-card mt-4" id="floor-`+buildingNumber+`-`+currentFloor+`">
+  <div class="p-2"><h5 class="text-center">Floor `+currentFloor+`</h5></div>
+  <div class="row">
+  <div class="col-md-5 offset-md-1  mt-2">
+          <div class="m-2">
+          <h6 >Any Apartments ?</h6>
+          <div class="form-radio d-flex">
+             
+              <div class="radio">
+                <label>
+                  <input type="radio" name="floor-`+buildingNumber+`-`+currentFloor+`-apartment" value="yes" onclick="apartmentStat(this)"/><i class="helper"></i>Yes
+                </label>
+              </div>
+              <div class="radio ml-4">
+                <label>
+                  <input type="radio" name="floor-`+buildingNumber+`-`+currentFloor+`-apartment" checked="checked" value="no" onclick="apartmentStat(this)"/><i class="helper"></i>No
+                </label>
+              </div>
+            </div>
+            </div>
+          
+          
+      </div>
+      <div class="col-md-5 mt-4 floor-option-`+buildingNumber+`-`+currentFloor+`">
+          
+            <div class="form-group m-2 ">
+      <select required="required" id="floor-`+buildingNumber+`-`+currentFloor+`-size" name="floor-`+buildingNumber+`-`+currentFloor+`-size"  >
+       
+      
+      </select>
+      <label for="select" class="control-label">Size</label><i class="bar"></i>
+    </div>
+         
+      </div>
+      <div class="col-md-5  offset-md-1 mt-2 floor-option-`+buildingNumber+`-`+currentFloor+`">
+          
+            <div class="form-group m-2 ">
+      <select required="required" id="floor-`+buildingNumber+`-`+currentFloor+`-walltype" name="floor-`+buildingNumber+`-`+currentFloor+`-walltype"  >
+        <option> Small</option>
+        <option>Medium</option>
+        <option>Large</option>
+      
+      </select>
+      <label for="select" class="control-label">Wall Type</label><i class="bar"></i>
+    </div>
+         
+      </div>
+      <div class="col-md-5  mt-2 floor-option-`+buildingNumber+`-`+currentFloor+`">
+          
+            <div class="form-group m-2 ">
+      <select required="required" id="floor-`+buildingNumber+`-`+currentFloor+`-ceilingtype" name="floor-`+buildingNumber+`-`+currentFloor+`-ceilingtype"  >
+        <option> Small</option>
+        <option>Medium</option>
+        <option>Large</option>
+      
+      </select>
+      <label for="select" class="control-label">Ceiling Type</label><i class="bar"></i>
+    </div>
+         
+      </div>
+      <div class="col-md-5  mt-2 offset-md-1 storage-fields floor-option-`+buildingNumber+`-`+currentFloor+`">
+          
+      <div class="form-group m-2 ">
+<select required="required" id="floor-`+buildingNumber+`-`+currentFloor+`-racktype" name="floor-`+buildingNumber+`-`+currentFloor+`-racktype"  >
+  <option> Wooden</option>
+  <option>Metal</option>
+  <option>Concrete</option>
+
+</select>
+<label for="select" class="control-label">Rack Type</label><i class="bar"></i>
+</div>
+   
+</div>
+<div class="col-md-5  mt-2 storage-fields floor-option-`+buildingNumber+`-`+currentFloor+`">
+<div class="form-group m-2">
+    <input type="number" required="required" id="floor-`+buildingNumber+`-`+currentFloor+`-racks"/>
+    <label for="input" class="control-label" >No of Racks</label><i class="bar"></i>
+  </div>
+
+
+</div>   
+     
+  <div class="col-md-5 offset-md-1 mt-2 floor-option-`+buildingNumber+`-`+currentFloor+`">
+      <div class="form-group m-2">
+          <input type="number" required="required" id="floor-`+buildingNumber+`-`+currentFloor+`-room"/>
+          <label for="input" class="control-label" >No of Rooms</label><i class="bar"></i>
+        </div>
+      
+      
+  </div>
+  <div class="col-md-5 mt-2 floor-option-`+buildingNumber+`-`+currentFloor+`">
+  <div class="form-group m-2">
+      <input type="number" required="required" id="floor-`+buildingNumber+`-`+currentFloor+`-bathroom"/>
+      <label for="input" class="control-label" >No of Bathrooms</label><i class="bar"></i>
+    </div>
+  
+  
 </div>
 <div class="col-md-5  offset-md-1 mt-2 floor-option-`+buildingNumber+`-`+currentFloor+`">
 <div class="form-group m-2">
-    <input type="number" required="required" id="floor-`+buildingNumber+`-`+currentFloor+`-window"/>
-    <label for="input" class="control-label" >No of Windows</label><i class="bar"></i>
-  </div>
+  <input type="number" required="required" id="floor-`+buildingNumber+`-`+currentFloor+`-window"/>
+  <label for="input" class="control-label" >No of Windows</label><i class="bar"></i>
+</div>
 
 
 </div>
-        <div class="col-md-5 mt-2  apartment-count" id="apartment-count-`+buildingNumber+`-`+currentFloor+`">
-            <div class="form-group m-2 mt-4">
-                <select id="floor-`+buildingNumber+`-`+currentFloor+`-no-of-apartment" name="floor-`+buildingNumber+`-`+currentFloor+`-no-of-apartment" onchange="addApartment(this)"  >
-                  <option> 1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                </select>
-                <label for="select" class="control-label">No of Apartments</label><i class="bar"></i>
-              </div>
-        </div>
-        
-       
-        
-    </div>
-  <div  class="apartments" id="apartment-`+buildingNumber+`-`+currentFloor+`">
-   
-    </div>
+      <div class="col-md-5 mt-2  apartment-count" id="apartment-count-`+buildingNumber+`-`+currentFloor+`">
+          <div class="form-group m-2 mt-4">
+              <select id="floor-`+buildingNumber+`-`+currentFloor+`-no-of-apartment" name="floor-`+buildingNumber+`-`+currentFloor+`-no-of-apartment" onchange="addApartment(this)"  >
+                <option> 1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+              </select>
+              <label for="select" class="control-label">No of Apartments</label><i class="bar"></i>
+            </div>
+      </div>
+      
+      
+     
+      
+  </div>
+<div  class="apartments" id="apartment-`+buildingNumber+`-`+currentFloor+`">
+ 
+  </div>
 
-    <div class="row mt-2 mb-2">
-        <div class="col-md-12 text-center mb-2">
-            <button class="sr-next-btn" onclick="addFloors()" id="floor-`+buildingNumber+`-`+currentFloor+`-next" >Next</button>
-        </div>
-    </div>
-</div>`);}
+  <div class="row mt-2 mb-2">
+      <div class="col-md-12 text-center mb-2">
+          <button class="sr-next-btn" onclick="addFloors()" id="floor-`+buildingNumber+`-`+currentFloor+`-next" >Next</button>
+      </div>
+  </div>
+</div>`);
+if(cleaningType=='General Cleaning'){    
+  $('#floor-'+buildingNumber+'-'+currentFloor+'-size').children().remove();    
+for(var j in generalCleaningSize)
+{
+  
+      $('#floor-'+buildingNumber+'-'+currentFloor+'-size').append('<option>'+generalCleaningSize[j].name+' ( '+generalCleaningSize[j].min_size+' to '+generalCleaningSize[j].max_size+' )</option>');
+
+}
+}
+else{
+if(cleaningType=='Deep Cleaning'){      
+  $('#floor-'+buildingNumber+'-'+currentFloor+'-size').children().remove();  
+  for(var j in deepCleaningSize)
+  {
+    
+        $('#floor-'+buildingNumber+'-'+currentFloor+'-size').append('<option>'+deepCleaningSize[j].name+' ( '+deepCleaningSize[j].min_size+' to '+deepCleaningSize[j].max_size+' )</option>');
+
+  }
+  $('.floor-option-'+buildingNumber+'-'+currentFloor).parent().append(`
+  <div class="col-md-5 offset-md-1 paint-residue floor-option-`+buildingNumber+`-`+currentFloor+`">
+  <div class="m-2">
+  <h6 >Paint & Cement Residue ?</h6>
+  <div class="form-radio d-flex">
+     
+      <div class="radio">
+        <label>
+          <input type="radio" name="floor-`+buildingNumber+`-`+currentFloor+`-residue" value="yes" /><i class="helper"></i>Yes
+        </label>
+      </div>
+      <div class="radio ml-4">
+        <label>
+          <input type="radio" name="floor-`+buildingNumber+`-`+currentFloor+`-residue" checked="checked" value="no" /><i class="helper"></i>No
+        </label>
+      </div>
+    </div> 
+    </div> 
+  </div>
+  `)
+}
+else{
+  if(cleaningType=='Storage Area'){   
+    $('#floor-'+buildingNumber+'-'+currentFloor+'-size').children().remove();     
+    for(var j in storageAreaCleaningSize)
+    {
+     
+          $('#floor-'+buildingNumber+'-'+currentFloor+'-size').append('<option>'+storageAreaCleaningSize[j].name+' ( '+storageAreaCleaningSize[j].min_size+' to '+storageAreaCleaningSize[j].max_size+' )</option>');
+
+    }
+  }
+}
+}
+}
+ }
 
 else{
-  //  $('.floor-card').hide();
-  console.log("build no is"+buildingNumber);
-  var nextBuilding=parseInt(buildingNumber)+1;
-  $('#tab'+nextBuilding).click();
-  console.log("clicked");
-  
+//  $('.floor-card').hide();
+console.log("build no is"+buildingNumber);
+var nextBuilding=parseInt(buildingNumber)+1;
+$('#tab'+nextBuilding).click();
+console.log("clicked");
+
 }
-    
+  
 currentFloor=currentFloor+1;
 changeLocation();
 }
@@ -478,10 +540,7 @@ function addApartment(elem){
         <div class="col-md-5  offset-md-1">
         <div class="form-group m-2 ">
         <select id="apartment-`+building_no+`-`+floor_no+`-`+i+`-size" name="apartment-`+building_no+`-`+floor_no+`-`+i+`-size"  >
-          <option> Small</option>
-          <option>Medium</option>
-          <option>Large</option>
-        
+         
         </select>
         <label for="select" class="control-label">Size</label><i class="bar"></i>
       </div>
@@ -561,12 +620,12 @@ function addApartment(elem){
        
         <div class="radio">
           <label>
-            <input type="radio" name="apartment-`+buildingNumber+`-`+currentFloor+`-residue" value="yes" onclick="apartmentStat(this)"/><i class="helper"></i>Yes
+            <input type="radio" name="apartment-`+building_no+`-`+floor_no+`-residue" value="yes" /><i class="helper"></i>Yes
           </label>
         </div>
         <div class="radio ml-4">
           <label>
-            <input type="radio" name="apartment-`+buildingNumber+`-`+currentFloor+`-residue" checked="checked" value="no" onclick="apartmentStat(this)"/><i class="helper"></i>No
+            <input type="radio" name="apartment-`+building_no+`-`+floor_no+`-residue" checked="checked" value="no" /><i class="helper"></i>No
           </label>
         </div>
       </div> 
@@ -574,8 +633,40 @@ function addApartment(elem){
     </div>
        
     </div>
-        `)
+        `);
+        if(cleaningType=='General Cleaning'){    
+          $('#apartment-'+building_no+'-'+floor_no+'-'+i+'-size').children().remove();    
+        for(var j in generalCleaningSize)
+        {
+          
+              $('#apartment-'+building_no+'-'+floor_no+'-'+i+'-size').append('<option>'+generalCleaningSize[j].name+' ( '+generalCleaningSize[j].min_size+' to '+generalCleaningSize[j].max_size+' )</option>');
+
+        }
+      }
+      else{
+        if(cleaningType=='Deep Cleaning'){      
+          $('#apartment-'+building_no+'-'+floor_no+'-'+i+'-size').children().remove();  
+          for(var j in deepCleaningSize)
+          {
+            
+                $('#apartment-'+building_no+'-'+floor_no+'-'+i+'-size').append('<option>'+deepCleaningSize[j].name+' ( '+deepCleaningSize[j].min_size+' to '+deepCleaningSize[j].max_size+' )</option>');
+  
+          }
+        }
+        else{
+          if(cleaningType=='Storage Area'){   
+            $('#apartment-'+building_no+'-'+floor_no+'-'+i+'-size').children().remove();     
+            for(var j in storageAreaCleaningSize)
+            {
+             
+                  $('#apartment-'+building_no+'-'+floor_no+'-'+i+'-size').append('<option>'+storageAreaCleaningSize[j].name+' ( '+storageAreaCleaningSize[j].min_size+' to '+storageAreaCleaningSize[j].max_size+' )</option>');
+    
+            }
+          }
+        }
+      }
     }
+    $('.storage-fields').hide();
     changeLocation();
     if(cleaningType=='Storage Area'){
         $('.storage-fields').show();
@@ -676,7 +767,19 @@ function switchTab(el){
     console.log('building number is '+buildingNumber);
     currentFloor=buildingData[buildingNumber-1].floors.length+1;
 }
-function selectService(elem){
+ function selectService(elem){
+  $('#location-type').val('Location Type');
+  $('.building').hide();
+  $('.common-field').hide();
+  $('.sr-tab-marker').remove();
+  $('.tab-panel').remove();
+ noOfBuildings=0;
+   buildingData=[];
+floorCount=0;
+currentFloor=1;
+buildingNumber=0;
+let noOfBuilding = new vanillaSelectBox("#no-of-buildings",{placeHolder: "No of buildings"});
+  $('.questions').show();
     $('.sr-service-card-active').addClass('sr-service-card');
     $('.sr-service-card-active').removeClass('sr-service-card-active');
     $(elem).addClass('sr-service-card-active');
@@ -696,7 +799,7 @@ function selectService(elem){
     $(elem).find('i').addClass('select-icon');
     cleaningType=$(elem).find('.service-title').text();
     
-    if(cleaningType=='General Cleaning'||cleaningType=='Deep Cleaning'||cleaningType=='Sanitization'){
+    if(cleaningType=='General Cleaning'||cleaningType=='Deep Cleaning'||cleaningType=='Sterilization'){
         $('.item-add-btn').hide();
         $('.building').show();
         $('.common-field').hide();
@@ -706,7 +809,21 @@ function selectService(elem){
         $('.storage-fields').hide();
         $('.items-card').remove();
        
-        upholsteryCount=0;
+        itemCount=0;
+        if(cleaningType=='General Cleaning'){
+          getSize('General Cleaning');
+          
+        }
+        else{
+          if(cleaningType=='Deep Cleaning'){
+            getSize('Deep Cleaning');
+          }
+          else{
+            if(cleaningType=='Sterilization'){
+              getSize('Sterilization');
+            }
+          }
+        }
         
     }
     else{
@@ -721,14 +838,19 @@ function selectService(elem){
     buildingNumber=0;
     let noOfBuilding = new vanillaSelectBox("#no-of-buildings",{placeHolder: "No of buildings"});
     if(cleaningType=='Facade Cleaning'){
-        $('.item-add-btn').hide();
+        $('.item-add-btn').remove();
+        $('.items-card').remove();
+        $('#field-area-type').show();
+        itemCount=0;
+        addItem('Facade');
+       /* $('.item-add-btn').hide();
         $('#field-wall-type').show();
         $('#field-size').show();
         $('#field-hallway-size').show();
         $('#field-location-type').hide();
         $('.storage-fields').hide();
         $('.items-card').remove();
-        upholsteryCount=0;
+        itemCount=0;*/
         
     }
     else{
@@ -752,45 +874,69 @@ function selectService(elem){
             $('#field-area-type').show();
             $('.storage-fields').show();
             $('.items-card').remove();
-            upholsteryCount=0;
+            itemCount=0;
+            getSize('Storage Area');
         }
         else{
             if(cleaningType=='Car Parking Umbrella'){
-                $('.item-add-btn').hide();
+               /* $('.item-add-btn').hide();
                 $('#field-floor-type').show();
                 $('#field-ceiling-type').show();
                 $('#field-size').show();
                 $('.items-card').remove();
-                upholsteryCount=0;
+                itemCount=0;*/
+                $('#field-area-type').hide();
+                $('#field-location-type').hide();
+              
+                $('.item-add-btn').remove();
+                   $('.items-card').remove();
+                   itemCount=0;
+                   addItem('Umbrella');
             }
             else{
                 if(cleaningType=='Outdoor Cleaning'){
-                    $('.item-add-btn').hide();
+                   /* $('.item-add-btn').hide();
                     $('#field-area-type').show();
                     $('#field-size').show();
                     $('.items-card').remove();
-                    upholsteryCount=0;
+                    itemCount=0;*/
+                    $('#field-area-type').show();
+                    $('#field-location-type').hide();
+                  
+                    $('.item-add-btn').remove();
+                       $('.items-card').remove();
+                       itemCount=0;
+                       addItem('Outdoor');
                 }
                 else{
                     if(cleaningType=='Window Cleaning'){
-                        $('.item-add-btn').hide();
                         $('#field-area-type').show();
-                        $('#field-location-type').show();
-                        $('#field-size').show();
-                        $('.items-card').remove();
-                        upholsteryCount=0;
+                    $('#field-location-type').show();
+              
+                $('.item-add-btn').remove();
+                   $('.items-card').remove();
+                   itemCount=0;
+                   addItem('Window');
                     }
                     else{
                         if(cleaningType=='Kitchen Cleaning'){
-                            $('.item-add-btn').hide();
-                            $('#field-area-type').show();
-                            $('#field-location-type').show();
+                       /*     $('.item-add-btn').hide();
+                            
                             $('#field-floor-type').show();
                             $('#field-wall-type').show();
                             $('#field-ceiling-type').show();
                             $('#field-size').show();
                             $('.items-card').remove();
-                            upholsteryCount=0;
+                            itemCount=0;*/
+                         //   $('.item-add-btn').hide();
+                         $('#field-area-type').show();
+                         $('#field-location-type').show();
+                       
+                         $('.item-add-btn').remove();
+                            $('.items-card').remove();
+                            itemCount=0;
+                            addItem('Kitchen');
+
 
                         }
                         else{
@@ -831,7 +977,8 @@ function addItem(item){
     let prev=itemCount;
     itemCount=itemCount+1;
     if(prev==0){
-
+        if(item=='Mattress'||item=='Carpet'||item=='Upholstery')
+        {
         $('.item-add-btn').remove();
           $('#field-area-type').show();
 
@@ -840,7 +987,7 @@ function addItem(item){
 
              <h6 class="text-center pt-4" id="item-title-`+itemCount+`">`+item+` `+itemCount+`</h6>
               <div class="row mb-4">
-              <div class="col-md-12">
+              <div class="col-md-12 item-cleaningtype">
               <div class="form-radio d-flex mt-4 mx-auto">
 
               <div class="radio">
@@ -922,22 +1069,178 @@ function addItem(item){
 
           </div>
           `);
+
           $('.item-add-btn').show();
          
           materialSelectBox[itemCount]= new vanillaSelectBox("#item-"+itemCount+"-material",{placeHolder: "Material"});
           colorSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-color",{placeHolder: "Color"});
           sizeSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-size",{placeHolder: "Size"});
           reasonSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-type",{placeHolder: "Stain Type"});
+        }
+        else{
+            if(item=='Kitchen'||item=='Facade'||item=='Umbrella'||item=='Window'||item=='Outdoor'){
+                $('#field-location-type').after(`<div class="col-md-12 mt-4 items-card" id="item-`+itemCount+`">
+                <i class="fas fa-trash-alt sr-close-btn" onclick="delItem('`+item+`',this)" id="del-1"></i>
+      
+                   <h6 class="text-center pt-4" id="item-title-`+itemCount+`">`+item+` `+itemCount+`</h6>
+                    <div class="row mb-4">
+                    <div class="col-md-12 item-cleaningtype">
+                    <div class="form-radio d-flex mt-4 mx-auto">
+      
+                    <div class="radio">
+                      <label>
+                        <input type="radio" name="item-condition-`+itemCount+`" value="used"  id="item-condition-`+itemCount+`"/><i class="helper"></i>Used
+                      </label>
+                    </div>
+                    <div class="radio ml-4">
+                      <label>
+                        <input type="radio" name="item-condition-`+itemCount+`" checked="checked" value="new"/><i class="helper"></i>New
+                      </label>
+                    </div>
+                  </div>
+                    </div>
+                    <div class="col-md-6 mt-4 " id="item-age-`+itemCount+`">
+                    <input type="number" placeholder="Age  (Months) " id="item-`+itemCount+`-age"  name="item-`+itemCount+`-age" class="sr-input"/>
+                   
+                    </div>
+                    <div class="col-md-6 mt-4">
+                    <select id="item-`+itemCount+`-size"  name="item-`+itemCount+`-size">
+                    <option value="1">Small</option>
+                    <option value="2">Medium</option>
+                    <option value="3">Large</option>
+                   
+                  
+               </select>
+               </div>
+                    <div class="col-md-6 mt-4">
+                    <select id="item-`+itemCount+`-floor" multiple  name="item-`+itemCount+`-floor">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  
+               </select>
+                    </div>
+                    <div class="col-md-6 mt-4 ">
+                    <select id="item-`+itemCount+`-wall"  name="item-`+itemCount+`-wall">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  
+               </select>
+                    </div>
+                    <div class="col-md-6 mt-4">
+                    <select id="item-`+itemCount+`-ceiling"  name="item-`+itemCount+`-ceiling">
+                    <option value="small">small</option>
+                    <option value="medium">medium</option>
+                    <option value="large">large</option>
+                    
+                  
+               </select>
+                    </div>
+                    <div class="col-md-6 oil-residue">
+                    <div class="form-radio d-flex mt-4 ">
+                      Oil Residue ?<br>
+                    <div class="radio ml-4" >
+                      <label>
+                        <input type="radio" name="item-oil-residue-`+itemCount+`" value="vaccum"  id="item-oil-residue-`+itemCount+`"  /><i class="helper"></i>Yes
+                      </label>
+                    </div>
+                    <div class="radio ml-4" >
+                      <label>
+                        <input type="radio" name="item-oil-residue-`+itemCount+`" checked="checked" value="deep" /><i class="helper"></i>No
+                      </label>
+                    </div>
+                  </div>
+                    </div>
+                   
+                    
+      
+                    </div>
+                </div>
+                <div class="item-add-btn" onclick="addItem('`+item+`')" id="item-btn-`+itemCount+`">
+                <i class="fa fa-plus-circle" aria-hidden="true"></i>
+      
+                </div>
+                `);
+               
+      
+                $('.item-add-btn').show();
+                floorSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-floor",{placeHolder: "Floor type"});
+                wallSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-wall",{placeHolder: "Wall Type"});
+                sizeSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-size",{placeHolder: "Size"});
+                 ceilingSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-ceiling",{placeHolder: "Ceiling Type"});
+                 if(item=='Facade'){
+                    $('#item-'+itemCount+'-floor').parent().remove();
+                    $('#item-'+itemCount+'-ceiling').parent().remove();
+                    // $('#item-'+itemCount+'-ceiling').parent().remove();
+                     $('.item-cleaningtype').remove();
+                     $('.oil-residue').remove();
+                    $('#item-age-'+itemCount).replaceWith(`
+                    <div class="col-md-6 mt-4">
+                    <select id="item-`+itemCount+`-hallway-size"  name="item-`+itemCount+`-hallway-size">
+                         <option value="1">Small</option>
+                         <option value="2">Medium</option>
+                         <option value="3">Large</option>    
+                     </select>
+                     </div>
+                    `);
+                    hallwaySelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-hallway-size",{placeHolder: "Hallway Size"});
+                }
+                else{
+                    if(item=='Umbrella'){
+                        $('#item-'+itemCount+'-wall').parent().remove();
+                        $('.item-cleaningtype').remove();
+                     $('.oil-residue').remove();
+                     $('#item-age-'+itemCount).remove();
+                    }
+                    else{
+                        if(item=='Window'){
+                            $('.item-cleaningtype').remove();
+                            $('#item-'+itemCount+'-floor').parent().remove();
+                            $('#item-'+itemCount+'-ceiling').parent().remove();
+                            $('#item-'+itemCount+'-wall').parent().remove();
+                            $('#item-'+itemCount+'-size').parent().parent().append(`
+                            <div class="col-md-6 mt-4 ">
+                            <select id="item-`+itemCount+`-sides"  name="item-`+itemCount+`-sides">
+                            <option value="1">Outside & Inside</option>
+                            <option value="2">Outside</option>
+                            <option value="3">Inside</option>
+                            </select>
+                            </div>
+                            `);
+                             $('.oil-residue').remove();
+                             $('#item-age-'+itemCount).remove();
+                             sidesSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-sides",{placeHolder: "Sides"});
+                        }
+                        else{
+                            if(item=='Outdoor'){
+                                $('.item-cleaningtype').remove();
+                                $('#item-'+itemCount+'-floor').parent().remove();
+                                 $('#item-'+itemCount+'-ceiling').parent().remove();
+                                $('#item-'+itemCount+'-wall').parent().remove();
+                                $('.oil-residue').remove();
+                             $('#item-age-'+itemCount).remove();
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }
           
  }
   else{
+    if(item=='Mattress'||item=='Carpet'||item=='Upholstery')
+    {
     $('#item-btn-'+prev).after(`<div class="col-md-12 mt-4 items-card" id="item-`+itemCount+`">
     <i class="fas fa-trash-alt sr-close-btn" onclick="delItem('`+item+`',this)"></i>
     
        <h6 class="text-center pt-4" id="item-title-`+itemCount+`">`+item+` `+itemCount+`</h6>
       
               <div class="row mb-4">
-        <div class="col-md-12">
+        <div class="col-md-12 item-cleaningtype">
         <div class="form-radio d-flex mt-4 ">
 
         <div class="radio">
@@ -1028,7 +1331,158 @@ function addItem(item){
     /* $("#item-"+prev+'-material').show();
      $("#item-"+prev+'-color').show();
      $("#item-"+prev+'-size').show();*/
+    }
+    else{
+        if(item=='Kitchen'||item=='Facade'||item=='Window'||item=='Umbrella'||item=='Outdoor'){
+            $('#item-btn-'+prev).after(`<div class="col-md-12 mt-4 items-card" id="item-`+itemCount+`">
+            <i class="fas fa-trash-alt sr-close-btn" onclick="delItem('`+item+`',this)" id="del-1"></i>
+  
+               <h6 class="text-center pt-4" id="item-title-`+itemCount+`">`+item+` `+itemCount+`</h6>
+                <div class="row mb-4">
+                <div class="col-md-12 item-cleaningtype">
+                <div class="form-radio d-flex mt-4 mx-auto">
+  
+                <div class="radio">
+                  <label>
+                    <input type="radio" name="item-condition-`+itemCount+`" value="used"  id="item-material-`+itemCount+`"/><i class="helper"></i>Used
+                  </label>
+                </div>
+                <div class="radio ml-4">
+                  <label>
+                    <input type="radio" name="item-condition-`+itemCount+`" checked="checked" value="new"/><i class="helper"></i>New
+                  </label>
+                </div>
+              </div>
+                </div>
+                <div class="col-md-6 mt-4 " id="item-age-`+itemCount+`">
+                <input type="number" placeholder="Age  (Months) " id="item-`+itemCount+`-age"  name="item-`+itemCount+`-age" class="sr-input"/>
+               
+                </div>
+                <div class="col-md-6 mt-4">
+                <select id="item-`+itemCount+`-size"  name="item-`+itemCount+`-size">
+                <option value="1">Small</option>
+                <option value="2">Medium</option>
+                <option value="3">Large</option>    
+           </select>
+           </div>
+                <div class="col-md-6 mt-4">
+                <select id="item-`+itemCount+`-floor" multiple  name="item-`+itemCount+`-floor">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              
+           </select>
+                </div>
+                <div class="col-md-6 mt-4 ">
+                <select id="item-`+itemCount+`-wall"  name="item-`+itemCount+`-wall">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              
+           </select>
+                </div>
+                <div class="col-md-6 mt-4">
+                <select id="item-`+itemCount+`-ceiling"  name="item-`+itemCount+`-ceiling">
+                <option value="small">small</option>
+                <option value="medium">medium</option>
+                <option value="large">large</option>
+                
+              
+           </select>
+                </div>
+                <div class="col-md-6 oil-residue">
+                <div class="form-radio d-flex mt-4 ">
+                  Oil Residue ?<br>
+                <div class="radio ml-4" >
+                  <label>
+                    <input type="radio" name="item-stain-`+itemCount+`" value="vaccum"  id="item-material-`+itemCount+`"  /><i class="helper"></i>Yes
+                  </label>
+                </div>
+                <div class="radio ml-4" >
+                  <label>
+                    <input type="radio" name="item-stain-`+itemCount+`" checked="checked" value="deep" /><i class="helper"></i>No
+                  </label>
+                </div>
+              </div>
+                </div>
+            
+  
+                </div>
+            </div>
+            <div class="item-add-btn" onclick="addItem('`+item+`')" id="item-btn-`+itemCount+`">
+            <i class="fa fa-plus-circle" aria-hidden="true"></i>
+  
+            </div>
+            `);
+  
+            $('.item-add-btn').show();
+            $('#item-btn-'+prev).remove();
+            floorSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-floor",{placeHolder: "Floor type"});
+            wallSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-wall",{placeHolder: "Wall Type"});
+            sizeSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-size",{placeHolder: "Size"});
+             ceilingSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-ceiling",{placeHolder: "Ceiling Type"});
+             $('.item-cleaningtype').remove();
+             if(item=='Facade'){
+                $('#item-'+itemCount+'-floor').parent().remove();
+                $('#item-'+itemCount+'-ceiling').parent().remove();
+                $('#item-age-'+itemCount).replaceWith(`
+                <div class="col-md-6 mt-4">
+                <select id="item-`+itemCount+`-hallway-size"  name="item-`+itemCount+`-hallway-size">
+                     <option value="1">Small</option>
+                     <option value="2">Medium</option>
+                     <option value="3">Large</option>    
+                 </select>
+                 </div>
+                `);
+                $('.oil-residue').remove();
+                hallwaySelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-hallway-size",{placeHolder: "Hallway Size"});
+            }
+            else{
+                if(item=='Umbrella'){
+                    $('#item-'+itemCount+'-wall').parent().remove();
+                    $('.item-cleaningtype').remove();
+                 $('.oil-residue').remove();
+                 $('#item-age-'+itemCount).remove();
+                }
+                else{
+                    if(item=='Window'){
+                        $('.item-cleaningtype').remove();
+                        $('#item-'+itemCount+'-floor').parent().remove();
+                        $('#item-'+itemCount+'-ceiling').parent().remove();
+                        $('#item-'+itemCount+'-wall').parent().remove();
+                        $('#item-'+itemCount+'-size').parent().parent().append(`
+                        <div class="col-md-6 mt-4 ">
+                        <select id="item-`+itemCount+`-sides"  name="item-`+itemCount+`-sides">
+                        <option value="1">Outside & Inside</option>
+                        <option value="2">Outside</option>
+                        <option value="3">Inside</option>
+                        </select>
+                        </div>
+                        `);
+                         $('.oil-residue').remove();
+                         $('#item-age-'+itemCount).remove();
+                         sidesSelectBox[itemCount]=new vanillaSelectBox("#item-"+itemCount+"-sides",{placeHolder: "Sides"});
+                    }
+                    else{
+                        if(item=='Outdoor'){
+                            $('.item-cleaningtype').remove();
+                            $('#item-'+itemCount+'-floor').parent().remove();
+                             $('#item-'+itemCount+'-ceiling').parent().remove();
+                            $('#item-'+itemCount+'-wall').parent().remove();
+                            $('.oil-residue').remove();
+                         $('#item-age-'+itemCount).remove();
+                        }
+                    }
+                }
+            }
+        }
 
+  }
+}
+  if(cleaningType=='Mattress Cleaning'){
+        $('.item-cleaningtype').hide();
   }
  
   
@@ -1071,7 +1525,7 @@ function changeLocation(){
 
     location_type=$('#location-type').val();
     if(cleaningType=='Deep Cleaning' && location_type=='Post Construction'){
-        console.log('called me');
+       
         $('.paint-residue').show();
     }
     else{
@@ -1127,6 +1581,36 @@ function hideReason(itemid){
     $('#item-stain-age-'+itemid).hide();
 }
 
+function getSize(srvc){
+  axios.get('/customer/ajax/getservicesizeprice?service_type='+srvc)
+  .then(function (response) {
+    console.log(response);
+    if(srvc=='General Cleaning'){
+      generalCleaningSize=response.data;
+      console.log("general clenainhg sise is "+JSON.stringify(generalCleaningSize));
+    }
+   
+    else{
+      if(srvc=='Deep Cleaning'){
+        deepCleaningSize=response.data;
+        console.log("deep clenainhg sise is "+JSON.stringify(deepCleaningSize));
+      }
+      else{
+        if(srvc=='Storage Area'){
+          storageAreaCleaningSize=response.data;
+          console.log("storage clenainhg sise is "+JSON.stringify(storageAreaCleaningSize));
+        }
+      }
+    }
+    
+  })
+  .catch(function (error) {
+    console.log(error);
+  })
+  .then(function () {
+    // always executed
+  });  
+}
 /*
     {
         service:' ',
