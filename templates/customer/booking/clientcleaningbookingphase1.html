@@ -406,7 +406,129 @@
     <script src="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.min.js' %}"></script>
     <script src="{% static 'files/externalfiles/js/vanillaSelectBox.js' %}"></script>
     <script src="{% static 'files/externalfiles/js/services.js' %}"></script>
-    
+    <script>
+    function durationcalculation(params)
+  {
+    //to find total size
+    sectioncounter = $('#sectioncounter_id').val();
+    total_estimated_size = 0
+    for(i=1;i<=sectioncounter;i++)
+    {
+        size = $('#bk-size-'+i).val() 
+        total_estimated_size += parseFloat(size);
+    }
+
+    //Ajax for finding productivity of perticular service
+    selected_service = $("#bk-service option:selected" ).text();
+    $.ajax({
+
+        url: "/customer/ajax/getserviceproductivity",
+
+        data: {'service_type':selected_service}, 
+
+        dataType: 'json',
+
+        success: function (data) {
+            //find duration and no of cleaners based on productivity
+            total_estimated_size = total_estimated_size
+            productivity         = data['perhour_cleaning'];
+            
+            //optimal manhour finding
+            manhour = parseInt(total_estimated_size/productivity)
+            r       = 2 ** (manhour.toString().length-1)
+            mod     = manhour%r
+            
+            if (mod > parseInt(r/2))
+            {
+              n= manhour+(r-mod);
+            }
+            else
+            {
+              n = manhour-mod;
+            }
+            for(i=1;i<parseInt(n ** (1/2))+1;i++)
+            {
+              if(n%i == 0)
+                {
+                  pair = [i,n/i];
+                }
+            }
+            max_cleaners = data['max_cleaners']
+            
+            duration_list = [];
+            upper_loop    = 2;
+            lower_loop    = 2;
+            middle_element=pair[0]
+
+            if(middle_element<=max_cleaners)
+            {
+              duration_list.push(pair);
+              //upperloop and lowerloop setup
+              for(i=1;i<=2;i++)
+              {
+                if((middle_element-i)<=0)
+                {
+                  upper_loop = upper_loop+(2-i)+1;
+                  lower_loop = lower_loop-((2-i)+1)
+                } 
+                if((middle_element+i) > max_cleaners)
+                {
+                  lower_loop = lower_loop+(2-i)+1;
+                  upper_loop = upper_loop-((2-i)+1)
+                }
+              }
+
+              //lower
+              for(i=1;i<=lower_loop;i++)
+              {
+                if((middle_element-i)>0 && (middle_element-i) <= max_cleaners)
+                {
+                  duration_list.push([(middle_element-i),n/(middle_element-i)])
+                }
+              }
+              //upper
+              for(i=1;i<=upper_loop;i++)
+              {
+                if((middle_element+i)>0 && (middle_element+i) <= max_cleaners)
+                {
+                  duration_list.push([(middle_element+i),n/(middle_element+i)])
+                } 
+              }
+            }
+
+            
+            else
+            {
+              middle_element = max_cleaners;
+              duration_list.push([(middle_element),n/(middle_element)])
+              for(i=1;i<=5;i++)
+              {
+                if((middle_element-i)>0)
+                {
+                  duration_list.push([(middle_element-i),n/(middle_element-i)])
+                }
+              }
+            }
+            console.log(duration_list)
+
+            for(i=0;i<duration_list.length;i++)
+              {
+                
+                total_duration  = duration_list[i][1];
+                //show to users
+                total_minutes     = (total_duration.toFixed(2)*60).toFixed(0)
+                converted_hours   = Math.floor(total_minutes / 60);          
+                converted_minutes = total_minutes % 60;
+                total_cleaners    = duration_list[i][0];
+                console.log(converted_hours,"converted_hours")
+                console.log(converted_minutes,"converted_minutes")
+                console.log(total_cleaners,"total_cleaners")
+                }
+                   }
+         });
+
+  }
+  </script>
 
   </body>
 </html>
