@@ -46,68 +46,40 @@
                     <div class="tab-content mt-4" id="tab-1-content">
                         <h5 class="pt-2">Service Type</h5>
                         <div class="owl-carousel owl-theme mt-4">
-                            <div class="sr-service-card p-2" id="service-1" onclick="selectService(this)"> 
+                          {% for service in service_types %}
+                            <div class="sr-service-card p-2" id="service-{{forloop.counter}}" onclick="selectService(this)"> 
                               <i class="far fa-circle inactive-icon"></i>
-                                <img src="{% static 'files/externalfiles/icons/vacuum.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Deep Cleaning</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-2" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% if service.name == 'General Cleaning' %}
                                 <img src="{% static 'files/externalfiles/icons/household.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">General Cleaning</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-3" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Deep Cleaning' %}
+                                <img src="{% static 'files/externalfiles/icons/vacuum.png' %}" class="service-icon"/>
+                                {% elif service.name == '' %}
                                 <img src="{% static 'files/externalfiles/icons/facade.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Facade Cleaning</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-4" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Facade Cleaning' %}
                                 <img src="{% static 'files/externalfiles/icons/storage.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Storage Area</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-5" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Storage Area' %}
+                                <img src="{% static 'files/externalfiles/icons/storage.png' %}" class="service-icon"/>
+                                {% elif service.name == 'Car Parking Umbrella' %}
                                 <img src="{% static 'files/externalfiles/icons/car.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Car Parking Umbrella</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-6" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Window Cleaning' %}
                                 <img src="{% static 'files/externalfiles/icons/windows.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Window Cleaning</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-7" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Outdoor Cleaning' %}
                                 <img src="{% static 'files/externalfiles/icons/outdoor.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Outdoor Cleaning</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-8" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Upholstery Cleaning' %}
                                 <img src="{% static 'files/externalfiles/icons/sofa.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Upholstery Cleaning</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-9" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Carpet Cleaning' %}
                                 <img src="{% static 'files/externalfiles/icons/carpet2.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Carpet Cleaning</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-10" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Sterilization' %}
                                 <img src="{% static 'files/externalfiles/icons/hand-sanitizer.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Sanitization</div>     
-                            </div>
-                            <div class="sr-service-card p-2" id="service-11" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Mattress Cleaning' %}
                                 <img src="{% static 'files/externalfiles/icons/bed.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Mattress Cleaning</div>     
-                            </div>
-                            
-                            <div class="sr-service-card p-2" id="service-12" onclick="selectService(this)"> 
-                              <i class="far fa-circle inactive-icon"></i>
+                                {% elif service.name == 'Kitchen Cleaning' %}
                                 <img src="{% static 'files/externalfiles/icons/kitchen.png' %}" class="service-icon"/>
-                                <div class="text-center pt-2 service-title">Kitchen Cleaning</div>     
+                                {% endif %}
+
+                                <div class="text-center pt-2 service-title">{{service.name}}</div>     
                             </div>
-                           
+                          {% endfor %}                           
                           </div>
 
                           <div><h5 class="pt-2">What's your place like ?</h5> </div>
@@ -115,27 +87,9 @@
 
                             <div class="col-md-4 mt-2 common-field" id="field-area-type">
                                <select id="area-type" name="area-type" >
-                                   <option value="APARTMENT">APARTMENT</option>
-                                   <option value="HOUSE">HOUSE</option>
-                                   <option value="VILLA">VILLA</option>
-                                   <option value="OFFICE">OFFICE</option>
-                                   <option value="PALACE">PALACE</option>
-                                   <option value="DIWANIYA">DIWANIYA</option>
-                                   <option value="MALL">MALL</option>
-                                   <option value="WAREHOUSE">WAREHOUSE</option>
-                                   <option value="CHALET">CHALET</option>
-                                   <option value="YATH">YATH</option>
-                                   <option value="GYM">GYM</option>
-                                   <option value="CLINIC">CLINIC</option>
-                                   <option value="SALON">SALON</option>
-                                   <option value="RETAIL SHOP">RETAIL SHOP</option>
-                                   <option value="STUDIO">STUDIO</option>
-                                   <option value="PHARMACY">PHARMACY</option>
-                                   <option value="TAILORING">TAILORING</option>
-                                   <option value="RESTAURANT">RESTAURANT</option>
-                                   <option value="COFFEE SHOP">COFFEE SHOP</option>
-                                   <option value="EDUCATIONAL INSTITUTE">EDUCATIONAL INSTITUTE</option>
-                                   <option value="HOSPITAL">HOSPITAL</option>
+                                   {% for area_type in area_types %}
+                                   <option value="{{area_type.name}}">{{area_type.name}}</option>
+                                   {% endfor %}
                               </select>
                             </div>
                             <div class="col-md-4 mt-2 common-field" id="field-location-type">
@@ -144,7 +98,6 @@
                                    <option value="Post Renovation">Post Renovation</option>
                                    <option value="Fully Furnished">Fully Furnished</option>
                                    <option value="Empty Area">Empty Area</option>
-                                 
                               </select>
                             </div>
                             <div class="col-md-4 mt-2 common-field" id="field-no-of-buildings">

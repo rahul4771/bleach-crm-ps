@@ -702,7 +702,7 @@ function selectService(elem){
     $(elem).find('i').addClass('select-icon');
     cleaningType=$(elem).find('.service-title').text();
     
-    if(cleaningType=='General Cleaning'||cleaningType=='Deep Cleaning'||cleaningType=='Sanitization'){
+    if(cleaningType=='General Cleaning'||cleaningType=='Deep Cleaning'||cleaningType=='Sterilization'){
         $('.item-add-btn').hide();
         $('.building').show();
         $('.common-field').hide();

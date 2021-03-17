@@ -1990,6 +1990,25 @@ def addpromocode(request):
 
 
 ######Client Booking#####
+
+def GetServiceSizePrice(request):
+	service_type         = request.GET.get('service_type')
+	response_dict        = {}
+	service_price_ranges = ServicePriceRange.objects.filter(service_type__name=service_type)
+
+	counter = 1
+	for service_price_range in service_price_ranges:
+		service_price_range_dict = {}
+		service_price_range_dict['name']     = service_price_range.name
+		service_price_range_dict['min_size'] = service_price_range.minimum_area
+		service_price_range_dict['max_size'] = service_price_range.maximum_area
+		service_price_range_dict['cost']     = service_price_range.price
+		response_dict[counter] = service_price_range_dict
+		counter += 1
+
+	return JsonResponse(response_dict)
+
+
 class ClientCleaningBookingPhase1(View):
 	def get(self,request):
 		

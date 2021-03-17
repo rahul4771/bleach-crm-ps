@@ -4,7 +4,6 @@ from evaluator.models import ServiceType
 class ServiceProductivity(models.Model):
 	service_type     = models.ForeignKey(ServiceType,blank=True,null=True,related_name='productivity_service_type')
 	perhour_cleaning = models.CharField(max_length=100,blank=True,null=True)
-	perunit_price    = models.FloatField(blank=True,null=True)
 
 	is_active    = models.BooleanField(null=False,blank=True,default=True)
 	created      = models.DateTimeField(auto_now_add=True)
