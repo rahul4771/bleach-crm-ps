@@ -5,6 +5,7 @@ from django.http import HttpResponse,JsonResponse
 from django.views import View
 
 from bleach_crm_ps.utils import get_error
+from agent.views import generate_random_username
 
 from googletrans import Translator
 
@@ -34,6 +35,14 @@ from itertools import chain
 from agent.views import generate_random_username
 
 import requests
+
+#restframe work 
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response 
+from rest_framework.status import HTTP_200_OK 
+
+from customer.serilizers import UserProfileSerializer,AddressSerializer
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -2037,3 +2046,224 @@ class ClientCleaningBookingPhase1(View):
 			area_types = None
 
 		return render(request,'customer/booking/clientcleaningbookingphase1.html',{"service_types":service_types,"area_types":area_types,})
+
+class ClientCleaningBookingPhase2(APIView):  
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def post(self,request): 
+		response_dict = {'success':False}
+
+		try:
+			booking_id         = request.data.get('booking_id')
+			customerbooking    = CustomerBooking.objects.select_related('evaluation__customer').get(booking_id=booking_id,is_bookingcompleted=False)
+		except:
+			customerbooking    = None
+		
+		print(request.data)
+		if not customerbooking:
+        	#create user or update user
+			try:
+				existing_customer    = UserProfile.objects.get(id=request.data.get('customer_id'))
+			except:
+				existing_customer    = None
+
+			if existing_customer:
+				customer_saveupdate_serializer = UserProfileSerializer(data=request.data.get('customer_details'),instance=existing_customer)
+			else:
+				customer_saveupdate_serializer = UserProfileSerializer(data=request.data.get('customer_details'))
+
+
+			if customer_saveupdate_serializer.is_valid():   
+				
+				#username generation and customer_id generation
+				if existing_customer:
+					user_name                      = existing_customer.username
+					new_customer_id                = existing_customer.customer_id
+				else:
+					user_name                      = generate_random_username()
+					customer_id                    = UserProfile.objects.filter(is_active=True,customer_id__isnull=False).aggregate(t=Max('customer_id'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'1000')
+					current_customer_id_starting   = int(str(timezone.now().year)[2:]+str(timezone.now().month).zfill(2))					
+					if current_customer_id_starting == int(str(customer_id)[:4]):
+						new_customer_id = int(customer_id)+1
+					else:
+						new_customer_id   = int(str(timezone.now().year)[2:]+str(timezone.now().month).zfill(2)+'1001')
+
+				#contact platform
+				contact_platform               = request.data.get('customer_details')['contact_platform']
+				contact_platform_list 	       = contact_platform.split(",")
+				if contact_platform_list:
+					is_whatsapp = False
+					is_email    = False
+					is_sms      = False
+					for contact_platform in contact_platform_list:
+						if contact_platform == 'Whatsapp':
+							is_whatsapp = True
+						elif contact_platform == 'Email':
+							is_email    = True
+						else:
+							is_sms      = True
+
+				savedupdated_customer = customer_saveupdate_serializer.save(is_whatsapp=is_whatsapp,is_sms=is_sms,is_email=is_email,username=user_name,user_type='CUSTOMER',customer_id=new_customer_id)  
+
+				response_dict['customerdetails_success']  = True     
+			else: 
+				errors= customer_saveupdate_serializer.errors   
+				key=tuple(errors.keys())[0] 
+				error=errors[key]
+				response_dict['customerdetails_Error']=key +':'+ error[0]
+				response_dict['customerdetails_Error_List'] = customer_saveupdate_serializer.errors
+
+				response_dict['customerdetails_success']  = False
+
+				return Response(response_dict,HTTP_200_OK)
+
+        	#create address or update address
+			try:
+				existing_address = Address.objects.get(id=request.data.get(address_id))
+			except:
+				existing_address = None
+
+			if existing_customer:
+				address_saveupdate_serializer = AddressSerializer(data=request.data.get('address_details'),instance=existing_address)
+			else:
+				address_saveupdate_serializer = AddressSerializer(data=request.data.get('address_details'))
+
+			if address_saveupdate_serializer.is_valid():
+				savedupdated_address = address_saveupdate_serializer.save(customer=savedupdated_customer,currently_active=True)
+
+				response_dict['customeraddress_success']  = True
+			else:
+				errors= address_saveupdate_serializer.errors   
+				key=tuple(errors.keys())[0] 
+				error=errors[key]
+				response_dict['customeraddress_Error']=key +':'+ error[0]
+				response_dict['customeraddress_Error_List'] = customer_saveupdate_serializer.errors
+
+				response_dict['customeraddress_success']  = False
+
+        	#create Main Evaluation
+			tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+
+			current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
+			
+			if current_blc_starting == int(str(tracking_no)[:6]):
+				new_tracking_no     = int(tracking_no)+1
+				evaluation_no       = 'BLC'+str(new_tracking_no)
+			else:
+				evaluation_no       = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
+				tracking_no         = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+			
+			evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=savedupdated_customer,total_cost=request.data.get('total_cost'),estimated_cost=request.data.get('total_cost'),quatation_status='APPROVED',quatation_approved_date=timezone.now(),payment_method='PREPAID',payment_way='ONLINE',quatation_expiry_date=timezone.now()+timedelta(14))
+			
+			#create order
+			last_invoice_no  		 = Order.objects.filter(is_active=True).aggregate(t=Max('invoice_no'))['t']
+			current_invoice_starting = str(timezone.now().year)
+			if last_invoice_no:		
+				if current_invoice_starting == last_invoice_no[0:4]:
+					new_invoice_no 		 = str(int(last_invoice_no[4:]) + 1 )
+					new_invoice_no 		 = last_invoice_no[0:-(len(new_invoice_no))]+new_invoice_no
+				else:
+					new_invoice_no 		 = str(timezone.now().year)+'00001'
+			else:
+				new_invoice_no 		 = str(timezone.now().year)+'00001'
+			
+			order      = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,payment_status='PENDING',invoice_no=new_invoice_no,order_status='APPROVED_BY_CLIENT',total_amount=evaluation.total_cost,remining_amount=evaluation.total_cost)
+
+			#create booking
+			booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
+			current_booking_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
+
+			if current_booking_starting == int(str(booking_id)[:4]):
+				new_booking_id = int(booking_id)+1
+			else:
+				new_booking_id = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
+			
+			customerbooking = CustomerBooking.objects.create(booking_id=new_booking_id,booking_type='CLEANINGBOOKING',booking_date=timezone.now(),evaluation=evaluation)
+
+			#create evaluation details
+			evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation,address=savedupdated_address,status='EVALUATED',total_cost=evaluation.total_cost,estimated_cost=evaluation.total_cost)
+			
+			#create  evaluation book
+			#create scheduler
+			#create sections
+			#create kenotes
+		else:
+			pass
+
+		return Response(response_dict,HTTP_200_OK)		
+
+
+#### test data for api ###
+{
+	"service_type":1,
+	"area_type":"GYM",
+	"location_type":"Post Construction",
+	"sections":{
+			"building1floor1apartment1":{
+				"size":"small",
+				"wall_type":"wooden,metal",
+				"ceiling_type":"wooden,metal,concrete",
+				"recidue":"true",
+				"section_cost":160,
+				"keynotes":{
+					"rooms":5,
+					"bathrooms":2,
+					"windows":5
+				},
+			},
+			},
+	"customer_details":{
+		"name":"Ansab mabu",
+		"gender":"MALE",
+		"email":"ansabm2015@gmail.com",
+		"mobile_number":"89786745",
+		"date_day":5,
+		"date_month":7,
+		"date_year":2018,
+		"nationality":"KW",
+		"sms_preference":"SMS,Email",
+	},
+	"address_id":5,
+	"address_details":{
+
+	},
+	"schedule_details":{	"1":{"date":"14/12/2022","time":"08:00 pm","no_of_cleaners":7},
+							"2":{"date":"14/12/2022","time":"08:00 pm","no_of_cleaners":7},
+						},
+	"total_cost":100,
+	"no_of_cleaners":6,
+}
+
+
+
+
+
+
+
+
+{
+ "total_cost":100,
+ "customer_id":53,
+ "customer_details":{  "name":"Ansab mabu",
+   "gender":"MALE",
+   "email":"ansabm2015@gmail.com",
+   "mobile_number":"89786745",
+   "date_day":5,
+   "date_month":7,
+   "date_year":2018,
+   "nationality":"KW",
+   "sms_preference":"ENGLISH",
+   "contact_platform":"SMS,Email"
+	},
+ "address_id":27,
+ "address_details":{
+   "governorate":1,
+   "area":1,
+   "block":7,
+   "avenue":"avenue",
+   "building":"ABC",
+   "street":"bekhinnham",
+   "floor":4,
+   "apartment":"ALDHAR"
+ }
+}

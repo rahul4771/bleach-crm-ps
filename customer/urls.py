@@ -31,7 +31,6 @@ urlpatterns = [
 		url(r'^ajax/customerdetails$',views.GetCustomerDetails,name='ajax-customerdetails'),
 		url(r'^ajax/cleaningtimeslotes$',views.GetCleaningTimeSlotes,name='ajax-getcleaningtimeslotes'),
 		url(r'^add-promocode/$',views.addpromocode,name='add-promocode'),
-		url(r'^ajax/getserviceproductivity$',views.GetServiceProductivity,name='ajax-serviceproductivity'),
 
 		url(r'^booking/phase1$',views.CustomerBookingPhase1.as_view(),name='customerbookingphase1'),
 
@@ -48,6 +47,8 @@ urlpatterns = [
 		
 		##actual booking related urls
 		url(r'^ajax/getservicesizeprice$',views.GetServiceSizePrice,name='ajax-getservicesizeprice'),
-		url(r'^booking$',views.ClientCleaningBookingPhase1.as_view(),name='clientcleaningbookingphase1'),
+		url(r'^ajax/getserviceproductivity$',views.GetServiceProductivity,name='ajax-serviceproductivity'),
+		url(r'^bookingphase1$',views.ClientCleaningBookingPhase1.as_view(),name='clientcleaningbookingphase1'),
+		url(r'^bookingphase2$',views.ClientCleaningBookingPhase2.as_view(),name='clientcleaningbookingphase2'),
 
 	]
