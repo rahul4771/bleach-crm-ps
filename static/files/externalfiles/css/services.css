@@ -372,3 +372,7 @@ body{
   .tabset {
     max-width: 65em;
   }
+  .questions{
+      display:none;
+  }
+  
