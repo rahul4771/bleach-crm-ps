@@ -49,5 +49,6 @@ urlpatterns = [
 		##actual booking related urls
 		url(r'^ajax/getservicesizeprice$',views.GetServiceSizePrice,name='ajax-getservicesizeprice'),
 		url(r'^booking$',views.ClientCleaningBookingPhase1.as_view(),name='clientcleaningbookingphase1'),
+		
 
 	]

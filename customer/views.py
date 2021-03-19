@@ -2037,3 +2037,4 @@ class ClientCleaningBookingPhase1(View):
 			area_types = None
 
 		return render(request,'customer/booking/clientcleaningbookingphase1.html',{"service_types":service_types,"area_types":area_types,})
+	
