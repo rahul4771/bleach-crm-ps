@@ -61,60 +61,6 @@
        
             
      <div class="main-content-holder"><!--main-content-holder-->            
-
-
-<div class="white-wrapper closetickets"><!--white-wrapper-->
-<h2 class="h2">Case Closing Task</h2>
-<table class="main-table">
-<tbody>
-{% for follow_up in followup_to_be_closed %}
-{% if follow_up.followupcount|add:follow_up.paybackcount|add:follow_up.buybackpromocodecount|add:follow_up.internalreportcount > 0 and follow_up.followupcount|add:follow_up.paybackcount|add:follow_up.buybackpromocodecount|add:follow_up.internalreportcount == follow_up.followupcompletedcount|add:follow_up.paybackcompletedcount|add:follow_up.buybackpromocodecompletedcount|add:follow_up.internalreportcount %}
-<tr class="green-line ticketcount">
-<td data-label="BLC Number" class="bold-text"><a href="{% url 'agent:agent-ticketadvanced' follow_up.investigation.order_schedule.order.evaluation.customer.id follow_up.id %}" target="_blank">TKT{{follow_up.ticket_no}}</a></td>
-<td>
-{% for followup in follow_up.followupschedulers %}
-{% if forloop.first %}
-FollowUp Cleaning<br>
-{% endif %}
-{% endfor %}
-{% for payback in follow_up.investigation.paybackdiscount %}
-{% if forloop.first %}
-Payback / Discount<br>
-{% endif %}
-{% endfor %}
-{% for buyback in follow_up.investigation.buybackpromocodegift %}
-{% if forloop.first %}
-BuyBack / Promocode /Gift<br>
-{% endif %}
-{% endfor %}
-{% for report in follow_up.investigation.internalreports %}
-{% if forloop.first %}
-Internal Report
-{% endif %}
-{% endfor %}
-
-</td>
-<td data-label="Time">{{follow_up.investigation.order.evaluation.customer.mobile_number}}</td>
-<td data-label="Customer">{{follow_up.investigation.order.evaluation.customer.name}}</td>
-<td data-label="Area">{{follow_up.investigation.order_schedule.customer_address.area}}</td>
-<td class="hide-a" data-label=""><img src="{{follow_up.investigation.investigator.profile_image.url}}" class="profile-avatar" title="{{follow_up.investigation.investigator.name}}"></td>
-
-<td data-label="" class="followup_schedule_close clickable-cursor" data-tickettypes="{{follow_up.investigation.ticket_types}}" data-blcno="{{follow_up.investigation.order.order_no}}" data-tktno="{{follow_up.ticket_no}}" 
-{% for followup in follow_up.followupschedulers %}{% if forloop.first %}data-followup="FollowUp Cleaning"{% else %}data-followup=""{% endif %}{% endfor %}
-{% for payback in follow_up.investigation.paybackdiscount %}{% if forloop.first %}data-paybacktype="{{payback.approved_option|default_if_none:""}}"{% else %}data-paybacktype=""{% endif %}{% endfor %} 
-{% for buyback in follow_up.investigation.buybackpromocodegift %}{% if forloop.first %}data-buybacktype="{{buyback.approved_option|default_if_none:""}}"{% else %}data-buybacktype=""{% endif %}{% endfor %}
-{% for report in follow_up.investigation.internalreports %}{% if forloop.first %}data-internalreport="Internal Report"{% else %}data-internalreport=""{% endif %}{% endfor %}
-data-assigner="{{follow_up.investigation.assigned_by.name}}" data-investigator="{{follow_up.investigation.investigator.name}}"
-data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" data-mobile_no="{{follow_up.investigation.order.evaluation.customer.mobile_number}}" data-area="{{follow_up.investigation.order_schedule.customer_address.area.name}}" data-service_type="{{follow_up.investigation.order_schedule.order_scheduler_book.service_type.name}}" data-id="{{follow_up.id}}"><span class="green-bg">Click to View</span></td>
-
-</tr>
-{% endif %}
-{% endfor %}
-</tbody>
-</table>
-</div><!--white-wrapper-->
-
-
  <div class="white-wrapper"><!--white-wrapper-->
 
 <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
@@ -235,73 +181,6 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
     </section><!--content-->
 {% include 'evaluator/common/footer.html' %} 
 </div><!--wrapper-->
-
-<!-- followup close popup -->
-<div id="followup_close_popup" class="overlay"><!--overlay-->
-    <div class="popup-assign-eval"><!--popup-assign-eval-->
-        <a class="close" id="followup_close_popup_close">&times;</a>
-            <div class="content"><!--content-->
-                        
-            <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
-            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-  <div class="ticket-form-left"><!--ticket-form-left-->
-    
-    <table width="100%" border="0" class="popup-tble1">
-                <tr>
-                    <td valign="bottom"><div class="blc-number" id="followup_schedule_close_tkt_id"></div><div id="followup_schedule_close_blc_id"></div></td>
-                    <td rowspan="2" align="center"><div class="bold-text"id="followup_schedule_close_customer_id"></div><div id="followup_schedule_close_mobile_id"></div></td>
-                </tr>
-            <tr><td><hr class="hr-dashedpad"></td></tr>  
-            <tr>
-              <td><b>Area</b> : <span id="followup_schedule_close_area_id"></span></td>  
-            </tr>
-            <tr>
-              <td><b>Service Type</b> : <span id="followup_schedule_close_service_type_id"></span></td>
-            </tr>
-
-            <tr>
-            <tr><td><hr class="hr-dashedpad"></td></tr>
-            <tr><td><b>Ticket Types</b></td></tr>
-            <tr>
-            <td id="followup_schedule_close_ticket_types"></td></tr>
-
-            <tr>
-            <tr><td><hr class="hr-dashedpad"></td></tr>
-            <tr><td><b>Actions</b></td></tr>
-            <tr>
-            <td id="followup_schedule_close_followupcleaning"></td></tr>
-            <tr>
-            <td id="followup_schedule_close_paybacktype"></td>
-            </tr>
-            <tr>
-            <td id="followup_schedule_close_buybacktype"></td></tr>
-            <tr>
-            <td id="followup_schedule_close_internalreport"></td></tr>
-            <tr><td><hr class="hr-dashedpad"></td></tr>
-            <tr>
-            <td><b>Assigned By</b> : <span id="followup_schedule_close_assignedby"></span></td>
-            
-            <td></td></tr>
-            <tr>
-            <td><b>Investigated By</b> : <span id="followup_schedule_close_investigator"></span> </td>
-            </tr>
-            </table>
-    
-      </div><!--ticket-form-left--> 
-  </div><!--ticket-wrapper-row ticket-forms-boxes-->
-<hr class="hr-dashedpad">   
-<form method="post" enctype= "multipart/form-data">
-{%csrf_token%}
-<input type="hidden" name="action_type" value="followup_close">
-<input type="hidden" name="followup" id="followup_schedule_close_id"> 
-<input type="hidden" name="internalreport" id="followup_schedule_close_reportexists">          
-<div align="center"> <input class="assignButton" name="assing" type="button" value="Close Ticket" onclick="submitAnyForm(this);"></div>
-</form> 
-</div><!--ticket-wrapper-full--> 
-            </div><!--content-->
-    </div><!--popup-assign-eval-->
-</div><!--overlay-->  
-<!-- /followup close popup-->
 
 {% endblock %}
 {% block javascript %}
@@ -695,44 +574,6 @@ $('document').ready(function(){
        
        {% endfor %}
 
-});
-
-//Close followup by special users
-$(".followup_schedule_close").click(function(){
-    $('#followup_schedule_close_id').val($(this).data('id'));
-    $("#followup_schedule_close_tkt_id").html("TKT"+$(this).data('tktno'));
-    $("#followup_schedule_close_blc_id").html($(this).data('blcno'));
-    $("#followup_schedule_close_assignedby").html($(this).data('assigner'));
-    $("#followup_schedule_close_investigator").html($(this).data('investigator'));
-
-    $("#followup_schedule_close_ticket_types").html('');
-    $("#followup_schedule_close_ticket_types").html($(this).data('tickettypes'));
-
-    $("#followup_schedule_close_followupcleaning").html('');
-    $("#followup_schedule_close_followupcleaning").html($(this).data('followup'));
-
-    $("#followup_schedule_close_paybacktype").html('');
-    $("#followup_schedule_close_paybacktype").html($(this).data('paybacktype'));
-    
-    $("#followup_schedule_close_buybacktype").html('');
-    $("#followup_schedule_close_buybacktype").html($(this).data('buybacktype'));
-    
-    $("#followup_schedule_close_internalreport").html('');
-    $("#followup_schedule_close_internalreport").html($(this).data('internalreport'));
-
-    $("#followup_schedule_close_reportexists").html('');
-    $("#followup_schedule_close_reportexists").val($(this).data('internalreport'));
-
-    $("#followup_schedule_close_customer_id").html($(this).data('customer_name'));
-    $("#followup_schedule_close_mobile_id").html($(this).data('mobile_no'));
-    $("#followup_schedule_close_area_id").html($(this).data('area'));
-    $("#followup_schedule_close_service_type_id").html($(this).data('service_type'));
-    
-
-    $("#followup_close_popup").css({'visibility':'visible','opacity':1,});
-});
-$("#followup_close_popup_close").click(function(){
-    $("#followup_close_popup").css({'visibility':'hidden','opacity':0,});
 });
 
 function set_params_go(args)
