@@ -20,8 +20,8 @@
                 <div class="column-left"><img src="{% static 'files/images/daily.png' %}" style="padding:10px;"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Sales</h1>
-                <h2 class="blue-text"><label>Today<span>{{dailysales|default_if_none:'0.000'}} KD</span></label> </h2>
-                <p><label>Monthly <span>{{monthlysales|default_if_none:'0.000'}} KD</span></label></p>
+                <h2 class="blue-text"><label>Today<span>{{dailysales|floatformat:"3"|default_if_none:'0.000'}} KD</span></label> </h2>
+                <p><label>Monthly <span>{{monthlysales|floatformat:"3"|default_if_none:'0.000'}} KD</span></label></p>
                 </div><!--column-right-->
                 </div><!--card-innerwrapper-->
             </div><!--card-column-->
