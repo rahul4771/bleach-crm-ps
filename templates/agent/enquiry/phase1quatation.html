@@ -63,7 +63,7 @@
         <br>
       </div><!--checkin-form-left-->
       <div class="checkin-form-right align-left"><!--checkin-form-right-->
-        <div class="total-Amount">{{evaluation.total_cost}} KD</div>
+        <div class="total-Amount">{{evaluation.total_cost|floatformat:"3"}} KD</div>
         <input type="hidden" name='total_amount' id="total_amount_id" value="{{evaluation.total_cost}}">
         <br>
       </div><!--checkin-form-right-->               

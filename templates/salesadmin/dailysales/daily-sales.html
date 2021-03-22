@@ -16,7 +16,7 @@
        	<div class="clients-card-column clients-column-left"><!--clients-card-column clients-column-left-->
         <div class="card-column whitebg blue-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/monthly.png' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/monthly.png' %}" style="padding:10px;"></div>
                 <div class="column-right"><!--column-right-->
               	<!--  <h1>Evaluations</h1>-->
             	<h2 class="blue-text"><label>Monthly <span>{{monthlysales|floatformat:"3"|default_if_none:"0.000"}} KD</span></label> </h2>
@@ -27,7 +27,7 @@
         
             <div class="card-column whitebg green-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/daily.png' %}"></div>
+                <div class="column-left"><img src="{% static 'files/images/daily.png' %}" style="padding:10px;"></div>
                 <div class="column-right"><!--column-right-->
             	<h2 class="green-text"><label>Daily<span>{{dailysales|floatformat:"3"|default_if_none:"0.000"}} KD</span></label>  </h2>
             	</div><!--column-right-->
@@ -38,12 +38,12 @@
 
         <div class="clients-card-column clients-column-right whitebg hover ltyellow-border"><!--clients-card-column clients-column-right-->
                  
-		{% comment %} <div class="chart_boxDiv"><!--chart_boxDiv-->
+		<div class="chart_boxDiv"><!--chart_boxDiv-->
   			<div class="chart_box_Right"><!--chart_box_Right-->
  				<!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
             	<div id="chart_div" ></div>
   			</div><!--chart_box_Right-->
-		</div><!--chart_boxDiv-->    {% endcomment %}
+		</div><!--chart_boxDiv-->
             
         {% comment %} <div class="chart_boxDiv"><!--chart_boxDiv-->    
         
@@ -87,19 +87,16 @@
 <tr>
 <th>Date</th>
 <th data-hide="phone,tablet">Day</th>
-<th data-hide="phone,tablet">General Cleaning</th>
-<th data-hide="phone,tablet">Upholstery Cleaning</th>
-<th data-hide="phone,tablet">Deep Cleaning</th>
-<th data-hide="phone,tablet">Carpet Cleaning</th>
-<th data-hide="phone,tablet">Kitchen Cleaning</th>
-<th data-hide="phone,tablet">Sterilization</th>
-<th data-hide="phone">Total Amount</th>
+<th data-hide="phone,tablet" class="align-right">General Cleaning</th>
+<th data-hide="phone,tablet" class="align-right">Upholstery Cleaning</th>
+<th data-hide="phone,tablet" class="align-right">Deep Cleaning</th>
+<th data-hide="phone,tablet" class="align-right">Carpet Cleaning</th>
+<th data-hide="phone,tablet" class="align-right">Kitchen Cleaning</th>
+<th data-hide="phone,tablet" class="align-right">Sterilization</th>
+<th data-hide="phone" class="align-right">Total Amount</th>
 </tr>
 </thead>
 <tbody id="dailysaleslist">
-
-    
-    {% comment %} <tr><td></td><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td><td></td></tr> {% endcomment %}
     
 </tbody>
 <tfoot>
@@ -117,7 +114,7 @@
 {% endblock %}
 
 {% block javascript %}
-{% comment %} <script src="{% static 'files/js/charts/dailysalesdatachart.js' %}"></script> {% endcomment %}
+<script src="{% static 'files/js/charts/dailysalesdatachart.js' %}"></script>
 <script src="{% static 'files/js/daily-sales/dailysales.js' %}"></script>
 <script id="rendered-js">
 $('.footable').footable({

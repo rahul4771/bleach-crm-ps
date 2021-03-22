@@ -305,7 +305,7 @@ class DailySalesAPI(APIView):
 
 		month,year = sales_month.split("/")
 		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
-		monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+		monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)-relativedelta(days=1)
 		daterange  = pd.date_range(monthdate1, monthdate2)
 		print(daterange,"dr")
 		# orderschedules = OrderScheduler.objects.filter(is_active=True).filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).distinct().values_list('order__order_no').distinct()
@@ -391,15 +391,13 @@ class DailySalesChartAPI(APIView):
 	def get(self,request):
 		response_dict = {'success':False}
 
-		start_date = request.GET.get('start_date')
-		end_date = request.GET.get('end_date')
-		date_a = start_date.split('-')
-		date_b = end_date.split('-')
+		sales_month = request.GET.get('sales_month')
+		print(sales_month,"smonth")
 
-		print(date_a,"pop")
+		month,year = sales_month.split("/")
 
 		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
-		monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+		monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)-relativedelta(days=1)
 		daterange  = pd.date_range(monthdate1, monthdate2)
 		print(daterange,"dr")
 

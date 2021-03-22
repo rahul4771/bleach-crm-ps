@@ -1329,7 +1329,7 @@ class DailySales(IsSalesAdmin,View):
 		today = datetime.now()
 		
 		monthdate1 = today.replace(day=1,hour=0,minute=0,second=0,microsecond=0)
-		monthdate2 = today.replace(day=1,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+		monthdate2 = today.replace(day=1,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)-relativedelta(days=1)
 		daterange  = pd.date_range(monthdate1, monthdate2)
 		print(daterange,"dr")
 

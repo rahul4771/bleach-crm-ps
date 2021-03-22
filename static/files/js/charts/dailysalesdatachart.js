@@ -1,3 +1,4 @@
+console.log("drax1")
 google.load('visualization', '1.0', {
     'packages': ['corechart']
 });
@@ -6,7 +7,7 @@ google.load('visualization', '1.0', {
 google.setOnLoadCallback(initialize);
 
 function initialize() {
-
+    console.log("drax2")
     var chart = new google.visualization.ChartWrapper({
         containerId: 'chart_div'
     });
@@ -30,46 +31,25 @@ function initialize() {
     chart.setOptions(options);
 
     function drawArea() {
+        console.log("drax3")
+        var date1 = new Date();
 
-        function appendLeadingZeroes(n){
-            if(n <= 9){
-              return "0" + n;
-            }
-            return n
-          }
+        var month = ("0" + (date1.getMonth()+1)).slice(-2);
+        console.log(month,"lp")
         
-        var date3 = new Date();
+        var datestring = month + "/" + date1.getFullYear();
         
-        date3.setDate(date3.getDate()-1)
-        //date3.setMonth(date3.getMonth()+1)
+        console.log(datestring)      
         
-        var datestring = appendLeadingZeroes(date3.getDate())  + "-" + appendLeadingZeroes(date3.getMonth()+1) + "-" + date3.getFullYear();
-        
-        var date4 = new Date();
-        date4.setDate(date4.getDate()-30);
-        //date4.setMonth(date4.getMonth()+1);
-        var datestring2 = appendLeadingZeroes(date4.getDate())  + "-" + appendLeadingZeroes(date4.getMonth()+1) + "-" + date4.getFullYear();
-        
-        console.log(datestring,datestring2)
-
-        
-        
-        axios.get(url+'/api/daily-sales-chart/',{ params: { 'start_date': datestring,'end_date':datestring2 } })
+        axios.get(url+'/api/daily-sales-chart/',{ params: { 'sales_month': datestring } })
         .then(function (response) {
-            console.log(response.data,"war")
+            console.log(response.data,"war444")
     
             $.each(response.data.list, function(key,value) {
             var quotations_area = [['Date', 'General Cleaning', 'Upholstery Cleaning', 'Kitchen Cleaning', 'Deep Cleaning', 'Carpet Cleaning', 'Sterilization']];
 
             if(response.data.list.length > 0){
             $.each(response.data.list,function(key,value){
-                console.log(response.data.list,"dtss")
-                var vals = value.date.split('-');
-                console.log(vals,vals[2],vals[1],vals[0],"datev")
-                var year = parseInt(vals[0]);
-                var month = parseInt (vals[1]);
-                var day = parseInt (vals[2]);
-                console.log(year,month,day,"ter")
 
                 var ord_date = new Date(value.date+"Z")
                 console.log(ord_date,"ord")
@@ -97,5 +77,7 @@ function initialize() {
         })
         
     }
+
+    drawArea();
     
 }
