@@ -23,13 +23,22 @@
             	<!--<p><label>This Week <span>42</span></label></p>-->
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
+
+              <div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/daily.png' %}" style="padding:10px;"></div>
+                <div class="column-right"><!--column-right-->
+            	<h2 class="green-text"><label>Daily<span>{{dailysales|floatformat:"3"|default_if_none:"0.000"}} KD</span></label>  </h2>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
             </div><!--card-column-->
         
             <div class="card-column whitebg green-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/daily.png' %}" style="padding:10px;"></div>
                 <div class="column-right"><!--column-right-->
-            	<h2 class="green-text"><label>Daily<span>{{dailysales|floatformat:"3"|default_if_none:"0.000"}} KD</span></label>  </h2>
+            	<h2 class="green-text"><label>Fine<span>{{fine_total|floatformat:"3"|default_if_none:"0.000"}} KD</span></label>  </h2>
+              <h2 class="green-text"><label>Write-Off<span>{{writeoff_total|floatformat:"3"|default_if_none:"0.000"}} KD</span></label>  </h2>
+              <h2 class="green-text"><label>Promocode<span>{{promocode_total|floatformat:"3"|default_if_none:"0.000"}} KD</span></label>  </h2>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -41,7 +50,7 @@
 		<div class="chart_boxDiv"><!--chart_boxDiv-->
   			<div class="chart_box_Right"><!--chart_box_Right-->
  				<!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
-            	<div id="chart_div" ></div>
+            	<div id="chart_div"></div>
   			</div><!--chart_box_Right-->
 		</div><!--chart_boxDiv-->
             

@@ -1,4 +1,3 @@
-console.log("drax1")
 google.load('visualization', '1.0', {
     'packages': ['corechart']
 });
@@ -15,7 +14,7 @@ function initialize() {
     var data = [];
 
     var options = {
-        chartArea : {height: '80%',},
+        chartArea : {height: '85%',},
         width: '100%',
         vAxis: {
             minValue: 0,
@@ -31,7 +30,6 @@ function initialize() {
     chart.setOptions(options);
 
     function drawArea() {
-        console.log("drax3")
         var date1 = new Date();
 
         var month = ("0" + (date1.getMonth()+1)).slice(-2);
@@ -43,30 +41,21 @@ function initialize() {
         
         axios.get(url+'/api/daily-sales-chart/',{ params: { 'sales_month': datestring } })
         .then(function (response) {
-            console.log(response.data,"war444")
     
             $.each(response.data.list, function(key,value) {
-            var quotations_area = [['Date', 'General Cleaning', 'Upholstery Cleaning', 'Kitchen Cleaning', 'Deep Cleaning', 'Carpet Cleaning', 'Sterilization']];
+            var quotations_area = [['Date', 'Total Cleaning Amount']];
 
             if(response.data.list.length > 0){
             $.each(response.data.list,function(key,value){
 
                 var ord_date = new Date(value.date+"Z")
-                console.log(ord_date,"ord")
-                // ord_date.setMonth(ord_date.getMonth()-1);
-                // console.log(ord_date,"ord2")
 
-                console.log(quotations_area,"qts_test")
-
-                quotations_area.push([ord_date,value.GeneralCleaning,value.UpholsteryCleaning,value.KitchenCleaning,value.DeepCleaning,value.CarpetCleaning,value.Sterilization]);
-                console.log(quotations_area,"qts_test2")
+                quotations_area.push([ord_date,value.totalamount]);
                 
             });
             }else{
-                quotations_area.push(['',0,0,0,0,0,0]);
+                quotations_area.push(['',0]);
             }
-            
-            console.log(quotations_area,"qts")
 
             data[1] = new google.visualization.arrayToDataTable(quotations_area);
 

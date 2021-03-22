@@ -1,5 +1,5 @@
-//var url='https://test.bleach-kw.com';
-var url = 'https://my.bleachkw.com';
+var url='https://test.bleach-kw.com';
+//var url = 'https://my.bleachkw.com';
 //var url = 'http://127.0.0.1:8000';
 
 function monthlysales(){
@@ -14,9 +14,14 @@ function monthlysales(){
         $("#dailysaleslist").empty();
 
         $.each(response.data.list, function(key,value) {
-            $('#dailysaleslist').append('<tr class="sales_rows"><td>'+value.Date+'</td><td>'+value.Day+'</td><td class="generalclean align-right">'+parseFloat(value.GeneralCleaning).toFixed(3)+'</td><td class="upholsteryclean align-right">'+parseFloat(value.UpholsteryCleaning).toFixed(3)+'</td><td class="deepclean align-right">'+parseFloat(value.DeepCleaning).toFixed(3)+'</td><td class="carpetclean align-right">'+parseFloat(value.CarpetCleaning).toFixed(3)+'</td><td class="kitchenclean align-right">'+parseFloat(value.KitchenCleaning).toFixed(3)+'</td><td class="sterilizationclean align-right">'+parseFloat(value.Sterilization).toFixed(3)+'</td><td class="totalclean align-right">'+parseFloat(value.Total).toFixed(3)+'</td></tr>')
+            console.log(response.data.todate,value.Date,"dtsss")
+            if (response.data.todate == value.Date){
+                $('#dailysaleslist').append('<tr class="sales_rows" bgcolor="#CCFFFF"><td>'+value.Date+'</td><td>'+value.Day+'</td><td class="generalclean align-right">'+parseFloat(value.GeneralCleaning).toFixed(3)+'</td><td class="upholsteryclean align-right">'+parseFloat(value.UpholsteryCleaning).toFixed(3)+'</td><td class="deepclean align-right">'+parseFloat(value.DeepCleaning).toFixed(3)+'</td><td class="carpetclean align-right">'+parseFloat(value.CarpetCleaning).toFixed(3)+'</td><td class="kitchenclean align-right">'+parseFloat(value.KitchenCleaning).toFixed(3)+'</td><td class="sterilizationclean align-right">'+parseFloat(value.Sterilization).toFixed(3)+'</td><td class="totalclean align-right">'+parseFloat(value.Total).toFixed(3)+'</td></tr>')
+            }else{
+                $('#dailysaleslist').append('<tr class="sales_rows"><td>'+value.Date+'</td><td>'+value.Day+'</td><td class="generalclean align-right">'+parseFloat(value.GeneralCleaning).toFixed(3)+'</td><td class="upholsteryclean align-right">'+parseFloat(value.UpholsteryCleaning).toFixed(3)+'</td><td class="deepclean align-right">'+parseFloat(value.DeepCleaning).toFixed(3)+'</td><td class="carpetclean align-right">'+parseFloat(value.CarpetCleaning).toFixed(3)+'</td><td class="kitchenclean align-right">'+parseFloat(value.KitchenCleaning).toFixed(3)+'</td><td class="sterilizationclean align-right">'+parseFloat(value.Sterilization).toFixed(3)+'</td><td class="totalclean align-right">'+parseFloat(value.Total).toFixed(3)+'</td></tr>')
+            }
         })
-        $('#dailysaleslist').append('<tr><td><b>Total</b></td><td></td><td id="generalsum" class="align-right"></td><td id="upholsterysum" class="align-right"></td><td id="deepsum" class="align-right"></td><td id="carpetsum" class="align-right"></td><td id="kitchensum" class="align-right"></td><td id="sterilizationsum" class="align-right"></td><td id="totalsum" class="align-right"></td></tr>');
+        $('#dailysaleslist').append('<tr bgcolor="#ADD8E6"><td><b>Total</b></td><td></td><td id="generalsum" class="align-right"></td><td id="upholsterysum" class="align-right"></td><td id="deepsum" class="align-right"></td><td id="carpetsum" class="align-right"></td><td id="kitchensum" class="align-right"></td><td id="sterilizationsum" class="align-right"></td><td id="totalsum" class="align-right"></td></tr>');
         add_console();
     })
 
