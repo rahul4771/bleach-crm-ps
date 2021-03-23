@@ -142,7 +142,7 @@
                 </div><!--enquiry-form-left-->
                 <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Cleaning Hours</label></div>
-                <input name="form-{{forloop.counter0}}-cleaning_hours" type="text" class="textBox OnlyNumber" maxlength="2" id='id_form-{{forloop.counter0}}-cleaning_hours' placeholder=" " value="{{book.cleaning_hours}}" required> 
+                <input name="form-{{forloop.counter0}}-cleaning_hours" type="text" class="textBox OnlyNumber" maxlength="2" id='id_form-{{forloop.counter0}}-cleaning_hours' placeholder=" " value="{{book.cleaning_hours|floatformat:"-1"}}" required> 
                 </div><!--enquiry-form-right-->
         </div> <!--enquiry-form-Wrapper enquiry-boxes--> 
                       

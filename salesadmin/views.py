@@ -1327,6 +1327,8 @@ class DailySales(IsSalesAdmin,View):
 	def get(self,request):
 		# for monthly tab and daily sales tab
 		today = datetime.now()
+
+		full_month_name = today.strftime("%B")
 		
 		monthdate1 = today.replace(day=1,hour=0,minute=0,second=0,microsecond=0)
 		monthdate2 = today.replace(day=1,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)-relativedelta(days=1)
@@ -1390,7 +1392,7 @@ class DailySales(IsSalesAdmin,View):
 				writeoff_total += float(evaluationn.writeback_amount)
 				promocode_total += float(evaluationn.promocode_amount)
 
-		return render(request,'salesadmin/dailysales/daily-sales.html',{"dailysales":daily_sales,"monthlysales":monthly_sales,"fine_total":fine_total,"writeoff_total":writeoff_total,"promocode_total":promocode_total})
+		return render(request,'salesadmin/dailysales/daily-sales.html',{"dailysales":daily_sales,"monthlysales":monthly_sales,"fine_total":fine_total,"writeoff_total":writeoff_total,"promocode_total":promocode_total,"month_name":full_month_name})
 
 class TicketApprove(IsSalesAdmin,View):
 	def get(self,request,ticket_id):

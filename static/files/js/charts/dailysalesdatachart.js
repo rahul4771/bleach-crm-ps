@@ -16,14 +16,16 @@ function initialize() {
     var options = {
         chartArea : {height: '85%',},
         width: '100%',
-        vAxis: {
-            minValue: 0,
-            format: '#'
-        },
         animation: {
             duration: 1000,
             easing: 'out'
         },
+        series: {
+            1: {
+              type: 'line'
+            }
+          },
+        colors: ['#CCCC00'],
         legend:{position:'none'}
     };
     
@@ -43,18 +45,18 @@ function initialize() {
         .then(function (response) {
     
             $.each(response.data.list, function(key,value) {
-            var quotations_area = [['Date', 'Total Cleaning Amount']];
+            var quotations_area = [['Date', 'Total Cleaning Amount','Reference']];
 
             if(response.data.list.length > 0){
             $.each(response.data.list,function(key,value){
 
                 var ord_date = new Date(value.date+"Z")
 
-                quotations_area.push([ord_date,value.totalamount]);
+                quotations_area.push([ord_date,value.totalamount,2000]);
                 
             });
             }else{
-                quotations_area.push(['',0]);
+                quotations_area.push(['',0,2000]);
             }
 
             data[1] = new google.visualization.arrayToDataTable(quotations_area);
