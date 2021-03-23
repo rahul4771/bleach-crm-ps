@@ -1,6 +1,6 @@
-var url='https://test.bleach-kw.com';
+//var url='https://test.bleach-kw.com';
 //var url = 'https://my.bleachkw.com';
-//var url = 'http://127.0.0.1:8000';
+var url = 'http://127.0.0.1:8000';
 
 function monthlysales(){
     var sales_month = $('#calendar_month').val();
@@ -25,7 +25,7 @@ function monthlysales(){
             }
 
         })
-        $('#dailysaleslist').append('<tr bgcolor="#ADD8E6"><td><b>Total</b></td><td></td><td id="generalsum" class="align-right"></td><td id="upholsterysum" class="align-right"></td><td id="deepsum" class="align-right"></td><td id="carpetsum" class="align-right"></td><td id="kitchensum" class="align-right"></td><td id="sterilizationsum" class="align-right"></td><td id="totalsum" class="align-right"></td><td id="totalsales" class="align-right"></td></tr>');
+        $('#dailysaleslist').append('<tr bgcolor="#ececec"><td><b>Total</b></td><td></td><td id="generalsum" class="align-right"></td><td id="upholsterysum" class="align-right"></td><td id="deepsum" class="align-right"></td><td id="carpetsum" class="align-right"></td><td id="kitchensum" class="align-right"></td><td id="sterilizationsum" class="align-right"></td><td id="totalsum" class="align-right"></td><td id="totalsales" class="align-right"></td></tr>');
         add_console();
 
         //adding up and down arrows in sales list table
@@ -35,6 +35,7 @@ function monthlysales(){
             console.log(salestatus,"stats")
 
             if (salestatus < 0){
+                $(this).text(parseFloat(Math.abs(salestatus)).toFixed(3));
                 $(this).prepend('<i class="fa fa-arrow-down" aria-hidden="true" style="color:red;"></i>');
                 $(this).addClass('red-text');
             }else if (salestatus > 0){
@@ -88,10 +89,6 @@ function add_console(){
         sum7 += parseFloat($(this).text());
     });
 
-    $('.salestatus').each(function(){
-        sum8 += parseFloat($(this).text());
-    });
-
     console.log(sum1, sum2,sum3,sum4,sum5,sum6,sum7,"lol")
     
     document.getElementById('generalsum').innerHTML =  parseFloat(sum1).toFixed(3) ;
@@ -101,6 +98,20 @@ function add_console(){
     document.getElementById('kitchensum').innerHTML =  parseFloat(sum5).toFixed(3) ;
     document.getElementById('sterilizationsum').innerHTML =  parseFloat(sum6).toFixed(3) ;
     document.getElementById('totalsum').innerHTML =  parseFloat(sum7).toFixed(3) ;
-    document.getElementById('totalsales').innerHTML =  parseFloat(sum8).toFixed(3) ;
+    document.getElementById('totalsales').innerHTML =  parseFloat(sum7 - 52000).toFixed(3) ;
+
+    var monthlytotalsales = $('#totalsales').text();
+    console.log(monthlytotalsales,"stats")
+
+    if (monthlytotalsales < 0){
+        $('#totalsales').text(parseFloat(Math.abs(monthlytotalsales)).toFixed(3));
+        $('#totalsales').prepend('<i class="fa fa-arrow-down" aria-hidden="true" style="color:red;"></i>');
+        $('#totalsales').addClass('red-text');
+    }else if (monthlytotalsales > 0){
+        $('#totalsales').prepend('<i class="fa fa-arrow-up" aria-hidden="true" style="color:green;"></i>');
+        $('#totalsales').addClass('green-text');
+    }else{
+        console.log("zero")
+    }
     
   }

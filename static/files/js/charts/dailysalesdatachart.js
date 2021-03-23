@@ -25,7 +25,7 @@ function initialize() {
               type: 'line'
             }
           },
-        colors: ['#CCCC00'],
+        colors: ['#FF6347','#FF4500'],
         legend:{position:'none'}
     };
     
