@@ -139,6 +139,10 @@ body{
 }
 .payment-section{
     position: relative;
+    position: fixed;
+    min-width: 20%;
+    max-height: 80vh;
+    overflow: auto;
 }
 .sr-calculation{
     position: absolute;
@@ -259,6 +263,30 @@ body{
 .storage-fields{
     display: none;
 }
+.item-list{
+   
+}
+.duration-active{
+    border: 1px solid #348695;
+    border-radius: 5px;
+    cursor:pointer;
+}
+.duration{
+    border:1px solid #dee2e6;
+    border-radius:5px;
+    cursor:pointer;
+}
+.custom-range::-webkit-slider-thumb {
+    background: gray;
+  }
+  
+  .custom-range::-moz-range-thumb {
+    background: gray;
+  }
+  
+  .custom-range::-ms-thumb {
+    background: gray;
+  }
 @media only screen and (max-width: 600px) {
     .sr-tab{
         font-size:9px;
@@ -279,6 +307,13 @@ body{
         padding: 0px !important;
         
     
+    }
+    .payment-section{
+        position: relative;
+        height:auto;
+        width:auto;
+        min-height: none;
+        min-width: none;
     }
 }
 

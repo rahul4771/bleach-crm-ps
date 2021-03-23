@@ -300,12 +300,14 @@ class DailySalesAPI(APIView):
 	def get(self,request):
 		response_dict = {'success':False}
 
+		today = datetime.now()
+
 		sales_month = request.GET.get('sales_month')
 		print(sales_month,"smonth")
 
 		month,year = sales_month.split("/")
 		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
-		monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+		monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)-relativedelta(days=1)
 		daterange  = pd.date_range(monthdate1, monthdate2)
 		print(daterange,"dr")
 		# orderschedules = OrderScheduler.objects.filter(is_active=True).filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).distinct().values_list('order__order_no').distinct()
@@ -379,7 +381,7 @@ class DailySalesAPI(APIView):
 			saleslist.append(list_item)
 
 				
-		response_dict = {'success':True,'list':saleslist}
+		response_dict = {'success':True,'list':saleslist,'todate':str(today.date())}
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -391,15 +393,13 @@ class DailySalesChartAPI(APIView):
 	def get(self,request):
 		response_dict = {'success':False}
 
-		start_date = request.GET.get('start_date')
-		end_date = request.GET.get('end_date')
-		date_a = start_date.split('-')
-		date_b = end_date.split('-')
+		sales_month = request.GET.get('sales_month')
+		print(sales_month,"smonth")
 
-		print(date_a,"pop")
+		month,year = sales_month.split("/")
 
 		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
-		monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+		monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)-relativedelta(days=1)
 		daterange  = pd.date_range(monthdate1, monthdate2)
 		print(daterange,"dr")
 
@@ -410,12 +410,7 @@ class DailySalesChartAPI(APIView):
 			end_date_day   = date+timedelta(1)
 
 			print(date.strftime("%A"),"dt")
-			generalcleaning = 0
-			upholsterycleaning = 0
-			deepcleaning = 0
-			carpetcleaning = 0
-			kitchencleaning = 0
-			sterilization = 0
+
 			cleaning_amount = 0
 
 			orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',start_at__range=(start_date_day,end_date_day)).values_list('order__order_no','order_scheduler_book__total_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id').order_by('end_at')
@@ -432,37 +427,14 @@ class DailySalesChartAPI(APIView):
 
 			for schedule in schedules_list:
 
-				schedule_count = OrderScheduler.objects.filter(order__order_no=schedule[0]).count()
+				schedule_count = OrderScheduler.objects.filter(order__order_no=schedule[0],order_scheduler_book__id=schedule[4]).count()
 
 				order_amount = schedule[1]
 				cleaning_amount += float(order_amount/schedule_count)
-
-				if schedule[2] == 'General Cleaning':
-					generalcleaning += float(order_amount/schedule_count)
-
-				if schedule[2] == 'Upholstery Cleaning':
-					upholsterycleaning += float(order_amount/schedule_count)
-
-				if schedule[2] == 'Deep Cleaning':
-					deepcleaning += float(order_amount/schedule_count)
-
-				if schedule[2] == 'Kitchen Cleaning':
-					kitchencleaning += float(order_amount/schedule_count)
-
-				if schedule[2] == 'Carpet Cleaning':
-					carpetcleaning += float(order_amount/schedule_count)
-				
-				if schedule[2] == 'Sterilization':
-					sterilization += float(order_amount/schedule_count)
 			
 			list_item = {
 				'date': str(date.date()),
-				'GeneralCleaning':generalcleaning,
-				'UpholsteryCleaning':upholsterycleaning,
-				'KitchenCleaning':kitchencleaning,
-				'CarpetCleaning':carpetcleaning,
-				'DeepCleaning':deepcleaning,
-				'Sterilization':sterilization
+				'totalamount':cleaning_amount
 			}
 
 			saleslist.append(list_item)

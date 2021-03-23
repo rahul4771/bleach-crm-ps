@@ -3089,6 +3089,8 @@ class MakeQuatationPhase2Delete(IsAgent,View):
 			Order.objects.filter(is_active=True,evaluation__id=evaluation_id).delete()
 			return redirect('agent:agent-orders')
 
+		messages.success(request,"Evaluation Deleted !")
+
 		return redirect('agent:agent-makequatation1edit',enquiry_id,evaluation_id)
 
 

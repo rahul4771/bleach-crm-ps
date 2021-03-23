@@ -1327,14 +1327,19 @@ class DailySales(IsSalesAdmin,View):
 	def get(self,request):
 		# for monthly tab and daily sales tab
 		today = datetime.now()
+
+		full_month_name = today.strftime("%B")
 		
 		monthdate1 = today.replace(day=1,hour=0,minute=0,second=0,microsecond=0)
-		monthdate2 = today.replace(day=1,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+		monthdate2 = today.replace(day=1,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)-relativedelta(days=1)
 		daterange  = pd.date_range(monthdate1, monthdate2)
 		print(daterange,"dr")
 
 		monthly_sales = 0
 		daily_sales = 0
+		fine_total = 0
+		writeoff_total = 0
+		promocode_total = 0
 
 		for date in daterange:
 			start_date_day = date
@@ -1344,17 +1349,25 @@ class DailySales(IsSalesAdmin,View):
 
 			cleaning_amount = 0
 
-			orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',start_at__range=(start_date_day,end_date_day)).values_list('order__order_no','order_scheduler_book__total_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id').order_by('end_at')
-
+			orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',start_at__range=(start_date_day,end_date_day)).values_list('order__order_no','order_scheduler_book__total_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id').order_by('end_at')
+			
 			found = set()
 			schedules_list = []
+
+			found_evaluations = set()
+			evaluations_list = []
 
 			for schedule in orderschedules:
 
 				if schedule[4] not in found:
 					schedules_list.append(schedule)
 				found.add(schedule[4])
-			print(found,schedules_list,"kio")
+
+				if schedule[5] not in found_evaluations:
+					evaluations_list.append(schedule)
+				found_evaluations.add(schedule[5])
+
+			print(schedules_list,evaluations_list,"listss")
 
 			for schedule in schedules_list:
 
@@ -1366,12 +1379,20 @@ class DailySales(IsSalesAdmin,View):
 			todate = datetime.now().replace(hour=0,minute=0,second=0,microsecond=0)
 
 			if date == todate:
-				print("now is")
+		
 				daily_sales = cleaning_amount
 
 			monthly_sales += cleaning_amount
 
-		return render(request,'salesadmin/dailysales/daily-sales.html',{"dailysales":daily_sales,"monthlysales":monthly_sales})
+			for evaluation in evaluations_list:
+				print(evaluation[5],"lop")
+				evaluationn = Evaluation.objects.get(is_active=True,id=int(evaluation[5]))
+				print(evaluationn.writeback_amount,evaluationn.fine_amount,evaluationn.promocode_amount,"amtt")
+				fine_total += float(evaluationn.fine_amount)
+				writeoff_total += float(evaluationn.writeback_amount)
+				promocode_total += float(evaluationn.promocode_amount)
+
+		return render(request,'salesadmin/dailysales/daily-sales.html',{"dailysales":daily_sales,"monthlysales":monthly_sales,"fine_total":fine_total,"writeoff_total":writeoff_total,"promocode_total":promocode_total,"month_name":full_month_name})
 
 class TicketApprove(IsSalesAdmin,View):
 	def get(self,request,ticket_id):
