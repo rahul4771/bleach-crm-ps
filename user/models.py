@@ -120,6 +120,8 @@ class UserProfile(AbstractUser):
     is_outdoor_skill            = models.BooleanField(null=False,blank=True,default=False)
     is_window_skill             = models.BooleanField(null=False,blank=True,default=False)
 
+    address_otp            = models.CharField(max_length=100,blank=True,null=True)
+
     created_by      = models.ForeignKey('self',blank=True,null=True)
     is_active       = models.BooleanField(null=False,blank=True,default=True)
     created         = models.DateTimeField(auto_now_add=True)

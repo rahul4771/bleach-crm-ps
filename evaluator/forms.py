@@ -45,7 +45,6 @@ class QuatationServiceForm(forms.ModelForm):
 		self.fields['service_type'].required    	= True
 		self.fields['cleaning_method'].required 	= True
 		self.fields['area_type'].required 			= True
-		self.fields['area_type'].required 			= True
 		self.fields['cleaning_policy'].required 	= True
 
 		self.fields['number_of_cleaners'].required  = True
