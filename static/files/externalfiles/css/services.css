@@ -141,7 +141,7 @@ body{
     position: relative;
     position: fixed;
     min-width: 20%;
-    max-height: 80vh;
+   height:80vh;
     overflow: auto;
 }
 .sr-calculation{
@@ -163,6 +163,103 @@ body{
   
     opacity: 1;
 }
+/*payment card */
+.inv-payment-card{
+    
+    background: #f2f2f2 0% 0% no-repeat padding-box;
+    width: 40%;
+    margin: 2%;
+    border: 1px solid #E0E0E0;
+    border-radius: 12px;
+    opacity: 1;
+
+cursor: pointer;
+}
+.inv-payment-card-active{
+    width: 40%;
+    margin: 2%;
+    box-shadow: 0px 3px 6px #00000029;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    border: 1px solid #E0E0E0;
+    border-radius: 12px;
+    opacity: 1;
+    cursor: pointer;
+    color: #616161
+}
+.inv-card-icon{
+    max-height: 60px;
+    padding: 10px;
+}
+.inv-payment-text{
+    font-size:12px;
+    font-weight:600;
+}
+.inv-btn{
+    background: #348695 0% 0% no-repeat padding-box;
+box-shadow: 0px 3px 6px #00000040;
+border-radius: 6px;
+opacity: 1;
+padding: 5px;
+cursor:pointer;
+width:120px;
+margin: auto;
+}
+.inv-white-btn{
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 6px #00000026;
+    border: 1px solid #767676;
+    border-radius: 6px;
+    opacity: 1;
+    cursor:pointer;
+    padding: 5px;
+}
+.inv-primary-outline-btn{
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 6px #00000040;
+    border: 1px solid #348695;
+    border-radius: 6px;
+    opacity: 1;
+    cursor:pointer;
+    color:#348695;
+    padding: 5px;
+}
+.inv-primary-btn{
+    background: #348695 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 6px #00000040;
+    border: 1px solid #348695;
+    border-radius: 6px;
+    opacity: 1;
+    cursor:pointer;
+    color:#ffffff;
+    padding: 5px;
+}
+.inv-check-box{
+    height:15px;
+    width:15px;
+    border-radius:15px;   
+    border: 1px solid #e0e0e0;
+    
+}
+.inv-check-box-active{
+    background-color: #30ab23de;
+    height: 20px;
+    width: 20px;
+    border-radius: 15px;
+    border:none; 
+}
+.inv-check-icon{
+    font-size: 11px;
+    margin: auto;
+    position: relative;
+    top: -4px;
+    color: #ffffff;
+    
+}
+
+
+
+/*payment ends here */
+
 .time-slot{
     border:1px solid #ffffff;
     cursor:pointer;
@@ -287,6 +384,30 @@ body{
   .custom-range::-ms-thumb {
     background: gray;
   }
+.item_image{
+    border: 1px dashed #348695;
+    border-radius: 10px;
+    text-align: center;
+    padding: 40px;
+    cursor:pointer;
+    max-width: 100%;
+}
+.ImageIcon{
+    font-size:24px;
+    color:#348695
+}
+.image-footer{
+    background-color:#348695;
+    color:#ffffff  !important;
+    padding:10px;
+    text-align: center;
+}
+.img-icon{
+    cursor: pointer;
+}
+
+
+  
 @media only screen and (max-width: 600px) {
     .sr-tab{
         font-size:9px;
@@ -314,6 +435,10 @@ body{
         width:auto;
         min-height: none;
         min-width: none;
+    }
+    .v-stepper__content{
+        padding:0px !important;
+        margin: 0px  !important;
     }
 }
 

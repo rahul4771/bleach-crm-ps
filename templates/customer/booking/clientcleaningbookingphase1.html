@@ -1,218 +1,907 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
+        integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w=="
+        crossorigin="anonymous" />
     <link rel="stylesheet" href="{% static 'files/externalfiles/css/material-form.css' %}">
 
     <link rel="stylesheet" href="{% static 'files/externalfiles/css/vanillaSelectBox.css' %}">
     <link rel="stylesheet" href="{% static 'files/externalfiles/css/services.css' %}">
-    
-    <link rel="stylesheet" href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.min.css' %}" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
+  
+
+    <link rel="stylesheet"
+        href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.min.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
+        integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w=="
+        crossorigin="anonymous" />
     <link rel="stylesheet" href="{% static 'files/externalfiles/plugins/date-picker/mc-calendar.min.css' %}" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
     <title>Bleach Cleaning Services | Booking</title>
-  </head>
-  <body>
-   
+</head>
+
+<body>
+
     <div class="container" id="app">
-        <div class="row">
-            <div class="col-md-8 ">
-                
-                <div class="sr-card mb-4 p-4 mt-4">
-                 
-                    <div >Need an evaluator to do it for you ? <a href="#" class="sr-link">Click here</a></div>
-                    <div class="d-flex sr-tabs " >
-                        <div class="p-3 sr-tab-active" id="tab-1" onclick="activateTab(this)">
-                            Services
-                        </div>
-                        
-                        <div class="p-3   sr-tab" id="tab-2" onclick="activateTab(this)">
-                            Schedule
-                        </div>
-                        <div class="p-3 sr-tab" id="tab-3" onclick="activateTab(this)">
-                            Address
-                        </div>
-                        <div class="p-3 sr-tab" id="tab-4" onclick="activateTab(this)">
-                            Payment Method
-                        </div>
-                        <div class="sr-tab"></div>
-                    </div>
-                    <div class="tab-content mt-4" id="tab-1-content">
-                        <h5 class="pt-2">Service Type</h5>
-                        <div class="owl-carousel owl-theme mt-4">
-                          {% for service in service_types %}
-                            <div class="sr-service-card p-2" id="service-{{forloop.counter}}"  onclick="selectService(this)"> 
-                                <!--@click="selectService('{{service.name}}',{{forloop.counter}})" v-if="serviceType=='{{service.name}}'"-->
-                              <i class="far fa-circle inactive-icon"></i>
-                                {% if service.name == 'General Cleaning' %}
-                                <img src="{% static 'files/externalfiles/icons/household.png' %}" class="service-icon"/>
-                                {% elif service.name == 'Deep Cleaning' %}
-                                <img src="{% static 'files/externalfiles/icons/vacuum.png' %}" class="service-icon"/>
-                                {% elif service.name == '' %}
-                                <img src="{% static 'files/externalfiles/icons/facade.png' %}" class="service-icon"/>
-                                {% elif service.name == 'Facade Cleaning' %}
-                                <img src="{% static 'files/externalfiles/icons/facade.png' %}" class="service-icon"/>
-                                {% elif service.name == 'Storage Area' %}
-                                <img src="{% static 'files/externalfiles/icons/storage.png' %}" class="service-icon"/>
-                                {% elif service.name == 'Car Parking Umbrella' %}
-                                <img src="{% static 'files/externalfiles/icons/car.png' %}" class="service-icon"/>
-                                {% elif service.name == 'Window Cleaning' %}
-                                <img src="{% static 'files/externalfiles/icons/windows.png' %}" class="service-icon"/>
-                                {% elif service.name == 'Outdoor Cleaning' %}
-                                <img src="{% static 'files/externalfiles/icons/outdoor.png' %}" class="service-icon"/>
-                                {% elif service.name == 'Upholstery Cleaning' %}
-                                <img src="{% static 'files/externalfiles/icons/sofa.png' %}" class="service-icon"/>
-                                {% elif service.name == 'Carpet Cleaning' %}
-                                <img src="{% static 'files/externalfiles/icons/carpet2.png' %}" class="service-icon"/>
-                                {% elif service.name == 'Sterilization' %}
-                                <img src="{% static 'files/externalfiles/icons/hand-sanitizer.png' %}" class="service-icon"/>
-                                {% elif service.name == 'Mattress Cleaning' %}
-                                <img src="{% static 'files/externalfiles/icons/bed.png' %}" class="service-icon"/>
-                                {% elif service.name == 'Kitchen Cleaning' %}
-                                <img src="{% static 'files/externalfiles/icons/kitchen.png' %}" class="service-icon"/>
-                                {% endif %}
 
-                                <div class="text-center pt-2 service-title">{{service.name}}</div>     
-                            </div>
-
-                            
-                          {% endfor %}                           
-                          </div>
-
-                          <div><h5 class="pt-2 questions">What's your place like ?</h5> </div>
-                          <div class="row ">
-
-                            <div class="col-md-4 mt-2 common-field" id="field-area-type">
-                               <select id="area-type" name="area-type" v-model="serviceSection.area_type">
-                                   {% for area_type in area_types %}
-                                   <option value="{{area_type.name}}">{{area_type.name}}</option>
-                                   {% endfor %}
-                              </select>
-                            </div>
-                            <div class="col-md-4 mt-2 common-field" id="field-location-type">
-                               <select id="location-type" name="location-type" onchange="changeLocation()" v-model="serviceSection.location_type">
-                                <option value="Location Type" disabled selected>Location Type</option>
-                                   <option value="Post Construction">Post Construction</option>
-                                   <option value="Post Renovation">Post Renovation</option>
-                                   <option value="Fully Furnished">Fully Furnished</option>
-                                   <option value="Empty Area">Empty Area</option>
-                              </select>
-                            </div>
-                            <div class="col-md-4 mt-2 common-field" id="field-no-of-buildings">
-                                <select id="no-of-buildings" onchange="addTabs()" name="no-of-buildings">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="4">5</option>
-                                    <option value="4">6</option>
-                                    <option value="4">7</option>
-                                    <option value="4">8</option>
-                                    <option value="4">9</option>
-                                    <option value="4">10</option>
-                                  
-                               </select>
-                             </div>
-                             <div class="col-md-4 mt-2 common-field" id="field-wall-type">
-                              <select id="wall-type" multiple name="wall-type">
-                                  <option value="1">1</option>
-                                  <option value="2">2</option>
-                                  <option value="3">3</option>
-                                  <option value="4">4</option>
+        <v-app style="background-color: #f2f2f2;">
+            <div class="text-center">
+                <v-dialog
+                  v-model="dialog"
+                  width="500"
+                >
+                  
+            
+                  <v-card>
+                    <v-card-title class="headline primary text-white">
+                      <%dialogmsg+' ' +serviceType.split(' ')[0]%>
+                    </v-card-title>
+            
+                    <v-card-text>
+                        <div class="row mt-4" >
                                 
-                             </select>
-                           </div>
-                           <div class="col-md-4 mt-2 common-field" id="field-floor-type">
-                            <select id="floor-type" multiple name="floor-type">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                              
-                           </select>
-                         </div>
-                         <div class="col-md-4 mt-2 common-field" id="field-ceiling-type">
-                          <select id="ceiling-type" multiple name="ceiling-type">
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                              <option value="4">4</option>
+                            <div class="col-md-12" v-if="serviceType=='Upholstery Cleaning'">
                             
-                         </select>
-                       </div>
-                       <div class="col-md-4 mt-2 common-field" id="field-rack-type">
-                        <select id="rack-type" multiple name="rack-type">
-                            <option value="1">WOODEN</option>
-                            <option value="2">METAL</option>
-                            <option value="3">CONCRETE</option>
-                           
-                          
-                       </select>
-                     </div>
-                     <div class="col-md-4 mt-2 common-field" id="field-no-of-racks">
-                      <input type="number" id="no-of-racks" name="no-of-racks" placeholder="No of Racks" class="sr-input"/>
+                                <v-select
+                                
+                                  :items="upholsteryType"
+                                 
+                                  label="Select the type of Upholstery"
+                                  v-model="otherService.type"
+                                  required
 
-                   </div>
-                           <div class="col-md-4 mt-2 common-field" id="field-size">
-                            <select id="size"  name="size">
-                                <option value="1">Small</option>
-                                <option value="2">Medium</option>
-                                <option value="3">Large</option>
+                                ></v-select>
+                            </div>
+                            <div class="col-md-6" v-if="serviceType=='Facade Cleaning'">
+                            
+                                <v-select
+                                
+                                  :items="color"
+                                 
+                                  label="Hall Way Size"
+                                  required
+                                  multiple
+                                  v-model="otherService.hallway_size"
+                                ></v-select>
+                            </div>
+                            <div class="col-md-6" v-if="serviceType!='Facade Cleaning' && serviceType!='Car Parking Umbrella' && serviceType!='Window Cleaning' && serviceType!='Outdoor Cleaning'">
+                                <v-text-field
+                                 
+                                 
+                                label="Age (In months)"
+                                type="number"
+                                required
+                                v-model="otherService.age"
+                              ></v-text-field>
+
+                            </div>
+                            
+                            <div class="col-md-6" v-if="serviceType!='Kitchen Cleaning' && serviceType!='Facade Cleaning' && serviceType!='Car Parking Umbrella' && serviceType!='Window Cleaning' && serviceType!='Outdoor Cleaning'">
+                            
+                                <v-select
+                                
+                                  :items="material"
+                                 
+                                  label="Material"
+                                  required
+                                  multiple
+                                  v-model="otherService.material"
+                                ></v-select>
+                            </div>
+                            <div class="col-md-6" v-if="serviceType!='Kitchen Cleaning' && serviceType!='Facade Cleaning' && serviceType!='Car Parking Umbrella' && serviceType!='Window Cleaning'&& serviceType!='Outdoor Cleaning'">
+                            
+                                <v-select
+                                
+                                  :items="color"
+                                 
+                                  label="Color"
+                                  required
+                                  multiple
+                                  v-model="otherService.color"
+                                ></v-select>
+                            </div>
+                            <div class="col-md-6">
+                            
+                                <v-select
+                                
+                                  :items="upholsterySize1"
+                                 
+                                  label="Size"
+                                  required
+                                  v-model="otherService.size"
+                                ></v-select>
+                            </div>
+                            <div class="col-md-6" v-if="serviceType=='Window Cleaning'">
+                            
+                                <v-select
+                                
+                                  :items="['Outside & Inside','Outside','Inside']"
+                                 
+                                  label="Sides"
+                                  required
+                                  v-model="otherService.sides"
+                                ></v-select>
+                            </div>
+                            <div class="col-md-6"v-if="serviceType!='Kitchen Cleaning' && serviceType!='Facade Cleaning' && serviceType!='Car Parking Umbrella' && serviceType!='Window Cleaning' && serviceType!='Outdoor Cleaning'">
+                                <v-radio-group v-model="otherService.stain" class="p-2">
+                                    <template v-slot:label>
+                                      <div>Any  <strong>Stain ?</strong></div>
+                                    </template>
+                                    <v-radio :value="true">
+                                      <template v-slot:label>
+                                        <div>Yes<strong class="success--text"></strong></div>
+                                      </template>
+                                    </v-radio>
+                                    <v-radio :value="false">
+                                      <template v-slot:label>
+                                        <div>No <strong class="primary--text"></strong></div>
+                                      </template>
+                                    </v-radio>
+                                  </v-radio-group>
+                            </div>
+                            <div class="col-md-6" v-if="otherService.stain" >
+                            
+                                <v-select
+                                
+                                  :items="upholsterySize1"
+                                 
+                                  label="Reason for stain"
+                                  required
+                                  v-model="otherService.stain_reason"
+                                ></v-select>
+                            </div>
+                            <div class="col-md-6" v-if="serviceType=='Kitchen Cleaning' || serviceType=='Facade Cleaning' ">
+                            
+                                <v-select
+                                
+                                  :items="color"
+                                 
+                                  label="Wall type"
+                                  required
+                                  multiple
+                                  v-model="otherService.wall_type"
+                                ></v-select>
+                            </div>
+                            <div class="col-md-6" v-if="serviceType=='Kitchen Cleaning' || serviceType=='Car Parking Umbrella'">
+                            
+                                <v-select
+                                
+                                  :items="color"
+                                 
+                                  label="Floor Type"
+                                  required
+                                  multiple
+                                  v-model="otherService.floor_type"
+                                ></v-select>
+                            </div>
+                            <div class="col-md-6" v-if="serviceType=='Kitchen Cleaning' || serviceType=='Car Parking Umbrella'">
+                            
+                                <v-select
+                                
+                                  :items="color"
+                                 
+                                  label="Ceiling Type"
+                                  required
+                                  multiple
+                                  v-model="otherService.ceiling_type"
+                                ></v-select>
+                            </div>
+                            <div class="col-md-6" v-if="serviceType=='Kitchen Cleaning'">
+                                <v-radio-group v-model="otherService.residue" class="p-2">
+                                    <template v-slot:label>
+                                      <div>Oil <strong>Residue ?</strong></div>
+                                    </template>
+                                    <v-radio :value="true">
+                                      <template v-slot:label>
+                                        <div>Yes<strong class="success--text"></strong></div>
+                                      </template>
+                                    </v-radio>
+                                    <v-radio :value="false">
+                                      <template v-slot:label>
+                                        <div>No <strong class="primary--text"></strong></div>
+                                      </template>
+                                    </v-radio>
+                                  </v-radio-group>
+                            </div>
                                
-                              
-                           </select>
-                         </div>
-                         <div class="col-md-4 mt-2 common-field" id="field-hallway-size">
-                          <select id="hallway-size"  name="hallway-size">
-                              <option value="1">Small</option>
-                              <option value="2">Medium</option>
-                              <option value="3">Large</option>
-                             
-                            
-                         </select>
-                       </div>
+                           
+                           
+                            <div class="col-md-12">
 
-                        </div>   
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="tabset mt-4">
-                                  
-                                
-                                    
-                                    <div class="tab-panels">
-                                  
+                            </div>
+
+                        </div>
+                    </v-card-text>
+            
+                    <v-divider></v-divider>
+            
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        color="primary"
+                        text
+                        v-on:click="addOtherService()"
+                        v-if="dialogStat"
+                      >
+                        Add 
+                      </v-btn>
+                      <v-btn
+                      color="primary"
+                      text
+                      v-on:click="saveChanges()"
+                      v-if="!dialogStat"
+                    >
+                      Save Changes
+                    </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </div>
+            <div class="row">
+                <div class="col-md-8 ">
+
+                    <div class="sr-card mb-4 p-4 mt-4">
+
+                        <div>Need an evaluator to do it for you ? <a href="#" class="sr-link">Click here</a></div>
+                        <div class="d-flex sr-tabs ">
+                            <div class="p-3 sr-tab-active" id="tab-1" onclick="activateTab(this)">
+                                Services
+                            </div>
+
+                            <div class="p-3   sr-tab" id="tab-2" onclick="activateTab(this)">
+                                Schedule
+                            </div>
+                            <div class="p-3 sr-tab" id="tab-3" onclick="activateTab(this)">
+                                Address
+                            </div>
+                            <div class="p-3 sr-tab" id="tab-4" onclick="activateTab(this)">
+                                Payment Method
+                            </div>
+                            <div class="sr-tab"></div>
+                        </div>
+                        <div class="tab-content mt-4" id="tab-1-content">
+                            <h5 class="pt-2">Service Type</h5>
+                            <div class="owl-carousel owl-theme mt-4">
+                                {% for service in service_types %}
+                                <div class="sr-service-card p-2" id="service-{{forloop.counter}}"
+                                    onclick="selectService(this)">
+                                    <!--@click="selectService('{{service.name}}',{{forloop.counter}})" v-if="serviceType=='{{service.name}}'"-->
+                                    <i class="far fa-circle inactive-icon"></i>
+                                    {% if service.name == 'General Cleaning' %}
+                                    <img src="{% static 'files/externalfiles/icons/household.png' %}"
+                                        class="service-icon" />
+                                    {% elif service.name == 'Deep Cleaning' %}
+                                    <img src="{% static 'files/externalfiles/icons/vacuum.png' %}"
+                                        class="service-icon" />
+                                    {% elif service.name == '' %}
+                                    <img src="{% static 'files/externalfiles/icons/facade.png' %}"
+                                        class="service-icon" />
+                                    {% elif service.name == 'Facade Cleaning' %}
+                                    <img src="{% static 'files/externalfiles/icons/facade.png' %}"
+                                        class="service-icon" />
+                                    {% elif service.name == 'Storage Area' %}
+                                    <img src="{% static 'files/externalfiles/icons/storage.png' %}"
+                                        class="service-icon" />
+                                    {% elif service.name == 'Car Parking Umbrella' %}
+                                    <img src="{% static 'files/externalfiles/icons/car.png' %}" class="service-icon" />
+                                    {% elif service.name == 'Window Cleaning' %}
+                                    <img src="{% static 'files/externalfiles/icons/windows.png' %}"
+                                        class="service-icon" />
+                                    {% elif service.name == 'Outdoor Cleaning' %}
+                                    <img src="{% static 'files/externalfiles/icons/outdoor.png' %}"
+                                        class="service-icon" />
+                                    {% elif service.name == 'Upholstery Cleaning' %}
+                                    <img src="{% static 'files/externalfiles/icons/sofa.png' %}" class="service-icon" />
+                                    {% elif service.name == 'Carpet Cleaning' %}
+                                    <img src="{% static 'files/externalfiles/icons/carpet2.png' %}"
+                                        class="service-icon" />
+                                    {% elif service.name == 'Sterilization' %}
+                                    <img src="{% static 'files/externalfiles/icons/hand-sanitizer.png' %}"
+                                        class="service-icon" />
+                                    {% elif service.name == 'Mattress Cleaning' %}
+                                    <img src="{% static 'files/externalfiles/icons/bed.png' %}" class="service-icon" />
+                                    {% elif service.name == 'Kitchen Cleaning' %}
+                                    <img src="{% static 'files/externalfiles/icons/kitchen.png' %}"
+                                        class="service-icon" />
+                                    {% endif %}
+
+                                    <div class="text-center pt-2 service-title">{{service.name}}</div>
+                                </div>
+
+
+                                {% endfor %}
+                            </div>
+
+                            <div>
+                                <h5 class="pt-2 questions">What's your place like ?</h5>
+                            </div>
+                            <div class="row " v-if="serviceType">
+
+                           
+                                <div class="col-md-4 mt-2" id="field-location-type">
+                                    <v-select :items="location_types"
+                                        v-model="serviceData.service_details.location_type" label="Location Type">
+                                    </v-select>
+
+                                </div>
+                                <div class="col-md-4 mt-2 " id="field-no-of-buildings">
+                                    <v-select :items="area_types" v-model="serviceData.service_details.area_type"
+                                        label="Area Type">
+                                    </v-select>
+                                </div>
+                                <div class="col-md-4 mt-2 " id="field-wall-type" v-if="serviceType=='General Cleaning' || serviceType=='Deep Cleaning'||serviceType=='Sterilization'||serviceType=='Storage Area'">
+                                    <v-select :items="buildings" v-model="no_of_building" label="No of Building" v-on:change="setBuilding()">
+                                    </v-select>
+                                </div>
+                            </div>
+                            <div class="row" v-if="serviceType=='General Cleaning' || serviceType=='Deep Cleaning'||serviceType=='Sterilization'||serviceType=='Storage Area'">
+
+
+                                <div class="col-md-12">
+                                    <v-tabs v-model="tab">
+                                        <v-tab v-for="index in parseInt(no_of_building)" :key="index">Building <% index
+                                                %>
+                                        </v-tab>
+
+                                    </v-tabs>
+                                    <v-tabs-items v-model="tab">
+
+                                        <v-tab-item v-for="index in parseInt(no_of_building)" :key="index">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <v-select :items="buildings" v-model="no_of_floors[index-1]" label="No of Floors" v-on:change="setFloors(index)">
+                                                    </v-select>
+                                                </div>
+                                            </div>
+                                            
+                                               <v-stepper v-model="e.building[index-1].e" outlined vertical v-if="no_of_floors[index-1]" class="elevation-0">
+                                                   <div v-for="floor in parseInt(no_of_floors[index-1])" :key="floor">
+                                                    <v-stepper-step :complete="e.building[index-1].e > floor" :step="floor" >
+                                                       <% 'Floor '+floor%>
+                                                        <small>Fill the details for Floor <% floor %></small>
+                                                    </v-stepper-step>
+
+                                                    <v-stepper-content :step="floor" >
+                                                        <v-card  class="mb-12" outlined >
+                                                            <v-radio-group v-model="building[index-1].floors[floor-1].apartment" class="p-2" v-if="serviceType!='Storage Area'" row>
+                                                                <template v-slot:label>
+                                                                  <div>Any  <strong>Apartments ?</strong></div>
+                                                                </template>
+                                                                <v-radio :value="true">
+                                                                  <template v-slot:label>
+                                                                    <div>Yes<strong class="success--text"></strong></div>
+                                                                  </template>
+                                                                </v-radio>
+                                                                <v-radio :value="false">
+                                                                  <template v-slot:label>
+                                                                    <div>No <strong class="primary--text"></strong></div>
+                                                                  </template>
+                                                                </v-radio>
+                                                              </v-radio-group>
+                                                              <div class="p-2" v-if="!building[index-1].floors[floor-1].apartment">
+                                                                  <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <v-select :items="sizeData" item-text="combinedSize"  v-model="building[index-1].floors[floor-1].size" label="Size"  return-object>
+                                                                        </v-select>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <v-select :items="size" v-model="building[index-1].floors[floor-1].wall_type" label="Wall Type" multiple>
+                                                                        </v-select>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <v-select :items="size" v-model="building[index-1].floors[floor-1].floor_type" label="Floor Type" multiple>
+                                                                        </v-select>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <v-select :items="size" v-model="building[index-1].floors[floor-1].ceiling_type" label="Ceiling Type" multiple>
+                                                                        </v-select>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <v-text-field
+                                                                        v-model="building[index-1].floors[floor-1].no_of_rooms"
+                                                                        label="No of Rooms"
+                                                                        required
+                                                                      > </v-text-field>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <v-text-field
+                                                                        v-model="building[index-1].floors[floor-1].no_of_bathrooms"
+                                                                        label="No of Bathrooms"
+                                                                        
+                                                                        required
+                                                                      > </v-text-field>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <v-text-field
+                                                                        v-model="building[index-1].floors[floor-1].no_of_windows"
+                                                                        label="No of Windows"
+                                                                        required
+                                                                      > </v-text-field>
+                                                                    </div>
+                                                                    <div class="col-md-6" v-if="serviceType=='Deep Cleaning' && serviceData.service_details.location_type=='Post Construction' ">
+                                                                        <v-radio-group v-model="building[index-1].floors[floor-1].paint_residue" class="p-2" row>
+                                                                            <template v-slot:label>
+                                                                              <div>Paint & Cement Residue ?</div>
+                                                                            </template>
+                                                                            <v-radio :value="true">
+                                                                              <template v-slot:label>
+                                                                                <div>Yes<strong class="success--text"></strong></div>
+                                                                              </template>
+                                                                            </v-radio>
+                                                                            <v-radio :value="false">
+                                                                              <template v-slot:label>
+                                                                                <div>No <strong class="primary--text"></strong></div>
+                                                                              </template>
+                                                                            </v-radio>
+                                                                          </v-radio-group>
+                                                                    </div>
+                                                                  </div>
+                                                              </div>
+                                                              <div class="p-2" v-if="building[index-1].floors[floor-1].apartment">
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <v-select :items="buildings"  v-model="building[index-1].floors[floor-1].no_of_apartments" label="No of Apartments" v-on:change="setApartments(index,floor)">
+                                                                        </v-select>
+                                                                    </div>
+                                                                   
+                                                                    
+                                                                </div>
+                                                                <v-stepper v-model="e.building[index-1].floors[floor-1].e" v-if="building[index-1].floors[floor-1].no_of_apartments" class="elevation-0">
+                                                                   
+                                                                    <div v-for="(apartment,apindex) in building[index-1].floors[floor-1].apartments" v-bind:key="apindex">
+                                                                  
+                                                                       
+                                                                      <v-stepper-step
+                                                                        :complete="e.building[index-1].floors[floor-1].e > apindex+1"
+                                                                        :step="apindex+1"
+                                                                      >
+                                                                      <% 'Apartment '+(apindex+1)%>
+                                                                      </v-stepper-step>
+                                                                
+                                                                      <v-divider></v-divider>
+                                                                
+                                                                    
+                                                                
+                                                                    
+                                                                  
+                                                                
+                                                                  
+                                                                      <v-stepper-content :step="apindex+1">
+                                                                        <v-card
+                                                                          class="mb-12 elevation-0"
+                                                                          
+                                                                         
+                                                                        >
+                                                                    <div class="row p-2">
+                                                                        <div class="col-md-6">
+                                                                            <v-select :items="sizeData" item-text="combinedSize"  v-model="apartment.size" label="Size" return-object>
+                                                                            </v-select>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <v-select :items="size" v-model="apartment.wall_type" label="Wall Type" multiple>
+                                                                            </v-select>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <v-select :items="size" v-model="apartment.floor_type" label="Floor Type" multiple>
+                                                                            </v-select>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <v-select :items="size" v-model="apartment.ceiling_type" label="Ceiling Type" multiple>
+                                                                            </v-select>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <v-text-field
+                                                                            v-model="apartment.no_of_rooms"
+                                                                            label="No of Rooms"
+                                                                            required
+                                                                          > </v-text-field>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <v-text-field
+                                                                            v-model="apartment.no_of_bathrooms"
+                                                                            label="No of Bathrooms"
+                                                                            
+                                                                            required
+                                                                          > </v-text-field>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <v-text-field
+                                                                            v-model="apartment.no_of_windows"
+                                                                            label="No of Windows"
+                                                                            required
+                                                                          > </v-text-field>
+                                                                        </div>
+                                                                        <div class="col-md-6" v-if="serviceType=='Deep Cleaning' && serviceData.service_details.location_type=='Post Construction' ">
+                                                                            <v-radio-group v-model="apartment.paint_residue" class="p-2">
+                                                                                <template v-slot:label>
+                                                                                  <div>Paint & Cement Residue ?</div>
+                                                                                </template>
+                                                                                <v-radio :value="true">
+                                                                                  <template v-slot:label>
+                                                                                    <div>Yes<strong class="success--text"></strong></div>
+                                                                                  </template>
+                                                                                </v-radio>
+                                                                                <v-radio :value="false">
+                                                                                  <template v-slot:label>
+                                                                                    <div>No <strong class="primary--text"></strong></div>
+                                                                                  </template>
+                                                                                </v-radio>
+                                                                              </v-radio-group>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    </v-card>
+                                                                
+                                                                        <v-btn
+                                                                          color="primary"
+                                                                          v-on:click="nextApartment(index-1,floor-1,apindex)"
+                                                                         
+                                                                          class="mb-2"
+                                                                        >
+                                                                          Continue
+                                                                        </v-btn>
+                                                                
+                                                                        <v-btn text @click="e.building[index-1].floors[floor-1].e = (apindex)" class="mb-2">
+                                                                         Back
+                                                                        </v-btn>
+                                                                      </v-stepper-content>
+                                                                
+                                                                      
+                                                                
+                                                                   
+                                                                </div>
+                                                          
+                                                               
+                                                                  </v-stepper>
+                                                              </div>
+                                                              
+                                                        </v-card>
+                                                        <v-btn color="primary" v-on:click="nextFloor(index-1,floor)"  class="mb-2">
+                                                            Continue
+                                                        </v-btn>
+                                                        <v-btn text @click="e.building[index-1].e = (floor-1)" class="mb-2">
+                                                           Back
+                                                        </v-btn>
+                                                    </v-stepper-content>
+
+                                                </div>
+                                                </v-stepper>
+
+                                        </v-tab-item>
+
+                                    </v-tabs-items>
+
+
+                                </div>
+                            </div>
+
+                            <div class="row floors-card mb-4" v-for="(service,index) in otherServices" v-bind:key="index">
+                                <div class="col-md-3 col-6"  v-if="serviceType=='Upholstery Cleaning'">
+                                    <div class="p-2">
+                                        <div class="sr-sub-heading">
+                                          Type of Upholstery
+                                        </div>
+                                        <div >
+                                          <% service.type %>
+                                        </div>
                                     </div>
-                                    
-                                  </div>
+                                </div>
+                                <div class="col-md-3 col-6"  v-else>
+                                    <div class="p-2">
+                                        <div class="sr-sub-heading">
+                                         Item
+                                        </div>
+                                        <div >
+                                          <% serviceType.split(' ')[0] %>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="p-2">
+                                        <div class="sr-sub-heading">
+                                        Size
+                                        </div>
+                                        <div >
+                                            <% service.size.split('(')[0] %>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="p-2">
+                                        <div class="sr-sub-heading">
+                                         Price
+                                        </div>
+                                        <div >
+                                            000
+                                        </div>
+                                    </div>
+                                </div>
                                 
+                               
+                               
+                                <div class="col-md-2 offset-md-1 col-6" >
+                                    <div class="p-2"><div class="sr-sub-heading">
+                                       Actions
+                                    </div>
+                                    <div>
+                                        <i class="far fa-edit edit-icon"  v-on:click="editItem(service,index)"></i>
+                                        <i class="far fa-trash-alt pl-2 del-icon"  v-on:click="deleteItem(index)"></i>
+                                    </div>
+                                </div>
+                                </div>
+                               
                             </div>
-                        </div>  
+                            <v-btn
+                            v-if="otherServices.length>0"
+                            class="mx-2 mt-4"
+                            fab
+                            dark
+                            color="primary"
+                            style="float:right"
+                            v-on:click="addNew()"
+                          >
+                            <v-icon dark>
+                              mdi-plus
+                            </v-icon>
+                          </v-btn>
+                            <div class="row items-card" v-if="(((serviceType=='Upholstery Cleaning')||(serviceType=='Facade Cleaning')||(serviceType=='Upholstery Cleaning')||(serviceType=='Carpet Cleaning')||(serviceType=='Mattress Cleaning')||(serviceType=='Kitchen Cleaning')|| serviceType=='Car Parking Umbrella' || serviceType=='Window Cleaning' || serviceType=='Outdoor Cleaning') && otherServices.length<1)" >
+                                
+                                <div class="col-md-12" v-if="serviceType=='Upholstery Cleaning'">
+                            
+                                    <v-select
+                                    
+                                      :items="upholsteryType"
+                                     
+                                      label="Select the type of Upholstery"
+                                      v-model="otherService.type"
+                                      required
+    
+                                    ></v-select>
+                                </div>
+                                <div class="col-md-6" v-if="serviceType=='Facade Cleaning'">
+                                
+                                    <v-select
+                                    
+                                      :items="color"
+                                     
+                                      label="Hall Way Size"
+                                      required
+                                      multiple
+                                      v-model="otherService.hallway_size"
+                                    ></v-select>
+                                </div>
+                                <div class="col-md-6" v-if="serviceType!='Facade Cleaning' && serviceType!='Car Parking Umbrella' && serviceType!='Window Cleaning' && serviceType!='Outdoor Cleaning'">
+                                    <v-text-field
+                                     
+                                     
+                                    label="Age (In months)"
+                                    type="number"
+                                    required
+                                    v-model="otherService.age"
+                                  ></v-text-field>
+    
+                                </div>
+                                
+                                <div class="col-md-6" v-if="serviceType!='Kitchen Cleaning' && serviceType!='Facade Cleaning' && serviceType!='Car Parking Umbrella' && serviceType!='Window Cleaning' && serviceType!='Outdoor Cleaning'">
+                                
+                                    <v-select
+                                    
+                                      :items="material"
+                                     
+                                      label="Material"
+                                      required
+                                      multiple
+                                      v-model="otherService.material"
+                                    ></v-select>
+                                </div>
+                                <div class="col-md-6" v-if="serviceType!='Kitchen Cleaning' && serviceType!='Facade Cleaning' && serviceType!='Car Parking Umbrella' && serviceType!='Window Cleaning' && serviceType!='Outdoor Cleaning'">
+                                
+                                    <v-select
+                                    
+                                      :items="color"
+                                     
+                                      label="Color"
+                                      required
+                                      multiple
+                                      v-model="otherService.color"
+                                    ></v-select>
+                                </div>
+                                <div class="col-md-6">
+                                
+                                    <v-select
+                                    
+                                      :items="upholsterySize1"
+                                     
+                                      label="Size"
+                                      required
+                                      v-model="otherService.size"
+                                    ></v-select>
+                                </div>
+                                <div class="col-md-6" v-if="serviceType=='Window Cleaning'">
+                                
+                                    <v-select
+                                    
+                                      :items="['Outside & Inside','Outside','Inside']"
+                                     
+                                      label="Sides"
+                                      required
+                                      v-model="otherService.sides"
+                                    ></v-select>
+                                </div>
+                                <div class="col-md-6"v-if="serviceType!='Kitchen Cleaning' && serviceType!='Facade Cleaning' && serviceType!='Car Parking Umbrella' && serviceType!='Window Cleaning' && serviceType!='Outdoor Cleaning'">
+                                    <v-radio-group v-model="otherService.stain" class="p-2">
+                                        <template v-slot:label>
+                                          <div>Any  <strong>Stain ?</strong></div>
+                                        </template>
+                                        <v-radio :value="true">
+                                          <template v-slot:label>
+                                            <div>Yes<strong class="success--text"></strong></div>
+                                          </template>
+                                        </v-radio>
+                                        <v-radio :value="false">
+                                          <template v-slot:label>
+                                            <div>No <strong class="primary--text"></strong></div>
+                                          </template>
+                                        </v-radio>
+                                      </v-radio-group>
+                                </div>
+                                <div class="col-md-6" v-if="otherService.stain" >
+                                
+                                    <v-select
+                                    
+                                      :items="upholsterySize1"
+                                     
+                                      label="Reason for stain"
+                                      required
+                                      v-model="otherService.stain_reason"
+                                    ></v-select>
+                                </div>
+                                <div class="col-md-6" v-if="serviceType=='Kitchen Cleaning' || serviceType=='Facade Cleaning' ">
+                                
+                                    <v-select
+                                    
+                                      :items="color"
+                                     
+                                      label="Wall type"
+                                      required
+                                      multiple
+                                      v-model="otherService.wall_type"
+                                    ></v-select>
+                                </div>
+                                <div class="col-md-6" v-if="serviceType=='Kitchen Cleaning' || serviceType=='Car Parking Umbrella'">
+                                
+                                    <v-select
+                                    
+                                      :items="color"
+                                     
+                                      label="Floor Type"
+                                      required
+                                      multiple
+                                      v-model="otherService.floor_type"
+                                    ></v-select>
+                                </div>
+                                <div class="col-md-6" v-if="serviceType=='Kitchen Cleaning' || serviceType=='Car Parking Umbrella'">
+                                
+                                    <v-select
+                                    
+                                      :items="color"
+                                     
+                                      label="Ceiling Type"
+                                      required
+                                      multiple
+                                      v-model="otherService.ceiling_type"
+                                    ></v-select>
+                                </div>
+                                <div class="col-md-6" v-if="serviceType=='Kitchen Cleaning'">
+                                    <v-radio-group v-model="otherService.residue" class="p-2">
+                                        <template v-slot:label>
+                                          <div>Oil <strong>Residue ?</strong></div>
+                                        </template>
+                                        <v-radio :value="true">
+                                          <template v-slot:label>
+                                            <div>Yes<strong class="success--text"></strong></div>
+                                          </template>
+                                        </v-radio>
+                                        <v-radio :value="false">
+                                          <template v-slot:label>
+                                            <div>No <strong class="primary--text"></strong></div>
+                                          </template>
+                                        </v-radio>
+                                      </v-radio-group>
+                                </div>
+                                
+                                   
+                                <div class="col-md-12 text-center">
+                                    <v-btn
+                                      color="primary"
+                                      class="mr-4 mx-auto"
+                                      v-on:click="addOtherService()"
+                                     
+                                    >
+                                      Add
+                                    </v-btn>
+                                
+                                </div>
+                                 
+                               
+                                <div class="col-md-12">
+
+                                </div>
+
+                            </div>
+                          <!-- Image Uploading -->
+                          <div class="row">
+                            <div class="col-md-12 mt-4"> <h5>Add Images</h5></div>
+                            <div class="col-md-3" v-for="(image,imageindex) in imageData" v-bind:key="imageindex">
+                                <div>
+                                    <img :src="image.url" style="max-width:100%"/>
+                                </div>
+                                <div class="image-footer">
+                                   <!-- <i class="far fa-edit img-icon"  v-on:click="editImage(imageindex)"></i>-->
+                                        <i class="far fa-trash-alt pl-2 img-icon"  v-on:click="deleteImage(imageindex)"></i>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                               <div class="addImg">
+                                   <div
+                                     class="item_image"
+                                     @click="$refs.itemfile.click()"
+                                     v-on:change="onImageFileChanged"
+                                   >
+                                     <input
+                                       type="file"
+                                       ref="itemfile"
+                                       style="display:none"
+                                       accept="image/*"
+                                       id="itemfileselected"
+                                     />
+                                     <i class="ImageIcon fa fa-plus" ></i>
+                                   </div>
+                                 </div>
+                            </div>
+
+                        </div>
                         <div class="row">
                             <div class="col-md-12">
-                          
+                                <v-textarea
+                                name="input-7-1"
+                                label="Notes"
+                               
+                                hint="Do you any other projects or contracts on same location ?  Please mention if you have any specific request."
+                              ></v-textarea>
                             </div>
-                            <div class="col-md-12">
-                                
-                            </div>
+                            <!--<div class="col-3 offset-5">
+                                <v-btn
+                                     depressed
+                                      color="primary"
+                                      class="mx-auto"
+                                    >
+                                   Proceed
+                                 </v-btn>
+                            </div>-->
+                        </div>
+
 
                         </div>
 
 
-                    </div>
+                        <!-- Tab 1 Contents end here -->
+                        <!-- Tab 2 Begins here-->
 
-
-                    <!-- Tab 1 Contents end here -->
-                    <!-- Tab 2 Begins here-->
-                    
-                    <!-- Tab 2 ends here-->
-                    <div class="tab-content" id="tab-2-content">
-                       <!-- <h6 class="mt-4">Select Duration</h6>
+                        <!-- Tab 2 ends here-->
+                        <div class="tab-content" id="tab-2-content">
+                            <!-- <h6 class="mt-4">Select Duration</h6>
                         <select id="duration" >
                             <option value="opt1">Option 1</option>
                             <option value="opt2">Option 2</option>
@@ -220,370 +909,498 @@
                             <option value="opt4">Option 4</option>
                             <option value="opt5">Option 5</option>
                        </select>-->
-                       <div class="row mt-4">
-                           <div class="col-md-12">
-                               <h6>Choose a duration</h6>
-                           </div>
-                           <div class="col-md-2 mt-2 col-12">
-                            <div class="text-center p-2">In Hours</div>
-                           </div>
-                            <div class="col-md-2 mt-2 col-6" v-for="item in schedules">
-                                <div class="duration-active text-center p-2" v-on:click="selectDuration(item)" v-if="selectedDuration==item">
-                                    <% item %>
-                                    
+                            <div class="row mt-4">
+                                <div class="col-md-12">
+                                    <h6>Choose a duration</h6>
                                 </div>
-                                <div class="duration text-center p-2" v-on:click="selectDuration(item)" v-else>
-                                    <% item %>
+                                <div class="col-md-2 mt-2 col-12">
+                                    <div class="text-center p-2">In Hours</div>
                                 </div>
-                               
+                                <div class="col-md-2 mt-2 col-6" v-for="item in schedules">
+                                    <div class="duration-active text-center p-2" v-on:click="selectDuration(item)"
+                                        v-if="selectedDuration==item">
+                                        <% item %>
+
+                                    </div>
+                                    <div class="duration text-center p-2" v-on:click="selectDuration(item)" v-else>
+                                        <% item %>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-md-12 mt-4" v-bind:key="index" v-for="(item,index) in splitData">
+                                    <h6>
+                                        <% 'Day ' +(index+1) %>
+                                    </h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="customRange3" class="form-label"> Duration </label>
+                                            <input type="range" class="form-range mt-4" min="1" :max="item.maxVal"
+                                                step="1" id="customRange3" :value="item.hours" v-model="item.hours"
+                                                v-on:change="changeDuration(index)">
+                                            <% item.hours %>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="">Select Date</h6>
+                                            <input :id="'example'+index" type="text" name="sr-date" />
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                             
-                       </div>
-                       <div class="row mt-4">
-                            <div class="col-md-12 mt-4" v-bind:key="index" v-for="(item,index) in splitData">
-                                <h6 > <% 'Day '+(index+1) %></h6>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                      <label for="customRange3" class="form-label"> Duration </label>
-                                        <input type="range" class="form-range mt-4" min="1" :max="item.maxVal" step="1" id="customRange3" :value="item.hours" v-model="item.hours" v-on:change="changeDuration(index)">    
-                                                <% item.hours %>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6 class="">Select Date</h6>
-                                        <input :id="'example'+index" type="text" name="sr-date"/>
-                                    </div>
+
+
+                        </div>
+                        <div class="tab-content" id="tab-3-content">
+                            <div>
+
+                                <v-radio-group
+                               
+                                row
+                              >
+                                <v-radio
+                                  label="New"
+                                  value="new"
+                                ></v-radio>
+                                <v-radio
+                                  label="Existing"
+                                  value="existing"
+                                  checked
+                                ></v-radio>
+                              </v-radio-group>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <v-text-field
+                                    v-model="phoneNumber"
+                                  
+                                     label="Phone Number"
+                                     required
+                                       ></v-text-field>
                                 </div>
+                                <div class="col-md-3  offset-md-1">
+                                    <v-btn
+                                   
+                                    color="primary"
+                                    class="mt-2"
+                                  >
+                                   Submit
+                                  </v-btn>
+                                </div>
+                                <div class="col-md-3 ">
+                                    <v-text-field
+                                    v-model="otp"
+                                  
+                                     label="OTP"
+                                     required
+                                       ></v-text-field>
+                                </div>
+                                
+                            </div>
+                            
+                           
+                            <div>
+                                <a href="#" class="sr-link">Resend Otp</a>
+                            </div>
+                            <div>
+                                Need cleaning for new address ? <a href="#" class="sr-link"> Click here</a>
                             </div>
 
-                       </div>
-                     
-                      
-                    </div>
-                    <div class="tab-content" id="tab-3-content">
-                        <div >
-                          
-                            <form class="p-2">
-                              <label class="radio-inline mr-2 ">
-                                <input type="radio" name="optradio"  class="m-2">New User
-                              </label>
-                              <label class="radio-inline ">
-                                <input type="radio" name="optradio" class="m-2" checked>Existing User
-                              </label>
-                             
-                            </form>
-                        </div>
-                        <div class="form-group">
-                            <label for="#phone">Phone Number</label><br>
-                            <input type="text" placeholder="0000-0000-0000" id="phone"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="#OTP">OTP</label><br>
-                            <input type="text" placeholder="0000" id="OTP"/> 
-                            <button class="sr-button ml-4 mt-2">Submit</button>
-                        </div>
-                        <div>
-                            <a href="#" class="sr-link">Resend Otp</a>
-                        </div>
-                        <div>
-                            Need cleaning for new address ? <a href="#" class="sr-link"> Click here</a>
-                        </div>
-                       
                             <div class="d-flex w-50 mx-auto text-center mt-4">
-                          <div class="sr-prev-btn">
-                              Back
-                            </div>
-                          <div class="sr-next-btn ml-2">
-                          Next
-                        </div>
-                      </div>
-                       
-                    </div>
-                    <div class="tab-content" id="tab-4-content">
-                        <h4 class="mt-4 ">Services</h4>
-                        <div class="sr-price-card mt-4 row">
-                            <div class="col-md-8 col-print-8">
-                              <div class="inv-service-title p-2 inv-text-bold">
-                                General cleaning - First Floor
-                              </div>
-                              <div class="d-md-flex d-print-flex">
-                                <div class="p-2">
-                                  Size :<span class="inv-text-bold">200 m&sup2</span>
+                                <div class="sr-prev-btn">
+                                    Back
                                 </div>
-                                <div class="p-2">
-                                  Quantity : <span class="inv-text-bold">1</span>
+                                <div class="sr-next-btn ml-2">
+                                    Next
                                 </div>
-                                <div class="p-2">
-                                  Unit Price :<span class="inv-text-bold">120.000</span>
-                                </div>
-                              </div>
                             </div>
-                            <div class="col-md-3 col-print-3 offset-md-1 p-2">
-                              <div class="p-2">
-                                NET PRICE
-                              </div>
-                              <div class="inv-price p-1 ">
-                             
-                                <span class="inv-text-bold">120.000</span> KD
-                             
-                              </div>
-                              <div>
-            
-                              </div>
-                            </div>
-                            
-                          </div>
 
-                         
+                        </div>
+                        <div class="tab-content" id="tab-4-content">
+                            <h4 class="mt-4 ">Services</h4>
                             <div class="sr-price-card mt-4 row">
-                              <div class="col-md-8 col-print-8">
-                                <div class="inv-service-title p-2 inv-text-bold">
-                                  General cleaning - Second Floor
+                                <div class="col-md-8 col-print-8">
+                                    <div class="inv-service-title p-2 inv-text-bold">
+                                        General cleaning - First Floor
+                                    </div>
+                                    <div class="d-md-flex d-print-flex">
+                                        <div class="p-2">
+                                            Size :<span class="inv-text-bold">200 m&sup2</span>
+                                        </div>
+                                        <div class="p-2">
+                                            Quantity : <span class="inv-text-bold">1</span>
+                                        </div>
+                                        <div class="p-2">
+                                            Unit Price :<span class="inv-text-bold">120.000</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="d-md-flex d-print-flex">
-                                  <div class="p-2">
-                                    Size :<span class="inv-text-bold">150 m&sup2</span>
-                                  </div>
-                                  <div class="p-2">
-                                    Quantity : <span class="inv-text-bold">1</span>
-                                  </div>
-                                  <div class="p-2">
-                                    Unit Price :<span class="inv-text-bold">100.000 </span>KD
-                                  </div>
+                                <div class="col-md-3 col-print-3 offset-md-1 p-2">
+                                    <div class="p-2">
+                                        NET PRICE
+                                    </div>
+                                    <div class="inv-price p-1 ">
+
+                                        <span class="inv-text-bold">120.000</span> KD
+
+                                    </div>
+                                    <div>
+
+                                    </div>
                                 </div>
-                              </div>
-                              <div class="col-md-3 col-print-3 offset-md-1 p-2">
-                                <div class="p-2">
-                                  NET PRICE
-                                </div>
-                                <div class="inv-price p-1  ">
-                                 
-                                  <span class="inv-text-bold"> 100.000</span> KD
-                               
-                                </div>
-                                <div>
-              
-                                </div>
-                              </div>
-                              
+
                             </div>
-                            <div class="sr-add-btn mt-2">
+
+
+                            <div class="sr-price-card mt-4 row">
+                                <div class="col-md-8 col-print-8">
+                                    <div class="inv-service-title p-2 inv-text-bold">
+                                        General cleaning - Second Floor
+                                    </div>
+                                    <div class="d-md-flex d-print-flex">
+                                        <div class="p-2">
+                                            Size :<span class="inv-text-bold">150 m&sup2</span>
+                                        </div>
+                                        <div class="p-2">
+                                            Quantity : <span class="inv-text-bold">1</span>
+                                        </div>
+                                        <div class="p-2">
+                                            Unit Price :<span class="inv-text-bold">100.000 </span>KD
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-print-3 offset-md-1 p-2">
+                                    <div class="p-2">
+                                        NET PRICE
+                                    </div>
+                                    <div class="inv-price p-1  ">
+
+                                        <span class="inv-text-bold"> 100.000</span> KD
+
+                                    </div>
+                                    <div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="sr-add-btn mt-4">
                                 +
-                               </div>
-                               <h4 class="mt-4 ">Payment Option</h4>
-                               <div class="row">
+                            </div>
+                            <h4 class="mt-4 ">Payment Option</h4>
+                            <div class="row">
                                 <div class="col-12">
                                     <div class="d-flex">
-                                      <div class="inv-payment-card mt-4 text-center" id="inv-debit" onclick="selectPayment('debit')">
-                                       
-                                        <img src="./icons/knet-icon.png" class="inv-card-icon " id="inv-knet" />
-                                        <div class="inv-payment-text" >
-                                          Debit Card
+                                        <div class="inv-payment-card mt-4 text-center" id="inv-debit"
+                                            onclick="selectPayment('debit')">
+
+                                            <img src="{% static 'files/icons/knet-icon.png' %}" class="inv-card-icon " id="inv-knet" />
+                                            <div class="inv-payment-text">
+                                                Debit Card
+                                            </div>
+                                            <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-debit-check-box">
+                                                <i class="fa fa-check inv-check-icon " id="inv-check-debit"></i>
+                                            </div>
                                         </div>
-                                        <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-debit-check-box">
-                                          <i class="fa fa-check inv-check-icon " id="inv-check-debit"></i>
+                                        <div class="inv-payment-card mt-4 text-center" id="inv-cash"
+                                            onclick="selectPayment('cash')">
+                                            <img src="{% static 'files/icons/wallet.png' %}" class="inv-card-icon " id="inv-cash-img" />
+                                            <div class="inv-payment-text">
+                                                Cash
+                                            </div>
+                                            <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-cash-check-box">
+                                                <i class="fa fa-check inv-check-icon " id="inv-check-cash"></i>
+                                            </div>
                                         </div>
-                                      </div>
-                                      <div class="inv-payment-card mt-4 text-center" id="inv-cash" onclick="selectPayment('cash')">
-                                        <img src="./icons/wallet.png" class="inv-card-icon "  id="inv-cash-img"/>
-                                        <div class="inv-payment-text">
-                                         Cash 
+                                        <div class="inv-payment-card mt-4 text-center inv-click-disable" id="inv-credit"
+                                            onclick="selectPayment('credit')">
+                                            <!-- to disable click add class inv-click-disable -->
+                                            <img src="{% static 'files/icons/debit-card.png' %}" class="inv-card-icon inv-payment-disabled"
+                                                id="inv-credit-img" />
+                                            <!-- to disable  add class inv-payment-disabled -->
+                                            <div class="inv-payment-text inv-payment-disabled">
+                                                <!-- to disable  add class inv-payment-disabled -->
+                                                Credit Card
+                                            </div>
+                                            <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-credit-check-box">
+                                                <i class="fa fa-check inv-check-icon " id="inv-check-credit"></i>
+                                            </div>
                                         </div>
-                                        <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-cash-check-box">
-                                          <i class="fa fa-check inv-check-icon " id="inv-check-cash"></i>
-                                        </div>
-                                      </div>
-                                      <div class="inv-payment-card mt-4 text-center inv-click-disable" id="inv-credit" onclick="selectPayment('credit')"><!-- to disable click add class inv-click-disable -->
-                                        <img src="./icons/debit-card.png" class="inv-card-icon inv-payment-disabled" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
-                                        <div class="inv-payment-text inv-payment-disabled"> <!-- to disable  add class inv-payment-disabled -->
-                                          Credit Card
-                                        </div>
-                                        <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-credit-check-box">
-                                          <i class="fa fa-check inv-check-icon " id="inv-check-credit"></i>
-                                        </div>
-                                      </div>
-                    
+
                                     </div>
-                                  </div>
-                                  <div class="col-12   text-center text-white mt-4">
-                                      <div class="d-flex w-50 mx-auto">
-                                    <div class="sr-prev-btn">
-                                        Back
-                                      </div>
-                                    <div class="sr-next-btn ml-2">
-                                    Next
-                                  </div>
                                 </div>
-                                  </div>
-                               </div>
+                                <div class="col-12   text-center text-white mt-4">
+                                    <div class="d-flex w-50 mx-auto">
+                                        <div class="sr-prev-btn">
+                                            Back
+                                        </div>
+                                        <div class="sr-next-btn ml-2">
+                                            Next
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+
+                       
+
+
                     </div>
-                 
                     
-                
-                
                 </div>
-            </div>
-            <div class="col-md-4 ">
-              
-                <div class="sr-card p-4 mt-4 mb-4 payment-section">
-                    <h4>Booking Summary</h4>
-                    <div class="mt-4" v-if="serviceSection.service_type">Service Type <span style="float: right;"><b><% serviceSection.service_type %></b></span> </div>
-                <div v-bind:key="index" v-for="(item,index) in serviceSection.sections" class="item-list">
-                    <hr class="">
-                    <div class="pt-2  ">Item  <span style="float: right;"><b><%index%></b></span> </div>
-                    <div class="pt-2" v-if="item.size">Size  <span style="float: right;" v-if="item.cost"><b><%item.size%></b></span> </div>
-                    <div class="pt-2" v-if="item.cost">Cost  <span style="float: right;" v-if="item.cost"><b><%item.cost%></b></span> </div>
-                </div>
-                    <div class="sr-calculation p-4">
-                       <!-- <div >Sub Total<span style="float: right;"><b>240.000 </b>KD</div>-->
+                <div class="col-md-4 ">
+
+                    <div class="sr-card p-4 mt-4 mb-4 payment-section">
+                        <div style="height:60vh;overflow:auto;">
+                        <h4>Booking Summary</h4>
+                        <div class="mt-4" v-if="serviceSection.service_type">Service Type <span
+                                style="float: right;"><b>
+                                    <% serviceSection.service_type %>
+                                </b></span> </div>
+                                <div v-for="(bill,bindex) in billingData" v-bind:key="bindex">
+                      
+                            <hr class=""
+                            >
                            
-                               <div class="sr-total mt-4 text-white">
-                                   <div class="p-2">Total</div>
-                                   <div><h3 class="p-2 text-right"><% totalCost %></h3></div>
-                               </div>      
-                    </div>
+                            
+                               
+                           <div class="pt-2  ">Item <span style="float: right;"><b>
+                                        <% bill.name %>
+                                    </b></span> </div>
+                            <div class="pt-2" v-if="bill.section.size">Size <span style="float: right;" v-if="bill.section.size"><b>
+                                        <%bill.section.size.name%>
+                                    </b></span> </div>
+                            <div class="pt-2" v-if="bill.section.size.cost">Cost <span style="float: right;" v-if="bill.section.size.cost"><b>
+                                        <%bill.section.size.cost%>
+                                    </b></span> </div>
+                                      
+                        </div> 
                     
+                        <div class="sr-calculation p-4">
+                            <!-- <div >Sub Total<span style="float: right;"><b>240.000 </b>KD</div>-->
+
+                            <div class="sr-total mt-4 text-white">
+                                <div class="p-2">Total</div>
+                                <div>
+                                    <h3 class="p-2 text-right">
+                                        <% totalCost %>
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    
+        </v-app>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-
+    <!-- Jquery -->
+    <script src="{% static 'files/js/jquery-3.3.1.min.js' %}"></script>
+  <!--  Jquery-->
+      
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
-     
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
     <script src="{% static 'files/externalfiles/plugins/date-picker/mc-calendar.min.js' %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"
+        integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF"
+        crossorigin="anonymous"></script>
     <script src="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.min.js' %}"></script>
     <script src="{% static 'files/externalfiles/js/vanillaSelectBox.js' %}"></script>
     <script src="{% static 'files/externalfiles/js/services.js' %}"></script>
     
-<script>
-    function durationcalculation(params)
-  {
-    //to find total size
-    selected_service=1
-    sectioncounter = $('#sectioncounter_id').val();
-    total_estimated_size = 0
-    for(i=1;i<=sectioncounter;i++)
-    {
-        size = $('#bk-size-'+i).val() 
-        total_estimated_size += parseFloat(size);
-    }
+   
+  <script>
+       durationcalculation();
 
-    //Ajax for finding productivity of perticular service
-    selected_service = $("#bk-service option:selected" ).text();
-    $.ajax({
+function durationcalculation(params)
+{
+// selected_service = $("#bk-service option:selected" ).text();
+selected_service     = 'Upholstery Cleaning';
 
-        url: "/customer/ajax/getserviceproductivity",
+$.ajax({
 
-        data: {'service_type':selected_service}, 
+    url: "/customer/ajax/getserviceproductivity",
 
-        dataType: 'json',
+    data: {'service_type':selected_service}, 
 
-        success: function (data) {
-            //find duration and no of cleaners based on productivity
-            total_estimated_size = total_estimated_size
-            productivity         = data['perhour_cleaning'];
+    dataType: 'json',
+
+    success: function (data) {
+        console.log(data);      
+        //to find total size and manhour
+        if(selected_service == 'Upholstery Cleaning')
+        {
+          total_sofa_size    = 6;
+          total_chair_size   = 9;
+          total_curtain_size = 750;
+          manhour = parseInt(total_sofa_size/data['sofa_perhour_cleaning'])+parseInt(total_chair_size/data['chair_perhour_cleaning'])+parseInt(total_curtain_size/data['curtain_perhour_cleaning'])
+        }
+
+        else if(selected_service == 'Facade Cleaning')
+        {
+          total_highpricefacade_size = 400;
+          total_lowpricefacade_size  = 400;
+          manhour = parseInt(total_highpricefacade_size/data['highpricefacade_perhour_cleaning'])+parseInt(total_lowpricefacade_size/data['lowpricefacade_perhour_cleaning'])
+        }
+
+        else if(selected_service == 'Kitchen Cleaning')
+        {
+          total_newkitchen_size = 400;
+          total_oldkitchen_size  = 400;
+          manhour = parseInt(total_newkitchen_size/data['newkitchen_perhour_cleaning'])+parseInt(total_oldkitchen_size/data['oldkitchen_perhour_cleaning'])
+        }
+
+        else if(selected_service == 'Window Cleaning')
+        {
+          total_highpricewindow_size = 400;
+          total_lowpricewindow_size  = 400;
+          manhour = parseInt(total_highpricewindow_size/data['highpricewindow_perhour_cleaning'])+parseInt(total_lowpricewindow_size/data['lowpricewindow_perhour_cleaning'])
+        }
+
+        else
+        {
+          total_estimated_size = 1000;
+          productivity         = data['perhour_cleaning'];
+          manhour              = parseInt(total_estimated_size/productivity)
+        }
+
+        //optimal finding
+        r       = 2 ** (manhour.toString().length-1)
+        mod     = manhour%r
+        
+        if (mod > parseInt(r/2))
+        {
+          n= manhour+(r-mod);
+        }
+        else
+        {
+          n = manhour-mod;
+        }
+        console.log(manhour,"manhour")
+        console.log(r,"r")
+        console.log(mod,"mod")
+        console.log(n,"n")
+        for(i=1;i<parseInt(n ** (1/2))+1;i++)
+        {
+          if(n%i == 0)
+            {
+              pair = [i,n/i];
+            }
+        }
+        console.log(pair,"pair");
+        //pair convert to 3's multiple
+        convertion_r       = 3
+        convertion_mod     = pair[1]%convertion_r
+        
+        if (convertion_mod > parseInt(convertion_r/3))
+        {
+          console.log(manhour,"divider")
+          console.log((pair[1]+(convertion_r-convertion_mod)),"divident")
+          console.log(parseInt(manhour/(pair[1]+(convertion_r-convertion_mod))),"division")
+          pair = [Math.round(manhour/(pair[1]+(convertion_r-convertion_mod))),(pair[1]+(convertion_r-convertion_mod))];
+        }
+        else
+        {
+          console.log(manhour,"divider")
+          console.log((pair[1]-convertion_mod),"divident")     
+          
+          if((pair[1]-convertion_mod) == 0)
+          {
+            pair = [Math.round(manhour/3),3];
+          }
+          else
+          {
+            pair = [Math.round(manhour/(pair[1]-convertion_mod)),(pair[1]-convertion_mod)];
+          }
+        }
+
+
+        console.log(pair,"newpair")
+
+        max_cleaners = data['max_cleaners']
+        
+        duration_list  = [];
+        lower_loop     = 0;
+        upper_loop     = 0;
+        middle_element = pair[0];
+        middle_hours   = pair[1];
+
+        if(middle_element<=max_cleaners)
+        {
+          duration_list.push(pair);
+
+          //first
+          if(Math.round(manhour/(middle_hours-3))>0 && Math.round(manhour/(middle_hours-3)) <= max_cleaners)
+            {
+              duration_list.push([Math.round(manhour/(middle_hours-3)),(middle_hours-3)]);
+              lower_loop = 1;
+            }
+          if(Math.round(manhour/(middle_hours+3))>0 && Math.round(manhour/(middle_hours+3))<=max_cleaners)
+            {
+              duration_list.push([Math.round(manhour/(middle_hours+3)),(middle_hours+3)]);
+              lower_loop = 1;
+            }
+
+          //check
+          if(Math.round(manhour/(middle_hours-6))>0 && Math.round(manhour/(middle_hours-6)) <= max_cleaners && upper_loop == 0)
+            {
+              duration_list.push([Math.round(manhour/(middle_hours-3)),(middle_hours-3)]);
+              lower_loop = 1;
+            }
+          if(Math.round(manhour/(middle_hours-6))>0 && Math.round(manhour/(middle_hours+6))<=max_cleaners && lower_loop == 0)
+            {
+              duration_list.push([Math.round(manhour/(middle_hours+6)),(middle_hours+6)]);
+              upper_loop = 1;
+            }
+        }
+
+        
+        else
+        {
+          middle_element = max_cleaners;
+          middle_hours   = Math.round(manhour/middle_element)-(Math.round(manhour/middle_element)%3)
+          duration_list.push([middle_element,middle_hours])
+
+          if(Math.round(manhour/(middle_hours+3)) > 0)
+          {
+            duration_list.push([Math.round(manhour/(middle_hours+3)),(middle_hours+3)]);  
+          }
+          if(Math.round(manhour/(middle_hours+6)) > 0)
+          {
+            duration_list.push([Math.round(manhour/(middle_hours+6)),(middle_hours+6)]);  
+          }
             
-            //optimal manhour finding
-            manhour = parseInt(total_estimated_size/productivity)
-            r       = 2 ** (manhour.toString().length-1)
-            mod     = manhour%r
+          
+        }
+        console.log(duration_list)
+
+        for(i=0;i<duration_list.length;i++)
+          {
             
-            if (mod > parseInt(r/2))
-            {
-              n= manhour+(r-mod);
+            total_duration  = duration_list[i][1];
+            //show to users
+            total_minutes     = (total_duration.toFixed(2)*60).toFixed(0)
+            converted_hours   = Math.floor(total_minutes / 60);          
+            converted_minutes = total_minutes % 60;
+            total_cleaners    = duration_list[i][0];
+            console.log(converted_hours,"converted_hours")
+            console.log(converted_minutes,"converted_minutes")
+            console.log(total_cleaners,"total_cleaners")
             }
-            else
-            {
-              n = manhour-mod;
-            }
-            for(i=1;i<parseInt(n ** (1/2))+1;i++)
-            {
-              if(n%i == 0)
-                {
-                  pair = [i,n/i];
-                }
-            }
-            max_cleaners = data['max_cleaners']
-            
-            duration_list = [];
-            upper_loop    = 2;
-            lower_loop    = 2;
-            middle_element=pair[0]
+               }
+     });
 
-            if(middle_element<=max_cleaners)
-            {
-              duration_list.push(pair);
-              //upperloop and lowerloop setup
-              for(i=1;i<=2;i++)
-              {
-                if((middle_element-i)<=0)
-                {
-                  upper_loop = upper_loop+(2-i)+1;
-                  lower_loop = lower_loop-((2-i)+1)
-                } 
-                if((middle_element+i) > max_cleaners)
-                {
-                  lower_loop = lower_loop+(2-i)+1;
-                  upper_loop = upper_loop-((2-i)+1)
-                }
-              }
 
-              //lower
-              for(i=1;i<=lower_loop;i++)
-              {
-                if((middle_element-i)>0 && (middle_element-i) <= max_cleaners)
-                {
-                  duration_list.push([(middle_element-i),n/(middle_element-i)])
-                }
-              }
-              //upper
-              for(i=1;i<=upper_loop;i++)
-              {
-                if((middle_element+i)>0 && (middle_element+i) <= max_cleaners)
-                {
-                  duration_list.push([(middle_element+i),n/(middle_element+i)])
-                } 
-              }
-            }
+}
+      </script>
 
-            
-            else
-            {
-              middle_element = max_cleaners;
-              duration_list.push([(middle_element),n/(middle_element)])
-              for(i=1;i<=5;i++)
-              {
-                if((middle_element-i)>0)
-                {
-                  duration_list.push([(middle_element-i),n/(middle_element-i)])
-                }
-              }
-            }
-            console.log(duration_list)
-
-            for(i=0;i<duration_list.length;i++)
-              {
-                
-                total_duration  = duration_list[i][1];
-                //show to users
-                total_minutes     = (total_duration.toFixed(2)*60).toFixed(0)
-                converted_hours   = Math.floor(total_minutes / 60);          
-                converted_minutes = total_minutes % 60;
-                total_cleaners    = duration_list[i][0];
-                console.log(converted_hours,"converted_hours")
-                console.log(converted_minutes,"converted_minutes")
-                console.log(total_cleaners,"total_cleaners")
-                }
-                   }
-         });
-
-  }
-  </script>
-
-  </body>
+</body>
 </html>
