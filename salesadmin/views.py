@@ -1379,9 +1379,11 @@ class DailySales(IsSalesAdmin,View):
 
 			if date == todate:
 		
-				daily_sales = cleaning_amount
+				daily_sales = round(cleaning_amount)
 
 			monthly_sales += cleaning_amount
+
+		monthly_sales = round(monthly_sales)
 
 		return render(request,'salesadmin/dailysales/daily-sales.html',{"dailysales":daily_sales,"monthlysales":monthly_sales,"month_name":full_month_name})
 

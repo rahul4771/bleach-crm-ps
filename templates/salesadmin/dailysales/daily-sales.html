@@ -21,8 +21,8 @@
                 <div class="column-left"><img src="{% static 'files/images/daily.png' %}" style="padding:10px;"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Sales</h1>
-                <h2 class="green-text"><label>Today<span>{{dailysales|floatformat:"3"|default_if_none:'0.000'}} KD</span></label> </h2>
-                <p class="dailysale"> <span id="dailysalevalue">{{dailysales|sub:2000.000|floatformat:"3"|default_if_none:'0.000'}} KD</span></p>
+                <h2 class="green-text"><label>Daily<span>{{dailysales|default_if_none:'0'}} KD</span></label> </h2>
+                <p class="dailysale"> <span id="dailysalevalue">{{dailysales|sub:2000|default_if_none:'0'}} KD</span></p>
                 </div><!--column-right-->
                 </div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -32,16 +32,16 @@
                 <div class="column-left"><img src="{% static 'files/images/monthly.png' %}" style="padding:10px;"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Sales</h1>
-                <h2 class="blue-text"><label>This Month<span>{{monthlysales|floatformat:"3"|default_if_none:'0.000'}} KD</span></label> </h2>
-                <p class="monthlysale"> <span id="monthlysalevalue">{{monthlysales|sub:52000.000|floatformat:"3"|default_if_none:'0.000'}} KD</span></p>
+                <h2 class="blue-text"><label>Monthly<span>{{monthlysales|default_if_none:'0'}} KD</span></label> </h2>
+                <p class="monthlysale"> <span id="monthlysalevalue">{{monthlysales|sub:52000|default_if_none:'0'}} KD</span></p>
                 </div><!--column-right-->
                 </div><!--card-innerwrapper-->
             </div><!--card-column-->
 
         </div><!--clients-card-column clients-column-left-->
 
-        <div class="clients-card-column clients-column-right whitebg hover ltyellow-border"><!--clients-card-column clients-column-right-->
-        <h2 class="orange-text">Sales (Month of {{month_name}})</h2><br> 
+        <div class="clients-card-column clients-column-right whitebg hover ltorange-border"><!--clients-card-column clients-column-right-->
+        <h2 class="orange-text">Sales (Month of <span id="month_name"></span>)</h2><br> 
 		<div class="chart_boxDiv"><!--chart_boxDiv-->
   			<div class="chart_box_Right"><!--chart_box_Right-->
  				<!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
@@ -137,27 +137,27 @@ $('.footable').footable({
 $('document').ready(function(){
 
 //target value calc for sales daily and monthly cards with up down arrows
-var dailysalevalue = "{{dailysales|sub:2000.000|floatformat:"3"|default_if_none:'0.000'}}"
-var monthlysalevalue = "{{monthlysales|sub:52000.000|floatformat:"3"|default_if_none:'0.000'}}"
+var dailysalevalue = "{{dailysales|sub:2000|default_if_none:'0.000'}}"
+var monthlysalevalue = "{{monthlysales|sub:52000|default_if_none:'0.000'}}"
 
 
 if (dailysalevalue < 0){
-  $('#dailysalevalue').text(parseFloat(Math.abs(dailysalevalue)).toFixed(3));
-  $('.dailysale').prepend('<i class="fa fa-arrow-down" aria-hidden="true" style="color:red;"></i>');
+  $('#dailysalevalue').text(Math.abs(dailysalevalue));
+  $('.dailysale').append(' <i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
   $('#dailysalevalue').addClass('red-text');
 }else if (dailysalevalue > 0){
-  $('.dailysale').prepend('<i class="fa fa-arrow-up" aria-hidden="true" style="color:green;"></i>');
+  $('.dailysale').append(' <i class="fa fa-arrow-up" aria-hidden="true" style="color:#3cbbb1;"></i>');
   $('#dailysalevalue').addClass('green-text');
 }else{
   console.log("zero")
 }
 
 if (monthlysalevalue < 0){
-  $('#monthlysalevalue').text(parseFloat(Math.abs(monthlysalevalue)).toFixed(3));
-  $('.monthlysale').prepend('<i class="fa fa-arrow-down" aria-hidden="true" style="color:red;"></i>');
+  $('#monthlysalevalue').text(Math.abs(monthlysalevalue));
+  $('.monthlysale').append(' <i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
   $('#monthlysalevalue').addClass('red-text');
 }else if (monthlysalevalue > 0){
-  $('.monthlysale').prepend('<i class="fa fa-arrow-up" aria-hidden="true" style="color:green;"></i>');
+  $('.monthlysale').append(' <i class="fa fa-arrow-up" aria-hidden="true" style="color:#3cbbb1;"></i>');
   $('#monthlysalevalue').addClass('green-text');
 }else{
   console.log("zero")

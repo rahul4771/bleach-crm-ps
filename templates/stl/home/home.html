@@ -374,13 +374,13 @@
         </div><!--modal-header-->
     <div class="modal-body"><!--modal-body-->
     <div class="modal-content"><!--modal-content-->
-    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+    <div class="ticket-wrapper-full cleaningwrapper"><!--ticket-wrapper-full-->
             <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
     
     <table width="100%" border="0" class="popup-tble1">  
                 <tr>
-                    <td valign="center"><a id="order_url"><div class="blc-number" id="blcno_cleaning_id"></div></a><span id="address_cleaning_id"></span></td>
+                    <td valign="center"><a id="order_url"><div class="blc-number" id="blcno_cleaning_id"></div></a><div id="servicetype"></div><br><span id="address_cleaning_id"></span></td>
                     <td><div class="bold-text" id="customername_cleaning_id"></div><div id="mobileno_cleaning_id"></div></td>
                 </tr>
  
@@ -475,7 +475,7 @@
     
     <table width="100%" border="0" class="popup-tble1">  
                 <tr>
-                    <td valign="center"><div class="blc-number" id="ticketno_followup_id"></div><div class="mobile_number" id="blcno_followup_id"></div><div class="blc-number" id="status_followup_id"></div><span id="address_followup_id"></span></td>
+                    <td valign="center"><div class="blc-number" id="ticketno_followup_id"></div><div class="mobile_number" id="blcno_followup_id"></div><div id="followup_servicetype"></div><br><div class="blc-number" id="status_followup_id"></div><span id="address_followup_id"></span></td>
                     <td><div class="bold-text" id="customername_followup_id"></div><div id="mobileno_followup_id"></div></td>
                 </tr>
  
@@ -561,13 +561,13 @@
         </div><!--modal-header-->
     <div class="modal-body"><!--modal-body-->
     <div class="modal-content"><!--modal-content-->
-    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+    <div class="ticket-wrapper-full notapproved_cleaningwrapper"><!--ticket-wrapper-full-->
             <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
     
     <table width="100%" border="0" class="popup-tble1">  
                 <tr>
-                    <td><a id="notapprovedorder_url"><div class="blc-number" id="blcno_notapprovedcleaning_id"></div></a><span id="address_notapprovedcleaning_id"></span></td>
+                    <td><a id="notapprovedorder_url"><div class="blc-number" id="blcno_notapprovedcleaning_id"></div></a><div id="notapproved_servicetype"></div><br><span id="address_notapprovedcleaning_id"></span></td>
                     <td><div class="bold-text" id="customername_notapprovedcleaning_id"></div><div id="mobileno_notapprovedcleaning_id"></div></td>
                 </tr>
  
@@ -1939,6 +1939,7 @@ $('document').ready(function(){
 
         success: function (data) { 
                   $('#blcno_cleaning_id').html(data['order_no']+'<br><br>'+data['status']);
+                  $('#servicetype').html(data['service_type']);
                   $('#address_cleaning_id').html(data['address']);
                   $('#customername_cleaning_id').html(data['customer']);
                   $('#mobileno_cleaning_id').html(data['customer_mobile']);  
@@ -1962,6 +1963,14 @@ $('document').ready(function(){
 
                   datetimecheck(data['start_at_time'],data['start_at_date'],'cleaning');
 
+                  if(data['cleaning_policy'] == 'SUBSCRIPTION')
+                  {
+                    $('.cleaningwrapper').removeClass('ltblue-border');
+                    $('.cleaningwrapper').addClass('ltgreen-border');
+                  }else{
+                    $('.cleaningwrapper').removeClass('ltgreen-border');
+                    $('.cleaningwrapper').addClass('ltblue-border');
+                  }
 
                   var order_url = '/stl/order-details/'+data['order_id']+'';
                     
@@ -2181,6 +2190,7 @@ $('.collapsible1-close').click(function(){
                   $('#ticketno_followup_id').html('TKT'+data['ticket_no'])
                   $('#blcno_followup_id').html(data['order_no']+'<br><br>');
                   $('#status_followup_id').html(data['status']);
+                  $('#followup_servicetype').html(data['service_type']);
                   $('#address_followup_id').html(data['address']);
                   $('#customername_followup_id').html(data['customer']);
                   $('#mobileno_followup_id').html(data['customer_mobile']);  
@@ -2417,12 +2427,22 @@ $('.collapsible2-close').click(function(){
 
         success: function (data) { 
                   $('#blcno_notapprovedcleaning_id').html(data['order_no']+'<br><br>'+'Quatation Not Approved');
+                  $('#notapproved_servicetype').html(data['service_type']);
                   $('#address_notapprovedcleaning_id').html(data['address']);
                   $('#customername_notapprovedcleaning_id').html(data['customer']);
                   $('#mobileno_notapprovedcleaning_id').html(data['customer_mobile']);  
                   $('#starting_date_notapprovedcleaning_id').html(data['start_at_date']);
                   $('#starting_time_notapprovedcleaning_id').html(data['start_at_time']);
                   $('#duration_notapprovedcleaning_id').html(data['duration']+' Hours');
+
+                  if(data['cleaning_policy'] == 'SUBSCRIPTION')
+                  {
+                    $('.notapproved_cleaningwrapper').removeClass('ltblue-border');
+                    $('.notapproved_cleaningwrapper').addClass('ltgreen-border');
+                  }else{
+                    $('.notapproved_cleaningwrapper').removeClass('ltgreen-border');
+                    $('.notapproved_cleaningwrapper').addClass('ltblue-border');
+                  }
 
                   var order_url = '/stl/order-details/'+data['order_id']+'';
                   $('#notapprovedorder_url').attr('href',order_url);  

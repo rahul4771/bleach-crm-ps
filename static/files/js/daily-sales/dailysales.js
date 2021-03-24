@@ -1,5 +1,5 @@
-//var url='https://test.bleach-kw.com';
-var url = 'https://my.bleachkw.com';
+var url='https://test.bleach-kw.com';
+//var url = 'https://my.bleachkw.com';
 //var url = 'http://127.0.0.1:8000';
 
 function monthlysales(){
@@ -9,6 +9,8 @@ function monthlysales(){
     axios.get(url+'/api/daily-sales-list/',{ params: { 'sales_month': sales_month } })
     .then(function (response) {
         console.log(response.data,"war")
+
+        $('#month_name').text(response.data.month_name);
 
         //refresh table body
         $("#dailysaleslist").empty();
@@ -36,10 +38,10 @@ function monthlysales(){
 
             if (salestatus < 0){
                 $(this).text(parseFloat(Math.abs(salestatus)).toFixed(3));
-                $(this).prepend('<i class="fa fa-arrow-down" aria-hidden="true" style="color:red;"></i>');
+                $(this).append(' <i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
                 $(this).addClass('red-text');
             }else if (salestatus > 0){
-                $(this).prepend('<i class="fa fa-arrow-up" aria-hidden="true" style="color:green;"></i>');
+                $(this).append(' <i class="fa fa-arrow-up" aria-hidden="true" style="color:#3cbbb1;"></i>');
                 $(this).addClass('green-text');
             }else{
                 console.log("zero")
@@ -105,10 +107,10 @@ function add_console(){
 
     if (monthlytotalsales < 0){
         $('#totalsales').text(parseFloat(Math.abs(monthlytotalsales)).toFixed(3));
-        $('#totalsales').prepend('<i class="fa fa-arrow-down" aria-hidden="true" style="color:red;"></i>');
+        $('#totalsales').append(' <i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
         $('#totalsales').addClass('red-text');
     }else if (monthlytotalsales > 0){
-        $('#totalsales').prepend('<i class="fa fa-arrow-up" aria-hidden="true" style="color:green;"></i>');
+        $('#totalsales').append(' <i class="fa fa-arrow-up" aria-hidden="true" style="color:#3cbbb1;"></i>');
         $('#totalsales').addClass('green-text');
     }else{
         console.log("zero")

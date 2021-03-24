@@ -309,6 +309,8 @@ class DailySalesAPI(APIView):
 		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
 		monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)-relativedelta(days=1)
 		daterange  = pd.date_range(monthdate1, monthdate2)
+
+		full_month_name = monthdate1.strftime("%B")
 		print(daterange,"dr")
 		# orderschedules = OrderScheduler.objects.filter(is_active=True).filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).distinct().values_list('order__order_no').distinct()
 		
@@ -431,7 +433,7 @@ class DailySalesAPI(APIView):
 			saleslist.append(list_item)
 
 				
-		response_dict = {'success':True,'list':saleslist,'todate':str(today.date())}
+		response_dict = {'success':True,'list':saleslist,'todate':str(today.date()),'month_name':full_month_name}
 
 		return Response(response_dict,HTTP_200_OK)
 
