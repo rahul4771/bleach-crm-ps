@@ -1067,7 +1067,7 @@ def export_users_xls(request):
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		orders = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(prev_date_start,todate_date_end)).values_list('evaluation__evaluation_details__evaluation_book_evaluation_details__cleaning_policy','evaluation__customer__customer_id','order_no','evaluation__id','order_no','total_amount','order_no','amount_paid','order_no','remining_amount').order_by('-id')
+		orders = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(prev_date_start,todate_date_end)).values_list('evaluation__evaluation_details__evaluation_book_evaluation_details__cleaning_policy','evaluation__customer__customer_id','order_no','evaluation__id','order_no','total_amount','order_no','amount_paid','id','remining_amount').order_by('-id')
 	
 		#removing duplicates
 		found = set()
@@ -1080,13 +1080,16 @@ def export_users_xls(request):
 			evaluationbooks = EvaluationBook.objects.filter(is_active=True,evaluation_details__evaluation__id=int(order_list[3]))
 			evaluationbooks_count = evaluationbooks.count()
 
+			orderschedules_start = OrderScheduler.objects.filter(order__id=int(order_list[8])).first()
+			orderschedules_end = OrderScheduler.objects.filter(order__id=int(order_list[8])).last()
+
 			if evaluationbooks_count > 1:
 				job_completed = 0
 				job_remaining = 0
 
 				for book in evaluationbooks:
-					cleanings_count = OrderScheduler.objects.filter(is_active=True,order__order_no=order_list[2],order_scheduler_book__id=int(book.id)).count()
-					completed_cleanings = OrderScheduler.objects.filter(is_active=True,order__order_no=order_list[2],order_scheduler_book__id=int(book.id),work_status='CLEANING_FULFILLED')
+					cleanings_count = OrderScheduler.objects.filter(is_active=True,order__id=int(order_list[8]),order_scheduler_book__id=int(book.id)).count()
+					completed_cleanings = OrderScheduler.objects.filter(is_active=True,order__id=int(order_list[8]),order_scheduler_book__id=int(book.id),work_status='CLEANING_FULFILLED')
 					completed_cleanings_count = completed_cleanings.count()
 					per_cleaning_amount = float(book.total_cost/cleanings_count)
 					job_completed += float(per_cleaning_amount*completed_cleanings_count)
@@ -1097,9 +1100,9 @@ def export_users_xls(request):
 
 			else:
 
-				schedule_count = OrderScheduler.objects.filter(order__order_no=order_list[2]).count()
+				schedule_count = OrderScheduler.objects.filter(order__id=int(order_list[8])).count()
 				
-				completed_cleanings_count = OrderScheduler.objects.filter(order__order_no=order_list[2],work_status='CLEANING_FULFILLED').count()
+				completed_cleanings_count = OrderScheduler.objects.filter(order__id=int(order_list[8]),work_status='CLEANING_FULFILLED').count()
 				
 				if order_list[0] == 'ONE TIME SERVICE':
 					order_list[6] = 0
@@ -1110,9 +1113,6 @@ def export_users_xls(request):
 					job_remaining = float(order_list[5] - job_completed)
 					order_list[6] = job_completed
 					order_list[8] = job_remaining
-				
-			orderschedules_start = OrderScheduler.objects.filter(order__order_no=order_list[2]).first()
-			orderschedules_end = OrderScheduler.objects.filter(order__order_no=order_list[2]).last()
 
 			if schedule_count > 1:
 				order_list[3] = orderschedules_start.start_at
