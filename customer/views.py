@@ -2215,15 +2215,17 @@ def GetCleaningSlotes(request):
 			busy_cleaners = len(set(team_members_scheduled))
 
 			#slote appending
-			if((total_cleaners-busy_cleaners)>=(number_of_cleaners-1) and (total_leaders-busy_leaders)>=1):
+			if((total_cleaners-busy_cleaners)>=number_of_cleaners and (total_leaders-busy_leaders)>=1):
 				available_durations.append(slote_duration)	
 			else:
-				break			
+				dropdown_slotes['success'] = False
+				dropdown_slotes['Error'] = 'Cleaners are not available'
+				return JsonResponse(dropdown_slotes)			
 		
 		available_slotes[slote] = available_durations
 
+	dropdown_slotes['success']= True
 	dropdown_slotes['slotes'] = available_slotes
-
 	return JsonResponse(dropdown_slotes)
 
 
