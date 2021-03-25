@@ -46,9 +46,9 @@ urlpatterns = [
 		url(r'^booking/cleaning/debitpay/$',views.CustomerBookingCleaningDebitPay.as_view(),name='customerbookingdebitpay'),
 		
 		##actual booking related urls
-		url(r'^ajax/getservicesizeprice$',views.GetServiceSizePrice,name='ajax-getservicesizeprice'),
-		url(r'^ajax/getserviceproductivity$',views.GetServiceProductivity,name='ajax-serviceproductivity'),
-		url(r'^ajax/getcleaningslotes$',views.GetCleaningSlotes,name='ajax-cleaningslotes'),
+		url(r'^ajax/getservicesizeprice$',views.GetServiceSizePrice.as_view(),name='ajax-getservicesizeprice'),
+		url(r'^ajax/getserviceproductivity$',views.GetServiceProductivity.as_view(),name='ajax-serviceproductivity'),
+		url(r'^ajax/getcleaningslotes$',views.GetCleaningSlotes.as_view(),name='ajax-cleaningslotes'),
 		url(r'^ajax/addressotpsend$',views.AddressOtpSend,name='ajax-addressotpsend'),
 		url(r'^ajax/addressotpverify$',views.AddressOtpVerify,name='ajax-addressotpverify'),
 		url(r'^bookingphase1$',views.ClientCleaningBookingPhase1.as_view(),name='clientcleaningbookingphase1'),
