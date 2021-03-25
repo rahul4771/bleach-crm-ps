@@ -2042,9 +2042,9 @@ def GetServiceProductivity(request):
 		serviceproductivities = ServiceProductivity.objects.select_related('service_type').filter(service_type__name=service_type)
 		for serviceproductivity in serviceproductivities:
 			if serviceproductivity.is_highprice_facade:
-				service_productivity['highpricefascade_perhour_cleaning'] = serviceproductivity.perhour_cleaning
+				service_productivity['highpricefacade_perhour_cleaning'] = serviceproductivity.perhour_cleaning
 			else:
-				service_productivity['lowpricefascade_perhour_cleaning']  = serviceproductivity.perhour_cleaning
+				service_productivity['lowpricefacade_perhour_cleaning']  = serviceproductivity.perhour_cleaning
 	
 	elif service_type         == 'Kitchen Cleaning':
 		serviceproductivities = ServiceProductivity.objects.select_related('service_type').filter(service_type__name=service_type)
@@ -2445,7 +2445,7 @@ class ClientCleaningBookingPhase2(APIView):
 				end_date_time           =  start_date_time + timedelta(hours=int(saved_service.cleaning_hours)) 	
 
 				#schedule
-				order_schedule = OrderScheduler.objects.create(order=order,status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book=saved_service)
+				order_schedule = OrderScheduler.objects.create(order=order,status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book=saved_service,no_of_cleaners=no_of_cleaners,cleaning_hours=cleaning_hours)
 					
 				#same blc cleaners for excluding
 				sameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
