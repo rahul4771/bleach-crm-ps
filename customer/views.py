@@ -1984,6 +1984,28 @@ def generate_random_otp(size=5, chars=string.digits):
 	except UserProfile.DoesNotExist:
 		return otp
 
+class GetServiceTypes(APIView):  
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict        		= {}
+		response_dict['susccess']	= False
+
+		try:
+			service_types = ServiceType.objects.filter(is_active=True)
+		except:
+			service_types = None
+
+		service_typeslist = []
+		for service_type in service_types:
+			service_typeslist.append({'name':service_type.name,'id':service_type.id})
+
+		response_dict['service_types']	= service_typeslist
+		response_dict['susccess']		= True
+
+		return JsonResponse(response_dict)
+
 
 class GetServiceSizePrice(APIView):  
 	permission_classes        = (AllowAny,)
