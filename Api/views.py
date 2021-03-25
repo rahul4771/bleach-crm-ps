@@ -318,6 +318,14 @@ class DailySalesAPI(APIView):
 
 		saleslist = []
 
+		generalcleaning_month = 0
+		upholsterycleaning_month = 0
+		deepcleaning_month = 0
+		carpetcleaning_month = 0
+		kitchencleaning_month = 0
+		sterilization_month = 0
+		cleaning_amount_month = 0
+
 		for date in daterange:
 			start_date_day = date
 			end_date_day   = date+timedelta(1)
@@ -366,7 +374,7 @@ class DailySalesAPI(APIView):
 					if schedule[7] != None:
 						generalcleaning -= float(schedule[7]/schedule_count)
 					if schedule[8] != None:
-						generalcleaning += float(schedule[8]/schedule_count)
+						generalcleaning += float(schedule[8]/schedule_count)										
 
 				if schedule[2] == 'Upholstery Cleaning':
 					upholsterycleaning += float(order_amount/schedule_count)
@@ -432,8 +440,16 @@ class DailySalesAPI(APIView):
 
 			saleslist.append(list_item)
 
+			generalcleaning_month += generalcleaning
+			upholsterycleaning_month += upholsterycleaning
+			deepcleaning_month += deepcleaning
+			kitchencleaning_month += kitchencleaning
+			carpetcleaning_month += carpetcleaning
+			sterilization_month += sterilization
+			cleaning_amount_month += cleaning_amount
+
 				
-		response_dict = {'success':True,'list':saleslist,'todate':str(today.date()),'month_name':full_month_name}
+		response_dict = {'success':True,'list':saleslist,'todate':str(today.date()),'month_name':full_month_name,'generalcleaning_month':generalcleaning_month,'upholsterycleaning_month':upholsterycleaning_month,'deepcleaning_month':deepcleaning_month,'kitchencleaning_month':kitchencleaning_month,'carpetcleaning_month':carpetcleaning_month,'sterilization_month':sterilization_month,'cleaning_amount_month':cleaning_amount_month}
 
 		return Response(response_dict,HTTP_200_OK)
 
