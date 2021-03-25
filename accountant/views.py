@@ -1101,7 +1101,12 @@ def export_users_xls(request):
 			else:
 
 				schedule_count = OrderScheduler.objects.filter(order__id=int(order_list[8])).count()
-				
+
+				if not schedule_count:
+					schedule_count = 1
+
+				print(schedule_count,"cmo")
+
 				completed_cleanings_count = OrderScheduler.objects.filter(order__id=int(order_list[8]),work_status='CLEANING_FULFILLED').count()
 				
 				if order_list[0] == 'ONE TIME SERVICE':
