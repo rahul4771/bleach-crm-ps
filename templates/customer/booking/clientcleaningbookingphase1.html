@@ -1364,13 +1364,13 @@ $.ajax({
             }
         }
 
-        else if(middle_element == 0)
+        else if(middle_element == 0 && max_cleaners > 0)
         {
           //1st
           duration_list.push([1,middle_hours]);
 
           //2nd
-          if(Math.round(manhour/(middle_hours+3)) > 0)
+          if(Math.round(manhour/(middle_hours+3)) > 0 && Math.round(manhour/(middle_hours+3)) <= max_cleaners)
           {
             duration_list.push([Math.round(manhour/(middle_hours+3)),(middle_hours+3)]);  
           }
@@ -1380,7 +1380,7 @@ $.ajax({
           }
 
           //3rd
-          if(Math.round(manhour/(middle_hours+6)) > 0)
+          if(Math.round(manhour/(middle_hours+6)) > 0 && Math.round(manhour/(middle_hours+6)) <= max_cleaners)
           {
             duration_list.push([Math.round(manhour/(middle_hours+6)),(middle_hours+6)]);  
           }
@@ -1404,7 +1404,7 @@ $.ajax({
           duration_list.push([middle_element,middle_hours])
           
           //2nd
-          if(Math.round(manhour/(middle_hours+3)) > 0)
+          if(Math.round(manhour/(middle_hours+3)) > 0 && Math.round(manhour/(middle_hours+3)) <= max_cleaners)
           {
             duration_list.push([Math.round(manhour/(middle_hours+3)),(middle_hours+3)]);  
           }
@@ -1414,7 +1414,7 @@ $.ajax({
           }
 
           //3rd
-          if(Math.round(manhour/(middle_hours+6)) > 0)
+          if(Math.round(manhour/(middle_hours+6)) > 0 && Math.round(manhour/(middle_hours+3)) <= max_cleaners)
           {
             duration_list.push([Math.round(manhour/(middle_hours+6)),(middle_hours+6)]);  
           }
