@@ -20,28 +20,27 @@ function initialize() {
             duration: 1000,
             easing: 'out'
         },
-        series: {
-            1: {
-              type: 'line'
-            }
-          },
-        colors: ['#FF6347','#FF4500'],
+        
+        series: {1: {lineWidth: 3, type: 'line',lineDashStyle: [5, 5], bold: true,}},
+        colors: ['#ff8c56','#FFFF00'],
         legend:{position:'none'}
     };
     
     chart.setOptions(options);
 
     function drawArea() {
-        var date1 = new Date();
+        // var date1 = new Date();
 
-        var month = ("0" + (date1.getMonth()+1)).slice(-2);
-        console.log(month,"lp")
+        var sales_month = $('#calendar_month').val();
+
+        // var month = ("0" + (date1.getMonth()+1)).slice(-2);
+        // console.log(month,"lp")
         
-        var datestring = month + "/" + date1.getFullYear();
+        // var datestring = month + "/" + date1.getFullYear();
         
-        console.log(datestring)      
+        // console.log(datestring)      
         
-        axios.get(url+'/api/daily-sales-chart/',{ params: { 'sales_month': datestring } })
+        axios.get(url+'/api/daily-sales-chart/',{ params: { 'sales_month': sales_month } })
         .then(function (response) {
     
             $.each(response.data.list, function(key,value) {
@@ -70,5 +69,9 @@ function initialize() {
     }
 
     drawArea();
+
+    $("#calendar_month").on("change",(function(){
+        drawArea();
+    }));
     
 }
