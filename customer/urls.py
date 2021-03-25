@@ -48,7 +48,7 @@ urlpatterns = [
 		##actual booking related urls
 		url(r'^ajax/getservicesizeprice$',views.GetServiceSizePrice,name='ajax-getservicesizeprice'),
 		url(r'^ajax/getserviceproductivity$',views.GetServiceProductivity,name='ajax-serviceproductivity'),
-		url(r'^ajax/getcleningslotes$',views.GetCleaningSlotes,name='ajax-cleaningslotes'),
+		url(r'^ajax/getcleaningslotes$',views.GetCleaningSlotes,name='ajax-cleaningslotes'),
 		url(r'^ajax/addressotpsend$',views.AddressOtpSend,name='ajax-addressotpsend'),
 		url(r'^ajax/addressotpverify$',views.AddressOtpVerify,name='ajax-addressotpverify'),
 		url(r'^bookingphase1$',views.ClientCleaningBookingPhase1.as_view(),name='clientcleaningbookingphase1'),

@@ -1223,7 +1223,7 @@
 function durationcalculation(params)
 {
 // selected_service = $("#bk-service option:selected" ).text();
-selected_service     = 'Upholstery Cleaning';
+selected_service     = 'Sterilization';
 
 $.ajax({
 
@@ -1253,7 +1253,7 @@ $.ajax({
 
         else if(selected_service == 'Kitchen Cleaning')
         {
-          total_newkitchen_size = 400;
+          total_newkitchen_size  = 400;
           total_oldkitchen_size  = 400;
           manhour = parseInt(total_newkitchen_size/data['newkitchen_perhour_cleaning'])+parseInt(total_oldkitchen_size/data['oldkitchen_perhour_cleaning'])
         }
@@ -1267,7 +1267,7 @@ $.ajax({
 
         else
         {
-          total_estimated_size = 1000;
+          total_estimated_size = 1504;
           productivity         = data['perhour_cleaning'];
           manhour              = parseInt(total_estimated_size/productivity)
         }
@@ -1325,7 +1325,8 @@ $.ajax({
 
         console.log(pair,"newpair")
 
-        max_cleaners = data['max_cleaners']
+        // max_cleaners = data['max_cleaners']
+        max_cleaners    = 20 
         
         duration_list  = [];
         lower_loop     = 0;
@@ -1333,7 +1334,8 @@ $.ajax({
         middle_element = pair[0];
         middle_hours   = pair[1];
 
-        if(middle_element<=max_cleaners)
+
+        if(middle_element<=max_cleaners && middle_element>0)
         {
           duration_list.push(pair);
 
@@ -1345,42 +1347,85 @@ $.ajax({
             }
           if(Math.round(manhour/(middle_hours+3))>0 && Math.round(manhour/(middle_hours+3))<=max_cleaners)
             {
-              duration_list.push([Math.round(manhour/(middle_hours+3)),(middle_hours+3)]);
-              lower_loop = 1;
+              duration_list.push([Math.round(manhour/(middle_hours+3)),(middle_hours+3)]); 
+              upper_loop = 1;
             }
 
           //check
           if(Math.round(manhour/(middle_hours-6))>0 && Math.round(manhour/(middle_hours-6)) <= max_cleaners && upper_loop == 0)
             {
-              duration_list.push([Math.round(manhour/(middle_hours-3)),(middle_hours-3)]);
+              duration_list.push([Math.round(manhour/(middle_hours-6)),(middle_hours-6)]); 
               lower_loop = 1;
             }
-          if(Math.round(manhour/(middle_hours-6))>0 && Math.round(manhour/(middle_hours+6))<=max_cleaners && lower_loop == 0)
-            {
+          if(Math.round(manhour/(middle_hours+6))>0 && Math.round(manhour/(middle_hours+6))<=max_cleaners && lower_loop == 0)
+            { 
               duration_list.push([Math.round(manhour/(middle_hours+6)),(middle_hours+6)]);
               upper_loop = 1;
             }
         }
 
-        
-        else
+        else if(middle_element == 0 && max_cleaners > 0)
         {
-          middle_element = max_cleaners;
-          middle_hours   = Math.round(manhour/middle_element)-(Math.round(manhour/middle_element)%3)
-          duration_list.push([middle_element,middle_hours])
+          //1st
+          duration_list.push([1,middle_hours]);
 
-          if(Math.round(manhour/(middle_hours+3)) > 0)
+          //2nd
+          if(Math.round(manhour/(middle_hours+3)) > 0 && Math.round(manhour/(middle_hours+3)) <= max_cleaners)
           {
             duration_list.push([Math.round(manhour/(middle_hours+3)),(middle_hours+3)]);  
           }
-          if(Math.round(manhour/(middle_hours+6)) > 0)
+          else
+          {
+            duration_list.push([1,(middle_hours+3)]); 
+          }
+
+          //3rd
+          if(Math.round(manhour/(middle_hours+6)) > 0 && Math.round(manhour/(middle_hours+6)) <= max_cleaners)
           {
             duration_list.push([Math.round(manhour/(middle_hours+6)),(middle_hours+6)]);  
+          }
+          else
+          {
+           duration_list.push([1,(middle_hours+6)]); 
+          }
+
+        }
+
+        else
+        {
+          middle_element = max_cleaners;
+          middle_hours   = Math.round(manhour/middle_element)-((Math.round(manhour/middle_element))%3)
+          if(middle_hours == 0)
+          {
+           middle_hours = 3; 
+          } 
+
+          //1st
+          duration_list.push([middle_element,middle_hours])
+          
+          //2nd
+          if(Math.round(manhour/(middle_hours+3)) > 0 && Math.round(manhour/(middle_hours+3)) <= max_cleaners)
+          {
+            duration_list.push([Math.round(manhour/(middle_hours+3)),(middle_hours+3)]);  
+          }
+          else
+          {
+            duration_list.push([middle_element,(middle_hours+3)]); 
+          }
+
+          //3rd
+          if(Math.round(manhour/(middle_hours+6)) > 0 && Math.round(manhour/(middle_hours+3)) <= max_cleaners)
+          {
+            duration_list.push([Math.round(manhour/(middle_hours+6)),(middle_hours+6)]);  
+          }
+          else
+          {
+           duration_list.push([middle_element,(middle_hours+6)]); 
           }
             
           
         }
-        console.log(duration_list)
+        console.log(duration_list,"duration_list")
 
         for(i=0;i<duration_list.length;i++)
           {
