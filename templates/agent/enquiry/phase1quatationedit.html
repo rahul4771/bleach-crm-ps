@@ -98,12 +98,13 @@
                 <label for="favcity">
                 <select id="payment_method_id" name="payment_method" class="payment_method" required>
                 <option value="">Choose Payment Method</option>
-                <option value="PREPAID" {% if evaluation.payment_method == "PREPAID" %}selected{% endif %}>Prepaid</option>
-                <option value="POSTPAID" {% if evaluation.payment_method == "POSTPAID" %}selected{% endif %}>Post Paid</option>
-                <option value="BREAKDOWN" {% if evaluation.payment_method == "BREAKDOWN" %}selected{% endif %}>Break-Down</option>
                 {% for evaluationdetail in evaluation_details %}
                 {% if evaluationdetail.evaluationbooks %}
                 <option {% if evaluation.payment_method == "SUBSCRIPTION" %}selected{% endif %} value="SUBSCRIPTION">Subscription</option>
+                {% else %}
+                <option value="PREPAID" {% if evaluation.payment_method == "PREPAID" %}selected{% endif %}>Prepaid</option>
+                <option value="POSTPAID" {% if evaluation.payment_method == "POSTPAID" %}selected{% endif %}>Post Paid</option>
+                <option value="BREAKDOWN" {% if evaluation.payment_method == "BREAKDOWN" %}selected{% endif %}>Break-Down</option>
                 {% endif %}
                 {% endfor %}
                 </select>
