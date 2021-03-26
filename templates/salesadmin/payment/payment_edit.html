@@ -69,7 +69,7 @@
                 <option value="PREPAID" {% if evaluation.payment_method == "PREPAID" %}selected{% endif %}>Prepaid</option>
                 <option value="POSTPAID" {% if evaluation.payment_method == "POSTPAID" %}selected{% endif %}>Post Paid</option>
                 <option value="BREAKDOWN" {% if evaluation.payment_method == "BREAKDOWN" %}selected{% endif %}>Break-Down</option>
-                <option value="SUBSCRIPTION" {% if evaluation.payment_method == "SUBSCRIPTION" %}selected{% endif %}>SUBSCRIPTION</option>
+                {% comment %} <option value="SUBSCRIPTION" {% if evaluation.payment_method == "SUBSCRIPTION" %}selected{% endif %}>SUBSCRIPTION</option> {% endcomment %}
                 </select>
                 </label>
   </div><!--ticket-form-left-->
