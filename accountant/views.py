@@ -1122,9 +1122,12 @@ def export_users_xls(request):
 			if schedule_count > 1:
 				order_list[3] = orderschedules_start.start_at
 				order_list[4] = orderschedules_end.end_at
-			else:
+			elif schedule_count == 1:
 				order_list[3] = orderschedules_start.start_at
 				order_list[4] = orderschedules_start.end_at
+			else:
+				order_list[3] = '-'
+				order_list[4] = '-'
 
 				
 
