@@ -3187,6 +3187,51 @@ class TicketRegistration(IsAgent,View):
 
 		return redirect('agent:agent-ticketregister')
 
+class PaymentEdit(IsAgent,View):
+
+	def get(self,request,enquiry_id,evaluation_id):
+		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
+		
+		try:
+			evaluation = Evaluation.objects.get(id=evaluation_id)
+		except:
+			evaluation = None		
+	
+		try:
+			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation)
+		except:
+			evaluation_details = None
+
+		#allow submition	
+		evaluation_details_count         = evaluation_details.count()
+		evaluation_details_completed_count= evaluation_details.filter(status='EVALUATED').count()
+		if evaluation_details_count==evaluation_details_completed_count:
+			allow_submit = True
+		else:
+			allow_submit = False	
+
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()				
+
+		return render(request,'agent/payment/payment_edit.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,})	
+
+	def post(self,request,enquiry_id,evaluation_id):
+		
+		payment_method 			= request.POST.get('payment_method')
+		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
+		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
+
+		#update payment method
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+		
+		messages.success(request,"Payment Policy Edited Succesfully")
+
+		order			= Order.objects.get(evaluation_id=evaluation_id)
+		
+		return redirect('agent:agent-client-orderdetails',order.id)
+
 class OrderTicketRegistration(IsAgent,View):
 	def get(self,request,orderid):
 

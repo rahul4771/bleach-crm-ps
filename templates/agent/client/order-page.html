@@ -763,7 +763,12 @@
             <div class="payment-text bold-text red-text"><div>Final Amount</div> : {{order.evaluation.total_cost|default_if_none:'0.000'|floatformat:'3'}} KD</div>
             <hr class="bar"> 
             <div class="payment-text"><div>Payment Policy</div> : 
-            {{order.evaluation.payment_method|default_if_none:''}}</div>
+            {{order.evaluation.payment_method|default_if_none:''}}
+            {% if order.amount_paid == 0.000 and order.evaluation.is_promocode_applied == False and order.evaluation.payment_method != 'SUBSCRIPTION' %}
+            &nbsp;&nbsp;&nbsp;<a class="paymentedit" href="{% url 'agent:agent-payment-edit' order.evaluation.customer.id order.evaluation.id %}"><div class="edit_payment_policy"></div></a>
+            {% else %}
+            {% endif %}
+            </div>
             {% if order.evaluation.payment_method == 'BREAKDOWN' %}
             <div class="payment-text"><div>Before Cleaning Amount</div> : {{order.evaluation.before_cleaning_amount|default_if_none:''}}</div>
             <div class="payment-text"><div>After Cleaning Amount</div> : {{order.evaluation.after_cleaning_amount|default_if_none:''}}</div>
@@ -1084,6 +1089,13 @@ cleaning_completed_count += 1;
 {% endif %}
 
 {% endfor %}
+
+//payment policy edit button hide / Show
+if (teamassign_completed_count > 0){
+    $('.paymentedit').remove();
+}else{
+    $('.edit_payment_policy').append('<span style="color: blue "><i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</span>');
+}
 
 //feedback button hide/show
 if (cleaning_completed_count == total_schedules){

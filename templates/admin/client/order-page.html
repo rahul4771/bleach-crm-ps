@@ -766,7 +766,7 @@
             <hr class="bar"> 
             <div class="payment-text"><div>Payment Policy</div> : 
             {{order.evaluation.payment_method|default_if_none:''}}            
-            {% if order.amount_paid == 0.000 and order.evaluation.is_promocode_applied == False %}
+            {% if order.amount_paid == 0.000 and order.evaluation.is_promocode_applied == False and order.evaluation.payment_method != 'SUBSCRIPTION' %}
             &nbsp;&nbsp;&nbsp;<a class="paymentedit" href="{% url 'bleach_admin:admin-payment-edit' order.evaluation.customer.id order.evaluation.id %}"><div class="edit_payment_policy"></div></a>
             {% else %}
             {% endif %}
