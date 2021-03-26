@@ -2269,7 +2269,7 @@ def AddressOtpSend(request):
 	response_dict['success'] = False
 
 	mobile_no  		= request.GET.get('mobile_number')
-	address_otp 	= generate_random_otp()
+	address_otp 	= 12345
 	otp_update 		= UserProfile.objects.filter(mobile_number=mobile_no).update(address_otp=address_otp)
 
 	if otp_update:
