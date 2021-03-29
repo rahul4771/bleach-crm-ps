@@ -2225,19 +2225,36 @@ class NewEnquiry(IsAgent,View):
 
 			#APPEND MR / MS TO NAME
 			customer_name = enquiry_form_save.name
+			customer_name = customer_name.lower()
 
 			if enquiry_form_save.gender == 'MALE':
-				prefix = 'Mr. '
-				prefix_exists = customer_name.startswith(prefix)
+				prefix_list = ['mr.','mr']
+				for prefix in prefix_list:
+					
+					prefix_exists = customer_name.startswith(prefix)
 
-				if prefix_exists == False :
-					enquiry_form_save.name = prefix+customer_name
+					if prefix_exists == False :
+						if customer_name.startswith('dr.') == True or customer_name.startswith('dr') == True :
+							enquiry_form_save.name = customer_name.title()
+						else:	
+							enquiry_form_save.name = 'Mr. '+customer_name
+					else:
+						enquiry_form_save.name = customer_name.title()													
+
 			elif enquiry_form_save.gender == 'FEMALE':
-				prefix = 'Ms. '
-				prefix_exists = customer_name.startswith(prefix)
+				prefix_list = ['ms.','ms']
+				for prefix in prefix_list:
+					
+					prefix_exists = customer_name.startswith(prefix)
 
-				if prefix_exists == False :
-					enquiry_form_save.name = prefix+customer_name
+					if prefix_exists == False :
+						if customer_name.startswith('dr.') == True or customer_name.startswith('dr') == True or customer_name.startswith('mrs.') == True or customer_name.startswith('mrs') == True:
+							enquiry_form_save.name = customer_name.title()
+						else:	
+							enquiry_form_save.name = 'Ms. '+customer_name
+					else:
+						enquiry_form_save.name = customer_name.title()
+
 			else:
 				pass
 
@@ -2397,19 +2414,36 @@ class ExistingEnquiry(IsAgent,View):
 
 				#APPEND MR / MS TO NAME
 				customer_name = enquiry_form_save.name
+				customer_name = customer_name.lower()
 
 				if enquiry_form_save.gender == 'MALE':
-					prefix = 'Mr. '
-					prefix_exists = customer_name.startswith(prefix)
+					prefix_list = ['mr.','mr']
+					for prefix in prefix_list:
+						
+						prefix_exists = customer_name.startswith(prefix)
 
-					if prefix_exists == False :
-						enquiry_form_save.name = prefix+customer_name
+						if prefix_exists == False :
+							if customer_name.startswith('dr.') == True or customer_name.startswith('dr') == True :
+								enquiry_form_save.name = customer_name.title()
+							else:	
+								enquiry_form_save.name = 'Mr. '+customer_name
+						else:
+							enquiry_form_save.name = customer_name.title()													
+
 				elif enquiry_form_save.gender == 'FEMALE':
-					prefix = 'Ms. '
-					prefix_exists = customer_name.startswith(prefix)
+					prefix_list = ['ms.','ms']
+					for prefix in prefix_list:
+						
+						prefix_exists = customer_name.startswith(prefix)
 
-					if prefix_exists == False :
-						enquiry_form_save.name = prefix+customer_name
+						if prefix_exists == False :
+							if customer_name.startswith('dr.') == True or customer_name.startswith('dr') == True or customer_name.startswith('mrs.') == True or customer_name.startswith('mrs') == True:
+								enquiry_form_save.name = customer_name.title()
+							else:	
+								enquiry_form_save.name = 'Ms. '+customer_name
+						else:
+							enquiry_form_save.name = customer_name.title()
+
 				else:
 					pass
 
