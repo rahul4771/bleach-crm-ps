@@ -17,11 +17,17 @@ var app = new Vue({
   }),
   data () {
   return {
+    buildingsCompleted:false,
+    date: null,
+      menu: false,
     ImageDetails:{
       url:'',
       file:''
     },
+    dateSelected:'',
+    userStat:true,
     images: [],
+    duration:[],
     totalCost:0,
     billingData:[],
     dialogStat:'',
@@ -45,7 +51,8 @@ var app = new Vue({
     ceiling_type:'',
     residue:false,
     hallway_size:'',
-    sides:''
+    sides:'',
+    stain_age:''
   },
   color:['Blue','Yellow','Orange','Red','Black','White'],
   material:['Material 1','Material 2','Material 3','Material 4'],
@@ -53,7 +60,7 @@ var app = new Vue({
   upholsterySize1:['Small','Medium','Large','Xtra Large'],
   upholsterySize2:['Small','Medium','Large'],
   upholsterySize3:['Small','Medium','Large'],
-  tab:'',
+  tab:'tab1',
   e6: 1,
   e1:1,
     serviceType:'',
@@ -95,24 +102,55 @@ var app = new Vue({
             number_of_cleaners:0,
             cleaning_hours:0
         },
-        sections:
-          {
-            section_name:'',
-            size:'',
-            wall_type:'',
-            ceiling_type:'',
-            cement_residue:false,
-            section_cost:'',
-            section_net_cost:'',
-            keynotes:{}
-          },
-        
-        sections:{
+        sections:{},
+        customer_id:'',
+        customer_details:{
+          name:'',
+          gender:'',
+          email:'',
+          mobile_number:'',
+          dob:'',
+          date_day:'',
+          date_month:'',
+          date_year:'',
+          nationality:'',
+          sms_preference:'',
+          contact_platform:[]
+        },
+        address_id:'',
+        address_details:{
+          governorate:'',
+          area:'',
+          block:'',
+          avenue:'',
+          building:'',
+          street:'',
+          floor:'',
+          apartment:''
+        },
 
-        }
-    }
+    },
+    sections:
+    {
+       section_name:'',
+       size:'',
+       wall_type:'',
+       ceiling_type:'',
+       cement_residue:false,
+       section_cost:'',
+       section_net_cost:'',
+       keynotes:{}
+     },
     
   }
+},
+mounted(){
+// this.getTimeSlots()
+},
+watch: {
+  menu (val) {
+    val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+  },
 },
   created: function() {
      
@@ -120,7 +158,27 @@ var app = new Vue({
     console.log('Vue instance was created');
   },
   methods: {
-
+    getTimeSlots(){
+      axios.get('/customer/ajax/getcleaningslotes?service_type='+this.serviceType+'&number_of_cleaners='+1+'&cleaning_date=27-3-2021')
+      .then(function (response) {
+        console.log(response.data);
+        console.log(response.status);
+        console.log(response.statusText);
+        console.log(response.headers);
+        console.log(response.config);
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    setDuration(hours,cleaners){
+      this.duration.push({
+        hours:hours,
+        cleaners:cleaners
+      })
+    },
+    save (date) {
+      this.$refs.menu.save(date)
+    },
     onImageFileChanged(event) {
       
       
@@ -139,6 +197,7 @@ var app = new Vue({
     deleteImage(imageindex){
       this.imageData.splice(imageindex,1);
     },
+
     addNew(){
       this.otherService={
         material:'',
@@ -153,7 +212,8 @@ var app = new Vue({
         ceiling_type:'',
         residue:false,
         hallway_size:'',
-        sides:''
+        sides:'',
+        stain_age:''
       }
       this.dialog=true;
       this.dialogmsg='Add New';
@@ -177,7 +237,8 @@ var app = new Vue({
         ceiling_type:a.ceiling_type,
         residue:a.residue,
         hallway_size:a.hallway_size,
-        sides:a.sides
+        sides:a.sides,
+        stain_age:a.stain_age
       },
       this.currentItem=b;
     },
@@ -200,7 +261,8 @@ var app = new Vue({
         ceiling_type:'',
         residue:false,
         hallway_size:'',
-        sides:''
+        sides:'',
+        stain_age:''
       }
       this.dialog=false
     },
@@ -254,12 +316,13 @@ var app = new Vue({
         this.building.push(
           {
             floors:[],
-           
+            completed:false
           }
         )
         this.e.building.push({
           floors:[],
-          e:1
+          e:1,
+          
         })
       }
     },
@@ -328,8 +391,9 @@ var app = new Vue({
       
     },
     selectDuration(duration){
+        duration.slots=duration.hours/3;
         this.selectedDuration=duration;
-        this.splitData=[];
+       /* this.splitData=[];
         let dur=parseInt(duration);
         var fullDays=0;
         var lastDayHour=0;
@@ -368,8 +432,13 @@ var app = new Vue({
        
        
         console.log("full days is "+fullDays);
-        console.log("last day is "+lastDayHour);
+        console.log("last day is "+lastDayHour);*/
 
+    },
+    nextTab(){
+      this.tab='tab2'
+      console.log('tab is'+this.tab)
+     
     },
     changeDuration(index){
           var currentTotal=0;
@@ -531,23 +600,55 @@ var app = new Vue({
     },
     nextApartment(building,floor,apartment){
       this.e.building[building].floors[floor].e = (apartment+2)
-      this.building[building].floors[floor].apartments[apartment].completed=true,
-      this.billingData.push({
-        name:'Building '+(building+1)+' Floor '+(floor+1)+' Apartment '+(apartment+1),
-        section:this.building[building].floors[floor].apartments[apartment]
-    })
-    this.totalCost=this.totalCost+this.building[building].floors[floor].apartments[apartment].size.cost
+      this.building[building].floors[floor].apartments[apartment].completed=true
+      var itemFound=false
+      for (var i=0;i<this.billingData.length;i++){
+          if(this.billingData[i].name=='Building '+(building+1)+' Floor '+(floor+1)+' Apartment '+(apartment+1)){
+            itemFound=true
+            this.billingData[i].section=this.building[building].floors[floor].apartments[apartment]
+          }
+      }
+      if(!itemFound){
+        this.billingData.push({
+          name:'Building '+(building+1)+' Floor '+(floor+1)+' Apartment '+(apartment+1),
+          section:this.building[building].floors[floor].apartments[apartment]
+      })
+      }
+      
+      this.recalcPrice()
     },
     nextFloor(building,floor){
       this.e.building[building].e = (floor+1)
       this.building[building].floors[floor-1].completed=true
+      var floorFound=false
+      for (var i=0;i<this.billingData.length;i++){
+        if(this.billingData[i].name=='Building '+(building+1)+' Floor '+(floor)){
+          floorFound=true
+          this.billingData[i].section=this.building[building].floors[floor-1]
+        }
+    }
+    if(!floorFound)
+    {
       if(!this.building[building].floors[floor-1].apartment){
       this.billingData.push({
           name:'Building '+(building+1)+' Floor '+(floor),
           section:this.building[building].floors[floor-1]
       })
-      this.totalCost=this.totalCost+this.building[building].floors[floor-1].size.cost
+      if(floor==this.building[building].floors.length){
+        this.building[building].completed=true;
+        console.log("floor is "+floor)
+      }
+      
     }
+  }
+    this.recalcPrice()
+   
+    },
+    recalcPrice(){
+      this.totalCost=0;
+      for(var i=0;i<this.billingData.length;i++){
+        this.totalCost=this.totalCost+this.billingData[i].section.size.cost
+      }
     },
     setCost(building,floor,apartment){
       this.building[building].floors[floor].apartments[apartment].cost=''
@@ -565,7 +666,7 @@ Vue.use(Vuetify);
 
 
 
-
+durationcalculation();
 var generalCleaningSize = {};
 var deepCleaningSize = {};
 var storageAreaCleaningSize = {};
@@ -650,21 +751,37 @@ $(document).ready(function () {
                   stagePadding: 50,
               },
               600: {
-                  items: 3,
+                  items: 4,
 
                   dots: true,
+                 
+                  
 
               },
               1000: {
                   items: 4,
 
                   loop: false,
+                  
 
               }
           }
       }
   );
 });
+function nextTab(elem){
+  var elid=$(elem).attr('id');
+  console.log('tab is'+'#tab'+elid.split('-')[1]);
+  if(parseInt(elid.split('-')[1])==app.building.length){
+    app.buildingsCompleted=true;
+  }
+  else{
+    $('#tab'+(parseInt(elid.split('-')[1])+1)).click();
+  }
+  app.e.building[(parseInt(elid.split('-')[1])-1)].e=app.building.length+1;
+  
+  
+}
 function getSlot() {
   console.log("yes i run")
   $('.mc-display__body').replaceWith('<div class="row w-100"><div class="col-md-6 "><div class="time-slot"> 10 : 00am </div> </div><div class="col-md-6 "><div class="time-slot"> 11 : 00 am </div> </div></div>');
@@ -738,6 +855,7 @@ function activeSlot(ele) {
   $(ele).addClass('time-slot-active');
 }
 function getSize(srvc) {
+  
   axios.get('/customer/ajax/getservicesizeprice?service_type=' + srvc)
       .then(function (response) {
           console.log(response);
@@ -809,6 +927,233 @@ function selectService(elem) {
   app.selectServ(cleaningType);
     getSize(cleaningType);
    
+
+
+}
+
+function durationcalculation(params)
+{
+// selected_service = $("#bk-service option:selected" ).text();
+selected_service     = 'General Cleaning';
+
+$.ajax({
+
+    url: "/customer/ajax/getserviceproductivity",
+
+    data: {'service_type':selected_service}, 
+
+    dataType: 'json',
+
+    success: function (data) {
+        console.log(data);      
+        //to find total size and manhour
+        if(selected_service == 'Upholstery Cleaning')
+        {
+          total_sofa_size    = 6;
+          total_chair_size   = 9;
+          total_curtain_size = 750;
+          manhour = parseInt(total_sofa_size/data['sofa_perhour_cleaning'])+parseInt(total_chair_size/data['chair_perhour_cleaning'])+parseInt(total_curtain_size/data['curtain_perhour_cleaning'])
+        }
+
+        else if(selected_service == 'Facade Cleaning')
+        {
+          total_highpricefacade_size = 400;
+          total_lowpricefacade_size  = 400;
+          manhour = parseInt(total_highpricefacade_size/data['highpricefacade_perhour_cleaning'])+parseInt(total_lowpricefacade_size/data['lowpricefacade_perhour_cleaning'])
+        }
+
+        else if(selected_service == 'Kitchen Cleaning')
+        {
+          total_newkitchen_size = 400;
+          total_oldkitchen_size  = 400;
+          manhour = parseInt(total_newkitchen_size/data['newkitchen_perhour_cleaning'])+parseInt(total_oldkitchen_size/data['oldkitchen_perhour_cleaning'])
+        }
+
+        else if(selected_service == 'Window Cleaning')
+        {
+          total_highpricewindow_size = 400;
+          total_lowpricewindow_size  = 400;
+          manhour = parseInt(total_highpricewindow_size/data['highpricewindow_perhour_cleaning'])+parseInt(total_lowpricewindow_size/data['lowpricewindow_perhour_cleaning'])
+        }
+
+        else
+        {
+          total_estimated_size = 100;
+          productivity         = data['perhour_cleaning'];
+          manhour              = parseInt(total_estimated_size/productivity)
+        }
+
+        //optimal finding
+        r       = 2 ** (manhour.toString().length-1)
+        mod     = manhour%r
+        
+        if (mod > parseInt(r/2))
+        {
+          n= manhour+(r-mod);
+        }
+        else
+        {
+          n = manhour-mod;
+        }
+        console.log(manhour,"manhour")
+        console.log(r,"r")
+        console.log(mod,"mod")
+        console.log(n,"n")
+        var pair=[]
+        for(var i=1;i<parseInt(n ** (1/2))+1;i++)
+        {
+          if(n%i == 0)
+            {
+              pair = [i,n/i];
+            }
+        }
+        console.log(pair,"pair");
+        //pair convert to 3's multiple
+        convertion_r       = 3
+        convertion_mod     = pair[1]%convertion_r
+        
+        if (convertion_mod > parseInt(convertion_r/3))
+        {
+          console.log(manhour,"divider")
+          console.log((pair[1]+(convertion_r-convertion_mod)),"divident")
+          console.log(parseInt(manhour/(pair[1]+(convertion_r-convertion_mod))),"division")
+          pair = [Math.round(manhour/(pair[1]+(convertion_r-convertion_mod))),(pair[1]+(convertion_r-convertion_mod))];
+        }
+        else
+        {
+          console.log(manhour,"divider")
+          console.log((pair[1]-convertion_mod),"divident")     
+          
+          if((pair[1]-convertion_mod) == 0)
+          {
+            pair = [Math.round(manhour/3),3];
+          }
+          else
+          {
+            pair = [Math.round(manhour/(pair[1]-convertion_mod)),(pair[1]-convertion_mod)];
+          }
+        }
+
+
+        console.log(pair,"newpair")
+
+        max_cleaners = data['max_cleaners']
+        //max_cleaners=10;
+        duration_list  = [];
+        lower_loop     = 0;
+        upper_loop     = 0;
+        middle_element = pair[0];
+        middle_hours   = pair[1];
+
+        if(middle_element<=max_cleaners && middle_element>0)
+        {
+          duration_list.push(pair);
+
+          //first
+          if(Math.round(manhour/(middle_hours-3))>0 && Math.round(manhour/(middle_hours-3)) <= max_cleaners)
+            {
+              duration_list.push([Math.round(manhour/(middle_hours-3)),(middle_hours-3)]);
+              lower_loop = 1;
+            }
+          if(Math.round(manhour/(middle_hours+3))>0 && Math.round(manhour/(middle_hours+3))<=max_cleaners)
+            {
+              duration_list.push([Math.round(manhour/(middle_hours+3)),(middle_hours+3)]); 
+              upper_loop = 1;
+            }
+
+          //check
+          if(Math.round(manhour/(middle_hours-6))>0 && Math.round(manhour/(middle_hours-6)) <= max_cleaners && upper_loop == 0)
+            {
+              duration_list.push([Math.round(manhour/(middle_hours-6)),(middle_hours-6)]); 
+              lower_loop = 1;
+            }
+          if(Math.round(manhour/(middle_hours+6))>0 && Math.round(manhour/(middle_hours+6))<=max_cleaners && lower_loop == 0)
+            { 
+              duration_list.push([Math.round(manhour/(middle_hours+6)),(middle_hours+6)]);
+              upper_loop = 1;
+            }
+        }
+
+        else if(middle_element == 0 && max_cleaners > 0)
+        {
+          //1st
+          duration_list.push([1,middle_hours]);
+
+          //2nd
+          if(Math.round(manhour/(middle_hours+3)) > 0 && Math.round(manhour/(middle_hours+3)) <= max_cleaners)
+          {
+            duration_list.push([Math.round(manhour/(middle_hours+3)),(middle_hours+3)]);  
+          }
+          else
+          {
+            duration_list.push([1,(middle_hours+3)]); 
+          }
+
+          //3rd
+          if(Math.round(manhour/(middle_hours+6)) > 0 && Math.round(manhour/(middle_hours+6)) <= max_cleaners)
+          {
+            duration_list.push([Math.round(manhour/(middle_hours+6)),(middle_hours+6)]);  
+          }
+          else
+          {
+           duration_list.push([1,(middle_hours+6)]); 
+          }
+
+        }
+
+        else
+        {
+          middle_element = max_cleaners;
+          middle_hours   = Math.round(manhour/middle_element)-((Math.round(manhour/middle_element))%3)
+          if(middle_hours == 0)
+          {
+           middle_hours = 3; 
+          } 
+
+          //1st
+          duration_list.push([middle_element,middle_hours])
+          
+          //2nd
+          if(Math.round(manhour/(middle_hours+3)) > 0 && Math.round(manhour/(middle_hours+3)) <= max_cleaners)
+          {
+            duration_list.push([Math.round(manhour/(middle_hours+3)),(middle_hours+3)]);  
+          }
+          else
+          {
+            duration_list.push([middle_element,(middle_hours+3)]); 
+          }
+
+          //3rd
+          if(Math.round(manhour/(middle_hours+6)) > 0 && Math.round(manhour/(middle_hours+3)) <= max_cleaners)
+          {
+            duration_list.push([Math.round(manhour/(middle_hours+6)),(middle_hours+6)]);  
+          }
+          else
+          {
+           duration_list.push([middle_element,(middle_hours+6)]); 
+          }
+            
+          
+        }
+        console.log(duration_list)
+
+        for(i=0;i<duration_list.length;i++)
+          {
+            
+            total_duration  = duration_list[i][1];
+            //show to users
+            total_minutes     = (total_duration.toFixed(2)*60).toFixed(0)
+            converted_hours   = Math.floor(total_minutes / 60);          
+            converted_minutes = total_minutes % 60;
+            total_cleaners    = duration_list[i][0];
+            console.log(converted_hours,"converted_hours")
+            console.log(converted_minutes,"converted_minutes")
+            console.log(total_cleaners,"total_cleaners")
+            app.setDuration(converted_hours,total_cleaners);
+
+            }
+               }
+     });
 
 
 }
