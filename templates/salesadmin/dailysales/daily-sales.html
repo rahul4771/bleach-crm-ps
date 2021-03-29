@@ -3,8 +3,13 @@
 {% load static %}
 {% load mathfilters %}
 <div class="wrapper"><!--wrapper-->
+
+{% if request.user.user_type == 'ADMIN' %}
+{% include "admin/common/header.html" %} 
+{% else %}
 {% include "salesadmin/common/header.html" %}
-    
+{% endif %}   
+
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
@@ -102,7 +107,7 @@
 </tr>
 </thead>
 <tbody id="dailysaleslist">
-    
+
 </tbody>
 <tfoot>
  

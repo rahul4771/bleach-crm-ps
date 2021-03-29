@@ -27,8 +27,8 @@ function monthlysales(){
             }
 
         })
-        $('#dailysaleslist').append('<tr bgcolor="#ececec"><td><b>Total</b></td><td></td><td id="generalsum" class="align-right"></td><td id="upholsterysum" class="align-right"></td><td id="deepsum" class="align-right"></td><td id="carpetsum" class="align-right"></td><td id="kitchensum" class="align-right"></td><td id="sterilizationsum" class="align-right"></td><td id="totalsum" class="align-right"></td><td id="totalsales" class="align-right"></td></tr>');
-        add_console();
+        $('#dailysaleslist').append('<tr bgcolor="#ececec"><td><b>Total</b></td><td></td><td class="align-right">'+parseFloat(response.data.generalcleaning_month).toFixed(3)+'</td><td id="upholsterysum" class="align-right">'+parseFloat(response.data.upholsterycleaning_month).toFixed(3)+'</td><td id="deepsum" class="align-right">'+parseFloat(response.data.deepcleaning_month).toFixed(3)+'</td><td id="carpetsum" class="align-right">'+parseFloat(response.data.carpetcleaning_month).toFixed(3)+'</td><td id="kitchensum" class="align-right">'+parseFloat(response.data.kitchencleaning_month).toFixed(3)+'</td><td id="sterilizationsum" class="align-right">'+parseFloat(response.data.sterilization_month).toFixed(3)+'</td><td id="totalsum" class="align-right">'+parseFloat(response.data.cleaning_amount_month).toFixed(3)+'</td><td id="totalsales" class="align-right">'+parseFloat(response.data.cleaning_amount_month - 52000).toFixed(3)+'</td></tr>');
+        //add_console();
 
         //adding up and down arrows in sales list table
         $('.salestatus').each(function(){
@@ -48,72 +48,19 @@ function monthlysales(){
             }
         
         });
+
+        var monthlytotalsales = $('#totalsales').text();
+
+        if (monthlytotalsales < 0){
+            $('#totalsales').text(parseFloat(Math.abs(monthlytotalsales)).toFixed(3));
+            $('#totalsales').append(' <i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
+            $('#totalsales').addClass('red-text');
+        }else if (monthlytotalsales > 0){
+            $('#totalsales').append(' <i class="fa fa-arrow-up" aria-hidden="true" style="color:#3cbbb1;"></i>');
+            $('#totalsales').addClass('green-text');
+        }else{
+            console.log("zero")
+        }
     })
 
 }
-
-function add_console(){
-  console.log("oatu")
-    var sum1 = 0;
-    var sum2 = 0;
-    var sum3 = 0;
-    var sum4 = 0;
-    var sum5 = 0;
-    var sum6 = 0;
-    var sum7 = 0;
-    var sum8 = 0;
-
-    $('.generalclean').each(function(){
-        sum1 += parseFloat($(this).text());
-    });
-
-    $('.upholsteryclean').each(function(){
-        sum2 += parseFloat($(this).text());
-    });
-
-    $('.deepclean').each(function(){
-        sum3 += parseFloat($(this).text());
-    });
-
-    $('.carpetclean').each(function(){
-        sum4 += parseFloat($(this).text());
-    });
-
-    $('.kitchenclean').each(function(){
-        sum5 += parseFloat($(this).text());
-    });
-
-    $('.sterilizationclean').each(function(){
-        sum6 += parseFloat($(this).text());
-    });
-
-    $('.totalclean').each(function(){
-        sum7 += parseFloat($(this).text());
-    });
-
-    console.log(sum1, sum2,sum3,sum4,sum5,sum6,sum7,"lol")
-    
-    document.getElementById('generalsum').innerHTML =  parseFloat(sum1).toFixed(3) ;
-    document.getElementById('upholsterysum').innerHTML =  parseFloat(sum2).toFixed(3) ;
-    document.getElementById('deepsum').innerHTML =  parseFloat(sum3).toFixed(3) ;
-    document.getElementById('carpetsum').innerHTML =  parseFloat(sum4).toFixed(3) ;
-    document.getElementById('kitchensum').innerHTML =  parseFloat(sum5).toFixed(3) ;
-    document.getElementById('sterilizationsum').innerHTML =  parseFloat(sum6).toFixed(3) ;
-    document.getElementById('totalsum').innerHTML =  parseFloat(sum7).toFixed(3) ;
-    document.getElementById('totalsales').innerHTML =  parseFloat(sum7 - 52000).toFixed(3) ;
-
-    var monthlytotalsales = $('#totalsales').text();
-    console.log(monthlytotalsales,"stats")
-
-    if (monthlytotalsales < 0){
-        $('#totalsales').text(parseFloat(Math.abs(monthlytotalsales)).toFixed(3));
-        $('#totalsales').append(' <i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
-        $('#totalsales').addClass('red-text');
-    }else if (monthlytotalsales > 0){
-        $('#totalsales').append(' <i class="fa fa-arrow-up" aria-hidden="true" style="color:#3cbbb1;"></i>');
-        $('#totalsales').addClass('green-text');
-    }else{
-        console.log("zero")
-    }
-    
-  }
