@@ -87,13 +87,20 @@
         <button class='this-month-resource current-date'>Month</button>
       </div>
     </div>
+
+    {% comment %} <div class="date-togglewrapper"><!--date-togglewrapper-->
+            <div class="Button_wrapperChart">
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="salestoggle"><div class="slider round"><span class="on">EVALUATOR</span><span class="off">SERVICE</span></div></label></div>
+    
+            </div>
+            </div><!--date-togglewrapper--> {% endcomment %}
   </div>
 </div><!--filter-column-boxes filter-columns-right-->  
 
-<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table" id="salestable">
+<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
 <thead>
-<tr>
+<tr id="salesheaders">
 <th>Date</th>
 <th data-hide="phone,tablet">Day</th>
 <th data-hide="phone,tablet" class="align-right">General Cleaning</th>

@@ -9,6 +9,7 @@ from accountant.models import PaymentHistory
 from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer
 from agent.views import generate_random_username
 
+import re
 import random
 import string
 import functools
@@ -303,7 +304,8 @@ class DailySalesAPI(APIView):
 		today = datetime.now()
 
 		sales_month = request.GET.get('sales_month')
-		print(sales_month,"smonth")
+		data_type = request.GET.get('datatype')
+		print(sales_month,data_type,"smonthlist")
 
 		month,year = sales_month.split("/")
 		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
@@ -312,9 +314,12 @@ class DailySalesAPI(APIView):
 
 		full_month_name = monthdate1.strftime("%B")
 		print(daterange,"dr")
-		# orderschedules = OrderScheduler.objects.filter(is_active=True).filter(Q(Q(Q(start_at__gte=monthdate1)&Q(start_at__lt=monthdate2))|Q(Q(end_at__gte=monthdate1)&Q(end_at__lt=monthdate2)))).distinct().values_list('order__order_no').distinct()
 		
-		# print(orderschedules.count(),"orders")
+		#adding evaluator names to list for table header
+		evaluators = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
+		evaluators_list = []
+		for evaluator in evaluators:
+			evaluators_list.append(str(evaluator.name)+str(evaluator.id))
 
 		saleslist = []
 
@@ -340,12 +345,21 @@ class DailySalesAPI(APIView):
 			kitchencleaning = 0
 			sterilization = 0
 			cleaning_amount = 0
+			evaluator_amount = 0
+			others = 0
 
+			list_item = {}
+		
+			for evaluator in evaluators:
+				eval_dict = {"evaluator"+str(evaluator.id)+"":0}
+				list_item.update(eval_dict)
+
+			print(list_item,"elist")
+			
 			if date < todate:
-				print(date,"dtER")
-				orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',start_at__range=(start_date_day,end_date_day)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).values_list('order__order_no','order_scheduler_book__total_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount').order_by('end_at')
+				orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',start_at__range=(start_date_day,end_date_day)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).values_list('order__order_no','order_scheduler_book__total_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id').order_by('end_at')
 			else:
-				orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',start_at__range=(start_date_day,end_date_day)).values_list('order__order_no','order_scheduler_book__total_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount').order_by('end_at')
+				orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',start_at__range=(start_date_day,end_date_day)).values_list('order__order_no','order_scheduler_book__total_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id').order_by('end_at')
 
 			found = set()
 			schedules_list = []
@@ -363,7 +377,7 @@ class DailySalesAPI(APIView):
 
 				order_amount = schedule[1]
 				cleaning_amount += float(order_amount/schedule_count)
-
+				
 				#fine,promocode, write off calc
 				if schedule[6] != None:
 					cleaning_amount -= float(schedule[6]/schedule_count)
@@ -372,6 +386,38 @@ class DailySalesAPI(APIView):
 				if schedule[8] != None:
 					cleaning_amount += float(schedule[8]/schedule_count)
 
+				#adding amount to evaluators dict
+				if schedule[9] != None:
+					for x, y in list_item.items():
+						evaluator_id = int(re.search(r'\d+', x).group(0))
+						print(evaluator_id,"loll")
+						if int(evaluator_id) == int(schedule[9]):
+							print("evade",evaluator_id)
+							evaluator_amount += float(order_amount/schedule_count)
+
+							#fine,promocode, write off calc
+							if schedule[6] != None:
+								evaluator_amount -= float(schedule[6]/schedule_count)
+							if schedule[7] != None:
+								evaluator_amount -= float(schedule[7]/schedule_count)
+							if schedule[8] != None:
+								evaluator_amount += float(schedule[8]/schedule_count)
+
+					eval_dict = {""+x+"":evaluator_amount}
+					list_item.update(eval_dict)
+
+				else:
+					others += float(order_amount/schedule_count)
+
+					#fine,promocode, write off calc
+					if schedule[6] != None:
+						others -= float(schedule[6]/schedule_count)
+					if schedule[7] != None:
+						others -= float(schedule[7]/schedule_count)
+					if schedule[8] != None:
+						others += float(schedule[8]/schedule_count)						
+
+				#cleaning type wise amount addition
 				if schedule[2] == 'General Cleaning':
 					generalcleaning += float(order_amount/schedule_count)
 
@@ -432,19 +478,28 @@ class DailySalesAPI(APIView):
 					if schedule[8] != None:
 						sterilization += float(schedule[8]/schedule_count)
 			
-			list_item = {
-				'Date': str(date.date()),
-				'Day': date.strftime("%A"),
-				'GeneralCleaning':generalcleaning,
-				'UpholsteryCleaning':upholsterycleaning,
-				'KitchenCleaning':kitchencleaning,
-				'CarpetCleaning':carpetcleaning,
-				'DeepCleaning':deepcleaning,
-				'Sterilization':sterilization,
-				'Total':cleaning_amount
-			}
+			
+			if data_type == 'service':
+				list_item = {
+					'Date': str(date.date()),
+					'Day': date.strftime("%A"),
+					'GeneralCleaning':generalcleaning,
+					'UpholsteryCleaning':upholsterycleaning,
+					'KitchenCleaning':kitchencleaning,
+					'CarpetCleaning':carpetcleaning,
+					'DeepCleaning':deepcleaning,
+					'Sterilization':sterilization,
+					'Total':cleaning_amount
+				}
+			else:
+				list_item.update( {
+					'Date': str(date.date()),
+					'Day': date.strftime("%A"),
+					'others':others,
+					'Total':cleaning_amount
+				} )
 
-			saleslist.append(list_item)
+			saleslist.append(list_item) #cleaningtype list append
 
 			generalcleaning_month += generalcleaning
 			upholsterycleaning_month += upholsterycleaning
@@ -455,7 +510,7 @@ class DailySalesAPI(APIView):
 			cleaning_amount_month += cleaning_amount
 
 				
-		response_dict = {'success':True,'list':saleslist,'todate':str(today.date()),'month_name':full_month_name,'generalcleaning_month':generalcleaning_month,'upholsterycleaning_month':upholsterycleaning_month,'deepcleaning_month':deepcleaning_month,'kitchencleaning_month':kitchencleaning_month,'carpetcleaning_month':carpetcleaning_month,'sterilization_month':sterilization_month,'cleaning_amount_month':cleaning_amount_month}
+		response_dict = {'success':True,'datatype':data_type,'list':saleslist,'list2':evaluators_list,'todate':str(today.date()),'month_name':full_month_name,'generalcleaning_month':generalcleaning_month,'upholsterycleaning_month':upholsterycleaning_month,'deepcleaning_month':deepcleaning_month,'kitchencleaning_month':kitchencleaning_month,'carpetcleaning_month':carpetcleaning_month,'sterilization_month':sterilization_month,'cleaning_amount_month':cleaning_amount_month}
 
 		return Response(response_dict,HTTP_200_OK)
 
