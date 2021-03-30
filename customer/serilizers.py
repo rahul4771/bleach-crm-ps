@@ -7,7 +7,19 @@ class UserProfileSerializer(serializers.ModelSerializer):
 		model  = UserProfile
 		fields = ('name','gender','email','nationality','mobile_number','date_day','date_month','date_year','sms_preference')	
 
+class GovernorateSerializer(serializers.ModelSerializer):
+	class Meta:
+		model  = Governorate
+		fields = ('id','name')
+
+class AreaSerializer(serializers.ModelSerializer):
+	class Meta:
+		model  = Area
+		fields = ('id','name')
+
 class AddressSerializer(serializers.ModelSerializer): 
+	governorate = GovernorateSerializer(read_only=True)
+	area        = AreaSerializer(read_only=True)
 	class Meta:
 		model  = Address
 		fields = ('governorate','area','block','avenue','building','street','floor','apartment')
