@@ -23,6 +23,13 @@ function monthlysales(){
         //refresh table body
         $("#dailysaleslist").empty();
 
+        const evaluator_names = []
+        $.each(response.data.list2, function(key,value) {
+            
+            var evaluator_data =  value.split(/([0-9]+)/);
+            evaluator_names.push(evaluator_data[0])
+        })
+
         //refresh table header
         if (response.data.datatype == 'evaluator'){           
             $("#salesheaders").empty();
