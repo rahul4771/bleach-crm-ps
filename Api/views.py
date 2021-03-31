@@ -404,9 +404,9 @@ class DailySalesAPI(APIView):
 							if schedule[8] != None:
 								evaluator_amount += float(schedule[8]/schedule_count)
 
-					eval_dict = {""+x+"":evaluator_amount}
+							eval_dict = {""+x+"":evaluator_amount}
+							print(date,eval_dict,"evdict")
 					list_item.update(eval_dict)
-
 				else:
 					others += float(order_amount/schedule_count)
 
