@@ -187,12 +187,26 @@
                    {{order.evaluation.payment_method}}
                 </div>
               </div>
-              <div class="d-flex pt-1 inv-invoice-details pb-4">
+              <div class="d-flex pt-1 inv-invoice-details">
                 <div class="w-50 inv-text-left">
                   Order Number
                 </div>
                 <div class="w-50 inv-text-right">
                    {{order.evaluation.evaluation_id}}
+                </div>
+              </div>
+              <div class="d-flex pt-1 inv-invoice-details pb-4">
+                <div class="w-50 inv-text-left inv-highlight-text">
+                  Cleaning Date(s)
+                </div>
+                <div class="w-50 inv-text-right inv-highlight-text">
+                {% for orderschedule in order.orderschedules %}
+                {% if forloop.last %}
+                   {{orderschedule.start_at|date:'d-m-Y'}}
+                {% else %}
+                  {{orderschedule.start_at|date:'d-m-Y'}},
+                {% endif %}
+                {% endfor %}
                 </div>
               </div>
             </div>
