@@ -322,6 +322,7 @@ class DailySalesAPI(APIView):
 			evaluators_list.append(str(evaluator.name)+str(evaluator.id))
 
 		saleslist = []
+		evaluator_list_monthly = []
 
 		generalcleaning_month = 0
 		upholsterycleaning_month = 0
@@ -351,7 +352,7 @@ class DailySalesAPI(APIView):
 			list_item = {}
 		
 			for evaluator in evaluators:
-				eval_dict = {"evaluator"+str(evaluator.id)+"":0}
+				eval_dict = {""+str(evaluator.name)+str(evaluator.id)+"":0}
 				list_item.update(eval_dict)
 
 			print(list_item,"elist")
@@ -492,6 +493,7 @@ class DailySalesAPI(APIView):
 					'Total':cleaning_amount
 				}
 			else:
+				evaluator_list_monthly.append(list_item)
 				list_item.update( {
 					'Date': str(date.date()),
 					'Day': date.strftime("%A"),
@@ -510,7 +512,7 @@ class DailySalesAPI(APIView):
 			cleaning_amount_month += cleaning_amount
 
 				
-		response_dict = {'success':True,'datatype':data_type,'list':saleslist,'list2':evaluators_list,'todate':str(today.date()),'month_name':full_month_name,'generalcleaning_month':generalcleaning_month,'upholsterycleaning_month':upholsterycleaning_month,'deepcleaning_month':deepcleaning_month,'kitchencleaning_month':kitchencleaning_month,'carpetcleaning_month':carpetcleaning_month,'sterilization_month':sterilization_month,'cleaning_amount_month':cleaning_amount_month}
+		response_dict = {'success':True,'datatype':data_type,'list':saleslist,'list2':evaluators_list,'list3':evaluator_list_monthly, 'todate':str(today.date()),'month_name':full_month_name,'generalcleaning_month':generalcleaning_month,'upholsterycleaning_month':upholsterycleaning_month,'deepcleaning_month':deepcleaning_month,'kitchencleaning_month':kitchencleaning_month,'carpetcleaning_month':carpetcleaning_month,'sterilization_month':sterilization_month,'cleaning_amount_month':cleaning_amount_month}
 
 		return Response(response_dict,HTTP_200_OK)
 
