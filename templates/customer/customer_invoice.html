@@ -202,9 +202,9 @@
                 <div class="w-50 inv-text-right inv-highlight-text">
                 {% for orderschedule in order.orderschedules %}
                 {% if forloop.last %}
-                   {{orderschedule.start_at|date:'d-m-Y'}}
+                   {{orderschedule.start_at|date:'d-m-Y'}}<br>
                 {% else %}
-                  {{orderschedule.start_at|date:'d-m-Y'}},
+                  {{orderschedule.start_at|date:'d-m-Y'}},<br>
                 {% endif %}
                 {% endfor %}
                 </div>
