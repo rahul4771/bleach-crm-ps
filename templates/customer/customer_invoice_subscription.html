@@ -447,6 +447,26 @@
 
                     </div>
                   </div><br><br><br><br>
+        {% elif order.order_status == 'ORDER_CANCELLED' %}
+            <div class="col-12">
+              <div class="inv-current-payment p-2 mt-4 mb-4">
+                <div class="inv-text-left  pt-1">
+               Payable Amount
+                </div>
+                <div class="inv-text-right inv-text-lg pb-4 ">
+                 
+                  <span class="inv-heading subscriptiontopay">{{order.subscription_topay|floatformat:'3'}}</span> KD
+                </div>
+              </div>
+            </div>
+
+            <br><br><br><br>
+            <div class="col-12 payment-success text-center">
+                    <div class="mx-auto inv-completed">
+                      <img src="{% static 'files/icons/call-center.png' %}"  class="inv-success-icon"/> <br> Please contact our customer service (1882707) to update the invoice.
+
+                    </div>
+                  </div><br><br><br><br>
         {% else %}
 
             <div class="col-12">
