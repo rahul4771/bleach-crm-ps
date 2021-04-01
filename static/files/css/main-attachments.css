@@ -14,9 +14,11 @@
 .sp-orange-box-first{ background:#ff8c56; position:absolute;right:; top:9px; color:#fff; border-bottom-left-radius: 100px; border-top-left-radius: 100px;display:inline-block; height:25px; line-height:20px; font-size:12px; padding:0 20px;}
 .sp-orange-box-second{ background:#ff8c56; position:absolute;right:; top:9px; color:#fff; border-bottom-right-radius: 100px; border-top-right-radius: 100px;display:inline-block; height:25px; line-height:20px; font-size:12px; padding:0 20px;}
 
-.red-box{ background:#ec6262; position:absolute;top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:20px; font-size:12px; padding:0 20px;text-shadow: 1px 2px 3px #00000045;}}
+.red-box{ background:#ec6262; position:absolute;top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:20px; font-size:12px; padding:0 20px;text-shadow: 1px 2px 3px #00000045;}
 .sp-red-box-first{ background:#ec6262; position:absolute;right:; top:9px; color:#fff; border-bottom-left-radius: 100px; border-top-left-radius: 100px;display:inline-block; height:25px; line-height:20px; font-size:12px; padding:0 20px;}
 .sp-red-box-second{ background:#ec6262; position:absolute;right:; top:9px; color:#fff; border-bottom-right-radius: 100px; border-top-right-radius: 100px;display:inline-block; height:25px; line-height:20px; font-size:12px; padding:0 20px;}
+.sp-red-box-first:hover{ background:#f54c4c; cursor:pointer;}
+.sp-red-box-second:hover{ background:#f54c4c; cursor:pointer;}
 
 .yellow-box{ background:#f2ba1e; position:absolute; top:9px; color:#fff; border-radius:100px; display:inline-block; height:25px; line-height:20px; font-size:12px; padding:0 20px;text-shadow: 1px 2px 3px #00000045;}}
 .sp-yellow-box-first{ background:#f2ba1e; position:absolute;right:; top:9px; color:#fff; border-bottom-left-radius: 100px; border-top-left-radius: 100px;display:inline-block; height:25px; line-height:20px; font-size:12px; padding:0 20px;}
@@ -622,6 +624,20 @@ right:0;
 .close-btn-sp { position: absolute; right: 0; top: -40px; cursor: pointer; z-index: 99; font-size: 30px; color: #fff;}
 .custom-model-main-sp:before {  content: ""; display: inline-block; height: auto; vertical-align: middle; margin-right: -0px; height: 100%;}
 .custom-model-inner-sp{margin-top: 45px;}
+
+/* popup1 */
+.custom-model-main-sp1 { text-align: center; overflow: hidden; position: fixed; top: 0; right: 0; bottom: 0; left: 0; /* z-index: 1050; */ -webkit-overflow-scrolling: touch; outline: 0; opacity: 0; -webkit-transition: opacity 0.15s linear, z-index 0.15; -o-transition: opacity 0.15s linear, z-index 0.15; transition: opacity 0.15s linear, z-index 0.15; z-index: -1; overflow-x: hidden; overflow-y: auto;}
+.model-open-sp1 { z-index: 99999; opacity: 1; overflow: hidden;}
+.custom-model-inner-sp1 {-webkit-transform: translate(0, -25%); -ms-transform: translate(0, -25%); transform: translate(0, -25%); -webkit-transition: -webkit-transform 0.3s ease-out; -o-transition: -o-transform 0.3s ease-out; transition: -webkit-transform 0.3s ease-out; -o-transition: transform 0.3s ease-out; transition: transform 0.3s ease-out; transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out; display: inline-block; vertical-align: middle; width: 400px; margin: 30px auto; max-width: 97%; }
+.custom-model-wrap-sp1 { display: block; width: 100%; position: relative; background-color: #fff; border: 1px solid #999; border: 1px solid rgba(0, 0, 0, 0.2); border-radius: 6px; -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5); background-clip: padding-box; outline: 0; text-align: center; padding: 20px; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; max-height: calc(100vh - 70px);
+  overflow-y: auto;}
+.model-open-sp1 .custom-model-inner-sp1 { -webkit-transform: translate(0, 0); -ms-transform: translate(0, 0); transform: translate(0, 0); position: relative; z-index: 999;}
+.model-open-sp1 .bg-overlay-sp1 { background: rgba(0, 0, 0, 0.6); z-index: 99;}
+.bg-overlay-sp1 { background: rgba(0, 0, 0, 0); height: 100vh; width: 100%; position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 0; -webkit-transition: background 0.15s linear; -o-transition: background 0.15s linear; transition: background 0.15s linear;}
+.close-btn-sp1 { position: absolute; right: 0; top: -40px; cursor: pointer; z-index: 99; font-size: 30px; color: #fff;}
+.custom-model-main-sp1:before {  content: ""; display: inline-block; height: auto; vertical-align: middle; margin-right: -0px; height: 100%;}
+.custom-model-inner-sp1{margin-top: 45px;}
 
 
 /*remove button for cleaner add */
