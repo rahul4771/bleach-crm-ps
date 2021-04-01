@@ -42,7 +42,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response 
 from rest_framework.status import HTTP_200_OK 
 
-from customer.serilizers import UserProfileSerializer,AddressSerializer,EvaluationBookSerializer,EvaluationBookSectionSerializer,EvaluationSectionKeynoteSerializer,EvaluationSerializer,OrderSerializer,EvaluationDetailsSerializer
+from customer.serilizers import UserProfileSerializer,AddressSerializer,AddressSaveSerializer,EvaluationBookSerializer,EvaluationBookSectionSerializer,EvaluationSectionKeynoteSerializer,EvaluationSerializer,OrderSerializer,EvaluationDetailsSerializer
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -2336,8 +2336,6 @@ class ClientCleaningBookingPhase2(APIView):
 		except:
 			customerbooking    = None
 		
-		print(request.data)
-		print(customerbooking)
 		if not customerbooking:
         	#create user or update user
 			try:
@@ -2402,10 +2400,11 @@ class ClientCleaningBookingPhase2(APIView):
 				existing_address = None
 
 			if existing_customer:
-				address_saveupdate_serializer = AddressSerializer(data=request.data.get('address_details'),instance=existing_address)
+				address_saveupdate_serializer = AddressSaveSerializer(data=request.data.get('address_details'),instance=existing_address)
 			else:
-				address_saveupdate_serializer = AddressSerializer(data=request.data.get('address_details'))
+				address_saveupdate_serializer = AddressSaveSerializer(data=request.data.get('address_details'))
 
+			print(address_saveupdate_serializer)
 			if address_saveupdate_serializer.is_valid():
 				savedupdated_address = address_saveupdate_serializer.save(customer=savedupdated_customer,currently_active=True)
 
@@ -2488,7 +2487,7 @@ class ClientCleaningBookingPhase2(APIView):
 				end_date_time           =  start_date_time + timedelta(hours=int(saved_service.cleaning_hours)) 	
 
 				#schedule
-				order_schedule = OrderScheduler.objects.create(order=order,status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book=saved_service,no_of_cleaners=no_of_cleaners,cleaning_hours=cleaning_hours)
+				order_schedule = OrderScheduler.objects.create(order=order,status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book=saved_service,no_of_cleaners=saved_service.number_of_cleaners,cleaning_hours=saved_service.cleaning_hours)
 					
 				#same blc cleaners for excluding
 				sameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
@@ -2653,9 +2652,9 @@ class ClientCleaningBookingPhase2(APIView):
 				existing_address = None
 
 			if existing_customer:
-				address_saveupdate_serializer = AddressSerializer(data=request.data.get('address_details'),instance=existing_address)
+				address_saveupdate_serializer = AddressSaveSerializer(data=request.data.get('address_details'),instance=existing_address)
 			else:
-				address_saveupdate_serializer = AddressSerializer(data=request.data.get('address_details'))
+				address_saveupdate_serializer = AddressSaveSerializer(data=request.data.get('address_details'))
 
 			if address_saveupdate_serializer.is_valid():
 				savedupdated_address = address_saveupdate_serializer.save(customer=savedupdated_customer,currently_active=True)
@@ -2800,12 +2799,9 @@ class ClientCleaningBookingPhase2(APIView):
 
 							return Response(response_dict,HTTP_200_OK)
 
-
-		#set cookie
-		httpresponse = HttpResponse('')
-		httpresponse.set_cookie('booking_id',customerbooking.booking_id)
-
-		response_dict['success'] = True
+		response_dict['evaluation_book_id'] = saved_service.id
+		response_dict['booking_id']         = customerbooking.booking_id
+		response_dict['success']            = True
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -2827,4 +2823,28 @@ class ClientCleaningBookingPhase3(APIView):
 		response_dict['customer_details']        = customer_details_serialized
 		response_dict['cleaning_details']        = address_details_serialized		 
 
+		return Response(response_dict,HTTP_200_OK)
+
+class ClientCleaningBookingMediaSave(APIView):
+	def post(self,request):
+		
+		response_dict = {}
+		response_dict['success'] = False
+
+		evaluation_book_id    = request.data.get('evaluation_book_id')
+		evaluation_book = EvaluationBook.objects.get(id=evaluation_book_id)
+
+		#To Save Media		
+		medias                = request.FILES.getlist('media')
+		if not medias==['']:
+			for media in medias:
+				EvaluationMedia.objects.create(
+				        evaluation_book=evaluation_book,
+				        media=media,
+				        media_type='PHOTO',
+						taken_status='CUSTOMER_SEND'
+				        )
+				print("hiiiiii")
+		
+		response_dict['success'] = True
 		return Response(response_dict,HTTP_200_OK)
