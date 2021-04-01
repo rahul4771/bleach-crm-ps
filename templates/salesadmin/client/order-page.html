@@ -904,11 +904,11 @@
     <div class="close-btn-sp1">×</div>
         <div class="custom-model-wrap-sp1"><!--custom-model-wrap-->
             <div class="pop-up-content-wrap1"><!--pop-up-content-wrap-->
-               <div class="bold-text">Click 'Continue' to proceed with Cancell-order</div>  
+               <div class="bold-text">Are you sure you want to cancell this order?</div>  
                <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
                 <input type="hidden" name="action_type" value="cancell_order">
                 <input type="hidden" name="evaluation" id="evaluation_id">
-               <div><input class="assignButton" name="submit" type="submit" value="Continue"></div>
+               <div><input class="assignButton" name="submit" type="submit" value="Cancell this Order"></div>
                </form>
             </div><!--pop-up-content-wrap-->
         </div><!--custom-model-wrap-->  
