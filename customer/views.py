@@ -2028,6 +2028,12 @@ class GetServiceSizePrice(APIView):
 			
 			if service_price_range.service_type.name   == 'Upholstery Cleaning':
 				service_price_range_dict['upholstery_type']     = service_price_range.upholstery_type
+				if service_price_range.upholstery_type == 'SOFA':
+					service_price_range_dict['unit_price'] = service_price_range.unit_price
+				elif service_price_range.upholstery_type == 'CHAIR':
+					service_price_range_dict['unit_price'] = service_price_range.unit_price
+				else:
+					pass
 			elif service_price_range.service_type.name == 'Window Cleaning':
 				service_price_range_dict['is_highprice_window'] = service_price_range.is_highprice_window
 			elif service_price_range.service_type.name == 'Facade Cleaning':

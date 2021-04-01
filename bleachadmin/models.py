@@ -30,6 +30,7 @@ class ServicePriceRange(models.Model):
 	minimum_area     = models.FloatField(blank=True,null=True)
 	maximum_area     = models.FloatField(blank=True,null=True)
 	price            = models.FloatField(blank=True,null=True)
+	unit_price       = models.FloatField(blank=True,null=True)
 
 	is_newkitchen       = models.BooleanField(null=False,blank=True,default=False)
 	is_highprice_facade = models.BooleanField(null=False,blank=True,default=False)
