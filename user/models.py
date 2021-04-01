@@ -190,11 +190,11 @@ class Address(models.Model):
                 setattr(self, field_name, val.title())
         super(Address, self).save(*args, **kwargs)
 
-    # def __unicode__(self):
-    #     return str(self.customer.customer_id+'-'+self.area.name+'-'+self.customer.name)
+    def __unicode__(self):
+        return str(self.customer.customer_id+'-'+self.area.name+'-'+self.customer.name)
 
-    # def __str__(self):
-    #     return self.customer.customer_id+'-'+self.area.name+'-'+self.customer.name    
+    def __str__(self):
+        return self.customer.customer_id+'-'+self.area.name+'-'+self.customer.name    
 
 class LeaveSchedule(models.Model):
     staff           = models.ForeignKey('UserProfile',blank=False,null=False,related_name='leave_staff')
