@@ -635,7 +635,6 @@ right:0;
 .model-open-sp1 .custom-model-inner-sp1 { -webkit-transform: translate(0, 0); -ms-transform: translate(0, 0); transform: translate(0, 0); position: relative; z-index: 999;}
 .model-open-sp1 .bg-overlay-sp1 { background: rgba(0, 0, 0, 0.6); z-index: 99;}
 .bg-overlay-sp1 { background: rgba(0, 0, 0, 0); height: 100vh; width: 100%; position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 0; -webkit-transition: background 0.15s linear; -o-transition: background 0.15s linear; transition: background 0.15s linear;}
-.close-btn-sp1 { position: absolute; right: 0; top: -40px; cursor: pointer; z-index: 99; font-size: 30px; color: #fff;}
 .custom-model-main-sp1:before {  content: ""; display: inline-block; height: auto; vertical-align: middle; margin-right: -0px; height: 100%;}
 .custom-model-inner-sp1{margin-top: 45px;}
 
