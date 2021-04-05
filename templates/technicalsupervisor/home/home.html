@@ -106,7 +106,168 @@
 </tbody>
 </table>
 </div><!--white-wrapper-->   
-      
+
+<div class="white-wrapper"><!--white-wrapper-->
+
+<div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
+
+<div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->
+<h2 class="h2">Cleaning Calendar</h2>
+</div>
+
+<div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+<div class="date-wrapper"><!--date-wrapper-->
+            <div class="date-wrapper-inner"><!--date-wrapper-inner-->
+            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type="text" id="cleaning_calendar" value="{{schedule_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='today-date current-date'>Today</button>
+            </div><!--date-wrapper-inner-->
+</div><!--date-wrapper-->
+</div>
+
+</div>
+
+<div class="cleaning-container"><!--cleaning-container-->
+<div class="scrollable"><!--scrollable-->
+<div>
+  <table id="cleaning_table" cellpadding="1" cellspacing="1" class="cleaning-table">
+  <tr>
+  <th width="4.166%" colspan="2"> </th>
+    <th width="8.333%" colspan="2">2 AM</th>
+    <th width="8.333%" colspan="2">4 AM</th>
+    <th width="8.333%" colspan="2">6 AM</th>
+    <th width="8.333%" colspan="2">8 AM</th>
+    <th width="8.333%" colspan="2">10 AM</th>
+    <th width="8.333%" colspan="2">12 PM</th>
+    <th width="8.333%" colspan="2">2 PM</th>
+    <th width="8.333%" colspan="2">4 PM</th>
+    <th width="8.333%" colspan="2">6 PM</th>
+    <th width="8.333%" colspan="2">8 PM</th>
+    <th width="8.333%" colspan="2">10 PM</th>
+    <th width="4.166%" colspan="2"></th>
+  </tr>  
+  </table>
+</div>
+</div><!--scrollable-->
+</div><!--cleaning-container-->
+</div><!--white-wrapper-->
+
+<!-- edit_cleaning_popup -->
+<div class="modal-popup-wrapper1"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+        <div class="modal-header"><!--modal-header-->
+        <button class="modal-close edit_cleaning collapsible1-close">X</button>
+        </div><!--modal-header-->
+    <div class="modal-body"><!--modal-body-->
+    <div class="modal-content"><!--modal-content-->
+    <div class="ticket-wrapper-full cleaningwrapper"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">  
+                <tr>
+                    <td><a id="order_url"><div class="blc-number" id="blcno_cleaning_id"></div></a><div id="servicetype"></div><br><span id="address_cleaning_id"></span></td>
+                
+                    <td><div class="bold-text" id="customername_cleaning_id"></div><div id="mobileno_cleaning_id"></div></td>
+                </tr>
+ 
+            <tr>
+            <td colspan="3">Cleaning Date:<strong><span class="blue-text" id="starting_date_cleaning_id"></span></strong> &nbsp;Starting Time:<strong><span class="blue-text" id="starting_time_cleaning_id"></span></strong> &nbsp;Duration:<strong><span class="blue-text" id="duration_cleaning_id"></span></strong></td>
+            </tr>
+            <tr id="team_leader_cleaning_id">
+            </tr>
+            <tr id="team_member_cleaning_id">
+            </tr>  
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+     
+</div><!--ticket-wrapper-full--> 
+        
+    </div><!--modal-content-->
+    </div><!--modal-body-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--modal-popup-wrapper-->
+<!-- /edit_cleaning_popup -->
+
+<!--edit followup popup -->
+<div class="modal-popup-wrapper2"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+        <div class="modal-header"><!--modal-header-->
+        <button class="modal-close edit_followup collapsible2-close">X</button>
+        </div><!--modal-header-->
+    <div class="modal-body"><!--modal-body-->
+    <div class="modal-content"><!--modal-content-->
+    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">  
+                <tr>
+                    <td valign="center"><div class="blc-number" id="ticketno_followup_id"></div><div class="mobile_number" id="blcno_followup_id"></div><div id="followup_servicetype"></div><br><div class="blc-number" id="status_followup_id"></div><span id="address_followup_id"></span></td>
+                    <td><div class="bold-text" id="customername_followup_id"></div><div id="mobileno_followup_id"></div></td>
+                </tr>
+ 
+            <tr>
+            <td colspan="3">Cleaning Date:<strong><span class="blue-text" id="starting_date_followup_id"></span></strong> &nbsp;Starting Time:<strong><span class="blue-text" id="starting_time_followup_id"></span></strong> &nbsp;Duration:<strong><span class="blue-text" id="duration_followup_id"></span></strong></td>
+            </tr>
+            <tr id="team_leader_followup_id">
+            </tr>
+            <tr id="team_member_followup_id">
+            </tr>  
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+     
+</div><!--ticket-wrapper-full--> 
+        
+    </div><!--modal-content-->
+    </div><!--modal-body-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--modal-popup-wrapper-->
+<!--edit followup popup -->
+
+
+<!-- edit_notapprovedcleaning_popup -->
+<div class="modal-popup-wrapper6"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+        <div class="modal-header"><!--modal-header-->
+        <button class="modal-close notapprovededit_cleaning collapsible6-close">X</button>
+        </div><!--modal-header-->
+    <div class="modal-body"><!--modal-body-->
+    <div class="modal-content"><!--modal-content-->
+    <div class="ticket-wrapper-full notapproved_cleaningwrapper"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">  
+                <tr>
+                    <td><a id="notapprovedorder_url"><div class="blc-number" id="blcno_notapprovedcleaning_id"></div></a><div id="notapproved_servicetype"></div><br><span id="address_notapprovedcleaning_id"></span></td>
+                    <td><div class="bold-text" id="customername_notapprovedcleaning_id"></div><div id="mobileno_notapprovedcleaning_id"></div></td>
+                </tr>
+ 
+            <tr>
+            <td colspan="3">Cleaning Date:<strong><span class="blue-text" id="starting_date_notapprovedcleaning_id"></span></strong> &nbsp;Starting Time:<strong><span class="blue-text" id="starting_time_notapprovedcleaning_id"></span></strong> &nbsp;Duration:<strong><span class="blue-text" id="duration_notapprovedcleaning_id"></span></strong></td>
+            </tr>  
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+     
+</div><!--ticket-wrapper-full--> 
+        
+    </div><!--modal-content-->
+    </div><!--modal-body-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--modal-popup-wrapper-->
+<!-- /edit_notapprovedcleaning_popup -->
+
       </div><!--main-content-holder-->
         </div><!--container-fluid space-->
     </section><!--content-->
@@ -127,7 +288,778 @@ $('document').ready(function(){
     }else{
       $('.closetickets').hide();
     }
+
+
+    //Function Used For Cleaning Calender    
+    function isArrayInArrayOverlap(source,search)
+    {   count1=0;
+        count2=0;
+
+
+        for(var i=0,len=source.length;i<len;i++)
+        {
+            if(source[i][0]>=search[0] && source[i][0] >= search[1])
+            {
+                count1++;
+            }
+            if(source[i][1]<=search[0] && source[i][1] <= search[1])
+            {
+                count2++;
+            }
+        
+        }
+        if(count1==source.length || count2 == source.length)
+        {
+            return true;
+            }
+        else{
+            return false;
+        }    
+        }
+
+
+      //To add cleaning schedules in cleaning calender  
+      console.log("callendar")
+      completed_calender = []; 
+      {% for old_schedule in calendar_order_schedules %}  
+
+            old_starting_time_string      = '{{old_schedule.start_at|date:'H:i'}}'.replace(":",".");
+            old_ending_time_string        = '{{old_schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+            old_starting_time             = parseInt(old_starting_time_string.split('.')[0])+parseInt(old_starting_time_string.split('.')[1])/60
+            old_ending_time               = parseInt(old_ending_time_string.split('.')[0])+parseInt(
+                old_ending_time_string.split('.')[1])/60
+            
+            current_raw_timings = [];
+            console.log(old_starting_time,"old loop")
+            {% for schedule in calendar_order_schedules %}
+                starting_time_string      = '{{schedule.start_at|date:'H:i'}}'.replace(":",".");
+                ending_time_string        = '{{schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+                starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+                    ending_time_string.split('.')[1])/60
+
+                console.log(starting_time,"new loop")
+                console.log(ending_time,"new loop")
+                if(completed_calender.includes('{{forloop.counter}}'))
+                {
+                    console.log("Includes");
+                }
+                else
+                {
+                if((old_starting_time>=starting_time && old_starting_time>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true))||(old_ending_time<=starting_time && old_ending_time<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true))||(current_raw_timings.length==0))
+                    {
+                        completed_calender.push('{{forloop.counter}}');
+                        console.log(current_raw_timings.length,"length before")
+                        console.log(current_raw_timings,"before")
+                        current_raw_timings.push([starting_time,ending_time]);
+                        console.log(current_raw_timings.length,"length after")
+                        console.log(current_raw_timings,"after")
+                        //append raw
+                    if(current_raw_timings.length==1)
+                        {
+                            console.log(old_starting_time)
+                            console.log(old_ending_time)
+                            console.log(starting_time)
+                            console.log(ending_time)
+                            console.log("appending new raw")
+                            
+                            left_percentage  = 100/24*starting_time
+
+                            if(ending_time == 0)
+                            {
+                              width_percentage = 100/24*24-100/24*starting_time;
+                            }
+                            else
+                            {
+                              width_percentage = 100/24*ending_time-100/24*starting_time;
+                            }
+                            
+                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{schedule.id}}" data-id="{{schedule.id}}" data-cleaning_status="{{schedule.work_status}}" {% if schedule.work_status == "CLEANING_CANCELLED" %}class="red-box edit_cleaning"{% elif schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box edit_cleaning"{% else %}class="green-box edit_cleaning"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar">{% if schedule.cleaning_teams %}{% for team in schedule.cleaning_teams %}{% if team.team_leader.profile_image %}<img src="{{team.team_leader.profile_image.url}}" title="{{team.team_leader.name}}">{%else%}<img src="{% static 'files/images/profile-pic.jpg' %}" title="{{team.team_leader.name}}">{% endif %}{% endfor %}{% endif %}</div><center></center> <div {% if schedule.work_status == "CLEANING_CANCELLED" %}class="right-value red-text"{% elif schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{% if schedule.work_status == 'CLEANING_FULFILLED' %}&#10004;{% else %}{{schedule.order_scheduler_book.number_of_cleaners}}{% endif %}</div></div></td></tr>')
+                        }
+                        //append td to the raw 
+                    else
+                        { 
+                           console.log(old_starting_time)
+                           console.log(old_ending_time)
+                           console.log(starting_time)
+                           console.log(ending_time)
+                           console.log("appending same raw")
+                           
+                           left_percentage  = 100/24*starting_time
+                           
+                           if(ending_time == 0)
+                            {
+                              width_percentage = 100/24*24-100/24*starting_time;
+                            }
+                            else
+                            {
+                              width_percentage = 100/24*ending_time-100/24*starting_time;
+                            } 
+                            
+                            $('#cleaning_table tr:last td').append('<div id="cleaningschedule{{schedule.id}}" data-id="{{schedule.id}}" data-cleaning_status="{{schedule.work_status}}" {% if schedule.work_status == "CLEANING_CANCELLED" %}class="red-box edit_cleaning"{% elif schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box edit_cleaning"{% else %}class="green-box edit_cleaning"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar">{% if schedule.cleaning_teams %}{% for team in schedule.cleaning_teams %}{% if team.team_leader.profile_image %}<img src="{{team.team_leader.profile_image.url}}" title="{{team.team_leader.name}}">{%else%}<img src="{% static 'files/images/profile-pic.jpg' %}" title="{{team.team_leader.name}}">{% endif %}{% endfor %}{% endif %}</div><center></center> <div {% if schedule.work_status == "CLEANING_CANCELLED" %}class="right-value red-text edit_cleaning"{% elif schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text edit_cleaning"{% else %}class="right-value green-text edit_cleaning"{% endif %}>{% if schedule.work_status == 'CLEANING_FULFILLED' %}&#10004;{% else %}{{schedule.order_scheduler_book.number_of_cleaners}}{% endif %}</div></div>')      
+                        }
+                    }
+
+                }
+            {% endfor %}        
+
+       {% endfor %}
+       console.log("Callendar ends")
+
+       //for special cases like 2 days cleanings
+       {% for sp_schedule in sp_calendar_order_schedules %}
+
+       starting_time_string      = '{{sp_schedule.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{sp_schedule.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+       console.log("special")
+       console.log(first_raw_left_percentage)
+       console.log(first_raw_width_percentage)
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{sp_schedule.id}}" data-id="{{sp_schedule.id}}" data-cleaning_status="{{sp_schedule.work_status}}" {% if sp_schedule.work_status == "CLEANING_CANCELLED" %}class="sp-red-box-first edit_cleaning"{% elif sp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-first edit_cleaning"{% else %}class="sp-green-box-first edit_cleaning"{% endif %} style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar">{% if sp_schedule.cleaning_teams %}{% for team in sp_schedule.cleaning_teams %}{% if team.team_leader.profile_image %}<img src="{{team.team_leader.profile_image.url}}" title="{{team.team_leader.name}}">{%else%}<img src="{% static 'files/images/profile-pic.jpg' %}" title="{{team.team_leader.name}}">{% endif %}{% endfor %}{% endif %}</div><center></center> </div></td></tr>')
+       
+       {% endfor %}
+
+       //for special cases like 2 days cleanings
+       {% for spp_schedule in spp_calendar_order_schedules %}
+
+       starting_time_string      = '{{spp_schedule.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{spp_schedule.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{spp_schedule.id}}" data-id="{{spp_schedule.id}}" data-cleaning_status="{{spp_schedule.work_status}}" {% if spp_schedule.work_status == "CLEANING_CANCELLED" %}class="sp-red-box-second edit_cleaning"{% elif spp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-second edit_cleaning"{% else %}class="sp-green-box-second edit_cleaning"{% endif %} style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div {% if spp_schedule.work_status == "CLEANING_CANCELLED" %}class="right-value red-text edit_cleaning"{% elif spp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text edit_cleaning"{% else %}class="right-value green-text edit_cleaning"{% endif %}>{% if spp_schedule.work_status == 'CLEANING_FULFILLED' %}&#10004;{% else %}{{spp_schedule.order_scheduler_book.number_of_cleaners}}{% endif %}</div></div></td></tr>')
+       
+       {% endfor %}
+
+
+      //To add followup schedules in cleaning calender  
+      completed_calender_followup = []; 
+      {% for old_schedule in calendar_followup_schedules %} 
+            old_starting_time_string      = '{{old_schedule.start_at|date:'H:i'}}'.replace(":",".");
+            old_ending_time_string        = '{{old_schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+            old_starting_time             = parseInt(old_starting_time_string.split('.')[0])+parseInt(old_starting_time_string.split('.')[1])/60
+            old_ending_time               = parseInt(old_ending_time_string.split('.')[0])+parseInt(
+                old_ending_time_string.split('.')[1])/60
+            
+            current_raw_timings = []
+            {% for schedule in calendar_followup_schedules %}
+                starting_time_string      = '{{schedule.start_at|date:'H:i'}}'.replace(":",".");
+                ending_time_string        = '{{schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+                starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+                    ending_time_string.split('.')[1])/60
+                if(completed_calender_followup.includes('{{forloop.counter}}'))
+                {
+                    console.log("includes");
+                }
+                else
+                {
+                if(old_starting_time_string>=starting_time && old_starting_time_string>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0)||old_ending_time_string<=starting_time && old_ending_time_string<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0))
+                    {
+                        completed_calender_followup.push('{{forloop.counter}}');
+                        current_raw_timings.push([starting_time,ending_time]);
+                        //append raw
+                        if(current_raw_timings.length==1)
+                        {
+                            left_percentage  = 100/24*starting_time
+                            
+                            if(ending_time == 0)
+                            {
+                              width_percentage = 100/24*24-100/24*starting_time;
+                            }
+                            else
+                            {
+                              width_percentage = 100/24*ending_time-100/24*starting_time;
+                            }
+
+
+                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{schedule.id}}" data-id="{{schedule.id}}" class="yellow-box edit_followup" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar">{% if schedule.followup_teams %}{% for team in schedule.followup_teams %}{% if team.team_leader.profile_image %}<img src="{{team.team_leader.profile_image.url}}" title="{{team.team_leader.name}}">{% else %}<img src="{% static 'files/images/profile-pic.jpg' %} title="{{team.team_leader.name}}">{% endif %}{% endfor %}{% endif %}</div><center></center> <div class="right-value yellow-text">{% if schedule.work_status == 'FOLLOW_UP_CLEANING_FULFILLED' %}&#10004;{% else %}{{schedule.follow_up.no_of_cleaners}}{% endif %}</div></div></td></tr>')
+                        }
+                        //append td to the raw 
+                        else
+                        { 
+                           left_percentage  = 100/24*starting_time
+                           
+                           if(ending_time == 0)
+                            {
+                              width_percentage = 100/24*24-100/24*starting_time;
+                            }
+                            else
+                            {
+                              width_percentage = 100/24*ending_time-100/24*starting_time;
+                            }
+
+
+                            $('#cleaning_table tr:last td').append('<div id="followupschedule{{schedule.id}}" data-id="{{schedule.id}}" class="yellow-box edit_followup" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar">{% if schedule.followup_teams %}{% for team in schedule.followup_teams %}{% if team.team_leader.profile_image %}<img src="{{team.team_leader.profile_image.url}}" title="{{team.team_leader.name}}">{% else %}<img src="{% static 'files/images/profile-pic.jpg' %} title="{{team.team_leader.name}}">{% endif %}{% endfor %}{% endif %}</div><center></center> <div class="right-value yellow-text">{% if schedule.work_status == 'FOLLOW_UP_CLEANING_FULFILLED' %}&#10004;{% else %}{{schedule.follow_up.no_of_cleaners}}{% endif %}</div></div>')      
+                        }
+                    }
+                }
+            {% endfor %}        
+
+       {% endfor %}
+
+       //for special cases like 2 days fllowup cleanings
+       {% for sp_schedule in sp_calendar_followup_schedules %}
+       starting_time_string      = '{{sp_schedule.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{sp_schedule.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{sp_schedule.id}}" data-id="{{sp_schedule.id}}" class="sp-yellow-box-first edit_followup" style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar">{% if sp_schedule.followup_teams %}{% for team in sp_schedule.followup_teams %}{% if team.team_leader.profile_image %}<img src="{{team.team_leader.profile_image.url}}" title="{{team.team_leader.name}}">{% else %}<img src="{% static 'files/images/profile-pic.jpg' %} title="{{team.team_leader.name}}">{% endif %}{% endfor %}{% endif %}</div><center></center> </div></td></tr>')
+       
+       {% endfor %}
+
+       //for special cases like 2 days fllowup cleanings
+       {% for spp_schedule in spp_calendar_followup_schedules %}
+       starting_time_string      = '{{spp_schedule.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{spp_schedule.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{spp_schedule.id}}" class="sp-yellow-box-second" style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div class="right-value yellow-text">{% if spp_schedule.work_status == 'FOLLOW_UP_CLEANING_FULFILLED' %}&#10004;{% else %}{{spp_schedule.follow_up.no_of_cleaners}}{% endif %}</div></div></td></tr>')
+       
+       {% endfor %}
+
+       //To add not confirmed cleaning schedules in cleaning calender  
+      console.log("callendar")
+      completed_calender = []; 
+      {% for old_schedule in calendar_notapprovedorder_schedules %}  
+
+            old_starting_time_string      = '{{old_schedule.start_at|date:'H:i'}}'.replace(":",".");
+            old_ending_time_string        = '{{old_schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+            old_starting_time             = parseInt(old_starting_time_string.split('.')[0])+parseInt(old_starting_time_string.split('.')[1])/60
+            old_ending_time               = parseInt(old_ending_time_string.split('.')[0])+parseInt(
+                old_ending_time_string.split('.')[1])/60
+            
+            current_raw_timings = [];
+            console.log(old_starting_time,"old loop")
+            {% for schedule in calendar_notapprovedorder_schedules %}
+                starting_time_string      = '{{schedule.start_at|date:'H:i'}}'.replace(":",".");
+                ending_time_string        = '{{schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+                starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+                    ending_time_string.split('.')[1])/60
+
+                console.log(starting_time,"new loop")
+                console.log(ending_time,"new loop")
+                if(completed_calender.includes('{{forloop.counter}}'))
+                {
+                    console.log("Includes");
+                }
+                else
+                {
+                if((old_starting_time>=starting_time && old_starting_time>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true))||(old_ending_time<=starting_time && old_ending_time<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true))||(current_raw_timings.length==0))
+                    {
+                        completed_calender.push('{{forloop.counter}}');
+                        console.log(current_raw_timings.length,"length before")
+                        console.log(current_raw_timings,"before")
+                        current_raw_timings.push([starting_time,ending_time]);
+                        console.log(current_raw_timings.length,"length after")
+                        console.log(current_raw_timings,"after")
+                        //append raw
+                    if(current_raw_timings.length==1)
+                        {
+                            console.log(old_starting_time)
+                            console.log(old_ending_time)
+                            console.log(starting_time)
+                            console.log(ending_time)
+                            console.log("appending new raw")
+                            
+                            left_percentage  = 100/24*starting_time
+
+                            if(ending_time == 0)
+                            {
+                              width_percentage = 100/24*24-100/24*starting_time;
+                            }
+                            else
+                            {
+                              width_percentage = 100/24*ending_time-100/24*starting_time;
+                            }
+                            
+                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{schedule.id}}" data-id="{{schedule.id}}" class="gray-box notapprovededit_cleaning" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"></div><center></center> <div {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.order_scheduler_book.number_of_cleaners}}</div></div></td></tr>')
+                        }
+                        //append td to the raw 
+                    else
+                        { 
+                           console.log(old_starting_time)
+                           console.log(old_ending_time)
+                           console.log(starting_time)
+                           console.log(ending_time)
+                           console.log("appending same raw")
+                           
+                           left_percentage  = 100/24*starting_time
+                           
+                           if(ending_time == 0)
+                            {
+                              width_percentage = 100/24*24-100/24*starting_time;
+                            }
+                            else
+                            {
+                              width_percentage = 100/24*ending_time-100/24*starting_time;
+                            } 
+                            
+                            $('#cleaning_table tr:last td').append('<div id="cleaningschedule{{schedule.id}}" data-id="{{schedule.id}}" class="gray-box notapprovededit_cleaning" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"></div><center></center> <div {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.order_scheduler_book.number_of_cleaners}}</div></div>')      
+                        }
+                    }
+
+                }
+            {% endfor %}        
+
+       {% endfor %}
+       console.log("Callendar ends")
+
+       //for special cases like 2 days cleanings
+       {% for sp_schedule in sp_calendar_notapprovedorder_schedules %}
+
+       starting_time_string      = '{{sp_schedule.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{sp_schedule.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+       console.log("special")
+       console.log(first_raw_left_percentage)
+       console.log(first_raw_width_percentage)
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{sp_schedule.id}}" data-id="{{sp_schedule.id}}" class="sp-gray-box-first notapprovededit_cleaning" style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"></div><center></center> </div></td></tr>')
+       
+       {% endfor %}
+
+       //for special cases like 2 days cleanings
+       {% for spp_schedule in spp_calendar_notapprovedorder_schedules %}
+
+       starting_time_string      = '{{spp_schedule.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{spp_schedule.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{spp_schedule.id}}" data-id="{{spp_schedule.id}}" class="sp-gray-box-second notapprovededit_cleaning" style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div {% if spp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{spp_schedule.order_scheduler_book.number_of_cleaners}}</div></div></td></tr>')
+       
+       {% endfor %}
+
+
+     // Cleaning Edit
+    $('.edit_cleaning').on('click', function (e) {
+      e.preventDefault();
+      $('.modal-popup-wrapper1').toggleClass('is-visible');
+      schedule_id         = $(this).data('id'); 
+      $('#cleaning_id').val(schedule_id);
+
+      //date picker and time picker 
+        $('#cleaning_date').datetimepicker({
+              pickTime: false, 
+              format: "DD-MM-YYYY",
+              minDate: new Date(),
+            });
+
+        $('#cleaning_time').datetimepicker({
+              pickDate:false,
+              format: 'hh:mm A'
+            });
+
+        $("#cleaning_date_alert").css({'color':'red'});
+        $("#cleaning_time_alert").css({'color':'red'});
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getcleaninginfo' %}",
+
+        data: {'schedule_id':schedule_id}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+                  $('#blcno_cleaning_id').html(data['order_no']+'<br><br>'+data['status']);
+                  $('#servicetype').html(data['service_type']);
+                  $('#address_cleaning_id').html(data['address']);
+                  $('#customername_cleaning_id').html(data['customer']);
+                  $('#mobileno_cleaning_id').html(data['customer_mobile']);  
+                  $('#starting_date_cleaning_id').html(data['start_at_date']);
+                  $('#starting_time_cleaning_id').html(data['start_at_time']);
+                  $('#duration_cleaning_id').html(data['duration']+' Hours');
+
+                  if(data['cleaning_policy'] == 'SUBSCRIPTION')
+                  {
+                    $('.cleaningwrapper').removeClass('ltblue-border');
+                    $('.cleaningwrapper').addClass('ltgreen-border');
+                  }else{
+                    $('.cleaningwrapper').removeClass('ltgreen-border');
+                    $('.cleaningwrapper').addClass('ltblue-border');
+                  }
+
+                  var order_url = '/agent/client/order/details/'+data['order_id']+'';
+                    
+                  $('#order_url').attr('href',order_url);
+
+                  //Append Team Incharge and team members Based on Conditions
+                  if(data['team_leader'] || data['stl'])
+                  {
+                    $('#team_leader_cleaning_id').html('<td colspan="3">Team Incharge:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
+                  }     
+                  else
+                  {
+                    $('#team_leader_cleaning_id').html('<td colspan="3"><strong class="red-text">Cleaning Team Not Assigned</strong></td>')
+                  }
+
+                  cleaners = data['cleanersinfo'].cleaners;
+                  
+                  if(cleaners != '')
+                  {
+                    $('#team_member_cleaning_id').html('<td colspan="3">Team Members:<strong><span class="blue-text"></span></strong> &nbsp;</td>');
+
+                    append_cleaners = '';
+                    for(i=0;i<cleaners.length;++i)
+                        {   
+                            if((i+1)%5 == 0)
+                            {
+                                append_cleaners += cleaners[i].member_name+',<br>';
+                            }
+                            else
+                            {
+                                append_cleaners += cleaners[i].member_name+',';
+                            }
+                            
+                        }   
+                    $('#team_member_cleaning_id td strong span').html(append_cleaners);
+                  }
+                  else
+                    {
+                        $('#team_member_cleaning_id').html('');
+                  }  
+
+                  //form
+                  $('#cleaning_date').val(data['start_at_date']);
+                  $('#cleaning_time').val(data['start_at_time']);
+                  $('#cleaning_duration').val(data['duration']);                        
+                                  }  
+      });
+
+      datetimecheck($('#cleaning_time').val(),$('#cleaning_date').val(),'cleaning');
+
+        $('#cleaning_time').change(function(){
+          datetimecheck($('#cleaning_time').val(),$('#cleaning_date').val(),'cleaning');
+        });
+
+        $('#cleaning_date').change(function(){
+          console.log("hui")
+          datetimecheck($('#cleaning_time').val(),$('#cleaning_date').val(),'cleaning');
+        });
+
+    //edit option toggle
+        cleaning_status = $(this).data('cleaning_status');
+        
+        if(cleaning_status == 'CLEANING_FULFILLED' || cleaning_status == 'CLEANING_TEAM_ASSIGNED' || cleaning_status == 'CLEANING_IN_PROGRESS')
+            {
+                $('.edit-collapse').css('display','none');
+        }
+        else
+        {
+                $('.edit-collapse').css('display','block');
+        }
+});
+
+var coll = document.getElementsByClassName("collapsible1");
+var i;
+for (i = 0; i < coll.length; i++) {  
+  coll[i].addEventListener("click", function() {
+    console.log(this);
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+  }
+
+$('.collapsible1-close').click(function(){
+    $(".popup-collapse1").css('display','none');
 })
+
+
+
+
+// followup Edit
+    $('.edit_followup').on('click', function (e) {
+      e.preventDefault();
+      $('.modal-popup-wrapper2').toggleClass('is-visible');
+      schedule_id         = $(this).data('id'); 
+      $('#followup_id').val(schedule_id);
+
+      //date picker and time picker 
+        $('#followup_date').datetimepicker({
+              pickTime: false, 
+              format: "DD-MM-YYYY",
+              minDate: 1,
+            });
+
+        $('#followup_time').datetimepicker({
+              pickDate:false,
+              format: 'hh:mm A'
+            });
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getfollowupinfo' %}",
+
+        data: {'schedule_id':schedule_id}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+                  $('#ticketno_followup_id').html('TKT'+data['ticket_no']);
+                  $('#blcno_followup_id').html(data['order_no']+'<br><br>');
+                  $('#followup_servicetype').html(data['service_type']);
+                  $('#status_followup_id').html(data['status']);
+                  $('#address_followup_id').html(data['address']);
+                  $('#customername_followup_id').html(data['customer']);
+                  $('#mobileno_followup_id').html(data['customer_mobile']);  
+                  $('#starting_date_followup_id').html(data['start_at_date']);
+                  $('#starting_time_followup_id').html(data['start_at_time']);
+                  $('#duration_followup_id').html(data['duration']+' Hours');
+
+                  //Append Team Incharge and team members Based on Conditions
+                  if(data['team_leader'] || data['stl'])
+                  {
+                    $('#team_leader_followup_id').html('<td colspan="3">Team Incharge:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
+                  }     
+                  else
+                  {
+                    $('#team_leader_followup_id').html('<td colspan="3"><strong class="red-text">Followup Team Not Assigned</strong></td>')
+                  }
+
+                  cleaners = data['cleanersinfo'].cleaners;
+                  
+                  if(cleaners != '')
+                  {
+                    $('#team_member_followup_id').html('<td colspan="3">Team Members:<strong><span class="blue-text"></span></strong> &nbsp;</td>');
+
+                    append_cleaners = '';
+                    for(i=0;i<cleaners.length;++i)
+                        {   
+                            if((i+1)%5 == 0)
+                            {
+                                append_cleaners += cleaners[i].member_name+',<br>';
+                            }
+                            else
+                            {
+                                append_cleaners += cleaners[i].member_name+',';
+                            }
+                        }
+                    $('#team_member_followup_id td strong span').html(append_cleaners);    
+                  }
+                  else
+                    {
+                        $('#team_member_followup_id').html('');
+                  }
+
+                  //form
+                  $('#followup_date').val(data['start_at_date']);
+                  $('#followup_time').val(data['start_at_time']);
+                  $('#followup_duration').val(data['duration']);                        
+                                  }  
+      });
+
+      datetimecheck($('#followup_time').val(),$('#followup_date').val(),'followupcleaning');
+
+        $('#followup_time').change(function(){
+          datetimecheck($('#followup_time').val(),$('#followup_date').val(),'followupcleaning');
+        });
+
+        $('#followup_date').change(function(){
+          console.log("hui")
+          datetimecheck($('#followup_time').val(),$('#followup_date').val(),'followupcleaning');
+        });
+
+      $("#followupcleaning_time_alert").css({'color':'red'});
+        //edit option toggle
+        followup_status = $(this).data('followup_status');
+        
+        if(followup_status == 'FOLLOW_UP_CLEANING_FULFILLED' || followup_status == 'FOLLOW_UP_TEAM_ASSIGNED' || followup_status == 'FOLLOW_UP_CLEANING_IN_PROGRESS')
+            {
+                $('.edit-collapse').css('display','none');
+        }
+        else
+        {
+                $('.edit-collapse').css('display','block');
+        }
+
+});
+
+var coll = document.getElementsByClassName("collapsible2");
+var i;
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+  }
+
+$('.collapsible2-close').click(function(){
+    $(".popup-collapse2").css('display','none');
+})
+
+
+
+//not approved Cleaning Edit
+    $('.notapprovededit_cleaning').on('click', function (e) {
+        console.log("rungg")
+      e.preventDefault();
+      $('.modal-popup-wrapper6').toggleClass('is-visible');
+      schedule_id         = $(this).data('id'); 
+      $('#notapprovedcleaning_id').val(schedule_id);
+
+      //date picker and time picker 
+        $('#notapprovedcleaning_date').datetimepicker({
+              pickTime: false, 
+              format: "DD-MM-YYYY",
+              minDate: new Date(),
+            });
+
+        $('#notapprovedcleaning_time').datetimepicker({
+              pickDate:false,
+              format: 'hh:mm A'
+            });
+
+        $("#notapprovedcleaning_date_alert").css({'color':'red'});
+        $("#notapprovedcleaning_time_alert").css({'color':'red'});
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getcleaninginfo' %}",
+
+        data: {'schedule_id':schedule_id}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+                  $('#blcno_notapprovedcleaning_id').html(data['order_no']+'<br><br>'+'Quatation Not Approved');
+                  $('#notapproved_servicetype').html(data['service_type']);
+                  $('#address_notapprovedcleaning_id').html(data['address']);
+                  $('#customername_notapprovedcleaning_id').html(data['customer']);
+                  $('#mobileno_notapprovedcleaning_id').html(data['customer_mobile']);  
+                  $('#starting_date_notapprovedcleaning_id').html(data['start_at_date']);
+                  $('#starting_time_notapprovedcleaning_id').html(data['start_at_time']);
+                  $('#duration_notapprovedcleaning_id').html(data['duration']+' Hours');
+
+                  if(data['cleaning_policy'] == 'SUBSCRIPTION')
+                  {
+                    $('.notapproved_cleaningwrapper').removeClass('ltblue-border');
+                    $('.notapproved_cleaningwrapper').addClass('ltgreen-border');
+                  }else{
+                    $('.notapproved_cleaningwrapper').removeClass('ltgreen-border');
+                    $('.notapproved_cleaningwrapper').addClass('ltblue-border');
+                  }
+                  
+                  var order_url = '/agent/client/order/details/'+data['order_id']+'';
+                  $('#notapprovedorder_url').attr('href',order_url);  
+
+
+                  //form
+                  $('#notapprovedcleaning_date').val(data['start_at_date']);
+                  $('#notapprovedcleaning_time').val(data['start_at_time']);
+                  $('#notapprovedcleaning_duration').val(data['duration']);                        
+                                  }  
+      });
+
+      datetimecheck($('#notapprovedcleaning_time').val(),$('#notapprovedcleaning_date').val(),'notapprovedcleaning');
+
+        $('#notapprovedcleaning_time').change(function(){
+          datetimecheck($('#notapprovedcleaning_time').val(),$('#notapprovedcleaning_date').val(),'notapprovedcleaning');
+        });
+
+        $('#notapprovedcleaning_date').change(function(){
+          datetimecheck($('#notapprovedcleaning_time').val(),$('#notapprovedcleaning_date').val(),'notapprovedcleaning');
+        });
+
+    //edit option toggle
+        
+    $('.edit-collapse').css('display','block');
+    
+});
+
+})
+
+function set_params_go(args)
+{
+var url='{% url 'tech-supervisor:tech-supervisor-dash-board' %}';
+var params={cleaning_calendar_date:$('#cleaning_calendar').val()
+};
+for(key in args) 
+    params[key]=args[key];
+var query='';
+for(key in params)
+    if(params[key]) 
+        query+='&'+key+'='+params[key].toString();
+query=query.replace('&','?');
+window.location.href=url+query;  
+}
 
 </script>
 {% endblock %}
