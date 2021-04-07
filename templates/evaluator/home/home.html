@@ -720,6 +720,7 @@ $('document').ready(function(){
       $('.modal-popup-wrapper1').toggleClass('is-visible');
       schedule_id         = $(this).data('id'); 
       $('#cleaning_id').val(schedule_id);
+      cleaning_status     = $(this).data('cleaning_status');
 
       //date picker and time picker 
         $('#cleaning_date').datetimepicker({
@@ -745,7 +746,17 @@ $('document').ready(function(){
         dataType: 'json',
 
         success: function (data) { 
-                  $('#blcno_cleaning_id').html(data['order_no']+'<br><br>'+data['status']);
+
+                  if(cleaning_status == 'CLEANING_CANCELLED')
+                    {
+                        $('#blcno_cleaning_id').html(data['order_no']+'<br><br><span class="red-text">Cleaning Cancelled</span>');
+                    }
+                    else
+                    {
+                        $('#blcno_cleaning_id').html(data['order_no']+'<br><br>'+data['status']);
+                    }
+
+                  
                   $('#servicetype').html(data['service_type']);
                   $('#address_cleaning_id').html(data['address']);
                   $('#customername_cleaning_id').html(data['customer']);
@@ -763,7 +774,7 @@ $('document').ready(function(){
                     $('.cleaningwrapper').addClass('ltblue-border');
                   }
 
-                  var order_url = '/agent/client/order/details/'+data['order_id']+'';
+                  var order_url = '/evaluator/client/order/details/'+data['order_id']+'';
                     
                   $('#order_url').attr('href',order_url);
 

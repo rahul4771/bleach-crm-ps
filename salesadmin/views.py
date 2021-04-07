@@ -711,6 +711,7 @@ class TicketAdvanced(IsSalesAdmin,View):
 
 class OrderDetails(IsSalesAdmin,View):
 	def get(self,request):
+		evaluators = UserProfile.objects.filter(is_active=True).filter(Q(user_type='EVALUATOR')|Q(user_type='AGENT')).only('id','name')
 		
 		try:
 			governorates = Governorate.objects.filter(is_active=True)
@@ -762,6 +763,11 @@ class OrderDetails(IsSalesAdmin,View):
 		except:
 			fil_area              = None
 
+		try:
+			fil_evaluator	   		  = int(request.GET.get('evaluator'))
+		except:
+			fil_evaluator 			  = None
+
 		fil_cleaning_policy       = request.GET.get('cleaning_policy')
 		
 		try:
@@ -784,7 +790,13 @@ class OrderDetails(IsSalesAdmin,View):
 		    customer_address_filter.append(case2)
 		    count_customer_address_filter.append(count_case2)
 
-		if fil_governorate or fil_area: 
+		if fil_evaluator:
+		    case3 		= Q(Q(evaluator__id=fil_evaluator) | Q(Q(evaluation__call_attender__id=fil_evaluator) & Q(evaluator__id=None)))
+		    count_case3 = Q(Q(evaluation_details__evaluator__id=fil_evaluator) | Q(Q(evaluation_details__evaluation__call_attender__id=fil_evaluator) & Q(evaluation_details__evaluator__id=None)))
+		    customer_address_filter.append(case3)
+		    count_customer_address_filter.append(count_case3)
+
+		if fil_governorate or fil_area or fil_evaluator: 
 			customer_address_prefetch_filter              = functools.reduce(operator.and_,customer_address_filter)
 			count_customer_address_prefetch_filter        = functools.reduce(operator.and_,count_customer_address_filter)
 		else:
@@ -890,7 +902,7 @@ class OrderDetails(IsSalesAdmin,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
 
-		return render(request,'salesadmin/order/orders.html',{"evaluations":evaluations,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_status":fil_status,"fil_cleaning_policy":fil_cleaning_policy,"fil_service_type":fil_service_type,"fil_payment_policy":fil_payment_policy,})		
+		return render(request,'salesadmin/order/orders.html',{"evaluations":evaluations,"evaluators":evaluators,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_status":fil_status,"fil_cleaning_policy":fil_cleaning_policy,"fil_service_type":fil_service_type,"fil_payment_policy":fil_payment_policy,"fil_evaluator":fil_evaluator})		
 
 
 class FeedbackDetails(IsSalesAdmin,View):
