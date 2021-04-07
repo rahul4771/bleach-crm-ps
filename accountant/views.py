@@ -1005,7 +1005,13 @@ class FineWriteBack(View):
 		
 		#update Evaluation and fine
 		if action == 'Fine':
-			Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')),fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
+			evaluation = Evaluation.objects.filter(id=order.evaluation.id).first()
+			
+			if evaluation.payment_method == 'BREAKDOWN':
+				Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')), after_cleaning_amount=F('after_cleaning_amount')+float(request.POST.get('amount')), fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
+			else:
+				Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')),fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
+			
 			Order.objects.filter(id=order_id).update(total_amount=F('total_amount')+float(request.POST.get('amount')),remining_amount=F('remining_amount')+float(request.POST.get('amount')))
 			messages.success(request,"Fine Amount Succesfully Added")
 		
@@ -1679,10 +1685,10 @@ def export_users_xls(request):
 
 		if report_type == 'allsalesdetails':
 			response['Content-Disposition'] = 'attachment; filename="SALES_DETAILS_ALL_'+from_date+'_'+to_date+'.xls"'
-			orderschedules = OrderScheduler.objects.filter(Q(is_active=True)&Q(Q(work_status='CLEANING_FULFILLED')|Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS'))&Q(end_at__range=(prev_date_start,todate_date_end))).values_list('order__order_no','end_at','end_at','id','evaluation_details__address__customer__name','evaluation_details__evaluation__payment_method','order_scheduler_book__total_cost','order__amount_paid','evaluation_details__evaluation__payment_way','order_scheduler_book__id','order__remining_amount','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','cleaning_hours','no_of_cleaners','evaluation_details__evaluator__name').order_by('end_at')
+			orderschedules = OrderScheduler.objects.filter(Q(is_active=True)&Q(Q(work_status='CLEANING_FULFILLED')|Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS'))&Q(end_at__range=(prev_date_start,todate_date_end))).values_list('order__order_no','end_at','end_at','id','evaluation_details__address__customer__name','evaluation_details__evaluation__payment_method','order_scheduler_book__total_cost','order__amount_paid','evaluation_details__evaluation__payment_way','order_scheduler_book__id','order__remining_amount','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__cleaning_hours','order_scheduler_book__number_of_cleaners','evaluation_details__evaluator__name').order_by('end_at')
 		else:
 			response['Content-Disposition'] = 'attachment; filename="SALES_DETAILS_COMPLETED_'+from_date+'_'+to_date+'.xls"'
-			orderschedules = OrderScheduler.objects.filter(is_active=True,work_status='CLEANING_FULFILLED',end_at__range=(prev_date_start,todate_date_end)).values_list('order__order_no','end_at','end_at','id','evaluation_details__address__customer__name','evaluation_details__evaluation__payment_method','order_scheduler_book__total_cost','order__amount_paid','evaluation_details__evaluation__payment_way','order_scheduler_book__id','order__remining_amount','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','cleaning_hours','no_of_cleaners','evaluation_details__evaluator__name').order_by('end_at')
+			orderschedules = OrderScheduler.objects.filter(is_active=True,work_status='CLEANING_FULFILLED',end_at__range=(prev_date_start,todate_date_end)).values_list('order__order_no','end_at','end_at','id','evaluation_details__address__customer__name','evaluation_details__evaluation__payment_method','order_scheduler_book__total_cost','order__amount_paid','evaluation_details__evaluation__payment_way','order_scheduler_book__id','order__remining_amount','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__cleaning_hours','order_scheduler_book__number_of_cleaners','evaluation_details__evaluator__name').order_by('end_at')
 
 		wb = xlwt.Workbook(encoding='utf-8')
 		
