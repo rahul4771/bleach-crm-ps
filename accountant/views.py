@@ -1005,7 +1005,13 @@ class FineWriteBack(View):
 		
 		#update Evaluation and fine
 		if action == 'Fine':
-			Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')),fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
+			evaluation = Evaluation.objects.filter(id=order.evaluation.id).first()
+			
+			if evaluation.payment_method == 'BREAKDOWN':
+				Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')), after_cleaning_amount=F('after_cleaning_amount')+float(request.POST.get('amount')), fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
+			else:
+				Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')),fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
+			
 			Order.objects.filter(id=order_id).update(total_amount=F('total_amount')+float(request.POST.get('amount')),remining_amount=F('remining_amount')+float(request.POST.get('amount')))
 			messages.success(request,"Fine Amount Succesfully Added")
 		
@@ -1086,6 +1092,11 @@ def export_users_xls(request):
 			orderschedules_start = OrderScheduler.objects.filter(order__id=int(order_list[8])).first()
 			orderschedules_end = OrderScheduler.objects.filter(order__id=int(order_list[8])).last()
 
+			schedule_count = OrderScheduler.objects.filter(order__id=int(order_list[8])).count()
+
+			if not schedule_count:
+				schedule_count = 1
+
 			if evaluationbooks_count > 1:
 				job_completed = 0
 				job_remaining = 0
@@ -1107,11 +1118,6 @@ def export_users_xls(request):
 				order_list[8] = job_remaining
 
 			else:
-
-				schedule_count = OrderScheduler.objects.filter(order__id=int(order_list[8])).count()
-
-				if not schedule_count:
-					schedule_count = 1
 
 				completed_cleanings_count = OrderScheduler.objects.filter(order__id=int(order_list[8]),work_status='CLEANING_FULFILLED').count()
 				
