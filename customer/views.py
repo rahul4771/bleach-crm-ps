@@ -2261,13 +2261,13 @@ class GetCleaningSlotes(APIView):
 				else:
 					dropdown_slotes['success'] = False
 					dropdown_slotes['Error'] = 'Cleaners are not available'
-					return JsonResponse(dropdown_slotes)			
+					return Response(dropdown_slotes,HTTP_200_OK)			
 			
 			available_slotes[slote] = available_durations
 
 		dropdown_slotes['success']= True
 		dropdown_slotes['slotes'] = available_slotes
-		return JsonResponse(dropdown_slotes)
+		return Response(dropdown_slotes,HTTP_200_OK)
 
 class GetMultipleServiceCleaningSlotes(APIView):  
 	permission_classes        = (AllowAny,)
@@ -2412,7 +2412,7 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				else:
 					dropdown_slotes['success'] = False
 					dropdown_slotes['Error'] = 'Cleaners are not available'
-					return JsonResponse(dropdown_slotes)			
+					return Response(dropdown_slotes,HTTP_200_OK)			
 			
 			available_slotes[slote] = available_durations
 
@@ -3985,6 +3985,17 @@ class ClientCleaningBookingMediaSave(APIView):
 				        media_type='PHOTO',
 						taken_status='CUSTOMER_SEND'
 				        )
+		
+		response_dict['success'] = True
+		return Response(response_dict,HTTP_200_OK)
+
+
+from django.core.mail import send_mail
+class EmailTest(APIView):
+	def get(self,request):
+		response_dict = {}
+
+		send_mail('Using SparkPost with Django', 'This is a message from Django using SparkPost!', 'ansab.m@bleach-kw.com',['ansabm2015@gmail.com'], fail_silently=False)
 		
 		response_dict['success'] = True
 		return Response(response_dict,HTTP_200_OK)
