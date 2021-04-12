@@ -7,7 +7,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 		model  = UserProfile
 		fields = ('name','gender','email','nationality','mobile_number','date_day','date_month','date_year','sms_preference')	
 
-class AddressSerializer(serializers.ModelSerializer): 
+class AddressSaveSerializer(serializers.ModelSerializer): 
 	class Meta:
 		model  = Address
 		fields = ('governorate','area','block','avenue','building','street','floor','apartment')
@@ -20,7 +20,7 @@ class EvaluationSectionKeynoteSerializer(serializers.ModelSerializer):
 class EvaluationBookSectionSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = EvaluationBookSection
-		fields = ('section_name','size','age','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain','cement_residue','oil_residue','hall_size','window_side','new_kitchen','vacuuming','deep','section_cost','section_net_cost')
+		fields = ('section_name','size','age','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain','cement_residue','oil_residue','hall_size','window_side','new_kitchen','vacuuming','section_cost','section_net_cost')
 
 class EvaluationBookSerializer(serializers.ModelSerializer):
 	evaluationsection_book = EvaluationBookSectionSerializer(many=True,read_only=True)
@@ -30,6 +30,23 @@ class EvaluationBookSerializer(serializers.ModelSerializer):
 
 
 ##for data showing
+class GovernorateSerializer(serializers.ModelSerializer):
+	class Meta:
+		model  = Governorate
+		fields = ('id','name')
+
+class AreaSerializer(serializers.ModelSerializer):
+	class Meta:
+		model  = Area
+		fields = ('id','name')
+
+class AddressSerializer(serializers.ModelSerializer): 
+	governorate = GovernorateSerializer(read_only=True)
+	area        = AreaSerializer(read_only=True)
+	class Meta:
+		model  = Address
+		fields = ('governorate','area','block','avenue','building','street','floor','apartment')
+
 class EvaluationSerializer(serializers.ModelSerializer):
 	customer                = UserProfileSerializer(read_only=True) 
 	quatation_approved_date = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p ")

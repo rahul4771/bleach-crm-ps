@@ -215,7 +215,7 @@
                       Size : <span class="inv-text-bold">{{section.size}} {{section.unit|default_if_none:''}}</span>
                     </div>
                     <div class="p-2">
-                      Quantity : <span class="inv-text-bold">{% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</span>
+                      No. of Visits : <span class="inv-text-bold">{% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</span>
                     </div>
                     <div class="p-2">
                       Unit Price : <span class="inv-text-bold">{{section.section_cost|floatformat:'3'}}</span>
@@ -367,14 +367,22 @@
                  </div>
               {% endif %}
 
-               <div class="inv-total-payment p-2 mt-4 mb-4">
-                 <div class="inv-text-left  pt-1">
+               <div class="p-2 mt-4 mb-4">
+                 {% comment %} <div class="inv-text-left  pt-1">
                Grand Total
                  </div>
                  <div class="inv-text-right inv-text-lg pb-4 ">
                   
                    <span class="inv-heading finalamount" >{{order.total_amount|floatformat:"3"}}</span> KD
+                 </div> {% endcomment %}
+                 <div class="d-flex pt-2">
+                 <div class="inv-text-left w-50">
+                   Grand Total
                  </div>
+                 <div class="inv-text-right w-50">
+                   <span class="inv-text-bold finalamount">{{order.total_amount|floatformat:"3"}}</span> KD
+                 </div>
+               </div>
                </div>
                
              </div>
@@ -411,12 +419,12 @@
             <div class="col-6 inv-text-right pt-1 inv-text-secondary">
                <b>{{order.amount_paid|floatformat:'3'}}</b> KD
             </div>
-            <div class="col-6 pt-1 ">
+            {% comment %} <div class="col-6 pt-1 ">
               Balance Payment
             </div>
             <div class="col-6 inv-text-right pt-1 inv-text-secondary">
               <b class="remainingamount">{{order.remining_amount|floatformat:'3'}}</b> KD
-            </div>
+            </div> {% endcomment %}
 
         {% if order.remining_amount == 0 %}
             <br><br><br><br>
@@ -428,6 +436,26 @@
                   </div><br><br><br><br>
 
         {% elif order.subscription_topay == 0 and order.remining_amount > 0 %}
+            <div class="col-12">
+              <div class="inv-current-payment p-2 mt-4 mb-4">
+                <div class="inv-text-left  pt-1">
+               Payable Amount
+                </div>
+                <div class="inv-text-right inv-text-lg pb-4 ">
+                 
+                  <span class="inv-heading subscriptiontopay">{{order.subscription_topay|floatformat:'3'}}</span> KD
+                </div>
+              </div>
+            </div>
+
+            <br><br><br><br>
+            <div class="col-12 payment-success text-center">
+                    <div class="mx-auto inv-completed">
+                      <img src="{% static 'files/icons/call-center.png' %}"  class="inv-success-icon"/> <br> Please contact our customer service (1882707) to update the invoice.
+
+                    </div>
+                  </div><br><br><br><br>
+        {% elif order.order_status == 'ORDER_CANCELLED' %}
             <div class="col-12">
               <div class="inv-current-payment p-2 mt-4 mb-4">
                 <div class="inv-text-left  pt-1">

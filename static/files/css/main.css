@@ -486,6 +486,7 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .cleaning-img{ margin:0; padding:0px; }
 .cleaning-img img{ width:100%; margin:0; padding:0;object-fit:cover;width:100%; height:25vh; object-position: top center;}
 .common-gray-text{ font-weight:normal; font-size:13px; color:#8c8a8a; padding:1px 0; text-align:center;}
+.dark-gray-text{ font-weight:normal; font-size:13px; color:#555555; padding:1px 0; text-align:center;}
 .bold-text{ font-weight:bold;}
 .blue-bg-sm{background:#528ce6; padding:2px 6px; margin-bottom:10px;  border-radius:3px; text-align:center; color:#fff; font-size:11px; width:80px;}
 .green-bg-sm{background:#3cbbb1; padding:2px 6px; margin-bottom:10px;  border-radius:3px; text-align:center; color:#fff; font-size:11px; width:85px;}

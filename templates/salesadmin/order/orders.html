@@ -143,6 +143,7 @@
                 <option value="ORDER_CLOSED" {% if fil_status == 'ORDER_CLOSED' %}selected{% endif %}>COMPLETED</option>
                 <option value="REJECTED" {% if fil_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
                 <option value="EXPIRED" {% if fil_status == 'EXPIRED' %}selected{% endif %}>EXPIRED</option>
+                <option value="ORDER_CANCELLED" {% if fil_status == 'ORDER_CANCELLED' %}selected{% endif %}>CANCELLED</option>
                                 
               </select>
                 </label>
@@ -176,6 +177,20 @@
               </label>		 
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<hr class="hr-dashedpad"> 
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    <div class=" bold-text common-label"> <label>Evaluator</label></div>
+				<label for="favcity">
+                <select name="evaluator_filter" id="evaluator_filter_id">
+                <option value=''>---ALL---</option>
+                {% for evaluator in evaluators %}
+                <option value="{{evaluator.id}}" {% if evaluator.id == fil_evaluator %}selected{% endif %}>{{evaluator.name}}</option>
+                {% endfor %}                
+              </select>
+                </label>
+  </div><!--ticket-form-left-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
 <div align="center"> <input class="assignButton" name="assing" type="button" onclick="set_params_go({});" value="Submit"> <input class="cancel-Button close-btn arrow-close" name="cancel" type="button" value="Reset"></div>
 
      
@@ -276,7 +291,22 @@
     {% else %}
       <a href="/customer/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>
     {% endif %}
-    {% else %}<img src="{% static 'files/images/view-icon-gray.png' %}" align="absmiddle" class="download-icon">{% endif %}&nbsp &nbsp{% if evaluation.quatation_status == 'APPROVED' %}<img src="{% static 'files/images/edit-gray.png' %}" align="absmiddle" class="download-icon">{% else %}<a href="{% url 'bleach_salesadmin:salesadmin-makequatation1edit' evaluation.customer.id evaluation.id %}"><img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon"></a>{% endif %}</td>
+    {% else %}<img src="{% static 'files/images/view-icon-gray.png' %}" align="absmiddle" class="download-icon">{% endif %}&nbsp &nbsp
+    
+    {% if evaluation.quatation_status == 'APPROVED' %}  
+    {% if evaluation.approved_not_paid_count > 0 %}<a href="{% url 'bleach_salesadmin:salesadmin-makequatation1edit' evaluation.customer.id evaluation.id %}"><img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon"></a>
+    {% else %}
+    {% for order in evaluation.evaluationorder %}
+    {% if order.order_status == 'ORDER_CANCELLED' %}<a href="{% url 'bleach_salesadmin:salesadmin-makequatation1edit' evaluation.customer.id evaluation.id %}"><img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon"></a>
+    {% else %}<img src="{% static 'files/images/edit-gray.png' %}" align="absmiddle" class="download-icon">
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+    {% else %}
+    <a href="{% url 'bleach_salesadmin:salesadmin-makequatation1edit' evaluation.customer.id evaluation.id %}"><img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon"></a>
+    {% endif %}
+
+  </td>
     </tr>    
     {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>
@@ -314,14 +344,14 @@
     {% endif %}
     {% for pg in page_range %}
     {% if vus.number == pg %}
-            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
     {% if evaluations.has_next %}        
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Next">
+      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
@@ -520,7 +550,7 @@ $("#governorate_filter_id").change(function(){
 function set_params_go(args)
 {
 var url='{% url 'bleach_salesadmin:salesadmin-orders' %}';
-var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val()
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val(),evaluator:$('#evaluator_filter_id').val()
 };
 for(key in args) 
     params[key]=args[key];

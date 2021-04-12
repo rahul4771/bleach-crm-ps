@@ -1476,9 +1476,9 @@ class OrderDetails(IsAgent,View):
 		status = request.GET.get('status')
 		
 		if search:
-			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(customer__mobile_number__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(customer__mobile_number__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),order_cancelled_count=Count(Case(When( evaluation_order__order_status='ORDER_CANCELLED',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
 		else:
-			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),order_cancelled_count=Count(Case(When( evaluation_order__order_status='ORDER_CANCELLED',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
 			
 
 		if evaluations:
@@ -1586,13 +1586,15 @@ class OrderDetails(IsAgent,View):
 		#filters
 		filters=[]
 		if fil_status:
-			if fil_status == 'ORDER_IN_PROGRESS' or fil_status == 'ORDER_CLOSED' or fil_status == 'APPROVED-NOT PAID' or fil_status == 'EVALUATING':
+			if fil_status == 'ORDER_IN_PROGRESS' or fil_status == 'ORDER_CLOSED' or fil_status == 'APPROVED-NOT PAID' or fil_status == 'ORDER_CANCELLED' or fil_status == 'EVALUATING':
 				if fil_status == 'ORDER_IN_PROGRESS':
 					case1 = Q(order_in_progress_count__gte=1)
 				elif fil_status == 'ORDER_CLOSED':
 					case1 = Q(order_closed_count__gte=1)
 				elif fil_status == 'APPROVED-NOT PAID':
 					case1 = Q(Q(approved_not_paid_count__gte=1)&~Q(payment_method='SUBSCRIPTION'))
+				elif fil_status == 'ORDER_CANCELLED':
+					case1 = Q(order_cancelled_count__gte=1)
 				elif fil_status == 'EVALUATING':
 					case1 = Q(quatation_status__isnull=True)
 			else:
@@ -2225,19 +2227,36 @@ class NewEnquiry(IsAgent,View):
 
 			#APPEND MR / MS TO NAME
 			customer_name = enquiry_form_save.name
+			customer_name = customer_name.lower()
 
 			if enquiry_form_save.gender == 'MALE':
-				prefix = 'Mr. '
-				prefix_exists = customer_name.startswith(prefix)
+				prefix_list = ['mr.','mr']
+				for prefix in prefix_list:
+					
+					prefix_exists = customer_name.startswith(prefix)
 
-				if prefix_exists == False :
-					enquiry_form_save.name = prefix+customer_name
+					if prefix_exists == False :
+						if customer_name.startswith('dr.') == True or customer_name.startswith('dr') == True :
+							enquiry_form_save.name = customer_name.title()
+						else:	
+							enquiry_form_save.name = 'Mr. '+customer_name
+					else:
+						enquiry_form_save.name = customer_name.title()													
+
 			elif enquiry_form_save.gender == 'FEMALE':
-				prefix = 'Ms. '
-				prefix_exists = customer_name.startswith(prefix)
+				prefix_list = ['ms.','ms']
+				for prefix in prefix_list:
+					
+					prefix_exists = customer_name.startswith(prefix)
 
-				if prefix_exists == False :
-					enquiry_form_save.name = prefix+customer_name
+					if prefix_exists == False :
+						if customer_name.startswith('dr.') == True or customer_name.startswith('dr') == True or customer_name.startswith('mrs.') == True or customer_name.startswith('mrs') == True:
+							enquiry_form_save.name = customer_name.title()
+						else:	
+							enquiry_form_save.name = 'Ms. '+customer_name
+					else:
+						enquiry_form_save.name = customer_name.title()
+
 			else:
 				pass
 
@@ -2397,19 +2416,36 @@ class ExistingEnquiry(IsAgent,View):
 
 				#APPEND MR / MS TO NAME
 				customer_name = enquiry_form_save.name
+				customer_name = customer_name.lower()
 
 				if enquiry_form_save.gender == 'MALE':
-					prefix = 'Mr. '
-					prefix_exists = customer_name.startswith(prefix)
+					prefix_list = ['mr.','mr']
+					for prefix in prefix_list:
+						
+						prefix_exists = customer_name.startswith(prefix)
 
-					if prefix_exists == False :
-						enquiry_form_save.name = prefix+customer_name
+						if prefix_exists == False :
+							if customer_name.startswith('dr.') == True or customer_name.startswith('dr') == True :
+								enquiry_form_save.name = customer_name.title()
+							else:	
+								enquiry_form_save.name = 'Mr. '+customer_name
+						else:
+							enquiry_form_save.name = customer_name.title()													
+
 				elif enquiry_form_save.gender == 'FEMALE':
-					prefix = 'Ms. '
-					prefix_exists = customer_name.startswith(prefix)
+					prefix_list = ['ms.','ms']
+					for prefix in prefix_list:
+						
+						prefix_exists = customer_name.startswith(prefix)
 
-					if prefix_exists == False :
-						enquiry_form_save.name = prefix+customer_name
+						if prefix_exists == False :
+							if customer_name.startswith('dr.') == True or customer_name.startswith('dr') == True or customer_name.startswith('mrs.') == True or customer_name.startswith('mrs') == True:
+								enquiry_form_save.name = customer_name.title()
+							else:	
+								enquiry_form_save.name = 'Ms. '+customer_name
+						else:
+							enquiry_form_save.name = customer_name.title()
+
 				else:
 					pass
 

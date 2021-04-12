@@ -147,7 +147,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-EMAIL_USE_TLS = True
+#EMAIL_USE_TLS = True
 # EMAIL_HOST = 'smtp.gmail.com'
 # EMAIL_HOST_USER = 'ansabm2018@gmail.com'
 # EMAIL_HOST_PASSWORD = '9495259869'
@@ -158,6 +158,12 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'SMTP_Injection'
 EMAIL_HOST_PASSWORD = 'bb8ebee24b8d2a17c26ee1c9cd56c3d26c72db55'
 EMAIL_USE_TLS = True
+
+# EMAIL_HOST = 'smtp-mail.outlook.com'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'ansab.m@bleach.com'
+# EMAIL_HOST_PASSWORD = 'Duc45773'
+# EMAIL_USE_TLS = True
 
 LOGIN_URL='login'
 LOGOUT_URL = 'logout'

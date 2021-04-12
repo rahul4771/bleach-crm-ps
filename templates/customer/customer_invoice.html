@@ -187,12 +187,26 @@
                    {{order.evaluation.payment_method}}
                 </div>
               </div>
-              <div class="d-flex pt-1 inv-invoice-details pb-4">
+              <div class="d-flex pt-1 inv-invoice-details">
                 <div class="w-50 inv-text-left">
                   Order Number
                 </div>
                 <div class="w-50 inv-text-right">
                    {{order.evaluation.evaluation_id}}
+                </div>
+              </div>
+              <div class="d-flex pt-1 inv-invoice-details pb-4">
+                <div class="w-50 inv-text-left inv-highlight-text">
+                  Cleaning Appointment(s)
+                </div>
+                <div class="w-50 inv-text-right inv-highlight-text">
+                {% for orderschedule in order.orderschedules %}
+                {% if forloop.last %}
+                   {{orderschedule.start_at|date:'d-m-Y g:iA'}}<br>
+                {% else %}
+                  {{orderschedule.start_at|date:'d-m-Y g:iA'}},<br>
+                {% endif %}
+                {% endfor %}
                 </div>
               </div>
             </div>
@@ -370,14 +384,22 @@
                 
                 </div>
               {% endif %}
-              <div class="inv-total-payment p-2 mt-4 mb-4">
-                <div class="inv-text-left  pt-1">
+              <div class=" p-2 mt-4 mb-4">
+                <div class="d-flex pt-2">
+                 <div class="inv-text-left w-50">
+                   Grand Total
+                 </div>
+                 <div class="inv-text-right w-50">
+                   <span class="inv-text-bold finalamount">{{order.total_amount|floatformat:"3"}}</span> KD
+                 </div>
+               </div>
+                {% comment %} <div class="inv-text-left  pt-1">
               Grand Total
                 </div>
                 <div class="inv-text-right inv-text-lg pb-4 ">
                  
                   <span class="inv-heading finalamount" >{{order.total_amount|floatformat:"3"}}</span> KD
-                </div>
+                </div> {% endcomment %}
               </div>
               
             </div>
@@ -432,7 +454,36 @@
             <b class="remainingamount">{{order.remining_amount|floatformat:'3'}}</b> KD
             </div>
 
-        {% if order.remining_amount == 0 %}
+        {% if order.order_status == 'ORDER_CANCELLED' %}
+        <div class="col-12">
+              <div class="inv-current-payment p-2 mt-4 mb-4">
+                <div class="inv-text-left  pt-1">
+               Payable Amount
+                </div>
+                <div class="inv-text-right inv-text-lg pb-4 ">
+                 
+                  {% if order.evaluation.payment_method == 'BREAKDOWN' %}
+                  {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
+                    <span class="inv-heading subscriptiontopay">{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</span> KD
+                  {% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}
+                    <span class="inv-heading subscriptiontopay">{{order.evaluation.after_cleaning_amount|floatformat:'3'}}</span> KD
+                  {% endif %}
+
+                  {% else %}
+                  <span class="inv-heading subscriptiontopay">{{order.remining_amount|floatformat:'3'}}</span> KD
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <br><br><br><br>
+            <div class="col-12 payment-success text-center">
+                    <div class="mx-auto inv-completed">
+                      <img src="{% static 'files/icons/call-center.png' %}"  class="inv-success-icon"/> <br> Please contact our customer service (1882707) to update the invoice.
+                    </div>
+            </div><br><br><br><br>
+        
+        {% elif order.remining_amount == 0 %}
         <br><br><br><br>
         <div class="col-12 payment-success text-center">
                 <div class="mx-auto inv-completed">
