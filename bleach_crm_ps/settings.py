@@ -27,11 +27,12 @@ SECRET_KEY = local_settings.secret_key
 DEBUG = local_settings.debug
 
 ALLOWED_HOSTS = local_settings.allowed_hosts
-
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -55,10 +56,11 @@ INSTALLED_APPS = [
     'qualitycontroll',
     'salesadmin',
     'Api',
-    'mathfilters' 
+    'mathfilters'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -67,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 ROOT_URLCONF = 'bleach_crm_ps.urls'
 
