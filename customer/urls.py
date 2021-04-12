@@ -59,4 +59,5 @@ urlpatterns = [
 		url(r'^bookingphase3$',views.ClientCleaningBookingPhase3.as_view(),name='clientcleaningbookingphase3'),
 		url(r'^bookingmediasave$',views.ClientCleaningBookingMediaSave.as_view(),name='clientcleaningbookingmediasave'),
 
+		url(r'^emailtest$',views.EmailTest.as_view(),name='email-test'),
 	]
