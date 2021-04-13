@@ -156,17 +156,17 @@ STATICFILES_DIRS = [
 # EMAIL_HOST_PASSWORD = '9495259869'
 # EMAIL_PORT = 587
 
-EMAIL_HOST = 'smtp.sparkpostmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'SMTP_Injection'
-EMAIL_HOST_PASSWORD = 'bb8ebee24b8d2a17c26ee1c9cd56c3d26c72db55'
-EMAIL_USE_TLS = True
-
-# EMAIL_HOST = 'smtp-mail.outlook.com'
+# EMAIL_HOST = 'smtp.sparkpostmail.com'
 # EMAIL_PORT = 587
-# EMAIL_HOST_USER = 'ansab.m@bleach.com'
-# EMAIL_HOST_PASSWORD = 'Duc45773'
+# EMAIL_HOST_USER = 'SMTP_Injection'
+# EMAIL_HOST_PASSWORD = 'bb8ebee24b8d2a17c26ee1c9cd56c3d26c72db55'
 # EMAIL_USE_TLS = True
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'ansab.m@bleach-kw.com'
+EMAIL_HOST_PASSWORD = 'Duc45773'
 
 LOGIN_URL='login'
 LOGOUT_URL = 'logout'

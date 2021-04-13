@@ -2006,6 +2006,28 @@ class GetServiceTypes(APIView):
 
 		return JsonResponse(response_dict)
 
+class GetAreaTypes(APIView):  
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict        		= {}
+		response_dict['success']	= False
+
+		try:
+			area_types = AreaType.objects.filter(is_active=True)
+		except:
+			area_types = None
+
+		area_typeslist = []
+		for area_type in area_types:
+			area_typeslist.append({'name':area_type.name,'id':area_type.id})
+
+		response_dict['area_types']	= area_typeslist
+		response_dict['success']    = True
+
+		return JsonResponse(response_dict)
+
 
 class GetServiceSizePrice(APIView):  
 	permission_classes        = (AllowAny,)
