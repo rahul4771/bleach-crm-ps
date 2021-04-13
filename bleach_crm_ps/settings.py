@@ -160,7 +160,7 @@ STATICFILES_DIRS = [
 # EMAIL_USE_TLS = True
 
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_HOST = 'smtp.office365.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'ansab.m@bleach-kw.com'
 EMAIL_HOST_PASSWORD = 'Duc45773'
