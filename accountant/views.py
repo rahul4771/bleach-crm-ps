@@ -156,6 +156,29 @@ def GetCashCollectOrderDetailedInfo(request):
 
 		return JsonResponse(dropdown_order_info)	
 
+def GetFineCollectOrderInfo(request):
+	data               = {}
+	order_info_dict = {}
+
+	query       =   request.GET.get('keyword')
+
+	orders = Order.objects.filter(is_active=True,order_status__isnull=False).select_related('evaluation__customer').filter(Q(evaluation__quatation_status='APPROVED') & Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)) & ~Q(Q(order_status='ORDER_CANCELLED'))).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).order_by('start_at'),to_attr='orderschedules')).annotate(Count('order_scheduler_order'))
+			
+	
+	if orders:
+		for order in orders:
+			order_info_dict[order.id] = order.evaluation.evaluation_id+'-'+order.evaluation.customer.name 	
+
+	
+	data['order_details'] = order_info_dict
+
+
+	data['status']     = 'true'
+
+	if order_info_dict == {}: 
+		data['status'] = 'false'	
+	
+	return JsonResponse(data)
 
 class AccountantHome(IsAccountant,View):
 	def get(self,request):
@@ -1005,14 +1028,27 @@ class FineWriteBack(View):
 		
 		#update Evaluation and fine
 		if action == 'Fine':
-			evaluation = Evaluation.objects.filter(id=order.evaluation.id).first()
 			
-			if evaluation.payment_method == 'BREAKDOWN':
-				Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')), after_cleaning_amount=F('after_cleaning_amount')+float(request.POST.get('amount')), fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
+			order.total_amount    += float(request.POST.get('amount'))
+			order.remining_amount += float(request.POST.get('amount'))
+
+			if order.payment_status == 'COMPLETED':
+				
+				if evaluation.payment_method == 'BREAKDOWN':
+					Evaluation.objects.filter(id=order.evaluation.id).update(is_excludedfine=True,fine_amount=F('fine_amount')+float(request.POST.get('amount')), after_cleaning_amount=F('after_cleaning_amount')+float(request.POST.get('amount')), fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
+				else:
+					Evaluation.objects.filter(id=order.evaluation.id).update(is_excludedfine=True,fine_amount=F('fine_amount')+float(request.POST.get('amount')),fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
+
+				order.payment_status  = 'PENDING'
+				order.order_status    = 'ORDER_IN_PROGRESS'
 			else:
-				Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')),fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
+				if evaluation.payment_method == 'BREAKDOWN':
+					Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')), after_cleaning_amount=F('after_cleaning_amount')+float(request.POST.get('amount')), fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
+				else:
+					Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')),fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))				
 			
-			Order.objects.filter(id=order_id).update(total_amount=F('total_amount')+float(request.POST.get('amount')),remining_amount=F('remining_amount')+float(request.POST.get('amount')))
+			order.save()
+
 			messages.success(request,"Fine Amount Succesfully Added")
 		
 		if action == 'Write-Off':

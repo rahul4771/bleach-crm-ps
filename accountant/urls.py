@@ -24,5 +24,5 @@ urlpatterns = [
 
 	url(r'^ajax/cashcollect/order/info/$',views.GetCashCollectOrderInfo,name='get-cashorderInfo'),
 	url(r'^ajax/cashcollect/order/detailed/info/$',views.GetCashCollectOrderDetailedInfo,name='get-cashorderdetailedInfo'),
-
+	url(r'^ajax/finecollect/order/info/$',views.GetFineCollectOrderInfo,name='get-fineorderInfo'),
 ]
