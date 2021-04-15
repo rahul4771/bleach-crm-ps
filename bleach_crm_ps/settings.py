@@ -162,10 +162,11 @@ STATICFILES_DIRS = [
 # EMAIL_HOST_PASSWORD = 'bb8ebee24b8d2a17c26ee1c9cd56c3d26c72db55'
 # EMAIL_USE_TLS = True
 
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.office365.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'ansab.m@bleach-kw.com'
+EMAIL_BACKEND       = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS       = True
+EMAIL_HOST          = 'smtp.office365.com'
+EMAIL_PORT          = 587
+EMAIL_HOST_USER     = 'ansab.m@bleach-kw.com'
 EMAIL_HOST_PASSWORD = 'Duc45773'
 
 LOGIN_URL='login'

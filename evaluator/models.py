@@ -207,6 +207,7 @@ class Evaluation(models.Model):
 	discount			= models.FloatField(blank=True,null=True,default=0)
 	extra_discount		= models.FloatField(blank=True,null=True,default=0)
 	fine_amount         = models.FloatField(blank=True,null=True,default=0)
+	is_excludedfine     = models.BooleanField(null=False,blank=True,default=False)
 	fine_created_by     = models.ForeignKey(UserProfile,blank=True,null=True,related_name='finecreatedby')
 	writeback_amount    = models.FloatField(blank=True,null=True,default=0)
 	writeback_created_by= models.ForeignKey(UserProfile,blank=True,null=True,related_name='writebackcreatedby')
