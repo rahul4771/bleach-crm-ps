@@ -1030,25 +1030,16 @@ class FineWriteBack(View):
 		if action == 'Fine':
 			
 			evaluation             = Evaluation.objects.filter(id=order.evaluation.id).first()
+			if evaluation.payment_method == 'BREAKDOWN':
+				Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')), after_cleaning_amount=F('after_cleaning_amount')+float(request.POST.get('amount')), fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
+			else:
+				Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')),fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
 
 			order.total_amount    += float(request.POST.get('amount'))
 			order.remining_amount += float(request.POST.get('amount'))
-
 			if order.payment_status == 'COMPLETED':
-				
-				if evaluation.payment_method == 'BREAKDOWN':
-					Evaluation.objects.filter(id=order.evaluation.id).update(is_excludedfine=True,fine_amount=F('fine_amount')+float(request.POST.get('amount')), after_cleaning_amount=F('after_cleaning_amount')+float(request.POST.get('amount')), fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
-				else:
-					Evaluation.objects.filter(id=order.evaluation.id).update(is_excludedfine=True,fine_amount=F('fine_amount')+float(request.POST.get('amount')),fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
-
 				order.payment_status  = 'PENDING'
-				order.order_status    = 'ORDER_IN_PROGRESS'
-			else:
-				if evaluation.payment_method == 'BREAKDOWN':
-					Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')), after_cleaning_amount=F('after_cleaning_amount')+float(request.POST.get('amount')), fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
-				else:
-					Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')),fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))				
-			
+				order.order_status    = 'ORDER_IN_PROGRESS'				
 			order.save()
 
 			messages.success(request,"Fine Amount Succesfully Added")
