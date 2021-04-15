@@ -1298,6 +1298,60 @@ class AgentHome(IsAgent,View):
 
 		return redirect('agent:agentdash-board')
 
+class ActiveSubscriptions(IsAgent,View):
+	def get(self,request):
+		#subscriptions
+
+		#Evaluation Details
+		search                  = request.GET.get('search')
+		
+		if search:
+			subscriptions = Order.objects.filter(Q(Q( Q(payment_status='PENDING') | Q(payment_status='ON_HOLD') | Q(payment_status='COMPLETED') ) & Q(evaluation__payment_method='SUBSCRIPTION') & Q(evaluation__quatation_status='APPROVED') & ~Q(order_status='ORDER_CANCELLED') & Q(Q(order_no__icontains=search)|Q(evaluation__customer__name__icontains=search)|Q(evaluation__customer__mobile_number__icontains=search)) )).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') ))   #Sum(Case(When( Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED') | Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS') | Q(order_scheduler_order__work_status=None) ),then=1),default=0,output_field=IntegerField()))
+		else:
+			subscriptions = Order.objects.filter(Q(Q( Q(payment_status='PENDING') | Q(payment_status='ON_HOLD') | Q(payment_status='COMPLETED') ) & Q(evaluation__payment_method='SUBSCRIPTION') & Q(evaluation__quatation_status='APPROVED') & ~Q(order_status='ORDER_CANCELLED'))).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') ))
+		
+		if subscriptions:
+
+			for invoice in subscriptions:
+				cleaning_price = 0
+				for scheduler in invoice.orderschedules:
+					if scheduler.work_status=='CLEANING_FULFILLED':
+						cleaning_price += scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
+				if cleaning_price > invoice.amount_paid:
+					invoice.balance       = cleaning_price-invoice.amount_paid
+				else:
+					invoice.balance       = cleaning_price-invoice.amount_paid
+
+				if invoice.balance == int(invoice.balance):
+					invoice.balance = int(invoice.balance)
+
+		#PAGINATION CLIENTS
+		no_of_entries = request.GET.get('no_of_entries')
+		if not no_of_entries:
+			no_of_entries = 20
+
+		page = request.GET.get('page',1)
+		paginator=Paginator(subscriptions,no_of_entries)
+		try:
+			subscriptions=paginator.page(page)
+		except PageNotAnInteger:
+			subscriptions=paginator.page(1)
+		except EmptyPage:
+			subscriptions = paginator.page(paginator.num_pages)
+
+		# Get the index of the current page
+		index = subscriptions.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]
+		entry_per_page=(subscriptions.end_index())-(subscriptions.start_index())+1
+
+		return render(request,'agent/subscription/active_subscriptions.html',{"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"subscriptions":subscriptions})
 
 class ResourceManagement(IsAgent,View):
 	def get(self,request):
