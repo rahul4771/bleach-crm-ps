@@ -14,6 +14,9 @@ urlpatterns = [
 
 	url(r'^payment-policy/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.PaymentEdit.as_view(),name='accountant-payment-edit'),
 
+	url(r'^tickets/$',views.TicketDetails.as_view(),name='accountant-tickets'),
+	url(r'^ticket/details/(?P<client_id>[-\w]+)/(?P<followup_id>[-\w]+)/$',views.TicketAdvanced.as_view(),name='accountant-ticketadvanced'),
+	
 	url(r'^cash/collect/$',views.CashCollect.as_view(),name='accountant-cashcollect'),
 
 	url(r'^paybackdiscount/process/(?P<paybackdiscount_id>[-\w]+)$',views.PaybackDiscountProcessing.as_view(),name='accountant-paybackdiscountprocess'),
