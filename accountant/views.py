@@ -25,7 +25,7 @@ from django.db.models.functions import ExtractMonth,ExtractYear
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia
-from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
+from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 
 import requests
@@ -2011,6 +2011,138 @@ def export_users_xls(request):
 	print(response.status_code,"resp")
 	
 	return response
+
+
+class TicketDetails(IsAccountant,View):
+	def get(self,request):
+
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
+		try:
+			investigators = UserProfile.objects.filter(is_active=True,user_type='QUALITYCONTROLL')
+		except:
+			investigators = None
+
+		search                  = request.GET.get('search')
+		
+		#Followup details
+		if search:
+			if search.startswith('TKT'):
+				search = search[len('TKT'):]
+			
+			tickets 	             = FollowUp.objects.select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').filter(is_active=True).filter(Q(Q(investigation__order_schedule__order__evaluation__customer__name__icontains=search)|Q(ticket_no__icontains=search))).order_by('-id').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))				
+			
+			if not search.startswith('TKT'):
+				search = 'TKT'+search				
+		else:
+			tickets 	             = FollowUp.objects.filter(is_active=True).select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').order_by('-id').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))		
+
+		follow_ups_count = FollowUp.objects.filter(Q(is_active=True)&Q(Q(status='TICKET_RISED')|Q(status='FOLLOWUP_IN_PROGRESS'))).count()
+
+
+		#followup cleaning count	
+		try:
+			follow_up_cleaning_count = FollowUpScheduler.objects.filter(is_active=True,work_status='FOLLOW_UP_CLEANING_FULFILLED').count()
+		except:
+			follow_up_cleaning_count = 0
+
+
+
+		#FILTER	
+		try:
+			fil_governorate     = int(request.GET.get('governorate')) 
+			areas               = Area.objects.filter(is_active=True,governorate_id=fil_governorate)
+		except:
+			fil_governorate     = None
+			areas               = None
+
+		try:	
+			fil_area            = int(request.GET.get('area'))
+		except:
+			fil_area            = None
+		
+		fil_status              = request.GET.get('status')
+		
+		try:
+			fil_investigator    = int(request.GET.get('investigator'))
+		except:
+			fil_investigator    = None
+
+		#filters
+		filters=[] 
+		if fil_governorate: 
+			case1 = Q(investigation__order_schedule__customer_address__governorate_id=fil_governorate)
+			filters.append(case1)
+		if fil_area: 
+			case2 = Q(investigation__order_schedule__customer_address__area_id=fil_area)
+			filters.append(case2)
+		if fil_status: 
+			case3 = Q(status=fil_status)
+			filters.append(case3)
+		if fil_investigator: 
+			case4 = Q(investigation__investigator_id=fil_investigator)
+			filters.append(case4)            
+	
+		if fil_governorate or fil_area or fil_status or fil_investigator: 
+			filters     = functools.reduce(operator.and_,filters)
+			tickets = tickets.filter(filters)
+
+
+
+
+		#PAGINATION TICKETS		
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
+		page = request.GET.get('page',1) 
+		paginator=Paginator(tickets,no_of_entries)
+		try: 
+			tickets=paginator.page(page) 
+		except PageNotAnInteger:
+			tickets=paginator.page(1)
+		except EmptyPage:
+			tickets = paginator.page(paginator.num_pages) 
+
+		# Get the index of the current page
+		index = tickets.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns 
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(tickets.end_index())-(tickets.start_index())+1
+
+		return render(request,'accountant/ticket/tickets.html',{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"investigators":investigators,"fil_governorate":fil_governorate,'fil_area':fil_area,"fil_investigator":fil_investigator,"fil_status":fil_status,})		
+
+
+class TicketAdvanced(IsAccountant,View):
+	def get(self,request,client_id,followup_id):
+
+		#client info
+		try:
+			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=client_id)
+		except:
+			client_details = None
+
+		#followup info
+		
+		followup_details = FollowUp.objects.select_related('investigation__investigator','investigation__order','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate','investigation__order_schedule__order_scheduler_book').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_media',queryset=FollowUpTeamMedia.objects.filter(is_active=True),to_attr='followupmedias'),Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules'),Prefetch('investigation__investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('follow_up_of_section',queryset=FollowUpSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesectionsfollowup',queryset=FollowUpSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='followupsections'),Prefetch('investigation__buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True).prefetch_related(Prefetch('buybackpromocodegiftdetails',queryset=BuybackPromocodeGiftDetails.objects.filter(is_active=True),to_attr='buybackpromogiftdetails'),Prefetch('buybackpromocodegift_media',queryset=BuybackPromocodeGiftDetailsMedia.objects.filter(is_active=True),to_attr='buybackpromogiftmedias')),to_attr='buybackpromogifts'),Prefetch('investigation__paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True).prefetch_related(Prefetch('paybackdiscount_details',queryset=PaybackDiscountDetails.objects.filter(is_active=True),to_attr='paybackdiscountdetails'),Prefetch('paybackdiscount_media',queryset=PaybackDiscountDetailsMedia.objects.filter(is_active=True),to_attr='paybackdiscountmedias')),to_attr='paybackdiscounts'),Prefetch('investigation__reporting_investigation',queryset=Reporting.objects.filter(is_active=True).prefetch_related(Prefetch('reporting_media',queryset=ReportingMedia.objects.filter(is_active=True),to_attr='reporting_medias')),to_attr='reports')).get(is_active=True,id=followup_id)
+			
+			
+
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=client_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()
+
+		return render(request,'accountant/ticket/followup-page.html',{"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"followup_details":followup_details,})
 
 
 	
