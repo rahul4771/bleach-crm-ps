@@ -524,10 +524,10 @@
                 <form method="post" class="inv-payment-box" action="https://testpay.bleach-kw.com/SendPerformREQuest.php" enctype= "multipart/form-data" id="debit-form">{% csrf_token %} 
                 {% if order.evaluation.payment_method == 'BREAKDOWN' %}
                 {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
-                <input type="hidden" name="price" class="beforecleaningamount" value="{{order.evaluation.before_cleaning_amount}}">
+                <input type="hidden" name="price" class="beforecleaningamount" value="{{order.evaluation.before_cleaning_amount|floatformat:'3'}}">
                 <input type="hidden" name="payment_mode" value="before_cleaning">
                 {% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}
-                <input type="hidden" name="price" class="aftercleaningamount" value="{{order.evaluation.after_cleaning_amount}}">
+                <input type="hidden" name="price" class="aftercleaningamount" value="{{order.remining_amount|floatformat:'3'}}">
                 <input type="hidden" name="payment_mode" value="after_cleaning">
                 {% endif %}
                 {% elif order.evaluation.payment_method == 'PREPAID' %}
