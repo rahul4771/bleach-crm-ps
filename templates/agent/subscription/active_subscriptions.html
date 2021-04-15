@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
-{% include "salesadmin/common/header.html" %}
+{% include "agent/common/header.html" %}
 
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
@@ -219,7 +219,7 @@
     
     <td data-label="" style="text-align:center;">
     <img {% if invoice.dropzerosamountpaid == invoice.dropzerostotalamount %}src="{% static 'files/images/send_invoice_greay.png' %}"{% else %} {% if invoice.balance <= 0 %}src="{% static 'files/images/send_invoice_green.png' %}" class="clickable-cursor send_invoice"{% else %}src="{% static 'files/images/send_invoice_red.png' %}" class="clickable-cursor send_invoice" {% endif %} {% endif %} align="absmiddle" data-id="{{invoice.id}}" data-blcno="{{invoice.evaluation.evaluation_id}}" data-customername="{{invoice.evaluation.customer.mobile_number}}" data-contactno="{{invoice.evaluation.customer.name}}" {% for schedule in invoice.orderschedules %}{% if forloop.first %}data-startdate="{{schedule.start_at|date:'d-m-Y'}}" {% endif %}{% if forloop.last %}data-enddate="{{schedule.start_at|date:'d-m-Y'}}"{% endif %}{% endfor %} data-totalamount="{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}" data-paidamount="{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}" data-balance="{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}" data-remining="{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}" width="32.5px" height="32.5px">&nbsp&nbsp
-    <img src="{% static 'files/images/order_blue.png' %}" align="absmiddle" class="clickable-row" data-href="{% url 'bleach_salesadmin:salesadmin-client-orderdetails' invoice.id %}" width="32.5px" height="32.5px">
+    <img src="{% static 'files/images/order_blue.png' %}" align="absmiddle" class="clickable-row" data-href="{% url 'agent:agent-client-orderdetails' invoice.id %}" width="32.5px" height="32.5px">
     </td>
     </tr>
 {% endfor %}
@@ -444,7 +444,7 @@ $('#close_send_invoice_popup').click(function(){
 
 function set_params_go(args)
 {
-var url='{% url 'bleach_salesadmin:salesadmin-active-subscriptions' %}';
+var url='{% url 'agent:agent-active-subscriptions' %}';
 var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val(),
 };
 for(key in args) 
