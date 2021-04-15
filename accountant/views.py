@@ -1029,6 +1029,8 @@ class FineWriteBack(View):
 		#update Evaluation and fine
 		if action == 'Fine':
 			
+			evaluation             = Evaluation.objects.filter(id=order.evaluation.id)
+
 			order.total_amount    += float(request.POST.get('amount'))
 			order.remining_amount += float(request.POST.get('amount'))
 
