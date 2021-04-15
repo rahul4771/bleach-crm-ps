@@ -456,7 +456,6 @@
               </div>
             {% endif %}
 
-            {% if order.remining_amount == 0 %}
               {% if order.evaluation.is_promocode_applied == True %}
               <div class="d-flex pt-2 inv-highlight-text ">
                   <div class="inv-text-left w-50">
@@ -468,7 +467,6 @@
                     </div>
                 </div>
               {% endif %}
-            {% endif %}
 
               <div class="inv-total-payment p-2 mt-4 mb-4">
                 <div class="inv-text-left  pt-1">

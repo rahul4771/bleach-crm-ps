@@ -350,7 +350,6 @@
                   <span class="inv-text-bold">0</span>  KD
                 </div>
               </div> -->
-              {% if order.remining_amount == 0 %}
                 {% if order.evaluation.is_promocode_applied == True %}
                 <div class="d-flex pt-2 inv-highlight-text ">
                   <div class="inv-text-left w-50">
@@ -362,7 +361,6 @@
                     </div>
                 </div>
                 {% endif %}
-              {% else %}
               <div class="d-flex pt-2 inv-highlight-text ">
                 <div class="inv-text-left w-100 inv-coupon-code" data-html2canvas-ignore="true" >
                   <input type="hidden" name="orderId" class="orderId" value="{{order.id}}" />
@@ -521,7 +519,7 @@
                 <div class="d-flex">
 
 
-                <form method="post" class="inv-payment-box" action="https://payment.bleach-kw.com/SendPerformREQuest.php" enctype= "multipart/form-data" id="debit-form">{% csrf_token %} 
+                <form method="post" class="inv-payment-box" action="https://testpay.bleach-kw.com/SendPerformREQuest.php" enctype= "multipart/form-data" id="debit-form">{% csrf_token %} 
                 {% if order.evaluation.payment_method == 'BREAKDOWN' %}
                 {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
                 <input type="hidden" name="price" class="beforecleaningamount" value="{{order.evaluation.before_cleaning_amount}}">
