@@ -252,7 +252,7 @@ var order_id=parseInt("{{request.GET.orderid}}");
                 {
                 $("#id_payment_policy").append($('<option>',{value: 'AFTER CLEANING',text: 'After Cleaning'}));
                
-                $('#id_amount').val(data['after_amount']);
+                $('#id_amount').val(data['remining_amount']);
                 $('#id_amount').attr('max',data['after_amount']);
                 $('#id_amount').attr('readonly',true);
                 }
@@ -265,12 +265,12 @@ var order_id=parseInt("{{request.GET.orderid}}");
             else if(data['payment_policy'] == 'PREPAID')
             {
               $("#id_payment_policy").append($('<option>',{value: 'PREPAID',text: 'PREPAID'}));
-              $('#id_amount').val(data['total_cost']);
+              $('#id_amount').val(data['remining_amount']);
               $('#id_amount').attr('readonly',true);
             }
             else if(data['payment_policy'] == 'POSTPAID')
             {
-              $("#id_payment_policy").append($('<option>',{value: 'POSTPAID',text: 'POSTPAID'}));$('#id_amount').val(data['total_cost']);
+              $("#id_payment_policy").append($('<option>',{value: 'POSTPAID',text: 'POSTPAID'}));$('#id_amount').val(data['remining_amount']);
               $('#id_amount').attr('readonly',true);              
             }
             else if(data['payment_policy'] == 'SUBSCRIPTION')
@@ -430,7 +430,7 @@ function select_existing_user(event,src){
               else if(data['after_amount'] != data['after_amount_paid'])
               {
                 $("#id_payment_policy").append($('<option>',{value: 'AFTER CLEANING',text: 'After Cleaning'})); 
-                $('#id_amount').val(data['after_amount']);
+                $('#id_amount').val(data['remining_amount']);
                 $('#id_amount').attr('max',data['after_amount']); 
                 $('#id_amount').attr('readonly',true);
               }
@@ -438,13 +438,13 @@ function select_existing_user(event,src){
             else if(data['payment_policy'] == 'PREPAID')
             {
               $("#id_payment_policy").append($('<option>',{value: 'PREPAID',text: 'PREPAID'}));
-              $('#id_amount').val(data['total_cost']);
+              $('#id_amount').val(data['remining_amount']);
               $('#id_amount').attr('readonly',true);
             }
             else if(data['payment_policy'] == 'POSTPAID')
             {
               $("#id_payment_policy").append($('<option>',{value: 'POSTPAID',text: 'POSTPAID'})); 
-              $('#id_amount').val(data['total_cost']);
+              $('#id_amount').val(data['remining_amount']);
               $('#id_amount').addClass('readonly');            
             }
             else if(data['payment_policy'] == 'SUBSCRIPTION')
