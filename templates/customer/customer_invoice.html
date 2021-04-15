@@ -360,8 +360,8 @@
                       <span class="inv-text-bold inv-highlight-text couponamount">-{{order.evaluation.promocode_amount|floatformat:"3"}}</span> KD
                     </div>
                 </div>
-                {% endif %}
               {% else %}
+              {% if order.remining_amount != 0  %}
               <div class="d-flex pt-2 inv-highlight-text ">
                 <div class="inv-text-left w-100 inv-coupon-code" data-html2canvas-ignore="true" >
                   <input type="hidden" name="orderId" class="orderId" value="{{order.id}}" />
@@ -382,6 +382,7 @@
               <div class="text-center pt-2 inv-coupon-error no-print" data-html2canvas-ignore="true" hidden>
                 
                 </div>
+              {% endif %}
               {% endif %}
               <div class=" p-2 mt-4 mb-4">
                 <div class="d-flex pt-2">
