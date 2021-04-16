@@ -111,7 +111,7 @@
     {% endfor %}
     </td>
     <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
-    <td data-label="Total Amount">{{invoice.total_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
+    <td data-label="Total Amount">{{invoice.remining_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
     <td class="{% if invoice.evaluation.payment_method == 'PREPAID' %}indigo-text{% else %}rose-text{% endif %}"  data-label="Payment Method">
     {{invoice.evaluation.payment_method|default_if_none:''}}
     </td>
@@ -177,7 +177,7 @@
     {% endfor %}
     </td>
     <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
-    <td data-label="Total Amount">{{invoice.evaluation.after_cleaning_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
+    <td data-label="Total Amount">{{invoice.remining_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
     <td data-label="Payment Method">{{invoice.evaluation.payment_method|default_if_none:''}}</td>
     <td data-label="" class="bold-text"><h3 class="{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
     <td data-label="">{% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}

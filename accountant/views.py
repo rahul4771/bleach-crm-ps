@@ -154,6 +154,7 @@ def GetCashCollectOrderDetailedInfo(request):
 		dropdown_order_info['active_orders_count'] = active_orders_count
 		dropdown_order_info['total_orders_count']  = total_orders_count
 
+		print(dropdown_order_info)
 		return JsonResponse(dropdown_order_info)	
 
 def GetFineCollectOrderInfo(request):
@@ -1056,6 +1057,14 @@ class FineWriteBack(View):
 			else:
 				Evaluation.objects.filter(id=order.evaluation.id).update(writeback_amount=F('writeback_amount')+float(request.POST.get('amount')),writeback_created_by=request.user,total_cost=F('total_cost')-float(request.POST.get('amount')))
 			Order.objects.filter(id=order_id).update(total_amount=F('total_amount')-float(request.POST.get('amount')),remining_amount=F('remining_amount')-float(request.POST.get('amount')))
+			
+			####to close order
+			order_closing_check = Order.objects.select_related('evaluation__customer').filter(is_active=True,id=order_id,payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+			if order_closing_check:
+				closing_order	= Order.objects.get(is_active=True,id=order_id)
+				closing_order.order_status = 'ORDER_CLOSED'
+				closing_order.save()
+
 			messages.success(request,"Write Back Amount Succesfully Removed")
 
 
