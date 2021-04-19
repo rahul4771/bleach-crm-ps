@@ -4001,7 +4001,7 @@ class ClientCleaningBookingPhase3(APIView):
 		
 		customer_booking   = CustomerBooking.objects.select_related('evaluation').get(booking_id=booking_id)
 		evaluation_details = EvaluationDetails.objects.filter(evaluation=customer_booking.evaluation).prefetch_related('evaluation_book_evaluation_details__evaluationsection_book')
-		order              = Order.objects.get(evaluation=customer_booking.evaluation)
+		order              = Order.objects.select_related('evaluation__customer').get(evaluation=customer_booking.evaluation)
 
 		order_details_serialized    = OrderSerializer(order).data
 		customer_details_serialized = EvaluationSerializer(customer_booking.evaluation).data
@@ -4009,7 +4009,8 @@ class ClientCleaningBookingPhase3(APIView):
 		
 		response_dict['order_details']           = order_details_serialized
 		response_dict['customer_details']        = customer_details_serialized
-		response_dict['cleaning_details']        = address_details_serialized		 
+		response_dict['cleaning_details']        = address_details_serialized
+		response_dict['encryption_key']		     = order.evaluation.customer.username
 
 		return Response(response_dict,HTTP_200_OK)
 
