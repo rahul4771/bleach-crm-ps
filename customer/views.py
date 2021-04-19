@@ -2482,6 +2482,31 @@ def AddressOtpVerify(request):
 	response_dict['success'] = True
 	return JsonResponse(response_dict)
 
+def AddressOtpVerifyTest(request):
+	response_dict = {}
+	response_dict['success'] = False
+	
+	mobile_number    		= request.GET.get('mobile_number')
+	try:
+		customer       		= UserProfile.objects.get(mobile_number=mobile_number)
+	except:
+		customer 			= None 
+	
+	if not customer:
+		response_dict['Error']   = 'Invalid Otp'
+		return JsonResponse(response_dict)
+				
+	customer_addresses	= Address.objects.filter(customer=customer,currently_active=True).select_related('governorate','area')
+	if not customer_addresses:
+		response_dict['Error']   = 'Address Doesnot Exist'
+		return JsonResponse(response_dict)
+
+	response_dict['customer_details']   = UserProfileSerializer(instance=customer).data
+	response_dict['customer_addresses'] = AddressSerializer(instance=customer_addresses,many=True).data 
+	
+	response_dict['success'] = True
+	return JsonResponse(response_dict)
+
 class ClientCleaningBookingPhase1(View):
 	def get(self,request):
 		
