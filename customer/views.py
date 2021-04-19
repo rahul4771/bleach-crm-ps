@@ -2028,6 +2028,27 @@ class GetAreaTypes(APIView):
 
 		return JsonResponse(response_dict)
 
+class GetServiceId(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	
+	def get(self,request):	
+		response_dict        		= {}
+		response_dict['success']	= False
+
+		service_type = request.GET.get('service_type')
+
+		try:
+			service_type = ServiceType.objects.get(name=service_type)
+		except:
+			service_type = None
+
+		if service_type:
+			response_dict['name']    = service_type.name
+			response_dict['id']      = service_type.id
+			response_dict['success'] = True
+		
+		return JsonResponse(response_dict)
 
 class GetServiceSizePrice(APIView):  
 	permission_classes        = (AllowAny,)
