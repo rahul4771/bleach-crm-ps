@@ -81,7 +81,7 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Amount</label></div>
-                <input name="amount" id="id_amount" type="number" class="textBox OnlyNumber readonly" placeholder="Amount in KD" min="0.001" step="any" required>
+                <input name="amount" id="id_amount" type="text" class="textBox OnlyNumber readonly" placeholder="Amount in KD" min="0.001" step="any" required>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Collection Date</label></div>
@@ -276,8 +276,8 @@ var order_id=parseInt("{{request.GET.orderid}}");
             else if(data['payment_policy'] == 'SUBSCRIPTION')
             {
               $("#id_payment_policy").append($('<option>',{value: 'SUBSCRIPTION',text: 'SUBSCRIPTION'}));$('#id_amount').val(data['subscription_amount']);
-              $('#id_amount').attr('readonly',true);
-              $('#id_amount').attr('max',data['subscription_amount']);              
+              $('#id_amount').attr('max',data['subscription_amount']);
+              $('#id_amount').addClass('readonly');              
             }
             //to show
             $('.order-details-head').show();
@@ -335,7 +335,7 @@ function select_existing_user(event,src){
           {
               $.ajax({
 
-        url: "{% url 'agent:get-feedbackorderinfo' %}",
+        url: "{% url 'accountant:get-cashorderdetailedInfo' %}",
 
         data: {'order_id':order_id}, 
 
@@ -451,7 +451,7 @@ function select_existing_user(event,src){
             {
               $("#id_payment_policy").append($('<option>',{value: 'SUBSCRIPTION',text: 'SUBSCRIPTION'}));$('#id_amount').val(data['subscription_amount']);
               $('#id_amount').attr('max',data['subscription_amount']);
-              $('#id_amount').attr('readonly',false);             
+              $('#id_amount').addClass('readonly');             
             }
 
             //to show

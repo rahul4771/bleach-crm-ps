@@ -57,7 +57,7 @@
 		</div><!--cleaning-column-wrapper-->
 		
 		<br><br>
-<div class="common-sub-head align-left ticket-form-head">Fine/Write-Off Form</div> 
+<div class="common-sub-head align-left ticket-form-head dynamic-fine-writeoff">Fine/Write-Off Form</div> 
 	<input type="hidden" name="order_id" id="order_id_hidden">
 
 <div class="ticket-wrapper-full ltyellow-border ticket-form"><!--ticket-wrapper-full-->
@@ -419,7 +419,8 @@ $('.id_finewriteback').change(function(){
     action = $(this).val();
     if(action == 'Write-Off')
     {
-      $('.auto-complete-input').data("auto-suggest-url","{% url 'accountant:get-cashorderInfo' %}")
+      $('.auto-complete-input').data("auto-suggest-url","{% url 'accountant:get-cashorderInfo' %}");
+      $('.dynamic-fine-writeoff').text("Write-Off");
         $('.order-details-head').hide();
         $('.order-details').hide();
         $('.ticket-form-head').hide();
@@ -429,6 +430,7 @@ $('.id_finewriteback').change(function(){
     else
     {
       $('.auto-complete-input').data("auto-suggest-url","{% url 'accountant:get-fineorderInfo' %}");
+      $('.dynamic-fine-writeoff').text("Fine");
         $('.order-details-head').hide();
         $('.order-details').hide();
         $('.ticket-form-head').hide();
