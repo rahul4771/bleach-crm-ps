@@ -46,6 +46,7 @@ urlpatterns = [
 		url(r'^booking/cleaning/debitpay/$',views.CustomerBookingCleaningDebitPay.as_view(),name='customerbookingdebitpay'),
 		
 		##actual booking related urls
+		url(r'^ajax/getservicetypes$',views.GetServiceTypes.as_view(),name='ajax-servicetypes'),
 		url(r'^ajax/getareatypes$',views.GetAreaTypes.as_view(),name='ajax-getareatypes'),
 		url(r'^ajax/getservicesizeprice$',views.GetServiceSizePrice.as_view(),name='ajax-getservicesizeprice'),
 		url(r'^ajax/getserviceproductivity$',views.GetServiceProductivity.as_view(),name='ajax-serviceproductivity'),
