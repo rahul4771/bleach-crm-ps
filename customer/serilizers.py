@@ -5,12 +5,14 @@ from order.models import Order
 class UserProfileSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = UserProfile
-		fields = ('name','gender','email','nationality','mobile_number','date_day','date_month','date_year','sms_preference')	
+		fields = ('id','name','gender','email','nationality','mobile_number','date_day','date_month','date_year','sms_preference')	
+		read_only_fields =('id',)
 
 class AddressSaveSerializer(serializers.ModelSerializer): 
 	class Meta:
 		model  = Address
-		fields = ('governorate','area','block','avenue','building','street','floor','apartment')
+		fields = ('id','governorate','area','block','avenue','building','street','floor','apartment')
+		read_only_fields =('id',)
 
 class EvaluationSectionKeynoteSerializer(serializers.ModelSerializer):
 	class Meta:
