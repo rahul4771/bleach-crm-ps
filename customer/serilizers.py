@@ -2,6 +2,7 @@ from rest_framework import serializers
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote
 from order.models import Order
+from customer.models import CustomerBooking
 class UserProfileSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = UserProfile
@@ -68,3 +69,8 @@ class EvaluationDetailsSerializer(serializers.ModelSerializer):
 		model  = EvaluationDetails
 		fields = ('address','evaluation_book_evaluation_details')	
 
+class CustomerBookingSerializer(serializers.ModelSerializer):
+	evaluation = EvaluationSerializer(read_only=True)
+	class Meta:
+		model  = CustomerBooking
+		fields = ('evaluation','booking_id','booking_type','booking_date',)

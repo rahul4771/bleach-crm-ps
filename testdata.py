@@ -1,3 +1,53 @@
+#Evaluation Booking
+#
+Get
+"booking_date":"01-01-2023",
+"booking_time":"08:00 AM"
+
+##
+{
+"booking_date":"01-01-2023",
+"booking_time":"08:00 AM"
+}
+
+###
+{
+   "evaluation_id":261,
+   "booking_id":82,
+   "customer_id":53,
+   "customer_details":{
+      "name":"Ansab mabu",
+      "gender":"MALE",
+      "email":"ansabm2015@gmail.com",
+      "mobile_number":"89786745",
+      "date_day":5,
+      "date_month":7,
+      "date_year":2018,
+      "nationality":"KW",
+      "sms_preference":"ENGLISH",
+      "contact_platform":"SMS,Email"
+   },
+   "address_id":27,
+   "address_details":{
+      "governorate":1,
+      "area":1,
+      "block":7,
+      "avenue":"avenue",
+      "building":"ABC",
+      "street":"bekhinnham",
+      "floor":4,
+      "apartment":"ALDHAR"
+   }
+}
+
+
+####
+GET
+   "booking_id":81,
+   "evaluationdetails_id":261  
+
+
+
 #single 
 {
    "service_details":{
