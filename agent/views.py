@@ -917,6 +917,7 @@ class AgentHome(IsAgent,View):
 			followup = FollowUp.objects.filter(id=request.POST.get('followup')).first()
 			investigationid = followup.investigation.id
 			followup.status = 'FOLLOWUP_CLOSED'
+			followup.closed = datetime.now()
 			followup.save()
 
 			report = request.POST.get('internalreport')

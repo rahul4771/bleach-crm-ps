@@ -133,7 +133,7 @@
 {% block javascript %}
 <script src="{% static 'files/js/charts/dailysalesdatachart.js' %}"></script>
 <script src="{% static 'files/js/daily-sales/dailysales.js' %}"></script>
-<script id="rendered-js">
+{% comment %} <script id="rendered-js">
 $('.footable').footable({
   calculateWidthOverride: function () {
     return { width: $(window).width() };
@@ -143,7 +143,7 @@ $('.footable').footable({
 // See:
 // http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
 //# sourceURL=pen.js
-    </script>
+    </script> {% endcomment %}
 <script>
 
 $('document').ready(function(){
