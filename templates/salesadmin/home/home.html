@@ -59,6 +59,53 @@
 </div><!--main-card-->       
             
 <div class="main-content-holder"><!--main-content-holder-->            
+    
+    {% if cancell_in_progress_orders %}
+    <div class="white-wrapper"><!--white-wrapper-->
+    <h2 class="h2">Order Cancell Task</h2>
+    <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+    <thead>
+        <tr>
+        <th>Order Number</th>
+        <th data-hide="phone,tablet">Name</th>
+        <th data-hide="phone,tablet">Mobile</th>
+        <th data-hide="phone">Total Amount</th>
+        <th data-hide="phone">Job Completed</th>
+        <th data-hide="phone">Paid</th>
+        <th class="align-center" data-hide="phone,tablet">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cancell_in_progress_order in cancell_in_progress_orders %}
+        <tr>
+        <td class="bold-text">
+        {{cancell_in_progress_order.order_no}}
+        </td>
+        <td>
+        {{cancell_in_progress_order.evaluation.customer.name}}
+        </td>
+        <td>
+        {{cancell_in_progress_order.evaluation.customer.mobile_number}}
+        </td>
+        <td>
+        {{cancell_in_progress_order.total_amount|floatformat:'3'}}
+        </td>
+        <td>
+        {{cancell_in_progress_order.job_completed_amount|floatformat:'3'}}
+        </td>
+        <td>
+        {{cancell_in_progress_order.amount_paid|floatformat:'3'}}
+        </td>
+        <td>
+        <span class="clickable-row red-bg" data-href="#">Click to Cancell</span>
+        </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+    </div>
+    {% endif %}
+
 
     {% if approve_tickets %}
     {% comment %} {% if paybackdiscount_count >= 1 and buybackpromocodegift_count >= 1 %} {% endcomment %}
