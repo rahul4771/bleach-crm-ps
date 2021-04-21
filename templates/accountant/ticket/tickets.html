@@ -160,12 +160,13 @@
  
 <thead>
 <tr>
-<th>Order Number</th>
-<th data-hide="phone,tablet">Name</th>
-<th data-hide="phone">Area</th>
-<th data-hide="phone,tablet">Investigator </th>
-<th>Contact</th>
-<th data-hide="phone,tablet">Status</th>
+<th>Ticket</th>
+<th data-hide="phone,tablet">Order</th>
+<th data-hide="phone,tablet">Customer</th>
+<th data-hide="phone" class="align-right pending-amount">Pending Amount</th>
+<th data-hide="phone,tablet" class="align-center">Opening Date </th>
+<th class="align-center">Closing Date</th>
+<th data-hide="phone,tablet" class="align-center">Status</th>
 </tr>
 </thead>
 <tbody>
@@ -182,12 +183,13 @@
     class="red-line"
     {% endif %}
     >TKT{{ticket.ticket_no}}</td>
+    <td>{{ticket.investigation.order_schedule.order.order_no}}</td>
     <td>{{ticket.investigation.order_schedule.order.evaluation.customer.name}}</td>
-    <td>
-    {{ticket.investigation.order_schedule.customer_address.area.name}}
+    <td class="align-right pending-amount">
+    {{ticket.investigation.order_schedule.order.remining_amount|floatformat:"3"}} KD
     </td>
-    <td>{{ticket.investigation.investigator.name}}</td>
-    <td>{{ticket.investigation.order_schedule.order.evaluation.customer.mobile_number}}</td> 
+    <td class="align-center">{{ticket.created|date:'d-m-Y'}}</td>
+    <td class="align-center">{{ticket.closed|date:'d-m-Y'|default_if_none:'-'}}</td> 
     <td>
     {% if ticket.status == 'FOLLOWUP_IN_PROGRESS' %}
     <span class="clickable-row yellow-bg" data-href="{% url 'accountant:accountant-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">In Progress</span>     

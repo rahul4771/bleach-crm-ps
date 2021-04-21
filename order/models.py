@@ -379,6 +379,7 @@ class FollowUp(models.Model):
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
+	closed			= models.DateTimeField(blank=True,null=True,auto_now=False)
 
 	def save(self,*args, **kwargs):
 		last_ticket_no  		 = FollowUp.objects.filter(is_active=True).aggregate(t=Max('ticket_no'))['t']

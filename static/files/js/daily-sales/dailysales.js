@@ -115,9 +115,11 @@ function monthlysales(){
                 $(this).text(parseFloat(Math.abs(salestatus)).toFixed(3));
                 $(this).append(' <i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
                 $(this).addClass('red-text');
+                $(this).parents('tr').find("td:first").addClass('red-line');
             }else if (salestatus > 0){
                 $(this).append(' <i class="fa fa-arrow-up" aria-hidden="true" style="color:#3cbbb1;"></i>');
                 $(this).addClass('green-text');
+                $(this).parents('tr').find("td:first").addClass('green-line');
             }else{
                 console.log("zero")
             }
