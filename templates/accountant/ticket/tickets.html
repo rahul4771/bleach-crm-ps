@@ -165,7 +165,7 @@
 <th data-hide="phone,tablet">Customer</th>
 <th data-hide="phone" class="align-right pending-amount">Pending Amount</th>
 <th data-hide="phone,tablet" class="align-center">Opening Date </th>
-<th>Closing Date</th>
+<th class="align-center">Closing Date</th>
 <th data-hide="phone,tablet" class="align-center">Status</th>
 </tr>
 </thead>
@@ -189,7 +189,7 @@
     {{ticket.investigation.order_schedule.order.remining_amount|floatformat:"3"}} KD
     </td>
     <td class="align-center">{{ticket.created|date:'d-m-Y'}}</td>
-    <td>{{ticket.closed|date:'d-m-Y'|default_if_none:'-'}}</td> 
+    <td class="align-center">{{ticket.closed|date:'d-m-Y'|default_if_none:'-'}}</td> 
     <td>
     {% if ticket.status == 'FOLLOWUP_IN_PROGRESS' %}
     <span class="clickable-row yellow-bg" data-href="{% url 'accountant:accountant-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">In Progress</span>     
