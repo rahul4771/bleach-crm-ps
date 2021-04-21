@@ -881,6 +881,25 @@
             {% endfor %}
             <!-- RE-ORDER -->
 
+            <!-- cancel order -->
+            {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
+            
+            <br>
+            <div class="order-card-column whitebg gray-border clickable-cursor cancell_order" data-id="{{order.evaluation.id}}"><!--order-card-column-->
+                    <div class="card-innerwrapper"><!--card-innerwrapper-->
+                    <div class="column-left"><img src="{% static "/files/images/cancel.png" %}"></div>
+                    <div class="column-right"><!--column-right-->
+                    <!-- <h1>Click To View</h1> -->
+                    <h2 class="dark-gray-text"><label>Cancel Order<span>
+                        <!-- <i class="fa fa-repeat" aria-hidden="true"></i> -->
+                    </span></label></h2>
+                    <p><label>Click to Cancel this Order <span></span></label></p>
+                    </div><!--column-right-->
+                    </div><!--card-innerwrapper-->
+                </div><!--order-card-column-->
+            
+            {% endif %}
+
     </div><!--order-details-right-fixed-->
 </div><!--order-details-wrapper-->    
 </div><!--order-top-wrapper-->            
@@ -903,7 +922,24 @@
     </div><!--custom-model-inner-->   
     <div class="bg-overlay-sp"></div>
 </div><!--custom-model-main-->    
-    
+
+<div class="custom-model-main-sp1"><!--custom-model-main-->
+    <div class="custom-model-inner-sp1">  <!--custom-model-inner-->      
+        <div class="custom-model-wrap-sp1"><!--custom-model-wrap-->
+            <div class="pop-up-content-wrap1"><!--pop-up-content-wrap-->
+               <div class="bold-text">Do you want to send a cancel request to admin ?</div>  
+               <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+                <input type="hidden" name="action_type" value="cancell_order">
+                <input type="hidden" name="evaluation" id="evaluation_id">
+                <br>
+                <div><input class="cancellButton" name="submit" type="submit" value="Yes">&nbsp;&nbsp;<input class="cancellButton close-btn-sp1" name="submit" type="button" value="No"></div>
+               </form>
+            </div><!--pop-up-content-wrap-->
+        </div><!--custom-model-wrap-->  
+    </div><!--custom-model-inner-->   
+    <div class="bg-overlay-sp"></div>
+</div><!--custom-model-main-->
+
 {% include 'agent/common/footer.html' %} 
 </div><!--wrapper-->
 {% endblock %}
@@ -914,9 +950,22 @@ $(".duplicate_order").on('click', function () {
   evaluation_id = $(this).data('id');
   $("#duplicate_form_id").attr('action','/agent/makequatation/duplicate/'+evaluation_id)
 });
+
 $(".close-btn-sp, .bg-overlay-sp").click(function () {
   $(".custom-model-main-sp").removeClass('model-open-sp');
 });
+
+//Cancell Popup
+$(".cancell_order").on('click', function () {
+  $(".custom-model-main-sp1").addClass('model-open-sp1');
+  evaluation_id = $(this).data('id');
+  $('#evaluation_id').val(evaluation_id);
+});
+
+$(".close-btn-sp1, .bg-overlay-sp1").click(function () {
+  $(".custom-model-main-sp1").removeClass('model-open-sp1');
+});
+
 </script>
 
 <script>

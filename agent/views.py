@@ -2262,6 +2262,32 @@ class ClientOrderDetails(IsAgent,View):
 
 		return render(request,"agent/client/order-page.html",{"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,})
 
+	def post(self,request,order_id):
+		action = request.POST.get('action_type')
+
+		if action == 'cancell_order':
+			evaluation_id = request.POST.get('evaluation')
+
+			#cancell order
+			order 				= Order.objects.select_related('evaluation').get(evaluation__id=evaluation_id)
+			order.order_status  = 'CANCELL_IN_PROGRESS'
+			order.cancell_requester = request.user
+			order.save()
+
+			#status change of scheduler
+			schedules = OrderScheduler.objects.filter(order=order)
+					
+			for schedule in schedules:
+				if not schedule.work_status == 'CLEANING_FULFILLED':
+					schedule.work_status = 'CLEANING_CANCELLED'
+					schedule.save()
+
+			#delete assigned cleaning team and members
+			CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=order).delete() 
+
+			messages.success(request,"Cancel Request Proceeded to Admin successfully !")
+		return redirect('agent:agent-client-orderdetails',order_id)
+
 class NewEnquiry(IsAgent,View):
 	address_formset_define    = formset_factory(AddressForm)
 	def get(self,request):
