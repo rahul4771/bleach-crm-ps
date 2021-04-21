@@ -1075,7 +1075,7 @@ class GetEvaluationBookingSlotes(APIView):
 		evaluation_date  = datetime.strptime(request.GET.get('evaluation_booking_date'),'%d-%m-%Y')
 		
 		available_slotes = []
-		for slote in range(8,18):
+		for slote in range(0,23):
 			slote_datetime 			  = evaluation_date.replace(hour=slote,minute=0,second=0,microsecond=0)
 			checkavailability         = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR',is_onlineevaluator=True).prefetch_related('evaluator_evaluation').annotate(busyevaluationcount=Sum(Case(When(evaluator_evaluation__proposed_time=slote_datetime,then=1),default=0,output_field=IntegerField()))).filter(busyevaluationcount__lt=2)
 			if checkavailability:
