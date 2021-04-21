@@ -445,21 +445,27 @@ class ClientOrderDetails(IsSalesAdmin,View):
 	def post(self,request,order_id):
 		action = request.POST.get('action_type')
 
-
 		if action == 'cancell_order':
 			evaluation_id = request.POST.get('evaluation')
 
 			#cancell order
 			order 				= Order.objects.select_related('evaluation').get(evaluation__id=evaluation_id)
-			order.order_status  = 'ORDER_CANCELLED'
+			order.order_status  = 'CANCELL_IN_PROGRESS'
+			order.cancell_requester = request.user
 			order.save()
 
 			#status change of scheduler
-			OrderScheduler.objects.filter(order=order).update(work_status='CLEANING_CANCELLED')			
+			schedules = OrderScheduler.objects.filter(order=order)
+					
+			for schedule in schedules:
+				if not schedule.work_status == 'CLEANING_FULFILLED':
+					schedule.work_status = 'CLEANING_CANCELLED'
+					schedule.save()
+
 			#delete assigned cleaning team and members
 			CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=order).delete() 
 
-		return redirect('bleach_salesadmin:salesadmin-client-orderdetails',order_id)
+		return redirect('bleach_salesadmin:salesadmin-cancel-form',order_id)
 
 class MakeQuatationDuplicate(IsSalesAdmin,View):
 	
@@ -2411,5 +2417,5 @@ class MakeQuatationPhase2Delete(IsSalesAdmin,View):
 		return redirect('bleach_salesadmin:salesadmin-makequatation1edit',enquiry_id,evaluation_id)		
 
 class OrderCancellationForm(IsSalesAdmin,View):
-	def get(self,request):
-		return render(request,"salesadmin/cancel-order/cancel-order.html")
+	def get(self,request,order_id):
+		return render(request,"salesadmin/cancel-order/cancel-order.html",{'order_id':order_id})
