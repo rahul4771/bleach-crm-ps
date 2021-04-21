@@ -43,4 +43,6 @@ urlpatterns = [
 	url(r'^ajax/payment-data/',views.PaymentData,name='payment-data'),
 	url(r'^ajax/evaluation-calendar-date/',views.evaluationcalendardate,name='evaluation-calendar-date'),
 	url(r'^ajax/cleaning-calendar-date/',views.cleaningcalendardate,name='cleaning-calendar-date'),
+
+	url(r'^cancel-order-form/',views.OrderCancellationForm.as_view(),name='salesadmin-cancel-form'),	
 ]

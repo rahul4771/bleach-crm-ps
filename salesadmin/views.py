@@ -2409,3 +2409,7 @@ class MakeQuatationPhase2Delete(IsSalesAdmin,View):
 			return redirect('bleach_salesadmin:salesadmin-orders')
 
 		return redirect('bleach_salesadmin:salesadmin-makequatation1edit',enquiry_id,evaluation_id)		
+
+class OrderCancellationForm(IsSalesAdmin,View):
+	def get(self,request):
+		return render(request,"salesadmin/cancel-order/cancel-order.html")

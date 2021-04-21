@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "salesadmin/common/header.html" %}
+
+<div class="wrapper"><!--wrapper-->
+   
+<section class="content"><!--content-->
+	<div class="container-fluid space topspace"><!--container-fluid space-->
+		<div class="welcome-wrapper"><!--welcome-wrapper-->
+	<h1 class="dashboard-head">Cancel Order</h1>
+	<p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>  
+		</div><!--welcome-wrapper-->
+	
+		
+		
+	<div class="main-content-holder"><!--main-content-holder-->            
+	
+<div class="common-sub-head align-left ticket-form-head">Ticket Form</div> 
+	<form method="post" action="{% url 'agent:agent-ticketregister' %}" enctype="multipart/form-data">{% csrf_token %}
+	<input type="hidden" name="order_id" id="order_id_hidden">
+
+<div class="ticket-wrapper-full ltyellow-border ticket-form"><!--ticket-wrapper-full-->
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Cancel Options</label></div>
+                <select name="amount_return_method">
+                    <option value="">--Select option--</option>
+                    <option value="PAYBACK">Pay Back</option>
+                    <option value="CREDITCARD">Credit Card</option>
+                    <option value="CANCEL">Cancel</option>
+                    <option value="SENDINVOICE">Send Invoice</option>
+                </select>
+  </div><!--ticket-form-left-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Total Amount</label></div>
+                <input type="text" name="total_amount" />
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  		<div class=" bold-text common-label"> <label>Job Completed</label></div>
+        <input type="text" name="total_amount" />
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->  
+
+<hr class="hr-dashedpad">
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Paid Amount</label></div>
+                <input type="text" name="total_amount" />
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  		<div class=" bold-text common-label"> <label>Amount</label></div>
+        <input type="text" name="total_amount" />
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">
+				<div class="bold-text common-label"> <label>Notes</label></div>
+                 <textarea name="notes" cols="" rows="4" class="textArea"></textarea>
+
+</div><!--ticket-wrapper-full--> 
+
+<div align="center" class="ticket-form-button"><input class="assignButton" name="submit" type="submit" value="Submit" onclick='SubmitNewTicket(this);'></div>   	
+</form>
+<br> <br>
+	</div><!--center-formDiv-->
+
+	</div><!--white-wrapper-->      
+			
+		
+		
+	</div><!--main-content-holder-->
+	</div><!--container-fluid space-->
+</section><!--content-->
+</div><!--wrapper-->
+
+{% include 'salesadmin/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+
+{% endblock %}	
