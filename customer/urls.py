@@ -26,33 +26,24 @@ urlpatterns = [
 		url(r'^order-detail/download/(?P<order_id>[-\w]+)/(?P<service_id>[-\w]+)/(?P<section_id>[-\w]+)$',views.orderdetail_html_to_pdf_view,name='order-detail-download'),
 		url(r'^terms-and-conditions/download$',views.termsandconditions_to_pdf,name='terms-conditions-download'),
 
-		##booking related uls
-		url(r'^ajax/evaluationslotes$',views.GetEvaluationBookingSlotes,name='ajax-getevaluationslotes'),
-		url(r'^ajax/customerdetails$',views.GetCustomerDetails,name='ajax-customerdetails'),
-		url(r'^ajax/cleaningtimeslotes$',views.GetCleaningTimeSlotes,name='ajax-getcleaningtimeslotes'),
 		url(r'^add-promocode/$',views.addpromocode,name='add-promocode'),
 
-		url(r'^booking/phase1$',views.CustomerBookingPhase1.as_view(),name='customerbookingphase1'),
+		##actual evaluation booking related urls
+		url(r'^ajax/evaluationslotes$',views.GetEvaluationBookingSlotes.as_view(),name='ajax-getevaluationslotes'),
+		url(r'^booking/evaluation/phase1$',views.CustomerBookingPhase1.as_view(),name='customerbookingphase1'),
+		url(r'^booking/evaluation/phase2$',views.CustomerBookingEvaluationPhase2.as_view(),name='customerbookingevaluationphase2'),
+		url(r'^booking/evaluation/phase3$',views.CustomerBookingEvaluationPhase3.as_view(),name='customerbookingevaluationphase3'),
 
-		url(r'^booking/evaluation/phase2/(?P<evaluationdetails_id>[-\w]+)/(?P<customerbooking_id>[-\w]+)$',views.CustomerBookingEvaluationPhase2.as_view(),name='customerbookingevaluationphase2'),
-		url(r'^booking/evaluation/phase3/(?P<evaluationdetails_id>[-\w]+)/(?P<customerbooking_id>[-\w]+)$',views.CustomerBookingEvaluationPhase3.as_view(),name='customerbookingevaluationphase3'),
-		url(r'^booking/evaluation/phase4/(?P<evaluationdetails_id>[-\w]+)/(?P<customerbooking_id>[-\w]+)$',views.CustomerBookingEvaluationPhase4.as_view(),name='customerbookingevaluationphase4'),
-	
-		url(r'^booking/cleaning/phase2/$',views.CustomerBookingCleaningPhase2.as_view(),name='customerbookingcleaningphase2'),
-		url(r'^booking/cleaning/phase3/$',views.CustomerBookingCleaningPhase3.as_view(),name='customerbookingcleaningphase3'),
-		url(r'^booking/cleaning/phase4/$',views.CustomerBookingCleaningPhase4.as_view(),name='customerbookingcleaningphase4'),
-		url(r'^booking/cleaning/phase5/$',views.CustomerBookingCleaningPhase5.as_view(),name='customerbookingcleaningphase5'),
-	
-		url(r'^booking/cleaning/debitpay/$',views.CustomerBookingCleaningDebitPay.as_view(),name='customerbookingdebitpay'),
-		
-		##actual booking related urls
-		url(r'^ajax/getservicetypes$',views.GetServiceTypes.as_view(),name='ajax-getservicetypes'),
+		##actual cleaning booking related urls
+		url(r'^ajax/getservicetypes$',views.GetServiceTypes.as_view(),name='ajax-servicetypes'),
+		url(r'^ajax/getareatypes$',views.GetAreaTypes.as_view(),name='ajax-getareatypes'),
 		url(r'^ajax/getservicesizeprice$',views.GetServiceSizePrice.as_view(),name='ajax-getservicesizeprice'),
 		url(r'^ajax/getserviceproductivity$',views.GetServiceProductivity.as_view(),name='ajax-serviceproductivity'),
 		url(r'^ajax/getcleaningslotes$',views.GetCleaningSlotes.as_view(),name='ajax-cleaningslotes'),
 		url(r'^ajax/getmultipleservicecleaningslotes$',views.GetMultipleServiceCleaningSlotes.as_view(),name='ajax-multiplecleaningslotes'),
 		url(r'^ajax/addressotpsend$',views.AddressOtpSend,name='ajax-addressotpsend'),
 		url(r'^ajax/addressotpverify$',views.AddressOtpVerify,name='ajax-addressotpverify'),
+		url(r'^ajax/addressotpverifytest$',views.AddressOtpVerifyTest,name='ajax-addressotpverifytest'),
 		url(r'^bookingphase1$',views.ClientCleaningBookingPhase1.as_view(),name='clientcleaningbookingphase1'),
 		url(r'^bookingphase2$',views.ClientCleaningBookingPhase2.as_view(),name='clientcleaningbookingphase2'),
 		url(r'^bookingmultiplephase2$',views.ClientMultipleCleaningBookingPhase2.as_view(),name='clientcleaningmultiplebookingphase2'),

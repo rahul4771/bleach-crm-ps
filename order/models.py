@@ -12,6 +12,7 @@ from django.db.models import Max
 ORDER_STATUS = (
 	('APPROVED_BY_CLIENT','APPROVED_BY_CLIENT'),
 	('ORDER_IN_PROGRESS','ORDER_IN_PROGRESS'),
+	('CANCELL_IN_PROGRESS','CANCELL_IN_PROGRESS'),
 	('ORDER_CANCELLED','ORDER_CANCELLED'),
 	('ORDER_CLOSED','ORDER_CLOSED')
 	)
@@ -70,6 +71,10 @@ INVOICE_CHOICES = (
 	('ACTIVE','ACTIVE'),
 	)
 
+RETURN_METHOD_CHOICES = (
+	('CASHBACK','CASHBACK'),
+	('CREDIT','CREDIT')
+	)
 
 INVESTIGATION_CATEGORY_CHOICES = (
 	('SERVICEQUALITY','SERVICEQUALITY'),
@@ -116,6 +121,9 @@ class Order(models.Model):
 	feedback_notes  	= models.CharField(max_length=5000,blank=True,null=True)
 	is_feedback_marked	= models.BooleanField(null=False,blank=True,default=False)
 	feedback_marked_date= models.DateTimeField(blank=True,null=True)
+
+	cancell_requester   = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cancellrequesting_user')
+	cancelled_by        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cancelled_user')   
 
 	created_by      = models.ForeignKey(UserProfile,blank=True,null=True)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
@@ -164,7 +172,20 @@ class OrderScheduler(models.Model):
 	def __str__(self):
 		return str(self.order.order_no)
 
+class CancellOrderAmountHistory(models.Model):
+	order                 = models.ForeignKey(Order,blank=False,null=False,related_name='cancelled_order')
+	amount_return_method  = models.CharField(max_length=20,blank=True,null=True,choices=RETURN_METHOD_CHOICES)
+	return_amount         = models.FloatField(blank=False,null=False)
 
+	is_active       = models.BooleanField(null=False,blank=True,default=True)
+	created         = models.DateTimeField(auto_now_add=True)
+	updated         = models.DateTimeField(auto_now=True)	
+
+	def __unicode__(self):
+		return str(self.order.order_no)
+
+	def __str__(self):
+		return str(self.order.order_no)
 
 #If the Customer is not Satisfied and reported a complaint. An Investigation team is assigned for Investigation
 
@@ -358,6 +379,7 @@ class FollowUp(models.Model):
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
+	closed			= models.DateTimeField(blank=True,null=True,auto_now=False)
 
 	def save(self,*args, **kwargs):
 		last_ticket_no  		 = FollowUp.objects.filter(is_active=True).aggregate(t=Max('ticket_no'))['t']

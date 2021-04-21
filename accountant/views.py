@@ -25,7 +25,7 @@ from django.db.models.functions import ExtractMonth,ExtractYear
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia
-from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
+from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 
 import requests
@@ -154,8 +154,32 @@ def GetCashCollectOrderDetailedInfo(request):
 		dropdown_order_info['active_orders_count'] = active_orders_count
 		dropdown_order_info['total_orders_count']  = total_orders_count
 
+		print(dropdown_order_info)
 		return JsonResponse(dropdown_order_info)	
 
+def GetFineCollectOrderInfo(request):
+	data               = {}
+	order_info_dict = {}
+
+	query       =   request.GET.get('keyword')
+
+	orders = Order.objects.filter(is_active=True,order_status__isnull=False).select_related('evaluation__customer').filter(Q(evaluation__quatation_status='APPROVED') & Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)) & ~Q(Q(order_status='ORDER_CANCELLED'))).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).order_by('start_at'),to_attr='orderschedules')).annotate(Count('order_scheduler_order'))
+			
+	
+	if orders:
+		for order in orders:
+			order_info_dict[order.id] = order.evaluation.evaluation_id+'-'+order.evaluation.customer.name 	
+
+	
+	data['order_details'] = order_info_dict
+
+
+	data['status']     = 'true'
+
+	if order_info_dict == {}: 
+		data['status'] = 'false'	
+	
+	return JsonResponse(data)
 
 class AccountantHome(IsAccountant,View):
 	def get(self,request):
@@ -573,9 +597,9 @@ class OrderDetails(IsAccountant,View):
 		status = request.GET.get('status')
 		
 		if search:
-			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(customer__mobile_number__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),order_cancelled_count=Count(Case(When( evaluation_order__order_status='ORDER_CANCELLED',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(customer__mobile_number__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),order_cancelled_count=Count(Case(When( evaluation_order__order_status='ORDER_CANCELLED',then=1),output_field=IntegerField())),order_cancellinprogress_count=Count(Case(When( evaluation_order__order_status='CANCELL_IN_PROGRESS',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
 		else:
-			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),order_cancelled_count=Count(Case(When( evaluation_order__order_status='ORDER_CANCELLED',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
+			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),order_cancelled_count=Count(Case(When( evaluation_order__order_status='ORDER_CANCELLED',then=1),output_field=IntegerField())),order_cancellinprogress_count=Count(Case(When( evaluation_order__order_status='CANCELL_IN_PROGRESS',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
 			
 
 		if evaluations:
@@ -683,13 +707,15 @@ class OrderDetails(IsAccountant,View):
 		#filters
 		filters=[]
 		if fil_status:
-			if fil_status == 'ORDER_IN_PROGRESS' or fil_status == 'ORDER_CLOSED' or fil_status == 'ORDER_CANCELLED' or fil_status == 'APPROVED-NOT PAID' or fil_status == 'EVALUATING':
+			if fil_status == 'ORDER_IN_PROGRESS' or fil_status == 'ORDER_CLOSED' or fil_status == 'CANCELL_IN_PROGRESS' or fil_status == 'ORDER_CANCELLED' or fil_status == 'APPROVED-NOT PAID' or fil_status == 'EVALUATING':
 				if fil_status == 'ORDER_IN_PROGRESS':
 					case1 = Q(order_in_progress_count__gte=1)
 				elif fil_status == 'ORDER_CLOSED':
 					case1 = Q(order_closed_count__gte=1)
 				elif fil_status == 'APPROVED-NOT PAID':
 					case1 = Q(Q(approved_not_paid_count__gte=1)&~Q(payment_method='SUBSCRIPTION'))
+				elif fil_status == 'CANCELL_IN_PROGRESS':
+					case1 = Q(order_cancellinprogress_count__gte=1)
 				elif fil_status == 'ORDER_CANCELLED':
 					case1 = Q(order_cancelled_count__gte=1)
 				elif fil_status == 'EVALUATING':
@@ -872,13 +898,13 @@ class CashCollect(IsAccountant,View):
 
 			if payment_method == 'CASH':
 				if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID':
-					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount,remining_amount=F('remining_amount')-amount) 
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount) 
 					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date,receipt_no=new_receipt_no)
 				elif payment_policy == 'BEFORE CLEANING':
-					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=amount)
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=F('preamount_paid')+amount)
 					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date,receipt_no=new_receipt_no)
 				elif payment_policy == 'AFTER CLEANING':
-					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=amount)
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=F('postamount_paid')+amount)
 					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date,receipt_no=new_receipt_no)
 				elif payment_policy == 'SUBSCRIPTION':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,subscription_topay=0)
@@ -891,13 +917,13 @@ class CashCollect(IsAccountant,View):
 				check_date = datetime.strptime(request.POST.get('check_date'),'%d-%m-%Y')
 
 				if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID':
-					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount,remining_amount=F('remining_amount')-amount) 
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount) 
 					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date,receipt_no=new_receipt_no)
 				elif payment_policy == 'BEFORE CLEANING':
-					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=amount)
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=F('preamount_paid')+amount)
 					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date,receipt_no=new_receipt_no)
 				elif payment_policy == 'AFTER CLEANING':
-					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=amount)
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=F('postamount_paid')+amount)
 					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date,receipt_no=new_receipt_no)
 				elif payment_policy == 'SUBSCRIPTION':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,subscription_topay=0)
@@ -910,13 +936,13 @@ class CashCollect(IsAccountant,View):
 				bank_no     = request.POST.get('ibn_number')
 
 				if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID':
-					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount,remining_amount=F('remining_amount')-amount) 
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount) 
 					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
 				elif payment_policy == 'BEFORE CLEANING':
-					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=amount)
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=F('preamount_paid')+amount)
 					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
 				elif payment_policy == 'AFTER CLEANING':
-					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=amount)
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=F('postamount_paid')+amount)
 					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
 				elif payment_policy == 'SUBSCRIPTION':
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,subscription_topay=0)
@@ -1005,14 +1031,20 @@ class FineWriteBack(View):
 		
 		#update Evaluation and fine
 		if action == 'Fine':
-			evaluation = Evaluation.objects.filter(id=order.evaluation.id).first()
 			
+			evaluation             = Evaluation.objects.filter(id=order.evaluation.id).first()
 			if evaluation.payment_method == 'BREAKDOWN':
 				Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')), after_cleaning_amount=F('after_cleaning_amount')+float(request.POST.get('amount')), fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
 			else:
 				Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')),fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
-			
-			Order.objects.filter(id=order_id).update(total_amount=F('total_amount')+float(request.POST.get('amount')),remining_amount=F('remining_amount')+float(request.POST.get('amount')))
+
+			order.total_amount    += float(request.POST.get('amount'))
+			order.remining_amount += float(request.POST.get('amount'))
+			if order.payment_status == 'COMPLETED':
+				order.payment_status  = 'PENDING'
+				order.order_status    = 'ORDER_IN_PROGRESS'				
+			order.save()
+
 			messages.success(request,"Fine Amount Succesfully Added")
 		
 		if action == 'Write-Off':
@@ -1027,6 +1059,14 @@ class FineWriteBack(View):
 			else:
 				Evaluation.objects.filter(id=order.evaluation.id).update(writeback_amount=F('writeback_amount')+float(request.POST.get('amount')),writeback_created_by=request.user,total_cost=F('total_cost')-float(request.POST.get('amount')))
 			Order.objects.filter(id=order_id).update(total_amount=F('total_amount')-float(request.POST.get('amount')),remining_amount=F('remining_amount')-float(request.POST.get('amount')))
+			
+			####to close order
+			order_closing_check = Order.objects.select_related('evaluation__customer').filter(is_active=True,id=order_id,payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+			if order_closing_check:
+				closing_order	= Order.objects.get(is_active=True,id=order_id)
+				closing_order.order_status = 'ORDER_CLOSED'
+				closing_order.save()
+
 			messages.success(request,"Write Back Amount Succesfully Removed")
 
 
@@ -2011,6 +2051,138 @@ def export_users_xls(request):
 	print(response.status_code,"resp")
 	
 	return response
+
+
+class TicketDetails(IsAccountant,View):
+	def get(self,request):
+
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
+		try:
+			investigators = UserProfile.objects.filter(is_active=True,user_type='QUALITYCONTROLL')
+		except:
+			investigators = None
+
+		search                  = request.GET.get('search')
+		
+		#Followup details
+		if search:
+			if search.startswith('TKT'):
+				search = search[len('TKT'):]
+			
+			tickets 	             = FollowUp.objects.select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').filter(is_active=True).filter(Q(Q(investigation__order_schedule__order__evaluation__customer__name__icontains=search)|Q(ticket_no__icontains=search))).order_by('-id').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))				
+			
+			if not search.startswith('TKT'):
+				search = 'TKT'+search				
+		else:
+			tickets 	             = FollowUp.objects.filter(is_active=True).select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').order_by('-id').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))		
+
+		follow_ups_count = FollowUp.objects.filter(Q(is_active=True)&Q(Q(status='TICKET_RISED')|Q(status='FOLLOWUP_IN_PROGRESS'))).count()
+
+
+		#followup cleaning count	
+		try:
+			follow_up_cleaning_count = FollowUpScheduler.objects.filter(is_active=True,work_status='FOLLOW_UP_CLEANING_FULFILLED').count()
+		except:
+			follow_up_cleaning_count = 0
+
+
+
+		#FILTER	
+		try:
+			fil_governorate     = int(request.GET.get('governorate')) 
+			areas               = Area.objects.filter(is_active=True,governorate_id=fil_governorate)
+		except:
+			fil_governorate     = None
+			areas               = None
+
+		try:	
+			fil_area            = int(request.GET.get('area'))
+		except:
+			fil_area            = None
+		
+		fil_status              = request.GET.get('status')
+		
+		try:
+			fil_investigator    = int(request.GET.get('investigator'))
+		except:
+			fil_investigator    = None
+
+		#filters
+		filters=[] 
+		if fil_governorate: 
+			case1 = Q(investigation__order_schedule__customer_address__governorate_id=fil_governorate)
+			filters.append(case1)
+		if fil_area: 
+			case2 = Q(investigation__order_schedule__customer_address__area_id=fil_area)
+			filters.append(case2)
+		if fil_status: 
+			case3 = Q(status=fil_status)
+			filters.append(case3)
+		if fil_investigator: 
+			case4 = Q(investigation__investigator_id=fil_investigator)
+			filters.append(case4)            
+	
+		if fil_governorate or fil_area or fil_status or fil_investigator: 
+			filters     = functools.reduce(operator.and_,filters)
+			tickets = tickets.filter(filters)
+
+
+
+
+		#PAGINATION TICKETS		
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
+		page = request.GET.get('page',1) 
+		paginator=Paginator(tickets,no_of_entries)
+		try: 
+			tickets=paginator.page(page) 
+		except PageNotAnInteger:
+			tickets=paginator.page(1)
+		except EmptyPage:
+			tickets = paginator.page(paginator.num_pages) 
+
+		# Get the index of the current page
+		index = tickets.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns 
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(tickets.end_index())-(tickets.start_index())+1
+
+		return render(request,'accountant/ticket/tickets.html',{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"investigators":investigators,"fil_governorate":fil_governorate,'fil_area':fil_area,"fil_investigator":fil_investigator,"fil_status":fil_status,})		
+
+
+class TicketAdvanced(IsAccountant,View):
+	def get(self,request,client_id,followup_id):
+
+		#client info
+		try:
+			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=client_id)
+		except:
+			client_details = None
+
+		#followup info
+		
+		followup_details = FollowUp.objects.select_related('investigation__investigator','investigation__order','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate','investigation__order_schedule__order_scheduler_book').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_media',queryset=FollowUpTeamMedia.objects.filter(is_active=True),to_attr='followupmedias'),Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules'),Prefetch('investigation__investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('follow_up_of_section',queryset=FollowUpSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesectionsfollowup',queryset=FollowUpSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='followupsections'),Prefetch('investigation__buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True).prefetch_related(Prefetch('buybackpromocodegiftdetails',queryset=BuybackPromocodeGiftDetails.objects.filter(is_active=True),to_attr='buybackpromogiftdetails'),Prefetch('buybackpromocodegift_media',queryset=BuybackPromocodeGiftDetailsMedia.objects.filter(is_active=True),to_attr='buybackpromogiftmedias')),to_attr='buybackpromogifts'),Prefetch('investigation__paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True).prefetch_related(Prefetch('paybackdiscount_details',queryset=PaybackDiscountDetails.objects.filter(is_active=True),to_attr='paybackdiscountdetails'),Prefetch('paybackdiscount_media',queryset=PaybackDiscountDetailsMedia.objects.filter(is_active=True),to_attr='paybackdiscountmedias')),to_attr='paybackdiscounts'),Prefetch('investigation__reporting_investigation',queryset=Reporting.objects.filter(is_active=True).prefetch_related(Prefetch('reporting_media',queryset=ReportingMedia.objects.filter(is_active=True),to_attr='reporting_medias')),to_attr='reports')).get(is_active=True,id=followup_id)
+			
+			
+
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=client_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()
+
+		return render(request,'accountant/ticket/followup-page.html',{"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"followup_details":followup_details,})
 
 
 	

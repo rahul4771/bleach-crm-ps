@@ -27,11 +27,12 @@ SECRET_KEY = local_settings.secret_key
 DEBUG = local_settings.debug
 
 ALLOWED_HOSTS = local_settings.allowed_hosts
-
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -55,10 +56,11 @@ INSTALLED_APPS = [
     'qualitycontroll',
     'salesadmin',
     'Api',
-    'mathfilters' 
+    'mathfilters'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -67,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 ROOT_URLCONF = 'bleach_crm_ps.urls'
 
@@ -153,17 +156,18 @@ STATICFILES_DIRS = [
 # EMAIL_HOST_PASSWORD = '9495259869'
 # EMAIL_PORT = 587
 
-EMAIL_HOST = 'smtp.sparkpostmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'SMTP_Injection'
-EMAIL_HOST_PASSWORD = 'bb8ebee24b8d2a17c26ee1c9cd56c3d26c72db55'
-EMAIL_USE_TLS = True
-
-# EMAIL_HOST = 'smtp-mail.outlook.com'
+# EMAIL_HOST = 'smtp.sparkpostmail.com'
 # EMAIL_PORT = 587
-# EMAIL_HOST_USER = 'ansab.m@bleach.com'
-# EMAIL_HOST_PASSWORD = 'Duc45773'
+# EMAIL_HOST_USER = 'SMTP_Injection'
+# EMAIL_HOST_PASSWORD = 'bb8ebee24b8d2a17c26ee1c9cd56c3d26c72db55'
 # EMAIL_USE_TLS = True
+
+EMAIL_BACKEND       = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS       = True
+EMAIL_HOST          = 'smtp.office365.com'
+EMAIL_PORT          = 587
+EMAIL_HOST_USER     = 'ansab.m@bleach-kw.com'
+EMAIL_HOST_PASSWORD = 'Duc45773'
 
 LOGIN_URL='login'
 LOGOUT_URL = 'logout'

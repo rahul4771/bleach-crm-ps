@@ -106,6 +106,7 @@ class UserProfile(AbstractUser):
     is_sms          = models.BooleanField(null=False,blank=True,default=False)
     is_email        = models.BooleanField(null=False,blank=True,default=False)
     customer_id     = models.CharField(max_length=12,blank=True,null=True)
+    credit_amount   = models.FloatField(blank=True,null=True,default=0)
 
     is_general_skill       = models.BooleanField(null=False,blank=True,default=False)
     is_deep_skill          = models.BooleanField(null=False,blank=True,default=False)
@@ -119,6 +120,8 @@ class UserProfile(AbstractUser):
     is_carparkingumbrella_skill = models.BooleanField(null=False,blank=True,default=False)
     is_outdoor_skill            = models.BooleanField(null=False,blank=True,default=False)
     is_window_skill             = models.BooleanField(null=False,blank=True,default=False)
+
+    is_onlineevaluator     = models.BooleanField(null=False,blank=True,default=True)
 
     address_otp            = models.CharField(max_length=100,blank=True,null=True)
 
@@ -190,11 +193,11 @@ class Address(models.Model):
                 setattr(self, field_name, val.title())
         super(Address, self).save(*args, **kwargs)
 
-    # def __unicode__(self):
-    #     return str(self.customer.customer_id+'-'+self.area.name+'-'+self.customer.name)
+    def __unicode__(self):
+        return str(self.customer.customer_id+'-'+self.area.name+'-'+self.customer.name)
 
-    # def __str__(self):
-    #     return self.customer.customer_id+'-'+self.area.name+'-'+self.customer.name    
+    def __str__(self):
+        return self.customer.customer_id+'-'+self.area.name+'-'+self.customer.name    
 
 class LeaveSchedule(models.Model):
     staff           = models.ForeignKey('UserProfile',blank=False,null=False,related_name='leave_staff')

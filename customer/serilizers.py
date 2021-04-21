@@ -2,10 +2,12 @@ from rest_framework import serializers
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote
 from order.models import Order
+from customer.models import CustomerBooking
 class UserProfileSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = UserProfile
-		fields = ('name','gender','email','nationality','mobile_number','date_day','date_month','date_year','sms_preference')	
+		fields = ('id','name','gender','email','nationality','mobile_number','date_day','date_month','date_year','sms_preference')	
+		read_only_fields =('id',)
 
 class AddressSaveSerializer(serializers.ModelSerializer): 
 	class Meta:
@@ -45,7 +47,8 @@ class AddressSerializer(serializers.ModelSerializer):
 	area        = AreaSerializer(read_only=True)
 	class Meta:
 		model  = Address
-		fields = ('governorate','area','block','avenue','building','street','floor','apartment')
+		fields = ('id','governorate','area','block','avenue','building','street','floor','apartment')
+		read_only_fields =('id',)
 
 class EvaluationSerializer(serializers.ModelSerializer):
 	customer                = UserProfileSerializer(read_only=True) 
@@ -66,3 +69,8 @@ class EvaluationDetailsSerializer(serializers.ModelSerializer):
 		model  = EvaluationDetails
 		fields = ('address','evaluation_book_evaluation_details')	
 
+class CustomerBookingSerializer(serializers.ModelSerializer):
+	evaluation = EvaluationSerializer(read_only=True)
+	class Meta:
+		model  = CustomerBooking
+		fields = ('evaluation','booking_id','booking_type','booking_date',)

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from order.models import Order,OrderScheduler,FollowUp,FollowUpSection,FollowUpSectionKeynote,FollowUpScheduler,Question,FeedBack,Investigation,InvestigationMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,Reporting,ReportingMedia,Promocode
+from order.models import Order,OrderScheduler,FollowUp,FollowUpSection,FollowUpSectionKeynote,FollowUpScheduler,Question,FeedBack,Investigation,InvestigationMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,Reporting,ReportingMedia,Promocode,CancellOrderAmountHistory
 # Register your models here.
 
 class OrderAdmin(admin.ModelAdmin):
@@ -31,6 +31,7 @@ class FeedBackAdmin(admin.ModelAdmin):
 	radio_fields = {"question":admin.VERTICAL}
 
 
+admin.site.register(CancellOrderAmountHistory)
 admin.site.register(FeedBack,FeedBackAdmin)
 admin.site.register(Question)
 admin.site.register(PaybackDiscount)

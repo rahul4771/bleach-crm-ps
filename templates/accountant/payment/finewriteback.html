@@ -18,12 +18,17 @@
 	<div class="main-content-holder"><!--main-content-holder-->            
 	
 	
-		
+<form method="post" action="" enctype="multipart/form-data">{% csrf_token %}
 <div class="white-wrapper"><!--white-wrapper-->
+<div class="center-formDiv"><!--center-formDiv-->
+<div class="order-Number bold-text"> <label>Fine/Write-Off</label></div>
+<input type="radio" name="finewriteback" class="id_finewriteback" value="Fine" checked> Fine
+<input type="radio" name="finewriteback" class="id_finewriteback" value="Write-Off"> Write-Off
+</div>    
 <div class="center-formDiv"><!--center-formDiv-->
 		<div class="order-Number bold-text"> <label>Order Number</label></div>
     <div id="search_box">
-                <input name="time" type="text" id="search_box" class="textBox auto-complete-input" placeholder="Search here existing clients or BLC Number..." data-min-size="2" data-pattern="[a-zA-Z0-9\s]" data-result-onclick="select_existing_user" data-auto-suggest-url="{% url 'accountant:get-cashorderInfo' %}">
+                <input name="time" type="text" id="search_box" class="textBox auto-complete-input" placeholder="Search here existing clients or BLC Number..." data-min-size="2" data-pattern="[a-zA-Z0-9\s]" data-result-onclick="select_existing_user" data-auto-suggest-url="{% url 'accountant:get-fineorderInfo' %}">
     </div>
 		<hr class="div">
 		
@@ -52,25 +57,15 @@
 		</div><!--cleaning-column-wrapper-->
 		
 		<br><br>
-<div class="common-sub-head align-left ticket-form-head">Fine/Write-Off Form</div> 
-	<form method="post" action="" enctype="multipart/form-data">{% csrf_token %}
+<div class="common-sub-head align-left ticket-form-head dynamic-fine-writeoff">Fine/Write-Off Form</div> 
 	<input type="hidden" name="order_id" id="order_id_hidden">
 
 <div class="ticket-wrapper-full ltyellow-border ticket-form"><!--ticket-wrapper-full-->
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-  <div class="ticket-form-left"><!--ticket-form-left-->
-  				<div class=" bold-text common-label"> <label>Fine/Write-Off</label></div>
-                <label for="favcity">
-                <select id="id_finewriteback" name="finewriteback">
-                  <option value="Fine">Fine</option>
-                  <option value="Write-Off">Write-Off</option>
-                </select>
-                </label>
-  </div><!--ticket-form-left-->
-  <div class="ticket-form-right"><!--ticket-form-right-->
+<div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>Amount</label></div>
                 <input name="amount" id="id_amount" type="number" class="textBox OnlyNumber" placeholder="Amount in KD" min="0.001" step="any" required>
-  </div><!--ticket-form-right-->
+  </div><!--ticket-form-left-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">  
 </div><!--ticket-wrapper-full--> 
@@ -404,18 +399,43 @@ function search_live(event){
           }
         };
         $.ajax(ajax);
+
+        //max and min setup
+        operation_type    = $('.id_finewriteback').val();
+        
+        if(operation_type == 'Write-Off')
+        {
+        $('#id_amount').prop('max',remining_amount);
+        }
+        else
+        {
+        $('#id_amount').removeAttr('max');
+        }
+
 }
 
 //if check -- check number
-$('#id_finewriteback').change(function(){
+$('.id_finewriteback').change(function(){
     action = $(this).val();
     if(action == 'Write-Off')
     {
-      $('#id_amount').prop('max',remining_amount);
+      $('.auto-complete-input').data("auto-suggest-url","{% url 'accountant:get-cashorderInfo' %}");
+      $('.dynamic-fine-writeoff').text("Write-Off");
+        $('.order-details-head').hide();
+        $('.order-details').hide();
+        $('.ticket-form-head').hide();
+        $('.ticket-form').hide();
+        $('.ticket-form-button').hide();
     }
     else
     {
-      $('#id_amount').removeAttr('max')
+      $('.auto-complete-input').data("auto-suggest-url","{% url 'accountant:get-fineorderInfo' %}");
+      $('.dynamic-fine-writeoff').text("Fine");
+        $('.order-details-head').hide();
+        $('.order-details').hide();
+        $('.ticket-form-head').hide();
+        $('.ticket-form').hide();
+        $('.ticket-form-button').hide();
     }
 });
 
