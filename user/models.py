@@ -106,6 +106,7 @@ class UserProfile(AbstractUser):
     is_sms          = models.BooleanField(null=False,blank=True,default=False)
     is_email        = models.BooleanField(null=False,blank=True,default=False)
     customer_id     = models.CharField(max_length=12,blank=True,null=True)
+    credit_amount   = models.FloatField(blank=True,null=True,default=0)
 
     is_general_skill       = models.BooleanField(null=False,blank=True,default=False)
     is_deep_skill          = models.BooleanField(null=False,blank=True,default=False)
