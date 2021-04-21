@@ -97,7 +97,7 @@
         {{cancell_in_progress_order.amount_paid|floatformat:'3'}}
         </td>
         <td>
-        <span class="clickable-row red-bg" data-href="#">Click to Cancell</span>
+        <span class="clickable-row red-bg" data-href="{% url 'bleach_salesadmin:cancell-order' cancell_in_progress_order.id %}">Click to Cancell</span>
         </td>
         </tr>
         {% endfor %}
