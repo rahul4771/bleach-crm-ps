@@ -468,7 +468,7 @@ class ClientOrderDetails(IsSalesAdmin,View):
 			#delete assigned cleaning team and members
 			CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=order).delete() 
 
-		return redirect('bleach_salesadmin:salesadmin-cancel-form',order_id)
+		return redirect('bleach_salesadmin:salesadmin-cancell-order',order_id)
 
 class MakeQuatationDuplicate(IsSalesAdmin,View):
 	
@@ -2422,4 +2422,6 @@ class MakeQuatationPhase2Delete(IsSalesAdmin,View):
 class OrderCancellation(IsSalesAdmin,View):
 	def get(self,request,order_id):
 		order_details = Order.objects.select_related('evaluation__customer','evaluation__call_attender').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('customer_address__area','customer_address','order_scheduler_book__service_type'),to_attr='order_secheduler_feedback')).annotate(total_cleaners=Sum('order_scheduler_order__order_scheduler_book__number_of_cleaners')).get(id=int(order_id),is_active=True)
-		return render(request,"salesadmin/cancel-order/cancel-order.html",{'order_details':order_details,'order_id':order_id})
+		#cancell in progress orders
+		cancell_in_progress_order = Order.objects.select_related('evaluation__customer').prefetch_related('order_scheduler_order__order_scheduler_book').filter(id=order_id).annotate(job_completed_amount=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=F('order_scheduler_order__order_scheduler_book__total_cost')),default=0,output_field=IntegerField()))).first()
+		return render(request,"salesadmin/cancel-order/cancel-order.html",{'order_details':order_details,'order_id':order_id,"cancell_in_progress_order":cancell_in_progress_order})

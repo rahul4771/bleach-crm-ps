@@ -231,6 +231,8 @@
         <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'tech-supervisor:tech-supervisor-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="violet-bg clickable-row">Order in Progress</span>
         {% elif order.order_status == 'ORDER_CLOSED' %}
         <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'tech-supervisor:tech-supervisor-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="rose-bg clickable-row">Completed</span>
+        {% elif order.order_status == 'CANCELL_IN_PROGRESS' %}
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'tech-supervisor:tech-supervisor-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="skyblue-bg clickable-row">Cancell in Progress</span>
         {% else %}
         <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'tech-supervisor:tech-supervisor-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Order Cancelled</span>
         {% endif %}
