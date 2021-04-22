@@ -859,7 +859,7 @@
             {% endfor %}
             <!-- RE-ORDER -->
             {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
-            {% if order.amount_paid == 0 and order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
+            {% comment %} {% if order.amount_paid == 0 and order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %} {% endcomment %}
             <br>
             <div class="order-card-column whitebg gray-border clickable-cursor cancell_order" data-id="{{order.evaluation.id}}"><!--order-card-column-->
                     <div class="card-innerwrapper"><!--card-innerwrapper-->
@@ -873,7 +873,7 @@
                     </div><!--column-right-->
                     </div><!--card-innerwrapper-->
                 </div><!--order-card-column-->
-            {% endif %}
+            {% comment %} {% endif %} {% endcomment %}
             {% endif %}
 
     </div><!--order-details-right-fixed-->
@@ -902,7 +902,7 @@
     <div class="custom-model-inner-sp1">  <!--custom-model-inner-->      
         <div class="custom-model-wrap-sp1"><!--custom-model-wrap-->
             <div class="pop-up-content-wrap1"><!--pop-up-content-wrap-->
-               <div class="bold-text">Are you sure you want to cancell this order?</div>  
+               <div class="bold-text">Are you sure you want to cancel this order?</div>  
                <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
                 <input type="hidden" name="action_type" value="cancell_order">
                 <input type="hidden" name="evaluation" id="evaluation_id">

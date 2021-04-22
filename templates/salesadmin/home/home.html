@@ -62,7 +62,7 @@
     
     {% if cancell_in_progress_orders %}
     <div class="white-wrapper"><!--white-wrapper-->
-    <h2 class="h2">Order Cancell Task</h2>
+    <h2 class="h2">Order Cancel Task</h2>
     <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
     <thead>
         <tr>
@@ -97,7 +97,7 @@
         {{cancell_in_progress_order.amount_paid|floatformat:'3'}}
         </td>
         <td>
-        <span class="clickable-row red-bg" data-href="{% url 'bleach_salesadmin:cancell-order' cancell_in_progress_order.id %}">Click to Cancell</span>
+        <span class="clickable-row red-bg" data-href="{% url 'bleach_salesadmin:salesadmin-cancel-form' cancell_in_progress_order.id %}">Click to Cancel</span>
         </td>
         </tr>
         {% endfor %}
