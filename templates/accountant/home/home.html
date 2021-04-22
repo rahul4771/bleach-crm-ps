@@ -101,7 +101,7 @@
         {{order_cancell_cashback.return_amount|floatformat:'3'}}
         </td>
         <td>
-        <span class="clickable-row red-bg" data-href="#">Click to Approve</span>
+        <span class="clickable-row red-bg" data-href="{% url 'accountant:accountant-cancel-order' order_cancell_cashback.id %}">Click to Approve</span>
         </td>
         </tr>
         {% endfor %}
