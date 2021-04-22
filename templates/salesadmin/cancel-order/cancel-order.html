@@ -34,11 +34,14 @@
 				</div>
 
 				<div class="order_addresses">
+        {% for scheduler in order_details.order_secheduler_feedback %}
+          <div class="area-bold">{{scheduler.customer_address.area.name}}</div><div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle {% if scheduler.work_status == 'CLEANING_FULFILLED' %}green-text{% else %}yellow-text{% endif %}" aria-hidden="true"></i> {{scheduler.order_scheduler_book.service_type.name}} - {{scheduler.order_scheduler_book.cleaning_policy}}</div>
+        {% endfor %}
 				</div>
 			</div><!--cleaning-column-widget cleaning-column-widget-column1-->
 			
 			<div class="cleaning-column-widget cleaning-column-widget-column2 order-details"><!--cleaning-column-widget cleaning-column-widget-column2-->
-				<div class="common-gray-text align-left">{{order_details.evaluation.created|date:'d-m-Y H:i'}}</div>
+				<div class="common-gray-text align-left">{{order_details.evaluation.created|date:'d-m-Y g:i A'}}</div>
 				<div class="common-gray-text align-left yellow-text lg-text">{{order_details.evaluation.total_cost|floatformat:"3"}} KD</div>
 				<div class="common-gray-text align-left sm-text gray-text">{{order_details.total_cleaners}} cleaners</div>
 				{% if order_details.evaluation.call_attender.profile_image %}
@@ -62,11 +65,18 @@
           <div class=" bold-text common-label"> <label>Cancel Options</label></div>
                 <label for="favcity">
                 <select name="cancel_method" id="cancel_method_id" required>
-                    <option value="">--Select option--</option>
+                    <option value="">--Select option--</option>           
+                    
+                    {% if cancell_in_progress_order.amount_paid > cancell_in_progress_order.job_completed_amount %}
                     <option value="PAYBACK">Pay Back</option>
                     <option value="CREDIT">Credit</option>
-                    <option value="CANCEL">Cancel</option>
+                    {% elif cancell_in_progress_order.amount_paid < cancell_in_progress_order.job_completed_amount %}
                     <option value="SENDINVOICE">Send Invoice</option>
+                    {% else %}
+                    {% endif %}
+
+                    <option value="CANCEL">Cancel</option>
+                  
                 </select>
                 </label>
   </div><!--ticket-form-left-->
@@ -93,7 +103,7 @@
 <div class="ticket-wrapper-row ticket-forms-boxes amount_div" hidden><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   	<div class=" bold-text common-label"> <label id="amount_label">Amount</label></div>
-        <input type="text" class="textBox" name="amount" required/>
+        <input type="text" class="textBox" id="cancel_amount" name="amount" required readonly/>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
   </div><!--ticket-form-right-->
@@ -129,16 +139,28 @@ $('#cancel_method_id').change(function(){
   if ($(this).val() == 'CREDIT') {
     $('.amount_div').attr("hidden",false);
     $('#amount_label').text('Credit Amount');
+
+    //adding amount to credit amount field
+    var credit_amount = "{{cancell_in_progress_order.amount_paid}}" - "{{cancell_in_progress_order.job_completed_amount}}" ;
+    $('#cancel_amount').val(parseFloat(credit_amount).toFixed(3));
   }
 
   if ($(this).val() == 'SENDINVOICE') {
     $('.amount_div').attr("hidden",false);
     $('#amount_label').text('Invoice Amount');
+
+    //adding amount to invoice amount field
+    var invoice_amount = "{{cancell_in_progress_order.job_completed_amount}}" - "{{cancell_in_progress_order.amount_paid}}" ;
+    $('#cancel_amount').val(parseFloat(invoice_amount).toFixed(3));
   }
 
   if ($(this).val() == 'PAYBACK') {
     $('.amount_div').attr("hidden",false);
     $('#amount_label').text('PayBack Amount');
+
+    //adding amount to payback amount field
+    var payback_amount = "{{cancell_in_progress_order.amount_paid}}" - "{{cancell_in_progress_order.job_completed_amount}}" ;
+    $('#cancel_amount').val(parseFloat(payback_amount).toFixed(3));
   }
 
   if ( ($(this).val() == 'CANCEL') || ($(this).val() == '') ) {
