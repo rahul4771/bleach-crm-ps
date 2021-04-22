@@ -468,7 +468,7 @@ class ClientOrderDetails(IsSalesAdmin,View):
 			#delete assigned cleaning team and members
 			CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=order).delete() 
 
-		return redirect('bleach_salesadmin:salesadmin-cancel-form',order_id)
+		return redirect('bleach_salesadmin:salesadmin-cancell-order',order_id)
 
 class MakeQuatationDuplicate(IsSalesAdmin,View):
 	

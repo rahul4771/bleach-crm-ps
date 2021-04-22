@@ -17,7 +17,7 @@
 		
 	<div class="main-content-holder"><!--main-content-holder-->            
 	
-	<form method="post" action="{% url 'bleach_salesadmin:salesadmin-cancel-form' order_id %}" enctype="multipart/form-data">{% csrf_token %}
+	<form method="post" action="{% url 'bleach_salesadmin:cancell-order' cancell_in_progress_order.id %}" enctype="multipart/form-data">{% csrf_token %}
 	<input type="hidden" name="order_id" id="order_id_hidden">
 
 <div class="ticket-wrapper-full ltyellow-border ticket-form"><!--ticket-wrapper-full-->
@@ -36,7 +36,7 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
   		<div class=" bold-text common-label"> <label>Total Amount</label></div>
-      <input type="text" class="textBox" name="total_amount" required/>
+      <input type="text" class="textBox" name="total_amount" value="{{cancell_in_progress_order.total_amount|floatformat:'3'}}" required readonly />
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <hr class="hr-dashedpad">
@@ -44,11 +44,11 @@
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   	<div class=" bold-text common-label"> <label>Job Completed</label></div>
-        <input type="text" class="textBox" name="jobcompleted" required/>
+        <input type="text" class="textBox" name="jobcompleted" value="{{cancell_in_progress_order.job_completed_amount|floatformat:'3'}}" required readonly/>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
   	<div class="text bold-text common-label"> <label>Paid Amount</label></div>
-      <input type="text" class="textBox" name="paid_amount" required/>
+      <input type="text" class="textBox" name="paid_amount" value="{{cancell_in_progress_order.amount_paid|floatformat:'3'}}" required readnly/>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->  
 
