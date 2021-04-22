@@ -2415,4 +2415,8 @@ class MakeQuatationPhase2Delete(IsSalesAdmin,View):
 
 class OrderCancellation(IsSalesAdmin,View):
 	def get(self,request,order_id):
-		return render(request,"salesadmin/cancel-order/cancel-order.html")
+		
+		#cancell in progress orders
+		cancell_in_progress_order = Order.objects.select_related('evaluation__customer').prefetch_related('order_scheduler_order__order_scheduler_book').filter(id=order_id).annotate(job_completed_amount=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=F('order_scheduler_order__order_scheduler_book__total_cost')),default=0,output_field=IntegerField()))).first()
+		
+		return render(request,"salesadmin/cancel-order/cancel-order.html",{"cancell_in_progress_order":cancell_in_progress_order})
