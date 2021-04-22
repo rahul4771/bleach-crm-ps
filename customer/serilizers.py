@@ -63,11 +63,13 @@ class OrderSerializer(serializers.ModelSerializer):
 		fields = ('order_no','invoice_no','order_status','payment_status','total_amount','amount_paid','remining_amount',)
 
 class EvaluationDetailsSerializer(serializers.ModelSerializer): 
+	evaluator                          = UserProfileSerializer(read_only=True)
 	address                            = AddressSerializer(read_only=True)
 	evaluation_book_evaluation_details = EvaluationBookSerializer(many=True,read_only=True)
+	proposed_time                      = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p ")
 	class Meta:
 		model  = EvaluationDetails
-		fields = ('address','evaluation_book_evaluation_details')	
+		fields = ('evaluator','proposed_time','address','evaluation_book_evaluation_details')	
 
 class CustomerBookingSerializer(serializers.ModelSerializer):
 	evaluation = EvaluationSerializer(read_only=True)
