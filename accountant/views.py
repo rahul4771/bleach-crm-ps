@@ -279,12 +279,16 @@ class AccountantHome(IsAccountant,View):
 		#buybackgiftpromos		
 		approved_paybackdiscounts = Investigation.objects.filter(is_paybackdiscount_approved=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=True,is_completed=False),to_attr='paybackdiscounts')).annotate(paybackdiscount_count=Case(When(Q( Q(paybackdiscount_investigation__is_active=True) & Q(paybackdiscount_investigation__investigation__is_paybackdiscount_approved=True) & Q(paybackdiscount_investigation__is_completed=False) ),then=1),default=0,output_field=IntegerField()))
 		
+		ticket_count = 0
 		#add days left
 		if approved_paybackdiscounts:
 			for ticket in approved_paybackdiscounts:
 				ticket.days_left = (timezone.now()-ticket.scheduled_at).days
 
-		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders,"approved_paybackdiscounts":approved_paybackdiscounts,"subscriptions":subscriptions})
+				for paybackdiscount in ticket.paybackdiscounts:
+					ticket_count += 1
+
+		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders,"approved_paybackdiscounts":approved_paybackdiscounts,"subscriptions":subscriptions,"ticket_count":ticket_count})
 
 	
 

@@ -17,15 +17,50 @@
 		
 	<div class="main-content-holder"><!--main-content-holder-->            
 	
-	<form method="post" action="{% url 'bleach_salesadmin:salesadmin-cancel-form' order_id %}" enctype="multipart/form-data">{% csrf_token %}
+  <div class="white-wrapper"><!--white-wrapper-->
+  <div class="center-formDiv"><!--center-formDiv-->
+		
+			<div class="common-sub-head align-left order-details-head">Order Details</div> 
+			
+				<div class="cleaning-column-wrapper ltyellow-border order-details"><!--cleaning-column-wrapper-->
+				<div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
+        <div class="details-head align-left order_blc_no">{{order_details.order_no}}</div>
+				<div class="inside-head align-left order_customer_name">{{order_details.evaluation.customer.name}}</div>
+				<p class="paragraph order_customer_mobile">{{order_details.evaluation.customer.mobile_number}}</p>
+				
+				<div class="order_payment_status">
+        <div class="{% if payment_status == 'COMPLETED' %}green-bg-lg{% elif payment_status == 'PENDING'%}yellow-bg-lg{% elif payment_status == 'ON_HOLD'%}red-bg-lg{% else %}yellow-bg-lg{% endif %} payment_status">{{order_details.payment_status}}</div>
+        <div class="{% if order_status == 'APPROVED_BY_CLIENT' %}blue-bg-lg{% elif order_status == 'ORDER_IN_PROGRESS'%}yellow-bg-lg{% elif order_status == 'ORDER_CANCELLED'%}red-bg-lg{% elif order_status == 'ORDER_CLOSED'%}green-bg-lg{% else %}yellow-bg-lg{% endif %}">{{order_details.order_status}}</div>
+				</div>
+
+				<div class="order_addresses">
+				</div>
+			</div><!--cleaning-column-widget cleaning-column-widget-column1-->
+			
+			<div class="cleaning-column-widget cleaning-column-widget-column2 order-details"><!--cleaning-column-widget cleaning-column-widget-column2-->
+				<div class="common-gray-text align-left">{{order_details.evaluation.created|date:'d-m-Y H:i'}}</div>
+				<div class="common-gray-text align-left yellow-text lg-text">{{order_details.evaluation.total_cost|floatformat:"3"}} KD</div>
+				<div class="common-gray-text align-left sm-text gray-text">{{order_details.total_cleaners}} cleaners</div>
+				{% if order_details.evaluation.call_attender.profile_image %}
+          <div class="profile-pic-line"><img class="agent_image" src="{{order_details.evaluation.call_attender.profile_image.url}}"></div>
+        {% else %}
+					<div class="profile-pic-line"><img class="agent_image" src="{% static 'files/images/profile-pic.png' %}"></div>
+        {% endif %}
+      </div><!--cleaning-column-widget cleaning-column-widget-column2-->
+		</div><!--cleaning-column-wrapper-->
+		
+		<br><br>
+  <div class="common-sub-head align-left ticket-form-head">Order Cancel Form</div> 
+  <form method="post" action="{% url 'bleach_salesadmin:salesadmin-cancel-form' order_id %}" enctype="multipart/form-data">{% csrf_token %}
 	<input type="hidden" name="order_id" id="order_id_hidden">
 
 <div class="ticket-wrapper-full ltyellow-border ticket-form"><!--ticket-wrapper-full-->
-<div class="common-sub-head align-left ticket-form-head">Order Cancel Form</div> 
+
 <br><br>
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Cancel Options</label></div>
+                <label for="favcity">
                 <select name="cancel_method" id="cancel_method_id" required>
                     <option value="">--Select option--</option>
                     <option value="PAYBACK">Pay Back</option>
@@ -33,6 +68,7 @@
                     <option value="CANCEL">Cancel</option>
                     <option value="SENDINVOICE">Send Invoice</option>
                 </select>
+                </label>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
   		<div class=" bold-text common-label"> <label>Total Amount</label></div>
@@ -52,7 +88,7 @@
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->  
 
-<hr class="hr-dashedpad">
+<hr class="hr-dashedpad amount_div" hidden>
 
 <div class="ticket-wrapper-row ticket-forms-boxes amount_div" hidden><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->

@@ -2421,4 +2421,5 @@ class MakeQuatationPhase2Delete(IsSalesAdmin,View):
 
 class OrderCancellation(IsSalesAdmin,View):
 	def get(self,request,order_id):
-		return render(request,"salesadmin/cancel-order/cancel-order.html",{'order_id':order_id})
+		order_details = Order.objects.select_related('evaluation__customer','evaluation__call_attender').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('customer_address__area','customer_address','order_scheduler_book__service_type'),to_attr='order_secheduler_feedback')).annotate(total_cleaners=Sum('order_scheduler_order__order_scheduler_book__number_of_cleaners')).get(id=int(order_id),is_active=True)
+		return render(request,"salesadmin/cancel-order/cancel-order.html",{'order_details':order_details,'order_id':order_id})
