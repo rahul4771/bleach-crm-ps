@@ -22,7 +22,7 @@ from django.db.models.functions import ExtractMonth,ExtractYear
 from django.contrib import messages
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod,ServiceType,EvaluationBookSection,EvaluationSectionKeynote,LocationType,CleaningType,AreaType,CleaningSection
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,Promocode
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,Promocode,CancellOrderAmountHistory
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from order.forms import PromocodeForm
@@ -468,7 +468,7 @@ class ClientOrderDetails(IsSalesAdmin,View):
 			#delete assigned cleaning team and members
 			CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=order).delete() 
 
-		return redirect('bleach_salesadmin:salesadmin-cancell-order',order_id)
+		return redirect('bleach_salesadmin:cancell-order',order_id)
 
 class MakeQuatationDuplicate(IsSalesAdmin,View):
 	
@@ -2425,3 +2425,55 @@ class OrderCancellation(IsSalesAdmin,View):
 		#cancell in progress orders
 		cancell_in_progress_order = Order.objects.select_related('evaluation__customer').prefetch_related('order_scheduler_order__order_scheduler_book').filter(id=order_id).annotate(job_completed_amount=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=F('order_scheduler_order__order_scheduler_book__total_cost')),default=0,output_field=IntegerField()))).first()
 		return render(request,"salesadmin/cancel-order/cancel-order.html",{'order_details':order_details,'order_id':order_id,"cancell_in_progress_order":cancell_in_progress_order})
+
+	def post(self,request,order_id):
+		cancell_option = request.POST.get('cancel_method')
+		
+		if cancell_option == 'CASHBACK':
+			amount = float(request.POST.get('amount'))			
+			CancellOrderAmountHistory.objects.create(order_id=order_id,return_amount=amount,amount_return_method='CASHBACK')
+		
+			order              = Order.objects.get(id=order_id)
+			order.cancelled_by = request.user
+			order.cancell_note = request.POST.get('notes')
+			order.order_status = 'ORDER_CANCELLED' 
+			order.save()
+
+			messages.success(request,'Order Successfully Cancelled and CashBack Request Send to Customer')
+
+		elif cancell_option == 'CREDIT':
+			amount = float(request.POST.get('amount'))			
+			CancellOrderAmountHistory.objects.create(order_id=order_id,return_amount=amount,amount_return_method='CREDIT',is_completed=True)
+			
+			order                 = Order.objects.get(id=order_id)
+			order.evaluation.customer.credit_amount += amount
+			order.amount_paid                       -= amount
+			order.remining_amount                    = 0
+			order.cancelled_by    = request.user
+			order.cancell_note    = request.POST.get('notes')
+			order.order_status    = 'ORDER_CANCELLED' 
+			order.evaluation.customer.save()
+			order.save()
+
+			messages.success(request,'Order Successfully Cancelled and Remining Amount Credited')
+
+		elif cancell_option == 'SENDINVOICE':
+			amount = float(request.POST.get('amount'))
+
+			order                 = Order.objects.select_related('evaluation__customer').get(id=order_id)
+			order.remining_amount = amount
+			order.cancelled_by    = request.user 
+			order.cancell_note    = request.POST.get('notes')
+			order.order_status    = 'ORDER_CANCELLED'
+			order.save()
+		else:
+			order                 = Order.objects.get(id=order_id)
+			order.remining_amount = 0
+			order.cancelled_by    = request.user
+			order.cancell_note    = request.POST.get('notes')
+			order.order_status    = 'ORDER_CANCELLED' 
+			order.save()
+
+			messages.success(request,'Order Successfully Cancelled')
+		
+		return redirect('bleach_salesadmin:salesadmindash-board')

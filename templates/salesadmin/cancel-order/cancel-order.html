@@ -68,14 +68,14 @@
                     <option value="">--Select option--</option>           
                     
                     {% if cancell_in_progress_order.amount_paid > cancell_in_progress_order.job_completed_amount %}
-                    <option value="PAYBACK">Pay Back</option>
+                    <option value="CASHBACK">Cash Back</option>
                     <option value="CREDIT">Credit</option>
                     {% elif cancell_in_progress_order.amount_paid < cancell_in_progress_order.job_completed_amount %}
                     <option value="SENDINVOICE">Send Invoice</option>
                     {% else %}
                     {% endif %}
 
-                    <option value="CANCEL">Cancel</option>
+                    <option value="CANCELL">Cancell</option>
                   
                 </select>
                 </label>
@@ -154,7 +154,7 @@ $('#cancel_method_id').change(function(){
     $('#cancel_amount').val(parseFloat(invoice_amount).toFixed(3));
   }
 
-  if ($(this).val() == 'PAYBACK') {
+  if ($(this).val() == 'CASHBACK') {
     $('.amount_div').attr("hidden",false);
     $('#amount_label').text('PayBack Amount');
 
@@ -163,7 +163,7 @@ $('#cancel_method_id').change(function(){
     $('#cancel_amount').val(parseFloat(payback_amount).toFixed(3));
   }
 
-  if ( ($(this).val() == 'CANCEL') || ($(this).val() == '') ) {
+  if ( ($(this).val() == 'CANCELL') || ($(this).val() == '') ) {
     $('.amount_div').attr("hidden",true);
     $('input[name="amount"]').attr("required",false);
   }

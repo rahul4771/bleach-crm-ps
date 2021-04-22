@@ -60,6 +60,56 @@
 </div><!--main-card-->        
             
      <div class="main-content-holder"><!--main-content-holder-->           
+{% if order_cancell_cashbacks %}
+<div class="white-wrapper"><!--white-wrapper-->
+    <h2 class="h2">Order Cancell CashBack Approval Task</h2>
+    <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+    <thead>
+        <tr>
+        <th>Order Number</th>
+        <th data-hide="phone,tablet">Name</th>
+        <th data-hide="phone,tablet">Mobile</th>
+        <th data-hide="phone">Total Amount</th>
+        <th data-hide="phone">Job Completed</th>
+        <th data-hide="phone">Paid</th>
+        <th data-hide="phone">Return</th>
+        <th class="align-center" data-hide="phone,tablet">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order_cancell_cashback in order_cancell_cashbacks %}
+        <tr>
+        <td class="bold-text">
+        {{order_cancell_cashback.order.order_no}}
+        </td>
+        <td>
+        {{order_cancell_cashback.order.evaluation.customer.name}}
+        </td>
+        <td>
+        {{order_cancell_cashback.order.evaluation.customer.mobile_number}}
+        </td>
+        <td>
+        {{order_cancell_cashback.order.total_amount|floatformat:'3'}}
+        </td>
+        <td>
+        {{order_cancell_cashback.job_completed_amount|floatformat:'3'}}
+        </td>
+        <td>
+        {{order_cancell_cashback.order.amount_paid|floatformat:'3'}}
+        </td>
+        <td>
+        {{order_cancell_cashback.return_amount|floatformat:'3'}}
+        </td>
+        <td>
+        <span class="clickable-row red-bg" data-href="#">Click to Approve</span>
+        </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+    </div>
+{% endif %}
+
 
 {% if approved_paybackdiscounts and ticket_count > 0 %}
 {% comment %} {% if approved_paybackdiscounts.paybackdiscount_count > 1 %} {% endcomment %}
