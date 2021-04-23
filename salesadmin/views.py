@@ -2436,7 +2436,7 @@ class OrderCancellation(IsSalesAdmin,View):
 			order              = Order.objects.get(id=order_id)
 			order.cancelled_by = request.user
 			order.cancell_note = request.POST.get('notes')
-			order.order_status = 'ORDER_CANCELLED' 
+			order.order_status = 'CANCELL_IN_PROGRESS' 
 			order.save()
 
 			messages.success(request,'Order Successfully Cancelled and CashBack Request Send to Customer')
