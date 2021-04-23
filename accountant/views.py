@@ -2249,7 +2249,7 @@ class OrderCancellation(IsAccountant,View):
 		cashback_history.save()
 
 		print(cashback_history)
-		return redirect('bleach_salesadmin:salesadmindash-board')
+		return redirect('accountant:accountantdash-board')
 
 
 	
