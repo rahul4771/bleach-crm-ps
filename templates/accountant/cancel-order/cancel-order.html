@@ -53,9 +53,9 @@
 		</div><!--cleaning-column-wrapper-->
 		
 		<br><br>
-  <div class="common-sub-head align-left ticket-form-head">Order Cancel Form</div> 
-  <form method="post" action="{% url 'bleach_salesadmin:cancell-order' order_cancell_cashbacks.id %}" enctype="multipart/form-data">{% csrf_token %}
-	<input type="hidden" name="order_id" id="order_id_hidden">
+  <div class="common-sub-head align-left ticket-form-head">Order Cancell Cashback Approval Form</div> 
+  <form method="post" action="{% url 'accountant:accountant-cancel-order' order_cancell_cashbacks.id %}" enctype="multipart/form-data">{% csrf_token %}
+	<input type="hidden" name="cashback_id" value="{{order_cancell_cashbacks.id}}">
 
 <div class="ticket-wrapper-full ltyellow-border ticket-form"><!--ticket-wrapper-full-->
 
