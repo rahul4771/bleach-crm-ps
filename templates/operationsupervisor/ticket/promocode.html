@@ -31,6 +31,7 @@
                 <option value="">--Select Action--</option>
                 <option value="SERVICEQUALITY">Service Quality</option>
                 <option value="DAMAGE">Damage</option>
+                <option value="OTHER">Other</option>
                 </select>
                 </label>
   </div>
@@ -83,7 +84,7 @@ $('document').ready(function(){
 
 $('.promocodesubmit').click(function(){
     console.log($('#id_section0-keynote_counter').val(),$('#id_section1-keynote_counter').val(),"lolll")
-    if ($('#id_section0-keynote_counter').val() > 0 || $('#id_section1-keynote_counter').val() > 0){
+    if ($('#id_section0-keynote_counter').val() > 0 || $('#id_section1-keynote_counter').val() > 0 || $('#id_section2-keynote_counter').val() > 0){
         console.log('dre')
         submitAnyForm(this);
     }else{
