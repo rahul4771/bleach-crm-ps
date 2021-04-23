@@ -39,7 +39,7 @@ def GetCashCollectOrderInfo(request):
 
 	query       =   request.GET.get('keyword')
 
-	orders = Order.objects.filter(is_active=True,order_status__isnull=False).filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).select_related('evaluation__customer').filter(Q(evaluation__quatation_status='APPROVED') & Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)) & ~Q(Q(order_status='ORDER_CANCELLED'))).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).order_by('start_at'),to_attr='orderschedules')).annotate(Count('order_scheduler_order'))
+	orders = Order.objects.filter(is_active=True,order_status__isnull=False).filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).select_related('evaluation__customer').filter(Q(Q(evaluation__quatation_status='APPROVED') & Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)) & ~Q(Q(order_status='CANCELL_IN_PROGRESS'))) | Q(Q(evaluation__quatation_status='APPROVED') & Q(Q(evaluation__evaluation_id__icontains=query)|Q(evaluation__customer__name__icontains=query)) & ~Q(Q(order_status='CANCELL_IN_PROGRESS'))) ).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).order_by('start_at'),to_attr='orderschedules')).annotate(Count('order_scheduler_order'))
 			
 	
 	if orders:
@@ -2195,59 +2195,24 @@ class TicketAdvanced(IsAccountant,View):
 class OrderCancellation(IsAccountant,View):
 	def get(self,request,order_cancel_id):
 		order_cancell_cashbacks = CancellOrderAmountHistory.objects.filter(amount_return_method='CASHBACK',is_completed=False,id=int(order_cancel_id)).select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order__order_scheduler_book').annotate(job_completed_amount=Sum(Case(When(order__order_scheduler_order__work_status='CLEANING_FULFILLED',then=F('order__order_scheduler_order__order_scheduler_book__total_cost')),default=0,output_field=IntegerField()))).first()
-		print(order_cancell_cashbacks.job_completed_amount,"cbs")
 		return render(request,"accountant/cancel-order/cancel-order.html",{'order_cancel_id':order_cancel_id,"order_cancell_cashbacks":order_cancell_cashbacks})
 
 	def post(self,request,order_cancel_id):
-		cancell_option = request.POST.get('cancel_method')
+		print(request.POST)
+		#cash back		
+		cashback_id                   = request.POST.get('cashback_id')
+		return_amount                 = request.POST.get('return_amount')
+		cashback_history              = CancellOrderAmountHistory.objects.select_related('order').get(id=cashback_id)
 		
-		if cancell_option == 'CASHBACK':
-			amount = float(request.POST.get('amount'))			
-			CancellOrderAmountHistory.objects.create(order_id=order_id,return_amount=amount,amount_return_method='CASHBACK')
-		
-			order              = Order.objects.get(id=order_id)
-			order.cancelled_by = request.user
-			order.cancell_note = request.POST.get('notes')
-			order.order_status = 'ORDER_CANCELLED' 
-			order.save()
+		cashback_history.order.remining_amount  = 0
+		cashback_history.order.amount_paid     -= float(return_amount)
+		cashback_history.order.order_status     = 'ORDER_CANCELLED'
+		cashback_history.is_completed           = True
+		cashback_history.return_amount          = float(return_amount)
+		cashback_history.order.save()
+		cashback_history.save()
 
-			messages.success(request,'Order Successfully Cancelled and CashBack Request Send to Customer')
-
-		elif cancell_option == 'CREDIT':
-			amount = float(request.POST.get('amount'))			
-			CancellOrderAmountHistory.objects.create(order_id=order_id,return_amount=amount,amount_return_method='CREDIT',is_completed=True)
-			
-			order                 = Order.objects.get(id=order_id)
-			order.evaluation.customer.credit_amount += amount
-			order.amount_paid                       -= amount
-			order.remining_amount                    = 0
-			order.cancelled_by    = request.user
-			order.cancell_note    = request.POST.get('notes')
-			order.order_status    = 'ORDER_CANCELLED' 
-			order.evaluation.customer.save()
-			order.save()
-
-			messages.success(request,'Order Successfully Cancelled and Remining Amount Credited')
-
-		elif cancell_option == 'SENDINVOICE':
-			amount = float(request.POST.get('amount'))
-
-			order                 = Order.objects.select_related('evaluation__customer').get(id=order_id)
-			order.remining_amount = amount
-			order.cancelled_by    = request.user 
-			order.cancell_note    = request.POST.get('notes')
-			order.order_status    = 'ORDER_CANCELLED'
-			order.save()
-		else:
-			order                 = Order.objects.get(id=order_id)
-			order.remining_amount = 0
-			order.cancelled_by    = request.user
-			order.cancell_note    = request.POST.get('notes')
-			order.order_status    = 'ORDER_CANCELLED' 
-			order.save()
-
-			messages.success(request,'Order Successfully Cancelled')
-		
+		print(cashback_history)
 		return redirect('bleach_salesadmin:salesadmindash-board')
 
 

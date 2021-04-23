@@ -2464,7 +2464,7 @@ class OrderCancellation(IsSalesAdmin,View):
 			order.remining_amount = amount
 			order.cancelled_by    = request.user 
 			order.cancell_note    = request.POST.get('notes')
-			order.order_status    = 'ORDER_CANCELLED'
+			order.order_status    = 'CANCELL_IN_PROGRESS'
 			order.save()
 		else:
 			order                 = Order.objects.get(id=order_id)

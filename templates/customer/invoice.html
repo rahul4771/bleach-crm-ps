@@ -244,6 +244,7 @@
             <tr class="table1tr1">
               <td colspan="2" class="align-right">
                 <form method="post" action="https://payment.bleachkw.com/SendPerformREQuest.php" enctype= "multipart/form-data">{% csrf_token %} 
+                <input type="hidden" name="order_status" value="{{order.order_status}}">
                 {% if order.evaluation.payment_method == 'BREAKDOWN' %}
                 {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
                 <input type="hidden" name="price" value="{{order.evaluation.before_cleaning_amount}}">
