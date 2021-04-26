@@ -177,24 +177,24 @@
       
         {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
         {% if order.order_status == 'APPROVED_BY_CLIENT' %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="green-bg clickable-row">Approved</span>
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'bleach_salesadmin:salesadmin-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="green-bg clickable-row">Approved</span>
         {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="violet-bg clickable-row">Order in Progress</span>
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'bleach_salesadmin:salesadmin-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="violet-bg clickable-row">Order in Progress</span>
         {% elif order.order_status == 'ORDER_CLOSED' %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="rose-bg clickable-row">Completed</span>
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'bleach_salesadmin:salesadmin-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="rose-bg clickable-row">Completed</span>
         {% elif order.order_status == 'CANCELL_IN_PROGRESS' %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="skyblue-bg clickable-row">Cancell in Progress</span>
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'bleach_salesadmin:salesadmin-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="skyblue-bg clickable-row">Cancell in Progress</span>
         {% else %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Order Cancelled</span>
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'bleach_salesadmin:salesadmin-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Order Cancelled</span>
         {% endif %}
         {% else %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="oil-green-bg clickable-row">Approved-Not Paid</span>
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'bleach_salesadmin:salesadmin-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="oil-green-bg clickable-row">Approved-Not Paid</span>
         {% endif %}
         {% endfor %}
 
-        {% elif evaluation.quatation_status == 'REJECTED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Rejected</span>
-        {% elif evaluation.quatation_status == 'PENDING' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="yellow-bg clickable-row">Pending</span>
-        {% elif evaluation.quatation_status == 'EXPIRED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="orange-bg clickable-row">Expired</span>
+        {% elif evaluation.quatation_status == 'REJECTED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'bleach_salesadmin:salesadmin-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Rejected</span>
+        {% elif evaluation.quatation_status == 'PENDING' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'bleach_salesadmin:salesadmin-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="yellow-bg clickable-row">Pending</span>
+        {% elif evaluation.quatation_status == 'EXPIRED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'bleach_salesadmin:salesadmin-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="orange-bg clickable-row">Expired</span>
         {% else %}
         <span data-href="#" class="blue-bg clickable-row">Evaluating</span>
         {%endif%}
@@ -205,7 +205,7 @@
     <a href="/customer/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>
     {% endif %}
     {% else %}<img src="{% static 'files/images/view-icon-gray.png' %}" align="absmiddle" class="download-icon">{% endif %} 
-    {% comment %} &nbsp &nbsp{% if evaluation.quatation_status == 'APPROVED' %}<img src="{% static 'files/images/edit-gray.png' %}" align="absmiddle" class="download-icon">{% else %}<a href="{% url 'agent:agent-makequatation1edit' evaluation.customer.id evaluation.id %}"><img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon"></a>{% endif %} {% endcomment %}
+    {% comment %} &nbsp &nbsp{% if evaluation.quatation_status == 'APPROVED' %}<img src="{% static 'files/images/edit-gray.png' %}" align="absmiddle" class="download-icon">{% else %}<a href="{% url 'bleach_salesadmin:salesadmin-makequatation1edit' evaluation.customer.id evaluation.id %}"><img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon"></a>{% endif %} {% endcomment %}
     </td>
     </tr>    
     {% empty %}
@@ -331,7 +331,7 @@ $("#governorate_filter_id").change(function(){
 
 function set_params_go(args)
 {
-var url='{% url 'agent:agent-customer-bookings' %}';
+var url='{% url 'bleach_salesadmin:salesadmin-customer-bookings' %}';
 var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val(),
 };
 for(key in args) 
