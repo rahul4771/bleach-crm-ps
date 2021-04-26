@@ -1687,8 +1687,9 @@ class CashbackEdit(IsOperationSupervisor,View):
 		paybackdiscount_details = PaybackDiscountDetails.objects.filter(is_active=True,paybackdiscount=paybackdiscount)
 		payback_servicequality = paybackdiscount_details.filter(category='SERVICEQUALITY')
 		payback_damage = paybackdiscount_details.filter(category='DAMAGE')
+		payback_other = paybackdiscount_details.filter(category='OTHER')
 		paybackdiscountmedias = PaybackDiscountDetailsMedia.objects.filter(paybackdiscount=paybackdiscount,is_active=True)
-		return render(request,"operationsupervisor/ticket/cash-back-edit.html",{"paybackdiscountmedias":paybackdiscountmedias,"paybackdiscount":paybackdiscount,"paybackdiscount_details":paybackdiscount_details,"payback_servicequality":payback_servicequality,"payback_damage":payback_damage})
+		return render(request,"operationsupervisor/ticket/cash-back-edit.html",{"paybackdiscountmedias":paybackdiscountmedias,"paybackdiscount":paybackdiscount,"paybackdiscount_details":paybackdiscount_details,"payback_servicequality":payback_servicequality,"payback_damage":payback_damage,"payback_other":payback_other})
 
 	def post(self,request,investigation_id):
 
@@ -1710,8 +1711,11 @@ class CashbackEdit(IsOperationSupervisor,View):
 		for section in sections:
 			if section == 'SERVICEQUALITY':
 				section_no = 1
-			else:
+			elif section == 'DAMAGE':
 				section_no = 2
+			else:
+				section_no = 3
+
 			print(section_no,"sectionno")
 			#to save keynotes
 			try:
@@ -1901,8 +1905,9 @@ class BuyBackPromoCodeEdit(IsOperationSupervisor,View):
 		buybackpromogift_details = BuybackPromocodeGiftDetails.objects.filter(is_active=True,buybackpromocodegift=buybackpromogift)
 		buybackpromogift_servicequality = buybackpromogift_details.filter(category='SERVICEQUALITY')
 		buybackpromogift_damage = buybackpromogift_details.filter(category='DAMAGE')
+		buybackpromogift_other = buybackpromogift_details.filter(category='OTHER')
 		buybackpromocodemedias = BuybackPromocodeGiftDetailsMedia.objects.filter(is_active=True,buybackpromocodegift=buybackpromogift)
-		return render(request,"operationsupervisor/ticket/promocode-edit.html",{"buybackpromocodemedias":buybackpromocodemedias,"buybackpromogift":buybackpromogift,"buybackpromogift_details":buybackpromogift_details,"buybackpromogift_servicequality":buybackpromogift_servicequality,"buybackpromogift_damage":buybackpromogift_damage})
+		return render(request,"operationsupervisor/ticket/promocode-edit.html",{"buybackpromocodemedias":buybackpromocodemedias,"buybackpromogift":buybackpromogift,"buybackpromogift_details":buybackpromogift_details,"buybackpromogift_servicequality":buybackpromogift_servicequality,"buybackpromogift_damage":buybackpromogift_damage,"buybackpromogift_other":buybackpromogift_other})
 
 	def post(self,request,investigation_id):
 
@@ -1917,8 +1922,11 @@ class BuyBackPromoCodeEdit(IsOperationSupervisor,View):
 		for section in sections:
 			if section == 'SERVICEQUALITY':
 				section_no = 1
-			else:
+			elif section == 'DAMAGE':
 				section_no = 2
+			else:
+				section_no = 3
+				
 			print(section_no,"sectionno")
 			#to save keynotes
 			try:

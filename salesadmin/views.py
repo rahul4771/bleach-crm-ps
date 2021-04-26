@@ -155,12 +155,20 @@ class AdminHome(IsSalesAdmin,View):
 		except:
 			spp_calendar_notapprovedorder_schedules = None
 
-		#ticket approval task		
+		#ticket approval task
+		ticket_count = 0
+
 		approve_tickets = Investigation.objects.filter(Q(Q(is_paybackdiscount_approved=False)|Q(is_buybackgiftpromo_approved=False))).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=False),to_attr='paybackdiscounts'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.select_related('investigation').filter(investigation__is_buybackgiftpromo_approved=False,is_active=True),to_attr='buybackpromocodegifts')).annotate(paybackdiscount_count=Case(When(paybackdiscount_investigation__is_completed=False,then=1),default=0,output_field=IntegerField()),buybackpromocodegift_count=Case(When(buybackpromocodegift_investigation__is_completed=False,then=1),default=0,output_field=IntegerField())).filter( Q(Q(paybackdiscount_count__gte=1)|Q(buybackpromocodegift_count__gte=1)) )
 		#add days left
 		if approve_tickets:
 			for ticket in approve_tickets:
 				ticket.days_left = (timezone.now()-ticket.scheduled_at).days
+
+				for paybackdiscount in ticket.paybackdiscounts:
+					ticket_count += 1
+
+				for buybackpromocodegift in ticket.buybackpromocodegifts:
+					ticket_count += 1
 
 		#cancell in progress orders
 		cancell_in_progress_orders = Order.objects.filter(order_status="CANCELL_IN_PROGRESS").select_related('evaluation__customer').prefetch_related('order_scheduler_order__order_scheduler_book')
@@ -172,7 +180,7 @@ class AdminHome(IsSalesAdmin,View):
 					cleaning_price += scheduler.order_scheduler_book.total_cost/len(cancell_in_progress_order.order_scheduler_order.all())			
 			cancell_in_progress_order.job_completed_amount = cleaning_price
 
-		return render(request,'salesadmin/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'evaluators_sales_targets':evaluators_sales_target,'approve_tickets':approve_tickets,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules,"cancell_in_progress_orders":cancell_in_progress_orders})
+		return render(request,'salesadmin/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'evaluators_sales_targets':evaluators_sales_target,'approve_tickets':approve_tickets,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules,"cancell_in_progress_orders":cancell_in_progress_orders,"ticket_count":ticket_count})
 
 	def post(self,request):
 		action = request.POST.get('action_type')
@@ -2480,6 +2488,45 @@ class OrderCancellation(IsSalesAdmin,View):
 			order.cancell_note    = request.POST.get('notes')
 			order.order_status    = 'CANCELL_IN_PROGRESS'
 			order.save()
+
+			language = order.evaluation.customer.sms_preference
+
+			evaluation = order.evaluation
+
+			if evaluation.customer.is_sms == True:
+
+				url = "https://smsapi.future-club.com/fccsms.aspx"
+
+				if language == 'ENGLISH':
+
+					if evaluation.payment_method == 'SUBSCRIPTION':
+
+						message = "Dear Customer, Please find the Invoice against the order number "+str(evaluation.evaluation_id)+"  here https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait."
+
+					else:
+
+						message = "Dear Customer, Please find the Invoice against the order number "+str(evaluation.evaluation_id)+"  here https://my.bleachkw.com/customer/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait."
+
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+				
+				else:
+					if evaluation.payment_method == 'SUBSCRIPTION':
+
+						message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على (Customer Service Number).  شكراً لاختياركم بليتش لخدمات التنظيف"
+
+					else:
+
+						message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على (Customer Service Number).  شكراً لاختياركم بليتش لخدمات التنظيف"
+
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+				
+				headers = {
+					'cache-control': "no-cache"
+				}
+
+				response = requests.request("GET", url, headers=headers, params=querystring)
+
+				print(message,response.text,"respo")
 		else:
 			order                 = Order.objects.get(id=order_id)
 			order.remining_amount = 0

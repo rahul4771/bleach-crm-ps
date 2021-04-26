@@ -177,7 +177,7 @@ def sendinvoice(request):
 
         response = requests.request("GET", url, headers=headers, params=querystring)
 
-        print(response.text,"respo")
+        print(message,response.text,"respo")
         print(order_no)
         data=True
     else:
