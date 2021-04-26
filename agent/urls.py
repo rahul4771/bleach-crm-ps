@@ -6,6 +6,7 @@ urlpatterns = [
 	url(r'^dashboard/$',views.AgentHome.as_view(),name='agentdash-board'),
 	url(r'^resources/$',views.ResourceManagement.as_view(),name='resource-management'),
 	url(r'^orders/$',views.OrderDetails.as_view(),name='agent-orders'),
+	url(r'^customer-bookings/$',views.CustomerBookingsList.as_view(),name='agent-customer-bookings'),
 
 	url(r'^payment-policy/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.PaymentEdit.as_view(),name='agent-payment-edit'),
 	url(r'^active-subscriptions/$',views.ActiveSubscriptions.as_view(),name='agent-active-subscriptions'),
