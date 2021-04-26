@@ -88,9 +88,14 @@ def GetCashCollectOrderDetailedInfo(request):
 		dropdown_order_info['order_status']  	= order.order_status
 		dropdown_order_info['payment_status']	= order.payment_status
 		dropdown_order_info['payment_policy']	= order.evaluation.payment_method
-		dropdown_order_info['agent_image_url']	= order.evaluation.call_attender.profile_image.url or None
-		dropdown_order_info['agent_name']       = order.evaluation.call_attender.name or None
-		dropdown_order_info['total_cleaners'] 	= order.total_cleaners
+		try:
+			dropdown_order_info['agent_image_url']	= order.evaluation.call_attender.profile_image.url
+		except:
+			dropdown_order_info['agent_image_url']  = None
+		try:
+			dropdown_order_info['agent_name']       = order.evaluation.call_attender.name
+		except:
+			dropdown_order_info['total_cleaners'] 	= None
 
 		dropdown_order_info['remining_amount']     = order.remining_amount
 		dropdown_order_info['before_amount']       = order.evaluation.before_cleaning_amount 
@@ -289,8 +294,15 @@ class AccountantHome(IsAccountant,View):
 					ticket_count += 1
 
 		#order cancell cashback
-		order_cancell_cashbacks = CancellOrderAmountHistory.objects.filter(amount_return_method='CASHBACK',is_completed=False).select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order__order_scheduler_book').annotate(job_completed_amount=Sum(Case(When(order__order_scheduler_order__work_status='CLEANING_FULFILLED',then=F('order__order_scheduler_order__order_scheduler_book__total_cost')),default=0,output_field=IntegerField())))
+		order_cancell_cashbacks = CancellOrderAmountHistory.objects.filter(amount_return_method='CASHBACK',is_completed=False).select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order__order_scheduler_book')
 		
+		for order_cancell_cashback in order_cancell_cashbacks:
+			cleaning_price = 0
+			for scheduler in order_cancell_cashback.order.order_scheduler_order.all():
+				if scheduler.work_status=='CLEANING_FULFILLED':
+					cleaning_price += scheduler.order_scheduler_book.total_cost/len(order_cancell_cashback.order.order_scheduler_order.all())			
+			order_cancell_cashback.job_completed_amount = cleaning_price
+
 		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders,"approved_paybackdiscounts":approved_paybackdiscounts,"subscriptions":subscriptions,"ticket_count":ticket_count,"order_cancell_cashbacks":order_cancell_cashbacks})
 
 	
@@ -2230,11 +2242,19 @@ class TicketAdvanced(IsAccountant,View):
 
 class OrderCancellation(IsAccountant,View):
 	def get(self,request,order_cancel_id):
-		order_cancell_cashbacks = CancellOrderAmountHistory.objects.filter(amount_return_method='CASHBACK',is_completed=False,id=int(order_cancel_id)).select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order__order_scheduler_book').annotate(job_completed_amount=Sum(Case(When(order__order_scheduler_order__work_status='CLEANING_FULFILLED',then=F('order__order_scheduler_order__order_scheduler_book__total_cost')),default=0,output_field=IntegerField()))).first()
+	
+		order_cancell_cashbacks = CancellOrderAmountHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order__order_scheduler_book').annotate(total_cleaners=Sum('order__order_scheduler_order__order_scheduler_book__number_of_cleaners')).get(amount_return_method='CASHBACK',is_completed=False,id=int(order_cancel_id))
+	
+		cleaning_price = 0
+		for scheduler in order_cancell_cashbacks.order.order_scheduler_order.all():
+			if scheduler.work_status=='CLEANING_FULFILLED':
+				cleaning_price += scheduler.order_scheduler_book.total_cost/len(order_cancell_cashbacks.order.order_scheduler_order.all())			
+		order_cancell_cashbacks.job_completed_amount = cleaning_price
+
 		return render(request,"accountant/cancel-order/cancel-order.html",{'order_cancel_id':order_cancel_id,"order_cancell_cashbacks":order_cancell_cashbacks})
 
 	def post(self,request,order_cancel_id):
-		print(request.POST)
+		
 		#cash back		
 		cashback_id                   = request.POST.get('cashback_id')
 		return_amount                 = request.POST.get('return_amount')

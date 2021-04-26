@@ -239,6 +239,8 @@
         class="violet-line"
         {% elif order.order_status == 'ORDER_CLOSED' %}
         class="rose-line"
+        {% elif order.order_status == 'CANCELL_IN_PROGRESS' %}
+        class="skyblue-line"
         {% else %}
         class="red-line"
         {% endif %}

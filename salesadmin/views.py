@@ -163,7 +163,14 @@ class AdminHome(IsSalesAdmin,View):
 				ticket.days_left = (timezone.now()-ticket.scheduled_at).days
 
 		#cancell in progress orders
-		cancell_in_progress_orders = Order.objects.filter(order_status="CANCELL_IN_PROGRESS").select_related('evaluation__customer').prefetch_related('order_scheduler_order__order_scheduler_book').annotate(job_completed_amount=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=F('order_scheduler_order__order_scheduler_book__total_cost')),default=0,output_field=IntegerField())))
+		cancell_in_progress_orders = Order.objects.filter(order_status="CANCELL_IN_PROGRESS").select_related('evaluation__customer').prefetch_related('order_scheduler_order__order_scheduler_book')
+		
+		for cancell_in_progress_order in cancell_in_progress_orders:
+			cleaning_price = 0
+			for scheduler in cancell_in_progress_order.order_scheduler_order.all():
+				if scheduler.work_status=='CLEANING_FULFILLED':
+					cleaning_price += scheduler.order_scheduler_book.total_cost/len(cancell_in_progress_order.order_scheduler_order.all())			
+			cancell_in_progress_order.job_completed_amount = cleaning_price
 
 		return render(request,'salesadmin/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'evaluators_sales_targets':evaluators_sales_target,'approve_tickets':approve_tickets,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules,"cancell_in_progress_orders":cancell_in_progress_orders})
 
@@ -2421,10 +2428,17 @@ class MakeQuatationPhase2Delete(IsSalesAdmin,View):
 
 class OrderCancellation(IsSalesAdmin,View):
 	def get(self,request,order_id):
-		order_details = Order.objects.select_related('evaluation__customer','evaluation__call_attender').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('customer_address__area','customer_address','order_scheduler_book__service_type'),to_attr='order_secheduler_feedback')).annotate(total_cleaners=Sum('order_scheduler_order__order_scheduler_book__number_of_cleaners')).get(id=int(order_id),is_active=True)
+
 		#cancell in progress orders
-		cancell_in_progress_order = Order.objects.select_related('evaluation__customer').prefetch_related('order_scheduler_order__order_scheduler_book').filter(id=order_id).annotate(job_completed_amount=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=F('order_scheduler_order__order_scheduler_book__total_cost')),default=0,output_field=IntegerField()))).first()
-		return render(request,"salesadmin/cancel-order/cancel-order.html",{'order_details':order_details,'order_id':order_id,"cancell_in_progress_order":cancell_in_progress_order})
+		cancell_in_progress_order = Order.objects.select_related('evaluation__customer').prefetch_related('order_scheduler_order__order_scheduler_book').annotate(total_cleaners=Sum('order_scheduler_order__order_scheduler_book__number_of_cleaners')).get(id=order_id)
+		
+		cleaning_price = 0
+		for scheduler in cancell_in_progress_order.order_scheduler_order.all():
+			if scheduler.work_status=='CLEANING_FULFILLED':
+				cleaning_price += scheduler.order_scheduler_book.total_cost/len(cancell_in_progress_order.order_scheduler_order.all())			
+		cancell_in_progress_order.job_completed_amount = cleaning_price
+
+		return render(request,"salesadmin/cancel-order/cancel-order.html",{'order_id':order_id,"cancell_in_progress_order":cancell_in_progress_order})
 
 	def post(self,request,order_id):
 		cancell_option = request.POST.get('cancel_method')
