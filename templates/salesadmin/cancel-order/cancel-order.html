@@ -24,28 +24,32 @@
 			
 				<div class="cleaning-column-wrapper ltyellow-border order-details"><!--cleaning-column-wrapper-->
 				<div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
-        <div class="details-head align-left order_blc_no">{{order_details.order_no}}</div>
-				<div class="inside-head align-left order_customer_name">{{order_details.evaluation.customer.name}}</div>
-				<p class="paragraph order_customer_mobile">{{order_details.evaluation.customer.mobile_number}}</p>
+        <div class="details-head align-left order_blc_no">{{cancell_in_progress_order.order_no}}</div>
+				<div class="inside-head align-left order_customer_name">{{cancell_in_progress_order.evaluation.customer.name}}</div>
+				<p class="paragraph order_customer_mobile">{{cancell_in_progress_order.evaluation.customer.mobile_number}}</p>
 				
 				<div class="order_payment_status">
-        <div class="{% if payment_status == 'COMPLETED' %}green-bg-lg{% elif payment_status == 'PENDING'%}yellow-bg-lg{% elif payment_status == 'ON_HOLD'%}red-bg-lg{% else %}yellow-bg-lg{% endif %} payment_status">{{order_details.payment_status}}</div>
-        <div class="{% if order_status == 'APPROVED_BY_CLIENT' %}blue-bg-lg{% elif order_status == 'ORDER_IN_PROGRESS'%}yellow-bg-lg{% elif order_status == 'ORDER_CANCELLED'%}red-bg-lg{% elif order_status == 'ORDER_CLOSED'%}green-bg-lg{% else %}yellow-bg-lg{% endif %}">{{order_details.order_status}}</div>
+        <div class="{% if cancell_in_progress_order.payment_status == 'COMPLETED' %}green-bg-lg{% elif cancell_in_progress_order.payment_status == 'PENDING'%}yellow-bg-lg{% elif cancell_in_progress_order.payment_status == 'ON_HOLD'%}red-bg-lg{% else %}yellow-bg-lg{% endif %} payment_status">{{cancell_in_progress_order.payment_status}}</div>
+        <div class="{% if cancell_in_progress_order.order_status == 'APPROVED_BY_CLIENT' %}blue-bg-lg{% elif cancell_in_progress_order.order_status == 'ORDER_IN_PROGRESS'%}yellow-bg-lg{% elif cancell_in_progress_order.order_status == 'ORDER_CANCELLED'%}red-bg-lg{% elif cancell_in_progress_order.order_status == 'ORDER_CLOSED'%}green-bg-lg{% elif cancell_in_progress_order.order_status == 'CANCELL_IN_PROGRESS' %}skyblue-bg-lg{% else %}yellow-bg-lg{% endif %}">{{cancell_in_progress_order.order_status}}</div>
 				</div>
 
 				<div class="order_addresses">
-        {% for scheduler in order_details.order_secheduler_feedback %}
+        {% for scheduler in cancell_in_progress_order.order_scheduler_order.all %}
           <div class="area-bold">{{scheduler.customer_address.area.name}}</div><div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle {% if scheduler.work_status == 'CLEANING_FULFILLED' %}green-text{% else %}yellow-text{% endif %}" aria-hidden="true"></i> {{scheduler.order_scheduler_book.service_type.name}} - {{scheduler.order_scheduler_book.cleaning_policy}}</div>
         {% endfor %}
 				</div>
 			</div><!--cleaning-column-widget cleaning-column-widget-column1-->
 			
 			<div class="cleaning-column-widget cleaning-column-widget-column2 order-details"><!--cleaning-column-widget cleaning-column-widget-column2-->
-				<div class="common-gray-text align-left">{{order_details.evaluation.created|date:'d-m-Y g:i A'}}</div>
-				<div class="common-gray-text align-left yellow-text lg-text">{{order_details.evaluation.total_cost|floatformat:"3"}} KD</div>
-				<div class="common-gray-text align-left sm-text gray-text">{{order_details.total_cleaners}} cleaners</div>
-				{% if order_details.evaluation.call_attender.profile_image %}
-          <div class="profile-pic-line"><img class="agent_image" src="{{order_details.evaluation.call_attender.profile_image.url}}"></div>
+				<div class="common-gray-text align-left">{{cancell_in_progress_order.evaluation.created|date:'d-m-Y g:i A'}}</div>
+				<br>
+        <div class="common-gray-text align-left yellow-text lg-text">Total Cost :{{cancell_in_progress_order.evaluation.total_cost|floatformat:"3"}} KD</div>
+        <div class="common-gray-text align-left yellow-text lg-text">Cleaning Amount :{{cancell_in_progress_order.job_completed_amount|floatformat:"3"}} KD</div>
+        <div class="common-gray-text align-left yellow-text lg-text">Paid Amount :{{cancell_in_progress_order.amount_paid|floatformat:"3"}} KD</div>
+        <br>
+				<div class="common-gray-text align-left sm-text gray-text">{{cancell_in_progress_order.total_cleaners}} cleaners</div>
+				{% if cancell_in_progress_order.evaluation.call_attender.profile_image %}
+          <div class="profile-pic-line"><img class="agent_image" src="{{cancell_in_progress_order.evaluation.call_attender.profile_image.url}}"></div>
         {% else %}
 					<div class="profile-pic-line"><img class="agent_image" src="{% static 'files/images/profile-pic.png' %}"></div>
         {% endif %}
@@ -80,22 +84,6 @@
                 </select>
                 </label>
   </div><!--ticket-form-left-->
-  <div class="ticket-form-right"><!--ticket-form-right-->
-  		<div class=" bold-text common-label"> <label>Total Amount</label></div>
-      <input type="text" class="textBox" name="total_amount" value="{{cancell_in_progress_order.total_amount|floatformat:'3'}}" required readonly />
-  </div><!--ticket-form-right-->
-</div><!--ticket-wrapper-row ticket-forms-boxes-->
-<hr class="hr-dashedpad">
-
-<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-  <div class="ticket-form-left"><!--ticket-form-left-->
-  	<div class=" bold-text common-label"> <label>Job Completed</label></div>
-        <input type="text" class="textBox" name="jobcompleted" value="{{cancell_in_progress_order.job_completed_amount|floatformat:'3'}}" required readonly/>
-  </div><!--ticket-form-left-->
-  <div class="ticket-form-right"><!--ticket-form-right-->
-  	<div class="text bold-text common-label"> <label>Paid Amount</label></div>
-      <input type="text" class="textBox" name="paid_amount" value="{{cancell_in_progress_order.amount_paid|floatformat:'3'}}" required readnly/>
-  </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->  
 
 <hr class="hr-dashedpad amount_div" hidden>
@@ -103,7 +91,7 @@
 <div class="ticket-wrapper-row ticket-forms-boxes amount_div" hidden><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   	<div class=" bold-text common-label"> <label id="amount_label">Amount</label></div>
-        <input type="text" class="textBox" id="cancel_amount" name="amount" required readonly/>
+        <input type="number" class="textBox OnlyNumber" id="cancel_amount" name="amount" required/>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
   </div><!--ticket-form-right-->
@@ -143,6 +131,7 @@ $('#cancel_method_id').change(function(){
     //adding amount to credit amount field
     var credit_amount = "{{cancell_in_progress_order.amount_paid}}" - "{{cancell_in_progress_order.job_completed_amount}}" ;
     $('#cancel_amount').val(parseFloat(credit_amount).toFixed(3));
+    $('#cancel_amount').attr('max',credit_amount);
   }
 
   if ($(this).val() == 'SENDINVOICE') {
@@ -152,6 +141,7 @@ $('#cancel_method_id').change(function(){
     //adding amount to invoice amount field
     var invoice_amount = "{{cancell_in_progress_order.job_completed_amount}}" - "{{cancell_in_progress_order.amount_paid}}" ;
     $('#cancel_amount').val(parseFloat(invoice_amount).toFixed(3));
+    $('#cancel_amount').attr('max',invoice_amount);
   }
 
   if ($(this).val() == 'CASHBACK') {
@@ -161,6 +151,7 @@ $('#cancel_method_id').change(function(){
     //adding amount to payback amount field
     var payback_amount = "{{cancell_in_progress_order.amount_paid}}" - "{{cancell_in_progress_order.job_completed_amount}}" ;
     $('#cancel_amount').val(parseFloat(payback_amount).toFixed(3));
+    $('#cancel_amount').attr('max',payback_amount);
   }
 
   if ( ($(this).val() == 'CANCELL') || ($(this).val() == '') ) {
