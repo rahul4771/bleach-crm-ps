@@ -1513,14 +1513,6 @@ class ProductivityView(IsAdmin,View):
 	def post(self,request):
 		action = request.POST.get('action_type')
 
-		if action == 'addproductivity':
-			productivity_form = ProductivityForm(request.POST)
-			if productivity_form.is_valid():
-				productivity_form.save()
-				messages.success(request,"Service Productivity Successfully Added")
-			else:
-				messages.error(request,get_error(productivity_form))
-
 		if action == 'editproductivity':
 			productivity_id = request.POST.get('productivityid')
 			productivity    = ServiceProductivity.objects.get(id=productivity_id)
