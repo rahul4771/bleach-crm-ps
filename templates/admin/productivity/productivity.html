@@ -32,7 +32,14 @@
   <tr>
     <td>{{productivity.service_type.name}}</td>
     <td>{% if productivity.service_type.name == 'Upholstery Cleaning' %}{{productivity.upholstery_type}}{% elif productivity.service_type.name == 'Kitchen Cleaning' %}{% if productivity.is_newkitchen %}New Kitchen{% else %}Old Kitchen{% endif %}{% elif productivity.service_type.name == 'Window Cleaning' %}{% if productivity.is_highprice_window %}High Price Window{% else %}Low Price Window{% endif %}{% elif productivity.service_type.name == 'Facade Cleaning' %}{% if productivity.is_highprice_facade %}High Price Facade{% else %}Low Price Facade{% endif %}{% else %}Normal{% endif %}</td>
-    <td></td>
+    <td>
+      {% for price_range in price_ranges %}
+      {% if productivity.service_type == price_range.service_type and productivity.upholstery_type == price_range.upholstery_type and productivity.is_newkitchen == price_range.is_newkitchen and productivity.is_highprice_window == price_range.is_highprice_window and productivity.is_highprice_facade == price_range.is_highprice_facade  %}
+      {% if price_range.minimum_area %}{{price_range.minimum_area}}-{% endif %}{{price_range.maximum_area}} Sqm  {{price_range.price}} KD
+      <br>
+      {% endif %}
+      {% endfor %} 
+    </td>
     <td class="align-center">{{productivity.perhour_cleaning}}</td>
     <td>
     <img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon edit_productivity clickable-cursor" data-id="{{productivity.id}}" data-service_typeid="{{productivity.service_type.id}}" data-service_typename="{{productivity.service_type.name}}" data-perhour_cleaning="{{productivity.perhour_cleaning}}" data-perunit_price="{{productivity.perunit_price|floatformat:'3'}}">

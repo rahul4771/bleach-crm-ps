@@ -23,7 +23,7 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,Evaluat
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,Promocode
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
-from bleachadmin.models import ServiceProductivity
+from bleachadmin.models import ServiceProductivity,ServicePriceRange
 
 from order.forms import PromocodeForm
 from bleachadmin.forms import ProductivityForm
@@ -1497,9 +1497,14 @@ class ProductivityView(IsAdmin,View):
 	def get(self,request):
 		
 		try:
-			productivities = ServiceProductivity.objects.filter(is_active=True).order_by('-created')
+			productivities = ServiceProductivity.objects.filter(is_active=True)
 		except:
 			productivities = None
+
+		try:
+			price_ranges = ServicePriceRange.objects.filter(is_active=True)
+		except:
+			price_ranges = None
 
 
 		added_services = productivities.values_list('service_type',flat=True)
@@ -1508,7 +1513,7 @@ class ProductivityView(IsAdmin,View):
 		except:
 			service_types = None
 
-		return render(request,'admin/productivity/productivity.html',{'productivities':productivities,'service_types':service_types,})
+		return render(request,'admin/productivity/productivity.html',{'productivities':productivities,'service_types':service_types,'price_ranges':price_ranges})
 
 	def post(self,request):
 		action = request.POST.get('action_type')
