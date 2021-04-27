@@ -204,7 +204,7 @@ var order_id=parseInt("{{request.GET.orderid}}");
             {
                 $('.order_payment_status').append('<div class="yellow-bg-lg">On-going</div>');
             }
-            else if(order_status == 'CANCELL_IN_PROGRESS')
+            else if(order_status == 'CANCEL_IN_PROGRESS')
             {
                 $('.order_payment_status').append('<div class="red-bg-lg">Cancelled</div>');   
             }
@@ -389,7 +389,7 @@ function select_existing_user(event,src){
             {
                 $('.order_payment_status').append('<div class="red-bg-lg">Cancelled</div>');   
             }
-            else if(order_status == 'CANCELL_IN_PROGRESS')
+            else if(order_status == 'CANCEL_IN_PROGRESS')
             {
                 $('.order_payment_status').append('<div class="red-bg-lg">Cancell in Progress</div>'); 
             }
@@ -420,7 +420,7 @@ function select_existing_user(event,src){
             $('#id_payment_policy').empty();
 
             //Payment Policy
-            if (order_status == 'CANCELL_IN_PROGRESS')
+            if (order_status == 'CANCEL_IN_PROGRESS')
             {
               $("#id_payment_policy").append($('<option>',{value: 'CLEANING BALANCE',text: 'CLEANING BALANCE'})); 
               $('#id_amount').val(data['remining_amount']);

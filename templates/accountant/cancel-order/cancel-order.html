@@ -29,8 +29,7 @@
 				<p class="paragraph order_customer_mobile">{{order_cancell_cashbacks.order.evaluation.customer.mobile_number}}</p>
 				
 				<div class="order_payment_status">
-        <div class="{% if order_cancell_cashbacks.order.payment_status == 'COMPLETED' %}green-bg-lg{% elif order_cancell_cashbacks.order.payment_status == 'PENDING'%}yellow-bg-lg{% elif order_cancell_cashbacks.order.payment_status == 'ON_HOLD'%}red-bg-lg{% else %}yellow-bg-lg{% endif %} payment_status">{{order_cancell_cashbacks.order.payment_status}}</div>
-        <div class="{% if order_cancell_cashbacks.order.order_status == 'APPROVED_BY_CLIENT' %}blue-bg-lg{% elif order_cancell_cashbacks.order.order_status == 'ORDER_IN_PROGRESS'%}yellow-bg-lg{% elif order_cancell_cashbacks.order.order_status == 'ORDER_CANCELLED'%}red-bg-lg{% elif order_cancell_cashbacks.order.order_status == 'ORDER_CLOSED'%}green-bg-lg{% elif order_cancell_cashbacks.order.order_status == 'CANCELL_IN_PROGRESS' %}skyblue-bg-lg{% else %}yellow-bg-lg{% endif %}">{{order_cancell_cashbacks.order.order_status}}</div>
+        <div class="{% if order_cancell_cashbacks.order.order_status == 'APPROVED_BY_CLIENT' %}blue-bg-lg{% elif order_cancell_cashbacks.order.order_status == 'ORDER_IN_PROGRESS'%}yellow-bg-lg{% elif order_cancell_cashbacks.order.order_status == 'ORDER_CANCELLED'%}red-bg-lg{% elif order_cancell_cashbacks.order.order_status == 'ORDER_CLOSED'%}green-bg-lg{% elif order_cancell_cashbacks.order.order_status == 'CANCEL_IN_PROGRESS' %}skyblue-bg-lg{% else %}yellow-bg-lg{% endif %}">{{order_cancell_cashbacks.order.order_status}}</div>
 				</div>
 
 				<div class="order_addresses">
@@ -38,14 +37,21 @@
           <div class="area-bold">{{scheduler.customer_address.area.name}}</div><div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle {% if scheduler.work_status == 'CLEANING_FULFILLED' %}green-text{% else %}yellow-text{% endif %}" aria-hidden="true"></i> {{scheduler.order_scheduler_book.service_type.name}} - {{scheduler.order_scheduler_book.cleaning_policy}}</div>
         {% endfor %}
 				</div>
+				<br>
+                    <div class="email"><div class="area-bold">Note :</div><span>{{order_cancell_cashbacks.order.cancell_note}}</span>
+                    </div>
 			</div><!--cleaning-column-widget cleaning-column-widget-column1-->
 			
 			<div class="cleaning-column-widget cleaning-column-widget-column2 order-details"><!--cleaning-column-widget cleaning-column-widget-column2-->
 				<div class="common-gray-text align-left">{{order_cancell_cashbacks.order.evaluation.created|date:'d-m-Y g:i A'}}</div>
 				<br>
-		        <div class="common-gray-text align-left yellow-text lg-text">Total Cost :{{order_cancell_cashbacks.order.evaluation.total_cost|floatformat:"3"}} KD</div>
-		        <div class="common-gray-text align-left yellow-text lg-text">Cleaning Amount :{{order_cancell_cashbacks.job_completed_amount|floatformat:"3"}} KD</div>
+		        <div class="common-gray-text align-left yellow-text lg-text">Total Amount :{{order_cancell_cashbacks.order.evaluation.total_cost|floatformat:"3"}} KD</div>
+		        <br>
 		        <div class="common-gray-text align-left yellow-text lg-text">Paid Amount :{{order_cancell_cashbacks.order.amount_paid|floatformat:"3"}} KD</div>
+		        <br>
+		        <div class="common-gray-text align-left yellow-text lg-text">Job Completed :{{order_cancell_cashbacks.job_completed_amount|floatformat:"3"}} KD</div>
+		        <br>
+		        <div class="common-gray-text align-left yellow-text lg-text">Refund Amount:{{order_cancell_cashbacks.return_amount|floatformat:'3'}} KD</div>
 		        <br>
 				<div class="common-gray-text align-left sm-text gray-text">{{order_cancell_cashbacks.total_cleaners|default_if_none:'0'}} cleaners</div>
 				{% if order_cancell_cashbacks.order.evaluation.call_attender.profile_image %}
@@ -55,29 +61,11 @@
         {% endif %}
       </div><!--cleaning-column-widget cleaning-column-widget-column2-->
 		</div><!--cleaning-column-wrapper-->
-		
-		<br><br>
-  <div class="common-sub-head align-left ticket-form-head">Order Cancell Cashback Approval Form</div> 
   <form method="post" action="{% url 'accountant:accountant-cancel-order' order_cancell_cashbacks.id %}" enctype="multipart/form-data">{% csrf_token %}
 	<input type="hidden" name="cashback_id" value="{{order_cancell_cashbacks.id}}">
-
-<div class="ticket-wrapper-full ltyellow-border ticket-form"><!--ticket-wrapper-full-->
-
-<br>
-
-<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-  <div class="ticket-form-left"><!--ticket-form-right-->
-  	<div class="text bold-text common-label"> <label>Return Amount</label></div>
-      <input type="number" class="textBox OnlyNumber" name="return_amount" value="{{order_cancell_cashbacks.return_amount|floatformat:'3'}}" required/>
-  </div><!--ticket-form-right-->
-</div><!--ticket-wrapper-row ticket-forms-boxes-->  
-
-</div><!--ticket-wrapper-full--> 
-
-<div align="center" class="ticket-form-button"><input class="assignButton" name="submit" type="submit" value="Submit" onclick='SubmitNewTicket(this);'></div>   	
+      <input type="hidden" name="return_amount" value="{{order_cancell_cashbacks.return_amount|floatformat:'3'}}" required/>
+<div align="center" class="ticket-form-button"><input class="assignButton" name="submit" type="submit" value="Refund Completed" onclick='SubmitNewTicket(this);'></div>   	
 </form>
-<br> <br>
-	</div><!--center-formDiv-->
 
 	</div><!--white-wrapper-->      
 			

@@ -72,7 +72,7 @@
         <th data-hide="phone">Total Amount</th>
         <th data-hide="phone">Job Completed</th>
         <th data-hide="phone">Paid</th>
-        <th data-hide="phone">Return</th>
+        <th data-hide="phone">Refund</th>
         <th class="align-center" data-hide="phone,tablet">Status</th>
         </tr>
     </thead>
@@ -101,7 +101,7 @@
         {{order_cancell_cashback.return_amount|floatformat:'3'}}
         </td>
         <td>
-        <span class="clickable-row red-bg" data-href="{% url 'accountant:accountant-cancel-order' order_cancell_cashback.id %}">Click to Approve</span>
+        <span class="clickable-row red-bg" data-href="{% url 'accountant:accountant-cancel-order' order_cancell_cashback.id %}">Click to Confirm</span>
         </td>
         </tr>
         {% endfor %}

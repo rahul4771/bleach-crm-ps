@@ -24,13 +24,12 @@
 			
 				<div class="cleaning-column-wrapper ltyellow-border order-details"><!--cleaning-column-wrapper-->
 				<div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
-        <div class="details-head align-left order_blc_no">{{cancell_in_progress_order.order_no}}</div>
+        <div class="details-head align-left order_blc_no clickable-row" data-href="{% url 'bleach_salesadmin:salesadmin-client-orderdetails' cancell_in_progress_order.id%}">{{cancell_in_progress_order.order_no}}</div>
 				<div class="inside-head align-left order_customer_name">{{cancell_in_progress_order.evaluation.customer.name}}</div>
 				<p class="paragraph order_customer_mobile">{{cancell_in_progress_order.evaluation.customer.mobile_number}}</p>
 				
 				<div class="order_payment_status">
-        <div class="{% if cancell_in_progress_order.payment_status == 'COMPLETED' %}green-bg-lg{% elif cancell_in_progress_order.payment_status == 'PENDING'%}yellow-bg-lg{% elif cancell_in_progress_order.payment_status == 'ON_HOLD'%}red-bg-lg{% else %}yellow-bg-lg{% endif %} payment_status">{{cancell_in_progress_order.payment_status}}</div>
-        <div class="{% if cancell_in_progress_order.order_status == 'APPROVED_BY_CLIENT' %}blue-bg-lg{% elif cancell_in_progress_order.order_status == 'ORDER_IN_PROGRESS'%}yellow-bg-lg{% elif cancell_in_progress_order.order_status == 'ORDER_CANCELLED'%}red-bg-lg{% elif cancell_in_progress_order.order_status == 'ORDER_CLOSED'%}green-bg-lg{% elif cancell_in_progress_order.order_status == 'CANCELL_IN_PROGRESS' %}skyblue-bg-lg{% else %}yellow-bg-lg{% endif %}">{{cancell_in_progress_order.order_status}}</div>
+        <div class="{% if cancell_in_progress_order.order_status == 'APPROVED_BY_CLIENT' %}blue-bg-lg{% elif cancell_in_progress_order.order_status == 'ORDER_IN_PROGRESS'%}yellow-bg-lg{% elif cancell_in_progress_order.order_status == 'ORDER_CANCELLED'%}red-bg-lg{% elif cancell_in_progress_order.order_status == 'ORDER_CLOSED'%}green-bg-lg{% elif cancell_in_progress_order.order_status == 'CANCEL_IN_PROGRESS' %}skyblue-bg-lg{% else %}skyblue-bg-lg{% endif %}">{{cancell_in_progress_order.order_status}}</div>
 				</div>
 
 				<div class="order_addresses">
@@ -43,9 +42,11 @@
 			<div class="cleaning-column-widget cleaning-column-widget-column2 order-details"><!--cleaning-column-widget cleaning-column-widget-column2-->
 				<div class="common-gray-text align-left">{{cancell_in_progress_order.evaluation.created|date:'d-m-Y g:i A'}}</div>
 				<br>
-        <div class="common-gray-text align-left yellow-text lg-text">Total Cost :{{cancell_in_progress_order.evaluation.total_cost|floatformat:"3"}} KD</div>
-        <div class="common-gray-text align-left yellow-text lg-text">Cleaning Amount :{{cancell_in_progress_order.job_completed_amount|floatformat:"3"}} KD</div>
+        <div class="common-gray-text align-left yellow-text lg-text">Total Amount :{{cancell_in_progress_order.evaluation.total_cost|floatformat:"3"}} KD</div>
+        <br>
         <div class="common-gray-text align-left yellow-text lg-text">Paid Amount :{{cancell_in_progress_order.amount_paid|floatformat:"3"}} KD</div>
+        <br>
+        <div class="common-gray-text align-left yellow-text lg-text">Job Completed :{{cancell_in_progress_order.job_completed_amount|floatformat:"3"}} KD</div>
         <br>
 				<div class="common-gray-text align-left sm-text gray-text">{{cancell_in_progress_order.total_cleaners}} cleaners</div>
 				{% if cancell_in_progress_order.evaluation.call_attender.profile_image %}
@@ -72,14 +73,14 @@
                     <option value="">--Select option--</option>           
                     
                     {% if cancell_in_progress_order.amount_paid > cancell_in_progress_order.job_completed_amount %}
-                    <option value="CASHBACK">Cash Back</option>
-                    <option value="CREDIT">Credit</option>
+                    <option value="CASHBACK">Give Cash Back</option>
+                    <option value="CREDIT">Add to Credit</option>
                     {% elif cancell_in_progress_order.amount_paid < cancell_in_progress_order.job_completed_amount %}
                     <option value="SENDINVOICE">Send Invoice</option>
                     {% else %}
                     {% endif %}
 
-                    <option value="CANCELL">Cancell</option>
+                    <option value="CANCELL">Direct Cancellation</option>
                   
                 </select>
                 </label>

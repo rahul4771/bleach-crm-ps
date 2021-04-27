@@ -380,7 +380,7 @@ class PaymentResponseDebit(View):
 		payment_history_check = PaymentHistory.objects.filter(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid')).exists()	
 		
 
-		if order and payment_result == 'CAPTURED' and not payment_history_check and order_status != 'CANCELL_IN_PROGRESS':
+		if order and payment_result == 'CAPTURED' and not payment_history_check and order_status != 'CANCEL_IN_PROGRESS':
 
 			#Receipt Number
 			receipt_no               = PaymentHistory.objects.filter(is_active=True,receipt_no__isnull=False).aggregate(t=Max('receipt_no'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
@@ -468,7 +468,7 @@ class PaymentResponseDebit(View):
 
 			return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
 
-		elif order and payment_result == 'CAPTURED' and not payment_history_check and order_status == 'CANCELL_IN_PROGRESS':
+		elif order and payment_result == 'CAPTURED' and not payment_history_check and order_status == 'CANCEL_IN_PROGRESS':
 			#Receipt Number
 			receipt_no               = PaymentHistory.objects.filter(is_active=True,receipt_no__isnull=False).aggregate(t=Max('receipt_no'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
 			current_receipt_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
