@@ -8,6 +8,8 @@ urlpatterns = [
 	url(r'^payments/$',views.PaymentDetails.as_view(),name='accountant-payments'),
 	url(r'^orders/$',views.OrderDetails.as_view(),name='accountant-orders'),
 
+	url(r'^cancell-order/(?P<order_cancel_id>[-\w]+)/$',views.OrderCancellation.as_view(),name='accountant-cancel-order'),	
+	
 	url(r'^clients/$',views.ClientDetails.as_view(),name='accountant-clients'),
 	url(r'^client/orders/(?P<client_id>[-\w]+)$',views.ClientOrders.as_view(),name='accountant-client-orders'),
 	url(r'^client/order/details/(?P<order_id>[-\w]+)$',views.ClientOrderDetails.as_view(),name='accountant-client-orderdetails'),

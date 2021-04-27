@@ -140,6 +140,63 @@
 
 </div><!--enquiry-child-wrapper-Full-->
 
+<!--section 3-->
+<div class="enquiry-child-wrapper-Full form_section" id="section3" ><!--enquiry-child-wrapper-Full-->
+<input type="hidden" name="section3-keynote_counter" id="id_section3-keynote_counter" value="">
+
+<div class="enquiry-form-Wrapper enquiry-boxes" ><!--enquiry-form-Wrapper enquiry-boxes-->
+
+<div class="enquiry-form-left"><!--enquiry-form-left-->
+<div class=" bold-text common-label"> 
+<label class="section_label">OTHER</label>
+</div>
+<input name="section" type="hidden" class="textBox section_time" placeholder=" " value="OTHER" required>
+</div><!--enquiry-form-left-->
+
+<div class="enquiry-form-right hide-m"><!--enquiry-form-right-->
+</div><!--enquiry-form-right-->
+</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
+
+<br><br><div class="common-sub-head align-left">Items</div><div class="keynotes-wrapper-Full"><!--keynotes-wrapper-Full--> 
+<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
+<div class="enquiry-form-left"><!--enquiry-form-left-->
+<div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+<div class="enquiry-two-col"><!--enquiry-two-col-->
+<div class=" bold-text common-label"> <label>DETAILS</label></div>
+<input class="keynote_field" type="text" id="id_section-3-keynote" name="select" >
+</div><!--enquiry-two-col-->
+</div><!--enquiry-Two-column-wrapp-->
+</div><!--enquiry-form-left-->
+<div class="enquiry-form-right"><!--enquiry-form-right-->
+    <div class="enquiry-Two-column-wrapp enquiry-column"><!--enquiry-Two-column-wrapp -->
+<div class="enquiry-two-col"><!--enquiry-two-col-->
+<div class=" bold-text common-label"> <label>PRICE</label></div>
+<input name="time" type="number" class="textBox" id="id_section-3-quantity" placeholder=" ">
+</div><!--enquiry-two-col-->
+<div class="enquiry-two-col"><!--enquiry-two-col-->
+<div class=" bold-text common-label hide-m"> 
+<label>&nbsp;</label>
+</div>
+<input name="add" type="button" value="Add" id="id_section-3-add" class="add-button" onclick="addKeynote(this);">
+</div><!--enquiry-two-col-->
+</div><!--enquiry-Two-column-wrapp-->
+</div><!--enquiry-form-right-->
+</div> <!--enquiry-form-Wrapper enquiry-boxes-->
+<hr class="hr-dashedpad">
+<div class="enquiry-form-Wrapper enquiry-boxes" id="id_section-3-keynotecontainer">
+<div class="enquiry-form-left"><!--enquiry-form-left-->
+<table width="100%" border="0" id="id_section-3-keynote-table-left" class="keynots-tble">
+
+{% for keynote in buybackpromogift_other %}<tr id="id_section-3-keynote-'+{{forloop.counter0}}+'" class="section3_keynote keynote-left" ><input type="hidden" name="editform_section3_keynote{{forloop.counter0}}" value="{{keynote.id}}"><input type="hidden" name="section3_keynote{{forloop.counter0}}" value="{{keynote.name}}" /><input type="hidden" name="section3_quantity{{forloop.counter0}}" value="{{keynote.cost}}" /><td align="left">{{keynote.name}}</td><td width="50px" align="center" class="keynote_qty">{{keynote.cost}}</td><td width="30px" align="center" class="btn-remove" data-keynoteid="{{keynote.id}}" data-delete="section3"><input name="delete" type="button" class="delete-button"></td></tr>{% endfor %}
+
+</table>
+</div><!--enquiry-form-left-->
+
+</div><!--enquiry-form-Wrapper-->
+</div><!--keynotes-wrapper-Full-->
+
+</div><!--enquiry-child-wrapper-Full-->
+
         </div><!--section-container-->
 
 
@@ -177,13 +234,15 @@ $('document').ready(function(){
 
 keynote_count1 = $('.section1_keynote').length;
 keynote_count2 = $('.section2_keynote').length;
+keynote_count3 = $('.section3_keynote').length;
 
 $('#id_section1-keynote_counter').val(keynote_count1);
 $('#id_section2-keynote_counter').val(keynote_count2);
+$('#id_section3-keynote_counter').val(keynote_count3);
 
 $('.promocodesubmit').click(function(){
     console.log($('#id_section1-keynote_counter').val(),$('#id_section2-keynote_counter').val(),"lolll")
-    if ($('#id_section1-keynote_counter').val() > 0 || $('#id_section2-keynote_counter').val() > 0){
+    if ($('#id_section1-keynote_counter').val() > 0 || $('#id_section2-keynote_counter').val() > 0 || $('#id_section3-keynote_counter').val() > 0){
         console.log('dre')
         submitAnyForm(this);
     }else{

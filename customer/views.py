@@ -369,6 +369,7 @@ class PaymentResponseDebit(View):
 		amount_paid       = float(request.GET.get("amt"))
 		payment_result    = request.GET.get("result")
 		payment_mode      = request.GET.get("udf2")
+		order_status      = request.GET.get("udf3")
 
 		try:
 			order = Order.objects.select_related('evaluation').get(order_no=evaluation_id,evaluation__customer__username=user_name)
@@ -379,7 +380,7 @@ class PaymentResponseDebit(View):
 		payment_history_check = PaymentHistory.objects.filter(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid')).exists()	
 		
 
-		if order and payment_result == 'CAPTURED' and not payment_history_check:
+		if order and payment_result == 'CAPTURED' and not payment_history_check and order_status != 'CANCEL_IN_PROGRESS':
 
 			#Receipt Number
 			receipt_no               = PaymentHistory.objects.filter(is_active=True,receipt_no__isnull=False).aggregate(t=Max('receipt_no'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
@@ -396,7 +397,7 @@ class PaymentResponseDebit(View):
 			#payment calculations
 			if payment_mode == 'subscription':
 				order.amount_paid      += amount_paid
-				order.remining_amount  = order.remining_amount-amount_paid
+				order.remining_amount   = order.remining_amount-amount_paid
 				order.subscription_topay= 0
 				#to check payment completed
 				if order.remining_amount == 0:
@@ -466,6 +467,26 @@ class PaymentResponseDebit(View):
 				closing_order.save()
 
 			return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
+
+		elif order and payment_result == 'CAPTURED' and not payment_history_check and order_status == 'CANCEL_IN_PROGRESS':
+			#Receipt Number
+			receipt_no               = PaymentHistory.objects.filter(is_active=True,receipt_no__isnull=False).aggregate(t=Max('receipt_no'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
+			current_receipt_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
+
+			if current_receipt_starting == int(str(receipt_no)[:4]):
+				new_receipt_no = int(receipt_no)+1
+			else:
+				new_receipt_no = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
+
+			#payment history
+			payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.GET.get('paymentid'),ref=request.GET.get('ref'),business_logic_post_date=request.GET.get('postdate'),track_id=request.GET.get('trackid'),transaction_id=request.GET.get('tranid'),receipt_no=new_receipt_no,payment_gateway='DEBITCARD')
+
+			order.remining_amount  = 0
+			order.amount_paid     += amount_paid
+			order.save()
+			
+			return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
+
 		else:
 
 			#payment fail sms
@@ -497,6 +518,7 @@ class PaymentResponseDebit(View):
 				print(response.text)
 			else:
 				pass
+
 
 			return redirect('/customer/payment/failed/?udf1='+evaluation_id_encrypted+'&paymentid='+request.GET.get('paymentid')+'&ref='+request.GET.get('ref'))
 
@@ -1075,7 +1097,7 @@ class GetEvaluationBookingSlotes(APIView):
 		evaluation_date  = datetime.strptime(request.GET.get('evaluation_booking_date'),'%d-%m-%Y')
 		
 		available_slotes = []
-		for slote in range(0,23):
+		for slote in range(0,24):
 			slote_datetime 			  = evaluation_date.replace(hour=slote,minute=0,second=0,microsecond=0)
 			checkavailability         = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR',is_onlineevaluator=True).prefetch_related('evaluator_evaluation').annotate(busyevaluationcount=Sum(Case(When(evaluator_evaluation__proposed_time=slote_datetime,then=1),default=0,output_field=IntegerField()))).filter(busyevaluationcount__lt=2)
 			if checkavailability:

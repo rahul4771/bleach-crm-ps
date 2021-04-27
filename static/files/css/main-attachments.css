@@ -41,10 +41,17 @@
 
 
 .orange-bg{background:#ff8c56; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; text-shadow: 1px 2px 3px #00000045;}
+
 .rose-bg{ background:#f765a3 ; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; text-shadow: 1px 2px 3px #00000045;} 
 .rose-line{ border-left:4px solid #f765a3;}
+
 .violet-bg{ background:#a155b9; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; text-shadow: 1px 2px 3px #00000045;}
 .violet-line{ border-left:4px solid #a155b9;}
+
+.skyblue-bg{ background:#87CEEB; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block; text-shadow: 1px 2px 3px #00000045;}
+.skyblue-bg-lg{background:#87CEEB; padding:4px 5px; margin:0 5px 10px 0;  border-radius:3px; text-align:center; color:#fff; font-size:13px; width:170px; display:inline-block;}
+.skyblue-line{ border-left:4px solid #87CEEB;}
+
 .oil-green-bg{ background:#bed522; padding:2px 6px; border-radius:30px; text-align:center; color:#fff; font-size:11px; display:block;text-shadow: 1px 2px 3px #00000045;}
 .oil-green-line{ border-left:4px solid #bed522;}
 
@@ -84,7 +91,8 @@
 
 .clickable-cursor{ cursor: pointer; }
 
-.gray-text-evaluation{ color:#999 !important;} 
+.gray-text-evaluation{ color:#999 !important;}
+.green-text-evaluation{ color:#3cbbb1 !important;} 
 .gray-text-cleaning{ color:#444 !important;} 
 /* Individual bars */
 .bar-n {height: 18px;}

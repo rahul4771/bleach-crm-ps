@@ -12,7 +12,7 @@ from django.db.models import Max
 ORDER_STATUS = (
 	('APPROVED_BY_CLIENT','APPROVED_BY_CLIENT'),
 	('ORDER_IN_PROGRESS','ORDER_IN_PROGRESS'),
-	('CANCELL_IN_PROGRESS','CANCELL_IN_PROGRESS'),
+	('CANCEL_IN_PROGRESS','CANCEL_IN_PROGRESS'),
 	('ORDER_CANCELLED','ORDER_CANCELLED'),
 	('ORDER_CLOSED','ORDER_CLOSED')
 	)
@@ -124,6 +124,7 @@ class Order(models.Model):
 
 	cancell_requester   = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cancellrequesting_user')
 	cancelled_by        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cancelled_user')   
+	cancell_note        = models.CharField(max_length=5000,blank=True,null=True)
 
 	created_by      = models.ForeignKey(UserProfile,blank=True,null=True)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
@@ -176,6 +177,7 @@ class CancellOrderAmountHistory(models.Model):
 	order                 = models.ForeignKey(Order,blank=False,null=False,related_name='cancelled_order')
 	amount_return_method  = models.CharField(max_length=20,blank=True,null=True,choices=RETURN_METHOD_CHOICES)
 	return_amount         = models.FloatField(blank=False,null=False)
+	is_completed          = models.BooleanField(null=False,blank=True,default=False)
 
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)

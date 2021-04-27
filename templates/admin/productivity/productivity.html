@@ -13,10 +13,6 @@
             
 <div class="main-content-holder"><!--main-content-holder-->            
 
-<div class="search-middle"><!--search-middle-->
-<div class="filter-button"><span class="add_productivity">Add Productivity </span></div>
-</div><!--search-middle-->
-<br>
 
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Productivity List</h2>
@@ -25,8 +21,9 @@
 <thead>
 <tr>
 <th>Service Type</th>
+<th>Speciality</th>
+<th>Price Range</th>
 <th data-hide="phone,tablet">Productivity/Cleaner/Hr</th>
-<th data-hide="phone">Price/Unit</th>
 <th data-hide="phone,tablet">&nbsp;</th>
 </tr>
 </thead>
@@ -34,11 +31,19 @@
   {% for productivity in productivities %}
   <tr>
     <td>{{productivity.service_type.name}}</td>
+    <td>{% if productivity.service_type.name == 'Upholstery Cleaning' %}{{productivity.upholstery_type}}{% elif productivity.service_type.name == 'Kitchen Cleaning' %}{% if productivity.is_newkitchen %}New Kitchen{% else %}Old Kitchen{% endif %}{% elif productivity.service_type.name == 'Window Cleaning' %}{% if productivity.is_highprice_window %}High Price Window{% else %}Low Price Window{% endif %}{% elif productivity.service_type.name == 'Facade Cleaning' %}{% if productivity.is_highprice_facade %}High Price Facade{% else %}Low Price Facade{% endif %}{% else %}Normal{% endif %}</td>
+    <td>
+      {% for price_range in price_ranges %}
+      {% if productivity.service_type == price_range.service_type and productivity.upholstery_type == price_range.upholstery_type and productivity.is_newkitchen == price_range.is_newkitchen and productivity.is_highprice_window == price_range.is_highprice_window and productivity.is_highprice_facade == price_range.is_highprice_facade  %}
+      {% if price_range.minimum_area %}{{price_range.minimum_area}}-{% endif %}{{price_range.maximum_area}} Sqm  {{price_range.price}} KD
+      <br>
+      {% endif %}
+      {% endfor %} 
+    </td>
     <td class="align-center">{{productivity.perhour_cleaning}}</td>
-    <td>{{productivity.perunit_price|floatformat:'3'}}</td>
     <td>
     <img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon edit_productivity clickable-cursor" data-id="{{productivity.id}}" data-service_typeid="{{productivity.service_type.id}}" data-service_typename="{{productivity.service_type.name}}" data-perhour_cleaning="{{productivity.perhour_cleaning}}" data-perunit_price="{{productivity.perunit_price|floatformat:'3'}}">
-  </td>
+    </td>
   </tr>
   {% empty %}
   <tr>
@@ -54,54 +59,8 @@
 </table>
 </div><!--main-content-holder-->            
 {% include 'admin/common/footer.html' %}
-<!-- add_productivity_popup -->
-<div class="overlay" id="add_productivity_popup">
-    <div class="popup-assign-eval"><!--popup-assign-eval-->
-        <a id="close_add_productivity_popup" class="close">&times;</a>
-            <div class="content"><!--content-->
-            
-<form method="post" enctype="multipart/form-data">{% csrf_token %}                      
-<input type="hidden" name="action_type" value="addproductivity">
-            <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
-            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
-  
-  <div class="ticket-form-left"><!--ticket-form-left-->
-          <div class="bold-text common-label required-field"> <label >Service Type</label></div>
-        <label for="favcity">
-                <select id="id_service_type" name="service_type" required>
-                {% for servicetype in service_types %}
-                <option value="{{servicetype.id}}">{{servicetype.name}}</option>
-                {% endfor %}
-                </select>
-                </label>
-  </div><!--ticket-form-left--> 
-</div><!--ticket-wrapper-row ticket-forms-boxes-->
-<hr class="hr-dashedpad">   
-  <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-      <div class="ticket-form-left"><!--ticket-form-left-->
-          <div class="bold-text common-label required-field"> <label>Productivity/cleaner/Hr</label></div>
-                <input type="text" name="perhour_cleaning" class="textBox OnlyNumber" id="id_perhour_cleaning" required>
-      </div><!--ticket-form-left--> 
-  </div><!--ticket-wrapper-row ticket-forms-boxes-->
- 
-<hr class="hr-dashedpad">     
-<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-      <div class="ticket-form-left"><!--ticket-form-left-->
-        <div class="bold-text common-label required-field"> <label>Price/Unit</label></div>
-                <input type="text" name="perunit_price" id="id_perunit_price" class="textBox OnlyNumber" required>
-      </div><!--ticket-form-left-->   
-</div><!--ticket-wrapper-row ticket-forms-boxes-->
 
-<div align="center"> <input class="assignButton dateconfirm" name="assing" type="button" value="Assign" onclick="submitAnyForm(this);" ></div>  
-
-</div><!--ticket-wrapper-full-->             
-</form>
-            </div><!--content-->
-    </div><!--popup-assign-eval-->
-</div><!--overlay-->
-<!-- /add_productivity_popup -->
-
-<!-- edit_promocode_popup -->
+<!-- edit_productivity_popup -->
 <div class="overlay" id="edit_productivity_popup">
     <div class="popup-assign-eval"><!--popup-assign-eval-->
         <a id="close_edit_productivity_popup" class="close">&times;</a>
@@ -130,14 +89,8 @@
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
 <hr class="hr-dashedpad">   
-  <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-      <div class="ticket-form-left"><!--ticket-form-left-->
-          <div class="bold-text common-label required-field"> <label>Price/Unit</label></div>
-                <input type="text" name="perunit_price" id="perunit_price_edit_id" class="textBox OnlyNumber" required>
-      </div><!--ticket-form-left--> 
-  </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
-<div align="center"> <input class="assignButton dateconfirm" name="assing" type="button" value="Assign" onclick="submitAnyForm(this);" ></div>  
+<div align="center"> <input class="assignButton dateconfirm" name="assing" type="button" value="Update" onclick="submitAnyForm(this);" ></div>  
 
 </div><!--ticket-wrapper-full-->             
 </form>

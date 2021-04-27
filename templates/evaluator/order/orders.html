@@ -134,7 +134,7 @@
                 <option value="ORDER_CLOSED" {% if fil_status == 'ORDER_CLOSED' %}selected{% endif %}>COMPLETED</option>
                 <option value="REJECTED" {% if fil_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
                 <option value="EXPIRED" {% if fil_status == 'EXPIRED' %}selected{% endif %}>EXPIRED</option>
-                <option value="CANCELL_IN_PROGRESS" {% if fil_status == 'CANCELL_IN_PROGRESS' %}selected{% endif %}>CANCELL IN PROGRESS</option>
+                <option value="CANCEL_IN_PROGRESS" {% if fil_status == 'CANCEL_IN_PROGRESS' %}selected{% endif %}>CANCELL IN PROGRESS</option>
                 <option value="ORDER_CANCELLED" {% if fil_status == 'ORDER_CANCELLED' %}selected{% endif %}>CANCELLED</option>
                                 
               </select>
@@ -216,6 +216,8 @@
         class="violet-line"
         {% elif order.order_status == 'ORDER_CLOSED' %}
         class="rose-line"
+        {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
+        class="skyblue-line"
         {% else %}
         class="red-line"
         {% endif %}
@@ -254,6 +256,8 @@
         <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'evaluator:evaluator-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="violet-bg clickable-row">Order in Progress</span>
         {% elif order.order_status == 'ORDER_CLOSED' %}
         <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'evaluator:evaluator-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="rose-bg clickable-row">Completed</span>
+        {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'evaluator:evaluator-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="skyblue-bg clickable-row">Cancell in Progress</span>
         {% else %}
         <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'evaluator:evaluator-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Order Cancelled</span>
         {% endif %}

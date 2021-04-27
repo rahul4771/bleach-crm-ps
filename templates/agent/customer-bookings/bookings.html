@@ -2,74 +2,14 @@
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
-{% include "operationsupervisor/common/header.html" %}         
+{% include "agent/common/header.html" %}         
     
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
-                <h1 class="dashboard-head">Orders</h1>
+                <h1 class="dashboard-head">Bookings</h1>
                 <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>    
-            </div><!--welcome-wrapper-->
-       
-     <div class="clients-top-card-wrapper"><!--clients-top-card-wrapper-->
-     	<div class="clients-card-wrapper"><!--clients-card-wrapper-->
-       	<div class="clients-card-column clients-column-left"><!--clients-card-column clients-column-left-->
-        <div class="card-column whitebg blue-border"><!--card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-aproved-icon.png' %}"></div>
-                <div class="column-right"><!--column-right-->
-              	<!--  <h1>Evaluations</h1>-->
-            	<h2 class="blue-text"><label>Approved<span>{{approved_orders_count|default_if_none:''}}</span></label> </h2>
-            	<!--<p><label>This Week <span>42</span></label></p>-->
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
-            </div><!--card-column-->
-        
-            <div class="card-column whitebg green-border"><!--card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-pending-icon.png' %}"></div>
-                <div class="column-right"><!--column-right-->
-            	<h2 class="green-text"><label>Pending<span>{{pending_orders_count|default_if_none:''}}</span></label>  </h2>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
-            </div><!--card-column-->
-        </div><!--clients-card-column clients-column-left-->
-      <div class="clients-card-column clients-column-right whitebg hover ltyellow-border orderchart"><!--clients-card-column clients-column-right-->
-        
-      <div class="chart_boxDiv"><!--chart_boxDiv-->
-      <div class="chart_box_Right"><!--chart_box_Right-->
-          <div id="chart_div" ></div>
-      </div><!--chart_box_Right-->
-      </div><!--chart_boxDiv-->   
-        
-    <div class="chart_boxDiv"><!--chart_boxDiv-->    
-
-        <div class="chart_box_Left"><!--chart_box_Left-->
-        <div class="legend-wrapper"><!--legend-wrapper--> 
-        <div class="legend-result count_div"><label class="legend-label">one time service </label> <b class="legend-result-blue" id="total_submitted">0</b></div>
-        <div class="legend-result count_div"><label class="legend-label">subscription </label> <b class="legend-result-red" id="total_approved">0</b></div>
-        </div><!--legend-wrapper-->
-        </div><!--chart_box_Left-->
-
-        <div class="chart_box_Left"><!--chart_box_Left-->        
-        <div class="Button_wrapperChart">
-            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonthtoggle"><div class="slider round"><span class="on">MONTH</span><span class="off">DATE</span></div></label></div>
-            <input type="text" id="ord_fromdate" class="date_pick_chart_from date_pick2 date-picker set1 date-pick-left" >
-            <input type="text" id="ord_todate" class="date_pick_chart_to date_pick2 date-picker set1 date-pick-right" >
-            <input type="text" id="month1" class="month_pick set2 date-pick-left" hidden >
-            <input type="text" id="month2" class="month_pick set2 date-pick-right" hidden >
-            <div><button id="reset_orders" class="green-button-chart">Reset</button></div>
-            </div>
-                            
-        </div><!--chart_box_Left-->
-            
-        </div><!--chart_boxDiv-->
-
-        </div><!--clients-card-column clients-column-right-->
-
-        </div><!--clients-card-wrapper-->
-
-</div><!--clients-top-card-wrapper-->       
+            </div><!--welcome-wrapper-->      
             
      <div class="main-content-holder"><!--main-content-holder-->            
      
@@ -131,9 +71,8 @@
                 <option value="ORDER_CLOSED" {% if fil_status == 'ORDER_CLOSED' %}selected{% endif %}>COMPLETED</option>
                 <option value="REJECTED" {% if fil_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
                 <option value="EXPIRED" {% if fil_status == 'EXPIRED' %}selected{% endif %}>EXPIRED</option>
-                <option value="CANCEL_IN_PROGRESS" {% if fil_status == 'CANCEL_IN_PROGRESS' %}selected{% endif %}>CANCELL IN PROGRESS</option>
-                <option value="ORDER_CANCELLED" {% if fil_status == 'ORDER_CANCELLED' %}selected{% endif %}>CANCELLED</option>
-                                
+                <option value="CANCELL_IN_PROGRESS" {% if fil_status == 'CANCELL_IN_PROGRESS' %}selected{% endif %}>CANCELL IN PROGRESS</option>
+                <option value="ORDER_CANCELLED" {% if fil_status == 'ORDER_CANCELLED' %}selected{% endif %}>CANCELLED</option>                
               </select>
                 </label>
   </div><!--ticket-form-right-->
@@ -151,8 +90,19 @@
               </select>
                 </label>
   </div><!--ticket-form-left-->
-  <div class="ticket-form-right hide-m"><!--ticket-form-right-->
-  				 
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Payment Policy</label></div>
+                <label for="favcity">
+                <select name="payment_policy" id="payment_policy_id">
+                <option value=''>---ALL---</option> 
+                
+                <option value='PREPAID' {% if fil_payment_policy == 'PREPAID' %}selected{% endif %}>PREPAID</option>
+                <option value='POSTPAID' {% if fil_payment_policy == 'POSTPAID' %}selected{% endif %}>POSTPAID</option>
+                <option value='BREAKDOWN' {% if fil_payment_policy == 'BREAKDOWN' %}selected{% endif %}>BREAKDOWN</option>
+                <option value='SUBSCRIPTION' {% if fil_payment_policy == 'SUBSCRIPTION' %}selected{% endif %}>SUBSCRIPTION</option>
+                           
+              </select>
+                </label>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
 <div align="center"> <input class="assignButton" name="assing" type="button" onclick="set_params_go({});" value="Submit"> <input class="cancel-Button close-btn arrow-close" name="cancel" type="button" value="Reset"></div>
@@ -167,7 +117,7 @@
      
             
 <div class="white-wrapper"><!--white-wrapper-->
-<h2 class="h2">Order List</h2>
+<h2 class="h2">Bookings List</h2>
 <div class="page-entries">Show {{entry_per_page}} entries</div>
 
 <label for="favcity" style="width:20%;"> 
@@ -188,6 +138,7 @@
 <th data-hide="phone,tablet">Service Type</th>
 {% comment %} <th>Contact</th> {% endcomment %}
 <th class="align-center" data-hide="phone,tablet">Status</th>
+<th data-hide="phone,tablet">&nbsp</th>
 </tr>
 </thead>
 <tbody>
@@ -201,8 +152,6 @@
         class="violet-line"
         {% elif order.order_status == 'ORDER_CLOSED' %}
         class="rose-line"
-        {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
-        class="skyblue-line"
         {% else %}
         class="red-line"
         {% endif %}
@@ -228,33 +177,39 @@
       
         {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
         {% if order.order_status == 'APPROVED_BY_CLIENT' %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'op-supervisor:op-supervisor-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="green-bg clickable-row">Approved</span>
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="green-bg clickable-row">Approved</span>
         {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'op-supervisor:op-supervisor-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="violet-bg clickable-row">Order in Progress</span>
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="violet-bg clickable-row">Order in Progress</span>
         {% elif order.order_status == 'ORDER_CLOSED' %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'op-supervisor:op-supervisor-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="rose-bg clickable-row">Completed</span>
-        {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'op-supervisor:op-supervisor-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="skyblue-bg clickable-row">Cancell in Progress</span>
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="rose-bg clickable-row">Completed</span>
+        {% elif order.order_status == 'CANCELL_IN_PROGRESS' %}
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="skyblue-bg clickable-row">Cancell in Progress</span>
         {% else %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'op-supervisor:op-supervisor-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Order Cancelled</span>
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Order Cancelled</span>
         {% endif %}
-
         {% else %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'op-supervisor:op-supervisor-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="oil-green-bg clickable-row">Approved-Not Paid</span>
+        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="oil-green-bg clickable-row">Approved-Not Paid</span>
         {% endif %}
-        
         {% endfor %}
 
-        {% elif evaluation.quatation_status == 'REJECTED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'op-supervisor:op-supervisor-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Rejected</span>
-        {% elif evaluation.quatation_status == 'PENDING' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'op-supervisor:op-supervisor-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="yellow-bg clickable-row">Pending</span>
-        {% elif evaluation.quatation_status == 'EXPIRED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'op-supervisor:op-supervisor-order-details' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="orange-bg clickable-row">Expired</span>
+        {% elif evaluation.quatation_status == 'REJECTED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Rejected</span>
+        {% elif evaluation.quatation_status == 'PENDING' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="yellow-bg clickable-row">Pending</span>
+        {% elif evaluation.quatation_status == 'EXPIRED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'agent:agent-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="orange-bg clickable-row">Expired</span>
         {% else %}
         <span data-href="#" class="blue-bg clickable-row">Evaluating</span>
         {%endif%}
     </td>
+    <td class="align-center">{% if evaluation.quatation_status == 'APPROVED' %}<a href="/customer/quatation/download/{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}"><img src="{% static 'files/images/icon-download.png' %}" align="absmiddle" class="download-icon"></a>{% else %}<img src="{% static 'files/images/icon-download-gray.png' %}" align="absmiddle" class="download-icon">{% endif %} &nbsp &nbsp{% if evaluation.quatation_status == 'APPROVED' or evaluation.quatation_status == 'PENDING' %}
+    {% if evaluation.payment_method == 'SUBSCRIPTION' %}<a href="/customer/subscription/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>
+    {% else %}
+    <a href="/customer/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>
+    {% endif %}
+    {% else %}<img src="{% static 'files/images/view-icon-gray.png' %}" align="absmiddle" class="download-icon">{% endif %} 
+    {% comment %} &nbsp &nbsp{% if evaluation.quatation_status == 'APPROVED' %}<img src="{% static 'files/images/edit-gray.png' %}" align="absmiddle" class="download-icon">{% else %}<a href="{% url 'agent:agent-makequatation1edit' evaluation.customer.id evaluation.id %}"><img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon"></a>{% endif %} {% endcomment %}
+    </td>
     </tr>    
     {% empty %}
-    <tr><td></td><td></td><td>No Data</td><td></td><td></td></tr>    
+    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>    
     {% endfor %}
 </tbody>
 <tfoot>
@@ -318,8 +273,8 @@
     </div><!--pagination-containter-->         
 </div><!--white-wrapper-pagination--> 
 </div><!--white-wrapper-->      
-             
-            
+
+           
             
       </div><!--main-content-holder-->
         </div><!--container-fluid space-->
@@ -329,7 +284,7 @@
 {% endblock %}
 
 {% block javascript %}
-<script src="{% static 'files/js/charts/order-chart-policy.js' %}"></script>
+
 <script>
 
 $("#governorate_filter_id").change(function(){  
@@ -376,8 +331,8 @@ $("#governorate_filter_id").change(function(){
 
 function set_params_go(args)
 {
-var url='{% url 'op-supervisor:op-supervisor-orders' %}';
-var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),
+var url='{% url 'agent:agent-customer-bookings' %}';
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val(),
 };
 for(key in args) 
     params[key]=args[key];

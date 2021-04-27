@@ -224,6 +224,7 @@
               <input type="hidden" name="payment_mode" value="subscription">
               <input type="hidden" name="qty" value="1">
               <input type="hidden" name="evaluation_id" value="{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">
+              <input type="hidden" name="order_status" value="{{order.order_status}}">
               <td colspan="2" class="align-right">
                 {% if request.user.user_type == 'AGENT' %}
                 {% elif request.user.user_type == 'EVALUATOR' %}
