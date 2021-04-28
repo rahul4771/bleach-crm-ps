@@ -418,9 +418,10 @@ $('.edit_price').click(function(){
       $('.facade-checkbox').hide()
       $('.window-checkbox').hide()
       $('.upholstery-checkbox').hide()
-
-      if($(this).data('is_newkitchen') == true)
+ 
+      if($(this).data('is_newkitchen')=='True')
       {
+     
         $('#edit_pricerange_is_newkitchen').attr('checked',true)
       }
       else
