@@ -41,7 +41,7 @@
       {% if productivity.service_type == price_range.service_type and productivity.upholstery_type == price_range.upholstery_type and productivity.is_newkitchen == price_range.is_newkitchen and productivity.is_highprice_window == price_range.is_highprice_window and productivity.is_highprice_facade == price_range.is_highprice_facade  %}<div class="d-flex"><div class="pr-price-range mt-10 clickable-cursor">{{price_range.name}}(
       {% if price_range.minimum_area %}{{price_range.minimum_area}}-{% endif %}{{price_range.maximum_area}} Sqm)  {{price_range.price}} KD
      
-      <img src="{% static 'files/images/edit-white.png' %}" align="absmiddle" class="pr-add-icon delete_price clickable-cursor ml-5" onclick="editItem()"/>
+      <img src="{% static 'files/images/edit-white.png' %}" align="absmiddle" class="pr-add-icon edit_price clickable-cursor ml-5" data-id="{{price_range.id}}" data-servicename="{{price_range.service_type.name}}" data-serviceid="{{price_range.service_type.id}}" data-="" data-name="{{price_range.name}}" data-maximum_area="{{price_range.maximum_area|default_if_none:''}}" data-minimum_area="{{price_range.minimum_area|default_if_none:''}}" data-price="{{price_range.price|default_if_none:''}}" data-unit_price="{{price_range.unit_price|default_if_none:''}}" data-is_highprice_facade="{{price_range.is_highprice_facade}}" data-is_highprice_window="{{price_range.is_highprice_window}}" data-is_newkitchen="{{price_range.is_newkitchen}}" data-upholstery_type="{{price_range.upholstery_type}}">
       <img src="{% static 'files/images/cancel-white.png' %}" align="absmiddle" class="pr-add-icon delete_price clickable-cursor" / data-id="{{price_range.id}}">
       </div>
     </div>
@@ -164,6 +164,100 @@
 </div><!--overlay-->
 <!-- /add_price_popup -->
 
+<!-- edit_price_popup -->
+<div class="overlay" id="edit_price_popup">
+  <div class="popup-assign-eval"><!--popup-assign-eval-->
+      <a id="close_edit_price_popup" class="close">&times;</a>
+          <div class="content"><!--content-->
+          
+<form method="post" enctype="multipart/form-data">{% csrf_token %}                      
+<input type="hidden" name="action_type" value="editpricerange">
+<input type="hidden" name="pricerange_id" id="edit_pricerange_id">
+          <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
+
+<div class="ticket-form-left"><!--ticket-form-left-->
+        <div class="bold-text common-label required-field"> <label >Service Type</label></div>
+      <label for="favcity">
+              <select name="service_type" required id="edit_pricerange_servicetype"> 
+              </select>
+              </label>
+</div><!--ticket-form-right--> 
+<div class="ticket-form-right"><!--ticket-form-left-->
+  <div class="bold-text common-label required-field"> <label >Name</label></div>
+  <input type="text" name="name" class="textBox" required id="edit_pricerange_name">
+</div><!--ticket-form-right--> 
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+  <div class="ticket-wrapper-row ticket-forms-boxes mt-10"><!--ticket-wrapper-row ticket-forms-boxes-->             
+    <div class="ticket-form-left"><!--ticket-form-left-->
+            <div class="bold-text common-label "> <label >Minimum Area</label></div>
+            <input type="text" name="minimum_area" class="textBox OnlyNumber" id="edit_pricerange_minimum_area">
+    </div><!--ticket-form-left--> 
+    <div class="ticket-form-right"><!--ticket-form-left-->
+      <div class="bold-text common-label "> <label >Maximum Area</label></div>
+      <input type="text" name="maximum_area" class="textBox OnlyNumber" id="edit_pricerange_maximum_area">
+</div><!--ticket-form-left--> 
+    </div><!--ticket-wrapper-row ticket-forms-boxes-->
+  
+      <div class="ticket-wrapper-row ticket-forms-boxes mt-10"><!--ticket-wrapper-row ticket-forms-boxes-->             
+        <div class="ticket-form-left"><!--ticket-form-left-->
+                <div class="bold-text common-label "> <label >Price</label></div>
+                <input type="text" name="price" class="textBox OnlyNumber" id="edit_pricerange_price">
+        </div><!--ticket-form-right--> 
+        <div class="ticket-form-right"><!--ticket-form-left-->
+          <div class="bold-text common-label "> <label >Unit Price</label></div>
+          <input type="text" name="unit_price" class="textBox OnlyNumber" id="edit_pricerange_unit_price">
+  </div><!--ticket-form-right--> 
+        </div><!--ticket-wrapper-row ticket-forms-boxes-->
+       
+<div class="ticket-wrapper-row ticket-forms-boxes mt-10"><!--ticket-wrapper-row ticket-forms-boxes-->             
+<div class="ticket-form-left"><!--ticket-form-left-->
+   <div class="kitchen-checkbox">    
+  <input type="checkbox" id="new_kitchen" name="is_newkitchen" value="true" id="edit_pricerange_is_newkitchen">
+
+  <label for="new_kitchen"> New Kitchen</label></div>
+<div class="facade-checkbox">
+  <input type="checkbox" id="high_price_facade" name="is_highprice_facade" value="true" id="edit_pricerange_is_highprice_facade">
+  <label for="new_kitchen"> High Price Facade</label></div>
+  <div class="window-checkbox">
+  <input type="checkbox" id="high_price_window" name="is_highprice_window" value="true" id="edit_pricerange_is_highprice_window">
+  <label for="new_kitchen"> High Price Window</label></div>
+  
+ 
+</div><!--ticket-form-left--> 
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
+
+  <div class="ticket-form-left  upholstery-checkbox"><!--ticket-form-left-->
+          <div class="bold-text common-label required-field"> <label >Upholstery Type</label></div>
+        <label for="favcity">
+                <select id="upholstery_type" name="upholstery_type" required id="edit_pricerange_upholstery_type">
+                
+                  <option value="SOFA">SOFA</option>
+                  <option value="CHAIR">CHAIR</option>
+                  <option value="CURTAIN">CURTAIN</option>
+                  
+                </select>
+                </label>
+  </div><!--ticket-form-right--> 
+ 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">   
+
+<div align="center"> <input class="assignButton dateconfirm" name="assing" type="button" value="Add"  onclick="submitAnyForm(this);"></div>  
+
+</div><!--ticket-wrapper-full-->             
+</form>
+          </div><!--content-->
+  </div><!--popup-assign-eval-->
+</div><!--overlay-->
+<!-- /edit_price_popup -->
+
+
+
+
 <!-- edit_productivity_popup -->
 <div class="overlay" id="edit_productivity_popup">
     <div class="popup-assign-eval"><!--popup-assign-eval-->
@@ -243,13 +337,6 @@
       $('.kitchen-checkbox').hide()
     }
   }
-  function editItem(){
-    $('#add_price_popup').css({'visibility':'visible','opacity':1,});
-
-}
-function deleteItem(){
-  console.log("delete item")
-}
 
 
 
@@ -270,20 +357,9 @@ $(document).ready(function(){
     $box.prop("checked", false);
   }
 });
-  //add productivity
-  $('.add_productivity').click(function(){
 
-      $('#add_productivity_popup').css({'visibility':'visible','opacity':1,});
-  });
-
-
-  $('#close_add_productivity_popup').click(function(){
-      $('#add_productivity_popup').css({'visibility':'hidden','opacity':0,});
-  });
-
-
-  //add price
-  $('.add_price').click(function(){
+//add price range
+$('.add_price').click(function(){
 
 $('#add_price_popup').css({'visibility':'visible','opacity':1,});
 });
@@ -293,30 +369,96 @@ $('#close_add_price_popup').click(function(){
 $('#add_price_popup').css({'visibility':'hidden','opacity':0,});
 });
 
+//edit price range
+$('.edit_price').click(function(){
+
+  $('#edit_pricerange_id').val($(this).data('id'));
+  $('#edit_pricerange_name').val($(this).data('name'));
+  $('#edit_pricerange_maximum_area').val($(this).data('maximum_area'));
+  $('#edit_pricerange_minimum_area').val($(this).data('minimum_area'));
+  $('#edit_pricerange_price').val($(this).data('price'));
+  $('#edit_pricerange_unit_price').val($(this).data('unit_price'));
 
 
-//EDIT PROMOCODE
-$('.edit_productivity').click(function(){
-  $('#productivity_id').val($(this).data('id'));
-  $('#perhour_cleaning_edit_id').val($(this).data('perhour_cleaning'));
-  $('#perunit_price_edit_id').val($(this).data('perunit_price'));
-  $("#service_type_edit_id").empty();
-  service_typeid   = $(this).data('service_typeid');
-  service_typename = $(this).data('service_typename');
-  $("#service_type_edit_id").append($('<option>', {
-                      value: service_typeid, 
-                      text: service_typename,
+  $("#edit_pricerange_servicetype").empty();
+  servicename = $(this).data('servicename');
+  serviceid   = $(this).data('serviceid');
+  $("#edit_pricerange_servicetype").append($('<option>', {
+                      value: serviceid, 
+                      text: servicename,
                       selected: true
                     }));
+  if(servicename=='Facade Cleaning'){
+      $('.facade-checkbox').show()
+      $('.window-checkbox').hide()
+      $('.upholstery-checkbox').hide()
+      $('.kitchen-checkbox').hide()
 
-  $('#edit_productivity_popup').css({'visibility':'visible','opacity':1,});
+      if($(this).data('is_highprice_facade') == true)
+      {
+        $('#edit_pricerange_is_highprice_facade').prop('checked',true)
+      }
+      else
+      {
+       $('#edit_pricerange_is_highprice_facade').prop('checked',false) 
+      }
+    }
+    else if(servicename=='Window Cleaning'){
+      $('.window-checkbox').show()
+      $('.facade-checkbox').hide()
+     
+      $('.upholstery-checkbox').hide()
+      $('.kitchen-checkbox').hide()
+    
+      if($(this).data('is_highprice_window') == true)
+      {
+      $('#edit_pricerange_is_highprice_window').prop('checked',true)
+      }
+      else
+      {
+        $('#edit_pricerange_is_highprice_window').prop('checked',false)
+      }
+    }
+    else if(servicename=='Upholstery Cleaning'){
+      $('.upholstery-checkbox').show()
+      $('.facade-checkbox').hide()
+      $('.window-checkbox').hide()
+    
+      $('.kitchen-checkbox').hide()
+    
+      $('#edit_pricerange_upholstery_type').val($(this).data('upholstery_type'));
+    }
+    else if(servicename=='Kitchen Cleaning'){
+      $('.kitchen-checkbox').show()
+      $('.facade-checkbox').hide()
+      $('.window-checkbox').hide()
+      $('.upholstery-checkbox').hide()
+
+      if($(this).data('is_newkitchen') == true)
+      {
+        alert("hiii")
+        $('#edit_pricerange_is_newkitchen').prop('checked',true)
+      }
+      else
+      {
+        $('#edit_pricerange_is_newkitchen').prop('checked',false) 
+      }
+    }
+    else{
+      $('.facade-checkbox').hide()
+      $('.window-checkbox').hide()
+      $('.upholstery-checkbox').hide()
+      $('.kitchen-checkbox').hide()
+    }
 
 
-})
+$('#edit_price_popup').css({'visibility':'visible','opacity':1,});
+});
 
-$('#close_edit_productivity_popup').click(function(){
-      $('#edit_productivity_popup').css({'visibility':'hidden','opacity':0,});
-  });
+
+$('#close_edit_price_popup').click(function(){
+$('#edit_price_popup').css({'visibility':'hidden','opacity':0,});
+});
 
 
 //Delete price range
@@ -336,6 +478,31 @@ $('.delete_price').click(function(){
       });
 
 })
+
+
+
+//EDIT PRODUCTIVITY
+$('.edit_productivity').click(function(){
+  $('#productivity_id').val($(this).data('id'));
+  $('#perhour_cleaning_edit_id').val($(this).data('perhour_cleaning'));
+  $("#service_type_edit_id").empty();
+  service_typeid   = $(this).data('service_typeid');
+  service_typename = $(this).data('service_typename');
+  $("#service_type_edit_id").append($('<option>', {
+                      value: service_typeid, 
+                      text: service_typename,
+                      selected: true
+                    }));
+
+  $('#edit_productivity_popup').css({'visibility':'visible','opacity':1,});
+
+
+})
+
+$('#close_edit_productivity_popup').click(function(){
+      $('#edit_productivity_popup').css({'visibility':'hidden','opacity':0,});
+  });
+
 
 })
 </script>
