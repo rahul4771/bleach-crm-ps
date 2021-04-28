@@ -1547,6 +1547,7 @@ class ProductivityView(IsAdmin,View):
 			pricerange_form = ServicePriceRangeForm(request.POST,instance=pricerange)
 			
 			if pricerange_form.is_valid():
+				print(pricerange_form)
 				pricerange_form.save()
 				messages.success(request,"Service Price Range Successfully Updated")
 			else:

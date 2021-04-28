@@ -141,8 +141,9 @@
   <div class="ticket-form-left  upholstery-checkbox"><!--ticket-form-left-->
           <div class="bold-text common-label required-field"> <label >Upholstery Type</label></div>
         <label for="favcity">
-                <select id="upholstery_type" name="upholstery_type" required >
+                <select id="upholstery_type" name="upholstery_type">
                 
+                  <option value="">---Select---</option>
                   <option value="SOFA">SOFA</option>
                   <option value="CHAIR">CHAIR</option>
                   <option value="CURTAIN">CURTAIN</option>
@@ -232,8 +233,9 @@
   <div class="ticket-form-left  upholstery-checkbox"><!--ticket-form-left-->
           <div class="bold-text common-label required-field"> <label >Upholstery Type</label></div>
         <label for="favcity">
-                <select name="upholstery_type" required id="edit_pricerange_upholstery_type">
+                <select name="upholstery_type" id="edit_pricerange_upholstery_type">
                 
+                  <option value="">---Select---</option>
                   <option value="SOFA">SOFA</option>
                   <option value="CHAIR">CHAIR</option>
                   <option value="CURTAIN">CURTAIN</option>
@@ -379,7 +381,7 @@ $('.edit_price').click(function(){
       $('.upholstery-checkbox').hide()
       $('.kitchen-checkbox').hide()
 
-      if($(this).data('is_highprice_facade') == true)
+      if($(this).data('is_highprice_facade') == 'True')
       {
         $('#edit_pricerange_is_highprice_facade').attr('checked',true)
       }
@@ -395,7 +397,7 @@ $('.edit_price').click(function(){
       $('.upholstery-checkbox').hide()
       $('.kitchen-checkbox').hide()
     
-      if($(this).data('is_highprice_window') == true)
+      if($(this).data('is_highprice_window') == 'True')
       {
       $('#edit_pricerange_is_highprice_window').attr('checked',true)
       }
