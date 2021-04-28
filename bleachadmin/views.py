@@ -1509,7 +1509,7 @@ class ProductivityView(IsAdmin,View):
 
 		added_services = productivities.values_list('service_type',flat=True)
 		try:
-			service_types = ServiceType.objects.filter(is_active=True).exclude(id__in=added_services)
+			service_types = ServiceType.objects.filter(is_active=True)
 		except:
 			service_types = None
 
