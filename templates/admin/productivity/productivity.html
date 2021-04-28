@@ -40,7 +40,7 @@
       
       {% if productivity.service_type == price_range.service_type and productivity.upholstery_type == price_range.upholstery_type and productivity.is_newkitchen == price_range.is_newkitchen and productivity.is_highprice_window == price_range.is_highprice_window and productivity.is_highprice_facade == price_range.is_highprice_facade  %}<div class="d-flex"><div class="pr-price-range mt-10">{{price_range.name}}(
       {% if price_range.minimum_area %}{{price_range.minimum_area}}-{% endif %}{{price_range.maximum_area}} Sqm)  {{price_range.price}} KD
-      <img src="{% static 'files/images/cancel-white.png' %}" align="absmiddle" class="pr-add-icon delete_price clickable-cursor" />
+      <img src="{% static 'files/images/cancel-white.png' %}" align="absmiddle" class="pr-add-icon delete_price clickable-cursor" / data-id="{{price_range.id}}">
       </div>
     </div>
     
@@ -76,8 +76,7 @@
           <div class="content"><!--content-->
           
 <form method="post" enctype="multipart/form-data">{% csrf_token %}                      
-<input type="hidden" name="action_type" value="editproductivity">
-<input type="hidden" name="productivityid" id="productivity_id" value="">
+<input type="hidden" name="action_type" value="addpricerange">
           <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
 
@@ -93,43 +92,43 @@
 </div><!--ticket-form-right--> 
 <div class="ticket-form-right"><!--ticket-form-left-->
   <div class="bold-text common-label required-field"> <label >Name</label></div>
-  <input type="text" name="perhour_cleaning" id="perhour_cleaning_edit_id" class="textBox" required>
+  <input type="text" name="name" class="textBox" required>
 </div><!--ticket-form-right--> 
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
   <div class="ticket-wrapper-row ticket-forms-boxes mt-10"><!--ticket-wrapper-row ticket-forms-boxes-->             
     <div class="ticket-form-left"><!--ticket-form-left-->
             <div class="bold-text common-label "> <label >Minimum Area</label></div>
-            <input type="text" name="perhour_cleaning" id="perhour_cleaning_edit_id" class="textBox OnlyNumber" required>
+            <input type="text" name="minimum_area" class="textBox OnlyNumber">
     </div><!--ticket-form-left--> 
     <div class="ticket-form-right"><!--ticket-form-left-->
       <div class="bold-text common-label "> <label >Maximum Area</label></div>
-      <input type="text" name="perhour_cleaning" id="perhour_cleaning_edit_id" class="textBox OnlyNumber" required>
+      <input type="text" name="maximum_area" class="textBox OnlyNumber">
 </div><!--ticket-form-left--> 
     </div><!--ticket-wrapper-row ticket-forms-boxes-->
   
       <div class="ticket-wrapper-row ticket-forms-boxes mt-10"><!--ticket-wrapper-row ticket-forms-boxes-->             
         <div class="ticket-form-left"><!--ticket-form-left-->
                 <div class="bold-text common-label "> <label >Price</label></div>
-                <input type="text" name="perhour_cleaning" id="perhour_cleaning_edit_id" class="textBox OnlyNumber" required>
+                <input type="text" name="price" class="textBox OnlyNumber">
         </div><!--ticket-form-right--> 
         <div class="ticket-form-right"><!--ticket-form-left-->
           <div class="bold-text common-label "> <label >Unit Price</label></div>
-          <input type="text" name="perhour_cleaning" id="perhour_cleaning_edit_id" class="textBox OnlyNumber" required>
+          <input type="text" name="unit_price" class="textBox OnlyNumber">
   </div><!--ticket-form-right--> 
         </div><!--ticket-wrapper-row ticket-forms-boxes-->
        
 <div class="ticket-wrapper-row ticket-forms-boxes mt-10"><!--ticket-wrapper-row ticket-forms-boxes-->             
 <div class="ticket-form-left"><!--ticket-form-left-->
    <div class="kitchen-checkbox">    
-  <input type="checkbox" id="new_kitchen" name="new_kitchen" value="true" >
+  <input type="checkbox" id="new_kitchen" name="is_newkitchen" value="true" >
 
   <label for="new_kitchen"> New Kitchen</label></div>
 <div class="facade-checkbox">
-  <input type="checkbox" id="high_price_facade" name="high_price_facade" value="true">
+  <input type="checkbox" id="high_price_facade" name="is_highprice_facade" value="true">
   <label for="new_kitchen"> High Price Facade</label></div>
   <div class="window-checkbox">
-  <input type="checkbox" id="high_price_window" name="high_price_window" value="true">
+  <input type="checkbox" id="high_price_window" name="is_highprice_window" value="true">
   <label for="new_kitchen"> High Price Window</label></div>
   <div class="upholstery-checkbox required">
     <label class="required-field common-label">Upholsetry Type</label><br>
@@ -146,7 +145,7 @@
 
 <hr class="hr-dashedpad">   
 
-<div align="center"> <input class="assignButton dateconfirm" name="assing" type="button" value="Add"  ></div>  
+<div align="center"> <input class="assignButton dateconfirm" name="assing" type="button" value="Add"  onclick="submitAnyForm(this);"></div>  
 
 </div><!--ticket-wrapper-full-->             
 </form>
@@ -250,7 +249,7 @@ $(document).ready(function(){
     $box.prop("checked", false);
   }
 });
-  //add promocode
+  //add productivity
   $('.add_productivity').click(function(){
 
       $('#add_productivity_popup').css({'visibility':'visible','opacity':1,});
@@ -260,6 +259,7 @@ $(document).ready(function(){
   $('#close_add_productivity_popup').click(function(){
       $('#add_productivity_popup').css({'visibility':'hidden','opacity':0,});
   });
+
 
   //add price
   $('.add_price').click(function(){
@@ -297,6 +297,24 @@ $('#close_edit_productivity_popup').click(function(){
       $('#edit_productivity_popup').css({'visibility':'hidden','opacity':0,});
   });
 
+
+//Delete price range
+$('.delete_price').click(function(){
+  pricerange_id = $(this).data('id');
+  $.ajax({
+
+        url: "{% url 'bleach_admin:admin-deletepricerange' %}",
+
+        data: {'pricerange_id':pricerange_id}, 
+
+        dataType: 'json',
+
+        success: function (data) {
+              location.reload()
+        }
+      });
+
+})
 
 })
 </script>
