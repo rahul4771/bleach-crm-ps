@@ -22,7 +22,10 @@
 <tr>
 <th>Service Type</th>
 <th>Speciality</th>
-<th>Price Range</th>
+<th class="d-flex">
+  Price Range  <div class="add-btn ml-10">
+  <img src="{% static 'files/images/plus.png' %}" align="absmiddle" class="pr-add-icon add_price clickable-cursor" data-id="{{productivity.id}}" data-service_typeid="{{productivity.service_type.id}}" data-service_typename="{{productivity.service_type.name}}" data-perhour_cleaning="{{productivity.perhour_cleaning}}" data-perunit_price="{{productivity.perunit_price|floatformat:'3'}}">
+</div></th>
 <th data-hide="phone,tablet">Productivity/Cleaner/Hr</th>
 <th data-hide="phone,tablet">&nbsp;</th>
 </tr>
@@ -34,15 +37,18 @@
     <td>{% if productivity.service_type.name == 'Upholstery Cleaning' %}{{productivity.upholstery_type}}{% elif productivity.service_type.name == 'Kitchen Cleaning' %}{% if productivity.is_newkitchen %}New Kitchen{% else %}Old Kitchen{% endif %}{% elif productivity.service_type.name == 'Window Cleaning' %}{% if productivity.is_highprice_window %}High Price Window{% else %}Low Price Window{% endif %}{% elif productivity.service_type.name == 'Facade Cleaning' %}{% if productivity.is_highprice_facade %}High Price Facade{% else %}Low Price Facade{% endif %}{% else %}Normal{% endif %}</td>
     <td>
       {% for price_range in price_ranges %}
-      {% if productivity.service_type == price_range.service_type and productivity.upholstery_type == price_range.upholstery_type and productivity.is_newkitchen == price_range.is_newkitchen and productivity.is_highprice_window == price_range.is_highprice_window and productivity.is_highprice_facade == price_range.is_highprice_facade  %}{{price_range.name}}(
-      {% if price_range.minimum_area %}{{price_range.minimum_area}}-{% endif %}{{price_range.maximum_area}} Sqm)  {{price_range.price}} KD
       
-      <br>
+      {% if productivity.service_type == price_range.service_type and productivity.upholstery_type == price_range.upholstery_type and productivity.is_newkitchen == price_range.is_newkitchen and productivity.is_highprice_window == price_range.is_highprice_window and productivity.is_highprice_facade == price_range.is_highprice_facade  %}<div class="d-flex"><div class="pr-price-range mt-10">{{price_range.name}}(
+      {% if price_range.minimum_area %}{{price_range.minimum_area}}-{% endif %}{{price_range.maximum_area}} Sqm)  {{price_range.price}} KD
+      <img src="{% static 'files/images/cancel-white.png' %}" align="absmiddle" class="pr-add-icon delete_price clickable-cursor" />
+      </div>
+    </div>
+    
+      
+      
       {% endif %}
       {% endfor %} 
-      <div class="add-btn">
-      <img src="{% static 'files/images/plus.png' %}" align="absmiddle" class="download-icon add_price clickable-cursor" data-id="{{productivity.id}}" data-service_typeid="{{productivity.service_type.id}}" data-service_typename="{{productivity.service_type.name}}" data-perhour_cleaning="{{productivity.perhour_cleaning}}" data-perunit_price="{{productivity.perunit_price|floatformat:'3'}}">
-    </div>
+     
     </td>
     <td class="align-center">{{productivity.perhour_cleaning}}</td>
     <td>
@@ -78,7 +84,7 @@
 <div class="ticket-form-left"><!--ticket-form-left-->
         <div class="bold-text common-label required-field"> <label >Service Type</label></div>
       <label for="favcity">
-              <select id="service_type_edit_id" name="service_type" required>
+              <select id="service_type_add" name="service_type" required onchange="checkService()">
                 {% for service in service_types %}
                 <option value="{{service.id}}">{{service.name}}</option>
                 {% endfor %} 
@@ -91,43 +97,50 @@
 </div><!--ticket-form-right--> 
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
-  <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
+  <div class="ticket-wrapper-row ticket-forms-boxes mt-10"><!--ticket-wrapper-row ticket-forms-boxes-->             
     <div class="ticket-form-left"><!--ticket-form-left-->
-            <div class="bold-text common-label required-field"> <label >Minimum Area</label></div>
+            <div class="bold-text common-label "> <label >Minimum Area</label></div>
             <input type="text" name="perhour_cleaning" id="perhour_cleaning_edit_id" class="textBox OnlyNumber" required>
     </div><!--ticket-form-left--> 
     <div class="ticket-form-right"><!--ticket-form-left-->
-      <div class="bold-text common-label required-field"> <label >Maximum Area</label></div>
+      <div class="bold-text common-label "> <label >Maximum Area</label></div>
       <input type="text" name="perhour_cleaning" id="perhour_cleaning_edit_id" class="textBox OnlyNumber" required>
 </div><!--ticket-form-left--> 
     </div><!--ticket-wrapper-row ticket-forms-boxes-->
   
-      <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
+      <div class="ticket-wrapper-row ticket-forms-boxes mt-10"><!--ticket-wrapper-row ticket-forms-boxes-->             
         <div class="ticket-form-left"><!--ticket-form-left-->
-                <div class="bold-text common-label required-field"> <label >Price</label></div>
+                <div class="bold-text common-label "> <label >Price</label></div>
                 <input type="text" name="perhour_cleaning" id="perhour_cleaning_edit_id" class="textBox OnlyNumber" required>
         </div><!--ticket-form-right--> 
         <div class="ticket-form-right"><!--ticket-form-left-->
-          <div class="bold-text common-label required-field"> <label >Unit Price</label></div>
+          <div class="bold-text common-label "> <label >Unit Price</label></div>
           <input type="text" name="perhour_cleaning" id="perhour_cleaning_edit_id" class="textBox OnlyNumber" required>
   </div><!--ticket-form-right--> 
         </div><!--ticket-wrapper-row ticket-forms-boxes-->
        
-<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
+<div class="ticket-wrapper-row ticket-forms-boxes mt-10"><!--ticket-wrapper-row ticket-forms-boxes-->             
 <div class="ticket-form-left"><!--ticket-form-left-->
-       
-  <input type="checkbox" id="new_kitchen" name="new_kitchen" value="true">
-  <label for="new_kitchen"> New Kitchen</label><br>
+   <div class="kitchen-checkbox">    
+  <input type="checkbox" id="new_kitchen" name="new_kitchen" value="true" >
+
+  <label for="new_kitchen"> New Kitchen</label></div>
+<div class="facade-checkbox">
   <input type="checkbox" id="high_price_facade" name="high_price_facade" value="true">
-  <label for="new_kitchen"> High Price Facade</label><br>
-  <input type="checkbox" id="high_price_facade" name="high_price_window" value="true">
-  <label for="new_kitchen"> High Price Window</label><br>
-  <input type="checkbox" id="sofa" name="sofa" value="true">
+  <label for="new_kitchen"> High Price Facade</label></div>
+  <div class="window-checkbox">
+  <input type="checkbox" id="high_price_window" name="high_price_window" value="true">
+  <label for="new_kitchen"> High Price Window</label></div>
+  <div class="upholstery-checkbox required">
+    <label class="required-field common-label">Upholsetry Type</label><br>
+
+  <input type="checkbox" id="sofa" name="upholstery_type" value="true" >
   <label for="new_kitchen"> Sofa</label>
-  <input type="checkbox" id="chair" name="chair" value="true">
+  <input type="checkbox" id="chair" name="upholstery_type" value="true" class="ml-10">
   <label for="new_kitchen"> Chair</label>
-  <input type="checkbox" id="curtain" name="curtain" value="true">
+  <input type="checkbox" id="curtain" name="upholstery_type" value="true" class="ml-10">
   <label for="new_kitchen"> Curtain</label>
+  </div>
 </div><!--ticket-form-left--> 
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -187,8 +200,56 @@
 
 {% block javascript %}
 <script>
+  function checkService(){
+    if($('#service_type_add option:selected')[0].innerText=='Facade Cleaning'){
+      $('.facade-checkbox').show()
+      $('.window-checkbox').hide()
+      $('.upholstery-checkbox').hide()
+      $('.kitchen-checkbox').hide()
+    }
+    else if($('#service_type_add option:selected')[0].innerText=='Window Cleaning'){
+      $('.window-checkbox').show()
+      $('.facade-checkbox').hide()
+     
+      $('.upholstery-checkbox').hide()
+      $('.kitchen-checkbox').hide()
+    }
+    else if($('#service_type_add option:selected')[0].innerText=='Upholstery Cleaning'){
+      $('.upholstery-checkbox').show()
+      $('.facade-checkbox').hide()
+      $('.window-checkbox').hide()
+    
+      $('.kitchen-checkbox').hide()
+    }
+    else if($('#service_type_add option:selected')[0].innerText=='Kitchen Cleaning'){
+      $('.kitchen-checkbox').show()
+      $('.facade-checkbox').hide()
+      $('.window-checkbox').hide()
+      $('.upholstery-checkbox').hide()
+    }
+    else{
+      $('.facade-checkbox').hide()
+      $('.window-checkbox').hide()
+      $('.upholstery-checkbox').hide()
+      $('.kitchen-checkbox').hide()
+    }
+  }
 $(document).ready(function(){
-
+  $("input:checkbox").on('click', function() {
+  // in the handler, 'this' refers to the box clicked on
+  var $box = $(this);
+  if ($box.is(":checked")) {
+    // the name of the box is retrieved using the .attr() method
+    // as it is assumed and expected to be immutable
+    var group = "input:checkbox[name='" + $box.attr("name") + "']";
+    // the checked state of the group/box on the other hand will change
+    // and the current value is retrieved using .prop() method
+    $(group).prop("checked", false);
+    $box.prop("checked", true);
+  } else {
+    $box.prop("checked", false);
+  }
+});
   //add promocode
   $('.add_productivity').click(function(){
 

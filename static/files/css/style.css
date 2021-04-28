@@ -46,6 +46,35 @@ footer {
     overflow: hidden;
     width: 100%;
 }
+.ml-10{
+    margin-left:10px !important;
+}
+.mt-10{
+    margin-top:10px !important;
+}
+.kitchen-checkbox{
+    display: none;
+}
+.facade-checkbox{
+    display: none;
+}
+.window-checkbox{
+    display: none;
+}
+.upholstery-checkbox{
+    display: none;
+}
+.pr-add-icon{
+    width:20px;
+}
+.pr-price-range{
+    background-color:#2e4e85 ;
+    color:#ffffff;
+   
+    padding: 7px;
+   
+    border-radius: 20px;
+}
 @media (max-width: 400px) {
     .pn-container {
         height: 150px;
