@@ -36,9 +36,13 @@
       {% for price_range in price_ranges %}
       {% if productivity.service_type == price_range.service_type and productivity.upholstery_type == price_range.upholstery_type and productivity.is_newkitchen == price_range.is_newkitchen and productivity.is_highprice_window == price_range.is_highprice_window and productivity.is_highprice_facade == price_range.is_highprice_facade  %}
       {% if price_range.minimum_area %}{{price_range.minimum_area}}-{% endif %}{{price_range.maximum_area}} Sqm  {{price_range.price}} KD
+      
       <br>
       {% endif %}
       {% endfor %} 
+      <div class="add-btn">
+      <img src="{% static 'files/images/plus.png' %}" align="absmiddle" class="download-icon add_price clickable-cursor" data-id="{{productivity.id}}" data-service_typeid="{{productivity.service_type.id}}" data-service_typename="{{productivity.service_type.name}}" data-perhour_cleaning="{{productivity.perhour_cleaning}}" data-perunit_price="{{productivity.perunit_price|floatformat:'3'}}">
+    </div>
     </td>
     <td class="align-center">{{productivity.perhour_cleaning}}</td>
     <td>
@@ -59,6 +63,84 @@
 </table>
 </div><!--main-content-holder-->            
 {% include 'admin/common/footer.html' %}
+<!-- add_price_popup -->
+<div class="overlay" id="add_price_popup">
+  <div class="popup-assign-eval"><!--popup-assign-eval-->
+      <a id="close_add_price_popup" class="close">&times;</a>
+          <div class="content"><!--content-->
+          
+<form method="post" enctype="multipart/form-data">{% csrf_token %}                      
+<input type="hidden" name="action_type" value="editproductivity">
+<input type="hidden" name="productivityid" id="productivity_id" value="">
+          <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
+
+<div class="ticket-form-left"><!--ticket-form-left-->
+        <div class="bold-text common-label required-field"> <label >Service Type</label></div>
+      <label for="favcity">
+              <select id="service_type_edit_id" name="service_type" required>
+                {% for service in service_types %}
+                <option value="{{service.id}}">{{service.name}}</option>
+                {% endfor %} 
+              </select>
+              </label>
+</div><!--ticket-form-right--> 
+<div class="ticket-form-right"><!--ticket-form-left-->
+  <div class="bold-text common-label required-field"> <label >Name</label></div>
+  <input type="text" name="perhour_cleaning" id="perhour_cleaning_edit_id" class="textBox" required>
+</div><!--ticket-form-right--> 
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+  <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
+    <div class="ticket-form-left"><!--ticket-form-left-->
+            <div class="bold-text common-label required-field"> <label >Minimum Area</label></div>
+            <input type="text" name="perhour_cleaning" id="perhour_cleaning_edit_id" class="textBox OnlyNumber" required>
+    </div><!--ticket-form-left--> 
+    <div class="ticket-form-right"><!--ticket-form-left-->
+      <div class="bold-text common-label required-field"> <label >Maximum Area</label></div>
+      <input type="text" name="perhour_cleaning" id="perhour_cleaning_edit_id" class="textBox OnlyNumber" required>
+</div><!--ticket-form-left--> 
+    </div><!--ticket-wrapper-row ticket-forms-boxes-->
+  
+      <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
+        <div class="ticket-form-left"><!--ticket-form-left-->
+                <div class="bold-text common-label required-field"> <label >Price</label></div>
+                <input type="text" name="perhour_cleaning" id="perhour_cleaning_edit_id" class="textBox OnlyNumber" required>
+        </div><!--ticket-form-right--> 
+        <div class="ticket-form-right"><!--ticket-form-left-->
+          <div class="bold-text common-label required-field"> <label >Unit Price</label></div>
+          <input type="text" name="perhour_cleaning" id="perhour_cleaning_edit_id" class="textBox OnlyNumber" required>
+  </div><!--ticket-form-right--> 
+        </div><!--ticket-wrapper-row ticket-forms-boxes-->
+       
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
+<div class="ticket-form-left"><!--ticket-form-left-->
+       
+  <input type="checkbox" id="new_kitchen" name="new_kitchen" value="true">
+  <label for="new_kitchen"> New Kitchen</label><br>
+  <input type="checkbox" id="high_price_facade" name="high_price_facade" value="true">
+  <label for="new_kitchen"> High Price Facade</label><br>
+  <input type="checkbox" id="high_price_facade" name="high_price_window" value="true">
+  <label for="new_kitchen"> High Price Window</label><br>
+  <input type="checkbox" id="sofa" name="sofa" value="true">
+  <label for="new_kitchen"> Sofa</label>
+  <input type="checkbox" id="chair" name="chair" value="true">
+  <label for="new_kitchen"> Chair</label>
+  <input type="checkbox" id="curtain" name="curtain" value="true">
+  <label for="new_kitchen"> Curtain</label>
+</div><!--ticket-form-left--> 
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">   
+
+<div align="center"> <input class="assignButton dateconfirm" name="assing" type="button" value="Add"  ></div>  
+
+</div><!--ticket-wrapper-full-->             
+</form>
+          </div><!--content-->
+  </div><!--popup-assign-eval-->
+</div><!--overlay-->
+<!-- /add_price_popup -->
 
 <!-- edit_productivity_popup -->
 <div class="overlay" id="edit_productivity_popup">
@@ -117,6 +199,17 @@ $(document).ready(function(){
   $('#close_add_productivity_popup').click(function(){
       $('#add_productivity_popup').css({'visibility':'hidden','opacity':0,});
   });
+
+  //add price
+  $('.add_price').click(function(){
+
+$('#add_price_popup').css({'visibility':'visible','opacity':1,});
+});
+
+
+$('#close_add_price_popup').click(function(){
+$('#add_price_popup').css({'visibility':'hidden','opacity':0,});
+});
 
 
 
