@@ -1,5 +1,5 @@
 from django import forms
-from bleachadmin.models import ServiceProductivity
+from bleachadmin.models import ServiceProductivity,ServicePriceRange
 
 class ProductivityForm(forms.ModelForm):
 	class Meta:
@@ -12,3 +12,7 @@ class ProductivityForm(forms.ModelForm):
 		self.fields['service_type'].required    	= True
 		self.fields['perhour_cleaning'].required    = True
 		
+class ServicePriceRangeForm(forms.ModelForm):
+	class Meta:
+		model = ServicePriceRange
+		fields= ('service_type','name','minimum_area','maximum_area','price','unit_price','is_newkitchen','is_highprice_facade','is_highprice_window','upholstery_type')

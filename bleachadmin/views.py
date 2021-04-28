@@ -26,7 +26,7 @@ from accountant.models import PaymentHistory
 from bleachadmin.models import ServiceProductivity,ServicePriceRange
 
 from order.forms import PromocodeForm
-from bleachadmin.forms import ProductivityForm
+from bleachadmin.forms import ProductivityForm,ServicePriceRangeForm
 
 from django.db.models.functions import TruncMonth as Month, TruncYear as Year
 from django.db.models import Count
@@ -1528,8 +1528,28 @@ class ProductivityView(IsAdmin,View):
 				productivity_form.save()
 				messages.success(request,"Service Productivity Successfully Updated")
 			else:
-				messages.error(request,get_error(productivity_form))		
-		
+				messages.error(request,get_error(productivity_form))	
+
+		elif action == 'addpricerange':
+			pricerange_form = ServicePriceRangeForm(request.POST)
+			
+			if pricerange_form.is_valid():
+				pricerange_form.save()
+				messages.success(request,"Service Price Range Successfully Updated")
+			else:
+				messages.error(request,get_error(pricerange_form))
+
+		elif action == 'editpricerange':	
+			pricerange_id   = request.POST.get('pricerangeid')
+			pricerange      = ServicePriceRange.objects.get(id=pricerange_id)
+			pricerange_form = ServicePriceRangeForm(request.POST,instance=pricerange)
+			
+			if pricerange_form.is_valid():
+				pricerange_form.save()
+				messages.success(request,"Service Price Range Successfully Updated")
+			else:
+				messages.error(request,get_error(pricerange_form))
+
 		return redirect('bleach_admin:admin-productivity')
 
 #ajax for sales charts
