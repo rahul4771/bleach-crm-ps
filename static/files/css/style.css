@@ -49,9 +49,13 @@ footer {
 .ml-10{
     margin-left:10px !important;
 }
+.ml-5{
+    margin-left:5px !important;
+}
 .mt-10{
     margin-top:10px !important;
 }
+
 .kitchen-checkbox{
     display: none;
 }
@@ -62,7 +66,7 @@ footer {
     display: none;
 }
 .upholstery-checkbox{
-    display: none;
+    display: none ;
 }
 .pr-add-icon{
     width:20px;

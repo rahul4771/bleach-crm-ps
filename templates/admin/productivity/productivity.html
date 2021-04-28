@@ -38,9 +38,11 @@
     <td>
       {% for price_range in price_ranges %}
       
-      {% if productivity.service_type == price_range.service_type and productivity.upholstery_type == price_range.upholstery_type and productivity.is_newkitchen == price_range.is_newkitchen and productivity.is_highprice_window == price_range.is_highprice_window and productivity.is_highprice_facade == price_range.is_highprice_facade  %}<div class="d-flex"><div class="pr-price-range mt-10">{{price_range.name}}(
+      {% if productivity.service_type == price_range.service_type and productivity.upholstery_type == price_range.upholstery_type and productivity.is_newkitchen == price_range.is_newkitchen and productivity.is_highprice_window == price_range.is_highprice_window and productivity.is_highprice_facade == price_range.is_highprice_facade  %}<div class="d-flex"><div class="pr-price-range mt-10 clickable-cursor">{{price_range.name}}(
       {% if price_range.minimum_area %}{{price_range.minimum_area}}-{% endif %}{{price_range.maximum_area}} Sqm)  {{price_range.price}} KD
-      <img src="{% static 'files/images/cancel-white.png' %}" align="absmiddle" class="pr-add-icon delete_price clickable-cursor" />
+      <img src="{% static 'files/images/edit-white.png' %}" align="absmiddle" class="pr-add-icon delete_price clickable-cursor ml-5" onclick="editItem()"/>
+
+      <img src="{% static 'files/images/cancel-white.png' %}" align="absmiddle" class="pr-add-icon delete_price clickable-cursor ml-5" onclick="deleteItem()"/>
       </div>
     </div>
     
@@ -131,18 +133,26 @@
   <div class="window-checkbox">
   <input type="checkbox" id="high_price_window" name="high_price_window" value="true">
   <label for="new_kitchen"> High Price Window</label></div>
-  <div class="upholstery-checkbox required">
-    <label class="required-field common-label">Upholsetry Type</label><br>
-
-  <input type="checkbox" id="sofa" name="upholstery_type" value="true" >
-  <label for="new_kitchen"> Sofa</label>
-  <input type="checkbox" id="chair" name="upholstery_type" value="true" class="ml-10">
-  <label for="new_kitchen"> Chair</label>
-  <input type="checkbox" id="curtain" name="upholstery_type" value="true" class="ml-10">
-  <label for="new_kitchen"> Curtain</label>
-  </div>
+  
+ 
 </div><!--ticket-form-left--> 
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
+
+  <div class="ticket-form-left  upholstery-checkbox"><!--ticket-form-left-->
+          <div class="bold-text common-label required-field"> <label >Upholstery Type</label></div>
+        <label for="favcity">
+                <select id="upholstery_type" name="upholstery_type" required >
+                
+                  <option value="SOFA">SOFA</option>
+                  <option value="CHAIR">CHAIR</option>
+                  <option value="CURTAIN">CURTAIN</option>
+                  
+                </select>
+                </label>
+  </div><!--ticket-form-right--> 
+ 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
 <hr class="hr-dashedpad">   
 
@@ -234,6 +244,17 @@
       $('.kitchen-checkbox').hide()
     }
   }
+  function editItem(){
+    $('#add_price_popup').css({'visibility':'visible','opacity':1,});
+
+}
+function deleteItem(){
+  console.log("delete item")
+}
+
+
+
+  
 $(document).ready(function(){
   $("input:checkbox").on('click', function() {
   // in the handler, 'this' refers to the box clicked on
