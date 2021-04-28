@@ -214,14 +214,14 @@
 <div class="ticket-wrapper-row ticket-forms-boxes mt-10"><!--ticket-wrapper-row ticket-forms-boxes-->             
 <div class="ticket-form-left"><!--ticket-form-left-->
    <div class="kitchen-checkbox">    
-  <input type="checkbox" id="new_kitchen" name="is_newkitchen" value="true" id="edit_pricerange_is_newkitchen">
+  <input type="checkbox" name="is_newkitchen" value="true" id="edit_pricerange_is_newkitchen">
 
   <label for="new_kitchen"> New Kitchen</label></div>
 <div class="facade-checkbox">
-  <input type="checkbox" id="high_price_facade" name="is_highprice_facade" value="true" id="edit_pricerange_is_highprice_facade">
+  <input type="checkbox" name="is_highprice_facade" value="true" id="edit_pricerange_is_highprice_facade">
   <label for="new_kitchen"> High Price Facade</label></div>
   <div class="window-checkbox">
-  <input type="checkbox" id="high_price_window" name="is_highprice_window" value="true" id="edit_pricerange_is_highprice_window">
+  <input type="checkbox" name="is_highprice_window" value="true" id="edit_pricerange_is_highprice_window">
   <label for="new_kitchen"> High Price Window</label></div>
   
  
@@ -232,7 +232,7 @@
   <div class="ticket-form-left  upholstery-checkbox"><!--ticket-form-left-->
           <div class="bold-text common-label required-field"> <label >Upholstery Type</label></div>
         <label for="favcity">
-                <select id="upholstery_type" name="upholstery_type" required id="edit_pricerange_upholstery_type">
+                <select name="upholstery_type" required id="edit_pricerange_upholstery_type">
                 
                   <option value="SOFA">SOFA</option>
                   <option value="CHAIR">CHAIR</option>
@@ -421,7 +421,6 @@ $('.edit_price').click(function(){
 
       if($(this).data('is_newkitchen') == true)
       {
-        alert("hiii")
         $('#edit_pricerange_is_newkitchen').attr('checked',true)
       }
       else
