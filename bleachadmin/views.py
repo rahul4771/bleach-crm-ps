@@ -1492,6 +1492,8 @@ class PromocodeView(IsAdmin,View):
 		
 		return redirect('bleach_admin:admin-promocode')		
 
+
+
 class ProductivityView(IsAdmin,View):
 
 	def get(self,request):
@@ -1551,6 +1553,19 @@ class ProductivityView(IsAdmin,View):
 				messages.error(request,get_error(pricerange_form))
 
 		return redirect('bleach_admin:admin-productivity')
+
+def DeletePriceRange(request):
+	response_dict            = {}
+	response_dict['success'] = False
+
+	pricerange_id = request.GET.get('pricerange_id')
+	price_range   = ServicePriceRange.objects.get(id=pricerange_id)
+	price_range.delete()
+
+	response_dict['success'] = True
+
+	return JsonResponse(response_dict)
+
 
 #ajax for sales charts
 def SalesLocationData(request):

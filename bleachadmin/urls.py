@@ -25,7 +25,7 @@ urlpatterns = [
 	url(r'^promocodes/$',views.PromocodeView.as_view(),name='admin-promocode'),
 
 	url(r'^productivity/$',views.ProductivityView.as_view(),name='admin-productivity'),
-	
+	url(r'^deletepricerange/$',views.DeletePriceRange,name='admin-deletepricerange'),
 
 	url(r'^payments/$',views.PaymentDetails.as_view(),name='admin-payments'),
 	url(r'^payment-policy/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.AdminPaymentEdit.as_view(),name='admin-payment-edit'),
