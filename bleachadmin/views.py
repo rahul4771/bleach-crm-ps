@@ -1542,11 +1542,12 @@ class ProductivityView(IsAdmin,View):
 				messages.error(request,get_error(pricerange_form))
 
 		elif action == 'editpricerange':	
-			pricerange_id   = request.POST.get('pricerangeid')
+			pricerange_id   = request.POST.get('pricerange_id')
 			pricerange      = ServicePriceRange.objects.get(id=pricerange_id)
 			pricerange_form = ServicePriceRangeForm(request.POST,instance=pricerange)
 			
 			if pricerange_form.is_valid():
+				print(pricerange_form)
 				pricerange_form.save()
 				messages.success(request,"Service Price Range Successfully Updated")
 			else:
