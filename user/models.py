@@ -194,10 +194,21 @@ class Address(models.Model):
         super(Address, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return str(self.customer.customer_id+'-'+self.area.name+'-'+self.customer.name)
+        
+        try:
+            return_string = str(self.customer.customer_id+'-'+self.area.name+'-'+self.customer.name)
+        except:
+            return_string = str(self.area.name+'-'+self.customer.name)
+        
+        return return_string
 
     def __str__(self):
-        return self.customer.customer_id+'-'+self.area.name+'-'+self.customer.name    
+        try:
+            return_string = str(self.customer.customer_id+'-'+self.area.name+'-'+self.customer.name)
+        except:
+            return_string = str(self.area.name+'-'+self.customer.name)
+        
+        return return_string    
 
 class LeaveSchedule(models.Model):
     staff           = models.ForeignKey('UserProfile',blank=False,null=False,related_name='leave_staff')
