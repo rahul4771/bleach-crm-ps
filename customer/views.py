@@ -1332,6 +1332,50 @@ class GetServiceTypes(APIView):
 
 		return JsonResponse(response_dict)
 
+class GetGovernorates(APIView):  
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict        		= {}
+		response_dict['success']	= False
+
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
+		governorate_list = []
+		for governrate in governorates:
+			governorate_list.append({'name':governrate.name,'id':governrate.id})
+
+		response_dict['governorates']	= governorate_list
+		response_dict['success']    = True
+
+		return JsonResponse(response_dict)
+
+class GetAreas(APIView):  
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict        		= {}
+		response_dict['success']	= False
+
+		try:
+			areas = Area.objects.select_related('governorate').filter(governorate__id=request.GET.get('governorate_id'))
+		except:
+			areas = None
+
+		area_list = []
+		for area in areas:
+			area_list.append({'name':area.name,'id':area.id})
+
+		response_dict['areas']	= area_list
+		response_dict['success']= True
+
+		return JsonResponse(response_dict)
+
 
 class GetAreaTypes(APIView):  
 	permission_classes        = (AllowAny,)
