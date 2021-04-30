@@ -2990,7 +2990,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 						cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=cleaners[i],start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
 					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=leaders.first(),start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
 
-				CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
+					CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
 
 				#create sections
 				sections_dict = services[service_detail]['sections']
@@ -3313,7 +3313,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 						cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=cleaners[i],start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
 					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=leaders.first(),start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
 
-				CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
+					CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
 
 				#create sections
 				sections_dict = services[service_detail]['sections']
