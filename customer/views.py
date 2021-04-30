@@ -2246,8 +2246,8 @@ class ClientCleaningBookingPhase2(APIView):
 				no_of_cleaners = int(saved_service.number_of_cleaners)-1
 				cleaning_team_member_array = []
 				for i in range(no_of_cleaners):
-					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=cleaners[i],start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
-				cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=leaders.first(),start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
+					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=cleaners[i],work_status='CLEANING_TEAM_ASSIGNED',start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
+				cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,work_status='CLEANING_TEAM_ASSIGNED',member=leaders.first(),start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
 
 				CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
 
@@ -2561,8 +2561,8 @@ class ClientCleaningBookingPhase2(APIView):
 				no_of_cleaners = int(saved_service.number_of_cleaners)-1
 				cleaning_team_member_array = []
 				for i in range(no_of_cleaners):
-					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=cleaners[i],start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
-				cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=leaders.first(),start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
+					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,work_status='CLEANING_TEAM_ASSIGNED',member=cleaners[i],start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
+				cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,work_status='CLEANING_TEAM_ASSIGNED',member=leaders.first(),start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
 
 				CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
 
