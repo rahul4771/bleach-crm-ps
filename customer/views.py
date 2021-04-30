@@ -3031,7 +3031,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 
 								return Response(response_dict,HTTP_200_OK)
 				
-				service_array.append(saved_service.id)		
+				service_dict[saved_service.id] = saved_service.service_type.name		
 		else:
 			evaluation = customerbooking.evaluation
 			###testing availability ####
