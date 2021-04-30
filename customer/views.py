@@ -2665,7 +2665,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 
 		total_cleaners = total_cleaners.count()-1
 		total_leaders  = total_leaders.count()-1
-		service_array  = []
+		service_dict  = {}
 
 		####allready half done or new quatation####
 		try:
@@ -3354,11 +3354,11 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 
 								return Response(response_dict,HTTP_200_OK)
 
-				service_array.append(saved_service.id)				
+				service_dict[saved_service.id] = saved_service.service_type.name				
 		
-		response_dict['evaluation_book_ids'] = service_array
-		response_dict['booking_id']         = customerbooking.booking_id
-		response_dict['success']            = True
+		response_dict['evaluation_book_ids'] = service_dict
+		response_dict['booking_id']          = customerbooking.booking_id
+		response_dict['success']             = True
 
 		return Response(response_dict,HTTP_200_OK)
 
