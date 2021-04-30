@@ -466,6 +466,11 @@ class PaymentResponseDebit(View):
 				closing_order.order_status = 'ORDER_CLOSED'
 				closing_order.save()
 
+			try:
+				booking_completed = CustomerBooking.objects.filter(evaluation=evaluation).update(is_bookingcompleted=True)
+			except:
+				booking_completed = None
+				
 			return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
 
 		elif order and payment_result == 'CAPTURED' and not payment_history_check and order_status == 'CANCEL_IN_PROGRESS':
@@ -1329,6 +1334,50 @@ class GetServiceTypes(APIView):
 
 		response_dict['service_types']	= service_typeslist
 		response_dict['susccess']		= True
+
+		return JsonResponse(response_dict)
+
+class GetGovernorates(APIView):  
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict        		= {}
+		response_dict['success']	= False
+
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
+		governorate_list = []
+		for governrate in governorates:
+			governorate_list.append({'name':governrate.name,'id':governrate.id})
+
+		response_dict['governorates']	= governorate_list
+		response_dict['success']    = True
+
+		return JsonResponse(response_dict)
+
+class GetAreas(APIView):  
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict        		= {}
+		response_dict['success']	= False
+
+		try:
+			areas = Area.objects.select_related('governorate').filter(governorate__id=request.GET.get('governorate_id'))
+		except:
+			areas = None
+
+		area_list = []
+		for area in areas:
+			area_list.append({'name':area.name,'id':area.id})
+
+		response_dict['areas']	= area_list
+		response_dict['success']= True
 
 		return JsonResponse(response_dict)
 
@@ -2202,8 +2251,8 @@ class ClientCleaningBookingPhase2(APIView):
 				no_of_cleaners = int(saved_service.number_of_cleaners)-1
 				cleaning_team_member_array = []
 				for i in range(no_of_cleaners):
-					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=cleaners[i],start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
-				cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=leaders.first(),start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
+					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=cleaners[i],work_status='CLEANING_TEAM_ASSIGNED',start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
+				cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,work_status='CLEANING_TEAM_ASSIGNED',member=leaders.first(),start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
 
 				CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
 
@@ -2517,8 +2566,8 @@ class ClientCleaningBookingPhase2(APIView):
 				no_of_cleaners = int(saved_service.number_of_cleaners)-1
 				cleaning_team_member_array = []
 				for i in range(no_of_cleaners):
-					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=cleaners[i],start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
-				cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=leaders.first(),start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
+					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,work_status='CLEANING_TEAM_ASSIGNED',member=cleaners[i],start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
+				cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,work_status='CLEANING_TEAM_ASSIGNED',member=leaders.first(),start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
 
 				CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
 
@@ -2621,7 +2670,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 
 		total_cleaners = total_cleaners.count()-1
 		total_leaders  = total_leaders.count()-1
-		service_array  = []
+		service_dict  = {}
 
 		####allready half done or new quatation####
 		try:
@@ -2946,7 +2995,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 						cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=cleaners[i],start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
 					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=leaders.first(),start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
 
-				CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
+					CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
 
 				#create sections
 				sections_dict = services[service_detail]['sections']
@@ -2987,7 +3036,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 
 								return Response(response_dict,HTTP_200_OK)
 				
-				service_array.append(saved_service.id)		
+				service_dict[saved_service.id] = saved_service.service_type.name		
 		else:
 			evaluation = customerbooking.evaluation
 			###testing availability ####
@@ -3269,7 +3318,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 						cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=cleaners[i],start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
 					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=leaders.first(),start_at=start_date_time,end_at=end_date_time,start_time=start_date_time.time(),end_time=end_date_time.time()))
 
-				CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
+					CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
 
 				#create sections
 				sections_dict = services[service_detail]['sections']
@@ -3310,11 +3359,11 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 
 								return Response(response_dict,HTTP_200_OK)
 
-				service_array.append(saved_service.id)				
+				service_dict[saved_service.id] = saved_service.service_type.name				
 		
-		response_dict['evaluation_book_ids'] = service_array
-		response_dict['booking_id']         = customerbooking.booking_id
-		response_dict['success']            = True
+		response_dict['evaluation_book_ids'] = service_dict
+		response_dict['booking_id']          = customerbooking.booking_id
+		response_dict['success']             = True
 
 		return Response(response_dict,HTTP_200_OK)
 

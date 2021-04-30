@@ -496,7 +496,8 @@
                 <div class="d-flex">
 
               {% if request.user.user_type != 'AGENT' and request.user.user_type != 'ADMIN' and request.user.user_type != 'EVALUATOR' and order.payment_status != 'COMPLETED' %}
-                <form method="post" class="inv-payment-box" action="https://payment.bleachkw.com/SendPerformREQuest.php" enctype= "multipart/form-data" id="debit-form">{% csrf_token %} 
+                <form method="post" class="inv-payment-box" action="https://testpay.bleach-kw.com/SendPerformREQuest.php" enctype= "multipart/form-data" id="debit-form">
+                <!-- <form method="post" class="inv-payment-box" action="https://payment.bleachkw.com/SendPerformREQuest.php" enctype= "multipart/form-data" id="debit-form"> -->{% csrf_token %} 
                 <input type="hidden" name="price" value="{{order.subscription_topay|floatformat:'3'}}">
                 <input type="hidden" name="payment_mode" value="subscription">
                 <input type="hidden" name="qty" value="1">
