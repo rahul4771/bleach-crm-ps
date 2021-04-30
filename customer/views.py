@@ -466,6 +466,11 @@ class PaymentResponseDebit(View):
 				closing_order.order_status = 'ORDER_CLOSED'
 				closing_order.save()
 
+			try:
+				booking_completed = CustomerBooking.objects.filter(evaluation=evaluation).update(is_bookingcompleted=True)
+			except:
+				booking_completed = None
+				
 			return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
 
 		elif order and payment_result == 'CAPTURED' and not payment_history_check and order_status == 'CANCEL_IN_PROGRESS':

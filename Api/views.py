@@ -5,6 +5,7 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,Evaluat
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
+from customer.models import CustomerBooking
 
 from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer
 from agent.views import generate_random_username
@@ -129,6 +130,7 @@ class PaymentResponseCredit(APIView):
 		evaluation_id = request.POST.get('req_merchant_defined_data1')
 		payment_mode  = request.POST.get('req_merchant_defined_data2')
 		amount_paid   = float(request.POST.get('req_amount'))
+		order_status  = request.POST.get("req_merchant_defined_data3")
 
 		try:
 			order = Order.objects.select_related('evaluation').get(order_no=evaluation_id)
@@ -138,7 +140,7 @@ class PaymentResponseCredit(APIView):
 
 		payment_result = request.POST.get('decision')
 		print(payment_result)
-		if order and payment_result == 'ACCEPT':
+		if order and payment_result == 'ACCEPT' and order_status != 'CANCEL_IN_PROGRESS':
 			#Receipt Number
 			receipt_no               = PaymentHistory.objects.filter(is_active=True,receipt_no__isnull=False).aggregate(t=Max('receipt_no'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
 			current_receipt_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
@@ -167,7 +169,7 @@ class PaymentResponseCredit(APIView):
 				order.remining_amount  = order.remining_amount-amount_paid
 
 			elif payment_mode == 'after_cleaning' and order.postamount_paid != order.evaluation.after_cleaning_amount:
-				order.postamount_paid    = amount_paid
+				order.postamount_paid   += amount_paid
 				order.amount_paid       += amount_paid
 				order.remining_amount    = order.remining_amount-amount_paid
 
@@ -175,14 +177,14 @@ class PaymentResponseCredit(APIView):
 				order.payment_completed_date = timezone.now()
 
 			elif payment_mode == 'prepaid' and order.amount_paid != order.total_amount:
-				order.amount_paid      = amount_paid
+				order.amount_paid     += amount_paid
 				order.remining_amount  = order.remining_amount-amount_paid					
 
 				order.payment_status         = 'COMPLETED'
 				order.payment_completed_date = timezone.now()
 
 			elif payment_mode == 'postpaid' and order.amount_paid != order.total_amount:
-				order.amount_paid      = amount_paid
+				order.amount_paid      += amount_paid
 				order.remining_amount  = order.remining_amount-amount_paid
 
 				order.payment_status         = 'COMPLETED'
@@ -216,6 +218,27 @@ class PaymentResponseCredit(APIView):
 				closing_order.order_status = 'ORDER_CLOSED'
 				closing_order.save()
 
+			try:
+				booking_completed = CustomerBooking.objects.filter(evaluation=evaluation).update(is_bookingcompleted=True)
+			except:
+				booking_completed = None
+
+		elif order and payment_result == 'ACCEPT' and order_status == 'CANCEL_IN_PROGRESS':
+			#Receipt Number
+			receipt_no               = PaymentHistory.objects.filter(is_active=True,receipt_no__isnull=False).aggregate(t=Max('receipt_no'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
+			current_receipt_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
+
+			if current_receipt_starting == int(str(receipt_no)[:4]):
+				new_receipt_no = int(receipt_no)+1
+			else:
+				new_receipt_no = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
+
+			#payment history
+			payment_history = PaymentHistory.objects.create(order=order,amount_paid=amount_paid,payment_mode='ONLINECREDIT',paid_date=timezone.now(),payment_id=request.POST.get('echeck_debit_ref_no'),ref=request.POST.get('payer_authentication_xid'),track_id=request.POST.get('req_reference_number'),transaction_id=request.POST.get('transaction_id'),receipt_no=new_receipt_no,payment_gateway='CREDITCARD')
+
+			order.remining_amount  = 0
+			order.amount_paid     += amount_paid
+			order.save()
 		return Response(HTTP_200_OK)	
 
 #get list of staff for leave scheduler
