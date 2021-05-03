@@ -79,6 +79,19 @@ footer {
    
     border-radius: 20px;
 }
+/*modal css*/
+.new-modal-content{
+    border-radius: 0px !important;
+    border-left: 10px solid #538de5 !important;
+    background-color: #ffffff;
+}
+.popup-btn{
+    border-radius:0px !important;
+}
+.new-modal-dialog{
+    border: none !important;
+    border-radius: 0px !important;
+}
 @media (max-width: 400px) {
     .pn-container {
         height: 150px;
