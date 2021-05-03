@@ -29,8 +29,8 @@
 	$Resudf5      = $_REQUEST['udf5'];               //UDF5
 	
 	//Below Terminal resource Key is used to decrypt the response sent from Payment Gateway.
-	// $termResourceKey="P287H49DV2GS6E0Z";
-	$termResourceKey="81G1ZB54MNW8X3J9";
+	 $termResourceKey="P287H49DV2GS6E0Z";
+	//$termResourceKey="81G1ZB54MNW8X3J9";
 	
 /* Merchant (ME) checks, if error number is NOT present,then go for Encryption using required parameters */
 /* NOTE - MERCHANT MUST LOG THE RESPONSE RECEIVED IN LOGS AS PER BEST PRACTICE */	
@@ -45,15 +45,15 @@
 		{
 		//Decryption logice starts
 		$decrytedData=decrypt($ResTranData,$termResourceKey);
-		// header("Location: https://my.bleachkw.com/customer/payment/response/?".$decrytedData);
-		header("Location: https://test.bleach-kw.com/customer/payment/response/?".$decrytedData);
+		 header("Location: https://my.bleachkw.com/customer/payment/response/?".$decrytedData);
+		//header("Location: https://test.bleach-kw.com/customer/payment/response/?".$decrytedData);
                 exit();
 		}
 	}
 	else{
 				
-				// header("Location: https://my.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
-				header("Location: https://test.bleach-kw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
+				 header("Location: https://my.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
+				//header("Location: https://test.bleach-kw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
                 exit();
 	}
 	  
