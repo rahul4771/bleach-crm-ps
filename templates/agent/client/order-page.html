@@ -885,9 +885,9 @@
             {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
             
             <br>
-            <div class="order-card-column whitebg gray-border clickable-cursor cancell_order" data-target="#cancellModal"><!--order-card-column-->
+            <div class="order-card-column whitebg gray-border clickable-cursor cancell_order" data-target="#cancellModal" data-toggle="modal" ><!--order-card-column-->
                     <div class="card-innerwrapper"><!--card-innerwrapper-->
-                    <div class="column-left"><img src="{% static "/files/images/cancel.png" %}"></div>
+                    <div class="column-left"><img src="{% static '/files/images/cancel.png' %}"></div>
                     <div class="column-right"><!--column-right-->
                     <!-- <h1>Click To View</h1> -->
                     <h2 class="dark-gray-text"><label>Cancel Order<span>
