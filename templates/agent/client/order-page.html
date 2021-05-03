@@ -863,9 +863,9 @@
         <!-- RE-ORDER -->
         {% comment %} {% if order.order_status == 'ORDER_CLOSED'  or order.orderschedules|length > 1 %} {% endcomment %}
         {% for schedule in order.orderschedules|slice:"1" %}
-        {% if schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' or order.order_status == 'ORDER_CLOSED'%}
+        {% if forloop.first and schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' or order.order_status == 'ORDER_CLOSED'%}
             <br>
-            <div class="order-card-column whitebg blue-border clickable-cursor duplicate_order" data-id="{{order.evaluation.id}}" data-toggle="modal" data-target="#reorderModal"><!--order-card-column-->
+            <div class="order-card-column whitebg blue-border clickable-cursor duplicate_order" data-toggle="modal" data-target="#reorderModal"><!--order-card-column-->
                     <div class="card-innerwrapper"><!--card-innerwrapper-->
                     <div class="column-left"><img src="{% static '/files/images/card-reorder-icon.png' %}"></div>
                     <div class="column-right"><!--column-right-->
@@ -923,7 +923,7 @@
           <div class="bold-text text-center ">Click 'Continue' to proceed with Re-order</div>
         </div>
         <div class="modal-body"> <!-- Content begins here-->
-            <form method="get" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center">{% csrf_token %}
+            <form method="get" action="{% url 'agent:agent-makequatation1duplicate' order.evaluation.id%}" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center">{% csrf_token %}
                 <div><input class="assignButton popup-btn" name="submit" type="submit" value="Continue" ></div>
                 </form><!--Content ends here-->
         </div>
@@ -949,8 +949,9 @@
           <div class="bold-text text-center ">Do you want to send a cancel request to admin ?</div>
         </div>
         <div class="modal-body"> <!-- Content begins here-->
-            <form method="get" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center">{% csrf_token %}
+            <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center">{% csrf_token %}
             <input type="hidden" name="evaluation" id="evaluation_id" value="{{order.evaluation.id}}">
+            <input type="hidden" name="action_type" value="cancell_order">
                 <div><input class="assignButton popup-btn" name="submit" type="submit" value="Yes" ></div>
                 </form><!--Content ends here-->
         </div>
