@@ -885,7 +885,7 @@
             {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
             
             <br>
-            <div class="order-card-column whitebg gray-border clickable-cursor cancell_order" data-id="{{order.evaluation.id}}"><!--order-card-column-->
+            <div class="order-card-column whitebg gray-border clickable-cursor cancell_order" data-target="#cancellModal"><!--order-card-column-->
                     <div class="card-innerwrapper"><!--card-innerwrapper-->
                     <div class="column-left"><img src="{% static "/files/images/cancel.png" %}"></div>
                     <div class="column-right"><!--column-right-->
@@ -930,41 +930,35 @@
         
       </div>
     </div>
-  </div>
- 
+  </div> 
 <!-- New Modal ends here-->
-<div class="custom-model-main-sp"><!--custom-model-main-->
-    <div class="custom-model-inner-sp">  <!--custom-model-inner-->      
-    <div class="close-btn-sp">×</div>
-     <div class="popup-head">test</div>
-        <div class="custom-model-wrap-sp"><!--custom-model-wrap-->
-            <div class="pop-up-content-wrap"><!--pop-up-content-wrap-->
-               <div class="bold-text">Click 'Continue' to proceed with Re-order</div>  
-               <form method="get" action="" enctype= "multipart/form-data" id="duplicate_form_id">{% csrf_token %}
-               <div><input class="assignButton" name="submit" type="submit" value="Continue"></div>
-               </form>
-            </div><!--pop-up-content-wrap-->
-        </div><!--custom-model-wrap-->  
-    </div><!--custom-model-inner-->   
-    <div class="bg-overlay-sp"></div>
-</div><!--custom-model-main-->    
 
-<div class="custom-model-main-sp1"><!--custom-model-main-->
-    <div class="custom-model-inner-sp1">  <!--custom-model-inner-->      
-        <div class="custom-model-wrap-sp1"><!--custom-model-wrap-->
-            <div class="pop-up-content-wrap1"><!--pop-up-content-wrap-->
-               <div class="bold-text">Do you want to send a cancel request to admin ?</div>  
-               <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
-                <input type="hidden" name="action_type" value="cancell_order">
-                <input type="hidden" name="evaluation" id="evaluation_id">
-                <br>
-                <div><input class="cancellButton" name="submit" type="submit" value="Yes">&nbsp;&nbsp;<input class="cancellButton close-btn-sp1" name="submit" type="button" value="No"></div>
-               </form>
-            </div><!--pop-up-content-wrap-->
-        </div><!--custom-model-wrap-->  
-    </div><!--custom-model-inner-->   
-    <div class="bg-overlay-sp"></div>
-</div><!--custom-model-main-->
+<!-- New modal-->
+
+<!-- Modal -->
+<div class="modal modal-vcenter fade" id="cancellModal" tabindex="-1" role="dialog"  aria-hidden="true">
+    <div class="modal-dialog new-modal-dialog" role="document">
+      <div class=" new-modal-content">
+        <div class="modal-header">
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                
+         
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <div class="bold-text text-center ">Do you want to send a cancel request to admin ?</div>
+        </div>
+        <div class="modal-body"> <!-- Content begins here-->
+            <form method="get" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center">{% csrf_token %}
+            <input type="hidden" name="evaluation" id="evaluation_id" value="{{order.evaluation.id}}">
+                <div><input class="assignButton popup-btn" name="submit" type="submit" value="Yes" ></div>
+                </form><!--Content ends here-->
+        </div>
+        
+      </div>
+    </div>
+  </div> 
+<!-- New Modal ends here-->
 
 {% include 'agent/common/footer.html' %} 
 </div><!--wrapper-->
