@@ -92,6 +92,9 @@ footer {
     border: none !important;
     border-radius: 0px !important;
 }
+.modal-text{
+    font-size: 1.5rem;
+}
 @media (max-width: 400px) {
     .pn-container {
         height: 150px;

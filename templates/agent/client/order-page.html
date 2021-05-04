@@ -920,7 +920,7 @@
          
             <span aria-hidden="true">&times;</span>
           </button>
-          <div class="bold-text text-center ">Click 'Continue' to proceed with Re-order</div>
+          <div class="text-center modal-text">Click 'Continue' to proceed with Re-order</div>
         </div>
         <div class="modal-body"> <!-- Content begins here-->
             <form method="get" action="{% url 'agent:agent-makequatation1duplicate' order.evaluation.id%}" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center">{% csrf_token %}
@@ -946,7 +946,7 @@
          
             <span aria-hidden="true">&times;</span>
           </button>
-          <div class="bold-text text-center ">Do you want to send a cancel request to admin ?</div>
+          <div class=" text-center modal-text ">Do you want to send a cancel request to admin ?</div>
         </div>
         <div class="modal-body"> <!-- Content begins here-->
             <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center">{% csrf_token %}

@@ -3949,3 +3949,8 @@ def deletesection(request,section_id,evaluation_detail_id):
 						
 	messages.success(request,"Section deleted successfully!")
 	return redirect('evaluator:evaluator-makequatation2edit',evaluation_detail_id)
+
+class TicketFollowup(IsAgent,View):
+	def get(self,request):
+		return render(request,"agent/ticket/followup-tickets.html") 	
+
