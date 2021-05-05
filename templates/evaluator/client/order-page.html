@@ -1046,6 +1046,9 @@
         <div class="order-payment-widget order-payment-widget-column"><!--order-payment-widget order-payment-widget-column-->
             <div class="payment-text"><div>Total Amount</div> : {{order.evaluation.estimated_cost|default_if_none:'0.000'|floatformat:'3'}} KD</div>
             <div class="payment-text"><div>Discount</div> : {{order.evaluation.discount|default_if_none:'0.000'|floatformat:'3'}} KD</div>
+            {% if order.evaluation.credit_amount %}
+            <div class="payment-text"><div>Applied Credit</div> : {{order.evaluation.credit_amount|default_if_none:'0.000'|floatformat:'3'}} KD</div>
+            {% endif %}
             {% if order.evaluation.is_promocode_applied == True %}
             <div class="payment-text"><div>Coupon Applied</div> : {{order.evaluation.promocode_amount|default_if_none:'0.000'|floatformat:3}} KD</div>
             {% endif %}

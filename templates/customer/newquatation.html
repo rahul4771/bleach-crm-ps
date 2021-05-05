@@ -153,6 +153,13 @@
               <td class="due-amount"> {{order.evaluation.discount|floatformat:'3'}} </td>
             </tr>
             {% endif %}
+
+            {% if order.evaluation.credit_amount != 0 %}
+              <tr>
+              <th>Credit Added / الخصم</th>
+              <td class="due-amount"> {{order.evaluation.credit_amount|floatformat:'3'}} </td>
+              </tr>
+            {% endif %}
             
             {% if order.evaluation.fine_amount != 0 %}
             <tr>

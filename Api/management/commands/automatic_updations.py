@@ -17,7 +17,7 @@ class Command(BaseCommand):
 		today_end   = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)+timedelta(1)
 		
 		#update expiry
-		expired_evaluations = Evaluation.objects.filter(quatation_expiry_date__lte=today_end,quatation_status='PENDING').update(quatation_status='EXPIRED')
+		expired_evaluations = Evaluation.objects.filter(quatation_expiry_date__lte=today_end,quatation_status='PENDING').select_related('customer').update(quatation_status='EXPIRED',customer__credit_amount=F('customer__credit_amount')+F('credit_amount'))
 		expired_invoices    = Order.objects.select_related('evaluation').filter(evaluation__quatation_expiry_date__lte=today_end,evaluation__quatation_status='PENDING').update(invoice_status='CANCELLED')
 
 		#remove unwanted evaluations
