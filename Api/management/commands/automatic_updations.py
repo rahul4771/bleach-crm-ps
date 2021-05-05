@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
-from evaluator.models import Evaluation,EvaluationDetails
-from order.models import Order
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
+from order.models import Order,OrderScheduler
 
 from django.utils import timezone
 from datetime import timedelta,date,datetime
@@ -15,10 +15,17 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **kwargs): 
 		today_end   = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)+timedelta(1)
-		
+
 		#update expiry
 		expired_evaluations = Evaluation.objects.filter(quatation_expiry_date__lte=today_end,quatation_status='PENDING').update(quatation_status='EXPIRED')
 		expired_invoices    = Order.objects.select_related('evaluation').filter(evaluation__quatation_expiry_date__lte=today_end,evaluation__quatation_status='PENDING').update(invoice_status='CANCELLED')
+
+		#update Credit
+		expired_credit_evaluations = Evaluation.objects.select_related('customer').filter(quatation_expiry_date__lte=today_end,quatation_expiry_date__gte=today_end-timedelta(1),quatation_status='EXPIRED',credit_amount__gt=0)		
+		if expired_credit_evaluations:
+			for expired_credit_evaluation in expired_credit_evaluations:
+				expired_credit_evaluation.customer.credit_amount = expired_credit_evaluation.credit_amount
+				expired_credit_evaluation.customer.save()
 
 		#remove unwanted evaluations
 		unwanted_evaluations = Evaluation.objects.filter(created__lt=today_end,quatation_status__isnull=True).prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True),to_attr='evaluationdetails')).annotate(active_evaluations_count=Sum(Case(When(Q(Q(evaluation_details__proposed_time__isnull=True)),then=1),default=0,output_field=IntegerField())),completed_evaluations_count=Sum(Case(When(evaluation_details__status='EVALUATED',then=1),default=0,output_field=IntegerField()))).filter(active_evaluations_count__gte=1).exclude(active_evaluations_count=F('completed_evaluations_count')).delete()
@@ -48,7 +55,6 @@ class Command(BaseCommand):
 				if passed_days >= 14:
 					Evaluation.objects.filter(id=payment.evaluation.id).update(quatation_status='EXPIRED')
 					Order.objects.select_related('evaluation').filter(is_active=True,evaluation__id=payment.evaluation.id).update(invoice_status='CANCELLED')
-
 
 
 

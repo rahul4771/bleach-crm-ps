@@ -118,14 +118,37 @@ class Quatation(View):
 
 				order_update      = Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='APPROVED_BY_CLIENT',invoice_no=new_invoice_no)
 				
-				#close payment if remining becomes zero 
-				order = Order.objects.get(order_no=evaluation_id)
+				 
+				order = Order.objects.select_related('evaluation__customer').get(order_no=evaluation_id)
+				#check credit
+				if order.evaluation.customer.credit_amount != 0:
+					if order.evaluation.total_cost-order.evaluation.customer.credit_amount >= 0:
+						order.total_amount                       -= order.evaluation.customer.credit_amount
+						order.remining_amount                    -= order.evaluation.customer.credit_amount
+
+						order.evaluation.total_cost              -= order.evaluation.customer.credit_amount
+						order.evaluation.credit_amount            = order.evaluation.customer.credit_amount
+
+						order.evaluation.customer.credit_amount   = 0
+					else:
+						order.total_amount                        = 0
+						order.remining_amount                     = 0
+
+						order.evaluation.total_cost               = 0
+						order.evaluation.credit_amount            = order.evaluation.total_cost
+
+						order.evaluation.customer.credit_amount  -= order.evaluation.total_cost
+					order.evaluation.customer.save()
+					order.evaluation.save()
+					order.save()
+					
+				#close payment if remining becomes zero
 				if order.remining_amount == 0:
 					order.payment_completed_date = timezone.now()
 					order.payment_status         = 'COMPLETED'
-					order.save()
+					order.save() 	
 
-				#sms				
+				#sms
 				evaluaation = Evaluation.objects.get(evaluation_id=evaluation_id,customer__username=user_name)
 
 				language = evaluaation.customer.sms_preference
@@ -2869,8 +2892,21 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 			else:
 				evaluation_no       = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
 				tracking_no         = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
-			
-			evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=savedupdated_customer,total_cost=request.data.get('total_cost'),estimated_cost=request.data.get('estimated_cost'),quatation_status='APPROVED',quatation_approved_date=timezone.now(),payment_method='PREPAID',payment_way='ONLINE',quatation_expiry_date=timezone.now()+timedelta(14))
+				
+			#check credit amount and update Evaluation
+			if savedupdated_customer.credit_amount != 0:
+				if request.data.get('total_cost')-savedupdated_customer.credit_amount >= 0:
+					evaluation                            = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=savedupdated_customer,total_cost=request.data.get('total_cost')-savedupdated_customer.credit_amount,estimated_cost=request.data.get('estimated_cost'),quatation_status='APPROVED',quatation_approved_date=timezone.now(),payment_method='PREPAID',payment_way='ONLINE',quatation_expiry_date=timezone.now()+timedelta(14),credit_amount=savedupdated_customer.credit_amount)
+					
+					savedupdated_customer.credit_amount   = 0
+					savedupdated_customer.save()
+				else:
+					evaluation                            = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=savedupdated_customer,total_cost=0,estimated_cost=request.data.get('estimated_cost'),quatation_status='APPROVED',quatation_approved_date=timezone.now(),payment_method='PREPAID',payment_way='ONLINE',quatation_expiry_date=timezone.now()+timedelta(14),credit_amount=request.data.get('total_cost'))
+					
+					savedupdated_customer.credit_amount  -= evaluation.total_cost 
+					savedupdated_customer.save()
+			else:
+				evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=savedupdated_customer,total_cost=request.data.get('total_cost'),estimated_cost=request.data.get('estimated_cost'),quatation_status='APPROVED',quatation_approved_date=timezone.now(),payment_method='PREPAID',payment_way='ONLINE',quatation_expiry_date=timezone.now()+timedelta(14))
 			
 			#create order
 			last_invoice_no  		 = Order.objects.filter(is_active=True).aggregate(t=Max('invoice_no'))['t']
@@ -2884,7 +2920,13 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 			else:
 				new_invoice_no 		 = str(timezone.now().year)+'00001'
 			
+
 			order      = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,payment_status='PENDING',invoice_no=new_invoice_no,order_status='APPROVED_BY_CLIENT',total_amount=evaluation.total_cost,remining_amount=evaluation.total_cost)
+			
+			#To check credit fullfill the total amount 
+			if order.remining_amount == 0: 
+				order.payment_status = 'COMPLETED'
+				order.save()
 
 			#create booking
 			booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
@@ -2896,6 +2938,11 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 				new_booking_id = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
 			
 			customerbooking = CustomerBooking.objects.create(booking_id=new_booking_id,booking_type='CLEANINGBOOKING',booking_date=timezone.now(),evaluation=evaluation)
+
+			#To check credit fullfill the total amount
+			if order.remining_amount == 0:
+				customerbooking.is_bookingcompleted = True
+				customerbooking.save()
 
 			#create evaluation details
 			evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation,address=savedupdated_address,status='EVALUATED',total_cost=evaluation.total_cost,estimated_cost=evaluation.total_cost)			
