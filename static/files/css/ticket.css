@@ -1,0 +1,115 @@
+.tk-customer-card{
+    padding:15px;
+    margin-top:20px
+}
+.tk-secondary-text{
+    color:#878787;
+}
+.tk-title{
+    font-size:1.5rem;
+}
+.tk-title-2{
+    font-size:1.2rem;
+    font-weight:500;
+}
+.tk-subtitle{
+    font-size:1rem;
+    font-weight:300;
+}
+.tk-desc{
+    font-size:0.8rem;
+}
+.fw-400{
+    font-weight: 400;
+}
+.fw-300{
+    font-weight: 300;
+}
+.tk-capsule{
+    background:#289bac;
+    color:#ffffff;
+    padding:3px;
+    max-width:100px;
+    border-radius:3px;
+    text-align: center;
+
+}
+.tk-profile{
+    border-radius: 70px;
+    height: 70px;
+    width: 70px;
+}
+.tk-mt-5{
+    margin-top:5px;
+}
+.tk-mt-10{
+    margin-top:10px;
+}
+.tk-ml-10{
+    margin-left:10px;
+}
+.tk-ml-30{
+    margin-left:30px;
+}
+.tk-mr-10{
+    margin-right:10px;
+}
+.tk-mb-10{
+    margin-bottom:10px;
+}
+.tk-tick{
+    color:rgb(241 186 21);
+}
+.tk-mt-20{
+    margin-top:20px;
+}
+.tk-mt-40{
+    margin-top:40px;
+}
+.tk-mt-30{
+    margin-top:30px;
+}
+.tk-card{
+    border:1px solid #878787;
+    border-radius: 10px;
+    padding:10px;
+    width:100%;
+}
+.tk-items{
+    font-weight:300;
+}
+.dummy-card{
+    background:#cccccc;
+    height:100px;
+    margin-top:3px;
+}
+
+
+
+.tk-timeline{
+    border:1px solid #cccccc61;
+}
+.tk-timeline-icon{
+    position: absolute;
+    left: 6px;
+    top: -15px;
+    font-size: 20px;
+    color:#289bac;
+}
+.tk-line{
+    margin-top: 15px;
+   /* margin-bottom: 15px;*/
+}
+.timeline-head{
+    color:#878787;
+    font-weight:400;
+    font-size:18px;
+    margin-left: 10px;
+}
+.tk-highlight{
+    color:red;
+    
+}
+.tk-b-none{
+    border:none !important;
+}

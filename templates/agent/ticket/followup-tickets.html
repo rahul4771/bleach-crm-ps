@@ -1,1 +1,633 @@
-<h1>ticket page</h1>
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+<div class="wrapper"><!--wrapper-->
+{% include "agent/common/header.html" %}
+    
+<section class="content"><!--content-->
+	<div class="container-fluid space topspace"><!--container-fluid space topspace-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+            <h1 class="dashboard-head">TKT202100018</h1>
+            
+            <p><input name="open" type="button" class="blue-button" value="Ticket Rised" id="closed"></p>
+            
+            </div><!--welcome-wrapper-->
+        
+        
+        
+        
+            <div class="order-top-wrapper"><!--order-top-wrapper-->
+                
+                
+                
+            <div class="order-details-wrapper"><!--order-details-wrapper--> 
+                <div class="order-details-left-stretch"><!--order-details-left-stretch-->
+                
+                   <div class="container">
+                       <div class="row">
+                           <div class="col-md-12">
+                              <span class="tk-title">BLC Number</span>  <span class="tk-secondary-text tk-title fw-300">(General Cleaning)</span>
+                           </div>
+                       </div>
+                       <div class="row">
+                           <div class="col-md-6">
+                            <div class="tk-capsule mt-10">
+                                Subscription
+                            </div>
+                            <div class="d-flex tk-mt-10">
+                                <img src="/static/files/images/profile-pic.png" class="tk-profile tk-mt-10"/>
+                                <div class="tk-ml-10 tk-mt-10">
+                                <div class="tk-title-2 tk-mt-10">Walter White</div>
+                                <div class="tk-subtitle ">Agent</div>
+                                <div class="tk-desc tk-secondary-text">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                </div>
+                            </div>
+                            </div>
+                           </div>
+                           <div class="col-md-3 tk-mt-10">
+                            <div><i class="fas fa-check-circle tk-mr-10 tk-tick"></i>Method 1</div>
+                            <div><i class="fas fa-check-circle tk-mr-10 tk-tick"></i>Outdoor Area</div>
+                            <div><i class="fas fa-check-circle tk-mr-10 tk-tick"></i>Post Construction</div>
+                            <div><i class="fas fa-check-circle tk-mr-10 tk-tick"></i>Bayan</div>
+                        </div>
+                        <div class="col-md-3 tk-mt-10">
+                            <div>Address</div>
+                            <div>GPS</div>
+                            <div>3 Cleaners</div>
+                            <div>3 hours</div>
+                            <div>550 KD</div>
+                        </div>
+                       </div>
+                       <hr/>
+                       <div class="row tk-mt-30">
+                           <div class="col-md-8">
+                               <div class="d-flex">
+                                <i class="fas fa-check-circle tk-timeline-icon"><span class="timeline-head">Ticket</span></i> 
+                                   <div class="tk-timeline h-100 tk-line"></div>
+                                    <div class="tk-card tk-ml-30 tk-mt-20">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="d-flex tk-mt-10">
+                                                    <img src="/static/files/images/profile-pic.png" class="tk-profile tk-mt-10"/>
+                                                    <div class="tk-ml-10 tk-mt-10">
+                                                    <div class="tk-title-2 tk-mt-10">Abdul Fatha</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">Customer</div>
+                                                    <div class="tk-desc tk-secondary-text">
+                                                        24 April 2021 7:30 pm
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8 ">
+                                                <div class="tk-mt-30 tk-secondary-text">Note</div>
+                                                <div class="tk-desc tk-secondary-text"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="tk-subtitle tk-mt-5">Cleaning</div>
+                                                <div class="row mt-10">
+                                                    <div class="col-md-3">
+                                                        <div class="dummy-card">
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="dummy-card">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="dummy-card">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="dummy-card">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                           </div>
+
+
+                           <!--- Timeline Card 2-->
+                           <div class="col-md-8 tk-mt-30">
+                            <div class="d-flex">
+                                <i class="far fa-circle tk-timeline-icon"><span class="timeline-head">Investigation</span></i>
+                             
+                                <div class="tk-timeline h-100 tk-line"></div>
+                                 <div class="tk-card tk-ml-30 tk-mt-20">
+                                     <div class="row">
+                                         <div class="col-md-4">
+                                             <div class="d-flex tk-mt-10">
+                                                 <img src="/static/files/images/profile-pic.png" class="tk-profile tk-mt-10"/>
+                                                 <div class="tk-ml-10 tk-mt-10">
+                                                    <div class="tk-title-2 tk-mt-10">Mukesh</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">Technical Supervisor</div>
+                                                 <div class="tk-desc tk-secondary-text">
+                                                     24 April 2021 7:30 pm
+                                                 </div>
+                                             </div>
+                                             </div>
+                                         </div>
+                                         <div class="col-md-8 ">
+                                             <div class="tk-mt-30 tk-secondary-text">Note</div>
+                                             <div class="tk-desc tk-secondary-text"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                             </div>
+                                         </div>
+                                         <div class="col-md-12">
+                                             <div class="tk-subtitle tk-mt-5">Cleaning</div>
+                                             <div class="row mt-10">
+                                                 <div class="col-md-3">
+                                                     <div class="dummy-card">
+
+                                                     </div>
+                                                 </div>
+                                                 <div class="col-md-3">
+                                                     <div class="dummy-card">
+                                                         
+                                                     </div>
+                                                 </div>
+                                                 <div class="col-md-3">
+                                                     <div class="dummy-card">
+                                                         
+                                                     </div>
+                                                 </div>
+                                                 <div class="col-md-3">
+                                                     <div class="dummy-card">
+                                                         
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+
+                           <!---Timeline card2 ends here-->
+
+
+                           <!-- Time line Card3 begins here-->
+
+                           <div class="col-md-8 tk-mt-30">
+                            <div class="d-flex">
+                                <i class="far fa-circle tk-timeline-icon"><span class="timeline-head">Action</span></i>
+                             
+                                <div class="tk-timeline h-100 tk-line"></div>
+                                 <div class="tk-card tk-ml-30 tk-mt-20">
+                                     <div class="row">
+                                         <div class="col-md-4">
+                                             <div class="d-flex tk-mt-10">
+                                                 <img src="/static/files/images/profile-pic.png" class="tk-profile tk-mt-10"/>
+                                                 <div class="tk-ml-10 tk-mt-10">
+                                                    <div class="tk-title-2 tk-mt-10">Mustafaops</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">QC</div>
+                                                 <div class="tk-desc tk-secondary-text">
+                                                     24 April 2021 7:30 pm
+                                                 </div>
+                                             </div>
+                                             </div>
+                                         </div>
+                                         <div class="col-md-8 ">
+                                             <div class="tk-mt-30 tk-secondary-text">Action : Follow up cleaning</div>
+                                             <div class=" tk-secondary-text">Follow up cleaning Note</div>
+                                             <div class="tk-desc tk-secondary-text"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                             </div>
+                                         </div>
+                                        
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+
+
+                           <!-- Time line card3 ends here-->
+
+                           <!-- Time line card4 begins here-->
+                           <div class="col-md-8 tk-mt-30">
+                            <div class="d-flex">
+                                <i class="far fa-circle tk-timeline-icon"><span class="timeline-head">Follow-up Cleaning</span></i>
+                             
+                                <div class="tk-timeline h-100 tk-line"></div>
+                                 <div class="tk-card tk-ml-30 tk-mt-20">
+                                     <div class="row">
+                                         <div class="col-md-6">
+                                            <div>Section 1 :<span class="tk-highlight"> Sofa </span></div>
+                                         </div>
+                                         <div class="col-md-6">
+                                            <div>  Material :<span class="tk-highlight">Polyster</span> </div>
+                                            <div>  Color : <span class="tk-highlight">Gray</span></div>
+                                            <div>  Cost :<span class="tk-highlight">5 KD</span> </div>
+                                         </div>
+                                         <div class="col-md-12">
+                                             <div> Cleaning Team   <span class="tk-ml-10">24 April 2021 7:30 pm</span></div>
+                                        </div>
+                                         <div class="col-md-6">
+                                             
+                                             <div class="d-flex tk-mt-10">
+                                                 <img src="/static/files/images/profile-pic.png" class="tk-profile tk-mt-10"/>
+                                                 <div class="tk-ml-10 tk-mt-10">
+                                                    <div class="tk-title-2 tk-mt-10">Abdul Fatha</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">Team Incharge</div>
+                                                 <div class="tk-desc tk-secondary-text">
+                                                     24 April 2021 7:30 pm
+                                                 </div>
+                                             </div>
+                                             </div>
+                                         </div>
+                                         <div class="col-md-6">
+                                             
+                                            <div class="d-flex tk-mt-10">
+                                                <img src="/static/files/images/profile-pic.png" class="tk-profile tk-mt-10"/>
+                                                <div class="tk-ml-10 tk-mt-10">
+                                                   <div class="tk-title-2 tk-mt-10">Jahir Rain</div>
+                                                   <div class="tk-subtitle tk-mt-5 tk-secondary-text">Team Incharge</div>
+                                                <div class="tk-desc tk-secondary-text">
+                                                    24 April 2021 7:30 pm
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                         
+                                         <div class="col-md-12">
+                                             <div class="tk-subtitle tk-mt-5">Cleaning</div>
+                                             <div class="row mt-10">
+                                                 <div class="col-md-3">
+                                                     <div class="dummy-card">
+
+                                                     </div>
+                                                 </div>
+                                                 <div class="col-md-3">
+                                                     <div class="dummy-card">
+                                                         
+                                                     </div>
+                                                 </div>
+                                                 <div class="col-md-3">
+                                                     <div class="dummy-card">
+                                                         
+                                                     </div>
+                                                 </div>
+                                                 <div class="col-md-3">
+                                                     <div class="dummy-card">
+                                                         
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+
+                           <!-- Time line card4 ends here-->
+
+
+
+                           <!-- Time line card 5 begins-->
+                           <div class="col-md-8 tk-mt-30">
+                            <div class="d-flex">
+                                <i class="far fa-circle tk-timeline-icon"><span class="timeline-head">Close</span></i>
+                             
+                                <div class="tk-timeline h-100 tk-line"></div>
+                                 <div class="tk-card tk-ml-30 tk-mt-20">
+                                     <div class="row">
+                                         <div class="col-md-4">
+                                             <div class="d-flex tk-mt-10">
+                                                 <img src="/static/files/images/profile-pic.png" class="tk-profile tk-mt-10"/>
+                                                 <div class="tk-ml-10 tk-mt-10">
+                                                    <div class="tk-title-2 tk-mt-10">Mustafaops</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">QC</div>
+                                                 <div class="tk-desc tk-secondary-text">
+                                                     24 April 2021 7:30 pm
+                                                 </div>
+                                             </div>
+                                             </div>
+                                         </div>
+                                         <div class="col-md-8 ">
+                                             <div class="tk-mt-30 tk-secondary-text">Note</div>
+                                            
+                                             <div class="tk-desc tk-secondary-text"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                             </div>
+                                         </div>
+                                        
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+                           <!-- Time line card 5 ends-->
+
+                           <!-- Timeline card 6 begins-->
+                           <div class="col-md-8 tk-mt-30">
+                            <div class="d-flex">
+                                <i class="far fa-circle tk-timeline-icon"><span class="timeline-head">Action</span></i>
+                             
+                                <div class="tk-timeline h-100 tk-line"></div>
+                                 <div class="tk-card tk-ml-30 tk-mt-20">
+                                     <div class="row">
+                                         <div class="col-md-4">
+                                             <div class="d-flex ">
+                                                 <img src="/static/files/images/profile-pic.png" class="tk-profile "/>
+                                                 <div class="tk-ml-10 ">
+                                                    <div class="tk-title-2 tk-mt-10">Mustafaops</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">QC</div>
+                                                 <div class="tk-desc tk-secondary-text">
+                                                     24 April 2021 7:30 pm
+                                                 </div>
+                                             </div>
+                                             </div>
+                                         </div>
+                                         <div class="col-md-8 ">
+                                             <div class="tk-mt-30 tk-secondary-text">Action : Internal Reporting</div>
+                                             <div class=" tk-secondary-text">Action : Payback/Discount</div>
+                                             <div class="tk-mt-30 tk-secondary-text">Note</div>
+                                             <div class="tk-desc tk-secondary-text"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                             </div>
+                                         </div>
+                                        
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+
+
+
+                            <!-- Timeline card 6 ends-->
+
+                        <!--- Timeline card 7 begins-->  
+                        <div class="col-md-8 tk-mt-30">
+                            <div class="d-flex">
+                                <i class="far fa-circle tk-timeline-icon"><span class="timeline-head">Internal Reporting</span></i>
+                             
+                                <div class="tk-timeline h-100 tk-line"></div>
+                                 <div class="tk-card tk-ml-30 tk-mt-20 w-100">
+                                     <div class="row">
+                                        
+                                         <div class="col-md-12 ">
+                                            
+                                             <div class=" tk-secondary-text">Note</div>
+                                             <div class="tk-desc tk-secondary-text"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                             </div>
+                                         </div>
+                                        
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+
+                         <!--- Timeline card 7 ends-->    
+                         <!--Timeline card 8 begins-->
+                         <div class="col-md-8 tk-mt-30">
+                            <div class="d-flex">
+                                <i class="far fa-circle tk-timeline-icon"><span class="timeline-head">Payback / Discount</span></i>
+                             
+                                <div class="tk-timeline h-100 tk-line"></div>
+                                 <div class="tk-card tk-ml-30 tk-mt-20 w-100">
+                                     <div class="row">
+                                        
+                                         <div class="col-md-12 ">
+                                            
+                                             <div class=" tk-secondary-text">Damage</div>
+                                             <div class="tk-secondary-text"> 
+                                                 <div class="d-flex tk-items">
+                                                     <div>Item  </div>:
+                                                     <div>Sofa</div>
+                                                 </div>
+                                                 <div class="d-flex tk-items">
+                                                    <div>Item  Quantity </div>:
+                                                    <div>Medium</div>
+                                                </div>
+                                                <div class="d-flex tk-items">
+                                                    <div>Maximum Price </div>:
+                                                    <div>18 KD</div>
+                                                </div>
+                                             </div>
+                                         </div>
+                                         <div class="col-md-12">
+                                            <div class="tk-subtitle tk-mt-5">Media</div>
+                                            <div class="row mt-10">
+                                                <div class="col-md-3">
+                                                    <div class="dummy-card">
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="dummy-card">
+                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="dummy-card">
+                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="dummy-card">
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+                         <!--Timeline card 8 ends here-->
+
+                         <!-- Timeline card 9 begins here-->
+                         <div class="col-md-8 tk-mt-30">
+                            <div class="d-flex">
+                                <i class="far fa-circle tk-timeline-icon"><span class="timeline-head">Close</span></i>
+                             
+                                <div class="tk-timeline h-100 tk-line tk-b-none"></div>
+                                 <div class="tk-card tk-ml-30 tk-mt-20">
+                                     <div class="row">
+                                         <div class="col-md-4">
+                                             <div class="d-flex ">
+                                                 <img src="/static/files/images/profile-pic.png" class="tk-profile "/>
+                                                 <div class="tk-ml-10 ">
+                                                    <div class="tk-title-2 tk-mt-10">Mustafaops</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">QC</div>
+                                                 <div class="tk-desc tk-secondary-text">
+                                                     24 April 2021 7:30 pm
+                                                 </div>
+                                             </div>
+                                             </div>
+                                         </div>
+                                         <div class="col-md-8 ">
+                                             <div class="tk-mt-30 tk-secondary-text">Action : Discount</div>
+                                             <div class=" tk-highlight tk-title tk-mt-10">18 KD</div>
+                                             <div class="tk-mt-10 tk-secondary-text">Note</div>
+                                             <div class="tk-desc tk-secondary-text"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                             </div>
+                                         </div>
+                                        
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+                          <!-- Timeline card 9 ends here-->
+
+                       </div>
+                      
+                   </div>
+                    
+                     
+                    
+                    
+                    
+               
+           
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+           
+          
+             
+             
+                   
+                   
+                </div><!--order-details-left-stretch-->
+            
+                <div class="order-details-right-fixed" style="background:#eeee;padding:0px"><!--order-details-right-fixed-->
+                    <div class="order-card-column whitebg red-border clickable-row-list" data-href="/agent/client/orders/35"><!--order-card-column-->
+                        <div class="card-innerwrapper"><!--card-innerwrapper-->
+                        <div class="column-left"><img src="/static/files/images/card-orders-icon.png"></div>
+                        <div class="column-right"><!--column-right-->
+                        <h1>Orders</h1>
+                        <h2 class="red-text"><label>Active<span>2</span></label> </h2>
+                        <p><label>Total<span>4</span></label></p>
+                        </div><!--column-right-->
+                        </div><!--card-innerwrapper-->
+                    </div><!--order-card-column-->
+                   <div class="tk-customer-card whitebg " >
+                      <div class="profile-pic mt-4"><img src="/static/files/images/profile-pic.png"></div>
+                    <div class="client-name">customer7</div>
+                    <div class="common-gray-text">64233518</div>
+                    <div class="common-gray-text"></div>
+                    <br>
+                    <hr class="hr">
+                    
+                    
+                    <div class="common-gray-text">Nationality : <span class="bold-text">Kuwait</span></div>
+                    
+                    
+                    <hr class="hr">
+                    <br>
+                    
+                        <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address 1: <b>Tejwlb</b></div>
+                        <div class="address">42 Floor,  Ulsgb, 396 Block, 1Qz Street, Ayfmxz Avenue,  Jabriya, Hawalli</div>
+                        <br>
+                        
+                        <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address 2: <b>Etret</b></div>
+                        <div class="address"> Gdhfgh, Xvxcv Block, Xvcxv Street, Bvcb Avenue,  Bayan, Hawalli</div>
+                        <br>
+                        
+                        <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address 3: <b>Ewrewr</b></div>
+                        <div class="address">Rtytr Floor,  Asda, Hfghfh Block, Xvxcv Street,  Abdullah Al-Salem, Al Asimah</div>
+                        <br>
+                   </div>
+                </div><!--order-details-right-fixed-->
+            
+            
+            
+            
+            
+            
+            
+            
+            </div><!--order-details-wrapper-->    
+            </div>
+            
+            
+            
+            
+                 
+	</div><!--container-fluid space topspace-->
+</section>
+    
+{% include 'agent/common/footer.html' %} 
+</div><!--wrapper-->
+{% endblock %}
+{% block javascript %}
+<script>
+ $('document').ready(function(){
+    
+    //To Hide Images 
+    invest_cust_img     = $('#data-pn-1').data('src');
+    invest_secondary_img= $('#data-pn-2').data('src');
+    invest_before_img   = $('#data-pn-3').data('src');
+    invest_after_img    = $('#data-pn-4').data('src');
+    paybackdiscount_img = $('#data-pn-5').data('src');
+    buybackpromogift_img= $('#data-pn-6').data('src');
+    reporting_img       = $('#data-pn-7').data('src');
+
+
+    if(invest_cust_img == '' || invest_cust_img == undefined)
+    {
+     $('.gallery-widget-column-column1').remove();   
+    }
+
+    if(invest_secondary_img == '' || invest_secondary_img == undefined)
+    {
+     $('.gallery-widget-column-column2').remove();   
+    }
+
+    if(invest_before_img == '' || invest_before_img == undefined)
+    {
+     $('.gallery-widget-column-column3').remove();   
+    }
+
+    if(invest_after_img == '' || invest_after_img == undefined)
+    {
+     $('.gallery-widget-column-column4').remove();   
+    }
+
+
+    //hide media
+    if((invest_cust_img == undefined || invest_cust_img == '') && (invest_secondary_img == undefined || invest_secondary_img == '') && (invest_before_img == undefined || invest_before_img == '') && (invest_after_img == undefined || invest_after_img == '') && (paybackdiscount_img == undefined || paybackdiscount_img == '') && (buybackpromogift_img == undefined || buybackpromogift_img == undefined) && (reporting_img == undefined || reporting_img == ''))
+    {
+        $('.media-head').remove();
+        $('.media-explaining').remove();
+    }
+
+    //to remove black in media
+    $(".pn-prev").click();
+    
+    //Bar
+    {% if followup_details.status == 'TICKET_RISED' %}
+    $('.bar-loader').css('width','33.33%');
+    {% elif followup_details.status == 'FOLLOWUP_IN_PROGRESS' %}
+    $('.bar-loader').css('width','66.66%');
+    {% elif followup_details.status == 'FOLLOWUP_CLOSED' %}
+    $('.bar-loader').css('width','100%');
+    {% else %}
+    $('.bar-loader').css('width','0%');
+    {% endif %}
+ 
+ });   
+</script>
+{% endblock %}
