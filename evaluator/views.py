@@ -3149,3 +3149,6 @@ class EvaluatorPaymentEdit(IsEvaluator,View):
 		messages.success(request,"Payment Policy Edited Succesfully")
 
 		return redirect('evaluator:evaluator-client-orderdetails',order.id)
+class Booking(IsEvaluator,View):
+	def get(self,request):
+		return render(request,"booking/booking.html") 		
