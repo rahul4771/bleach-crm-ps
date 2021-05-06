@@ -2714,6 +2714,12 @@ class OrderCancellation(IsSalesAdmin,View):
 				response = requests.request("GET", url, headers=headers, params=querystring)
 
 				print(message,response.text,"respo")
+		elif cancell_option == 'REJECT':
+			order                 = Order.objects.select_related('evaluation__customer').get(id=order_id)
+			order.order_status    = 'ORDER_IN_PROGRESS'
+			order.cancelled_by    = request.user
+			order.cancell_note    = request.POST.get('notes')
+			order.save()
 		else:
 			order                 = Order.objects.get(id=order_id)
 			order.remining_amount = 0
