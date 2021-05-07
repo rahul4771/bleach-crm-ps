@@ -35,6 +35,8 @@ urlpatterns = [
 		url(r'^booking/evaluation/phase3$',views.CustomerBookingEvaluationPhase3.as_view(),name='customerbookingevaluationphase3'),
 
 		##actual cleaning booking related urls
+		url(r'^ajax/countries$',views.GetCountries.as_view(),name='ajax-countries'),
+		url(r'^ajax/mobilecheck$',views.ExistingMobileCheck.as_view(),name='ajax-checkmobile'),
 		url(r'^ajax/getgovernorates$',views.GetGovernorates.as_view(),name='ajax-governorates'),
 		url(r'^ajax/getareas$',views.GetAreas.as_view(),name='ajax-areas'),
 		url(r'^ajax/getservicetypes$',views.GetServiceTypes.as_view(),name='ajax-servicetypes'),

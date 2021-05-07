@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from django.template.loader import render_to_string
 from django.http import HttpResponse,JsonResponse
+from django_countries import countries
 
 from django.views import View
 
@@ -1337,6 +1338,38 @@ def generate_random_otp(size=5, chars=string.digits):
 		return generate_random_otp(size=5,chars=string.digits)
 	except UserProfile.DoesNotExist:
 		return otp
+
+class GetCountries(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict        		= {}
+		response_dict['success']	= False
+
+		djangocountries ={}
+		for code, name in list(countries):
+			djangocountries[code] = name
+		response_dict['countries']=	djangocountries
+
+		response_dict['success']	= True
+		return JsonResponse(response_dict)
+
+class ExistingMobileCheck(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict        		= {}
+		response_dict['success']	= False
+
+		mobile_number               = request.GET.get('mobile_number')
+		existing_customer           = UserProfile.objects.filter(mobile_number=mobile_number)
+		
+		if not existing_customer:
+			response_dict['success']	= True
+
+		return JsonResponse(response_dict)
 
 class GetServiceTypes(APIView):  
 	permission_classes        = (AllowAny,)
