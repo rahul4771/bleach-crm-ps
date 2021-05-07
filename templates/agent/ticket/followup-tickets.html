@@ -284,9 +284,9 @@
                            <div class="col-md-8 tk-mt-30">
                             <div class="d-flex">
                             {% if followup_details.followup_schedule_count == followup_details.completed_followup_count %}
-                                <i class="fas fa-check-circle tk-timeline-icon"><span class="timeline-head">Follow-up Cleaning (<span class="green-text">Completed</span>)</span></i>
+                                <i class="fas fa-check-circle tk-timeline-icon sort_tab"><span class="timeline-head">Follow-up Cleaning (<span class="green-text">Completed</span>)</span></i>
                             {% else %}
-                                <i class="fas fa-check-circle tk-timeline-icon-yellow"><span class="timeline-head">Follow-up Cleaning{{followup_details.followup_schedule_count}} (<span class="yellow-text">In Progress</span>)</span></i>
+                                <i class="fas fa-check-circle tk-timeline-icon-yellow"><span class="timeline-head">Follow-up Cleaning (<span class="yellow-text">In Progress</span>)</span></i>
                             {% endif %}
                                 <div class="tk-timeline h-100 tk-line"></div>
                                  <div class="tk-card tk-ml-30 tk-mt-20">
@@ -397,7 +397,7 @@
                         {% if followup_details.investigation.reports %}
                         <div class="col-md-8 tk-mt-30">
                             <div class="d-flex">
-                                <i class="fas fa-check-circle tk-timeline-icon"><span class="timeline-head">Internal Reporting (<span class="green-text">Completed</span>)</span></i>
+                                <i class="fas fa-check-circle tk-timeline-icon sort_tab"><span class="timeline-head">Internal Reporting (<span class="green-text">Completed</span>)</span></i>
                              
                                 <div class="tk-timeline h-100 tk-line"></div>
                                 <div class="tk-card tk-ml-30 tk-mt-20 w-100">
@@ -440,7 +440,7 @@
                             <div class="d-flex">
                             {% for payback in followup_details.investigation.paybackdiscounts %}
                             {% if payback.is_completed == True %}
-                                <i class="fas fa-check-circle tk-timeline-icon"><span class="timeline-head">Payback / Discount (<span class="green-text">Completed</span>)</span></i>
+                                <i class="fas fa-check-circle tk-timeline-icon sort_tab"><span class="timeline-head">Payback / Discount (<span class="green-text">Completed</span>)</span></i>
                             {% else %}
                                 <i class="fas fa-check-circle tk-timeline-icon-yellow"><span class="timeline-head">Payback / Discount {% if payback.investigation.is_paybackdiscount_approved == True %}(<span class="yellow-text">Approved</span>){% else %}(<span class="tk-highlight">Pending Approval</span>){% endif %}</span></i>
                             {% endif %}
@@ -510,7 +510,7 @@
                             <div class="d-flex">
                             {% for buyback in followup_details.investigation.buybackpromogifts %}
                             {% if buyback.is_completed == True %}
-                                <i class="fas fa-check-circle tk-timeline-icon"><span class="timeline-head">Buyback / Promocode / Gift (<span class="green-text">Completed</span>)</span></i>
+                                <i class="fas fa-check-circle tk-timeline-icon sort_tab"><span class="timeline-head">Buyback / Promocode / Gift (<span class="green-text">Completed</span>)</span></i>
                             {% else %}
                                 <i class="fas fa-check-circle tk-timeline-icon-yellow"><span class="timeline-head">Buyback / Promocode / Gift {% if followup_details.investigation.is_buybackgiftpromo_approved == False %}(<span class="tk-highlight">Pending Approval</span>){% endif %}</span></i>
                             {% endif %}
@@ -790,7 +790,7 @@
     $('.bar-loader').css('width','0%');
     {% endif %}
 
-    $('.tk-timeline-icon').parent().parent().prependTo('#sort_container');
+    $('.sort_tab').parent().parent().prependTo('#sort_container');
  
  });   
 </script>

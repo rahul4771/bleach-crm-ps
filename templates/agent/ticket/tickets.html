@@ -125,7 +125,7 @@
                 <label for="favcity">
                 <select name="status_filter" id="status_filter_id">
                 <option value=''>---ALL---</option>
-                <option value="TICKET_RISED" {% if fil_status == 'TICKET_RISED' %}selected{%endif%}>Ticket Rised</option>
+                <option value="TICKET_RISED" {% if fil_status == 'TICKET_RISED' %}selected{%endif%}>Ticket Raised</option>
                 <option value="FOLLOWUP_IN_PROGRESS" {% if fil_status == 'FOLLOWUP_IN_PROGRESS' %}selected{%endif%}>In Progress</option>
                 <option value="FOLLOWUP_CLOSED" {% if fil_status == 'FOLLOWUP_CLOSED' %}selected{%endif%}>Closed</option>                
               </select>
@@ -195,7 +195,7 @@
     {% elif ticket.status == 'FOLLOWUP_CLOSED' %}
     <span class="clickable-row green-bg" data-href="{% url 'agent:agent-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Closed</span>
     {% elif ticket.status == 'TICKET_RISED' %}
-    <span class="clickable-row blue-bg" data-href="{% url 'agent:agent-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Ticket Rised</span>
+    <span class="clickable-row blue-bg" data-href="{% url 'agent:agent-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Ticket Raised</span>
     {% else %}
     <span class="clickable-row red-bg" data-href="{% url 'agent:agent-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}">Cancelled</span>
     {% endif %}
