@@ -96,6 +96,15 @@
     font-size: 20px;
     color:#289bac;
 }
+
+.tk-timeline-icon-yellow{
+    position: absolute;
+    left: 6px;
+    top: -15px;
+    font-size: 20px;
+    color:#f2ba1e;
+}
+
 .tk-line{
     margin-top: 15px;
    /* margin-bottom: 15px;*/
