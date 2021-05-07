@@ -2292,7 +2292,7 @@ class TicketAdvanced(IsAgent,View):
 		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
 		total_orders_count  = orders.count()
 
-		return render(request,'agent/ticket/followup-page.html',{"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"followup_details":followup_details,})
+		return render(request,'agent/ticket/followup-tickets.html',{"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"followup_details":followup_details,})
 
 
 

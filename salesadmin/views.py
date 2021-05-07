@@ -1716,6 +1716,8 @@ class TicketApprove(IsSalesAdmin,View):
 
 			paybackdiscount.approved_total_cost = payback_amount
 
+			paybackdiscount.approved_by = request.user
+
 			paybackdiscount.save()
 
 			investigation.is_paybackdiscount_approved = True
@@ -1733,6 +1735,8 @@ class TicketApprove(IsSalesAdmin,View):
 				promo_code = request.POST.get('promocode',None)
 
 				buybackpromocodegift.approved_promo_code = promo_code
+
+				buybackpromocodegift.approved_by = request.user
 				
 				buybackpromocodegift.save()
 
@@ -1741,6 +1745,8 @@ class TicketApprove(IsSalesAdmin,View):
 				buyback_amount = request.POST.get('buyback_amount',0.0)
 
 				buybackpromocodegift.approved_total_cost = buyback_amount
+
+				buybackpromocodegift.approved_by = request.user
 
 				buybackpromocodegift.save()
 
