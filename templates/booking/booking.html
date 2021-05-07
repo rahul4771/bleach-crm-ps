@@ -5,10 +5,11 @@
 <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
   <!--<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">-->
-  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.min.css' %}">
+  
+  <link rel="stylesheet" href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}">
 <link rel="stylesheet" href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.theme.default.min.css' %}">
 <link rel="stylesheet" href="{% static 'files/css/booking/booking.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
 
 
 <div class="wrapper"><!--wrapper-->
@@ -20,7 +21,7 @@
 	
      
     <div id="app">
-        <v-app>
+        <v-app v-cloak>
             <div class="container">
                 <div class="row mt-4">
                     <div class="col-md-8 mx-auto">
@@ -73,44 +74,13 @@
                             >
                               Schedule
                             </div>
-                            <div
-                              class="p-3 sr-tab-active"
-                              id="tab-3"
-                              @click="activeTab = 'Address'"
-                              v-if="activeTab == 'Address'"
-                            >
-                              Address
-                            </div>
-                            <div
-                              class="p-3 sr-tab"
-                              id="tab-3"
-                              @click="activeTab = 'Address'"
-                              v-else
-                            >
-                              Address
-                            </div>
-                            <div
-                              class="p-3 sr-tab-active"
-                              id="tab-4"
-                              @click="activeTab = 'Payment Method'"
-                              v-if="activeTab == 'Payment Method'"
-                            >
-                              Payment 
-                            </div>
-                            <div
-                              class="p-3 sr-tab"
-                              id="tab-4"
-                              @click="activeTab = 'Payment Method'"
-                              v-else
-                            >
-                              Payment 
-                            </div>
+                            
               
-                            <div class="sr-tab"></div>
+                           
                           </div>
                         <div v-if="activeTab == 'Services'">
                             <h5 class="pt-4">Category</h5>
-                        <div class="owl-carousel" :key="cat_counter" id="category-carousel">
+                        <div class="owl-carousel" :key="'cat_count'+serviceCount" id="category-carousel" v-if="activeTab == 'Services'">
                             <div
                             class="sr-service-card"
                             v-for="(item, index) in categories"
@@ -154,7 +124,8 @@
                            
                           </div>
                           <h5 class="pt-4">Service Type</h5>
-            <div class="owl-carousel" id="service-carousel" >
+                          
+            <div class="owl-carousel" id="service-carousel"  :key="'serv_count'+serviceCount">
                 
                 <div
                   class="sr-service-card m-2 p-2"
@@ -247,6 +218,7 @@
                     v-model="location_type"
                     label="Location Type"
                     v-if="serviceType=='General Cleaning' || serviceType=='Sterilization'"
+                    :attach="true"
                   >
                   </v-select>
                   <v-select
@@ -254,6 +226,7 @@
                     :items="location_types"
                     v-model="location_type"
                     label="Location Type"
+                    :attach="true"
                     
                   >
                   </v-select>
@@ -264,6 +237,7 @@
                     v-model="area_type"
                     item-text="name"
                     label="Area Type"
+                    :attach="true"
                   >
                   </v-select>
                 </div>
@@ -282,6 +256,7 @@
                     v-model="no_of_building"
                     label="No of Building"
                     v-on:change="setBuilding()"
+                    :attach="true"
                   >
                   </v-select>
                 </div>
@@ -321,6 +296,7 @@
                             v-model="no_of_floors[index - 1]"
                             label="No of Floors"
                             v-on:change="setFloors(index)"
+                            
                           >
                           </v-select>
                         </div>
@@ -364,7 +340,7 @@
                                           .apartment
                                       "
                                       
-                                      class="p-2"
+                                      class="p-4"
                                       v-if="serviceType != 'Storage Area'"
                                       row
                                     >
@@ -413,7 +389,7 @@
                                       "
                                       label="Size"
                                       return-object
-                                      
+                                      :attach="true"
                                       :rules="[v => !!v || 'Size is required']"
                                       required
                                     >
@@ -428,6 +404,7 @@
                                       "
                                       :rules="[v => !!v || 'Wall Type is required']"
                                       label="Wall Type"
+                                      :attach="true"
                                       multiple
                                       required
 
@@ -443,6 +420,7 @@
                                       "
                                       :rules="[v => !!v || 'Floor Type is required']"
                                       label="Floor Type"
+                                      :attach="true"
                                       multiple
                                       required
 
@@ -458,6 +436,7 @@
                                       "
                                       :rules="[v => !!v || 'ceiling Type is required']"
                                       label="Ceiling Type"
+                                      :attach="true"
                                       multiple
                                       required
                                     >
@@ -716,6 +695,7 @@
                       :rules="[v => !!v || 'Size is required']"
                     required
                       v-model="kitchenData.size"
+                      :attach="true"
                     ></v-select>
                   </div>
                   <div class="col-md-6" v-if="building[index - 1].floors[floor - 1]
@@ -775,6 +755,7 @@
                                       "
                                       label="No of Apartments"
                                       v-on:change="setApartments(index, floor)"
+                                      :attach="true"
                                     >
                                     </v-select>
                                   </div>
@@ -824,6 +805,7 @@
                                              
                                                :rules="[v => !!v || 'Size is required']"
                                             required
+                                            :attach="true"
                                             >
                                             </v-select>
                                           </div>
@@ -835,6 +817,7 @@
                                               multiple
                                                :rules="[v => !!v || 'Wall type is required']"
                                             required
+                                            :attach="true"
                                             >
                                             </v-select>
                                           </div>
@@ -846,6 +829,7 @@
                                               multiple
                                                :rules="[v => !!v || 'Floor type is required']"
                                             required
+                                            :attach="true"
                                             >
                                             </v-select>
                                           </div>
@@ -857,6 +841,7 @@
                                               multiple
                                                :rules="[v => !!v || 'Ceiling type is required']"
                                             required
+                                            :attach="true"
                                             >
                                             </v-select>
                                           </div>
@@ -1285,6 +1270,7 @@
                     :rules="[v => !!v || 'Type of Upholstery is required']"
                     required
                     v-on:change="updateSize()"
+                    :attach="true"
                   ></v-select>
                 </div>
                 <div class="col-md-6" v-if="serviceType == 'Facade Cleaning'">
@@ -1355,6 +1341,7 @@
                     required
                     multiple
                     v-model="otherService.material"
+                    :attach="true"
                   ></v-select>
                 </div>
                 <div
@@ -1374,6 +1361,7 @@
                     required
                     multiple
                     v-model="otherService.color"
+                    :attach="true"
                   ></v-select>
                 </div>
                 
@@ -1398,6 +1386,7 @@
                       :rules="[v => !!v || 'Size is required']"
                     required
                       v-model="otherService.size"
+                      :attach="true"
                     ></v-select>
                 
                   <v-text-field
@@ -1419,6 +1408,7 @@
                       :rules="[v => !!v || 'Size is required']"
                     required
                       v-model="otherService.size"
+                      :attach="true"
                     ></v-select>
                   </div>
                   <div v-if="serviceType == 'Facade Cleaning'">
@@ -1430,6 +1420,7 @@
                       :rules="[v => !!v || 'Size is required']"
                     required
                       v-model="otherService.size"
+                      :attach="true"
                     ></v-select>
                   </div>
                   <div
@@ -1445,6 +1436,7 @@
                       :rules="[v => !!v || 'Size is required']"
                     required
                       v-model="otherService.size"
+                      :attach="true"
                     ></v-select>
                 </div>
                   <div
@@ -1460,6 +1452,7 @@
                       :rules="[v => !!v || 'Size is required']"
                     required
                       v-model="otherService.size"
+                      :attach="true"
                     ></v-select>
                 </div>
                   <div v-if="serviceType == 'Car Parking Umbrella' || serviceType == 'Outdoor Cleaning' || serviceType == 'Window Cleaning'">
@@ -1471,6 +1464,7 @@
                       :rules="[v => !!v || 'Size is required']"
                     required
                       v-model="otherService.size"
+                      :attach="true"
                     ></v-select>
                   </div>
                 </div>
@@ -1482,6 +1476,7 @@
                     :rules="[v => !!v || 'Size is required']"
                     required
                     v-model="otherService.sides"
+                    :attach="true"
                   ></v-select>
                 </div>
                 <div
@@ -1517,6 +1512,7 @@
                     :rules="[v => !!v || 'Cause of Stain is required']"
                     required
                     v-model="otherService.stain_reason"
+                    :attach="true"
                   ></v-select>
                 </div>
                 <div class="col-md-6" v-if="otherService.stain">
@@ -1542,6 +1538,7 @@
                     required
                     multiple
                     v-model="otherService.wall_type"
+                    :attach="true"
                   ></v-select>
                 </div>
                 <div
@@ -1558,6 +1555,7 @@
                     required
                     multiple
                     v-model="otherService.floor_type"
+                    :attach="true"
                   ></v-select>
                 </div>
                 <div
@@ -1574,6 +1572,7 @@
                     required
                     multiple
                     v-model="otherService.ceiling_type"
+                    :attach="true"
                   ></v-select>
                 </div>
                 <div class="col-md-6" v-if="serviceType == 'Kitchen Cleaning'">
@@ -1797,179 +1796,183 @@
                     <% item.hours / 3 %> slots
                   </div>
                 </div>
-              </div>
-
-              <div class="row">
                 <div class="col-md-12">
-                  <h6>Choose Slots</h6>
-                </div>
-                <div class="col-md-6">
-                  <v-date-picker
-                    v-model="dateSelected"
-                    full-width
-                    elevation="5"
-                    color="primary"
-                    v-on:change="formatDate()"
-                    :min="today"
-                  ></v-date-picker>
-                </div>
-                <div class="col-md-6" v-if="selectedDuration.slots">
-                  <h6>Slots Available</h6>
-
-                  <div
-                    class="ma-2 primary-text"
-                    label
-                    color="primary"
-                    v-if="slotCounter < selectedDuration.slots && !errMsg"
-                  >
-                    Select <% " " + selectedDuration.slots - slotCounter + " "
-                    %><span v-if="slotCounter > 0"> more <% " " %> </span> Slots
+                    <h6>Choose Slots</h6>
                   </div>
-                  <div
-                    class="ma-2 danger"
-                    label
-                   
-                    v-if="errMsg"
-                  >
-                   <% errMsg %>
-                  </div>
-                  <div
-                    v-if="slotCounter >= selectedDuration.slots"
-                    class="ma-2 primary-text"
-                  >
-                    Slots selection Completed. Please proceed to continue.
-                  </div>
-                  <div class="row mt-4" v-if="renderComponent">
-                    <div
-                      class="col-md-6"
-                      v-for="(slot, sindex) in timeSlots"
-                      v-bind:key="sindex"
-                    >
-                      <div
-                        class="time-slot duration text-center p-2"
-                        v-if="
-                          sindex == 0 &&
-                          !time_slot[slotDate].selectedSlot.includes(sindex) &&
-                          slot.length > 0 &&
-                          checkSlot(sindex)
-                        "
-                        @click="addSlot(sindex)"
-                      >
-                        12:00 AM - 3:00 AM
-                      </div>
-
-                      <div
-                        class="time-slot duration-active text-center p-2"
-                        v-if="
-                          sindex == 0 &&
-                          time_slot[slotDate].selectedSlot.includes(sindex) &&
-                          slot.length > 0
-                        "
-                        @click="removeSlot(sindex)"
-                      >
-                        12:00 AM - 3:00 AM
-                      </div>
-                      <div
-                        class="time-slot duration-inactive text-center p-2"
-                        v-if="
-                          sindex == 0 &&
-                          !time_slot[slotDate].selectedSlot.includes(sindex) &&
-                          slot.length > 0 &&
-                          !checkSlot(sindex)
-                        "
-                      >
-                        12:00 AM - 3:00 AM
-                      </div>
+                  <div class="col-md-6">
+                    <v-date-picker
+                      v-model="dateSelected"
+                      full-width
+                      elevation="5"
+                      color="primary"
+                      v-on:change="formatDate()"
                       
+                    ></v-date-picker>
+                  </div>
+                  <div class="col-md-6" v-if="selectedDuration.slots">
+                    <h6>Slots Available</h6>
+  
+                    <div
+                      class="ma-2 primary-text"
+                      label
+                      color="primary"
+                      v-if="slotCounter < selectedDuration.slots && !errMsg"
+                    >
+                      Select <% " " + selectedDuration.slots - slotCounter + " "
+                      %><span v-if="slotCounter > 0"> more <% " " %> </span> Slots
+                    </div>
+                    <div
+                      class="ma-2 danger"
+                      label
+                     
+                      v-if="errMsg"
+                    >
+                     <% errMsg %>
+                    </div>
+                    <div
+                      v-if="slotCounter >= selectedDuration.slots"
+                      class="ma-2 primary-text"
+                    >
+                      Slots selection Completed. Please proceed to continue.
+                    </div>
+                    <div class="row mt-4" v-if="renderComponent">
                       <div
-                        class="time-slot duration text-center p-2"
-                        v-if="
-                          sindex != 21 &&
-                          sindex != 0 &&
-                          !time_slot[slotDate].selectedSlot.includes(sindex) &&
-                          slot.length > 0 &&
-                          checkSlot(sindex)
-                        "
-                        @click="addSlot(sindex)"
+                        class="col-md-6"
+                        v-for="(slot, sindex) in timeSlots"
+                        v-bind:key="sindex"
                       >
+                        <div
+                          class="time-slot duration text-center p-2"
+                          v-if="
+                            sindex == 0 &&
+                            !time_slot[slotDate].selectedSlot.includes(sindex) &&
+                            slot.length > 0 &&
+                            checkSlot(sindex)
+                          "
+                          @click="addSlot(sindex)"
+                        >
+                          12:00 AM - 3:00 AM
+                        </div>
+  
+                        <div
+                          class="time-slot duration-active text-center p-2"
+                          v-if="
+                            sindex == 0 &&
+                            time_slot[slotDate].selectedSlot.includes(sindex) &&
+                            slot.length > 0
+                          "
+                          @click="removeSlot(sindex)"
+                        >
+                          12:00 AM - 3:00 AM
+                        </div>
+                        <div
+                          class="time-slot duration-inactive text-center p-2"
+                          v-if="
+                            sindex == 0 &&
+                            !time_slot[slotDate].selectedSlot.includes(sindex) &&
+                            slot.length > 0 &&
+                            !checkSlot(sindex)
+                          "
+                        >
+                          12:00 AM - 3:00 AM
+                        </div>
                         
-                         <span v-if="sindex>12"><% (parseInt(sindex)-12) + ":00 PM - " + (parseInt(sindex) - 9) + ":00 PM"%></span>
-                         <span v-if="sindex==12"><% 12 + ":00 PM - " + (parseInt(sindex) - 9) + ":00 PM"%></span>
-                        <span v-if="sindex<12"> <%
-                          sindex + ":00 AM - " + (parseInt(sindex) + 3) + ":00 AM"
-                        %></span>
-                      </div>
-                      <div
-                        class="time-slot duration-inactive text-center p-2"
-                        v-if="
-                          sindex != 21 &&
-                          sindex != 0 &&
-                          !time_slot[slotDate].selectedSlot.includes(sindex) &&
-                          slot.length > 0 &&
-                          !checkSlot(sindex)
-                        "
-                      >
-                        <span v-if="sindex>12"><% (parseInt(sindex)-12) + ":00 PM - " + (parseInt(sindex) - 9) + ":00 PM"%></span>
-                         <span v-if="sindex==12"><% 12 + ":00 PM - " + (parseInt(sindex) - 9) + ":00 PM"%></span>
-                        <span v-if="sindex<12"> <%
-                          sindex + ":00 AM - " + (parseInt(sindex) + 3) + ":00 AM"
-                        %></span>
-                      </div>
-                      <div
-                        class="time-slot duration-active text-center p-2"
-                        v-if="
-                          sindex != 21 &&
-                          sindex != 0 &&
-                          time_slot[slotDate].selectedSlot.includes(sindex) &&
-                          slot.length > 0
-                        "
-                        @click="removeSlot(sindex)"
-                      >
-                         <span v-if="sindex>12"><% (parseInt(sindex)-12) + ":00 PM - " + (parseInt(sindex) - 9) + ":00 PM"%></span>
-                         <span v-if="sindex==12"><% 12 + ":00 PM - " + (parseInt(sindex) - 9) + ":00 PM"%></span>
-                        <span v-if="sindex<12"> <%
-                          sindex + ":00 AM - " + (parseInt(sindex) + 3) + ":00 AM"
-                        %></span>
-                      </div>
-                      <div
-                        class="time-slot duration text-center p-2"
-                        v-if="
-                          sindex == 21 &&
-                          !time_slot[slotDate].selectedSlot.includes(sindex) &&
-                          slot.length > 0 &&
-                          checkSlot(sindex) &&
-                          slot.length > 0
-                        "
-                        @click="addSlot(sindex)"
-                      >
-                        9:00 PM  - 12:00 AM
-                      </div>
-                      <div
-                        class="time-slot duration-inactive text-center p-2"
-                        v-if="
-                          sindex == 21 &&
-                          !time_slot[slotDate].selectedSlot.includes(sindex) &&
-                          slot.length > 0 &&
-                          !checkSlot(sindex) &&
-                          slot.length > 0
-                        "
-                      >
-                        9:00 PM - 12:00 AM
-                      </div>
-                      <div
-                        class="time-slot duration-active text-center p-2"
-                        v-if="
-                          sindex == 21 &&
-                          time_slot[slotDate].selectedSlot.includes(sindex) &&
-                          slot.length > 0
-                        "
-                        @click="removeSlot(sindex)"
-                      >
-                        9:00 PM - 12:00 AM
+                        <div
+                          class="time-slot duration text-center p-2"
+                          v-if="
+                            sindex != 21 &&
+                            sindex != 0 &&
+                            !time_slot[slotDate].selectedSlot.includes(sindex) &&
+                            slot.length > 0 &&
+                            checkSlot(sindex)
+                          "
+                          @click="addSlot(sindex)"
+                        >
+                          
+                           <span v-if="sindex>12"><% (parseInt(sindex)-12) + ":00 PM - " + (parseInt(sindex) - 9) + ":00 PM"%></span>
+                           <span v-if="sindex==12"><% 12 + ":00 PM - " + (parseInt(sindex) - 9) + ":00 PM"%></span>
+                          <span v-if="sindex<12"> <%
+                            sindex + ":00 AM - " + (parseInt(sindex) + 3) + ":00 AM"
+                          %></span>
+                        </div>
+                        <div
+                          class="time-slot duration-inactive text-center p-2"
+                          v-if="
+                            sindex != 21 &&
+                            sindex != 0 &&
+                            !time_slot[slotDate].selectedSlot.includes(sindex) &&
+                            slot.length > 0 &&
+                            !checkSlot(sindex)
+                          "
+                        >
+                          <span v-if="sindex>12"><% (parseInt(sindex)-12) + ":00 PM - " + (parseInt(sindex) - 9) + ":00 PM"%></span>
+                           <span v-if="sindex==12"><% 12 + ":00 PM - " + (parseInt(sindex) - 9) + ":00 PM"%></span>
+                          <span v-if="sindex<12"> <%
+                            sindex + ":00 AM - " + (parseInt(sindex) + 3) + ":00 AM"
+                          %></span>
+                        </div>
+                        <div
+                          class="time-slot duration-active text-center p-2"
+                          v-if="
+                            sindex != 21 &&
+                            sindex != 0 &&
+                            time_slot[slotDate].selectedSlot.includes(sindex) &&
+                            slot.length > 0
+                          "
+                          @click="removeSlot(sindex)"
+                        >
+                           <span v-if="sindex>12"><% (parseInt(sindex)-12) + ":00 PM - " + (parseInt(sindex) - 9) + ":00 PM"%></span>
+                           <span v-if="sindex==12"><% 12 + ":00 PM - " + (parseInt(sindex) - 9) + ":00 PM"%></span>
+                          <span v-if="sindex<12"> <%
+                            sindex + ":00 AM - " + (parseInt(sindex) + 3) + ":00 AM"
+                          %></span>
+                        </div>
+                        <div
+                          class="time-slot duration text-center p-2"
+                          v-if="
+                            sindex == 21 &&
+                            !time_slot[slotDate].selectedSlot.includes(sindex) &&
+                            slot.length > 0 &&
+                            checkSlot(sindex) &&
+                            slot.length > 0
+                          "
+                          @click="addSlot(sindex)"
+                        >
+                          9:00 PM  - 12:00 AM
+                        </div>
+                        <div
+                          class="time-slot duration-inactive text-center p-2"
+                          v-if="
+                            sindex == 21 &&
+                            !time_slot[slotDate].selectedSlot.includes(sindex) &&
+                            slot.length > 0 &&
+                            !checkSlot(sindex) &&
+                            slot.length > 0
+                          "
+                        >
+                          9:00 PM - 12:00 AM
+                        </div>
+                        <div
+                          class="time-slot duration-active text-center p-2"
+                          v-if="
+                            sindex == 21 &&
+                            time_slot[slotDate].selectedSlot.includes(sindex) &&
+                            slot.length > 0
+                          "
+                          @click="removeSlot(sindex)"
+                        >
+                          9:00 PM - 12:00 AM
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                
+              </div>
+
+
+              <div class="row">
+                
+               
               </div>
               <div class="row">
                 <div class="col-md-12 text-center">
@@ -2041,456 +2044,6 @@
           <!-- Cart ends here-->
 
 
-            <!-- Tab 3 Begins here -->
-            <div v-if="activeTab == 'Address'">
-              <div>
-                <v-radio-group v-model="userStat" row>
-                  <v-radio label="New" :value="false"></v-radio>
-                  <v-radio label="Existing" :value="true" checked></v-radio>
-                </v-radio-group>
-              </div>
-              <div class="row" v-if="userStat && !verificationStat">
-                <div class="col-md-6">
-                  <v-text-field
-                    v-model="mob_number"
-                    label="Phone Number"
-                    required
-                  ></v-text-field>
-                </div>
-                <div class="col-md-3 offset-md-1">
-                  <v-btn
-                    color="primary"
-                    class="mt-2"
-                    @click="verifyTest()"
-                    v-if="!otpStat"
-                  >
-                    Submit
-                  </v-btn>
-                </div>
-                <div class="col-md-12 offset-md-1" v-if="otpStat">
-                  <div class="success-msg">
-                    <i class="fa fa-check"></i> OTP sent to the mobile number
-                    <% mob_number %>
-                  </div>
-                </div>
-                <div class="col-md-12 offset-md-1" v-if="errorStat">
-                  <div class="error-msg">
-                    <i class="fa fa-times"></i> Invalid Mobile number or
-                    Customer doesn't exist.
-                  </div>
-                </div>
-                <div class="col-md-3" v-if="otpStat">
-                  <v-text-field
-                    v-model="mob_otp"
-                    label="OTP"
-                    required
-                  ></v-text-field>
-                </div>
-                <div class="col-md-3 offset-md-1">
-                  <v-btn
-                    color="primary"
-                    class="mt-2"
-                    @click="verifyOtp()"
-                    v-if="otpStat"
-                  >
-                    Verify
-                  </v-btn>
-                </div>
-                <div class="col-md-12 offset-md-1" v-if="errorVerifyStat">
-                  <div class="error-msg">
-                    <i class="fa fa-times"></i> Invalid OTP
-                  </div>
-                </div>
-              </div>
-
-              <div v-if="otpStat && !verificationStat">
-                <a href="#" class="sr-link" @click="sendOtp()">Resend Otp</a>
-              </div>
-              <div v-if="verificationStat && userStat" class="row mb-4">
-                <div class="col-md-12 mt-4">
-                  <h5>Select an Address</h5>
-                </div>
-                <div
-                  class="col-md-4 mb-2"
-                  v-for="(
-                    address, aindex
-                  ) in customerDetails.customer_addresses"
-                  v-bind:key="aindex"
-                >
-                  <div
-                    class="address-active p-2"
-                    v-if="selectedAddress == address"
-                    @click="selectedAddress = address"
-                  >
-                    <div v-if="address.apartment">
-                      <% address.apartment %>
-                    </div>
-                    <div v-if="address.area">
-                      <% address.area.name %>
-                    </div>
-                    <div v-if="address.governorate">
-                      <% address.governorate.name %>
-                    </div>
-                    <div v-if="address.avenue">
-                      <% address.avenue %>
-                    </div>
-                    <div v-if="address.block">
-                      <% address.block %>
-                    </div>
-                    <div v-if="address.floor">
-                      <% address.block %>
-                    </div>
-                    <div v-if="address.street">
-                      <% address.street %>
-                    </div>
-                  </div>
-                  <div
-                    class="address-block p-2"
-                    v-else
-                    @click="selectedAddress = address"
-                  >
-                    <div v-if="address.apartment">
-                      <% address.apartment %>
-                    </div>
-                    <div v-if="address.area">
-                      <% address.area.name %>
-                    </div>
-                    <div v-if="address.governorate">
-                      <% address.governorate.name %>
-                    </div>
-                    <div v-if="address.avenue">
-                      <% address.avenue %>
-                    </div>
-                    <div v-if="address.block">
-                      <% address.block %>
-                    </div>
-                    <div v-if="address.floor">
-                      <% address.block %>
-                    </div>
-                    <div v-if="address.street">
-                      <% address.street %>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div v-if="userStat" class="mt-4">
-                Need cleaning for new address ?
-                <a href="#" class="sr-link"> Click here</a>
-              </div>
-              <div class="row" v-if="!userStat">
-                <div class="col-md-12">
-                  <h6>Personal details</h6>
-                </div>
-                <div class="col-md-6">
-                  
-                  <v-text-field
-                    v-model="serviceDetails.customer_details.name"
-                    label="Name"
-                    required
-                  ></v-text-field>
-                </div>
-                <div class="col-md-6">
-                  <v-select
-                    v-model="serviceDetails.customer_details.gender"
-                    :items="['MALE', 'FEMALE']"
-                    label="Gender"
-                    required
-                  ></v-select>
-                </div>
-                <div class="col-md-6">
-                  <v-text-field
-                    v-model="serviceDetails.customer_details.email"
-                    label="Email"
-                    required
-                  ></v-text-field>
-                </div>
-                <div class="col-md-6">
-                  <v-text-field
-                    v-model="serviceDetails.customer_details.mobile_number"
-                    label="Mobile Number"
-                    :counter="8"
-                    :rules="rules"
-                    type="phone"
-                    required
-                  ></v-text-field>
-                </div>
-                <div class="col-md-6">
-                  <v-menu
-                    ref="menu"
-                    v-model="menu"
-                    :close-on-content-click="false"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        v-model="dob"
-                        label="Date of Birth"
-                        prepend-icon="mdi-calendar"
-                        readonly
-                        v-bind="attrs"
-                        v-on="on"
-                      ></v-text-field>
-                    </template>
-                    <v-date-picker
-                      ref="picker"
-                      v-model="dob"
-                      :max="new Date().toISOString().substr(0, 10)"
-                      min="1950-01-01"
-                      v-on:change="save"
-                    ></v-date-picker>
-                  </v-menu>
-                </div>
-                <div class="col-md-6">
-                  <v-select
-                    v-model="serviceDetails.customer_details.nationality"
-                    :items="['KW']"
-                    label="Nationality"
-                    required
-                  ></v-select>
-                </div>
-                <div class="col-md-6">
-                  <v-select
-                    v-model="serviceDetails.customer_details.sms_preference"
-                    :items="['ARABIC', 'ENGLISH']"
-                    label="Sms Language"
-                    required
-                  ></v-select>
-                </div>
-                <div class="col-md-6">
-                  Contact Platform
-                  <div class="d-flex">
-                    <v-checkbox
-                      v-model="contact_platform"
-                      label="SMS"
-                      value="SMS"
-                    ></v-checkbox>
-                    <v-checkbox
-                      v-model="contact_platform"
-                      label="WHATSAPP"
-                      value="WHATSAPP"
-                      class="pl-2"
-                    ></v-checkbox>
-                    <v-checkbox
-                      v-model="contact_platform"
-                      label="EMAIL"
-                      value="EMAIL"
-                      class="pl-2"
-                    ></v-checkbox>
-                  </div>
-                </div>
-                <div class="col-md-12 mt-4">
-                  <h6>Address</h6>
-                </div>
-                <div class="col-md-6">
-                  <v-select
-                    v-model="serviceDetails.address_details.governorate"
-                    :items="cust_governorates"
-                    item-text="name"
-                    item-value="id"
-                    label="Governorate"
-                    required
-                    v-on:change="getAreas()"
-                  ></v-select>
-                </div>
-                <div class="col-md-6">
-                  <v-select
-                    v-model="serviceDetails.address_details.area"
-                    :items="cust_areas"
-                    item-text="name"
-                    item-value="id"
-                    label="Area"
-                    required
-                  ></v-select>
-                </div>
-                <div class="col-md-6">
-                  <v-text-field
-                    v-model="serviceDetails.address_details.building"
-                    label="Building"
-                    required
-                  ></v-text-field>
-                </div>
-                <div class="col-md-6">
-                  <v-text-field
-                    v-model="serviceDetails.address_details.apartment"
-                    label="Apartment"
-                    required
-                  ></v-text-field>
-                </div>
-                <div class="col-md-6">
-                  <v-text-field
-                    v-model="serviceDetails.address_details.floor"
-                    label="Floor"
-                    required
-                  ></v-text-field>
-                </div>
-                <div class="col-md-6">
-                  <v-text-field
-                    v-model="serviceDetails.address_details.block"
-                    label="Block"
-                    required
-                  ></v-text-field>
-                </div>
-                <div class="col-md-6">
-                  <v-text-field
-                    v-model="serviceDetails.address_details.street"
-                    label="Street"
-                    required
-                  ></v-text-field>
-                </div>
-                <div class="col-md-6">
-                  <v-text-field
-                    v-model="serviceDetails.address_details.avenue"
-                    label="Avenue"
-                    required
-                  ></v-text-field>
-                </div>
-              </div>
-              <div
-                class="d-flex w-50 mx-auto text-center mt-4"
-                v-if="!userStat"
-              >
-                <div class="sr-prev-btn">Back</div>
-                <div
-                  class="sr-next-btn ml-2"
-                  @click="goToBilling()"
-                >
-                  Next
-                </div>
-              </div>
-              <div
-                class="d-flex w-50 mx-auto text-center mt-4"
-                v-if="verifyStat && userStat"
-              >
-                <div class="sr-prev-btn">Back</div>
-                <div
-                  class="sr-next-btn ml-2"
-                  @click="goToBilling()"
-                >
-                  Next
-                </div>
-              </div>
-            </div>
-
-            <!-- Tab 3 Ends Here -->
-            <!-- Tab 4 Begins here -->
-            <div v-if="activeTab == 'Payment Method'">
-            
-             
-           
-              <h4 class="mt-4">Payment Option</h4>
-              <div class="row">
-                <div class="col-12">
-                  <div class="d-flex">
-                    <div
-                      class="inv-payment-card mt-4 text-center"
-                      id="inv-debit"
-                      v-on:click="selectPayment('debit')"
-                      v-if="activePayment!='debit'"
-                    >
-                      <img
-                        src="../assets/icons/knet-icon.png"
-                        class="inv-card-icon"
-                        id="inv-knet"
-                      />
-                      <div class="inv-payment-text">Debit Card</div>
-                      <div
-                        class="inv-check-box mt-2 mb-2 mx-auto"
-                        id="inv-debit-check-box"
-                      >
-                        
-                      </div>
-                    </div>
-                    <div
-                      class="inv-payment-card-active mt-4 text-center"
-                      id="inv-debit"
-                      v-on:click="selectPayment('debit')"
-                      v-if="activePayment=='debit'"
-                    >
-                      <img
-                        src="../assets/icons/knet-icon.png"
-                        class="inv-card-icon"
-                        id="inv-knet"
-                      />
-                      <div class="inv-payment-text">Debit Card</div>
-                      <i class="fas fa-check-circle active-check"></i>
-                    </div>
-                   <!-- <div
-                      class="inv-payment-card mt-4 text-center"
-                      id="inv-cash"
-                      onclick="selectPayment('cash')"
-                    >
-                      <img
-                        src="../assets/icons/wallet.png"
-                        class="inv-card-icon"
-                        id="inv-cash-img"
-                      />
-                      <div class="inv-payment-text">Cash</div>
-                      <div
-                        class="inv-check-box mt-2 mb-2 mx-auto"
-                        id="inv-cash-check-box"
-                      >
-                        <i
-                          class="fa fa-check inv-check-icon"
-                          id="inv-check-cash"
-                        ></i>
-                      </div>
-                    </div>-->
-                    <div
-                      class="inv-payment-card mt-4 text-center inv-click-disable"
-                      id="inv-credit"
-                      v-on:click="selectPayment('credit')"
-                      v-if="activePayment!='credit'"
-                    >
-                      <!-- to disable click add class inv-click-disable -->
-                      <img
-                        src="../assets/icons/debit-card.png"
-                        class="inv-card-icon inv-payment-disabled"
-                        id="inv-credit-img"
-                      />
-                      <!-- to disable  add class inv-payment-disabled -->
-                      <div class="inv-payment-text inv-payment-disabled">
-                        <!-- to disable  add class inv-payment-disabled -->
-                        Credit Card
-                      </div>
-                      <div
-                        class="inv-check-box mt-2 mb-2 mx-auto"
-                        id="inv-credit-check-box"
-                      >
-                        
-                      </div>
-                    </div>
-                    <div
-                      class="inv-payment-card-active mt-4 text-center inv-click-disable"
-                      id="inv-credit"
-                      v-on:click="selectPayment('credit')"
-                      v-if="activePayment=='credit'"
-                    >
-                      <!-- to disable click add class inv-click-disable -->
-                      <img
-                        src="../assets/icons/debit-card.png"
-                        class="inv-card-icon inv-payment-disabled"
-                        id="inv-credit-img"
-                      />
-                      <!-- to disable  add class inv-payment-disabled -->
-                      <div class="inv-payment-text inv-payment-disabled">
-                        <!-- to disable  add class inv-payment-disabled -->
-                        Credit Card
-                      </div>
-                     <i class="fas fa-check-circle active-check"></i>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-12 text-center text-white mt-4">
-                  <div class="d-flex w-50 mx-auto">
-                    <div class="sr-prev-btn">Back</div>
-                    <div class="sr-next-btn ml-2" @click="goToPayment()">Next</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- Tab 4 Ends Here -->
           </div>
         </div>
 
@@ -2508,10 +2061,14 @@
 </div><!--wrapper-->
 {% endblock %}
 {% block javascript %}
-<script src="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.min.js' %}"></script>
+<script src="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.33/moment-timezone.min.js" integrity="sha512-jkvef+BAlqJubZdUhcyvaE84uD9XOoLR3e5GGX7YW7y8ywt0rwcGmTQHoxSMRzrJA3+Jh2T8Uy6f8TLU3WQhpQ==" crossorigin="anonymous"></script>
+
   <script src="{% static 'files/js/booking/booking.js' %}"></script>
+  
   
   
 {% endblock %}
