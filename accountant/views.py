@@ -236,14 +236,14 @@ class AccountantHome(IsAccountant,View):
 
 		#remove object in postpaid if not last cleaning fulfilled	
 		#remove if subscription to pay date
-		if pending_payments:
-			for payment in pending_payments:
-				if payment.evaluation.payment_method == 'POSTPAID':
-					very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
-					if very_latest_cleaning.work_status != 'CLEANING_FULFILLED':
-						pending_payments = pending_payments.exclude(id=payment.id)
-				if payment.evaluation.payment_method == 'SUBSCRIPTION' and not payment.subscription_topay_date:
-					pending_payments = pending_payments.exclude(id=payment.id)	
+		# if pending_payments:
+		# 	for payment in pending_payments:
+		# 		if payment.evaluation.payment_method == 'POSTPAID':
+		# 			very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
+		# 			if very_latest_cleaning.work_status != 'CLEANING_FULFILLED':
+		# 				pending_payments = pending_payments.exclude(id=payment.id)
+		# 		if payment.evaluation.payment_method == 'SUBSCRIPTION' and not payment.subscription_topay_date:
+		# 			pending_payments = pending_payments.exclude(id=payment.id)	
 
 		#to find days
 		if pending_payments:
@@ -1049,13 +1049,13 @@ class PaybackDiscountProcessing(View):
 
 		if option == 'PAYBACK':
 			
-			PaybackDiscount.objects.filter(id=paybackdiscount_id).update(approved_option=option,is_completed=True,accountant_notes=request.POST.get('accountant_notes'))
+			PaybackDiscount.objects.filter(id=paybackdiscount_id).update(approved_option=option,approved_by=request.user,is_completed=True,accountant_notes=request.POST.get('accountant_notes'))
 
 			messages.success(request,"Payback Succesfully Added")
 
 		if option == 'DISCOUNT':
 			
-			PaybackDiscount.objects.filter(id=paybackdiscount_id).update(approved_option=option,is_completed=True,accountant_notes=request.POST.get('accountant_notes'))
+			PaybackDiscount.objects.filter(id=paybackdiscount_id).update(approved_option=option,approved_by=request.user,is_completed=True,accountant_notes=request.POST.get('accountant_notes'))
 			
 			#update order and evaluation
 			order_id      =  request.POST.get('order_id')

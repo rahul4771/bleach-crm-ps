@@ -7,7 +7,7 @@ new Vue({
     vuetify: new Vuetify({theme: {
         themes: {
           light: {
-            primary: '#348695', // #E53935
+            primary: '#2e4e85', // #E53935
             secondary: '#FFCDD2', // #FFCDD2
             accent: '#3F51B5', // #3F51B5
           },
@@ -1113,7 +1113,7 @@ this.infectionControlServices=[]
     }
  this.getSize();
  
- refreshService();
+
    
   },
   bookMultipleService(){
@@ -1636,6 +1636,10 @@ try {
     this.billingData.splice(a,1)
     this.recalcCost()
   },
+  goToService(){
+    this.activeTab='Service'
+    reinit()
+  },
   goToSchedule(){
       this.activeTab='Schedule'
       this.newdurationcalculation();
@@ -1645,11 +1649,13 @@ try {
       this.arrangeData();
   },
   addMoreService(){
+    reinit()
     this.serviceCount++
     this.activeTab='Services'
+   
   },
    goToCart(){
-     
+ /*  destroyCarousel()*/
      var sampleServicesBill={
        service:'',
        bill:[],
@@ -2737,9 +2743,11 @@ try {
 mounted() {
    
   this.getServices()
+  this.getAreaTypes()
   this.getIp()
   this.getGovernorate()
   this.selectCategory('Detailed Cleaning')
+  
   moment.tz.setDefault("Asia/Baghdad");
   console.log("current time is" + moment().format());
 
@@ -2747,7 +2755,7 @@ mounted() {
   this.today = moment().format().split("T")[0];
   this.formatDate();
      // this.getMultipleSlots()
-      this.getAreaTypes();
+     
       this.changeNewKitchen()
      
       
@@ -2780,6 +2788,27 @@ created()
         }
     }
 });
+$('#service-carousel').owlCarousel({
+    loop:false,
+    
+    responsiveClass:true,
+    responsive:{
+        0:{
+            items:4,
+            nav:true
+        },
+        600:{
+            items:4,
+            nav:false
+        },
+        1000:{
+            items:4,
+            nav:true,
+            loop:false
+        }
+    }
+});
+
 
 
 });
@@ -2807,5 +2836,66 @@ function refreshService() {
         }
     });
     
+}
+function destroyCarousel(){
+  
+   
+
+
+/*$('#category-carousel').owlCarousel('destroy');
+$('#category-carousel').owlCarousel({touchDrag: false, mouseDrag: false});
+
+$('#service-carousel').owlCarousel('destroy');
+$('#service-carousel').owlCarousel({touchDrag: false, mouseDrag: false});*/
+/*$('#service-carousel').data('owl.carousel').destroy();  
+$('#service-carousel').owlCarousel({touchDrag: false, mouseDrag: false});
+/*$('#category-carousel').data('owlCarousel').reinit();*/
+    $('#category-carousel').trigger('destroy.owl.carousel').removeClass('owl-carousel owl-loaded');
+    $('#category-carousel').find('.owl-stage-outer').children().unwrap();
+    $('#service-carousel').trigger('destroy.owl.carousel').removeClass('owl-carousel owl-loaded');
+    $('#service-carousel').find('.owl-stage-outer').children().unwrap();
+}
+function reinit(){
+    $('#category-carousel').owlCarousel({
+        loop:false,
+        
+        responsiveClass:true,
+        responsive:{
+            0:{
+                items:1,
+                nav:true
+            },
+            600:{
+                items:4,
+                nav:false
+            },
+            1000:{
+                items:4,
+                nav:true,
+                loop:false
+            }
+        }
+    });
+    $('#service-carousel').owlCarousel({
+        loop:false,
+        
+        responsiveClass:true,
+        responsive:{
+            0:{
+                items:4,
+                nav:true
+            },
+            600:{
+                items:4,
+                nav:false
+            },
+            1000:{
+                items:4,
+                nav:true,
+                loop:false
+            }
+        }
+    });
+    console.log("carousel reinitialized")
 }
     
