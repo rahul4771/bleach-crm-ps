@@ -279,8 +279,9 @@ class PaybackDiscount(models.Model):
 	investigation      = models.ForeignKey('Investigation',blank=False,null=False,related_name='paybackdiscount_investigation')
 	total_cost         = models.FloatField(blank=True,null=True)
 	approved_total_cost= models.FloatField(blank=True,null=True)
-	approved_by		   = models.ForeignKey(UserProfile,blank=True,null=True)
+	approved_by		   = models.ForeignKey(UserProfile,blank=True,null=True,related_name="admin_payback")
 	approved_option    = models.CharField(max_length=500,blank=True,null=True,choices=PAYBACKDISCOUNT_CHOICES)
+	accountant_approval= models.ForeignKey(UserProfile,blank=True,null=True,related_name="accountant_payback")
 	accountant_notes   = models.CharField(max_length=5000,blank=True,null=True)
 	is_completed       = models.BooleanField(null=False,blank=True,default=False)
 

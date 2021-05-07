@@ -221,7 +221,7 @@
 
                         
                            <!-- Time line Card3 begins here-->  
-                           {% if followup_details.follow_up_schedules or followup_details.investigation.paybackdiscounts or followup_details.investigation.reports%}                    
+                           {% if followup_details.investigation.investigator %}                    
                            <div class="col-md-8 tk-mt-30">
                             <div class="d-flex">
                                 {% if followup_details.investigation.is_casesandcomplaints_submit == True %}
@@ -439,50 +439,16 @@
                          <div class="col-md-8 tk-mt-30">
                             <div class="d-flex">
                             {% for payback in followup_details.investigation.paybackdiscounts %}
-                            {% if payback.is_completed == True %}
-                                <i class="fas fa-check-circle tk-timeline-icon sort_tab"><span class="timeline-head">Payback / Discount (<span class="green-text">Completed</span>)</span></i>
+                            {% if followup_details.investigation.is_paybackdiscount_approved == True %}
+                                <i class="fas fa-check-circle tk-timeline-icon sort_tab"><span class="timeline-head">Payback / Discount (<span class="green-text">Approved</span>)</span></i>
                             {% else %}
-                                <i class="fas fa-check-circle tk-timeline-icon-yellow"><span class="timeline-head">Payback / Discount {% if payback.investigation.is_paybackdiscount_approved == True %}(<span class="yellow-text">Approved</span>){% else %}(<span class="tk-highlight">Pending Approval</span>){% endif %}</span></i>
+                                <i class="fas fa-check-circle tk-timeline-icon-yellow"><span class="timeline-head">Payback / Discount (<span class="yellow-text">Pending Approval</span>)</span></i>
                             {% endif %}
                             {% endfor %}
                                 <div class="tk-timeline h-100 tk-line"></div>
                                  <div class="tk-card tk-ml-30 tk-mt-20 w-100">
                                      <div class="row">
 
-                                        {% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
-                                        {% if paybackdiscount.approved_by %}
-
-                                        <div class="col-md-4">
-                                             <div class="d-flex ">
-                                                {% if paybackdiscount.approved_by.profile_image %}
-                                                    <img src="{{paybackdiscount.approved_by.profile_image.url}}" class="tk-profile "/>
-                                                {% else %}
-                                                    <img src="/static/files/images/profile-pic.png" class="tk-profile "/>
-                                                {% endif %}
-                                                 <div class="tk-ml-10 ">
-                                                    <div class="tk-title-2 tk-mt-10">{{paybackdiscount.approved_by.name}}</div>
-                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{paybackdiscount.approved_by.user_type}}</div>
-                                                 {% comment %} <div class="tk-desc tk-secondary-text blue-text">
-                                                 {% for report in followup_details.investigation.reports %} {{report.created}} {% endfor %} 
-                                                 </div> {% endcomment %}
-                                             </div>
-                                            </div>
-                                        </div>
-
-                                        {% endif %}
-
-                                        
-                                        <div class="col-md-8 ">
-                                        {% if paybackdiscount.accountant_notes %}
-                                            <div class=" tk-secondary-text"><b>Accountant Notes</b></div>
-                                            <div class="tk-desc tk-secondary-text"> {{paybackdiscount.accountant_notes}}</div>
-                                        {% endif %}
-                                        </div>
-                                        
-
-                                        {% endfor %}
-
-                                        
                                         {% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
                                         {% for paybackdiscountdetail in  paybackdiscount.paybackdiscountdetails %}
                                         <div class="col-md-4 ">
@@ -533,13 +499,105 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="col-md-4">
+                                        {% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
+                                        {% if paybackdiscount.approved_by %}
+
+                                             <div class="d-flex ">
+                                                {% if paybackdiscount.approved_by.profile_image %}
+                                                    <img src="{{paybackdiscount.approved_by.profile_image.url}}" class="tk-profile "/>
+                                                {% else %}
+                                                    <img src="/static/files/images/profile-pic.png" class="tk-profile "/>
+                                                {% endif %}
+                                                 <div class="tk-ml-10 ">
+                                                    <div class="tk-title-2 tk-mt-10">{{paybackdiscount.approved_by.name}}</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{paybackdiscount.approved_by.user_type}}</div>
+                                                 {% comment %} <div class="tk-desc tk-secondary-text blue-text">
+                                                 {% for report in followup_details.investigation.reports %} {{report.created}} {% endfor %} 
+                                                 </div> {% endcomment %}
+                                             </div>
+                                            </div> 
+
+                                        {% endif %}
+                                        </div>
+                                        
+                                        {% endfor %}
                                         
                                      </div>
                                  </div>
                              </div>
                         </div>
                         {% endif %}
-                         <!--Timeline card 8 ends here-->                       
+                         <!--Timeline card 8 ends here-->   
+
+
+                        <!--Timeline card 8 begins-->
+                         {% if followup_details.investigation.is_paybackdiscount_approved == True %}
+                         
+                         <div class="col-md-8 tk-mt-30">
+                            <div class="d-flex">
+                            {% for payback in followup_details.investigation.paybackdiscounts %}
+                            {% if payback.is_completed == True %}
+                                <i class="fas fa-check-circle tk-timeline-icon sort_tab"><span class="timeline-head">Payback / Discount (<span class="green-text">Completed</span>)</span></i>
+                            
+                                <div class="tk-timeline h-100 tk-line"></div>
+                                 <div class="tk-card tk-ml-30 tk-mt-20 w-100">
+                                     <div class="row">
+
+                                        <div class="col-md-4">
+                                        {% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
+                                        {% if paybackdiscount.accountant_approval %}
+
+                                             <div class="d-flex ">
+                                                {% if paybackdiscount.accountant_approval.profile_image %}
+                                                    <img src="{{paybackdiscount.accountant_approval.profile_image.url}}" class="tk-profile "/>
+                                                {% else %}
+                                                    <img src="/static/files/images/profile-pic.png" class="tk-profile "/>
+                                                {% endif %}
+                                                 <div class="tk-ml-10 ">
+                                                    <div class="tk-title-2 tk-mt-10">{{paybackdiscount.accountant_approval.name}}</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{paybackdiscount.accountant_approval.user_type}}</div>
+                                                 {% comment %} <div class="tk-desc tk-secondary-text blue-text">
+                                                 {% for report in followup_details.investigation.reports %} {{report.created}} {% endfor %} 
+                                                 </div> {% endcomment %}
+                                             </div>
+                                            </div> 
+
+                                        {% endif %}
+                                        </div>
+
+                                        
+                                        <div class="col-md-8 ">
+                                        {% if paybackdiscount.accountant_notes %}
+                                            <div class=" tk-secondary-text"><b>Accountant Notes</b></div>
+                                            <div class="tk-desc tk-secondary-text"> {{paybackdiscount.accountant_notes}}</div>
+                                        {% endif %}
+                                        </div>
+
+                                        <div class="col-md-12 ">
+                                        {% if paybackdiscount.approved_option %}
+                                            <div class=" tk-title-2"><b>{{paybackdiscount.approved_option}}</b></div>
+                                            <div class=" tk-title tk-highlight"> {{paybackdiscount.approved_total_cost|floatformat:"3"}} KD</div>
+                                        {% endif %}
+                                        </div>
+                                        
+
+                                        {% endfor %}
+                                        
+                                     </div>
+                                 </div>
+                            
+                            {% else %}
+                                <i class="fas fa-check-circle tk-timeline-icon-yellow"><span class="timeline-head">Payback / Discount (<span class="yellow-text">Pending Accountant Approval</span>)</span></i>
+                                
+                            {% endif %}
+                            {% endfor %}
+                                
+                             </div>
+                        </div>
+                        {% endif %}
+                         <!--Timeline card 8 ends here-->
 
 
                         <!--Timeline card 9 begins-->
@@ -556,28 +614,8 @@
                                 <div class="tk-timeline h-100 tk-line"></div>
                                  <div class="tk-card tk-ml-30 tk-mt-20 w-100">
                                      <div class="row">
-
-                                        {% for buybackpromogift in followup_details.investigation.buybackpromogifts %}
-                                        {% if buybackpromogift.approved_by %}
-                                        <div class="col-md-12">
-                                             <div class="d-flex ">
-                                                {% if followup_details.investigation.investigator.profile_image %}
-                                                    <img src="{{buybackpromogift.approved_by.profile_image.url}}" class="tk-profile "/>
-                                                {% else %}
-                                                    <img src="/static/files/images/profile-pic.png" class="tk-profile "/>
-                                                {% endif %}
-                                                 <div class="tk-ml-10 ">
-                                                    <div class="tk-title-2 tk-mt-10">{{buybackpromogift.approved_by.name}}</div>
-                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{buybackpromogift.approved_by.user_type}}</div>
-                                                 <div class="tk-desc tk-secondary-text blue-text">
-                                                 {% for report in followup_details.investigation.reports %} {{report.created}} {% endfor %} 
-                                                 </div>
-                                             </div>
-                                            </div>
-                                        </div>
-                                        {% endif %}
-                                        {% endfor %}
                                         
+                                        <div class="col-md-12">
                                         {% for buybackpromogift in followup_details.investigation.buybackpromogifts %}
                                         {% for buybackpromogiftdetail in  buybackpromogift.buybackpromogiftdetails %}
                                         <div class="col-md-4 ">
@@ -600,7 +638,7 @@
                                         </div>
 
                                         {% endfor %}
-
+                                        </div>
                                         
 
                                          <div class="col-md-12">
@@ -627,6 +665,43 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+
+                                        <div class="col-md-5">
+                                        {% for buybackpromogift in followup_details.investigation.buybackpromogifts %}
+                                        {% if buybackpromogift.approved_by %}
+                                        
+                                             <div class="d-flex ">
+                                                {% if followup_details.investigation.investigator.profile_image %}
+                                                    <img src="{{buybackpromogift.approved_by.profile_image.url}}" class="tk-profile "/>
+                                                {% else %}
+                                                    <img src="/static/files/images/profile-pic.png" class="tk-profile "/>
+                                                {% endif %}
+                                                 <div class="tk-ml-10 ">
+                                                    <div class="tk-title-2 tk-mt-10">{{buybackpromogift.approved_by.name}}</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{buybackpromogift.approved_by.user_type}}</div>
+                                                 <div class="tk-desc tk-secondary-text blue-text">
+                                                 {% for report in followup_details.investigation.reports %} {{report.created}} {% endfor %} 
+                                                 </div>
+                                             </div>
+                                            </div>
+                                        
+                                        {% endif %}
+                                        {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-7">
+                                        {% for buybackpromogift in followup_details.investigation.buybackpromogifts %}
+                                        {% if buybackpromogift.is_completed == True %}
+                                            {% if buybackpromogift.approved_option == 'PROMOCODE' %}
+                                            <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{buybackpromogift.approved_option}}</div>
+                                            <div class="tk-title-2 tk-mt-10">{{buybackpromogift.approved_promo_code}}</div>
+                                            {% else %}
+                                            <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{buybackpromogift.approved_option}}</div>
+                                            <div class="tk-title-2 tk-mt-10">{{buybackpromogift.approved_total_cost|floatformat:"3"}} KD</div>
+                                            {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
                                         </div>
                                         
                                      </div>
@@ -691,7 +766,7 @@
                                         {% if followup_details.investigation.paybackdiscounts %} 
                                         <div class="col-md-6 ">   
                                             {% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
-                                            <div class="tk-mt-30 tk-secondary-text">{{paybackdiscount.approved_option}} : <span class=" tk-highlight tk-title tk-mt-10">{{paybackdiscount.total_cost|floatformat:"3"}} KD</span></div>
+                                            <div class="tk-mt-30 tk-secondary-text">{{paybackdiscount.approved_option}} : <span class=" tk-highlight tk-title tk-mt-10">{{paybackdiscount.approved_total_cost|floatformat:"3"}} KD</span></div>
                                             
                                             {% endfor %}
                                         </div>
@@ -700,8 +775,13 @@
                                         {% if followup_details.investigation.buybackpromogifts %}
                                         <div class="col-md-6 ">    
                                             {% for buyback in followup_details.investigation.buybackpromogifts %}
-                                            <div class="tk-mt-30 tk-secondary-text">{{buyback.approved_option}} : <span class=" tk-highlight tk-title tk-mt-10">{{buyback.total_cost|floatformat:"3"}} KD</span></div>
                                             
+                                            {% if buyback.approved_option == 'PROMOCODE' %}
+                                            <div class="tk-mt-30 tk-secondary-text">{{buyback.approved_option}} : <span class=" tk-highlight tk-title tk-mt-10">{{buyback.approved_promo_code}}</span></div>
+                                            {% else %}
+                                            <div class="tk-mt-30 tk-secondary-text">{{buyback.approved_option}} : <span class=" tk-highlight tk-title tk-mt-10">{{buyback.approved_total_cost|floatformat:"3"}} KD</span></div>
+                                            {% endif %}
+
                                             {% endfor %}
                                         </div>
                                         {% endif %}            
