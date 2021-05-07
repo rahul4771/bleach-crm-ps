@@ -1340,6 +1340,7 @@ class InvestigationTask(IsOperationSupervisor,View):
 			investigationdata = Investigation.objects.get(id=investigation_id,is_active=True)
 			
 			investigationdata.secondary_investigator = investigator
+			investigation.secondary_investigation_created = datetime.now()
 			investigationdata.save()
 			
 			messages.success(request,"Investigator Assigned !")
