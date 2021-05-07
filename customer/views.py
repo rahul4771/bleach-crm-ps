@@ -1347,9 +1347,9 @@ class GetCountries(APIView):
 		response_dict        		= {}
 		response_dict['success']	= False
 
-		djangocountries ={}
+		djangocountries =[]
 		for code, name in list(countries):
-			djangocountries[code] = name
+			djangocountries.append({'country':name,'code':code})
 		response_dict['countries']=	djangocountries
 
 		response_dict['success']	= True
