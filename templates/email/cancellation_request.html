@@ -5,4 +5,4 @@
 <h6>Mobile:{{order.evaluation.customer.mobile_number|default_if_none:''}}</h6>
 <h6>Sender:{{order.cancell_requester.name|default_if_none:''}}</h6>
 <p>Cancellation Request has been send to Sales Admin</p>
-<button><a href="{% url 'bleach_salesadmin:cancell-order' order.id %}">Check Request</a></button>
+<button><a href="https://test.bleach-kw.com/bleach_salesadmin/cancell-order/{{order.id}}/">Check Request</a></button>
