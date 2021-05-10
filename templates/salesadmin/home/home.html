@@ -69,6 +69,7 @@
         <th>Order Number</th>
         <th data-hide="phone,tablet">Name</th>
         <th data-hide="phone,tablet">Mobile</th>
+        <th data-hide="phone,tablet">Requester</th>
         <th data-hide="phone">Total Amount</th>
         <th data-hide="phone">Job Completed</th>
         <th data-hide="phone">Paid</th>
@@ -86,6 +87,9 @@
         </td>
         <td>
         {{cancell_in_progress_order.evaluation.customer.mobile_number}}
+        </td>
+        <td>
+        {{cancell_in_progress_order.cancell_requester.name}}
         </td>
         <td>
         {{cancell_in_progress_order.total_amount|floatformat:'3'}}
