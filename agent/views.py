@@ -42,6 +42,11 @@ from django.db.models import Count
 
 from dateutil.relativedelta import relativedelta
 
+
+from django.core.mail import send_mail,EmailMultiAlternatives
+from django.template.loader import render_to_string
+
+
 #Username Random Generation
 def generate_random_username(size=10, chars=string.ascii_uppercase + string.digits):
 
@@ -2459,7 +2464,7 @@ class ClientOrderDetails(IsAgent,View):
 			evaluation_id = request.POST.get('evaluation')
 
 			#cancell order
-			order 				= Order.objects.select_related('evaluation').get(evaluation__id=evaluation_id)
+			order 				= Order.objects.select_related('evaluation__customer').get(evaluation__id=evaluation_id)
 			order.order_status  = 'CANCEL_IN_PROGRESS'
 			order.cancell_requester = request.user
 			order.save()
@@ -2475,6 +2480,12 @@ class ClientOrderDetails(IsAgent,View):
 			#delete assigned cleaning team and members
 			CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=order).delete() 
 
+			#Email Send
+			msg_html = render_to_string('email/cancellation_request.html',{'order':order})
+			msg      = EmailMultiAlternatives('Order Cancellation', '', 'ansab.m@bleach-kw.com', ['ansabm2015@gmail.com'], bcc=['ansabm2018@gmail.com'], cc=['ansabm594@gmail.com'])
+			msg.attach_alternative(msg_html, "text/html")
+			msg.send(fail_silently=False)
+			
 			messages.success(request,"Cancel Request Proceeded to Admin successfully !")
 		return redirect('agent:agent-client-orderdetails',order_id)
 
