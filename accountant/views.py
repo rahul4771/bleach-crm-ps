@@ -1049,13 +1049,13 @@ class PaybackDiscountProcessing(View):
 
 		if option == 'PAYBACK':
 			
-			PaybackDiscount.objects.filter(id=paybackdiscount_id).update(approved_option=option,approved_by=request.user,is_completed=True,accountant_notes=request.POST.get('accountant_notes'))
+			PaybackDiscount.objects.filter(id=paybackdiscount_id).update(approved_option=option,accountant_approval=request.user,is_completed=True,accountant_notes=request.POST.get('accountant_notes'))
 
 			messages.success(request,"Payback Succesfully Added")
 
 		if option == 'DISCOUNT':
 			
-			PaybackDiscount.objects.filter(id=paybackdiscount_id).update(approved_option=option,approved_by=request.user,is_completed=True,accountant_notes=request.POST.get('accountant_notes'))
+			PaybackDiscount.objects.filter(id=paybackdiscount_id).update(approved_option=option,accountant_approval=request.user,is_completed=True,accountant_notes=request.POST.get('accountant_notes'))
 			
 			#update order and evaluation
 			order_id      =  request.POST.get('order_id')
