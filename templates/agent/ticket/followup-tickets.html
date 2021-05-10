@@ -294,12 +294,12 @@
                                         {% for section in followup_details.followupsections %}
                                         
                                          <div class="col-md-4">
-                                            <div><b>Section {{forloop.counter}}</b> :<span class="tk-highlight"> {{section.section_name}} </span></div>
+                                            <div><b>Section {{forloop.counter}}</b> :<span> {{section.section_name}} </span></div>
                                          </div>
                                          <div class="col-md-8">
-                                            {% if section.material %} <div>  <b>Material</b> : <span class="tk-highlight">{{section.material}}</span> </div> {% endif %}
-                                            {% if section.material %} <div>  <b>Color</b> : <span class="tk-highlight">{{section.colour}}</span></div> {% endif %}
-                                            <div>  <b>Cost</b> : <span class="tk-highlight">{{section.section_cost|floatformat:'3'}} KD</span> </div>
+                                            {% if section.material %} <div>  <b>Material</b> : <span >{{section.material}}</span> </div> {% endif %}
+                                            {% if section.material %} <div>  <b>Color</b> : <span >{{section.colour}}</span></div> {% endif %}
+                                            <div>  <b>Cost</b> : <span >{{section.section_cost|floatformat:'3'}} KD</span> </div>
                                          </div>
 
                                         {% endfor %}
@@ -479,10 +479,10 @@
                                              <div class=" tk-secondary-text"><b>{% if paybackdiscountdetail.category == 'SERVICEQUALITY' %}Service Quality{% else %}{{paybackdiscountdetail.category|title}}{% endif %}</b></div>
                                              <div class="tk-secondary-text"> 
                                                  <div class="d-flex tk-items">
-                                                     <div><b>Item</b>  </div> : <div class="tk-highlight">{{paybackdiscountdetail.name}}</div>
+                                                     <div><b>Item</b>  </div> : <div >{{paybackdiscountdetail.name}}</div>
                                                  </div>
                                                  <div class="d-flex tk-items">
-                                                    <div><b>Price</b> </div>: <div class="tk-highlight">{{paybackdiscountdetail.cost|floatformat:'3'}} KD</div>
+                                                    <div><b>Price</b> </div>: <div >{{paybackdiscountdetail.cost|floatformat:'3'}} KD</div>
                                                 </div>
                                                 
                                              </div>
@@ -490,7 +490,7 @@
                                         {% endfor %}
 
                                         <div class="col-md-12 d-flex tk-title">
-                                            <div><b>Maximum Price</b> </div>: <div class="tk-highlight">{{paybackdiscount.total_cost|floatformat:'3'}} KD</div>
+                                            <div><b>Maximum Price</b> </div>: <div >{{paybackdiscount.total_cost|floatformat:'3'}} KD</div>
                                         </div>
 
                                         {% endfor %}
@@ -577,7 +577,7 @@
                                         <div class="col-md-12 ">
                                         {% if paybackdiscount.approved_option %}
                                             <div class=" tk-title-2"><b>{{paybackdiscount.approved_option}}</b></div>
-                                            <div class=" tk-title tk-highlight"> {{paybackdiscount.approved_total_cost|floatformat:"3"}} KD</div>
+                                            <div class=" tk-title"> {{paybackdiscount.approved_total_cost|floatformat:"3"}} KD</div>
                                         {% endif %}
                                         </div>
                                         
@@ -659,18 +659,18 @@
                                              <div class="tk-secondary-text"><b>{% if buybackpromogiftdetail.category == 'SERVICEQUALITY' %}Service Quality{% else %}{{buybackpromogiftdetail.category|title}}{% endif %}</b></div>
                                              <div class="tk-secondary-text"> 
                                                  <div class="d-flex tk-items">
-                                                     <div>Item  </div>: <div class="tk-highlight">{{buybackpromogiftdetail.name}}</div>
+                                                     <div>Item  </div>: <div >{{buybackpromogiftdetail.name}}</div>
                                                  </div>
                                                  
                                                 <div class="d-flex tk-items">
-                                                    <div>Price</div>: <div class="tk-highlight">{{buybackpromogiftdetail.cost|floatformat:'3'}} KD</div>
+                                                    <div>Price</div>: <div >{{buybackpromogiftdetail.cost|floatformat:'3'}} KD</div>
                                                 </div>
                                              </div>
                                         </div>
                                         {% endfor %}
 
                                         <div class="col-md-12 d-flex tk-title">
-                                            <div><b>Maximum Price</b> </div>: <div class="tk-highlight">{{buybackpromogift.total_cost|floatformat:'3'}} KD</div>
+                                            <div><b>Maximum Price</b> </div>: <div >{{buybackpromogift.total_cost|floatformat:'3'}} KD</div>
                                         </div>
 
                                         {% endfor %}
@@ -765,7 +765,7 @@
                                         {% if followup_details.investigation.paybackdiscounts %} 
                                         <div class="col-md-6 ">   
                                             {% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
-                                            <div class="tk-mt-30 tk-secondary-text">{{paybackdiscount.approved_option}} : <span class=" tk-highlight tk-title tk-mt-10">{{paybackdiscount.approved_total_cost|floatformat:"3"}} KD</span></div>
+                                            <div class="tk-mt-30 tk-secondary-text">{{paybackdiscount.approved_option}} : <span class=" tk-title tk-mt-10">{{paybackdiscount.approved_total_cost|floatformat:"3"}} KD</span></div>
                                             
                                             {% endfor %}
                                         </div>
@@ -776,9 +776,9 @@
                                             {% for buyback in followup_details.investigation.buybackpromogifts %}
                                             
                                             {% if buyback.approved_option == 'PROMOCODE' %}
-                                            <div class="tk-mt-30 tk-secondary-text">{{buyback.approved_option}} : <span class=" tk-highlight tk-title tk-mt-10">{{buyback.approved_promo_code}}</span></div>
+                                            <div class="tk-mt-30 tk-secondary-text">{{buyback.approved_option}} : <span class="  tk-title tk-mt-10">{{buyback.approved_promo_code}}</span></div>
                                             {% else %}
-                                            <div class="tk-mt-30 tk-secondary-text">{{buyback.approved_option}} : <span class=" tk-highlight tk-title tk-mt-10">{{buyback.approved_total_cost|floatformat:"3"}} KD</span></div>
+                                            <div class="tk-mt-30 tk-secondary-text">{{buyback.approved_option}} : <span class="  tk-title tk-mt-10">{{buyback.approved_total_cost|floatformat:"3"}} KD</span></div>
                                             {% endif %}
 
                                             {% endfor %}
