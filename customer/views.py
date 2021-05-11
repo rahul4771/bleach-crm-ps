@@ -3492,13 +3492,17 @@ class ClientCleaningBookingMediaSave(APIView):
 		response_dict['success'] = True
 		return Response(response_dict,HTTP_200_OK)
 
-
-from django.core.mail import send_mail
+		
+from django.core.mail import send_mail,EmailMultiAlternatives
 class EmailTest(APIView):
 	def get(self,request):
 		response_dict = {}
 
-		send_mail('Using SparkPost with Django', 'This is a message from Django using SparkPost!', 'ansab.m@bleach-kw.com',['ansabm2015@gmail.com'], fail_silently=False)
+		# send_mail('Using SparkPost with Django', 'This is a message from Django using SparkPost!', 'ansab.m@bleach-kw.com',['ansabm2015@gmail.com'],fail_silently=False)
 		
+		msg = EmailMultiAlternatives('Test From Ansab', 'Test Test Test Test', 'ansab.m@bleach-kw.com', ['ansabm2015@gmail.com'], bcc=['ansabm2018@gmail.com'], cc=['ansabm594@gmail.com'])
+		msg.attach_alternative('<p>This is an <strong>important</strong> message.</p>', "text/html")
+		msg.send(fail_silently=False)
+
 		response_dict['success'] = True
 		return Response(response_dict,HTTP_200_OK)
