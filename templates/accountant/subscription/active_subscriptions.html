@@ -218,9 +218,9 @@
     {% endif %}
     
     <td data-label="" style="text-align:center;">
-    <img {% if invoice.dropzerosamountpaid == invoice.dropzerostotalamount %}src="{% static 'files/images/send_invoice_greay.png' %}"{% else %} {% if invoice.balance <= 0 %}src="{% static 'files/images/send_invoice_green.png' %}" class="clickable-cursor send_invoice"{% else %}src="{% static 'files/images/send_invoice_red.png' %}" class="clickable-cursor send_invoice" {% endif %} {% endif %} align="absmiddle" data-id="{{invoice.id}}" data-blcno="{{invoice.evaluation.evaluation_id}}" data-customername="{{invoice.evaluation.customer.mobile_number}}" data-contactno="{{invoice.evaluation.customer.name}}" {% for schedule in invoice.orderschedules %}{% if forloop.first %}data-startdate="{{schedule.start_at|date:'d-m-Y'}}" {% endif %}{% if forloop.last %}data-enddate="{{schedule.start_at|date:'d-m-Y'}}"{% endif %}{% endfor %} data-totalamount="{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}" data-paidamount="{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}" data-balance="{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}" data-remining="{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}" width="32.5px" height="32.5px">&nbsp&nbsp
-    <a href="/customer/subscription/quatation/paw{{invoice.evaluation.evaluation_id|slice:'3:'}}{{invoice.evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>&nbsp&nbsp
-    <img src="{% static 'files/images/order_blue.png' %}" align="absmiddle" class="clickable-row" data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}" width="32.5px" height="32.5px">
+    <img {% if invoice.dropzerosamountpaid == invoice.dropzerostotalamount %}src="{% static 'files/images/send_invoice_greay.png' %}"{% else %} {% if invoice.balance <= 0 %}src="{% static 'files/images/send_invoice_green.png' %}" class="clickable-cursor send_invoice"{% else %}src="{% static 'files/images/send_invoice_red.png' %}" class="clickable-cursor send_invoice" {% endif %} {% endif %} align="absmiddle" title="Send Invoice" data-id="{{invoice.id}}" data-blcno="{{invoice.evaluation.evaluation_id}}" data-customername="{{invoice.evaluation.customer.mobile_number}}" data-contactno="{{invoice.evaluation.customer.name}}" {% for schedule in invoice.orderschedules %}{% if forloop.first %}data-startdate="{{schedule.start_at|date:'d-m-Y'}}" {% endif %}{% if forloop.last %}data-enddate="{{schedule.start_at|date:'d-m-Y'}}"{% endif %}{% endfor %} data-totalamount="{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}" data-paidamount="{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}" data-balance="{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}" data-remining="{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}" width="32.5px" height="32.5px">&nbsp&nbsp
+    <a href="/customer/subscription/quatation/paw{{invoice.evaluation.evaluation_id|slice:'3:'}}{{invoice.evaluation.customer.username}}" title="View Quotation" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>&nbsp&nbsp
+    <img src="{% static 'files/images/order_blue.png' %}" align="absmiddle" title="Order Details" class="clickable-row" data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}" width="32.5px" height="32.5px">
     </td>
     </tr>
 {% endfor %}
@@ -326,7 +326,7 @@
             <td>End Date:&nbsp;<strong><span class="bold-text" id="ending_date_invoice_id"></span></strong></td><td>Paid:&nbsp;<strong><span class="bold-text" id="paid_invoice_id"></span></strong></td>
             </tr>
             <tr>
-            <td>Remining:&nbsp;<strong><span class="bold-text" id="remining_invoice_id"></span></strong></td><td>Balance:&nbsp;<strong><span class="bold-text" id="balance_invoice_id"></span></strong></td>
+            <td>Debit/Credit:&nbsp;<strong><span class="bold-text" id="remining_invoice_id"></span></strong></td><td>Balance:&nbsp;<strong><span class="bold-text" id="balance_invoice_id"></span></strong></td>
             </tr>  
             </table>
 </div><!--ticket-form-left--> 
