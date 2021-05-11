@@ -1,0 +1,45 @@
+{% load static %}
+
+{% if paybackdiscount %}
+<h1>PayBack/Discount Task</h1>
+<h6>Order Number:{{paybackdiscount.investigation.order.order_no|default_if_none:''}}</h6>
+<h6>Customer:{{paybackdiscount.investigation.order.evaluation.customer.name|default_if_none:''}}</h6>
+<h6>Mobile:{{paybackdiscount.investigation.order.evaluation.customer.mobile_number|default_if_none:''}}</h6>
+<h6>Ticket Rised By:{{paybackdiscount.investigation.assigned_by.name|default_if_none:''}}</h6>
+<h6>Primary Investigator:{{paybackdiscount.investigation.investigator.name|default_if_none:''}}</h6>
+<h6>Secondary Investigator:{{paybackdiscount.investigation.secondary_investigator.name|default_if_none:''}}</h6>
+<p>Ticket has been Rised by {{paybackdiscount.investigation.order.evaluation.customer.name|default_if_none:''}} Against the Order {{paybackdiscount.investigation.order.order_no|default_if_none:''}}</p>
+
+{% if email_user == 'admin' %}
+<button><a href="https://test.bleach-kw.com/bleach_admin/ticket/approve/{{paybackdiscount.investigation.id}}/">
+PayBack/Discount Task</a></button>
+{% endif %}
+{% if email_user == 'salesadmin' %}
+<button><a href="https://test.bleach-kw.com/bleach_salesadmin/ticket/approve/{{paybackdiscount.investigation.id}}/">
+PayBack/Discount Task</a></button>
+{% endif %}
+{% endif %}
+
+
+
+
+
+{% if buybackpromocodegift %}
+<h1>Buyback/Gift/Promocode Task</h1>
+<h6>Order Number:{{buybackpromocodegift.investigation.order.order_no|default_if_none:''}}</h6>
+<h6>Customer:{{buybackpromocodegift.investigation.order.evaluation.customer.name|default_if_none:''}}</h6>
+<h6>Mobile:{{buybackpromocodegift.investigation.order.evaluation.customer.mobile_number|default_if_none:''}}</h6>
+<h6>Ticket Rised By:{{buybackpromocodegift.investigation.assigned_by.name|default_if_none:''}}</h6>
+<h6>Primary Investigator:{{buybackpromocodegift.investigation.investigator.name|default_if_none:''}}</h6>
+<h6>Secondary Investigator:{{buybackpromocodegift.investigation.secondary_investigator.name|default_if_none:''}}</h6>
+<p>Ticket has been Rised by {{buybackpromocodegift.investigation.order.evaluation.customer.name|default_if_none:''}} Against the Order {{buybackpromocodegift.investigation.order.order_no|default_if_none:''}}</p>
+
+{% if email_user == 'admin' %}
+<button><a href="https://test.bleach-kw.com/bleach_admin/ticket/approve/{{buybackpromocodegift.investigation.id}}/">
+Buyback/Promocode/Gift Task</a></button>
+{% endif %}
+{% if email_user == 'salesadmin' %}
+<button><a href="https://test.bleach-kw.com/bleach_salesadmin/ticket/approve/{{buybackpromocodegift.investigation.id}}/">
+Buyback/Promocode/Gift Task</a></button>
+{% endif %}
+{% endif %}

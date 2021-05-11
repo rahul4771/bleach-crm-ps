@@ -1,0 +1,15 @@
+{% load static %}
+<h1>Ticket Rised</h1>
+<h6>Order Number:{{investigation_form_save.order.order_no|default_if_none:''}}</h6>
+<h6>Customer:{{investigation_form_save.order.evaluation.customer.name|default_if_none:''}}</h6>
+<h6>Mobile:{{investigation_form_save.order.evaluation.customer.mobile_number|default_if_none:''}}</h6>
+<h6>Ticket Rised By:{{investigation_form_save.assigned_by.name|default_if_none:''}}</h6>
+<h6>Investigator:{{investigation_form_save.investigator.name|default_if_none:''}}</h6>
+<p>Ticket has been Rised by {{investigation_form_save.order.evaluation.customer.name|default_if_none:''}} Against the Order {{investigation_form_save.order.order_no|default_if_none:''}}</p>
+{% if investigation_form_save.order.evaluation.customer.user_type == 'OPERATIONSUPERVISOR' %}
+<button><a href="https://test.bleach-kw.com/operation-supervisor/investigation/{{investigation_form_save.id}}/">
+Investigate</a></button>
+{% else %}
+<button><a href="https://test.bleach-kw.com/quality-control/investigation/{{investigation_form_save.id}}/">
+Investigate</a></button>
+{% endif %}

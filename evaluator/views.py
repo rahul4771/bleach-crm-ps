@@ -34,6 +34,9 @@ from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import MyEvaluationDetailsForm,QuatationServiceForm
 
 import requests
+
+from django.core.mail import send_mail,EmailMultiAlternatives
+from django.template.loader import render_to_string
 # Create your views here.
 
 
@@ -1359,12 +1362,13 @@ class AssignEvaluator(IsEvaluator,View):
 
 					response = requests.request("GET", url, headers=headers, params=querystring)
 
-					print(response.text,"respo")
-					print(str(evaluation_form_save.proposed_time))
-					print(evaluation_form_save.evaluation.customer.mobile_number,"mobile")
 				else:
 					pass
 
+				msg_html = render_to_string('email/evaluation_task.html',{'evaluation_form_save':evaluation_form_save})
+				msg      = EmailMultiAlternatives('Evaluation Task', '', 'notification@bleach-kw.com', [evaluation_form_save.evaluator.email])
+				msg.attach_alternative(msg_html, "text/html")
+				msg.send(fail_silently=False)
 			else:
 				messages.error(request,get_error(evaluation_form))	
 		

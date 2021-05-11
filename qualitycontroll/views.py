@@ -26,6 +26,9 @@ from senior_team_leader.forms import CleaningTeamAssignForm,FollowupTeamAssignFo
 
 from django.forms import formset_factory,modelformset_factory
 from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
+
+from django.core.mail import send_mail,EmailMultiAlternatives
+from django.template.loader import render_to_string
 # Create your views here.
 
 class QcHome(IsQualityControll,View):
@@ -761,7 +764,7 @@ class Followup(IsQualityControll,View):
 
 		tendative_time = request.POST.get('tendative_time')
 		
-		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+		follow_up = FollowUp.objects.select_related('investigation__order__evaluation__customer').get(investigation_id=investigation_id,is_active=True)
 		follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
 		follow_up.followup_notes = request.POST.get('investigator_notes')
 		follow_up.no_of_cleaners = no_of_cleaners
@@ -1048,6 +1051,19 @@ class Cashback(IsQualityControll,View):
 					is_active = True
 				)
 
+		#Email
+		salesadmin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='SALESADMIN').values_list('email',flat=True)
+		msg_html = render_to_string('email/ticketapprove.html',{'paybackdiscount':paybackdiscount,'email_user':'salesadmin'})
+		msg      = EmailMultiAlternatives('Cash Back Approval', '', 'notification@bleach-kw.com', salesadmin_list)
+		msg.attach_alternative(msg_html, "text/html")
+		msg.send(fail_silently=False)
+
+		admin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='ADMIN').values_list('email',flat=True)
+		msg_html = render_to_string('email/ticketapprove.html',{'paybackdiscount':paybackdiscount,'email_user':'admin'})
+		msg      = EmailMultiAlternatives('Cash Back Approval', '', 'notification@bleach-kw.com', admin_list)
+		msg.attach_alternative(msg_html, "text/html")
+		msg.send(fail_silently=False)
+
 		messages.success(request,"Cash Back Added !")
 		return redirect('quality-control:investigation', investigation_id)
 
@@ -1261,6 +1277,19 @@ class BuyBackPromoCode(IsQualityControll,View):
 					media = img,
 					is_active = True
 				)
+
+		#Email
+		salesadmin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='SALESADMIN').values_list('email',flat=True)
+		msg_html = render_to_string('email/ticketapprove.html',{'buybackpromocodegift':buybackpromocodegift,'email_user':'salesadmin'})
+		msg      = EmailMultiAlternatives('Buyback/Gift/Promocode Approval', '', 'notification@bleach-kw.com', salesadmin_list)
+		msg.attach_alternative(msg_html, "text/html")
+		msg.send(fail_silently=False)
+
+		admin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='ADMIN').values_list('email',flat=True)
+		msg_html = render_to_string('email/ticketapprove.html',{'buybackpromocodegift':buybackpromocodegift,'email_user':'admin'})
+		msg      = EmailMultiAlternatives('Buyback/Gift/Promocode Approval', '', 'notification@bleach-kw.com', admin_list)
+		msg.attach_alternative(msg_html, "text/html")
+		msg.send(fail_silently=False)
 
 		messages.success(request,"Buy Back / Promo Code Added !")
 		return redirect('quality-control:investigation', investigation_id)

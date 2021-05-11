@@ -1,0 +1,11 @@
+{% load static %}
+<h1>Ticket Rised</h1>
+<h6>Order Number:{{investigationdata.order.order_no|default_if_none:''}}</h6>
+<h6>Customer:{{investigationdata.order.evaluation.customer.name|default_if_none:''}}</h6>
+<h6>Mobile:{{investigationdata.order.evaluation.customer.mobile_number|default_if_none:''}}</h6>
+<h6>Ticket Rised By:{{investigationdata.assigned_by.name|default_if_none:''}}</h6>
+<h6>Primary Investigator:{{investigationdata.investigator.name|default_if_none:''}}</h6>
+<h6>Secondary Investigator:{{investigationdata.secondary_investigator.name|default_if_none:''}}</h6>
+<p>Ticket has been Rised by {{investigationdata.order.evaluation.customer.name|default_if_none:''}} Against the Order {{investigationdata.order.order_no|default_if_none:''}}</p>
+<button><a href="https://test.bleach-kw.com/technical-supervisor/investigation/{{investigationdata.id}}/">
+Investigate</a></button>

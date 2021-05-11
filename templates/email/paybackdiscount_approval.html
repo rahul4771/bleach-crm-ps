@@ -1,0 +1,14 @@
+{% load static %}
+
+<h1>PayBack/Discount Confirm</h1>
+<h6>Order Number:{{paybackdiscount.investigation.order.order_no|default_if_none:''}}</h6>
+<h6>Customer:{{paybackdiscount.investigation.order.evaluation.customer.name|default_if_none:''}}</h6>
+<h6>Mobile:{{paybackdiscount.investigation.order.evaluation.customer.mobile_number|default_if_none:''}}</h6>
+<h6>Ticket Rised By:{{paybackdiscount.investigation.assigned_by.name|default_if_none:''}}</h6>
+<h6>Primary Investigator:{{paybackdiscount.investigation.investigator.name|default_if_none:''}}</h6>
+<h6>Secondary Investigator:{{paybackdiscount.investigation.secondary_investigator.name|default_if_none:''}}</h6>
+<p>Ticket has been Rised by {{paybackdiscount.investigation.order.evaluation.customer.name|default_if_none:''}} Against the Order {{paybackdiscount.investigation.order.order_no|default_if_none:''}}</p>
+
+<button><a href="https://test.bleach-kw.com/accountant/paybackdiscount/process/{{paybackdiscount.id}}/">
+PayBack/Discount Confirm</a></button>
+

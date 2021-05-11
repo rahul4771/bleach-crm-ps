@@ -1,0 +1,6 @@
+{% load static %}
+<h1>Evaluation Appointment</h1>
+<h6>Customer:{{evaluation_form_save.evaluation.customer.name|default_if_none:''}}</h6>
+<h6>Mobile:{{evaluation_form_save.evaluation.customer.mobile_number|default_if_none:''}}</h6>
+<p>Evaluation Appointment Assigned to {{evaluation_form_save.evaluator.name|default_if_none:''}} on {{evaluation_form_save.proposed_time|default_if_none:''}} by {{evaluation_form_save.evaluation.call_attender.name|default_if_none:''}}</p>
+<button><a href="https://test.bleach-kw.com/evaluator/makequatation/assigned/phase1/{{evaluation_form_save.evaluation.customer.id}}/{{evaluation_form_save.evaluation.id}}/">Evaluate</a></button>

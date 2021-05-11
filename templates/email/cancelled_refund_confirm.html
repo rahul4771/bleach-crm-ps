@@ -1,0 +1,8 @@
+{% load static %}
+<h1>Refund Confirmation Request</h1>
+<h6>Order Number:{{order.order_no|default_if_none:''}}</h6>
+<h6>Customer:{{order.evaluation.customer.name|default_if_none:''}}</h6>
+<h6>Mobile:{{order.evaluation.customer.mobile_number|default_if_none:''}}</h6>
+<h6>Order Cancelled By:{{order.cancelled_by.name|default_if_none:''}}</h6>
+<p>Refund Confirmation has been send to Accountant</p>
+<button><a href="https://test.bleach-kw.com/accountant/cancell-order/{{cancell_order_history.id}}/">Check Request</a></button>
