@@ -360,28 +360,28 @@ ul.social li{
 										A new evaluation task has been assigned to you by
 									</div>
 									<div class="text-center mt-2">
-										<img src=".../../../../static/files/images/profile-pic.jpg" class="profile-pic"/>
+										<img src="https://test.bleach-kw.com/{{evaluation_form_save.evaluation.call_attender.profile_image.url}}"/>
 									</div>
 									<div class="ev-title-3 text-center">
-										Amanadiel
+										{{evaluation_form_save.evaluation.call_attender.name|default_if_none:''}}
 									</div>
 									<div class="ev-sub-title text-center">
-										Evaluator
+										{{evaluation_form_save.evaluation.call_attender.user_type|default_if_none:''}}
 									</div>
 									<p class="text-center mt-2"><a href="https://test.bleach-kw.com/evaluator/makequatation/assigned/phase1/{{evaluation_form_save.evaluation.customer.id}}/{{evaluation_form_save.evaluation.id}}/" class="btn btn-primary">View Task</a></p>
-									<p class="text-center"><a href="#" class="btn-custom mt-2">Click to email Amanediel</a></p>
+									<p class="text-center"><a href="#" class="btn-custom mt-2">Click to email {{evaluation_form_save.evaluation.call_attender.name|default_if_none:''}}</a></p>
 									<div Class="ev-title-3 text-center">Appointment Details</div>
 									<div class="d-flex  w-50 mx-auto pt-2">
 										<div class="sv-left-field w-50">Customer</div>:
-										<div class="sv-right-field w-50 text-right">Michael</div>
+										<div class="sv-right-field w-50 text-right">{{evaluation_form_save.evaluation.customer.name|default_if_none:''}}</div>
 									</div>
 									<div class="d-flex w-50 mx-auto pt-2">
 										<div class="sv-left-field w-50">Mobile Number</div>:
-										<div class="sv-right-field w-50 text-right">00000078</div>
+										<div class="sv-right-field w-50 text-right">{{evaluation_form_save.evaluation.customer.mobile_number|default_if_none:''}}</div>
 									</div>
 									<div class="d-flex w-50 mx-auto pt-2">
 										<div class="sv-left-field w-50">Appointment date</div>:
-										<div class="sv-right-field w-50 text-right">18-07-2020</div>
+										<div class="sv-right-field w-50 text-right">{{evaluation_form_save.proposed_time|default_if_none:''}}</div>
 									</div>
 								</div>
 							</div>
@@ -395,9 +395,6 @@ ul.social li{
 					Please do not reply direcly to this email. </p>
 					<img src="https://test.bleach-kw.com/{% static 'files/images/newlogo.png' %}" alt="" style="width: 80px; max-width: 600px; height: auto; margin: auto; display: block;">
 				<p></p>
-				<div class="text-center ">
-					<img src=".../../../../static/files/images/logo1.png" class="footer-logo"/>
-				</div>
 			</div>
 		</div>
 

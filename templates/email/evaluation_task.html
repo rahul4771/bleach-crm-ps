@@ -7,9 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Use the latest (edge) version of IE rendering engine -->
     <meta name="x-apple-disable-message-reformatting">  <!-- Disable auto-scale in iOS 10 Mail entirely -->
     <title></title> <!-- The title tag shows in email notifications, like Android 4.4. -->
-
+    
     <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700" rel="stylesheet">
-
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
     <!-- CSS Reset : BEGIN -->
     <style>
 
@@ -272,10 +272,66 @@ ul.social li{
 .footer ul li a{
 	color: rgba(0,0,0,1);
 }
+.ev-card{
+	border: 1px solid rgba(0,0,0,.05);
+	margin:20px;
+	background-color: #ffffff;
+}
+.ev-title-1{
+	color:#000000;
+	font-size:2rem;
+	font-weight:300;
+}
+.ev-title-2{
+	font-size:1.5rem;
+	font-weight:700;
+}
+.ev-sub-card{
+	border: 1px solid rgba(0,0,0,.05);
+}
+.ev-title-3{
+	font-size:1.5rem;
+	color:#000000;
+}
+.ev-sub-title{
+	font-size: 1rem;
 
-
-@media screen and (max-width: 500px) {
-
+}
+.sv-left-field{
+	margin-right: auto;
+}
+.sv-right-field{
+	margin-left: auto;
+}
+.text-right{
+	text-align: right;
+}
+.main-container{
+	
+	
+}
+.ev-card{
+	
+  margin-top:100px;
+}
+.profile-pic{
+	width:70px;
+	height:70px;
+	border-radius:70px;
+}
+.footer-logo{
+	height:70px;
+}
+@media screen and (max-width: 600px) {
+.w-50{
+	width:100% !important;
+}
+.ev-card {
+	margin:0px;
+}
+.mob-padding{
+	padding:0px !important;
+}
 
 }
 
@@ -285,77 +341,65 @@ ul.social li{
 
 </head>
 
-<body width="100%" style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly; background-color: #f1f1f1;">
-	<center style="width: 100%; background-color: #f1f1f1;">
-    <div style="display: none; font-size: 1px;max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;">
-      &zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
-    </div>
-    <div style="max-width: 600px; margin: 0 auto;" class="email-container">
-    	<!-- BEGIN BODY -->
-      <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
-      	<tr>
-          <td valign="top" class="bg_white" style="padding: 1em 2.5em 0 2.5em;">
-          	<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-				
-          		<tr>
-          			<td class="logo" style="text-align: center;">
-			            <h1><a href="#">MyBleach</a></h1>
-			          </td>
-          		</tr>
-          	</table>
-          </td>
-	      </tr><!-- end tr -->
-		
-		  <tr>
-          <td valign="middle" class="hero bg_white" style="padding: 2em 0 4em 0;">
-            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-            	<tr>
-            		<td style="padding: 0 2.5em; text-align: center; padding-bottom: 3em;">
-            			<div class="text">
-            				<h2>Evaluation Task</h2>
-            			</div>
-            		</td>
-            	</tr>
-            	<tr>
-			          <td style="text-align: center;">
-			          	<div class="text-author">
-                            <span class="position">A new evaluation task has been assigned to you by </span>
-                            <br><br>
-				          	<img src="https://test.bleach-kw.com/{{evaluation_form_save.evaluation.call_attender.profile_image.url}}" alt="" style="width: 100px; max-width: 600px; height: auto; margin: auto; display: block;">
-				          	<h3 class="name">{{evaluation_form_save.evaluation.call_attender.name|default_if_none:''}}</h3>
-				          	<span class="position">{{evaluation_form_save.evaluation.call_attender.user_type|default_if_none:''}}</span>
-				           	<p><a href="https://test.bleach-kw.com/evaluator/makequatation/assigned/phase1/{{evaluation_form_save.evaluation.customer.id}}/{{evaluation_form_save.evaluation.id}}/" class="btn btn-primary">View Task</a></p>
-				           	<p><a href="#" class="btn-custom">Click to email {{evaluation_form_save.evaluation.call_attender.name|default_if_none:''}}</a></p>
-			           	</div>
-			          </td>
-			        </tr>
-			    <tr>
-					  	<td style="text-align: center;">
-					  		<div class="text-author">
-					  		<h3>Appointment Details</h3>
-					  		<h6>Customer:{{evaluation_form_save.evaluation.customer.name|default_if_none:''}}</h6>
-					  		<h6>Mobile No:{{evaluation_form_save.evaluation.customer.mobile_number|default_if_none:''}}</h6>
-					  		<h6>Appointment Date:{{evaluation_form_save.proposed_time|default_if_none:''}}</h6>
-					  		</div>
-					  	</td>
-					 </tr>
-            </table>
-          </td>
-	      </tr><!-- end tr -->
-      <!-- 1 Column Text + Button : END -->
-      </table>
-      <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
-        <tr>
-          <td class="bg_light" style="text-align: center;">
-          	<p>This is an automatically generated email form MyBleach.
-				Please do not reply direcly to this email. </p>
-				<img src="https://test.bleach-kw.com/{% static 'files/images/newlogo.png' %}" alt="" style="width: 80px; max-width: 600px; height: auto; margin: auto; display: block;">
-			<p></p>
-          </td>
-        </tr>
-      </table>
+<body>
+	<div class="container">
+		<div class="row ">
+			<div class="col-md-8 mx-auto mob-padding main-container">
+				<div class="ev-card pb-4">
+					<div class="container">
+						<div class="row">
+							<div class="col-md-12 pt-4">
+								<div class="text-center ev-title-2"><a href="#">MyBleach</a></div>
+							</div>
+							<div class="col-md-12">
+								<div class="ev-title-1 text-center">Evaluation Task</div>
+							</div>
+							<div class="col-md-10 mx-auto ">
+								<div class="ev-sub-card p-4 mb-4 mt-4">
+									<div class="text-center">
+										A new evaluation task has been assigned to you by
+									</div>
+									<div class="text-center mt-2">
+										<img src="https://test.bleach-kw.com/{{evaluation_form_save.evaluation.call_attender.profile_image.url}}"/>
+									</div>
+									<div class="ev-title-3 text-center">
+										{{evaluation_form_save.evaluation.call_attender.name|default_if_none:''}}
+									</div>
+									<div class="ev-sub-title text-center">
+										{{evaluation_form_save.evaluation.call_attender.user_type|default_if_none:''}}
+									</div>
+									<p class="text-center mt-2"><a href="https://test.bleach-kw.com/evaluator/makequatation/assigned/phase1/{{evaluation_form_save.evaluation.customer.id}}/{{evaluation_form_save.evaluation.id}}/" class="btn btn-primary">View Task</a></p>
+									<p class="text-center"><a href="#" class="btn-custom mt-2">Click to email {{evaluation_form_save.evaluation.call_attender.name|default_if_none:''}}</a></p>
+									<div Class="ev-title-3 text-center">Appointment Details</div>
+									<div class="d-flex  w-50 mx-auto pt-2">
+										<div class="sv-left-field w-50">Customer</div>:
+										<div class="sv-right-field w-50 text-right">{{evaluation_form_save.evaluation.customer.name|default_if_none:''}}</div>
+									</div>
+									<div class="d-flex w-50 mx-auto pt-2">
+										<div class="sv-left-field w-50">Mobile Number</div>:
+										<div class="sv-right-field w-50 text-right">{{evaluation_form_save.evaluation.customer.mobile_number|default_if_none:''}}</div>
+									</div>
+									<div class="d-flex w-50 mx-auto pt-2">
+										<div class="sv-left-field w-50">Appointment date</div>:
+										<div class="sv-right-field w-50 text-right">{{evaluation_form_save.proposed_time|default_if_none:''}}</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+			<div class="col-md-12 text-center mt-2">
+				<p>This is an automatically generated email form MyBleach.
+					Please do not reply direcly to this email. </p>
+					<img src="https://test.bleach-kw.com/{% static 'files/images/newlogo.png' %}" alt="" style="width: 80px; max-width: 600px; height: auto; margin: auto; display: block;">
+				<p></p>
+			</div>
+		</div>
 
-    </div>
-  </center>
+	</div>
 </body>
+
+
 </html>
