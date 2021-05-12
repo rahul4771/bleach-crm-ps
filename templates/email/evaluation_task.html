@@ -121,7 +121,7 @@ img.g-img + div {
     <style>
 
 	    .primary{
-	background: #17bebb;
+	background: #2A8EA2 ;
 }
 .bg_white{
 	background: #ffffff;
@@ -146,7 +146,7 @@ img.g-img + div {
 }
 .btn.btn-primary{
 	border-radius: 5px;
-	background: #17bebb;
+	background: #2A8EA2 ;
 	color: #ffffff;
 }
 .btn.btn-white{
@@ -188,7 +188,7 @@ body{
 }
 
 a{
-	color: #17bebb;
+	color: #2A8EA2 ;
 }
 
 table{
@@ -199,7 +199,7 @@ table{
 	margin: 0;
 }
 .logo h1 a{
-	color: #17bebb;
+	color: #2A8EA2 ;
 	font-size: 24px;
 	font-weight: 700;
 	font-family: 'Poppins', sans-serif;
@@ -296,15 +296,17 @@ ul.social li{
       	<tr>
           <td valign="top" class="bg_white" style="padding: 1em 2.5em 0 2.5em;">
           	<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+				
           		<tr>
           			<td class="logo" style="text-align: center;">
-			            <h1><a href="#">My Bleach</a></h1>
+			            <h1><a href="#">MyBleach</a></h1>
 			          </td>
           		</tr>
           	</table>
           </td>
 	      </tr><!-- end tr -->
-				<tr>
+		
+		  <tr>
           <td valign="middle" class="hero bg_white" style="padding: 2em 0 4em 0;">
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
             	<tr>
@@ -317,16 +319,17 @@ ul.social li{
             	<tr>
 			          <td style="text-align: center;">
 			          	<div class="text-author">
-                            <span class="position">A New Evaluation Task Has Been Assigned To You By </span>
+                            <span class="position">A new evaluation task has been assigned to you by </span>
                             <br><br>
 				          	<img src="https://test.bleach-kw.com/{{evaluation_form_save.evaluation.call_attender.profile_image.url}}" alt="" style="width: 100px; max-width: 600px; height: auto; margin: auto; display: block;">
 				          	<h3 class="name">{{evaluation_form_save.evaluation.call_attender.name|default_if_none:''}}</h3>
 				          	<span class="position">{{evaluation_form_save.evaluation.call_attender.user_type|default_if_none:''}}</span>
 				           	<p><a href="https://test.bleach-kw.com/evaluator/makequatation/assigned/phase1/{{evaluation_form_save.evaluation.customer.id}}/{{evaluation_form_save.evaluation.id}}/" class="btn btn-primary">View Task</a></p>
+				           	<p><a href="#" class="btn-custom">Click to email Ronald Tuff</a></p>
 			           	</div>
 			          </td>
 			        </tr>
-			        <tr>
+			    <tr>
 					  	<td style="text-align: center;">
 					  		<div class="text-author">
 					  		<h3>Appointment Details</h3>
@@ -344,7 +347,10 @@ ul.social li{
       <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
         <tr>
           <td class="bg_light" style="text-align: center;">
-          	<p>This is an automated notification message generated from<a href="#" style="color: rgba(0,0,0,.8);"> My Bleach</a></p>
+          	<p>This is an automatically generated email form MyBleach.
+				Please do not reply direcly to this email. </p>
+				<img src="https://test.bleach-kw.com/{% static 'files/images/logo.png' %}" alt="" style="width: 80px; max-width: 600px; height: auto; margin: auto; display: block;">
+			<p></p>
           </td>
         </tr>
       </table>
