@@ -325,7 +325,7 @@ ul.social li{
 				          	<h3 class="name">{{evaluation_form_save.evaluation.call_attender.name|default_if_none:''}}</h3>
 				          	<span class="position">{{evaluation_form_save.evaluation.call_attender.user_type|default_if_none:''}}</span>
 				           	<p><a href="https://test.bleach-kw.com/evaluator/makequatation/assigned/phase1/{{evaluation_form_save.evaluation.customer.id}}/{{evaluation_form_save.evaluation.id}}/" class="btn btn-primary">View Task</a></p>
-				           	<p><a href="#" class="btn-custom">Click to email Ronald Tuff</a></p>
+				           	<p><a href="#" class="btn-custom">Click to email {{evaluation_form_save.evaluation.call_attender.name|default_if_none:''}}</a></p>
 			           	</div>
 			          </td>
 			        </tr>
