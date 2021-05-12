@@ -319,7 +319,7 @@ ul.social li{
 			          	<div class="text-author">
                             <span class="position">A New Evaluation Task Has Been Assigned To You By </span>
                             <br><br>
-				          	<img src="{{evaluation_form_save.evaluation.call_attender.profile_image.url}}" alt="" style="width: 100px; max-width: 600px; height: auto; margin: auto; display: block;">
+				          	<img src="https://test.bleach-kw.com/{{evaluation_form_save.evaluation.call_attender.profile_image.url}}" alt="" style="width: 100px; max-width: 600px; height: auto; margin: auto; display: block;">
 				          	<h3 class="name">{{evaluation_form_save.evaluation.call_attender.name|default_if_none:''}}</h3>
 				          	<span class="position">{{evaluation_form_save.evaluation.call_attender.user_type|default_if_none:''}}</span>
 				           	<p><a href="https://test.bleach-kw.com/evaluator/makequatation/assigned/phase1/{{evaluation_form_save.evaluation.customer.id}}/{{evaluation_form_save.evaluation.id}}/" class="btn btn-primary">View Task</a></p>
@@ -328,10 +328,12 @@ ul.social li{
 			        </tr>
 			        <tr>
 					  	<td style="text-align: center;">
+					  		<div class="text-author">
 					  		<h3>Appointment Details</h3>
 					  		<h6>Customer:{{evaluation_form_save.evaluation.customer.name|default_if_none:''}}</h6>
 					  		<h6>Mobile No:{{evaluation_form_save.evaluation.customer.mobile_number|default_if_none:''}}</h6>
 					  		<h6>Appointment Date:{{evaluation_form_save.proposed_time|default_if_none:''}}</h6>
+					  		</div>
 					  	</td>
 					 </tr>
             </table>
