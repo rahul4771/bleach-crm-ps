@@ -2697,10 +2697,14 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 		for service_detail in services.keys():
 			sections_dict       = services[service_detail]['sections']
 			for key in sections_dict.keys():
-				try:
-					service_cost = ServicePriceRange.objects.get(name=sections_dict[key]['size'],service_type__id=services[service_detail]['service_type'],is_newkitchen=sections_dict[key]['is_newkitchen'],upholstery_type=sections_dict[key]['upholstery_type'],is_highprice_window=sections_dict[key]['is_highprice_window'],is_highprice_facade=sections_dict[key]['is_highprice_facade']).price
-				except:
-					service_cost = 0
+				service_cost = ServicePriceRange.objects.get(name=sections_dict[key]['size'],service_type__id=services[service_detail]['service_type'],is_newkitchen=sections_dict[key]['is_newkitchen'],upholstery_type=sections_dict[key]['upholstery_type'],is_highprice_window=sections_dict[key]['is_highprice_window'],is_highprice_facade=sections_dict[key]['is_highprice_facade']).price
+				##add try except
+				print(sections_dict[key]['size'])
+				print(sections_dict[key]['is_highprice_window'])
+				print(sections_dict[key]['is_new_kitchen'])
+				print(sections_dict[key]['is_highprice_facade'])
+				print(sections_dict[key]['upholstery_type'])
+				print(service_cost)
 				total_cost += service_cost
 
 		if float(total_cost) != float(request.data.get('estimated_cost')):
