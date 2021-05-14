@@ -2693,9 +2693,9 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 
 		#check price calculation is Ok
 		services       = request.data.get("service_details")
+		total_cost     = 0
 		for service_detail in services.keys():
 			sections_dict       = services[service_detail]['sections']
-			total_cost = 0
 			for key in sections_dict.keys():
 				try:
 					service_cost = ServicePriceRange.objects.get(name=sections_dict[key]['size'],service_type__id=services[service_detail]['service_type'],is_newkitchen=sections_dict[key]['is_newkitchen'],upholstery_type=sections_dict[key]['upholstery_type'],is_highprice_window=sections_dict[key]['is_highprice_window'],is_highprice_facade=sections_dict[key]['is_highprice_facade']).price
@@ -2703,8 +2703,10 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 					service_cost = 0
 				total_cost += service_cost
 
-		if total_cost != float(request.data.get('estimated_cost')):
+		if float(total_cost) != float(request.data.get('estimated_cost')):
 			response_dict['Error'] = 'Invalid Cost Calculation'
+			print(float(total_cost),"total_cost")
+			print(float(request.data.get('estimated_cost')),"estimated_cost")
 			return Response(response_dict,HTTP_200_OK)
 
 		##multiple services #count total cleaners and total leaders for availability
