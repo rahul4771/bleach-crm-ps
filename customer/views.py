@@ -2698,7 +2698,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 			total_cost = 0
 			for key in sections_dict.keys():
 				try:
-					service_cost = ServicePriceRange.objects.get(name=sections_dict[key]['size'],service_type__id=services[service_detail]['service_type'],is_newkitchen=services[service_detail]['is_newkitchen'],upholstery_type=services[service_detail]['upholstery_type'],is_highprice_window=services[service_detail]['is_highprice_window'],is_highprice_facade=services[service_detail]['is_highprice_facade']).price
+					service_cost = ServicePriceRange.objects.get(name=sections_dict[key]['size'],service_type__id=services[service_detail]['service_type'],is_newkitchen=sections_dict[key]['is_newkitchen'],upholstery_type=sections_dict[key]['upholstery_type'],is_highprice_window=sections_dict[key]['is_highprice_window'],is_highprice_facade=sections_dict[key]['is_highprice_facade']).price
 				except:
 					service_cost = 0
 				total_cost += service_cost
