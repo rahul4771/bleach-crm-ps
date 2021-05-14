@@ -1899,6 +1899,7 @@ def AddressOtpSend(request):
 	else:
 		newcustomer_otp                = generate_newcustomer_random_otp()
 		newcustomer_otp_update         = NewCustomerOtp.objects.get_or_create(mobile_number=mobile_no,customer_otp=newcustomer_otp)
+		response_dict['success']       = True
 		response_dict['customer_type'] = 'New Customer'
 	
 	return JsonResponse(response_dict)
@@ -1925,10 +1926,11 @@ def AddressOtpVerify(request):
 			response_dict['Error']   = 'Address Doesnot Exist'
 			return JsonResponse(response_dict)
 	else:
-		newcustomer_otp_update         = NewCustomerOtp.objects.get(customer_otp=address_otp)
-		if newcustomer_otp_update:
+		newcustomer_otp         = NewCustomerOtp.objects.get(customer_otp=address_otp)
+		if newcustomer_otp:
 			response_dict['customer_type'] = 'New Customer'
 			response_dict['success'] = True
+			newcustomer_otp.delete()
 		else:
 			response_dict['Error']   = 'Invalid Otp'
 			response_dict['success']  = False
