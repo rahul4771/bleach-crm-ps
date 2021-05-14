@@ -1965,6 +1965,7 @@ class ClientCleaningBookingPhase1(View):
 
 		return render(request,'customer/booking/clientcleaningbookingphase1.html',{"service_types":service_types,"area_types":area_types,})
 
+
 class ClientCleaningBookingPhase2(APIView):  
 	permission_classes        = (AllowAny,)
 	authentication_classes    = ()
@@ -2689,6 +2690,22 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 	authentication_classes    = ()
 	def post(self,request): 
 		response_dict = {'success':False}
+		
+		#check price calculation is Ok
+		services       = request.data.get("service_details")
+		for service_detail in services.keys():
+			sections_dict       = services[service_detail]['sections']
+			total_cost = 0
+			for key in sections_dict.keys():
+				try:
+					service_cost = ServicePriceRange.objects.get(name=sections_dict[key]['size'],service_type__id=services[service_detail]['service_type'],is_newkitchen=services[service_detail]['is_newkitchen'],upholstery_type=services[service_detail]['upholstery_type'],is_highprice_window=services[service_detail]['is_highprice_window'],is_highprice_facade=services[service_detail]['is_highprice_facade']).price
+				except:
+					service_cost = 0
+				total_cost += service_cost
+
+		if total_cost != float(request.data.get('estimated_cost'))
+			response_dict['Error'] = 'Invalid Cost Calculation'
+			return Response(response_dict,HTTP_200_OK)
 
 		##multiple services #count total cleaners and total leaders for availability
 		total_cleaners 	= UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
