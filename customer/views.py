@@ -1935,7 +1935,11 @@ def AddressOtpVerify(request):
 			response_dict['Error']   = 'Address Doesnot Exist'
 			return JsonResponse(response_dict)
 	else:
-		newcustomer_otp         = NewCustomerOtp.objects.get(customer_otp=address_otp)
+		try:
+			newcustomer_otp         = NewCustomerOtp.objects.get(customer_otp=address_otp)
+		except:
+			newcustomer_otp         = None
+
 		if newcustomer_otp:
 			response_dict['customer_type'] = 'New Customer'
 			response_dict['success'] = True
