@@ -1897,8 +1897,10 @@ def AddressOtpSend(request):
 		response_dict['success']       = True
 		response_dict['customer_type'] = 'Existing Customer'
 	else:
-		newcustomer_otp                = generate_newcustomer_random_otp()
-		newcustomer_otp_update         = NewCustomerOtp.objects.get_or_create(mobile_number=mobile_no,customer_otp=newcustomer_otp)
+		newcustomer_otp_update              =  NewCustomerOtp.objects.get_or_create(mobile_number=mobile_no)
+		newcustomer_otp_update.customer_otp =  generate_newcustomer_random_otp()
+		newcustomer_otp_update.save()
+		
 		response_dict['success']       = True
 		response_dict['customer_type'] = 'New Customer'
 	
