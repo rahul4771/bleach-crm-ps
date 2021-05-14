@@ -2703,7 +2703,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 					service_cost = 0
 				total_cost += service_cost
 
-		if total_cost != float(request.data.get('estimated_cost'))
+		if total_cost != float(request.data.get('estimated_cost')):
 			response_dict['Error'] = 'Invalid Cost Calculation'
 			return Response(response_dict,HTTP_200_OK)
 
