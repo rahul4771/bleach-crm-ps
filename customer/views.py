@@ -28,7 +28,7 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,Evaluat
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,Promocode
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
-from customer.models import CustomerBooking
+from customer.models import CustomerBooking,NewCustomerOtp
 from bleachadmin.models import ServiceProductivity,ServicePriceRange
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import QuatationServiceFormCustomer
@@ -1339,6 +1339,17 @@ def generate_random_otp(size=5, chars=string.digits):
 	except UserProfile.DoesNotExist:
 		return otp
 
+def generate_newcustomer_random_otp(size=5, chars=string.digits):
+	otp = ''.join(random.choice(chars) for n in range(size))
+
+
+	try:
+		NewCustomerOtp.objects.get(customer_otp=otp)
+		return generate_random_otp(size=5,chars=string.digits)
+	except NewCustomerOtp.DoesNotExist:
+		return otp
+
+
 class GetCountries(APIView):
 	permission_classes        = (AllowAny,)
 	authentication_classes    = ()
@@ -1879,13 +1890,16 @@ def AddressOtpSend(request):
 	response_dict['success'] = False
 
 	mobile_no  		= request.GET.get('mobile_number')
-	address_otp 	= 12345
+	address_otp 	= generate_random_otp()
 	otp_update 		= UserProfile.objects.filter(mobile_number=mobile_no).update(address_otp=address_otp)
 
 	if otp_update:
-		response_dict['success'] = True
+		response_dict['success']       = True
+		response_dict['customer_type'] = 'Existing Customer'
 	else:
-		response_dict['Error']   = 'mobile number doesnot exist'
+		newcustomer_otp                = generate_newcustomer_random_otp()
+		newcustomer_otp_update         = NewCustomerOtp.objects.get_or_create(mobile_number=mobile_no,customer_otp=newcustomer_otp)
+		response_dict['customer_type'] = 'New Customer'
 	
 	return JsonResponse(response_dict)
 
@@ -1898,44 +1912,27 @@ def AddressOtpVerify(request):
 		customer       		= UserProfile.objects.get(address_otp=address_otp)
 	except:
 		customer 			= None 
-	if not customer:
-		response_dict['Error']   = 'Invalid Otp'
-		return JsonResponse(response_dict)
-				
-	customer_addresses	= Address.objects.filter(customer=customer,currently_active=True).select_related('governorate','area')
-	if not customer_addresses:
-		response_dict['Error']   = 'Address Doesnot Exist'
-		return JsonResponse(response_dict)
 
-	response_dict['customer_details']   = UserProfileSerializer(instance=customer).data
-	response_dict['customer_addresses'] = AddressSerializer(instance=customer_addresses,many=True).data 
-	
-	response_dict['success'] = True
-	return JsonResponse(response_dict)
+	if customer:
+		response_dict['customer_type'] = 'Existing Customer'
+		response_dict['success']       = True
 
-def AddressOtpVerifyTest(request):
-	response_dict = {}
-	response_dict['success'] = False
-	
-	mobile_number    		= request.GET.get('mobile_number')
-	try:
-		customer       		= UserProfile.objects.get(mobile_number=mobile_number)
-	except:
-		customer 			= None 
-	
-	if not customer:
-		response_dict['Error']   = 'Invalid Otp'
-		return JsonResponse(response_dict)
-				
-	customer_addresses	= Address.objects.filter(customer=customer,currently_active=True).select_related('governorate','area')
-	if not customer_addresses:
-		response_dict['Error']   = 'Address Doesnot Exist'
-		return JsonResponse(response_dict)
+		customer_addresses	= Address.objects.filter(customer=customer,currently_active=True).select_related('governorate','area')
+		if customer_addresses:
+			response_dict['customer_details']   = UserProfileSerializer(instance=customer).data
+			response_dict['customer_addresses'] = AddressSerializer(instance=customer_addresses,many=True).data
+		else:
+			response_dict['Error']   = 'Address Doesnot Exist'
+			return JsonResponse(response_dict)
+	else:
+		newcustomer_otp_update         = NewCustomerOtp.objects.get(customer_otp=address_otp)
+		if newcustomer_otp_update:
+			response_dict['customer_type'] = 'New Customer'
+			response_dict['success'] = True
+		else:
+			response_dict['Error']   = 'Invalid Otp'
+			response_dict['success']  = False
 
-	response_dict['customer_details']   = UserProfileSerializer(instance=customer).data
-	response_dict['customer_addresses'] = AddressSerializer(instance=customer_addresses,many=True).data 
-	
-	response_dict['success'] = True
 	return JsonResponse(response_dict)
 
 class ClientCleaningBookingPhase1(View):
