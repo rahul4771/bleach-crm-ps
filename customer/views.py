@@ -1611,8 +1611,8 @@ class GetCleaningSlotes(APIView):
 			total_cleaners 	= UserProfile.objects.filter(is_deep_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
 			total_leaders 	= UserProfile.objects.filter(is_deep_skill=True,user_type='TEAMINCHARGE').count()-1
 		elif service_type == 'Upholstery Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_upholster_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_upholster_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_upholstery_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
+			total_leaders 	= UserProfile.objects.filter(is_upholstery_skill=True,user_type='TEAMINCHARGE').count()-1
 		elif service_type == 'Kitchen Cleaning':
 			total_cleaners 	= UserProfile.objects.filter(is_kitchen_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
 			total_leaders 	= UserProfile.objects.filter(is_kitchen_skill=True,user_type='TEAMINCHARGE').count()-1
@@ -1983,8 +1983,8 @@ class ClientCleaningBookingPhase2(APIView):
 			total_cleaners 	= UserProfile.objects.filter(is_deep_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
 			total_leaders 	= UserProfile.objects.filter(is_deep_skill=True,user_type='TEAMINCHARGE').count()-1
 		elif service_type == 'Upholstery Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_upholster_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_upholster_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_upholstery_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
+			total_leaders 	= UserProfile.objects.filter(is_upholstery_skill=True,user_type='TEAMINCHARGE').count()-1
 		elif service_type == 'Kitchen Cleaning':
 			total_cleaners 	= UserProfile.objects.filter(is_kitchen_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
 			total_leaders 	= UserProfile.objects.filter(is_kitchen_skill=True,user_type='TEAMINCHARGE').count()-1
@@ -2690,7 +2690,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 	authentication_classes    = ()
 	def post(self,request): 
 		response_dict = {'success':False}
-		
+
 		#check price calculation is Ok
 		services       = request.data.get("service_details")
 		for service_detail in services.keys():
@@ -2723,8 +2723,8 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 				total_cleaners 	= total_cleaners.filter(is_deep_skill=True)
 				total_leaders 	= total_leaders.filter(is_deep_skill=True)
 			elif service_type == 'Upholstery Cleaning':
-				total_cleaners 	= total_cleaners.filter(is_upholster_skill=True)
-				total_leaders 	= total_leaders.filter(is_upholster_skill=True)
+				total_cleaners 	= total_cleaners.filter(is_upholstery_skill=True)
+				total_leaders 	= total_leaders.filter(is_upholstery_skill=True)
 			elif service_type == 'Kitchen Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
 				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
