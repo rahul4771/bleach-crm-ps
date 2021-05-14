@@ -2700,7 +2700,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 				print(services[service_detail]['service_type'])
 				print(sections_dict[key]['size'])
 				print(sections_dict[key]['is_highprice_window'])
-				print(sections_dict[key]['is_new_kitchen'])
+				print(sections_dict[key]['is_newkitchen'])
 				print(sections_dict[key]['is_highprice_facade'])
 				print(sections_dict[key]['upholstery_type'])
 				service_cost = ServicePriceRange.objects.get(name=sections_dict[key]['size'],service_type__id=services[service_detail]['service_type'],is_newkitchen=sections_dict[key]['is_newkitchen'],upholstery_type=sections_dict[key]['upholstery_type'],is_highprice_window=sections_dict[key]['is_highprice_window'],is_highprice_facade=sections_dict[key]['is_highprice_facade']).price
