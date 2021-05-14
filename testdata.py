@@ -202,9 +202,7 @@ GET
          "location_type":"GYM",
          "area_type":"Post Construction",
          "evaluator_note":"test addition of service",
-         "is_newkitchen":False,
-         "is_highprice_facade":False,
-         "is_highprice_window":False,
+         
          "upholstery_type":"CHAIR",
          "estimated_cost":150,
          "total_cost":150,
@@ -219,6 +217,9 @@ GET
                "cement_residue":false,
                "section_cost":100,
                "section_net_cost":100,
+               "is_newkitchen":False,
+              "is_highprice_facade":False,
+              "is_highprice_window":False,
                "keynotes":{
                   "1":{
                      "sub_area":"bathroom",
@@ -238,6 +239,9 @@ GET
                "cement_residue":true,
                "section_cost":50,
                "section_net_cost":50,
+               "is_newkitchen":False,
+              "is_highprice_facade":False,
+              "is_highprice_window":False,
                "keynotes":{
                   "1":{
                      "sub_area":"windows",
