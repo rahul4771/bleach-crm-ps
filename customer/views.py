@@ -2692,6 +2692,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 		response_dict = {'success':False}
 
 		#check price calculation is Ok
+		print(request.POST)
 		services       = request.data.get("service_details")
 		total_cost     = 0
 		for service_detail in services.keys():
@@ -2699,11 +2700,11 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 			for key in sections_dict.keys():
 				print(services[service_detail]['service_type'])
 				print(sections_dict[key]['size'])
-				print(sections_dict[key]['is_highprice_window'])
-				print(sections_dict[key]['is_newkitchen'])
-				print(sections_dict[key]['is_highprice_facade'])
-				print(sections_dict[key]['upholstery_type'])
-				service_cost = ServicePriceRange.objects.get(name=sections_dict[key]['size'],service_type__id=services[service_detail]['service_type'],is_newkitchen=sections_dict[key]['is_newkitchen'],upholstery_type=sections_dict[key]['upholstery_type'],is_highprice_window=sections_dict[key]['is_highprice_window'],is_highprice_facade=sections_dict[key]['is_highprice_facade']).price
+				print(sections_dict[key]['is_highprice_window'],"is_highprice_window")
+				print(sections_dict[key]['is_newkitchen'],"is_newkitchen")
+				print(sections_dict[key]['is_highprice_facade'],"is_highprice_facade")
+				print(sections_dict[key]['upholstery_type'],"upholstery_type")
+				# service_cost = ServicePriceRange.objects.get(name=sections_dict[key]['size'],service_type__id=services[service_detail]['service_type'],is_newkitchen=sections_dict[key]['is_newkitchen'],upholstery_type=sections_dict[key]['upholstery_type'],is_highprice_window=sections_dict[key]['is_highprice_window'],is_highprice_facade=sections_dict[key]['is_highprice_facade']).price
 				##add try except
 				print(service_cost)
 				total_cost += service_cost
