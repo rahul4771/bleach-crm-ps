@@ -32,9 +32,9 @@ class ServicePriceRange(models.Model):
 	price            = models.FloatField(blank=True,null=True)
 	unit_price       = models.FloatField(blank=True,null=True)
 
-	is_newkitchen       = models.BooleanField(null=False,blank=True,default=False)
-	is_highprice_facade = models.BooleanField(null=False,blank=True,default=False)
-	is_highprice_window = models.BooleanField(null=False,blank=True,default=False)
+	is_newkitchen       = models.BooleanField(null=True,blank=True,default=False)
+	is_highprice_facade = models.BooleanField(null=True,blank=True,default=False)
+	is_highprice_window = models.BooleanField(null=True,blank=True,default=False)
 	upholstery_type     = models.CharField(max_length=50,blank=True,null=True,choices=SERVICEDIVISION_CHOICES)
 
 	is_active    = models.BooleanField(null=False,blank=True,default=True)
