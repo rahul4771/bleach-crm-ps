@@ -28,7 +28,7 @@ from django.db.models.functions import Cast,TruncDate,ExtractMonth,ExtractYear,C
 from django.db.models import Prefetch
 from django.contrib import messages
 
-from user.models import UserProfile,Address,Governorate,Area
+from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
@@ -46,6 +46,13 @@ from dateutil.relativedelta import relativedelta
 from django.core.mail import send_mail,EmailMultiAlternatives
 from django.template.loader import render_to_string
 
+#restframe work 
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response 
+from rest_framework.status import HTTP_200_OK
+
+from agent.serializers import CleaningScheduleSerializer,FollowupScheduleSerializer,UserProfileShowSerializer
 
 #Username Random Generation
 def generate_random_username(size=10, chars=string.ascii_uppercase + string.digits):
@@ -718,6 +725,184 @@ def CleaningExistingDates(request):
 	data['cleaners_busy_dates'] = team_members_busy
 	print(data)
 	return JsonResponse(data)
+
+
+class AvailabilityCleaningCallendar(APIView):
+	def post(self,request):
+		response_dict            = {}
+		response_dict['success'] = False
+
+		cleaning_datetime_start      = datetime.strptime(request.data.get('cleaning_datetime'),'%d-%m-%Y %I:%M %p')
+		cleaning_datetime_end        = cleaning_datetime_start+timedelta(hours=3)
+		service_types                = request.data.get('service_types')
+		
+
+		team_leaders_scheduled      = []
+		team_members_scheduled      = []
+		#absent cleaners and leaders
+		cleaning_date1   = cleaning_datetime_start.date()
+		cleaning_date2   = cleaning_datetime_end.date()	
+		absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=cleaning_date1)|Q(leave_date=cleaning_date2))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
+		absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=cleaning_date1)|Q(leave_date=cleaning_date2))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
+
+		#Active cleaners
+		active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end))|Q(Q(end_at__gte=cleaning_datetime_start)&Q(end_at__lte=cleaning_datetime_end))|Q(Q(start_at__lte=cleaning_datetime_start)&Q(end_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end)&Q(end_at__gte=cleaning_datetime_end))|Q(Q(start_at__gte=cleaning_datetime_start)&Q(end_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end)&Q(end_at__lte=cleaning_datetime_end))))
+		active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end))|Q(Q(end_at__gte=cleaning_datetime_start)&Q(end_at__lte=cleaning_datetime_end))|Q(Q(start_at__lte=cleaning_datetime_start)&Q(end_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end)&Q(end_at__gte=cleaning_datetime_end))|Q(Q(start_at__gte=cleaning_datetime_start)&Q(end_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end)&Q(end_at__lte=cleaning_datetime_end))))
+				
+		
+		for service_type in service_types:
+			if service_type == 'General Cleaning':
+				active_cleaners1 	= active_cleaners1.filter(member__is_general_skill=True)
+				active_cleaners2 	= active_cleaners2.filter(member__is_general_skill=True)
+			elif service_type == 'Deep Cleaning':
+				active_cleaners1 	= active_cleaners1.filter(member__is_deep_skill=True)
+				active_cleaners2 	= active_cleaners2.filter(member__is_deep_skill=True)
+			elif service_type == 'Upholstery Cleaning':
+				active_cleaners1 	= active_cleaners1.filter(member__is_upholstery_skill=True)
+				active_cleaners2 	= active_cleaners2.filter(member__is_upholstery_skill=True)
+			elif service_type == 'Kitchen Cleaning':
+				active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
+				active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
+			elif service_type == 'Carpet Cleaning':
+				active_cleaners1 	= active_cleaners1.filter(member__is_carpet_skill=True)
+				active_cleaners2 	= active_cleaners2.filter(member__is_carpet_skill=True)
+			elif service_type == 'Sterilization':
+				active_cleaners1 	= active_cleaners1.filter(member__is_sterilization_skill=True)
+				active_cleaners2 	= active_cleaners2.filter(member__is_sterilization_skill=True)
+			elif service_type == 'Mattress Cleaning':
+				active_cleaners1 	= active_cleaners1.filter(member__is_mattress_skill=True)
+				active_cleaners2 	= active_cleaners2.filter(member__is_mattress_skill=True)
+			elif service_type == 'Facade Cleaning':
+				active_cleaners1 	= active_cleaners1.filter(member__is_facade_skill=True)
+				active_cleaners2 	= active_cleaners2.filter(member__is_facade_skill=True)
+			elif service_type == 'Storage Area':
+				active_cleaners1 	= active_cleaners1.filter(member__is_storagearea_skill=True)
+				active_cleaners2 	= active_cleaners2.filter(member__is_storagearea_skill=True)
+			elif service_type == 'Car Parking Umbrella':
+				active_cleaners1 	= active_cleaners1.filter(member__is_carparkingumbrella_skill=True)
+				active_cleaners2 	= active_cleaners2.filter(member__is_carparkingumbrella_skill=True)
+			elif service_type == 'Window Cleaning':
+				active_cleaners1 	= active_cleaners1.filter(member__is_window_skill=True)
+				active_cleaners2 	= active_cleaners2.filter(member__is_window_skill=True)
+			elif service_type == 'Outdoor Cleaning':
+				active_cleaners1 	= active_cleaners1.filter(member__is_outdoor_skill=True)
+				active_cleaners2 	= active_cleaners2.filter(member__is_outdoor_skill=True)
+
+			cleaning_active_team_leaders = active_cleaners1.filter(member__user_type='TEAMINCHARGE').values_list('member',flat=True)
+			cleaning_active_cleaners     = active_cleaners1.filter(Q(Q(member__user_type='TEAMINCHARGE')|Q(member__user_type='CLEANER'))).values_list('member',flat=True)
+
+			followup_active_team_leaders = active_cleaners2.filter(member__user_type='TEAMINCHARGE').values_list('member',flat=True)
+			followup_active_cleaners     = active_cleaners2.filter(Q(Q(member__user_type='TEAMINCHARGE')|Q(member__user_type='CLEANER'))).values_list('member',flat=True)
+
+			#merging
+
+			for active_team_leaders in cleaning_active_team_leaders:
+				team_leaders_scheduled.append(active_team_leaders)
+			for active_team_leaders in followup_active_team_leaders:
+				team_leaders_scheduled.append(active_team_leaders)
+
+			for active_team_member in cleaning_active_cleaners:
+				team_members_scheduled.append(active_team_member)
+			for active_team_member in followup_active_cleaners:
+				team_members_scheduled.append(active_team_member)
+
+		for absent_cleaner in absent_cleaners:
+			team_members_scheduled.append(absent_cleaner)
+		for absent_leader in absent_leaders:
+			team_leaders_scheduled.append(absent_leader)
+
+		#count total cleaners and total leaders
+		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+		total_leaders  = UserProfile.objects.filter(user_type='TEAMINCHARGE')
+		for service_type in service_types:
+			if service_type == 'General Cleaning':
+				total_cleaners 	= total_cleaners.filter(is_general_skill=True)
+				total_leaders 	= total_leaders.filter(is_general_skill=True)
+			elif service_type == 'Deep Cleaning':
+				total_cleaners 	= total_cleaners.filter(is_deep_skill=True)
+				total_leaders 	= total_leaders.filter(is_deep_skill=True)
+			elif service_type == 'Upholstery Cleaning':
+				total_cleaners 	= total_cleaners.filter(is_upholstery_skill=True)
+				total_leaders 	= total_leaders.filter(is_upholstery_skill=True)
+			elif service_type == 'Kitchen Cleaning':
+				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
+				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
+			elif service_type == 'Carpet Cleaning':
+				total_cleaners 	= total_cleaners.filter(is_carpet_skill=True)
+				total_leaders 	= total_leaders.filter(is_carpet_skill=True)
+			elif service_type == 'Sterilization':
+				total_cleaners 	= total_cleaners.filter(is_sterilization_skill=True)
+				total_leaders 	= total_leaders.filter(is_sterilization_skill=True)
+			elif service_type == 'Mattress Cleaning':
+				total_cleaners 	= total_cleaners.filter(is_mattress_skill=True)
+				total_leaders 	= total_leaders.filter(is_mattress_skill=True)
+			elif service_type == 'Facade Cleaning':
+				total_cleaners 	= total_cleaners.filter(is_facade_skill=True)
+				total_leaders 	= total_leaders.filter(is_facade_skill=True)
+			elif service_type == 'Storage Area':
+				total_cleaners 	= total_cleaners.filter(is_storagearea_skill=True)
+				total_leaders 	= total_leaders.filter(is_storagearea_skill=True)
+			elif service_type == 'Car Parking Umbrella':
+				total_cleaners 	= total_cleaners.filter(is_carparkingumbrella_skill=True)
+				total_leaders 	= total_leaders.filter(is_carparkingumbrella_skill=True)
+			elif service_type == 'Window Cleaning':
+				total_cleaners 	= total_cleaners.filter(is_window_skill=True)
+				total_leaders 	= total_leaders.filter(is_window_skill=True)
+			elif service_type == 'Outdoor Cleaning':
+				total_cleaners 	= total_cleaners.filter(is_outdoor_skill=True)
+				total_leaders 	= total_leaders.filter(is_outdoor_skill=True)
+
+
+		available_cleaners = total_cleaners.exclude(id__in=team_members_scheduled)
+		available_leaders  = total_leaders.exclude(id__in=team_leaders_scheduled)
+
+		response_dict['available_cleaners_count'] = available_cleaners.count()
+		response_dict['available_leaders_count']  = available_leaders.count()
+		response_dict['available_leaders']        = UserProfileShowSerializer(instance=available_leaders,many=True).data
+
+		response_dict['success'] = True
+		return Response(response_dict,HTTP_200_OK)
+
+class CleaningCallendar(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request):
+		response_dict            = {}
+		response_dict['success'] = False
+
+		#cleaning schedule & followup schedule for cleaning calendar
+		cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
+
+		try:
+			schedule_date = datetime.strptime(cleaning_calendar_date,'%d-%m-%Y')
+		except:
+			schedule_date = timezone.now().replace(tzinfo=None)
+
+		schedule_date_start = schedule_date.replace(hour=0,minute=0,second=0,microsecond=0)
+		schedule_date_end   = schedule_date_start+timedelta(1)
+
+		#ready for cleaning & cancelled schedules
+		calendar_order_schedules_list 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))|Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))|Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).order_by('start_at').select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_teams')).filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(order__evaluation__payment_method='SUBSCRIPTION') | Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__remining_amount=0)&Q(order__remining_amount=F('order__evaluation__fine_amount'))) )).values('id','start_at','end_at','order').distinct().values_list('id') 
+		calendar_order_schedules        = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list)
+
+		#not approved & approved not paid schedules
+		calendar_notapprovedorder_schedules_list 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))|Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))|Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).order_by('start_at').select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(Q( Q(order__evaluation__quatation_status='PENDING')|Q(Q(order__evaluation__quatation_status='APPROVED')&Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0)) | Q(Q(order__evaluation__quatation_status='APPROVED')&Q(order__evaluation__payment_method='PREPAID')&Q(order__amount_paid=0)) )).values('id','start_at','end_at','order').distinct().values_list('id') 
+		calendar_notapprovedorder_schedules 	    = OrderScheduler.objects.filter(id__in=calendar_notapprovedorder_schedules_list)
+
+		#followup schedules
+		try:
+			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))|Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))|Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).order_by('start_at').select_related('follow_up__investigation__order__evaluation__customer','customer_address').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_teams'))
+		except:
+			calendar_followup_schedules = None
+
+		response_dict['appoved_cleanings']    = CleaningScheduleSerializer(instance=calendar_order_schedules,many=True).data
+		response_dict['notappoved_cleanings'] = CleaningScheduleSerializer(instance=calendar_notapprovedorder_schedules,many=True).data
+		response_dict['followup_cleanings']   = FollowupScheduleSerializer(instance=calendar_followup_schedules,many=True).data
+
+		response_dict['success'] = True
+
+		return Response(response_dict,HTTP_200_OK)
+
 
 # Create your views here.
 class AgentHome(IsAgent,View):

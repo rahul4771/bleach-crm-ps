@@ -1,0 +1,37 @@
+from rest_framework import serializers
+from customer.serilizers import AddressSerializer
+from order.models import OrderScheduler,FollowUpScheduler,FollowUp
+from user.models import UserProfile
+
+class CleaningScheduleSerializer(serializers.ModelSerializer):
+	start_at = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p")
+	end_at   = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p")
+	customer_address = AddressSerializer(read_only=True)
+	class Meta:
+		model  = OrderScheduler
+		fields = ('id','start_at','end_at','customer_address','work_status','no_of_cleaners','cleaning_hours')
+
+
+
+
+
+class FollowupSerializer(serializers.ModelSerializer):
+	class Meta:		
+		model  = FollowUp
+		fields = ('no_of_cleaners','cleaning_hours')
+
+class FollowupScheduleSerializer(serializers.ModelSerializer):
+	customer_address = AddressSerializer(read_only=True)
+	start_at = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p")
+	end_at   = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p")
+	class Meta:		
+		model  = FollowUpScheduler
+		fields = ('id','start_at','end_at','customer_address','work_status')
+
+
+
+class UserProfileShowSerializer(serializers.ModelSerializer):
+	class Meta:
+		model  = UserProfile
+		fields = ('id','name','gender','email','mobile_number','profile_image')	
+		read_only_fields =('id',)
