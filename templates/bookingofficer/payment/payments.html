@@ -1,0 +1,472 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "bookingofficer/common/header.html" %}
+    
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Payments</h1>
+                <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>    
+            </div><!--welcome-wrapper-->
+       
+     <div class="clients-top-card-wrapper"><!--clients-top-card-wrapper-->
+     	<div class="clients-card-wrapper"><!--clients-card-wrapper-->
+       	<div class="clients-card-column clients-column-left"><!--clients-card-column clients-column-left-->
+        <div class="card-column whitebg blue-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-pending-payment-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+              	<!--  <h1>Evaluations</h1>-->
+            	<h2 class="blue-text"><label>Pending <br>Payments<span>{{total_pending_amount|default_if_none:'0.00'|floatformat:'2'}}</span><br><span class="orders">Rate</span></label> </h2>
+            	<!--<p><label>This Week <span>42</span></label></p>-->
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg green-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-pending-payment-orders-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+            	<h2 class="green-text"><label>Pending<br>payments<span>{{total_pending_orders|default_if_none:'0'}}</span><br><span class="orders">Orders</span></label>  </h2>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+
+            <div class="card-column whitebg orange-border export_btn"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-export-icon-o.png'%}"></div>
+                <div class="column-right"><!--column-right-->
+              	<!--  <h1>Evaluations</h1>-->
+            	<h2 class="orange-text"><label>Report Generator<span><i class="fa fa-download"></i> </span><br><span class="orders">Click to Export</span></label> </h2>
+            	<!--<p><label>This Week <span>42</span></label></p>-->
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+
+        </div><!--clients-card-column clients-column-left-->
+
+        <div class="clients-card-column clients-column-right whitebg hover ltyellow-border"><!--clients-card-column clients-column-right-->
+                 
+		<div class="chart_boxDiv"><!--chart_boxDiv-->
+  			<div class="chart_box_Right"><!--chart_box_Right-->
+ 				<!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
+            	<div id="chart_payment" ></div>
+  			</div><!--chart_box_Right-->
+		</div><!--chart_boxDiv-->   
+            
+        <div class="chart_boxDiv"><!--chart_boxDiv-->    
+        
+         <div class="chart_box_Left"><!--chart_box_Left-->
+         <div class="legend-wrapper"><!--legend-wrapper--> 
+            <div class="legend-result count_div"><label class="legend-label">SALES </label> <b class="legend-result-blue" id="total_submitted"></b> <b>KD</b></div>
+            <!--<div class="legend-result count_div"><label class="legend-label">PENDING AMOUNT </label> <b class="legend-result-red" id="total_approved"></b> <b>KD</b></div>-->
+         </div><!--legend-wrapper-->
+  		</div><!--chart_box_Left-->
+        <div class="chart_box_Left"><!--chart_box_Left-->        
+        <div class="Button_wrapperChart">
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonthtoggle"><div class="slider round"><span class="on">MONTH</span><span class="off">DATE</span></div></label></div>
+            <input type="text" id="ord_fromdate" class="date_pick_chart_from date_pick2 date-picker set1 date-pick-left" >
+            <input type="text" id="ord_todate" class="date_pick_chart_to date_pick2 date-picker set1 date-pick-right" >
+            <input type="text" id="month1" class="month_pick set2 date-pick-left" >
+            <input type="text" id="month2" class="month_pick set2 date-pick-right" >
+            <div><button id="reset_orders" class="green-button-chart">Reset</button></div>
+            </div>
+            	           
+        </div><!--chart_box_Left-->
+            
+        </div><!--chart_boxDiv-->    
+            
+        </div><!--lients-card-column clients-column-right-->
+
+        </div><!--clients-card-wrapper-->
+
+</div><!--clients-top-card-wrapper-->       
+            
+     <div class="main-content-holder"><!--main-content-holder-->            
+     
+     <div class="white-wrapper-search"><!--white-wrapper-search-->
+     <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
+          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search BLC Number & customer Name Here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+     </div><!--left-box leftbox-item1-->
+     <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
+     <input name="filter" type="button" value="Filter" id="filter" class="blue-button arrow"> 
+     
+     <div class="menu-filter ltgreen-border" style="display:none;"><!--menu-filter ltgreen-border-->
+      <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Job Status</label></div>
+                <label for="favcity">
+                <select name="status_filter" id="status_filter_id">
+                <option value=''>---ALL---</option>
+                <option value="NOT STARTED" {% if fil_order_status == 'NOT STARTED' %}selected{% endif %}>NOT STARTED</option>
+                <option value="IN PROGRESS" {% if fil_order_status == 'IN PROGRESS' %}selected{% endif %}>IN PROGRESS</option>
+                <option value="COMPLETED" {% if fil_order_status == 'COMPLETED' %}selected{% endif %}>COMPLETED</option>              
+              </select>
+                </label>
+  </div><!--ticket-form-right-->
+      </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+      <hr class="hr-dashedpad"> 
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+<div class="ticket-form-right"><!--ticket-form-left-->
+      <div class=" bold-text common-label"> <label>Payment Status</label></div>
+    <label for="favcity">
+            <select name="payment_status_filter" id="payment_status_filter_id">
+            <option value=''>---ALL---</option>
+            <option value="PENDING" {% if fil_payment_status == 'PENDING' %}selected{% endif %}>PENDING</option>
+            <option value="COMPLETED" {% if fil_payment_status == 'COMPLETED' %}selected{% endif %}>PAID</option>                
+          </select>
+            </label>
+</div><!--ticket-form-left-->
+<div class="ticket-form-left"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Payment Policy</label></div>
+                <label for="favcity">
+                <select name="payment_policy" id="payment_policy_id">
+                <option value=''>---ALL---</option> 
+                
+                <option value='PREPAID' {% if fil_payment_policy == 'PREPAID' %}selected{% endif %}>PREPAID</option>
+                <option value='POSTPAID' {% if fil_payment_policy == 'POSTPAID' %}selected{% endif %}>POSTPAID</option>
+                <option value='BREAKDOWN' {% if fil_payment_policy == 'BREAKDOWN' %}selected{% endif %}>BREAKDOWN</option>
+                <option value='SUBSCRIPTION' {% if fil_payment_policy == 'SUBSCRIPTION' %}selected{% endif %}>SUBSCRIPTION</option>
+              </select>
+                </label>
+</div><!--ticket-form-right-->
+      </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+      <div align="center"> <input class="assignButton" name="assing" type="button" onclick="set_params_go();" value="Submit"> <input class="cancel-Button close-btn arrow-close" name="cancel" type="button" value="Reset"></div>
+
+          
+          </div><!--menu-filter ltgreen-border-->
+     
+     </div><!--right-box leftbox-item1-->     
+     
+     
+ 
+     </div><!--white-wrapper-search-->
+     
+            
+<div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Payment List</h2>
+<div class="page-entries">Show {{entry_per_page}} entries</div>
+<label for="favcity" style="width:20%;"> 
+<select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
+<option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+<option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+<option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+</select>
+</label>
+<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+ 
+<thead>
+<tr>
+<th>Order Date</th>
+<th class="text-left">Order Number</th>
+<th class="text-center" data-hide="phone,tablet">Payment Policy</th>
+<th class="text-right" data-hide="phone,tablet">Amount</th>
+<th class="text-right" data-hide="phone,tablet">Paid</th>
+<th class="text-right" data-hide="phone,tablet">Balance</th>
+<th class="text-center" data-hide="phone,tablet">Payment Mode</th>
+<th class="align-center" data-hide="phone">Job Status</th>
+</tr>
+</thead>
+<tbody>
+    {% for invoice in invoices %}
+    <tr>
+    <td {% if invoice.cleaning_in_progress_count == 0 and invoice.completed_cleaning_count == 0 %}
+        class="blue-line"
+        {% elif invoice.cleaning_in_progress_count >= 1 %}
+        class="yellow-line"
+        {% elif invoice.completed_cleaning_count == invoice.cleaning_count %}
+        class="green-line"
+        {% else %}
+        class="blue-line"
+        {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
+    <td class="text-left"  >{{invoice.order_no}}</td>
+    <td class="text-center">{{invoice.evaluation.payment_method}}</td>
+    </td>
+    <td class="text-right">{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}</td>
+    <td class="text-right">{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}</td>
+    {% if invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
+    <td class="text-right">{{invoice.subscription_topay|default_if_none:'0.000'|floatformat:'3'}}</td>
+    {% else %}
+    <td class="text-right">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}</td>
+    {% endif %}
+    <td class="text-center">
+    {% for inv in invoice.paymenthistory|slice:":1" %}
+    {% if inv.payment_mode == 'ONLINECREDIT' %}
+    {{inv.payment_gateway|default_if_none:'-'}},
+    {% else %}
+    {{inv.payment_mode|default_if_none:'-'}},
+    {% endif %}
+    {% empty %}
+    -
+    {% endfor %}
+    </td>
+    <td class="clickable-row" {% if invoice %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
+        {% if invoice.cleaning_in_progress_count == 0 and invoice.completed_cleaning_count == 0 %}
+        <span class="text-center blue-bg clickable-row">Not Started</span>
+        {% elif invoice.cleaning_in_progress_count >= 1 %}
+        <span class="text-center yellow-bg clickable-row">IN PROGRESS</span>
+        {% elif invoice.completed_cleaning_count == invoice.cleaning_count %}
+        <span class="text-center green-bg clickable-row" >COMPLETED</span>
+        {% else %}
+        <span class="text-center blue-bg clickable-row">Not Started</span>
+        {% endif %}
+        </td>
+    </tr>
+    {% empty %}
+    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td><td></td></tr>
+    {% endfor %}
+
+</tbody>
+<tfoot>
+</tfoot>
+</table>
+
+<div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
+    <div class="pagination-containter"><!--pagination-containter-->
+    	<div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
+        Showing {{invoices.start_index}} to {{invoices.end_index}} of {{invoices.paginator.count}} entries
+        </div><!--pagination-column pagination-column-left-->
+        
+        <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
+        <!--paginated-->
+   {% if invoices.has_other_pages %}
+   <nav aria-label="Page navigation example">
+  <ul class="pagination">
+     {% if invoices.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ invoices.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% endif %}
+    {% for pg in page_range %}
+    {% if vus.number == pg %}
+            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}">{{pg}}</a></li>
+    {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}">{{pg}}</a></li>
+    {% endif %}
+    {% endfor %}
+    {% if invoices.has_next %}        
+    <li class="page-item">
+      <a class="page-link" href="?page={{ invoices.next_page_number}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link disabled" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+    {% endif %}
+    <!--paginated-->
+        </div><!--pagination-column pagination-column-right-->
+    </div><!--pagination-containter-->         
+</div><!--white-wrapper-pagination--> 
+</div><!--white-wrapper-->      
+            
+            
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+
+  <!-- export popup -->
+<div class="overlay" id="export_popup">
+    <div class="popup-assign-eval"><!--popup-assign-eval-->
+        <a id="close_export_popup" class="close">&times;</a>
+            <div class="content"><!--content-->
+            
+<form id="excelform" method="post" action="{% url 'accountant:export_payment_xls' %}" enctype="multipart/form-data" target="_blank">{% csrf_token %}
+
+    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->  
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  <h3 align="center">Report Generator</h3>
+  </div>
+  </div>
+
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>From Date</label></div>
+        <input type="text" name="from_date" class="textBox id_from_date readonly" onchange="exportfromtodatecheck();" required readonly>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>To Date</label></div>
+                <input type="text" name="to_date" class="textBox id_to_date readonly" onchange="exportfromtodatecheck();" required readonly>
+
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+   
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    <div class=" bold-text common-label"> <label>Report Type</label></div>
+      <select class="textBox" name="report_type" id="report_type" required>
+      {% comment %} <option value="paymentlist">GENERAL PAYMENT SHEET</option>
+      <option value="totalsales">TOTAL SALES REPORT</option>
+      <option value="acceptedjobs">ACCEPED JOB SHEET</option>
+      <option value="rejectedjobs">REJECTED JOB SHEET</option>
+      <option value="onetime">SALES REPORT : ONETIME CLEANING</option>
+      <option value="subscription">SALES REPORT : SUBSCRIPTION</option>
+      <option value="customer">CUSTOMER PAYMENT REPORT</option>
+      <option value="customeroutstanding">CUSTOMER OUTSTANDING PAYMENTS REPORT</option> {% endcomment %}
+      <option value="transactionhistory">TRANSACTION HISTORY</option>
+      <option value="salesdetails">SALES REPORT (COMPLETED JOBS)</option>
+      <option value="allsalesdetails">SALES REPORT (ALL JOBS)</option>
+      </select>
+      </div>
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<div align="center"> <input class="assignButton export_payment" name="assing" type="button" value="Export" ></div>  
+
+</div><!--ticket-wrapper-full-->             
+</form>
+            </div><!--content-->
+    </div><!--popup-assign-eval-->
+</div><!--overlay-->
+<!-- export popup -->
+
+{% include 'salesadmin/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %} 
+<script src='js/footable.js'></script> 
+<script src="{% static 'files/js/charts/payment-chart.js' %}"></script>  
+<script id="rendered-js">
+$('.footable').footable({
+  calculateWidthOverride: function () {
+    return { width: $(window).width() };
+  } });
+// See:
+// http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
+//# sourceURL=pen.js
+    </script>
+    <script>
+    
+// //datepicker and timepicker for popup
+    $(document).on("click", ".content", function () {
+       $('.id_from_date').datetimepicker({ 
+            pickTime: false, 
+            format: "DD-MM-YYYY", 
+            startDate: new Date(), 
+        });
+
+        $('.id_to_date').datetimepicker({ 
+            pickTime: false, 
+            format: "DD-MM-YYYY", 
+            startDate: new Date(), 
+        });
+
+    });
+
+function appendLeadingZeroes(n){
+    if(n <= 9){
+      return "0" + n;
+    }
+    return n
+  }
+
+//append dates to export popup
+var date3 = new Date();
+date3.setDate(date3.getDate()-1)
+
+var datestring = appendLeadingZeroes(date3.getDate())  + "-" + appendLeadingZeroes(date3.getMonth()+1) + "-" + date3.getFullYear();
+
+var date4 = new Date();
+date4.setDate(date4.getDate()-30);
+
+var datestring2 = appendLeadingZeroes(date4.getDate())  + "-" + appendLeadingZeroes(date4.getMonth()+1) + "-" + date4.getFullYear();
+console.log(datestring,datestring2)
+
+$('.id_from_date').val(datestring2);
+$('.id_to_date').val(datestring);
+
+
+$('.export_btn').click(function(){
+  
+  $('#export_popup').css({'visibility':'visible','opacity':1,});
+});
+
+$("#close_export_popup").click(function () {
+    $('#export_popup').css({'visibility':'hidden','opacity':0,});
+});
+
+//EXPORT EXCEL
+$(".export_payment").click(function () {
+  console.log("poi")
+    $('#export_popup').css({'visibility':'hidden','opacity':0,});
+    
+    submitAnyForm($(this));
+
+    location.reload(true);
+
+    //document.getElementById("excelform").reset();
+    
+});
+
+function paymentfromtodatecheck() {
+  var d1 = $('#payment_fromdate').val();
+
+  var vals = d1.split('-');
+  var day = parseInt(vals[0]);
+  var month = parseInt (vals[1]);
+  var year = parseInt (vals[2]);
+
+  var d1date = new Date(year,month,day);
+  d1date.setMonth(d1date.getMonth()-1);
+  
+  var d2 = $('#payment_todate').val();
+
+  var vals2 = d2.split('-');
+  var day2 = parseInt(vals2[0]);
+  var month2 = parseInt (vals2[1]);
+  var year2 = parseInt (vals2[2]);
+
+  var d2date = new Date(year2,month2,day2);
+  d2date.setMonth(d2date.getMonth()-1);
+
+  console.log(d1,d2,"dee")
+  if ( d1date > d2date){
+    $('#payment_fromdate').val(d2);
+    $('#payment_todate').val(d1);
+  }
+};
+</script>
+
+<script>
+function set_params_go(args)
+{
+var url='{% url 'booking-officer:bookingofficer-payments' %}';
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),status:$('#status_filter_id').val(),payment_policy:$('#payment_policy_id').val(),payment_status:$('#payment_status_filter_id').val()
+};
+for(key in args) 
+    params[key]=args[key];
+var query='';
+for(key in params)
+    if(params[key]) 
+        query+='&'+key+'='+params[key].toString();
+query=query.replace('&','?');
+window.location.href=url+query;  
+}
+    </script>    
+{% endblock %}

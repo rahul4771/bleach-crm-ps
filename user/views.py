@@ -44,6 +44,9 @@ class Signin(View):
 
 			if request.user.user_type == 'SALESADMIN':	
 				return redirect('bleach_salesadmin:salesadmindash-board')
+
+			if request.user.user_type == 'BOOKINGOFFICER':	
+				return redirect('booking-officer:bookingofficerdash-board')
 		else:		
 			return render(request,'user/login.html',{})
 
