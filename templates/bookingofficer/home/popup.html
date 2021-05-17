@@ -1,0 +1,90 @@
+{% load static %}
+<!-- edit_evaluation_popup -->
+<div class="modal-popup-wrapper"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+        <div class="modal-header"><!--modal-header-->
+        <button class="modal-close edit_evaluation">X</button>
+        </div><!--modal-header-->
+    <div class="modal-body"><!--modal-body-->
+    <div class="modal-content"><!--modal-content-->
+    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">  
+                <tr>
+                    <td valign="center"><div class="blc-number" id="blcno_evaluation_id"></div><span id="address_evaluation_id"></span></td>
+                    <td align="center"><div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div></td>
+                    <td><div class="bold-text" id="customername_evaluation_id"></div><div id="mobileno_evaluation_id"></div></td>
+                </tr>
+ 
+            <tr>
+            <td colspan="3">Evaluation Date:<strong><span class="blue-text" id="proposed_date_evaluation_id"></span></strong> &nbsp;Evaluation Time:<strong><span class="blue-text" id="proposed_time_evaluation_id"></span></strong> &nbsp;Evaluator:<strong><span class="blue-text" id="evaluator_name_evaluation_id"></span></strong></td>
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+     
+    <div class="edit-collapse collapsible"><a href="#collapsible" ><img src="{% static 'files/images/edit.png' %}"></a></div>  
+    <div class="popup-collapse"><!--popup-collapse--> 
+    <form method="post" enctype= "multipart/form-data">
+    {%csrf_token%}  
+    <input type="hidden" name="action_type" value="edit_evaluation">
+    <input type="hidden" name="evaluation_id" id="evaluation_id">  
+ <hr class="hr-dashedpad">  
+  <div class="blc-number align-center">Edit Evaluation</div>    
+  <br>   
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Address</label></div>
+        <label for="favcity">
+                <select name="address" id="address">
+                <option value="">Choose Address</option>
+                </select>
+        </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Evaluator</label></div>
+        <label for="favcity">
+                <select id="evaluator" name="evaluator">
+                <option value="">Choose Evaluator</option>
+                {% for worker in workers %}
+                {% if worker.user_type == 'EVALUATOR' %}
+                <option value="{{worker.id}}">{{worker.name}}</option>
+                {% endif %}
+                {% endfor %}
+                </select>
+        </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">  
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Appointment Date</label></div>
+        <input name="proposed_date" type="text" class="textBox" id="appointment_date">
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Appointment Time</label></div>
+        <input name="proposed_time" type="text" class="textBox" id="appointment_time">
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">  
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+     <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Notes</label></div>
+                <textarea name="notes" class="textArea" cols="" rows="" id="notes"></textarea>
+  </div><!--ticket-form-left-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<div align="center"> <input class="assignButton" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
+</form>
+ </div><!--popup-collapse-->
+</div><!--ticket-wrapper-full--> 
+        
+    </div><!--modal-content-->
+    </div><!--modal-body-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--modal-popup-wrapper-->
+<!-- /edit_evaluation_popup -->

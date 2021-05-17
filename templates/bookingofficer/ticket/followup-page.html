@@ -1,0 +1,623 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "bookingofficer/common/header.html" %}
+    
+<section class="content"><!--content-->
+    <div class="container-fluid space topspace"><!--container-fluid space topspace-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+            <h1 class="dashboard-head">TKT{{followup_details.ticket_no}}</h1>
+            {% if followup_details.status == 'FOLLOWUP_IN_PROGRESS' %}
+            <p><input name="open" type="button" class="yellow-button" value="Open" id="open"></p>
+            {% elif followup_details.status == 'FOLLOWUP_CLOSED' %}
+            <p><input name="open" type="button" class="green-button" value="Closed" id="closed"></p>
+            {% elif followup_details.status == 'TICKET_RISED' %}
+            <p><input name="open" type="button" class="blue-button" value="Ticket Rised" id="closed"></p>
+            {% else %}
+            <p><input name="open" type="button" class="red-button" value="Cancelled" id="cancelled"></p> 
+            {% endif %}
+            </div><!--welcome-wrapper-->
+        
+        
+        
+        
+        
+<div class="order-top-wrapper"><!--order-top-wrapper-->
+    <div class="order-steps-wrapper"><!--order-steps-wrapper-->
+            <div class="order-left-stretch"><!--order-left-stretch-->
+ 
+                <div class="order-bar-container"><!--order-bar-container-->
+                    <div class="order-loaderbar"><!--order-loaderbar-->
+                        <div class="bar-loader"></div>
+                    </div><!--order-loaderbar-->
+                </div><!--order-bar-container-->
+                
+                <div class="order-progress-wrapper"><!--order-progress-wrapper-->
+                
+                    <div class="order-progress-widget order-progress-widget-column1"><!--order-progress-widget order-progress-widget-column1-->
+                        <div class="evaluation">Tickets</div>
+                        <div class="evaluation-icon"><img src="{% static 'files/images/tickets-green.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                    </div><!--order-progress-widget order-progress-widget-column1-->
+                   
+                    <div class="order-progress-widget order-progress-widget-column2"><!--order-progress-widget order-progress-widget-column2-->
+                        <div class="evaluation">Investigation</div>
+                        <div class="evaluation-icon">{% if followup_details.status == 'FOLLOWUP_IN_PROGRESS' or followup_details.status == 'FOLLOWUP_CLOSED' %}<img src="{% static 'files/images/investigation-green.png' %}" class="orderEval-icon %}"><div class="evaluation-status">Completed</div>{% else %}<img src="{% static 'files/images/investigation-gray.png' %}" class="orderEval-icon %}"><div class="evaluation-status">Waiting</div> {% endif %}</div>
+                    </div><!--order-progress-widget order-progress-widget-column2-->                  
+                    
+                    {% if followup_details.follow_up_schedules %}
+                    {% for follow_up_scheduler in followup_details.follow_up_schedules %}
+                    <div class="order-progress-widget order-progress-widget-column3"><!--order-progress-widget order-progress-widget-column6-->
+                        <div class="evaluation">Followup Cleaning</div>
+                        
+                        {% if follow_up_scheduler.work_status == 'FOLLOW_UP_TEAM_ASSIGNED' %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-assigningteam.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Cleaning Team Assigned</div>
+                        {% elif follow_up_scheduler.work_status == 'FOLLOW_UP_CLEANING_IN_PROGRESS' %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-cleaning.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Cleaning in Progress</div>
+                        {% elif follow_up_scheduler.work_status == 'FOLLOW_UP_CLEANING_FULFILLED' %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-green-cleaning.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                        {% else %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-gray-cleaning.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Approved</div>
+                        {% endif %}
+                    </div><!--order-progress-widget order-progress-widget-column7-->
+                    {% endfor %}                      
+                    {% endif %}
+
+                    {% if followup_details.investigation.reports %}
+                    <div class="order-progress-widget order-progress-widget-column4"><!--order-progress-widget order-progress-widget-column6-->
+                        <div class="evaluation">Reporting</div>
+                        
+                        <div class="evaluation-icon"><img src="{% static 'files/images/report_green.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+
+                    </div><!--order-progress-widget order-progress-widget-column7-->
+                    {% endif %}
+
+                    {% if followup_details.investigation.paybackdiscounts %}
+                    <div class="order-progress-widget order-progress-widget-column5"><!--order-progress-widget order-progress-widget-column6-->
+                        <div class="evaluation">Payback/Discount</div>
+                        
+                        {% if followup_details.is_paybackdiscount_approved %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/payback_green.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                        {% else %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/payback_gray.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Waiting</div>
+                        {% endif %}
+                    </div><!--order-progress-widget order-progress-widget-column7-->
+                    {% endif %}
+
+                    {% if followup_details.investigation.buybackpromogifts %}
+                    <div class="order-progress-widget order-progress-widget-column6"><!--order-progress-widget order-progress-widget-column6-->
+                        <div class="evaluation">Buyback/Promocode/Gift</div>
+                        
+                        {% if followup_details.is_buybackgiftpromo_approved %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/presents_green.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                        {% else %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/presents_gray.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Waiting</div>
+                        {% endif %}
+                    </div><!--order-progress-widget order-progress-widget-column7-->
+                    {% endif %}
+
+                    <div class="order-progress-widget order-progress-widget-column7"><!--order-progress-widget order-progress-widget-column6-->
+                        <div class="evaluation">Closed</div>
+                        
+                        {% if followup_details.status == 'FOLLOWUP_CLOSED' %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/closed-green.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                        {% else %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/closed-gray.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Waiting</div>
+                        {% endif %}
+
+                    </div><!--order-progress-widget order-progress-widget-column7-->                      
+                </div><!--order-progress-wrapper-->
+            </div><!--order-left-stretch-->
+            
+        <div class="order-right-fixed"><!--order-right-fixed-->
+            <div class="order-card-column whitebg red-border clickable-row-list" data-href="{% url 'booking-officer:bookingofficer-client-orders' client_details.id %}"><!--order-card-column-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-orders-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Orders</h1>
+                <h2 class="red-text"><label>Active<span>{{active_orders_count}}</span></label> </h2>
+                <p><label>Total<span>{{total_orders_count}}</span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
+            </div><!--order-card-column-->
+        </div><!--order-right-fixed-->
+    </div><!--order-steps-wrapper-->
+    
+    
+<div class="order-details-wrapper"><!--order-details-wrapper--> 
+    <div class="order-details-left-stretch"><!--order-details-left-stretch-->
+    
+        <div class="details-head">Cleaning Details <div class="order-date">{{followup_details.investigation.order_schedule.start_at}}</div></div>   
+        <hr class="style-three" > 
+        <div class="order-clean-Details-wrapper"><!--order-clean-Details-wrapper-->
+            <div class="order-clean-Details-widget order-clean-Details-widget-column1"><!--order-clean-Details-widget order-clean-Details-widget-column1-->
+            <div class="cleaning-img"><img src="{% static 'files/images/cleaning.jpg' %}"></div>
+            </div><!--order-clean-Details-widget order-clean-Details-widget-column1-->
+            
+            <div class="order-clean-Details-widget order-clean-Details-widget-column2"><!--order-clean-Details-widget order-clean-Details-widget-column2-->
+                <div class="details-head align-left">{{followup_details.investigation.order_schedule.order_scheduler_book.cleaning_type.name}}</div>
+
+                {% if followup_details.investigation.order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
+                <div class="blue-bg-sm">ONE TIME</div>
+                {% else %}
+                <div class="green-bg-sm">SUBSCRIBED</div>
+                {% endif %}
+
+                
+                {% if followup_details.investigation.order_schedule.order_scheduler_book.cleaning_method %}
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.cleaning_method}} Method</div>
+                {% endif %}
+
+
+                {% if followup_details.investigation.order_schedule.order_scheduler_book.area_type %}
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.area_type}}</div>
+                {% endif %}
+
+                {% if followup_details.investigation.order_schedule.order_scheduler_book.location_type %}
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.location_type}}</div>
+                {% endif %}
+
+                {% if followup_details.investigation.order_schedule.customer_address.area %}
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i>
+                {{followup_details.investigation.order_schedule.customer_address.area.name}}</div>
+                {% endif %}
+
+            </div><!--order-clean-Details-widget order-clean-Details-widget-column2-->            
+            
+            <div class="order-clean-Details-widget order-clean-Details-widget-column3"><!--order-clean-Details-widget order-clean-Details-widget-column3-->
+            <br>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.start_at}}</div>
+                <br>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> <b>{{followup_details.investigation.order_schedule.customer_address.apartment}}</b>: {% if followup_details.investigation.order_schedule.customer_address.floor %}{{followup_details.investigation.order_schedule.customer_address.floor}}, {% else %}{% endif %} {{followup_details.investigation.order_schedule.customer_address.building}}, {{followup_details.investigation.order_schedule.customer_address.block}}, {{followup_details.investigation.order_schedule.customer_address.street}}, {% if followup_details.investigation.order_schedule.customer_address.avenue %}{{followup_details.investigation.order_schedule.customer_address.avenue}}, {% else %}{% endif %} {{followup_details.investigation.order_schedule.customer_address.area.name}}, {{followup_details.investigation.order_schedule.customer_address.governorate.name}}</div>
+                <br>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
+                <br>
+                <div class="common-gray-text align-left"><i class="fa fa-lg fa-credit-card orange-text" aria-hidden="true"></i> {{followup_details.investigation.order_schedule.order_scheduler_book.total_cost|floatformat:'3'}} KD</div>
+            </div><!--order-clean-Details-widget order-clean-Details-widget-column3-->                        
+        </div><!--order-clean-Details-wrapper--> 
+         
+        
+        
+        
+<div class="details-sub-head align-left">Ticket Details</div>     
+<div class="investigation-columns"><!--investigation-columns-->
+        <div class="investigation-columns-left"><!--investigation-columns-left-->
+            {% if followup_details.investigation.assigned_by.profile_image %}
+            <div class="profile-pic"><img src="{{followup_details.investigation.assigned_by.profile_image.url}}"></div>
+            {% else %}
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>            
+            {% endif %}
+            <div class="client-name">{{followup_details.investigation.assigned_by.name}}<div class="common-gray-text">{{followup_details.investigation.assigned_by.user_type}}</div></div>
+        </div><!--investigation-columns-left-->
+
+        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
+        <div class="order-invest-date">{{followup_details.investigation.scheduled_at}}</div>
+        <br>
+        <div class="order-invest-date"><i class="fa fa-lg fa-check-circle" aria-hidden="true"></i>  {{followup_details.investigation.ticket_types}}</div>
+            <div class="notes">Notes</div>
+            <p>{{followup_details.investigation.notes}}</p>
+        </div><!--investigation-columns-middle-->
+</div><!--investigation-columns-->
+
+{% if followup_details.investigation.is_secondary_investigation_completed == True %}
+<div class="details-sub-head align-left">Investigation</div>     
+<div class="investigation-columns"><!--investigation-columns-->
+        <div class="investigation-columns-left"><!--investigation-columns-left-->
+            {% if followup_details.investigation.secondary_investigator.profile_image %}
+            <div class="profile-pic"><img src="{{followup_details.investigation.secondary_investigator.profile_image.url}}"></div>
+            {% else %}
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>            
+            {% endif %}
+            <div class="client-name">{{followup_details.investigation.secondary_investigator.name}}<div class="common-gray-text">{{followup_details.investigation.secondary_investigator.user_type}}</div></div>
+        </div><!--investigation-columns-left-->
+
+        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
+        {% comment %} <div class="order-invest-date">{{followup_details.investigation.scheduled_at}}</div> {% endcomment %}
+        <br>
+        <div class="notes">{{followup_details.investigation.title}}</div>
+        <p>{{followup_details.investigation.secondary_investigation_notes}}</p>
+        </div><!--investigation-columns-middle-->
+</div><!--investigation-columns-->
+{% endif %}
+
+{% if followup_details.investigation.check_out %}
+<div class="details-sub-head align-left">Actions</div>
+<div class="investigation-columns"><!--investigation-columns-->
+        <div class="investigation-columns-left"><!--investigation-columns-left-->
+            {% if followup_details.investigation.investigator.profile_image %}
+            <div class="profile-pic"><img src="{{followup_details.investigation.investigator.profile_image.url}}"></div>
+            {% else %}
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>            
+            {% endif %}
+            <div class="client-name">{{followup_details.investigation.investigator.name}}<div class="common-gray-text">QC</div></div>
+        </div><!--investigation-columns-left-->
+
+        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
+        <div class="order-invest-date">
+            <p> {% if followup_details.follow_up_schedules %}<i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i>  &nbsp;Followup Cleaning{% endif %}<br>
+
+                {% if followup_details.investigation.reports %}<i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i> &nbsp;Internal Reporting{% endif %}<br>
+
+                {% if followup_details.investigation.buybackpromogifts %}{% if followup_details.is_buybackgiftpromo_approved  %}<i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i>{% else %}<i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i>{% endif %}  &nbsp;Buyback/Promocode/Gift{% endif %}<br>
+
+                {% if followup_details.investigation.paybackdiscounts %}{% if followup_details.is_paybackdiscount_approved  %}<i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i>{% else %}<i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i>{% endif %}  &nbsp;Payback/Discount{% endif %}</p>
+            </div>
+
+        {% if followup_details.followup_notes %}
+        <div class="notes">Followup Cleaning Notes</div>
+            <p>{{followup_details.followup_notes}}</p>
+        {% endif %}
+        </div><!--investigation-columns-middle-->
+</div><!--investigation-columns-->
+{% endif %}
+
+{% if followup_details.followupsections %}
+<hr class="divider">
+<div class="details-sub-head align-left">Followup Details</div>
+{% for section in followup_details.followupsections %}
+<div class="details-sub-head align-left">Section {{forloop.counter}} : {{section.section_name}}</div>
+<br>
+<div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
+        <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left--> 
+        {% if section.category %}  
+        <div class="category-cleaning"><span class="labelcategory">Category</span> : {{section.category}}</div>
+        {% endif %}
+        <div class="category-cleaning"><span class="labelcategory">Dirt Level</span> : {{section.dirt_level}}</div>
+        {% if section.age %}
+        <div class="category-cleaning"><span class="labelcategory">Age</span> : {{section.age}}</div>
+        {% endif %}
+        <div class="category-cleaning"><span class="labelcategory">Size</span> : {{section.size}} {{section.unit|default_if_none:''}}</div>
+        {% if section.floor %}
+        <div class="category-cleaning"><span class="labelcategory">Floors</span> : {{section.floor}}</div>
+        {% endif %}
+        {% if section.apartment %}
+        <div class="category-cleaning"><span class="labelcategory">Apartments</span> : {{section.apartment}}</div>
+        {% endif %}
+        {% if section.room %}
+        <div class="category-cleaning"><span class="labelcategory">Rooms</span> : {{section.room}}</div>
+        {% endif %}
+        </div><!--filter-column-boxes filter-columns-left-->
+        <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+        {% if section.wall_type %}
+        <div class="category-cleaning"><span class="labelcategory">Wall Type</span>  : {{section.wall_type}}</div>
+        {% endif %}
+        {% if section.ceiling_type %}
+        <div class="category-cleaning"><span class="labelcategory">Celing Type</span>  : {{section.ceiling_type}}</div>
+        {% endif %}
+        {% if section.floor_type %}
+        <div class="category-cleaning"><span class="labelcategory">Floor Type</span>  : {{section.floor_type}}</div>
+        {% endif %}
+        {% if section.material %}
+        <div class="category-cleaning"><span class="labelcategory">Material</span>  : {{section.material}}</div>
+        {% endif %}
+        {% if section.colour %}
+        <div class="category-cleaning"><span class="labelcategory">Color</span>  : {{section.colour}}</div>
+        {% endif %}
+        {% if section.cause_of_stain %}
+        <div class="category-cleaning"><span class="labelcategory">Cause of Stain</span>  : {{section.cause_of_stain}}</div>
+        {% endif %}
+        <div class="category-cleaning"><span class="labelcategory">Cost</span>  : {{section.section_cost|floatformat:'3'}} KD</div>
+        </div><!--filter-column-boxes filter-columns-right-->      
+        </div><!--filter-columns-wrapper--> 
+<br> 
+<div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
+{% if section.sectionkeynotes %}
+{% for keynote in section.sectionkeynotes %}
+        <div class="evaluation-card"><!--evaluation-card-->
+        <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
+        </div><!--evaluation-card-->        
+{% endfor %}
+{% endif %}
+</div><!--evaluation-card-wrapper-->
+{% endfor %}
+{% endif %}
+
+
+{% for follow_up_scheduler in followup_details.follow_up_schedules %}
+{% for team in follow_up_scheduler.followupteams %}
+
+{% if team.followupmembers %}
+<div class="details-sub-head align-left">Followup Cleaning Team</div>
+    <div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
+        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+            <div class="order-common-date">{{follow_up_scheduler.start_at}}</div>
+                    <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                        <div class="team-profile-pic"><img src="{% static 'files/images/team-leader.png' %}"></div>
+                    </div><!--order-clean-team-widget order-clean-team-widget-column1-->
+                    
+                <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                    <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                        <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                            <div class="team-Name">{{team.team_leader}}</div>
+                            <div class="team-profile">Team Incharge</div>
+                        </div><!--order-clean-inColumn-->                   
+                    </div> <!--order-clean-team-inside-wrapper-->
+                </div><!--order-clean-team-widget order-clean-team-widget-column2-->
+        </div><!--order-clean-team-wrapper-->
+        
+<hr class="bar">
+        
+        
+        <div class="order-clean-team-wrapper"><!--order-clean-team-wrapper-->
+            <div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1-->
+                <div class="team-profile-pic"><img src="{% static 'files/images/team-member.png' %}"></div>
+            </div><!--order-clean-team-widget order-clean-team-widget-column1-->
+            
+            <div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2-->
+                <div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->
+                    {% for member in team.followupmembers %}
+                    {% if team.team_leader.id != member.member.id %}
+                    <div class="order-clean-inColumn"><!--order-clean-inColumn-->
+                        <div class="team-Name">{{member.member.name}}</div>
+                        <div class="team-profile">Team Member</div>
+                    </div><!--order-clean-inColumn-->
+                    {% endif %}
+                    {% endfor %}
+                </div><!--order-clean-team-inside-wrapper-->     
+            </div><!--order-clean-team-widget order-clean-team-widget-column2-->  
+        </div><!--order-clean-team-wrapper-->
+        
+    </div><!--order-clean-outer-wrapper-->
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+{% if followup_details.investigation.is_internalreporting_approved == True %}
+<hr class="divider">
+<div class="details-sub-head align-left">Internal Reporting</div>
+<br>
+{% for report in followup_details.investigation.reports %}
+<div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
+            <div class="bold-text lg-text red-text">{{report.title}}</div>
+            <br>
+            <div><p class="bold-text">{{report.notes}}</p></div>
+</div>
+{% endfor %}
+{% endif %}
+
+
+{% if followup_details.investigation.paybackdiscounts %}
+<hr class="divider">
+<div class="details-sub-head align-left">Payback/Discount Details</div>
+<br>
+{% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
+{% for paybackdiscountdetail in  paybackdiscount.paybackdiscountdetails %}
+<div class="evaluation-card"><!--evaluation-card-->
+    <div class="evaluation-section"><label>{{paybackdiscountdetail.name}} ({{paybackdiscountdetail.name}} ({% if paybackdiscountdetail.category == 'SERVICEQUALITY' %}Service Quality{% else %}{{paybackdiscountdetail.category|title}}{% endif %})</label>{{paybackdiscountdetail.cost|floatformat:'3'}} KD</div> 
+</div><!--evaluation-card-->
+{% endfor %}
+<div class="evaluation-card"><!--evaluation-card-->
+    <div class="evaluation-section"><label><span class="red-text bold-text">Total</span></label><span class="red-text">{{paybackdiscount.total_cost|floatformat:'3'}} KD</span></div> 
+</div><!--evaluation-card-->
+{% endfor %}
+{% endif %}
+
+
+{% if followup_details.investigation.buybackpromogifts %}
+<hr class="divider">
+<div class="details-sub-head align-left">Buyback/Promocode/Gift Details</div>
+<br>
+{% for buybackpromogift in followup_details.investigation.buybackpromogifts %}
+{% for buybackpromogiftdetail in  buybackpromogift.buybackpromogiftdetails %}
+<div class="evaluation-card"><!--evaluation-card-->
+    <div class="evaluation-section"><label>{{buybackpromogiftdetail.name}} ({% if buybackpromogiftdetail.category == 'SERVICEQUALITY' %}Service Quality{% else %}{{buybackpromogiftdetail.category|title}}{% endif %})</label>{{buybackpromogiftdetail.cost|floatformat:'3'}} KD</div> 
+</div><!--evaluation-card-->
+{% endfor %}
+<div class="evaluation-card"><!--evaluation-card-->
+    <div class="evaluation-section"><label><span class="red-text bold-text">Total</span></label><span class="red-text">{{buybackpromogift.total_cost|floatformat:'3'}} KD</span></div> 
+</div><!--evaluation-card-->
+{% endfor %}
+{% endif %}
+
+
+ <div class="details-sub-head align-left media-head">Media</div>
+<div class="order-clean-outer-wrapper media-explaining"><!--order-clean-outer-wrapper-->
+<div class="gallery-wrapper"><!--gallery-wrapper-->
+    
+    {% if followup_details.investigation.investigationmedias %}
+    <div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
+    <div class="media-heading align-left">From Customer</div>
+    <section>
+        <div id="data-pn-1" data-pn="1" data-src="{% for investigationmedia in followup_details.investigation.investigationmedias %}{% if investigationmedia.taken_status == 'CUSTOMER_SEND' %}{{investigationmedia.media.url}},{% endif %}{% endfor %}"></div>
+    </section>  
+    </div><!--gallery-widget-column-column1-->
+    {% endif %}
+
+    {% if followup_details.investigation.investigationmedias %}
+    <div class="gallery-widget-column-column2"><!--gallery-widget-column-column1-->
+    <div class="media-heading align-left">From Technical Supervisor</div>
+    <section>
+        <div id="data-pn-2" data-pn="2" data-src="{% for investigationmedia in followup_details.investigation.investigationmedias %}{% if investigationmedia.taken_status == 'SECONDARY_INVESTIGATION' %}{{investigationmedia.media.url}},{% endif %}{% endfor %}"></div>
+    </section>  
+    </div><!--gallery-widget-column-column1-->
+    {% endif %}
+
+</div>
+
+<div class="gallery-wrapper"><!--gallery-wrapper-->
+    {% if followup_details.follow_up_schedules %}
+    <div class="gallery-widget-column-column3"><!--gallery-widget-column-column1-->
+    <div class="media-heading align-left">Before Cleaning</div>
+    <section>
+        <div id="data-pn-3" data-pn="3" data-src="{% for follow_up_scheduler in followup_details.follow_up_schedules %}{% for team in follow_up_scheduler.followupteams %}{% for media in team.followupmedias %}{% if media.taken_status == 'BEFORE_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}{% endfor %}"></div>
+    </section>  
+    </div><!--gallery-widget-column-column1-->
+    {% endif %}
+
+    {% if followup_details.follow_up_schedules %}
+    <div class="gallery-widget-column-column4"><!--gallery-widget-column-column1-->
+    <div class="media-heading align-left">After Cleaning</div>
+    <section>
+        <div id="data-pn-4" data-pn="4" data-src="{% for follow_up_scheduler in followup_details.follow_up_schedules %}{% for team in follow_up_scheduler.followupteams %}{% for media in team.followupmedias %}{% if media.taken_status == 'BEFORE_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}{% endfor %}"></div>
+    </section>  
+    </div><!--gallery-widget-column-column1-->
+    {% endif %}
+    
+</div>
+
+
+<div class="gallery-wrapper"><!--gallery-wrapper-->
+{% for report in  followup_details.investigation.reports %}
+    {% if report.reporting_medias %}
+    <div class="gallery-widget-column-column5"><!--gallery-widget-column-column2-->
+    <div class="media-heading align-left">Reporting</div>
+        <section>
+        <div id="data-pn-5" data-pn="5" data-src="{% for report in followup_details.investigation.reports %}{% for reporting_media in report.reporting_medias %}{{reporting_media.media.url}},{% endfor %}{% endfor %}"></div>
+    </section>
+    </div><!--gallery-widget-column-column2-->
+    {% endif %}
+    {% endfor %}
+
+{% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
+{% if paybackdiscount.paybackdiscountmedias %}
+    <div class="gallery-widget-column-column6"><!--gallery-widget-column-column2-->
+    <div class="media-heading align-left">Payback/Discount</div>
+        <section>
+        <div id="data-pn-6" data-pn="6" data-src="{% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
+{% for paybackdiscountmedia in  paybackdiscount.paybackdiscountmedias %}{{paybackdiscountmedia.media.url}},{% endfor %}{% endfor %}"></div>
+    </section>
+    </div><!--gallery-widget-column-column4-->
+{% endif %}
+{% endfor %}
+
+
+
+{% for buybackpromogift in followup_details.investigation.buybackpromogifts %}
+{% if buybackpromogift.buybackpromogiftmedias %}
+    <div class="gallery-widget-column-column7"><!--gallery-widget-column-column2-->
+    <div class="media-heading align-left">Buyback/Gift/Promocode</div>
+        <section>
+        <div id="data-pn-7" data-pn="7" data-src="{% for buybackpromogift in followup_details.investigation.buybackpromogifts %}
+{% for buybackpromogiftmedia in  buybackpromogift.buybackpromogiftmedias %}{{buybackpromogiftmedia.media.url}},{% endfor %}{% endfor %}"></div>
+    </section>
+    </div><!--gallery-widget-column-column2-->    
+{% endif %}
+{% endfor %}
+
+</div><!--gallery-wrapper-->
+
+ 
+</div><!--order-clean-outer-wrapper-->
+
+ 
+ 
+       
+       
+    </div><!--order-details-left-stretch-->
+
+    <div class="order-details-right-fixed"><!--order-details-right-fixed-->
+        <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+        <div class="client-name">{{client_details.name}}</div>
+        <div class="common-gray-text">{{client_details.mobile_number}}</div>
+        <div class="common-gray-text">{{client_details.email}}</div>
+        <br>
+        <hr class="hr">
+        {% if client_details.company  %}
+        <div class="common-gray-text">Comapany Name : <span class="bold-text">{{client_details.company}}</span></div>
+        {% endif %}
+        {% if client_details.nationality %}
+        <div class="common-gray-text">Nationality : <span class="bold-text">{{client_details.nationality}}</span></div>
+        {% endif %}
+        {% if client_details.phone_number %}
+        <div class="common-gray-text">Other Contact : <span class="bold-text">{{client_details.phone_number}}</span></div>
+        {% endif %}
+        <hr class="hr">
+        <br>
+        {% for address in client_details.customer_addresses %}
+            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address {{forloop.counter}}: <b>{{address.apartment}}</b></div>
+            <div class="address">{% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}}, {{address.block}}, {{address.street}}, {% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} {{address.area.name}}, {{address.governorate.name}}</div>
+            <br>
+            {% endfor %}
+    </div><!--order-details-right-fixed-->
+
+
+
+
+
+
+
+
+</div><!--order-details-wrapper-->    
+</div><!--order-top-wrapper-->  
+            
+            
+            
+            
+                 
+    </div><!--container-fluid space topspace-->
+</section><!--content-->
+    
+{% include 'salesadmin/common/footer.html' %} 
+</div><!--wrapper-->
+{% endblock %}
+{% block javascript %}
+<script>
+ $('document').ready(function(){
+    
+    //To Hide Images 
+    invest_cust_img     = $('#data-pn-1').data('src');
+    invest_secondary_img= $('#data-pn-2').data('src');
+    invest_before_img   = $('#data-pn-3').data('src');
+    invest_after_img    = $('#data-pn-4').data('src');
+    paybackdiscount_img = $('#data-pn-5').data('src');
+    buybackpromogift_img= $('#data-pn-6').data('src');
+    reporting_img       = $('#data-pn-7').data('src');
+
+
+    if(invest_cust_img == '' || invest_cust_img == undefined)
+    {
+     $('.gallery-widget-column-column1').remove();   
+    }
+
+    if(invest_secondary_img == '' || invest_secondary_img == undefined)
+    {
+     $('.gallery-widget-column-column2').remove();   
+    }
+
+    if(invest_before_img == '' || invest_before_img == undefined)
+    {
+     $('.gallery-widget-column-column3').remove();   
+    }
+
+    if(invest_after_img == '' || invest_after_img == undefined)
+    {
+     $('.gallery-widget-column-column4').remove();   
+    }
+
+
+    //hide media
+    if((invest_cust_img == undefined || invest_cust_img == '') && (invest_secondary_img == undefined || invest_secondary_img == '') && (invest_before_img == undefined || invest_before_img == '') && (invest_after_img == undefined || invest_after_img == '') && (paybackdiscount_img == undefined || paybackdiscount_img == '') && (buybackpromogift_img == undefined || buybackpromogift_img == undefined) && (reporting_img == undefined || reporting_img == ''))
+    {
+        $('.media-head').remove();
+        $('.media-explaining').remove();
+    }
+
+    //to remove black in media
+    $(".pn-prev").click();
+    
+    //Bar
+    {% if followup_details.status == 'TICKET_RISED' %}
+    $('.bar-loader').css('width','33.33%');
+    {% elif followup_details.status == 'FOLLOWUP_IN_PROGRESS' %}
+    $('.bar-loader').css('width','66.66%');
+    {% elif followup_details.status == 'FOLLOWUP_CLOSED' %}
+    $('.bar-loader').css('width','100%');
+    {% else %}
+    $('.bar-loader').css('width','0%');
+    {% endif %}
+ 
+ });   
+</script>
+{% endblock %}

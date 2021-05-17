@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "bookingofficer/common/header.html" %}
+    
+<section class="content"><!--content-->
+<div class="container-fluid space topspace"><!--container-fluid space topspace-->
+    <div class="welcome-wrapper"><!--welcome-wrapper-->
+        <h1 class="dashboard-head">Orders</h1>
+    </div><!--welcome-wrapper-->
+            
+        
+<div class="order-top-wrapper"><!--order-top-wrapper-->
+    <div class="cleaning-Order-wrapper"><!--cleaning-Order-wrapper-->
+        <div class="cleaning--left-stretch"><!--cleaning--left-stretch-->
+            
+            {% for order in orders %}
+            <div class="cleaning-column-wrapper"><!--cleaning-column-wrapper-->
+                <div class="cleaning-column-widget cleaning-column-widget-column"><!--cleaning-column-widget cleaning-column-widget-column-->
+                    <div class="cleaning-img"><img src="{% static 'files/images/cleaning2.jpg' %}"></div>
+                </div><!--cleaning-column-widget cleaning-column-widget-column-->
+
+                <div class="cleaning-column-widget cleaning-column-widget-column1"><!--
+                
+                cleaning-column-widget cleaning-column-widget-column1-->
+                    <div class="details-head align-left"><a href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}">{{order.evaluation.evaluation_id}}</a></div>
+                    
+                    {% if order.payment_status == 'COMPLETED' %}
+                    <div class="green-bg-lg">Paid</div>
+                    {% elif order.payment_status == 'PENDING' %}
+                    <div class="yellow-bg-lg">Pending</div>
+                    {% elif order.payment_status == 'ON_HOLD' %}
+                    <div class="red-bg-lg">On Hold</div>
+                    {% else %}
+                    <div class="yellow-bg-lg">Waiting</div>
+                    {% endif %}
+
+
+                    {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+                    <div class="blue-bg-lg">Approved</div>
+                    {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
+                    <div class="yellow-bg-lg">On-going</div>
+                    {% elif order.order_status == 'ORDER_CANCELLED' %}
+                    <div class="red-bg-lg">Cancelled</div>
+                    {% elif order.order_status == 'ORDER_CLOSED' %}
+                    <div class="green-bg-lg">Closed</div>
+                    {% else %}
+                    <div class="yellow-bg-lg">Waiting</div>
+                    {% endif %}
+
+                    {% for evaluation_detail in order.evaluation.evaluationdetails %}
+                    <div class="area-bold">{{evaluation_detail.address.area.name}}</div>
+                    {% for evaluation_book in evaluation_detail.evaluationbooks %}
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{evaluation_book.service_type.name}}</div>
+                    {% endfor %}
+                    {% endfor %}
+                
+                </div><!--cleaning-column-widget cleaning-column-widget-column1-->
+                
+                <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
+                    <div class="common-gray-text align-left">{{order.evaluation.created}}</div>
+                    <div class="common-gray-text align-left yellow-text lg-text">{{order.evaluation.total_cost|default_if_none:'0.00'|floatformat:'2'}} KD</div>
+                    <div class="common-gray-text align-left sm-text gray-text">{{order.total_cleaners}} Cleaners</div>
+                    
+                    {% if order.evaluation.call_attender.profile_image %}
+                    <div class="profile-pic-line"><img src="{{order.evaluation.call_attender.profile_image.url}}"></div>
+                    {% else %}
+                    <div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+                    {% endif %}
+                </div><!--cleaning-column-widget cleaning-column-widget-column2-->
+            </div><!--cleaning-column-wrapper-->
+            
+            <hr class="div">
+            {% endfor %}
+        
+        {% comment %}
+            <div class="cleaning-column-wrapper"><!--cleaning-column-wrapper-->
+                <div class="cleaning-column-widget cleaning-column-widget-column"><!--cleaning-column-widget cleaning-column-widget-column-->
+                    <div class="cleaning-img"><img src="{% static 'files/images/cleaning3.jpg' %}"></div>
+                </div><!--cleaning-column-widget cleaning-column-widget-column-->
+                
+                <div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column11-->
+                    <div class="details-head align-left">BLC 29304894</div>
+                    <div class="green-bg-lg">Paid</div><div class="blue-bg-lg">On-going</div>
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Types of Cleaning</div>
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Types of Area</div>
+                </div><!--cleaning-column-widget cleaning-column-widget-column-->
+                
+                <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
+                    <div class="common-gray-text align-left">May 20, 2020 at 11:40 AM</div>
+                    <div class="common-gray-text align-left yellow-text lg-text">150 KD</div>
+                    <div class="common-gray-text align-left sm-text gray-text">2 Cleaners</div>
+                    
+                    <div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div><div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div><div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+                </div><!--cleaning-column-widget cleaning-column-widget-column2-->
+            </div><!--cleaning-column-wrapper-->        
+        
+        <hr class="div">
+        
+            <div class="cleaning-column-wrapper"><!--cleaning-column-wrapper-->
+                <div class="cleaning-column-widget cleaning-column-widget-column"><!--cleaning-column-widget cleaning-column-widget-column-->
+                    <div class="cleaning-img"><img src="{% static 'files/images/cleaning4.jpg' %}"></div>
+                </div><!--cleaning-column-widget cleaning-column-widget-column-->
+                
+                <div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
+                    <div class="details-head align-left">BLC 29304894</div>
+                    <div class="green-bg-lg">Paid</div><div class="red-bg-lg">Closed</div>
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Types of Cleaning</div>
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> Types of Area</div>
+                </div><!--cleaning-column-widget cleaning-column-widget-column1-->
+                
+                <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
+                    <div class="common-gray-text align-left">May 20, 2020 at 11:40 AM</div>
+                    <div class="common-gray-text align-left yellow-text lg-text">150 KD</div>
+                    <div class="common-gray-text align-left sm-text gray-text">2 Cleaners</div>
+                    
+                    <div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div><div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div><div class="profile-pic-line"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+                </div><!--cleaning-column-widget cleaning-column-widget-column2-->
+            </div><!--cleaning-column-wrapper--> 
+        
+        {% endcomment %}
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        </div><!--cleaning--left-stretch-->  
+        
+        <div class="cleaning--right-fixed"><!--cleaning--right-fixed-->
+            <div class="order-card-column whitebg red-border clickable-row-list" data-href="{% url 'booking-officer:bookingofficer-client-orders' client_details.id %}"><!--order-card-column-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-orders-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>{{client_details.customer_id|default_if_none:'-'}}</h1>
+                <h2 class="red-text"><label>Active<span>{{active_orders_count|default_if_none:'0'}}</span></label> </h2>
+                <p><label>Total<span>{{orders.count|default_if_none:'0'}}</span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
+            </div><!--order-card-column-->
+        <div class="right-bgwrapper"><!--right-bgwrapper-->    
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+            <div class="client-name">{{client_details.name}}</div>
+            <div class="common-gray-text">{{client_details.mobile_number}}</div>
+            <div class="common-gray-text">{{client_details.email}}</div>
+            <br>
+            <hr class="hr">
+            {% if client_details.company  %}
+            <div class="common-gray-text">Comapany Name : <span class="bold-text">{{client_details.company}}</span></div>
+            {% endif %}
+            {% if client_details.nationality %}
+            <div class="common-gray-text">Nationality : <span class="bold-text">{{client_details.nationality}}</span></div>
+            {% endif %}
+            {% if client_details.phone_number %}
+            <div class="common-gray-text">Other Contact : <span class="bold-text">{{client_details.phone_number}}</span></div>
+            {% endif %} 
+            <hr class="hr">
+            <br>
+            {% for address in client_details.customer_addresses %}
+            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address {{forloop.counter}}: <b>{{address.apartment}}</b></div>
+            <div class="address">{% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}}, {{address.block}}, {{address.street}}, {% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} {{address.area.name}}, {{address.governorate.name}}</div>
+            <br>
+            {% endfor %}
+        </div><!--right-bgwrapper-->     
+        </div><!--cleaning--right-fixed-->  
+    </div><!--cleaning-Order-wrapper-->
+</div><!--order-top-wrapper-->  
+            
+            
+            
+            
+                 
+</div><!--container-fluid space topspace-->
+</section><!--content-->
+    
+    
+{% include 'salesadmin/common/footer.html' %} 
+</div><!--wrapper-->
+{% endblock %}
