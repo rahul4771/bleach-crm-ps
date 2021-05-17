@@ -1125,7 +1125,10 @@ class PaybackDiscountProcessing(View):
 
 			messages.success(request,"Discount Succesfully Added")
 
-		return redirect('accountant:accountantdash-board')
+		if request.user.user_type == 'BOOKINGOFFICER':
+			return redirect('booking-officer:bookingofficerdash-board')
+		else:
+			return redirect('accountant:accountantdash-board')
 
 class FineWriteBack(View):
 	def get(self,request):
