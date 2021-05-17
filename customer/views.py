@@ -28,7 +28,7 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,Evaluat
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,Promocode
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
-from customer.models import CustomerBooking,NewCustomerOtp
+from customer.models import CustomerBooking
 from bleachadmin.models import ServiceProductivity,ServicePriceRange
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import QuatationServiceFormCustomer
@@ -626,7 +626,7 @@ class CustomerFeedback(View):
 		except:
 			questions = None
 
-		return render(request,"customer/feedback.html",{"order":order, "questions":questions, "feedback_exist":feedback_exist})
+		return render(request,"customer/customer-feedback.html",{"order":order, "questions":questions, "feedback_exist":feedback_exist})
 
 	def post(self,request,order_id):
 		order_id        = int(order_id)
@@ -1339,17 +1339,6 @@ def generate_random_otp(size=5, chars=string.digits):
 	except UserProfile.DoesNotExist:
 		return otp
 
-def generate_newcustomer_random_otp(size=5, chars=string.digits):
-	otp = ''.join(random.choice(chars) for n in range(size))
-
-
-	try:
-		NewCustomerOtp.objects.get(customer_otp=otp)
-		return generate_random_otp(size=5,chars=string.digits)
-	except NewCustomerOtp.DoesNotExist:
-		return otp
-
-
 class GetCountries(APIView):
 	permission_classes        = (AllowAny,)
 	authentication_classes    = ()
@@ -1611,8 +1600,8 @@ class GetCleaningSlotes(APIView):
 			total_cleaners 	= UserProfile.objects.filter(is_deep_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
 			total_leaders 	= UserProfile.objects.filter(is_deep_skill=True,user_type='TEAMINCHARGE').count()-1
 		elif service_type == 'Upholstery Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_upholstery_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_upholstery_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_upholster_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
+			total_leaders 	= UserProfile.objects.filter(is_upholster_skill=True,user_type='TEAMINCHARGE').count()-1
 		elif service_type == 'Kitchen Cleaning':
 			total_cleaners 	= UserProfile.objects.filter(is_kitchen_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
 			total_leaders 	= UserProfile.objects.filter(is_kitchen_skill=True,user_type='TEAMINCHARGE').count()-1
@@ -1890,26 +1879,13 @@ def AddressOtpSend(request):
 	response_dict['success'] = False
 
 	mobile_no  		= request.GET.get('mobile_number')
-	address_otp 	= generate_random_otp()
+	address_otp 	= 12345
 	otp_update 		= UserProfile.objects.filter(mobile_number=mobile_no).update(address_otp=address_otp)
 
 	if otp_update:
-		response_dict['success']       = True
-		response_dict['customer_type'] = 'Existing Customer'
+		response_dict['success'] = True
 	else:
-		try:
-			newcustomer_otp_update              =  NewCustomerOtp.objects.get(mobile_number=mobile_no)
-		except:
-			newcustomer_otp_update              = None
-		
-		if newcustomer_otp_update:
-			newcustomer_otp_update.customer_otp =  generate_newcustomer_random_otp()
-			newcustomer_otp_update.save()
-		else:
-			newcustomer_otp_create              = NewCustomerOtp.objects.create(mobile_number=mobile_no,customer_otp=generate_newcustomer_random_otp())
-
-		response_dict['success']       = True
-		response_dict['customer_type'] = 'New Customer'
+		response_dict['Error']   = 'mobile number doesnot exist'
 	
 	return JsonResponse(response_dict)
 
@@ -1922,32 +1898,44 @@ def AddressOtpVerify(request):
 		customer       		= UserProfile.objects.get(address_otp=address_otp)
 	except:
 		customer 			= None 
+	if not customer:
+		response_dict['Error']   = 'Invalid Otp'
+		return JsonResponse(response_dict)
+				
+	customer_addresses	= Address.objects.filter(customer=customer,currently_active=True).select_related('governorate','area')
+	if not customer_addresses:
+		response_dict['Error']   = 'Address Doesnot Exist'
+		return JsonResponse(response_dict)
 
-	if customer:
-		response_dict['customer_type'] = 'Existing Customer'
-		response_dict['success']       = True
+	response_dict['customer_details']   = UserProfileSerializer(instance=customer).data
+	response_dict['customer_addresses'] = AddressSerializer(instance=customer_addresses,many=True).data 
+	
+	response_dict['success'] = True
+	return JsonResponse(response_dict)
 
-		customer_addresses	= Address.objects.filter(customer=customer,currently_active=True).select_related('governorate','area')
-		if customer_addresses:
-			response_dict['customer_details']   = UserProfileSerializer(instance=customer).data
-			response_dict['customer_addresses'] = AddressSerializer(instance=customer_addresses,many=True).data
-		else:
-			response_dict['Error']   = 'Address Doesnot Exist'
-			return JsonResponse(response_dict)
-	else:
-		try:
-			newcustomer_otp         = NewCustomerOtp.objects.get(customer_otp=address_otp)
-		except:
-			newcustomer_otp         = None
+def AddressOtpVerifyTest(request):
+	response_dict = {}
+	response_dict['success'] = False
+	
+	mobile_number    		= request.GET.get('mobile_number')
+	try:
+		customer       		= UserProfile.objects.get(mobile_number=mobile_number)
+	except:
+		customer 			= None 
+	
+	if not customer:
+		response_dict['Error']   = 'Invalid Otp'
+		return JsonResponse(response_dict)
+				
+	customer_addresses	= Address.objects.filter(customer=customer,currently_active=True).select_related('governorate','area')
+	if not customer_addresses:
+		response_dict['Error']   = 'Address Doesnot Exist'
+		return JsonResponse(response_dict)
 
-		if newcustomer_otp:
-			response_dict['customer_type'] = 'New Customer'
-			response_dict['success'] = True
-			newcustomer_otp.delete()
-		else:
-			response_dict['Error']   = 'Invalid Otp'
-			response_dict['success']  = False
-
+	response_dict['customer_details']   = UserProfileSerializer(instance=customer).data
+	response_dict['customer_addresses'] = AddressSerializer(instance=customer_addresses,many=True).data 
+	
+	response_dict['success'] = True
 	return JsonResponse(response_dict)
 
 class ClientCleaningBookingPhase1(View):
@@ -1964,7 +1952,6 @@ class ClientCleaningBookingPhase1(View):
 			area_types = None
 
 		return render(request,'customer/booking/clientcleaningbookingphase1.html',{"service_types":service_types,"area_types":area_types,})
-
 
 class ClientCleaningBookingPhase2(APIView):  
 	permission_classes        = (AllowAny,)
@@ -1983,8 +1970,8 @@ class ClientCleaningBookingPhase2(APIView):
 			total_cleaners 	= UserProfile.objects.filter(is_deep_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
 			total_leaders 	= UserProfile.objects.filter(is_deep_skill=True,user_type='TEAMINCHARGE').count()-1
 		elif service_type == 'Upholstery Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_upholstery_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_upholstery_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_upholster_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
+			total_leaders 	= UserProfile.objects.filter(is_upholster_skill=True,user_type='TEAMINCHARGE').count()-1
 		elif service_type == 'Kitchen Cleaning':
 			total_cleaners 	= UserProfile.objects.filter(is_kitchen_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
 			total_leaders 	= UserProfile.objects.filter(is_kitchen_skill=True,user_type='TEAMINCHARGE').count()-1
@@ -2691,33 +2678,6 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 	def post(self,request): 
 		response_dict = {'success':False}
 
-		#check price calculation is Ok
-		print(request.POST)
-		services       = request.data.get("service_details")
-		total_cost     = 0
-		for service_detail in services.keys():
-			sections_dict       = services[service_detail]['sections']
-			for key in sections_dict.keys():
-				try:
-					service_cost = ServicePriceRange.objects.get(name=sections_dict[key]['size'],service_type__id=services[service_detail]['service_type'],is_newkitchen=sections_dict[key]['is_newkitchen'],upholstery_type=sections_dict[key]['upholstery_type'],is_highprice_window=sections_dict[key]['is_highprice_window'],is_highprice_facade=sections_dict[key]['is_highprice_facade']).price
-				except:
-					service_cost = 0
-				
-				##for sofa above 10 or 10+
-				if service_cost == 0:
-					size=sections_dict[key]['size'].split()
-					if size[1] == 'Seater':
-						unit_price   = ServicePriceRange.objects.filter(service_type__id=services[service_detail]['service_type'],upholstery_type=sections_dict[key]['upholstery_type']).first().unit_price
-						service_cost = size[0]*unit_price  				
-				
-				total_cost += service_cost
-
-		if float(total_cost) != float(request.data.get('estimated_cost')):
-			response_dict['Error'] = 'Invalid Cost Calculation'
-			print(float(total_cost),"total_cost")
-			print(float(request.data.get('estimated_cost')),"estimated_cost")
-			return Response(response_dict,HTTP_200_OK)
-
 		##multiple services #count total cleaners and total leaders for availability
 		total_cleaners 	= UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
 		total_leaders   = UserProfile.objects.filter(is_general_skill=True,user_type='TEAMINCHARGE')
@@ -2734,8 +2694,8 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 				total_cleaners 	= total_cleaners.filter(is_deep_skill=True)
 				total_leaders 	= total_leaders.filter(is_deep_skill=True)
 			elif service_type == 'Upholstery Cleaning':
-				total_cleaners 	= total_cleaners.filter(is_upholstery_skill=True)
-				total_leaders 	= total_leaders.filter(is_upholstery_skill=True)
+				total_cleaners 	= total_cleaners.filter(is_upholster_skill=True)
+				total_leaders 	= total_leaders.filter(is_upholster_skill=True)
 			elif service_type == 'Kitchen Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
 				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
