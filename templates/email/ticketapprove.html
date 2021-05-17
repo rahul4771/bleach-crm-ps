@@ -308,24 +308,31 @@ ul.social li{
 		
 		  <tr>
           <td valign="middle" class="hero bg_white" style="padding: 2em 0 4em 0;">
+            {% if paybackdiscount %}
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
             	<tr>
             		<td style="padding: 0 2.5em; text-align: center; padding-bottom: 3em;">
             			<div class="text">
-            				<h2>Order Cancellation Task</h2>
+            				<h2>Payback/Discount Task</h2>
             			</div>
             		</td>
             	</tr>
             	<tr>
 			          <td style="text-align: center;">
 			          	<div class="text-author">
-                            <span class="position">A New Cancellation Request has been send to you by</span>
+                            <span class="position">A new Payback/Discount task has been assigned to you by </span>
                             <br><br>
-				          	<img src="https://test.bleach-kw.com/{{order.cancell_requester.profile_image.url}}" alt="" style="width: 100px; max-width: 600px; height: auto; margin: auto; display: block;">
-				          	<h3 class="name">{{order.cancell_requester.name|default_if_none:''}}</h3>
-				          	<span class="position">{{order.cancell_requester.user_type|default_if_none:''}}</span>
-				           	<p><a href="https://test.bleach-kw.com/bleach_salesadmin/cancell-order/{{order.id}}/" class="btn btn-primary">View Task</a></p>
-				           	<p><a href="#" class="btn-custom">Click to email {{order.cancell_requester.name|default_if_none:''}}</a></p>
+							 <img src="https://test.bleach-kw.com/{{paybackdiscount.investigation.investigator.profile_image.url}}" alt="" style="width: 100px; max-width: 600px; height: auto; margin: auto; display: block;">
+				          	<h3 class="name">{{paybackdiscount.investigation.investigator.name|default_if_none:''}}</h3>
+				          	<span class="position">{{paybackdiscount.investigation.investigator.user_type|default_if_none:''}}</span>
+				           	<p>
+				           	{% if email_user == 'admin' %}
+							<a href="https://test.bleach-kw.com/bleach_admin/ticket/approve/{{paybackdiscount.investigation.id}}/" class="btn btn-primary">View Task</a>
+							{% endif %}
+							{% if email_user == 'salesadmin' %}
+							<a href="https://test.bleach-kw.com/bleach_salesadmin/ticket/approve/{{paybackdiscount.investigation.id}}/" class="btn btn-primary">View Task</a>{% endif %}
+							</p>
+				           	<p><a href="#" class="btn-custom">Click to email {{paybackdiscount.investigation.investigator.name|default_if_none:''}}</a></p>
 							 <div>
 								<h3>Order Details</h3>
 							 </div>  
@@ -334,15 +341,14 @@ ul.social li{
 										Order Number
 									</div>:
 									<div style="width:50%;margin-left:auto;text-align: right;">
-										{{order.order_no|default_if_none:''}}
+										{{paybackdiscount.investigation.order.order_no|default_if_none:''}}
 									</div>
 							 </div>
 							 <div style="display: flex;" >
 								<div style="width:50%;text-align: left;">
 									Customer
 								</div > :
-								<div style="width:50%;margin-left:auto;text-align: right;">
-									{{order.evaluation.customer.name|default_if_none:''}}
+								<div style="width:50%;margin-left:auto;text-align: right;">{{paybackdiscount.investigation.order.evaluation.customer.name|default_if_none:''}}
 								</div>
 						 </div>
 						 <div style="display: flex;" >
@@ -350,7 +356,7 @@ ul.social li{
 								Mobile No
 							</div>:
 							<div style="width:50%;text-align: right;margin-left:auto">
-								{{order.evaluation.customer.mobile_number|default_if_none:''}}
+								{{paybackdiscount.investigation.order.evaluation.customer.mobile_number|default_if_none:''}}
 							</div>
 					 </div>
 			           	</div>
@@ -358,6 +364,66 @@ ul.social li{
 			        </tr>
 			    
             </table>
+            {% endif %}
+
+
+            {% if buybackpromocodegift %}
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+            	<tr>
+            		<td style="padding: 0 2.5em; text-align: center; padding-bottom: 3em;">
+            			<div class="text">
+            				<h2>Buyback/Promocode/Gift Task</h2>
+            			</div>
+            		</td>
+            	</tr>
+            	<tr>
+			          <td style="text-align: center;">
+			          	<div class="text-author">
+                            <span class="position">A new Buyback/Promocode/Gift task has been assigned to you by </span>
+                            <br><br>
+							 <img src="https://test.bleach-kw.com/{{buybackpromocodegift.investigation.investigator.profile_image.url}}" alt="" style="width: 100px; max-width: 600px; height: auto; margin: auto; display: block;">
+				          	<h3 class="name">{{buybackpromocodegift.investigation.investigator.name|default_if_none:''}}</h3>
+				          	<span class="position">{{buybackpromocodegift.investigation.investigator.user_type|default_if_none:''}}</span>
+				           	<p>
+				           	{% if email_user == 'admin' %}
+							<a href="https://test.bleach-kw.com/bleach_admin/ticket/approve/{{buybackpromocodegift.investigation.id}}/" class="btn btn-primary">View Task</a>
+							{% endif %}
+							{% if email_user == 'salesadmin' %}
+							<a href="https://test.bleach-kw.com/bleach_salesadmin/ticket/approve/{{buybackpromocodegift.investigation.id}}/" class="btn btn-primary">View Task</a>{% endif %}
+							</p>
+				           	<p><a href="#" class="btn-custom">Click to email {{buybackpromocodegift.investigation.investigator.name|default_if_none:''}}</a></p>
+							 <div>
+								<h3>Order Details</h3>
+							 </div>  
+							 <div style="display: flex;margin-top:10px" >
+									<div style="width:50%;text-align: left;">
+										Order Number
+									</div>:
+									<div style="width:50%;margin-left:auto;text-align: right;">
+										{{buybackpromocodegift.investigation.order.order_no|default_if_none:''}}
+									</div>
+							 </div>
+							 <div style="display: flex;" >
+								<div style="width:50%;text-align: left;">
+									Customer
+								</div > :
+								<div style="width:50%;margin-left:auto;text-align: right;">{{buybackpromocodegift.investigation.order.evaluation.customer.name|default_if_none:''}}
+								</div>
+						 </div>
+						 <div style="display: flex;" >
+							<div style="width:50%;text-align: left;">
+								Mobile No
+							</div>:
+							<div style="width:50%;text-align: right;margin-left:auto">
+								{{buybackpromocodegift.investigation.order.evaluation.customer.mobile_number|default_if_none:''}}
+							</div>
+					 </div>
+			           	</div>
+			          </td>
+			        </tr>
+			    
+            </table>
+            {% endif %}
           </td>
 	      </tr><!-- end tr -->
       <!-- 1 Column Text + Button : END -->

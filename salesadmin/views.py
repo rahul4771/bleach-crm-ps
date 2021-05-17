@@ -33,6 +33,11 @@ from operator import itemgetter
 
 from evaluator.forms import QuatationServiceForm
 
+from django.core.mail import send_mail,EmailMultiAlternatives
+from django.template.loader import render_to_string
+
+from django.core.mail import send_mail,EmailMultiAlternatives
+from django.template.loader import render_to_string
 # Create your views here.
 
 class AdminHome(IsSalesAdmin,View):
@@ -1772,7 +1777,15 @@ class TicketApprove(IsSalesAdmin,View):
 
 			investigation.save()
 
+			#Email Send
+			accountant_list = UserProfile.objects.filter(is_active=True,user_type='ACCOUNTANT').values_list('email',flat=True)
+			msg_html = render_to_string('email/paybackdiscount_approval.html',{'paybackdiscount':paybackdiscount})
+			msg      = EmailMultiAlternatives('Payback/Discount Confirm', '', 'notification@bleach-kw.com', accountant_list)
+			msg.attach_alternative(msg_html, "text/html")
+			msg.send(fail_silently=False)
+
 			messages.success(request,"Payback Approved !")
+
 
 		if approve_action == 'buyback':
 
@@ -2694,13 +2707,20 @@ class OrderCancellation(IsSalesAdmin,View):
 		
 		if cancell_option == 'CASHBACK':
 			amount = float(request.POST.get('amount'))			
-			CancellOrderAmountHistory.objects.create(order_id=order_id,return_amount=amount,amount_return_method='CASHBACK')
+			cancell_order_history = CancellOrderAmountHistory.objects.create(order_id=order_id,return_amount=amount,amount_return_method='CASHBACK')
 		
-			order              = Order.objects.get(id=order_id)
+			order              = Order.objects.select_related('evaluation__customer','cancelled_by').get(id=order_id)
 			order.cancelled_by = request.user
 			order.cancell_note = request.POST.get('notes')
 			order.order_status = 'CANCEL_IN_PROGRESS' 
 			order.save()
+
+			#Email Send
+			accountant_list = UserProfile.objects.filter(is_active=True,user_type='ACCOUNTANT').values_list('email',flat=True)
+			msg_html = render_to_string('email/cancelled_refund_confirm.html',{'order':order,'cancell_order_history':cancell_order_history})
+			msg      = EmailMultiAlternatives('Refund Confirmation', '', 'notification@bleach-kw.com', accountant_list)
+			msg.attach_alternative(msg_html, "text/html")
+			msg.send(fail_silently=False)
 
 			messages.success(request,'Order Successfully Cancelled and CashBack Request Send to Customer')
 

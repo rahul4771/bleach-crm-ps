@@ -33,6 +33,8 @@ from django.db.models import Count
 from operator import itemgetter
 import requests
 
+from django.core.mail import send_mail,EmailMultiAlternatives
+from django.template.loader import render_to_string
 # Create your views here.
 
 class AdminHome(IsAdmin,View):
@@ -1464,6 +1466,13 @@ class TicketApprove(IsAdmin,View):
 			investigation.is_paybackdiscount_approved = True
 
 			investigation.save()
+
+			#Email Send
+			accountant_list = UserProfile.objects.filter(is_active=True,user_type='ACCOUNTANT').values_list('email',flat=True)
+			msg_html = render_to_string('email/paybackdiscount_approval.html',{'paybackdiscount':paybackdiscount})
+			msg      = EmailMultiAlternatives('Payback/Discount Confirm', '', 'notification@bleach-kw.com', accountant_list)
+			msg.attach_alternative(msg_html, "text/html")
+			msg.send(fail_silently=False)
 
 			messages.success(request,"Payback Approved !")
 

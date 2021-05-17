@@ -312,45 +312,45 @@ ul.social li{
             	<tr>
             		<td style="padding: 0 2.5em; text-align: center; padding-bottom: 3em;">
             			<div class="text">
-            				<h2>Order Cancellation Task</h2>
+            				<h2>Evaluation Task</h2>
             			</div>
             		</td>
             	</tr>
             	<tr>
 			          <td style="text-align: center;">
 			          	<div class="text-author">
-                            <span class="position">A New Cancellation Request has been send to you by</span>
+                            <span class="position">A new evaluation task has been assigned to you by </span>
                             <br><br>
-				          	<img src="https://test.bleach-kw.com/{{order.cancell_requester.profile_image.url}}" alt="" style="width: 100px; max-width: 600px; height: auto; margin: auto; display: block;">
-				          	<h3 class="name">{{order.cancell_requester.name|default_if_none:''}}</h3>
-				          	<span class="position">{{order.cancell_requester.user_type|default_if_none:''}}</span>
-				           	<p><a href="https://test.bleach-kw.com/bleach_salesadmin/cancell-order/{{order.id}}/" class="btn btn-primary">View Task</a></p>
-				           	<p><a href="#" class="btn-custom">Click to email {{order.cancell_requester.name|default_if_none:''}}</a></p>
+				          	<img src="https://test.bleach-kw.com/{{evaluation_form_save.evaluation.call_attender.profile_image.url}}" alt="" style="width: 100px; max-width: 600px; height: auto; margin: auto; display: block;">
+				          	<h3 class="name">{{evaluation_form_save.evaluation.call_attender.name|default_if_none:''}}</h3>
+				          	<span class="position">{{evaluation_form_save.evaluation.call_attender.user_type|default_if_none:''}}</span>
+				           	<p><a href="https://test.bleach-kw.com/evaluator/makequatation/assigned/phase1/{{evaluation_form_save.evaluation.customer.id}}/{{evaluation_form_save.evaluation.id}}/" class="btn btn-primary">View Task</a></p>
+				           	<p><a href="#" class="btn-custom">Click to email {{evaluation_form_save.evaluation.call_attender.name|default_if_none:''}}</a></p>
 							 <div>
-								<h3>Order Details</h3>
+								<h3>Appointment Details</h3>
 							 </div>  
 							 <div style="display: flex;margin-top:10px" >
 									<div style="width:50%;text-align: left;">
-										Order Number
+										Customer 
 									</div>:
 									<div style="width:50%;margin-left:auto;text-align: right;">
-										{{order.order_no|default_if_none:''}}
+										{{evaluation_form_save.evaluation.customer.name|default_if_none:''}}
 									</div>
 							 </div>
 							 <div style="display: flex;" >
 								<div style="width:50%;text-align: left;">
-									Customer
+									Mobile No
 								</div > :
 								<div style="width:50%;margin-left:auto;text-align: right;">
-									{{order.evaluation.customer.name|default_if_none:''}}
+									{{evaluation_form_save.evaluation.customer.mobile_number|default_if_none:''}}
 								</div>
 						 </div>
 						 <div style="display: flex;" >
 							<div style="width:50%;text-align: left;">
-								Mobile No
+								Appointment Date
 							</div>:
 							<div style="width:50%;text-align: right;margin-left:auto">
-								{{order.evaluation.customer.mobile_number|default_if_none:''}}
+								{{evaluation_form_save.proposed_time|default_if_none:''}}
 							</div>
 					 </div>
 			           	</div>

@@ -26,6 +26,9 @@ from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMemb
 from accountant.models import PaymentHistory
 from senior_team_leader.forms import CleaningTeamAssignForm,FollowupTeamAssignForm
 from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
+
+from django.core.mail import send_mail,EmailMultiAlternatives
+from django.template.loader import render_to_string
 # Create your views here.
 
 
@@ -1337,12 +1340,17 @@ class InvestigationTask(IsOperationSupervisor,View):
 			secondary_investigator = request.POST.get('secondary_investigator')
 			
 			investigator = UserProfile.objects.get(id=int(secondary_investigator))
-			investigationdata = Investigation.objects.get(id=investigation_id,is_active=True)
-			
+
+			investigationdata = Investigation.objects.select_related('investigator','assigned_by','secondary_investigator','order__evaluation__customer').get(id=investigation_id,is_active=True)
 			investigationdata.secondary_investigator = investigator
 			investigationdata.secondary_investigation_created = datetime.now()
 			investigationdata.save()
 			
+			msg_html = render_to_string('email/rise_ticket_request2.html',{'investigationdata':investigationdata})
+			msg      = EmailMultiAlternatives('Ticket Rised', '', 'notification@bleach-kw.com', [investigationdata.secondary_investigator.email])
+			msg.attach_alternative(msg_html, "text/html")
+			msg.send(fail_silently=False)
+
 			messages.success(request,"Investigator Assigned !")
 			return redirect('op-supervisor:op-supervisor-dash-board')
 		if form_action == "final_submit":
@@ -1366,7 +1374,6 @@ class Followup(IsOperationSupervisor,View):
 	service_formset_define    = formset_factory(QuatationServiceForm)
 	def get(self,request,investigation_id):
 		investigation = Investigation.objects.get(is_active=True,id=int(investigation_id))
-		print(investigation.order_schedule.evaluation_details.id,"evs")
 		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=investigation.order_schedule.evaluation_details.id)
 
 		service_type = investigation.order_schedule.order_scheduler_book.service_type
@@ -1392,7 +1399,7 @@ class Followup(IsOperationSupervisor,View):
 
 		tendative_time = request.POST.get('tendative_time')
 		
-		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+		follow_up = FollowUp.objects.select_related('investigation__order__evaluator__customer').get(investigation_id=investigation_id,is_active=True)
 		follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
 		follow_up.followup_notes = request.POST.get('investigator_notes')
 		follow_up.no_of_cleaners = no_of_cleaners
@@ -1679,6 +1686,19 @@ class Cashback(IsOperationSupervisor,View):
 					is_active = True
 				)
 
+		#Email
+		salesadmin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='SALESADMIN').values_list('email',flat=True)
+		msg_html = render_to_string('email/ticketapprove.html',{'paybackdiscount':paybackdiscount,'email_user':'salesadmin'})
+		msg      = EmailMultiAlternatives('Cash Back Approval', '', 'notification@bleach-kw.com', salesadmin_list)
+		msg.attach_alternative(msg_html, "text/html")
+		msg.send(fail_silently=False)
+
+		admin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='ADMIN').values_list('email',flat=True)
+		msg_html = render_to_string('email/ticketapprove.html',{'paybackdiscount':paybackdiscount,'email_user':'admin'})
+		msg      = EmailMultiAlternatives('Cash Back Approval', '', 'notification@bleach-kw.com', admin_list)
+		msg.attach_alternative(msg_html, "text/html")
+		msg.send(fail_silently=False)
+
 		messages.success(request,"Cash Back Added !")
 		return redirect('op-supervisor:investigation', investigation_id)
 
@@ -1897,6 +1917,19 @@ class BuyBackPromoCode(IsOperationSupervisor,View):
 					is_active = True
 				)
 
+		#Email
+		salesadmin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='SALESADMIN').values_list('email',flat=True)
+		msg_html = render_to_string('email/ticketapprove.html',{'buybackpromocodegift':buybackpromocodegift,'email_user':'salesadmin'})
+		msg      = EmailMultiAlternatives('Buback/Promocode/Gift Approval', '', 'notification@bleach-kw.com', salesadmin_list)
+		msg.attach_alternative(msg_html, "text/html")
+		msg.send(fail_silently=False)
+
+		admin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='ADMIN').values_list('email',flat=True)
+		msg_html = render_to_string('email/ticketapprove.html',{'buybackpromocodegift':buybackpromocodegift,'email_user':'admin'})
+		msg      = EmailMultiAlternatives('Buback/Promocode/Gift Approval', '', 'notification@bleach-kw.com', admin_list)
+		msg.attach_alternative(msg_html, "text/html")
+		msg.send(fail_silently=False)
+		
 		messages.success(request,"Buy Back / Promo Code Added !")
 		return redirect('op-supervisor:investigation', investigation_id)
 

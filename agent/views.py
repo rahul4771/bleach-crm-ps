@@ -2495,8 +2495,9 @@ class ClientOrderDetails(IsAgent,View):
 			CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=order).delete() 
 
 			#Email Send
+			salesadmin_list = UserProfile.objects.filter(is_active=True,user_type='SALESADMIN').values_list('email',flat=True)
 			msg_html = render_to_string('email/cancellation_request.html',{'order':order})
-			msg      = EmailMultiAlternatives('Order Cancellation', '', 'ansab.m@bleach-kw.com', ['ansabm2015@gmail.com'], bcc=['ansabm2018@gmail.com'], cc=['ansabm594@gmail.com'])
+			msg      = EmailMultiAlternatives('Order Cancellation', '', 'notification@bleach-kw.com', salesadmin_list)
 			msg.attach_alternative(msg_html, "text/html")
 			msg.send(fail_silently=False)
 			
@@ -3089,13 +3090,14 @@ class AssignEvaluator(IsAgent,View):
 					}
 
 					response = requests.request("GET", url, headers=headers, params=querystring)
-
-					print(response.text,"respo")
-					print(str(evaluation_form_save.proposed_time))
-					print(message, evaluation_form_save.evaluation.customer.mobile_number,"mobile")
 				else:
 					pass
 
+				#Email Send
+				msg_html = render_to_string('email/evaluation_task.html',{'evaluation_form_save':evaluation_form_save})
+				msg      = EmailMultiAlternatives('Evaluation Task', '', 'notification@bleach-kw.com', [evaluation_form_save.evaluator.email])
+				msg.attach_alternative(msg_html, "text/html")
+				msg.send(fail_silently=False)
 			else:
 				messages.error(request,get_error(evaluation_form))
 
@@ -3588,6 +3590,12 @@ class TicketRegistration(IsAgent,View):
 							is_active = True
 						)
 						
+			#Email Send
+			msg_html = render_to_string('email/rise_ticket_request.html',{'investigation_form_save':investigation_form_save})
+			msg      = EmailMultiAlternatives('Ticket Rised', '', 'notification@bleach-kw.com', [investigation_form_save.investigator.email])
+			msg.attach_alternative(msg_html, "text/html")
+			msg.send(fail_silently=False)
+
 			messages.success(request,"Investigation Raised Succesfully!")
 		else:
 			messages.error(request,get_error(investigation_form))
@@ -3673,7 +3681,13 @@ class OrderTicketRegistration(IsAgent,View):
 							taken_status = 'CUSTOMER_SEND',
 							is_active = True
 						)
-						
+
+			#Email Send
+			msg_html = render_to_string('email/rise_ticket_request.html',{'investigation_form_save':investigation_form_save})
+			msg      = EmailMultiAlternatives('Ticket Rised', '', 'notification@bleach-kw.com', [investigation_form_save.investigator.email])
+			msg.attach_alternative(msg_html, "text/html")
+			msg.send(fail_silently=False)
+									
 			messages.success(request,"Investigation Raised Succesfully!")
 		else:
 			messages.error(request,get_error(investigation_form))

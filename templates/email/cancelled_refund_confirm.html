@@ -312,26 +312,26 @@ ul.social li{
             	<tr>
             		<td style="padding: 0 2.5em; text-align: center; padding-bottom: 3em;">
             			<div class="text">
-            				<h2>Order Cancellation Task</h2>
+            				<h2>Refund Confirmation Task</h2>
             			</div>
             		</td>
             	</tr>
             	<tr>
 			          <td style="text-align: center;">
 			          	<div class="text-author">
-                            <span class="position">A New Cancellation Request has been send to you by</span>
+                            <span class="position">A New Refund Confirmation Task has been assigned to you by </span>
                             <br><br>
-				          	<img src="https://test.bleach-kw.com/{{order.cancell_requester.profile_image.url}}" alt="" style="width: 100px; max-width: 600px; height: auto; margin: auto; display: block;">
-				          	<h3 class="name">{{order.cancell_requester.name|default_if_none:''}}</h3>
-				          	<span class="position">{{order.cancell_requester.user_type|default_if_none:''}}</span>
-				           	<p><a href="https://test.bleach-kw.com/bleach_salesadmin/cancell-order/{{order.id}}/" class="btn btn-primary">View Task</a></p>
-				           	<p><a href="#" class="btn-custom">Click to email {{order.cancell_requester.name|default_if_none:''}}</a></p>
+				          	<img src="https://test.bleach-kw.com/{{order.cancelled_by.profile_image.url}}" alt="" style="width: 100px; max-width: 600px; height: auto; margin: auto; display: block;">
+				          	<h3 class="name">{{order.cancelled_by.name|default_if_none:''}}</h3>
+				          	<span class="position">{{order.cancelled_by.user_type|default_if_none:''}}</span>
+				           	<p><a href="https://test.bleach-kw.com/accountant/cancell-order/{{cancell_order_history.id}}/" class="btn btn-primary">View Task</a></p>
+				           	<p><a href="#" class="btn-custom">Click to email {{order.cancelled_by.name|default_if_none:''}}</a></p>
 							 <div>
-								<h3>Order Details</h3>
+								<h3>Appointment Details</h3>
 							 </div>  
 							 <div style="display: flex;margin-top:10px" >
 									<div style="width:50%;text-align: left;">
-										Order Number
+										Order Number 
 									</div>:
 									<div style="width:50%;margin-left:auto;text-align: right;">
 										{{order.order_no|default_if_none:''}}

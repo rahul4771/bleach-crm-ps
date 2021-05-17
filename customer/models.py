@@ -23,3 +23,17 @@ class CustomerBooking(models.Model):
 
 	def __str__(self):
 		return self.booking_id
+
+class NewCustomerOtp(models.Model):
+	mobile_number= models.CharField(max_length=10,blank=True,null=True) 
+	customer_otp = models.CharField(max_length=100,blank=True,null=True)
+
+	is_active    = models.BooleanField(null=False,blank=True,default=True)
+	created      = models.DateTimeField(auto_now_add=True)
+	updated      = models.DateTimeField(auto_now=True)
+
+	def __unicode__(self):
+		return str(self.mobile_number)
+
+	def __str__(self):
+		return self.mobile_number
