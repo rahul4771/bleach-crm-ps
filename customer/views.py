@@ -2698,9 +2698,18 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 		for service_detail in services.keys():
 			sections_dict       = services[service_detail]['sections']
 			for key in sections_dict.keys():
-				service_cost = ServicePriceRange.objects.get(name=sections_dict[key]['size'],service_type__id=services[service_detail]['service_type'],is_newkitchen=sections_dict[key]['is_newkitchen'],upholstery_type=sections_dict[key]['upholstery_type'],is_highprice_window=sections_dict[key]['is_highprice_window'],is_highprice_facade=sections_dict[key]['is_highprice_facade']).price
-				##add try except
-				print(service_cost)
+				try:
+					service_cost = ServicePriceRange.objects.get(name=sections_dict[key]['size'],service_type__id=services[service_detail]['service_type'],is_newkitchen=sections_dict[key]['is_newkitchen'],upholstery_type=sections_dict[key]['upholstery_type'],is_highprice_window=sections_dict[key]['is_highprice_window'],is_highprice_facade=sections_dict[key]['is_highprice_facade']).price
+				except:
+					service_cost = 0
+				
+				##for sofa above 10 or 10+
+				if service_cost == 0:
+					size=sections_dict[key]['size'].split()
+					if size[1] == 'Seater':
+						unit_price   = ServicePriceRange.objects.filter(service_type__id=services[service_detail]['service_type'],upholstery_type=sections_dict[key]['upholstery_type']).first().unit_price
+						service_cost = size[0]*unit_price  				
+				
 				total_cost += service_cost
 
 		if float(total_cost) != float(request.data.get('estimated_cost')):
