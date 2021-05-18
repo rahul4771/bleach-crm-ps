@@ -1,0 +1,177 @@
+{% load static %}
+
+{% for evaluator in evaluation_details %}
+<tr id="evaluator{{evaluator.id}}">
+<th width="4.54%" bgcolor="#eee" class="fixed-side"><img {% if evaluator.profile_image %} src="{{evaluator.profile_image.url}}" {% else %} src="{% static 'files/images/profile-pic.jpg' %}" {% endif %} class="profile-avtar profile-avatar"></th>
+</tr>
+{% endfor %}
+
+{% block javascript %}
+<script type="text/javascript">
+{% for evaluator in evaluation_details %}
+            
+            {% if evaluator.evaluation_details %}
+
+                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            
+                evaluator_timings_list =[]
+                {% for evaluation in evaluator.evaluation_details %}
+                    proposed_timing_string      = '{{evaluation.proposed_time|date:'H'}}';
+                    proposed_timing             = parseInt(proposed_timing_string)
+                    evaluator_timings_list.push(proposed_timing);
+                {% endfor %}
+                for(i=8;i<=17;i++)
+                {
+                    if(evaluator_timings_list.includes(i))
+                    {
+                        same_slote_count = 0
+                        {% for evaluation in evaluator.evaluation_details %}
+                            proposed_timing_string      = '{{evaluation.proposed_time|date:'H'}}';
+                            proposed_timing             = parseInt(proposed_timing_string)
+                        
+                        if(i == proposed_timing)
+                            {
+                              same_slote_count += 1
+                              if(same_slote_count == 1)
+                              {
+                                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="edit_evaluation" data-blcno="{{evaluation.evaluation.evaluation_id}}" data-customer_name="{{evaluation.evaluation.customer.name}}" data-area="{{evaluation.address.area.name}}" data-governorate="{{evaluation.address.governorate.name}}" data-block="{{evaluation.address.block}}" data-apartment="{{evaluation.address.apartment}}" data-street="{{evaluation.address.street}}" data-building="{{evaluation.address.building}}" data-avenue="{{evaluation.address.avenue}}"  data-mobile_no="{{evaluation.evaluation.customer.mobile_number}}" data-proposed_date="{{evaluation.proposed_time|date:'d-m-Y'}}" data-proposed_time="{{evaluation.proposed_time|date:'h:i A'}}" data-evaluator_name="{{evaluation.evaluator.name}}" data-notes="{{evaluation.evaluator_note}}" data-customer_id="{{evaluation.evaluation.customer.id}}" data-evaluator_id="{{evaluation.evaluator.id}}" data-address_id="{{evaluation.address.id}}" data-id="{{evaluation.id}}">{{evaluation.address.area.name}}</a></td>');
+                              }
+                              else
+                              {
+                                $("#evaluator{{evaluator.id}} td:last").append('<br><a class="edit_evaluation" data-blcno="{{evaluation.evaluation.evaluation_id}}" data-customer_name="{{evaluation.evaluation.customer.name}}"  data-area="{{evaluation.address.area.name}}" data-governorate="{{evaluation.address.governorate.name}}" data-block="{{evaluation.address.block}}"  data-apartment="{{evaluation.address.apartment}}" data-street="{{evaluation.address.street}}" data-building="{{evaluation.address.building}}" data-avenue="{{evaluation.address.avenue}}" data-mobile_no="{{evaluation.evaluation.customer.mobile_number}}" data-proposed_date="{{evaluation.proposed_time|date:'d-m-Y'}}" data-proposed_time="{{evaluation.proposed_time|date:'h:i A'}}" data-evaluator_name="{{evaluation.evaluator.name}}" data-notes="{{evaluation.notes}}" data-customer_id="{{evaluation.evaluation.customer.id}}" data-evaluator_id="{{evaluation.evaluator.id}}" data-address_id="{{evaluation.address.id}}" data-id="{{evaluation.id}}">{{evaluation.address.area.name}}</a>');
+                              }  
+                              
+                            }
+                            
+
+                        {% endfor %}
+                
+                    }
+                    else
+                    {
+                      $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">----</a></td>');  
+                    }
+                    $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+                }    
+            {% else %}
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-----</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            {% endif %}
+
+        {% endfor %} 
+
+    //Function Used For Cleaning Calender    
+    function isArrayInArrayOverlap(source,search)
+    {   count1=1;
+        count2=1;
+
+
+        for(var i=0,len=source.length;i<len;i++)
+        {
+            if(source[i][0]>=search[0] && source[i][0] >= search[1])
+            {
+                count1++;
+            }
+            if(source[i][1]<=search[0] && source[i][1] >= search[1])
+            {
+                count2++;
+            }
+        
+        }
+        if(count1==source.length || count2 == source.length)
+        {
+            return true;
+            }
+        else{
+            return false;
+        }    
+        }
+</script>
+<script type="text/javascript">
+$('.edit_evaluation').on('click', function (e) {
+      e.preventDefault();
+      $('.modal-popup-wrapper').toggleClass('is-visible');
+
+      $('#blcno_evaluation_id').html($(this).data('blcno'));
+      $('#address_evaluation_id').html($(this).data('street')+', '+$(this).data('apartment')+', '+$(this).data('block')+', '+$(this).data('avenue')+', '+$(this).data('building')+', '+$(this).data('area')+', '+$(this).data('governorate'));
+      $('#proposed_date_evaluation_id').html($(this).data('proposed_date'));
+      $('#proposed_time_evaluation_id').html($(this).data('proposed_time'));
+      $('#customername_evaluation_id').html($(this).data('customer_name'));
+      $('#mobileno_evaluation_id').html($(this).data('mobile_no'));
+      $('#evaluator_name_evaluation_id').html($(this).data('evaluator_name'));
+
+      //form values
+      $('#evaluation_id').val($(this).data('id'));
+      $('#appointment_date').val($(this).data('proposed_date'));
+      $('#appointment_time').val($(this).data('proposed_time'));
+      $('#notes').html($(this).data('notes'));
+
+      customer_id         = $(this).data('customer_id'); 
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getaddress' %}",
+
+        data: {'customer_id':customer_id}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+
+          ajax_ret_address = data['customer_address'];      
+
+        $.each( ajax_ret_address, function( key, values ) {
+
+              $("#address").append($('<option>', {        
+
+                              value: key, 
+
+                              text: values   
+
+                            }));           
+
+              });
+                                  }  
+      });
+
+        $('#evaluator').val($(this).data('evaluator_id'));
+        $('#address').val($(this).data('address_id'));
+
+});
+
+var coll = document.getElementsByClassName("collapsible");
+var i;
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+  }
+</script>
+{% endblock %}
+
+{% include 'salesadmin/home/popup.html' %}

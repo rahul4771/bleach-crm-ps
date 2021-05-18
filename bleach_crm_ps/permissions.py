@@ -70,6 +70,13 @@ class IsSalesAdmin(UserPassesTestMixin):
         else:
             return False
 
+class IsBookingOfficer(UserPassesTestMixin):
+    def test_func(self):
+        if self.request.user.is_authenticated and self.request.user.user_type=='BOOKINGOFFICER' and self.request.user.is_active==True:
+            return True
+        else:
+            return False
+
 class IsAgentEvaluatorSalesAdmin(UserPassesTestMixin):
     def test_func(self):
         if self.request.user.is_authenticated and self.request.user.user_type=='SALESADMIN' and self.request.user.is_active==True:

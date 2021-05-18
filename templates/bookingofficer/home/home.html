@@ -1,0 +1,1926 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper">
+{% include "bookingofficer/common/header.html" %}    
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Welcome to Dashboard</h1>
+                <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>    
+            </div><!--welcome-wrapper-->
+       
+<div class="main-card"><!--main-card-->
+    <div class="card-row"><!--card-row-->
+            <div class="card-column whitebg blue-border"><!--card-column-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-today-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Evaluations</h1>
+                <h2 class="blue-text"><label>Today<span>{{today_enquiry_count|default_if_none:''}}</span></label> </h2>
+                <p><label>This Week <span>{{week_enquiry_count|default_if_none:''}}</span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg green-border"><!--card-column-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-cleaning-job-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Cleaning Jobs</h1>
+                <h2 class="green-text"><label>Today<span>{{today_cleaning_job_count|default_if_none:''}}</span></label>  </h2>
+                <p><label>This Week<span>{{week_cleaning_job_count|default_if_none:''}}</span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg orange-border"><!--card-column-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-followup-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Follow-up</h1>
+                <h2 class="orange-text"><label>Today<span>{{today_follow_up_job_count|default_if_none:''}}</span></label> </h2>
+                <p><label>This Week <span>{{week_follow_up_job_count|default_if_none:''}}</span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg red-border"><!--card-column-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-rating-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Rating</h1>
+                <h2 class="red-text"><label>Month<span>{{month_average_feedback|default_if_none:'0.0'|floatformat:1}}</span></label> </h2>
+                <p><label>Last Month <span>{{lastmonth_average_feedback|default_if_none:'0.0'|floatformat:1}}</span></label></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
+            </div><!--card-column-->
+   </div><!--card-row-->
+</div><!--main-card-->       
+            
+<div class="main-content-holder"><!--main-content-holder-->  
+
+    {% if order_cancell_cashbacks %}
+<div class="white-wrapper"><!--white-wrapper-->
+    <h2 class="h2">Order Cancell CashBack Approval Task</h2>
+    <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+    <thead>
+        <tr>
+        <th>Order Number</th>
+        <th data-hide="phone,tablet">Name</th>
+        <th data-hide="phone,tablet">Mobile</th>
+        <th data-hide="phone">Total Amount</th>
+        <th data-hide="phone">Job Completed</th>
+        <th data-hide="phone">Paid</th>
+        <th data-hide="phone">Refund</th>
+        <th class="align-center" data-hide="phone,tablet">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order_cancell_cashback in order_cancell_cashbacks %}
+        <tr>
+        <td class="bold-text">
+        {{order_cancell_cashback.order.order_no}}
+        </td>
+        <td>
+        {{order_cancell_cashback.order.evaluation.customer.name}}
+        </td>
+        <td>
+        {{order_cancell_cashback.order.evaluation.customer.mobile_number}}
+        </td>
+        <td>
+        {{order_cancell_cashback.order.total_amount|floatformat:'3'}}
+        </td>
+        <td>
+        {{order_cancell_cashback.job_completed_amount|floatformat:'3'}}
+        </td>
+        <td>
+        {{order_cancell_cashback.order.amount_paid|floatformat:'3'}}
+        </td>
+        <td>
+        {{order_cancell_cashback.return_amount|floatformat:'3'}}
+        </td>
+        <td>
+        <span class="clickable-row red-bg" data-href="{% url 'booking-officer:bookingofficer-cancel-order' order_cancell_cashback.id %}">Click to Confirm</span>
+        </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+    </div>
+{% endif %}
+
+
+{% if approved_paybackdiscounts and ticket_count > 0 %}
+{% comment %} {% if approved_paybackdiscounts.paybackdiscount_count > 1 %} {% endcomment %}
+    <div class="white-wrapper"><!--white-wrapper-->
+    <h2 class="h2">Payback/Discount Task</h2>
+    <table class="main-table">
+    <tbody>
+        {% for ticket in approved_paybackdiscounts %}
+        {% for paybackdiscount in  ticket.paybackdiscounts %}
+        <tr class="{% if ticket.days_left <= 2 %}green-line{% elif ticket.days_left > 2 and ticket.days_left <= 5 %}yellow-line{% elif ticket.days_left > 5 and ticket.days_left <= 7 %}orange-line{% else %}red-line{% endif %}" >
+        <td data-label="Ticket Number" class="bold-text">
+        {% for followup in ticket.followup %}
+        TKT{{followup.ticket_no}}
+        {% endfor %}</td>
+        {% comment %} <td data-label="Ticket Types">{{ticket.ticket_types}}</td> {% endcomment %}
+        <td data-label="Action">Payback/Discount</td>
+        <td>{{paybackdiscount.investigation.order_schedule.order.evaluation.customer.name}}</td>
+        <td>{{paybackdiscount.investigation.order_schedule.order.evaluation.customer.mobile_number}}</td>
+        <td class="hide-a" data-label="">{% if ticket.investigator.profile_image %}<img src="{{ticket.investigator.profile_image.url}}" title="{{ticket.investigator.name}}" class="profile-avatar">{% endif %}</td>
+        <td data-label="" class="bold-text">{% if ticket.days_left <= 2 %}<h3 class="green-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% elif ticket.days_left > 2 and ticket.days_left <= 5 %}<h3 class="yellow-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% elif ticket.days_left > 5 and ticket.days_left <= 7 %}<h3 class="orange-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% else %}<h3 class="red-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% endif %}</td>
+        <td data-label="">
+        <span class="{% if ticket.days_left <= 2 %}green-bg{% elif ticket.days_left > 2 and ticket.days_left <= 5 %}yellow-bg{% elif ticket.days_left > 5 and ticket.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} clickable-row-list" data-href="{% url 'accountant:accountant-paybackdiscountprocess' paybackdiscount.id %}">Click to Approve</span>
+        </td>
+        </tr>
+        {% endfor %}
+        {% endfor %}
+    </tbody>
+    </table>
+    </div>
+    {% comment %} {% endif %} {% endcomment %}
+    {% endif %}
+
+<div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Cash Collection Requests</h2>
+<table class="main-table">
+<tbody>
+    {% for invoice in pending_payments %}
+    {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}
+    
+    {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
+    <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+    <td data-label="BLC Number" class="bold-text clickable-row" {% if invoice %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+    <td data-label="Service Type(s)">
+    {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+    {% for book in evaluation_details.evaluation_books %}
+    {{book.service_type}}<br>
+    {% endfor %}
+    {% endfor %}
+    </td>
+    <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+    <td data-label="Total Amount">{{invoice.remining_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
+    <td class="{% if invoice.evaluation.payment_method == 'PREPAID' %}indigo-text{% else %}rose-text{% endif %}"  data-label="Payment Method">
+    {{invoice.evaluation.payment_method|default_if_none:''}}
+    </td>
+    <td data-label="" class="bold-text">
+    {% if invoice.evaluation.payment_method == 'PREPAID' %}
+    {% if invoice.reminigdays < 0 %}
+    <h3 class="red-text-h3">Exp</h3>
+    {% else %}
+    <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}">{{invoice.reminigdays}}</h3> Days&#11015;
+    {% endif %}
+
+    {% elif invoice.evaluation.payment_method == 'POSTPAID' %}
+    <h3 class="{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;
+    {% endif %}
+</td>
+    <td data-label="">{% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}
+        <span class="green-bg clickable-row" data-href="{% url 'booking-officer:bookingofficer-cashcollect' %}?orderid={{invoice.id}}">Collect</span>   
+        {% else %}
+        <span class="gray-bg">Collect</span>
+        {% endif %}
+    </td>
+    </tr>
+
+    {% elif invoice.evaluation.payment_method == 'BREAKDOWN' %}
+    
+    {% if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount %}
+    <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+    <td data-label="BLC Number" class="bold-text clickable-row" {% if invoice %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+    <td data-label="Service Type(s)">
+    {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+    {% for book in evaluation_details.evaluation_books %}
+    {{book.service_type}}<br>
+    {% endfor %}
+    {% endfor %}
+    </td>
+    <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+    <td data-label="Total Amount">{{invoice.evaluation.before_cleaning_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
+    <td class="violet-text" data-label="Payment Method">{{invoice.evaluation.payment_method|default_if_none:''}}</td>
+    <td data-label="" class="bold-text">{% if invoice.reminigdays <= 0 %}
+    <h3 class="red-text-h3">Exp</h3>
+    {% else %}
+    <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}">{{invoice.reminigdays}}</h3> Days&#11015;
+    {% endif %}</td>
+    <td data-label="">{% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}
+        <span class="green-bg clickable-row" data-href="{% url 'booking-officer:bookingofficer-cashcollect' %}?orderid={{invoice.id}}">Collect</span>   
+        {% else %}
+        <span class="gray-bg">Collect</span>
+        {% endif %}
+    </td>
+    </tr>
+    {% endif %}
+
+    {% if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount %}
+    <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+    <td data-label="BLC Number" class="bold-text clickable-row" {% if invoice %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+    <td data-label="Service Type(s)">
+    {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+    {% for book in evaluation_details.evaluation_books %}
+    {{book.service_type}}<br>
+    {% endfor %}
+    {% endfor %}
+    </td>
+    <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+    <td data-label="Total Amount">{{invoice.remining_amount|default_if_none:'0.00'|floatformat:'2'}}KD</td>
+    <td data-label="Payment Method">{{invoice.evaluation.payment_method|default_if_none:''}}</td>
+    <td data-label="" class="bold-text"><h3 class="{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
+    <td data-label="">{% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}
+        <span class="green-bg clickable-row" data-href="{% url 'booking-officer:bookingofficer-cashcollect' %}?orderid={{invoice.id}}">Collect</span>   
+        {% else %}
+        <span class="gray-bg">Collect</span>
+        {% endif %}
+    </td>
+    </tr>
+    {% endif %}
+
+    {% elif invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
+    {% if invoice.subscription_topay != 0 %}
+        <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+        <td class="bold-text clickable-row" data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' invoice.id %}">{{invoice.evaluation.evaluation_id}}</td>
+        <td>{{invoice.evaluation.customer.name}}</td>
+        <td>
+        {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+        {% for book in evaluation_details.evaluation_books %}
+        {{book.service_type}}<br>
+        {% endfor %}
+        {% endfor %}
+        </td>
+        <td>{{invoice.evaluation.customer.mobile_number}}</td>
+        <td>{{invoice.subscription_topay|default_if_none:'0.000'|floatformat:'3'}} KD</td>
+        <td data-label="Payment Method" class="green-text">SUBSCRIPTION</td>
+        <td data-label="" class="bold-text"><h3 class="{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
+        <td data-label="">{% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}
+            <span class="green-bg clickable-row" data-href="{% url 'booking-officer:bookingofficer-cashcollect' %}?orderid={{invoice.id}}">Collect</span>   
+            {% else %}
+            <span class="gray-bg">Collect</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
+    {% endif %}
+
+    {% endif %}
+    {% endfor %}
+
+</tbody>
+</table>
+</div><!--white-wrapper-->
+    
+    {% if cancell_in_progress_orders %}
+    <div class="white-wrapper"><!--white-wrapper-->
+    <h2 class="h2">Order Cancel Task</h2>
+    <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+    <thead>
+        <tr>
+        <th>Order Number</th>
+        <th data-hide="phone,tablet">Name</th>
+        <th data-hide="phone,tablet">Mobile</th>
+        <th data-hide="phone,tablet">Requester</th>
+        <th data-hide="phone">Total Amount</th>
+        <th data-hide="phone">Job Completed</th>
+        <th data-hide="phone">Paid</th>
+        <th class="align-center" data-hide="phone,tablet">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cancell_in_progress_order in cancell_in_progress_orders %}
+        <tr>
+        <td class="bold-text">
+        {{cancell_in_progress_order.order_no}}
+        </td>
+        <td>
+        {{cancell_in_progress_order.evaluation.customer.name}}
+        </td>
+        <td>
+        {{cancell_in_progress_order.evaluation.customer.mobile_number}}
+        </td>
+        <td>
+        {{cancell_in_progress_order.cancell_requester.name}}
+        </td>
+        <td>
+        {{cancell_in_progress_order.total_amount|floatformat:'3'}}
+        </td>
+        <td>
+        {{cancell_in_progress_order.job_completed_amount|floatformat:'3'}}
+        </td>
+        <td>
+        {{cancell_in_progress_order.amount_paid|floatformat:'3'}}
+        </td>
+        <td>
+        <span class="clickable-row red-bg" data-href="{% url 'booking-officer:cancell-order' cancell_in_progress_order.id %}">Click to Cancel</span>
+        </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+    </div>
+    {% endif %}
+
+
+    {% if approve_tickets and ticket_count > 0 %}
+    {% comment %} {% if paybackdiscount_count >= 1 and buybackpromocodegift_count >= 1 %} {% endcomment %}
+    <div class="white-wrapper"><!--white-wrapper-->
+    <h2 class="h2">Ticket Approval Task</h2>
+    <table class="main-table">
+    <tbody>
+        {% for ticket in approve_tickets %}
+        {% if ticket.paybackdiscounts or ticket.buybackpromocodegifts %}
+        <tr class="{% if ticket.days_left <= 2 %}green-line{% elif ticket.days_left > 2 and ticket.days_left <= 5 %}yellow-line{% elif ticket.days_left > 5 and ticket.days_left <= 7 %}orange-line{% else %}red-line{% endif %} clickable-row-list" data-href="#">
+        <td data-label="Ticket Number" class="bold-text">
+        {% for followup in ticket.followup %}
+        TKT{{followup.ticket_no}}
+        {% endfor %}</td>
+        <td data-label="Ticket Types">
+        {% for payback in ticket.paybackdiscounts %}{% if forloop.first %}Payback / Discount{% endif %}{% endfor %}<br>
+        {% for buyback in ticket.buybackpromocodegifts %}{% if forloop.first %}Buy Back / Promo Code / Gift{% endif %}{% endfor %}
+        </td>
+        
+        <td class="hide-a" data-label="">{% if ticket.investigator.profile_image %}<img src="{{ticket.investigator.profile_image.url}}" title="{{ticket.investigator.name}}" class="profile-avatar">{% endif %}</td>
+        <td data-label="" class="bold-text">{% if ticket.days_left <= 2 %}<h3 class="green-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% elif ticket.days_left > 2 and ticket.days_left <= 5 %}<h3 class="yellow-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% elif ticket.days_left > 5 and ticket.days_left <= 7 %}<h3 class="orange-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% else %}<h3 class="red-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% endif %}</td>
+        <td data-label="">
+        <span class="{% if ticket.days_left <= 2 %}green-bg{% elif ticket.days_left > 2 and ticket.days_left <= 5 %}yellow-bg{% elif ticket.days_left > 5 and ticket.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} clickable-row-list" data-href="{% url 'booking-officer:bookingofficer-ticketapprove' ticket.id %}">Click to Approve</span>
+        </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+    </table>
+    </div>
+    {% comment %} {% endif %} {% endcomment %}
+    {% endif %}
+
+
+{% if evaluation_details %}
+<div class="white-wrapper"><!--white-wrapper-->
+
+<div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
+
+<div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
+<h2 class="h2">Evaluation Calendar</h2>
+{% comment %} <a href='{% url 'agent:email-view'%}'>sendmail</a> {% endcomment %}
+</div>
+
+<div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+<div class="date-wrapper"><!--date-wrapper-->
+            <div class="date-wrapper-inner"><!--date-wrapper-inner-->
+            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='today-date current-date'>Today</button>
+            </div><!--date-wrapper-inner-->
+</div><!--date-wrapper-->
+</div>
+
+</div>
+
+<div id="table-scroll" class="table-scroll"><!--table-scroll-->
+<div class="table-wrap"><!--table-wrap-->
+<table class="eval-table">
+<thead>
+<tr>
+<th bgcolor="#eee" width="4.54%" class="fixed-side padding" scope="col">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">00 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">01 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">02 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">03 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">04 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">05 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">06 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">07 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">08 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">09 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">10 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">11 AM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">12 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">01 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">02 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">03 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">04 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">05 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">06 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">07 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">08 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">09 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">10 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">11 PM</th>
+<th class="theadbg" width="4.54%">&nbsp;</th>
+<th class="theadbg" width="4.54%" scope="col">00 AM</th>
+</tr>
+</thead>
+<tbody>
+{% for evaluator in evaluation_details %}
+<tr id="evaluator{{evaluator.id}}">
+<th width="4.54%" bgcolor="#eee" class="fixed-side"><img {% if evaluator.profile_image %} src="{{evaluator.profile_image.url}}" {% else %} src="{% static 'files/images/profile-pic.jpg' %}" {% endif %} class="profile-avatar"></th>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div><!--table-wrap-->
+</div><!--table-scroll-->
+</div><!--white-wrapper-->
+{% endif %}
+ 
+<div class="white-wrapper"><!--white-wrapper-->
+
+<div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
+
+<div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
+<h2 class="h2">Cleaning Calender</h2>
+</div>
+
+<div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+<div class="date-wrapper"><!--date-wrapper-->
+            <div class="date-wrapper-inner"><!--date-wrapper-inner-->
+            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type="text" id="cleaning_calendar" value="{{schedule_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='today-date current-date'>Today</button>
+            </div><!--date-wrapper-inner-->
+</div><!--date-wrapper-->
+</div>
+
+</div>
+
+<div class="cleaning-container">
+<div class="scrollable">
+<div>
+  <table id="cleaning_table" cellpadding="1" cellspacing="1" class="cleaning-table">
+  <tr>
+  <th width="4.166%" colspan="2"> </th>
+    <th width="8.333%" colspan="2">2 AM</th>
+    <th width="8.333%" colspan="2">4 AM</th>
+    <th width="8.333%" colspan="2">6 AM</th>
+    <th width="8.333%" colspan="2">8 AM</th>
+    <th width="8.333%" colspan="2">10 AM</th>
+    <th width="8.333%" colspan="2">12 PM</th>
+    <th width="8.333%" colspan="2">2 PM</th>
+    <th width="8.333%" colspan="2">4 PM</th>
+    <th width="8.333%" colspan="2">6 PM</th>
+    <th width="8.333%" colspan="2">8 PM</th>
+    <th width="8.333%" colspan="2">10 PM</th>
+    <th width="4.166%" colspan="2"></th>
+  </tr>
+  </table>
+</div>
+</div>
+</div>
+</div><!--white-wrapper-->              
+             
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+
+{% include 'salesadmin/common/footer.html' %}
+</div><!--wrapper-->
+
+
+<!-- followup graph_popup -->
+<div class="modal-popup-wrappergraph"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+       <div class="full-wrapp-pop">  <!--full-wrapp-pop-->
+        <div class="close-popup modal-close modal-toggle followup_graph">X</div>
+        
+        <div class="modal-body no-padding"><!--modal-body-->        
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+                <div class="clients-card-column clients-column-right"><!--clients-card-column clients-column-right-->
+                    <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
+                    <h2 class="h2"><b class="evaluatorname">runn</b></h2>
+                    </div>
+                    <div class="chart_boxDiv"><!--chart_boxDiv-->
+                        <div class="chart_box_Right"><!--chart_box_Right-->
+                            <!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
+                            <div id="chart_div" ></div>
+                        </div><!--chart_box_Right-->
+                    </div><!--chart_boxDiv-->   
+                
+                    <div class="chart_boxDiv"><!--chart_boxDiv-->    
+                        <div class="chart_box_Left"><!--chart_box_Left-->
+                                <div class="legend-wrapper"><!--legend-wrapper--> 
+                                    <div class="legend-result count_div"><label class="legend-label">SALES </label> <b class="legend-result-blue" id="total_sales2">0.00</b><b>KD</b></div>
+                                    <div class="legend-result count_div"><label class="legend-label">ORDERS </label> <b class="legend-result-red" id="total_orders2">0.00</b><b>KD</b></div>
+                                </div><!--legend-wrapper-->
+                            </div><!--chart_box_Left-->
+                            
+        <div class="chart_box_Left"><!--chart_box_Left-->        
+        <div class="Button_wrapperChart">
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonth_sales_target"><div class="slider round"><span class="on">MONTH</span><span class="off">DATE</span></div></label></div>
+            <input type="text" id="sales_target_date1" class="followup_date1 targetset1 txt-box" >&nbsp;
+            <input type="text" id="sales_target_date2" class="followup_date2 targetset1 txt-box" >
+            <input type="text" id="sales_target_month1" class="followup_month targetset2 txt-box" hidden>&nbsp;
+            <input type="text" id="sales_target_month2" class="followup_month targetset2 txt-box" hidden>
+            <div><button id="reset_sales_target" class="green-button-chart">Reset</button></div>
+              
+            </div>
+                       
+        </div><!--chart_box_Left-->           
+                    </div><!--chart_boxDiv-->                
+                </div> <!--clients-card-column clients-column-right-->                                   
+            </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+        </div><!--modal-body-->
+        </div>  <!--full-wrapp-pop-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--followup graph popup-->
+
+<!-- edit_evaluation_popup -->
+<div class="modal-popup-wrapper"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+        <div class="modal-header"><!--modal-header-->
+        <button class="modal-close edit_evaluation collapsible0-close">X</button>
+        </div><!--modal-header-->
+    <div class="modal-body"><!--modal-body-->
+    <div class="modal-content"><!--modal-content-->
+    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">  
+                <tr>
+                    <td valign="center"><div class="blc-number" id="area_evaluation_id"></div><span id="address_evaluation_id"></span></td>
+                    <td><a id="client_url"><div class="bold-text" id="customername_evaluation_id"></div></a><div id="mobileno_evaluation_id"></div></td>
+                </tr>
+ 
+            <tr>
+            <td colspan="3">Evaluation Date:<strong><span class="blue-text" id="proposed_date_evaluation_id"></span></strong> &nbsp;Evaluation Time:<strong><span class="blue-text" id="proposed_time_evaluation_id"></span></strong> &nbsp;Evaluator:<strong><span class="blue-text" id="evaluator_name_evaluation_id"></span></strong></td>
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div><!--ticket-wrapper-full--> 
+        
+    </div><!--modal-content-->
+    </div><!--modal-body-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--modal-popup-wrapper-->
+<!-- /edit_evaluation_popup -->
+
+
+<!-- edit_cleaning_popup -->
+<div class="modal-popup-wrapper1"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+        <div class="modal-header"><!--modal-header-->
+        <button class="modal-close edit_cleaning collapsible1-close">X</button>
+        </div><!--modal-header-->
+    <div class="modal-body"><!--modal-body-->
+    <div class="modal-content"><!--modal-content-->
+    <div class="ticket-wrapper-full cleaningwrapper"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">  
+                <tr>
+                    <td><a id="order_url"><div class="blc-number" id="blcno_cleaning_id"></div></a><div id="servicetype"></div><br><span id="address_cleaning_id"></span></td>
+                    <td><div class="bold-text" id="customername_cleaning_id"></div><div id="mobileno_cleaning_id"></div></td>
+                </tr>
+ 
+            <tr>
+            <td colspan="3">Cleaning Date:<strong><span class="blue-text" id="starting_date_cleaning_id"></span></strong> &nbsp;Starting Time:<strong><span class="blue-text" id="starting_time_cleaning_id"></span></strong> &nbsp;Duration:<strong><span class="blue-text" id="duration_cleaning_id"></span></strong></td>
+            </tr>
+            <tr id="team_leader_cleaning_id">
+            </tr>
+            <tr id="team_member_cleaning_id">
+            </tr>  
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div><!--ticket-wrapper-full--> 
+        
+    </div><!--modal-content-->
+    </div><!--modal-body-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--modal-popup-wrapper-->
+<!-- /edit_cleaning_popup -->
+
+
+<!--edit followup popup -->
+<div class="modal-popup-wrapper2"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+        <div class="modal-header"><!--modal-header-->
+        <button class="modal-close edit_followup collapsible2-close">X</button>
+        </div><!--modal-header-->
+    <div class="modal-body"><!--modal-body-->
+    <div class="modal-content"><!--modal-content-->
+    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">  
+                <tr>
+                    <td valign="center"><div class="blc-number" id="ticketno_followup_id"></div><div class="mobile_number" id="blcno_followup_id"></div><div id="followup_servicetype"></div><br><div class="blc-number" id="status_followup_id"></div><span id="address_followup_id"></span></td>
+                    <td><div class="bold-text" id="customername_followup_id"></div><div id="mobileno_followup_id"></div></td>
+                </tr>
+ 
+            <tr>
+            <td colspan="3">Cleaning Date:<strong><span class="blue-text" id="starting_date_followup_id"></span></strong> &nbsp;Starting Time:<strong><span class="blue-text" id="starting_time_followup_id"></span></strong> &nbsp;Duration:<strong><span class="blue-text" id="duration_followup_id"></span></strong></td>
+            </tr>
+            <tr id="team_leader_followup_id">
+            </tr>
+            <tr id="team_member_followup_id">
+            </tr>  
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div><!--ticket-wrapper-full--> 
+        
+    </div><!--modal-content-->
+    </div><!--modal-body-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--modal-popup-wrapper-->
+<!--edit followup popup -->
+
+
+<!-- edit_notapprovedcleaning_popup -->
+<div class="modal-popup-wrapper6"><!--modal-popup-wrapper-->
+    <div class="modal-overlay modal-toggle"></div>
+    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
+        <div class="modal-header"><!--modal-header-->
+        <button class="modal-close notapprovededit_cleaning collapsible6-close">X</button>
+        </div><!--modal-header-->
+    <div class="modal-body"><!--modal-body-->
+    <div class="modal-content"><!--modal-content-->
+    <div class="ticket-wrapper-full notapproved_cleaningwrapper"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    
+    <table width="100%" border="0" class="popup-tble1">  
+                <tr>
+                    <td><a id="notapprovedorder_url"><div class="blc-number" id="blcno_notapprovedcleaning_id"></div></a><div id="notapproved_servicetype"></div><br><span id="address_notapprovedcleaning_id"></span></td>
+                    <td><div class="bold-text" id="customername_notapprovedcleaning_id"></div><div id="mobileno_notapprovedcleaning_id"></div></td>
+                </tr>
+ 
+            <tr>
+            <td colspan="3">Cleaning Date:<strong><span class="blue-text" id="starting_date_notapprovedcleaning_id"></span></strong> &nbsp;Starting Time:<strong><span class="blue-text" id="starting_time_notapprovedcleaning_id"></span></strong> &nbsp;Duration:<strong><span class="blue-text" id="duration_notapprovedcleaning_id"></span></strong></td>
+            </tr>  
+            </table>
+    
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+     
+    <div class="edit-collapse collapsible1"><a href="#" ><img src="{% static 'files/images/edit.png' %}" width="30px"></a></div>  
+    <div class="popup-collapse popup-collapse1"><!--popup-collapse--> 
+    <form method="post" enctype= "multipart/form-data">
+    {%csrf_token%}  
+    <input type="hidden" name="action_type" value="notapprovededit_cleaning">
+    <input type="hidden" name="notapprovedcleaning_id" id="notapprovedcleaning_id">  
+ <hr class="hr-dashedpad">  
+  <div class="blc-number align-center">Edit Cleaning</div>    
+  <br>   
+<hr class="hr-dashedpad">  
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Cleaning Date</label></div>
+        <input name="notapprovedcleaning_date" type="text" class="textBox" id="notapprovedcleaning_date">
+        <p id="notapprovedcleaning_date_alert" hidden>Please Select a new date !</p>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Starting Time</label></div>
+        <input name="notapprovedcleaning_time" type="text" class="textBox" id="notapprovedcleaning_time">
+        <p id="notapprovedcleaning_time_alert">Please Select proper date and time !</p>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Duration</label></div>
+        <input name="notapprovedcleaning_hours" type="text" class="textBox" id="notapprovedcleaning_duration">
+  </div><!--ticket-form-left-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+   
+<div align="center"> <input class="assignButton notapprovedcleaning_btn" name="assing" type="button" value="Submit" onclick="submitAnyForm(this);"></div>
+</form>
+ </div><!--popup-collapse-->
+</div><!--ticket-wrapper-full--> 
+        
+    </div><!--modal-content-->
+    </div><!--modal-body-->
+    </div><!--modal-wrapper modal-transition-->
+</div><!--modal-popup-wrapper-->
+<!-- /edit_notapprovedcleaning_popup -->
+
+{% endblock %}
+{% block javascript %}
+<script type="text/javascript">
+//previous time limit
+    function datetimecheck(ftime,fdate,mode){
+    var today = new Date();
+    console.log(ftime,fdate,"preee")
+    tentativedate = fdate;
+    
+        console.log(tentativedate,today,"dte")
+        var vals = tentativedate.split('-');
+        var day = parseInt(vals[0]);
+        var month = parseInt (vals[1]);
+        var year = parseInt (vals[2]);
+
+        var start_time = ftime;
+        start_time = start_time.split(" ");
+        time_AM_PM = start_time[1];
+        var time = start_time[0].split(":");
+
+        //splitting 0 in hour
+        if (time[0] < 10){
+            var hour_split = time[0].split('');
+            var time_hour = hour_split[1];
+            console.log(time_hour,"werry")    
+        }else{
+            time_hour = time[0];
+        }
+
+        //converting to 24 hr
+        if (time_AM_PM == 'PM'){
+          if (time_hour < 12){
+            newhour = parseInt(time_hour) + 12 ;
+          }else{
+            newhour = time_hour;
+          }
+        }else{
+          if (time_hour == 12){
+            newhour = 00 ;
+          }else{
+            newhour = time[0];
+          }
+        }
+
+        //creating datetime element
+        selecteddatetime = new Date(year,month,day,newhour,time[1]);
+        selecteddatetime.setMonth(selecteddatetime.getMonth()-1);
+        console.log(newhour,selecteddatetime,"sel")
+
+        if (selecteddatetime < today){
+          if (mode == 'followup'){
+            $('#followup_schedule_time_alert').attr("hidden",false);
+            $('.confirmdate_followup_btn').attr("disabled",true);
+          }
+          if (mode == 'order'){
+            $('#order_schedule_time_alert').attr("hidden",false);
+            $('.confirmdate_order_btn').attr("disabled",true);
+          }
+          if (mode == 'evaluation'){
+            console.log("lop1")
+            $('#appointment_time_alert').attr("hidden",false);
+            $('.appointment_btn').attr("disabled",true);
+          }
+          if (mode == 'cleaning'){
+            console.log("lop1")
+            $('#cleaning_time_alert').attr("hidden",false);
+            $('.cleaning_btn').attr("disabled",true);
+          }
+          if (mode == 'followupcleaning'){
+            console.log("lop1")
+            $('#followupcleaning_time_alert').attr("hidden",false);
+            $('.followupcleaning_btn').attr("disabled",true);
+          }
+          if (mode == 'notapprovedcleaning'){
+            console.log("lop1")
+            $('#notapprovedcleaning_time_alert').attr("hidden",false);
+            $('.notapprovedcleaning_btn').attr("disabled",true);
+          }
+          console.log("success")
+        }else{
+          if (mode == 'followup'){
+          $('#followup_schedule_time_alert').attr("hidden",true);
+          $('.confirmdate_followup_btn').attr("disabled",false);
+          }
+          if (mode == 'order'){
+          $('#order_schedule_time_alert').attr("hidden",true);
+          $('.confirmdate_order_btn').attr("disabled",false);
+          }
+          if (mode == 'evaluation'){
+            console.log("lop2")
+            $('#appointment_time_alert').attr("hidden",true);
+            $('.appointment_btn').attr("disabled",false);
+          }
+          if (mode == 'cleaning'){
+            console.log("lop1")
+            $('#cleaning_time_alert').attr("hidden",true);
+            $('.cleaning_btn').attr("disabled",false);
+          }
+          if (mode == 'followupcleaning'){
+            console.log("lop1")
+            $('#followupcleaning_time_alert').attr("hidden",true);
+            $('.followupcleaning_btn').attr("disabled",false);
+          }
+          if (mode == 'notapprovedcleaning'){
+            console.log("lop1")
+            $('#notapprovedcleaning_time_alert').attr("hidden",true);
+            $('.notapprovedcleaning_btn').attr("disabled",false);
+          }
+          console.log("fail")
+        }
+
+    }
+    //
+
+
+
+
+//set default month year in monthpicker
+function appendLeadingZeroes(n){
+    if(n <= 9){
+      return "0" + n;
+    }
+    return n
+  }
+
+var date1 = new Date();
+
+var month = appendLeadingZeroes(date1.getMonth()+1);
+var monthstring = month + "/" + date1.getFullYear();
+console.log(month,"lp")
+$('#working_calendar_month').val(monthstring);
+
+//datemonthtoggle
+$('#daymonthtoggle_resource').click(function(){
+        if($(this).is(':checked')){
+            $('#working_calendar2').attr("hidden",false);
+            $('#working_calendar').attr("hidden",true);
+            
+            $('.togglehide').attr("hidden",true);
+            
+        }else{
+            $('#working_calendar2').attr("hidden",true);
+            $('#working_calendar').attr("hidden",false);
+            
+            $('.togglehide').attr("hidden",false);
+            
+        }
+        salestargetcalculation();
+    });
+
+// sales target calculation
+    function salestargetcalculation(){
+        console.log($('#sales_target_datepicker').val(),"romo");
+        if($('#daymonthtoggle_resource').is(':checked')){
+            var dom = 'Month'
+            var target_date = $('#working_calendar_month').val();
+        }else{
+            var dom = 'Date'
+            var target_date = $('#sales_target_datepicker').val();
+        };
+        
+        
+        $.ajax({
+            url: '/booking-officer/ajax/sales-target-daily/',
+            data: {
+            'target_date': target_date,
+            'date_or_month': dom
+            },
+            dataType: "json",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            
+            success: function(data) {
+
+              $.each(data,function(key,value){
+                var percent = ((parseFloat(value.amount)*parseFloat(100))/parseFloat(value.submitted));
+
+                if (isNaN(percent)){
+                    percent = 0.0;
+                };
+              
+                $('#evaluatorid'+value.evaluator_id+'').text(parseFloat(percent).toFixed(2));
+
+                $('#submitted_amount'+value.evaluator_id+'').text(parseFloat(value.submitted).toFixed(3));
+                $('#approved_amount'+value.evaluator_id+'').text(parseFloat(value.amount).toFixed(3));
+                $('#approved_count'+value.evaluator_id+'').text(value.approved_count);
+                $('#submitted_count'+value.evaluator_id+'').text(value.submitted_count);
+                
+                $('#color'+value.evaluator_id+'').attr("style",'width:'+parseFloat(percent).toFixed(2)+'%;');
+
+                if (percent > 0 & percent < 25){
+                    $('#color'+value.evaluator_id+'').removeAttr("class");
+                    $('#color'+value.evaluator_id+'').addClass('chart-redbg');
+                }
+                if (percent > 25 & percent < 50){
+                    $('#color'+value.evaluator_id+'').removeAttr("class");
+                    $('#color'+value.evaluator_id+'').addClass('chart-orangebg');
+                }
+                if (percent > 50 & percent < 75){
+                    $('#color'+value.evaluator_id+'').removeAttr("class");
+                    $('#color'+value.evaluator_id+'').addClass('chart-yellobg');
+                }
+                if (percent > 75 & percent <= 100){
+                    $('#color'+value.evaluator_id+'').removeAttr("class");
+                    $('#color'+value.evaluator_id+'').addClass('chart-greenbg');
+                }
+                
+                console.log(percent,"per")
+              });
+            }
+        })
+    };
+
+$('document').ready(function(){
+  //hiding ticket closing tab if empty
+    var ticketcount = $('.ticketcount').length ;
+
+    if (ticketcount > 0){
+      $('.closetickets').show();
+    }else{
+      $('.closetickets').hide();
+    }
+    
+  var today = new Date();
+
+  //pie charts datepickers
+  $('#location_pie_date1').datetimepicker({
+      pickTime: false, 
+      format: 'DD-MM-YYYY',
+      autoclose:true,
+      endDate: "today",
+      maxDate: today,
+  }).on('changeDate', function (ev) {
+          $(this).datetimepicker('hide');
+      });
+
+    $('#location_pie_date2').datetimepicker({
+        pickTime: false, 
+        format: 'DD-MM-YYYY',
+        autoclose:true,
+        endDate: "today",
+        maxDate: today,
+    }).on('changeDate', function (ev) {
+            $(this).datetimepicker('hide');
+        });
+
+    $('#cleaningtype_pie_date1').datetimepicker({
+      pickTime: false, 
+      format: 'DD-MM-YYYY',
+      autoclose:true,
+      endDate: "today",
+      maxDate: today,
+  }).on('changeDate', function (ev) {
+          $(this).datetimepicker('hide');
+      });
+
+    $('#cleaningtype_pie_date2').datetimepicker({
+        pickTime: false, 
+        format: 'DD-MM-YYYY',
+        autoclose:true,
+        endDate: "today",
+        maxDate: today,
+    }).on('changeDate', function (ev) {
+            $(this).datetimepicker('hide');
+        });
+
+    $('#governorate_pie_date1').datetimepicker({
+      pickTime: false, 
+      format: 'DD-MM-YYYY',
+      autoclose:true,
+      endDate: "today",
+      maxDate: today,
+  }).on('changeDate', function (ev) {
+          $(this).datetimepicker('hide');
+      });
+
+    $('#governorate_pie_date2').datetimepicker({
+        pickTime: false, 
+        format: 'DD-MM-YYYY',
+        autoclose:true,
+        endDate: "today",
+        maxDate: today,
+    }).on('changeDate', function (ev) {
+            $(this).datetimepicker('hide');
+        });
+
+    salestargetcalculation();
+    //Evaluation Callender
+        {% for evaluator in evaluation_details %}
+            
+            {% if evaluator.evaluation_details %}
+
+                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            
+                evaluator_timings_list =[]
+                {% for evaluation in evaluator.evaluation_details %}
+                    proposed_timing_string      = '{{evaluation.proposed_time|date:'H'}}';
+                    proposed_timing             = parseInt(proposed_timing_string)
+                    evaluator_timings_list.push(proposed_timing);
+                {% endfor %}
+                for(i=0;i<=23;i++)
+                {
+                    if(evaluator_timings_list.includes(i))
+                    {
+                        same_slote_count = 0
+                        {% for evaluation in evaluator.evaluation_details %}
+                            proposed_timing_string      = '{{evaluation.proposed_time|date:'H'}}';
+                            proposed_timing             = parseInt(proposed_timing_string)
+                        
+                        if(i == proposed_timing)
+                            {
+                              same_slote_count += 1
+                              if(same_slote_count == 1)
+                              {
+                                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="edit_evaluation bold-text clickable-cursor {% if evaluation.status == 'EVALUATED' %}gray-text-evaluation{% endif %}" data-blcno="{{evaluation.evaluation.evaluation_id}}" data-customer_name="{{evaluation.evaluation.customer.name}}" data-customer_id="{{evaluation.evaluation.customer.id}}" data-area="{{evaluation.address.area.name}}" data-governorate="{{evaluation.address.governorate.name}}" data-block="{{evaluation.address.block}}" data-apartment="{{evaluation.address.apartment}}" data-street="{{evaluation.address.street}}" data-building="{{evaluation.address.building}}" data-avenue="{{evaluation.address.avenue}}"  data-mobile_no="{{evaluation.evaluation.customer.mobile_number}}" data-proposed_date="{{evaluation.proposed_time|date:'d-m-Y'}}" data-proposed_time="{{evaluation.proposed_time|date:'h:i A'}}" data-evaluator_name="{{evaluation.evaluator.name}}" data-notes="{{evaluation.evaluator_note|escapejs|default_if_none:''}}" data-customer_id="{{evaluation.evaluation.customer.id}}" data-evaluator_id="{{evaluation.evaluator.id}}" data-address_id="{{evaluation.address.id}}" data-id="{{evaluation.id}}">{{evaluation.address.area.name}}</a></td>');
+                              }
+                              else
+                              {
+                                $("#evaluator{{evaluator.id}} td:last").append('<br><a class="edit_evaluation bold-text clickable-cursor {% if evaluation.status == 'EVALUATED' %}gray-text-evaluation{% endif %}" data-blcno="{{evaluation.evaluation.evaluation_id}}" data-customer_name="{{evaluation.evaluation.customer.name}}" data-customer_id="{{evaluation.evaluation.customer.id}}"  data-area="{{evaluation.address.area.name}}" data-governorate="{{evaluation.address.governorate.name}}" data-block="{{evaluation.address.block}}"  data-apartment="{{evaluation.address.apartment}}" data-street="{{evaluation.address.street}}" data-building="{{evaluation.address.building}}" data-avenue="{{evaluation.address.avenue}}" data-mobile_no="{{evaluation.evaluation.customer.mobile_number}}" data-proposed_date="{{evaluation.proposed_time|date:'d-m-Y'}}" data-proposed_time="{{evaluation.proposed_time|date:'h:i A'}}" data-evaluator_name="{{evaluation.evaluator.name}}" data-notes="{{evaluation.notes|escapejs|default_if_none:''}}" data-customer_id="{{evaluation.evaluation.customer.id}}" data-evaluator_id="{{evaluation.evaluator.id}}" data-address_id="{{evaluation.address.id}}" data-id="{{evaluation.id}}">{{evaluation.address.area.name}}</a>');
+                              }  
+                              
+                            }
+                            
+
+                        {% endfor %}
+                
+                    }
+                    else
+                    {
+                      $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');  
+                    }
+                    $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+                }    
+            {% else %}
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
+            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            {% endif %}
+
+        {% endfor %}    
+
+
+
+    //Function Used For Cleaning Calender    
+    function isArrayInArrayOverlap(source,search)
+    {   count1=0;
+        count2=0;
+
+
+        for(var i=0,len=source.length;i<len;i++)
+        {
+            if(source[i][0]>=search[0] && source[i][0] >= search[1])
+            {
+                count1++;
+            }
+            if(source[i][1]<=search[0] && source[i][1] <= search[1])
+            {
+                count2++;
+            }
+        
+        }
+        if(count1==source.length || count2 == source.length)
+        {
+            return true;
+            }
+        else{
+            return false;
+        }    
+        }
+
+
+      //To add cleaning schedules in cleaning calender  
+      console.log("callendar")
+      completed_calender = []; 
+      {% for old_schedule in calendar_order_schedules %}  
+
+            old_starting_time_string      = '{{old_schedule.start_at|date:'H:i'}}'.replace(":",".");
+            old_ending_time_string        = '{{old_schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+            old_starting_time             = parseInt(old_starting_time_string.split('.')[0])+parseInt(old_starting_time_string.split('.')[1])/60
+            old_ending_time               = parseInt(old_ending_time_string.split('.')[0])+parseInt(
+                old_ending_time_string.split('.')[1])/60
+            
+            current_raw_timings = [];
+            console.log(old_starting_time,"old loop")
+            {% for schedule in calendar_order_schedules %}
+                starting_time_string      = '{{schedule.start_at|date:'H:i'}}'.replace(":",".");
+                ending_time_string        = '{{schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+                starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+                    ending_time_string.split('.')[1])/60
+
+                console.log(starting_time,"new loop")
+                console.log(ending_time,"new loop")
+                if(completed_calender.includes('{{forloop.counter}}'))
+                {
+                    console.log("Includes");
+                }
+                else
+                {
+                if((old_starting_time>=starting_time && old_starting_time>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true))||(old_ending_time<=starting_time && old_ending_time<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true))||(current_raw_timings.length==0))
+                    {
+                        completed_calender.push('{{forloop.counter}}');
+                        console.log(current_raw_timings.length,"length before")
+                        console.log(current_raw_timings,"before")
+                        current_raw_timings.push([starting_time,ending_time]);
+                        console.log(current_raw_timings.length,"length after")
+                        console.log(current_raw_timings,"after")
+                        //append raw
+                    if(current_raw_timings.length==1)
+                        {
+                            console.log(old_starting_time)
+                            console.log(old_ending_time)
+                            console.log(starting_time)
+                            console.log(ending_time)
+                            console.log("appending new raw")
+                            
+                            left_percentage  = 100/24*starting_time
+
+                            if(ending_time == 0)
+                            {
+                              width_percentage = 100/24*24-100/24*starting_time;
+                            }
+                            else
+                            {
+                              width_percentage = 100/24*ending_time-100/24*starting_time;
+                            }
+                            
+                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{schedule.id}}" data-id="{{schedule.id}}" data-cleaning_status="{{schedule.work_status}}" {% if schedule.work_status == "CLEANING_CANCELLED" %}class="red-box edit_cleaning"{% elif schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box edit_cleaning"{% else %}class="green-box edit_cleaning"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar">{% if schedule.cleaning_teams %}{% for team in schedule.cleaning_teams %}{% if team.team_leader.profile_image %}<img src="{{team.team_leader.profile_image.url}}" title="{{team.team_leader.name}}">{%else%}<img src="{% static 'files/images/profile-pic.jpg' %}" title="{{team.team_leader.name}}">{% endif %}{% endfor %}{% endif %}</div><center></center> <div {% if schedule.work_status == "CLEANING_CANCELLED" %}class="right-value red-text"{% elif schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{% if schedule.work_status == 'CLEANING_FULFILLED' %}&#10004;{% else %}{{schedule.order_scheduler_book.number_of_cleaners}}{% endif %}</div></div></td></tr>')
+                        }
+                        //append td to the raw 
+                    else
+                        { 
+                           console.log(old_starting_time)
+                           console.log(old_ending_time)
+                           console.log(starting_time)
+                           console.log(ending_time)
+                           console.log("appending same raw")
+                           
+                           left_percentage  = 100/24*starting_time
+                           
+                           if(ending_time == 0)
+                            {
+                              width_percentage = 100/24*24-100/24*starting_time;
+                            }
+                            else
+                            {
+                              width_percentage = 100/24*ending_time-100/24*starting_time;
+                            } 
+                            
+                            $('#cleaning_table tr:last td').append('<div id="cleaningschedule{{schedule.id}}" data-id="{{schedule.id}}" data-cleaning_status="{{schedule.work_status}}" {% if schedule.work_status == "CLEANING_CANCELLED" %}class="red-box edit_cleaning"{% elif schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box edit_cleaning"{% else %}class="green-box edit_cleaning"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar">{% if schedule.cleaning_teams %}{% for team in schedule.cleaning_teams %}{% if team.team_leader.profile_image %}<img src="{{team.team_leader.profile_image.url}}" title="{{team.team_leader.name}}">{%else%}<img src="{% static 'files/images/profile-pic.jpg' %}" title="{{team.team_leader.name}}">{% endif %}{% endfor %}{% endif %}</div><center></center> <div {% if schedule.work_status == "CLEANING_CANCELLED" %}class="right-value red-text edit_cleaning"{% elif schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text edit_cleaning"{% else %}class="right-value green-text edit_cleaning"{% endif %}>{% if schedule.work_status == 'CLEANING_FULFILLED' %}&#10004;{% else %}{{schedule.order_scheduler_book.number_of_cleaners}}{% endif %}</div></div>')      
+                        }
+                    }
+
+                }
+            {% endfor %}        
+
+       {% endfor %}
+       console.log("Callendar ends")
+
+       //for special cases like 2 days cleanings
+       {% for sp_schedule in sp_calendar_order_schedules %}
+
+       starting_time_string      = '{{sp_schedule.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{sp_schedule.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+       console.log("special")
+       console.log(first_raw_left_percentage)
+       console.log(first_raw_width_percentage)
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{sp_schedule.id}}" data-id="{{sp_schedule.id}}" data-cleaning_status="{{sp_schedule.work_status}}" {% if sp_schedule.work_status == "CLEANING_CANCELLED" %}class="sp-red-box-first edit_cleaning"{% elif sp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-first edit_cleaning"{% else %}class="sp-green-box-first edit_cleaning"{% endif %} style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar">{% if sp_schedule.cleaning_teams %}{% for team in sp_schedule.cleaning_teams %}{% if team.team_leader.profile_image %}<img src="{{team.team_leader.profile_image.url}}" title="{{team.team_leader.name}}">{%else%}<img src="{% static 'files/images/profile-pic.jpg' %}" title="{{team.team_leader.name}}">{% endif %}{% endfor %}{% endif %}</div><center></center> </div></td></tr>')
+       
+       {% endfor %}
+
+       //for special cases like 2 days cleanings
+       {% for spp_schedule in spp_calendar_order_schedules %}
+
+       starting_time_string      = '{{spp_schedule.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{spp_schedule.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{spp_schedule.id}}" data-id="{{spp_schedule.id}}" data-cleaning_status="{{spp_schedule.work_status}}" {% if spp_schedule.work_status == "CLEANING_CANCELLED" %}class="sp-red-box-second edit_cleaning"{% elif spp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-second edit_cleaning"{% else %}class="sp-green-box-second edit_cleaning"{% endif %} style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div {% if spp_schedule.work_status == "CLEANING_CANCELLED" %}class="right-value red-text edit_cleaning"{% elif spp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text edit_cleaning"{% else %}class="right-value green-text edit_cleaning"{% endif %}>{% if spp_schedule.work_status == 'CLEANING_FULFILLED' %}&#10004;{% else %}{{spp_schedule.order_scheduler_book.number_of_cleaners}}{% endif %}</div></div></td></tr>')
+       
+       {% endfor %}
+
+
+
+      //To add followup schedules in cleaning calender  
+      completed_calender_followup = []; 
+      {% for old_schedule in calendar_followup_schedules %} 
+            old_starting_time_string      = '{{old_schedule.start_at|date:'H:i'}}'.replace(":",".");
+            old_ending_time_string        = '{{old_schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+            old_starting_time             = parseInt(old_starting_time_string.split('.')[0])+parseInt(old_starting_time_string.split('.')[1])/60
+            old_ending_time               = parseInt(old_ending_time_string.split('.')[0])+parseInt(
+                old_ending_time_string.split('.')[1])/60
+            
+            current_raw_timings = []
+            {% for schedule in calendar_followup_schedules %}
+                starting_time_string      = '{{schedule.start_at|date:'H:i'}}'.replace(":",".");
+                ending_time_string        = '{{schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+                starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+                    ending_time_string.split('.')[1])/60
+                if(completed_calender_followup.includes('{{forloop.counter}}'))
+                {
+                    console.log("includes");
+                }
+                else
+                {
+                if(old_starting_time_string>=starting_time && old_starting_time_string>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0)||old_ending_time_string<=starting_time && old_ending_time_string<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0))
+                    {
+                        completed_calender_followup.push('{{forloop.counter}}');
+                        current_raw_timings.push([starting_time,ending_time]);
+                        //append raw
+                        if(current_raw_timings.length==1)
+                        {
+                            left_percentage  = 100/24*starting_time
+                            
+                            if(ending_time == 0)
+                            {
+                              width_percentage = 100/24*24-100/24*starting_time;
+                            }
+                            else
+                            {
+                              width_percentage = 100/24*ending_time-100/24*starting_time;
+                            }
+                            
+                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{schedule.id}}" data-id="{{schedule.id}}" class="yellow-box edit_followup" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar">{% if schedule.followup_teams %}{% for team in schedule.followup_teams %}{% if team.team_leader.profile_image %}<img src="{{team.team_leader.profile_image.url}}" title="{{team.team_leader.name}}">{% else %}<img src="{% static 'files/images/profile-pic.jpg' %} title="{{team.team_leader.name}}">{% endif %}{% endfor %}{% endif %}</div><center></center> <div class="right-value yellow-text">{% if schedule.work_status == 'FOLLOW_UP_CLEANING_FULFILLED' %}&#10004;{% else %}{{schedule.follow_up.no_of_cleaners}}{% endif %}</div></div></td></tr>')
+                        }
+                        //append td to the raw 
+                        else
+                        { 
+                           left_percentage  = 100/24*starting_time
+                           
+                           if(ending_time == 0)
+                            {
+                              width_percentage = 100/24*24-100/24*starting_time;
+                            }
+                            else
+                            {
+                              width_percentage = 100/24*ending_time-100/24*starting_time;
+                            }
+
+                            $('#cleaning_table tr:last td').append('<div id="followupschedule{{schedule.id}}" data-id="{{schedule.id}}" class="yellow-box edit_followup" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar">{% if schedule.followup_teams %}{% for team in schedule.followup_teams %}{% if team.team_leader.profile_image %}<img src="{{team.team_leader.profile_image.url}}" title="{{team.team_leader.name}}">{% else %}<img src="{% static 'files/images/profile-pic.jpg' %} title="{{team.team_leader.name}}">{% endif %}{% endfor %}{% endif %}</div><center></center> <div class="right-value yellow-text">{% if schedule.work_status == 'FOLLOW_UP_CLEANING_FULFILLED' %}&#10004;{% else %}{{schedule.follow_up.no_of_cleaners}}{% endif %}</div></div>')      
+                        }
+                    }
+                }
+            {% endfor %}        
+
+       {% endfor %}
+
+       //for special cases like 2 days fllowup cleanings
+       {% for sp_schedule in sp_calendar_followup_schedules %}
+       starting_time_string      = '{{sp_schedule.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{sp_schedule.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{sp_schedule.id}}" data-id="{{sp_schedule.id}}" class="sp-yellow-box-first edit_followup" style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar">{% if sp_schedule.followup_teams %}{% for team in sp_schedule.followup_teams %}{% if team.team_leader.profile_image %}<img src="{{team.team_leader.profile_image.url}}" title="{{team.team_leader.name}}">{% else %}<img src="{% static 'files/images/profile-pic.jpg' %} title="{{team.team_leader.name}}">{% endif %}{% endfor %}{% endif %}</div><center></center> </div></td></tr>')
+       
+       {% endfor %}
+
+       //for special cases like 2 days fllowup cleanings
+       {% for spp_schedule in spp_calendar_followup_schedules %}
+       starting_time_string      = '{{spp_schedule.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{spp_schedule.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{spp_schedule.id}}" data-id="{{spp_schedule.id}}" class="sp-yellow-box-second edit_followup" style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div class="right-value yellow-text">{% if spp_schedule.work_status == 'FOLLOW_UP_CLEANING_FULFILLED' %}&#10004;{% else %}{{spp_schedule.follow_up.no_of_cleaners}}{% endif %}</div></div></td></tr>')
+       
+       {% endfor %}
+
+
+
+       //To add not confirmed cleaning schedules in cleaning calender  
+      console.log("callendar")
+      completed_calender = []; 
+      {% for old_schedule in calendar_notapprovedorder_schedules %}  
+
+            old_starting_time_string      = '{{old_schedule.start_at|date:'H:i'}}'.replace(":",".");
+            old_ending_time_string        = '{{old_schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+            old_starting_time             = parseInt(old_starting_time_string.split('.')[0])+parseInt(old_starting_time_string.split('.')[1])/60
+            old_ending_time               = parseInt(old_ending_time_string.split('.')[0])+parseInt(
+                old_ending_time_string.split('.')[1])/60
+            
+            current_raw_timings = [];
+            console.log(old_starting_time,"old loop")
+            {% for schedule in calendar_notapprovedorder_schedules %}
+                starting_time_string      = '{{schedule.start_at|date:'H:i'}}'.replace(":",".");
+                ending_time_string        = '{{schedule.end_at|date:'H:i'}}'.replace(":",".");
+
+                starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+                ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+                    ending_time_string.split('.')[1])/60
+
+                console.log(starting_time,"new loop")
+                console.log(ending_time,"new loop")
+                if(completed_calender.includes('{{forloop.counter}}'))
+                {
+                    console.log("Includes");
+                }
+                else
+                {
+                if((old_starting_time>=starting_time && old_starting_time>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true))||(old_ending_time<=starting_time && old_ending_time<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true))||(current_raw_timings.length==0))
+                    {
+                        completed_calender.push('{{forloop.counter}}');
+                        console.log(current_raw_timings.length,"length before")
+                        console.log(current_raw_timings,"before")
+                        current_raw_timings.push([starting_time,ending_time]);
+                        console.log(current_raw_timings.length,"length after")
+                        console.log(current_raw_timings,"after")
+                        //append raw
+                    if(current_raw_timings.length==1)
+                        {
+                            console.log(old_starting_time)
+                            console.log(old_ending_time)
+                            console.log(starting_time)
+                            console.log(ending_time)
+                            console.log("appending new raw")
+                            
+                            left_percentage  = 100/24*starting_time
+
+                            if(ending_time == 0)
+                            {
+                              width_percentage = 100/24*24-100/24*starting_time;
+                            }
+                            else
+                            {
+                              width_percentage = 100/24*ending_time-100/24*starting_time;
+                            }
+                            
+                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{schedule.id}}" data-id="{{schedule.id}}" class="gray-box notapprovededit_cleaning" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"></div><center></center> <div {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.order_scheduler_book.number_of_cleaners}}</div></div></td></tr>')
+                        }
+                        //append td to the raw 
+                    else
+                        { 
+                           console.log(old_starting_time)
+                           console.log(old_ending_time)
+                           console.log(starting_time)
+                           console.log(ending_time)
+                           console.log("appending same raw")
+                           
+                           left_percentage  = 100/24*starting_time
+                           
+                           if(ending_time == 0)
+                            {
+                              width_percentage = 100/24*24-100/24*starting_time;
+                            }
+                            else
+                            {
+                              width_percentage = 100/24*ending_time-100/24*starting_time;
+                            } 
+                            
+                            $('#cleaning_table tr:last td').append('<div id="cleaningschedule{{schedule.id}}" data-id="{{schedule.id}}" class="gray-box notapprovededit_cleaning" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"></div><center></center> <div {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.order_scheduler_book.number_of_cleaners}}</div></div>')      
+                        }
+                    }
+
+                }
+            {% endfor %}        
+
+       {% endfor %}
+       console.log("Callendar ends")
+
+       //for special cases like 2 days cleanings
+       {% for sp_schedule in sp_calendar_notapprovedorder_schedules %}
+
+       starting_time_string      = '{{sp_schedule.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{sp_schedule.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+       console.log("special")
+       console.log(first_raw_left_percentage)
+       console.log(first_raw_width_percentage)
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{sp_schedule.id}}" data-id="{{sp_schedule.id}}" class="sp-gray-box-first notapprovededit_cleaning" style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"></div><center></center> </div></td></tr>')
+       
+       {% endfor %}
+
+       //for special cases like 2 days cleanings
+       {% for spp_schedule in spp_calendar_notapprovedorder_schedules %}
+
+       starting_time_string      = '{{spp_schedule.start_at|date:'H:i'}}'.replace(":",".");
+       ending_time_string        = '{{spp_schedule.end_at|date:'H:i'}}'.replace(":",".");
+       
+       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
+       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
+            ending_time_string.split('.')[1])/60
+
+       first_raw_left_percentage   = 100/24*starting_time
+       first_raw_width_percentage  = 100-100/24*starting_time
+
+       second_raw_left_percentage  = 0
+       second_raw_width_percentage = 100/24*ending_time;
+
+
+       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{spp_schedule.id}}" data-id="{{spp_schedule.id}}" class="sp-gray-box-second notapprovededit_cleaning" style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div {% if spp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{spp_schedule.order_scheduler_book.number_of_cleaners}}</div></div></td></tr>')
+       
+       {% endfor %}
+
+});
+
+function set_params_go(args)
+{
+var url='{% url 'booking-officer:bookingofficerdash-board' %}';
+var params={cleaning_calendar_date:$('#cleaning_calendar').val(),evaluation_calendar_date:$('#evaluation_calendar').val(),
+};
+for(key in args) 
+    params[key]=args[key];
+var query='';
+for(key in params)
+    if(params[key]) 
+        query+='&'+key+'='+params[key].toString();
+query=query.replace('&','?');
+window.location.href=url+query;  
+}
+
+$('document').ready(function(){
+  //Followup graph popup
+  $('.followup_graph').on('click', function (e) {
+    console.log($(this).data('evaluator'),"drt")
+      $('.evaluatorname').text($(this).data('evaluator'));
+      var today = new Date();
+      $('.followup_date1').datetimepicker({ 
+          pickTime: false, 
+          format: "DD-MM-YYYY", 
+          pickTime: false, 
+            format: 'DD-MM-YYYY',
+            autoclose:true,
+            endDate: "today",
+            maxDate: today,
+        }).on('changeDate', function (ev) {
+                $(this).datetimepicker('hide');
+            });
+
+      $('.followup_date2').datetimepicker({ 
+          pickTime: false, 
+            format: 'DD-MM-YYYY',
+            autoclose:true,
+            endDate: "today",
+            maxDate: today,
+        }).on('changeDate', function (ev) {
+                $(this).datetimepicker('hide');
+            });
+
+      $(".followup_month").datepicker({
+          format: "mm/yyyy",
+          startView: "year", 
+          minViewMode: "months"
+      });
+
+      e.preventDefault();
+      console.log("hiiiiii");
+      $('.modal-popup-wrappergraph').toggleClass('is-visible');
+    });  
+
+
+  // Evaluation Edit
+    $('.edit_evaluation').on('click', function (e) {
+      e.preventDefault();
+      $('.modal-popup-wrapper').toggleClass('is-visible');
+
+      $('#area_evaluation_id').html($(this).data('area'));
+      $('#address_evaluation_id').html($(this).data('street')+', '+$(this).data('apartment')+', '+$(this).data('block')+', '+$(this).data('avenue')+', '+$(this).data('building')+', '+$(this).data('area')+', '+$(this).data('governorate'));
+      $('#proposed_date_evaluation_id').html($(this).data('proposed_date'));
+      $('#proposed_time_evaluation_id').html($(this).data('proposed_time'));
+      $('#customername_evaluation_id').html($(this).data('customer_name'));
+      $('#mobileno_evaluation_id').html($(this).data('mobile_no'));
+      $('#evaluator_name_evaluation_id').html($(this).data('evaluator_name'));
+
+      var client_url = '/booking-officer/client/orders/'+$(this).data('customer_id')+'';
+      console.log(client_url,"web")
+      $('#client_url').attr('href',client_url);
+
+      //form values
+      $('#evaluation_id').val($(this).data('id'));
+      $('#appointment_date').val($(this).data('proposed_date'));
+      $('#appointment_time').val($(this).data('proposed_time'));
+      $('#notes').html($(this).data('notes'));
+
+});
+
+var coll = document.getElementsByClassName("collapsible");
+var i;
+console.log(coll);
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });  
+  }
+
+$('.collapsible0-close').click(function(){
+    $(".popup-collapse0").css('display','none');
+})
+
+
+
+// Cleaning Edit
+    $('.edit_cleaning').on('click', function (e) {
+      e.preventDefault();
+      $('.modal-popup-wrapper1').toggleClass('is-visible');
+      schedule_id         = $(this).data('id'); 
+      cleaning_status     = $(this).data('cleaning_status');
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getcleaninginfo' %}",
+
+        data: {'schedule_id':schedule_id}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+                  if(cleaning_status == 'CLEANING_CANCELLED')
+                    {
+                        $('#blcno_cleaning_id').html(data['order_no']+'<br><br><span class="red-text">Cleaning Cancelled</span>');
+                    }
+                  else
+                    {
+                        $('#blcno_cleaning_id').html(data['order_no']+'<br><br>'+data['status']);
+                    }
+                  $('#servicetype').html(data['service_type']);
+                  $('#address_cleaning_id').html(data['address']);
+                  $('#customername_cleaning_id').html(data['customer']);
+                  $('#mobileno_cleaning_id').html(data['customer_mobile']);  
+                  $('#starting_date_cleaning_id').html(data['start_at_date']);
+                  $('#starting_time_cleaning_id').html(data['start_at_time']);
+                  $('#duration_cleaning_id').html(data['duration']+' Hours');
+
+                  if(data['cleaning_policy'] == 'SUBSCRIPTION')
+                  {
+                    $('.cleaningwrapper').removeClass('ltblue-border');
+                    $('.cleaningwrapper').addClass('ltgreen-border');
+                  }else{
+                    $('.cleaningwrapper').removeClass('ltgreen-border');
+                    $('.cleaningwrapper').addClass('ltblue-border');
+                  }
+
+                    var order_url = '/booking-officer/client/order/details/'+data['order_id']+'';
+                    
+                    $('#order_url').attr('href',order_url);
+
+                  //Append Team Incharge and team members Based on Conditions
+                  if(data['team_leader'] || data['stl'])
+                  {
+                    $('#team_leader_cleaning_id').html('<td colspan="3">Team Incharge:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
+                  }     
+                  else
+                  {
+                    $('#team_leader_cleaning_id').html('<td colspan="3"><strong class="red-text">Cleaning Team Not Assigned</strong></td>')
+                  }
+
+                  cleaners = data['cleanersinfo'].cleaners;
+                  
+                  if(cleaners != '')
+                  {
+                    $('#team_member_cleaning_id').html('<td colspan="3">Team Members:<strong><span class="blue-text"></span></strong> &nbsp;</td>');
+
+                    append_cleaners = '';
+                    for(i=0;i<cleaners.length;++i)
+                        {   
+                            if((i+1)%5 == 0)
+                            {
+                                append_cleaners += cleaners[i].member_name+',<br>';
+                            }
+                            else
+                            {
+                                append_cleaners += cleaners[i].member_name+',';
+                            }
+                            
+                        }   
+                    $('#team_member_cleaning_id td strong span').html(append_cleaners);
+                  }
+                  else
+                    {
+                        $('#team_member_cleaning_id').html('');
+                  }  
+                        
+                                  }  
+      });
+});
+
+var coll = document.getElementsByClassName("collapsible1");
+var i;
+for (i = 0; i < coll.length; i++) {  
+  coll[i].addEventListener("click", function() {
+    console.log(this);
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+  }
+
+$('.collapsible1-close').click(function(){
+    $(".popup-collapse1").css('display','none');
+})
+
+
+
+
+// followup Edit
+    $('.edit_followup').on('click', function (e) {
+      e.preventDefault();
+      $('.modal-popup-wrapper2').toggleClass('is-visible');
+      schedule_id         = $(this).data('id'); 
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getfollowupinfo' %}",
+
+        data: {'schedule_id':schedule_id}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+                  $('#ticketno_followup_id').html('TKT'+data['ticket_no']);
+                  $('#blcno_followup_id').html(data['order_no']+'<br><br>');
+                  $('#followup_servicetype').html(data['service_type']);
+                  $('#status_followup_id').html(data['status']);
+                  $('#address_followup_id').html(data['address']);
+                  $('#customername_followup_id').html(data['customer']);
+                  $('#mobileno_followup_id').html(data['customer_mobile']);  
+                  $('#starting_date_followup_id').html(data['start_at_date']);
+                  $('#starting_time_followup_id').html(data['start_at_time']);
+                  $('#duration_followup_id').html(data['duration']+' Hours');
+
+                  //Append Team Incharge and team members Based on Conditions
+                  if(data['team_leader'] || data['stl'])
+                  {
+                    $('#team_leader_followup_id').html('<td colspan="3">Team Incharge:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
+                  }     
+                  else
+                  {
+                    $('#team_leader_followup_id').html('<td colspan="3"><strong class="red-text">Followup Team Not Assigned</strong></td>')
+                  }
+
+                  cleaners = data['cleanersinfo'].cleaners;
+                  
+                  if(cleaners != '')
+                  {
+                    $('#team_member_followup_id').html('<td colspan="3">Team Members:<strong><span class="blue-text"></span></strong> &nbsp;</td>');
+
+                    append_cleaners = '';
+                    for(i=0;i<cleaners.length;++i)
+                        {   
+                            if((i+1)%5 == 0)
+                            {
+                                append_cleaners += cleaners[i].member_name+',<br>';
+                            }
+                            else
+                            {
+                                append_cleaners += cleaners[i].member_name+',';
+                            }
+                        }
+                    $('#team_member_followup_id td strong span').html(append_cleaners);    
+                  }
+                  else
+                    {
+                        $('#team_member_followup_id').html('');
+                  }
+                       
+                                  }  
+      });
+
+});
+
+var coll = document.getElementsByClassName("collapsible2");
+var i;
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+  }
+
+$('.collapsible2-close').click(function(){
+    $(".popup-collapse2").css('display','none');
+})
+
+
+//not approved Cleaning Edit
+    $('.notapprovededit_cleaning').on('click', function (e) {
+      e.preventDefault();
+      $('.modal-popup-wrapper6').toggleClass('is-visible');
+      schedule_id         = $(this).data('id'); 
+      $('#notapprovedcleaning_id').val(schedule_id);
+
+      //date picker and time picker 
+        $('#notapprovedcleaning_date').datetimepicker({
+              pickTime: false, 
+              format: "DD-MM-YYYY",
+              minDate: new Date(),
+            });
+
+        $('#notapprovedcleaning_time').datetimepicker({
+              pickDate:false,
+              format: 'hh:mm A'
+            });
+
+        $("#notapprovedcleaning_date_alert").css({'color':'red'});
+        $("#notapprovedcleaning_time_alert").css({'color':'red'});
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getcleaninginfo' %}",
+
+        data: {'schedule_id':schedule_id}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+                  $('#blcno_notapprovedcleaning_id').html(data['order_no']+'<br><br>'+'Quatation Not Approved');
+                  $('#notapproved_servicetype').html(data['service_type']);
+                  $('#address_notapprovedcleaning_id').html(data['address']);
+                  $('#customername_notapprovedcleaning_id').html(data['customer']);
+                  $('#mobileno_notapprovedcleaning_id').html(data['customer_mobile']);  
+                  $('#starting_date_notapprovedcleaning_id').html(data['start_at_date']);
+                  $('#starting_time_notapprovedcleaning_id').html(data['start_at_time']);
+                  $('#duration_notapprovedcleaning_id').html(data['duration']+' Hours');
+
+                  if(data['cleaning_policy'] == 'SUBSCRIPTION')
+                  {
+                    $('.notapproved_cleaningwrapper').removeClass('ltblue-border');
+                    $('.notapproved_cleaningwrapper').addClass('ltgreen-border');
+                  }else{
+                    $('.notapproved_cleaningwrapper').removeClass('ltgreen-border');
+                    $('.notapproved_cleaningwrapper').addClass('ltblue-border');
+                  }
+
+                  var order_url = '/booking-officer/client/order/details/'+data['order_id']+'';
+                  $('#notapprovedorder_url').attr('href',order_url);  
+
+
+                  //form
+                  $('#notapprovedcleaning_date').val(data['start_at_date']);
+                  $('#notapprovedcleaning_time').val(data['start_at_time']);
+                  $('#notapprovedcleaning_duration').val(data['duration']);                        
+                                  }  
+      });
+
+      datetimecheck($('#notapprovedcleaning_time').val(),$('#notapprovedcleaning_date').val(),'notapprovedcleaning');
+
+        $('#notapprovedcleaning_time').change(function(){
+          datetimecheck($('#notapprovedcleaning_time').val(),$('#notapprovedcleaning_date').val(),'notapprovedcleaning');
+        });
+
+        $('#notapprovedcleaning_date').change(function(){
+          datetimecheck($('#notapprovedcleaning_time').val(),$('#notapprovedcleaning_date').val(),'notapprovedcleaning');
+        });
+
+    //edit option toggle
+        
+    $('.edit-collapse').css('display','block');
+    
+});
+
+var coll = document.getElementsByClassName("collapsible6");
+var i;
+for (i = 0; i < coll.length; i++) {  
+  coll[i].addEventListener("click", function() {
+    console.log(this);
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+  }
+
+$('.collapsible6-close').click(function(){
+    $(".popup-collapse6").css('display','none');
+})
+
+});
+
+//# sourceURL=pen.js
+    </script>
+{% endblock %}

@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^technical-supervisor/',include('technicalsupervisor.urls',namespace='tech-supervisor')),
     url(r'^quality-control/',include('qualitycontroll.urls',namespace='quality-control')),
     url(r'^tl/',include('team_leader.urls',namespace='tl')),
+    url(r'^booking-officer/',include('bookingofficer.urls',namespace='booking-officer')),
     url(r'^accountant/',include('accountant.urls',namespace='accountant')),
     url(r'^qc/',include('qualitycontroll.urls',namespace='qc')),
     url(r'^customer/',include('customer.urls',namespace='customer')),

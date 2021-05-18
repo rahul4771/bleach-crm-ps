@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load mathfilters %}
+<div class="wrapper"><!--wrapper-->
+
+{% if request.user.user_type == 'ADMIN' %}
+{% include "admin/common/header.html" %} 
+{% elif request.user.user_type == 'BOOKINGOFFICER' %}
+{% include "bookingofficer/common/header.html" %} 
+{% else %}
+{% include "salesadmin/common/header.html" %}
+{% endif %}   
+
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Daily Sales</h1>
+                <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>    
+            </div><!--welcome-wrapper-->
+       
+     <div class="clients-top-card-wrapper"><!--clients-top-card-wrapper-->
+     	<div class="clients-card-wrapper"><!--clients-card-wrapper-->
+       	<div class="clients-card-column clients-column-left"><!--clients-card-column clients-column-left-->
+        
+        <div class="card-column whitebg green-border"><!--card-column-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/daily.png' %}" style="padding:10px;"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Sales</h1>
+                <h2 class="green-text"><label>Daily<span>{{dailysales|default_if_none:'0'}} KD</span></label> </h2>
+                <p class="dailysale"> <span id="dailysalevalue">{{dailysales|sub:2000|default_if_none:'0'}} KD</span></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
+            </div><!--card-column-->
+
+        <div class="card-column whitebg blue-border"><!--card-column-->
+                <div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/monthly.png' %}" style="padding:10px;"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Sales</h1>
+                <h2 class="blue-text"><label>Monthly<span>{{monthlysales|default_if_none:'0'}} KD</span></label> </h2>
+                <p class="monthlysale"> <span id="monthlysalevalue">{{monthlysales|sub:52000|default_if_none:'0'}} KD</span></p>
+                </div><!--column-right-->
+                </div><!--card-innerwrapper-->
+            </div><!--card-column-->
+
+        </div><!--clients-card-column clients-column-left-->
+
+        <div class="clients-card-column clients-column-right whitebg hover ltorange-border"><!--clients-card-column clients-column-right-->
+        <h2 class="orange-text">Sales (Month of <span id="month_name"></span>)</h2><br> 
+		<div class="chart_boxDiv"><!--chart_boxDiv-->
+  			<div class="chart_box_Right"><!--chart_box_Right-->
+ 				<!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
+            	<div id="chart_div"></div>
+  			</div><!--chart_box_Right-->
+		</div><!--chart_boxDiv-->
+            
+        {% comment %} <div class="chart_boxDiv"><!--chart_boxDiv-->    
+        
+         <div class="chart_box_Left"><!--chart_box_Left-->
+         <div class="legend-wrapper"><!--legend-wrapper--> 
+            <div class="legend-result count_div"><label class="legend-label">Submitted </label> <b class="legend-result-blue" id="total_submitted">0</b></div>
+            <div class="legend-result count_div"><label class="legend-label">Approved </label> <b class="legend-result-red" id="total_approved">0</b></div>
+         </div><!--legend-wrapper-->
+  		</div><!--chart_box_Left-->
+            
+        </div><!--chart_boxDiv-->     {% endcomment %}
+            
+        </div><!--clients-card-column clients-column-right-->
+
+        </div><!--clients-card-wrapper-->
+
+</div><!--clients-top-card-wrapper-->       
+            
+     <div class="main-content-holder"><!--main-content-holder-->                
+            
+<div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Daily Sales List</h2>
+
+<div class="filter-column-boxes filter-columns-right">
+  <!-- datepicker -->
+  <div class="date-wrapper"><!--date-wrapper-->
+    <div class="date-wrapper-inner-resource"><!--date-wrapper-inner-->
+      <div id="working_calendar2" >
+        <button class="prev-month-resource previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+        <input type='text' id='calendar_month'  name='monthpicker' class="date-box month_pick_resource" onchange="monthlysales();">
+        <button class='next-month-resource next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+        <button class='this-month-resource current-date'>Month</button>
+      </div>
+    </div>
+
+    <div class="date-togglewrapper"><!--date-togglewrapper-->
+            <div class="Button_wrapperChart">
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="salestoggle"><div class="slider round"><span class="on">EVALUATOR</span><span class="off">SERVICE</span></div></label></div>
+    
+            </div>
+            </div><!--date-togglewrapper-->
+  </div>
+</div><!--filter-column-boxes filter-columns-right-->  
+
+<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+ 
+<thead>
+<tr id="salesheaders">
+<th>Date</th>
+<th data-hide="phone,tablet">Day</th>
+<th data-hide="phone,tablet" class="align-right">General Cleaning</th>
+<th data-hide="phone,tablet" class="align-right">Upholstery Cleaning</th>
+<th data-hide="phone,tablet" class="align-right">Deep Cleaning</th>
+<th data-hide="phone,tablet" class="align-right">Carpet Cleaning</th>
+<th data-hide="phone,tablet" class="align-right">Kitchen Cleaning</th>
+<th data-hide="phone,tablet" class="align-right">Sterilization</th>
+<th data-hide="phone,tablet" class="align-right">Total Amount</th>
+<th data-hide="phone,tablet" class="align-right">Sales Status</th>
+</tr>
+</thead>
+<tbody id="dailysaleslist">
+
+</tbody>
+<tfoot>
+ 
+</tfoot>
+</table>
+
+</div><!--white-wrapper-->                   
+            
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+{% include 'salesadmin/common/footer.html' %}    
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'files/js/charts/dailysalesdatachart.js' %}"></script>
+<script src="{% static 'files/js/daily-sales/dailysales.js' %}"></script>
+{% comment %} <script id="rendered-js">
+$('.footable').footable({
+  calculateWidthOverride: function () {
+    return { width: $(window).width() };
+  } });
+
+
+// See:
+// http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
+//# sourceURL=pen.js
+    </script> {% endcomment %}
+<script>
+
+$('document').ready(function(){
+
+//target value calc for sales daily and monthly cards with up down arrows
+var dailysalevalue = "{{dailysales|sub:2000|default_if_none:'0.000'}}"
+var monthlysalevalue = "{{monthlysales|sub:52000|default_if_none:'0.000'}}"
+
+
+if (dailysalevalue < 0){
+  $('#dailysalevalue').text(Math.abs(dailysalevalue));
+  $('.dailysale').append(' <i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
+  $('#dailysalevalue').addClass('red-text');
+}else if (dailysalevalue > 0){
+  $('.dailysale').append(' <i class="fa fa-arrow-up" aria-hidden="true" style="color:#3cbbb1;"></i>');
+  $('#dailysalevalue').addClass('green-text');
+}else{
+  console.log("zero")
+}
+
+if (monthlysalevalue < 0){
+  $('#monthlysalevalue').text(Math.abs(monthlysalevalue));
+  $('.monthlysale').append(' <i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
+  $('#monthlysalevalue').addClass('red-text');
+}else if (monthlysalevalue > 0){
+  $('.monthlysale').append(' <i class="fa fa-arrow-up" aria-hidden="true" style="color:#3cbbb1;"></i>');
+  $('#monthlysalevalue').addClass('green-text');
+}else{
+  console.log("zero")
+}
+
+//monthpicker month setup
+var date1 = new Date();
+
+var month = ("0" + (date1.getMonth()+1)).slice(-2);
+console.log(month,"lp")
+
+var datestring = month + "/" + date1.getFullYear();
+$('#calendar_month').val(datestring);
+
+monthlysales();
+
+})
+
+function set_params_go(args)
+{
+var url='{% url 'booking-officer:bookingofficer-orders' %}';
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val()
+};
+for(key in args) 
+    params[key]=args[key];
+var query='';
+for(key in params)
+    if(params[key]) 
+        query+='&'+key+'='+params[key].toString();
+query=query.replace('&','?');
+window.location.href=url+query;  
+}
+
+</script>    
+{% endblock %}

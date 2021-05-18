@@ -1,0 +1,283 @@
+<!doctype html>
+{% load static %}
+<html lang="en" xml:lang="en" >
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" id="viewportMeta" />
+
+    
+    <meta name="description" content="Bleach Invoice">
+    <meta name="author" content="Invoice">
+
+    
+
+   
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="{% static 'files/css/customer/main.css' %}">
+    <title>Bleach Cleaning Services | Feedback Form</title>
+
+  </head>
+  <body id="printableArea">
+   
+   <div class="container mb-4 mt-4" id="content" >
+      <div class="row" id="printableArea">
+        <div class="col-md-8 col-print-12 mx-auto" id="canvas" >
+          
+          <div class="inv-card mb-4">
+            <div class="d-flex p-4">
+              <div class="d-flex ">
+                <div >
+                 <img src="{% static 'files/images/customer/logo.png' %}" class="inv-logo mr-4"/>
+               </div>
+               <!--  <div  class="text-justify ml-5">
+                 <div  class="inv-company-title notranslate" id="company-name">BLEACH</div>
+                 <div class="inv-company-subtitle ">CLEANING SERVICES</div>
+               </div>-->
+               </div>
+          <div class=" pt-4 inv-translator " data-html2canvas-ignore="true">
+            <div class="form-check form-switch inv-form-switch select-language">
+              <input type="checkbox"  id="lang-selector" />
+              <!--<input class="form-check-input" type="checkbox"  id="lang-selector" >--> 
+              <label class="form-check-label notranslate" for="flexSwitchCheckChecked" id="lang-label" data-html2canvas-ignore="true">English</label>
+            </div>
+           
+            
+            <div id="google_translate_element" style="display: none;"></div>
+          </div>
+          
+            </div>
+           
+            
+            
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 fb-header order-md-1 order-2">
+                        <div class="inv-heading-light">
+                        Feel free to drop us a line and give your feedback
+                       </div>
+                       <div>
+                        We are looking forward to hearing back from you
+                       </div>
+                    </div>
+                    <div class="col-md-4 offset-md-2 fb-company order-md-2 order-1" >
+                        
+                    </div>
+                </div>
+
+          <div class="inv-content inv-text-color mt-4">Customer Details</div>
+          <h4 class="inv-content pt-2 inv-heading-light inv-text-color">{{order.evaluation.customer.name}}</h4>
+          Contact No : {{order.evaluation.customer.mobile_number}} <br>
+              
+          Email : {{order.evaluation.customer.email}}<br><br>
+          
+          <div class="row ">
+          {% for orderschedule in order.orderschedules %}
+            <div class="col-md-5 col-print-5 fb-customer-details mt-4 mt-md-0">
+              <div class="">
+              
+              <div class="inv-content inv-text-color"> 
+              
+                {{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}} {% else %}{% endif %} {{orderschedule.customer_address.building}},{{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},{% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}} {% else %}{% endif %}<br>{{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}<br><br>
+              
+              </div>
+              </div>
+
+            </div>
+            <div class="col-md-3 col-print-3  fb-middle-card" >
+              <div class=" mt-4">
+              <!--<h1 class="text-center qt-title">QUOTATION</h1>-->
+              
+                <div class="pt-4">{{orderschedule.start_at}}</div>
+               
+                <div class="pt-2"><h4 class="inv-heading-light">{{orderschedule.order_scheduler_book.total_cost|floatformat:2}} KD</h4></div>
+              
+
+            </div>
+              
+              
+              
+            </div>
+            <div class="col-md-3 col-print-3 offset-md-1 fb-end-card" >
+              <div class=" mt-4">
+              <!--<h1 class="text-center qt-title">QUOTATION</h1>-->
+              
+                <div class="pt-4"><b>{{orderschedule.customer_address.area.name}}</b></div>
+                <div>{{orderschedule.order_scheduler_book.service_type}}</div>
+                <div>{{orderschedule.order_scheduler_book.area_type}}</div>
+              
+            </div>
+              
+              
+              
+            </div>
+            {% endfor %}
+
+            <form method="post" action="">
+                {%csrf_token%}
+            
+            <div class="col-md-12 col-print-12 order-3">
+              <h4 class="pt-4">Service Details</h4>
+
+              {% for question in questions %}
+              <div class="inv-price-card mt-4 row">
+               <div class="pt-2 mb-2">{{question.question}}  ?</div>
+                <div class="mb-2">
+                
+                  <div class="rate pb-2">
+                    <input type="radio" id="star5{{question.id}}" name="rate" value="5" />
+                    <label for="star5{{question.id}}" title="text">5 stars</label>
+                    <input type="radio" id="star4{{question.id}}" name="rate" value="4" />
+                    <label for="star4{{question.id}}" title="text">4 stars</label>
+                    <input type="radio" id="star3{{question.id}}" name="rate" value="3" />
+                    <label for="star3{{question.id}}" title="text">3 stars</label>
+                    <input type="radio" id="star2{{question.id}}" name="rate" value="2" />
+                    <label for="star2{{question.id}}" title="text">2 stars</label>
+                    <input type="radio" id="star1{{question.id}}" name="rate" value="1" />
+                    <label for="star1{{question.id}}" title="text">1 star</label>
+                    <input type="hidden" name="rating{{question.id}}" value="1">
+                  </div>
+                </div>
+                
+              </div>
+              {% endfor %}
+
+            </div>
+          
+         
+           
+          
+          </div>
+        <!--  <hr class="mt-3 mb-3 pl-2 pr-2 inv-divider"/>-->
+        
+       <div class="row mb-4">
+         <div class="col-md-12 fb-notes-container" >
+          <label for="fb-notes" class="fb-notes-label">Note</label>
+
+          <textarea id="fb-notes" name="notes" rows="4" cols="50">
+          
+          </textarea>
+         </div>
+       </div>
+        </div>
+         
+         
+          </div>
+          
+        </div>
+       
+      </div>
+      <div class="d-flex text-center no-print">
+        <div class="inv-primary-btn text-center  mt-4 mb-4 inv-receipt-download " id="download">
+        
+         Submit
+        </div> 
+        <div class="inv-primary-outline-btn text-center  mt-4 mb-4 inv-receipt-print  " >
+          
+         Cancel
+        </div> 
+      </div>
+      </form>
+
+   </div>
+   <div class="inv-footer ">
+     <div class="container">
+       <div class="row">
+         <div class="col-md-4">
+          <div class="d-flex pt-4 pb-4">
+            <div class="p-2">
+              <img src="{% static 'files/icons/placeholder.png' %}" class="inv-icon"/>
+            </div>
+           
+            <div class="p-2">
+              <b>Bleach International Contracting Company for Cleaning Building & Cities WLL</b><br>
+              Office No. 3, Building No. 8, Block 13 Qibila Building, Mohammed AL Ghanim Street Kuwait City,<br> PO Box 4489, Safat 13045 CR No.362934
+            </div>
+          </div>
+         </div>
+         <div class="col-md-4">
+          <div class="d-flex pt-4 pb-4">
+            <div class="p-2">
+              <img src="{% static 'files/icons/contact.png' %}" class="inv-icon"/>
+            </div>
+           
+            <div class="p-2">
+              Tel : +965 1882707 <br>Email: customercare@bleach-kw.com <br>Website : www.bleach-kw.com
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 offset-md-1 ">
+          <div class="pt-4 pb-4 text-center">
+           <a href="https://www.facebook.com/BleachKw/" target="_blank" class="inv-link"> <i class="fab fa-facebook-f text-white p-2 inv-cp"></i> </a>
+            <!-- https://www.facebook.com/BleachKw/ -->
+            <a href="https://twitter.com/bleachkw?lang=en" target="_blank" class="inv-link">  <i class="fab fa-twitter text-white p-2 inv-cp"></i></a>
+            <!-- https://twitter.com/bleachkw?lang=en -->
+            <a href="https://www.instagram.com/bleachkw/?hl=en" target="_blank" class="inv-link"><i class="fab fa-instagram text-white p-2 inv-cp"></i></a>
+            <!-- https://www.instagram.com/bleachkw/?hl=en -->
+            <a href="https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw" target="_blank" class="inv-link"> <i class="fab fa-youtube text-white p-2 inv-cp"></i></a>
+            <!-- https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw -->
+            <a href="https://www.linkedin.com/company/bleachkw" target="_blank" class="inv-link"><i class="fab fa-linkedin text-white p-2 inv-cp"></i></a>
+            <!-- https://www.linkedin.com/company/bleachkw -->
+            
+          </div>
+        </div>
+       </div>
+     </div>
+   </div>
+
+
+   <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/pdfmake.js" integrity="sha512-rn5JpU98RtYVMtZeQJfzmJ67rl4/dqDpGZ393z5f9WMYHXEU4+8Stm/PQAma2gbsLbpClmUHJzT0DaG32OmEyQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js" integrity="sha512-jzL0FvPiDtXef2o2XZJWgaEpVAihqquZT/tT89qCVaxVuHwJ/1DFcJ+8TBMXplSJXE8gLbVAUv+Lj20qHpGx+A==" crossorigin="anonymous"></script>
+    <script src="{% static 'files/js/convertToPdf.js' %}"></script>
+   
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" type="text/javascript"></script>
+        <script src="{% static 'files/js/main.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+    <script src="{% static 'files/js/modal.js' %}"> </script>
+
+    <script>
+    
+    
+    {% for question in questions %}
+
+    $('#star1{{question.id}},#star2{{question.id}},#star3{{question.id}},#star4{{question.id}},#star5{{question.id}}').click(function(){
+      console.log("poi")
+    
+    var starcount = 0;
+    if( $('#star1{{question.id}}').checked ){
+      starcount += 1 ;
+    }
+    if( $('#star2{{question.id}}').checked ){
+      starcount += 1 ;
+    }
+    if( $('#star3{{question.id}}').checked ){
+      starcount += 1 ;
+    }
+    if( $('#star4{{question.id}}').checked ){
+      starcount += 1 ;
+    }
+    if( $('#star5{{question.id}}').checked ){
+      starcount += 1 ;
+    }
+    console.log(starcount,"cvvb");
+    });
+
+    {% endfor %}
+    
+    </script>
+
+    {% include 'external_messages.html' %}
+  </body>
+</html>
