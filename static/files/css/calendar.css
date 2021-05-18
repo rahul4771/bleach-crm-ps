@@ -1,0 +1,272 @@
+/* Evaluation Calendar */
+.cl-slot{
+    width: 8.33%;
+    color: #434343;
+    font-size:14px;
+    font-weight:400;
+    padding:2px;
+    
+}
+.cl-evaluator{
+    background: #EDF1F6 0% 0% no-repeat padding-box;
+    padding: 5px;
+    margin-bottom:10px;
+    min-height: 90px;
+    border-radius: 5px;
+    border-top-right-radius:0px;
+    border-bottom-right-radius:0px;
+}
+.cl-evaluator-head{
+    background: #EDF1F6 0% 0% no-repeat padding-box;
+    padding: 14.5px;
+    margin-bottom: 10px;
+    min-height: 12px;
+    min-height: -12px;
+    font-size: 14px;
+    border-radius: 5px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+.slot-container{
+    background: #EDF1F6 0% 0% no-repeat padding-box;
+    padding: 5px;
+    padding-right: 0px;
+    padding-left: 0px;
+    min-width:100%;
+    margin-bottom:10px;
+    min-height: 90px;
+    border-radius: 5px;
+    border-top-left-radius:0px;
+    border-bottom-left-radius:0px;
+}
+.slot-container-head{
+    background: #EDF1F6 0% 0% no-repeat padding-box;
+    padding: 15px;
+    padding-right: 0px;
+    padding-left: 0px;
+    min-width:100%;
+    margin-bottom:10px;
+    height: 50px;
+    border-radius: 5px;
+    border-top-left-radius:0px;
+    border-bottom-left-radius:0px;
+}
+.cl-left-container{
+  
+    
+    font-size:14px;
+    
+  
+    
+}
+.cl-chip{
+    width:100%;
+    text-align: center;
+    color:#ffffff;
+    
+    margin-left:5px;
+    margin-top:20px;
+    padding:5px;
+    border-radius:10px;
+    cursor:pointer;
+}
+.cl-chip-2{
+    width:100%;
+    text-align: center;
+    color:#ffffff;
+    
+    margin-left:5px;
+    margin-top:3px;
+    padding:5px;
+    border-radius:10px;
+}
+.agent-submitted{
+    background:#0d87c5;
+    margin-left: 1px;
+}
+.customer-submitted{
+    background:#139275;
+    margin-left: 1px;
+}
+.cl-cancelled{
+    background: #8B8B8B;
+}
+.date-row{
+    width: 100%;
+    overflow: auto;
+}
+.cl-dates{
+  
+    width:100%;
+}
+.w-100{
+width:100% !important;
+}
+.eval-calendar{
+    max-width:100%;
+   
+    width:100%;
+   
+}
+.calendar-container{
+    overflow: auto;
+}
+.cl-completed{
+    color:#ffffff;
+    font-size:16px;
+    text-align: left;
+}
+.cl-check-icon{
+    height:15px;
+    width:15px;
+}
+.cl-profile-pic{
+    width: 64px;
+    height: 64px;
+    padding: 5px;
+    border-radius: 35px;
+    margin-top: 10px;
+}
+.cl-evaluator-title{
+    color: #2C4C82;
+}
+.eval-select{
+    max-width:250px !important;
+}
+.test + .tooltip > .tooltip-inner {
+    background-color: #73AD21; 
+    color: #FFFFFF; 
+    border: 1px solid green; 
+    padding: 15px;
+    font-size: 20px;
+  }
+  /* Tooltip on top */
+  .test + .tooltip.top > .tooltip-arrow {
+    border-top: 5px solid green;
+  }
+  /* Tooltip on bottom */
+  .test + .tooltip.bottom > .tooltip-arrow {
+    border-bottom: 5px solid blue;
+  }
+  /* Tooltip on left */
+  .test + .tooltip.left > .tooltip-arrow {
+    border-left: 5px solid red;
+  }
+  /* Tooltip on right */
+  .test + .tooltip.right > .tooltip-arrow {
+    border-right: 5px solid black;
+  }
+
+  .modal-evaluation-wrapper {
+    position: fixed;
+    z-index: 100000000 !important;
+    top: 0 !important;
+    left: 0;
+    right: 0;
+    visibility: hidden;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, .7);
+}
+.modal-evaluation-wrapper.is-visible {
+    visibility: visible !important;
+}
+#evaluationAgentModal .modal-dialog{
+    border-radius: 0px 0px 12px 12px !important;
+    
+    border: none !important;
+    border-bottom: 10px solid #0D87C5 !important;
+    width:80%;
+}
+.cl-blc-title{
+    color: #139275;
+    font-size:22px;
+    font-weight:400;
+}
+.cl-status{
+    font-weight:300;
+    color: #5D5D5D;
+    padding-left:5px;
+}
+.cl-status-marker{
+    height:17px;
+    width:17px;
+    background: #0D87C5;
+    border-radius: 17px;
+  
+}
+.cl-modal-text-title{
+    font-size:18px;
+    color: #4E4E4E;
+   
+}
+.cl-modal-section-title{
+    font-size:18px;
+    color: #4E4E4E;
+}
+.cl-text-blue{
+    color: #0D87C5;
+}
+.cl-modal-text-content{
+    font-size:16px;
+    color: #5D5D5D;
+    font-weight:300;
+}
+.cl-mt-2{
+    margin-top:2px;
+}
+.cl-mt-10{
+    margin-top:2px;
+}
+.cl-mt-5{
+    margin-top: 5px;
+}
+.cl-mt-20{
+    margin-top:20px;
+}
+.cl-modal-icon{
+    height:30px;
+    width:30px;
+    padding:6px;
+    cursor:pointer;
+}
+.cl-modal-icons{
+    justify-content: flex-end;
+}
+.time-slot{
+    
+    border: 1px solid #cccccc;
+    border-radius: 10px;
+    padding: 8px;
+    font-size: 12px;
+    color: #676767;
+    text-align: center;
+    cursor:pointer;
+}
+.time-slot-active{
+    
+    border: 1px solid #2e4e85;
+    border-radius: 10px;
+    padding: 8px;
+    font-size: 12px;
+    color: #676767;
+    text-align: center;
+    cursor:pointer;
+}
+.late-hour label{
+    font-weight: 300  !important;
+    padding-top: 5px !important;
+    
+}
+.cl-datecalendar{
+    border: 1px solid #cecece;
+}
+  @media only screen and (max-width: 600px) {
+
+    .cl-slot{
+        width:auto;
+    }
+    #evaluationModal .modal-dialog{
+        width:auto;
+    }
+  }
