@@ -1,0 +1,370 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "bookingofficer/common/header.html" %}
+    
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Callback List</h1>
+                <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>    
+            </div><!--welcome-wrapper-->
+       
+     {% comment %} <div class="clients-top-card-wrapper"><!--clients-top-card-wrapper-->
+     	<div class="clients-card-wrapper"><!--clients-card-wrapper-->
+       	<div class="clients-card-column clients-column-left"><!--clients-card-column clients-column-left-->
+    
+        
+            <div class="card-column whitebg green-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-pending-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+            	<h2 class="green-text"><label>Pending<span>{{pending_orders_count}}</span></label>  </h2>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+
+        </div><!--clients-card-column clients-column-left-->
+
+        <div class="clients-card-column clients-column-right whitebg hover ltyellow-border"><!--clients-card-column clients-column-right-->
+                 
+		<div class="chart_boxDiv"><!--chart_boxDiv-->
+  			<div class="chart_box_Right"><!--chart_box_Right-->
+ 				<!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
+            	<div id="chart_div" ></div>
+  			</div><!--chart_box_Right-->
+		</div><!--chart_boxDiv-->   
+            
+        <div class="chart_boxDiv"><!--chart_boxDiv-->    
+        
+         <div class="chart_box_Left"><!--chart_box_Left-->
+         <div class="legend-wrapper"><!--legend-wrapper--> 
+            <div class="legend-result count_div"><label class="legend-label">Submitted </label> <b class="legend-result-blue" id="total_submitted">0</b></div>
+            <div class="legend-result count_div"><label class="legend-label">Approved </label> <b class="legend-result-red" id="total_approved">0</b></div>
+         </div><!--legend-wrapper-->
+  		</div><!--chart_box_Left-->
+        <div class="chart_box_Left"><!--chart_box_Left-->        
+        <div class="Button_wrapperChart">
+            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonthtoggle"><div class="slider round"><span class="on">MONTH</span><span class="off">DATE</span></div></label></div>
+            <input type="text" id="ord_fromdate" class="date_pick_chart_from date_pick2 date-picker set1 date-pick-left" >
+            <input type="text" id="ord_todate" class="date_pick_chart_to date_pick2 date-picker set1 date-pick-right" >
+            <input type="text" id="month1" class="month_pick set2 date-pick-left" hidden>
+            <input type="text" id="month2" class="month_pick set2 date-pick-right" hidden>
+            <div><button id="reset_orders" class="green-button-chart">Reset</button></div>
+            </div>
+                         
+        </div><!--chart_box_Left-->
+            
+        </div><!--chart_boxDiv--> 
+            
+        </div><!--lients-card-column clients-column-right-->
+
+        </div><!--clients-card-wrapper-->
+
+</div><!--clients-top-card-wrapper-->        {% endcomment %}
+            
+     <div class="main-content-holder"><!--main-content-holder-->            
+     
+     <div class="white-wrapper-search"><!--white-wrapper-search-->
+     <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
+          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search BLC Number, Customer Mobile Number & Customer Name Here" value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+     </div><!--left-box leftbox-item1-->
+ 
+     </div><!--white-wrapper-search-->
+     
+            
+<div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Callback List</h2>
+<div class="page-entries">Show {{entry_per_page}} entries</div>
+
+<label for="favcity" style="width:20%;"> 
+<select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
+<option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+<option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+<option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+</select>
+</label>
+
+<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+ 
+<thead>
+<tr>
+<th>Order Number</th>
+<th data-hide="phone,tablet">Name</th>
+{% comment %} <th data-hide="phone,tablet">Service Type</th>
+<th data-hide="phone">Evaluator</th> {% endcomment %}
+<th class="align-center" data-hide="phone,tablet">Status</th>
+<th class="align-center" data-hide="phone,tablet">Callback Status</th>
+<th data-hide="phone,tablet">&nbsp;</th>
+</tr>
+</thead>
+<tbody>
+
+    {% for evaluation in evaluations %}
+    <tr>
+    <td {% if evaluation.quatation_status == 'APPROVED' %}{% for order in evaluation.evaluationorder %}
+        {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' %}
+        {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+        class="green-line"
+        {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
+        class="violet-line"
+        {% elif order.order_status == 'ORDER_CLOSED' %}
+        class="rose-line"
+        {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
+        class="skyblue-line"
+        {% else %}
+        class="red-line"
+        {% endif %}
+        {% else %}
+        class="oil-green-line"
+        {% endif %}
+        {% endfor %}
+
+        {% elif evaluation.quatation_status == 'REJECTED' %}class="red-line"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line"{% elif evaluation.quatation_status == 'EXPIRED' %}class="orange-line"{%else%}class="blue-line"{%endif%}>{{evaluation.evaluation_id}}</td>    
+    <td>{{evaluation.customer.name|default_if_none:''}}</td>
+
+    {% comment %} <td>{% for evaluation_detail in evaluation.details_evaluation %}
+     {% for evaluation_book in evaluation_detail.evaluation_book %}
+     {{evaluation_book.service_type.name}},
+     {% endfor %}
+     <br> 
+     {% endfor %}</td>
+
+    <td>{% for evaluation_detail in evaluation.details_evaluation %}{% if evaluation_detail.evaluator %}{{evaluation_detail.evaluator.name}}<br>{% else %}{{evaluation_detail.evaluation.call_attender.name}}{% endif %}{% endfor %}</td> {% endcomment %}
+    
+    <td>{% if evaluation.quatation_status == 'REJECTED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Rejected</span>
+        {% elif evaluation.quatation_status == 'PENDING' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="yellow-bg clickable-row">Pending</span>
+        {% elif evaluation.quatation_status == 'EXPIRED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="orange-bg clickable-row">Expired</span>
+        {% else %}
+        <span data-href="#" class="blue-bg clickable-row">Evaluating</span>
+        {%endif%}
+    </td>
+
+    <td>
+    {% for order in evaluation.evaluationorder %}
+    <input type="hidden" name="callback_order" id="callback_order" value="{{order.id}}" />
+    {% endfor %}
+    
+    <label for="favcity" style="width:80%;"> 
+    <select id="callback" onchange="set_params_go();">
+    <option value="">--SELECT CALLBACK OPTION--</option>
+    <option value="NO_CALLBACK" {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'NO_CALLBACK' %}selected{% endif %}{% endfor %}>NO CALLBACK</option>
+    <option value="CALLBACK_ACTIVE" {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'CALLBACK_ACTIVE' %}selected{% endif %}{% endfor %}>CALLBACK ACTIVE</option>
+    </select>
+    </label> 
+    </td>
+
+    <td class="align-center">
+    {% comment %} <a href="{% url 'booking-officer:bookingofficer-makequatation1edit' evaluation.customer.id evaluation.id %}"><img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon"></a> {% endcomment %}
+     </td>
+
+    </tr>    
+    {% empty %}
+    <tr><td></td><td></td><td>No Data</td><td></td></tr>
+    {% endfor %} 
+</tbody>
+<tfoot>
+ 
+</tfoot>
+</table>
+<div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
+    <div class="pagination-containter"><!--pagination-containter-->
+    	<div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
+        Showing {{evaluations.start_index}} to {{evaluations.end_index}} of {{evaluations.paginator.count}} entries
+        </div><!--pagination-column pagination-column-left-->
+        
+        <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
+        <!--paginated-->
+   {% if evaluations.has_other_pages %}
+   <nav aria-label="Page navigation example">
+  <ul class="pagination">
+     {% if evaluations.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% endif %}
+    {% for pg in page_range %}
+    {% if vus.number == pg %}
+            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
+    {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
+    {% endif %}
+    {% endfor %}
+    {% if evaluations.has_next %}        
+    <li class="page-item">
+      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link disabled" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+    {% endif %}
+    <!--paginated-->
+        </div><!--pagination-column pagination-column-right-->
+    </div><!--pagination-containter-->         
+</div><!--white-wrapper-pagination--> 
+</div><!--white-wrapper-->      
+                         
+            
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+{% include 'bookingofficer/common/footer.html' %}    
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'files/js/charts/order-chart.js' %}"></script> 
+<script id="rendered-js">
+$('.footable').footable({
+  calculateWidthOverride: function () {
+    return { width: $(window).width() };
+  } });
+
+
+// See:
+// http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
+//# sourceURL=pen.js
+    </script>
+<script>
+
+function appendLeadingZeroes(n){
+    if(n <= 9){
+      return "0" + n;
+    }
+    return n
+  }
+
+//append dates to export popup
+var date3 = new Date();
+date3.setDate(date3.getDate()-1)
+
+var datestring = appendLeadingZeroes(date3.getDate())  + "-" + appendLeadingZeroes(date3.getMonth()+1) + "-" + date3.getFullYear();
+
+var date4 = new Date();
+date4.setDate(date4.getDate()-30);
+
+var datestring2 = appendLeadingZeroes(date4.getDate())  + "-" + appendLeadingZeroes(date4.getMonth()+1) + "-" + date4.getFullYear();
+console.log(datestring,datestring2)
+
+$('.id_from_date').val(datestring2);
+$('.id_to_date').val(datestring);
+
+
+$('.export_btn').click(function(){
+  
+  $('#export_popup').css({'visibility':'visible','opacity':1,});
+});
+
+$("#close_export_popup").click(function () {
+    $('#export_popup').css({'visibility':'hidden','opacity':0,});
+});
+
+//EXPORT EXCEL
+$(".export_payment").click(function () {
+  console.log("poi")
+    $('#export_popup').css({'visibility':'hidden','opacity':0,});
+    
+    submitAnyForm($(this));
+
+    location.reload(true);
+
+    //document.getElementById("excelform").reset();
+    
+});
+
+// //datepicker and timepicker for popup
+    $(document).on("click", ".content", function () {
+       $('.id_from_date').datetimepicker({ 
+            pickTime: false, 
+            format: "DD-MM-YYYY", 
+            startDate: new Date(), 
+        });
+
+        $('.id_to_date').datetimepicker({ 
+            pickTime: false, 
+            format: "DD-MM-YYYY", 
+            startDate: new Date(), 
+        });
+
+    });
+
+$("#governorate_filter_id").change(function(){  
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getarea' %}",
+
+        data: {'governorate_id':this.value}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+
+          ajax_ret_areas = data;     
+
+       $("#area_filter_id").empty();
+
+       $("#area_filter_id").append($('<option>', {
+
+            value: "", 
+
+           text: "---ALL---"
+
+        })); 
+
+        $.each( ajax_ret_areas, function( key, values ) {
+
+              $("#area_filter_id").append($('<option>', {        
+
+              value: key, 
+
+              text: values   
+
+            }));   
+        });
+
+                                  }  
+
+      }); 
+
+});
+
+function set_params_go(args)
+{
+var url='{% url 'booking-officer:bookingofficer-callback-list' %}';
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val(),evaluator:$('#evaluator_filter_id').val(),
+callback_order:$('#callback_order').val(),callback_status:$('#callback').val()
+};
+for(key in args) 
+    params[key]=args[key];
+var query='';
+for(key in params)
+    if(params[key]) 
+        query+='&'+key+'='+params[key].toString();
+query=query.replace('&','?');
+window.location.href=url+query;  
+}
+
+</script>    
+{% endblock %}
