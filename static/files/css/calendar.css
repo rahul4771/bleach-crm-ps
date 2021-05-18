@@ -80,17 +80,7 @@
     padding:5px;
     border-radius:10px;
 }
-.agent-submitted{
-    background:#0d87c5;
-    margin-left: 1px;
-}
-.customer-submitted{
-    background:#139275;
-    margin-left: 1px;
-}
-.cl-cancelled{
-    background: #8B8B8B;
-}
+
 .date-row{
     width: 100%;
     overflow: auto;
@@ -290,6 +280,65 @@ width:100% !important;
     cursor: pointer;
 
 }
+
+/*** Colors ***/
+
+
+/** AGENT **/
+
+.agent-booked-bg{
+    background-color: #0D87C5 !important;
+}
+.agent-booked-text{
+    color: #0D87C5 !important;
+}
+
+.agent-booked-border{
+    border-color: #0D87C5 !important;
+}
+
+
+/***  CUSTOMER **/
+.customer-booked-text{
+    color: #139275 !important;
+}
+.customer-booked-bg{
+    background-color: #139275 !important;
+}
+.cutomer-booked-border{
+    border-color: #139275  !important;
+}
+
+
+
+/** CANCELLED**/
+
+.cancelled-text{
+    color:#8B8B8B;
+}
+.cancelled-bg{
+    background-color: #8B8B8B !important;
+}
+.cancelled-border{
+    border-color: #8B8B8B  !important;
+}
+
+
+/** calendar markers**/
+
+.agent-submitted{
+    background:#0d87c5;
+    margin-left: 1px;
+}
+.customer-submitted{
+    background:#139275;
+    margin-left: 1px;
+}
+.cl-cancelled{
+    background: #8B8B8B;
+}
+
+
   @media only screen and (max-width: 600px) {
 
     .cl-slot{

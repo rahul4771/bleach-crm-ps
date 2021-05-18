@@ -32,7 +32,9 @@ $(document).ready(function(){
         selectedEvaluator:'Ahamed Abdou',
         lateHour:false,
         editEval:false,
-        delAlert:false
+        delAlert:false,
+        customer:'#139275',
+        cancelled:'#8B8B8B'
       }
   })
 

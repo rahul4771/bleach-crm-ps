@@ -709,6 +709,8 @@
       </div>
       <div class="row" style="margin:0">
         <div class="col-md-12" style="padding:0">
+
+          <!-- :color = agent || :color="customer" || :color="cancelled"     -->   
       <v-alert
       prominent
       type="error"
@@ -718,7 +720,7 @@
     >
       <v-row align="center">
         <v-col class="grow ">
-          Are you sure you want to delete this booking ?  
+        Do you want to cancel this booking ?
         </v-col>
         <v-col class="shrink">
           <div class="d-flex">
@@ -733,11 +735,11 @@
          <div class="row">
            <div class="col-md-12">
            
-            <div class="cl-modal-text-title cl-mt-10 cl-text-blue">
+            <div class="cl-modal-text-title cl-mt-10 agent-booked-text">
               Al Yarmouk
             </div>
             
-            <div class="cl-modal-text-title cl-mt-20 cl-text-blue">
+            <div class="cl-modal-text-title cl-mt-20 agent-booked-text">
               Ahamed Abdou
             </div>
             <div class="cl-modal-text-content cl-mt-5">
@@ -929,10 +931,10 @@
             ></v-textarea>
            </div>
            <div class="cl-btns d-flex justify-center col-md-12">
-            <div class="proceed-btn">
+            <div class="proceed-btn agent-booked-bg ">
               Proceed
             </div>
-            <div class="cancel-btn ml-4" data-dismiss="modal" aria-label="Close">
+            <div class="cancel-btn ml-4 agent-booked-border" data-dismiss="modal" aria-label="Close">
              Cancel
            </div>
           </div>
