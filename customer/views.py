@@ -626,7 +626,7 @@ class CustomerFeedback(View):
 		except:
 			questions = None
 
-		return render(request,"customer/feedback.html",{"order":order, "questions":questions, "feedback_exist":feedback_exist})
+		return render(request,"customer/customer-feedback.html",{"order":order, "questions":questions, "feedback_exist":feedback_exist})
 
 	def post(self,request,order_id):
 		order_id        = int(order_id)
