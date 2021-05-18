@@ -704,9 +704,32 @@
       <div class="modal-body">
       <div class="d-flex cl-modal-icons">
         <img src="{% static 'files/icons/edit.png'%}" class="cl-modal-icon" @click="editEval=!editEval"/>
-        <img src="{% static 'files/icons/delete.png'%}" class="cl-modal-icon"/>
+        <img src="{% static 'files/icons/delete.png'%}" class="cl-modal-icon" @click="delAlert=!delAlert"/>
         <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon" data-dismiss="modal" aria-label="Close"/>
       </div>
+      <div class="row" style="margin:0">
+        <div class="col-md-12" style="padding:0">
+      <v-alert
+      prominent
+      type="error"
+      v-model="delAlert"
+      :color="agent"
+      class="mt-2 w-100"
+    >
+      <v-row align="center">
+        <v-col class="grow ">
+          Are you sure you want to delete this booking ?  
+        </v-col>
+        <v-col class="shrink">
+          <div class="d-flex">
+          <v-btn>Proceed</v-btn>
+          <v-btn class="ml-4 text-black" color="white" style="color:#000000"  @click="delAlert=!delAlert">Cancel</v-btn>
+        </div>
+        </v-col>
+      </v-row>
+    </v-alert>
+    </div>
+  </div>
          <div class="row">
            <div class="col-md-12">
            
@@ -719,6 +742,9 @@
             </div>
             <div class="cl-modal-text-content cl-mt-5">
               Assigned By :<b> Rayan</b>
+            </div>
+            <div class="cl-modal-text-content cl-mt-5">
+              Booking ID  :<b> 134234</b>
             </div>
             <div class="cl-modal-text-title cl-mt-20 ">
               MR. Bhageerathan Pillai
@@ -740,10 +766,10 @@
              </div>
              <div class="mt-2 col-md-4">
             
-                <v-date-picker v-model="selectedDate" :color="agent" class="cl-datecalendar"></v-date-picker>
+                <v-date-picker v-model="selectedDate" :color="agent" class="cl-datecalendar w-100"></v-date-picker>
              
              </div>
-             <div class="col-md-8">
+             <div class="col-md-7 offset-md-1">
               <v-select
           :items="['Ahamed Abdou','Michael','Amanadiel','Trixie']"
           v-model="selectedEvaluator"
@@ -893,9 +919,28 @@
          
         </div>
              </div>
+             <div class="col-md-12">
+              <v-textarea
+              outlined
+              name="input-7-4"
+              label="Note"
+              
+              :color="agent"
+            ></v-textarea>
+           </div>
+           <div class="cl-btns d-flex justify-center col-md-12">
+            <div class="proceed-btn">
+              Proceed
+            </div>
+            <div class="cancel-btn ml-4" data-dismiss="modal" aria-label="Close">
+             Cancel
+           </div>
+          </div>
+             
            </div>
           
          </div>
+         
        
       </div>
       

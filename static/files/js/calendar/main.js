@@ -31,7 +31,8 @@ $(document).ready(function(){
         selectedDate:new Date().toISOString().substr(0, 10),
         selectedEvaluator:'Ahamed Abdou',
         lateHour:false,
-        editEval:false
+        editEval:false,
+        delAlert:false
       }
   })
 

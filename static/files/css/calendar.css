@@ -261,12 +261,46 @@ width:100% !important;
 .cl-datecalendar{
     border: 1px solid #cecece;
 }
+.v-picker__body{
+    width:100% !important;
+    margin:0 !important;
+}
+.proceed-btn{
+    background: #2C4C82;
+    padding: 6px;
+    color: #ffffff;
+    border-radius: 10px;
+    width: 117px;
+    font-size: 16px;
+    box-shadow: 0px 3px 6px #0000003d;
+    text-align: center;
+    cursor: pointer;
+
+}
+.cancel-btn{
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 6px #0000003D;
+    border: 1px solid #2C4C82;
+    border-radius: 10px;
+    width: 117px;
+    font-size: 16px;
+    text-align: center;
+    padding: 6px;
+    color:#2C4C82;
+    cursor: pointer;
+
+}
   @media only screen and (max-width: 600px) {
 
     .cl-slot{
         width:auto;
     }
-    #evaluationModal .modal-dialog{
+    #evaluationAgentModal .modal-dialog{
         width:auto;
+    }
+    .v-alert{
+       
+    padding-left: 0px !important;
+    padding-right: 0px !important;
     }
   }
