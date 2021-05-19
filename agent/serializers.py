@@ -17,7 +17,7 @@ class EvaluationDetailsShowSerializer(serializers.ModelSerializer):
 	evaluator                          = UserProfileShowSerializer(read_only=True)
 	class Meta:
 		model  = EvaluationDetails
-		fields = ('evaluator',)
+		fields = ('evaluator','evaluation_id')
 
 class CleaningScheduleSerializer(serializers.ModelSerializer):
 	start_at           = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p")
@@ -35,7 +35,7 @@ class CleaningScheduleSerializer(serializers.ModelSerializer):
 class FollowupSerializer(serializers.ModelSerializer):
 	class Meta:		
 		model  = FollowUp
-		fields = ('no_of_cleaners','cleaning_hours')
+		fields = ('ticket_no','no_of_cleaners','cleaning_hours')
 
 class FollowupScheduleSerializer(serializers.ModelSerializer):
 	customer_address = AddressSerializer(read_only=True)
