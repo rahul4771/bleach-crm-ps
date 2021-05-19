@@ -193,6 +193,15 @@ width:100% !important;
     color:#8B8B8B ;
 
 }
+.cancelled-icon{
+    width:50px;
+    height:50px;
+}
+.cancelled-modal-text{
+    width: 100%;
+    margin-top: 10px;
+    color: #de352d;
+}
 .cl-blc-title{
     color: #139275;
     font-size:22px;
