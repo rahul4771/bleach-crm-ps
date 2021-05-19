@@ -17,7 +17,7 @@ class EvaluationDetailsShowSerializer(serializers.ModelSerializer):
 	evaluator                          = UserProfileShowSerializer(read_only=True)
 	class Meta:
 		model  = EvaluationDetails
-		fields = ('evaluator')
+		fields = ('evaluator',)
 
 class CleaningScheduleSerializer(serializers.ModelSerializer):
 	start_at           = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p")
