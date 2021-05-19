@@ -3193,3 +3193,54 @@ class FineWriteBack(View):
 
 
 		return redirect('booking-officer:bookingofficerdash-board')
+
+class CallBackList(IsBookingOfficer,View):
+	def get(self,request):
+		#Evaluation Details
+		search                  = request.GET.get('search')
+		#for order filtering
+		status = request.GET.get('status')
+		
+		if search:
+			evaluations = Evaluation.objects.filter(is_active=True).filter(Q(quatation_status='PENDING')|Q(quatation_status='REJECTED')|Q(quatation_status='EXPIRED')).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(customer__mobile_number__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),order_cancelled_count=Count(Case(When( evaluation_order__order_status='ORDER_CANCELLED',then=1),output_field=IntegerField())),order_cancellinprogress_count=Count(Case(When( evaluation_order__order_status='CANCEL_IN_PROGRESS',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
+		else:
+			evaluations = Evaluation.objects.filter(is_active=True).filter(Q(quatation_status='PENDING')|Q(quatation_status='REJECTED')|Q(quatation_status='EXPIRED')).select_related('customer').order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),order_cancelled_count=Count(Case(When( evaluation_order__order_status='ORDER_CANCELLED',then=1),output_field=IntegerField())),order_cancellinprogress_count=Count(Case(When( evaluation_order__order_status='CANCEL_IN_PROGRESS',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
+		
+		#callback function
+		callback_order_id = request.GET.get('callback_order',None)
+		callback_status = request.GET.get('callback_status',None)
+
+		if callback_order_id:
+			callback_order = Order.objects.get(id=int(callback_order_id),is_active=True)
+			callback_order.callback_status = callback_status
+			callback_order.save()
+
+			messages.success(request,"Callback Status updated !!")
+		
+		#PAGINATION ORDERS		
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
+		page = request.GET.get('page',1) 
+		paginator=Paginator(evaluations,no_of_entries)
+		try: 
+			evaluations=paginator.page(page) 
+		except PageNotAnInteger:
+			evaluations=paginator.page(1)
+		except EmptyPage:
+			evaluations = paginator.page(paginator.num_pages) 
+
+		# Get the index of the current page
+		index = evaluations.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns 
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
+
+		return render(request,"bookingofficer/callback-list/callbacklist.html",{"evaluations":evaluations,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries})

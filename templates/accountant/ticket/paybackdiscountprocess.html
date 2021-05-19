@@ -2,7 +2,11 @@
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
-{% include "accountant/common/header.html" %}    
+{% if request.user.user_type == 'BOOKINGOFFICER' %}
+{% include "bookingofficer/common/header.html" %} 
+{% else %}
+{% include "accountant/common/header.html" %} 
+{% endif %}   
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
