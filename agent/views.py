@@ -732,8 +732,8 @@ class AvailabilityCleaningCallendar(APIView):
 		response_dict            = {}
 		response_dict['success'] = False
 
-		cleaning_datetime_start      = datetime.strptime(request.data.get('cleaning_datetime'),'%d-%m-%Y %I:%M %p')
-		cleaning_datetime_end        = cleaning_datetime_start+timedelta(hours=3)
+		cleaning_datetime_start      = datetime.strptime(request.data.get('cleaning_datetime_start'),'%d-%m-%Y %I:%M %p')
+		cleaning_datetime_end        = datetime.strptime(request.data.get('cleaning_datetime_end'),'%d-%m-%Y %I:%M %p')
 		service_types                = request.data.get('service_types')
 		
 
@@ -871,7 +871,7 @@ class CleaningCallendar(APIView):
 		response_dict['success'] = False
 
 		#cleaning schedule & followup schedule for cleaning calendar
-		cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
+		cleaning_calendar_date	= request.GET.get('cleaning_callendar_date')
 
 		try:
 			schedule_date = datetime.strptime(cleaning_calendar_date,'%d-%m-%Y')
