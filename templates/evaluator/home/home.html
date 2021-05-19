@@ -349,7 +349,7 @@
           <div class="cl-slot">
             
           </div>
-          <div class="cl-slot">
+          <div class="cl-slot" data-toggle="modal" data-target="#cancelledModal">
             <div class="cl-cancelled cl-chip d-flex">
               
               <div class="text-center w-100">
@@ -692,7 +692,27 @@
 
 
 <!--- Evaluation calender ends here-->
-
+<!-- Cancelled modal-->
+<div class="modal" tabindex="-1" role="dialog" id="cancelledModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      
+      <div class="modal-body">
+        <div class="d-flex cl-modal-icons">
+        
+          <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon" data-dismiss="modal" aria-label="Close"/>
+        </div>
+        <div class="row" style="margin:0">
+          <div class="col-md-12 text-center" style="padding:0">
+                <div class="cancelled-stamp">Booking Cancelled</div>
+            </div>
+            </div>
+      </div>
+    
+    </div>
+  </div>
+</div>
+<!--Cancelled modal-->
 <!-- evaluation_popup -->
 <div class="modal fade" id="evaluationAgentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">

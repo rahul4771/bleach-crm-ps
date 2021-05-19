@@ -168,6 +168,31 @@ width:100% !important;
     border-bottom: 10px solid #0D87C5 !important;
     width:80%;
 }
+#evaluationCustomerModal .modal-dialog{
+    border-radius: 0px 0px 12px 12px !important;
+    
+    border: none !important;
+    border-bottom: 10px solid #139275 !important;
+    width:80%;
+}
+#cancelledModal .modal-dialog{
+    border-radius: 0px 0px 12px 12px !important;
+    
+    border: none !important;
+    border-bottom: 10px solid #8B8B8B !important;
+    max-width:500px;
+}
+.cancelled-stamp{
+    font-size:24px;
+    border:1px dashed red;
+    padding:10px;
+   
+    margin:auto;
+    margin-top:30px;
+    margin-bottom:30px;
+    color:#8B8B8B ;
+
+}
 .cl-blc-title{
     color: #139275;
     font-size:22px;
@@ -345,6 +370,9 @@ width:100% !important;
         width:auto;
     }
     #evaluationAgentModal .modal-dialog{
+        width:auto;
+    }
+    #evaluationCustomerModal .modal-dialog{
         width:auto;
     }
     .v-alert{
