@@ -33,7 +33,7 @@ class CleaningScheduleSerializer(serializers.ModelSerializer):
 	order              = OrderShowSerializer(read_only=True)
 	class Meta:
 		model  = OrderScheduler
-		fields = ('id','start_at','end_at','customer_address','work_status','no_of_cleaners','cleaning_hours','evaluation_details')
+		fields = ('id','start_at','end_at','customer_address','work_status','no_of_cleaners','cleaning_hours','evaluation_details','order')
 
 
 
