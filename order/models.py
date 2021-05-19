@@ -97,8 +97,9 @@ PAYBACKDISCOUNT_CHOICES =(
 	)
 
 CALLBACK_CHOICES =(
-	('NO_CALLBACK','NO_CALLBACK'),
-	('CALLBACK_ACTIVE','CALLBACK_ACTIVE')
+	('CALLBACK_LATER','CALLBACK_LATER'),
+	('WAITING','WAITING'),
+	('COMPLETED','COMPLETED')
 	)
 #Store the Order Details.DownPayment,Subscription and Direct Cleaning Comes Under a Single Order
 
@@ -123,7 +124,7 @@ class Order(models.Model):
 	
 	instructions		   = models.CharField(max_length=5000,blank=True,null=True)
 	
-	callback_status		   = models.CharField(max_length=100,blank=True,null=True,default='NO_CALLBACK',choices=CALLBACK_CHOICES)
+	callback_status		   = models.CharField(max_length=100,blank=True,null=True,default='WAITING',choices=CALLBACK_CHOICES)
 	
 	feedback_notes  	= models.CharField(max_length=5000,blank=True,null=True)
 	is_feedback_marked	= models.BooleanField(null=False,blank=True,default=False)

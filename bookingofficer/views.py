@@ -3209,7 +3209,7 @@ class CallBackList(IsBookingOfficer,View):
 		#callback function
 		callback_order_id = request.GET.get('callback_order',None)
 		callback_status = request.GET.get('callback_status',None)
-
+		print(callback_order_id,callback_status,"stat")
 		if callback_order_id:
 			callback_order = Order.objects.get(id=int(callback_order_id),is_active=True)
 			callback_order.callback_status = callback_status
