@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<div class="wrapper" id="app"><!--wrapper-->
+ <link href="{% static 'files/css/client-details.css' %}" rel="stylesheet">
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% include "evaluator/common/header.html" %}    
+
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Client Details</h1>
+                 
+            </div><!--welcome-wrapper-->
+       
+      
+           
+            
+
+        </div><!--container-fluid space-->
+        <div class="main-content-holder">
+            <div class="row white-wrapper cd-card-border m-0" >
+                <div class="col-md-2">
+                    <img src="{% static 'files/icons/profile.png'%}" class="cd-profile-pic"/>
+                </div>
+                <div class="col-md-4">
+                    <div class="cd-card-title d-flex">
+                        Ms. Chloe Decker <img src="{% static 'files/icons/edit.png'%}" class="edit-icon ml-auto"/>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="cd-card-content cd-mt-2">melea@ex.com</div>
+                            <div class="cd-card-content">8888888888</div>
+                            <div class="cd-card-content2 cd-mt-2">13 Dec 1993</div>
+                            <div class="cd-card-content2">Indian</div>
+                            
+                        </div>
+                        <div class="col-md-6">
+                            <div class="cd-card-content2 cd-mt-2">Customer Type <span class="cd-card-content">Corporate</span></div>
+                            <div class="cd-card-content2 cd-mt-2">Supervisor</div>
+                            <div class="cd-card-content2 ">Subash INC</div>
+                            
+                        </div>
+                        <div class="col-md-12 cd-mt-2">
+                            <div class="cd-card-content2 cd-mt-2">Communication Preference</div>
+                            <div class="cd-card-content"> Language : English</div>
+                            <div class="cd-card-content"> Platform : SMS, WhatsApp</div>
+                        </div>
+                       
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="cd-service-box">
+                        <div class="row ml-0 mr-0">
+                            <div class="col-xs-8 cd-card-title2">Total Services</div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-green">3</span></div>
+                        </div>
+                        <div class="row ml-0 mr-0 cd-mt-4">
+                            <div class="col-xs-8 cd-key ">Ongoing</div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-blue">1</span></div>
+                        </div>
+                        <div class="row ml-0 mr-0 cd-mt-2">
+                            <div class="col-xs-8 cd-key ">Completed</div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-blue">1</span></div>
+                        </div>
+                        <div class="row ml-0 mr-0 cd-mt-4">
+                            <div class="col-xs-8 cd-key ">Ticket Raised</div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-blue">1</span></div>
+                        </div>
+                        <div class="row ml-0 mr-0 cd-mt-2">
+                            <div class="col-xs-8 cd-key ">Active Ticket</div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-red">1</span></div>
+                        </div>
+                        <div class="row ml-0 mr-0  cd-mt-2">
+                            <div class="col-xs-8 cd-key">Closed Ticket</div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-blue">1</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 no-float">
+                    <div class="cd-service-box cd-p-20">
+                       
+                            <div class=" cd-card-title2  text-center"><span class="cd-price ">200 KD</span><span class="cd-key cd-ml-4">Wallet</span>
+                            
+                            
+                        </div>
+                        <div class="row ml-0 mr-0 cd-mt-50">
+                            <div class="col-xs-8 cd-key">Total Paid
+                            </div><div class="col-xs-4 cd-card-title2">: 200 KD
+                            </div>
+                            
+                        </div>
+                        <div class="row ml-0 mr-0">
+                            <div class="col-xs-8 cd-key cd-mt-2">Total Balance
+                            </div><div class="col-xs-4 cd-card-title2 no-float cd-mt-2">: 200 KD
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="main-content-holder">
+            <div class="row white-wrapper cd-card-border m-0" >
+                <div class="col-md-9">
+                    <div class="cd-card-title">BLC20210510135</div>
+                    <div class="d-flex cd-mt-4">
+                        <div class="green-chip chip">
+                            Subscription
+                        </div>
+                        <div class="red-chip chip cd-ml-4">
+                           2 Tickets <i class="fas fa-flag icon-white"></i>
+                        </div>
+                    </div>
+                    <div class="cd-card-content2 cd-mt-4">
+                        In Progress
+                    </div>
+                    <div class="cd-card-content2 cd-mt-4">
+                        Al-Eqaila
+                    </div>
+                    <div class="cd-card-content cd-mt-4">
+                        <i class="fas fa-check-circle yellow-tick"></i> General Cleaning
+                    </div>
+                    <div class="cd-card-content cd-mt-2">
+                        <i class="fas fa-check-circle yellow-tick"></i>  Carpet Cleaning
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="row ml-0 mr-0">
+                        <div class="col-xs-12">
+                            <div class="cd-card-title2">
+                                Payment
+                            </div>
+                        </div>
+                    </div>    
+                    
+
+                    <div class="row ml-0 mr-0 cd-mt-4">
+                        <div class="col-xs-8 cd-key cd-mt-4">Payment Policy</div>
+                        <div class="col-xs-4">: <span class="cd-count">Prepaid</span></div>
+                    </div>
+                    <div class="row ml-0 mr-0 cd-mt-2">
+                        <div class="col-xs-8 cd-key ">Paid</div>
+                        <div class="col-xs-4">: <span class="cd-count">45 KD</span></div>
+                    </div>
+                    <div class="row ml-0 mr-0  cd-mt-2">
+                        <div class="col-xs-8 cd-key">Balance</div>
+                        <div class="col-xs-4">: <span class="cd-count">0 KD</span></div>
+                    </div>
+                    <div class="row ml-0 mr-0  cd-mt-2">
+                        <div class="col-xs-8 cd-key">Payment Type</div>
+                        <div class="col-xs-4">: <span class="cd-count">Debit card</span></div>
+                    </div>
+                    <div class="d-flex cd-mt-50 justify-center">
+                        <div class="primary-btn ">
+                            <i class="fas fa-retweet white-icon"></i>
+                            Reorder
+                        </div>
+                        <div class="secondary-btn cd-ml-4">
+                            <i class="far fa-file-alt primary-icon"></i>
+                            Quotation
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="main-content-holder">
+            <div class="row white-wrapper cd-card-border m-0" >
+                <div class="col-md-9">
+                    <div class="cd-card-title">BLC20210510134</div>
+                    <div class="d-flex cd-mt-4">
+                        <div class="green-chip chip">
+                            <i class="fas fa-check icon-white"></i>
+                            Completed
+                        </div>
+                        <div class="cd-ml-4 cd-mt-2">
+                            <i class="fas fa-star yellow-icon"></i>
+                            <i class="fas fa-star yellow-icon"></i>
+                            <i class="fas fa-star yellow-icon"></i>
+                            <i class="fas fa-star yellow-icon"></i>
+                            <i class="fas fa-star yellow-icon"></i>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                    <div class="blue-chip chip cd-mt-4">
+                        One Time
+                    </div>
+                </div>
+                    <div class="cd-card-content2 cd-mt-4">
+                        In Progress
+                    </div>
+                    <div class="cd-card-content2 cd-mt-4">
+                        Al-Eqaila
+                    </div>
+                    <div class="cd-card-content cd-mt-4">
+                        <i class="fas fa-check-circle yellow-tick"></i> General Cleaning
+                    </div>
+                    <div class="cd-card-content cd-mt-2">
+                        <i class="fas fa-check-circle yellow-tick"></i>  Carpet Cleaning
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="row ml-0 mr-0">
+                        <div class="col-xs-12">
+                            <div class="cd-card-title2">
+                                Payment
+                            </div>
+                        </div>
+                    </div>    
+                    
+
+                    <div class="row ml-0 mr-0 cd-mt-4">
+                        <div class="col-xs-8 cd-key cd-mt-4">Payment Policy</div>
+                        <div class="col-xs-4">: <span class="cd-count">Prepaid</span></div>
+                    </div>
+                    <div class="row ml-0 mr-0 cd-mt-2">
+                        <div class="col-xs-8 cd-key ">Paid</div>
+                        <div class="col-xs-4">: <span class="cd-count">45 KD</span></div>
+                    </div>
+                    <div class="row ml-0 mr-0  cd-mt-2">
+                        <div class="col-xs-8 cd-key">Balance</div>
+                        <div class="col-xs-4">: <span class="cd-count">0 KD</span></div>
+                    </div>
+                    <div class="row ml-0 mr-0  cd-mt-2">
+                        <div class="col-xs-8 cd-key">Payment Type</div>
+                        <div class="col-xs-4">: <span class="cd-count">Debit card</span></div>
+                    </div>
+                    <div class="d-flex cd-mt-50 justify-center">
+                        <div class="primary-btn ">
+                            <i class="fas fa-retweet white-icon"></i>
+                            Reorder
+                        </div>
+                        <div class="secondary-btn cd-ml-4">
+                            <i class="far fa-file-alt primary-icon"></i>
+                            Quotation
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+    </section><!--content-->
+    
+{% include 'evaluator/common/footer.html' %} 
+</div><!--wrapper-->
+
+{% endblock %}
+{% block javascript %}
+
+{% endblock %}

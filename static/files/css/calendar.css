@@ -426,7 +426,7 @@ width:100% !important;
     
 }
 .marker-container{
-    
+    height:42px;
 }
 .cl-marker-text{
     padding-top: 10px;
@@ -477,10 +477,20 @@ width:100% !important;
 .cl-customer-start-only{
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
+    width:110% !important;
+    background: #139275;
+    height:42px;
+    color:#ffffff;
+    padding:1px;
 }
 .cl-customer-end-only{
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
+    padding:1px;
+    width:100% !important;
+    background: #139275;
+    height:42px;
+    color:#ffffff;
     padding:1px;
 }
 .cl-marker-completed{
