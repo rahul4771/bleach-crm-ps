@@ -202,6 +202,7 @@ width:100% !important;
     margin-top: 10px;
     color: #de352d;
 }
+
 .cl-blc-title{
     color: #139275;
     font-size:22px;
@@ -372,6 +373,128 @@ width:100% !important;
     background: #8B8B8B;
 }
 
+
+
+
+/** Cleaning calendar begins here**/
+
+.cl-slot-card{
+    height: 469px;
+    background: #EDF1F6 0% 0% no-repeat padding-box;
+   
+    border-radius: 4px;
+    opacity: 1;
+}
+.cl-slot-card-title{
+    font-size:16px;
+    color: #434343;
+}
+.cl-slot-card-title2{
+    font-size: 14px;
+    color: #434343;
+    font-weight:400;
+
+}
+.cl-slot-card-subtitle{
+    font-size:14px;
+    color: #434343;
+    font-weight:300;
+}
+.ml-0{
+    margin-left: 0px !important;
+}
+.slot-section{
+    border: 1px solid #eeeeee !important;
+    border-radius: 4px !important;
+}
+.cl-cleaners-count{
+    color: #0D87C5;
+    font-size:5rem;
+}
+.cl-service-list{
+    height: 20px !important;
+}
+.cl-service-list label{
+    font-weight: 300  !important;
+    padding-top: 5px !important;
+    
+}
+.cl-customer-marker{
+    background: #139275;
+    height:42px;
+    color:#ffffff;
+    
+}
+.marker-container{
+    
+}
+.cl-marker-text{
+    padding-top: 10px;
+    padding-left: 10px;
+    color:#ffffff;
+}
+.cl-marker-profile-pic{
+    height:34px;
+    width:34px !important;
+    border-radius:34px;
+    margin:3px;
+    border: 1px solid white;
+
+}
+.cl-marker-pic-box{
+    position: relative;
+}
+.cl-marker-count{
+    height: 34px;
+    width: 34px !important;
+    border-radius: 34px;
+    margin-top: 3px;
+    color: #000000;
+    text-align: center;
+    font-size: 14px;
+    padding-top: 7px;
+    background: #ffffff;
+    float: right;
+    margin-right: 3px;
+    margin-left: auto;
+
+}
+.cl-customer-marker-continue{
+    background: #139275;
+    height:42px;
+    color:#ffffff;
+    width:110%;
+    
+}
+.cl-customer-start-end{
+    border-radius:20px;
+    width:100% !important;
+    background: #139275;
+    height:42px;
+    color:#ffffff;
+    padding:1px;
+}
+.cl-customer-start-only{
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+}
+.cl-customer-end-only{
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    padding:1px;
+}
+.cl-marker-completed{
+    color: #ffffff;
+    position: absolute;
+    top: 1px;
+    left: 30px;
+    font-size: 16px;
+    text-align: left;
+}
+.cl-marker-check-icon{
+    height:14px;
+    width:14px !important;
+}
 
   @media only screen and (max-width: 600px) {
 

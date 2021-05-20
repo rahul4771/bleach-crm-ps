@@ -6,6 +6,7 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+<link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
 {% include "evaluator/common/header.html" %}    
 <v-app>
     <section class="content"><!--content-->
@@ -692,6 +693,403 @@
 
 
 <!--- Evaluation calender ends here-->
+
+
+<!--Cleaning calendar begins here-->
+<div class="white-wrapper"><!--white-wrapper-->
+
+  <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
+  
+    <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->
+    <h2 class="h2">Cleaning Calendar</h2>
+    </div>
+    
+    <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+    <div class="date-wrapper"><!--date-wrapper-->
+                <div class="date-wrapper-inner"><!--date-wrapper-inner-->
+                <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+                <input type="text" id="cleaning_calendar" value="{{schedule_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+                <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+                <button class='today-date current-date'>Today</button>
+                </div><!--date-wrapper-inner-->
+    </div><!--date-wrapper-->
+    </div>
+    
+    </div>
+  
+  
+    <div class="row">
+      <div class="col-md-12">
+        <div class="owl-carousel owl-theme" id="cleaningCalendar-carousel">
+          <div class="cl-slot-card">
+            <div class="row ml-0">
+              <div class="col-md-12">
+                <div class="d-flex">
+                <v-checkbox
+                v-model="selectedCleaningSlot"
+                 value="1"
+                 :color="primary"
+              ></v-checkbox>
+              <div class="mt-4 mx-auto">
+              <div class="cl-slot-card-title text-center mt-1">Slot 1</div> 
+                 <div class="cl-slot-card-subtitle text-center ">12 AM - 03 AM</div> 
+                </div>
+              </div>
+            </div>
+            </div>
+            <div class="marker-container mt-4" v-for="(item,index) in combineSlots" v-bind:key="index">
+            <div class="cl-customer-start-end  d-flex" v-if="item.slots.start_at.split(' ')[1]=='12:00' && item.slots.start_at.split(' ')[2]=='AM' && item.slots.end_at.split(' ')[1]=='12:00' && item.slots.end_at.split(' ')[2]=='AM' && item.slots.cleaning_hours==3 ">
+              <div class="cl-marker-pic-box">
+                <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
+                <div class="cl-marker-completed">
+                  <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+
+              </div>
+
+              </div>
+              <div class="cl-marker-text ">  <% item.slots.order.order_no %> first cond</div>
+              <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
+              
+            </div>
+            <div class="cl-customer-marker-continue cl-customer-start-only d-flex" v-if="item.slots.start_at.split(' ')[1]=='12:00' && item.slots.start_at.split(' ')[2]=='AM' && item.slots.cleaning_hours>3 && startChecker('12:00 AM',item.slots.end_at.split(' ')[1]+' '+item.slots.end_at.split(' ')[2],item.slots.cleaning_hours)">
+              <div class="cl-marker-pic-box">
+                <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
+                <div class="cl-marker-completed">
+                  <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+
+              </div>
+
+              </div>
+              <div class="cl-marker-text ">  <% item.slots.order.order_no %> </div>
+              
+              
+            </div>
+           <!-- <div class="cl-customer-marker-continue  d-flex" v-if="item.slots.start_at.split(' ')[1]=='12:00' && item.slots.start_at.split(' ')[2]=='AM' && item.slots.cleaning_hours>3 && item.slots.end_at.split(' ')[1]!='12:00'">
+              
+              <div class="cl-marker-text ">  <% item.slots.order.order_no %> thidt cond</div>
+              <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
+              
+            </div>-->
+            <div class="cl-customer-marker-continue  cl-customer-end-only d-flex" v-if="item.slots.start_at.split(' ')[1]=='12:00' && item.slots.start_at.split(' ')[2]=='AM' && item.slots.end_at.split(' ')[1]=='12:00' && item.slots.start_at.split(' ')[2]=='AM' && item.slots.cleaning_hours>3 ">
+              
+              <div class="cl-marker-text ">  <% item.slots.order.order_no %> forth cond</div>
+              <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
+              
+            </div>
+          </div>
+
+          </div>
+          <div class="cl-slot-card">
+            <div class="row ml-0">
+              <div class="col-md-12">
+                <div class="d-flex">
+                <v-checkbox
+                v-model="selectedCleaningSlot"
+                 value="2"
+                 :color="primary"
+              ></v-checkbox>
+              <div class="mt-4 mx-auto">
+              <div class="cl-slot-card-title text-center mt-1">Slot 2</div> 
+                 <div class="cl-slot-card-subtitle text-center ">03 AM - 06 AM</div> 
+                </div>
+              </div>
+            </div>
+            
+            </div>
+            <div class="marker-container mt-4" v-for="(item,index) in combineSlots" v-bind:key="index">
+              <div class="cl-customer-start-end  d-flex" v-if="item.slots.start_at.split(' ')[1]=='03:00' && item.slots.start_at.split(' ')[2]=='AM'">
+                <div class="cl-marker-pic-box">
+                  <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
+                  <div class="cl-marker-completed">
+                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+  
+                </div>
+  
+                </div>
+                <div class="cl-marker-text ">  <% item.slots.order.order_no %></div>
+                <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
+                
+              </div>
+            </div>
+          </div>
+          <div class="cl-slot-card">
+            <div class="row ml-0">
+              <div class="col-md-12">
+                <div class="d-flex">
+                <v-checkbox
+                v-model="selectedCleaningSlot"
+                 value="3"
+                 :color="primary"
+              ></v-checkbox>
+              <div class="mt-4 mx-auto">
+              <div class="cl-slot-card-title text-center mt-1">Slot 3</div> 
+                 <div class="cl-slot-card-subtitle text-center ">06 AM - 09 AM</div> 
+                </div>
+              </div>
+            </div>
+            </div>
+           
+          </div>
+          <div class="cl-slot-card">
+            <div class="row ml-0">
+              <div class="col-md-12">
+                <div class="d-flex">
+                <v-checkbox
+                v-model="selectedCleaningSlot"
+                 value="4"
+                 :color="primary"
+              ></v-checkbox>
+              <div class="mt-4 mx-auto">
+              <div class="cl-slot-card-title text-center mt-1">Slot 4</div> 
+                 <div class="cl-slot-card-subtitle text-center ">09 AM - 12 PM</div> 
+                </div>
+              </div>
+            </div>
+            </div>
+            <div class="marker-container mt-4" v-for="(item,index) in combineSlots" v-bind:key="index">
+              <div class="cl-customer-start-end  d-flex" v-if="item.slots.start_at.split(' ')[1]=='09:00' && item.slots.start_at.split(' ')[2]=='AM'">
+                <div class="cl-marker-pic-box">
+                  <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
+                  <div class="cl-marker-completed">
+                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+  
+                </div>
+  
+                </div>
+                <div class="cl-marker-text ">  <% item.slots.order.order_no %></div>
+                <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
+                
+              </div>
+            </div>
+          </div>
+          <div class="cl-slot-card">
+            <div class="row ml-0">
+              <div class="col-md-12">
+                <div class="d-flex">
+                <v-checkbox
+                v-model="selectedCleaningSlot"
+                 value="5"
+                 :color="primary"
+              ></v-checkbox>
+              <div class="mt-4 mx-auto">
+              <div class="cl-slot-card-title text-center mt-1">Slot 5</div> 
+                 <div class="cl-slot-card-subtitle text-center ">12 PM -  03 PM</div> 
+                </div>
+              </div>
+            </div>
+            </div>
+            <div class="cl-customer-marker-continue cl-customer-start-only mt-4 d-flex">
+              <div class="cl-marker-pic-box">
+                <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
+                <div class="cl-marker-completed">
+                  <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+
+              </div>
+
+              </div>
+              <div class="cl-marker-text">  BLC20210510135</div>
+            
+            </div>
+          </div>
+          <div class="cl-slot-card">
+            <div class="row ml-0">
+              <div class="col-md-12">
+                <div class="d-flex">
+                <v-checkbox
+                v-model="selectedCleaningSlot"
+                 value="6"
+                 :color="primary"
+              ></v-checkbox>
+              <div class="mt-4 mx-auto">
+              <div class="cl-slot-card-title text-center mt-1">Slot 6</div> 
+                 <div class="cl-slot-card-subtitle text-center ">03 PM - 06 PM</div> 
+                </div>
+              </div>
+            </div>
+            </div>
+            <div class="cl-customer-marker cl-customer-end-only mt-4">
+              <div class="cl-marker-count">03</div>
+            </div>
+          </div>
+          <div class="cl-slot-card">
+            <div class="row ml-0">
+              <div class="col-md-12">
+                <div class="d-flex">
+                <v-checkbox
+                v-model="selectedCleaningSlot"
+                 value="7"
+                 :color="primary"
+              ></v-checkbox>
+              <div class="mt-4 mx-auto">
+              <div class="cl-slot-card-title text-center mt-1">Slot 7</div> 
+                 <div class="cl-slot-card-subtitle text-center ">06 PM - 09 PM</div> 
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+          <div class="cl-slot-card">
+            <div class="row ml-0">
+              <div class="col-md-12">
+                <div class="d-flex">
+                <v-checkbox
+                v-model="selectedCleaningSlot"
+                 value="8"
+                 :color="primary"
+              ></v-checkbox>
+              <div class="mt-4 mx-auto">
+              <div class="cl-slot-card-title text-center mt-1">Slot 8</div> 
+                 <div class="cl-slot-card-subtitle text-center ">09 PM - 12 AM</div> 
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+          
+         
+        </div>
+      </div>
+     
+
+    </div>
+     <!--- selected slots section-->
+ <div class="row mt-0 slot-section"  v-if="selectedCleaningSlot.length>0">
+  <div class="col-md-4">
+    <div class="cl-slot-card-title2">Slots Selected</div>
+    <div class="row">
+      
+    <div class="col-md-3" v-for="(slot,index) in selectedCleaningSlot">
+      <div class="cl-slot-card-title text-center mt-2">Slot <% slot %></div> 
+         <div class="cl-slot-card-subtitle text-center ">06 AM - 09 AM</div> 
+      </div>
+      </div>
+      <div class="row">
+     
+      <div class="col-md-6">
+        <v-checkbox
+      v-model="services"
+      label="General Cleaning"
+      value="General Cleaning"
+      :color="primary"
+      class="cl-service-list"
+    ></v-checkbox>
+    <v-checkbox
+    v-model="services"
+    label="Carpet Cleaning"
+    value="Carpet Cleaning"
+    :color="primary"
+    class="cl-service-list"
+  ></v-checkbox>
+  <v-checkbox
+    v-model="services"
+    label="Outdoor Cleaning"
+    value="Outdoor Cleaning"
+    :color="primary"
+    class="cl-service-list"
+  ></v-checkbox>
+  <v-checkbox
+    v-model="services"
+    label="Window Cleaning"
+    value="Window Cleaning"
+    :color="primary"
+    class="cl-service-list"
+  ></v-checkbox>
+  <v-checkbox
+    v-model="services"
+    label="Car Parking Umbrella"
+    value="Car Parking Umbrella"
+    :color="primary"
+    class="cl-service-list"
+  ></v-checkbox>
+  <v-checkbox
+    v-model="services"
+    label="Kitchen Cleaning"
+    value="Kitchen Cleaning"
+    :color="primary"
+    class="cl-service-list"
+  ></v-checkbox>
+      </div>
+      <div class="col-md-6">
+        <v-checkbox
+        v-model="services"
+        label="Deep Cleaning"
+        value="Deep Cleaning"
+        :color="primary"
+        class="cl-service-list"
+      ></v-checkbox>
+      <v-checkbox
+      v-model="services"
+      label="Upholstery Cleaning"
+      value="Upholstery Cleaning"
+      :color="primary"
+      class="cl-service-list"
+    ></v-checkbox>
+    <v-checkbox
+    v-model="services"
+    label="Facade Cleaning"
+    value="Facade Cleaning"
+    :color="primary"
+    class="cl-service-list"
+  ></v-checkbox>
+      </div>
+    
+    
+      </div>
+  
+   </div>
+   <div class="col-md-2">
+    <div class="cl-slot-card-title2 text-center">Available Cleaners</div>
+    <div class="cl-cleaners-count text-center">
+        35
+    </div>
+
+   </div>
+   <div class="col-md-4">
+    <div class="cl-slot-card-title2">Available Team Incharge</div>
+    <div class="row">
+      <div class="col-md-3 text-center" >
+        <img src="{% static 'files/images/profile.jpg'%}" class="cl-profile-pic"  data-toggle="tooltip" data-placement="bottom" title="Amanadiel"/>
+        <div>Amanadiel</div>
+      </div>
+      <div class="col-md-3 text-center">
+        <img src="{% static 'files/images/profile.jpg'%}" class="cl-profile-pic"  data-toggle="tooltip" data-placement="bottom" title="Amanadiel"/>
+        <div>Michael</div>
+      </div>
+      <div class="col-md-3 text-center">
+        <img src="{% static 'files/images/profile.jpg'%}" class="cl-profile-pic"  data-toggle="tooltip" data-placement="bottom" title="Amanadiel"/>
+        <div>Trixie</div>
+      </div>
+      <div class="col-md-3 text-center">
+        <img src="{% static 'files/images/profile.jpg'%}" class="cl-profile-pic"  data-toggle="tooltip" data-placement="bottom" title="Amanadiel"/>
+        <div>Eve</div>
+      </div>
+      <div class="col-md-3 text-center">
+        <img src="{% static 'files/images/profile.jpg'%}" class="cl-profile-pic"  data-toggle="tooltip" data-placement="bottom" title="Amanadiel"/>
+        <div>Adam</div>
+      </div>
+      <div class="col-md-3 text-center">
+        <img src="{% static 'files/images/profile.jpg'%}" class="cl-profile-pic"  data-toggle="tooltip" data-placement="bottom" title="Amanadiel"/>
+        <div>Abel</div>
+      </div>
+      <div class="col-md-3 text-center">
+        <img src="{% static 'files/images/profile.jpg'%}" class="cl-profile-pic"  data-toggle="tooltip" data-placement="bottom" title="Amanadiel"/>
+        <div>Linda</div>
+      </div>
+    </div>
+    
+   </div>
+ </div>
+
+      <!-- selected slots section ends-->
+    
+  
+  
+  
+</div>
+
+<!--cleaning calendar ends here-->
+
+
 <!-- Cancelled modal-->
 <div class="modal" tabindex="-1" role="dialog" id="cancelledModal">
   <div class="modal-dialog" role="document">
@@ -1104,10 +1502,14 @@
 
 {% endblock %}
 {% block javascript %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
   <!-- calendar-->
+  <script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
 <script src="{% static 'files/js/calendar/main.js' %}"></script>
+
+
 <!--calender-->
   
 <script>
