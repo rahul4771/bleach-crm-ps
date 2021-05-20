@@ -9,7 +9,11 @@
 {% endblock %}
 
 <div class="wrapper">
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
 {% include "agent/common/header.html" %}
+
 
 <section class="content"> 
 <div class="container-fluid space topspace"><!--container-fluid space-->
@@ -173,7 +177,7 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
 <div class="date-wrapper"><!--date-wrapper-->
             <div class="date-wrapper-inner"><!--date-wrapper-inner-->
             <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+            <input type="text" id="evaluation_calendar2" value="{{evaluation_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
             <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
             <button class='today-date current-date'>Today</button>
             </div><!--date-wrapper-inner-->
@@ -254,6 +258,452 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
 </div><!--table-scroll-->
 </div><!--white-wrapper-->
 {% endif %}
+
+
+
+
+
+<!--- New Evaluation calendar begins here-->
+
+<div class="white-wrapper"><!--white-wrapper-->
+
+  <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
+  
+  <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->
+  <h2 class="h2">Evaluation Calendar</h2>
+  </div>
+  
+  <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+  <div class="date-wrapper"><!--date-wrapper-->
+              <div class="date-wrapper-inner"><!--date-wrapper-inner-->
+              <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+              <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+              <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+              <button class='today-date current-date'>Today</button>
+              </div><!--date-wrapper-inner-->
+  </div><!--date-wrapper-->
+  </div>
+  
+  </div>
+  
+  <div class="cleaning-container"><!--cleaning-container-->
+    <div class="scrollable"><!--scrollable-->
+    
+      <div class="d-flex w-100">
+        <div>
+    
+        </div>
+        <div class="d-flex eval-calendar" >
+         <div class="cl-left-container">
+          <div class="cl-evaluator-head cl-evaluator-title"> Evaluator</div>
+
+          {% for evaluator in evaluation_details %}
+            <div class="cl-evaluator" id="cl-evaluator{{evaluator.id}}"> <img src="{{evaluator.profile_image.url}}" class="cl-profile-pic"  data-toggle="tooltip" data-placement="bottom" title="{{evaluator.name}}"/></div>
+          {% endfor %}
+
+         </div>
+         <!-- Date row begins here-->
+         <div class="date-row">
+       <div class="d-flex cl-dates">
+        <div class="d-flex w-100 slot-container-head">
+          
+            <div class="cl-slot">
+              07 AM
+            </div>
+            <div class="cl-slot">
+              08 AM
+            </div>
+            <div class="cl-slot">
+              09 AM
+            </div>
+            <div class="cl-slot">
+              10 AM
+            </div>
+            <div class="cl-slot">
+              11 AM
+            </div>
+            <div class="cl-slot">
+              12 AM
+            </div>
+            <div class="cl-slot">
+              01 PM 
+            </div>
+            <div class="cl-slot">
+              02 PM
+            </div>
+            <div class="cl-slot">
+              03 PM
+            </div>
+            <div class="cl-slot">
+              04 PM
+            </div>
+            <div class="cl-slot">
+              05 PM
+            </div>
+            <div class="cl-slot">
+              06 PM
+            </div>
+            <div class="cl-slot">
+              07 PM
+            </div>    
+        </div>
+        <div class="d-flex w-100 slot-container-head">
+         
+          <div class="cl-slot">
+            08 PM
+          </div>
+          <div class="cl-slot">
+            09 PM
+          </div>
+          <div class="cl-slot">
+            10 PM
+          </div>
+          <div class="cl-slot">
+            11 PM
+          </div>
+          <div class="cl-slot">
+            12 AM
+          </div>
+          <div class="cl-slot">
+            01 AM
+          </div>
+          <div class="cl-slot">
+            02 AM
+          </div>
+          <div class="cl-slot">
+            03 AM
+          </div>
+          <div class="cl-slot">
+            04 AM
+          </div>
+          <div class="cl-slot">
+            05 AM
+          </div>
+          <div class="cl-slot">
+            06 AM
+          </div>
+          <div class="cl-slot">
+            07 AM
+          </div>    
+      </div>
+    
+    
+     
+    </div> 
+    <!-- Date row1 ends here-->
+     <!-- row 2 begins here-->
+     {% for evaluator in evaluation_details %}
+     <div class="d-flex cl-dates">
+      <div class="d-flex w-100 slot-container" id="slot-row-{{evaluator.id}}">
+          
+      </div>
+
+      <div class="d-flex w-100 slot-container" id="slot-row2-{{evaluator.id}}">
+      
+      </div>
+
+    </div> 
+    {% endfor %}
+      
+    </div>
+    <!-- Date row sends here-->
+    
+    
+     
+      </div>
+      </div>
+      </div><!--scrollable-->
+  </div><!--cleaning-container-->
+  </div><!--white-wrapper-->
+
+<!--new evaluation calendar ends-->
+
+
+
+<!-- Cancelled modal-->
+<div class="modal" tabindex="-1" role="dialog" id="cancelledModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      
+      <div class="modal-body">
+        <div class="d-flex cl-modal-icons">
+        
+          <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon" data-dismiss="modal" aria-label="Close"/>
+        </div>
+        <div class="row" style="margin:0">
+          <div class="col-md-12 text-center" style="padding:0">
+                <div class="d-flex cancelled-stamp">
+                  <img src="{% static 'files/icons/cancelled.png'%}" class="cancelled-icon"/>
+                  <div class="cancelled-modal-text"> Booking Cancelled</div>
+
+                </div>
+               
+            </div>
+            </div>
+      </div>
+    
+    </div>
+  </div>
+</div>
+<!--Cancelled modal-->
+<!-- evaluation_popup -->
+<div class="modal fade" id="evaluationAgentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+    
+      <div>
+      
+      </div>
+      <div class="modal-body">
+      <div class="d-flex cl-modal-icons">
+        <img src="{% static 'files/icons/edit.png'%}" class="cl-modal-icon" @click="editEval=!editEval"/>
+        <img src="{% static 'files/icons/delete.png'%}" class="cl-modal-icon" @click="delAlert=!delAlert"/>
+        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon" data-dismiss="modal" aria-label="Close"/>
+      </div>
+      <div class="row" style="margin:0">
+        <div class="col-md-12" style="padding:0">
+
+          <!-- :color = agent || :color="customer" || :color="cancelled"     -->   
+      <v-alert
+      prominent
+      type="error"
+      v-model="delAlert"
+      :color="agent"
+      class="mt-2 w-100"
+    >
+      <v-row align="center">
+        <v-col class="grow ">
+        Do you want to cancel this booking ?
+        </v-col>
+        <v-col class="shrink">
+          <div class="d-flex">
+          <v-btn>Proceed</v-btn>
+          <v-btn class="ml-4 text-black" color="white" style="color:#000000"  @click="delAlert=!delAlert">Cancel</v-btn>
+        </div>
+        </v-col>
+      </v-row>
+    </v-alert>
+    </div>
+  </div>
+         <div class="row">
+           <div class="col-md-12">
+           
+            <div class="cl-modal-text-title cl-mt-10 agent-booked-text">
+              Al Yarmouk
+            </div>
+            
+            <div class="cl-modal-text-title cl-mt-20 agent-booked-text">
+              Ahamed Abdou
+            </div>
+            <div class="cl-modal-text-content cl-mt-5">
+              Assigned By :<b> Rayan</b>
+            </div>
+            <div class="cl-modal-text-content cl-mt-5">
+              Booking ID  :<b> 134234</b>
+            </div>
+            <div class="cl-modal-text-title cl-mt-20 ">
+              MR. Bhageerathan Pillai
+            </div>
+            <div class="cl-modal-text-content cl-mt-5">
+              8080808080
+            </div>
+            <div class="cl-modal-text-content cl-mt-5">
+              Sindhu, 45, Vasanth Street, Hashima Building, Shammy avenue,24th Block, Farwaniya
+            </div>
+            <div class="cl-modal-text-content cl-mt-20">
+              <div>Evaluation Date : 14-05-2021</div>
+              <div class="cl-mt-5">Evaluation Date : 12:00 PM - 01:00 PM</div>
+            </div>
+           </div>
+           <div class="edit-eval col-md-12 cl-mt-20" v-if="editEval">
+             <div class="cl-modal-text-title">
+                Edit Evaluation
+             </div>
+             <div class="mt-2 col-md-4">
+            
+                <v-date-picker v-model="selectedDate" :color="agent" class="cl-datecalendar w-100"></v-date-picker>
+             
+             </div>
+             <div class="col-md-7 offset-md-1">
+              <v-select
+          :items="['Ahamed Abdou','Michael','Amanadiel','Trixie']"
+          v-model="selectedEvaluator"
+          outlined
+          :color="agent"
+          class="eval-select"
+        ></v-select>
+        <div>
+          <b>Time Slots Available</b>
+        </div>
+        <v-checkbox
+        v-model="lateHour"
+        label="Show Late Hours"
+        :color="agent"
+        class="late-hour"
+      ></v-checkbox>
+      <div class="time-slots row mt-2" v-if="lateHour">
+        <div class="col-md-3">
+          <div class="time-slot" onclick="selectSlot(this)">
+            12:00 AM - 01:00 AM
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="time-slot" onclick="selectSlot(this)">
+            01:00 AM - 02:00 AM
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="time-slot" onclick="selectSlot(this)">
+            02:00 AM - 03:00 AM
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="time-slot" onclick="selectSlot(this)">
+            03:00 AM - 04:00 AM
+          </div>
+        </div>
+        <div class="col-md-3" onclick="selectSlot(this)">
+          <div class="time-slot">
+            04:00 AM - 05:00 AM
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="time-slot" onclick="selectSlot(this)">
+            05:00 AM - 06:00 AM
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="time-slot" onclick="selectSlot(this)">
+            06:00 AM - 07:00 AM
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="time-slot" onclick="selectSlot(this)">
+            07:00 AM - 08:00 AM
+          </div>
+        </div>
+        
+       
+      </div>
+        <div class="time-slots row mt-2">
+          <div class="col-md-3">
+            <div class="time-slot" onclick="selectSlot(this)">
+              08:00 AM - 09:00 AM
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="time-slot" onclick="selectSlot(this)">
+              09:00 AM - 10:00 AM
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="time-slot" onclick="selectSlot(this)">
+              10:00 AM - 11:00 AM
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="time-slot" onclick="selectSlot(this)">
+              11:00 AM - 12:00 PM
+            </div>
+          </div>
+          <div class="col-md-3" onclick="selectSlot(this)">
+            <div class="time-slot">
+              12:00 PM - 01:00 PM
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="time-slot" onclick="selectSlot(this)">
+              01:00 PM - 02:00 PM
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="time-slot" onclick="selectSlot(this)">
+              02:00 PM - 03:00 PM
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="time-slot" onclick="selectSlot(this)">
+              03:00 PM - 4:00 PM
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="time-slot" onclick="selectSlot(this)">
+              04:00 AM - 05:00 AM
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="time-slot" onclick="selectSlot(this)">
+              05:00 PM - 06:00 PM
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="time-slot" onclick="selectSlot(this)">
+              06:00 PM - 07:00 PM
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="time-slot" onclick="selectSlot(this)">
+              07:00 PM - 08:00 PM
+            </div>
+          </div>
+         
+        </div>
+        <div class="time-slots row mt-2" v-if="lateHour">
+          <div class="col-md-3">
+            <div class="time-slot" onclick="selectSlot(this)">
+              08:00 PM - 09:00 PM
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="time-slot" onclick="selectSlot(this)">
+              09:00 PM - 10:00 PM
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="time-slot" onclick="selectSlot(this)">
+              10:00 PM - 11:00 PM
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="time-slot" onclick="selectSlot(this)">
+              11:00 PM - 12:00 PM
+            </div>
+          </div>
+          
+          
+         
+        </div>
+             </div>
+             <div class="col-md-12">
+              <v-textarea
+              outlined
+              name="input-7-4"
+              label="Note"
+              
+              :color="agent"
+            ></v-textarea>
+           </div>
+           <div class="cl-btns d-flex justify-center col-md-12">
+            <div class="proceed-btn agent-booked-bg ">
+              Proceed
+            </div>
+            <div class="cancel-btn ml-4 agent-booked-border" data-dismiss="modal" aria-label="Close">
+             Cancel
+           </div>
+          </div>
+             
+           </div>
+          
+         </div>
+         
+       
+      </div>
+      
+    </div>
+  </div>
+</div>
+<!--modal-evaluation-wrapper-->
+
 
 
 <div class="white-wrapper"><!--white-wrapper-->
@@ -995,6 +1445,13 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
 
 {% endblock %}
 {% block javascript %}
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <!-- calendar-->
+<script src="{% static 'files/js/calendar/main.js' %}"></script>
+<!--calender-->
+
 <script type="text/javascript">
 
 //previous time limit
@@ -1209,10 +1666,170 @@ $('document').ready(function(){
             
             {% endif %}
 
-        {% endfor %}    
+        {% endfor %}  
 
 
 
+    //new Evaluation Callender start
+        {% for evaluator in evaluation_details %}
+            
+            {% if evaluator.evaluation_details %}
+
+                //$("#cl-evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
+            
+                evaluator_timings_list =[]
+                {% for evaluation in evaluator.evaluation_details %}
+                    proposed_timing_string      = '{{evaluation.proposed_time|date:'H'}}';
+                    proposed_timing             = parseInt(proposed_timing_string)
+                    evaluator_timings_list.push(proposed_timing);
+                    console.log("{{evaluation.evaluation.evaluation_id}}");
+                {% endfor %}
+                for(i=7;i<=19;i++)
+                {
+                    if(evaluator_timings_list.includes(i))
+                    {
+                        same_slote_count = 0
+                        {% for evaluation in evaluator.evaluation_details %}
+                            proposed_timing_string      = '{{evaluation.proposed_time|date:'H'}}';
+                            proposed_timing             = parseInt(proposed_timing_string)
+                        
+                        if(i == proposed_timing)
+                            {
+                              same_slote_count += 1
+                              if(same_slote_count == 1)
+                              {
+                                $("#slot-row-{{evaluator.id}}").append('<div class="cl-slot"  data-toggle="modal" data-target="#evaluationAgentModal" ><div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %} {% else %}agent-submitted{% endif %} cl-chip-2 d-flex"><div class="cl-completed"><img src="{% static 'files/icons/check-white.png'%}" class="cl-check-icon"/></div><div class="text-center w-100">AMS</div></div></div>');
+                              }
+                              else
+                              {
+                                $("#slot-row-{{evaluator.id}} .cl-slot").append('<div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %} {% else %}agent-submitted{% endif %} cl-chip-2 d-flex"><div class="cl-completed"><img src="{% static 'files/icons/check-white.png'%}" class="cl-check-icon"/></div><div class="text-center w-100">AMS</div></div>');
+                              }  
+                              
+                            }
+                            
+
+                        {% endfor %}
+                
+                    }
+                    else
+                    {
+                      $("#slot-row-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+                       
+                    }
+                    //$("#slot-row-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+                    
+                }  
+
+                for(i=20;i<=23;i++)
+                {
+                    if(evaluator_timings_list.includes(i))
+                    {
+                        same_slote_count = 0
+                        {% for evaluation in evaluator.evaluation_details %}
+                            proposed_timing_string      = '{{evaluation.proposed_time|date:'H'}}';
+                            proposed_timing             = parseInt(proposed_timing_string)
+                        
+                        if(i == proposed_timing)
+                            {
+                              same_slote_count += 1
+                              if(same_slote_count == 1)
+                              {
+                                $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot"  data-toggle="modal" data-target="#evaluationAgentModal" ><div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %} {% else %}agent-submitted{% endif %} cl-chip-2 d-flex"><div class="cl-completed"><img src="{% static 'files/icons/check-white.png'%}" class="cl-check-icon"/></div><div class="text-center w-100">AMS</div></div></div>');
+                              }
+                              else
+                              {
+                                $("#slot-row2-{{evaluator.id}} .cl-slot").append('<div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %} {% else %}agent-submitted{% endif %} cl-chip-2 d-flex"><div class="cl-completed"><img src="{% static 'files/icons/check-white.png'%}" class="cl-check-icon"/></div><div class="text-center w-100">AMS</div></div>');
+                              }  
+                              
+                            }
+                            
+
+                        {% endfor %}
+                
+                    }
+                    else
+                    {
+                      
+                      $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot"></div>');   
+                    }
+                    
+                    //$("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot"></div>'); 
+                } 
+
+                for(i=0;i<=7;i++)
+                {
+                    if(evaluator_timings_list.includes(i))
+                    {
+                        same_slote_count = 0
+                        {% for evaluation in evaluator.evaluation_details %}
+                            proposed_timing_string      = '{{evaluation.proposed_time|date:'H'}}';
+                            proposed_timing             = parseInt(proposed_timing_string)
+                        
+                        if(i == proposed_timing)
+                            {
+                              same_slote_count += 1
+                              if(same_slote_count == 1)
+                              {
+                                $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot"  data-toggle="modal" data-target="#evaluationAgentModal" ><div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %} {% else %} agent-submitted {% endif %} cl-chip-2 d-flex"><div class="cl-completed"><img src="{% static 'files/icons/check-white.png'%}" class="cl-check-icon"/></div><div class="text-center w-100">AMS</div></div></div>');
+                              }
+                              else
+                              {
+                                $("#slot-row2-{{evaluator.id}} .cl-slot").append('<div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %}{% else %} agent-submitted {% endif %} cl-chip-2 d-flex"><div class="cl-completed"><img src="{% static 'files/icons/check-white.png'%}" class="cl-check-icon"/></div><div class="text-center w-100">AMS</div></div>');
+                              }  
+                              
+                            }
+                            
+
+                        {% endfor %}
+                
+                    }
+                    else
+                    {
+                      
+                      $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot"></div>');   
+                    }
+                    
+                    //$("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot"></div>'); 
+                }
+
+            {% else %}
+
+            $("#slot-row-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+
+            $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot"></div>');
+            
+            {% endif %}
+
+        {% endfor %}
+
+    //new evaluation calendar end
+
+    
+    
+    
     //Function Used For Cleaning Calender    
     function isArrayInArrayOverlap(source,search)
     {   count1=0;
