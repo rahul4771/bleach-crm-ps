@@ -48,22 +48,23 @@ class CleaningScheduleSerializer(serializers.ModelSerializer):
 
 class FollowupSerializer(serializers.ModelSerializer):
 	class Meta:		
-		model  = FollowUp
-		fields = ('ticket_no','no_of_cleaners','cleaning_hours')
+		model   = FollowUp
+		fields  = ('ticket_no','no_of_cleaners','cleaning_hours')
 
 class FollowUpTeamShowSerializer(serializers.ModelSerializer):
 	team_leader = UserProfileShowSerializer(read_only=True)
 	class Meta:
-		model = FollowUpTeam
-		fields= ('team_leader',)
+		model   = FollowUpTeam
+		fields  = ('team_leader',)
 
 
 class FollowupScheduleSerializer(serializers.ModelSerializer):
-	customer_address = AddressSerializer(read_only=True)
-	start_at = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p")
-	end_at   = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p")
+	customer_address              = AddressSerializer(read_only=True)
+	start_at                      = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p")
+	end_at                        = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p")
+	follow_up                     = FollowupSerializer(read_only=True)
 	followupteam_followupschedule = FollowUpTeamShowSerializer(many=True,read_only=True)
 	class Meta:		
 		model  = FollowUpScheduler
-		fields = ('id','start_at','end_at','customer_address','work_status','followupteam_followupschedule')
+		fields = ('id','start_at','end_at','customer_address','work_status','follow_up','followupteam_followupschedule')
 
