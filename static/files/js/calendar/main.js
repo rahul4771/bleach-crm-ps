@@ -57,13 +57,109 @@ $(document).ready(function(){
         services:[],
         slots:{},
         combineSlots:[],
+        slotDate:'',
+        dateSelected:'',
+        booking:{
+            booking_date:'',
+            booking_time:''
+        },
+        convertedTime:{
+            earlyHours:[],
+            lateHours:[]
+          },
+         
+          lateHours:false,
+        selectedTime:'',
+        timeSlots:[],
         url:'https://test.bleach-kw.com'
       },
       mounted(){
         this.getSlots()
         this.parseDate()
+        
+        //moment.tz.setDefault("Asia/Baghdad");
+        console.log("current time is" + moment().format());
+    
+        this.dateSelected = moment().format().split("T")[0];
+        this.today = moment().format().split("T")[0];
+        this.formatDate()
+        this.getEvaluationSlots()
       },
       methods:{
+        getTime(){
+            if(!this.lateHours)
+            {
+            return this.convertedTime.earlyHours
+            }
+            else{
+              //return this.convertedTime.earlyHours.concat(this.convertedTime.lateHours)
+              return this.timeSlots
+            }
+          },
+          convertTime(){
+            this.convertedTime.earlyHours=[],
+            this.convertedTime.lateHours=[]
+            for(var i=8;i<24;i++){
+              if(this.timeSlots.includes(i)){
+                if(i<20)
+                {
+                this.convertedTime.earlyHours.push(i)
+                }
+                else{
+                  this.convertedTime.lateHours.push(i)
+                }
+              }
+            }
+            for(var i=0;i<8;i++){
+              if(this.timeSlots.includes(i)){
+                this.convertedTime.lateHours.push(i)
+              }
+            }
+    
+    
+          },
+          selectTime(time,slot){
+            this.booking.booking_time=time
+            this.selectedTime=slot
+          },
+        formatDate() {
+            var slotDate = this.dateSelected;
+            var slotYear = slotDate.split("-")[0];
+            var slotMonth = slotDate.split("-")[1];
+            var slotDay = slotDate.split("-")[2];
+            if (slotDay[0] == 0) {
+              slotDay = slotDay[1];
+            }
+            if (slotMonth[0] == 0) {
+              slotMonth = slotMonth[1];
+            }
+            this.slotDate = slotDay + "-" + slotMonth + "-" + slotYear;
+            
+          },
+          getEvaluationSlots(){
+            this.formatDate()
+            this.booking.booking_date=this.slotDate
+            this.booking.booking_time=''
+            this.selectedTime=''
+            axios
+              .get(
+                 this.url+"/customer/ajax/evaluationslotes?evaluation_booking_date="+this.slotDate
+               
+              )
+              .then((response) => {
+                 this.timeSlots = response.data.slotes;
+                 this.convertTime()
+                 if(response.data['ERROR']){
+                   this.errMsg=response.data['ERROR']
+                 }
+               
+      
+                //this.parseSize();
+              })
+               .catch((error) => {
+                console.log(error);
+              });
+          },
           parseDate(){
             this.cleaningDate=this.selectedDate.split('-')[2]+'-'+this.selectedDate.split('-')[1]+'-'+this.selectedDate.split('-')[0]
           },
