@@ -35,7 +35,7 @@ $(document).ready(function(){
   /** vue js */
 
 
-  new Vue({
+const app=  new Vue({
 
     el: '#app',
     vuetify: new Vuetify(),
@@ -59,6 +59,7 @@ $(document).ready(function(){
         combineSlots:[],
         slotDate:'',
         dateSelected:'',
+        evaluators:[],
         booking:{
             booking_date:'',
             booking_time:''
@@ -86,6 +87,9 @@ $(document).ready(function(){
         this.getEvaluationSlots()
       },
       methods:{
+          setEvaluators(evaluatorList){
+            this.evaluators=evaluatorList
+          },
         getTime(){
             if(!this.lateHours)
             {
