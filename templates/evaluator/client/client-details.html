@@ -819,7 +819,7 @@
                         <div ><!--ticket-form-right-->
                             <div class=" bold-text common-label required-field"> <label>Customer Type</label></div>
                           <label for="favcity">
-                          <select name="customer_type" id="id_customer_type" required="">
+                          <select name="customer_type" id="id_customer_type" required="" onChange="showCompanydetails()">
                           <option value="">Choose Customer Type</option>
                           <option value="INDIVIDUAL">INDIVIDUAL</option>
                           <option value="RETAIL">RETAIL</option>
@@ -829,13 +829,13 @@
             </div>
                      </div>
                      
-                    <div class="col-md-6 cd-mt-4 offset-md-6" >
+                    <div class="col-md-6 cd-mt-4 offset-md-6 company-details" >
                         <div >
                             <div class=" bold-text common-label"> <label>Company</label></div>
                           <input name="company" id="id_company" type="text" class="textBox" placeholder=" " required="required">
                         </div>
                      </div>
-                     <div class="col-md-6 cd-mt-4" >
+                     <div class="col-md-6 cd-mt-4 company-details" >
                         <div >
                             <div class=" bold-text common-label"> <label>Job Title</label></div>
                           <input name="job_title" id="id_job_title" type="text" class="textBox OnlyText" placeholder=" " required="required">
@@ -899,5 +899,15 @@
 
 {% endblock %}
 {% block javascript %}
-
+<script src="{% static 'files/js/validation.js' %}"></script>
+<script>
+    function showCompanydetails(){
+        if($('#id_customer_type').val()=='CORPORATE'){
+            $('.company-details').show()
+        }
+        else{
+            $('.company-details').hide()
+        }
+    }
+</script>
 {% endblock %}

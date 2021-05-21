@@ -174,3 +174,6 @@ label{
 input[type="checkbox"]:checked {
     background: #2b4c82;
 }
+.company-details{
+    display:none;
+}
