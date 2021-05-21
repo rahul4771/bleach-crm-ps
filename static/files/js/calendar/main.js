@@ -43,6 +43,7 @@ const app=  new Vue({
    
     
     data: {
+        setAttenderNotes:"",
         agent:'#0D87C5',
         cleaningDate:new Date().toISOString().substr(0, 10),
         selectedDate:new Date().toISOString().substr(0, 10),
