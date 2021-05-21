@@ -132,21 +132,12 @@ class EvaluationDetailsList(APIView):
 		print(evaluation_detail_id,"evid")
 		try:
 			evaluation_details = EvaluationDetails.objects.get(id=evaluation_detail_id)
-			
-		
-		# if evaluation_details.evaluation.booking_evaluation:
-		# 	customer_booking = True
-		# 	booking_id = evaluation_details.evaluation__booking_evaluation.booking_id
-		# else:
-		# 	customer_booking = False
-		# 	booking_id = None
+			evaluators = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').values('id','name')
 		except:
-			
+			evaluators = None
 			evaluation_details = None
-
-		print(evaluation_details.proposed_time.date(),evaluation_details.proposed_time.time(),"evdx")
-		# evaluationdetails_serializer = EvaluationDetailsSerializer(evaluation_details).data
-		
+		print(evaluators,"evs")
+		response_dict["evaluators_list"]=evaluators
 		response_dict["evaluation_id"]=evaluation_details.evaluation.id
 		response_dict["area"]=evaluation_details.address.area.name
 		response_dict["governorate"]=evaluation_details.address.governorate.name
