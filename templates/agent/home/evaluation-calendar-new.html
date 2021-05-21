@@ -287,10 +287,9 @@
           <!--<div class="time-slot" onclick="selectSlot(this)">
             12:00 AM - 01:00 AM
           </div>-->
-          <div >
+          <div v-if="slot!=selectedTime">
             <div
               class="time-slot duration text-center p-2"
-              onclick="selectSlot(this)"
               @click="selectTime(12+':00 AM',slot)"
               v-if="slot==0"
             >
@@ -298,22 +297,52 @@
             </div>
             <div
               class="time-slot duration text-center p-2"
-              onclick="selectSlot(this)"
-
+              @click="selectTime(slot+':00 AM',slot)"
+              v-if="slot<12 && slot>0"
+            >
+              <% slot +':00' %> am -  <% (slot+1)+':00' %> <span v-if="(slot+1)<12">am </span><span v-else>pm</span>
+            </div>
+            <div
+              class="time-slot duration text-center p-2"
+              @click="selectTime('12:00 PM',slot)"
+              v-if="slot==12"
+            >
+              12:00 pm - <% (slot-11)+':00' %> pm 
+            </div>
+            <div
+              class="time-slot duration text-center p-2"
+              @click="selectTime((slot-12)+':00 PM',slot)"
+              v-if="slot>12"
+            >
+              <% (slot-12) %>:00 pm - <% (slot-11)+':00' %> <span v-if="(slot+1)>12 && (slot+1)<24">pm </span><span v-else>am</span>
+            </div>
+            
+          </div>
+          <div v-if="slot==selectedTime">
+            <div
+              class="time-slot-active  text-center p-2"
+              @click="selectTime(12+':00 AM',slot)"
+              v-if="slot==0"
+            >
+              12:00 am - 1:00 am
+            </div>
+            <div
+              class="time-slot-active  text-center p-2"
+              @click="selectTime(slot+':00 AM',slot)"
               v-if="slot<12 && slot>0"
             >
               <%slot +':00'%> am - <%(slot+1)+':00'%> <span v-if="(slot+1)<12">am </span><span v-else>pm</span>
             </div>
             <div
-              class="time-slot duration text-center p-2"
-              onclick="selectSlot(this)"
+              class="time-slot-active   text-center p-2"
+              @click="selectTime('12:00 PM',slot)"
               v-if="slot==12"
             >
               12:00 pm - <%(slot-11)+':00'%> pm 
             </div>
             <div
-              class="time-slot duration text-center p-2"
-              onclick="selectSlot(this)"
+              class="time-slot-active  text-center p-2"
+              @click="selectTime((slot-12)+':00 PM',slot)"
               v-if="slot>12"
             >
               <%(slot-12)%>:00 pm - <%(slot-11)+':00'%> <span v-if="(slot+1)>12 && (slot+1)<24">pm </span><span v-else>am</span>
