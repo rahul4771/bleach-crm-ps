@@ -3231,6 +3231,7 @@ class AssignEvaluator(IsAgent,View):
 
 				proposed_date                     = request.POST.get('proposed_date')
 				proposed_time                     = request.POST.get('proposed_time')
+				
 				converted_proposed_time           = datetime.strptime(proposed_date+" "+proposed_time,'%d-%m-%Y %I:%M %p')
 
 				evaluation_form_save.proposed_time   = converted_proposed_time

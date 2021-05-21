@@ -130,10 +130,24 @@ class EvaluationUpdate(APIView):
 		response_dict = {"success":False}
 
 		evaluation_date = request.GET.get('evaluation_date')
+		evaluation_time = request.GET.get('evaluation_time')
+
+		converted_datetime = datetime.strptime(evaluation_date+" "+evaluation_time,'%d-%m-%Y %I:%M %p')
+
 		evaluator_id = request.GET.get('evaluator_id')
 		evaluation_detail_id = request.GET.get('evaluation_detail_id')
 		agent_notes = request.GET.get('agent_notes')
-		print(evaluation_date,evaluator_id,agent_notes,evaluation_detail_id)
+		print(converted_datetime,evaluator_id,agent_notes,evaluation_detail_id)
+
+		evaluationdetail = EvaluationDetails.objects.get(id=int(evaluation_detail_id))
+		evaluator = UserProfile.objects.get(id=int(evaluator_id),user_type='EVALUATOR')
+
+		evaluationdetail.evaluator = evaluator
+		evaluationdetail.proposed_time = converted_datetime
+		evaluationdetail.attender_note = agent_notes
+		evaluationdetail.save()
+		
+		response_dict = {"success":True}
 		return Response(response_dict,HTTP_200_OK)
 
 

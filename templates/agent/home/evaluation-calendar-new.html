@@ -428,7 +428,7 @@ function load_evaluation(evaluation_detail_id,item){
     })   
     }
 
-
+//delete evaluation
 function delete_evaluation(){
     
     var evaluation_id = $('#evaluation_id').val();
@@ -444,16 +444,25 @@ function delete_evaluation(){
     })
 }
 
+//update evaluation
 function update_evaluation(){
 
-    axios.get(url+'/api/evaluation-update/',{ params: { 'evaluation_date': app.selectedDate, 'evaluation_detail_id':$('#evaluation_detail_id').val(), 'evaluator_id':app.selectedEvaluator, 'agent_notes':app.setAttenderNotes } })
+    var dates = app.selectedDate.split('-');
+    var selecteddate = dates[2]+'-'+dates[1]+'-'+dates[0];
+
+    axios.get(url+'/api/evaluation-update/',{ params: { 'evaluation_time':app.booking.booking_time, 'evaluation_date': selecteddate, 'evaluation_detail_id':$('#evaluation_detail_id').val(), 'evaluator_id':app.selectedEvaluator, 'agent_notes':app.setAttenderNotes } })
     .then(function (response) {
-        
+        console.log(response.data.success,"war")
+        if (response.data.success == true){
+            console.log("war")
+            $('.close-evaluation').click();
+            window.location.reload();
+        }
     })
 
     //console.log(app.booking.booking_time,"slop")
     
-    console.log(app.setAttenderNotes,app.selectedDate,app.selectedEvaluator,"evft")
+    //console.log(app.setAttenderNotes,app.booking.booking_time,app.selectedDate,app.selectedEvaluator,"evft")
 }
 
     $('document').ready(function(){
