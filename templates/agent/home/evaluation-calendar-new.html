@@ -187,6 +187,7 @@
   <div class="modal-dialog" role="document" id="evaluation-modal-border">
     <div class="modal-content">
     <input type="hidden" name="evaluationid" id="evaluation_id" />
+    <input type="hidden" name="evaluationdetailid" id="evaluation_detail_id" />
       <div>
       
       </div>
@@ -384,6 +385,7 @@ function load_evaluation(evaluation_detail_id,item){
         }
       $('#evaluation_booking_id').text(response.data.booking_id);
       $('#evaluation_id').val(response.data.evaluation_id);
+      $('#evaluation_detail_id').val(response.data.evaluation_detail_id);
       $('#evaluation_area_name').text(response.data.area);
       $('#evaluation_evaluator_name').text(response.data.evaluator);
       $('#evaluation_agent_name').text(response.data.agent);
@@ -413,7 +415,12 @@ function delete_evaluation(){
     })
 }
 
-function update_evaluation(slot){
+function update_evaluation(){
+
+    axios.get(url+'/api/evaluation-update/',{ params: { 'evaluation_date': app.selectedDate, 'evaluation_detail_id':$('#evaluation_detail_id').val(), 'evaluator_id':app.selectedEvaluator, 'agent_notes':app.setAttenderNotes } })
+    .then(function (response) {
+        
+    })
 
     //console.log(app.booking.booking_time,"slop")
     

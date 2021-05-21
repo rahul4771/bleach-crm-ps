@@ -122,12 +122,19 @@ class EvaluationBooking(APIView):
 		response_dict["evaluations"]=evaluation_serializer
 		return Response(response_dict,HTTP_200_OK)
 
-# class EvaluationUpdate(APIView):
-# 	permission_classes  	=   (AllowAny,)
-# 	authentication_classes  = ()
+class EvaluationUpdate(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
 
-# 	def get(self,request):
+	def get(self,request):
+		response_dict = {"success":False}
 
+		evaluation_date = request.GET.get('evaluation_date')
+		evaluator_id = request.GET.get('evaluator_id')
+		evaluation_detail_id = request.GET.get('evaluation_detail_id')
+		agent_notes = request.GET.get('agent_notes')
+		print(evaluation_date,evaluator_id,agent_notes,evaluation_detail_id)
+		return Response(response_dict,HTTP_200_OK)
 
 
 
@@ -157,6 +164,7 @@ class EvaluationDetailsList(APIView):
 		response_dict["booking_id"]=booking_id
 		response_dict["evaluators_list"]=evaluators
 		response_dict["evaluation_id"]=evaluation_details.evaluation.id
+		response_dict["evaluation_detail_id"]=evaluation_details.id
 		response_dict["area"]=evaluation_details.address.area.name
 		response_dict["governorate"]=evaluation_details.address.governorate.name
 		response_dict["evaluator"]=evaluation_details.evaluator.name

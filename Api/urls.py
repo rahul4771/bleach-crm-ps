@@ -6,6 +6,7 @@ urlpatterns = [
 	url(r'^checkslote/$',views.ApiCheckSlote.as_view(),name='api-checkslote'),
 	url(r'^basicdetails/$',views.ApiBasicDetails.as_view(),name='api-basicdetails'),
 	url(r'^evaluation-booking/$',views.EvaluationBooking.as_view(),name='api-evaluationbooking'),
+	url(r'^evaluation-update/$',views.EvaluationUpdate.as_view(),name='api-evaluation-update'),
 	url(r'^evaluation-details/(?P<evaluation_detail_id>\d+)/$',views.EvaluationDetailsList.as_view(),name='api-evaluation-details'),
 	url(r'^evaluation-delete/(?P<evaluation_id>\d+)/$',views.DeleteEvaluation.as_view(),name='api-evaluation-delete'),
 	url(r'^leave-users-list/$',views.LeaveUsersList.as_view(),name='api-leave-users-list'),
