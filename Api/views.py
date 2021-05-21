@@ -122,6 +122,52 @@ class EvaluationBooking(APIView):
 		response_dict["evaluations"]=evaluation_serializer
 		return Response(response_dict,HTTP_200_OK)
 
+class EvaluationDetailsList(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request,evaluation_detail_id):
+		response_dict = {"success":False}
+
+		print(evaluation_detail_id,"evid")
+		try:
+			evaluation_details = EvaluationDetails.objects.get(id=evaluation_detail_id)
+			
+		
+		# if evaluation_details.evaluation.booking_evaluation:
+		# 	customer_booking = True
+		# 	booking_id = evaluation_details.evaluation__booking_evaluation.booking_id
+		# else:
+		# 	customer_booking = False
+		# 	booking_id = None
+		except:
+			
+			evaluation_details = None
+
+		print(evaluation_details.proposed_time.date(),evaluation_details.proposed_time.time(),"evdx")
+		# evaluationdetails_serializer = EvaluationDetailsSerializer(evaluation_details).data
+		
+		response_dict["evaluation_id"]=evaluation_details.evaluation.id
+		response_dict["area"]=evaluation_details.address.area.name
+		response_dict["governorate"]=evaluation_details.address.governorate.name
+		response_dict["evaluator"]=evaluation_details.evaluator.name
+		response_dict["agent"]=evaluation_details.evaluation.call_attender.name
+		# response_dict["booking_id"]=booking_id
+		response_dict["customer"]=evaluation_details.evaluation.customer.name
+		response_dict["customer_mobile"]=evaluation_details.evaluation.customer.mobile_number
+		response_dict["location"]=evaluation_details.address.location
+		response_dict["block"]=evaluation_details.address.block
+		response_dict["avenue"]=evaluation_details.address.avenue
+		response_dict["building"]=evaluation_details.address.building
+		response_dict["street"]=evaluation_details.address.street
+		response_dict["floor"]=evaluation_details.address.floor
+		response_dict["apartment"]=evaluation_details.address.apartment
+		response_dict["evaluation_date"]=str(evaluation_details.proposed_time.date())
+		response_dict["evaluation_time"]=str(evaluation_details.proposed_time.time())
+		# response_dict["customer_booking"]=customer_booking
+		return Response(response_dict,HTTP_200_OK)
+
+
 class PaymentResponseCredit(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
@@ -295,6 +341,30 @@ class LeaveScheduleAPI(APIView):
 		response_dict['success']  = True  
 
 		return Response(response_dict,HTTP_200_OK)
+
+class DeleteEvaluation(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request,evaluation_id):
+		response_dict = {'success':False}
+
+		try:
+			evaluation = Evaluation.objects.get(is_active=True,id=int(evaluation_id))
+		except:
+			evaluation = None
+
+		print(evaluation_id,evaluation,"lop")
+		if evaluation:
+			evaluation.delete()
+			response_dict = {'success':True}  
+			return Response(response_dict, HTTP_200_OK)
+		else:
+			response_dict['reason'] = 'Invalid Id' 
+
+		return Response(response_dict,HTTP_200_OK)
+
+
 
 class DeleteLeaveSchedule(APIView):
 	permission_classes  	=   (AllowAny,)

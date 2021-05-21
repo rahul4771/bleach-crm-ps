@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule
-from evaluator.models import Evaluation
+from evaluator.models import Evaluation,EvaluationDetails
 from order.models import Promocode
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -60,4 +60,5 @@ class EvaluationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Evaluation
         fields = ('evaluation_id','customer__mobile','evaluation_details__evaluator','evaluation_details__proposed_time','evaluation_details__address')
+
   
