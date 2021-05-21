@@ -2631,13 +2631,29 @@ class ClientOrdersTest(IsAgent,View):
 		except:
 			client_details = None
 
-		orders = Order.objects.filter(evaluation__customer_id=client_id).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(total_cleaners=Sum('evaluation__evaluation_details__evaluation_book_evaluation_details__number_of_cleaners'))
+		orders = Order.objects.filter(evaluation__customer_id=client_id).select_related('evaluation__customer').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluationbooks')),to_attr='evaluationdetails'))
 
 		#COUNT
 		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
 
 		return render(request,"evaluator/client/client-page-test.html",{"client_details":client_details,"orders":orders,"active_orders_count":active_orders_count,})
 
+	def post(self,request,client_id):
+		action      = request.POST.get('action_type')
+		customer_id = request.POST.get('customer_id')
+		customer    = UserProfile.objects.get(id=customer_id)
+		
+		if action == 'edit_customer':
+			customer_edit_form    = UserProfileForm(request.POST,instance=customer)
+
+			if customer_edit_form.is_valid():
+				customer_edit_form_save            = customer_edit_form.save(commit=False)
+				customer_edit_form_save.save()
+				messages.success(request,"Customer Details Succesfully Updated")
+			else:
+				messages.error(request,get_error(customer_edit_form))
+
+		return redirect('agent:agent-client-orderstest',client_id)
 
 class ClientOrderDetails(IsAgent,View):
 	def get(self,request,order_id):
