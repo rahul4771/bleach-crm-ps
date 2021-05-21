@@ -175,27 +175,28 @@ class EvaluationDetailsList(APIView):
 			customer_booking = None
 
 		print(evaluators,"evs")
-		response_dict["booking_id"]=booking_id or None
-		response_dict["evaluators_list"]=evaluators or None
-		response_dict["evaluation_id"]=evaluation_details.evaluation.id or None
-		response_dict["evaluation_detail_id"]=evaluation_details.id or None
-		response_dict["area"]=evaluation_details.address.area.name or None
-		response_dict["governorate"]=evaluation_details.address.governorate.name or None
-		response_dict["evaluator"]=evaluation_details.evaluator.name or None
-		response_dict["agent"]=evaluation_details.evaluation.call_attender.name or None
+		response_dict["booking_id"]=booking_id 
+		response_dict["evaluators_list"]=evaluators 
+		response_dict["evaluation_id"]=evaluation_details.evaluation.id 
+		response_dict["evaluation_detail_id"]=evaluation_details.id 
+		response_dict["area"]=evaluation_details.address.area.name 
+		response_dict["governorate"]=evaluation_details.address.governorate.name 
+		response_dict["evaluator"]=evaluation_details.evaluator.name 
+		if evaluation_details.evaluation.call_attender:
+			response_dict["agent"]=evaluation_details.evaluation.call_attender.name 
 		# response_dict["booking_id"]=booking_id
-		response_dict["customer"]=evaluation_details.evaluation.customer.name or None
-		response_dict["customer_mobile"]=evaluation_details.evaluation.customer.mobile_number or None
-		response_dict["location"]=evaluation_details.address.location or None
-		response_dict["block"]=evaluation_details.address.block or None
-		response_dict["avenue"]=evaluation_details.address.avenue or None
-		response_dict["building"]=evaluation_details.address.building or None
-		response_dict["street"]=evaluation_details.address.street or None
-		response_dict["floor"]=evaluation_details.address.floor or None
-		response_dict["apartment"]=evaluation_details.address.apartment or None
-		response_dict["evaluation_date"]=str(evaluation_details.proposed_time.date()) or None
-		response_dict["evaluation_time"]=str(evaluation_details.proposed_time.time()) or None
-		response_dict["agent_evaluation_notes"]=evaluation_details.attender_note or None
+		response_dict["customer"]=evaluation_details.evaluation.customer.name 
+		response_dict["customer_mobile"]=evaluation_details.evaluation.customer.mobile_number 
+		response_dict["location"]=evaluation_details.address.location 
+		response_dict["block"]=evaluation_details.address.block 
+		response_dict["avenue"]=evaluation_details.address.avenue 
+		response_dict["building"]=evaluation_details.address.building 
+		response_dict["street"]=evaluation_details.address.street 
+		response_dict["floor"]=evaluation_details.address.floor 
+		response_dict["apartment"]=evaluation_details.address.apartment 
+		response_dict["evaluation_date"]=str(evaluation_details.proposed_time.date()) 
+		response_dict["evaluation_time"]=str(evaluation_details.proposed_time.time()) 
+		response_dict["agent_evaluation_notes"]=evaluation_details.attender_note 
 		return Response(response_dict,HTTP_200_OK)
 
 
