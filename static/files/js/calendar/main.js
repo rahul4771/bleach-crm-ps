@@ -179,8 +179,11 @@ const app=  new Vue({
                     this.combineSlots.push({type:'approved',slots:this.slots.appoved_cleanings[j]})
                 }
                 for(var k=0;k<this.slots.followup_cleanings.length;k++){
-                   
-                    this.combineSlots.push({type:'followup',slots:this.slots.followup_cleanings[k]})
+                    var slot=this.slots.followup_cleanings[k]
+                    //this.slots.followup_cleanings[k]['cleaning_hours']=this.slots.followup_cleanings[k].follow_up.cleaning_hours
+                    slot.cleaning_hours=slot.follow_up.cleaning_hours
+                    slot.order={order_no:slot.follow_up.ticket_no}
+                    this.combineSlots.push({type:'followup',slots:slot})
                 }
               })
           },

@@ -1,0 +1,71 @@
+
+/** Backgrounds**/
+
+
+.completed{
+    background: #779F39 !important;
+}
+
+
+.approved{
+    background: #31AA4A !important;
+}
+
+.approved-not-paid{
+    background: #425D57 !important;
+}
+.order-in-progress{
+    background: #0D87C5 !important;
+}
+.evaluating{
+    background: #1A8E92 !important;
+}
+.pending{
+    background: #606FCE !important;
+}
+.expired{
+    background:#7C35A5 !important; 
+}
+.rejected{
+    background: #C91212 !important;
+}
+.cancel-in-progress{
+    background: #DBA03A !important;
+}
+.cancelled{
+    background: #FF5E00 !important;
+}
+
+/** Texts **/
+
+
+.completed-text{
+    color: #779F39 !important;
+}
+.approved-text{
+    color:#31AA4A !important;
+}
+.approved-not-paid-text{
+    color: #425D57 !important;
+}
+.order-in-progress-text{
+    color: #0D87C5 !important;
+}
+.evaluating-text{
+    color: #1A8E92 !important;
+}
+.pending-text{
+    color: #606FCE !important;
+}
+.expired-text{
+    color:#7C35A5 !important; 
+}
+.rejected-text{
+    color: #C91212 !important;
+}
+.cancel-in-progress-text{
+    color: #DBA03A !important;
+}
+.cancelled-text{
+    color: #FF5E00 !important;
+}
