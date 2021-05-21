@@ -184,9 +184,10 @@
 <!--Cancelled modal-->
 <!-- evaluation_popup -->
 <div class="modal fade" id="evaluationAgentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog" role="document" id="evaluation-modal-border">
     <div class="modal-content">
     <input type="hidden" name="evaluationid" id="evaluation_id" />
+    <input type="hidden" name="evaluationdetailid" id="evaluation_detail_id" />
       <div>
       
       </div>
@@ -231,10 +232,10 @@
             <div class="cl-modal-text-title cl-mt-20 agent-booked-text" id="evaluation_evaluator_name">
               
             </div>
-            <div class="cl-modal-text-content cl-mt-5">
+            <div class="cl-modal-text-content cl-mt-5 assigned-by">
               Assigned By : <b id="evaluation_agent_name"> </b>
             </div>
-            <div class="cl-modal-text-content cl-mt-5">
+            <div class="cl-modal-text-content cl-mt-5 booking-id">
               Booking ID  : <b id="evaluation_booking_id"> </b>
             </div>
             <div class="cl-modal-text-title cl-mt-20 " id="evaluation_customer_name">
@@ -287,10 +288,9 @@
           <!--<div class="time-slot" onclick="selectSlot(this)">
             12:00 AM - 01:00 AM
           </div>-->
-          <div >
+          <div v-if="slot!=selectedTime">
             <div
               class="time-slot duration text-center p-2"
-              onclick="selectSlot(this)"
               @click="selectTime(12+':00 AM',slot)"
               v-if="slot==0"
             >
@@ -298,22 +298,52 @@
             </div>
             <div
               class="time-slot duration text-center p-2"
-              onclick="selectSlot(this)"
-
+              @click="selectTime(slot+':00 AM',slot)"
+              v-if="slot<12 && slot>0"
+            >
+              <% slot +':00' %> am -  <% (slot+1)+':00' %> <span v-if="(slot+1)<12">am </span><span v-else>pm</span>
+            </div>
+            <div
+              class="time-slot duration text-center p-2"
+              @click="selectTime('12:00 PM',slot)"
+              v-if="slot==12"
+            >
+              12:00 pm - <% (slot-11)+':00' %> pm 
+            </div>
+            <div
+              class="time-slot duration text-center p-2"
+              @click="selectTime((slot-12)+':00 PM',slot)"
+              v-if="slot>12"
+            >
+              <% (slot-12) %>:00 pm - <% (slot-11)+':00' %> <span v-if="(slot+1)>12 && (slot+1)<24">pm </span><span v-else>am</span>
+            </div>
+            
+          </div>
+          <div v-if="slot==selectedTime">
+            <div
+              class="time-slot-active  text-center p-2"
+              @click="selectTime(12+':00 AM',slot)"
+              v-if="slot==0"
+            >
+              12:00 am - 1:00 am
+            </div>
+            <div
+              class="time-slot-active  text-center p-2"
+              @click="selectTime(slot+':00 AM',slot)"
               v-if="slot<12 && slot>0"
             >
               <%slot +':00'%> am - <%(slot+1)+':00'%> <span v-if="(slot+1)<12">am </span><span v-else>pm</span>
             </div>
             <div
-              class="time-slot duration text-center p-2"
-              onclick="selectSlot(this)"
+              class="time-slot-active   text-center p-2"
+              @click="selectTime('12:00 PM',slot)"
               v-if="slot==12"
             >
               12:00 pm - <%(slot-11)+':00'%> pm 
             </div>
             <div
-              class="time-slot duration text-center p-2"
-              onclick="selectSlot(this)"
+              class="time-slot-active  text-center p-2"
+              @click="selectTime((slot-12)+':00 PM',slot)"
               v-if="slot>12"
             >
               <%(slot-12)%>:00 pm - <%(slot-11)+':00'%> <span v-if="(slot+1)>12 && (slot+1)<24">pm </span><span v-else>am</span>
@@ -329,17 +359,17 @@
       </div>
       
              </div>
-             <div class="col-md-12">
+             <div class="col-md-12" >
               <v-textarea
               outlined
               name="input-7-4"
               label="Note"
-              
+              v-model="setAttenderNotes"
               :color="agent"
             ></v-textarea>
            </div>
            <div class="cl-btns d-flex justify-center col-md-12">
-            <div class="proceed-btn agent-booked-bg " >
+            <div class="proceed-btn agent-booked-bg " onclick="update_evaluation();">
               Proceed
             </div>
             <div class="cancel-btn ml-4 agent-booked-border" data-dismiss="modal" aria-label="Close">
@@ -361,18 +391,30 @@
 <script type="text/javascript">
 
 //load data in new evaluation popup
-function load_evaluation(evaluation_detail_id){
+function load_evaluation(evaluation_detail_id,item){
     
+    console.log(item,"uty")
     axios.get(url+'/api/evaluation-details/'+evaluation_detail_id)
     .then(function (response) {
       app.setEvaluators(response.data.evaluators_list)
       console.log(response.data.evaluators_list,"evdata")
-      //evaluators looping
-      $.each(response.data.evaluators_list,function(key,value){
-          console.log(value.id,value.name,"datt")
-      })
-
+      
+      //modal border color change and field hide/show for agent evaluation or customer evaluation
+      if ($(item).hasClass('customer-submitted')){ 
+            $('.assigned-by').hide();
+            $('.booking-id').show();
+            $('#evaluation-modal-border').removeClass("agent-border");
+            $('#evaluation-modal-border').addClass("customer-border");
+            
+        }else{
+            $('.assigned-by').show();
+            $('.booking-id').hide();
+            $('#evaluation-modal-border').removeClass("customer-border");
+            $('#evaluation-modal-border').addClass("agent-border");
+        }
+      $('#evaluation_booking_id').text(response.data.booking_id);
       $('#evaluation_id').val(response.data.evaluation_id);
+      $('#evaluation_detail_id').val(response.data.evaluation_detail_id);
       $('#evaluation_area_name').text(response.data.area);
       $('#evaluation_evaluator_name').text(response.data.evaluator);
       $('#evaluation_agent_name').text(response.data.agent);
@@ -386,7 +428,7 @@ function load_evaluation(evaluation_detail_id){
     })   
     }
 
-
+//delete evaluation
 function delete_evaluation(){
     
     var evaluation_id = $('#evaluation_id').val();
@@ -400,6 +442,27 @@ function delete_evaluation(){
             window.location.reload();
         }
     })
+}
+
+//update evaluation
+function update_evaluation(){
+
+    var dates = app.selectedDate.split('-');
+    var selecteddate = dates[2]+'-'+dates[1]+'-'+dates[0];
+
+    axios.get(url+'/api/evaluation-update/',{ params: { 'evaluation_time':app.booking.booking_time, 'evaluation_date': selecteddate, 'evaluation_detail_id':$('#evaluation_detail_id').val(), 'evaluator_id':app.selectedEvaluator, 'agent_notes':app.setAttenderNotes } })
+    .then(function (response) {
+        console.log(response.data.success,"war")
+        if (response.data.success == true){
+            console.log("war")
+            $('.close-evaluation').click();
+            window.location.reload();
+        }
+    })
+
+    //console.log(app.booking.booking_time,"slop")
+    
+    //console.log(app.setAttenderNotes,app.booking.booking_time,app.selectedDate,app.selectedEvaluator,"evft")
 }
 
     $('document').ready(function(){
@@ -431,11 +494,11 @@ function delete_evaluation(){
                               same_slote_count += 1
                               if(same_slote_count == 1)
                               {
-                                $("#slot-row-{{evaluator.id}}").append('<div class="cl-slot" ><div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %} {% else %}agent-submitted{% endif %} cl-chip d-flex" onclick="load_evaluation({{evaluation.id}})" data-toggle="modal" data-target="#evaluationAgentModal"><div class="cl-completed"><img src="{% static 'files/icons/check-white.png'%}" class="cl-check-icon"/></div><div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="{{evaluation.address.area.name}}">{{evaluation.address.area.name|slice:":3"}}</div></div></div>');
+                                $("#slot-row-{{evaluator.id}}").append('<div class="cl-slot" ><div {% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}class="customer-submitted cl-chip d-flex" onclick="load_evaluation({{evaluation.id}},this)" data-toggle="modal" data-target="#evaluationAgentModal" {% endif %}{% endfor %} {% elif evaluation.status == 'CANCELLED' %} class="cl-cancelled cl-chip d-flex" data-toggle="modal" data-target="#cancelledModal" {% else %} class="agent-submitted cl-chip d-flex" onclick="load_evaluation({{evaluation.id}},this)" data-toggle="modal" data-target="#evaluationAgentModal" {% endif %} ><div class="cl-completed"><img src="{% static 'files/icons/check-white.png'%}" class="cl-check-icon"/></div><div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="{{evaluation.address.area.name}}">{{evaluation.address.area.name|slice:":3"}}</div></div></div>');
                               }
                               else
                               {
-                                $("#slot-row-{{evaluator.id}} .cl-slot").append('<div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %} {% else %}agent-submitted{% endif %} cl-chip-2 d-flex" onclick="load_evaluation({{evaluation.id}})" data-toggle="modal" data-target="#evaluationAgentModal"><div class="cl-completed"><img src="{% static 'files/icons/check-white.png'%}" class="cl-check-icon"/></div><div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="{{evaluation.address.area.name}}">{{evaluation.address.area.name|slice:":3"}}</div></div>');
+                                $("#slot-row-{{evaluator.id}} .cl-slot").append('<div {% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}class="customer-submitted cl-chip d-flex" onclick="load_evaluation({{evaluation.id}},this)" data-toggle="modal" data-target="#evaluationAgentModal" {% endif %}{% endfor %} {% elif evaluation.status == 'CANCELLED' %} class="cl-cancelled cl-chip d-flex" data-toggle="modal" data-target="#cancelledModal" {% else %} class="agent-submitted cl-chip d-flex" onclick="load_evaluation({{evaluation.id}},this)" data-toggle="modal" data-target="#evaluationAgentModal" {% endif %} ><div class="cl-completed"><img src="{% static 'files/icons/check-white.png'%}" class="cl-check-icon"/></div><div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="{{evaluation.address.area.name}}">{{evaluation.address.area.name|slice:":3"}}</div></div>');
                               }  
                               
                             }
@@ -467,11 +530,11 @@ function delete_evaluation(){
                               same_slote_count += 1
                               if(same_slote_count == 1)
                               {
-                                $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot" ><div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %} {% else %}agent-submitted{% endif %} cl-chip-2 d-flex" onclick="load_evaluation({{evaluation.id}})" data-toggle="modal" data-target="#evaluationAgentModal"><div class="cl-completed"><img src="{% static 'files/icons/check-white.png'%}" class="cl-check-icon"/></div><div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="{{evaluation.address.area.name}}">{{evaluation.address.area.name|slice:":3"}}</div></div></div>');
+                                $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot" ><div {% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}class="customer-submitted cl-chip d-flex" onclick="load_evaluation({{evaluation.id}},this)" data-toggle="modal" data-target="#evaluationAgentModal" {% endif %}{% endfor %} {% elif evaluation.status == 'CANCELLED' %} class="cl-cancelled cl-chip d-flex" data-toggle="modal" data-target="#cancelledModal" {% else %} class="agent-submitted cl-chip d-flex" onclick="load_evaluation({{evaluation.id}},this)" data-toggle="modal" data-target="#evaluationAgentModal" {% endif %} ><div class="cl-completed"><img src="{% static 'files/icons/check-white.png'%}" class="cl-check-icon"/></div><div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="{{evaluation.address.area.name}}">{{evaluation.address.area.name|slice:":3"}}</div></div></div>');
                               }
                               else
                               {
-                                $("#slot-row2-{{evaluator.id}} .cl-slot").append('<div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %} {% else %}agent-submitted{% endif %} cl-chip-2 d-flex" onclick="load_evaluation({{evaluation.id}})" data-toggle="modal" data-target="#evaluationAgentModal"><div class="cl-completed"><img src="{% static 'files/icons/check-white.png'%}" class="cl-check-icon"/></div><div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="{{evaluation.address.area.name}}">{{evaluation.address.area.name|slice:":3"}}</div></div>');
+                                $("#slot-row2-{{evaluator.id}} .cl-slot").append('<div {% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}class="customer-submitted cl-chip d-flex" onclick="load_evaluation({{evaluation.id}},this)" data-toggle="modal" data-target="#evaluationAgentModal" {% endif %}{% endfor %} {% elif evaluation.status == 'CANCELLED' %} class="cl-cancelled cl-chip d-flex" data-toggle="modal" data-target="#cancelledModal" {% else %} class="agent-submitted cl-chip d-flex" onclick="load_evaluation({{evaluation.id}},this)" data-toggle="modal" data-target="#evaluationAgentModal" {% endif %} ><div class="cl-completed"><img src="{% static 'files/icons/check-white.png'%}" class="cl-check-icon"/></div><div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="{{evaluation.address.area.name}}">{{evaluation.address.area.name|slice:":3"}}</div></div>');
                               }  
                               
                             }
@@ -503,11 +566,11 @@ function delete_evaluation(){
                               same_slote_count += 1
                               if(same_slote_count == 1)
                               {
-                                $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot" ><div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %} {% else %} agent-submitted {% endif %} cl-chip d-flex" onclick="load_evaluation({{evaluation.id}})" data-toggle="modal" data-target="#evaluationAgentModal"><div class="cl-completed"><img src="{% static 'files/icons/check-white.png'%}" class="cl-check-icon"/></div><div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="{{evaluation.address.area.name}}">{{evaluation.address.area.name|slice:":3"}}</div></div></div>');
+                                $("#slot-row2-{{evaluator.id}}").append('<div class="cl-slot" ><div {% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}class="customer-submitted cl-chip d-flex" onclick="load_evaluation({{evaluation.id}},this)" data-toggle="modal" data-target="#evaluationAgentModal" {% endif %}{% endfor %} {% elif evaluation.status == 'CANCELLED' %} class="cl-cancelled cl-chip d-flex" data-toggle="modal" data-target="#cancelledModal" {% else %} class="agent-submitted cl-chip d-flex" onclick="load_evaluation({{evaluation.id}},this)" data-toggle="modal" data-target="#evaluationAgentModal" {% endif %} ><div class="cl-completed"><img src="{% static 'files/icons/check-white.png'%}" class="cl-check-icon"/></div><div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="{{evaluation.address.area.name}}">{{evaluation.address.area.name|slice:":3"}}</div></div></div>');
                               }
                               else
                               {
-                                $("#slot-row2-{{evaluator.id}} .cl-slot").append('<div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %}{% else %} agent-submitted {% endif %} cl-chip-2 d-flex"><div class="cl-completed"><img src="{% static 'files/icons/check-white.png'%}" class="cl-check-icon"/></div><div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="{{evaluation.address.area.name}}">{{evaluation.address.area.name|slice:":3"}}</div></div>');
+                                $("#slot-row2-{{evaluator.id}} .cl-slot").append('<div {% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}class="customer-submitted cl-chip d-flex" onclick="load_evaluation({{evaluation.id}},this)" data-toggle="modal" data-target="#evaluationAgentModal" {% endif %}{% endfor %} {% elif evaluation.status == 'CANCELLED' %} class="cl-cancelled cl-chip d-flex" data-toggle="modal" data-target="#cancelledModal" {% else %} class="agent-submitted cl-chip d-flex" onclick="load_evaluation({{evaluation.id}},this)" data-toggle="modal" data-target="#evaluationAgentModal" {% endif %} ><div class="cl-completed"><img src="{% static 'files/icons/check-white.png'%}" class="cl-check-icon"/></div><div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="{{evaluation.address.area.name}}">{{evaluation.address.area.name|slice:":3"}}</div></div>');
                               }  
                               
                             }

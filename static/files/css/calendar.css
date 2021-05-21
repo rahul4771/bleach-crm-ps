@@ -168,13 +168,15 @@ width:100% !important;
     border-bottom: 10px solid #0D87C5 !important;
     width:80%;
 }
-#evaluationCustomerModal .modal-dialog{
-    border-radius: 0px 0px 12px 12px !important;
-    
-    border: none !important;
-    border-bottom: 10px solid #139275 !important;
-    width:80%;
+
+#evaluationAgentModal .agent-border{
+    border-bottom: 10px solid #0D87C5 !important;
 }
+
+#evaluationAgentModal .customer-border{
+    border-bottom: 10px solid #139275 !important;
+}
+
 #cancelledModal .modal-dialog{
     border-radius: 0px 0px 12px 12px !important;
     
