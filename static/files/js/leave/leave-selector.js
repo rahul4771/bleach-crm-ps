@@ -55,7 +55,7 @@ for (var k=1;k<=noOfDays;k++){
 
    }
 }
-console.log("testing :"+noOfDays);
+
 for (var j=0;j<resourceList.length;j++){
     var noOfLeave=0;
     var rsid=j+1;
@@ -167,7 +167,7 @@ for (var k=1;k<=noOfDays;k++){
    }
   
 }
-console.log("resource liST IS"+JSON.stringify(resourceList));
+
 for (var j=0;j<resourceList.length;j++){
     var rsid=j+1;
     var noOfLeave=0;
@@ -245,14 +245,14 @@ function reinitVal(){
 function selectDay(el){
     var dayId=$(el).attr('id');
     dateCounter=dateCounter+1;
-    console.log("my id is "+dayId);
+   
     var userId=dayId.split('-')[2];
     var user=resourceList[userId].name;
     modalUser=resourceList[userId].id;
-    console.log("user is "+resourceList[userId].name);
+  
     selectedDates[userId].name=user;
     leaveId=getLeaveId($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString(),userId);
-    console.log("day id is "+dayId);
+   
     if($('#'+dayId).find('.lv-date').hasClass('lv-weekend')){
         $('#'+dayId).find('.lv-date').removeClass('lv-weekend');
     }
@@ -330,7 +330,7 @@ function selectDay(el){
         selectedDates[userId].dates.push($('#'+dayId).find('.lv-date').text()+'-'+currentMonth.toString()+'-'+currentYear.toString());
     }
 }
-    console.log("counter is "+ dateCounter);
+    
     $('#select-counter').text(dateCounter);
 }
 function clearAll(){
@@ -385,7 +385,7 @@ function applyLeave(){
     axios.post(url+'/api/leave-scheduler/',resourceLeave)
     .then(function (response) {
       // handle success
-      console.log(response);
+   
       resourceLeave=[];
       selectedDates=[];
       resourceList=[];
@@ -401,7 +401,7 @@ function applyLeave(){
       console.log(error);
     })
     
-    console.log("leave selected is"+JSON.stringify( resourceLeave ));
+   
     selectedDates=[];
  
     $(".lv-result-box").hide();
@@ -422,7 +422,7 @@ function getUsers(){
     
     
       resourceList=[];
-   console.log("called me");
+  
     axios.get(url+'/api/leave-users-list/')
 .then(function (response) {
   // handle success
@@ -434,7 +434,7 @@ function getUsers(){
     staffData['user_type']=response.data.staffs[i].user_type;
     staffData['photo_url']=response.data.staffs[i].photo_url;
     staffData['leave']=[];
-    console.log('category is'+$("#lv-category").text());
+  
   
      
         resourceList.push(staffData);
@@ -489,7 +489,7 @@ function resetResources(category){
        
     }
     resourceList=newResource;
-    console.log("new list is "+JSON.stringify(resourceList));
+  
    
 }
 function getLeave(){
@@ -502,7 +502,7 @@ function getLeave(){
     for(var i=0;i<response.data.staffs.length;i++){
        
        var userIndex=userSearch(response.data.staffs[i].staff)
-        console.log("user index is "+userIndex);
+     
        // resourceList[userIndex].leave.push({date:'2-2-2021',type:'Annual Leave'});
       leaveSheet=response.data.staffs;
        var gt_year=response.data.staffs[i].leave_date.split('-')[0];
@@ -537,8 +537,7 @@ function userSearch(key){
 function leaveSearch(staffId){
     for (var k=0; k < leaveSheet.length; k++) {
         if (leaveSheet[k].staff == staffId) {
-            console.log("my staff id  "+leaveSheet[k].staff);
-            console.log("my leave id is  "+leaveSheet[k].id);
+          
             return leaveSheet[k].id;
         }
     }
