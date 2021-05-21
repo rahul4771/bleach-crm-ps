@@ -1,7 +1,7 @@
 {% load static %}
 <!--- New Evaluation calendar begins here-->
 
-<div class="white-wrapper" id="new_evaluation_calendar"><!--white-wrapper-->
+<div class="white-wrapper" ><!--white-wrapper-->
 
   <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
   
@@ -264,7 +264,7 @@
              </div>
              <div class="col-md-7 offset-md-1">
               <v-select
-          :items="[{% for evaluator in evaluators %}'{{evaluator.name}}',{% endfor %}]"
+          :items="['Ahamed Abdou','Michael','Amanadiel','Trixie']"
           v-model="selectedEvaluator"
           outlined
           :color="agent"
@@ -450,7 +450,12 @@ function load_evaluation(evaluation_detail_id){
     axios.get(url+'/api/evaluation-details/'+evaluation_detail_id)
     .then(function (response) {
       
-      console.log(response.data,"evdata")
+      console.log(response.data.evaluators_list,"evdata")
+      //evaluators looping
+      $.each(response.data.evaluators_list,function(key,value){
+          console.log(value.id,value.name,"datt")
+      })
+
       $('#evaluation_id').val(response.data.evaluation_id);
       $('#evaluation_area_name').text(response.data.area);
       $('#evaluation_evaluator_name').text(response.data.evaluator);
