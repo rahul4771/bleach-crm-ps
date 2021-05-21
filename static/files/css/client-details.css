@@ -147,3 +147,30 @@ cursor: pointer;
 .yellow-icon{
     color:#F8CF00;
 }
+.cd-modal-close-icon{
+   
+    font-size: 22px;
+   
+    cursor:pointer;
+    
+}
+.cd-modal-close{
+    text-align: right;
+}
+label[for=favcity]::after {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+select{
+    border-radius:10px;
+}
+input{
+    border-radius:10px;
+}
+label{
+    font-weight: 300;
+    color: #434343;
+}
+input[type="checkbox"]:checked {
+    background: #2b4c82;
+}
