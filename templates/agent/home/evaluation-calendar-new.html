@@ -263,10 +263,13 @@
              
              </div>
              <div class="col-md-7 offset-md-1">
+               <!-- app.selectedEvaluator -->
               <v-select
-          :items="['Ahamed Abdou','Michael','Amanadiel','Trixie']"
+          :items="evaluators"
+          item-text="name" 
+          item-value="id"    
           v-model="selectedEvaluator"
-          outlined
+          outlined 
           :color="agent"
           class="eval-select"
         ></v-select>
@@ -274,143 +277,57 @@
           <b>Time Slots Available</b>
         </div>
         <v-checkbox
-        v-model="lateHour"
+        v-model="lateHours"
         label="Show Late Hours"
         :color="agent"
         class="late-hour"
       ></v-checkbox>
-      <div class="time-slots row mt-2" v-if="lateHour">
-        <div class="col-md-3">
-          <div class="time-slot" onclick="selectSlot(this)">
+      <div class="time-slots row mt-2" >
+        <div class="col-md-3"  v-for="(slot,sindex) in getTime()" v-bind:key="sindex" >
+          <!--<div class="time-slot" onclick="selectSlot(this)">
             12:00 AM - 01:00 AM
+          </div>-->
+          <div >
+            <div
+              class="time-slot duration text-center p-2"
+              onclick="selectSlot(this)"
+              @click="selectTime(12+':00 AM',slot)"
+              v-if="slot==0"
+            >
+              12:00 am - 1:00 am
+            </div>
+            <div
+              class="time-slot duration text-center p-2"
+              onclick="selectSlot(this)"
+
+              v-if="slot<12 && slot>0"
+            >
+              <%slot +':00'%> am - <%(slot+1)+':00'%> <span v-if="(slot+1)<12">am </span><span v-else>pm</span>
+            </div>
+            <div
+              class="time-slot duration text-center p-2"
+              onclick="selectSlot(this)"
+              v-if="slot==12"
+            >
+              12:00 pm - <%(slot-11)+':00'%> pm 
+            </div>
+            <div
+              class="time-slot duration text-center p-2"
+              onclick="selectSlot(this)"
+              v-if="slot>12"
+            >
+              <%(slot-12)%>:00 pm - <%(slot-11)+':00'%> <span v-if="(slot+1)>12 && (slot+1)<24">pm </span><span v-else>am</span>
+            </div>
+            
           </div>
+       
+
         </div>
-        <div class="col-md-3">
-          <div class="time-slot" onclick="selectSlot(this)">
-            01:00 AM - 02:00 AM
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="time-slot" onclick="selectSlot(this)">
-            02:00 AM - 03:00 AM
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="time-slot" onclick="selectSlot(this)">
-            03:00 AM - 04:00 AM
-          </div>
-        </div>
-        <div class="col-md-3" onclick="selectSlot(this)">
-          <div class="time-slot">
-            04:00 AM - 05:00 AM
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="time-slot" onclick="selectSlot(this)">
-            05:00 AM - 06:00 AM
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="time-slot" onclick="selectSlot(this)">
-            06:00 AM - 07:00 AM
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="time-slot" onclick="selectSlot(this)">
-            07:00 AM - 08:00 AM
-          </div>
-        </div>
+        
         
        
       </div>
-        <div class="time-slots row mt-2">
-          <div class="col-md-3">
-            <div class="time-slot" onclick="selectSlot(this)">
-              08:00 AM - 09:00 AM
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="time-slot" onclick="selectSlot(this)">
-              09:00 AM - 10:00 AM
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="time-slot" onclick="selectSlot(this)">
-              10:00 AM - 11:00 AM
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="time-slot" onclick="selectSlot(this)">
-              11:00 AM - 12:00 PM
-            </div>
-          </div>
-          <div class="col-md-3" onclick="selectSlot(this)">
-            <div class="time-slot">
-              12:00 PM - 01:00 PM
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="time-slot" onclick="selectSlot(this)">
-              01:00 PM - 02:00 PM
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="time-slot" onclick="selectSlot(this)">
-              02:00 PM - 03:00 PM
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="time-slot" onclick="selectSlot(this)">
-              03:00 PM - 4:00 PM
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="time-slot" onclick="selectSlot(this)">
-              04:00 AM - 05:00 AM
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="time-slot" onclick="selectSlot(this)">
-              05:00 PM - 06:00 PM
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="time-slot" onclick="selectSlot(this)">
-              06:00 PM - 07:00 PM
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="time-slot" onclick="selectSlot(this)">
-              07:00 PM - 08:00 PM
-            </div>
-          </div>
-         
-        </div>
-        <div class="time-slots row mt-2" v-if="lateHour">
-          <div class="col-md-3">
-            <div class="time-slot" onclick="selectSlot(this)">
-              08:00 PM - 09:00 PM
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="time-slot" onclick="selectSlot(this)">
-              09:00 PM - 10:00 PM
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="time-slot" onclick="selectSlot(this)">
-              10:00 PM - 11:00 PM
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="time-slot" onclick="selectSlot(this)">
-              11:00 PM - 12:00 PM
-            </div>
-          </div>
-          
-          
-         
-        </div>
+      
              </div>
              <div class="col-md-12">
               <v-textarea
@@ -441,7 +358,6 @@
   </div>
 </div>
 <!--modal-evaluation-wrapper-->
-
 <script type="text/javascript">
 
 //load data in new evaluation popup
@@ -449,7 +365,7 @@ function load_evaluation(evaluation_detail_id){
     
     axios.get(url+'/api/evaluation-details/'+evaluation_detail_id)
     .then(function (response) {
-      
+      app.setEvaluators(response.data.evaluators_list)
       console.log(response.data.evaluators_list,"evdata")
       //evaluators looping
       $.each(response.data.evaluators_list,function(key,value){
