@@ -103,25 +103,7 @@
 
     {% for evaluation in evaluations %}
     <tr>
-    <td {% if evaluation.quatation_status == 'APPROVED' %}{% for order in evaluation.evaluationorder %}
-        {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' %}
-        {% if order.order_status == 'APPROVED_BY_CLIENT' %}
-        class="green-line"
-        {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
-        class="violet-line"
-        {% elif order.order_status == 'ORDER_CLOSED' %}
-        class="rose-line"
-        {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
-        class="skyblue-line"
-        {% else %}
-        class="red-line"
-        {% endif %}
-        {% else %}
-        class="oil-green-line"
-        {% endif %}
-        {% endfor %}
-
-        {% elif evaluation.quatation_status == 'REJECTED' %}class="red-line"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line"{% elif evaluation.quatation_status == 'EXPIRED' %}class="orange-line"{%else%}class="blue-line"{%endif%}>{{evaluation.evaluation_id}}</td>    
+    <td {% if evaluation.quatation_status == 'REJECTED' %}class="red-line"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line"{% elif evaluation.quatation_status == 'EXPIRED' %}class="orange-line"{%else%}class="blue-line"{%endif%}>{{evaluation.evaluation_id}}</td>    
     <td>{{evaluation.customer.name|default_if_none:''}}</td>
 
     {% comment %} <td>{% for evaluation_detail in evaluation.details_evaluation %}
@@ -142,17 +124,20 @@
     </td>
 
     <td>
-    {% for order in evaluation.evaluationorder %}
-    <input type="hidden" name="callback_order" id="callback_order" value="{{order.id}}" />
-    {% endfor %}
+    <form class="callbackform" method="GET" >{% csrf_token %}
+    
+    <input type="hidden" name="callback_order" class="callback_order" value="" />
+    <input type="hidden" name="action_type" value="callback" />
     
     <label for="favcity" style="width:80%;"> 
-    <select id="callback" onchange="set_params_go();">
+    <select class="callback" onchange="callbacklist(this.value,{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})">
     <option value="">--SELECT CALLBACK OPTION--</option>
-    <option value="NO_CALLBACK" {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'NO_CALLBACK' %}selected{% endif %}{% endfor %}>NO CALLBACK</option>
-    <option value="CALLBACK_ACTIVE" {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'CALLBACK_ACTIVE' %}selected{% endif %}{% endfor %}>CALLBACK ACTIVE</option>
+    <option value="CALLBACK_LATER" {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'CALLBACK_LATER' %}selected{% endif %}{% endfor %}>CALLBACK LATER</option>
+    <option value="WAITING" {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'WAITING' %}selected{% endif %}{% endfor %}>WAITING</option>
+    <option value="COMPLETED" {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'COMPLETED' %}selected{% endif %}{% endfor %}>COMPLETED</option>
     </select>
     </label> 
+    </form>
     </td>
 
     <td class="align-center">
@@ -234,7 +219,7 @@
 {% endblock %}
 
 {% block javascript %}
-<script src="{% static 'files/js/charts/order-chart.js' %}"></script> 
+
 <script id="rendered-js">
 $('.footable').footable({
   calculateWidthOverride: function () {
@@ -350,11 +335,14 @@ $("#governorate_filter_id").change(function(){
 
 });
 
+function callbacklist(order_id,status){
+    console.log(order_id,status,"callbak");
+}
+
 function set_params_go(args)
 {
 var url='{% url 'booking-officer:bookingofficer-callback-list' %}';
-var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val(),evaluator:$('#evaluator_filter_id').val(),
-callback_order:$('#callback_order').val(),callback_status:$('#callback').val()
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val(),evaluator:$('#evaluator_filter_id').val()
 };
 for(key in args) 
     params[key]=args[key];
