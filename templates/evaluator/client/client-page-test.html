@@ -5,7 +5,9 @@
 <div class="wrapper" id="app"><!--wrapper-->
  <link href="{% static 'files/css/client-details.css' %}" rel="stylesheet">
  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-{% include "evaluator/common/header.html" %}    
+ {% if request.user.user_type == 'AGENT' %}
+{% include "agent/common/header.html" %}
+{% endif %}    
 
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
@@ -893,8 +895,10 @@
           <!--    Edit modal ends here-->
         
     </section><!--content-->
-    
-{% include 'evaluator/common/footer.html' %} 
+ 
+{% if request.user.user_type == 'AGENT' %}   
+{% include 'agent/common/footer.html' %} 
+{% endif %}
 </div><!--wrapper-->
 
 {% endblock %}

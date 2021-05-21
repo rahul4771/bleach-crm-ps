@@ -2620,6 +2620,23 @@ class ClientOrders(IsAgent,View):
 
 		return render(request,"agent/client/client-page.html",{"client_details":client_details,"orders":orders,"active_orders_count":active_orders_count,})
 
+
+class ClientOrdersTest(IsAgent,View):
+	def get(self,request,client_id):
+
+		try:
+			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=client_id)
+		except:
+			client_details = None
+
+		orders = Order.objects.filter(evaluation__customer_id=client_id).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(total_cleaners=Sum('evaluation__evaluation_details__evaluation_book_evaluation_details__number_of_cleaners'))
+
+		#COUNT
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+
+		return render(request,"evaluator/client/client-page-test.html",{"client_details":client_details,"orders":orders,"active_orders_count":active_orders_count,})
+
+
 class ClientOrderDetails(IsAgent,View):
 	def get(self,request,order_id):
 
