@@ -122,6 +122,15 @@ class EvaluationBooking(APIView):
 		response_dict["evaluations"]=evaluation_serializer
 		return Response(response_dict,HTTP_200_OK)
 
+# class EvaluationUpdate(APIView):
+# 	permission_classes  	=   (AllowAny,)
+# 	authentication_classes  = ()
+
+# 	def get(self,request):
+
+
+
+
 class EvaluationDetailsList(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
@@ -136,7 +145,16 @@ class EvaluationDetailsList(APIView):
 		except:
 			evaluators = None
 			evaluation_details = None
+
+		try:
+			customer_booking = CustomerBooking.objects.get(booking_type='EVALUATIONBOOKING',evaluation__id=evaluation_details.evaluation.id)
+			booking_id = customer_booking.booking_id
+		except:
+			booking_id = None
+			customer_booking = None
+
 		print(evaluators,"evs")
+		response_dict["booking_id"]=booking_id
 		response_dict["evaluators_list"]=evaluators
 		response_dict["evaluation_id"]=evaluation_details.evaluation.id
 		response_dict["area"]=evaluation_details.address.area.name
@@ -155,7 +173,7 @@ class EvaluationDetailsList(APIView):
 		response_dict["apartment"]=evaluation_details.address.apartment
 		response_dict["evaluation_date"]=str(evaluation_details.proposed_time.date())
 		response_dict["evaluation_time"]=str(evaluation_details.proposed_time.time())
-		# response_dict["customer_booking"]=customer_booking
+		response_dict["agent_evaluation_notes"]=evaluation_details.attender_note
 		return Response(response_dict,HTTP_200_OK)
 
 
