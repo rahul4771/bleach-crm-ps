@@ -263,12 +263,13 @@
              
              </div>
              <div class="col-md-7 offset-md-1">
+               <!-- app.selectedEvaluator -->
               <v-select
           :items="evaluators"
           item-text="name" 
           item-value="id"    
           v-model="selectedEvaluator"
-          outlined
+          outlined 
           :color="agent"
           class="eval-select"
         ></v-select>
