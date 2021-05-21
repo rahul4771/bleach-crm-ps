@@ -2,39 +2,48 @@
 /** Backgrounds**/
 
 
-.completed{
+.completed-bg{
     background: #779F39 !important;
 }
 
 
-.approved{
+.approved-bg{
     background: #31AA4A !important;
 }
 
-.approved-not-paid{
+.approved-not-paid-bg{
     background: #425D57 !important;
 }
-.order-in-progress{
+.order-in-progress-bg{
     background: #0D87C5 !important;
 }
-.evaluating{
+.evaluating-bg{
     background: #1A8E92 !important;
 }
-.pending{
+.pending-bg{
     background: #606FCE !important;
 }
-.expired{
+.expired-bg{
     background:#7C35A5 !important; 
 }
-.rejected{
+.rejected-bg{
     background: #C91212 !important;
 }
-.cancel-in-progress{
+.cancel-in-progress-bg{
     background: #DBA03A !important;
 }
-.cancelled{
+.cancelled-bg{
     background: #FF5E00 !important;
 }
+.followup-cleaning-bg{
+    background: #DBA03A !important;
+}
+.onetime-cleaning-bg{
+    background: #0D87C5 !important;
+}.subscription-cleaning-bg{
+    background: #139275 !important;
+}
+
 
 /** Texts **/
 
