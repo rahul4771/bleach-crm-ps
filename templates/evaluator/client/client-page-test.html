@@ -1,0 +1,490 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<div class="wrapper" id="app"><!--wrapper-->
+ <link href="{% static 'files/css/client-details.css' %}" rel="stylesheet">
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+ {% if request.user.user_type == 'AGENT' %}
+{% include "agent/common/header.html" %}
+{% endif %}    
+
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Client Details</h1>
+                 
+            </div><!--welcome-wrapper-->
+       
+      
+           
+            
+
+        </div><!--container-fluid space-->
+        <div class="main-content-holder">
+            <div class="row white-wrapper cd-card-border m-0" >
+                <div class="col-md-2 cd-mt-4">
+                    <img src="{% static 'files/icons/profile.png'%}" class="cd-profile-pic"/>
+                </div>
+                <div class="col-md-4 cd-mt-4">
+                    <div class="cd-card-title d-flex">
+                        {{client_details.name}} <img src="{% static 'files/icons/edit.png'%}" class="edit-icon ml-auto" data-toggle="modal" data-target="#editModal"/>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="cd-card-content cd-mt-2">{{client_details.email}}</div>
+                            <div class="cd-card-content">{{client_details.mobile_number}}</div>
+                            <div class="cd-card-content2 cd-mt-2">{{client_details.date_day}}-{{client_details.date_month}}-{{client_details.date_year|default_if_none:'----'}}</div>
+                            <div class="cd-card-content2">{{client_details.nationality.name}}</div>
+                            
+                        </div>
+                        <div class="col-md-6">
+                            <div class="cd-card-content2 cd-mt-2">Customer Type <span class="cd-card-content">{{client_details.customer_type}}</span></div>
+                            {% if client_details.customer_type == 'CORPORATE' %}
+                            <div class="cd-card-content2 cd-mt-2">{{client_details.company}}</div>
+                            <div class="cd-card-content2 ">{{client_details.job_title}}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-12 cd-mt-2">
+                            <div class="cd-card-content2 cd-mt-2">Communication Preference</div>
+                            <div class="cd-card-content"> Language : {{client_details.sms_preference}}</div>
+                            <div class="cd-card-content"> Platform : {% if client_details.is_sms %}SMS,{% elif client_details.is_email %}Email,{% elif client_details.is_whatsapp %}Whatsapp,{% endif %}</div>
+                        </div>
+                       
+                    </div>
+                </div>
+                <div class="col-md-3 cd-mt-4">
+                    <div class="cd-service-box">
+                        <div class="row ml-0 mr-0">
+                            <div class="col-xs-8 cd-card-title2">Total Services</div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-green">{{total_services}}</span></div>
+                        </div>
+                        <div class="row ml-0 mr-0 cd-mt-4">
+                            <div class="col-xs-8 cd-key ">Ongoing</div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-blue">{{ongoing_services}}</span></div>
+                        </div>
+                        <div class="row ml-0 mr-0 cd-mt-2">
+                            <div class="col-xs-8 cd-key ">Completed</div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-blue">{{closed_services}}</span></div>
+                        </div>
+                        <div class="row ml-0 mr-0 cd-mt-4">
+                            <div class="col-xs-8 cd-key ">Ticket Raised</div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-blue">{{total_tickets}}</span></div>
+                        </div>
+                        <div class="row ml-0 mr-0 cd-mt-2">
+                            <div class="col-xs-8 cd-key ">Active Ticket</div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-red">{{active_tickets}}</span></div>
+                        </div>
+                        <div class="row ml-0 mr-0  cd-mt-2">
+                            <div class="col-xs-8 cd-key">Closed Ticket</div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-blue">{{completed_tickets}}</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 no-float cd-mt-4">
+                    <div class="cd-service-box cd-p-20">
+                       
+                            <div class=" cd-card-title2  text-center"><span class="cd-price ">{{client_details.credit_amount}} KD</span><span class="cd-key cd-ml-4">Wallet</span>
+                            
+                            
+                        </div>
+                        <div class="row ml-0 mr-0 cd-mt-50">
+                            <div class="col-xs-6 col-md-8 cd-key">Total Paid
+                            </div><div class="col-xs-6 col-md-4 cd-card-title2">: {{total_paid}} KD
+                            </div>
+                            
+                        </div>
+                        <div class="row ml-0 mr-0">
+                            <div class="col-xs-6 col-md-8 cd-key cd-mt-2">Total Balance
+                            </div><div class="col-xs-6 col-md-4 cd-card-title2 no-float cd-mt-2">: {{balance}} KD
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        {% for order in orders %}
+        {% if request.user.user_type == 'AGENT' %}
+        <a href="{% url 'agent:agent-client-orderdetails' order.id %}">
+        {%  elif request.user.user_type == 'EVALUATOR' %}
+        <a href="{% url 'evaluator:evaluator-client-orderdetails' order.id %}"> 
+        {% endif %}
+        <div class="main-content-holder clickable-cursor">
+            <div class="row white-wrapper cd-card-border m-0" >
+                <div class="col-md-9 cd-mt-4">
+                    <div class="cd-card-title">{{order.evaluation.evaluation_id}}</div>
+                    <div class="d-flex cd-mt-4">
+                        {% for evaluation_detail in order.evaluation.evaluationdetails %}
+                        {% for evaluation_book in evaluation_detail.evaluationbooks %}
+                        {% if forloop.first %}
+                        {% if evaluation_book.cleaning_policy == 'ONE TIME SERVICE' %}
+                        <div class="blue-chip chip">
+                            One Time
+                        </div>
+                        {% else %}
+                        <div class="green-chip chip">
+                            Subscription
+                        </div>
+                        {% endif %}
+                        {% endif %}
+                        {% endfor %}
+                        {% endfor %}
+
+                        <div class="red-chip chip cd-ml-4">
+                           {{order.total_tickets}} Tickets <i class="fas fa-flag icon-white"></i>
+                        </div>
+                    </div>
+
+        <div class="d-flex cd-mt-4">
+        {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
+        
+        {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+        <div class="approved-bg chip">
+            Approved
+        </div>
+        {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
+        <div class="order-in-progress-bg chip">
+            Order in Progress
+        </div>
+        {% elif order.order_status == 'ORDER_CLOSED' %}
+        <div class="completed-bg chip">
+            Completed
+        </div>
+        {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
+        Cancell in Progress
+        {% elif order.order_status == 'CANCELLED' %}
+        <div class="cancelled-bg chip">
+            Cancelled
+        </div>
+        {% endif %}
+        
+        {% else %}
+        {% if order.evaluation.quatation_status == 'APPROVED' %}
+        <div class="approved-not-paid-bg chip">
+            Approved Not Paid
+        </div>
+        {% endif %}
+        
+        {% endif %}
+        
+        {% if order.evaluation.quatation_status == 'REJECTED' %}
+        <div class="rejected-bg chip">
+            Rejected
+        </div>
+        {% elif order.evaluation.quatation_status == 'PENDING' %}
+        <div class="pending-bg chip">
+            Pending
+        </div>
+        {% elif order.evaluation.quatation_status == 'EXPIRED' %}
+        <div class="expired-bg chip">
+            Expired
+        </div>
+        {% else %}
+        <div class="evaluating-bg chip">
+            Evaluating
+        </div>
+        {%endif%}
+
+        {% if order.feedback_details %}
+        <div class="cd-ml-4 cd-mt-2">
+        {% if order.avg_starring >= 4.5 and order.avg_starring <= 5 %}
+        <i class="fas fa-star yellow-icon"></i>
+        <i class="fas fa-star yellow-icon"></i>
+        <i class="fas fa-star yellow-icon"></i>
+        <i class="fas fa-star yellow-icon"></i>
+        <i class="fas fa-star yellow-icon"></i>
+        {% elif order.avg_starring >= 3.5 and order.avg_starring < 4.5 %}
+        <i class="fas fa-star yellow-icon"></i>
+        <i class="fas fa-star yellow-icon"></i>
+        <i class="fas fa-star yellow-icon"></i>
+        <i class="fas fa-star yellow-icon"></i>
+        <i class="fas fa-star"></i>
+        {% elif order.avg_starring >= 2.5 and order.avg_starring < 3.5 %}
+        <i class="fas fa-star yellow-icon"></i>
+        <i class="fas fa-star yellow-icon"></i>
+        <i class="fas fa-star yellow-icon"></i>
+        <i class="fas fa-star"></i>
+        <i class="fas fa-star"></i>
+        {% elif order.avg_starring >= 1.5 and order.avg_starring < 2.5 %}
+        <i class="fas fa-star yellow-icon"></i>
+        <i class="fas fa-star yellow-icon"></i>
+        <i class="fas fa-star"></i>
+        <i class="fas fa-star"></i>
+        <i class="fas fa-star"></i>
+        {% elif order.avg_starring >= .5 and order.avg_starring <= 1.5 %}
+        <i class="fas fa-star yellow-icon"></i>
+        <i class="fas fa-star"></i>
+        <i class="fas fa-star"></i>
+        <i class="fas fa-star"></i>
+        <i class="fas fa-star"></i>
+        {% elif order.avg_starring < .5 %}
+        <i class="fas fa-star"></i>
+        <i class="fas fa-star"></i>
+        <i class="fas fa-star"></i>
+        <i class="fas fa-star"></i>
+        <i class="fas fa-star"></i>
+        {% endif %}
+        </div>
+        {% endif %}
+        </div>
+
+
+                    {% for evaluation_detail in order.evaluation.evaluationdetails %}
+                    <div class="cd-card-content2 cd-mt-4">
+                        {{evaluation_detail.address.area.name}}
+                    </div>
+                    {% for evaluation_book in evaluation_detail.evaluationbooks %}
+                    <div class="cd-card-content cd-mt-4">
+                        <i class="fas fa-check-circle yellow-tick"></i> {{evaluation_book.service_type.name}}
+                    </div>
+                    {% endfor %}
+                    {% endfor %}
+                </div>
+                <div class="col-md-3 cd-mt-4">
+                    <div class="row ml-0 mr-0">
+                        <div class="col-xs-12">
+                            <div class="cd-card-title2">
+                                Payment
+                            </div>
+                        </div>
+                    </div>    
+                    
+
+                    <div class="row ml-0 mr-0 cd-mt-4">
+                        <div class="col-xs-6 col-md-8 cd-key cd-mt-4">Payment Policy</div>
+                        <div class="col-md-4 col-xs-6 cd-mt-4">: <span class="cd-count">{{order.evaluation.payment_method}}</span></div>
+                    </div>
+                    <div class="row ml-0 mr-0 cd-mt-2">
+                        <div class="col-xs-6 col-md-8 cd-key ">Paid</div>
+                        <div class="col-md-4 col-xs-6">: <span class="cd-count">{{order.amount_paid}} KD</span></div>
+                    </div>
+                    <div class="row ml-0 mr-0  cd-mt-2">
+                        <div class="col-xs-6 col-md-8 cd-key">Balance</div>
+                        <div class="col-md-4 col-xs-6">: <span class="cd-count">{{order.remining_amount}} KD</span></div>
+                    </div>
+                    <div class="row ml-0 mr-0  cd-mt-2">
+                        <div class="col-xs-6 col-md-8 cd-key">Payment Type(s)</div>
+                        <div class="col-md-4 col-xs-6">: <span class="cd-count">
+                        {% for payment in  order.paymenthistory %}
+                        {% if forloop.last %}
+                        {{payment.payment_gateway}}
+                        {% else %}
+                        {{payment.payment_gateway}},
+                        {% endif %}
+                        {% endfor %}
+                    </span></div>
+                    </div>
+                    <div class="d-flex cd-mt-50 justify-center">
+                        {% if order.order_status == 'ORDER_CLOSED' %}
+                        {% if request.user.user_type == 'AGENT' %}
+                        <a href="{% url 'agent:agent-makequatation1duplicate' order.evaluation.id %}">
+                        {% elif request.user.user_type == 'EVALUATOR' %}
+                        <a href="{% url 'evaluator:evaluator-makequatation1duplicate' order.evaluation.id %}">          {% endif %}
+                        <div class="primary-btn ">
+                            <i class="fas fa-retweet white-icon"></i>
+                            Reorder
+                        </div>
+                        {% endif %}
+                        </a>
+                        <a {% if evaluation.payment_method == 'SUBSCRIPTION' %}href="/customer/subscription/quatation/paw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}"{% else %}href="/customer/quatation/paw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}"{% endif %} target="_blank">
+                        <div class="secondary-btn cd-ml-4">
+                            <i class="far fa-file-alt primary-icon"></i>
+                            Quotation
+                        </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        </a>
+        {% endfor %}
+        <!--    Edit modal-->
+        <form method="post" action="">
+            {% csrf_token %}
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="cd-modal-close">
+                    <i class="far fa-times-circle cd-modal-close-icon" data-dismiss="modal" ></i>
+                  </div>
+               
+                <div class="modal-body">
+                    <div class="cd-card-title">Client Details</div>
+                    <input type="hidden" name="customer_id" value="{{client_details.id}}">
+                    <input type="hidden" name="action_type" value="edit_customer">
+                 <div class="row ml-0 mr-0 cd-mt-4">
+                    <div class="col-md-6 cd-mt-4">
+                        <div><div class=" bold-text common-label"> <label class="section_label">Name</label></div><input name="name" type="text" class="textBox section_time" placeholder=" "  required="" value="{{client_details.name}}"></div>
+                     </div>
+                     <div class="col-md-6 cd-mt-4">
+                        <div><div class=" bold-text common-label"> <label class="section_label">Name in Arabic</label></div><input name="name_arabic" type="text" class="textBox section_time" placeholder=" "  required="" value="{{client_details.name_arabic}}"></div>
+                     </div>
+                     <div class="col-md-6 cd-mt-4">
+                        <div ><!--ticket-form-left-->
+                            <div class=" bold-text common-label required-field"> <label>Gender</label></div>
+                                          <label for="favcity">
+                                          <select name="gender" required="">
+                                          <option value="">Choose Gender</option>
+                                          <option value="MALE" {% if client_details.gender == 'MALE' %}selected{% endif %}>Male</option>
+                                          <option value="FEMALE" {% if client_details.gender == 'FEMALE' %}selected{% endif %}>Female</option>
+                                          <option value="OTHERS" {% if client_details.gender == 'OTHERS' %}selected{% endif %}>Others</option>
+                                          </select>
+                                          </label>
+                            </div>
+                     </div>
+                     <div class="col-md-6 cd-mt-4">
+                        <div ><!--ticket-form-left-->
+                            <div class=" bold-text common-label required-field"> <label>Nationality</label></div>
+                          <label for="favcity">         
+                          <select name="nationality" required="">
+                          <option value="">Choose Country</option>                           
+                          {% load countries %}
+                          {% get_countries as countries %}
+                          {% for country in countries %}
+                          <option value="{{country.code}}" {% if country.code == client_details.nationality.code %}selected{% endif %}>{{country.name}}</option>
+                          {% endfor %}
+                          </select>
+                          </label>
+            </div>
+                     </div>
+                     <div class="col-md-6 cd-mt-4">
+                        <div ><!--ticket-form-right-->
+                            <div class=" bold-text common-label required-field"> <label>Date of Birth</label></div>
+                            <input name="date_day" id="id_date_day" type="text" class="dateBox OnlyNumber" minlength="2" placeholder="DD" onkeyup="daterange();" required="" value="{{client_details.date_day}}">
+                            <input name="date_month" id="id_date_month" type="text" class="dateBox OnlyNumber" minlength="2" placeholder="MM" onkeyup="monthrange();" required="" value="{{client_details.date_month}}">
+                            <input name="date_year" id="id_date_year" type="text" class="dateBox OnlyNumber" minlength="4" placeholder="YYYY" onkeyup="yearrange();" value="{{client_details.date_year|default_if_none:''}}">
+                          </div>
+                     </div>
+                     <div class="col-md-6 cd-mt-4">
+                        <div ><!--ticket-form-left-->
+                            <div class=" bold-text common-label required-field"> <label>Email</label></div>
+                          <input name="email" type="email" class="textBox" placeholder=" " oninput="ValidateEmail(this);" required="" value="{{client_details.email}}">
+                          <p class="email_alert" style="color:Red;"></p>
+                         </div>
+                     </div>
+                     <div class="col-md-6 cd-mt-4">
+                        <div ><!--ticket-form-right-->
+                            <div class=" bold-text common-label required-field"> <label>Mobile Number</label></div>
+                          <input name="mobile_number" type="text" class="textBox OnlyNumber" id="id_mobile" placeholder=" " oninput="phonenumber(this);remove_duplicate_mobile(this);" maxlength="8" required="" value="{{client_details.mobile_number}}">
+                             <p class="phone_alert" style="color:Red;"></p>
+                         </div>
+                     </div>
+                     <div class="col-md-6 cd-mt-4">
+                        <div><!--ticket-form-left-->
+  				
+                            <div class=" bold-text common-label"> <label>Other Mobile Number</label></div>
+                                     <input name="phone_number" id="id_phone_number" class="textBox OnlyNumber" placeholder=" " oninput="mobilenumber(this);" maxlength="8" value="{{client_details.phonenumber}}">
+                             <p class="mobile_alert" style="color:Red;"></p>         
+                       
+                       </div>
+                     </div>
+                     
+                    
+                     <div class="col-md-12 cd-mt-4">
+                        <div ><!--ticket-form-right-->
+                            <div class=" bold-text common-label required-field"> <label>Customer Type</label></div>
+                          <label for="favcity">
+                          <select name="customer_type" id="id_customer_type" required="" onChange="showCompanydetails()">
+                          <option value="">Choose Customer Type</option>
+                          <option value="INDIVIDUAL" {% if client_details.customer_type == 'INDIVIDUAL' %}selected{% endif %}>INDIVIDUAL</option>
+                          <option value="RETAIL" {% if client_details.customer_type == 'RETAIL' %}selected{% endif %}>RETAIL</option>
+                          <option value="CORPORATE" {% if client_details.customer_type == 'CORPORATE' %}selected{% endif %}>CORPORATE</option>
+                          </select>
+                          </label>
+            </div>
+                     </div>
+                     
+
+                    <div class="col-md-6 cd-mt-4 offset-md-6 company-details" >
+                        <div >
+                            <div class=" bold-text common-label"> <label>Company</label></div>
+                          <input name="company" id="id_company" type="text" class="textBox" placeholder=" " required="required" value="{{client_details.company}}">
+                        </div>
+                     </div>
+                     <div class="col-md-6 cd-mt-4 company-details" >
+                        <div >
+                            <div class=" bold-text common-label"> <label>Job Title</label></div>
+                          <input name="job_title" id="id_job_title" type="text" class="textBox OnlyText" placeholder=" " required="required" value="{{client_details.job_title}}">
+                        </div>
+                     </div>
+
+                     
+                     <div class="col-md-6 cd-mt-4">
+                        <div ><!--ticket-form-left-->
+                            <div class=" bold-text common-label required-field"> <label>Communication Language</label></div>
+                          <label for="favcity">
+                          <select name="sms_preference" required="">
+                          <option value="">Choose Languages</option>
+                          <option value="ENGLISH" {% if client_details.sms_preference == 'ENGLISH' %}selected{% endif %}>ENGLISH</option>
+                          <option value="ARABIC" {% if client_details.sms_preference == 'ARABIC' %}selected{% endif %}>ARABIC</option>
+                          </select>
+                          </label>
+                        </div>
+                     </div>
+                     <div class="col-md-6 cd-mt-4">
+                        <div ><!--ticket-form-right-->
+                            <div class=" bold-text common-label required-field"> <label>Contact Platform</label></div>
+                            <div class="d-flex">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="sms" value="SMS" {% if client_details.is_sms %}checked{% endif %}>
+                                <label class="form-check-label" for="exampleCheck1">SMS</label>
+                              </div>
+                              <div class="form-check cd-ml-4">
+                                <input type="checkbox" class="form-check-input" id="Whatsapp" value="WHATSAPP" {% if client_details.is_whatsapp %}checked{% endif %}>
+                                <label class="form-check-label" for="exampleCheck1">Whatsapp</label>
+                              </div>
+                              <div class="form-check cd-ml-4">
+                                <input type="checkbox" class="form-check-input" id="email" value="EMAIL" {% if client_details.is_email %}checked{% endif %}>
+                                <label class="form-check-label" for="exampleCheck1">Email</label>
+                              </div>
+                            </div>
+                                  <p class="contact_platform_alert" style="color:Red;"></p>
+                    </div>
+                     </div>
+                    
+                 </div>
+                 <div class="d-flex justify-center cd-mt-4">
+                    <div class="secondary-btn cd-mt-4">
+                        Cancel
+                    </div>
+                     <div class="primary-btn cd-ml-4 cd-mt-4">
+                         <input type="submit" value=Submit>
+                     </div>
+                 </div>
+                </div>
+               
+              </div>
+            </div>
+          </div>
+      </form>
+          <!--    Edit modal ends here-->
+        
+    </section><!--content-->
+ 
+{% if request.user.user_type == 'AGENT' %}   
+{% include 'agent/common/footer.html' %} 
+{% endif %}
+</div><!--wrapper-->
+
+{% endblock %}
+{% block javascript %}
+<script src="{% static 'files/js/validation.js' %}"></script>
+<script>
+    {% if client_details.customer_type == 'CORPORATE' %}
+    $('.company-details').show()
+    {% endif %}
+
+    function showCompanydetails(){
+        if($('#id_customer_type').val()=='CORPORATE'){
+            $('.company-details').show()
+        }
+        else{
+            $('.company-details').hide()
+        }
+    }
+</script>
+{% endblock %}

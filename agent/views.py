@@ -2620,6 +2620,48 @@ class ClientOrders(IsAgent,View):
 
 		return render(request,"agent/client/client-page.html",{"client_details":client_details,"orders":orders,"active_orders_count":active_orders_count,})
 
+
+class ClientOrdersTest(IsAgent,View):
+	def get(self,request,client_id):
+
+		try:
+			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=client_id)
+		except:
+			client_details = None
+
+		orders = Order.objects.filter(evaluation__customer_id=client_id).select_related('evaluation__customer').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluationbooks')),to_attr='evaluationdetails'),Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),'investigation_orders__followup_investigation').annotate(total_tickets=Count('investigation_orders'),completed_tickets=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))
+
+		#COUNT
+		total_services   = orders.count() 
+		closed_services  = orders.filter(order_status='ORDER_CLOSED').count()
+		ongoing_services = total_services-closed_services
+		
+		total_paid       = orders.aggregate(Sum('amount_paid'))['amount_paid__sum']
+		balance          = orders.aggregate(Sum('remining_amount'))['remining_amount__sum']
+
+		total_tickets    = orders.aggregate(Sum('total_tickets'))['total_tickets__sum']
+		completed_tickets= orders.aggregate(Sum('completed_tickets'))['completed_tickets__sum']
+		active_tickets   = total_tickets-completed_tickets
+
+		return render(request,"evaluator/client/client-page-test.html",{"client_details":client_details,"orders":orders,"total_services":total_services,"closed_services":closed_services,"ongoing_services":ongoing_services,"total_paid":total_paid,"balance":balance,"total_tickets":total_tickets,"completed_tickets":completed_tickets,"active_tickets":active_tickets})
+
+	def post(self,request,client_id):
+		action      = request.POST.get('action_type')
+		customer_id = request.POST.get('customer_id')
+		customer    = UserProfile.objects.get(id=customer_id)
+		
+		if action == 'edit_customer':
+			customer_edit_form    = UserProfileForm(request.POST,instance=customer)
+
+			if customer_edit_form.is_valid():
+				customer_edit_form_save            = customer_edit_form.save(commit=False)
+				customer_edit_form_save.save()
+				messages.success(request,"Customer Details Succesfully Updated")
+			else:
+				messages.error(request,get_error(customer_edit_form))
+
+		return redirect('agent:agent-client-orderstest',client_id)
+
 class ClientOrderDetails(IsAgent,View):
 	def get(self,request,order_id):
 
