@@ -174,28 +174,37 @@ class EvaluationDetailsList(APIView):
 			booking_id = None
 			customer_booking = None
 
-		print(evaluators,"evs")
-		response_dict["booking_id"]=booking_id
-		response_dict["evaluators_list"]=evaluators
-		response_dict["evaluation_id"]=evaluation_details.evaluation.id
-		response_dict["evaluation_detail_id"]=evaluation_details.id
-		response_dict["area"]=evaluation_details.address.area.name
-		response_dict["governorate"]=evaluation_details.address.governorate.name
-		response_dict["evaluator"]=evaluation_details.evaluator.name
-		response_dict["agent"]=evaluation_details.evaluation.call_attender.name
-		# response_dict["booking_id"]=booking_id
-		response_dict["customer"]=evaluation_details.evaluation.customer.name
-		response_dict["customer_mobile"]=evaluation_details.evaluation.customer.mobile_number
-		response_dict["location"]=evaluation_details.address.location
-		response_dict["block"]=evaluation_details.address.block
-		response_dict["avenue"]=evaluation_details.address.avenue
-		response_dict["building"]=evaluation_details.address.building
-		response_dict["street"]=evaluation_details.address.street
-		response_dict["floor"]=evaluation_details.address.floor
-		response_dict["apartment"]=evaluation_details.address.apartment
-		response_dict["evaluation_date"]=str(evaluation_details.proposed_time.date())
-		response_dict["evaluation_time"]=str(evaluation_details.proposed_time.time())
-		response_dict["agent_evaluation_notes"]=evaluation_details.attender_note
+		proposed_time = evaluation_details.proposed_time+timedelta(hours=3)
+		proposed_date = evaluation_details.proposed_time+timedelta(hours=3)
+		print(proposed_time.strftime('%I:%M %p'),proposed_date.strftime('%d-%m-%Y'),"evs")
+		
+		response_dict["booking_id"]=booking_id 
+		response_dict["evaluators_list"]=evaluators 
+		response_dict["evaluation_id"]=evaluation_details.evaluation.id 
+		response_dict["evaluation_detail_id"]=evaluation_details.id 
+		response_dict["area"]=evaluation_details.address.area.name 
+		response_dict["governorate"]=evaluation_details.address.governorate.name 
+		response_dict["evaluator"]=evaluation_details.evaluator.name 
+		response_dict["evaluator_id"]=evaluation_details.evaluator.id
+
+		if evaluation_details.evaluation.call_attender:
+			response_dict["agent"]=evaluation_details.evaluation.call_attender.name 
+		
+		response_dict["agent_notes"]=evaluation_details.attender_note
+		response_dict["customer"]=evaluation_details.evaluation.customer.name 
+		response_dict["customer_mobile"]=evaluation_details.evaluation.customer.mobile_number 
+		response_dict["location"]=evaluation_details.address.location 
+		response_dict["block"]=evaluation_details.address.block 
+		response_dict["avenue"]=evaluation_details.address.avenue 
+		response_dict["building"]=evaluation_details.address.building 
+		response_dict["street"]=evaluation_details.address.street 
+		response_dict["floor"]=evaluation_details.address.floor 
+		response_dict["apartment"]=evaluation_details.address.apartment 
+		response_dict["evaluation_date"]=proposed_date.strftime('%d-%m-%Y')
+		response_dict["evaluation_time"]=proposed_time.strftime('%I:%M %p')
+		response_dict["evaluation_slot"]=proposed_time.strftime('%H:%M')
+		response_dict["agent_evaluation_notes"]=evaluation_details.attender_note 
+		
 		return Response(response_dict,HTTP_200_OK)
 
 
