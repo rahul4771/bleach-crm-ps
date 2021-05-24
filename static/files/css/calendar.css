@@ -322,6 +322,17 @@ width:100% !important;
     text-align: center;
     cursor:pointer;
 }
+.time-slot-inactive{
+    pointer-events: none;
+    border-radius: 10px;
+    padding: 8px;
+    font-size: 12px;
+    pointer-events: none;
+    background-color: #eee;
+    color:#ccc;
+    text-align: center;
+    cursor:pointer;
+}
 .late-hour label{
     font-weight: 300  !important;
     padding-top: 5px !important;

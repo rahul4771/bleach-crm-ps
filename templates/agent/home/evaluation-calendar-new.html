@@ -195,7 +195,7 @@
       <div class="d-flex cl-modal-icons">
         <img src="{% static 'files/icons/edit.png'%}" class="cl-modal-icon" @click="editEval=!editEval"/>
         <img src="{% static 'files/icons/delete.png'%}" class="cl-modal-icon" @click="delAlert=!delAlert"/>
-        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" data-dismiss="modal" aria-label="Close"/>
+        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" data-dismiss="modal" aria-label="Close" @click="closeModal()"/>
       </div>
       <div class="row" style="margin:0">
         <div class="col-md-12" style="padding:0">
@@ -260,7 +260,7 @@
              </div>
              <div class="mt-2 col-md-4">
             
-                <v-date-picker v-model="selectedDate" :color="agent" class="cl-datecalendar w-100"></v-date-picker>
+                <v-date-picker v-model="selectedDate" :color="agent" class="cl-datecalendar w-100" @change="getEvaluationSlots()" :min="today"></v-date-picker>
              
              </div>
              <div class="col-md-7 offset-md-1">
@@ -288,7 +288,7 @@
           <!--<div class="time-slot" onclick="selectSlot(this)">
             12:00 AM - 01:00 AM
           </div>-->
-          <div v-if="slot!=selectedTime">
+          <div v-if="slot!=selectedTime && !checkToday(slot)">
             <div
               class="time-slot duration text-center p-2"
               @click="selectTime(12+':00 AM',slot)"
@@ -299,7 +299,7 @@
             <div
               class="time-slot duration text-center p-2"
               @click="selectTime(slot+':00 AM',slot)"
-              v-if="slot<12 && slot>0"
+              v-if="slot<12 && slot>0 "
             >
               <% slot +':00' %> am -  <% (slot+1)+':00' %> <span v-if="(slot+1)<12">am </span><span v-else>pm</span>
             </div>
@@ -319,7 +319,7 @@
             </div>
             
           </div>
-          <div v-if="slot==selectedTime">
+          <div v-if="slot==selectedTime  && !checkToday(slot)">
             <div
               class="time-slot-active  text-center p-2"
               @click="selectTime(12+':00 AM',slot)"
@@ -344,6 +344,37 @@
             <div
               class="time-slot-active  text-center p-2"
               @click="selectTime((slot-12)+':00 PM',slot)"
+              v-if="slot>12"
+            >
+              <%(slot-12)%>:00 pm - <%(slot-11)+':00'%> <span v-if="(slot+1)>12 && (slot+1)<24">pm </span><span v-else>am</span>
+            </div>
+            
+          </div>
+          <div v-if="checkToday(slot)">
+            <div
+              class="time-slot-inactive  text-center p-2"
+             
+              v-if="slot==0"
+            >
+              12:00 am - 1:00 am
+            </div>
+            <div
+              class="time-slot-inactive  text-center p-2"
+              @click="selectTime(slot+':00 AM',slot)"
+              v-if="slot<12 && slot>0"
+            >
+              <%slot +':00'%> am - <%(slot+1)+':00'%> <span v-if="(slot+1)<12">am </span><span v-else>pm</span>
+            </div>
+            <div
+              class="time-slot-inactive   text-center p-2"
+              
+              v-if="slot==12"
+            >
+              12:00 pm - <%(slot-11)+':00'%> pm 
+            </div>
+            <div
+              class="time-slot-inactive  text-center p-2"
+             
               v-if="slot>12"
             >
               <%(slot-12)%>:00 pm - <%(slot-11)+':00'%> <span v-if="(slot+1)>12 && (slot+1)<24">pm </span><span v-else>am</span>
