@@ -911,8 +911,8 @@
               </div>
             </div>
             </div>
-            <div class="marker-container mt-4" v-for="(item,index) in combineSlots" v-bind:key="index">
-              <div class="cl-customer-start-end  d-flex" v-if="checkAll('09:00 AM','12:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-end'">
+            <div class="marker-container mt-4" v-for="(item,index) in combineSlots" v-bind:key="index" >
+              <div class="cl-customer-start-end  d-flex" v-if="checkAll('09:00 AM','12:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-end'" data-toggle="modal" data-target="#cleanAgentModal">
                 <div class="cl-marker-pic-box">
                   <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
                   <div class="cl-marker-completed">
@@ -925,7 +925,7 @@
                 <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
                 
               </div>
-              <div class="cl-customer-start-only d-flex" v-if="checkAll('09:00 AM','12:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-only'">
+              <div class="cl-customer-start-only d-flex" v-if="checkAll('09:00 AM','12:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-only'" data-toggle="modal" data-target="#cleanAgentModal">
                 <div class="cl-marker-pic-box">
                   <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
                   <div class="cl-marker-completed">
@@ -938,11 +938,11 @@
                 
                 
               </div>
-              <div class="cl-customer-marker-continue  d-flex" v-if="checkAll('09:00 AM','12:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='continue'">
+              <div class="cl-customer-marker-continue  d-flex" v-if="checkAll('09:00 AM','12:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='continue'" data-toggle="modal" data-target="#cleanAgentModal">
                 
               
               </div>
-              <div class="cl-customer-end-only d-flex" v-if="checkAll('09:00 AM','12:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='end-only'">
+              <div class="cl-customer-end-only d-flex" v-if="checkAll('09:00 AM','12:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='end-only'" data-toggle="modal" data-target="#cleanAgentModal">
                 
                 
                 <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
@@ -1604,7 +1604,189 @@
 </div>
 <!--modal-evaluation-wrapper-->
 
+<!-- Cleaning cal popup-->
 
+<div class="modal fade booking-dialog" id="cleanAgentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog customer-border" role="document" id="customer-border">
+    <div class="modal-content">
+    <input type="hidden" name="evaluationid" id="evaluation_id" />
+    <input type="hidden" name="evaluationdetailid" id="evaluation_detail_id" />
+      <div>
+      
+      </div>
+      <div class="modal-body">
+      <div class="d-flex cl-modal-icons">
+        <img src="{% static 'files/icons/edit.png'%}" class="cl-modal-icon" @click="editEval=!editEval"/>
+        <img src="{% static 'files/icons/delete.png'%}" class="cl-modal-icon" @click="delAlert=!delAlert"/>
+        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" data-dismiss="modal" aria-label="Close"/>
+      </div>
+      <div class="row" style="margin:0">
+        <div class="col-md-12" style="padding:0">
+
+          <!-- :color = agent || :color="customer" || :color="cancelled"     -->   
+      <v-alert
+      prominent
+      type="error"
+      v-model="delAlert"
+      :color="customer"
+      class="mt-2 w-100"
+    >
+      <v-row align="center">
+        <v-col class="grow ">
+        Do you want to cancel this booking ?
+        </v-col>
+        <v-col class="shrink">
+          <div class="d-flex">
+          <v-btn onclick="delete_evaluation()">Proceed</v-btn>
+          <v-btn class="ml-4 text-black close-cancel" color="white" style="color:#000000"  @click="delAlert=!delAlert">Cancel</v-btn>
+        </div>
+        </v-col>
+      </v-row>
+    </v-alert>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8">
+    
+     <div class="cl-modal-text-title cl-mt-10 customer-booked-text">
+      BLC20210510135
+     </div>
+     <div class="d-flex">
+      <div class="cl-completed-mark"></div>
+      <div class="cl-subtext">
+        Completed
+       </div>
+     </div>
+     
+     <div class="cl-modal-text-title cl-mt-20 ">
+       MR. Bhageerathan Pillai
+     </div>
+     <div class="cl-modal-text-content cl-mt-5">
+       8080808080
+     </div>
+     <div class="cl-modal-text-title cl-mt-20 ">
+     Kitchen Cleaning & Carpet Cleaning
+    </div>
+     <div class="cl-modal-text-content cl-mt-5">
+       Sindhu, 45, Vasanth Street, Hashima Building, Shammy avenue,24th Block, Farwaniya
+     </div>
+     <div class="cl-modal-text-content cl-mt-20">
+       <div>Cleaning Date : 14-05-2021</div>
+       <div class="cl-mt-5">Slot : 12:00 PM - 03:00 PM</div>
+     </div>
+    </div>
+    <div class="col-md-4">
+      <div class="right-popup-box">
+        <div class="cl-modal-text-content cl-mt-20">
+          Team leader
+        </div>
+        <div class="cl-modal-text-title  ">
+          Sheikh Musthafa
+        </div>
+        <div class="cl-modal-text-content cl-mt-20">
+          Team Incharge
+        </div>
+        <div class="cl-modal-text-title cl-highlight">
+          Not Assigned
+        </div>
+        <div class="cl-modal-text-content cl-mt-20">
+          Team Members
+        </div>
+        <div class="cl-modal-text-title  ">
+          Lucifer, Eve , Michael, Adam
+        </div>
+        <div class="text-right cl-mt-20">
+          <a class="cl-link">Edit Cleaning Team</a>
+        </div>
+      </div>
+    </div>
+    <div class="edit-eval col-md-12 cl-mt-20" v-if="editEval">
+      <div class="cl-modal-text-title">
+         Edit Cleaning
+      </div>
+      <div class="mt-2 col-md-4">
+     
+         <v-date-picker v-model="selectedDate" :color="customer" class="cl-datecalendar w-100"></v-date-picker>
+      
+      </div>
+      <div class="col-md-7 offset-md-1">
+        Slots for cleaning
+       <v-select
+   :items="['1','2','3','4']"
+   v-model="selectedSlot"
+   size="sm"
+   outlined
+   :color="customer"
+   class="eval-select"
+ ></v-select>
+ <div>
+   <b>Time Slots Available</b>
+ </div>
+<div class="time-slots row mt-2" >
+ <div class="col-md-6">
+   <div class="time-slot" onclick="selectSlot(this)">
+     12:00 AM - 03:00 AM
+   </div>
+ </div>
+ <div class="col-md-6">
+   <div class="time-slot" onclick="selectSlot(this)">
+     03:00 AM - 06:00 AM
+   </div>
+ </div>
+ <div class="col-md-6">
+   <div class="time-slot" onclick="selectSlot(this)">
+     06:00 AM - 09:00 AM
+   </div>
+ </div>
+ <div class="col-md-6">
+   <div class="time-slot" onclick="selectSlot(this)">
+     09:00 AM - 12:00 PM
+   </div>
+ </div>
+ <div class="col-md-6" onclick="selectSlot(this)">
+   <div class="time-slot">
+     12:00 PM - 03:00 PM
+   </div>
+ </div>
+ <div class="col-md-6">
+   <div class="time-slot" onclick="selectSlot(this)">
+     03:00 PM - 06:00 PM
+   </div>
+ </div>
+ <div class="col-md-6">
+   <div class="time-slot" onclick="selectSlot(this)">
+     06:00 PM - 09:00 PM
+   </div>
+ </div>
+ <div class="col-md-6">
+   <div class="time-slot" onclick="selectSlot(this)">
+     09:00 PM - 12:00 PM
+   </div>
+ </div>
+ 
+
+</div>
+
+ 
+      </div>
+     
+    <div class="cl-btns d-flex justify-center col-md-12">
+     <div class="proceed-btn customer-booked-bg ">
+       Proceed
+     </div>
+     <div class="cancel-btn ml-4 customer-booked-border" data-dismiss="modal" aria-label="Close">
+      Cancel
+    </div>
+   </div>
+      
+    </div>
+   
+  </div>
+
+  </div>
+  </div>
+  </div>
+  </div>
 
 
             

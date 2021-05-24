@@ -106,6 +106,27 @@ width:100% !important;
     font-size:16px;
     text-align: left;
 }
+.cl-completed-mark{
+    background: #779F39 0% 0% no-repeat padding-box;
+    height:17px;
+    width:17px;
+    margin-top: 2px;
+    margin-right: 8px;
+    border-radius: 17px;
+
+}
+.right-popup-box{
+    background: #EDF1F6 ;
+    height:100%;
+    padding:10px;
+}
+.cl-highlight{
+    color: #AB2020 !important;
+}
+.cl-subtext{
+    color: #5D5D5D;
+    font-weight:300;
+}
 .cl-check-icon{
     height:15px;
     width:15px;
@@ -160,6 +181,27 @@ width:100% !important;
 }
 .modal-evaluation-wrapper.is-visible {
     visibility: visible !important;
+}
+.booking-dialog .modal-dialog{
+    border-radius: 0px 0px 12px 12px !important;
+    
+    border: none !important;
+    border-bottom: 10px solid #0D87C5 !important;
+    width:60%;
+}
+
+.booking-dialog .agent-border{
+    border-bottom: 10px solid #0D87C5 !important;
+}
+.cl-link{
+    color: #528CE6;
+    text-decoration: underline;
+}
+.text-right{
+    text-align: right;
+}
+.booking-dialog .customer-border{
+    border-bottom: 10px solid #139275 !important;
 }
 #evaluationAgentModal .modal-dialog{
     border-radius: 0px 0px 12px 12px !important;
@@ -280,6 +322,17 @@ width:100% !important;
     text-align: center;
     cursor:pointer;
 }
+.time-slot-inactive{
+    pointer-events: none;
+    border-radius: 10px;
+    padding: 8px;
+    font-size: 12px;
+    pointer-events: none;
+    background-color: #eee;
+    color:#ccc;
+    text-align: center;
+    cursor:pointer;
+}
 .late-hour label{
     font-weight: 300  !important;
     padding-top: 5px !important;
@@ -342,7 +395,7 @@ width:100% !important;
 .customer-booked-bg{
     background-color: #139275 !important;
 }
-.cutomer-booked-border{
+.customer-booked-border{
     border-color: #139275  !important;
 }
 
@@ -517,6 +570,9 @@ width:100% !important;
         width:auto;
     }
     #evaluationCustomerModal .modal-dialog{
+        width:auto;
+    }
+    .booking-dialog .modal-dialog{
         width:auto;
     }
     .v-alert{

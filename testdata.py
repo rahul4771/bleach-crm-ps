@@ -1,3 +1,13 @@
+
+{
+"number_of_cleaners":4,
+"cleaning_hours":3,
+"service_types":["General Cleaning"],
+"cleaning_datetimes":["01-05-2021 12:00 pm","01-05-2021 03:00 pm"]
+}
+
+
+
 #Evaluation Booking
 #
 Get
