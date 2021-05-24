@@ -2177,7 +2177,7 @@ class GetMultipleServiceDateCleaningSlotesAutofix(APIView):
 
 					#slote availability				
 					if((total_cleaners-busy_cleaners)>=number_of_cleaners and (total_leaders-busy_leaders)>=1):
-						slote_details[cleaning_datetime] =	start_at
+						slote_details[cleaning_datetime] =	datetime.stftime(start_at,'%d-%m-%Y %I:%M %p')
 						break
 					else:
 						slote_details[cleaning_datetime] = 'NOt Available'
