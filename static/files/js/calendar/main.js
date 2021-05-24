@@ -2,7 +2,8 @@
 //$('#cl-evaluator-1').height($('#slot-row-1').height());
 
 $(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip();  
+    $('[data-toggle="tooltip"]').tooltip(); 
+    $( ".scroll-cal" ).scrollLeft( 650 ); 
     $('#cleaningCalendar-carousel').owlCarousel({
         loop:false,
         margin:10,
