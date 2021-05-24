@@ -962,7 +962,7 @@ class AgentHome(IsAgent,View):
 			evaluation_date = timezone.now().replace(tzinfo=None)
 
 		# evaluation calendar switching 
-		if evaluation_date < datetime.now().replace(day=23,month=5,year=2021,hour=0,minute=0,second=0,microsecond=0):
+		if evaluation_date < datetime.now().replace(day=12,month=5,year=2021,hour=0,minute=0,second=0,microsecond=0):
 			calendar_type = "old-calendar"
 		else:
 			calendar_type = "new-calendar"
