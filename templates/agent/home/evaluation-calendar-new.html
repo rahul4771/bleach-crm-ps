@@ -388,6 +388,55 @@
   </div>
 </div>
 <!--modal-evaluation-wrapper-->
+
+
+<!-- Cleaning cal popup-->
+<!-- evaluation_popup -->
+<div class="modal fade" id="cleanAgentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document" id="evaluation-modal-border">
+    <div class="modal-content">
+    <input type="hidden" name="evaluationid" id="evaluation_id" />
+    <input type="hidden" name="evaluationdetailid" id="evaluation_detail_id" />
+      <div>
+      
+      </div>
+      <div class="modal-body">
+      <div class="d-flex cl-modal-icons">
+        <img src="{% static 'files/icons/edit.png'%}" class="cl-modal-icon" @click="editEval=!editEval"/>
+        <img src="{% static 'files/icons/delete.png'%}" class="cl-modal-icon" @click="delAlert=!delAlert"/>
+        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" data-dismiss="modal" aria-label="Close"/>
+      </div>
+      <div class="row" style="margin:0">
+        <div class="col-md-12" style="padding:0">
+
+          <!-- :color = agent || :color="customer" || :color="cancelled"     -->   
+      <v-alert
+      prominent
+      type="error"
+      v-model="delAlert"
+      :color="agent"
+      class="mt-2 w-100"
+    >
+      <v-row align="center">
+        <v-col class="grow ">
+        Do you want to cancel this booking ?
+        </v-col>
+        <v-col class="shrink">
+          <div class="d-flex">
+          <v-btn onclick="delete_evaluation()">Proceed</v-btn>
+          <v-btn class="ml-4 text-black close-cancel" color="white" style="color:#000000"  @click="delAlert=!delAlert">Cancel</v-btn>
+        </div>
+        </v-col>
+      </v-row>
+    </v-alert>
+    </div>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+<!-- cleaning cal popups ends-->
 <script type="text/javascript">
 
 //load data in new evaluation popup

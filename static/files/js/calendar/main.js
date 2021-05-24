@@ -61,6 +61,7 @@ const app=  new Vue({
         combineSlots:[],
         slotDate:'',
         dateSelected:'',
+        selectedSlot:'1',
         evaluators:[],
         booking:{
             booking_date:'',
