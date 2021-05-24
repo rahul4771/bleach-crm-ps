@@ -950,12 +950,22 @@ class AgentHome(IsAgent,View):
 		lastmonth_average_feedback	  = feedbacks.filter(response_date__gte=count_today_end-timedelta(60),response_date__lte=count_today_end-timedelta(30)).aggregate(Avg('rating'))['rating__avg']	
 		
 		#Evaluation details of each evaluator for evaluation table
-		evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
+		evaluation_oldcalendar_date	= request.GET.get('evaluation_oldcalendar_date')
+		evaluation_newcalendar_date	= request.GET.get('evaluation_newcalendar_date')
 
 		try:
-			evaluation_date = datetime.strptime(evaluation_calendar_date,'%d-%m-%Y')
+			if evaluation_newcalendar_date:
+				evaluation_date = datetime.strptime(evaluation_newcalendar_date,'%d-%m-%Y')	
+			else:
+				evaluation_date = datetime.strptime(evaluation_oldcalendar_date,'%d-%m-%Y')	
 		except:
 			evaluation_date = timezone.now().replace(tzinfo=None)
+
+		# evaluation calendar switching 
+		if evaluation_date < datetime.now().replace(day=23,month=5,year=2021,hour=0,minute=0,second=0,microsecond=0):
+			calendar_type = "old-calendar"
+		else:
+			calendar_type = "new-calendar"
 
 		evaluation_date_start  = evaluation_date.replace(hour=0,minute=0,second=0,microsecond=0)
 		evaluation_date_end    = evaluation_date_start+timedelta(1)
@@ -1055,7 +1065,7 @@ class AgentHome(IsAgent,View):
 		#followup confirmation for special user
 		followup_to_be_closed = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_IN_PROGRESS').select_related('investigation','investigation__order_schedule__customer_address__area','investigation__order_schedule__order_scheduler_book__service_type','investigation__investigator','investigation__order__evaluation__customer').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True),to_attr='followupschedulers'),Prefetch('investigation__paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscount'),Prefetch('investigation__reporting_investigation',queryset=Reporting.objects.filter(is_active=True),to_attr='internalreports'),Prefetch('investigation__buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift')).annotate(followupcount=Sum(Case(When(follow_up_of_scheduler__is_active=True,then=1),default=0,output_field=IntegerField())), followupcompletedcount=Sum(Case(When(follow_up_of_scheduler__work_status='FOLLOW_UP_CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), paybackcount=Sum(Case(When(investigation__paybackdiscount_investigation__is_active=True,then=1),default=0,output_field=IntegerField())), paybackcompletedcount=Sum(Case(When(investigation__paybackdiscount_investigation__is_completed=True,then=1),default=0,output_field=IntegerField())), buybackpromocodecount=Sum(Case(When(investigation__buybackpromocodegift_investigation__is_active=True,then=1),default=0,output_field=IntegerField())), buybackpromocodecompletedcount=Sum(Case(When(investigation__buybackpromocodegift_investigation__is_completed=True,then=1),default=0,output_field=IntegerField())) ,internalreportcount=Sum(Case(When(investigation__reporting_investigation__is_active=True,then=1),default=0,output_field=IntegerField())))
 				
-		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'workers':workers,"customer_addresses":customer_addresses,"followup_to_be_closed":followup_to_be_closed,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules})
+		return render(request,'agent/home/home.html',{'calendar_type':calendar_type,'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'workers':workers,"customer_addresses":customer_addresses,"followup_to_be_closed":followup_to_be_closed,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules})
 
 
 	def post(self,request):
