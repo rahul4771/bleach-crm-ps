@@ -208,6 +208,25 @@ class EvaluationDetailsList(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 
+class CallbackStatusUpdate(APIView):
+	def get(self,request):
+
+		order_id = request.GET.get('order_id')
+		order_callback_status = request.GET.get('callback_status')
+		print(order_id,order_callback_status,"rog")
+
+		try:
+			order = Order.objects.get(id=int(order_id),is_active=True)
+			order.callback_status = order_callback_status
+			order.save()
+			response_dict = {"success":True}
+		except:
+			order = None
+			response_dict = {"success":False}
+
+		return Response(response_dict,HTTP_200_OK)
+
+
 class PaymentResponseCredit(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
