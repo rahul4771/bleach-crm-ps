@@ -904,6 +904,45 @@ class CleaningCallendar(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 
+class CleaningCallendarCleaningPopup(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request):
+		response_dict            = {}
+		response_dict['success'] = False
+
+		schedule_start_at	        = datetime.strptime(request.GET.get('cleaning_start'),'%d-%m-%Y %I:%M %p')
+		schedule_end_at	            = datetime.strptime(request.GET.get('cleaning_end'),'%d-%m-%Y %I:%M %p')
+		evaluation_id               = request.GET.get('evaluation_id')
+		
+		#cleaning schedules
+		cleaning_schedules                  = OrderScheduler.objects.filter(evaluation_details__evaluation__evaluation_id=evaluation_id,start_at=schedule_start_at,end_at=schedule_end_at).select_related('evaluation_details__evaluator','order_scheduler_book').prefetch_related('cleaning_team_order_scheduler__team_leader')
+		response_dict['cleaning_details']   = CleaningScheduleSerializer(instance=cleaning_schedules,many=True).data
+
+
+		response_dict['success'] = True
+
+		return Response(response_dict,HTTP_200_OK)
+
+class CleaningCallendarFollowupPopup(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request):
+		response_dict            = {}
+		response_dict['success'] = False
+
+		followup_scheduler_id    = request.GET.get('followup_scheduler_id')
+		
+		#followup schedule
+		followup_schedule                     = FollowUpScheduler.objects.filter(id=followup_scheduler_id).order_by('start_at').select_related('follow_up','customer_address').prefetch_related('followupteam_followupschedule__team_leader')
+		response_dict['followup_cleanings']   = FollowupScheduleSerializer(instance=followup_schedule,many=True).data
+
+		
+		response_dict['success'] = True
+
+		return Response(response_dict,HTTP_200_OK)
+
+
 # Create your views here.
 class AgentHome(IsAgent,View):
 	def get(self,request):
