@@ -127,7 +127,6 @@ class EvaluationUpdate(APIView):
 	authentication_classes  = ()
 
 	def get(self,request):
-		response_dict = {"success":False}
 
 		evaluation_date = request.GET.get('evaluation_date')
 		evaluation_time = request.GET.get('evaluation_time')
@@ -142,12 +141,17 @@ class EvaluationUpdate(APIView):
 		evaluationdetail = EvaluationDetails.objects.get(id=int(evaluation_detail_id))
 		evaluator = UserProfile.objects.get(id=int(evaluator_id),user_type='EVALUATOR')
 
-		evaluationdetail.evaluator = evaluator
-		evaluationdetail.proposed_time = converted_datetime
-		evaluationdetail.attender_note = agent_notes
-		evaluationdetail.save()
-		
-		response_dict = {"success":True}
+		slot_count_check = EvaluationDetails.objects.filter(is_active=True,proposed_time=converted_datetime).count()
+
+		if slot_count_check > 1:
+			response_dict = {"success":False,"alert":"This slot is Filled. Please select another slot."}
+		else:
+			evaluationdetail.evaluator = evaluator
+			evaluationdetail.proposed_time = converted_datetime
+			evaluationdetail.attender_note = agent_notes
+			evaluationdetail.save()
+			
+			response_dict = {"success":True}
 		return Response(response_dict,HTTP_200_OK)
 
 
@@ -186,6 +190,7 @@ class EvaluationDetailsList(APIView):
 		response_dict["governorate"]=evaluation_details.address.governorate.name 
 		response_dict["evaluator"]=evaluation_details.evaluator.name 
 		response_dict["evaluator_id"]=evaluation_details.evaluator.id
+		response_dict["evaluation_status"]=evaluation_details.status
 
 		if evaluation_details.evaluation.call_attender:
 			response_dict["agent"]=evaluation_details.evaluation.call_attender.name 
@@ -401,21 +406,22 @@ class LeaveScheduleAPI(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
-class DeleteEvaluation(APIView):
+class CancelEvaluation(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
 
-	def get(self,request,evaluation_id):
+	def get(self,request,evaluation_detail_id):
 		response_dict = {'success':False}
 
 		try:
-			evaluation = Evaluation.objects.get(is_active=True,id=int(evaluation_id))
+			evaluation = EvaluationDetails.objects.get(is_active=True,id=int(evaluation_detail_id))
 		except:
 			evaluation = None
 
-		print(evaluation_id,evaluation,"lop")
+		print(evaluation_detail_id,evaluation,"lop")
 		if evaluation:
-			evaluation.delete()
+			evaluation.status = 'CANCELLED'
+			evaluation.save()
 			response_dict = {'success':True}  
 			return Response(response_dict, HTTP_200_OK)
 		else:
