@@ -61,7 +61,9 @@ const app=  new Vue({
         combineSlots:[],
         slotDate:'',
         dateSelected:'',
+        selectedSlot:'1',
         evaluators:[],
+        currentTime:'',
         booking:{
             booking_date:'',
             booking_time:''
@@ -73,26 +75,36 @@ const app=  new Vue({
          
           lateHours:false,
         selectedTime:'',
+        today:'',
         timeSlots:[],
         url:'https://test.bleach-kw.com'
       },
       mounted(){
         this.getSlots()
         this.parseDate()
-        
-        //moment.tz.setDefault("Asia/Baghdad");
-        console.log("current time is" + moment().format());
-    
+        moment.locale('fr');
+        this.currentTime=moment().format().split("T")[1];
         this.dateSelected = moment().format().split("T")[0];
         this.today = moment().format().split("T")[0];
+       
+       
+        console.log("today is "+this.today)
+        console.log("time is "+this.currentTime)
+        //console.log("tiime is "+moment().format("hh:mm A"))
+       // moment(currentTime).format("hh:mm"))
+
         this.formatDate()
         this.getEvaluationSlots()
       },
       methods:{
+        closeModal(){
+          this.editEval=false
+        },
           setEvaluators(evaluatorList){
             this.evaluators=evaluatorList
           },
         getTime(){
+          
             if(!this.lateHours)
             {
             return this.convertedTime.earlyHours
@@ -100,6 +112,19 @@ const app=  new Vue({
             else{
               //return this.convertedTime.earlyHours.concat(this.convertedTime.lateHours)
               return this.timeSlots
+            }
+          },
+          checkToday(slot){
+            if(this.selectedDate==this.today){
+                if((slot-2)<this.currentTime.split(':')[0]){
+                  return true
+                }
+                else{
+                  return false
+                }
+            }
+            else{
+              return false
             }
           },
           convertTime(){
