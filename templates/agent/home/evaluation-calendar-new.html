@@ -13,7 +13,7 @@
   <div class="date-wrapper"><!--date-wrapper-->
               <div class="date-wrapper-inner"><!--date-wrapper-inner-->
               <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-              <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+              <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick evaluation_calendar">
               <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
               <button class='today-date current-date'>Today</button>
               </div><!--date-wrapper-inner-->
@@ -154,34 +154,6 @@
 
 <!--new evaluation calendar ends-->
 
-
-
-<!-- Cancelled modal-->
-<div class="modal" tabindex="-1" role="dialog" id="cancelledModal">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      
-      <div class="modal-body">
-        <div class="d-flex cl-modal-icons">
-        
-          <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon" data-dismiss="modal" aria-label="Close"/>
-        </div>
-        <div class="row" style="margin:0">
-          <div class="col-md-12 text-center" style="padding:0">
-                <div class="d-flex cancelled-stamp">
-                  <img src="{% static 'files/icons/cancelled.png'%}" class="cancelled-icon"/>
-                  <div class="cancelled-modal-text"> Booking Cancelled</div>
-
-                </div>
-               
-            </div>
-            </div>
-      </div>
-    
-    </div>
-  </div>
-</div>
-<!--Cancelled modal-->
 <!-- evaluation_popup -->
 <div class="modal fade" id="evaluationAgentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document" id="evaluation-modal-border">
@@ -210,12 +182,12 @@
     >
       <v-row align="center">
         <v-col class="grow ">
-        Do you want to cancel this booking ?
+        Do you want to cancel this evaluation booking ?
         </v-col>
         <v-col class="shrink">
           <div class="d-flex">
-          <v-btn onclick="delete_evaluation()">Proceed</v-btn>
-          <v-btn class="ml-4 text-black close-cancel" color="white" style="color:#000000"  @click="delAlert=!delAlert">Cancel</v-btn>
+          <v-btn onclick="cancel_evaluation()">Yes</v-btn>
+          <v-btn class="ml-4 text-black close-cancel" color="white" style="color:#000000"  @click="delAlert=!delAlert">No</v-btn>
         </div>
         </v-col>
       </v-row>
@@ -393,10 +365,9 @@
             </div>
             
           </div>
-       
 
         </div>
-        
+        <div id="slot_alert" style="color:red"></div>
         
        
       </div>
@@ -466,7 +437,7 @@
         </v-col>
         <v-col class="shrink">
           <div class="d-flex">
-          <v-btn onclick="delete_evaluation()">Proceed</v-btn>
+          <v-btn onclick="cancel_evaluation()">Proceed</v-btn>
           <v-btn class="ml-4 text-black close-cancel" color="white" style="color:#000000"  @click="delAlert=!delAlert">Cancel</v-btn>
         </div>
         </v-col>
@@ -630,27 +601,43 @@ function load_evaluation(evaluation_detail_id,item){
       console.log(response.data.evaluation_time,response.data.evaluators_list,"evdata")
       
       //modal border color change and field hide/show for agent evaluation or customer evaluation
+
       if ($(item).hasClass('customer-submitted')){ 
             $('.assigned-by').hide();
             $('.booking-id').show();
             $('#evaluation-modal-border').removeClass("agent-border");
             $('#evaluation-modal-border').addClass("customer-border");
-            $('#evaluation-cancelled').hide();
-            $('.edit-evaluation').show();
-          $('.delete-evaluation').show();
-        }else if ($(item).hasClass('cl-cancelled')){
+            $('#evaluation-cancelled').hide();s
+
+            if (response.data.evaluation_status == 'EVALUATED'){
+              $('.edit-evaluation').hide();
+              $('.delete-evaluation').hide();
+            }else{
+              $('.edit-evaluation').show();
+              $('.delete-evaluation').show();
+            }
+
+        }else if (response.data.evaluation_status == 'CANCELLED'){
           $('#evaluation-cancelled').show();
           $('.edit-evaluation').hide();
           $('.delete-evaluation').hide();
         }else{
             $('.assigned-by').show();
             $('.booking-id').hide();
-            $('.edit-evaluation').show();
-          $('.delete-evaluation').show();
+
+            if (response.data.evaluation_status == 'EVALUATED'){
+              $('.edit-evaluation').hide();
+              $('.delete-evaluation').hide();
+            }else{
+              $('.edit-evaluation').show();
+              $('.delete-evaluation').show();
+            }
+            
             $('#evaluation-modal-border').removeClass("customer-border");
             $('#evaluation-modal-border').addClass("agent-border");
             $('#evaluation-cancelled').hide();
         }
+
       $('#evaluation_booking_id').text(response.data.booking_id);
       $('#evaluation_id').val(response.data.evaluation_id);
       $('#evaluation_detail_id').val(response.data.evaluation_detail_id);
@@ -674,12 +661,13 @@ function load_evaluation(evaluation_detail_id,item){
     })   
     }
 
-//delete evaluation
-function delete_evaluation(){
-    
-    var evaluation_id = $('#evaluation_id').val();
 
-    axios.get(url+'/api/evaluation-delete/'+evaluation_id)
+//delete evaluation
+function cancel_evaluation(){
+    
+    var evaluation_detail_id = $('#evaluation_detail_id').val();
+
+    axios.get(url+'/api/evaluation-cancel/'+evaluation_detail_id)
     .then(function (response) {
         console.log(response.data.success,"resp")
         if (response.data.success == true){
@@ -702,9 +690,15 @@ function update_evaluation(){
         if (response.data.success == true){
             console.log("war")
             $('.close-evaluation').click();
-            
+            $('#slot_alert').text("");
             window.location.reload();        
             
+        }else{
+            $('#slot_alert').text("Selected time slot is filled. Please select another time slot.");
+            $div = $('#slot_alert');
+            var timer = setInterval( function() {
+                $div.html( "" ); // which would reference some dynamic content 
+            }, 5000);
         }
     })
 
