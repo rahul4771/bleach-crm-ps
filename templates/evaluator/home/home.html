@@ -709,7 +709,7 @@
     <div class="date-wrapper"><!--date-wrapper-->
                 <div class="date-wrapper-inner"><!--date-wrapper-inner-->
                 <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-                <input type="text" id="cl_cleaning_calendar"  class="date-box date_pick" v-model="cleaningDate" @change="changeCleaningDate()"/>
+                <input type="text" id="cl_cleaning_calendar"  class="date-box date_pick" v-model="cleaningDate" onchange="app.getSlots()"/>
                 <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
                 <button class='today-date current-date'>Today</button>
                 </div><!--date-wrapper-inner-->
@@ -739,9 +739,12 @@
               </div>
             </div>
             </div>
-            <div class="marker-container mt-4" v-for="(item,index) in combineSlots" v-bind:key="index">
-              <div class="cl-customer-start-end  d-flex" v-if="checkAll('12:00 AM','03:00 AM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-end'">
-                <div class="cl-marker-pic-box">
+            <div class="marker-container mt-4" v-for="(item,index) in slot[1].slots" v-bind:key="index">
+              <div class="cl-dummy mt-4 mb-4" v-for="(dummy,dindex) in getRowDiff(item,slot[1].slots,index)">
+
+              </div>
+              <div :class="item.classType+' '+item.color+' '+'d-flex'">
+                <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
                   <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
                   <div class="cl-marker-completed">
                     <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
@@ -749,34 +752,13 @@
                 </div>
   
                 </div>
-                <div class="cl-marker-text ">  <% item.slots.order.order_no %> </div>
-                <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'"><% item.slots.cleaning_hours %></div>
                 
               </div>
-              <div class="cl-customer-start-only d-flex" v-if="checkAll('12:00 AM','03:00 AM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-only'">
-                <div class="cl-marker-pic-box">
-                  <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
-                  <div class="cl-marker-completed">
-                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
-  
-                </div>
-  
-                </div>
-                <div class="cl-marker-text ">  <% item.slots.order.order_no %> </div>
-                
-                
-              </div>
-              <div class="cl-customer-marker-continue  d-flex" v-if="checkAll('12:00 AM','03:00 AM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='continue'">
-                
               
-                
-              </div>
-              <div class="cl-customer-end-only d-flex" v-if="checkAll('12:00 AM','03:00 AM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='end-only'">
-                
-                
-                <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
-                
-              </div>
+             
+              
             </div>
 
           </div>
@@ -797,9 +779,12 @@
             </div>
             
             </div>
-            <div class="marker-container mt-4" v-for="(item,index) in combineSlots" v-bind:key="index">
-              <div :class="'cl-customer-start-end  d-flex '+item.class" v-if="checkAll('03:00 AM','06:00 AM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-end'">
-                <div class="cl-marker-pic-box">
+            <div class="marker-container mt-4" v-for="(item,index) in slot[2].slots" v-bind:key="index">
+              <div class="cl-dummy mt-4 mb-4" v-for="(dummy,dindex) in getRowDiff(item,slot[2].slots,index)">
+
+              </div>
+              <div :class="item.classType+' '+item.color+' '+'d-flex'">
+                <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
                   <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
                   <div class="cl-marker-completed">
                     <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
@@ -807,34 +792,12 @@
                 </div>
   
                 </div>
-                <div class="cl-marker-text ">  <% item.slots.order.order_no %> </div>
-                <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'"><% item.slots.cleaning_hours %></div>
                 
               </div>
-              <div :class="'cl-customer-start-only d-flex d-flex '+item.class" v-if="checkAll('03:00 AM','06:00 AM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-only'">
-                <div class="cl-marker-pic-box">
-                  <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
-                  <div class="cl-marker-completed">
-                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
-  
-                </div>
-  
-                </div>
-                <div class="cl-marker-text ">  <% item.slots.order.order_no %> </div>
-                
-                
-              </div>
-              <div :class="'cl-customer-marker-continue  d-flex '+item.class" v-if="checkAll('03:00 AM','06:00 AM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='continue'">
-                
-                
-                
-              </div>
-              <div :class="'cl-customer-end-only d-flex '+item.class" v-if="checkAll('03:00 AM','06:00 AM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='end-only'">
-                
-                
-                <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
-                
-              </div>
+              
+              
             </div>
            
           </div>
@@ -854,9 +817,12 @@
               </div>
             </div>
             </div>
-            <div class="marker-container mt-4" v-for="(item,index) in combineSlots" v-bind:key="index">
-              <div class="cl-customer-start-end  d-flex" v-if="checkAll('06:00 AM','09:00 AM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-end'">
-                <div class="cl-marker-pic-box">
+            <div class="marker-container mt-4" v-for="(item,index) in slot[3].slots" v-bind:key="index">
+              <div class="cl-dummy mt-4 mb-4" v-for="(dummy,dindex) in getRowDiff(item,slot[3].slots,index)">
+
+              </div>
+              <div :class="item.classType+' '+item.color+' '+'d-flex'">
+                <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
                   <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
                   <div class="cl-marker-completed">
                     <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
@@ -864,34 +830,10 @@
                 </div>
   
                 </div>
-                <div class="cl-marker-text ">  <% item.slots.order.order_no %> </div>
-                <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'"><% item.slots.cleaning_hours %></div>
                 
-              </div>
-              <div class="cl-customer-start-only d-flex" v-if="checkAll('06:00 AM','09:00 AM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-only'">
-                <div class="cl-marker-pic-box">
-                  <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
-                  <div class="cl-marker-completed">
-                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
-  
-                </div>
-  
-                </div>
-                <div class="cl-marker-text ">  <% item.slots.order.order_no %> </div>
-                
-                
-              </div>
-              <div class="cl-customer-marker-continue  d-flex" v-if="checkAll('06:00 AM','09:00 AM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='continue'">
-                
-           
-                
-              </div>
-              <div class="cl-customer-end-only d-flex" v-if="checkAll('06:00 AM','09:00 AM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='end-only'">
-                
-                
-                <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
-                
-              </div>
+              </div>       
             </div>
            
           </div>
@@ -905,49 +847,34 @@
                  :color="primary"
               ></v-checkbox>
               <div class="mt-4 mx-auto">
-              <div class="cl-slot-card-title text-center mt-1">Slot 4</div> 
+              <div class="cl-slot-card-title text-center mt-1" >Slot 4</div> 
                  <div class="cl-slot-card-subtitle text-center ">09 AM - 12 PM</div> 
                 </div>
               </div>
             </div>
             </div>
-            <div class="marker-container mt-4" v-for="(item,index) in combineSlots" v-bind:key="index" >
-              <div class="cl-customer-start-end  d-flex" v-if="checkAll('09:00 AM','12:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-end'" data-toggle="modal" data-target="#cleanAgentModal">
-                <div class="cl-marker-pic-box">
-                  <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
-                  <div class="cl-marker-completed">
-                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
-  
-                </div>
-  
-                </div>
-                <div class="cl-marker-text ">  <% item.slots.order.order_no %> </div>
-                <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
-                
-              </div>
-              <div class="cl-customer-start-only d-flex" v-if="checkAll('09:00 AM','12:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-only'" data-toggle="modal" data-target="#cleanAgentModal">
-                <div class="cl-marker-pic-box">
-                  <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
-                  <div class="cl-marker-completed">
-                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
-  
-                </div>
-  
-                </div>
-                <div class="cl-marker-text ">  <% item.slots.order.order_no %> </div>
-                
-                
-              </div>
-              <div class="cl-customer-marker-continue  d-flex" v-if="checkAll('09:00 AM','12:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='continue'" data-toggle="modal" data-target="#cleanAgentModal">
-                
+            <div class="marker-container mt-4" v-for="(item,index) in slot[4].slots" v-bind:key="index" >
               
+              <div class="cl-dummy mt-4 mb-4" v-for="(dummy,dindex) in getRowDiff(item,slot[4].slots,index)">
+
               </div>
-              <div class="cl-customer-end-only d-flex" v-if="checkAll('09:00 AM','12:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='end-only'" data-toggle="modal" data-target="#cleanAgentModal">
-                
-                
-                <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
+          
+              
+              <div :class="item.classType+' '+item.color+' '+'d-flex'">
+                <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
+                  <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
+                  <div class="cl-marker-completed">
+                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+  
+                </div>
+  
+                </div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'"><% item.slots.cleaning_hours %></div>
                 
               </div>
+              
+              
             </div>
           </div>
           <div class="cl-slot-card">
@@ -966,9 +893,12 @@
               </div>
             </div>
             </div>
-            <div class="marker-container mt-4" v-for="(item,index) in combineSlots" v-bind:key="index">
-              <div class="cl-customer-start-end  d-flex" v-if="checkAll('12:00 PM','03:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-end'">
-                <div class="cl-marker-pic-box">
+            <div class="marker-container mt-4" v-for="(item,index) in slot[5].slots" v-bind:key="index">
+              <div class="cl-dummy mt-4 mb-4" v-for="(dummy,dindex) in getRowDiff(item,slot[5].slots,index)">
+
+              </div>
+              <div :class="item.classType+' '+item.color+' '+'d-flex'">
+                <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
                   <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
                   <div class="cl-marker-completed">
                     <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
@@ -976,34 +906,14 @@
                 </div>
   
                 </div>
-                <div class="cl-marker-text ">  <% item.slots.order.order_no %> </div>
-                <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'"><% item.slots.cleaning_hours %></div>
                 
               </div>
-              <div class="cl-customer-start-only d-flex" v-if="checkAll('12:00 PM','03:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-only'">
-                <div class="cl-marker-pic-box">
-                  <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
-                  <div class="cl-marker-completed">
-                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
-  
-                </div>
-  
-                </div>
-                <div class="cl-marker-text ">  <% item.slots.order.order_no %> </div>
-                
-                
-              </div>
-              <div class="cl-customer-marker-continue  d-flex" v-if="checkAll('12:00 PM','03:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='continue'">
-                
+            
               
-                
-              </div>
-              <div class="cl-customer-end-only d-flex" v-if="checkAll('12:00 PM','03:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='end-only'">
-                
-                
-                <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
-                
-              </div>
+             
+              
             </div>
             
           </div>
@@ -1023,9 +933,12 @@
               </div>
             </div>
             </div>
-            <div class="marker-container mt-4" v-for="(item,index) in combineSlots" v-bind:key="index">
-              <div class="cl-customer-start-end  d-flex" v-if="checkAll('03:00 PM','06:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-end'">
-                <div class="cl-marker-pic-box">
+            <div class="marker-container mt-4" v-for="(item,index) in slot[6].slots" v-bind:key="index">
+              <div class="cl-dummy mt-4 mb-4" v-for="(dummy,dindex) in getRowDiff(item,slot[6].slots,index)">
+
+              </div>
+              <div :class="item.classType+' '+item.color+' '+'d-flex'">
+                <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
                   <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
                   <div class="cl-marker-completed">
                     <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
@@ -1033,34 +946,13 @@
                 </div>
   
                 </div>
-                <div class="cl-marker-text ">  <% item.slots.order.order_no %> </div>
-                <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'"><% item.slots.cleaning_hours %></div>
                 
               </div>
-              <div class="cl-customer-start-only d-flex" v-if="checkAll('03:00 PM','06:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-only'">
-                <div class="cl-marker-pic-box">
-                  <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
-                  <div class="cl-marker-completed">
-                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
-  
-                </div>
-  
-                </div>
-                <div class="cl-marker-text ">  <% item.slots.order.order_no %> </div>
-                
-                
-              </div>
-              <div class="cl-customer-marker-continue  d-flex" v-if="checkAll('03:00 PM','06:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='continue'">
-                
               
-                
-              </div>
-              <div class="cl-customer-end-only d-flex" v-if="checkAll('03:00 PM','06:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='end-only'">
-                
-                
-                <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
-                
-              </div>
+              
+              
             </div>
           </div>
           <div class="cl-slot-card">
@@ -1079,9 +971,12 @@
               </div>
             </div>
             </div>
-            <div class="marker-container mt-4" v-for="(item,index) in combineSlots" v-bind:key="index">
-              <div :class="'cl-customer-start-end  d-flex '+item.class" v-if="checkAll('06:00 PM','09:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-end'">
-                <div class="cl-marker-pic-box">
+            <div class="marker-container mt-4" v-for="(item,index) in slot[7].slots" v-bind:key="index">
+              <div class="cl-dummy mt-4 mb-4" v-for="(dummy,dindex) in getRowDiff(item,slot[7].slots,index)">
+
+              </div>
+              <div :class="item.classType+' '+item.color+' '+'d-flex'">
+                <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
                   <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
                   <div class="cl-marker-completed">
                     <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
@@ -1089,34 +984,12 @@
                 </div>
   
                 </div>
-                <div class="cl-marker-text ">  <% item.slots.order.order_no %> </div>
-                <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'"><% item.slots.cleaning_hours %></div>
                 
               </div>
-              <div :class="'cl-customer-start-only d-flex '+item.class" v-if="checkAll('06:00 PM','09:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-only'">
-                <div class="cl-marker-pic-box">
-                  <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
-                  <div class="cl-marker-completed">
-                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
-  
-                </div>
-  
-                </div>
-                <div class="cl-marker-text ">  <% item.slots.order.order_no %> </div>
-                
-                
-              </div>
-              <div :class="'cl-customer-marker-continue  d-flex '+item.class" v-if="checkAll('06:00 PM','09:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='continue'">
-                
-                
-                
-              </div>
-              <div class="cl-customer-end-only d-flex" v-if="checkAll('06:00 PM','09:00 PM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='end-only'">
-                
-                
-                <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
-                
-              </div>
+             
+              
             </div>
           </div>
           <div class="cl-slot-card">
@@ -1135,9 +1008,12 @@
               </div>
             </div>
             </div>
-            <div class="marker-container mt-4" v-for="(item,index) in combineSlots" v-bind:key="index">
-              <div class="cl-customer-start-end  d-flex" v-if="checkAll('09:00 PM','12:00 AM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-end'">
-                <div class="cl-marker-pic-box">
+            <div class="marker-container mt-4" v-for="(item,index) in slot[8].slots" v-bind:key="index">
+              <div class="cl-dummy mt-4 mb-4" v-for="(dummy,dindex) in getRowDiff(item,slot[8].slots,index)">
+
+              </div>
+              <div :class="item.classType+' '+item.color+' '+'d-flex'">
+                <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
                   <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
                   <div class="cl-marker-completed">
                     <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
@@ -1145,34 +1021,13 @@
                 </div>
   
                 </div>
-                <div class="cl-marker-text ">  <% item.slots.order.order_no %> </div>
-                <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'"><% item.slots.cleaning_hours %></div>
                 
               </div>
-              <div class="cl-customer-start-only d-flex" v-if="checkAll('09:00 PM','12:00 AM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='start-only'">
-                <div class="cl-marker-pic-box">
-                  <img src="{% static 'files/images/profile.jpg'%}" class="cl-marker-profile-pic"/>
-                  <div class="cl-marker-completed">
-                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
-  
-                </div>
-  
-                </div>
-                <div class="cl-marker-text ">  <% item.slots.order.order_no %> </div>
-                
-                
-              </div>
-              <div class="cl-customer-marker-continue  d-flex" v-if="checkAll('09:00 PM','12:00 AM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='continue'">
-                
-                
-                
-              </div>
-              <div class="cl-customer-end-only d-flex" v-if="checkAll('09:00 PM','12:00 AM',item.slots.start_at,item.slots.end_at,item.slots.cleaning_hours)=='end-only'">
-                
-                
-                <div class="cl-marker-count"><% item.slots.cleaning_hours %></div>
-                
-              </div>
+              
+              
+              
             </div>
           </div>
           
@@ -1914,6 +1769,7 @@
 
 {% endblock %}
 {% block javascript %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
