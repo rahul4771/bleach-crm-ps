@@ -483,6 +483,10 @@ width:100% !important;
 }
 .marker-container{
     height:42px;
+    
+}
+.marker-container div{
+    position: relative;
 }
 .cl-dummy{
     height:42px;
@@ -517,6 +521,12 @@ width:100% !important;
     margin-right: 3px;
     margin-left: auto;
 
+}
+.cl-marker-user{
+    position: absolute;
+    right: 50px;
+    top: 10px;
+    font-size: 20px !important;
 }
 .cl-continue{
    
@@ -554,7 +564,7 @@ width:100% !important;
 }
 .cl-marker-completed{
     color: #ffffff;
-    position: absolute;
+    position: absolute !important;
     top: 1px;
     left: 30px;
     font-size: 16px;
@@ -563,6 +573,14 @@ width:100% !important;
 .cl-marker-check-icon{
     height:14px;
     width:14px !important;
+}
+.select-slot{
+    background:#EDF1F6;
+    padding:3px;
+    border-radius:5px;
+}
+.cl-right-divider{
+    border-right: 3px solid #CFD7E2;
 }
 
   @media only screen and (max-width: 600px) {
