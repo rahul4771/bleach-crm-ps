@@ -534,9 +534,9 @@ class DailySalesAPI(APIView):
 
 			for schedule in orderschedules:
 
-				if schedule[4] not in found:
-					schedules_list.append(schedule)
-				found.add(schedule[4])
+				#if schedule[4] not in found:
+				schedules_list.append(schedule)
+				#found.add(schedule[4])
 			print(found,schedules_list,"kio")
 
 			for schedule in schedules_list:
