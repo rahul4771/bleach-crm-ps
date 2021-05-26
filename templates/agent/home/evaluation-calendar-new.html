@@ -165,8 +165,11 @@
       </div>
       <div class="modal-body">
       <div class="d-flex cl-modal-icons">
+      {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'BOOKINGOFFICER' %}
+      {% else %}
         <img src="{% static 'files/icons/edit.png'%}" class="cl-modal-icon edit-evaluation" @click="editEval=!editEval"/>
         <img src="{% static 'files/icons/delete.png'%}" class="cl-modal-icon delete-evaluation" @click="delAlert=!delAlert"/>
+      {% endif %}
         <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" data-dismiss="modal" aria-label="Close" @click="closeModal()"/>
       </div>
       <div class="row" style="margin:0">
@@ -597,6 +600,7 @@ function load_evaluation(evaluation_detail_id,item){
     console.log(item,app.selectedDate,"uty")
     axios.get(url+'/api/evaluation-details/'+evaluation_detail_id)
     .then(function (response) {
+
       app.setEvaluators(response.data.evaluators_list)
       console.log(response.data.evaluation_time,response.data.evaluators_list,"evdata")
       
@@ -607,7 +611,7 @@ function load_evaluation(evaluation_detail_id,item){
             $('.booking-id').show();
             $('#evaluation-modal-border').removeClass("agent-border");
             $('#evaluation-modal-border').addClass("customer-border");
-            $('#evaluation-cancelled').hide();s
+            $('#evaluation-cancelled').hide();
 
             if (response.data.evaluation_status == 'EVALUATED'){
               $('.edit-evaluation').hide();
@@ -648,7 +652,7 @@ function load_evaluation(evaluation_detail_id,item){
       $('#evaluation_customer_mobile').text(response.data.customer_mobile);
       $('#evaluation_proposed_date').text(response.data.evaluation_date);
       $('#evaluation_proposed_time').text(response.data.evaluation_time);
-      $('#evaluation_address').html(''+response.data.apartment+','+response.data.floor+','+response.data.building+','+response.data.block+','+response.data.street+','+response.data.avenue+','+response.data.area+','+response.data.governorate+'');
+      $('#evaluation_address').html(response.data.customer_address);
       
       //for edit evaluation data
       app.selectedEvaluator = response.data.evaluator_id ;

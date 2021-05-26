@@ -178,6 +178,21 @@ class EvaluationDetailsList(APIView):
 			booking_id = None
 			customer_booking = None
 
+		# address appending to single item
+		if evaluation_details.address.floor  == None and evaluation_details.address.avenue  == None:
+			address_list = [evaluation_details.address.apartment, evaluation_details.address.street, evaluation_details.address.building, evaluation_details.address.block, evaluation_details.address.area.name, evaluation_details.address.governorate.name]
+		
+		elif evaluation_details.address.floor  == None:
+			address_list = [evaluation_details.address.apartment, evaluation_details.address.street, evaluation_details.address.building, evaluation_details.address.avenue, evaluation_details.address.block, evaluation_details.address.area.name, evaluation_details.address.governorate.name]
+		
+		elif evaluation_details.address.avenue  == None:
+			address_list = [evaluation_details.address.apartment, evaluation_details.address.floor, evaluation_details.address.street, evaluation_details.address.building, evaluation_details.address.block, evaluation_details.address.area.name, evaluation_details.address.governorate.name]
+		
+		else:
+			address_list = [evaluation_details.address.apartment, evaluation_details.address.floor, evaluation_details.address.street, evaluation_details.address.building, evaluation_details.address.avenue, evaluation_details.address.block, evaluation_details.address.area.name, evaluation_details.address.governorate.name]
+
+		separator = ", "
+
 		proposed_time = evaluation_details.proposed_time+timedelta(hours=3)
 		proposed_date = evaluation_details.proposed_time+timedelta(hours=3)
 		print(proposed_time.strftime('%I:%M %p'),proposed_date.strftime('%d-%m-%Y'),"evs")
@@ -187,7 +202,6 @@ class EvaluationDetailsList(APIView):
 		response_dict["evaluation_id"]=evaluation_details.evaluation.id 
 		response_dict["evaluation_detail_id"]=evaluation_details.id 
 		response_dict["area"]=evaluation_details.address.area.name 
-		response_dict["governorate"]=evaluation_details.address.governorate.name 
 		response_dict["evaluator"]=evaluation_details.evaluator.name 
 		response_dict["evaluator_id"]=evaluation_details.evaluator.id
 		response_dict["evaluation_status"]=evaluation_details.status
@@ -199,12 +213,7 @@ class EvaluationDetailsList(APIView):
 		response_dict["customer"]=evaluation_details.evaluation.customer.name 
 		response_dict["customer_mobile"]=evaluation_details.evaluation.customer.mobile_number 
 		response_dict["location"]=evaluation_details.address.location 
-		response_dict["block"]=evaluation_details.address.block 
-		response_dict["avenue"]=evaluation_details.address.avenue 
-		response_dict["building"]=evaluation_details.address.building 
-		response_dict["street"]=evaluation_details.address.street 
-		response_dict["floor"]=evaluation_details.address.floor 
-		response_dict["apartment"]=evaluation_details.address.apartment 
+		response_dict["customer_address"]=separator.join(address_list)
 		response_dict["evaluation_date"]=proposed_date.strftime('%d-%m-%Y')
 		response_dict["evaluation_time"]=proposed_time.strftime('%I:%M %p')
 		response_dict["evaluation_slot"]=proposed_time.strftime('%H:%M')
@@ -525,10 +534,9 @@ class DailySalesAPI(APIView):
 
 			for schedule in orderschedules:
 
-				if schedule[4] not in found:
-					schedules_list.append(schedule)
-				found.add(schedule[4])
-			print(found,schedules_list,"kio")
+				#if schedule[4] not in found:
+				schedules_list.append(schedule)
+				#found.add(schedule[4])
 
 			for schedule in schedules_list:
 

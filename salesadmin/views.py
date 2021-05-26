@@ -1690,10 +1690,8 @@ class DailySales(View):
 			schedules_list = []
 
 			for schedule in orderschedules:
+				schedules_list.append(schedule)
 
-				if schedule[4] not in found:
-					schedules_list.append(schedule)
-				found.add(schedule[4])
 
 			print(schedules_list,"listss")
 

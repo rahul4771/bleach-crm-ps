@@ -229,7 +229,7 @@ class AdminHome(IsBookingOfficer,View):
 		#remove if subscription to pay date
 		if pending_payments:
 			for payment in pending_payments:
-				if payment.evaluation.payment_method == 'POSTPAID':
+				if payment.evaluation.payment_method == 'POSTPAID' and payment.cleaning_count :
 					very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
 					if very_latest_cleaning.work_status != 'CLEANING_FULFILLED':
 						pending_payments = pending_payments.exclude(id=payment.id)

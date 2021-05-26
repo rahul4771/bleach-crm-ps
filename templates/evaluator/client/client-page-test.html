@@ -182,7 +182,7 @@
         <div class="expired-bg chip">
             Expired
         </div>
-        {% else %}
+        {% elif not order.evaluation.quatation_status %}
         <div class="evaluating-bg chip">
             Evaluating
         </div>
