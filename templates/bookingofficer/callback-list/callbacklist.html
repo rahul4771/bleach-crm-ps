@@ -91,12 +91,12 @@
 <thead>
 <tr>
 <th>Order Number</th>
-<th data-hide="phone,tablet">Name</th>
-{% comment %} <th data-hide="phone,tablet">Service Type</th>
-<th data-hide="phone">Evaluator</th> {% endcomment %}
+<th data-hide="phone,tablet">Customer Name</th>
+{% comment %} <th data-hide="phone,tablet">Service Type</th> {% endcomment %}
+<th data-hide="phone">Customer Mobile</th>
 <th class="align-center" data-hide="phone,tablet">Status</th>
 <th class="align-center" data-hide="phone,tablet">Callback Status</th>
-<th data-hide="phone,tablet">&nbsp;</th>
+{% comment %} <th data-hide="phone,tablet">&nbsp;</th> {% endcomment %}
 </tr>
 </thead>
 <tbody>
@@ -105,7 +105,7 @@
     <tr>
     <td {% if evaluation.quatation_status == 'REJECTED' %}class="red-line"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line"{% elif evaluation.quatation_status == 'EXPIRED' %}class="orange-line"{%else%}class="blue-line"{%endif%}>{{evaluation.evaluation_id}}</td>    
     <td>{{evaluation.customer.name|default_if_none:''}}</td>
-
+    <td>{{evaluation.customer.mobile_number|default_if_none:''}}</td>
     {% comment %} <td>{% for evaluation_detail in evaluation.details_evaluation %}
      {% for evaluation_book in evaluation_detail.evaluation_book %}
      {{evaluation_book.service_type.name}},
@@ -124,25 +124,21 @@
     </td>
 
     <td>
-    <form class="callbackform" method="GET" >{% csrf_token %}
-    
-    <input type="hidden" name="callback_order" class="callback_order" value="" />
-    <input type="hidden" name="action_type" value="callback" />
     
     <label for="favcity" style="width:80%;"> 
     <select class="callback" onchange="callbacklist(this.value,{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})">
-    <option value="">--SELECT CALLBACK OPTION--</option>
+    <option value="">--SELECT OPTION--</option>
     <option value="CALLBACK_LATER" {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'CALLBACK_LATER' %}selected{% endif %}{% endfor %}>CALLBACK LATER</option>
     <option value="WAITING" {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'WAITING' %}selected{% endif %}{% endfor %}>WAITING</option>
     <option value="COMPLETED" {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'COMPLETED' %}selected{% endif %}{% endfor %}>COMPLETED</option>
     </select>
     </label> 
-    </form>
+    
     </td>
 
-    <td class="align-center">
-    {% comment %} <a href="{% url 'booking-officer:bookingofficer-makequatation1edit' evaluation.customer.id evaluation.id %}"><img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon"></a> {% endcomment %}
-     </td>
+    {% comment %}<td class="align-center">
+     <a href="{% url 'booking-officer:bookingofficer-makequatation1edit' evaluation.customer.id evaluation.id %}"><img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon"></a> 
+     </td>{% endcomment %}
 
     </tr>    
     {% empty %}
@@ -335,8 +331,15 @@ $("#governorate_filter_id").change(function(){
 
 });
 
-function callbacklist(order_id,status){
+function callbacklist(status,order_id){
     console.log(order_id,status,"callbak");
+    
+    axios.get(url+'/api/callback-status-update/',{ params: { 'order_id':order_id, 'callback_status': status } })
+    .then(function (response) {
+      if (response.data.success == true){
+        window.location.reload();
+      }
+    })
 }
 
 function set_params_go(args)

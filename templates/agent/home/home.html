@@ -163,17 +163,19 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
 {% endcomment %}
 
 <!--calendar switching-->
-{% if calendar_type == "old-calendar" %}
-<!--old evaluation calendar-->
-{% include 'agent/home/old-evaluation-calendar.html' %}
-<!--old evaluation calendar end-->
 
-{% else %}
+{% comment %} <!--old evaluation calendar-->
+{% include 'agent/home/old-evaluation-calendar.html' %}
+<!--old evaluation calendar end--> {% endcomment %}
+
+<!--new evaluation calendar-->
+{% include 'agent/home/old-evaluation-calendar.html' %}
+<!--new evaluation calendar end-->
 
 <!--new evaluation calendar-->
 {% include 'agent/home/evaluation-calendar-new.html' %}
 <!--new evaluation calendar end-->
-{% endif %}
+
 <!--calendar switching-->
 
 
@@ -1587,7 +1589,7 @@ $("#followup_close_popup_close").click(function(){
 function set_params_go(args)
 {
 var url='{% url 'agent:agentdash-board' %}';
-var params={cleaning_calendar_date:$('#cleaning_calendar').val(),evaluation_oldcalendar_date:$('#evaluation_calendar').val(),evaluation_newcalendar_date:$('#evaluation_calendar2').val(),
+var params={cleaning_calendar_date:$('#cleaning_calendar').val(),evaluation_calendar_date:$('.evaluation_calendar').val(),
 };
 for(key in args) 
     params[key]=args[key];

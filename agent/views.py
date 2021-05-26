@@ -904,6 +904,45 @@ class CleaningCallendar(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 
+class CleaningCallendarCleaningPopup(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request):
+		response_dict            = {}
+		response_dict['success'] = False
+
+		schedule_start_at	        = datetime.strptime(request.GET.get('cleaning_start'),'%d-%m-%Y %I:%M %p')
+		schedule_end_at	            = datetime.strptime(request.GET.get('cleaning_end'),'%d-%m-%Y %I:%M %p')
+		evaluation_id               = request.GET.get('evaluation_id')
+		
+		#cleaning schedules
+		cleaning_schedules                  = OrderScheduler.objects.filter(evaluation_details__evaluation__evaluation_id=evaluation_id,start_at=schedule_start_at,end_at=schedule_end_at).select_related('evaluation_details__evaluator','order_scheduler_book').prefetch_related('cleaning_team_order_scheduler__team_leader')
+		response_dict['cleaning_details']   = CleaningScheduleSerializer(instance=cleaning_schedules,many=True).data
+
+
+		response_dict['success'] = True
+
+		return Response(response_dict,HTTP_200_OK)
+
+class CleaningCallendarFollowupPopup(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request):
+		response_dict            = {}
+		response_dict['success'] = False
+
+		followup_scheduler_id    = request.GET.get('followup_scheduler_id')
+		
+		#followup schedule
+		followup_schedule                     = FollowUpScheduler.objects.filter(id=followup_scheduler_id).order_by('start_at').select_related('follow_up','customer_address').prefetch_related('followupteam_followupschedule__team_leader')
+		response_dict['followup_cleanings']   = FollowupScheduleSerializer(instance=followup_schedule,many=True).data
+
+		
+		response_dict['success'] = True
+
+		return Response(response_dict,HTTP_200_OK)
+
+
 # Create your views here.
 class AgentHome(IsAgent,View):
 	def get(self,request):
@@ -950,22 +989,22 @@ class AgentHome(IsAgent,View):
 		lastmonth_average_feedback	  = feedbacks.filter(response_date__gte=count_today_end-timedelta(60),response_date__lte=count_today_end-timedelta(30)).aggregate(Avg('rating'))['rating__avg']	
 		
 		#Evaluation details of each evaluator for evaluation table
-		evaluation_oldcalendar_date	= request.GET.get('evaluation_oldcalendar_date')
-		evaluation_newcalendar_date	= request.GET.get('evaluation_newcalendar_date')
+		# evaluation_oldcalendar_date	= request.GET.get('evaluation_oldcalendar_date')
+		evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
 
 		try:
-			if evaluation_newcalendar_date:
-				evaluation_date = datetime.strptime(evaluation_newcalendar_date,'%d-%m-%Y')	
-			else:
-				evaluation_date = datetime.strptime(evaluation_oldcalendar_date,'%d-%m-%Y')	
+			# if evaluation_newcalendar_date:
+			evaluation_date = datetime.strptime(evaluation_calendar_date,'%d-%m-%Y')	
+			# else:
+			# 	evaluation_date = datetime.strptime(evaluation_oldcalendar_date,'%d-%m-%Y')	
 		except:
 			evaluation_date = timezone.now().replace(tzinfo=None)
 
 		# evaluation calendar switching 
-		if evaluation_date < datetime.now().replace(day=23,month=5,year=2021,hour=0,minute=0,second=0,microsecond=0):
-			calendar_type = "old-calendar"
-		else:
-			calendar_type = "new-calendar"
+		# if evaluation_date < datetime.now().replace(day=12,month=5,year=2021,hour=0,minute=0,second=0,microsecond=0):
+		# 	calendar_type = "old-calendar"
+		# else:
+		# 	calendar_type = "new-calendar"
 
 		evaluation_date_start  = evaluation_date.replace(hour=0,minute=0,second=0,microsecond=0)
 		evaluation_date_end    = evaluation_date_start+timedelta(1)
@@ -1065,7 +1104,7 @@ class AgentHome(IsAgent,View):
 		#followup confirmation for special user
 		followup_to_be_closed = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_IN_PROGRESS').select_related('investigation','investigation__order_schedule__customer_address__area','investigation__order_schedule__order_scheduler_book__service_type','investigation__investigator','investigation__order__evaluation__customer').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True),to_attr='followupschedulers'),Prefetch('investigation__paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscount'),Prefetch('investigation__reporting_investigation',queryset=Reporting.objects.filter(is_active=True),to_attr='internalreports'),Prefetch('investigation__buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift')).annotate(followupcount=Sum(Case(When(follow_up_of_scheduler__is_active=True,then=1),default=0,output_field=IntegerField())), followupcompletedcount=Sum(Case(When(follow_up_of_scheduler__work_status='FOLLOW_UP_CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), paybackcount=Sum(Case(When(investigation__paybackdiscount_investigation__is_active=True,then=1),default=0,output_field=IntegerField())), paybackcompletedcount=Sum(Case(When(investigation__paybackdiscount_investigation__is_completed=True,then=1),default=0,output_field=IntegerField())), buybackpromocodecount=Sum(Case(When(investigation__buybackpromocodegift_investigation__is_active=True,then=1),default=0,output_field=IntegerField())), buybackpromocodecompletedcount=Sum(Case(When(investigation__buybackpromocodegift_investigation__is_completed=True,then=1),default=0,output_field=IntegerField())) ,internalreportcount=Sum(Case(When(investigation__reporting_investigation__is_active=True,then=1),default=0,output_field=IntegerField())))
 				
-		return render(request,'agent/home/home.html',{'calendar_type':calendar_type,'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'workers':workers,"customer_addresses":customer_addresses,"followup_to_be_closed":followup_to_be_closed,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules})
+		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'workers':workers,"customer_addresses":customer_addresses,"followup_to_be_closed":followup_to_be_closed,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules})
 
 
 	def post(self,request):
@@ -2640,18 +2679,23 @@ class ClientOrdersTest(IsAgent,View):
 			client_details = None
 
 		orders = Order.objects.filter(evaluation__customer_id=client_id).select_related('evaluation__customer').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluationbooks')),to_attr='evaluationdetails'),Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),'investigation_orders__followup_investigation').annotate(total_tickets=Count('investigation_orders'),completed_tickets=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))
-
 		#COUNT
-		total_services   = orders.count() 
+		total_services   = orders.count()
 		closed_services  = orders.filter(order_status='ORDER_CLOSED').count()
 		ongoing_services = total_services-closed_services
 		
 		total_paid       = orders.aggregate(Sum('amount_paid'))['amount_paid__sum']
 		balance          = orders.aggregate(Sum('remining_amount'))['remining_amount__sum']
 
-		total_tickets    = orders.aggregate(Sum('total_tickets'))['total_tickets__sum']
+	
+		total_tickets    = orders.aggregate(Sum('total_tickets'))['total_tickets__sum']	
 		completed_tickets= orders.aggregate(Sum('completed_tickets'))['completed_tickets__sum']
-		active_tickets   = total_tickets-completed_tickets
+		if total_tickets == None:
+			total_tickets = 0
+		if completed_tickets == None:
+			completed_tickets = 0 	
+		active_tickets   = total_tickets-completed_tickets 
+
 
 		return render(request,"evaluator/client/client-page-test.html",{"client_details":client_details,"orders":orders,"total_services":total_services,"closed_services":closed_services,"ongoing_services":ongoing_services,"total_paid":total_paid,"balance":balance,"total_tickets":total_tickets,"completed_tickets":completed_tickets,"active_tickets":active_tickets})
 

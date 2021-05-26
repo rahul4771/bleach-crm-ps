@@ -126,6 +126,7 @@ const app=  new Vue({
       methods:{
         closeModal(){
           this.editEval=false
+          this.delAlert=false
         },
           setEvaluators(evaluatorList){
             this.evaluators=evaluatorList
