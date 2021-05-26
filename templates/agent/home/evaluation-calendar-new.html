@@ -600,6 +600,7 @@ function load_evaluation(evaluation_detail_id,item){
     console.log(item,app.selectedDate,"uty")
     axios.get(url+'/api/evaluation-details/'+evaluation_detail_id)
     .then(function (response) {
+
       app.setEvaluators(response.data.evaluators_list)
       console.log(response.data.evaluation_time,response.data.evaluators_list,"evdata")
       
@@ -651,7 +652,7 @@ function load_evaluation(evaluation_detail_id,item){
       $('#evaluation_customer_mobile').text(response.data.customer_mobile);
       $('#evaluation_proposed_date').text(response.data.evaluation_date);
       $('#evaluation_proposed_time').text(response.data.evaluation_time);
-      $('#evaluation_address').html(''+response.data.apartment+','+response.data.floor+','+response.data.building+','+response.data.block+','+response.data.street+','+response.data.avenue+','+response.data.area+','+response.data.governorate+'');
+      $('#evaluation_address').html(response.data.customer_address);
       
       //for edit evaluation data
       app.selectedEvaluator = response.data.evaluator_id ;
