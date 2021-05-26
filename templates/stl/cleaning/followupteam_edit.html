@@ -152,7 +152,7 @@
  
  
 <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
- <input type="hidden" name="no_of_cleaners" value="{{followup_schedule.follow_up.no_of_cleaners}}">
+ <input type="hidden" name="followupschedule_id" value="{{followup_schedule.id}}">
 
  <div class="common-sub-head align-left">Assign Followup Team</div> 
     <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
@@ -231,7 +231,7 @@
 </div><!--commnDiv-border--> 
 
 <br> 
- <div align="center"><input class="assignButton" name="addevaluator" type="button" value="Assign" onclick="submitAnyForm(this);"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>     	
+ <div align="center"><input class="assignButton" name="addevaluator" type="button" value="Assign" onclick="submitAnyForm(this);"> <input class="cancel-Button" name="cancel" type="button"></div>     	
 <br> <br>
 </form>      
         
