@@ -77,6 +77,33 @@ const app=  new Vue({
         selectedTime:'',
         today:'',
         timeSlots:[],
+        parsedSlots:[],
+        slot:{
+          "1":{
+            slots:[]
+          },
+          "2":{
+            slots:[]
+          },
+          "3":{
+            slots:[]
+          },
+          "4":{
+            slots:[]
+          },
+          "5":{
+            slots:[]
+          },
+          "6":{
+            slots:[]
+          },
+          "7":{
+            slots:[]
+          },
+          "8":{
+            slots:[]
+          },
+        },
         url:'https://test.bleach-kw.com'
       },
       mounted(){
@@ -168,6 +195,16 @@ const app=  new Vue({
             this.slotDate = slotDay + "-" + slotMonth + "-" + slotYear;
             
           },
+          getRowDiff(item,slots,index){
+            if(slots.length>0){
+              if((index+1)!=item.row)
+              return (item.row-(index+1))
+            }
+            else{
+              return 0
+            }
+
+          },
           getEvaluationSlots(){
             this.formatDate()
             this.booking.booking_date=this.slotDate
@@ -196,7 +233,37 @@ const app=  new Vue({
             this.cleaningDate=this.selectedDate.split('-')[2]+'-'+this.selectedDate.split('-')[1]+'-'+this.selectedDate.split('-')[0]
           },
           getSlots(){
-            axios.get(this.url+"/agent/cleaningcallendar?cleaning_callendar_date=31-07-2021").then((response) => {
+           // console.log($('#cl_cleaning_calendar').val())
+            this.cleaningDate=$('#cl_cleaning_calendar').val()
+            this.combineSlots=[]
+            this.slots={}
+           // this.slot={}
+           this.slot={
+            "1":{
+              slots:[]
+            },
+            "2":{
+              slots:[]
+            },
+            "3":{
+              slots:[]
+            },
+            "4":{
+              slots:[]
+            },
+            "5":{
+              slots:[]
+            },
+            "6":{
+              slots:[]
+            },
+            "7":{
+              slots:[]
+            },
+            "8":{
+              slots:[]
+            }}
+            axios.get(this.url+"/agent/cleaningcallendar?cleaning_callendar_date="+this.cleaningDate).then((response) => {
                 this.slots = response.data;
                 for(var i=0;i<this.slots.notapproved_cleanings.length;i++){
                    
@@ -213,7 +280,194 @@ const app=  new Vue({
                     slot.order={order_no:slot.follow_up.ticket_no}
                     this.combineSlots.push({type:'followup',class:'followup-cleaning-bg',slots:slot})
                 }
+                this.parseSlots()
               })
+          },
+          parseSlots(){
+            for(var i=0;i<this.combineSlots.length;i++){
+                var startdate=this.combineSlots[i].slots.start_at.split(' ')[0]
+                var enddate=this.combineSlots[i].slots.end_at.split(' ')[0]
+                var startslot=this.combineSlots[i].slots.start_at.split(' ')[1]+' '+this.combineSlots[i].slots.start_at.split(' ')[2]
+                var endslot=this.combineSlots[i].slots.end_at.split(' ')[1]+' '+this.combineSlots[i].slots.end_at.split(' ')[2]
+                var slots=[]
+                if(startdate==enddate && parseInt(startslot.split(':')[0])%3==0 && parseInt(endslot.split(':')[0])%3==0 && parseInt(startslot.split(':')[1])==0 && parseInt(endslot.split(':')[1])==0){
+                  var color=''
+                  var slot=moment('12:00 AM', 'h:mma')
+                  var limit=moment('11:55 PM', 'h:mma')
+                  var beginningTime = moment(startslot, 'h:mma');
+                  var endTime = moment(endslot, 'h:mma');
+                  if(this.combineSlots[i].type!='followup')
+                  {
+                  if(this.combineSlots[i].slots.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE'){
+                    color='onetime-cleaning-bg'
+                  }
+                  else if(this.combineSlots[i].slots.order_scheduler_book.cleaning_policy=='SUBSCRIPTION'){
+                    color='subscription-cleaning-bg'
+                  }
+                
+                  if(this.combineSlots[i].slots.work_status=='CLEANING_CANCELLED')
+                  {
+                    color='rejected-bg'
+                  }
+                }
+                  if(this.combineSlots[i].type=='followup')
+                  {
+                    color='followup-cleaning-bg'
+                  }
+                  while(slot.isBefore(limit)){
+                    if(slot.isBefore(endTime) && slot.isSameOrAfter(beginningTime)){
+                      
+                      if(slot.isSame(beginningTime) && !(moment(slot).add(3, 'hours')).isSame(endTime)){
+                        var slotData={
+                          slot:moment(slot).format('hh:mm A'),
+                          classType:'cl-start-only',
+                          color:color,
+                          startTime:startslot,
+                          endTime:endslot,
+                          startDate:startdate,
+                          endDate:enddate,
+                          row:'',
+                          slots:this.combineSlots[i].slots
+
+                        }
+                           
+                      }
+                      else if(slot.isSame(beginningTime)&& (moment(slot).add(3, 'hours')).isSame(endTime)){
+                        var slotData={
+                          slot:moment(slot).format('hh:mm A'),
+                          classType:'cl-start-end',
+                          color:color,
+                          startTime:startslot,
+                          endTime:endslot,
+                          startDate:startdate,
+                          endDate:enddate,
+                          row:'',
+                          slots:this.combineSlots[i].slots
+                         
+
+                        }
+                           
+                      }
+                      else if(!slot.isSame(beginningTime) && (moment(slot).add(3, 'hours')).isSame(endTime)){
+                        var slotData={
+                          slot:moment(slot).format('hh:mm A'),
+                          classType:'cl-end-only',
+                          color:color,
+                          startTime:startslot,
+                          endTime:endslot,
+                          startDate:startdate,
+                          endDate:enddate,
+                          row:'',
+                          slots:this.combineSlots[i].slots
+
+                        }
+
+                      }
+                      else{
+                        var slotData={
+                          slot:moment(slot).format('hh:mm A'),
+                          classType:'cl-continue',
+                          color:color,
+                          startTime:startslot,
+                          endTime:endslot,
+                          startDate:startdate,
+                          endDate:enddate,
+                          row:'',
+                          slots:this.combineSlots[i].slots
+
+                        }
+
+                      }
+                      console.log("slot data is"+JSON.stringify(slotData))
+                      this.parsedSlots.push(slotData)
+                      var slotFormatted=moment(slot).format('hh:mm A')
+                  console.log("sloformatted is "+slotFormatted)
+                  if(slotFormatted=='12:00 AM'){
+                    slots.push(1)
+                    this.slot["1"].slots.push(slotData)
+                  }
+                  else if(slotFormatted=='03:00 AM'){
+                    slots.push(2)
+                    this.slot["2"].slots.push(slotData)
+                  }
+                  else if(slotFormatted=='06:00 AM'){
+                    slots.push(3)
+                    this.slot["3"].slots.push(slotData)
+                  }
+                  else if(slotFormatted=='09:00 AM'){
+                    slots.push(4)
+                    this.slot["4"].slots.push(slotData)
+                  }
+                  else if(slotFormatted=='12:00 PM'){
+                    slots.push(5)
+                    this.slot["5"].slots.push(slotData)
+                  }
+                  else if(slotFormatted=='03:00 PM'){
+                    slots.push(6)
+                    this.slot["6"].slots.push(slotData)
+                  }
+                  else if(slotFormatted=='06:00 PM'){
+                    slots.push(7)
+                    this.slot["7"].slots.push(slotData)
+                  }
+                  else if(slotFormatted=='09:00 PM'){
+                    slots.push(8)
+                    this.slot["8"].slots.push(slotData)
+                  }
+                      console.log("end time :" +endslot+",start time :"+startslot+",slot :"+moment(slot).format('hh:mm A'))
+                  }
+                 
+                  
+                  slot=moment(slot).add(3, 'hours');  
+                  }
+                  console.log("slots:" +slots)
+                  var rowno=this.setRow(slots)
+                  console.log("row no:" +rowno)
+                  for(var j=0;j<slots.length;j++){
+                    var slotind=slots[j]
+                    if(this.slot[slotind].slots.length>0){
+                      this.slot[slotind].slots[(this.slot[slotind].slots.length-1)].row=rowno
+                    }
+                   
+                  }
+                 
+                  
+                }
+            }
+          },
+          setRow(slots){
+           /* var max=this.slot[slots[0]].slots.length
+            var rows =[]
+            if(max>0)
+            {
+              for(var j=0;j<max;j++){
+                rows.push(this.slot[slots[0]].slots[j].row)
+              }
+            }*/
+            var max=0
+            var rows=[]
+            
+            var maxslots=[]
+            for(var i=0;i<slots.length;i++){
+              maxslots.push(this.slot[slots[i]].slots.length)
+              if(this.slot[slots[i]].slots.length>max){
+                max=this.slot[slots[i]].slots.length
+                for(var j=0;j<max;j++){
+                  rows.push(this.slot[slots[i]].slots[j].row)
+                }
+
+              }
+            }
+            
+            console.log("slots are "+JSON.stringify(maxslots)+"max is:" +max)
+            if(rows.length>0){
+              if(max<(Math.max(...rows)+1)){
+                max=Math.max(...rows)+1
+              }
+              console.log("rows are "+JSON.stringify(rows)+"max is:" +max)
+            }
+           
+            return max
           },
           startChecker(start,end,hour){
               start=start.split(':')[0]

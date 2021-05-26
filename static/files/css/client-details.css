@@ -177,3 +177,15 @@ input[type="checkbox"]:checked {
 .company-details{
     display:none;
 }
+.restrict-input-btn{
+    background: none;
+    outline: none;
+    border: none;
+}
+.restrict-input-btn:hover{
+    color:#ffffff !important;
+    background:none  !important;
+    outline: none !important;
+    border: none !important;
+}
+
