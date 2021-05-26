@@ -1,8 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-<div class="wrapper">
-{% include "bookingofficer/common/header.html" %}    
+
+<div class="wrapper" id="app">
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+<link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
+{% include "bookingofficer/common/header.html" %}
+<v-app>
+
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
@@ -101,7 +108,7 @@
         {{order_cancell_cashback.return_amount|floatformat:'3'}}
         </td>
         <td>
-        <span class="clickable-row red-bg" data-href="{% url 'booking-officer:bookingofficer-cancel-order' order_cancell_cashback.id %}">Click to Confirm</span>
+        <span class="clickable-row red-bg" data-href="{% url 'booking-officer:cancell-order' order_cancell_cashback.id %}">Click to Confirm</span>
         </td>
         </tr>
         {% endfor %}
@@ -356,98 +363,9 @@
     {% endif %}
 
 
-{% if evaluation_details %}
-<div class="white-wrapper"><!--white-wrapper-->
-
-<div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
-
-<div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
-<h2 class="h2">Evaluation Calendar</h2>
-{% comment %} <a href='{% url 'agent:email-view'%}'>sendmail</a> {% endcomment %}
-</div>
-
-<div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
-<div class="date-wrapper"><!--date-wrapper-->
-            <div class="date-wrapper-inner"><!--date-wrapper-inner-->
-            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type="text" id="evaluation_calendar" value="{{evaluation_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
-            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
-            <button class='today-date current-date'>Today</button>
-            </div><!--date-wrapper-inner-->
-</div><!--date-wrapper-->
-</div>
-
-</div>
-
-<div id="table-scroll" class="table-scroll"><!--table-scroll-->
-<div class="table-wrap"><!--table-wrap-->
-<table class="eval-table">
-<thead>
-<tr>
-<th bgcolor="#eee" width="4.54%" class="fixed-side padding" scope="col">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">00 AM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">01 AM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">02 AM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">03 AM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">04 AM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">05 AM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">06 AM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">07 AM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">08 AM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">09 AM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">10 AM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">11 AM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">12 PM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">01 PM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">02 PM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">03 PM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">04 PM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">05 PM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">06 PM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">07 PM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">08 PM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">09 PM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">10 PM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">11 PM</th>
-<th class="theadbg" width="4.54%">&nbsp;</th>
-<th class="theadbg" width="4.54%" scope="col">00 AM</th>
-</tr>
-</thead>
-<tbody>
-{% for evaluator in evaluation_details %}
-<tr id="evaluator{{evaluator.id}}">
-<th width="4.54%" bgcolor="#eee" class="fixed-side"><img {% if evaluator.profile_image %} src="{{evaluator.profile_image.url}}" {% else %} src="{% static 'files/images/profile-pic.jpg' %}" {% endif %} class="profile-avatar"></th>
-</tr>
-{% endfor %}
-</tbody>
-</table>
-</div><!--table-wrap-->
-</div><!--table-scroll-->
-</div><!--white-wrapper-->
-{% endif %}
+<!--new evaluation calendar-->
+{% include 'agent/home/evaluation-calendar-new.html' %}
+<!--new evaluation calendar-->
  
 <div class="white-wrapper"><!--white-wrapper-->
 
@@ -550,39 +468,6 @@
         </div>  <!--full-wrapp-pop-->
     </div><!--modal-wrapper modal-transition-->
 </div><!--followup graph popup-->
-
-<!-- edit_evaluation_popup -->
-<div class="modal-popup-wrapper"><!--modal-popup-wrapper-->
-    <div class="modal-overlay modal-toggle"></div>
-    <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
-        <div class="modal-header"><!--modal-header-->
-        <button class="modal-close edit_evaluation collapsible0-close">X</button>
-        </div><!--modal-header-->
-    <div class="modal-body"><!--modal-body-->
-    <div class="modal-content"><!--modal-content-->
-    <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
-            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-  <div class="ticket-form-left"><!--ticket-form-left-->
-    
-    <table width="100%" border="0" class="popup-tble1">  
-                <tr>
-                    <td valign="center"><div class="blc-number" id="area_evaluation_id"></div><span id="address_evaluation_id"></span></td>
-                    <td><a id="client_url"><div class="bold-text" id="customername_evaluation_id"></div></a><div id="mobileno_evaluation_id"></div></td>
-                </tr>
- 
-            <tr>
-            <td colspan="3">Evaluation Date:<strong><span class="blue-text" id="proposed_date_evaluation_id"></span></strong> &nbsp;Evaluation Time:<strong><span class="blue-text" id="proposed_time_evaluation_id"></span></strong> &nbsp;Evaluator:<strong><span class="blue-text" id="evaluator_name_evaluation_id"></span></strong></td>
-            </table>
-    
-      </div><!--ticket-form-left--> 
-  </div><!--ticket-wrapper-row ticket-forms-boxes-->
-</div><!--ticket-wrapper-full--> 
-        
-    </div><!--modal-content-->
-    </div><!--modal-body-->
-    </div><!--modal-wrapper modal-transition-->
-</div><!--modal-popup-wrapper-->
-<!-- /edit_evaluation_popup -->
 
 
 <!-- edit_cleaning_popup -->
@@ -734,6 +619,14 @@
 
 {% endblock %}
 {% block javascript %}
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <!-- calendar-->
+  <script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
+<script src="{% static 'files/js/calendar/main.js' %}"></script>
+<!--calender-->
+
 <script type="text/javascript">
 //previous time limit
     function datetimecheck(ftime,fdate,mode){
@@ -1019,108 +912,7 @@ $('document').ready(function(){
         });
 
     salestargetcalculation();
-    //Evaluation Callender
-        {% for evaluator in evaluation_details %}
-            
-            {% if evaluator.evaluation_details %}
-
-                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            
-                evaluator_timings_list =[]
-                {% for evaluation in evaluator.evaluation_details %}
-                    proposed_timing_string      = '{{evaluation.proposed_time|date:'H'}}';
-                    proposed_timing             = parseInt(proposed_timing_string)
-                    evaluator_timings_list.push(proposed_timing);
-                {% endfor %}
-                for(i=0;i<=23;i++)
-                {
-                    if(evaluator_timings_list.includes(i))
-                    {
-                        same_slote_count = 0
-                        {% for evaluation in evaluator.evaluation_details %}
-                            proposed_timing_string      = '{{evaluation.proposed_time|date:'H'}}';
-                            proposed_timing             = parseInt(proposed_timing_string)
-                        
-                        if(i == proposed_timing)
-                            {
-                              same_slote_count += 1
-                              if(same_slote_count == 1)
-                              {
-                                $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a class="edit_evaluation bold-text clickable-cursor {% if evaluation.status == 'EVALUATED' %}gray-text-evaluation{% endif %}" data-blcno="{{evaluation.evaluation.evaluation_id}}" data-customer_name="{{evaluation.evaluation.customer.name}}" data-customer_id="{{evaluation.evaluation.customer.id}}" data-area="{{evaluation.address.area.name}}" data-governorate="{{evaluation.address.governorate.name}}" data-block="{{evaluation.address.block}}" data-apartment="{{evaluation.address.apartment}}" data-street="{{evaluation.address.street}}" data-building="{{evaluation.address.building}}" data-avenue="{{evaluation.address.avenue}}"  data-mobile_no="{{evaluation.evaluation.customer.mobile_number}}" data-proposed_date="{{evaluation.proposed_time|date:'d-m-Y'}}" data-proposed_time="{{evaluation.proposed_time|date:'h:i A'}}" data-evaluator_name="{{evaluation.evaluator.name}}" data-notes="{{evaluation.evaluator_note|escapejs|default_if_none:''}}" data-customer_id="{{evaluation.evaluation.customer.id}}" data-evaluator_id="{{evaluation.evaluator.id}}" data-address_id="{{evaluation.address.id}}" data-id="{{evaluation.id}}">{{evaluation.address.area.name}}</a></td>');
-                              }
-                              else
-                              {
-                                $("#evaluator{{evaluator.id}} td:last").append('<br><a class="edit_evaluation bold-text clickable-cursor {% if evaluation.status == 'EVALUATED' %}gray-text-evaluation{% endif %}" data-blcno="{{evaluation.evaluation.evaluation_id}}" data-customer_name="{{evaluation.evaluation.customer.name}}" data-customer_id="{{evaluation.evaluation.customer.id}}"  data-area="{{evaluation.address.area.name}}" data-governorate="{{evaluation.address.governorate.name}}" data-block="{{evaluation.address.block}}"  data-apartment="{{evaluation.address.apartment}}" data-street="{{evaluation.address.street}}" data-building="{{evaluation.address.building}}" data-avenue="{{evaluation.address.avenue}}" data-mobile_no="{{evaluation.evaluation.customer.mobile_number}}" data-proposed_date="{{evaluation.proposed_time|date:'d-m-Y'}}" data-proposed_time="{{evaluation.proposed_time|date:'h:i A'}}" data-evaluator_name="{{evaluation.evaluator.name}}" data-notes="{{evaluation.notes|escapejs|default_if_none:''}}" data-customer_id="{{evaluation.evaluation.customer.id}}" data-evaluator_id="{{evaluation.evaluator.id}}" data-address_id="{{evaluation.address.id}}" data-id="{{evaluation.id}}">{{evaluation.address.area.name}}</a>');
-                              }  
-                              
-                            }
-                            
-
-                        {% endfor %}
-                
-                    }
-                    else
-                    {
-                      $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');  
-                    }
-                    $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-                }    
-            {% else %}
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">-</a></td>');
-            $("#evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
-            {% endif %}
-
-        {% endfor %}    
-
-
-
+    
     //Function Used For Cleaning Calender    
     function isArrayInArrayOverlap(source,search)
     {   count1=0;
@@ -1584,52 +1376,6 @@ $('document').ready(function(){
       console.log("hiiiiii");
       $('.modal-popup-wrappergraph').toggleClass('is-visible');
     });  
-
-
-  // Evaluation Edit
-    $('.edit_evaluation').on('click', function (e) {
-      e.preventDefault();
-      $('.modal-popup-wrapper').toggleClass('is-visible');
-
-      $('#area_evaluation_id').html($(this).data('area'));
-      $('#address_evaluation_id').html($(this).data('street')+', '+$(this).data('apartment')+', '+$(this).data('block')+', '+$(this).data('avenue')+', '+$(this).data('building')+', '+$(this).data('area')+', '+$(this).data('governorate'));
-      $('#proposed_date_evaluation_id').html($(this).data('proposed_date'));
-      $('#proposed_time_evaluation_id').html($(this).data('proposed_time'));
-      $('#customername_evaluation_id').html($(this).data('customer_name'));
-      $('#mobileno_evaluation_id').html($(this).data('mobile_no'));
-      $('#evaluator_name_evaluation_id').html($(this).data('evaluator_name'));
-
-      var client_url = '/booking-officer/client/orders/'+$(this).data('customer_id')+'';
-      console.log(client_url,"web")
-      $('#client_url').attr('href',client_url);
-
-      //form values
-      $('#evaluation_id').val($(this).data('id'));
-      $('#appointment_date').val($(this).data('proposed_date'));
-      $('#appointment_time').val($(this).data('proposed_time'));
-      $('#notes').html($(this).data('notes'));
-
-});
-
-var coll = document.getElementsByClassName("collapsible");
-var i;
-console.log(coll);
-for (i = 0; i < coll.length; i++) {
-  coll[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var content = this.nextElementSibling;
-    if (content.style.display === "block") {
-      content.style.display = "none";
-    } else {
-      content.style.display = "block";
-    }
-  });  
-  }
-
-$('.collapsible0-close').click(function(){
-    $(".popup-collapse0").css('display','none');
-})
-
 
 
 // Cleaning Edit

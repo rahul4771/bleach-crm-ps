@@ -165,8 +165,11 @@
       </div>
       <div class="modal-body">
       <div class="d-flex cl-modal-icons">
+      {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'BOOKINGOFFICER' %}
+      {% else %}
         <img src="{% static 'files/icons/edit.png'%}" class="cl-modal-icon edit-evaluation" @click="editEval=!editEval"/>
         <img src="{% static 'files/icons/delete.png'%}" class="cl-modal-icon delete-evaluation" @click="delAlert=!delAlert"/>
+      {% endif %}
         <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" data-dismiss="modal" aria-label="Close" @click="closeModal()"/>
       </div>
       <div class="row" style="margin:0">
