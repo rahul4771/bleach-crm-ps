@@ -77,7 +77,26 @@
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Callback List</h2>
 <div class="page-entries">Show {{entry_per_page}} entries</div>
+<h5>Order Status</h5>
+<label for="favcity" style="width:20%;"> 
+<select name="order_status" id="order_status" onchange="set_params_go();"> 
+<option value="" >ALL</option>
+<option value="PENDING" {% if order_status == 'PENDING' %}selected{% endif %}>PENDING</option>
+<option value="REJECTED" {% if order_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
+<option value="EXPIRED" {% if order_status == 'EXPIRED' %}selected{% endif %}>EXPIRED</option>
+</select>
+</label>
 
+<h5>Callback Status</h5>
+<label for="favcity" style="width:20%;"> 
+<select name="callback_status" id="callback_status" onchange="set_params_go();"> 
+<option value="" >ALL</option>
+<option value="CALLBACK_LATER" {% if callback_status == 'CALLBACK_LATER' %}selected{% endif %}>CALLBACK LATER</option>
+<option value="WAITING" {% if callback_status == 'WAITING' %}selected{% endif %}>WAITING</option>
+<option value="COMPLETED" {% if callback_status == 'COMPLETED' %}selected{% endif %}>COMPLETED</option>
+</select>
+</label>
+<br>
 <label for="favcity" style="width:20%;"> 
 <select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
 <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
@@ -90,10 +109,11 @@
  
 <thead>
 <tr>
-<th>Order Number</th>
+<th class="align-center">Order Number</th>
 <th data-hide="phone,tablet">Customer Name</th>
 {% comment %} <th data-hide="phone,tablet">Service Type</th> {% endcomment %}
 <th data-hide="phone">Customer Mobile</th>
+<th data-hide="phone">Service Type</th>
 <th class="align-center" data-hide="phone,tablet">Status</th>
 <th class="align-center" data-hide="phone,tablet">Callback Status</th>
 {% comment %} <th data-hide="phone,tablet">&nbsp;</th> {% endcomment %}
@@ -103,17 +123,18 @@
 
     {% for evaluation in evaluations %}
     <tr>
-    <td {% if evaluation.quatation_status == 'REJECTED' %}class="red-line"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line"{% elif evaluation.quatation_status == 'EXPIRED' %}class="orange-line"{%else%}class="blue-line"{%endif%}>{{evaluation.evaluation_id}}</td>    
+    <td {% if evaluation.quatation_status == 'REJECTED' %}class="red-line clickable-row"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line clickable-row"{% elif evaluation.quatation_status == 'EXPIRED' %}class="orange-line clickable-row"{%else%}class="blue-line clickable-row"{%endif%} {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% endif %}>{{evaluation.evaluation_id}}</td>    
     <td>{{evaluation.customer.name|default_if_none:''}}</td>
     <td>{{evaluation.customer.mobile_number|default_if_none:''}}</td>
-    {% comment %} <td>{% for evaluation_detail in evaluation.details_evaluation %}
+
+    <td>{% for evaluation_detail in evaluation.details_evaluation %}
      {% for evaluation_book in evaluation_detail.evaluation_book %}
      {{evaluation_book.service_type.name}},
      {% endfor %}
      <br> 
      {% endfor %}</td>
 
-    <td>{% for evaluation_detail in evaluation.details_evaluation %}{% if evaluation_detail.evaluator %}{{evaluation_detail.evaluator.name}}<br>{% else %}{{evaluation_detail.evaluation.call_attender.name}}{% endif %}{% endfor %}</td> {% endcomment %}
+    {% comment %} <td>{% for evaluation_detail in evaluation.details_evaluation %}{% if evaluation_detail.evaluator %}{{evaluation_detail.evaluator.name}}<br>{% else %}{{evaluation_detail.evaluation.call_attender.name}}{% endif %}{% endfor %}</td> {% endcomment %}
     
     <td>{% if evaluation.quatation_status == 'REJECTED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Rejected</span>
         {% elif evaluation.quatation_status == 'PENDING' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="yellow-bg clickable-row">Pending</span>
@@ -162,7 +183,7 @@
   <ul class="pagination">
      {% if evaluations.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Previous">
+      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
@@ -177,14 +198,14 @@
     {% endif %}
     {% for pg in page_range %}
     {% if vus.number == pg %}
-            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
     {% if evaluations.has_next %}        
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Next">
+      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
@@ -345,7 +366,7 @@ function callbacklist(status,order_id){
 function set_params_go(args)
 {
 var url='{% url 'booking-officer:bookingofficer-callback-list' %}';
-var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val(),evaluator:$('#evaluator_filter_id').val()
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),order_status:$('#order_status').val(),callback_status:$('#callback_status').val()
 };
 for(key in args) 
     params[key]=args[key];

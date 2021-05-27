@@ -3199,23 +3199,30 @@ class CallBackList(IsBookingOfficer,View):
 		#Evaluation Details
 		search                  = request.GET.get('search')
 		#for order filtering
-		status = request.GET.get('status')
 		
-		if search:
-			evaluations = Evaluation.objects.filter(is_active=True).filter(Q(quatation_status='PENDING')|Q(quatation_status='REJECTED')|Q(quatation_status='EXPIRED')).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(customer__mobile_number__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),order_cancelled_count=Count(Case(When( evaluation_order__order_status='ORDER_CANCELLED',then=1),output_field=IntegerField())),order_cancellinprogress_count=Count(Case(When( evaluation_order__order_status='CANCEL_IN_PROGRESS',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
-		else:
-			evaluations = Evaluation.objects.filter(is_active=True).filter(Q(quatation_status='PENDING')|Q(quatation_status='REJECTED')|Q(quatation_status='EXPIRED')).select_related('customer').order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),order_cancelled_count=Count(Case(When( evaluation_order__order_status='ORDER_CANCELLED',then=1),output_field=IntegerField())),order_cancellinprogress_count=Count(Case(When( evaluation_order__order_status='CANCEL_IN_PROGRESS',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
-		
-		#callback function
-		callback_order_id = request.GET.get('callback_order',None)
-		callback_status = request.GET.get('callback_status',None)
-		print(callback_order_id,callback_status,"stat")
-		if callback_order_id:
-			callback_order = Order.objects.get(id=int(callback_order_id),is_active=True)
-			callback_order.callback_status = callback_status
-			callback_order.save()
+		order_status = request.GET.get('order_status')
+		callback_status = request.GET.get('callback_status')
 
-			messages.success(request,"Callback Status updated !!")
+		if search:
+			evaluations = Evaluation.objects.filter(is_active=True).filter(Q(quatation_status='PENDING')|Q(quatation_status='REJECTED')|Q(quatation_status='EXPIRED')).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(customer__mobile_number__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_book')),to_attr='details_evaluation'))
+		else:
+			evaluations = Evaluation.objects.filter(is_active=True).filter(Q(quatation_status='PENDING')|Q(quatation_status='REJECTED')|Q(quatation_status='EXPIRED')).select_related('customer').order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_book')),to_attr='details_evaluation'))
+
+		# callback and order status filters
+		order_callback_status_filter       = []
+		if order_status:
+			case1       = Q(quatation_status=order_status)
+			order_callback_status_filter.append(case1)	
+
+		if callback_status:
+			case2 		= Q(evaluation_order__callback_status=callback_status)
+			order_callback_status_filter.append(case2)
+
+		if order_status or callback_status:
+			order_callback_status_filter     = functools.reduce(operator.and_,order_callback_status_filter)
+			evaluations = evaluations.filter(order_callback_status_filter)
+		
+			
 		
 		#PAGINATION ORDERS		
 		no_of_entries = request.GET.get('no_of_entries')		
@@ -3243,4 +3250,4 @@ class CallBackList(IsBookingOfficer,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
 
-		return render(request,"bookingofficer/callback-list/callbacklist.html",{"evaluations":evaluations,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries})
+		return render(request,"bookingofficer/callback-list/callbacklist.html",{"order_status":order_status,"callback_status":callback_status,"evaluations":evaluations,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries})
