@@ -104,7 +104,54 @@ const app=  new Vue({
             slots:[]
           },
         },
-        url:'https://test.bleach-kw.com'
+        slotFormat:{
+          "1":{
+            start_time:'12:00 AM',
+            end_time:'03:00 AM'
+          },
+          "2":{
+            start_time:'03:00 AM',
+            end_time:'06:00 AM'
+          },
+          "3":{
+            start_time:'06:00 AM',
+            end_time:'09:00 AM'
+          },
+          "4":{
+            start_time:'09:00 AM',
+            end_time:'12:00 PM'
+          },
+          "5":{
+            start_time:'12:00 PM',
+            end_time:'03:00 PM'
+          },
+          "6":{
+            start_time:'03:00 PM',
+            end_time:'06:00 PM'
+          },
+          "7":{
+            start_time:'06:00 PM',
+            end_time:'09:00 PM'
+          },
+          "8":{
+            start_time:'09:00 PM',
+            end_time:'12:00 AM'
+          }
+        },
+        url:'https://test.bleach-kw.com',
+        cleaningData:{
+          cleaning_datetime_start:'',
+          cleaning_datetime_end:'',
+          service_types:[]
+        },
+        cleaningDetails:{},
+        combinedCleaningDetails:[]
+      },
+      watch: {
+        services: function (val) {
+          // when the hash prop changes, this function will be fired.
+          this.getSlotDetails()
+        } 
       },
       mounted(){
         this.getSlots()
@@ -234,8 +281,10 @@ const app=  new Vue({
           },
           getSlots(){
            // console.log($('#cl_cleaning_calendar').val())
+           this.services=[]
             this.cleaningDate=$('#cl_cleaning_calendar').val()
             this.combineSlots=[]
+            this.selectedCleaningSlot=[]
             this.slots={}
            // this.slot={}
            this.slot={
@@ -283,6 +332,82 @@ const app=  new Vue({
                 this.parseSlots()
               })
           },
+          getSlotDetails(){
+           
+            var max=Math.max(...this.selectedCleaningSlot)
+            var min=Math.min(...this.selectedCleaningSlot)
+            this.cleaningData.cleaning_datetime_start=this.cleaningDate+' '+this.slotFormat[min].start_time
+            this.cleaningData.cleaning_datetime_end=this.cleaningDate+' '+this.slotFormat[max].end_time
+            this.cleaningData.service_types=this.services
+
+           /* for(var i=0;i<this.selectedCleaningSlot.length;i++){
+              if(this.slot[this.selectedCleaningSlot[i]].slots.length>0)
+              {
+                var index=this.selectedCleaningSlot[i]
+              this.cleaningData.cleaning_datetime_start=this.slot[index].slots[0].slots.start_at
+              this.cleaningData.cleaning_datetime_end=this.slot[index].slots[0].slots.end_at
+              console.log("start:"+this.cleaningData.cleaning_datetime_start,"end:"+this.cleaningData.cleaning_datetime_end)
+              this.cleaningData.service_types=["General Cleaning"]
+              axios.post(this.url+"/agent/cleaningcallendar/availability/",this.cleaningData).then((response) => {
+
+              })
+            }
+            }*/
+            axios.post(this.url+"/agent/cleaningcallendar/availability/",this.cleaningData).then((response) => {
+              this.cleaningDetails=response.data
+            })
+            
+          },
+          checkCustomerBooking(classType,slot,type){
+            if(type!="followup-cleaning-bg"){
+
+            
+            if(classType=='cl-start-end' || classType=='cl-end-only')
+            {
+            if (!slot.evaluation_details.evaluator){
+              return true
+            }
+            else{
+              return false
+            }
+          }
+          else{
+            return false
+          }
+        }
+        else{
+          return false
+        }
+          },
+          checkTeamLeader(slot,type){
+            if(type!='followup-cleaning-bg'){
+              if(slot.cleaning_team_order_scheduler.length>0){
+                if(slot.cleaning_team_order_scheduler[0].team_leader){
+                 return  true
+                }
+                else{
+                  return false
+                }
+              }
+              else{
+                return false
+              }
+            }
+            else{
+              if(slot.followupteam_followupschedule.length>0){
+                if(slot.followupteam_followupschedule[0].team_leader){
+                  return  true
+                 }
+                 else{
+                   return false
+                 }
+              }
+              else{
+                return false
+              }
+            }
+            
+          },
           parseSlots(){
             for(var i=0;i<this.combineSlots.length;i++){
                 var startdate=this.combineSlots[i].slots.start_at.split(' ')[0]
@@ -313,6 +438,25 @@ const app=  new Vue({
                   if(this.combineSlots[i].type=='followup')
                   {
                     color='followup-cleaning-bg'
+                  }
+                  else if(this.combineSlots[i].type=='not approved'){
+                    if(!this.combineSlots[i].slots.order.order_status)
+                    {
+                      color='not-approved-not-paid-bg'
+                    }
+                    else{
+                      color='not-approved-bg'
+                    }
+                  }
+                  else if(this.combineSlots[i].type=='approved'){
+                    if(!this.combineSlots[i].slots.order.order_status)
+                    {
+                      color='approved-not-paid-bg'
+                    }
+                   /* else
+                    {
+                      color='approved-bg'
+                    }*/
                   }
                   while(slot.isBefore(limit)){
                     if(slot.isBefore(endTime) && slot.isSameOrAfter(beginningTime)){
