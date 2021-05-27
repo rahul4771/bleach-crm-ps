@@ -10,10 +10,16 @@
 .approved-bg{
     background: #31AA4A !important;
 }
-
+.not-approved-bg{
+    background:#8B8B8B !important;
+}
 .approved-not-paid-bg{
     background: #425D57 !important;
 }
+.not-approved-not-paid-bg{
+    background:#699189 !important;
+}
+
 .order-in-progress-bg{
     background: #0D87C5 !important;
 }
