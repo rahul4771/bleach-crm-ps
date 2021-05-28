@@ -1115,7 +1115,7 @@ class CleaningPopupSave(APIView):
 				cleaning_schedule.save()
 
 				#update cleaning team
-				cleaning_team                = cleaning_teamCleaningTeam.objects.get(order_scheduler=cleaning_schedule)
+				cleaning_team                = CleaningTeam.objects.get(order_scheduler=cleaning_schedule)
 				cleaning_team.start_at       = schedule_start_at
 				cleaning_team.end_at         = schedule_end_at
 				cleaning_team.no_of_cleaners = no_of_cleaners
