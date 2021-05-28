@@ -1092,13 +1092,13 @@ class CleaningPopupSave(APIView):
 
 		action = request.POST.get('action_type')
 		
-		schedule_start_at	        = datetime.strptime(request.GET.get('cleaning_start'),'%d-%m-%Y %I:%M %p')
-		schedule_end_at	            = datetime.strptime(request.GET.get('cleaning_end'),'%d-%m-%Y %I:%M %p')
-		no_of_cleaners              = request.POST.get('no_of_cleaners')
-		cleaning_hours              = request.POST.get('cleaning_hours')
-		schedules                   = request.POST.get('schedule')
-		evaluation_id               = request.POST.get('evaluation_id')
-		service_types               = request.POST.get('service_types')
+		schedule_start_at	        = datetime.strptime(request.data.get('cleaning_start'),'%d-%m-%Y %I:%M %p')
+		schedule_end_at	            = datetime.strptime(request.data.get('cleaning_end'),'%d-%m-%Y %I:%M %p')
+		no_of_cleaners              = request.data.get('no_of_cleaners')
+		cleaning_hours              = request.data.get('cleaning_hours')
+		schedules                   = request.data.get('schedules')
+		evaluation_id               = request.data.get('evaluation_id')
+		service_types               = request.data.get('service_types')
 
 		#cleaning schedules
 		cleaning_schedules          = OrderScheduler.objects.filter(id__in=schedules).select_related('order_scheduler_book')
