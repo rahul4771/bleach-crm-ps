@@ -10,11 +10,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
 		read_only_fields =('id',)
 
 class AddressSaveSerializer(serializers.ModelSerializer): 
-	customer = UserProfileShowSerializer(read_only=True)
+	customer = UserProfileSerializer(read_only=True)
 	class Meta:
 		model  = Address
 		fields = ('governorate','area','block','avenue','building','street','floor','apartment','customer')
-
+		read_only_fields = ('customer',)
+		
 class EvaluationSectionKeynoteSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = EvaluationSectionKeynote
