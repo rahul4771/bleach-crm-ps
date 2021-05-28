@@ -10,11 +10,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
 		read_only_fields =('id',)
 
 class AddressSaveSerializer(serializers.ModelSerializer): 
-	customer = UserProfileSerializer(read_only=True)
 	class Meta:
 		model  = Address
-		fields = ('governorate','area','block','avenue','building','street','floor','apartment','customer')
-		read_only_fields = ('customer',)
+		fields = ('governorate','area','block','avenue','building','street','floor','apartment')
 		
 class EvaluationSectionKeynoteSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -47,9 +45,10 @@ class AreaSerializer(serializers.ModelSerializer):
 class AddressSerializer(serializers.ModelSerializer): 
 	governorate = GovernorateSerializer(read_only=True)
 	area        = AreaSerializer(read_only=True)
+	customer    = UserProfileSerializer(read_only=True)
 	class Meta:
 		model  = Address
-		fields = ('id','governorate','area','block','avenue','building','street','floor','apartment')
+		fields = ('id','governorate','area','block','avenue','building','street','floor','apartment','customer')
 		read_only_fields =('id',)
 
 class EvaluationSerializer(serializers.ModelSerializer):
