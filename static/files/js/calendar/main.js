@@ -151,7 +151,8 @@ const app=  new Vue({
         cleaningDetails:{},
         combinedCleaningDetails:[],
         cleaningEditSlots:[],
-        availableSlots:[]
+        availableSlots:[],
+        selectedEditSlot:[]
       },
       watch: {
         services: function (val) {
@@ -177,6 +178,16 @@ const app=  new Vue({
         this.getEvaluationSlots()
       },
       methods:{
+        selectEditSlot(slot){
+          this.selectedEditSlot.push(slot)
+        },
+        removeEditSlot(slot){
+          const index = this.selectedEditSlot.indexOf(slot);
+          if (index > -1) {
+            this.selectedEditSlot.splice(index, 1);
+          }
+          
+        },
         closeModal(){
           this.editEval=false
           this.delAlert=false
@@ -381,18 +392,53 @@ const app=  new Vue({
               this.parseEditSlots()
             })
           },
+          saveEdit(){
+            var temparray=this.selectedDate.split("-")
+            var selectedDate=temparray.reverse().join("-")
+            var max=moment(this.selectedEditSlot[0], 'h:mma')
+            var min=moment(this.selectedEditSlot[0], 'h:mma')
+            for(var i=1;i<this.selectedEditSlot.length;i++){
+              var cslot=moment(this.selectedEditSlot[i], 'h:mma')
+              if(moment(cslot).isAfter(max)){
+                max=cslot
+              }
+              if(moment(cslot).isBefore(min)){
+                min=cslot
+              }
+            }
+            console.log("max is "+moment(max).format('hh:mm A'))
+            var end = (moment(max).add(3, 'hours'))
+
+            axios.post(this.url+'/agent/cleaningcallendar/cleaning/edit/save/',{
+             // cleaning_date:this.currentSlotDetails.start_at.split(' ')[0],
+             
+
+            cleaning_start:selectedDate+' '+moment(min).format('hh:mm A'),
+            cleaning_end:selectedDate+' '+moment(end).format('hh:mm A'),
+            no_of_cleaners:this.currentSlotDetails.no_of_cleaners,
+            cleaning_hours:this.currentSlotDetails.cleaning_hours,
+            schedules : [this.currentSlotDetails.id],
+            evaluation_id:this.currentSlotDetails.order.order_no,
+            service_types:['General Cleaning'],
+            action_type:'edit_cleaning_withautofix'
+            }).then((response) => {
+              console.log(response)
+            })
+          },
           parseEditSlots(){
             this.availableSlots=[]
               for(var slot in this.cleaningEditSlots){
 
                 if(this.cleaningEditSlots[slot].includes(3))
                 {
-                  if(slot==0){
-                    var slotAvailable='12:00 AM - 03:00 AM'
-                  }
-                  else {
-                    var slotAvailable=slot+':00 - '+(parseInt(slot)+3)+':00'
-                  }
+                 
+                  
+                   var slotno=(parseInt(slot)/3)+1
+                    var start=this.slotFormat[slotno].start_time
+                    var end=this.slotFormat[slotno].end_time
+                   
+                    var slotAvailable=start+' - '+end
+                  
                   this.availableSlots.push(slotAvailable)
                 }
                 
