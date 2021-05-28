@@ -1104,7 +1104,7 @@ class CleaningPopupSave(APIView):
 		cleaning_schedules          = OrderScheduler.objects.filter(id__in=schedules)
 		print(cleaning_schedules,"cleaning_schedules")		
 		if action == 'edit_cleaning_withautofix':
-			print(edit_cleaning_withautofix)
+			print("edit_cleaning_withautofix")
 			for cleaning_schedule in cleaning_schedules:
 				print("loop")	
 				#update cleaning schedule
