@@ -63,6 +63,9 @@ const app=  new Vue({
         dateSelected:'',
         selectedSlot:'1',
         evaluators:[],
+        currentSlot:{},
+        currentSlotDetails:null,
+        openedit:false,
         currentTime:'',
         booking:{
             booking_date:'',
@@ -78,6 +81,7 @@ const app=  new Vue({
         today:'',
         timeSlots:[],
         parsedSlots:[],
+        teammembers:'yes',
         slot:{
           "1":{
             slots:[]
@@ -145,7 +149,9 @@ const app=  new Vue({
           service_types:[]
         },
         cleaningDetails:{},
-        combinedCleaningDetails:[]
+        combinedCleaningDetails:[],
+        cleaningEditSlots:[],
+        availableSlots:[]
       },
       watch: {
         services: function (val) {
@@ -358,6 +364,40 @@ const app=  new Vue({
             })
             
           },
+          editCleaning(){
+            this.editEval=true
+            var temparray=this.selectedDate.split("-")
+            var selectedDate=temparray.reverse().join("-")
+            axios.post(this.url+'/agent/cleaningcallendar/cleaning/edit/slotes/',{
+             // cleaning_date:this.currentSlotDetails.start_at.split(' ')[0],
+             
+
+             cleaning_date:selectedDate,
+              number_of_cleaners:this.currentSlotDetails.no_of_cleaners,
+              service_types:this.currentSlotDetails.order_scheduler_book.service_type.name,
+              evaluation_id:this.currentSlotDetails.order.order_no
+            }).then((response) => {
+              this.cleaningEditSlots=response.data.slotes
+              this.parseEditSlots()
+            })
+          },
+          parseEditSlots(){
+            this.availableSlots=[]
+              for(var slot in this.cleaningEditSlots){
+
+                if(this.cleaningEditSlots[slot].includes(3))
+                {
+                  if(slot==0){
+                    var slotAvailable='12:00 AM - 03:00 AM'
+                  }
+                  else {
+                    var slotAvailable=slot+':00 - '+(parseInt(slot)+3)+':00'
+                  }
+                  this.availableSlots.push(slotAvailable)
+                }
+                
+              }
+          },
           checkCustomerBooking(classType,slot,type){
             if(type!="followup-cleaning-bg"){
 
@@ -407,6 +447,15 @@ const app=  new Vue({
               }
             }
             
+          },
+          openCleaningModal(item){
+            this.currentSlot=item
+         
+            axios.get(this.url+"/agent/cleaningcallendar/cleaning/popup/?cleaning_start="+item.slots.start_at+'&cleaning_end='+item.slots.end_at+'&evaluation_id='+item.slots.order.order_no).then((response) => {
+              this.currentSlotDetails=response.data.cleaning_details[0]
+              
+            })
+
           },
           parseSlots(){
             for(var i=0;i<this.combineSlots.length;i++){
