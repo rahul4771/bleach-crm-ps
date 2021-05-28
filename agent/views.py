@@ -1233,7 +1233,7 @@ class CleaningCallendarFollowupPopup(APIView):
 		followup_scheduler_id    = request.GET.get('followup_scheduler_id')
 		
 		#followup schedule
-		followup_schedule                     = FollowUpScheduler.objects.filter(id=followup_scheduler_id).order_by('start_at').select_related('follow_up','customer_address').prefetch_related('followupteam_followupschedule__team_leader')
+		followup_schedule                     = FollowUpScheduler.objects.filter(id=followup_scheduler_id).order_by('start_at').select_related('follow_up','customer_address__customer').prefetch_related('followupteam_followupschedule__team_leader')
 		response_dict['followup_cleanings']   = FollowupScheduleSerializer(instance=followup_schedule,many=True).data
 
 		
