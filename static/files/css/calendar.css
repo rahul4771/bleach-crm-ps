@@ -432,7 +432,13 @@ width:100% !important;
 
 
 /** Cleaning calendar begins here**/
-
+.cl-radio label{
+    font-weight:400 !important;
+    padding-top:5px;
+}
+.cl-radio-row{
+    margin-top: 0px !important;
+}
 .cl-slot-card{
     min-height: 600px;
     height:100%;
@@ -483,6 +489,7 @@ width:100% !important;
 }
 .marker-container{
     height:42px;
+    cursor:pointer;
     
 }
 .marker-container div{

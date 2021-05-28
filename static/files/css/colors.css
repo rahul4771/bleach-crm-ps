@@ -49,6 +49,13 @@
 }.subscription-cleaning-bg{
     background: #139275 !important;
 }
+.round-marker{
+    width: 12px;
+    height: 12px;
+  
+    border-radius: 20px;
+    margin: 5px;
+}
 
 
 /** Texts **/
