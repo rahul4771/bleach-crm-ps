@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.conf.urls.static import static  
 from django.conf import settings
 from user.views import Signin,logout,testcalendar
+from salesadmin.views import OrderDetails
+from agent.views import TicketDetails
 
 urlpatterns = [
     
@@ -25,6 +27,9 @@ urlpatterns = [
     url(r'^$',Signin.as_view(),name='login'),
     url(r'^logout/$',logout.as_view(),name='logout'),
     url(r'^test_data/$',testcalendar,name='test_data'),
+
+    url(r'^orders/$',OrderDetails.as_view(),name='orders'),
+    url(r'^tickets/$',TicketDetails.as_view(),name='tickets'),
 
     url(r'^bleach_admin/',include('bleachadmin.urls',namespace='bleach_admin')),
     url(r'^bleach_salesadmin/',include('salesadmin.urls',namespace='bleach_salesadmin')),

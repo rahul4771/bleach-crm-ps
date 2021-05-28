@@ -202,17 +202,19 @@
     -
     {% endfor %}
     </td>
-    <td class="clickable-row" {% if invoice %}data-href="{% url 'bleach_salesadmin:salesadmin-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>
+    <td >
         {% if invoice.cleaning_in_progress_count == 0 and invoice.completed_cleaning_count == 0 %}
-        <span class="text-center blue-bg clickable-row">Not Started</span>
+        <div class="text-center d-flex "><div class="round-marker payment-not-started-bg"></div><span>NOT STARTED</span></div>
         {% elif invoice.cleaning_in_progress_count >= 1 %}
-        <span class="text-center yellow-bg clickable-row">IN PROGRESS</span>
+        <div class="text-center d-flex "><div class="round-marker payment-in-progress-bg"></div><span>IN PROGRESS</span></div>
         {% elif invoice.completed_cleaning_count == invoice.cleaning_count %}
-        <span class="text-center green-bg clickable-row" >COMPLETED</span>
+        <div class="text-center d-flex " ><div class="round-marker payment-completed-bg"></div><span>COMPLETED</span></div>
         {% else %}
-        <span class="text-center blue-bg clickable-row">Not Started</span>
+        <div class="text-center d-flex "><div class="round-marker payment-not-started-bg"></div><span>NOT STARTED</span></div>
         {% endif %}
         </td>
+
+        <td class="clickable-row" {% if invoice %}data-href="{% url 'bleach_admin:admin-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}></td>
     </tr>
     {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td><td></td></tr>

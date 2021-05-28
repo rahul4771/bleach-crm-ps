@@ -212,11 +212,11 @@ width:100% !important;
 }
 
 #evaluationAgentModal .agent-border{
-    border-bottom: 10px solid #0D87C5 !important;
+    border-bottom: 10px solid #12AED8 !important;
 }
 
 #evaluationAgentModal .customer-border{
-    border-bottom: 10px solid #139275 !important;
+    border-bottom: 10px solid #779F39 !important;
 }
 
 #cancelledModal .modal-dialog{
@@ -417,11 +417,11 @@ width:100% !important;
 /** calendar markers**/
 
 .agent-submitted{
-    background:#0d87c5;
+    background:#12AED8;
     margin-left: 1px;
 }
 .customer-submitted{
-    background:#139275;
+    background:#779F39;
     margin-left: 1px;
 }
 .cl-cancelled{

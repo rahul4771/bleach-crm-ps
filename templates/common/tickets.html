@@ -2,7 +2,26 @@
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
-{% include "admin/common/header.html" %}
+
+{% if request.user.user_type == 'SALESADMIN' %}
+  {% include "salesadmin/common/header.html" %}
+{% elif request.user.user_type == 'AGENT' %}
+  {% include "agent/common/header.html" %}
+{% elif request.user.user_type == 'ADMIN' %}
+  {% include "admin/common/header.html" %}
+{% elif request.user.user_type == 'BOOKINGOFFICER' %}
+  {% include "bookingofficer/common/header.html" %} 
+{% elif request.user.user_type == 'EVALUATOR' %}
+  {% include "evaluator/common/header.html" %}
+{% elif request.user.user_type == 'SENIORTEAMLEADER' %}
+  {% include "stl/common/header.html" %}
+{% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
+  {% include "operationsupervisor/common/header.html" %}
+{% elif request.user.user_type == 'TECHNICALSUPERVISOR' %}
+  {% include "technicalsupervisor/common/header.html" %}
+{% elif request.user.user_type == 'ACCOUNTANT' %}
+  {% include "accountant/common/header.html" %}
+{% endif %}
     
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
@@ -191,15 +210,35 @@
     <td>{{ticket.investigation.order_schedule.order.evaluation.customer.mobile_number}}</td> 
     <td>
     {% if ticket.status == 'FOLLOWUP_IN_PROGRESS' %}
-    <div class="clickable-row d-flex" data-href="{% url 'bleach_admin:admin-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"><div class="round-marker ticket-in-progress-status-bg"></div><span>In Progress</span></div>     
+    <div class=" d-flex" ><div class="round-marker ticket-in-progress-status-bg"></div><span>In Progress</span></div>     
     {% elif ticket.status == 'FOLLOWUP_CLOSED' %}
-    <div class="clickable-row d-flex" data-href="{% url 'bleach_admin:admin-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"><div class="round-marker ticket-closed-status-bg"></div><span>Closed</span></div>
+    <div class=" d-flex" ><div class="round-marker ticket-closed-status-bg"></div><span>Closed</span></div>
     {% elif ticket.status == 'TICKET_RISED' %}
-    <div class="clickable-row d-flex" data-href="{% url 'bleach_admin:admin-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"><div class="round-marker ticket-raised-status-bg"></div><span>Ticket Raised</span></div>
+    <div class=" d-flex" ><div class="round-marker ticket-raised-status-bg"></div><span>Ticket Raised</span></div>
     {% else %}
-    <div class="clickable-row d-flex" data-href="{% url 'bleach_admin:admin-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"><div class="round-marker cancelled-status-bg"></div><span>Cancelled</span></div>
+    <div class="d-flex"><div class="round-marker cancelled-status-bg"></div><span>Cancelled</span></div>
     {% endif %}
     </td>
+    
+    {% if request.user.user_type == 'SALESADMIN' %}
+    <td class="clickable-row" data-href="{% url 'bleach_salesadmin:salesadmin-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
+    {% elif request.user.user_type == 'AGENT' %}
+    <td class="clickable-row" data-href="{% url 'agent:agent-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
+    {% elif request.user.user_type == 'ADMIN' %}
+    <td class="clickable-row" data-href="{% url 'bleach_admin:admin-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
+    {% elif request.user.user_type == 'BOOKINGOFFICER' %}
+    <td class="clickable-row" data-href="{% url 'booking-officer:bookingofficer-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
+    {% elif request.user.user_type == 'SENIORTEAMLEADER' %}
+    <td class="clickable-row" data-href="{% url 'stl:stl-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
+    {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
+    <td class="clickable-row" data-href="{% url 'op-supervisor:op-supervisor-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
+    {% elif request.user.user_type == 'TECHNICALSUPERVISOR' %}
+    <td class="clickable-row" data-href="{% url 'tech-supervisor:tech-supervisor-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
+    {% elif request.user.user_type == 'ACCOUNTANT' %}
+    <td class="clickable-row" data-href="{% url 'accountant:accountant-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
+    {% endif %}
+
+    
     </tr> 
     {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>    
@@ -273,7 +312,7 @@
       </div><!--main-content-holder-->
         </div><!--container-fluid space-->
     </section><!--content-->
-    {% include 'admin/common/footer.html' %}
+    {% include 'salesadmin/common/footer.html' %}
 </div><!--wrapper-->
 {% endblock %}
 
@@ -327,7 +366,7 @@ $("#governorate_filter_id").change(function(){
 
 function set_params_go(args)
 {
-var url='{% url 'bleach_admin:admin-tickets' %}';
+var url='{% url 'tickets' %}';
 var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),investigator:$('#investigator_filter_id').val(),
 };
 for(key in args) 

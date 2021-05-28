@@ -3,7 +3,7 @@ from customer.serilizers import AddressSerializer,EvaluationSerializer
 from order.models import Order,OrderScheduler,FollowUpScheduler,FollowUp
 from evaluator.models import EvaluationDetails,EvaluationBook,ServiceType
 from user.models import UserProfile
-from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember
+from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 
 
 class ServiceTypeShowSerializer(serializers.ModelSerializer):
@@ -67,16 +67,25 @@ class CleaningScheduleSerializer(serializers.ModelSerializer):
 
 
 
+class FollowUpTeamMemberShowSerializer(serializers.ModelSerializer):
+	member = UserProfileShowSerializer(read_only=True)
+	class Meta:
+		model = FollowUpTeamMember
+		fields= ('member',) 
+
+
 class FollowupSerializer(serializers.ModelSerializer):
 	class Meta:		
 		model   = FollowUp
 		fields  = ('ticket_no','no_of_cleaners','cleaning_hours')
 
 class FollowUpTeamShowSerializer(serializers.ModelSerializer):
-	team_leader = UserProfileShowSerializer(read_only=True)
+	team_leader            = UserProfileShowSerializer(read_only=True)
+	created_by             = UserProfileShowSerializer(read_only=True)
+	followup_member_team   = FollowUpTeamMemberShowSerializer(many=True,read_only=True)	
 	class Meta:
 		model   = FollowUpTeam
-		fields  = ('team_leader',)
+		fields  = ('team_leader','created_by','followup_member_team')
 
 
 class FollowupScheduleSerializer(serializers.ModelSerializer):

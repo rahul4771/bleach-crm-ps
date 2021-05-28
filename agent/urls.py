@@ -9,7 +9,8 @@ urlpatterns = [
 	url(r'^cleaningcallendar/cleaning/edit/slotes/$',views.CleaningPopupMultipleServiceCleaningSlotes.as_view(),name='cleaning-callendar-cleaningedit-slotes'),
 	url(r'^cleaningcallendar/cleaning/edit/save/$',views.CleaningPopupSave.as_view(),name='cleaning-callendar-cleaningedit-save'),
 	url(r'^cleaningcallendar/followupcleaning/popup/$',views.CleaningCallendarFollowupPopup.as_view(),name='cleaning-callendar-followupcleaningpopup'),
-	
+	url(r'^cleaningcallendar/followup/edit/save/$',views.FollowupPopupSave.as_view(),name='cleaning-callendar-followupedit-save'),
+
 	url(r'^dashboard/$',views.AgentHome.as_view(),name='agentdash-board'),
 	url(r'^resources/$',views.ResourceManagement.as_view(),name='resource-management'),
 	url(r'^orders/$',views.OrderDetails.as_view(),name='agent-orders'),
@@ -22,7 +23,7 @@ urlpatterns = [
 	url(r'^feedback/details/(?P<client_id>[-\w]+)/(?P<order_id>[-\w]+)/$',views.FeedbackAdvanced.as_view(),name='agent-feedbackadvanced'),	
 	url(r'^newfeedback/$',views.AddFeedBack.as_view(),name='new-feedback'),
 
-	url(r'^tickets/$',views.TicketDetails.as_view(),name='agent-tickets'),
+	
 	url(r'^tickets/edit/(?P<ticket_id>[-\w]+)/(?P<order_id>[-\w]+)/$',views.TicketDetailsEdit.as_view(),name='agent-tickets-edit'),
 	url(r'^ticket/details/(?P<client_id>[-\w]+)/(?P<followup_id>[-\w]+)/$',views.TicketAdvanced.as_view(),name='agent-ticketadvanced'),
 	url(r'^tickets/register/$',views.TicketRegistration.as_view(),name='agent-ticketregister'),
