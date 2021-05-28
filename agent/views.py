@@ -1087,6 +1087,9 @@ class CleaningPopupSave(APIView):
 	authentication_classes    = ()
 
 	def post(self,request):
+		response_dict = {}
+		response_dict['success'] = False
+
 		action = request.POST.get('action_type')
 		
 		schedule_start_at	        = datetime.strptime(request.GET.get('cleaning_start'),'%d-%m-%Y %I:%M %p')
@@ -1185,9 +1188,11 @@ class CleaningPopupSave(APIView):
 
 					CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
 
-					messages.success(request,"Cleaning Team Automatically Assigned")
+					response_dict['success'] = True
+					response_dict['msg']     = "Cleaning Team Automatically Assigned"
 				else:
-					messages.success(request,"Cleaners Not Available !! Cleaning Appointment Succesfully Updated")
+					response_dict['success'] = True
+					response_dict['msg']     = "Cleaners Not Available !! Cleaning Appointment Succesfully Updated"
 
 		if action == 'edit_cleaning_withoutautofix':
 			for cleaning_schedule in cleaning_schedules:	
@@ -1204,10 +1209,11 @@ class CleaningPopupSave(APIView):
 				#delete team member
 				CleaningTeamMember.objects.filter(team__order_scheduler=cleaning_schedule).delete()	
 
-			messages.success(request,"Cleaning Appointment Succesfully Updated")
+			response_dict['success'] = True
+			response_dict['msg']     = "Cleaning Appointment Succesfully Updated"
 
 
-		return redirect('agent:agentdash-board')
+		return Response(response_dict,HTTP_200_OK)
 
 
 
