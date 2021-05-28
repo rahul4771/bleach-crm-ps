@@ -822,56 +822,30 @@ class="cl-service-list"
    <b>Time Slots Available</b>
  </div>
 <div class="time-slots row mt-2" >
- <div class="col-md-6">
-   <div class="time-slot" onclick="selectSlot(this)">
-     12:00 AM - 03:00 AM
+ <div class="col-md-6" v-for="(slot,index) in availableSlots" v-bind:key="index">
+   <div class="time-slot" @click="selectEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])"  v-if="!selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1]))">
+    <% slot %>
+   </div>
+   <div class="time-slot-active" v-if="selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1]))" @click="removeEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])">
+    <% slot %>
    </div>
  </div>
- <div class="col-md-6">
-   <div class="time-slot" onclick="selectSlot(this)">
-     03:00 AM - 06:00 AM
-   </div>
- </div>
- <div class="col-md-6">
-   <div class="time-slot" onclick="selectSlot(this)">
-     06:00 AM - 09:00 AM
-   </div>
- </div>
- <div class="col-md-6">
-   <div class="time-slot" onclick="selectSlot(this)">
-     09:00 AM - 12:00 PM
-   </div>
- </div>
- <div class="col-md-6" onclick="selectSlot(this)">
-   <div class="time-slot">
-     12:00 PM - 03:00 PM
-   </div>
- </div>
- <div class="col-md-6">
-   <div class="time-slot" onclick="selectSlot(this)">
-     03:00 PM - 06:00 PM
-   </div>
- </div>
- <div class="col-md-6">
-   <div class="time-slot" onclick="selectSlot(this)">
-     06:00 PM - 09:00 PM
-   </div>
- </div>
- <div class="col-md-6">
-   <div class="time-slot" onclick="selectSlot(this)">
-     09:00 PM - 12:00 PM
-   </div>
- </div>
+ <div class="col-md-12"  v-if="availableSlots.length<1">
+  <div class=" cl-modal-text-title text-center cl-highlight" >
+  Slots not available. 
+  </div>
+</div>
  
 
 </div>
-<div class="mt-4 cl-modal-text-title">
+<div class="mt-10 cl-modal-text-title" v-if="selectedEditSlot.length>0">
   Do you want to automatically assign team members ? 
 </div>
 <v-radio-group
       v-model="teammembers"
       row
       class="cl-radio-row"
+      v-if="selectedEditSlot.length>0"
      
     >
       <v-radio
@@ -891,7 +865,7 @@ class="cl-service-list"
       </div>
      
     <div class="cl-btns d-flex justify-center col-md-12">
-     <div class="proceed-btn customer-booked-bg ">
+     <div class="proceed-btn customer-booked-bg " @click="saveEdit()">
        Proceed
      </div>
      <div class="cancel-btn ml-4 customer-booked-border" data-dismiss="modal" aria-label="Close">
