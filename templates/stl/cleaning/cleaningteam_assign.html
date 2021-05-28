@@ -202,7 +202,11 @@
 <script>
   $('document').ready(function(){
     //Append cleaners by default select cleaners in order    
+    {% if order_schedule.no_of_cleaners %}
+    no_of_cleaners = {{order_schedule.no_of_cleaners}};
+    {% else %}
     no_of_cleaners = {{order_schedule.order_scheduler_book.number_of_cleaners}};
+    {% endif %}
 
     for(i=1;i<=(no_of_cleaners-1);i++)
     {

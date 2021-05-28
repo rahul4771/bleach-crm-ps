@@ -1101,11 +1101,12 @@ class CleaningPopupSave(APIView):
 		service_types               = request.data.get('service_types')
 
 		#cleaning schedules
-		cleaning_schedules          = OrderScheduler.objects.filter(id__in=schedules).select_related('order_scheduler_book')
-		
+		cleaning_schedules          = OrderScheduler.objects.filter(id__in=schedules)
+		print(cleaning_schedules,"cleaning_schedules")		
 		if action == 'edit_cleaning_withautofix':
-
-			for cleaning_schedule in cleaning_schedules:	
+			print(edit_cleaning_withautofix)
+			for cleaning_schedule in cleaning_schedules:
+				print("loop")	
 				#update cleaning schedule
 				cleaning_schedule.start_at 							= schedule_start_at
 				cleaning_schedule.end_at   							= schedule_end_at
@@ -1125,17 +1126,20 @@ class CleaningPopupSave(APIView):
 
 				#same blc cleaners for excluding
 				sameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation_id=evaluation_id).filter(Q(Q(Q(start_at__gte=schedule_start_at)&Q(start_at__lte=schedule_end_at))|Q(Q(end_at__gte=schedule_start_at)&Q(end_at__lte=schedule_end_at))|Q(Q(start_at__lte=schedule_start_at)&Q(end_at__gte=schedule_start_at)&Q(start_at__lte=schedule_end_at)&Q(end_at__gte=schedule_end_at))|Q(Q(start_at__gte=start_date_time)&Q(end_at__gte=schedule_start_at)&Q(start_at__lte=schedule_end_at)&Q(end_at__lte=schedule_end_at)))).values_list("id",flat=True)
-
+				print(sameblc_cleaners,"sameblc_cleaners")
 				#absent cleaners
 				absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=cleaning_schedule.start_at.date())|Q(leave_date=cleaning_schedule.end_at.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 				absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=cleaning_schedule.start_at.date())|Q(leave_date=cleaning_schedule.end_at.date()))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
-
+				print(absent_cleaners,"absent_cleaners")
+				print(absent_leaders,"absent_leaders")
 				active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=cleaning_schedule.start_at)&Q(start_at__lte=cleaning_schedule.end_at))|Q(Q(end_at__gte=cleaning_schedule.start_at)&Q(end_at__lte=cleaning_schedule.end_at))|Q(Q(start_at__lte=cleaning_schedule.start_at)&Q(end_at__gte=cleaning_schedule.start_at)&Q(start_at__lte=cleaning_schedule.end_at)&Q(end_at__gte=cleaning_schedule.end_at))|Q(Q(start_at__gte=cleaning_schedule.start_at)&Q(end_at__gte=cleaning_schedule.start_at)&Q(start_at__lte=cleaning_schedule.end_at)&Q(end_at__lte=cleaning_schedule.end_at)))).exclude(id__in=sameblc_cleaners).values_list("member",flat=True)
 				active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=cleaning_schedule.start_at)&Q(start_at__lte=cleaning_schedule.end_at))|Q(Q(end_at__gte=cleaning_schedule.start_at)&Q(end_at__lte=cleaning_schedule.end_at))|Q(Q(start_at__lte=cleaning_schedule.start_at)&Q(end_at__gte=cleaning_schedule.start_at)&Q(start_at__lte=cleaning_schedule.end_at)&Q(end_at__gte=cleaning_schedule.end_at))|Q(Q(start_at__gte=cleaning_schedule.start_at)&Q(end_at__gte=cleaning_schedule.start_at)&Q(start_at__lte=cleaning_schedule.end_at)&Q(end_at__lte=cleaning_schedule.end_at)))).values_list("member",flat=True)
-		
+				print(active_cleaners1,"active_cleaners1")
+				print(active_cleaners2,"active_cleaners2")
 				leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders)))
 				cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners)))
-					
+				print(leaders,"leaders")
+				print(cleaners,"cleaners")	
 				
 				for service_type in service_types:
 					if service_type == 'General Cleaning':
@@ -1174,7 +1178,9 @@ class CleaningPopupSave(APIView):
 					elif service_type == 'Facade Cleaning':
 						leaders = leaders.filter(is_facade_skill=True)
 						cleaners= cleaners.filter(is_facade_skill=True).order_by('user_type')
-					
+				
+				print(cleaners.count(),"cleaners count")
+				print(no_of_cleaners-1)	
 				#cleaning team
 				if leaders and cleaners.count() >= (no_of_cleaners-1):
 					cleaning_team.team_leader=leaders.first()
