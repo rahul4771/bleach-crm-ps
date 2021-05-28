@@ -1,16 +1,27 @@
 from rest_framework import serializers
-from customer.serilizers import AddressSerializer
+from customer.serilizers import AddressSerializer,EvaluationSerializer
 from order.models import Order,OrderScheduler,FollowUpScheduler,FollowUp
-from evaluator.models import EvaluationDetails,EvaluationBook
+from evaluator.models import EvaluationDetails,EvaluationBook,ServiceType
 from user.models import UserProfile
-from senior_team_leader.models import CleaningTeam,FollowUpTeam
+from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember
 
 
+class ServiceTypeShowSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = ServiceType
+		fields= ('name',)
 
 class UserProfileShowSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = UserProfile
 		fields = ('id','name','gender','email','mobile_number','profile_image')	
+
+class CleaningTeamMemberShowSerializer(serializers.ModelSerializer):
+	member = UserProfileShowSerializer(read_only=True)
+	class Meta:
+		model = CleaningTeamMember
+		fields= ('member',)
+
 
 
 class OrderShowSerializer(serializers.ModelSerializer):
@@ -20,20 +31,24 @@ class OrderShowSerializer(serializers.ModelSerializer):
 
 class EvaluationDetailsShowSerializer(serializers.ModelSerializer): 
 	evaluator          = UserProfileShowSerializer(read_only=True) 
+	evaluation         = EvaluationSerializer(read_only=True)
 	class Meta:
 		model  = EvaluationDetails
-		fields = ('evaluator',)
+		fields = ('evaluator','evaluation')
 
 class EvaluationBookShowSerializer(serializers.ModelSerializer):
+	service_type = ServiceTypeShowSerializer(read_only=True)
 	class Meta:
 		model = EvaluationBook
-		fields = ('cleaning_policy',)
+		fields = ('cleaning_policy','service_type')
 
 class CleaningTeamShowSerializer(serializers.ModelSerializer):
-	team_leader = UserProfileShowSerializer(read_only=True)
+	team_leader                     = UserProfileShowSerializer(read_only=True)
+	cleaning_member_team			= CleaningTeamMemberShowSerializer(many=True,read_only=True)
+	created_by                      = UserProfileShowSerializer(read_only=True)
 	class Meta:
 		model = CleaningTeam
-		fields= ('team_leader',)
+		fields= ('team_leader','created_by','cleaning_member_team')
 
 
 class CleaningScheduleSerializer(serializers.ModelSerializer):

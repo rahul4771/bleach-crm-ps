@@ -3,10 +3,17 @@ from order.models import Order,OrderScheduler,FollowUp,FollowUpSection,FollowUpS
 # Register your models here.
 
 class OrderAdmin(admin.ModelAdmin):
+	search_fields=['order_no']
 	radio_fields = {"order_status":admin.VERTICAL,"payment_status":admin.VERTICAL}
-
 admin.site.register(Order,OrderAdmin)
-admin.site.register(OrderScheduler)
+
+
+
+class OrderSchedulerAdmin(admin.ModelAdmin):
+	search_fields=['order__order_no']
+admin.site.register(OrderScheduler,OrderSchedulerAdmin)
+
+
 
 class InvestigationMediaInline(admin.TabularInline):
 	model = InvestigationMedia
