@@ -221,7 +221,7 @@
     </td>
     
     {% if request.user.user_type == 'SALESADMIN' %}
-    <td class="clickable-row" data-href="{% url 'salesadmin:salesadmin-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
+    <td class="clickable-row" data-href="{% url 'bleach_salesadmin:salesadmin-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
     {% elif request.user.user_type == 'AGENT' %}
     <td class="clickable-row" data-href="{% url 'agent:agent-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
     {% elif request.user.user_type == 'ADMIN' %}
