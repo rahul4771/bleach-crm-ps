@@ -2,53 +2,87 @@
 /** Backgrounds**/
 
 
-.completed-bg{
+.completed-status-bg{
     background: #779F39 !important;
 }
 
 
-.approved-bg{
+.approved-status-bg{
     background: #31AA4A !important;
 }
-.not-approved-bg{
+.not-approved-status-bg{
     background:#8B8B8B !important;
 }
-.approved-not-paid-bg{
+.approved-not-paid-status-bg{
     background: #425D57 !important;
 }
-.not-approved-not-paid-bg{
+.not-approved-not-paid-status-bg{
     background:#699189 !important;
 }
 
-.order-in-progress-bg{
+.order-in-progress-status-bg{
     background: #0D87C5 !important;
 }
-.evaluating-bg{
+.evaluating-status-bg{
     background: #1A8E92 !important;
 }
-.pending-bg{
+.pending-status-bg{
     background: #606FCE !important;
 }
-.expired-bg{
+.expired-status-bg{
     background:#7C35A5 !important; 
 }
-.rejected-bg{
+.rejected-status-bg{
     background: #C91212 !important;
 }
-.cancel-in-progress-bg{
+.cancel-in-progress-status-bg{
     background: #DBA03A !important;
 }
-.cancelled-bg{
+.cancelled-status-bg{
     background: #FF5E00 !important;
 }
-.followup-cleaning-bg{
+.followup-cleaning-status-bg{
     background: #DBA03A !important;
 }
-.onetime-cleaning-bg{
+.onetime-cleaning-status-bg{
     background: #0D87C5 !important;
-}.subscription-cleaning-bg{
+}.subscription-cleaning-status-bg{
     background: #139275 !important;
 }
+
+
+.ticket-in-progress-status-bg{
+    background: #f2ba1e !important;
+}
+
+.ticket-raised-status-bg{
+    background: #528ce6 !important;
+}
+
+.ticket-closed-status-bg{
+    background: #3cbbb1 !important;
+}
+
+.client-active-bg{
+    background: #3cbbb1 !important;
+}
+
+.client-not-active-bg{
+    background: #f2ba1e !important;
+}
+
+.payment-not-started-bg{
+    background: #528ce6 !important;
+}
+
+.payment-in-progress-bg{
+    background: #f2ba1e !important;
+}
+
+.payment-completed-bg{
+    background: #3cbbb1 !important;
+}
+
 .round-marker{
     width: 12px;
     height: 12px;
@@ -57,6 +91,21 @@
     margin: 5px;
 }
 
+.completed-line{ border-left:4px solid #779F39 !important;}
+.approved-line{ border-left:4px solid #31AA4A !important;}
+.not-approved-line{ border-left:4px solid #8B8B8B !important;}
+.approved-not-paid-line{ border-left:4px solid #425D57 !important;}
+.order-in-progress-line{ border-left:4px solid #0D87C5 !important;}
+.evaluating-line{ border-left:4px solid #1A8E92 !important;}
+.pending-line{ border-left:4px solid #606FCE !important;}
+.expired-line{ border-left:4px solid #7C35A5 !important;}
+.rejected-line{ border-left:4px solid #C91212 !important;}
+.cancel-in-progress-line{ border-left:4px solid #DBA03A !important;}
+.cancelled-line{ border-left:4px solid #FF5E00 !important;}
+.rejected-line{ border-left:4px solid #C91212 !important;}
+.pending-line{ border-left:4px solid #606FCE !important;}
+.expired-line{ border-left:4px solid #7C35A5 !important;}
+.evaluating-line{ border-left:4px solid #1A8E92 !important;}
 
 /** Texts **/
 

@@ -6,7 +6,7 @@ from django.forms import formset_factory,modelformset_factory
 from django.http import HttpResponse,JsonResponse
 
 from django.conf import settings
-from bleach_crm_ps.permissions import IsAgent
+from bleach_crm_ps.permissions import IsAgent,IsAuthenticated
 from bleach_crm_ps.utils import get_error
 import glob
 import os
@@ -2514,7 +2514,7 @@ class FeedbackAdvanced(IsAgent,View):
 		return render(request,'agent/feedback/feedback-page.html',{"order":order,"client_details":client_details,"feedback_details":feedback_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"other_feedbacks":other_feedbacks,"average_feedback":average_feedback,})
 
 
-class TicketDetails(IsAgent,View):
+class TicketDetails(IsAuthenticated,View):
 	def get(self,request):
 
 		try:
@@ -2618,7 +2618,7 @@ class TicketDetails(IsAgent,View):
 		page_range = list(paginator.page_range)[start_index:end_index]
 		entry_per_page=(tickets.end_index())-(tickets.start_index())+1
 
-		return render(request,"agent/ticket/tickets.html",{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"investigators":investigators,"fil_governorate":fil_governorate,'fil_area':fil_area,"fil_investigator":fil_investigator,"fil_status":fil_status,})
+		return render(request,"common/tickets.html",{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"investigators":investigators,"fil_governorate":fil_governorate,'fil_area':fil_area,"fil_investigator":fil_investigator,"fil_status":fil_status,})
 
 
 class TicketDetailsEdit(IsAgent,View):

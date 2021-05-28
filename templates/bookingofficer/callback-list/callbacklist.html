@@ -114,9 +114,9 @@
 {% comment %} <th data-hide="phone,tablet">Service Type</th> {% endcomment %}
 <th data-hide="phone">Customer Mobile</th>
 <th data-hide="phone">Service Type</th>
-<th class="align-center" data-hide="phone,tablet">Status</th>
+<th data-hide="phone,tablet">Status</th>
 <th class="align-center" data-hide="phone,tablet">Callback Status</th>
-{% comment %} <th data-hide="phone,tablet">&nbsp;</th> {% endcomment %}
+<th class="align-center" data-hide="phone,tablet">Shortcuts</th>
 </tr>
 </thead>
 <tbody>
@@ -136,9 +136,9 @@
 
     {% comment %} <td>{% for evaluation_detail in evaluation.details_evaluation %}{% if evaluation_detail.evaluator %}{{evaluation_detail.evaluator.name}}<br>{% else %}{{evaluation_detail.evaluation.call_attender.name}}{% endif %}{% endfor %}</td> {% endcomment %}
     
-    <td>{% if evaluation.quatation_status == 'REJECTED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Rejected</span>
-        {% elif evaluation.quatation_status == 'PENDING' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="yellow-bg clickable-row">Pending</span>
-        {% elif evaluation.quatation_status == 'EXPIRED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="orange-bg clickable-row">Expired</span>
+    <td>{% if evaluation.quatation_status == 'REJECTED' %}<div {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="d-flex "><div class="round-marker red-bg"></div><span>REJECTED</span></div>
+        {% elif evaluation.quatation_status == 'PENDING' %}<div {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="d-flex "><div class="round-marker yellow-bg"></div><span>PENDING</span></div>
+        {% elif evaluation.quatation_status == 'EXPIRED' %}<div {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="d-flex "><div class="round-marker orange-bg"></div><span>EXPIRED</span></div>
         {% else %}
         <span data-href="#" class="blue-bg clickable-row">Evaluating</span>
         {%endif%}
@@ -157,9 +157,9 @@
     
     </td>
 
-    {% comment %}<td class="align-center">
-     <a href="{% url 'booking-officer:bookingofficer-makequatation1edit' evaluation.customer.id evaluation.id %}"><img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon"></a> 
-     </td>{% endcomment %}
+    <td class="clickable-row" {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %}>
+      
+     </td>
 
     </tr>    
     {% empty %}

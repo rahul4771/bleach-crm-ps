@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
-{% include "agent/common/header.html" %}         
+{% include "bookingofficer/common/header.html" %}         
     
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
@@ -147,11 +147,13 @@
     <td {% if evaluation.quatation_status == 'APPROVED' %}{% for order in evaluation.evaluationorder %}
         {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' %}
         {% if order.order_status == 'APPROVED_BY_CLIENT' %}
-        class="green-line"
+        class="approved-line"
         {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
-        class="violet-line"
+        class="order-in-progress-line"
         {% elif order.order_status == 'ORDER_CLOSED' %}
-        class="rose-line"
+        class="completed-line"
+        {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
+        class="cancel-in-progress-line"
         {% else %}
         class="red-line"
         {% endif %}
@@ -160,7 +162,7 @@
         {% endif %}
         {% endfor %}
 
-        {% elif evaluation.quatation_status == 'REJECTED' %}class="red-line"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line"{% elif evaluation.quatation_status == 'EXPIRED' %}class="orange-line"{%else%}class="blue-line"{%endif%}>{{evaluation.evaluation_id}}</td>    
+        {% elif evaluation.quatation_status == 'REJECTED' %}class="rejected-line"{% elif evaluation.quatation_status == 'PENDING' %}class="pending-line"{% elif evaluation.quatation_status == 'EXPIRED' %}class="expired-line"{%else%}class="blue-line"{%endif%}>{{evaluation.evaluation_id}}</td>    
     <td>{{evaluation.customer.name|default_if_none:''}}</td>
     <td>{% for evaluation_detail in evaluation.details_evaluation %}{{evaluation_detail.address.area.name}}<br>{% endfor %}</td>
     <td>{% for evaluation_detail in evaluation.details_evaluation %}
@@ -177,29 +179,35 @@
       
         {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
         {% if order.order_status == 'APPROVED_BY_CLIENT' %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="green-bg clickable-row">Approved</span>
+        <div class="d-flex "><div class="round-marker approved-status-bg"></div><span>Approved</span></div>
         {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="violet-bg clickable-row">Order in Progress</span>
+        <div  class="d-flex "><div class="round-marker order-in-progress-status-bg"></div><span>Order in progress</span></div>
         {% elif order.order_status == 'ORDER_CLOSED' %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="rose-bg clickable-row">Completed</span>
-        {% elif order.order_status == 'CANCELL_IN_PROGRESS' %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="skyblue-bg clickable-row">Cancell in Progress</span>
+        <div  class="d-flex "><div class="round-marker completed-status-bg"></div><span>Completed</span></div>
+        {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
+        <div  class="d-flex "><div class="round-marker cancel-in-progress-status-bg"></div><span>Cancel in Progress</span></div>
         {% else %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Order Cancelled</span>
+        <div  class="d-flex "><div class="round-marker cancelled-status-bg"></div><span>Order Cancelled</span></div>
         {% endif %}
         {% else %}
-        <span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="oil-green-bg clickable-row">Approved-Not Paid</span>
+        <div  class="d-flex "><div class="round-marker approved-not-paid-status-bg"></div><span>Approved-Not Paid</span></div>
         {% endif %}
         {% endfor %}
 
-        {% elif evaluation.quatation_status == 'REJECTED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="red-bg clickable-row">Rejected</span>
-        {% elif evaluation.quatation_status == 'PENDING' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="yellow-bg clickable-row">Pending</span>
-        {% elif evaluation.quatation_status == 'EXPIRED' %}<span {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="orange-bg clickable-row">Expired</span>
+        {% elif evaluation.quatation_status == 'REJECTED' %}<div  class="d-flex "><div class="round-marker rejected-status-bg"></div><span>Rejected</span></div>
+        {% elif evaluation.quatation_status == 'PENDING' %}<div  class="d-flex "><div class="round-marker pending-status-bg"></div><span>Pending</span></div>
+        {% elif evaluation.quatation_status == 'EXPIRED' %}<div  class="d-flex "><div class="round-marker expired-status-bg"></div><span>Expired</span></div>
         {% else %}
-        <span data-href="#" class="blue-bg clickable-row">Evaluating</span>
+        <div data-href="#" class="d-flex "><div class="round-marker clickable-row evaluating-status-bg"></div><span>Evaluating</span></div>
         {%endif%}
     </td>
-    <td class="align-center">{% if evaluation.quatation_status == 'APPROVED' %}<a href="/customer/quatation/download/{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}"><img src="{% static 'files/images/icon-download.png' %}" align="absmiddle" class="download-icon"></a>{% else %}<img src="{% static 'files/images/icon-download-gray.png' %}" align="absmiddle" class="download-icon">{% endif %} &nbsp &nbsp{% if evaluation.quatation_status == 'APPROVED' or evaluation.quatation_status == 'PENDING' %}
+    <td class="align-center">
+    
+    {% for order in evaluation.evaluationorder %}
+      <a href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"><img src="{% static 'files/images/icon-download.png' %}" align="absmiddle" class="download-icon"></a>
+    {% endfor %}&nbsp &nbsp
+
+    {% if evaluation.quatation_status == 'APPROVED' %}<a href="/customer/quatation/download/{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}"><img src="{% static 'files/images/icon-download.png' %}" align="absmiddle" class="download-icon"></a>{% else %}<img src="{% static 'files/images/icon-download-gray.png' %}" align="absmiddle" class="download-icon">{% endif %} &nbsp &nbsp{% if evaluation.quatation_status == 'APPROVED' or evaluation.quatation_status == 'PENDING' %}
     {% if evaluation.payment_method == 'SUBSCRIPTION' %}<a href="/customer/subscription/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>
     {% else %}
     <a href="/customer/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>
