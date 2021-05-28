@@ -1,5 +1,17 @@
 
 {
+"action_type": "edit_cleaning_withautofix",
+"cleaning_end": "29-05-2021 09:00 AM",
+"cleaning_hours": 9,
+"cleaning_start": "29-05-2021 12:00 AM",
+"evaluation_id": "BLC20210410067",
+"no_of_cleaners": 3,
+"schedules": [782],
+"service_types": ["General Cleaning"]
+}
+
+
+{
 "number_of_cleaners":4,
 "cleaning_hours":3,
 "service_types":["General Cleaning"],

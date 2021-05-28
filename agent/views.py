@@ -1189,8 +1189,8 @@ class CleaningPopupSave(APIView):
 					#cleaning team members
 					cleaning_team_member_array = []
 					for i in range(no_of_cleaners-1):
-						cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=cleaners[i],work_status='CLEANING_TEAM_ASSIGNED',start_at=schedule_start_at,end_at=schedule_end_at,start_time=schedule_start_at.time(),end_time=schedule_end_at.time()))
-					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,work_status='CLEANING_TEAM_ASSIGNED',member=leaders.first(),start_at=schedule_start_at,end_at=schedule_end_at,start_time=schedule_start_at.time(),end_time=schedule_end_at.time()))
+						cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=cleaners[i],start_at=schedule_start_at,end_at=schedule_end_at,start_time=schedule_start_at.time(),end_time=schedule_end_at.time()))
+					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=leaders.first(),start_at=schedule_start_at,end_at=schedule_end_at,start_time=schedule_start_at.time(),end_time=schedule_end_at.time()))
 
 					CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
 
