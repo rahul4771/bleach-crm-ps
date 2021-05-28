@@ -81,10 +81,11 @@ class FollowupSerializer(serializers.ModelSerializer):
 
 class FollowUpTeamShowSerializer(serializers.ModelSerializer):
 	team_leader            = UserProfileShowSerializer(read_only=True)
-	followup_member_team   = FollowUpTeamMemberShowSerializer(many=True,read_only=True)
+	created_by             = UserProfileShowSerializer(read_only=True)
+	followup_member_team   = FollowUpTeamMemberShowSerializer(many=True,read_only=True)	
 	class Meta:
 		model   = FollowUpTeam
-		fields  = ('team_leader','followup_member_team')
+		fields  = ('team_leader','created_by','followup_member_team')
 
 
 class FollowupScheduleSerializer(serializers.ModelSerializer):
