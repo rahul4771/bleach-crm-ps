@@ -1090,7 +1090,7 @@ class CleaningPopupSave(APIView):
 		response_dict = {}
 		response_dict['success'] = False
 
-		action = request.POST.get('action_type')
+		action = request.data.get('action_type')
 		
 		schedule_start_at	        = datetime.strptime(request.data.get('cleaning_start'),'%d-%m-%Y %I:%M %p')
 		schedule_end_at	            = datetime.strptime(request.data.get('cleaning_end'),'%d-%m-%Y %I:%M %p')
