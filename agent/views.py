@@ -1242,6 +1242,43 @@ class CleaningCallendarFollowupPopup(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 
+class FollowupPopupSave(APIView):  
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def post(self,request):
+		response_dict = {}
+		response_dict['success'] = False
+
+		schedule_id               = request.data.get('followup_id')
+		cleaning_hours 	          = float(request.data.get('cleaning_hours'))
+		no_of_cleaners            = request.data.get('no_of_cleaners')
+		schedule_start_at         = datetime.strptime(request.data.get('cleaning_start_at'),'%d-%m-%Y %I:%M %p')
+		schedule_end_at           = datetime.strptime(request.data.get('cleaning_end_at'),'%d-%m-%Y %I:%M %p')
+
+		#update schedule
+		followup_scheduler  = FollowUpScheduler.objects.select_related('follow_up').get(id=schedule_id)
+		followup_scheduler.start_at 							= schedule_start_at
+		followup_scheduler.end_at   							= schedule_end_at
+		followup_scheduler.follow_up.cleaning_hours 			= cleaning_hours
+		followup_scheduler.follow_up.no_of_cleaners 			= no_of_cleaners
+
+		followup_scheduler.save()
+		followup_scheduler.follow_up.save()
+
+		#Delete followup team
+		FollowUpTeam.objects.filter(followup_scheduler=followup_scheduler).delete()
+		
+		#Delete followup team members		
+		FollowUpTeamMember.objects.filter(team__followup_scheduler=followup_scheduler).delete()
+		
+
+		response_dict['success'] = True
+		response_dict['msg']     = "Followup Cleaning Appointment Succesfully Updated"
+		
+		return Response(response_dict,HTTP_200_OK)
+
+
 # Create your views here.
 class AgentHome(IsAgent,View):
 	def get(self,request):

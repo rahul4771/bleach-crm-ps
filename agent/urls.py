@@ -9,7 +9,8 @@ urlpatterns = [
 	url(r'^cleaningcallendar/cleaning/edit/slotes/$',views.CleaningPopupMultipleServiceCleaningSlotes.as_view(),name='cleaning-callendar-cleaningedit-slotes'),
 	url(r'^cleaningcallendar/cleaning/edit/save/$',views.CleaningPopupSave.as_view(),name='cleaning-callendar-cleaningedit-save'),
 	url(r'^cleaningcallendar/followupcleaning/popup/$',views.CleaningCallendarFollowupPopup.as_view(),name='cleaning-callendar-followupcleaningpopup'),
-	
+	url(r'^cleaningcallendar/followup/edit/save/$',views.FollowupPopupSave.as_view(),name='cleaning-callendar-followupedit-save'),
+
 	url(r'^dashboard/$',views.AgentHome.as_view(),name='agentdash-board'),
 	url(r'^resources/$',views.ResourceManagement.as_view(),name='resource-management'),
 	url(r'^orders/$',views.OrderDetails.as_view(),name='agent-orders'),
