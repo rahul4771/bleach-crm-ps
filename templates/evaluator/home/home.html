@@ -232,8 +232,8 @@
               </div>
               <div :class="item.classType+' '+item.color+' '+'d-flex'" @click="openCleaningModal(item)">
                 <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
-                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-bg'"/>
-                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-bg'"/>
+                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-status-bg'"/>
+                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-status-bg'"/>
 
                   <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
                     <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
@@ -277,8 +277,8 @@
               </div>
               <div :class="item.classType+' '+item.color+' '+'d-flex'" @click="openCleaningModal(item)">
                 <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
-                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-bg'"/>
-                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
+                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-status-bg'"/>
+                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-status-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
                     <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
                       <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
     
@@ -320,8 +320,8 @@
               </div>
               <div :class="item.classType+' '+item.color+' '+'d-flex'" @click="openCleaningModal(item)">
                 <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
-                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-bg'"/>
-                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
+                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-status-bg'"/>
+                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-status-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
                     <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
                       <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
     
@@ -365,8 +365,8 @@
               
               <div :class="item.classType+' '+item.color+' '+'d-flex'"   @click="openCleaningModal(item)">
                 <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
-                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-bg'"/>
-                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
+                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-status-bg'"/>
+                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-status-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
                     <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
                       <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
     
@@ -407,8 +407,8 @@
               </div>
               <div :class="item.classType+' '+item.color+' '+'d-flex'">
                 <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
-                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-bg'"/>
-                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
+                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-status-bg'"/>
+                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-status-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
                     <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
                       <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
     
@@ -452,8 +452,8 @@
               </div>
               <div :class="item.classType+' '+item.color+' '+'d-flex'" @click="openCleaningModal(item)">
                 <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
-                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-bg'"/>
-                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
+                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-status-bg'"/>
+                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-status-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
                     <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
                       <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
     
@@ -495,8 +495,8 @@
               </div>
               <div :class="item.classType+' '+item.color+' '+'d-flex'" @click="openCleaningModal(item)">
                 <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
-                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-bg'"/>
-                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
+                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-status-bg'"/>
+                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-status-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
                     <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
                       <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
     
@@ -537,8 +537,8 @@
               </div>
               <div :class="item.classType+' '+item.color+' '+'d-flex'" @click="openCleaningModal(item)">
                 <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
-                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-bg'"/>
-                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
+                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-status-bg'"/>
+                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-status-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
                     <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
                       <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
     
@@ -915,7 +915,7 @@ class="cl-service-list"
   <div class="modal-dialog customer-border" role="document" id="customer-border" >
 
    
-    <div class="modal-content" v-if="currentSlotDetails!=null && currentSlot.color!='followup-cleaning-bg' && dataCompleted">
+    <div class="modal-content" v-if="currentSlotDetails!=null && currentSlot.color!='followup-cleaning-status-bg' && dataCompleted">
     <input type="hidden" name="evaluationid" id="evaluation_id" />
     <input type="hidden" name="evaluationdetailid" id="evaluation_detail_id" />
       <div>
@@ -1099,7 +1099,7 @@ class="cl-service-list"
   <!--- followup popup content-->
 
 
-  <div class="modal-content" v-if="currentSlotDetails!=null && currentSlot.color=='followup-cleaning-bg' && dataCompleted">
+  <!--<div class="modal-content" v-if="currentSlotDetails!=null && currentSlot.color=='followup-cleaning-status-bg' && dataCompleted">
     <input type="hidden" name="evaluationid" id="evaluation_id" />
     <input type="hidden" name="evaluationdetailid" id="evaluation_detail_id" />
       <div>
@@ -1114,7 +1114,7 @@ class="cl-service-list"
       <div class="row" style="margin:0">
         <div class="col-md-12" style="padding:0">
 
-          <!-- :color = agent || :color="customer" || :color="cancelled"     -->   
+        
       <v-alert
       prominent
       type="error"
@@ -1155,9 +1155,7 @@ class="cl-service-list"
      <div class="cl-modal-text-content cl-mt-5">
       <% currentSlotDetails.customer_address.customer.mobile_number %>
      </div>
-    <!-- <div class="cl-modal-text-title cl-mt-20 ">
-     <% currentSlotDetails.order_scheduler_book.service_type.name %>
-    </div>-->
+   
      <div class="cl-modal-text-content cl-mt-5">
        Apartment : <% currentSlotDetails.customer_address.apartment %>,
        Building : <% currentSlotDetails.customer_address.building %>
@@ -1218,15 +1216,7 @@ class="cl-service-list"
       
       </div>
       <div class="col-md-7 offset-md-1">
-     <!--   Slots for cleaning
-       <v-select
-   :items="['1','2','3','4']"
-   v-model="selectedSlot"
-   size="sm"
-   outlined
-   :color="customer"
-   class="eval-select"
- ></v-select>-->
+  
  Slots : <% no_of_slots %>
  <div>
    <b>Time Slots Available</b>
@@ -1274,7 +1264,7 @@ class="cl-service-list"
   </div>
   </div>
   </div>
-  </div>
+  </div>-->
 
 
             

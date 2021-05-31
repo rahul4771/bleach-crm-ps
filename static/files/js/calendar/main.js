@@ -348,7 +348,7 @@ const app=  new Vue({
                     //this.slots.followup_cleanings[k]['cleaning_hours']=this.slots.followup_cleanings[k].follow_up.cleaning_hours
                     slot.cleaning_hours=slot.follow_up.cleaning_hours
                     slot.order={order_no:slot.follow_up.ticket_no}
-                    this.combineSlots.push({type:'followup',class:'followup-cleaning-bg',slots:slot})
+                    this.combineSlots.push({type:'followup',class:'followup-cleaning-status-bg',slots:slot})
                 }
                 this.parseSlots()
               })
@@ -552,7 +552,7 @@ const app=  new Vue({
               }
           },
           checkCustomerBooking(classType,slot,type){
-            if(type!="followup-cleaning-bg"){
+            if(type!="followup-cleaning-status-bg"){
 
             
             if(classType=='cl-start-end' || classType=='cl-end-only')
@@ -573,7 +573,7 @@ const app=  new Vue({
         }
           },
           checkTeamLeader(slot,type){
-            if(type!='followup-cleaning-bg'){
+            if(type!='followup-cleaning-status-bg'){
               if(slot.cleaning_team_order_scheduler.length>0){
                 if(slot.cleaning_team_order_scheduler[0].team_leader){
                  return  true
@@ -607,7 +607,7 @@ const app=  new Vue({
             //this.dataCompleted=true
             console.log("item is "+JSON.stringify(item))
             
-         if(item.color!='followup-cleaning-bg')
+         if(item.color!='followup-cleaning-status-bg')
          {
            
             axios.get(this.url+"/agent/cleaningcallendar/cleaning/popup/?cleaning_start="+item.slots.start_at+'&cleaning_end='+item.slots.end_at+'&evaluation_id='+item.slots.order.order_no).then((response) => {
