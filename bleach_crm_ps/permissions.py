@@ -86,4 +86,11 @@ class IsAgentEvaluatorSalesAdmin(UserPassesTestMixin):
         elif self.request.user.is_authenticated and self.request.user.user_type=='EVALUATOR' and self.request.user.is_active==True:
             return True
         else:
-            return False        
+            return False    
+
+class IsAuthenticated(UserPassesTestMixin):
+    def test_func(self):
+        if self.request.user.is_authenticated and self.request.user.is_active==True:
+            return True
+        else:
+            return False

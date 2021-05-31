@@ -81,6 +81,7 @@ const app=  new Vue({
         today:'',
         timeSlots:[],
         parsedSlots:[],
+        no_of_slots:0,
         teammembers:'yes',
         slot:{
           "1":{
@@ -152,7 +153,10 @@ const app=  new Vue({
         combinedCleaningDetails:[],
         cleaningEditSlots:[],
         availableSlots:[],
-        selectedEditSlot:[]
+        selectedEditSlot:[],
+        dataCompleted:false,
+        action_type:'edit_cleaning_withautofix',
+        cleaningAgentDialog:false,
       },
       watch: {
         services: function (val) {
@@ -344,7 +348,7 @@ const app=  new Vue({
                     //this.slots.followup_cleanings[k]['cleaning_hours']=this.slots.followup_cleanings[k].follow_up.cleaning_hours
                     slot.cleaning_hours=slot.follow_up.cleaning_hours
                     slot.order={order_no:slot.follow_up.ticket_no}
-                    this.combineSlots.push({type:'followup',class:'followup-cleaning-bg',slots:slot})
+                    this.combineSlots.push({type:'followup',class:'followup-cleaning-status-bg',slots:slot})
                 }
                 this.parseSlots()
               })
@@ -375,6 +379,49 @@ const app=  new Vue({
             })
             
           },
+          checkslot(index){
+            if(this.selectedEditSlot.length<this.no_of_slots)
+            {
+            if(this.selectedEditSlot.length>0)
+            {
+            if(index==0){
+              var nextslot=this.availableSlots[(index+1)]
+              if(this.selectedEditSlot.includes((nextslot.split(' ')[0]+' '+nextslot.split(' ')[1]))){
+                return true
+              }
+              else{
+                return false
+              }
+            }
+            else if(index==(this.availableSlots.length-1)){
+              var prevslot=this.availableSlots[(index-1)]
+              if(this.selectedEditSlot.includes((prevslot.split(' ')[0]+' '+prevslot.split(' ')[1]))){
+                return true
+              }
+              else{
+                return false
+              }
+            }
+            else{  
+              var prevslot=this.availableSlots[(index-1)]
+            var nextslot=this.availableSlots[(index+1)]
+            
+            if(this.selectedEditSlot.includes((prevslot.split(' ')[0]+' '+prevslot.split(' ')[1]))||this.selectedEditSlot.includes((nextslot.split(' ')[0]+' '+nextslot.split(' ')[1]))){
+              return true
+            }
+            else{
+              return false
+            }
+          }
+        }
+          else{
+            return true
+          }
+        }
+        else{
+          return false
+        }
+          },
           editCleaning(){
             this.editEval=true
             var temparray=this.selectedDate.split("-")
@@ -389,8 +436,26 @@ const app=  new Vue({
               evaluation_id:this.currentSlotDetails.order.order_no
             }).then((response) => {
               this.cleaningEditSlots=response.data.slotes
+
               this.parseEditSlots()
             })
+          },
+          editFollowupCleaning(){
+            this.editEval=true
+            var temparray=this.selectedDate.split("-")
+            var selectedDate=temparray.reverse().join("-")
+            this.cleaningEditSlots={
+              "0":[3,6,9,12],
+              "3":[3,6,9,12],
+              "6":[3,6,9,12],
+              "9":[3,6,9,12],
+              "12":[3,6,9,12],
+              "15":[3,6,9,12],
+              "18":[3,6,9,12],
+              "21":[3,6,9,12]
+
+            }
+            this.parseEditSlots()
           },
           saveEdit(){
             var temparray=this.selectedDate.split("-")
@@ -420,9 +485,51 @@ const app=  new Vue({
             schedules : [this.currentSlotDetails.id],
             evaluation_id:this.currentSlotDetails.order.order_no,
             service_types:['General Cleaning'],
-            action_type:'edit_cleaning_withautofix'
+            action_type:this.action_type
             }).then((response) => {
               console.log(response)
+              this.editEval=false,
+              this.selectedEditSlot=[],
+              this.availableSlots=[],
+              this.currentSlot={},
+              this.currentSlotDetails={}
+              this.getSlots()
+            })
+          },
+          saveEditFollowup(){
+            var temparray=this.selectedDate.split("-")
+            var selectedDate=temparray.reverse().join("-")
+            var max=moment(this.selectedEditSlot[0], 'h:mma')
+            var min=moment(this.selectedEditSlot[0], 'h:mma')
+            for(var i=1;i<this.selectedEditSlot.length;i++){
+              var cslot=moment(this.selectedEditSlot[i], 'h:mma')
+              if(moment(cslot).isAfter(max)){
+                max=cslot
+              }
+              if(moment(cslot).isBefore(min)){
+                min=cslot
+              }
+            }
+            console.log("max is "+moment(max).format('hh:mm A'))
+            var end = (moment(max).add(3, 'hours'))
+
+            axios.post(this.url+'/agent/cleaningcallendar/followup/edit/save/',{
+          
+             
+
+            cleaning_start_at:selectedDate+' '+moment(min).format('hh:mm A'),
+            cleaning_end_at:selectedDate+' '+moment(end).format('hh:mm A'),
+            no_of_cleaners:this.currentSlotDetails.follow_up.no_of_cleaners,
+            cleaning_hours:this.currentSlotDetails.follow_up.cleaning_hours,
+            followup_id:this.currentSlotDetails.id
+            }).then((response) => {
+              console.log(response)
+              this.editEval=false,
+              this.selectedEditSlot=[],
+              this.availableSlots=[],
+              this.currentSlot={},
+              this.currentSlotDetails={}
+              this.getSlots()
             })
           },
           parseEditSlots(){
@@ -445,7 +552,7 @@ const app=  new Vue({
               }
           },
           checkCustomerBooking(classType,slot,type){
-            if(type!="followup-cleaning-bg"){
+            if(type!="followup-cleaning-status-bg"){
 
             
             if(classType=='cl-start-end' || classType=='cl-end-only')
@@ -466,7 +573,7 @@ const app=  new Vue({
         }
           },
           checkTeamLeader(slot,type){
-            if(type!='followup-cleaning-bg'){
+            if(type!='followup-cleaning-status-bg'){
               if(slot.cleaning_team_order_scheduler.length>0){
                 if(slot.cleaning_team_order_scheduler[0].team_leader){
                  return  true
@@ -495,12 +602,35 @@ const app=  new Vue({
             
           },
           openCleaningModal(item){
-            this.currentSlot=item
-         
+          
+            this.currentSlotDetails={}
+            //this.dataCompleted=true
+            console.log("item is "+JSON.stringify(item))
+            
+         if(item.color!='followup-cleaning-status-bg')
+         {
+           
             axios.get(this.url+"/agent/cleaningcallendar/cleaning/popup/?cleaning_start="+item.slots.start_at+'&cleaning_end='+item.slots.end_at+'&evaluation_id='+item.slots.order.order_no).then((response) => {
               this.currentSlotDetails=response.data.cleaning_details[0]
+              this.no_of_slots=parseInt(this.currentSlotDetails.cleaning_hours)/3
+              this.cleaningAgentDialog=true
+              this.dataCompleted=true
+             // $('#cleanAgentModal').modal('show');
               
             })
+          }
+          else{
+
+          
+            axios.get(this.url+"/agent/cleaningcallendar/followupcleaning/popup/?followup_scheduler_id="+item.slots.id).then((response) => {
+              this.currentSlotDetails=response.data.followup_cleanings[0]
+              this.no_of_slots=parseInt(this.currentSlotDetails.follow_up.cleaning_hours)/3
+            
+              
+            })
+          }
+          this.currentSlot=item
+            
 
           },
           parseSlots(){
@@ -519,34 +649,34 @@ const app=  new Vue({
                   if(this.combineSlots[i].type!='followup')
                   {
                   if(this.combineSlots[i].slots.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE'){
-                    color='onetime-cleaning-bg'
+                    color='onetime-cleaning-status-bg'
                   }
                   else if(this.combineSlots[i].slots.order_scheduler_book.cleaning_policy=='SUBSCRIPTION'){
-                    color='subscription-cleaning-bg'
+                    color='subscription-cleaning-status-bg'
                   }
                 
                   if(this.combineSlots[i].slots.work_status=='CLEANING_CANCELLED')
                   {
-                    color='rejected-bg'
+                    color='rejected-status-bg'
                   }
                 }
                   if(this.combineSlots[i].type=='followup')
                   {
-                    color='followup-cleaning-bg'
+                    color='followup-cleaning-status-bg'
                   }
                   else if(this.combineSlots[i].type=='not approved'){
                     if(!this.combineSlots[i].slots.order.order_status)
                     {
-                      color='not-approved-not-paid-bg'
+                      color='not-approved-not-paid-status-bg'
                     }
                     else{
-                      color='not-approved-bg'
+                      color='not-approved-status-bg'
                     }
                   }
                   else if(this.combineSlots[i].type=='approved'){
                     if(!this.combineSlots[i].slots.order.order_status)
                     {
-                      color='approved-not-paid-bg'
+                      color='approved-not-paid-status-bg'
                     }
                    /* else
                     {

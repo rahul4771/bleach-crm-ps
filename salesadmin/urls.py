@@ -7,7 +7,7 @@ urlpatterns = [
 	url(r'^dashboard/$',views.AdminHome.as_view(),name='salesadmindash-board'),
 	url(r'^active-subscriptions/$',views.ActiveSubscriptions.as_view(),name='salesadmin-active-subscriptions'),
 	url(r'^resources/$',views.ResourceManagement.as_view(),name='resource-management'),
-	url(r'^orders/$',views.OrderDetails.as_view(),name='salesadmin-orders'),
+	
 	url(r'^customer-bookings/$',views.CustomerBookingsList.as_view(),name='salesadmin-customer-bookings'),
 
 	url(r'^daily-sales/$',views.DailySales.as_view(),name='salesadmin-daily-sales'),
