@@ -155,7 +155,8 @@ const app=  new Vue({
         availableSlots:[],
         selectedEditSlot:[],
         dataCompleted:false,
-        action_type:'edit_cleaning_withautofix'
+        action_type:'edit_cleaning_withautofix',
+        cleaningAgentDialog:false,
       },
       watch: {
         services: function (val) {
@@ -601,8 +602,9 @@ const app=  new Vue({
             
           },
           openCleaningModal(item){
+          
             this.currentSlotDetails={}
-            this.dataCompleted=true
+            //this.dataCompleted=true
             console.log("item is "+JSON.stringify(item))
             
          if(item.color!='followup-cleaning-bg')
@@ -611,6 +613,7 @@ const app=  new Vue({
             axios.get(this.url+"/agent/cleaningcallendar/cleaning/popup/?cleaning_start="+item.slots.start_at+'&cleaning_end='+item.slots.end_at+'&evaluation_id='+item.slots.order.order_no).then((response) => {
               this.currentSlotDetails=response.data.cleaning_details[0]
               this.no_of_slots=parseInt(this.currentSlotDetails.cleaning_hours)/3
+              this.cleaningAgentDialog=true
               this.dataCompleted=true
              // $('#cleanAgentModal').modal('show');
               
@@ -646,34 +649,34 @@ const app=  new Vue({
                   if(this.combineSlots[i].type!='followup')
                   {
                   if(this.combineSlots[i].slots.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE'){
-                    color='onetime-cleaning-bg'
+                    color='onetime-cleaning-status-bg'
                   }
                   else if(this.combineSlots[i].slots.order_scheduler_book.cleaning_policy=='SUBSCRIPTION'){
-                    color='subscription-cleaning-bg'
+                    color='subscription-cleaning-status-bg'
                   }
                 
                   if(this.combineSlots[i].slots.work_status=='CLEANING_CANCELLED')
                   {
-                    color='rejected-bg'
+                    color='rejected-status-bg'
                   }
                 }
                   if(this.combineSlots[i].type=='followup')
                   {
-                    color='followup-cleaning-bg'
+                    color='followup-cleaning-status-bg'
                   }
                   else if(this.combineSlots[i].type=='not approved'){
                     if(!this.combineSlots[i].slots.order.order_status)
                     {
-                      color='not-approved-not-paid-bg'
+                      color='not-approved-not-paid-status-bg'
                     }
                     else{
-                      color='not-approved-bg'
+                      color='not-approved-status-bg'
                     }
                   }
                   else if(this.combineSlots[i].type=='approved'){
                     if(!this.combineSlots[i].slots.order.order_status)
                     {
-                      color='approved-not-paid-bg'
+                      color='approved-not-paid-status-bg'
                     }
                    /* else
                     {
