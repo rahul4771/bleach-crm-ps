@@ -23,6 +23,10 @@ $(document).ready(function(){
     })
    
   });
+  
+console.log("maxheight:"+$('#cleaningCalendar-carousel').height())
+var heightCarousel=$('#cleaningCalendar-carousel').height()
+$('.owl-item').height(heightCarousel)
 
   function openModal(){
    
@@ -712,12 +716,24 @@ const app=  new Vue({
                 var startslot=this.combineSlots[i].slots.start_at.split(' ')[1]+' '+this.combineSlots[i].slots.start_at.split(' ')[2]
                 var endslot=this.combineSlots[i].slots.end_at.split(' ')[1]+' '+this.combineSlots[i].slots.end_at.split(' ')[2]
                 var slots=[]
-                if(startdate==enddate && parseInt(startslot.split(':')[0])%3==0 && parseInt(endslot.split(':')[0])%3==0 && parseInt(startslot.split(':')[1])==0 && parseInt(endslot.split(':')[1])==0){
+                if(parseInt(startslot.split(':')[0])%3==0 && parseInt(endslot.split(':')[0])%3==0 && parseInt(startslot.split(':')[1])==0 && parseInt(endslot.split(':')[1])==0){
                   var color=''
-                  var slot=moment('12:00 AM', 'h:mma')
-                  var limit=moment('11:55 PM', 'h:mma')
-                  var beginningTime = moment(startslot, 'h:mma');
-                  var endTime = moment(endslot, 'h:mma');
+                  var slot=moment(this.cleaningDate,'DD-MM-YYYY HH:mm A')
+               //   var limit=moment(startdate+' 12:00 AM').format('DD MM YYYY h:mm:ss a').add(1,'days')
+                  var limit =moment(this.cleaningDate,'DD-MM-YYYY HH:mm A').add(1, 'days')
+                 // var lastday =moment(this.cleaningDate,'DD-MM-YYYY HH:mm A').(1, 'days')
+                  
+                  
+                  
+                  console.log("slot:"+slot+'limit:'+limit)
+                  var date_start=this.combineSlots[i].slots.start_at
+                  var date_end=this.combineSlots[i].slots.end_at
+                  /*var beginningTime = moment(startslot, 'h:mma');
+                  var endTime = moment(endslot, 'h:mma');*/
+                  console.log("begold time is :"+date_start+'end time :'+date_end)
+                  var beginningTime=moment(date_start,'DD-MM-YYYY HH:mm A')
+                  var endTime=moment(date_end,'DD-MM-YYYY HH:mm A')
+                  console.log("beg time is :"+beginningTime+'end time :'+endTime)
                   if(this.combineSlots[i].type!='followup')
                   {
                   if(this.combineSlots[i].slots.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE'){
@@ -875,6 +891,47 @@ const app=  new Vue({
                  
                   
                 }
+
+                /*    continous slot */
+             /*   else{
+                  if(this.combineSlots[i].type!='followup')
+                  {
+                  if(this.combineSlots[i].slots.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE'){
+                    color='onetime-cleaning-status-bg'
+                  }
+                  else if(this.combineSlots[i].slots.order_scheduler_book.cleaning_policy=='SUBSCRIPTION'){
+                    color='subscription-cleaning-status-bg'
+                  }
+                
+                  if(this.combineSlots[i].slots.work_status=='CLEANING_CANCELLED')
+                  {
+                    color='rejected-status-bg'
+                  }
+                }
+                  if(this.combineSlots[i].type=='followup')
+                  {
+                    color='followup-cleaning-status-bg'
+                  }
+                  else if(this.combineSlots[i].type=='not approved'){
+                    if(!this.combineSlots[i].slots.order.order_status)
+                    {
+                      color='not-approved-not-paid-status-bg'
+                    }
+                    else{
+                      color='not-approved-status-bg'
+                    }
+                  }
+                  else if(this.combineSlots[i].type=='approved'){
+                    if(!this.combineSlots[i].slots.order.order_status)
+                    {
+                      color='approved-not-paid-status-bg'
+                    }
+                   
+                  }
+
+
+
+                }*/
             }
           },
           setRow(slots){
