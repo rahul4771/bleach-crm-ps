@@ -1,4 +1,8 @@
+.v-dialog__content{
+    z-index:9999 !important;
+}
 /* Evaluation Calendar */
+
 .cl-slot{
     width: 8.33%;
     color: #434343;

@@ -8,6 +8,7 @@ $(document).ready(function(){
         loop:false,
         margin:10,
         nav:false,
+        
         responsive:{
             0:{
                 items:1
@@ -154,9 +155,21 @@ const app=  new Vue({
         cleaningEditSlots:[],
         availableSlots:[],
         selectedEditSlot:[],
+        selectedSlotDetailed:{},
         dataCompleted:false,
         action_type:'edit_cleaning_withautofix',
         cleaningAgentDialog:false,
+        cleaningFollowupDialog:false,
+        followupStat:false,
+        convertedDate:'',
+        popup:{
+          border:'',
+          text:'',
+          bg:'',
+          color:'',
+          type:''
+        }
+
       },
       watch: {
         services: function (val) {
@@ -183,7 +196,10 @@ const app=  new Vue({
       },
       methods:{
         selectEditSlot(slot){
+         
+
           this.selectedEditSlot.push(slot)
+          this.selectedSlotDetailed[this.convertedDate].push(slot)
         },
         removeEditSlot(slot){
           const index = this.selectedEditSlot.indexOf(slot);
@@ -307,6 +323,7 @@ const app=  new Vue({
             this.combineSlots=[]
             this.selectedCleaningSlot=[]
             this.slots={}
+            
            // this.slot={}
            this.slot={
             "1":{
@@ -423,9 +440,16 @@ const app=  new Vue({
         }
           },
           editCleaning(){
-            this.editEval=true
+            
             var temparray=this.selectedDate.split("-")
             var selectedDate=temparray.reverse().join("-")
+            this.convertedDate=selectedDate
+            this.selectedEditSlot=[]
+            if(!this.selectedSlotDetailed[this.convertedDate]){
+              this.selectedSlotDetailed[this.convertedDate]=[]
+            }
+          
+            this.editEval=true
             axios.post(this.url+'/agent/cleaningcallendar/cleaning/edit/slotes/',{
              // cleaning_date:this.currentSlotDetails.start_at.split(' ')[0],
              
@@ -442,8 +466,13 @@ const app=  new Vue({
           },
           editFollowupCleaning(){
             this.editEval=true
+            this.selectedEditSlot=[]
             var temparray=this.selectedDate.split("-")
             var selectedDate=temparray.reverse().join("-")
+            this.convertedDate=selectedDate
+            if(!this.selectedSlotDetailed[this.convertedDate]){
+              this.selectedSlotDetailed[this.convertedDate]=[]
+            }
             this.cleaningEditSlots={
               "0":[3,6,9,12],
               "3":[3,6,9,12],
@@ -529,7 +558,10 @@ const app=  new Vue({
               this.availableSlots=[],
               this.currentSlot={},
               this.currentSlotDetails={}
+              this.cleaningFollowupDialog=false
+              this.followupStat=false
               this.getSlots()
+              
             })
           },
           parseEditSlots(){
@@ -601,14 +633,45 @@ const app=  new Vue({
             }
             
           },
+          closeCleaningModal(){
+            this.editEval=false
+            this.cleaningAgentDialog=false
+            this.cleaningFollowupDialog=false
+          },
           openCleaningModal(item){
-          
+            this.cleaningAgentDialog=false
+            this.dataCompleted=false
+            this.cleaningFollowupDialog=false
+              this.followupStat=false
             this.currentSlotDetails={}
             //this.dataCompleted=true
             console.log("item is "+JSON.stringify(item))
             
          if(item.color!='followup-cleaning-status-bg')
          {
+          if(item.color=='subscription-cleaning-status-bg'){
+            this.popup.color='#139275'
+            this.popup.border='subscription-border'
+            this.popup.type='subscription-popup'
+            this.popup.text='subscription-text',
+            this.popup.bg='subscription-cleaning-status-bg'
+
+
+          }
+          else if(item.color=='onetime-cleaning-status-bg'){
+            this.popup.color='#0D87C5'
+            this.popup.border='onetime-border'
+            this.popup.type='onetime-popup'
+            this.popup.text='onetime-text',
+            this.popup.bg='onetime-cleaning-status-bg'
+          }
+          else if(item.color=='not-approved-status-bg'){
+            this.popup.color='#8B8B8B'
+            this.popup.border='not-approved-border'
+            this.popup.type='not-approved-popup'
+            this.popup.text='not-approved-text',
+            this.popup.bg='not-approved-status-bg'
+          }
            
             axios.get(this.url+"/agent/cleaningcallendar/cleaning/popup/?cleaning_start="+item.slots.start_at+'&cleaning_end='+item.slots.end_at+'&evaluation_id='+item.slots.order.order_no).then((response) => {
               this.currentSlotDetails=response.data.cleaning_details[0]
@@ -620,11 +683,17 @@ const app=  new Vue({
             })
           }
           else{
+         
 
           
             axios.get(this.url+"/agent/cleaningcallendar/followupcleaning/popup/?followup_scheduler_id="+item.slots.id).then((response) => {
               this.currentSlotDetails=response.data.followup_cleanings[0]
-              this.no_of_slots=parseInt(this.currentSlotDetails.follow_up.cleaning_hours)/3
+              this.no_of_slots=parseInt(this.currentSlotDetails.follow_up.cleaning_hours)/3   
+              this.cleaningFollowupDialog=true
+              this.followupStat=true
+              
+             
+               
             
               
             })

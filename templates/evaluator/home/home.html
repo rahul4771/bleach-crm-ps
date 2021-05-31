@@ -717,14 +717,14 @@ class="cl-service-list"
       v-model="cleaningAgentDialog"
       width="1000"
     >
-    <v-card v-if="dataCompleted">
+    <v-card v-if="dataCompleted" :class="this.popup.type">
     <div class="container">
       <div class="row" style="margin:0">
         <div class="col-md-12">
           <div class="d-flex cl-modal-icons">
             <img src="{% static 'files/icons/edit.png'%}" class="cl-modal-icon" @click="editCleaning()"/>
             <img src="{% static 'files/icons/delete.png'%}" class="cl-modal-icon" @click="delAlert=!delAlert"/>
-            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" @click="cleaningAgentDialog=false"/>
+            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" @click="closeCleaningModal()"/>
           </div>
 
         </div>
@@ -758,7 +758,7 @@ class="cl-service-list"
       <div class="row" style="margin:0">
         <div class="col-md-8">
         
-         <div class="cl-modal-text-title cl-mt-10 customer-booked-text">
+         <div :class="'cl-modal-text-title cl-mt-10 customer-booked-text '+popup.text">
           <% currentSlotDetails.order.order_no %>
          </div>
          <div class="d-flex" v-if="currentSlotDetails.work_status=='CLEANING_FULFILLED'">
@@ -798,7 +798,7 @@ class="cl-service-list"
               Senior Team leader
             </div>
             <div class="cl-modal-text-title  "  v-if="currentSlotDetails.cleaning_team_order_scheduler[0]">
-              <div v-if="currentSlotDetails.cleaning_team_order_scheduler[0].created_by"><% currentSlotDetails.cleaning_team_order_scheduler[0].created_by %></div>
+              <div v-if="currentSlotDetails.cleaning_team_order_scheduler[0].created_by"><% currentSlotDetails.cleaning_team_order_scheduler[0].created_by.name %></div>
               <div v-else class="cl-highlight"> Not Assigned </div>
             </div>
             <div v-else class="cl-highlight cl-modal-text-title "> Not Assigned </div>
@@ -829,7 +829,7 @@ class="cl-service-list"
           </div>
           <div class="mt-2 col-md-4">
          
-             <v-date-picker v-model="selectedDate" :color="customer" class="cl-datecalendar w-100" @change="editCleaning()"></v-date-picker>
+             <v-date-picker v-model="selectedDate" :color="popup.color" class="cl-datecalendar w-100" @change="editCleaning()" :min="today"></v-date-picker>
           
           </div>
           <div class="col-md-7 offset-md-1">
@@ -886,10 +886,10 @@ class="cl-service-list"
           </div>
          
         <div class="cl-btns d-flex justify-center col-md-12">
-         <div class="proceed-btn customer-booked-bg " @click="saveEdit()" data-dismiss="modal" aria-label="Close">
+         <div :class="'proceed-btn '+popup.bg" @click="saveEdit()" data-dismiss="modal" aria-label="Close">
            Proceed
          </div>
-         <div class="cancel-btn ml-4 customer-booked-border" @click="cleaningAgentDialog=false">
+         <div :class="'cancel-btn ml-4 '+popup.border+' '+ popup.text" @click="closeCleaningModal()">
           Cancel
         </div>
        </div>
@@ -903,7 +903,179 @@ class="cl-service-list"
   </v-card>
  </v-dialog>   
 
+ <v-dialog
+ v-model="cleaningFollowupDialog"
+ width="1000"
+ 
+ 
+>
+<v-card v-if="followupStat" class="followup-popup">
+  <div class="container">
+    <div class="row" style="margin:0">
+      <div class="col-md-12">
+        <div class="d-flex cl-modal-icons">
+          <img src="{% static 'files/icons/edit.png'%}" class="cl-modal-icon" @click="editFollowupCleaning()"/>
+          <img src="{% static 'files/icons/delete.png'%}" class="cl-modal-icon" @click="delAlert=!delAlert"/>
+          <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" @click="closeCleaningModal()"/>
+        </div>
 
+      </div>
+      <div class="col-md-12" style="padding:0">    
+    <v-alert
+    prominent
+    type="error"
+    v-model="delAlert"
+    :color="customer"
+    class="mt-2 w-100"
+  >
+    <v-row align="center">
+      <v-col class="grow ">
+      Do you want to cancel this booking ?
+      </v-col>
+      <v-col class="shrink">
+        <div class="d-flex">
+        <v-btn onclick="delete_evaluation()">Proceed</v-btn>
+        <v-btn class="ml-4 text-black close-cancel" color="white" style="color:#000000"  @click="delAlert=!delAlert">Cancel</v-btn>
+      </div>
+      </v-col>
+    </v-row>
+  </v-alert>
+  </div>
+  
+
+      
+    </div>
+    <div class="row" style="margin:0">
+      <div class="col-md-8">
+      
+       <div class="cl-modal-text-title cl-mt-10 followup-text" v-if="currentSlotDetails.follow_up.ticket_no">
+        <% currentSlotDetails.follow_up.ticket_no %>
+       </div>
+       <div class="d-flex" v-if="currentSlotDetails.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
+        <div class="cl-completed-mark"></div>
+        <div class="cl-subtext" >
+          Completed
+         </div>
+       </div>
+       
+       <div class="cl-modal-text-title cl-mt-20 ">
+        <% currentSlotDetails.customer_address.customer.name %>
+       </div>
+       <div class="cl-modal-text-content cl-mt-5">
+        <% currentSlotDetails.customer_address.customer.mobile_number %>
+       </div>
+     
+       <div class="cl-modal-text-content cl-mt-5">
+         Apartment : <% currentSlotDetails.customer_address.apartment %>,
+         Building : <% currentSlotDetails.customer_address.building %>
+         Block : <% currentSlotDetails.customer_address.block %>,
+        
+         Area : <% currentSlotDetails.customer_address.area.name %>,
+         Governorate : <% currentSlotDetails.customer_address.governorate.name %>
+  
+         
+       </div>
+       <div class="cl-modal-text-content cl-mt-20">
+         <div>Cleaning Date : <% currentSlotDetails.start_at.split(' ')[0] %></div>
+         <div class="cl-mt-5">Slot : <% currentSlotDetails.start_at.split(' ')[1]+currentSlotDetails.start_at.split(' ')[2]+' - ' + currentSlotDetails.end_at.split(' ')[1]+currentSlotDetails.end_at.split(' ')[2] %></div>
+       </div>
+      </div>
+      <div class="col-md-4">
+        <div class="right-popup-box">
+          <div class="cl-modal-text-content cl-mt-20">
+            Senior Team leader
+          </div>
+          <div class="cl-modal-text-title  ">
+            <div v-if="currentSlotDetails.followupteam_followupschedule[0] ">
+              <span v-if="currentSlotDetails.followupteam_followupschedule[0].created_by"><% currentSlotDetails.followupteam_followupschedule[0].created_by.name %></span>
+              <span v-else class="cl-highlight"> Not Assigned </span>
+            </div>
+            <div v-else class="cl-highlight cl-modal-text-title "> Not Assigned </div>
+            
+          </div>
+          <div class="cl-modal-text-content cl-mt-20">
+            Team Incharge
+          </div>
+          <div class="cl-modal-text-title">
+            <div v-if="currentSlotDetails.followupteam_followupschedule[0]">
+              <span v-if="currentSlotDetails.followupteam_followupschedule[0].team_leader"><% currentSlotDetails.followupteam_followupschedule[0].team_leader.name %></span>
+
+              <span v-else class="cl-highlight"> Not Assigned </span>
+            </div>
+            <div v-else class="cl-highlight cl-modal-text-title "> Not Assigned </div>
+            
+          </div>
+          <div class="cl-modal-text-content cl-mt-20">
+            Team Members
+          </div>
+          <div class="cl-modal-text-title  " v-if="currentSlotDetails.followupteam_followupschedule[0]">
+            <span v-for="(team,tindex) in currentSlotDetails.followupteam_followupschedule[0].followup_member_team">
+              <% team.member.name %><span v-if="currentSlotDetails.followupteam_followupschedule[0].followup_member_team.length>0 && (currentSlotDetails.followupteam_followupschedule[0].followup_member_team.length-1)!=tindex">,</span>
+            </span>
+          </div>
+          <div v-else class="cl-highlight cl-modal-text-title "> Not Assigned </div>
+          <div class="text-right cl-mt-20">
+            <a class="cl-link">Edit Cleaning Team</a>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <div class="row" style="margin:0">
+        <div class="edit-eval col-md-12 cl-mt-20" v-if="editEval">
+          <div class="cl-modal-text-title">
+             Edit Cleaning
+          </div>
+          <div class="row">
+            <div class="mt-2 col-md-4">
+         
+              <v-date-picker v-model="selectedDate" color="#DBA03A" class="cl-datecalendar w-100" @change="editFollowupCleaning()" :min="today"></v-date-picker>
+           
+           </div>
+            <div class="col-md-7 offset-md-1">
+          
+              Slots : <% no_of_slots %>
+              <div>
+                <b>Time Slots Available</b>
+              </div>
+             <div class="time-slots row mt-2" >
+              <div class="col-md-6" v-for="(slot,index) in availableSlots" v-bind:key="index">
+                <div class="time-slot" @click="selectEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])"  v-if="!selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1])) && checkslot(index)">
+                 <% slot %>
+                </div>
+                <div class="time-slot-active" v-if="selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1]))" @click="removeEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])">
+                 <% slot %>
+                </div>
+                <div class="time-slot-inactive" v-if="!checkslot(index) && !selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1]))" @click="removeEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])">
+                 <% slot %>
+                </div>
+              </div>
+              <div class="col-md-12"  v-if="availableSlots.length<1">
+               <div class=" cl-modal-text-title text-center cl-highlight" >
+               Slots not available. 
+               </div>
+             </div>
+            </div>
+        </div>
+        <div class="cl-btns d-flex justify-center col-md-12">
+          <div class="proceed-btn followup-cleaning-status-bg " @click="saveEditFollowup()" data-dismiss="modal" aria-label="Close">
+            Proceed
+          </div>
+          <div class="cancel-btn ml-4 followup-border followup-text" @click="closeCleaningModal()">
+           Cancel
+         </div>
+        </div>
+          </div>
+          
+
+
+      </div>
+      </div>
+  
+  
+  </div>
+  </v-card>
+  </v-dialog>
 <!-- new cleaning cal popup ends here-->
 
 
