@@ -235,7 +235,7 @@
                   <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-bg'"/>
                   <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-bg'"/>
 
-                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
+                  <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
                     <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
   
                 </div>
@@ -279,7 +279,10 @@
                 <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
                   <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-bg'"/>
                   <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
-                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+                    <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
+                      <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+    
+                  </div>
   
                 </div>
   
@@ -319,7 +322,10 @@
                 <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
                   <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-bg'"/>
                   <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
-                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+                    <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
+                      <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+    
+                  </div>
   
                 </div>
   
@@ -361,7 +367,10 @@
                 <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
                   <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-bg'"/>
                   <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
-                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+                    <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
+                      <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+    
+                  </div>
   
                 </div>
   
@@ -392,7 +401,7 @@
               </div>
             </div>
             </div>
-            <div class="marker-container mt-4" v-for="(item,index) in slot[5].slots" v-bind:key="index"  data-toggle="modal" data-target="#cleanAgentModal" @click="openCleaningModal(item)">
+            <div class="marker-container mt-4" v-for="(item,index) in slot[5].slots" v-bind:key="index" data-toggle="modal" data-target="#cleanAgentModal"  @click="openCleaningModal(item)">
               <div class="cl-dummy mt-4 mb-4" v-for="(dummy,dindex) in getRowDiff(item,slot[5].slots,index)">
 
               </div>
@@ -400,7 +409,10 @@
                 <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
                   <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-bg'"/>
                   <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
-                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+                    <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
+                      <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+    
+                  </div>
   
                 </div>
   
@@ -442,7 +454,10 @@
                 <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
                   <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-bg'"/>
                   <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
-                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+                    <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
+                      <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+    
+                  </div>
   
                 </div>
   
@@ -482,7 +497,10 @@
                 <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
                   <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-bg'"/>
                   <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
-                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+                    <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
+                      <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+    
+                  </div>
   
                 </div>
   
@@ -521,7 +539,10 @@
                 <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
                   <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-bg'"/>
                   <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
-                    <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+                    <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
+                      <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+    
+                  </div>
   
                 </div>
   
@@ -696,7 +717,9 @@ class="cl-service-list"
 
 <div class="modal fade booking-dialog" id="cleanAgentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
   <div class="modal-dialog customer-border" role="document" id="customer-border" >
-    <div class="modal-content" v-if="currentSlotDetails!=null">
+
+    <!--   Approved & not approved bookings popup content-->
+    <div class="modal-content" v-if="currentSlotDetails!=null && currentSlot.color!='followup-cleaning-bg' && dataCompleted">
     <input type="hidden" name="evaluationid" id="evaluation_id" />
     <input type="hidden" name="evaluationdetailid" id="evaluation_detail_id" />
       <div>
@@ -739,7 +762,7 @@ class="cl-service-list"
      <div class="cl-modal-text-title cl-mt-10 customer-booked-text">
       <% currentSlotDetails.order.order_no %>
      </div>
-     <div class="d-flex" v-if="currentSlotDetails.order.order_status=='ORDER_CLOSED'">
+     <div class="d-flex" v-if="currentSlotDetails.work_status=='CLEANING_FULFILLED'">
       <div class="cl-completed-mark"></div>
       <div class="cl-subtext" >
         Completed
@@ -767,7 +790,7 @@ class="cl-service-list"
      </div>
      <div class="cl-modal-text-content cl-mt-20">
        <div>Cleaning Date : <% currentSlotDetails.start_at.split(' ')[0] %></div>
-       <div class="cl-mt-5">Slot : <% currentSlotDetails.start_at.split(' ')[1]+currentSlotDetails.start_at.split(' ')[2]+' - ' + currentSlotDetails.end_at.split(' ')[1]+currentSlotDetails.start_at.split(' ')[2] %></div>
+       <div class="cl-mt-5">Slot : <% currentSlotDetails.start_at.split(' ')[1]+currentSlotDetails.start_at.split(' ')[2]+' - ' + currentSlotDetails.end_at.split(' ')[1]+currentSlotDetails.end_at.split(' ')[2] %></div>
      </div>
     </div>
     <div class="col-md-4">
@@ -818,15 +841,19 @@ class="cl-service-list"
    :color="customer"
    class="eval-select"
  ></v-select>-->
+ Slots : <% no_of_slots %>
  <div>
    <b>Time Slots Available</b>
  </div>
 <div class="time-slots row mt-2" >
  <div class="col-md-6" v-for="(slot,index) in availableSlots" v-bind:key="index">
-   <div class="time-slot" @click="selectEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])"  v-if="!selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1]))">
+   <div class="time-slot" @click="selectEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])"  v-if="!selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1])) && checkslot(index)">
     <% slot %>
    </div>
    <div class="time-slot-active" v-if="selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1]))" @click="removeEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])">
+    <% slot %>
+   </div>
+   <div class="time-slot-inactive" v-if="!checkslot(index) && !selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1]))" @click="removeEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])">
     <% slot %>
    </div>
  </div>
@@ -842,7 +869,7 @@ class="cl-service-list"
   Do you want to automatically assign team members ? 
 </div>
 <v-radio-group
-      v-model="teammembers"
+      v-model="action_type"
       row
       class="cl-radio-row"
       v-if="selectedEditSlot.length>0"
@@ -850,13 +877,14 @@ class="cl-service-list"
     >
       <v-radio
         label="Yes"
-        value="yes"
+       
+        value="edit_cleaning_withautofix"
         class="cl-radio"
         :color="customer"
       ></v-radio>
       <v-radio
         label="No"
-        value="no"
+        value="edit_cleaning_withoutautofix"
         class="cl-radio"
         :color="customer"
       ></v-radio>
@@ -865,7 +893,7 @@ class="cl-service-list"
       </div>
      
     <div class="cl-btns d-flex justify-center col-md-12">
-     <div class="proceed-btn customer-booked-bg " @click="saveEdit()">
+     <div class="proceed-btn customer-booked-bg " @click="saveEdit()" data-dismiss="modal" aria-label="Close">
        Proceed
      </div>
      <div class="cancel-btn ml-4 customer-booked-border" data-dismiss="modal" aria-label="Close">
@@ -878,6 +906,185 @@ class="cl-service-list"
   </div>
 
   </div>
+
+</div>
+
+  <!--- followup popup content-->
+
+
+  <div class="modal-content" v-if="currentSlotDetails!=null && currentSlot.color=='followup-cleaning-bg' && dataCompleted">
+    <input type="hidden" name="evaluationid" id="evaluation_id" />
+    <input type="hidden" name="evaluationdetailid" id="evaluation_detail_id" />
+      <div>
+      
+      </div>
+      <div class="modal-body">
+      <div class="d-flex cl-modal-icons">
+        <img src="{% static 'files/icons/edit.png'%}" class="cl-modal-icon" @click="editFollowupCleaning()"/>
+        <img src="{% static 'files/icons/delete.png'%}" class="cl-modal-icon" @click="delAlert=!delAlert"/>
+        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" data-dismiss="modal" aria-label="Close"/>
+      </div>
+      <div class="row" style="margin:0">
+        <div class="col-md-12" style="padding:0">
+
+          <!-- :color = agent || :color="customer" || :color="cancelled"     -->   
+      <v-alert
+      prominent
+      type="error"
+      v-model="delAlert"
+      :color="customer"
+      class="mt-2 w-100"
+    >
+      <v-row align="center">
+        <v-col class="grow ">
+        Do you want to cancel this booking ?
+        </v-col>
+        <v-col class="shrink">
+          <div class="d-flex">
+          <v-btn onclick="delete_evaluation()">Proceed</v-btn>
+          <v-btn class="ml-4 text-black close-cancel" color="white" style="color:#000000"  @click="delAlert=!delAlert">Cancel</v-btn>
+        </div>
+        </v-col>
+      </v-row>
+    </v-alert>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8">
+    
+     <div class="cl-modal-text-title cl-mt-10 customer-booked-text" v-if="currentSlotDetails.follow_up.ticket_no">
+      <% currentSlotDetails.follow_up.ticket_no %>
+     </div>
+     <div class="d-flex" v-if="currentSlotDetails.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
+      <div class="cl-completed-mark"></div>
+      <div class="cl-subtext" >
+        Completed
+       </div>
+     </div>
+     
+     <div class="cl-modal-text-title cl-mt-20 ">
+      <% currentSlotDetails.customer_address.customer.name %>
+     </div>
+     <div class="cl-modal-text-content cl-mt-5">
+      <% currentSlotDetails.customer_address.customer.mobile_number %>
+     </div>
+    <!-- <div class="cl-modal-text-title cl-mt-20 ">
+     <% currentSlotDetails.order_scheduler_book.service_type.name %>
+    </div>-->
+     <div class="cl-modal-text-content cl-mt-5">
+       Apartment : <% currentSlotDetails.customer_address.apartment %>,
+       Building : <% currentSlotDetails.customer_address.building %>
+       Block : <% currentSlotDetails.customer_address.block %>,
+      
+       Area : <% currentSlotDetails.customer_address.area.name %>,
+       Governorate : <% currentSlotDetails.customer_address.governorate.name %>
+
+       
+     </div>
+     <div class="cl-modal-text-content cl-mt-20">
+       <div>Cleaning Date : <% currentSlotDetails.start_at.split(' ')[0] %></div>
+       <div class="cl-mt-5">Slot : <% currentSlotDetails.start_at.split(' ')[1]+currentSlotDetails.start_at.split(' ')[2]+' - ' + currentSlotDetails.end_at.split(' ')[1]+currentSlotDetails.end_at.split(' ')[2] %></div>
+     </div>
+    </div>
+    <div class="col-md-4">
+      <div class="right-popup-box">
+        <div class="cl-modal-text-content cl-mt-20">
+          Senior Team leader
+        </div>
+        <div class="cl-modal-text-title  ">
+          <div v-if="currentSlotDetails.followupteam_followupschedule[0] ">
+            <span v-if="currentSlotDetails.followupteam_followupschedule[0].created_by"><% currentSlotDetails.followupteam_followupschedule[0].created_by.name %></span>
+            <span v-else class="cl-highlight"> Not Assigned </span>
+          </div>
+          
+        </div>
+        <div class="cl-modal-text-content cl-mt-20">
+          Team Incharge
+        </div>
+        <div class="cl-modal-text-title">
+          <div v-if="currentSlotDetails.followupteam_followupschedule[0]">
+            <span v-if="currentSlotDetails.followupteam_followupschedule[0].team_leader"><% currentSlotDetails.followupteam_followupschedule[0].team_leader.name %></span>
+            <span v-else class="cl-highlight"> Not Assigned </span>
+          </div>
+          
+        </div>
+        <div class="cl-modal-text-content cl-mt-20">
+          Team Members
+        </div>
+        <div class="cl-modal-text-title  ">
+          <span v-for="(team,tindex) in currentSlotDetails.followupteam_followupschedule[0].followup_member_team">
+            <% team.member.name %><span v-if="currentSlotDetails.followupteam_followupschedule[0].followup_member_team.length>0 && (currentSlotDetails.followupteam_followupschedule[0].followup_member_team.length-1)!=tindex">,</span>
+          </span>
+        </div>
+        <div class="text-right cl-mt-20">
+          <a class="cl-link">Edit Cleaning Team</a>
+        </div>
+      </div>
+    </div>
+    <div class="edit-eval col-md-12 cl-mt-20" v-if="editEval">
+      <div class="cl-modal-text-title">
+         Edit Cleaning
+      </div>
+      <div class="mt-2 col-md-4">
+     
+         <v-date-picker v-model="selectedDate" :color="customer" class="cl-datecalendar w-100" @change="editCleaning()"></v-date-picker>
+      
+      </div>
+      <div class="col-md-7 offset-md-1">
+     <!--   Slots for cleaning
+       <v-select
+   :items="['1','2','3','4']"
+   v-model="selectedSlot"
+   size="sm"
+   outlined
+   :color="customer"
+   class="eval-select"
+ ></v-select>-->
+ Slots : <% no_of_slots %>
+ <div>
+   <b>Time Slots Available</b>
+ </div>
+<div class="time-slots row mt-2" >
+ <div class="col-md-6" v-for="(slot,index) in availableSlots" v-bind:key="index">
+   <div class="time-slot" @click="selectEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])"  v-if="!selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1])) && checkslot(index)">
+    <% slot %>
+   </div>
+   <div class="time-slot-active" v-if="selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1]))" @click="removeEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])">
+    <% slot %>
+   </div>
+   <div class="time-slot-inactive" v-if="!checkslot(index) && !selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1]))" @click="removeEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])">
+    <% slot %>
+   </div>
+ </div>
+ <div class="col-md-12"  v-if="availableSlots.length<1">
+  <div class=" cl-modal-text-title text-center cl-highlight" >
+  Slots not available. 
+  </div>
+</div>
+ 
+
+</div>
+
+
+ 
+      </div>
+     
+    <div class="cl-btns d-flex justify-center col-md-12">
+     <div class="proceed-btn customer-booked-bg " @click="saveEditFollowup()" data-dismiss="modal" aria-label="Close">
+       Proceed
+     </div>
+     <div class="cancel-btn ml-4 customer-booked-border" data-dismiss="modal" aria-label="Close">
+      Cancel
+    </div>
+   </div>
+      
+    </div>
+   
+   
+  </div>
+
+  </div>
+  </div>
   </div>
   </div>
   </div>
@@ -885,6 +1092,20 @@ class="cl-service-list"
 
             
 <!-- edit_cleaning_popup -->
+
+
+
+
+
+
+            
+<!-- edit_cleaning_popup -->
+
+
+<!--edit followup popup ends here-->
+
+
+
 <div class="modal-popup-wrapper1"><!--modal-popup-wrapper-->
     <div class="modal-overlay modal-toggle"></div>
     <div class="modal-wrapper modal-transition"><!--modal-wrapper modal-transition-->
@@ -923,6 +1144,7 @@ class="cl-service-list"
     </div><!--modal-wrapper modal-transition-->
 </div><!--modal-popup-wrapper-->
 <!-- /edit_cleaning_popup -->
+
 
 <!--edit followup popup -->
 <div class="modal-popup-wrapper2"><!--modal-popup-wrapper-->
