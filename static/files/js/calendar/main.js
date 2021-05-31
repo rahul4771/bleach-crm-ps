@@ -522,7 +522,10 @@ const app=  new Vue({
               this.availableSlots=[],
               this.currentSlot={},
               this.currentSlotDetails={}
+              this.cleaningAgentDialog=false
+              this.dataCompleted=false
               this.getSlots()
+              
             })
           },
           saveEditFollowup(){
@@ -752,6 +755,7 @@ const app=  new Vue({
                       color='approved-bg'
                     }*/
                   }
+                  
                   while(slot.isBefore(limit)){
                     if(slot.isBefore(endTime) && slot.isSameOrAfter(beginningTime)){
                       
