@@ -506,7 +506,7 @@ width:100% !important;
 }
 .cl-dummy{
     height:42px;
-    
+    transform: rotateZ(180deg);
 }
 .cl-marker-text{
     padding-top: 10px;
