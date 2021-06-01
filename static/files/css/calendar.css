@@ -1,4 +1,8 @@
+.v-dialog__content{
+    z-index:9999 !important;
+}
 /* Evaluation Calendar */
+
 .cl-slot{
     width: 8.33%;
     color: #434343;
@@ -432,9 +436,13 @@ width:100% !important;
 
 
 /** Cleaning calendar begins here**/
+#cleaningCalendar-carousel .owl-stage-outer{
+  
+}
 .cl-radio label{
     font-weight:400 !important;
     padding-top:5px;
+
 }
 .cl-radio-row{
     margin-top: 0px !important;
@@ -490,6 +498,7 @@ width:100% !important;
 .marker-container{
     height:42px;
     cursor:pointer;
+    background: #edf1f5;
     
 }
 .marker-container div{
@@ -497,6 +506,7 @@ width:100% !important;
 }
 .cl-dummy{
     height:42px;
+    
 }
 .cl-marker-text{
     padding-top: 10px;
