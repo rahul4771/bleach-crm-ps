@@ -27,11 +27,6 @@
     <div class="blc-number-big">{{order_schedule.evaluation_details.evaluation.evaluation_id}}</div>
     <br>        
         <div class="green-bg-lg">{% if order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}One-Time{% else %}Subscription{% endif %}</div><div class="blue-bg-lg">{% if order_schedule.order.payment_status == 'COMPLETED' %}Paid{% elif order_schedule.order.payment_status == 'ON_HOLD' %}ON HOLD<{% else %}Pending{% endif %}</div>
-
-        <div class="customer-name">{{order_schedule.order_scheduler_book.service_type.name}}</div>
-        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.cleaning_method}}</div>
-        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.area_type}}</div>
-        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.location_type}}</div>
     </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
         <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{order_schedule.start_at}}</div>
@@ -45,8 +40,14 @@
         <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
-<hr class="hr-dashedpad">
 
+{% for order_schedule in order_schedules %}
+<hr class="hr-dashedpad">
+<div class="customer-name">{{forloop.counter}}){{order_schedule.order_scheduler_book.service_type.name}}</div>
+<div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.cleaning_method}}</div>
+<div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.area_type}}</div>
+<div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.location_type}}</div>
+<br> 
 {% for section in  order_schedule.order_scheduler_book.sections %}
 <div class="narrow-head align-left">Section {{forloop.counter}} : {{section.section_name}}</div>
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
@@ -108,6 +109,8 @@
 </div><!--evaluation-card-wrapper-->
 
 <hr class="hr-dashedpad">
+{% endfor %}
+
 {% endfor %}
    
 <div class="eval-note-columns border"><!--eval-note-columns-->

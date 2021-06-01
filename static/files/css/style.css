@@ -132,6 +132,7 @@ footer {
   transition: all 0.5s linear;
     float: right;
     padding: 3px;
+    color:#2f4e85;
   }
   
   .action-icon.rotate {

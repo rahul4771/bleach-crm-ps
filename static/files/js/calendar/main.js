@@ -7,8 +7,9 @@ $(document).ready(function(){
     $('#cleaningCalendar-carousel').owlCarousel({
         loop:false,
         margin:10,
-        nav:false,
-        
+        nav:true,
+        navText:[`<i class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
+      `<i class='fa fa-chevron-right service-control'></i>`], 
         responsive:{
             0:{
                 items:1
@@ -374,8 +375,14 @@ const app=  new Vue({
                 this.parseSlots()
               })
           },
-          getSlotDetails(){
-           
+          getSlotDetails(slot){
+            var prevSlot=parseInt(slot)-1
+            var nextSlot=parseInt(slot)+1
+           if(!this.selectedCleaningSlot.includes(String(prevSlot)) && !this.selectedCleaningSlot.includes(String(nextSlot)) && this.selectedCleaningSlot.length>0)
+            {
+              this.selectedCleaningSlot=[]
+              this.selectedCleaningSlot.push(String(slot))
+            }
             var max=Math.max(...this.selectedCleaningSlot)
             var min=Math.min(...this.selectedCleaningSlot)
             this.cleaningData.cleaning_datetime_start=this.cleaningDate+' '+this.slotFormat[min].start_time
