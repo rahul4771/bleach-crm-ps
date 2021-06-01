@@ -1594,41 +1594,41 @@ class GetCleaningSlotes(APIView):
 
 		#count total cleaners and total leaders
 		if service_type == 'General Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_general_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_general_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_general_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_general_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Deep Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_deep_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_deep_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_deep_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_deep_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Upholstery Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_upholster_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_upholster_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_upholster_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_upholster_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Kitchen Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_kitchen_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_kitchen_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_kitchen_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_kitchen_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Carpet Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_carpet_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_carpet_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_carpet_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_carpet_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Sterilization':
-			total_cleaners 	= UserProfile.objects.filter(is_sterilization_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_sterilization_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_sterilization_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_sterilization_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Mattress Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_mattress_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_mattress_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_mattress_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_mattress_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Facade Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_facade_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_facade_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_facade_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_facade_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Storage Area':
-			total_cleaners 	= UserProfile.objects.filter(is_storagearea_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_storagearea_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_storagearea_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_storagearea_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Car Parking Umbrella':
-			total_cleaners 	= UserProfile.objects.filter(is_carparkingumbrella_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_carparkingumbrella_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_carparkingumbrella_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_carparkingumbrella_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Window Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_window_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_window_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_window_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_window_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Outdoor Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_outdoor_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_outdoor_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_outdoor_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_outdoor_skill=True,user_type='TEAMINCHARGE')
 		#absent cleaners and leaders	
 		absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(leave_date=cleaning_date).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 		absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(leave_date=cleaning_date,staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
@@ -1642,6 +1642,9 @@ class GetCleaningSlotes(APIView):
 			for slote_duration in slote_durations:
 				slote_starttime 			  = cleaning_date.replace(hour=slote,minute=0,second=0,microsecond=0)
 				slote_endtime                 = slote_starttime+timedelta(hours=slote_duration)
+
+				total_newcleaners = total_cleaners.filter(Q(Q(Q(shift_start__lte=slote_starttime.time())&Q(shift_end__gte=slote_starttime.time()))&Q(Q(shift_start__lte=slote_endtime.time())&Q(shift_end__gte=slote_endtime.time())))).count()-1
+				total_newleaders  = total_leaders.filter(Q(Q(Q(shift_start__lte=slote_starttime.time())&Q(shift_end__gte=slote_starttime.time()))&Q(Q(shift_start__lte=slote_endtime.time())&Q(shift_end__gte=slote_endtime.time())))).count()-1
 
 				if service_type == 'General Cleaning':
 					active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(member__is_general_skill=True).filter(Q(Q(Q(start_at__gte=slote_starttime)&Q(start_at__lte=slote_endtime))|Q(Q(end_at__gte=slote_starttime)&Q(end_at__lte=slote_endtime))|Q(Q(start_at__lte=slote_starttime)&Q(end_at__gte=slote_starttime)&Q(start_at__lte=slote_endtime)&Q(end_at__gte=slote_endtime))|Q(Q(start_at__gte=slote_starttime)&Q(end_at__gte=slote_starttime)&Q(start_at__lte=slote_endtime)&Q(end_at__lte=slote_endtime))))
@@ -1709,12 +1712,8 @@ class GetCleaningSlotes(APIView):
 				busy_cleaners = len(set(team_members_scheduled))
 
 				#slote appending
-				if((total_cleaners-busy_cleaners)>=number_of_cleaners and (total_leaders-busy_leaders)>=1):
-					available_durations.append(slote_duration)	
-				else:
-					dropdown_slotes['success'] = False
-					dropdown_slotes['Error'] = 'Cleaners are not available'
-					return Response(dropdown_slotes,HTTP_200_OK)			
+				if((total_newcleaners-busy_cleaners)>=number_of_cleaners and (total_newleaders-busy_leaders)>=1):
+					available_durations.append(slote_duration)				
 			
 			available_slotes[slote] = available_durations
 
@@ -1773,8 +1772,6 @@ class GetMultipleServiceCleaningSlotes(APIView):
 			elif service_type == 'Outdoor Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_outdoor_skill=True)
 				total_leaders 	= total_leaders.filter(is_outdoor_skill=True)
-		total_cleaners = total_cleaners.count()-1
-		total_leaders  = total_leaders.count()-1
 		
 		#absent cleaners and leaders	
 		absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(leave_date=cleaning_date).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
@@ -1790,6 +1787,9 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				slote_starttime 			  = cleaning_date.replace(hour=slote,minute=0,second=0,microsecond=0)
 				slote_endtime                 = slote_starttime+timedelta(hours=slote_duration)
 
+				total_newcleaners = total_cleaners.filter(Q(Q(Q(shift_start__lte=slote_starttime.time())&Q(shift_end__gte=slote_starttime.time()))&Q(Q(shift_start__lte=slote_endtime.time())&Q(shift_end__gte=slote_endtime.time())))).count()-1
+				total_newleaders  = total_leaders.filter(Q(Q(Q(shift_start__lte=slote_starttime.time())&Q(shift_end__gte=slote_starttime.time()))&Q(Q(shift_start__lte=slote_endtime.time())&Q(shift_end__gte=slote_endtime.time())))).count()-1
+				
 				active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_starttime)&Q(start_at__lte=slote_endtime))|Q(Q(end_at__gte=slote_starttime)&Q(end_at__lte=slote_endtime))|Q(Q(start_at__lte=slote_starttime)&Q(end_at__gte=slote_starttime)&Q(start_at__lte=slote_endtime)&Q(end_at__gte=slote_endtime))|Q(Q(start_at__gte=slote_starttime)&Q(end_at__gte=slote_starttime)&Q(start_at__lte=slote_endtime)&Q(end_at__lte=slote_endtime))))
 				active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_starttime)&Q(start_at__lte=slote_endtime))|Q(Q(end_at__gte=slote_starttime)&Q(end_at__lte=slote_endtime))|Q(Q(start_at__lte=slote_starttime)&Q(end_at__gte=slote_starttime)&Q(start_at__lte=slote_endtime)&Q(end_at__gte=slote_endtime))|Q(Q(start_at__gte=slote_starttime)&Q(end_at__gte=slote_starttime)&Q(start_at__lte=slote_endtime)&Q(end_at__lte=slote_endtime))))
 				
@@ -1860,12 +1860,8 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				busy_cleaners = len(set(team_members_scheduled))
 
 				#slote appending
-				if((total_cleaners-busy_cleaners)>=number_of_cleaners and (total_leaders-busy_leaders)>=1):
-					available_durations.append(slote_duration)	
-				else:
-					dropdown_slotes['success'] = False
-					dropdown_slotes['Error'] = 'Cleaners are not available'
-					return Response(dropdown_slotes,HTTP_200_OK)			
+				if((total_newcleaners-busy_cleaners)>=number_of_cleaners and (total_newleaders-busy_leaders)>=1):
+					available_durations.append(slote_duration)				
 			
 			available_slotes[slote] = available_durations
 
@@ -1924,8 +1920,6 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 			elif service_type == 'Outdoor Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_outdoor_skill=True)
 				total_leaders 	= total_leaders.filter(is_outdoor_skill=True)
-		total_cleaners = total_cleaners.count()-1
-		total_leaders  = total_leaders.count()-1
 		
 
 		available_slotes = []
@@ -1943,6 +1937,9 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 			start_at_date = start_at.date()
 			end_at_date   = end_at.date()
 
+			total_newcleaners = total_cleaners.filter(Q(Q(Q(shift_start__lte=start_at.time())&Q(shift_end__gte=start_at.time()))&Q(Q(shift_start__lte=end_at.time())&Q(shift_end__gte=end_at.time())))).count()-1
+			total_newleaders  = total_leaders.filter(Q(Q(Q(shift_start__lte=start_at.time())&Q(shift_end__gte=start_at.time()))&Q(Q(shift_start__lte=end_at.time())&Q(shift_end__gte=end_at.time())))).count()-1
+			
 			#absent cleaners and leaders	
 			absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_at_date)|Q(leave_date=end_at_date))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 			absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_at_date)|Q(leave_date=end_at_date))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
@@ -2015,7 +2012,7 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 			busy_cleaners = len(set(team_members_scheduled))
 
 			#slote availability				
-			if((total_cleaners-busy_cleaners)>=number_of_cleaners and (total_leaders-busy_leaders)>=1):
+			if((total_newcleaners-busy_cleaners)>=number_of_cleaners and (total_newleaders-busy_leaders)>=1):
 				available_slotes.append(datetime.strftime(start_at,'%d-%m-%Y %I:%M %p'))	
 			else:
 				busy_slotes.append(datetime.strftime(start_at,'%d-%m-%Y %I:%M %p'))
@@ -2080,8 +2077,6 @@ class GetMultipleServiceDateCleaningSlotesAutofix(APIView):
 			elif service_type == 'Outdoor Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_outdoor_skill=True)
 				total_leaders 	= total_leaders.filter(is_outdoor_skill=True)
-		total_cleaners = total_cleaners.count()-1
-		total_leaders  = total_leaders.count()-1
 		
 
 		slote_details = {}
@@ -2098,7 +2093,10 @@ class GetMultipleServiceDateCleaningSlotesAutofix(APIView):
 				
 				start_at = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p')+timedelta(hours=slote_checking)
 				end_at   = start_at+timedelta(hours=cleaing_hours)
-
+	
+				total_newcleaners = total_cleaners.filter(Q(Q(Q(shift_start__lte=start_at.time())&Q(shift_end__gte=start_at.time()))&Q(Q(shift_start__lte=end_at.time())&Q(shift_end__gte=end_at.time())))).count()-1
+				total_newleaders  = total_leaders.filter(Q(Q(Q(shift_start__lte=start_at.time())&Q(shift_end__gte=start_at.time()))&Q(Q(shift_start__lte=end_at.time())&Q(shift_end__gte=end_at.time())))).count()-1
+		
 				start_at_date = start_at.date()
 				end_at_date   = end_at.date()
 				
@@ -2176,7 +2174,7 @@ class GetMultipleServiceDateCleaningSlotesAutofix(APIView):
 					busy_cleaners = len(set(team_members_scheduled))
 
 					#slote availability				
-					if((total_cleaners-busy_cleaners)>=number_of_cleaners and (total_leaders-busy_leaders)>=1):
+					if((total_newcleaners-busy_cleaners)>=number_of_cleaners and (total_newleaders-busy_leaders)>=1):
 						slote_details[cleaning_datetime] =	datetime.strftime(start_at,'%d-%m-%Y %I:%M %p')
 						break
 					else:
@@ -2281,41 +2279,41 @@ class ClientCleaningBookingPhase2(APIView):
 		service_type   		= service.name
 
 		if service_type == 'General Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_general_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_general_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_general_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_general_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Deep Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_deep_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_deep_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_deep_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_deep_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Upholstery Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_upholster_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_upholster_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_upholster_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_upholster_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Kitchen Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_kitchen_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_kitchen_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_kitchen_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_kitchen_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Carpet Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_carpet_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_carpet_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_carpet_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_carpet_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Sterilization':
-			total_cleaners 	= UserProfile.objects.filter(is_sterilization_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_sterilization_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_sterilization_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_sterilization_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Mattress Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_mattress_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_mattress_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_mattress_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_mattress_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Facade Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_facade_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_facade_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_facade_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_facade_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Storage Area':
-			total_cleaners 	= UserProfile.objects.filter(is_storagearea_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_storagearea_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_storagearea_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_storagearea_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Car Parking Umbrella':
-			total_cleaners 	= UserProfile.objects.filter(is_carparkingumbrella_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_carparkingumbrella_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_carparkingumbrella_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_carparkingumbrella_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Window Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_window_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_window_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_window_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_window_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Outdoor Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_outdoor_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))).count()-1
-			total_leaders 	= UserProfile.objects.filter(is_outdoor_skill=True,user_type='TEAMINCHARGE').count()-1
+			total_cleaners 	= UserProfile.objects.filter(is_outdoor_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_outdoor_skill=True,user_type='TEAMINCHARGE')
 
 		####allready half done or new quatation####
 		try:
@@ -2334,6 +2332,10 @@ class ClientCleaningBookingPhase2(APIView):
 				end_date_time           =  start_date_time + timedelta(hours=test_schedules_dict[key]['cleaning_hours']) 	
 
 				number_of_cleaners      = test_schedules_dict[key]['no_of_cleaners']-1
+
+				#total cleaners
+				total_newcleaners = total_cleaners.filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).count()-1
+				total_newleaders  = total_leaders.filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).count()-1
 
 				#absent cleaners and leaders	
 				absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
@@ -2376,6 +2378,8 @@ class ClientCleaningBookingPhase2(APIView):
 					active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(member__is_outdoor_skill=True).filter(Q(Q(Q(start_at__gte=start_date_time)&Q(start_at__lte=end_date_time))|Q(Q(end_at__gte=start_date_time)&Q(end_at__lte=end_date_time))|Q(Q(start_at__lte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__gte=end_date_time))|Q(Q(start_at__gte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__lte=end_date_time))))
 					active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(member__is_outdoor_skill=True).filter(Q(Q(Q(start_at__gte=start_date_time)&Q(start_at__lte=end_date_time))|Q(Q(end_at__gte=start_date_time)&Q(end_at__lte=end_date_time))|Q(Q(start_at__lte=start_date_time)&Q(end_at__gte=slote_starttime)&Q(start_at__lte=end_date_time)&Q(end_at__gte=end_date_time))|Q(Q(start_at__gte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__lte=end_date_time))))
 
+
+
 				cleaning_active_team_leaders = active_cleaners1.filter(member__user_type='TEAMINCHARGE').values_list('member',flat=True)
 				cleaning_active_cleaners     = active_cleaners1.filter(Q(Q(member__user_type='TEAMINCHARGE')|Q(member__user_type='CLEANER'))).values_list('member',flat=True)
 
@@ -2405,7 +2409,7 @@ class ClientCleaningBookingPhase2(APIView):
 				busy_cleaners = len(set(team_members_scheduled))
 
 				#slote appending
-				if((total_cleaners-busy_cleaners)>=number_of_cleaners and (total_leaders-busy_leaders)>=1):
+				if((total_newcleaners-busy_cleaners)>=number_of_cleaners and (total_newleaders-busy_leaders)>=1):
 					pass
 				else:
 					response_dict['Error'] = 'Cleaners are not available'
@@ -2576,9 +2580,10 @@ class ClientCleaningBookingPhase2(APIView):
 				active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
 
 		
-				leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders)))
-				cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners)))
-					
+				leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders)))
+				cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners)))
+				
+
 				service_type        = saved_service.service_type.name
 				
 				if service_type == 'General Cleaning':
@@ -2679,6 +2684,9 @@ class ClientCleaningBookingPhase2(APIView):
 
 				number_of_cleaners      = test_schedules_dict[key]['no_of_cleaners']-1
 
+				total_newcleaners = total_cleaners.filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).count()-1
+				total_newleaders  = total_leaders.filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).count()-1
+
 				#absent cleaners and leaders	
 				absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 				absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
@@ -2752,7 +2760,7 @@ class ClientCleaningBookingPhase2(APIView):
 				busy_cleaners = len(set(team_members_scheduled))
 
 				#slote appending
-				if((total_cleaners-busy_cleaners)>=number_of_cleaners and (total_leaders-busy_leaders)>=1):
+				if((total_newcleaners-busy_cleaners)>=number_of_cleaners and (total_newleaders-busy_leaders)>=1):
 					pass
 				else:
 					response_dict['Error'] = 'Cleaners are not available'
@@ -2891,9 +2899,9 @@ class ClientCleaningBookingPhase2(APIView):
 				active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).exclude(member__id__in=sameblc_cleaners).values_list("member",flat=True)
 				active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
 		
-				leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners)))
-				cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders)))
-					
+				leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners)))
+				cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders)))
+
 				service_type        = saved_service.service_type.name
 				
 				if service_type == 'General Cleaning':
@@ -3041,8 +3049,6 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 				total_cleaners 	= total_cleaners.filter(is_outdoor_skill=True)
 				total_leaders 	= total_leaders.filter(is_outdoor_skill=True)
 
-		total_cleaners = total_cleaners.count()-1
-		total_leaders  = total_leaders.count()-1
 		service_dict  = {}
 
 		####allready half done or new quatation####
@@ -3063,6 +3069,9 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 				end_date_time           =  start_date_time + timedelta(hours=test_schedules_dict[key]['cleaning_hours']) 	
 
 				number_of_cleaners      = test_schedules_dict[key]['no_of_cleaners']-1
+				
+				total_newcleaners = total_cleaners.filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).count()-1
+				total_newleaders  = total_leaders.filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).count()-1
 
 				#absent cleaners and leaders	
 				absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
@@ -3141,7 +3150,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 				busy_cleaners = len(set(team_members_scheduled))
 
 				#slote appending
-				if((total_cleaners-busy_cleaners)>=number_of_cleaners and (total_leaders-busy_leaders)>=1):
+				if((total_newcleaners-busy_cleaners)>=number_of_cleaners and (total_newleaders-busy_leaders)>=1):
 					pass
 				else:
 					response_dict['Error'] = 'Cleaners are not available'
@@ -3338,10 +3347,10 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 					active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
 
 			
-					leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders)))
-					cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners)))
+					leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders)))
+					cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners)))
 					
-					
+
 					for service_detail in services.keys():
 						service        		= ServiceType.objects.get(id=services[service_detail]['service_type'])
 						service_type   		= service.name 			
@@ -3446,6 +3455,9 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 
 				number_of_cleaners      = test_schedules_dict[key]['no_of_cleaners']-1
 
+				total_newcleaners = total_cleaners.filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).count()-1
+				total_newleaders  = total_leaders.filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).count()-1
+
 				#absent cleaners and leaders	
 				absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 				absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
@@ -3527,7 +3539,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 				busy_cleaners = len(set(team_members_scheduled))
 
 				#slote appending
-				if((total_cleaners-busy_cleaners)>=number_of_cleaners and (total_leaders-busy_leaders)>=1):
+				if((total_newcleaners-busy_cleaners)>=number_of_cleaners and (total_newleaders-busy_leaders)>=1):
 					pass
 				else:
 					response_dict['Error'] = 'Cleaners are not available'
@@ -3662,9 +3674,9 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 					active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).exclude(member__id__in=sameblc_cleaners).values_list("member",flat=True)
 					active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
 			
-					leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
-					cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
-	
+					leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
+					cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
+
 					for service_detail in services.keys():
 						service        		= ServiceType.objects.get(id=services[service_detail]['service_type'])
 						service_type   		= service.name 			
