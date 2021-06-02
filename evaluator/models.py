@@ -156,7 +156,7 @@ class CleaningType(models.Model):
 
 class CleaningMethod(models.Model):	
 	name 				= models.CharField(max_length=100,blank=False,null=False)
-	# service_type 		= models.ForeignKey('ServiceType',blank=True,null=True,related_name='method_service_type')
+	service_type 		= models.ForeignKey('ServiceType',blank=True,null=True,related_name='method_service_type')
 	
 	is_active       	= models.BooleanField(null=False,blank=True,default=True)
 	created         	= models.DateTimeField(auto_now_add=True)
@@ -183,7 +183,7 @@ class AreaType(models.Model):
 
 class CleaningSection(models.Model):	
 	name 				= models.CharField(max_length=100,blank=False,null=False)
-	# service_type 		= models.ForeignKey('ServiceType',blank=True,null=True,related_name='cleaning_section_service_type')
+	service_type 		= models.ForeignKey('ServiceType',blank=True,null=True,related_name='cleaning_section_service_type')
 	
 	is_active       	= models.BooleanField(null=False,blank=True,default=True)
 	created         	= models.DateTimeField(auto_now_add=True)
