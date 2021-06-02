@@ -213,7 +213,7 @@ class Investigation(models.Model):
 	title				 = models.CharField(max_length=500,blank=True,null=True)
 	secondary_investigation_notes  = models.CharField(max_length=5000,blank=True,null=True)
 	secondary_investigator		 = models.ForeignKey(UserProfile,blank=True,null=True,related_name='second_investigator')
-	secondary_investigation_created = models.DateTimeField(blank=True,null=True)
+	# secondary_investigation_created = models.DateTimeField(blank=True,null=True)
 	
 	is_followup_approved           = models.BooleanField(null=False,blank=True,default=False)
 	is_buybackgiftpromo_approved   = models.BooleanField(null=False,blank=True,default=False)
