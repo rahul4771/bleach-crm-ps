@@ -506,8 +506,63 @@ width:100% !important;
 }
 .cl-dummy{
     height:42px;
-    transform: rotateZ(180deg);
+   
 }
+
+/** Carousel**/
+.owl-prev {
+  
+    position: absolute;
+    top: 50px;
+    left: -15px;
+    top: 45%;
+    display: block !important;
+    border: 0px solid black;
+    height: 40px;
+    width: 40px;
+    border-radius: 40px;
+    background: #2f4e85 !important;
+    opacity:0.6 !important;
+}
+.service-control{
+    font-size:22px;
+}
+.owl-prev i, .owl-next i {transform: scale(1,1.5);
+    color: #dee2e6;
+    }
+    .owl-prev i{
+        padding-right: 4px;
+    }
+    .owl-next i{
+        padding-left: 4px;
+    }
+    .owl-prev:hover{
+        opacity:1 !important;
+    }
+/*.owl-prev i:hover {
+    color: #616161;
+}
+.owl-next i:hover {
+    color: #616161;
+}*/
+.owl-next {
+   
+    position: absolute;
+    top: 50px;
+    right: -15px;
+    top: 45%;
+    display: block !important;
+    border: 0px solid black;
+    height: 40px;
+    width: 40px;
+    border-radius: 40px;
+    background: #2f4e85 !important;
+    opacity:0.6 !important;
+}
+.owl-next:hover{
+    opacity:1 !important;
+}
+
 .cl-marker-text{
     padding-top: 10px;
     padding-left: 10px;
