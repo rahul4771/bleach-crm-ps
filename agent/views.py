@@ -3159,6 +3159,10 @@ class ClientOrderDetails(IsAgent,View):
 		
 		return redirect('agent:agent-client-orderdetails',order_id)
 
+class ClientOrderDetailsTest(IsAgent,View):
+	def get(self,request):
+		return render(request,"evaluator/client/order-page-test.html",{})
+
 class NewEnquiry(IsAgent,View):
 	address_formset_define    = formset_factory(AddressForm)
 	def get(self,request):
