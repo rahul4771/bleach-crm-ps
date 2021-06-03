@@ -21,7 +21,7 @@ class CustomUserAdmin(UserAdmin):
  
     fieldsets = (
         (None, {'fields': ('username', 'password','email')}),
-        (('Personal info'), {'fields': ('user_type','name','name_arabic','gender','nationality','bleach_mobile_number','company','job_title','mobile_number','date_day','date_month','date_year','phone_number','shift_start','shift_end','sms_preference','is_sms','is_email','is_whatsapp','customer_id','profile_image','credit_amount','is_general_skill','is_deep_skill','is_upholstery_skill','is_kitchen_skill','is_sterilization_skill','is_carpet_skill','is_mattress_skill','is_facade_skill','is_storagearea_skill','is_carparkingumbrella_skill','is_outdoor_skill','is_window_skill','address_otp','is_onlineevaluator')}),
+        (('Personal info'), {'fields': ('user_type','name','name_arabic','gender','nationality','bleach_mobile_number','company','job_title','mobile_number','date_day','date_month','date_year','phone_number','sms_preference','is_sms','is_email','is_whatsapp','customer_id','profile_image','credit_amount','is_general_skill','is_deep_skill','is_upholstery_skill','is_kitchen_skill','is_sterilization_skill','is_carpet_skill','is_mattress_skill','is_facade_skill','is_storagearea_skill','is_carparkingumbrella_skill','is_outdoor_skill','is_window_skill','address_otp','shift_start','shift_end','is_onlineevaluator')}),
 
         (('Permissions'), {'fields': ('is_active', 'is_staff','is_superuser',
                                        'groups', 'user_permissions')}),
