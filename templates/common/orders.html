@@ -644,7 +644,7 @@ $("#governorate_filter_id").change(function(){
 
 function set_params_go(args)
 {
-var url='{% url 'orders' %}';
+var url='{% url 'common_items:orders' %}';
 var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val(),evaluator:$('#evaluator_filter_id').val()
 };
 for(key in args) 

@@ -1,0 +1,376 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+
+{% if request.user.user_type == 'SALESADMIN' %}
+  {% include "salesadmin/common/header.html" %}
+{% elif request.user.user_type == 'AGENT' %}
+  {% include "agent/common/header.html" %}
+{% elif request.user.user_type == 'ADMIN' %}
+  {% include "admin/common/header.html" %}
+{% elif request.user.user_type == 'BOOKINGOFFICER' %}
+  {% include "bookingofficer/common/header.html" %} 
+{% elif request.user.user_type == 'EVALUATOR' %}
+  {% include "evaluator/common/header.html" %}
+{% elif request.user.user_type == 'SENIORTEAMLEADER' %}
+  {% include "stl/common/header.html" %}
+{% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
+  {% include "operationsupervisor/common/header.html" %}
+{% elif request.user.user_type == 'TECHNICALSUPERVISOR' %}
+  {% include "technicalsupervisor/common/header.html" %}
+{% elif request.user.user_type == 'ACCOUNTANT' %}
+  {% include "accountant/common/header.html" %}
+{% endif %}    
+    
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Bookings</h1>
+                <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>    
+            </div><!--welcome-wrapper-->      
+            
+     <div class="main-content-holder"><!--main-content-holder-->            
+     
+     <div class="white-wrapper-search"><!--white-wrapper-search-->
+     <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
+          <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search BLC Number, Customer Mobile Number & Customer Name Here" value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
+     </div><!--left-box leftbox-item1-->
+     <div class="left-box leftbox-item2"><!--right-box leftbox-item1-->
+     <input name="filter" type="button" value="Filter" id="filter" class="blue-button arrow"> 
+     <div class="menu-filter ltgreen-border" style="display:none;"><!--menu-filter ltgreen-border-->
+     
+    
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Governorate</label></div>
+                <label for="favcity">
+                <select name="governorate_filter" id="governorate_filter_id">
+                <option value=''>---ALL---</option>
+                {% for governorate in governorates %}
+          <option value='{{governorate.id}}' {% if governorate.id == fil_governorate %}selected{%endif%}>{{governorate.name}}</option>
+                {% endfor %}                
+              </select>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label"> <label>Area</label></div>
+                <label for="favcity">
+                <select name="area_filter" id="area_filter_id">
+                <option value=''>---ALL---</option> 
+                {% for area in areas %}
+                <option value='{{area.id}}' {% if fil_area == area.id %}selected{% endif %}>{{area.name}}</option>
+                {% endfor %}               
+              </select>
+                </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<hr class="hr-dashedpad"> 
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Cleaning Policy</label></div>
+				<label for="favcity">
+                <select name="cleaning_policy_filter" id="cleaning_policy_filter_id">
+                <option value=''>---ALL---</option>
+                <option value="ONE TIME SERVICE" {% if fil_cleaning_policy == 'ONE TIME SERVICE' %}selected{%endif%}>ONE TIME SERVICE</option>
+                <option value="SUBSCRIPTION" {% if fil_cleaning_policy == 'SUBSCRIPTION' %}selected{%endif%}>SUBSCRIPTION</option>                
+              </select>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label"> <label>Status</label></div>
+                <label for="favcity">
+                <select name="status_filter" id="status_filter_id">
+                <option value=''>---ALL---</option>
+                <option value="EVALUATING" {% if fil_status == 'EVALUATING' %}selected{% endif %}>EVALUATING</option>
+                <option value="PENDING" {% if fil_status == 'PENDING' %}selected{% endif %}>PENDING</option>
+                <option value="APPROVED" {% if fil_status == 'APPROVED' %}selected{% endif %}>APPROVED</option>
+                <option value="APPROVED-NOT PAID" {% if fil_status == 'APPROVED-NOT PAID' %}selected{% endif %}>APPROVED-NOT PAID</option>
+                <option value="ORDER_IN_PROGRESS" {% if fil_status == 'ORDER_IN_PROGRESS' %}selected{% endif %}>ORDER IN PROGRESS</option>
+                <option value="ORDER_CLOSED" {% if fil_status == 'ORDER_CLOSED' %}selected{% endif %}>COMPLETED</option>
+                <option value="REJECTED" {% if fil_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
+                <option value="EXPIRED" {% if fil_status == 'EXPIRED' %}selected{% endif %}>EXPIRED</option>
+                <option value="CANCELL_IN_PROGRESS" {% if fil_status == 'CANCELL_IN_PROGRESS' %}selected{% endif %}>CANCELL IN PROGRESS</option>
+                <option value="ORDER_CANCELLED" {% if fil_status == 'ORDER_CANCELLED' %}selected{% endif %}>CANCELLED</option>                
+              </select>
+                </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<hr class="hr-dashedpad"> 
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Service Type</label></div>
+				<label for="favcity">
+                <select name="service_type_filter" id="service_type_filter_id">
+                <option value=''>---ALL---</option>
+                {% for service_type in service_types %}
+                <option value="{{service_type.id}}" {% if service_type.id == fil_service_type %}selected{% endif %}>{{service_type.name}}</option>
+                {% endfor %}                
+              </select>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Payment Policy</label></div>
+                <label for="favcity">
+                <select name="payment_policy" id="payment_policy_id">
+                <option value=''>---ALL---</option> 
+                
+                <option value='PREPAID' {% if fil_payment_policy == 'PREPAID' %}selected{% endif %}>PREPAID</option>
+                <option value='POSTPAID' {% if fil_payment_policy == 'POSTPAID' %}selected{% endif %}>POSTPAID</option>
+                <option value='BREAKDOWN' {% if fil_payment_policy == 'BREAKDOWN' %}selected{% endif %}>BREAKDOWN</option>
+                <option value='SUBSCRIPTION' {% if fil_payment_policy == 'SUBSCRIPTION' %}selected{% endif %}>SUBSCRIPTION</option>
+                           
+              </select>
+                </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes--> 
+<div align="center"> <input class="assignButton" name="assing" type="button" onclick="set_params_go({});" value="Submit"> <input class="cancel-Button close-btn arrow-close" name="cancel" type="button" value="Reset"></div>
+
+     
+     </div><!--menu-filter ltgreen-border-->
+     </div><!--right-box leftbox-item1-->     
+     
+     
+ 
+     </div><!--white-wrapper-search-->
+     
+            
+<div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Bookings List</h2>
+<div class="page-entries">Show {{entry_per_page}} entries</div>
+
+<label for="favcity" style="width:20%;"> 
+<select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
+<option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+<option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+<option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+</select>
+</label>
+
+<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+ 
+<thead>
+<tr>
+<th>Order Number</th>
+<th data-hide="phone,tablet">Name</th>
+<th data-hide="phone">Area</th>
+<th data-hide="phone,tablet">Service Type</th>
+{% comment %} <th>Contact</th> {% endcomment %}
+<th data-hide="phone,tablet">Status</th>
+<th class="align-center" data-hide="phone,tablet">Shortcuts</th>
+</tr>
+</thead>
+<tbody>
+    {% for evaluation in evaluations %}
+    <tr>
+    <td {% if evaluation.quatation_status == 'APPROVED' %}{% for order in evaluation.evaluationorder %}
+        {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' %}
+        {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+        class="approved-line"
+        {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
+        class="order-in-progress-line"
+        {% elif order.order_status == 'ORDER_CLOSED' %}
+        class="completed-line"
+        {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
+        class="cancel-in-progress-line"
+        {% else %}
+        class="red-line"
+        {% endif %}
+        {% else %}
+        class="oil-green-line"
+        {% endif %}
+        {% endfor %}
+
+        {% elif evaluation.quatation_status == 'REJECTED' %}class="rejected-line"{% elif evaluation.quatation_status == 'PENDING' %}class="pending-line"{% elif evaluation.quatation_status == 'EXPIRED' %}class="expired-line"{%else%}class="blue-line"{%endif%}>{{evaluation.evaluation_id}}</td>    
+    <td>{{evaluation.customer.name|default_if_none:''}}</td>
+    <td>{% for evaluation_detail in evaluation.details_evaluation %}{{evaluation_detail.address.area.name}}<br>{% endfor %}</td>
+    <td>{% for evaluation_detail in evaluation.details_evaluation %}
+     {% for evaluation_book in evaluation_detail.evaluation_book %}
+     {{evaluation_book.service_type.name}},
+     {% endfor %}
+     <br> 
+     {% endfor %}</td>
+    {% comment %} <td>{{evaluation.customer.mobile_number|default_if_none:''}}</td> {% endcomment %}
+    <td>{% if evaluation.quatation_status == 'APPROVED' %}
+
+
+        {% for order in evaluation.evaluationorder %}
+      
+        {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
+        {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+        <div class="d-flex "><div class="round-marker approved-status-bg"></div><span>Approved</span></div>
+        {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
+        <div  class="d-flex "><div class="round-marker order-in-progress-status-bg"></div><span>Order in progress</span></div>
+        {% elif order.order_status == 'ORDER_CLOSED' %}
+        <div  class="d-flex "><div class="round-marker completed-status-bg"></div><span>Completed</span></div>
+        {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
+        <div  class="d-flex "><div class="round-marker cancel-in-progress-status-bg"></div><span>Cancel in Progress</span></div>
+        {% else %}
+        <div  class="d-flex "><div class="round-marker cancelled-status-bg"></div><span>Order Cancelled</span></div>
+        {% endif %}
+        {% else %}
+        <div  class="d-flex "><div class="round-marker approved-not-paid-status-bg"></div><span>Approved-Not Paid</span></div>
+        {% endif %}
+        {% endfor %}
+
+        {% elif evaluation.quatation_status == 'REJECTED' %}<div  class="d-flex "><div class="round-marker rejected-status-bg"></div><span>Rejected</span></div>
+        {% elif evaluation.quatation_status == 'PENDING' %}<div  class="d-flex "><div class="round-marker pending-status-bg"></div><span>Pending</span></div>
+        {% elif evaluation.quatation_status == 'EXPIRED' %}<div  class="d-flex "><div class="round-marker expired-status-bg"></div><span>Expired</span></div>
+        {% else %}
+        <div data-href="#" class="d-flex "><div class="round-marker clickable-row evaluating-status-bg"></div><span>Evaluating</span></div>
+        {%endif%}
+    </td>
+
+    <td class="align-center">
+    
+    {% for order in evaluation.evaluationorder %}
+      <a href="{% url 'bleach_admin:admin-client-orderdetails' order.id %}"><img src="{% static 'files/images/icon-download.png' %}" align="absmiddle" class="download-icon"></a>
+    {% endfor %}&nbsp &nbsp
+
+    {% if evaluation.quatation_status == 'APPROVED' %}<a href="/customer/quatation/download/{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}"><img src="{% static 'files/images/icon-download.png' %}" align="absmiddle" class="download-icon"></a>{% else %}<img src="{% static 'files/images/icon-download-gray.png' %}" align="absmiddle" class="download-icon">{% endif %} &nbsp &nbsp{% if evaluation.quatation_status == 'APPROVED' or evaluation.quatation_status == 'PENDING' %}
+    {% if evaluation.payment_method == 'SUBSCRIPTION' %}<a href="/customer/subscription/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>
+    {% else %}
+    <a href="/customer/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>
+    {% endif %}
+    {% else %}<img src="{% static 'files/images/view-icon-gray.png' %}" align="absmiddle" class="download-icon">{% endif %} 
+    {% comment %} &nbsp &nbsp{% if evaluation.quatation_status == 'APPROVED' %}<img src="{% static 'files/images/edit-gray.png' %}" align="absmiddle" class="download-icon">{% else %}<a href="{% url 'bleach_admin:admin-makequatation1edit' evaluation.customer.id evaluation.id %}"><img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon"></a>{% endif %} {% endcomment %}
+    </td>
+    </tr>    
+    {% empty %}
+    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>    
+    {% endfor %}
+</tbody>
+<tfoot>
+ 
+</tfoot>
+</table>
+
+<div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
+    <div class="pagination-containter"><!--pagination-containter-->
+        <div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
+        Showing {{evaluations.start_index}} to {{evaluations.end_index}} of {{evaluations.paginator.count}} entries
+        </div><!--pagination-column pagination-column-left-->
+        
+        <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
+        <!--paginated-->
+   {% if evaluations.has_other_pages %}
+   <nav aria-label="Page navigation example">
+  <ul class="pagination">
+     {% if evaluations.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% endif %}
+    {% for pg in page_range %}
+    {% if vus.number == pg %}
+            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
+    {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
+    {% endif %}
+    {% endfor %}
+    {% if evaluations.has_next %}        
+    <li class="page-item">
+      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link disabled" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+    {% endif %}
+    <!--paginated-->
+        </div><!--pagination-column pagination-column-right-->
+    </div><!--pagination-containter-->         
+</div><!--white-wrapper-pagination--> 
+</div><!--white-wrapper-->      
+
+           
+            
+      </div><!--main-content-holder-->
+        </div><!--container-fluid space-->
+    </section><!--content-->
+    {% include 'agent/common/footer.html' %}    
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+
+$("#governorate_filter_id").change(function(){  
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getarea' %}",
+
+        data: {'governorate_id':this.value}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+
+          ajax_ret_areas = data;     
+
+       $("#area_filter_id").empty();
+
+       $("#area_filter_id").append($('<option>', {
+
+            value: "", 
+
+           text: "---ALL---"
+
+        })); 
+
+        $.each( ajax_ret_areas, function( key, values ) {
+
+              $("#area_filter_id").append($('<option>', {        
+
+              value: key, 
+
+              text: values   
+
+            }));   
+        });
+
+                                  }  
+
+      }); 
+
+});
+
+
+function set_params_go(args)
+{
+var url='{% url 'common_items:customer-bookings' %}';
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),governorate:$('#governorate_filter_id').val(),area:$('#area_filter_id').val(),status:$('#status_filter_id').val(),cleaning_policy:$('#cleaning_policy_filter_id').val(),service_type:$('#service_type_filter_id').val(),payment_policy:$('#payment_policy_id').val(),
+};
+for(key in args) 
+    params[key]=args[key];
+var query='';
+for(key in params)
+    if(params[key]) 
+        query+='&'+key+'='+params[key].toString();
+query=query.replace('&','?');
+window.location.href=url+query;  
+}
+
+</script>    
+{% endblock %}
