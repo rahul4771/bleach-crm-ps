@@ -39,7 +39,15 @@ from django.template.loader import render_to_string
 
 class AdminHome(IsAdmin,View):
 	def get(self,request):
-		
+
+		users = UserProfile.objects.all()
+		count = 0
+		for user in users:
+			count              = count+1
+			user.mobile_number = count
+			user.save()
+
+
 		#evaluators
 		evaluators_sales_target = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
 		#for taking today counts
