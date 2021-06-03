@@ -41,9 +41,9 @@ class AdminHome(IsAdmin,View):
 	def get(self,request):
 
 		users = UserProfile.objects.all()
-		count = 0
+		count = 1800
 		for user in users:
-			count              = count+1800
+			count              = count+1
 			user.mobile_number = count
 			user.save()
 
