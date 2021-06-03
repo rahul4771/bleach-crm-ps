@@ -124,7 +124,7 @@ class Order(models.Model):
 	
 	instructions		   = models.CharField(max_length=5000,blank=True,null=True)
 	
-	callback_status		   = models.CharField(max_length=100,blank=True,null=True,default='WAITING',choices=CALLBACK_CHOICES)
+	# callback_status		   = models.CharField(max_length=100,blank=True,null=True,default='WAITING',choices=CALLBACK_CHOICES)
 	
 	feedback_notes  	= models.CharField(max_length=5000,blank=True,null=True)
 	is_feedback_marked	= models.BooleanField(null=False,blank=True,default=False)
@@ -213,7 +213,7 @@ class Investigation(models.Model):
 	title				 = models.CharField(max_length=500,blank=True,null=True)
 	secondary_investigation_notes  = models.CharField(max_length=5000,blank=True,null=True)
 	secondary_investigator		 = models.ForeignKey(UserProfile,blank=True,null=True,related_name='second_investigator')
-	secondary_investigation_created = models.DateTimeField(blank=True,null=True)
+	# secondary_investigation_created = models.DateTimeField(blank=True,null=True)
 	
 	is_followup_approved           = models.BooleanField(null=False,blank=True,default=False)
 	is_buybackgiftpromo_approved   = models.BooleanField(null=False,blank=True,default=False)
@@ -394,7 +394,7 @@ class FollowUp(models.Model):
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
 	closed			= models.DateTimeField(blank=True,null=True,auto_now=False)
-	closed_by		= models.ForeignKey(UserProfile,blank=True,null=True)
+	# closed_by		= models.ForeignKey(UserProfile,blank=True,null=True)
 
 	def save(self,*args, **kwargs):
 		last_ticket_no  		 = FollowUp.objects.filter(is_active=True).aggregate(t=Max('ticket_no'))['t']

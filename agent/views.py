@@ -2872,7 +2872,7 @@ class TicketAdvanced(IsAgent,View):
 
 
 
-class ClientDetails(IsAgent,View):
+class ClientDetails(IsAuthenticated,View):
 	def get(self,request):
 
 		try:
@@ -2987,7 +2987,7 @@ class ClientDetails(IsAgent,View):
 		page_range = list(paginator.page_range)[start_index:end_index]
 		entry_per_page=(client_details.end_index())-(client_details.start_index())+1
 
-		return render(request,"agent/client/clients.html",{"client_details":client_details,"search_query":search,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_customertype":fil_customertype,"fil_status":fil_status})
+		return render(request,"common/client/clients.html",{"client_details":client_details,"search_query":search,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_customertype":fil_customertype,"fil_status":fil_status})
 
 
 class ClientOrders(IsAgent,View):

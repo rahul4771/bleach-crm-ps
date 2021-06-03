@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^orders/$',OrderDetails.as_view(),name='orders'),
     url(r'^tickets/$',TicketDetails.as_view(),name='tickets'),
 
+    url(r'^common/',include('common_items.urls',namespace='common_items')),
     url(r'^bleach_admin/',include('bleachadmin.urls',namespace='bleach_admin')),
     url(r'^bleach_salesadmin/',include('salesadmin.urls',namespace='bleach_salesadmin')),
     url(r'^agent/',include('agent.urls',namespace='agent')),
