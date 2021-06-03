@@ -220,24 +220,9 @@
     {% endif %}
     </td>
     
-    {% if request.user.user_type == 'SALESADMIN' %}
-    <td class="clickable-row" data-href="{% url 'bleach_salesadmin:salesadmin-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
-    {% elif request.user.user_type == 'AGENT' %}
-    <td class="clickable-row" data-href="{% url 'agent:agent-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
-    {% elif request.user.user_type == 'ADMIN' %}
-    <td class="clickable-row" data-href="{% url 'bleach_admin:admin-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
-    {% elif request.user.user_type == 'BOOKINGOFFICER' %}
-    <td class="clickable-row" data-href="{% url 'booking-officer:bookingofficer-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
-    {% elif request.user.user_type == 'SENIORTEAMLEADER' %}
-    <td class="clickable-row" data-href="{% url 'stl:stl-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
-    {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
-    <td class="clickable-row" data-href="{% url 'op-supervisor:op-supervisor-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
-    {% elif request.user.user_type == 'TECHNICALSUPERVISOR' %}
-    <td class="clickable-row" data-href="{% url 'tech-supervisor:tech-supervisor-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
-    {% elif request.user.user_type == 'ACCOUNTANT' %}
-    <td class="clickable-row" data-href="{% url 'accountant:accountant-ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
-    {% endif %}
-
+  
+    <td class="clickable-row" data-href="{% url 'common_items:ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}"></td>
+  
     
     </tr> 
     {% empty %}
