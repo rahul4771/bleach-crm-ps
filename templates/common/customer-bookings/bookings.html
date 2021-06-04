@@ -163,8 +163,10 @@
 <tbody>
     {% for evaluation in evaluations %}
     <tr>
-    <td {% if evaluation.quatation_status == 'APPROVED' %}{% for order in evaluation.evaluationorder %}
-        {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' %}
+    <td {% if evaluation.quatation_status == 'APPROVED' %}
+        {% for order in evaluation.evaluationorder %}
+      
+        {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
         {% if order.order_status == 'APPROVED_BY_CLIENT' %}
         class="approved-line"
         {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
@@ -174,14 +176,20 @@
         {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
         class="cancel-in-progress-line"
         {% else %}
-        class="red-line"
+        class="cancelled-line"
         {% endif %}
         {% else %}
-        class="oil-green-line"
+        class="approved-not-paid-line"
         {% endif %}
         {% endfor %}
 
-        {% elif evaluation.quatation_status == 'REJECTED' %}class="rejected-line"{% elif evaluation.quatation_status == 'PENDING' %}class="pending-line"{% elif evaluation.quatation_status == 'EXPIRED' %}class="expired-line"{%else%}class="blue-line"{%endif%}>{{evaluation.evaluation_id}}</td>    
+        {% elif evaluation.quatation_status == 'REJECTED' %}class="rejected-line"
+        {% elif evaluation.quatation_status == 'PENDING' %}class="pending-line"
+        {% elif evaluation.quatation_status == 'EXPIRED' %}class="expired-line"
+        {% else %}
+        class="evaluating-line"
+        {%endif%}>{{evaluation.evaluation_id}}</td>   
+
     <td>{{evaluation.customer.name|default_if_none:''}}</td>
     <td>{% for evaluation_detail in evaluation.details_evaluation %}{{evaluation_detail.address.area.name}}<br>{% endfor %}</td>
     <td>{% for evaluation_detail in evaluation.details_evaluation %}
@@ -223,17 +231,28 @@
 
     <td class="align-center">
     
-    {% for order in evaluation.evaluationorder %}
-      <a href="{% url 'bleach_admin:admin-client-orderdetails' order.id %}"><img src="{% static 'files/images/icon-download.png' %}" align="absmiddle" class="download-icon"></a>
-    {% endfor %}&nbsp &nbsp
+    <div class="btn-group" id="actionDropdown">
+        <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+          Action
+          <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
+        </div>
+        <div class="dropdown-menu" id="dropdown-menu-orders">
+          {% if evaluation.quatation_status == 'APPROVED' %}<div class="d-flex dropdown-orders clickable-row" data-href="/customer/quatation/download/{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}"><img src="{% static 'files/images/DownloadQuotation.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">Download Quotation</div></div>{% endif %}
+          
+          {% if evaluation.quatation_status == 'APPROVED' or evaluation.quatation_status == 'PENDING' %}
+          {% if evaluation.payment_method == 'SUBSCRIPTION' %}
+          <a class="d-flex dropdown-orders" href="/customer/subscription/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/ViewQuotation.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Quotation</div></a>
+          {% else %}
+          <a class="d-flex dropdown-orders" href="/customer/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/ViewQuotation.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Quotation</div></a>
+          {% endif %}
+          {% endif %}
+          
+          <a class="d-flex dropdown-orders" {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %} href="{% url 'common_items:client-orderdetails' order.id %}" target="_blank" {% endfor %}{% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a>
 
-    {% if evaluation.quatation_status == 'APPROVED' %}<a href="/customer/quatation/download/{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}"><img src="{% static 'files/images/icon-download.png' %}" align="absmiddle" class="download-icon"></a>{% else %}<img src="{% static 'files/images/icon-download-gray.png' %}" align="absmiddle" class="download-icon">{% endif %} &nbsp &nbsp{% if evaluation.quatation_status == 'APPROVED' or evaluation.quatation_status == 'PENDING' %}
-    {% if evaluation.payment_method == 'SUBSCRIPTION' %}<a href="/customer/subscription/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>
-    {% else %}
-    <a href="/customer/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>
-    {% endif %}
-    {% else %}<img src="{% static 'files/images/view-icon-gray.png' %}" align="absmiddle" class="download-icon">{% endif %} 
-    {% comment %} &nbsp &nbsp{% if evaluation.quatation_status == 'APPROVED' %}<img src="{% static 'files/images/edit-gray.png' %}" align="absmiddle" class="download-icon">{% else %}<a href="{% url 'bleach_admin:admin-makequatation1edit' evaluation.customer.id evaluation.id %}"><img src="{% static 'files/images/edit.png' %}" align="absmiddle" class="download-icon"></a>{% endif %} {% endcomment %}
+
+        </div>
+      </div>
+
     </td>
     </tr>    
     {% empty %}
