@@ -1633,8 +1633,8 @@ class GetCleaningSlotes(APIView):
 		absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(leave_date=cleaning_date).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 		absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(leave_date=cleaning_date,staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
 
-		slotes           =[0,3,6,9,12,15,18,21]
-		slote_durations  =[3,6,9,12]
+		slotes           =[0,2,4,6,8,10,12,14,16,18,20,22]
+		slote_durations  =[2,4,6,8,10]
 		available_slotes = {}
 		#slote wise checking
 		for slote in slotes:
@@ -1777,8 +1777,8 @@ class GetMultipleServiceCleaningSlotes(APIView):
 		absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(leave_date=cleaning_date).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 		absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(leave_date=cleaning_date,staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
 
-		slotes           =[0,3,6,9,12,15,18,21]
-		slote_durations  =[3,6,9,12]
+		slotes           =[0,2,4,6,8,10,12,14,16,18,20,22]
+		slote_durations  =[2,4,6,8,10]
 		available_slotes = {}
 		#slote wise checking
 		for slote in slotes:
@@ -2083,7 +2083,7 @@ class GetMultipleServiceDateCleaningSlotesAutofix(APIView):
 
 		#Test on multiple date for multiple slotes
 		cleaning_datetimes      = request.data.get('cleaning_datetimes')
-		slote_checkings         = [3,-3,6,-6,9,-9,12,-12,15,-15,18,-18,21,-21]
+		slote_checkings         = [2,-2,4,-4,6,-6,8,-8,10,-10,12,-12,14,-14,16,-16,18,-18,20,-20,22,-22]
 
 		for cleaning_datetime in cleaning_datetimes:
 			actual_cleaningdate = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p').date() 
@@ -2544,7 +2544,7 @@ class ClientCleaningBookingPhase2(APIView):
 			#evaluation book
 			service_save_serializer                    = EvaluationBookSerializer(data=request.data.get('service_details'))
 			if service_save_serializer.is_valid():
-				saved_service                              = service_save_serializer.save(evaluation_details=evaluation_details,cleaning_policy='ONE TIME SERVICE',cleaning_method='Method1')
+				saved_service                              = service_save_serializer.save(evaluation_details=evaluation_details,cleaning_method='Method1')
 				
 				response_dict['service_success']           = True
 			else:
