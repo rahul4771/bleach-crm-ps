@@ -39,7 +39,35 @@ from django.template.loader import render_to_string
 
 class AdminHome(IsAdmin,View):
 	def get(self,request):
+
+		#cleaners and leaders
+		cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER')
+		leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE')
+		count    = 0
 		
+		for cleaner in cleaners:
+			print(cleaner.username)
+			if count%2 == 0:
+				cleaner.shift_start = datetime.strptime('06:00 AM','%I:%M %p')
+				cleaner.shift_end   = datetime.strptime('06:00 PM','%I:%M %p')
+			else:
+				cleaner.shift_start = datetime.strptime('09:00 AM','%I:%M %p')
+				cleaner.shift_end   = datetime.strptime('09:00 PM','%I:%M %p')
+			count = count+1
+			cleaner.save()
+
+		for leader in leaders:
+			print(leader.username)
+			if count%2 == 0:
+				leader.shift_start  = datetime.strptime('06:00 AM','%I:%M %p')
+				leader.shift_end    = datetime.strptime('06:00 PM','%I:%M %p')
+			else:
+				leader.shift_start  = datetime.strptime('09:00 AM','%I:%M %p')
+				leader.shift_end    = datetime.strptime('09:00 PM','%I:%M %p')
+			count = count+1
+			leader.save()
+
+
 		#evaluators
 		evaluators_sales_target = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
 		#for taking today counts

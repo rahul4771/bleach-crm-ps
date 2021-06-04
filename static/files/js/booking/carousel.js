@@ -14,7 +14,7 @@ $('#category-carousel').owlCarousel({
         },
         1000:{
             items:4,
-            nav:true,
+            nav:false,
             loop:false
         }
     }
