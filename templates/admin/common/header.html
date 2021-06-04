@@ -48,12 +48,12 @@
             <br><br>
             <ul id="accordion" class="nav">
                 <li class="active lhs-home"><a href="{% url 'bleach_admin:admindash-board' %}" title="My Dashboard"><span>My Dashboard</span></a> </li>
-                <li class="lhs-orders"><a href="{% url 'orders' %}" title="Orders"><span>Orders</span></a></li>
-                <li class="lhs-booking"><a href="{% url 'bleach_admin:admin-customer-bookings' %}" title="Home"><span>Bookings</span></a></li>
-                <li class="lhs-clients"><a href="{% url 'bleach_admin:admin-clients' %}" title="Clients"><span>Clients</span></a><div></div></li>
-                <li class="lhs-tickets"><a href="{% url 'tickets' %}" title="Tickets"><span>Tickets</span></a></li>
+                <li class="lhs-orders"><a href="{% url 'common_items:orders' %}" title="Orders"><span>Orders</span></a></li>
+                <li class="lhs-booking"><a href="{% url 'common_items:customer-bookings' %}" title="Bookings"><span>Bookings</span></a></li>
+                <li class="lhs-clients"><a href="{% url 'common_items:clients' %}" title="Clients"><span>Clients</span></a><div></div></li>
+                <li class="lhs-tickets"><a href="{% url 'common_items:tickets' %}" title="Tickets"><span>Tickets</span></a></li>
                 <li class="lhs-feedbacks"><a href="{% url 'bleach_admin:admin-feedbacks' %}" title="Feedbacks"><span>Feedbacks</span></a></li>
-                <li class="lhs-payments"><a href="{% url 'bleach_admin:admin-payments' %}" title="Payments"><span>Payments</span></a></li>
+                <li class="lhs-payments"><a href="{% url 'common_items:payments' %}" title="Payments"><span>Payments</span></a></li>
                 <li class="lhs_sales"><a href="{% url 'bleach_salesadmin:salesadmin-daily-sales' %}" title="Daily Sales"><span>Daily Sales</span></a></li>
                 <li class="lhs-leave-scheduler"><a href="{% url 'bleach_admin:admin-leave-scheduler' %}" title="Leave Scheduler"><span>Leave Scheduler</span></a></li>
                 <li class="lhs_subscription"><a href="{% url 'bleach_admin:admin-active-subscriptions' %}" title="Active Subscriptions"><span>Subscriptions</span></a></li>

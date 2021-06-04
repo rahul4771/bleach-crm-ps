@@ -984,8 +984,8 @@ class CleaningPopupMultipleServiceCleaningSlotes(APIView):
 		absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(leave_date=cleaning_date).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 		absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(leave_date=cleaning_date,staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
 
-		slotes           =[0,3,6,9,12,15,18,21]
-		slote_durations  =[3,6,9,12]
+		slotes           =[0,2,4,6,8,10,12,14,16,18,20,22]
+		slote_durations  =[2,4,6,8,10]
 		available_slotes = {}
 		#slote wise checking
 		for slote in slotes:
@@ -2872,7 +2872,7 @@ class TicketAdvanced(IsAgent,View):
 
 
 
-class ClientDetails(IsAgent,View):
+class ClientDetails(IsAuthenticated,View):
 	def get(self,request):
 
 		try:
@@ -2987,7 +2987,7 @@ class ClientDetails(IsAgent,View):
 		page_range = list(paginator.page_range)[start_index:end_index]
 		entry_per_page=(client_details.end_index())-(client_details.start_index())+1
 
-		return render(request,"agent/client/clients.html",{"client_details":client_details,"search_query":search,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_customertype":fil_customertype,"fil_status":fil_status})
+		return render(request,"common/client/clients.html",{"client_details":client_details,"search_query":search,"new_clients_count":new_clients_count,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_customertype":fil_customertype,"fil_status":fil_status})
 
 
 class ClientOrders(IsAgent,View):
@@ -3158,6 +3158,10 @@ class ClientOrderDetails(IsAgent,View):
 
 		
 		return redirect('agent:agent-client-orderdetails',order_id)
+
+class ClientOrderDetailsTest(IsAgent,View):
+	def get(self,request):
+		return render(request,"evaluator/client/order-page-test.html",{})
 
 class NewEnquiry(IsAgent,View):
 	address_formset_define    = formset_factory(AddressForm)

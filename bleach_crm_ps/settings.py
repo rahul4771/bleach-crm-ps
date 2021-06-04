@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'qualitycontroll',
     'salesadmin',
     'bookingofficer',
+    'common_items',
     'Api',
     'mathfilters'
 ]

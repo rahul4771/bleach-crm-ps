@@ -75,6 +75,7 @@ GET
       "1":{
          "service_type":1,
          "location_type":"GYM",
+         "cleaning_policy":"ONE TIME SERVICE",
          "area_type":"Post Construction",
          "evaluator_note":"test addition of service",
          "is_newkitchen":False,
@@ -129,6 +130,7 @@ GET
       "2":{
          "service_type":2,
          "location_type":"GYM",
+         "cleaning_policy":"ONE TIME SERVICE",
          "area_type":"Post Construction",
          "evaluator_note":"test addition of service",
          "estimated_cost":150,

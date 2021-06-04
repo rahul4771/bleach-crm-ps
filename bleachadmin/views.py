@@ -39,7 +39,7 @@ from django.template.loader import render_to_string
 
 class AdminHome(IsAdmin,View):
 	def get(self,request):
-		
+
 		#evaluators
 		evaluators_sales_target = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
 		#for taking today counts

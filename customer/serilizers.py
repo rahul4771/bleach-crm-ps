@@ -28,7 +28,7 @@ class EvaluationBookSerializer(serializers.ModelSerializer):
 	evaluationsection_book = EvaluationBookSectionSerializer(many=True,read_only=True)
 	class Meta:
 		model = EvaluationBook
-		fields = ('service_type','area_type','location_type','total_cost','evaluator_note','number_of_cleaners','cleaning_hours','evaluationsection_book')
+		fields = ('service_type','cleaning_policy','area_type','location_type','total_cost','evaluator_note','number_of_cleaners','cleaning_hours','evaluationsection_book')
 
 
 ##for data showing

@@ -49,10 +49,10 @@
             </div><!--user-typer-wrapper-->
             <ul id="accordion" class="nav">
             <li class="lhs-home"><a href="{% url 'agent:agentdash-board' %}" title="Home"><span>My Dashboard</span></a></li>
-            <li class="lhs-orders"><a href="{% url 'orders' %}" title="Orders"><span>Orders</span></a></li>
-            <li class="lhs-booking"><a href="{% url 'agent:agent-customer-bookings' %}" title="Bookings"><span>Bookings</span></a></li>
-            <li class="lhs-clients"><a href="{% url 'agent:agent-clients' %}" title="Clients"><span>Clients</span></a></li>
-            <li class="lhs-tickets"><a href="{% url 'tickets' %}" title="Tickets"><span>Tickets</span></a></li>
+            <li class="lhs-orders"><a href="{% url 'common_items:orders' %}" title="Orders"><span>Orders</span></a></li>
+            <li class="lhs-booking"><a href="{% url 'common_items:customer-bookings' %}" title="Bookings"><span>Bookings</span></a></li>
+            <li class="lhs-clients"><a href="{% url 'common_items:clients' %}" title="Clients"><span>Clients</span></a></li>
+            <li class="lhs-tickets"><a href="{% url 'common_items:tickets' %}" title="Tickets"><span>Tickets</span></a></li>
             <li class="lhs-feedbacks"><a href="{% url 'agent:agent-feedbacks' %}" title="Feedbacks"><span>Feedbacks</span></a></li>
             <li class="lhs_subscription"><a href="{% url 'agent:agent-active-subscriptions' %}" title="Active Subscriptions"><span>Subscriptions</span></a></li>
             <li class="lhs-resources border"><a href="{% url 'agent:resource-management' %}" title="Resources"><span>Resources</span></a></li>

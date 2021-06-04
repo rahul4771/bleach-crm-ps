@@ -48,10 +48,10 @@
             <br><br>
             <ul id="accordion" class="nav">
                 <li class="active lhs-home"><a href="{% url 'accountant:accountantdash-board' %}" title="My Dashboard"><span>My Dashboard</span></a><div></div></li>
-                <li class="lhs-orders"><a href="{% url 'orders' %}" title="Orders"><span>Orders</span></a></li>
-                <li class="lhs-clients"><a href="{% url 'accountant:accountant-clients' %}" title="Clients"><span>Clients</span></a></li>
-                <li class="lhs-payments"><a href="{% url 'accountant:accountant-payments' %}" title="Payments"><span>Payments</span></a></li>
-                <li class="lhs-tickets"><a href="{% url 'tickets' %}" title="Tickets"><span>Tickets</span></a></li>
+                <li class="lhs-orders"><a href="{% url 'common_items:orders' %}" title="Orders"><span>Orders</span></a></li>
+                <li class="lhs-clients"><a href="{% url 'common_items:clients' %}" title="Clients"><span>Clients</span></a></li>
+                <li class="lhs-payments"><a href="{% url 'common_items:payments' %}" title="Payments"><span>Payments</span></a></li>
+                <li class="lhs-tickets"><a href="{% url 'common_items:tickets' %}" title="Tickets"><span>Tickets</span></a></li>
                 <li class="lhs_subscription"><a href="{% url 'accountant:accountant-active-subscriptions' %}" title="Active Subscriptions"><span>Subscriptions</span></a></li>
                 <br> <br>
                 <li class="lhs-collection cap"><a href="{% url 'accountant:accountant-cashcollect' %}" title="New Enquiry"><span>Collection</span></a></li>
