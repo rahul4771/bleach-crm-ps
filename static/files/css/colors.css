@@ -109,7 +109,9 @@
 
 /** Texts **/
 
-
+.primary-text{
+    color:#2f4e85 !important;
+}
 .completed-text{
     color: #779F39 !important;
 }

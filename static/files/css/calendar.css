@@ -510,7 +510,7 @@ width:100% !important;
 }
 
 /** Carousel**/
-.owl-prev {
+#cleaningCalendar-carousel .owl-prev {
   
     position: absolute;
     top: 50px;
@@ -524,7 +524,7 @@ width:100% !important;
     background: #2f4e85 !important;
     opacity:0.6 !important;
 }
-.service-control{
+ .service-control{
     font-size:22px;
 }
 .owl-prev i, .owl-next i {transform: scale(1,1.5);
@@ -536,7 +536,7 @@ width:100% !important;
     .owl-next i{
         padding-left: 4px;
     }
-    .owl-prev:hover{
+    #cleaningCalendar-carousel  .owl-prev:hover{
         opacity:1 !important;
     }
 /*.owl-prev i:hover {
@@ -545,7 +545,7 @@ width:100% !important;
 .owl-next i:hover {
     color: #616161;
 }*/
-.owl-next {
+#cleaningCalendar-carousel  .owl-next {
    
     position: absolute;
     top: 50px;
@@ -559,7 +559,7 @@ width:100% !important;
     background: #2f4e85 !important;
     opacity:0.6 !important;
 }
-.owl-next:hover{
+#cleaningCalendar-carousel  .owl-next:hover{
     opacity:1 !important;
 }
 
