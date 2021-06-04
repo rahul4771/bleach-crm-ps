@@ -42,7 +42,7 @@ class AdminHome(IsAdmin,View):
 
 		#cleaners and leaders
 		cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER')
-		leaders  = UserProfile.objects.filter(is_active=True,user_type='LEADER')
+		leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE')
 		count    = 0
 		
 		for cleaner in cleaners:
