@@ -46,6 +46,7 @@ class AdminHome(IsAdmin,View):
 		count    = 0
 		
 		for cleaner in cleaners:
+			print(cleaner.username)
 			if count%2 == 0:
 				cleaner.shift_start = datetime.strptime('06:00 AM','%I:%M %p')
 				cleaner.shift_end   = datetime.strptime('06:00 PM','%I:%M %p')
@@ -56,6 +57,7 @@ class AdminHome(IsAdmin,View):
 			cleaner.save()
 
 		for leader in leaders:
+			print(leader.username)
 			if count%2 == 0:
 				leader.shift_start  = datetime.strptime('06:00 AM','%I:%M %p')
 				leader.shift_end    = datetime.strptime('06:00 PM','%I:%M %p')
