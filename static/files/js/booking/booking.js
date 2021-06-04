@@ -1,7 +1,75 @@
+$(document).ready(function(){
+  $('#category-carousel').owlCarousel({
+    loop:false,
+    
+    responsiveClass:true,
+    responsive:{
+        0:{
+            items:1,
+            nav:true
+        },
+        600:{
+            items:4,
+            nav:false
+        },
+        1000:{
+            items:5,
+            nav:false,
+            loop:false
+        }
+    }
+});
+$('#service-carousel').owlCarousel({
+    loop:false,
+    
+    responsiveClass:true,
+    responsive:{
+        0:{
+            items:1,
+            nav:true,
+            loop:true
+        },
+        600:{
+            items:4,
+            nav:false
+        },
+        1000:{
+            items:5,
+            nav:false,
+            loop:false
+        }
+    }
+});
+selectServiceOnly('General Cleaning')
 
-      $(document).ready(function(){
-   
-new Vue({
+
+
+
+});
+
+function selectService(item,itempt){
+  
+  $('#service-carousel').find('.active-icon').replaceWith(`
+  <i class="far fa-circle inactive-icon"></i>
+  `)
+  $(itempt).find('.inactive-icon').replaceWith(` <i
+  class="fa fa-check-circle active-icon"
+></i>`)
+app.selectService({name:item})
+
+}
+function selectServiceOnly(service){
+  app.selectService({name:service})
+  $('#service-carousel').find('.active-icon').replaceWith(`
+  <i class="far fa-circle inactive-icon"></i>
+  `)
+  $('.service-one').find('.inactive-icon').replaceWith(` <i
+  class="fa fa-check-circle active-icon"
+></i>`)
+
+}
+
+const app=new Vue({
     el: '#app',
     delimiters: ['<%', '%>'],
     vuetify: new Vuetify({theme: {
@@ -13,7 +81,16 @@ new Vue({
           },
         },
       }}),
+      components:{
+        
+      },
     data: {
+      subStat:'',
+      altdaysStat:false,
+      currentPageTitle:'Booking',
+      custBookStat:false,
+      scheduleStat:true,
+      serviceChange:true,
         cat_counter:0,
         ser_counter:0,
       bookingMultiData:{},
@@ -75,12 +152,13 @@ new Vue({
     validOtherService:true,
     validOtherServiceDialog:true,
     hallway_check:false,
+   
     selectedCategory:'Detailed Cleaning',
   name: '',
   rules: {
     required: v => !!v || 'this field is required',
   },
-    url:'https://test.bleach-kw.com',
+    url:'http://localhost:8000',
     kitchenData:{
         wall_type:'',
         floor_type:'',
@@ -105,7 +183,7 @@ new Vue({
       name:'General Cleaning'
   },
   serviceSize: {},
-
+  cartItems:[],
   selectedSlot: [],
   categories:['Detailed Cleaning','Special Care','Kitchen Cleaning','Infection Control'],
   area_types:[],
@@ -363,11 +441,143 @@ new Vue({
   udf3:'',
   multiServiceImages:[],
   phase2Result:{},
-  ip_address:''
-
-       
+  ip_address:'',
+  owl_items:[],
+prefDay:[],
+scheduleDialog:false,
+scheduleDate:'',
+double_slots:[],
+selected_double_slots:[],
+slotFormat:{
+  "1":{
+    start_time:'12:00 AM',
+    end_time:'02:00 AM'
+  },
+  "2":{
+    start_time:'02:00 AM',
+    end_time:'04:00 AM'
+  },
+  "3":{
+    start_time:'04:00 AM',
+    end_time:'06:00 AM'
+  },
+  "4":{
+    start_time:'06:00 AM',
+    end_time:'08:00 AM'
+  },
+  "5":{
+    start_time:'08:00 AM',
+    end_time:'10:00 AM'
+  },
+  "6":{
+    start_time:'10:00 AM',
+    end_time:'12:00 PM'
+  },
+  "7":{
+    start_time:'12:00 PM',
+    end_time:'02:00 PM'
+  },
+  "8":{
+    start_time:'02:00 PM',
+    end_time:'04:00 PM'
+  },
+  "9":{
+    start_time:'04:00 PM',
+    end_time:'06:00 PM'
+  },
+  "10":{
+    start_time:'06:00 PM',
+    end_time:'08:00 PM'
+  },
+  "11":{
+    start_time:'08:00 PM',
+    end_time:'10:00 PM'
+  },
+  "12":{
+    start_time:'10:00 PM',
+    end_time:'12:00 AM'
+  }
+}    
       },
       methods: {
+        calcSlots(){
+          this.double_slots=[]
+          this.selected_double_slots=[]
+          var slot={
+            "0":[2,4,6,8,10,12,14,16,18,20,22,24],
+            "2":[2,4,6,8,10,12,14,16,18,20,22,24],
+            "4":[2,4,6,8,10,12,14,16,18,20,22,24],
+            "6":[2,4,6,8,10,12,14,16,18,20,22,24],
+            "8":[2,4,6,8,10,12,14,16,18,20,22,24],
+            "10":[2,4,6,8,10,12,14,16,18,20,22,24],
+            "12":[2,4,6,8,10,12,14,16,18,20,22,24],
+            "14":[2,4,6,8,10,12,14,16,18,20,22,24],
+            "16":[2,4,6,8,10,12,14,16,18,20,22,24],
+            "18":[2,4,6,8,10,12,14,16,18,20,22,24],
+            "20":[2,4,6,8,10,12,14,16,18,20,22,24],
+            "22":[2,4,6,8,10,12,14,16,18,20,22,24]
+    
+          }
+          for(var i in slot){
+            if(slot[i].includes(2)){
+              var slotNo=(parseInt(i)+2)/2
+    
+              this.double_slots.push(this.slotFormat[String(slotNo)])
+              
+              
+            }
+          }
+     },
+ /*calcSlots(){
+      var slot={
+        "0":[2,4,6,8,10,12,14,16,18,20,22,24],
+        "2":[2,4,6,8,10,12,14,16,18,20,22,24],
+        "4":[2,4,6,8,10,12,14,16,18,20,22,24],
+        "6":[2,4,6,8,10,12,14,16,18,20,22,24],
+        "8":[2,4,6,8,10,12,14,16,18,20,22,24],
+        "10":[2,4,6,8,10,12,14,16,18,20,22,24],
+        "12":[2,4,6,8,10,12,14,16,18,20,22,24],
+        "14":[2,4,6,8,10,12,14,16,18,20,22,24],
+        "16":[2,4,6,8,10,12,14,16,18,20,22,24],
+        "18":[2,4,6,8,10,12,14,16,18,20,22,24],
+        "20":[2,4,6,8,10,12,14,16,18,20,22,24],
+        "22":[2,4,6,8,10,12,14,16,18,20,22,24]
+
+      }
+      for(var i in slot){
+        if(slot[i].includes(2)){
+          if(i<12){
+            startTime=i+'AM'
+          }
+          else{
+            startTimeUnit='PM'
+          }
+          var endTime=i+2
+          if(endTime<12){
+            sTimeUnit='AM'
+          }
+          else{
+            startTimeUnit='PM'
+          }
+          
+          var startSlot=parseInt(i)+12
+          this.double_slots.push({
+            slotNo:i,
+            slot:
+          })
+        }
+      }
+ },*/
+     selectPrefDay(day){
+       if(!this.prefDay.includes(day))
+       {
+      this.prefDay.push(day)
+       }
+       else{
+        const prefIndex = this.prefDay.indexOf(day);
+         this.prefDay.splice(prefIndex,1)
+       }
+     },
   getIp(){
     axios.get('https://www.cloudflare.com/cdn-cgi/trace').then((response)=>{
 
@@ -944,6 +1154,68 @@ console.log(response)
       this.renderComponent = true;
     });
   },
+  addDoubleSlot(start,end,slot){
+      this.selected_double_slots.push(slot)
+  },
+  removeDoubleSlot(slot){
+    var prevSlot=parseInt(slot)-1
+    var nextSlot=parseInt(slot)+1
+    var index=this.selected_double_slots.indexOf(slot)
+    this.selected_double_slots.splice(index,1)
+    if(this.selected_double_slots.includes(nextSlot)&&this.selected_double_slots.includes(prevSlot))
+    {
+      var tempSlots=[...this.selected_double_slots]
+      for(var i=0;i<this.selected_double_slots.length;i++){
+        if(this.selected_double_slots[i]>slot){
+          var slotindex=tempSlots.indexOf(this.selected_double_slots[i])
+          tempSlots.splice(slotindex,1)
+        }
+      }
+      console.log("duble slot is "+this.selected_double_slots+"tempslot:"+tempSlots)
+      this.selected_double_slots=[...tempSlots]
+    }
+  },
+  checkSlotStat(slot){
+    var prevSlot=parseInt(slot)-1
+    var nextSlot=parseInt(slot)+1
+    if(this.selected_double_slots.length<this.selectedDuration.slots)
+    {
+    if(this.selected_double_slots.length>0)
+    {
+    if(slot==1){
+      if(this.selected_double_slots.includes(nextSlot)){
+        return true
+      }
+      else {
+        return false
+      }
+    }
+    else if(slot==12){
+      if(this.selected_double_slots.includes(prevSlot)){
+        return true
+      }
+      else {
+        return false
+      }
+    }
+    else{
+      if(this.selected_double_slots.includes(prevSlot)||this.selected_double_slots.includes(nextSlot))
+      {
+        return true
+      }
+      else{
+        return false
+      }
+    }
+    }
+    else{
+      return true
+    }
+  }
+  else{
+    return false
+  }
+  },
   addSlot(slot) {
     if (this.time_slot[this.slotDate].selectedSlot.length == 0) {
       this.time_slot[this.slotDate].selectedSlot.push(slot);
@@ -1038,6 +1310,7 @@ console.log(response)
     console.log("total size is "+this.total_size)
   },
   selectService(service) {
+    this.serviceChange=false
     this.selectedService = service;
     this.serviceType = service.name;
   
@@ -1049,8 +1322,16 @@ console.log(response)
     this.no_of_apartments = [];
     this.buildingsCompleted=false
     this.getSize();
+    this.serviceChange=true
+   
+  
+    
+   
   },
   selectCategory(item){
+    var carousel = $("#service-carousel");
+    carousel.owlCarousel('destroy'); 
+
     this.ser_counter++
     this.refresh++
     this.currentServices=[]
@@ -1060,20 +1341,64 @@ this.kitchenCleaningServices=[]
 this.infectionControlServices=[]
     this.selectedCategory=item
     if(item=='Detailed Cleaning'){
-       for(var i=0;i<this.services.length;i++){
-         if(this.services[i].name=='General Cleaning'||this.services[i].name=='Deep Cleaning'||this.services[i].name=='Facade Cleaning'||this.services[i].name=='Car Parking Umbrella'||this.services[i].name=='Window Cleaning'||this.services[i].name=='Outdoor Cleaning'||this.services[i].name=='Storage Area'){
-             this.detailedCleaningServices.push(this.services[i])
-               this.currentServices.push(this.services[i])
-               this.selectedService={name:'General Cleaning'}
-               this.serviceType='General Cleaning'
-
-         }
-    
-    }
+      $('#service-carousel').html(`
+      <div class="sr-service-card m-2 p-2 service-one"  onclick="selectService('General Cleaning',this)">
+      <i class="far fa-circle inactive-icon"></i>
+      <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+      <div class="text-center pt-2 service-title">
+      General Cleaning
+    </div></div>
+    <div class="sr-service-card m-2 p-2 "  onclick="selectService('Deep Cleaning',this)">
+    <i class="far fa-circle inactive-icon"></i>
+    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <div class="text-center pt-2 service-title">
+    Deep Cleaning
+  </div>
+  </div>
+  
+   
+  
+    <div class="sr-service-card m-2 p-2"  onclick="selectService('Facade Cleaning',this)">
+    <i class="far fa-circle inactive-icon"></i>
+    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <div class="text-center pt-2 service-title">
+    Facade Cleaning
+  </div></div>
+ 
+    <div class="sr-service-card m-2 p-2"  onclick="selectService('Storage Area',this)">
+    <i class="far fa-circle inactive-icon"></i>
+    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <div class="text-center pt-2 service-title">
+    Storage Area
+  </div></div>
+ 
+    <div class="sr-service-card m-2 p-2"  onclick="selectService('Car Parking Umbrella',this)">
+    <i class="far fa-circle inactive-icon"></i>
+    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <div class="text-center pt-2 service-title">
+    Car Parking Umbrella
+  </div></div>
+  
+    <div class="sr-service-card m-2 p-2"  onclick="selectService('Window Cleaning',this)">
+    <i class="far fa-circle inactive-icon"></i>
+    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <div class="text-center pt-2 service-title">
+    Window Cleaning
+  </div></div>
+ 
+    <div class="sr-service-card m-2 p-2"  onclick="selectService('Outdoor Cleaning',this)">
+    <i class="far fa-circle inactive-icon"></i>
+    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <div class="text-center pt-2 service-title">
+    Outdoor Cleaning
+  </div></div>
+    `)
+    selectServiceOnly('General Cleaning')
+   
     }
     else{
        if(item=='Special Care'){
-       for(var i=0;i<this.services.length;i++){
+      /* for(var i=0;i<this.services.length;i++){
          if(this.services[i].name=='Upholstery Cleaning'||this.services[i].name=='Carpet Cleaning'||this.services[i].name=='Mattress Cleaning'){
              this.specialCareServices.push(this.services[i])
               this.currentServices.push(this.services[i])
@@ -1081,11 +1406,35 @@ this.infectionControlServices=[]
                 this.serviceType='Upholstery Cleaning'
          }
     
-    }
+    }*/
+    $('#service-carousel').html(`
+   
+    <div class="sr-service-card m-2 p-2 service-one"  onclick="selectService('Upholstery Cleaning',this)">
+    <i class="far fa-circle inactive-icon"></i>
+    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <div class="text-center pt-2 service-title">
+    Upholstery Cleaning
+  </div></div>
+  
+    <div class="sr-service-card m-2 p-2"  onclick="selectService('Mattress Cleaning',this)">
+    <i class="far fa-circle inactive-icon"></i>
+    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <div class="text-center pt-2 service-title">
+    Mattress Cleaning
+  </div></div>
+  
+    <div class="sr-service-card m-2 p-2"  onclick="selectService('Carpet Cleaning',this)">
+    <i class="far fa-circle inactive-icon"></i>
+    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <div class="text-center pt-2 service-title">
+    Carpet Cleaning
+  </div></div>
+    `)
+    selectServiceOnly('Upholstery Cleaning')
     }
      else{
         if(item=='Kitchen Cleaning'){
-      for(var i=0;i<this.services.length;i++){
+     /* for(var i=0;i<this.services.length;i++){
          if(this.services[i].name=='Kitchen Cleaning'){
              this.kitchenCleaningServices.push(this.services[i])
               this.currentServices.push(this.services[i])
@@ -1093,11 +1442,23 @@ this.infectionControlServices=[]
                 this.serviceType='Kitchen Cleaning'
          }
     
-    }
+    }*/
+    $('#service-carousel').html(`
+   
+    <div class="sr-service-card m-2 p-2 service-one"   onclick="selectService('Kitchen Cleaning',this)">
+    <i class="far fa-circle inactive-icon"></i>
+    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <div class="text-center pt-2 service-title">
+    Kitchen Cleaning
+  </div></div>
+  
+   
+    `)
+    selectServiceOnly('Kitchen Cleaning')
         }
         else{
            if(item=='Infection Control'){
-               for(var i=0;i<this.services.length;i++){
+          /*     for(var i=0;i<this.services.length;i++){
          if(this.services[i].name=='Sterilization'){
              this.infectionControlServices.push(this.services[i])
               this.currentServices.push(this.services[i])
@@ -1105,14 +1466,52 @@ this.infectionControlServices=[]
                 this.serviceType='Sterilization'
          }
     
-    }
+    }*/
+    $('#service-carousel').html(`
+   
+    <div class="sr-service-card m-2 p-2 service-one"  onclick="selectService('Sanitization',this)">
+    <i class="far fa-circle inactive-icon"></i>
+    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <div class="text-center pt-2 service-title">
+    Sterilization
+  </div></div>
+  
+   
+    `)
+    selectServiceOnly('Sterilization')
            }
         }
+        
     }
    
+     
+    
+    
     }
+    $('.owl-item:empty').remove()
  this.getSize();
- 
+ carousel.owlCarousel(
+  {
+    loop:false,
+
+responsiveClass:true,
+responsive:{
+    0:{
+        items:1,
+        nav:true,
+        loop:true
+    },
+    600:{
+        items:4,
+        nav:false
+    },
+    1000:{
+        items:5,
+        nav:false,
+        loop:false
+    }
+}
+}).trigger('refresh.owl.carousel');
 
    
   },
@@ -1636,12 +2035,47 @@ try {
     this.billingData.splice(a,1)
     this.recalcCost()
   },
-  goToService(){
-    this.activeTab='Service'
-    reinit()
+  goToServices(){
+    
+    console.log('i m here')
+    
+  this.activeTab='Services'
+  setTimeout(function (){
+
+    app.reinitCat()
+    app.selectCategory('Detailed Cleaning')
+  }, 500);
+  
+ 
+  $('#tab-1').click()
+  
+  },
+  reinitCat(){
+    $('#category-carousel').owlCarousel('destroy'); 
+    $('#category-carousel').owlCarousel({
+      loop:false,
+      
+      responsiveClass:true,
+      responsive:{
+          0:{
+              items:1,
+              nav:true
+          },
+          600:{
+              items:4,
+              nav:false
+          },
+          1000:{
+              items:5,
+              nav:false,
+              loop:false
+          }
+      }
+  }).trigger('refresh.owl.carousel');
   },
   goToSchedule(){
       this.activeTab='Schedule'
+      this.currentPageTitle='Schedule',
       this.newdurationcalculation();
   },
   goToBilling(){
@@ -1655,7 +2089,7 @@ try {
    
   },
    goToCart(){
- /*  destroyCarousel()*/
+
      var sampleServicesBill={
        service:'',
        bill:[],
@@ -1830,6 +2264,7 @@ try {
   selectDuration(duration) {
     duration.slots = duration.hours / 3;
     this.selectedDuration = duration;
+    this.calcSlots()
     this.getMultipleSlots();
   },
   formatDate() {
@@ -2746,9 +3181,6 @@ mounted() {
   this.getAreaTypes()
   this.getIp()
   this.getGovernorate()
-  this.selectCategory('Detailed Cleaning')
-  
-  moment.tz.setDefault("Asia/Baghdad");
   console.log("current time is" + moment().format());
 
   this.dateSelected = moment().format().split("T")[0];
@@ -2757,6 +3189,11 @@ mounted() {
      // this.getMultipleSlots()
      
       this.changeNewKitchen()
+
+  this.selectCategory('Detailed Cleaning')
+  
+  //moment.tz.setDefault("Asia/Baghdad");
+  
      
       
 },
@@ -2768,134 +3205,9 @@ created()
    
    
   });
-  $('#category-carousel').owlCarousel({
-    loop:false,
-    
-    responsiveClass:true,
-    responsive:{
-        0:{
-            items:1,
-            nav:true
-        },
-        600:{
-            items:4,
-            nav:false
-        },
-        1000:{
-            items:4,
-            nav:true,
-            loop:false
-        }
-    }
-});
-$('#service-carousel').owlCarousel({
-    loop:false,
-    
-    responsiveClass:true,
-    responsive:{
-        0:{
-            items:4,
-            nav:true
-        },
-        600:{
-            items:4,
-            nav:false
-        },
-        1000:{
-            items:4,
-            nav:true,
-            loop:false
-        }
-    }
-});
-
-
-
-});
-
-function refreshService() {
-    console.log("service refreshed")
-    var $owl=$('#service-carousel').owlCarousel({
-        loop:false,
-        
-        responsiveClass:true,
-        responsive:{
-            0:{
-                items:4,
-                nav:true
-            },
-            600:{
-                items:4,
-                nav:false
-            },
-            1000:{
-                items:4,
-                nav:true,
-                loop:false
-            }
-        }
-    });
-    
-}
-function destroyCarousel(){
   
-   
+  
 
 
-/*$('#category-carousel').owlCarousel('destroy');
-$('#category-carousel').owlCarousel({touchDrag: false, mouseDrag: false});
 
-$('#service-carousel').owlCarousel('destroy');
-$('#service-carousel').owlCarousel({touchDrag: false, mouseDrag: false});*/
-/*$('#service-carousel').data('owl.carousel').destroy();  
-$('#service-carousel').owlCarousel({touchDrag: false, mouseDrag: false});
-/*$('#category-carousel').data('owlCarousel').reinit();*/
-    $('#category-carousel').trigger('destroy.owl.carousel').removeClass('owl-carousel owl-loaded');
-    $('#category-carousel').find('.owl-stage-outer').children().unwrap();
-    $('#service-carousel').trigger('destroy.owl.carousel').removeClass('owl-carousel owl-loaded');
-    $('#service-carousel').find('.owl-stage-outer').children().unwrap();
-}
-function reinit(){
-    $('#category-carousel').owlCarousel({
-        loop:false,
-        
-        responsiveClass:true,
-        responsive:{
-            0:{
-                items:1,
-                nav:true
-            },
-            600:{
-                items:4,
-                nav:false
-            },
-            1000:{
-                items:4,
-                nav:true,
-                loop:false
-            }
-        }
-    });
-    $('#service-carousel').owlCarousel({
-        loop:false,
-        
-        responsiveClass:true,
-        responsive:{
-            0:{
-                items:4,
-                nav:true
-            },
-            600:{
-                items:4,
-                nav:false
-            },
-            1000:{
-                items:4,
-                nav:true,
-                loop:false
-            }
-        }
-    });
-    console.log("carousel reinitialized")
-}
-    
+
