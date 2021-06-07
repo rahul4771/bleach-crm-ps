@@ -720,12 +720,12 @@ class PaymentDetails(IsAuthenticated,View):
 		#sales amount
 		if search:
 			try:
-				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).filter(~Q(order_status='ORDER_CANCELLED')).filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
+				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).filter(~Q(order_status='ORDER_CANCELLED')).filter(Q(Q(evaluation__customer__name__icontains=search)|Q(evaluation__evaluation_id__icontains=search))).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
 			except:
 				invoices         = None
 		else:
 			try:
-				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).filter(~Q(order_status='ORDER_CANCELLED')).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
+				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).filter(~Q(order_status='ORDER_CANCELLED')).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
 			except:
 				invoices         = None
 				
@@ -749,6 +749,40 @@ class PaymentDetails(IsAuthenticated,View):
 		else:
 			total_pending_amount = 0
 			total_pending_orders = 0
+
+		#remove object in postpaid if not last cleaning fulfilled	
+		#remove if subscription to pay date
+		if pending_payments:
+			for payment in pending_payments:
+				if payment.evaluation.payment_method == 'POSTPAID' and payment.cleaning_count :
+					very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
+					if very_latest_cleaning.work_status != 'CLEANING_FULFILLED':
+						pending_payments = pending_payments.exclude(id=payment.id)
+				if payment.evaluation.payment_method == 'SUBSCRIPTION' and not payment.subscription_topay_date:
+					pending_payments = pending_payments.exclude(id=payment.id)	
+
+		#to find days
+		if pending_payments:
+			for payment in pending_payments:
+				if payment.evaluation.payment_method == 'PREPAID' and payment.orderschedules:
+					very_old_cleaning   = payment.orderschedules[0]
+					payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
+				elif payment.evaluation.payment_method == 'POSTPAID' and payment.orderschedules:
+					very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
+					payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
+				elif payment.evaluation.payment_method == 'BREAKDOWN' and payment.orderschedules:
+				
+					very_old_cleaning   = payment.orderschedules[0]
+					very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
+					payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
+					payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
+
+					#to check last cleaning completed for break down after payment
+					if very_latest_cleaning.work_status == 'CLEANING_FULFILLED':
+						payment.last_completed = True	
+
+				elif payment.evaluation.payment_method == 'SUBSCRIPTION':				
+					payment.delaydays= (timezone.now()-payment.subscription_topay_date).days	
 
 		#filters
 		fil_order_status			= request.GET.get('status')
@@ -782,7 +816,8 @@ class PaymentDetails(IsAuthenticated,View):
 		if fil_payment_policy or fil_payment_status or fil_order_status:
 			filters=functools.reduce(operator.and_,filters)
 			invoices = invoices.filter(filters)
-		
+
+
 		#PAGINATION INVOICE		
 		page = request.GET.get('page',1) 
 		no_of_entries = request.GET.get('no_of_entries')
@@ -790,17 +825,17 @@ class PaymentDetails(IsAuthenticated,View):
 			no_of_entries = 20
 		
 		page = request.GET.get('page',1) 
-		paginator=Paginator(invoices,no_of_entries)
+		paginator=Paginator(pending_payments,no_of_entries)
 			
 		try: 
-			invoices=paginator.page(page) 
+			pending_payments=paginator.page(page) 
 		except PageNotAnInteger:
-			invoices=paginator.page(1)
+			pending_payments=paginator.page(1)
 		except EmptyPage:
-			invoices = paginator.page(paginator.num_pages) 
+			pending_payments = paginator.page(paginator.num_pages) 
 
 		# Get the index of the current page
-		index = invoices.number - 1  # edited to something easier without index
+		index = pending_payments.number - 1  # edited to something easier without index
 		# This value is maximum index of your pages, so the last page - 1
 		max_index = len(paginator.page_range)
 		# You want a range of 7, so lets calculate where to slice the list
@@ -809,7 +844,9 @@ class PaymentDetails(IsAuthenticated,View):
 		# Get our new page range. In the latest versions of Django page_range returns 
 		# an iterator. Thus pass it to list, to make our slice possible again.
 		page_range = list(paginator.page_range)[start_index:end_index]	
-		entry_per_page=(invoices.end_index())-(invoices.start_index())+1
+		entry_per_page=(pending_payments.end_index())-(pending_payments.start_index())+1
+
+
 
 		return render(request,'common/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status,"pending_payments":pending_payments})
 
@@ -871,6 +908,8 @@ class ActiveSubscriptions(IsAuthenticated,View):
 	def post(self,request):
 		order_id            = request.POST.get('order')
 		subscription_topay  = float(request.POST.get('subscription_topay'))
+		invoice_type  		= request.POST.get('invoice_type')
+		print(invoice_type,"ivtp")
 
 		Order.objects.filter(id=order_id).update(subscription_topay=subscription_topay,subscription_topay_date=timezone.now())
 
@@ -878,7 +917,8 @@ class ActiveSubscriptions(IsAuthenticated,View):
 
 		evaluaation = order.evaluation
 
-		if evaluaation.customer.is_sms == True:
+		if evaluaation.customer.is_sms == True and invoice_type == "invoice" :
+			print("sms")
 
 			url = "https://smsapi.future-club.com/fccsms.aspx"
 
