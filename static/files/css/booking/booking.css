@@ -466,6 +466,14 @@ margin: auto;
     opacity: 1;
     position: relative;
   }
+  .available-slot-card{
+    border: 1px solid #8B8B8B;
+    border-radius: 6px;
+  }
+  .not-available-slot-card{
+    border: 1px solid #EC6262;
+    border-radius: 6px;
+  }
   .cart-plus{
       margin-top:100px;
   }

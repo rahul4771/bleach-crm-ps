@@ -63,11 +63,11 @@ width="1000"
       </b>
     </div>
     <div v-if="selectedDuration == item" class="text-center sub-content">
-      <% item.hours / 3 %> slots
+      <% item.hours / 2 %> slots
     </div>
   </div>
   </div>
-  <div class="row " style="margin:0 !important" v-if="selectedDuration">
+  <div class="row " style="margin:0 !important" v-if="selectedDuration.hours">
   <div class="col-md-4">
     <div >
       Choose starting Date
@@ -76,7 +76,7 @@ width="1000"
     v-on:change="calcSlots()" class="mt-2" :min="today"></v-date-picker>
   </div>
 
-  <div class="col-md-8">
+  <div class="col-md-8"  >
     <div>
       Select  Slots
     </div>
@@ -94,6 +94,16 @@ width="1000"
       <% slot.start_time+' - '+ slot.end_time %>
     </div>
   </div>
+  <div class="col-md-12 ">
+    <div class="d-flex justify-center">
+    <v-btn color="primary" @click="findVisits()">
+      Proceed
+    </v-btn>
+    <v-btn color="primary" outlined class="ml-2" @click="scheduleDialog=false">
+      Cancel
+    </v-btn>
+    </div>
+  </div>
   </div>
 
   </div>
@@ -104,8 +114,11 @@ width="1000"
 <!--- Schedule Dialog Ends-->
         <!--white-wrapper-->
 
-        <div class="booking-container">
-          <div class="row white-wrapper booking-card">
+        <div class="booking-container ">
+          
+          <div class=" white-wrapper booking-card">
+            <div class="container">
+              <div class="row">
             <div class="col-md-12">
               <div class="d-flex sr-tabs" v-if="activeTab!='Schedule'">
                 <div class="p-3 sr-tab-active" id="tab-1" @click="goToServices()"
@@ -1683,6 +1696,7 @@ width="1000"
                           <v-text-field
                           label="No of Visits"
                           type="number"
+                          v-model="no_of_visits"
                           dense
                         ></v-text-field>
                         </div>
@@ -1692,6 +1706,14 @@ width="1000"
                     <div class="row m-0">
                       <div class="col-md-12">
                       <div> Preferred Days</div> </div>
+                      <div class="col-sm-2 col-md-1">
+                        <div class="ev-day-active" @click="selectPrefDay('Sun')" v-if="prefDay.includes('Sun')">
+                          Sun
+                           </div>
+                           <div class="ev-day" @click="selectPrefDay('Sun')" v-else>
+                           Sun
+                           </div>
+                           </div>
                       <div class="col-sm-2 col-md-1">
                         <div class="ev-day-active" @click="selectPrefDay('Mon')" v-if="prefDay.includes('Mon')">
                           Mon 
@@ -1740,14 +1762,7 @@ width="1000"
                           Sat
                           </div>
                           </div>
-                          <div class="col-sm-2 col-md-1">
-                          <div class="ev-day-active" @click="selectPrefDay('Sun')" v-if="prefDay.includes('Sun')">
-                            Sun
-                             </div>
-                             <div class="ev-day" @click="selectPrefDay('Sun')" v-else>
-                             Sun
-                             </div>
-                             </div>
+                         
                              <div class="col-md-12 ">
                               <v-btn
                               tile
@@ -1760,6 +1775,47 @@ width="1000"
                              Choose a Starting Date
                             </v-btn>
                              </div>
+                             <div class="col-md-12">
+                                <div>
+                                  Please Change Unavailable Slots
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-2" v-for="(visit,vindex) in visits" v-bind:key="vindex">
+                                      <div class="available-slot-card p-2"  v-if="slotStat.available_slotes.includes(visit.dateTime)">
+                                        <div class="d-flex">
+                                          <div>
+                                           <b>Visit <% (vindex+1) %></b> 
+                                          </div>
+                                          <div class="ml-auto">
+                                           <% visit.date %>
+                                          </div>
+                                        </div>
+                                        <div class="text-center pt-2">
+                                         <span v-for="(time,tindex) in visit.slots" v-bind:key="tindex"><% slotFormat[time].start_time + ' - '+ slotFormat[time].end_time%> </span> 
+                                        </div>
+                                      </div>
+                                      <div class="not-available-slot-card p-2"  v-if="!slotStat.available_slotes.includes(visit.dateTime)">
+                                        <div class="d-flex">
+                                          <div>
+                                           <b>Visit <% (vindex+1) %></b> 
+                                          </div>
+                                          <div class="ml-auto">
+                                           <% visit.date %>
+                                          </div>
+                                        </div>
+                                        <div class="text-center pt-2">
+                                         <span v-for="(time,tindex) in visit.slots" v-bind:key="tindex"><% slotFormat[time].start_time + ' - '+ slotFormat[time].end_time%> </span> 
+                                        </div>
+                                      </div>
+                                    </div>
+                                   
+                                </div>
+                                <div class="text-center mt-4">
+                                  <v-btn color="primary" @click="autoFix()">
+                                    Autofix
+                                  </v-btn>
+                                </div>
+                             </div>
 
                       
                       </div>
@@ -1770,6 +1826,8 @@ width="1000"
                   </div>
 
 
+                </div>
+                </div>
                 </div>
               </div>
 
