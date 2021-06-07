@@ -115,7 +115,7 @@
 <th data-hide="phone">Customer Mobile</th>
 <th data-hide="phone">Service Type</th>
 <th data-hide="phone,tablet">Status</th>
-<th class="align-center" data-hide="phone,tablet">Callback Status</th>
+<th class="align-center" data-hide="phone,tablet">Actions</th>
 <th class="align-center" data-hide="phone,tablet">Shortcuts</th>
 </tr>
 </thead>
@@ -144,7 +144,7 @@
         {%endif%}
     </td>
 
-    <td>
+    <td class="align-center">
     
     <label for="favcity" style="width:80%;"> 
     <select class="callback" onchange="callbacklist(this.value,{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})">
@@ -157,8 +157,8 @@
     
     </td>
 
-    <td class="clickable-row" {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %}>
-      
+    <td class="align-center">
+      <a class="d-flex dropdown-orders" {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}href="{% url 'common_items:client-orderdetails' order.id %}"{% endfor %}{% else %}href="#"{% endif %} target="_blank"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></div>
      </td>
 
     </tr>    
