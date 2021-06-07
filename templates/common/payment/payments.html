@@ -174,76 +174,240 @@
 <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
 </select>
 </label>
-<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+<ul class="nav nav-tabs" id="paymentTab" role="tablist" style="margin-top:20px">
+  <li class="nav-item" role="presentation">
+    <a class="nav-link active primary-text" id="all-tab" data-toggle="tab" href="#all" role="tab" aria-controls="all" aria-selected="true">All</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link primary-text" id="paid-tab" data-toggle="tab" href="#paid" role="tab" aria-controls="paid" aria-selected="false">Paid</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link primary-text" id="due-tab" data-toggle="tab" href="#due" role="tab" aria-controls="due" aria-selected="false">Due</a>
+  </li>
+</ul>
+<div class="tab-content" id="paymentTabContent"  style="margin-top:20px">
+  <!-- All Tab begins here-->
+  <div class="tab-pane" id="all" role="tabpanel" aria-labelledby="all-tab">
+    <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
-<thead>
-<tr>
-<th>Order Date</th>
-<th class="text-left">Order Number</th>
-<th class="text-center" data-hide="phone,tablet">Payment Policy</th>
-<th class="text-right" data-hide="phone,tablet">Amount</th>
-<th class="text-right" data-hide="phone,tablet">Paid</th>
-<th class="text-right" data-hide="phone,tablet">Balance</th>
-<th class="text-center" data-hide="phone,tablet">Payment Mode</th>
-<th data-hide="phone">Job Status</th>
-<th class="align-center" data-hide="phone">Shortcuts</th>
-</tr>
-</thead>
-<tbody>
-    {% for invoice in invoices %}
-    <tr>
-    <td {% if invoice.cleaning_in_progress_count == 0 and invoice.completed_cleaning_count == 0 %}
-        class="blue-line"
-        {% elif invoice.cleaning_in_progress_count >= 1 %}
-        class="yellow-line"
-        {% elif invoice.completed_cleaning_count == invoice.cleaning_count %}
-        class="green-line"
-        {% else %}
-        class="blue-line"
-        {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
-    <td class="text-left"  >{{invoice.order_no}}</td>
-    <td class="text-center">{{invoice.evaluation.payment_method}}</td>
-    </td>
-    <td class="text-right">{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}</td>
-    <td class="text-right">{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}</td>
-    {% if invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
-    <td class="text-right">{{invoice.subscription_topay|default_if_none:'0.000'|floatformat:'3'}}</td>
-    {% else %}
-    <td class="text-right">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}</td>
-    {% endif %}
-    <td class="text-center">
-    {% for inv in invoice.paymenthistory|slice:":1" %}
-    {% if inv.payment_mode == 'ONLINECREDIT' %}
-    {{inv.payment_gateway|default_if_none:'-'}},
-    {% else %}
-    {{inv.payment_mode|default_if_none:'-'}},
-    {% endif %}
-    {% empty %}
-    -
-    {% endfor %}
-    </td>
-    <td >
-        {% if invoice.cleaning_in_progress_count == 0 and invoice.completed_cleaning_count == 0 %}
-        <div class="text-center d-flex "><div class="round-marker payment-not-started-bg"></div><span>NOT STARTED</span></div>
-        {% elif invoice.cleaning_in_progress_count >= 1 %}
-        <div class="text-center d-flex "><div class="round-marker payment-in-progress-bg"></div><span>IN PROGRESS</span></div>
-        {% elif invoice.completed_cleaning_count == invoice.cleaning_count %}
-        <div class="text-center d-flex " ><div class="round-marker payment-completed-bg"></div><span>COMPLETED</span></div>
-        {% else %}
-        <div class="text-center d-flex "><div class="round-marker payment-not-started-bg"></div><span>NOT STARTED</span></div>
-        {% endif %}
-        </td>
+      <thead>
+      <tr>
+      <th>Order Date</th>
+      <th class="text-left">Order Number</th>
+      <th class="text-center" data-hide="phone,tablet">Payment Policy</th>
+      <th class="text-right" data-hide="phone,tablet">Amount</th>
+      <th class="text-right" data-hide="phone,tablet">Paid</th>
+      <th class="text-right" data-hide="phone,tablet">Balance</th>
+      <th class="text-center" data-hide="phone,tablet">Payment Mode</th>
+      <th data-hide="phone">Job Status</th>
+      <th class="align-center" data-hide="phone">Shortcuts</th>
+      </tr>
+      </thead>
+      <tbody>
+          {% for invoice in invoices %}
+          <tr>
+          <td {% if invoice.cleaning_in_progress_count == 0 and invoice.completed_cleaning_count == 0 %}
+              class="blue-line"
+              {% elif invoice.cleaning_in_progress_count >= 1 %}
+              class="yellow-line"
+              {% elif invoice.completed_cleaning_count == invoice.cleaning_count %}
+              class="green-line"
+              {% else %}
+              class="blue-line"
+              {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
+          <td class="text-left"  >{{invoice.order_no}}</td>
+          <td class="text-center">{{invoice.evaluation.payment_method}}</td>
+          </td>
+          <td class="text-right">{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}</td>
+          <td class="text-right">{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}</td>
+          {% if invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
+          <td class="text-right">{{invoice.subscription_topay|default_if_none:'0.000'|floatformat:'3'}}</td>
+          {% else %}
+          <td class="text-right">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}</td>
+          {% endif %}
+          <td class="text-center">
+          {% for inv in invoice.paymenthistory|slice:":1" %}
+          {% if inv.payment_mode == 'ONLINECREDIT' %}
+          {{inv.payment_gateway|default_if_none:'-'}},
+          {% else %}
+          {{inv.payment_mode|default_if_none:'-'}},
+          {% endif %}
+          {% empty %}
+          -
+          {% endfor %}
+          </td>
+          <td >
+              {% if invoice.cleaning_in_progress_count == 0 and invoice.completed_cleaning_count == 0 %}
+              <div class="text-center d-flex "><div class="round-marker payment-not-started-bg"></div><span>NOT STARTED</span></div>
+              {% elif invoice.cleaning_in_progress_count >= 1 %}
+              <div class="text-center d-flex "><div class="round-marker payment-in-progress-bg"></div><span>IN PROGRESS</span></div>
+              {% elif invoice.completed_cleaning_count == invoice.cleaning_count %}
+              <div class="text-center d-flex " ><div class="round-marker payment-completed-bg"></div><span>COMPLETED</span></div>
+              {% else %}
+              <div class="text-center d-flex "><div class="round-marker payment-not-started-bg"></div><span>NOT STARTED</span></div>
+              {% endif %}
+              </td>
+      
+              <td class="align-center" ><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a></td>
+          </tr>
+          {% empty %}
+          <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td><td></td></tr>
+          {% endfor %}
+      
+      </tbody>
+      <tfoot>
+      </tfoot>
+      </table>
 
-        <td class="align-center" ><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a></td>
-    </tr>
-    {% empty %}
-    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td><td></td></tr>
-    {% endfor %}
+   </div>
+    <!-- Paid tab begins here-->
+  <div class="tab-pane fade" id="paid" role="tabpanel" aria-labelledby="paid-tab">
+    <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+ 
+      <thead>
+      <tr>
+      <th>Order Date</th>
+      <th class="text-left">Order Number</th>
+      <th class="text-center" data-hide="phone,tablet">Payment Policy</th>
+      <th class="text-right" data-hide="phone,tablet">Amount</th>
+      <th class="text-right" data-hide="phone,tablet">Paid</th>
+      <th class="text-right" data-hide="phone,tablet">Balance</th>
+      <th class="text-center" data-hide="phone,tablet">Payment Mode</th>
+      <th data-hide="phone">Job Status</th>
+      <th class="align-center" data-hide="phone">Shortcuts</th>
+      </tr>
+      </thead>
+      <tbody>
+          {% for invoice in invoices %}
+          <tr>
+          <td {% if invoice.cleaning_in_progress_count == 0 and invoice.completed_cleaning_count == 0 %}
+              class="blue-line"
+              {% elif invoice.cleaning_in_progress_count >= 1 %}
+              class="yellow-line"
+              {% elif invoice.completed_cleaning_count == invoice.cleaning_count %}
+              class="green-line"
+              {% else %}
+              class="blue-line"
+              {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
+          <td class="text-left"  >{{invoice.order_no}}</td>
+          <td class="text-center">{{invoice.evaluation.payment_method}}</td>
+          </td>
+          <td class="text-right">{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}</td>
+          <td class="text-right">{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}</td>
+          {% if invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
+          <td class="text-right">{{invoice.subscription_topay|default_if_none:'0.000'|floatformat:'3'}}</td>
+          {% else %}
+          <td class="text-right">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}</td>
+          {% endif %}
+          <td class="text-center">
+          {% for inv in invoice.paymenthistory|slice:":1" %}
+          {% if inv.payment_mode == 'ONLINECREDIT' %}
+          {{inv.payment_gateway|default_if_none:'-'}},
+          {% else %}
+          {{inv.payment_mode|default_if_none:'-'}},
+          {% endif %}
+          {% empty %}
+          -
+          {% endfor %}
+          </td>
+          <td >
+              {% if invoice.cleaning_in_progress_count == 0 and invoice.completed_cleaning_count == 0 %}
+              <div class="text-center d-flex "><div class="round-marker payment-not-started-bg"></div><span>NOT STARTED</span></div>
+              {% elif invoice.cleaning_in_progress_count >= 1 %}
+              <div class="text-center d-flex "><div class="round-marker payment-in-progress-bg"></div><span>IN PROGRESS</span></div>
+              {% elif invoice.completed_cleaning_count == invoice.cleaning_count %}
+              <div class="text-center d-flex " ><div class="round-marker payment-completed-bg"></div><span>COMPLETED</span></div>
+              {% else %}
+              <div class="text-center d-flex "><div class="round-marker payment-not-started-bg"></div><span>NOT STARTED</span></div>
+              {% endif %}
+              </td>
+      
+              <td class="align-center" ><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a></td>
+          </tr>
+          {% empty %}
+          <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td><td></td></tr>
+          {% endfor %}
+      
+      </tbody>
+      <tfoot>
+      </tfoot>
+      </table>
+    </div>
+    <!-- Due tab begins here-->
+    <div class="tab-pane fade" id="due" role="tabpanel" aria-labelledby="due-tab">
+      <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+ 
+        <thead>
+        <tr>
+        <th>Order Date</th>
+        <th class="text-left">Order Number</th>
+        <th class="text-center" data-hide="phone,tablet">Payment Policy</th>
+        <th class="text-right" data-hide="phone,tablet">Amount</th>
+        <th class="text-right" data-hide="phone,tablet">Paid</th>
+        <th class="text-right" data-hide="phone,tablet">Balance</th>
+        <th class="text-center" data-hide="phone,tablet">Payment Mode</th>
+        <th data-hide="phone">Job Status</th>
+        <th class="align-center" data-hide="phone">Shortcuts</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoices %}
+            <tr>
+            <td {% if invoice.cleaning_in_progress_count == 0 and invoice.completed_cleaning_count == 0 %}
+                class="blue-line"
+                {% elif invoice.cleaning_in_progress_count >= 1 %}
+                class="yellow-line"
+                {% elif invoice.completed_cleaning_count == invoice.cleaning_count %}
+                class="green-line"
+                {% else %}
+                class="blue-line"
+                {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
+            <td class="text-left"  >{{invoice.order_no}}</td>
+            <td class="text-center">{{invoice.evaluation.payment_method}}</td>
+            </td>
+            <td class="text-right">{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}</td>
+            <td class="text-right">{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}</td>
+            {% if invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
+            <td class="text-right">{{invoice.subscription_topay|default_if_none:'0.000'|floatformat:'3'}}</td>
+            {% else %}
+            <td class="text-right">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}</td>
+            {% endif %}
+            <td class="text-center">
+            {% for inv in invoice.paymenthistory|slice:":1" %}
+            {% if inv.payment_mode == 'ONLINECREDIT' %}
+            {{inv.payment_gateway|default_if_none:'-'}},
+            {% else %}
+            {{inv.payment_mode|default_if_none:'-'}},
+            {% endif %}
+            {% empty %}
+            -
+            {% endfor %}
+            </td>
+            <td >
+                {% if invoice.cleaning_in_progress_count == 0 and invoice.completed_cleaning_count == 0 %}
+                <div class="text-center d-flex "><div class="round-marker payment-not-started-bg"></div><span>NOT STARTED</span></div>
+                {% elif invoice.cleaning_in_progress_count >= 1 %}
+                <div class="text-center d-flex "><div class="round-marker payment-in-progress-bg"></div><span>IN PROGRESS</span></div>
+                {% elif invoice.completed_cleaning_count == invoice.cleaning_count %}
+                <div class="text-center d-flex " ><div class="round-marker payment-completed-bg"></div><span>COMPLETED</span></div>
+                {% else %}
+                <div class="text-center d-flex "><div class="round-marker payment-not-started-bg"></div><span>NOT STARTED</span></div>
+                {% endif %}
+                </td>
+        
+                <td class="align-center" ><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a></td>
+            </tr>
+            {% empty %}
+            <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td><td></td></tr>
+            {% endfor %}
+        
+        </tbody>
+        <tfoot>
+        </tfoot>
+        </table>
+    </div>
+</div>
 
-</tbody>
-<tfoot>
-</tfoot>
-</table>
 
 <div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
     <div class="pagination-containter"><!--pagination-containter-->
@@ -384,7 +548,8 @@ $('.footable').footable({
 //# sourceURL=pen.js
     </script>
     <script>
-    
+    //for tabs
+    $('#all-tab').click()
 // //datepicker and timepicker for popup
     $(document).on("click", ".content", function () {
        $('.id_from_date').datetimepicker({ 
