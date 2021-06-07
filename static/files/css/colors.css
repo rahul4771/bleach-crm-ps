@@ -193,3 +193,6 @@ Popups
 .not-approved-border{
     border:1px solid  #8B8B8B !important;
 }
+.cancel-order-border{
+    border-bottom: 1px ​solid #2C4C82 !important;
+}
