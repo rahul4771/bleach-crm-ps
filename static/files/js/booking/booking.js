@@ -158,7 +158,7 @@ const app=new Vue({
   rules: {
     required: v => !!v || 'this field is required',
   },
-    url:'http://localhost:8000',
+    url:'https://test.bleach-kw.com',
     kitchenData:{
         wall_type:'',
         floor_type:'',
@@ -447,7 +447,11 @@ prefDay:[],
 scheduleDialog:false,
 scheduleDate:'',
 double_slots:[],
+slotStat:{},
 selected_double_slots:[],
+visits:[],
+visitDateTime:[],
+no_of_visits:null,
 slotFormat:{
   "1":{
     start_time:'12:00 AM',
@@ -500,6 +504,61 @@ slotFormat:{
 }    
       },
       methods: {
+        findVisits(){
+        
+         this.scheduleDialog=false
+         var count=0
+        var visitcount=0
+
+          while(count<999){
+            var day=moment(this.dateSelected,'YYYY-MM-DD').add(count,"days")
+            
+            var dayname=day.format('ddd')
+            var startSlot=Math.min(...this.selected_double_slots)
+            var dateTime=day.format('DD-MM-YYYY')+' '+this.slotFormat[startSlot].start_time
+            if(this.prefDay.includes(dayname)){
+              this.visits.push({
+                date:day.format('DD-MM-YYYY'),      
+                slots:this.selected_double_slots,
+                day:dayname,
+                dateTime:day.format('DD-MM-YYYY')+' '+this.slotFormat[startSlot].start_time
+              })
+              
+               this.visitDateTime.push(dateTime)
+              visitcount++
+           
+            }
+            if(visitcount==parseInt(this.no_of_visits)){
+              this.checkAvailablility()
+              break;
+            }
+            
+           count++
+            
+          }
+        },
+        checkAvailablility(){
+         axios.post(this.url+'/customer/ajax/multipleservice/multipledates/cleaningslotes/',{number_of_cleaners:this.selectedDuration.cleaners,
+          cleaning_hours:this.selectedDuration.hours,
+          service_types:this.serviceTypes,
+          cleaning_datetimes:this.visitDateTime}).then(response=>{
+            this.slotStat=response.data
+
+         })
+          
+          
+        },
+        autoFix(){
+          axios.post(this.url+'/customer/ajax/multipleservice/multipledates/cleaningslotes/autofix/',{number_of_cleaners:this.selectedDuration.cleaners,
+           cleaning_hours:this.selectedDuration.hours,
+           service_types:this.serviceTypes,
+           cleaning_datetimes:this.slotStat.busy_slotes}).then(response=>{
+             this.slotStat=response.data
+ 
+          })
+           
+           
+         },
         calcSlots(){
           this.double_slots=[]
           this.selected_double_slots=[]
@@ -2262,7 +2321,7 @@ try {
     }
   },
   selectDuration(duration) {
-    duration.slots = duration.hours / 3;
+    duration.slots = duration.hours / 2;
     this.selectedDuration = duration;
     this.calcSlots()
     this.getMultipleSlots();
@@ -2748,12 +2807,12 @@ try {
         }
         console.log(pair, "pair");
         //pair convert to 3's multiple
-        var convertion_r = 3;
+        var convertion_r = 2;
         var convertion_mod = pair[1] % convertion_r;
         var highest_cleaner=Math.max(...this.maxCleaners)
         var lowest_cleaner=Math.min(...this.maxCleaners)
 
-        if (convertion_mod > parseInt(convertion_r / 3)) {
+        if (convertion_mod > parseInt(convertion_r / 2)) {
           console.log(manhour, "divider");
           console.log(pair[1] + (convertion_r - convertion_mod), "divident");
           console.log(
@@ -2769,7 +2828,7 @@ try {
           console.log(pair[1] - convertion_mod, "divident");
 
           if (pair[1] - convertion_mod == 0) {
-            pair = [Math.round(manhour / 3), 3];
+            pair = [Math.round(manhour / 2), 2];
           } else {
             pair = [
               Math.round(manhour / (pair[1] - convertion_mod)),
@@ -2794,46 +2853,46 @@ try {
 
           //first
           if (
-            Math.round(manhour / (middle_hours - 3)) > 0 &&
-            Math.round(manhour / (middle_hours - 3)) <= lowest_cleaner
+            Math.round(manhour / (middle_hours - 2)) > 0 &&
+            Math.round(manhour / (middle_hours - 2)) <= lowest_cleaner
           ) {
             duration_list.push([
-              Math.round(manhour / (middle_hours - 3)),
-              middle_hours - 3,
+              Math.round(manhour / (middle_hours - 2)),
+              middle_hours - 2,
             ]);
             lower_loop = 1;
           }
           if (
-            Math.round(manhour / (middle_hours + 3)) > 0 &&
-            Math.round(manhour / (middle_hours + 3)) <= lowest_cleaner
+            Math.round(manhour / (middle_hours + 2)) > 0 &&
+            Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
           ) {
             duration_list.push([
-              Math.round(manhour / (middle_hours + 3)),
-              middle_hours + 3,
+              Math.round(manhour / (middle_hours + 2)),
+              middle_hours + 2,
             ]);
             upper_loop = 1;
           }
 
           //check
           if (
-            Math.round(manhour / (middle_hours - 6)) > 0 &&
-            Math.round(manhour / (middle_hours - 6)) <= lowest_cleaner &&
+            Math.round(manhour / (middle_hours - 4)) > 0 &&
+            Math.round(manhour / (middle_hours - 4)) <= lowest_cleaner &&
             upper_loop == 0
           ) {
             duration_list.push([
-              Math.round(manhour / (middle_hours - 6)),
-              middle_hours - 6,
+              Math.round(manhour / (middle_hours - 4)),
+              middle_hours - 4,
             ]);
             lower_loop = 1;
           }
           if (
-            Math.round(manhour / (middle_hours + 6)) > 0 &&
-            Math.round(manhour / (middle_hours + 6)) <= lowest_cleaner &&
+            Math.round(manhour / (middle_hours + 4)) > 0 &&
+            Math.round(manhour / (middle_hours + 4)) <= lowest_cleaner &&
             lower_loop == 0
           ) {
             duration_list.push([
-              Math.round(manhour / (middle_hours + 6)),
-              middle_hours + 6,
+              Math.round(manhour / (middle_hours + 4)),
+              middle_hours + 4,
             ]);
             upper_loop = 1;
           }
@@ -2843,36 +2902,36 @@ try {
 
           //2nd
           if (
-            Math.round(manhour / (middle_hours + 3)) > 0 &&
-            Math.round(manhour / (middle_hours + 3)) <= lowest_cleaner
+            Math.round(manhour / (middle_hours + 2)) > 0 &&
+            Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
           ) {
             duration_list.push([
-              Math.round(manhour / (middle_hours + 3)),
-              middle_hours + 3,
+              Math.round(manhour / (middle_hours + 2)),
+              middle_hours + 2,
             ]);
           } else {
-            duration_list.push([1, middle_hours + 3]);
+            duration_list.push([1, middle_hours + 2]);
           }
 
           //3rd
           if (
-            Math.round(manhour / (middle_hours + 6)) > 0 &&
-            Math.round(manhour / (middle_hours + 6)) <= lowest_cleaner
+            Math.round(manhour / (middle_hours + 4)) > 0 &&
+            Math.round(manhour / (middle_hours + 4)) <= lowest_cleaner
           ) {
             duration_list.push([
-              Math.round(manhour / (middle_hours + 6)),
-              middle_hours + 6,
+              Math.round(manhour / (middle_hours + 4)),
+              middle_hours + 4,
             ]);
           } else {
-            duration_list.push([1, middle_hours + 6]);
+            duration_list.push([1, middle_hours + 4]);
           }
         } else {
           middle_element = lowest_cleaner;
           middle_hours =
             Math.round(manhour / middle_element) -
-            (Math.round(manhour / middle_element) % 3);
+            (Math.round(manhour / middle_element) % 2);
           if (middle_hours == 0) {
-            middle_hours = 3;
+            middle_hours = 2;
           }
 
           //1st
@@ -2880,28 +2939,28 @@ try {
 
           //2nd
           if (
-            Math.round(manhour / (middle_hours + 3)) > 0 &&
-            Math.round(manhour / (middle_hours + 3)) <= lowest_cleaner
+            Math.round(manhour / (middle_hours + 2)) > 0 &&
+            Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
           ) {
             duration_list.push([
-              Math.round(manhour / (middle_hours + 3)),
-              middle_hours + 3,
+              Math.round(manhour / (middle_hours + 2)),
+              middle_hours + 2,
             ]);
           } else {
-            duration_list.push([middle_element, middle_hours + 3]);
+            duration_list.push([middle_element, middle_hours + 2]);
           }
 
           //3rd
           if (
-            Math.round(manhour / (middle_hours + 6)) > 0 &&
-            Math.round(manhour / (middle_hours + 3)) <= max_cleaners
+            Math.round(manhour / (middle_hours + 4)) > 0 &&
+            Math.round(manhour / (middle_hours + 2)) <= max_cleaners
           ) {
             duration_list.push([
-              Math.round(manhour / (middle_hours + 6)),
-              middle_hours + 6,
+              Math.round(manhour / (middle_hours + 4)),
+              middle_hours + 4,
             ]);
           } else {
-            duration_list.push([middle_element, middle_hours + 6]);
+            duration_list.push([middle_element, middle_hours + 4]);
           }
         }
         console.log(duration_list);

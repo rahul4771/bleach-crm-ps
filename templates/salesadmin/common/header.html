@@ -52,13 +52,13 @@
                 <li class="lhs-booking"><a href="{% url 'common_items:customer-bookings' %}" title="Bookings"><span>Bookings</span></a></li>
                 <li class="lhs-clients"><a href="{% url 'common_items:clients' %}" title="Clients"><span>Clients</span></a><div></div></li>
                 <li class="lhs-tickets"><a href="{% url 'common_items:tickets' %}" title="Tickets"><span>Tickets</span></a></li>
-                <li class="lhs-feedbacks"><a href="{% url 'bleach_salesadmin:salesadmin-feedbacks' %}" title="Feedbacks"><span>Feedbacks</span></a></li>
-                <li class="lhs_subscription"><a href="{% url 'bleach_salesadmin:salesadmin-active-subscriptions' %}" title="Active Subscriptions"><span>Subscriptions</span></a></li>
-                <li class="lhs_sales"><a href="{% url 'bleach_salesadmin:salesadmin-daily-sales' %}" title="Daily Sales"><span>Daily Sales</span></a></li>
+                <li class="lhs-feedbacks"><a href="{% url 'common_items:feedbacks' %}" title="Feedbacks"><span>Feedbacks</span></a></li>
+                <li class="lhs_subscription"><a href="{% url 'common_items:active-subscriptions' %}" title="Active Subscriptions"><span>Subscriptions</span></a></li>
+                <li class="lhs_sales"><a href="{% url 'common_items:daily-sales' %}" title="Daily Sales"><span>Daily Sales</span></a></li>
                 {% comment %}
                 <li class="lhs-payments"><a href="{% url 'bleach_salesadmin:salesadmin-payments' %}" title="Payments"><span>Payments</span></a></li>
                 {% endcomment %}
-                <li class="lhs-resources border"><a href="{% url 'bleach_salesadmin:resource-management' %}" title="Resources"><span>Resources</span></a></li>
+                <li class="lhs-resources border"><a href="{% url 'common_items:resource-management' %}" title="Resources"><span>Resources</span></a></li>
                 <li class="lhs-promocodes border"><a href="{% url 'bleach_salesadmin:salesadmin-promocode' %}" title="Resources"><span>Promocodes</span></a></li>
             </ul>
         </section>

@@ -1,0 +1,315 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+{% include "admin/common/header.html" %}    
+    
+<section class="content"><!--content-->
+<div class="container-fluid space topspace"><!--container-fluid space topspace-->
+    <div class="welcome-wrapper"><!--welcome-wrapper-->
+        <a href="/bleach_admin/client/order/details/{{feedback_details.id}}"><h1 class="dashboard-head">Order # {{feedback_details.order_no}}</h1></a>
+        <div class="align-left"><span class="xtralrg-text white-text"> {{average_feedback|default_if_none:'0.0'|floatformat:'1'}} </span>
+        {% if average_feedback >= 4.5 %}
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span> 
+        {% elif average_feedback >= 3.5 and average_feedback < 4.5 %}   
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        {% elif average_feedback >= 2.5 and average_feedback < 3.5 %}
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        {% elif average_feedback >= 1.5 and average_feedback < 2.5 %}
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        {% elif average_feedback >= .5 and average_feedback < 1.5 %}
+        <span class="fa  fa-2x fa-star checked yellow-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        {% else %}
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        <span class="fa  fa-2x fa-star white-text"></span>
+        {% endif %}
+        </div>
+    </div><!--welcome-wrapper-->
+            
+        
+<div class="order-top-wrapper"><!--order-top-wrapper-->
+	<div class="cleaning-Order-wrapper"><!--cleaning-Order-wrapper-->
+    	<div class="cleaning--left-stretch"><!--cleaning--left-stretch-->
+        	
+             <div class="common-sub-head align-left">Feedback</div> 
+ 			 
+                  <div class="cleaning-column-wrapper"><!--cleaning-column-wrapper-->
+					<div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
+                	<div class="details-head align-left">{{feedback_details.order_no}}</div>
+                	<div class="green-bg-lg">Paid</div>
+
+                    {% if feedback_details.order_status == 'APPROVED_BY_CLIENT' %}
+                    <div class="blue-bg-lg">Approved</div>
+                    {% elif feedback_details.order_status == 'ORDER_IN_PROGRESS' %}
+                    <div class="yellow-bg-lg">On-going</div>
+                    {% elif feedback_details.order_status == 'ORDER_CANCELLED' %}
+                    <div class="red-bg-lg">Cancelled</div>
+                    {% elif feedback_details.order_status == 'ORDER_CLOSED' %}
+                    <div class="green-bg-lg">Closed</div>
+                    {% else %}
+                    <div class="yellow-bg-lg">Waiting</div>
+                    {% endif %}
+
+                    {% for orderschedule in order.orderschedules %}
+                    <div class="area-bold">{{orderschedule.customer_address.area.name}}</div>
+
+                    
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> 
+                    {{orderschedule.order_scheduler_book.service_type.name}}
+                    </div>
+
+                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i>
+                     
+                    {{orderschedule.order_scheduler_book.area_type}}
+                    
+                    </div>
+                    {% endfor %}
+
+            	</div><!--cleaning-column-widget cleaning-column-widget-column1-->
+                
+                {% for orderschedule in order.orderschedules %}
+                <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
+                    <div class="common-gray-text align-left">{{orderschedule.start_at}}</div>
+                    <div class="common-gray-text align-left yellow-text lg-text">{{orderschedule.order_scheduler_book.total_cost|floatformat:2}} KD</div>
+                	<div class="common-gray-text align-left sm-text gray-text">{{orderschedule.order_scheduler_book.number_of_cleaners}} cleaners</div>
+                    
+                    <div class="order-admin-widget-column1"><!--order-admin-widget-column1-->
+                        {% if orderschedule.evaluation_details.evaluator.profile_image %}
+                        <div class="profile-pic-line"><img src="{{orderschedule.evaluation_details.evaluator.profile_image.url}}"></div>
+                        <div class="client-name-line">{{orderschedule.evaluation_details.evaluator.name}}<div class="common-gray-text-line">Evaluator</div></div>
+                        {% else %}
+                        <div class="profile-pic-line"><img src="{{orderschedule.evaluation_details.evaluation.call_attender.profile_image.url}}"></div>
+                        <div class="client-name-line">{{orderschedule.evaluation_details.evaluation.call_attender.name}}<div class="common-gray-text-line">Agent</div></div>
+                        {% endif %}
+                    </div><!--order-admin-widget-column1-->
+            	</div><!--cleaning-column-widget cleaning-column-widget-column2-->
+                {% endfor %}
+            </div><!--cleaning-column-wrapper-->
+            
+            <br><br>
+ <div class="common-sub-head align-left">Feedback</div> 
+<div class="investigation-columns"><!--investigation-columns-->
+
+        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
+        <div class="right-date">{{feedback_details.feedback_marked_date|default_if_none:''}}</div>
+               
+        <div class="feedback-list"><!--feedback-list-->
+        <ul>
+        {% for feedback in feedback_details.feedbacks %}    
+        <li>{{feedback.question.question}}  ?</li>
+        <div class="feedback-ratings">
+        {% if feedback.rating == 5 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        {% elif feedback.rating == 4 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        {% elif feedback.rating == 3 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% elif feedback.rating == 2 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% elif feedback.rating == 1 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% else %}
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% endif %}
+        </div>
+        {% endfor %}
+        </ul>
+        </div><!--feedback-list-->
+         
+ 
+            <div class="details-notes align-left">Notes</div>
+            <p class="thrt-size">{{feedback_details.feedback_notes|default_if_none:''}}</p>
+        </div><!--investigation-columns-middle-->
+ 
+</div><!--investigation-columns-->
+     	
+<div class="details-sub-head align-left">Other Feedback</div> 
+<br>       
+<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+ 
+<thead>
+<tr>
+<th class="align-center">Order Number</th>
+<th data-hide="phone" class="align-center">Area</th>
+<th data-hide="phone,tablet" class="align-center">Cleaning Type</th>
+<th class="align-center" data-hide="phone,tablet" >Ratings</th>
+</tr>
+</thead>
+<tbody>
+    {% for other_feedback in other_feedbacks %}
+    <tr class="clickable-row" data-href="{% url 'bleach_admin:admin-feedbackadvanced' other_feedback.evaluation.customer.id other_feedback.id %}">
+    <td class="yellow-line">
+    {{other_feedback.evaluation.evaluation_id}}</td>
+    <td>
+    {% for evaluation_detail in other_feedback.evaluation.order_evaluation_details %}
+    {{evaluation_detail.address.area.name}}
+    {% endfor %}
+    </td>
+    <td>
+    {% for evaluation_detail in other_feedback.evaluation.order_evaluation_details %}     
+    {% for evaluation_book in evaluation_detail.evaluation_book %}
+    {{evaluation_book.service_type.name}}
+    {% endfor %}
+    </br>
+    {% endfor %}
+    </td>
+    <td class="align-center">{% if other_feedback.avg_starring == 5 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        {% elif other_feedback.avg_starring < 5 and other_feedback.avg_starring >= 4 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        {% elif other_feedback.avg_starring < 4 and other_feedback.avg_starring >= 3 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% elif other_feedback.avg_starring < 3 and other_feedback.avg_starring >= 2 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% elif other_feedback.avg_starring < 2 and other_feedback.avg_starring >= 1 %}
+        <span class="fa fa-star checked"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        <span class="fa fa-star"></span>
+        {% else %}
+        <span class="gray-bg">Not Rated</span>
+        {% endif %} </td>
+    </tr>
+    {% empty %}
+    <tr><td></td><td></td><td>No Data</td><td></td>
+    {% endfor %} 
+</tbody>
+<tfoot>
+ 
+</tfoot>
+</table>       
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+		</div><!--cleaning--left-stretch-->  
+        
+        <div class="cleaning--right-fixed"><!--cleaning--right-fixed-->
+        	<div class="order-card-column whitebg red-border clickable-row-list" data-href="{% url 'bleach_admin:admin-client-orders' client_details.id %}"><!--order-card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-orders-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Orders</h1>
+            	<h2 class="red-text"><label>Active<span>{{active_orders_count}}</span></label> </h2>
+            	<p><label>Total<span>{{total_orders_count}}</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--order-card-column-->
+        <div class="right-bgwrapper"><!--right-bgwrapper-->    
+            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+            <div class="client-name">{{client_details.name}}</div>
+            <div class="common-gray-text">{{client_details.mobile_number}}</div>
+            <div class="common-gray-text">{{client_details.email}}</div>
+            <br>
+            <hr class="hr">
+            {% if client_details.company  %}
+            <div class="common-gray-text">Comapany Name : <span class="bold-text">{{client_details.company}}</span></div>
+            {% endif %}
+            {% if client_details.nationality %}
+            <div class="common-gray-text">Nationality : <span class="bold-text">{{client_details.nationality}}</span></div>
+            {% endif %}
+            {% if client_details.phone_number %}
+            <div class="common-gray-text">Other Contact : <span class="bold-text">{{client_details.phone_number}}</span></div>
+            {% endif %}
+            <hr class="hr">
+            <br>
+            {% for address in client_details.customer_addresses %}
+            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address {{forloop.counter}}: <b>{{address.apartment}}</b></div>
+            <div class="address">{% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}}, {{address.block}}, {{address.street}}, {% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} {{address.area.name}}, {{address.governorate.name}}</div>
+            <br>
+            {% endfor %}
+            
+        </div><!--right-bgwrapper-->     
+        </div><!--cleaning--right-fixed-->  
+	</div><!--cleaning-Order-wrapper-->
+</div><!--order-top-wrapper-->  
+            
+            
+            
+            
+                 
+</div><!--container-fluid space topspace-->
+</section><!--content-->
+    
+    
+{% include 'admin/common/footer.html' %} 
+</div><!--wrapper-->
+{% endblock %}
