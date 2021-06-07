@@ -216,7 +216,7 @@ class AccountantHome(IsAccountant,View):
 
 
 		#due payments
-		due_payments     = invoices.filter(Q( Q( Q(Q(payment_method='PREPAID')|Q(payment_method='POSTPAID')|Q(payment_method='BREAKDOWN')) & Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD')) & Q(completed_cleaning_count=F('cleaning_count')) ) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
+		due_payments     = invoices.filter(Q( Q( Q(Q(evaluation__payment_method='PREPAID')|Q(evaluation__payment_method='POSTPAID')|Q(evaluation__payment_method='BREAKDOWN')) & Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD')) & Q(completed_cleaning_count=F('cleaning_count')) ) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
 		#Due Payment and Order Count			
 		total_due_amount = due_payments.aggregate(Sum('remining_amount'))['remining_amount__sum']
 		total_due_orders = due_payments.count()
