@@ -940,7 +940,7 @@ def addpromocode(request):
 					order_amount = order.total_amount
 					promocode_amount = float(promocode.percentage/100) * float(order_amount)
 
-					if promocode_amount > promocode.percentage_upto_price:
+					if promocode_amount.percentage_upto_price and promocode_amount > promocode.percentage_upto_price:
 						promocode_amount = promocode.percentage_upto_price
 
 				elif promocode.price:
