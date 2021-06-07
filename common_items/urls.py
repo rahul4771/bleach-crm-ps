@@ -18,7 +18,9 @@ urlpatterns = [
 		url(r'^resources/$',views.ResourceManagement.as_view(),name='resource-management'),
 	
 		url(r'^feedbacks/$',views.FeedbackDetails.as_view(),name='feedbacks'),
-		url(r'^feedback/details/(?P<client_id>[-\w]+)/(?P<order_id>[-\w]+)/$',views.FeedbackAdvanced.as_view(),name='feedbackadvanced'),	
+		url(r'^feedback/details/(?P<client_id>[-\w]+)/(?P<order_id>[-\w]+)/$',views.FeedbackAdvanced.as_view(),name='feedbackadvanced'),
+
+		url(r'^leave-scheduler/$',views.LeaveScheduler.as_view(),name='leave-scheduler'),	
 
 		url(r'^ajax/resourcestoggle/',views.ResourcesToggle,name='resource-toggle'),
 	]
