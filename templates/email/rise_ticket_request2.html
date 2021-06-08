@@ -1,4 +1,4 @@
-{% load static %}
+
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
@@ -321,14 +321,14 @@ ul.social li{
 			          	<div class="text-author">
                             <span class="position">A New Investigation Job has been Assigned to you by </span>
                             <br><br>
-				          	<img src="https://test.bleach-kw.com/{{investigationdata.investigator.profile_image.url}}" alt="" style="width: 100px; max-width: 600px; height: auto; margin: auto; display: block;">
-				          	<h3 class="name">{{investigationdata.investigator.name|default_if_none:''}}</h3>
-				          	<span class="position">{{investigationdata.investigator.user_type|default_if_none:''}}</span>
+				          	<img src="lalettan.jpg" alt="" style="width: 100px; max-width: 600px; height: auto; margin: auto; display: block;">
+				          	<h3 class="name">Sonu</h3>
+				          	<span class="position">Agent</span>
 
 				           	<p>
-				           	<a href="https://test.bleach-kw.com/technical-supervisor/investigation/{{investigationdata.id}}/">View Task</a>
+				           	<a class="btn btn-primary">View Task</a>
 				           	</p>
-				           	<p><a href="#" class="btn-custom">Click to email {{investigationdata.investigator.name|default_if_none:''}}</a></p>
+				           	<p><a href="#" class="btn-custom">Click to email SOnu</a></p>
 							 <div>
 								<h3>Order Details</h3>
 							 </div>  
@@ -337,7 +337,7 @@ ul.social li{
 										Order Number 
 									</div>:
 									<div style="width:50%;margin-left:auto;text-align: right;">
-										{{investigationdata.order.order_no|default_if_none:''}}
+										BLC0000007
 									</div>
 							 </div>
 							 <div style="display: flex;" >
@@ -345,7 +345,7 @@ ul.social li{
 									Customer
 								</div > :
 								<div style="width:50%;margin-left:auto;text-align: right;">
-									{{investigationdata.order.evaluation.customer.name|default_if_none:''}}
+									George
 								</div>
 						 </div>
 						 <div style="display: flex;" >
@@ -353,7 +353,7 @@ ul.social li{
 								Mobile No
 							</div>:
 							<div style="width:50%;text-align: right;margin-left:auto">
-								{{investigationdata.order.evaluation.customer.mobile_number|default_if_none:''}}
+								987654321
 							</div>
 					 </div>
 			           	</div>

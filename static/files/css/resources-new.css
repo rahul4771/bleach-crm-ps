@@ -48,7 +48,8 @@
   border: 2px solid #bed0e8;
   border-radius: 8px;
   color: #6b6b6b;
-  height: 250px;
+  height: 260px;
+  overflow: hidden;
 }
 .flip-container.flip-hover .flipper {
   transform: rotateY(180deg);
@@ -126,6 +127,7 @@
   color: #b9cfeb;
   margin-right: 5px;
   float: left;
+  width: 50px;
 }
 .resource-card-solt-2 {
   background: #0d87c5;
@@ -135,6 +137,8 @@
   color: #fff;
   margin-right: 5px;
   float: left;
+  width: 50px;
+
 }
 .resource-card-solt-3 {
   background: #0e6e58;
@@ -143,6 +147,8 @@
   padding: 8px 18px 8px 18px;
   color: #fff;
   float: left;
+  width: 50px;
+
 }
 .skill-edit {
   position: absolute;
@@ -326,7 +332,28 @@
 .solt-filter-box-active-1{
   border: 2px solid #0D87C5;
 }
+.hide-div-solt{
+  display: none;
+}
 @media only screen and (max-width: 950px) {
+  .m-pr-0{
+    padding-right: 10px;
+
+  }
+  .m-pl-0{padding-left: 0px !important;}
+  .m-mlr-0{
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+  }
+  .search-wrapper {
+    width: 100% !important;
+}
+  .filter-columns-center {
+    display: contents;
+}
+  .hide-div-solt{
+    display: block;
+  }  
   .m-mb-60{
     margin-bottom: 60px;
 }
