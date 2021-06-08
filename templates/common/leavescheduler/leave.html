@@ -39,7 +39,7 @@
 
 <div class="white-wrapper" style="overflow:auto"><!--white-wrapper-->
  
-  <!--<div id="myModal" class="lv-modal" >
+  {% comment %} <div id="myModal" class="lv-modal" >
     <div class="modal-dialog">
     
      
@@ -65,7 +65,10 @@
       </div>
       
     </div>
-  </div>-->
+  </div> {% endcomment %}
+  
+
+  {% if request.user.user_type == 'OPERATIONSUPERVISOR' or request.user.user_type == 'SENIORTEAMLEADER' %}
   <div id="cancelModal" class="lv-modal" >
     <div class="lv-modal-dialog">
     
@@ -99,7 +102,9 @@
       
     </div>
   </div>
-    
+    {% else %}
+  {% endif %}
+
   <div class="lv-month d-flex">
     <div class="select-container">
        
@@ -128,6 +133,8 @@
             </span>
     <span class="lv-month-select" id="lv-month-select">JANUARY 2021</span>
     
+    {% if request.user.user_type == 'ADMIN' %}
+    {% else %}
     <div class="lv-clear-btn d-flex" onclick="clearAll()">
       <div class="lv-select-counter" id="select-counter">0</div>
     <div class="pr-20" > Clear All</div> 
@@ -135,6 +142,8 @@
     <div class="lv-add-btn" onclick="openForm()">
       +
     </div>
+    {% endif %}
+
     <div class="lv-result-box">
      
          
