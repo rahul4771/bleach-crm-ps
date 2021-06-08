@@ -30,13 +30,13 @@ from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia
+from order.models import Promocode,OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
-from order.forms import InvestigationForm
+from order.forms import InvestigationForm,PromocodeForm
 
 from django.db.models import Count
 
@@ -71,6 +71,11 @@ class OrderDetails(IsAuthenticated,View):
 		except:
 			service_types =	None
 
+		tab = request.GET.get('tab')
+		
+		if not tab:
+			tab = 'orders'
+
 		#Evaluation Details
 		search                  = request.GET.get('search')
 		#for order filtering
@@ -96,6 +101,8 @@ class OrderDetails(IsAuthenticated,View):
 			approved_orders_count = 0
 			pending_orders_count  = 0	
 
+
+		bookings = evaluations.filter(booking_evaluation__is_active=True)
 
 
 		#Prefetch filters
@@ -252,7 +259,7 @@ class OrderDetails(IsAuthenticated,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
 
-		return render(request,'common/order/orders.html',{"evaluations":evaluations,"evaluators":evaluators,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_status":fil_status,"fil_cleaning_policy":fil_cleaning_policy,"fil_service_type":fil_service_type,"fil_payment_policy":fil_payment_policy,"fil_evaluator":fil_evaluator})		
+		return render(request,'common/order/orders.html',{"bookings":bookings,"tab":tab,"evaluations":evaluations,"evaluators":evaluators,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_status":fil_status,"fil_cleaning_policy":fil_cleaning_policy,"fil_service_type":fil_service_type,"fil_payment_policy":fil_payment_policy,"fil_evaluator":fil_evaluator})		
 
 
 class ClientDetails(IsAuthenticated,View):
@@ -714,6 +721,12 @@ class PaymentDetails(IsAuthenticated,View):
 		except:
 			service_types =	None
 
+		
+		tab = request.GET.get('tab')
+		print(tab,"tabber")
+		if not tab:
+			tab = 'all'
+
 		#Evaluation Details
 		search                  = request.GET.get('search')
 		
@@ -819,36 +832,53 @@ class PaymentDetails(IsAuthenticated,View):
 
 
 		#PAGINATION INVOICE		
-		page = request.GET.get('page',1) 
+
 		no_of_entries = request.GET.get('no_of_entries')
 		if not no_of_entries:
 			no_of_entries = 20
 		
-		page = request.GET.get('page',1) 
+		page = request.GET.get('page1',1) 
+
+		paginator=Paginator(invoices,no_of_entries)
+			
+		try: 
+			invoices=paginator.page(page) 
+		except PageNotAnInteger:
+			invoices=paginator.page(1) 
+		except EmptyPage:
+			invoices=paginator.page(paginator.num_pages) 
+
+		page = request.GET.get('page2',1) 
+
 		paginator=Paginator(pending_payments,no_of_entries)
 			
 		try: 
 			pending_payments=paginator.page(page) 
 		except PageNotAnInteger:
-			pending_payments=paginator.page(1)
+			pending_payments=paginator.page(1) 
 		except EmptyPage:
-			pending_payments = paginator.page(paginator.num_pages) 
+			pending_payments=paginator.page(paginator.num_pages) 
 
 		# Get the index of the current page
-		index = pending_payments.number - 1  # edited to something easier without index
+		index = invoices.number - 1
+		index = pending_payments.number - 1
+		# edited to something easier without index
 		# This value is maximum index of your pages, so the last page - 1
 		max_index = len(paginator.page_range)
+		
 		# You want a range of 7, so lets calculate where to slice the list
 		start_index = index - 3 if index >= 3 else 0
 		end_index = index + 3 if index <= max_index - 3 else max_index
+
 		# Get our new page range. In the latest versions of Django page_range returns 
 		# an iterator. Thus pass it to list, to make our slice possible again.
 		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(invoices.end_index())-(invoices.start_index())+1
 		entry_per_page=(pending_payments.end_index())-(pending_payments.start_index())+1
 
+		print(tab,"tab")
 
-
-		return render(request,'common/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status,"pending_payments":pending_payments})
+		return render(request,'common/payment/payments.html',{'tab':tab,'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status,"pending_payments":pending_payments})
 
 
 class ActiveSubscriptions(IsAuthenticated,View):
@@ -1630,6 +1660,52 @@ class FeedbackAdvanced(IsAuthenticated,View):
 		total_orders_count  = orders.count()	
 
 		return render(request,'common/feedback/feedback-page.html',{"order":order,"client_details":client_details,"feedback_details":feedback_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"other_feedbacks":other_feedbacks,"average_feedback":average_feedback,})
+
+
+class PromocodeView(IsAuthenticated,View):
+
+	def get(self,request):
+		
+		try:
+			promo_codes = Promocode.objects.filter(is_active=True).order_by('-created').annotate(active=Case(When(expiry_date__gt=timezone.now().date(),then=True),default=False,output_field=BooleanField()))
+		except:
+			promo_codes = None
+
+		#counts
+		try:
+			active_promocodes_count = promo_codes.filter(active=True).count()
+			used_coupons_count      = promo_codes.aggregate(total_used_count=Sum('total_used'))['total_used_count']
+		except:
+			active_promocodes_count = 0
+			used_coupons_count      = 0
+
+		return render(request,'common/promocode/promo.html',{'promo_codes':promo_codes,'active_promocodes_count':active_promocodes_count,'used_coupons_count':used_coupons_count,})
+
+	def post(self,request):
+		action = request.POST.get('action_type')
+
+		if action == 'addpromocode':
+			promocode_form = PromocodeForm(request.POST)
+			if promocode_form.is_valid():
+				promocode_form.save()
+				messages.success(request,"Promocode Successfully Added")
+			else:
+				messages.error(request,get_error(promocode_form))
+
+		if action == 'editpromocode':
+			promocode_id = request.POST.get('promocodeid')
+			promocode = Promocode.objects.get(id=promocode_id)
+
+			promocode_form = PromocodeForm(request.POST,instance=promocode)
+			
+			if promocode_form.is_valid():
+				promocode_form.save()
+				messages.success(request,"Promocode Successfully Updated")
+			else:
+				messages.error(request,get_error(promocode_form))		
+		
+		return redirect('common_items:promocode')
+
 
 class LeaveScheduler(IsAuthenticated,View):
 	def get(self,request):
