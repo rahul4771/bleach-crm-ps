@@ -199,12 +199,10 @@ class AccountantHome(IsAccountant,View):
 
 		#Payment Details
 		payment_history = PaymentHistory.objects.filter(is_active=True)
-
 		##week
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)		
-		this_week_sales = payment_history.filter(paid_date__week=count_today_start.isocalendar()[1]).aggregate(total=Sum('amount_paid'))['total']
-		last_week_sales = payment_history.filter(paid_date__week=(count_today_start-timedelta(7)).isocalendar()[1]).aggregate(total=Sum('amount_paid'))['total']		
-		
+		this_week_sales = payment_history.filter(paid_date__week=count_today_start.isocalendar()[1],paid_date__year=count_today_start.year).aggregate(total=Sum('amount_paid'))['total']
+		last_week_sales = payment_history.filter(paid_date__week=count_today_start.isocalendar()[1]-1,paid_date__year=count_today_start.year).aggregate(total=Sum('amount_paid'))['total']				
 		##month		
 		prvmonth  = count_today_start-relativedelta(months=1)
 		this_month_sales=payment_history.filter(paid_date__month=count_today_start.month,paid_date__year=count_today_start.year).aggregate(total=Sum('amount_paid'))['total']
