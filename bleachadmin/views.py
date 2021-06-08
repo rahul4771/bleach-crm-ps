@@ -80,8 +80,8 @@ class AdminHome(IsAdmin,View):
 		except:
 			enquiry	= None
 
-		today_enquiry_count = enquiry.filter(proposed_time__gte=count_today_start,proposed_time__lt=count_today_end,).count()
-		week_enquiry_count  = enquiry.filter(proposed_time__gte=count_today_end-timedelta(7),proposed_time__lt=count_today_end).count()	
+		today_enquiry_count = enquiry.filter(proposed_time__date=count_today_start.date()).count()
+		week_enquiry_count  = enquiry.filter( Q(Q(proposed_time__week=count_today_start.isocalendar()[1])&Q(proposed_time__year=count_today_start.year)) ).count()	
 
 		#Cleaning Jobs count
 		try:
@@ -89,8 +89,8 @@ class AdminHome(IsAdmin,View):
 		except:
 			cleaning_job    = None
 
-		today_cleaning_job_count = cleaning_job.filter(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))).count() 
-		week_cleaning_job_count  = cleaning_job.filter(Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end))).count()		
+		today_cleaning_job_count = cleaning_job.filter(Q(Q(start_at__date=count_today_start.date())|Q(end_at__date=count_today_start.date()))).count() 
+		week_cleaning_job_count  = cleaning_job.filter(Q( Q(Q(start_at__week=count_today_start.isocalendar()[1])&Q(start_at__year=count_today_start.year)) | Q(Q(end_at__week=count_today_start.isocalendar()[1])&Q(end_at__year=count_today_start.year)))).count()		
 		
 		#Followup jobs count
 		try:
@@ -98,8 +98,8 @@ class AdminHome(IsAdmin,View):
 		except:
 			follow_up_job	 = None
 
-		today_follow_up_job_count = follow_up_job.filter(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))).count() 
-		week_follow_up_job_count  = follow_up_job.filter(Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end))).count()		
+		today_follow_up_job_count = follow_up_job.filter(Q(Q(start_at__date=count_today_start.date())|Q(end_at__date=count_today_start.date()))).count() 
+		week_follow_up_job_count  = follow_up_job.filter(Q( Q(Q(start_at__week=count_today_start.isocalendar()[1])&Q(start_at__year=count_today_start.year)) | Q(Q(end_at__week=count_today_start.isocalendar()[1])&Q(end_at__year=count_today_start.year)))).count()		
 
 		#Feedback Staring count
 		try:
@@ -107,8 +107,10 @@ class AdminHome(IsAdmin,View):
 		except:
 			feedbacks				  = None
 
-		month_average_feedback		  = feedbacks.filter(response_date__gte=count_today_end-timedelta(30)).aggregate(Avg('rating'))['rating__avg']
-		lastmonth_average_feedback		  = feedbacks.filter(response_date__gte=count_today_end-timedelta(60),response_date__lte=count_today_end-timedelta(30)).aggregate(Avg('rating'))['rating__avg']	
+
+		prvmonth                      = count_today_start-relativedelta(months=1)
+		month_average_feedback		  = feedbacks.filter(response_date__month=count_today_start.month,response_date__year=count_today_start.year).aggregate(Avg('rating'))['rating__avg']
+		lastmonth_average_feedback	  = feedbacks.filter(response_date__month=prvmonth.month,response_date__year=prvmonth.year).aggregate(Avg('rating'))['rating__avg']	
 		
 
 		#Evaluation details of each evaluator for evaluation table
