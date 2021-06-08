@@ -24,5 +24,7 @@ urlpatterns = [
 
 		url(r'^leave-scheduler/$',views.LeaveScheduler.as_view(),name='leave-scheduler'),	
 
+		url(r'^promocodes/$',views.PromocodeView.as_view(),name='promocode'),
+
 		url(r'^ajax/resourcestoggle/',views.ResourcesToggle,name='resource-toggle'),
 	]

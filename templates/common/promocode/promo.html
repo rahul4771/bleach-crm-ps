@@ -1,0 +1,424 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+
+{% if request.user.user_type == 'SALESADMIN' %}
+  {% include "salesadmin/common/header.html" %}
+{% elif request.user.user_type == 'AGENT' %}
+  {% include "agent/common/header.html" %}
+{% elif request.user.user_type == 'ADMIN' %}
+  {% include "admin/common/header.html" %}
+{% elif request.user.user_type == 'BOOKINGOFFICER' %}
+  {% include "bookingofficer/common/header.html" %} 
+{% elif request.user.user_type == 'EVALUATOR' %}
+  {% include "evaluator/common/header.html" %}
+{% elif request.user.user_type == 'SENIORTEAMLEADER' %}
+  {% include "stl/common/header.html" %}
+{% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
+  {% include "operationsupervisor/common/header.html" %}
+{% elif request.user.user_type == 'TECHNICALSUPERVISOR' %}
+  {% include "technicalsupervisor/common/header.html" %}
+{% elif request.user.user_type == 'ACCOUNTANT' %}
+  {% include "accountant/common/header.html" %}
+{% endif %}
+    
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Promo-Codes</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>    
+            </div><!--welcome-wrapper-->
+       
+     <div class="main-card"><!--main-card-->
+<div class="card-row"><!--card-row-->
+            <div class="card-column whitebg blue-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-coupon_1.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Promo-code</h1>
+            	<h2 class="blue-text"><label>Active<span>{{active_promocodes_count}}</span></label> </h2>
+            	<p><label>Numbers <span></span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg green-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-coupon_2.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Promo-code</h1>
+            	<h2 class="green-text"><label>Total<span>{{promo_codes.count}}</span></label>  </h2>
+            	<p><label>Numbers <span></span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg orange-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-coupon_3.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Coupon</h1>
+            	<h2 class="orange-text"><label>Used<span>{{used_coupons_count}}</span></label> </h2>
+            	<p><label>Numbers<span></span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+        
+            <div class="card-column whitebg red-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-active-team-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Coupon</h1>
+            	<h2 class="red-text"><label>Used<span>---</span></label> </h2>
+            	<p><label>Price in K.D.<span></span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+   </div><!--card-row-->
+</div><!--main-card-->       
+            
+<div class="main-content-holder"><!--main-content-holder-->            
+
+<div class="search-middle"><!--search-middle-->
+<div class="filter-button"><span class="add_promocode">Add Promo-Code </span></div>
+</div><!--search-middle-->
+
+<br>
+    
+    <div class="row_coupon">
+
+        {% for promo_code in promo_codes %}
+        <div class="column_coupon">
+            <div class="card_coupon {% if promo_code.total_usage > promo_code.total_used and promo_code.active %}yellow-border{% else %}gray-border{% endif %}">
+              <br><br>
+              <div class="common-gray-text align-center yellow-text sm-text">{{promo_code.promocode}}</div>
+              <!-- <div class="customer-name align-center">BLEACHNEWYEAR2020</div> -->
+              {% if promo_code.total_usage > promo_code.total_used and promo_code.active %}
+              <div class="common-gray-text align-center"><i class="fa fa-sm fa-calendar green-text" aria-hidden="true"></i>&nbsp;Starts on : {{promo_code.starting_date}}</div>
+              <div class="common-gray-text align-center"><i class="fa fa-sm fa-calendar red-text" aria-hidden="true"></i>&nbsp;Ends on : {{promo_code.expiry_date}}</div>
+              {% else %}
+              <div class="common-gray-text align-center"><i class="fa fa-sm fa-calendar gray-text" aria-hidden="true"></i>&nbsp;Starts on : {{promo_code.starting_date}}</div>
+              <div class="common-gray-text align-center"><i class="fa fa-sm fa-calendar gray-text" aria-hidden="true"></i>&nbsp;Ends on : {{promo_code.expiry_date}}</div>
+              {% endif %}
+              <br>
+              {% if promo_code.promocode_type == 'PERCENTAGE' %}
+              <div class="common-gray-text align-center  orange-text lg-text">{{promo_code.percentage}}% OFF {% if promo_code.percentage_upto_price %}UPTO {{promo_code.percentage_upto_price|floatformat:'3'}} KD{% endif %}</div>
+              {% else %}
+              <div class="common-gray-text align-center gray-text lg-text">{{promo_code.price|floatformat:'3'}} KD OFF</div>
+              {% endif %}
+              <br>
+              {% if promo_code.total_usage > promo_code.total_used  and promo_code.active  %}
+              <div class="check-in-icons align-right"><img src="{% static 'files/images/coupon_active.png' %}"></div>
+              <div class="sm-text yellow-text">Active</div>
+              <div class=" sm-text yellow-text">Used {{promo_code.total_used}} / {{promo_code.total_usage}} Coupons &nbsp;<span class="edit_promocode" data-id="{{promo_code.id}}" data-promocode_type="{{promo_code.promocode_type}}" data-promocode="{{promo_code.promocode}}" data-price="{{promo_code.price}}" data-percentage="{{promo_code.percentage}}" data-percentage_upto_price="{{promo_code.percentage_upto_price|default_if_none:''}}" data-starting_date="{{promo_code.starting_date|date:'d-m-Y'}}" data-expiry_date="{{promo_code.expiry_date|date:'d-m-Y'}}" data-total_usage="{{promo_code.total_usage}}"><i class="fa fa-1x fa-pencil-square-o clickable-cursor" aria-hidden="true"></i></span></div>
+              {% else %}
+              <div class="check-in-icons align-right"><img src="{% static 'files/images/coupon_expired.png' %}"></div>
+              <div class="sm-text gray-text">Active</div>
+              <div class=" sm-text gray-text">Used {{promo_code.total_used}} / {{promo_code.total_usage}} Coupons &nbsp;<span class="edit_promocode" data-id="{{promo_code.id}}" data-promocode_type="{{promo_code.promocode_type}}" data-promocode="{{promo_code.promocode}}" data-price="{{promo_code.price}}" data-percentage="{{promo_code.percentage}}" data-percentage_upto_price="{{promo_code.percentage_upto_price}}" data-starting_date="{{promo_code.starting_date|date:'d-m-Y'}}" data-expiry_date="{{promo_code.expiry_date|date:'d-m-Y'}}" data-total_usage="{{promo_code.total_usage}}"><i class="fa fa-1x fa-pencil-square-o clickable-cursor" aria-hidden="true"></i></span></div>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+
+    </div><!--main-content-holder-->            
+{% include 'admin/common/footer.html' %}
+<!-- add_promocode_popup -->
+<div class="overlay" id="add_promocode_popup">
+    <div class="popup-assign-eval"><!--popup-assign-eval-->
+        <a id="close_add_promocode_popup" class="close">&times;</a>
+            <div class="content"><!--content-->
+            
+<form method="post" enctype="multipart/form-data">{% csrf_token %}                      
+<input type="hidden" name="action_type" value="addpromocode">
+            <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
+  
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class="bold-text common-label required-field"> <label >Promo-code Type</label></div>
+        <label for="favcity">
+                <select id="id_promocode_type" name="promocode_type" required>
+                <option value="AMOUNT">IN-AMOUNT</option>
+                <option value="PERCENTAGE">IN-PERCENTAGE</option>
+                </select>
+                </label>
+  </div><!--ticket-form-left--> 
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">   
+  <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+      <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class="bold-text common-label required-field"> <label>Promo-code</label></div>
+                <input type="text" name="promocode" class="textBox" id="id_promocode" required>
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">   
+          
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label required-field"> <label>Starting Date</label></div>
+        <input type="text" name="starting_date" class="textBox id_starting_date readonly" required>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label required-field"> <label>Expiry Date</label></div>
+                <input type="text" name="expiry_date" class="textBox id_expiry_date readonly" required>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+ 
+<div class="addpromocodeamount"> 
+<hr class="hr-dashedpad">     
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+      <div class="ticket-form-left"><!--ticket-form-left-->
+        <div class="bold-text common-label required-field"> <label>Discount in Amount</label></div>
+                <input type="text" name="price" id="price_id" class="textBox OnlyNumber" required>
+      </div><!--ticket-form-left-->   
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div>
+<div class="addpromocodepercentage" style="display:none">
+<hr class="hr-dashedpad">     
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+      <div class="ticket-form-left"><!--ticket-form-left-->
+        <div class="bold-text common-label required-field"> <label>Discount in Percentage</label></div>
+                <input type="text" name="percentage" id="percentage_id" class="textBox OnlyNumber">
+      </div><!--ticket-form-left--> 
+      <div class="ticket-form-right"><!--ticket-form-left-->
+        <div class="bold-text common-label"> <label>Discount Price Limit</label></div>
+                <input type="text" name="percentage_upto_price" id="percentage_upto_price_id" class="textBox OnlyNumber">
+      </div>  
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div>
+
+<hr class="hr-dashedpad">
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  <div class="bold-text common-label required-field"> <label>Total Coupon Count</label></div>
+                <input type="text" name="total_usage" class="textBox OnlyNumber" required>
+  </div><!--ticket-form-left--> 
+</div>
+
+<div align="center"> <input class="assignButton dateconfirm" name="assing" type="button" value="Assign" onclick="submitAnyForm(this);" ></div>  
+
+</div><!--ticket-wrapper-full-->             
+</form>
+            </div><!--content-->
+    </div><!--popup-assign-eval-->
+</div><!--overlay-->
+<!-- /add_promocode_popup -->
+
+<!-- edit_promocode_popup -->
+<div class="overlay" id="edit_promocode_popup">
+    <div class="popup-assign-eval"><!--popup-assign-eval-->
+        <a id="close_edit_promocode_popup" class="close">&times;</a>
+            <div class="content"><!--content-->
+            
+<form method="post" enctype="multipart/form-data">{% csrf_token %}                      
+<input type="hidden" name="action_type" value="editpromocode">
+<input type="hidden" name="promocodeid" id="promocode_id" value="">
+            <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
+            <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->             
+  
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class="bold-text common-label required-field"> <label >Promo-code Type</label></div>
+        <label for="favcity">
+                <select name="promocode_type" id="promocode_type_edit_id" required>
+                <option value="AMOUNT">IN-AMOUNT</option>
+                <option value="PERCENTAGE">IN-PERCENTAGE</option>
+                </select>
+                </label>
+  </div><!--ticket-form-left--> 
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">   
+  <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+      <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class="bold-text common-label required-field"> <label>Promo-code</label></div>
+                <input type="text" name="promocode" id="promocodeedit_id" class="textBox" required>
+      </div><!--ticket-form-left--> 
+  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">   
+          
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label required-field"> <label>Starting Date</label></div>
+        <input type="text" name="starting_date" id="starting_dateedit_id" class="textBox id_starting_date readonly" required>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label required-field"> <label>Expiry Date</label></div>
+                <input type="text" name="expiry_date" id="expiry_dateedit_id" class="textBox id_expiry_date readonly" required>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+ 
+<div class="editpromocodeamount"> 
+<hr class="hr-dashedpad">     
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+      <div class="ticket-form-left"><!--ticket-form-left-->
+        <div class="bold-text common-label required-field"> <label>Discount in Amount</label></div>
+                <input type="text" name="price" id="priceedit_id" class="textBox OnlyNumber">
+      </div><!--ticket-form-left-->   
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div>
+<div class="editpromocodepercentage">
+<hr class="hr-dashedpad">     
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+      <div class="ticket-form-left"><!--ticket-form-left-->
+        <div class="bold-text common-label required-field"> <label>Discount in Percentage</label></div>
+                <input type="text" name="percentage" id="percentageedit_id" class="textBox OnlyNumber">
+      </div><!--ticket-form-left--> 
+      <div class="ticket-form-right"><!--ticket-form-left-->
+        <div class="bold-text common-label"> <label>Discount Price Limit</label></div>
+                <input type="text" name="percentage_upto_price" id="percentage_upto_priceedit_id" class="textBox OnlyNumber">
+      </div>  
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div>
+
+<hr class="hr-dashedpad">
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  <div class="bold-text common-label required-field"> <label>Total Usage Count</label></div>
+                <input type="text" name="total_usage" id="total_usage_edit_id" class="textBox OnlyNumber" required>
+  </div><!--ticket-form-left--> 
+</div>
+
+<div align="center"> <input class="assignButton dateconfirm" name="assing" type="button" value="Assign" onclick="submitAnyForm(this);" ></div>  
+
+</div><!--ticket-wrapper-full-->             
+</form>
+            </div><!--content-->
+    </div><!--popup-assign-eval-->
+</div><!--overlay-->
+<!-- /edit_promocode_popup -->
+
+
+</div><!--wrapper-->
+{% endblock %}  
+
+{% block javascript %}
+<script>
+$(document).ready(function(){
+  //convert promo code to upper case while typing
+  $(document).ready(function(){
+      $('#id_promocode').keyup(function(){
+          $(this).val($(this).val().toUpperCase());
+      });
+  });
+
+  //add promocode
+  $('.add_promocode').click(function(){
+
+      $('.id_starting_date').datetimepicker({ 
+            pickTime: false, 
+            format: "DD-MM-YYYY",  
+        });
+      
+      $('.id_expiry_date').datetimepicker({
+              pickTime: false, 
+              format: "DD-MM-YYYY",
+            });
+      $('#add_promocode_popup').css({'visibility':'visible','opacity':1,});
+  });
+
+
+  $('#close_add_promocode_popup').click(function(){
+      $('#add_promocode_popup').css({'visibility':'hidden','opacity':0,});
+  });
+
+
+
+  $('#id_promocode_type').change(function(){
+    promocode_type = this.value;
+    if(promocode_type == 'AMOUNT')
+    {
+      $('.addpromocodeamount').css('display','block');
+      $('.addpromocodepercentage').css('display','none');
+      $('#price_id').prop("required",true);
+      $('#percentage_id').prop("required",false);
+      $('#percentage_id').val('');
+      $('#percentage_upto_price_id').val('');
+    }
+
+    if(promocode_type == 'PERCENTAGE')
+    {
+      $('.addpromocodepercentage').css('display','block');
+      $('.addpromocodeamount').css('display','none');
+      $('#percentage_id').prop("required",true);
+      $('#price_id').prop("required",false);
+      $('#price_id').val('');
+    }
+  });
+
+
+//EDIT PROMOCODE
+$('.edit_promocode').click(function(){
+  $('#promocode_id').val($(this).data('id'));
+  $('#promocode_type_edit_id').val($(this).data('promocode_type'));
+  $('#promocodeedit_id').val($(this).data('promocode'));
+  $('#starting_dateedit_id').val($(this).data('starting_date'));
+  $('#expiry_dateedit_id').val($(this).data('expiry_date'));
+  $('#total_usage_edit_id').val($(this).data('total_usage'));
+
+  $('#starting_dateedit_id').datetimepicker({ 
+            pickTime: false, 
+            format: "DD-MM-YYYY",  
+        });
+      
+  $('#expiry_dateedit_id').datetimepicker({
+              pickTime: false, 
+              format: "DD-MM-YYYY",
+            });
+
+  $('#edit_promocode_popup').css({'visibility':'visible','opacity':1,});
+
+  promocode_type = $(this).data('promocode_type')
+
+  if(promocode_type == 'AMOUNT')
+      {
+        $('.editpromocodepercentage').css({'display':'none',});
+        $('#priceedit_id').val($(this).data('price'));
+        
+        $('#priceedit_id').prop('required',true);
+      }
+
+  if(promocode_type == 'PERCENTAGE')
+      {
+        $('.editpromocodeamount').css({'display':'none',});
+        $('#percentage_upto_priceedit_id').val($(this).data('percentage_upto_price'));
+        $('#percentageedit_id').val($(this).data('percentage'));
+        
+        $('#percentageedit_id').prop('required',true);
+      }
+
+})
+
+$('#close_edit_promocode_popup').click(function(){
+      $('#edit_promocode_popup').css({'visibility':'hidden','opacity':0,});
+  });
+
+
+$('#promocode_type_edit_id').change(function(){
+    promocode_type = this.value;
+    if(promocode_type == 'AMOUNT')
+    {
+      $('.editpromocodeamount').css('display','block');
+      $('.editpromocodepercentage').css('display','none');
+      
+      $('#priceedit_id').prop("required",true);
+      $('#percentageedit_id').prop("required",false);
+      $('#percentageedit_id').val('');
+      $('#percentage_upto_priceedit_id').val('');
+    }
+
+    if(promocode_type == 'PERCENTAGE')
+    {
+      $('.editpromocodepercentage').css('display','block');
+      $('.editpromocodeamount').css('display','none');
+      
+      $('#percentageedit_id').prop("required",true);
+      $('#priceedit_id').prop("required",false);
+      $('#priceedit_id').val('');
+    }
+  });
+
+
+})
+</script>
+{% endblock %}
+</body>
+</html>
