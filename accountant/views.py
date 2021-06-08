@@ -189,42 +189,6 @@ def GetFineCollectOrderInfo(request):
 class AccountantHome(IsAccountant,View):
 	def get(self,request):
 
-		users = UserProfile.objects.all()
-		count = 1500
-		for user in users:
-			count              = count+1
-			user.mobile_number = count
-			user.save()
-
-		#cleaners and leaders
-		cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER')
-		leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE')
-		count    = 0
-		
-		for cleaner in cleaners:
-			print(cleaner.username)
-			if count%2 == 0:
-				cleaner.shift_start = datetime.strptime('06:00 AM','%I:%M %p')
-				cleaner.shift_end   = datetime.strptime('06:00 PM','%I:%M %p')
-			else:
-				cleaner.shift_start = datetime.strptime('09:00 AM','%I:%M %p')
-				cleaner.shift_end   = datetime.strptime('09:00 PM','%I:%M %p')
-			count = count+1
-			cleaner.save()
-
-		for leader in leaders:
-			print(leader.username)
-			if count%2 == 0:
-				leader.shift_start  = datetime.strptime('06:00 AM','%I:%M %p')
-				leader.shift_end    = datetime.strptime('06:00 PM','%I:%M %p')
-			else:
-				leader.shift_start  = datetime.strptime('09:00 AM','%I:%M %p')
-				leader.shift_end    = datetime.strptime('09:00 PM','%I:%M %p')
-			count = count+1
-			leader.save()
-
-
-
 		#Payment Details
 		search                  = request.GET.get('search')
 
