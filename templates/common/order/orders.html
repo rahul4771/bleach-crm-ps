@@ -238,7 +238,7 @@
 
 <ul class="nav nav-tabs" id="paymentTab" role="tablist" style="margin-top:20px">
   <li class="nav-item" role="presentation">
-    <a class="nav-link active primary-text" id="orders-tab" data-toggle="tab" href="#orders" role="tab" aria-controls="all" aria-selected="true">Orders</a>
+    <a class="nav-link active primary-text" id="orders-tab" data-toggle="tab" href="#orders" role="tab" aria-controls="all" aria-selected="true">All Orders</a>
   </li>
   <li class="nav-item" role="presentation">
     <a class="nav-link primary-text" id="bookings-tab" data-toggle="tab" href="#bookings" role="tab" aria-controls="paid" aria-selected="false">Bookings</a>
@@ -625,17 +625,17 @@
 <div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
     <div class="pagination-containter"><!--pagination-containter-->
     	<div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
-        Showing {{evaluations.start_index}} to {{evaluations.end_index}} of {{evaluations.paginator.count}} entries
+        Showing {{bookings.start_index}} to {{bookings.end_index}} of {{bookings.paginator.count}} entries
         </div><!--pagination-column pagination-column-left-->
         
         <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
         <!--paginated-->
-   {% if evaluations.has_other_pages %}
+   {% if bookings.has_other_pages %}
    <nav aria-label="Page navigation example">
   <ul class="pagination">
-     {% if evaluations.has_previous %}
+     {% if bookings.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=bookings" aria-label="Previous">
+      <a class="page-link" href="?page2={{ bookings.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=bookings" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
@@ -650,14 +650,14 @@
     {% endif %}
     {% for pg in page_range %}
     {% if vus.number == pg %}
-            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=bookings">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link active" href="?page2={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=bookings">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=bookings">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page2={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=bookings">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
-    {% if evaluations.has_next %}        
+    {% if bookings.has_next %}        
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=bookings" aria-label="Next">
+      <a class="page-link" href="?page2={{ bookings.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=bookings" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
