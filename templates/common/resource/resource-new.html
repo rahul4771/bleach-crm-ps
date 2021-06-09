@@ -345,7 +345,7 @@
                                                         <div class="col-xs-5">
                                                             <div class="resource-card-profile">
                                                                 <img class="resource-user-pic"
-                                                                    {% if worker.profile_image.url %}
+                                                                    {% if worker.profile_image %}
                                                                     src="{{worker.profile_image.url}}"
                                                                     {% else %}
                                                                     src="{% static 'files/icons/profile.png' %}"
