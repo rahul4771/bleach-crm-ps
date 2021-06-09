@@ -1029,7 +1029,7 @@ class ClientOrderDetails(IsAuthenticated,View):
 				invoice.balance = int(invoice.balance)
 
 
-		return render(request,"common/client/order-page.html",{"order":order,"invoice":invoice,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,})
+		return render(request,"common/client/order-page-test.html",{"order":order,"invoice":invoice,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,})
 
 	def post(self,request,order_id):
 		action = request.POST.get('action_type')
@@ -1732,3 +1732,7 @@ class LeaveScheduler(IsAuthenticated,View):
 class ResourceManagementTest(IsAuthenticated,View):
 	def get(self,request):
 		return render(request,'common/resource/resource-new.html',{})
+
+class ProductivityTest(IsAuthenticated,View):
+	def get(self,request):
+		return render(request,'common/productivity/productivity-test.html',{})
