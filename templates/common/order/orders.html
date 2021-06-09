@@ -235,6 +235,21 @@
 </select>
 </label>
 
+
+<ul class="nav nav-tabs" id="paymentTab" role="tablist" style="margin-top:20px">
+  <li class="nav-item" role="presentation">
+    <a class="nav-link active primary-text" id="orders-tab" data-toggle="tab" href="#orders" role="tab" aria-controls="all" aria-selected="true">All Orders</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link primary-text" id="bookings-tab" data-toggle="tab" href="#bookings" role="tab" aria-controls="paid" aria-selected="false">Bookings</a>
+  </li>
+</ul>
+
+<div class="tab-content" id="paymentTabContent"  style="margin-top:20px">
+
+<!-- orders Tab begins here-->
+  <div class="tab-pane" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
 <thead>
@@ -442,7 +457,7 @@
   <ul class="pagination">
      {% if evaluations.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Previous">
+      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=orders" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
@@ -457,14 +472,14 @@
     {% endif %}
     {% for pg in page_range %}
     {% if vus.number == pg %}
-            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=orders">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=orders">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
     {% if evaluations.has_next %}        
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Next">
+      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=orders" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
@@ -484,6 +499,190 @@
         </div><!--pagination-column pagination-column-right-->
     </div><!--pagination-containter-->         
 </div><!--white-wrapper-pagination--> 
+
+</div>
+
+<!--bookings tab begins here-->
+<div class="tab-pane fade" id="bookings" role="tabpanel" aria-labelledby="bookings-tab">
+
+<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+ 
+<thead>
+<tr>
+<th>Order Number</th>
+<th data-hide="phone,tablet">Name</th>
+<th data-hide="phone">Area</th>
+<th data-hide="phone,tablet">Service Type</th>
+{% comment %} <th>Contact</th> {% endcomment %}
+<th data-hide="phone,tablet">Status</th>
+<th class="align-center" data-hide="phone,tablet">Shortcuts</th>
+</tr>
+</thead>
+<tbody>
+    {% for evaluation in bookings %}
+    <tr>
+    <td {% if evaluation.quatation_status == 'APPROVED' %}
+        {% for order in evaluation.evaluationorder %}
+      
+        {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
+        {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+        class="approved-line"
+        {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
+        class="order-in-progress-line"
+        {% elif order.order_status == 'ORDER_CLOSED' %}
+        class="completed-line"
+        {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
+        class="cancel-in-progress-line"
+        {% else %}
+        class="cancelled-line"
+        {% endif %}
+        {% else %}
+        class="approved-not-paid-line"
+        {% endif %}
+        {% endfor %}
+
+        {% elif evaluation.quatation_status == 'REJECTED' %}class="rejected-line"
+        {% elif evaluation.quatation_status == 'PENDING' %}class="pending-line"
+        {% elif evaluation.quatation_status == 'EXPIRED' %}class="expired-line"
+        {% else %}
+        class="evaluating-line"
+        {%endif%}>{{evaluation.evaluation_id}}</td>   
+
+    <td>{{evaluation.customer.name|default_if_none:''}}</td>
+    <td>{% for evaluation_detail in evaluation.details_evaluation %}{{evaluation_detail.address.area.name}}<br>{% endfor %}</td>
+    <td>{% for evaluation_detail in evaluation.details_evaluation %}
+     {% for evaluation_book in evaluation_detail.evaluation_book %}
+     {{evaluation_book.service_type.name}},
+     {% endfor %}
+     <br> 
+     {% endfor %}</td>
+    {% comment %} <td>{{evaluation.customer.mobile_number|default_if_none:''}}</td> {% endcomment %}
+    <td>{% if evaluation.quatation_status == 'APPROVED' %}
+
+
+        {% for order in evaluation.evaluationorder %}
+      
+        {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
+        {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+        <div class="d-flex "><div class="round-marker approved-status-bg"></div><span>Approved</span></div>
+        {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
+        <div  class="d-flex "><div class="round-marker order-in-progress-status-bg"></div><span>Order in progress</span></div>
+        {% elif order.order_status == 'ORDER_CLOSED' %}
+        <div  class="d-flex "><div class="round-marker completed-status-bg"></div><span>Completed</span></div>
+        {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
+        <div  class="d-flex "><div class="round-marker cancel-in-progress-status-bg"></div><span>Cancel in Progress</span></div>
+        {% else %}
+        <div  class="d-flex "><div class="round-marker cancelled-status-bg"></div><span>Order Cancelled</span></div>
+        {% endif %}
+        {% else %}
+        <div  class="d-flex "><div class="round-marker approved-not-paid-status-bg"></div><span>Approved-Not Paid</span></div>
+        {% endif %}
+        {% endfor %}
+
+        {% elif evaluation.quatation_status == 'REJECTED' %}<div  class="d-flex "><div class="round-marker rejected-status-bg"></div><span>Rejected</span></div>
+        {% elif evaluation.quatation_status == 'PENDING' %}<div  class="d-flex "><div class="round-marker pending-status-bg"></div><span>Pending</span></div>
+        {% elif evaluation.quatation_status == 'EXPIRED' %}<div  class="d-flex "><div class="round-marker expired-status-bg"></div><span>Expired</span></div>
+        {% else %}
+        <div data-href="#" class="d-flex "><div class="round-marker clickable-row evaluating-status-bg"></div><span>Evaluating</span></div>
+        {%endif%}
+    </td>
+
+    <td class="align-center">
+    
+    <div class="btn-group" id="actionDropdown">
+        <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+          Action
+          <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
+        </div>
+        <div class="dropdown-menu" id="dropdown-menu-orders">
+          {% if evaluation.quatation_status == 'APPROVED' %}<div class="d-flex dropdown-orders clickable-row" data-href="/customer/quatation/download/{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}"><img src="{% static 'files/images/DownloadQuotation.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">Download Quotation</div></div>{% endif %}
+          
+          {% if evaluation.quatation_status == 'APPROVED' or evaluation.quatation_status == 'PENDING' %}
+          {% if evaluation.payment_method == 'SUBSCRIPTION' %}
+          <a class="d-flex dropdown-orders" href="/customer/subscription/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/ViewQuotation.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Quotation</div></a>
+          {% else %}
+          <a class="d-flex dropdown-orders" href="/customer/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/ViewQuotation.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Quotation</div></a>
+          {% endif %}
+          {% endif %}
+          
+          <a class="d-flex dropdown-orders" {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %} href="{% url 'common_items:client-orderdetails' order.id %}" target="_blank" {% endfor %}{% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a>
+
+
+        </div>
+      </div>
+
+    </td>
+    </tr>    
+    {% empty %}
+    <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>    
+    {% endfor %}
+</tbody>
+<tfoot>
+ 
+</tfoot>
+</table>
+
+<div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
+    <div class="pagination-containter"><!--pagination-containter-->
+    	<div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
+        Showing {{bookings.start_index}} to {{bookings.end_index}} of {{bookings.paginator.count}} entries
+        </div><!--pagination-column pagination-column-left-->
+        
+        <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
+        <!--paginated-->
+   {% if bookings.has_other_pages %}
+   <nav aria-label="Page navigation example">
+  <ul class="pagination">
+     {% if bookings.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page2={{ bookings.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=bookings" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% endif %}
+    {% for pg in page_range %}
+    {% if vus.number == pg %}
+            <li class="page-item"><a class="page-link active" href="?page2={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=bookings">{{pg}}</a></li>
+    {% else %}
+            <li class="page-item"><a class="page-link" href="?page2={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=bookings">{{pg}}</a></li>
+    {% endif %}
+    {% endfor %}
+    {% if bookings.has_next %}        
+    <li class="page-item">
+      <a class="page-link" href="?page2={{ bookings.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=bookings" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link disabled" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+    {% endif %}
+    <!--paginated-->
+        </div><!--pagination-column pagination-column-right-->
+    </div><!--pagination-containter-->         
+</div><!--white-wrapper-pagination-->
+
+</div>
+<!--booking tab ends-->
+
+</div>
+
 </div><!--white-wrapper-->      
              
 <!-- export popup -->
@@ -557,6 +756,15 @@ $('.footable').footable({
 //# sourceURL=pen.js
     </script>
 <script>
+
+//for tabs
+
+    //keep selected tab on page reload
+    {% if tab == 'orders' %}
+      $('#orders-tab').click()  
+    {% else %}
+      $('#bookings-tab').click()
+    {% endif %}
 
 function appendLeadingZeroes(n){
     if(n <= 9){

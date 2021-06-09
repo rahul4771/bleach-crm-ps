@@ -778,7 +778,7 @@
 .img-close-button {
   border: none;
   padding: 20px;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgb(185 22 22 / 80%);
 }
 
 .pointer {
@@ -948,7 +948,26 @@ select.minimal:focus {
 }
 
 
+.order-status {
+  padding: 4px 5px;
+  margin: 0 5px 10px 0;
+  border-radius: 3px;
+  text-align: center;
+  color: #fff;
+  font-size: 13px;
+  width: 80px;
+  display: inline-block;
+}
 
+.other-media{
+  letter-spacing: 0px;
+  color: #434343;
+  opacity: 1;
+  margin: 0;
+  padding: 0;
+  font-size: 22px;
+  font-weight: 200;
+}
 
 .select-items div:hover, .same-as-selected {
   background-color: rgba(0, 0, 0, 0.1) !;

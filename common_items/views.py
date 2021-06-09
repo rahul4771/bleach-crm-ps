@@ -30,13 +30,13 @@ from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia
+from order.models import Promocode,OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
-from order.forms import InvestigationForm
+from order.forms import InvestigationForm,PromocodeForm
 
 from django.db.models import Count
 
@@ -71,6 +71,11 @@ class OrderDetails(IsAuthenticated,View):
 		except:
 			service_types =	None
 
+		tab = request.GET.get('tab')
+		
+		if not tab:
+			tab = 'orders'
+
 		#Evaluation Details
 		search                  = request.GET.get('search')
 		#for order filtering
@@ -78,8 +83,10 @@ class OrderDetails(IsAuthenticated,View):
 		
 		if search:
 			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(customer__mobile_number__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),order_cancelled_count=Count(Case(When( evaluation_order__order_status='ORDER_CANCELLED',then=1),output_field=IntegerField())),order_cancellinprogress_count=Count(Case(When( evaluation_order__order_status='CANCEL_IN_PROGRESS',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
+			# bookings = Evaluation.objects.filter(is_active=True,booking_evaluation__is_active=True).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(customer__mobile_number__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),order_cancelled_count=Count(Case(When( evaluation_order__order_status='ORDER_CANCELLED',then=1),output_field=IntegerField())),order_cancellinprogress_count=Count(Case(When( evaluation_order__order_status='CANCEL_IN_PROGRESS',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
 		else:
 			evaluations = Evaluation.objects.filter(is_active=True).select_related('customer').order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),order_cancelled_count=Count(Case(When( evaluation_order__order_status='ORDER_CANCELLED',then=1),output_field=IntegerField())),order_cancellinprogress_count=Count(Case(When( evaluation_order__order_status='CANCEL_IN_PROGRESS',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
+			# bookings = Evaluation.objects.filter(is_active=True,booking_evaluation__is_active=True).select_related('customer').order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder')).annotate(order_in_progress_count=Count(Case(When( evaluation_order__order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( evaluation_order__order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),order_cancelled_count=Count(Case(When( evaluation_order__order_status='ORDER_CANCELLED',then=1),output_field=IntegerField())),order_cancellinprogress_count=Count(Case(When( evaluation_order__order_status='CANCEL_IN_PROGRESS',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) ),then=1),output_field=IntegerField())))
 			
 
 		if evaluations:
@@ -96,6 +103,8 @@ class OrderDetails(IsAuthenticated,View):
 			approved_orders_count = 0
 			pending_orders_count  = 0	
 
+
+		bookings = evaluations.filter(booking_evaluation__is_active=True)
 
 
 		#Prefetch filters
@@ -174,16 +183,20 @@ class OrderDetails(IsAuthenticated,View):
 
 		#Apply prefetch filter
 		if evaluation_book_prefetch_filter and customer_address_prefetch_filter: 
-			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter & count_customer_address_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)		 
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter & count_customer_address_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)
+			bookings = bookings.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter & count_customer_address_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)		 		 
 			print("both")
 		elif evaluation_book_prefetch_filter and not customer_address_prefetch_filter:
 			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(book_count=Count(Case(When( count_evaluation_book_prefetch_filter,then=1),output_field=IntegerField()))).filter(book_count__gt=0)
+			bookings = bookings.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(book_count=Count(Case(When( count_evaluation_book_prefetch_filter,then=1),output_field=IntegerField()))).filter(book_count__gt=0)
 			print("book only")
 		elif not evaluation_book_prefetch_filter and customer_address_prefetch_filter:
 			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)
+			bookings = bookings.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)
 			print("address only") 
 		else:
-			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))		
+			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))
+			bookings = bookings.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))				
 			print("not at all")
 		
 		#exclude atleast 1 not completed evaluation
@@ -224,7 +237,8 @@ class OrderDetails(IsAuthenticated,View):
 			
 		if fil_status or fil_payment_policy: 
 		    filters     = functools.reduce(operator.and_,filters)
-		    evaluations = evaluations.filter(filters)
+		    bookings = bookings.filter(filters)
+			
 
 		#PAGINATION ORDERS		
 		no_of_entries = request.GET.get('no_of_entries')		
@@ -240,8 +254,18 @@ class OrderDetails(IsAuthenticated,View):
 		except EmptyPage:
 			evaluations = paginator.page(paginator.num_pages) 
 
+		page = request.GET.get('page2',1) 
+		paginator=Paginator(bookings,no_of_entries)
+		try: 
+			bookings=paginator.page(page) 
+		except PageNotAnInteger:
+			bookings=paginator.page(1)
+		except EmptyPage:
+			bookings = paginator.page(paginator.num_pages)
+
 		# Get the index of the current page
 		index = evaluations.number - 1  # edited to something easier without index
+		index = bookings.number - 1
 		# This value is maximum index of your pages, so the last page - 1
 		max_index = len(paginator.page_range)
 		# You want a range of 7, so lets calculate where to slice the list
@@ -251,8 +275,9 @@ class OrderDetails(IsAuthenticated,View):
 		# an iterator. Thus pass it to list, to make our slice possible again.
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
+		entry_per_page=(bookings.end_index())-(bookings.start_index())+1
 
-		return render(request,'common/order/orders.html',{"evaluations":evaluations,"evaluators":evaluators,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_status":fil_status,"fil_cleaning_policy":fil_cleaning_policy,"fil_service_type":fil_service_type,"fil_payment_policy":fil_payment_policy,"fil_evaluator":fil_evaluator})		
+		return render(request,'common/order/orders.html',{"bookings":bookings,"tab":tab,"evaluations":evaluations,"evaluators":evaluators,"approved_orders_count":approved_orders_count,"pending_orders_count":pending_orders_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"service_types":service_types,"fil_governorate":fil_governorate,"fil_area":fil_area,"fil_status":fil_status,"fil_cleaning_policy":fil_cleaning_policy,"fil_service_type":fil_service_type,"fil_payment_policy":fil_payment_policy,"fil_evaluator":fil_evaluator})		
 
 
 class ClientDetails(IsAuthenticated,View):
@@ -714,6 +739,12 @@ class PaymentDetails(IsAuthenticated,View):
 		except:
 			service_types =	None
 
+		
+		tab = request.GET.get('tab')
+		print(tab,"tabber")
+		if not tab:
+			tab = 'all'
+
 		#Evaluation Details
 		search                  = request.GET.get('search')
 		
@@ -819,36 +850,53 @@ class PaymentDetails(IsAuthenticated,View):
 
 
 		#PAGINATION INVOICE		
-		page = request.GET.get('page',1) 
+
 		no_of_entries = request.GET.get('no_of_entries')
 		if not no_of_entries:
 			no_of_entries = 20
 		
-		page = request.GET.get('page',1) 
+		page = request.GET.get('page1',1) 
+
+		paginator=Paginator(invoices,no_of_entries)
+			
+		try: 
+			invoices=paginator.page(page) 
+		except PageNotAnInteger:
+			invoices=paginator.page(1) 
+		except EmptyPage:
+			invoices=paginator.page(paginator.num_pages) 
+
+		page = request.GET.get('page2',1) 
+
 		paginator=Paginator(pending_payments,no_of_entries)
 			
 		try: 
 			pending_payments=paginator.page(page) 
 		except PageNotAnInteger:
-			pending_payments=paginator.page(1)
+			pending_payments=paginator.page(1) 
 		except EmptyPage:
-			pending_payments = paginator.page(paginator.num_pages) 
+			pending_payments=paginator.page(paginator.num_pages) 
 
 		# Get the index of the current page
-		index = pending_payments.number - 1  # edited to something easier without index
+		index = invoices.number - 1
+		index = pending_payments.number - 1
+		# edited to something easier without index
 		# This value is maximum index of your pages, so the last page - 1
 		max_index = len(paginator.page_range)
+		
 		# You want a range of 7, so lets calculate where to slice the list
 		start_index = index - 3 if index >= 3 else 0
 		end_index = index + 3 if index <= max_index - 3 else max_index
+
 		# Get our new page range. In the latest versions of Django page_range returns 
 		# an iterator. Thus pass it to list, to make our slice possible again.
 		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(invoices.end_index())-(invoices.start_index())+1
 		entry_per_page=(pending_payments.end_index())-(pending_payments.start_index())+1
 
+		print(tab,"tab")
 
-
-		return render(request,'common/payment/payments.html',{'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status,"pending_payments":pending_payments})
+		return render(request,'common/payment/payments.html',{'tab':tab,'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status,"pending_payments":pending_payments})
 
 
 class ActiveSubscriptions(IsAuthenticated,View):
@@ -981,7 +1029,7 @@ class ClientOrderDetails(IsAuthenticated,View):
 				invoice.balance = int(invoice.balance)
 
 
-		return render(request,"common/client/order-page.html",{"order":order,"invoice":invoice,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,})
+		return render(request,"common/client/order-page-test.html",{"order":order,"invoice":invoice,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,})
 
 	def post(self,request,order_id):
 		action = request.POST.get('action_type')
@@ -1631,6 +1679,52 @@ class FeedbackAdvanced(IsAuthenticated,View):
 
 		return render(request,'common/feedback/feedback-page.html',{"order":order,"client_details":client_details,"feedback_details":feedback_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"other_feedbacks":other_feedbacks,"average_feedback":average_feedback,})
 
+
+class PromocodeView(IsAuthenticated,View):
+
+	def get(self,request):
+		
+		try:
+			promo_codes = Promocode.objects.filter(is_active=True).order_by('-created').annotate(active=Case(When(expiry_date__gt=timezone.now().date(),then=True),default=False,output_field=BooleanField()))
+		except:
+			promo_codes = None
+
+		#counts
+		try:
+			active_promocodes_count = promo_codes.filter(active=True).count()
+			used_coupons_count      = promo_codes.aggregate(total_used_count=Sum('total_used'))['total_used_count']
+		except:
+			active_promocodes_count = 0
+			used_coupons_count      = 0
+
+		return render(request,'common/promocode/promo.html',{'promo_codes':promo_codes,'active_promocodes_count':active_promocodes_count,'used_coupons_count':used_coupons_count,})
+
+	def post(self,request):
+		action = request.POST.get('action_type')
+
+		if action == 'addpromocode':
+			promocode_form = PromocodeForm(request.POST)
+			if promocode_form.is_valid():
+				promocode_form.save()
+				messages.success(request,"Promocode Successfully Added")
+			else:
+				messages.error(request,get_error(promocode_form))
+
+		if action == 'editpromocode':
+			promocode_id = request.POST.get('promocodeid')
+			promocode = Promocode.objects.get(id=promocode_id)
+
+			promocode_form = PromocodeForm(request.POST,instance=promocode)
+			
+			if promocode_form.is_valid():
+				promocode_form.save()
+				messages.success(request,"Promocode Successfully Updated")
+			else:
+				messages.error(request,get_error(promocode_form))		
+		
+		return redirect('common_items:promocode')
+
+
 class LeaveScheduler(IsAuthenticated,View):
 	def get(self,request):
 		return render(request,'common/leavescheduler/leave.html',{})
@@ -1640,6 +1734,11 @@ class ResourceManagementTest(IsAuthenticated,View):
 
 		workers_date       = timezone.now().date()
 		workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date)|Q(end_at__date=workers_date)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__date=workers_date)|Q(end_at__date=workers_date)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
-		print(workers,"workers")
 
 		return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date})
+
+
+class ProductivityTest(IsAuthenticated,View):
+	def get(self,request):
+		return render(request,'common/productivity/productivity-test.html',{})
+
