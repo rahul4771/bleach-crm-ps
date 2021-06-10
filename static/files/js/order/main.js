@@ -59,7 +59,7 @@ const app = new Vue({
   },
   methods:{
     onChange(event) {
-      if(event.target.value == "Break-Down"){
+      if(event.target.value == "BREAKDOWN"){
         this.breakDownFlag= true
       }else{
         this.breakDownFlag =false

@@ -191,6 +191,7 @@
 
             </div>
           </div>
+          <!-- wrapper 1-->
           <div id="table-wrapper">
             <div id="#table-scroll " style="max-height:100vh;">
               <table cellspacing="0" cellpadding="0" id="leave-table">
@@ -204,6 +205,7 @@
               </table>
             </div>
           </div>
+          <!-- wrapper 1 ens here-->
          </div>
          <div id="work_id" style="display: none;">
           <div class="lv-month d-flex">
@@ -232,7 +234,7 @@
             <span class="material-icons next-arrow" onclick="nextMonth()">
               arrow_forward
             </span>
-            <span class="lv-month-select" id="lv-month-select">JANUARY 2021</span>
+            <span class="lv-month-select" id="lv-month-select-2">JANUARY 2021</span>
 
             {% if request.user.user_type == 'ADMIN' %}
             {% else %}
@@ -278,6 +280,7 @@
 
             </div>
           </div>
+          <!-- wrapper 2-->
           <div id="table-wrapper">
             <div id="#table-scroll " style="max-height:100vh;">
               <table cellspacing="0" cellpadding="0" id="leave-table">
@@ -291,6 +294,7 @@
               </table>
             </div>
           </div>
+          <!-- wrapper 2 ends here-->
          </div>
         </div>
 
@@ -313,6 +317,22 @@
     document.getElementById("work_id").style.display = "block";
     $("#work_button_id").addClass("productivity-tab-border");
     $("#leave_button_id").removeClass("productivity-tab-border");
+    var url='https://test.bleach-kw.com';
+//var url = 'https://my.bleachkw.com';
+//var url = 'http://127.0.0.1:8000';
+//var url='http://localhost:8000';
+
+var resourceList=[];
+var cleanerList=[];
+var teamLeaderList=[];
+var leaveSheet=[];
+var leaveId='';
+var modaluser='';
+var newResource=[];
+var dateCounter=0;
+getUsers();
+
+    
   }
   function viewLeave() {
     document.getElementById("leave_id").style.display = "block";
