@@ -702,44 +702,13 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 		html_string = render_to_string('customer/downloads/onetimequatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
 	main_doc = html.render()
+	return render(request,'customer/downloads/onetimequatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 	
-	exists_links = False
-	#Header
-	html = HTML('templates/customer/downloads/header.html')
-	header = html.render(stylesheets=[CSS(string='div {position: fixed; top: 1cm; left: 1cm;}')])
-
-	header_page = header.pages[0]
-	exists_links = exists_links or header_page.links
-	header_body = get_page_body(header_page._page_box.all_children())
-	header_body = header_body.copy_with_children(header_body.all_children())
 	
-	#Footer
-	html = HTML('templates/customer/downloads/footer.html')
-	footer = html.render(stylesheets=[CSS(string='div {position: fixed; bottom: 1cm; left: 1cm;}')])
 
-	footer_page  = footer.pages[0]
-	exists_links = exists_links or footer_page.links
-	footer_body = get_page_body(footer_page._page_box.all_children())
-	footer_body = footer_body.copy_with_children(footer_body.all_children())
+	main_doc.write_pdf(target='/home/sonu/pdf/tmp/quatation/quatation.pdf');
 
-	#Insert header and footer in main doc
-	for i, page in enumerate(main_doc.pages):
-		print(i,"page")
-		if not i:
-		    continue
-
-		page_body = get_page_body(page._page_box.all_children())
-
-		page_body.children += header_body.all_children()
-		page_body.children += footer_body.all_children()
-
-		if exists_links:
-			page.links.extend(header_page.links)
-			page.links.extend(footer_page.links)
-
-	main_doc.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');
-
-	fs = FileSystemStorage('/home/pdf/tmp/quatation/')
+	fs = FileSystemStorage('/home/sonu/pdf/tmp/quatation/')
 	with fs.open('quatation.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_quatation.pdf"'

@@ -639,14 +639,15 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 
         }
 
-
         header {
-            position: running(header); 
+            position: running(header);
             /*height: 100px;*/
         }
 
         footer {
             position: running(footer);
+            width: 100%;
+            background: #616161;
             /*height: 150px;*/
         }
 
