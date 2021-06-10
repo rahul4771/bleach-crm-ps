@@ -1,37 +1,37 @@
 
-var url='https://test.bleach-kw.com';
-//var url = 'https://my.bleachkw.com';
-//var url = 'http://127.0.0.1:8000';
-//var url='http://localhost:8000';
+// var url='https://test.bleach-kw.com';
+// //var url = 'https://my.bleachkw.com';
+// //var url = 'http://127.0.0.1:8000';
+// //var url='http://localhost:8000';
 
-var resourceList=[];
-var cleanerList=[];
-var teamLeaderList=[];
-var leaveSheet=[];
-var leaveId='';
-var modaluser='';
-var newResource=[];
-var dateCounter=0;
-getUsers();
+// var resourceList=[];
+// var cleanerList=[];
+// var teamLeaderList=[];
+// var leaveSheet=[];
+// var leaveId='';
+// var modaluser='';
+// var newResource=[];
+// var dateCounter=0;
+// getUsers();
 
-$(".lv-result-box").hide();
-$(".lv-conf").hide();
-$('.lv-modal').hide();
-var modalBox=false;
-var DateTime = luxon.DateTime;
+// $(".lv-result-box-2").hide();
+// $(".lv-conf-2").hide();
+// $('.lv-modal-2').hide();
+// var modalBox=false;
+// var DateTime = luxon.DateTime;
 
-var selectedId = [];
-var days=['M','T','W','T','F','S','S'];
-var currentMonth = DateTime.local().month; //CURRENT MONTH
-var currentYear=DateTime.local().year;   //CURRENT YEAR
-var currentDay=DateTime.local(2017, 10, 30).weekday; //CURRENT DAY
+// var selectedId = [];
+// var days=['M','T','W','T','F','S','S'];
+// var currentMonth = DateTime.local().month; //CURRENT MONTH
+// var currentYear=DateTime.local().year;   //CURRENT YEAR
+// var currentDay=DateTime.local(2017, 10, 30).weekday; //CURRENT DAY
 
-$('#lv-month-select').text(DateTime.local().monthLong+' '+ DateTime.local().year);
-var resources=[];
-var selectedDates=[];
-var resourceLeave=[];
+// $('#lv-month-select-2').text(DateTime.local().monthLong+' '+ DateTime.local().year);
+// var resources=[];
+// var selectedDates=[];
+// var resourceLeave=[];
 
-function getInitDatas(){
+function getInitDatasShift(){
    
  
     $('.day-head').remove();
@@ -48,11 +48,11 @@ var found=false;
 for (var k=1;k<=noOfDays;k++){
     var day=DateTime.local(currentYear, currentMonth, k).weekday-1;
     if(DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)=='F'){
-        $('#lv-head-'+k).after('<th class="noBorder day-head" id="lv-head-'+(k+1)+'"> <div class="lv-day lv-friday">'+DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)+'</div></th>');
+        $('#lv-head-2'+k).after('<th class="noBorder day-head" id="lv-head-2'+(k+1)+'"> <div class="lv-day lv-friday">'+DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)+'</div></th>');
 
     }
    else{
-    $('#lv-head-'+k).after('<th class="noBorder day-head" id="lv-head-'+(k+1)+'"> <div class="lv-day">'+DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)+'</div></th>');
+    $('#lv-head-2'+k).after('<th class="noBorder day-head" id="lv-head-2'+(k+1)+'"> <div class="lv-day">'+DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)+'</div></th>');
 
    }
 }
@@ -61,7 +61,7 @@ for (var j=0;j<resourceList.length;j++){
     var noOfLeave=0;
     var rsid=j+1;
     
-    $('#lv-body-head').append('<tr class="lv-rows" id="row-'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"><span class="counter-text" id="no-leave-'+j+'">'+noOfLeave+'</span></div> <img src="'+resourceList[j].photo_url+'"align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">'+resourceList[j].user_type+'</div></div></td></tr>');
+    $('#lv-body-head-2').append('<tr class="lv-rows" id="row-2'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"><span class="counter-text" id="no-leave-2'+j+'">'+noOfLeave+'</span></div> <img src="'+resourceList[j].photo_url+'"align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">'+resourceList[j].user_type+'</div></div></td></tr>');
 
    
     for(var i=1;i<=noOfDays;i++){
@@ -74,20 +74,20 @@ for (var j=0;j<resourceList.length;j++){
                 if(resourceList[j].leave[rs].date==today){
                     if(resourceList[j].leave[rs].date==today){
                         if(resourceList[j].leave[rs].type=='ANNUAL LEAVE'){
-                         $('#row-'+rsid).append('<td class="noBorder text-center lv-date"  onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-annual" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
+                         $('#row-2'+rsid).append('<td class="noBorder text-center lv-date"  onclick="selectDay(this)" id="lv-day-2'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-annual" id="lv-date-2'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
                         }
                         else{
                             if(resourceList[j].leave[rs].type=='WEEKLY OFF'){
-                                $('#row-'+rsid).append('<td class="noBorder text-center lv-date"  onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-weekly" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
+                                $('#row-2'+rsid).append('<td class="noBorder text-center lv-date"  onclick="selectDay(this)" id="lv-day-2'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-weekly" id="lv-date-2'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
             
                                }
                                else{
                                 if(resourceList[j].leave[rs].type=='MATERNITY/PATERNITY'){
-                                    $('#row-'+rsid).append('<td class="noBorder text-center lv-date"  onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-maternity" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
+                                    $('#row-2'+rsid).append('<td class="noBorder text-center lv-date"  onclick="selectDay(this)" id="lv-day-2'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-maternity" id="lv-date-2'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
                                    }
                                    else{
                                     if(resourceList[j].leave[rs].type=='SICK LEAVE'){
-                                        $('#row-'+rsid).append('<td class="noBorder text-center lv-date" onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-sick" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
+                                        $('#row-2'+rsid).append('<td class="noBorder text-center lv-date" onclick="selectDay(this)" id="lv-day-2'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-sick" id="lv-date-2'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
                     
                                        }
                                        
@@ -112,12 +112,12 @@ for (var j=0;j<resourceList.length;j++){
         }
         if(found==false)
         {
-            $('#row-'+rsid).append('<td class="noBorder text-center lv-date" onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
+            $('#row-2'+rsid).append('<td class="noBorder text-center lv-date" onclick="selectDay(this)" id="lv-day-2'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date" id="lv-date-2'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
             
         }
         if(DateTime.local(currentYear, currentMonth, i).weekdayShort.substring(0,1)=='F'){
-            $('#lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('lv-weekend');
-            $('#lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('is-weekend');
+            $('#lv-day-2'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('lv-weekend');
+            $('#lv-day-2'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('is-weekend');
 
         }
       
@@ -159,11 +159,11 @@ function reCalc(){
 for (var k=1;k<=noOfDays;k++){
     var day=DateTime.local(currentYear, currentMonth, k).weekday-1;
     if(DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)=='F'){
-        $('#lv-head-'+k).after('<th class="noBorder day-head" id="lv-head-'+(k+1)+'"> <div class="lv-day lv-friday">'+DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)+'</div></th>');
+        $('#lv-head-2'+k).after('<th class="noBorder day-head" id="lv-head-2'+(k+1)+'"> <div class="lv-day lv-friday">'+DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)+'</div></th>');
 
     }
    else{
-    $('#lv-head-'+k).after('<th class="noBorder day-head" id="lv-head-'+(k+1)+'"> <div class="lv-day">'+DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)+'</div></th>');
+    $('#lv-head-2'+k).after('<th class="noBorder day-head" id="lv-head-2'+(k+1)+'"> <div class="lv-day">'+DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)+'</div></th>');
 
    }
   
@@ -343,7 +343,7 @@ function clearAll(){
     selectedDates=[];
     resourceList=[];
     reinitVal();
-    getUsers();
+    getUsersShift();
 }
 function openForm(){
   
@@ -391,7 +391,7 @@ function applyLeave(){
       selectedDates=[];
       resourceList=[];
       reinitVal();
-      getUsers();
+      getUsersShift();
    
      
     
@@ -419,7 +419,7 @@ function closeConf(){
     $("#lv-cancel-btn").show();
 }
 
-function getUsers(){
+function getUsersShift(){
     
     
       resourceList=[];
@@ -427,6 +427,7 @@ function getUsers(){
     axios.get(url+'/api/leave-users-list/')
 .then(function (response) {
   // handle success
+  console.log(response);
   for(var i = 0; i < response.data.staffs.length; i++) {
     var staffData={};
     staffData['name'] = response.data.staffs[i].name;
@@ -445,8 +446,7 @@ function getUsers(){
 
     
 }
-alert("users function")
-getLeave();
+getShift();
 
 })
 .catch(function (error) {
@@ -493,15 +493,16 @@ function resetResources(category){
   
    
 }
-function getLeave(){
+function getShift(){
     
+  
     axios.get(url+'/api/leave-scheduler/')
 .then(function (response) {
   // handle success
-    alert("Leave function");
+ 
     for(var i=0;i<response.data.staffs.length;i++){
        
-       var userIndex=userSearch(response.data.staffs[i].staff)
+       var userIndex=userSearchShift(response.data.staffs[i].staff)
      
        // resourceList[userIndex].leave.push({date:'2-2-2021',type:'Annual Leave'});
       leaveSheet=response.data.staffs;
@@ -516,7 +517,8 @@ function getLeave(){
     }
     resourceList[userIndex].leave.push({date:gt_day+'-'+gt_month+'-'+gt_year,type:response.data.staffs[i].leave_type,leave_id:response.data.staffs[i].id});
     }
-    getInitDatas();
+   
+    getInitDatasShift();
    
 
 
@@ -526,15 +528,14 @@ function getLeave(){
   console.log(error);
 })
 }
-function userSearch(key){
+function userSearchShift(key){
     for (var j=0; j < resourceList.length; j++) {
         if (resourceList[j].id == key) {
             return j;
         }
     }
-    alert("User search function");
 }
-function leaveSearch(staffId){
+function shiftSearch(staffId){
     for (var k=0; k < leaveSheet.length; k++) {
         if (leaveSheet[k].staff == staffId) {
           
@@ -542,35 +543,35 @@ function leaveSearch(staffId){
         }
     }
 }
-function closeCancelModal(){
-    $('#cancelModal').hide();
-    closeConf();
+// function closeCancelModal(){
+//     $('#cancelModal').hide();
+//     closeConf();
 
-}
+// }
 
-function cancelLeave(){
+// function cancelLeave(){
     
-      axios.get(url+'/api/leave-scheduler-delete/'+leaveId)
-      .then(function (response) {
-        // handle success
-        resourceLeave=[];
-        selectedDates=[];
-        resourceList=[];
-        reinitVal();
-        getUsers();
+//       axios.get(url+'/api/leave-scheduler-delete/'+leaveId)
+//       .then(function (response) {
+//         // handle success
+//         resourceLeave=[];
+//         selectedDates=[];
+//         resourceList=[];
+//         reinitVal();
+//         getUsersShift();
        
        
-      leaveId='';
-      $('.lv-modal').hide();
-      dateCounter=0;
-      $('#select-counter').text(dateCounter);
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-      })
-      closeConf();
-  }
+//       leaveId='';
+//       $('.lv-modal').hide();
+//       dateCounter=0;
+//       $('#select-counter').text(dateCounter);
+//       })
+//       .catch(function (error) {
+//         // handle error
+//         console.log(error);
+//       })
+//       closeConf();
+//   }
   function getLeaveId(ldate,staffid){
       for(var i=0;i<resourceList[staffid].leave.length;i++){
           if(resourceList[staffid].leave[i].date==ldate){

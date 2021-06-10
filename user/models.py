@@ -227,3 +227,22 @@ class LeaveSchedule(models.Model):
 
     def __str__(self):
     	return self.staff.username+str(self.leave_date)
+
+class ShiftSchedule(models.Model):
+    staff           = models.ForeignKey('UserProfile',blank=False,null=False,related_name='shift_staff')
+    shift_date      = models.DateField(blank=False,null=False)
+    shift1          = models.BooleanField(null=False,blank=True,default=False)
+    shift2          = models.BooleanField(null=False,blank=True,default=False)
+    shift1_start_at = models.DateField(blank=True,null=True)
+    shift1_end_at   = models.DateField(blank=True,null=True)
+    shift2_start_at = models.DateField(blank=True,null=True)
+    shift2_end_at   = models.DateField(blank=True,null=True)
+
+    is_active       = models.BooleanField(null=False,blank=True,default=True)
+    created         = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.staff.name)
+
+    def __str__(self):
+        return self.staff.name
