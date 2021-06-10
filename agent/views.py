@@ -4175,6 +4175,49 @@ class AddFeedBack(IsAgent,View):
 
 		return redirect('agent:new-feedback')
 
+class AddFeedBackOrder(IsAgent,View):
+	def get(self,request,orderid):
+
+		order = Order.objects.filter(id=int(orderid)).first()
+
+		try:
+			questions = Question.objects.filter(is_active=True).order_by('id')
+		except:
+			questions = None
+
+		return render(request,'agent/feedback/add-feedback.html',{'order':order,"questions":questions})
+
+	# def post(self,request):
+	# 	order_id        = request.POST.get('order_id')
+	# 	feedback_remark = request.POST.get('notes')
+
+	# 	try:
+	# 		order                    = Order.objects.get(id=order_id)
+	# 		order.feedback_notes     = feedback_remark
+	# 		order.is_feedback_marked = True
+	# 		order.save()
+	# 	except:
+	# 		order = 	None
+
+	# 	try:
+	# 		questions = Question.objects.filter(is_active=True).order_by('id')
+	# 	except:
+	# 		questions = None
+
+	# 	create_feedbacks = []
+	# 	if order:
+	# 		for question in questions:
+	# 			rating = request.POST.get('rating'+str(question.id)) or 0
+
+	# 			create_feedbacks.append(FeedBack(order=order,question=question,rating=rating,response_date=timezone.now()))
+	# 		FeedBack.objects.bulk_create(create_feedbacks)
+
+	# 		messages.success(request,"Feedback Succesfully Submitted")
+	# 	else:
+	# 		messages.error(request,'Please Select a BLC Number')
+
+	# 	return redirect('agent:new-feedback')
+
 class TicketRegistration(IsAgent,View):
 	def get(self,request):
 
