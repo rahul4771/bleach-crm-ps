@@ -547,29 +547,29 @@
 
                                             {% if section.sectionkeynotes %}
 
+                                            <div class="col-md-3 ml-0 ">
+
+                                            {% for keynote in section.sectionkeynotes %}
                                             {% if forloop.counter|divisibleby:2 %}
-                                            <div class="col-md-3 ml-0 ">
-
-                                            {% for keynote in section.sectionkeynotes %}
-                                                <div class="clean-section-card">
-                                                    <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
-                                                </div>
-                                            {% endfor %}
-
-                                            </div>
-
                                             {% else %}
-
-                                            <div class="col-md-3 ml-0 ">
-
-                                            {% for keynote in section.sectionkeynotes %}
                                                 <div class="clean-section-card">
                                                     <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
                                                 </div>
+                                            {% endif %}
                                             {% endfor %}
 
                                             </div>
+
+                                            <div class="col-md-3 ml-0 ">
+                                            {% for keynote in section.sectionkeynotes %}
+                                            {% if forloop.counter|divisibleby:2 %}
+                                            <div class="clean-section-card">
+                                                <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
+                                            </div>
+                                            {% else %}
                                             {% endif %}
+                                            {% endfor %}
+                                            </div>
                                             
                                             {% endif %}
                                         </div>
@@ -1010,7 +1010,7 @@
                                                     <div class="col-xs-6">Payment Policy</div>
                                                     <div class="col-xs-6">: <span class="c-text">{{order.evaluation.payment_method|default_if_none:''}}</span>
                                                         {% if order.amount_paid == 0.000 and order.evaluation.is_promocode_applied == False and order.evaluation.payment_method != 'SUBSCRIPTION' %}
-                                                        <button class="model-close ml-10" data-toggle="modal" data-target="#paymentModel" data-payment-policy="{{order.evaluation.payment_method|default_if_none:''}}" data-before-cleaning="" data-after-cleaning>
+                                                        <button class="model-close ml-10" data-toggle="modal" data-target="#paymentModel">
                                                             <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}">
                                                         </button>
                                                         {% else %}
@@ -1073,26 +1073,28 @@
                                         <div class="c-pr0060">
                                             <div class="order-payment-section-card">
                                                 <div>
-                                                    <label class="c-container">Invoice
-                                                        <input type="checkbox">
-                                                        <span class="c-checkmark"></span>
-                                                    </label>
-                                                    <label class="c-container">Quotation
-                                                        <input type="checkbox">
-                                                        <span class="c-checkmark"></span>
-                                                    </label>
-                                                    <label class="c-container">Receipt Voucher
-                                                        <input type="checkbox">
-                                                        <span class="c-checkmark"></span>
-                                                    </label>
-                                                    <label class="c-container">Feedback Form
-                                                        <input type="checkbox">
-                                                        <span class="c-checkmark"></span>
-                                                    </label>
+                                                    <form>
+                                                        <label class="cc-container">Invoice
+                                                            <input type="radio"  name="radio" value="invoice">
+                                                            <span class="cc-checkmark"></span>
+                                                          </label>
+                                                          <label class="cc-container">Quotation
+                                                            <input type="radio" name="radio" value="quotation">
+                                                            <span class="cc-checkmark"></span>
+                                                          </label>
+                                                          <label class="cc-container">Receipt Voucher
+                                                            <input type="radio" name="radio" value="receipt">
+                                                            <span class="cc-checkmark"></span>
+                                                          </label>
+                                                          <label class="cc-container">Feedback Form
+                                                            <input type="radio" name="radio" value="feedback">
+                                                            <span class="cc-checkmark"></span>
+                                                          </label>
+                                                    </form>
                                                 </div>
                                                 <div class="payment-section-button text-center">
-                                                    <button class="sent-button">Send</button>
-                                                    <button class="view-button">View</button>
+                                                    <button class="sent-button" onclick="send_items()">Send</button>
+                                                    <button class="view-button" onclick="view_page()">View</button>
                                                 </div>
 
                                             </div>
@@ -1116,7 +1118,7 @@
                                     <div class="column-left"><img src="{% static 'files/images/card-orders-icon.png' %}"></div>
                                     <div class="column-right"><!--column-right-->
                                     <h1>Orders</h1>
-                                    <h2 class="red-text"><label>Active<span>{{active_orders_count|default_if_none:'0'}}</span></label> </h2>
+                                    <h2><label class="red-text">Active<span>{{active_orders_count|default_if_none:'0'}}</span></label> </h2>
                                     <p><label>Total<span>{{total_orders_count|default_if_none:'0'}}</span></label></p>
                                     </div><!--column-right-->
                                     </div><!--card-innerwrapper-->
@@ -1164,6 +1166,9 @@
                                     </div>
                                 </button>
                             </div>
+
+                            {% for schedule in order.orderschedules|slice:"1" %}
+                            {% if forloop.first and schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' or order.order_status == 'ORDER_CLOSED'%}
                             <div class="c-button-div">
                                 <button class="side-buttons" data-toggle="modal" data-target="#reorderModel">
                                     <div class="row">
@@ -1176,6 +1181,10 @@
                                     </div>
                                 </button>
                             </div>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
                             <div class="c-button-div">
                                 <button data-toggle="modal" data-target="#cancelModel" class="side-buttons">
                                     <div class="row">
@@ -1189,6 +1198,8 @@
                                     </div>
                                 </button>
                             </div>
+                            {% endif %}
+
                             <div class="c-button-div">
                                 <button class="side-buttons" data-toggle="modal" data-target="#raiseTicketModel"
                                     class="side-buttons">
@@ -1237,8 +1248,13 @@
             <div class="row">
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content">
-                        <button class="sent-button">Yes</button>
+                        <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center">{% csrf_token %}
+                        <input type="hidden" name="evaluation" id="evaluation_id" value="{{order.evaluation.id}}">
+                        <input type="hidden" name="action_type" value="cancell_order">
+                        <button class="sent-button" type="submit">Yes</button>
                         <button data-dismiss="modal" class="view-button">Cancel</button>
+                        </form><!--Content ends here-->
+                        
                     </div>
                 </div>
 
@@ -1309,8 +1325,10 @@
             <div class="row">
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content">
-                        <button class="sent-button">Yes</button>
+                        
+                        <a href="{% url 'agent:agent-makequatation1duplicate' order.evaluation.id%}"><button class="sent-button" type="submit">Yes</button></a>
                         <button data-dismiss="modal" class="view-button">Cancel</button>
+                        
                     </div>
                 </div>
 
@@ -1345,7 +1363,7 @@
             <div class="row">
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content">
-                        <button class="sent-button">Yes</button>
+                        <a href="{% url 'agent:agent-orderticketregister' order.id %}"><button class="sent-button">Yes</button></a>
                         <button data-dismiss="modal" class="view-button">Cancel</button>
                     </div>
                 </div>
@@ -1440,7 +1458,7 @@
                                   <option value="Choosen Payment Method" >Choosen Payment Method</option>
                                   <option value="PREPAID" {% if order.evaluation.payment_method == 'PREPAID' %}selected{% endif %}>Prepaid</option>
                                   <option value="POSTPAID" {% if order.evaluation.payment_method == 'POSTPAID' %}selected{% endif %}>Post Paid</option>
-                                  <option value="BREAKDOWN" {% if order.evaluation.payment_method == 'BREAKDOWN' %}selected{% endif %}>Break-Down</option>
+                                  <option value="Break-Down" {% if order.evaluation.payment_method == 'BREAKDOWN' %}selected{% endif %}>Break-Down</option>
                                 </select>
                               </div>
                         </div>
@@ -1448,11 +1466,11 @@
                     <div class="row c-mt-20" v-if="breakDownFlag" >
                         <div class="col-md-6">
                             <p>Before Cleaning</p>
-                            <input name="before_cleaning" id="id_before_cleaning" type="text" class="textBox model-text-border" placeholder=" " value="{{order.evaluation.before_cleaning_amount|default_if_none:''}}" required="required">
+                            <input name="before_cleaning" id="id_before_cleaning" type="text" class="textBox model-text-border" placeholder=" " value="{{order.evaluation.before_cleaning_amount|default_if_none:''}}" onkeyup="beforeamountcheck()" required="required">
                         </div>
                         <div class="col-md-6">
                             <p>After Cleaning</p>
-                            <input name="before_cleaning" id="id_after_cleaning" type="text" class="textBox model-text-border" placeholder=" " value="{{order.evaluation.after_cleaning_amount|default_if_none:''}}" required="required">
+                            <input name="before_cleaning" id="id_after_cleaning" type="text" class="textBox model-text-border" placeholder=" " value="{{order.evaluation.after_cleaning_amount|default_if_none:''}}" onkeyup="afteramountcheck()" required="required">
                         </div>
                     </div>
                 </div>
@@ -1614,35 +1632,38 @@
 
 //total adjustment
 total_cost = parseFloat("{{order.evaluation.total_cost}}")
-$("#id_after_cleaning").keyup(function(){
-  after_amount  =  $("#id_after_cleaning").val();
-  before_amount =  $("#id_before_cleaning").val();
 
-  before_cleaning_amount = parseFloat(parseFloat(total_cost)-parseFloat(after_amount)).toFixed(3)
-  $("#id_before_cleaning").val(before_cleaning_amount) 
+function beforeamountcheck(){
 
-  if(after_amount > total_cost)
-  {
-    $("#id_after_cleaning").val("0");
-    $("#id_before_cleaning").val("0");
-  } 
-})
+    after_amount  =  $("#id_after_cleaning").val();
+    before_amount =  $("#id_before_cleaning").val();
 
-$("#id_before_cleaning").keyup(function(){
-    console.log("wrekk")
-  after_amount  =  $("#id_after_cleaning").val();
-  before_amount =  $("#id_before_cleaning").val();
+    after_cleaning_amount = parseFloat(parseFloat(total_cost)-parseFloat(before_amount)).toFixed(3)
+    $("#id_after_cleaning").val(after_cleaning_amount) 
 
-  after_cleaning_amount = parseFloat(parseFloat(total_cost)-parseFloat(before_amount)).toFixed(3)
-  $("#id_after_cleaning").val(after_cleaning_amount)  
+    if(before_amount > total_cost)
+    {
+        $("#id_after_cleaning").val("0");
+        $("#id_before_cleaning").val("0");
+    } 
 
-  if(before_amount > total_cost)
-  {
-    $("#id_before_cleaning").val("0");
-    $("#id_after_cleaning").val("0");
-  }
-})
+}
 
+function afteramountcheck(){
+
+    after_amount  =  $("#id_after_cleaning").val();
+    before_amount =  $("#id_before_cleaning").val();
+
+    before_cleaning_amount = parseFloat(parseFloat(total_cost)-parseFloat(after_amount)).toFixed(3)
+    $("#id_before_cleaning").val(before_cleaning_amount) 
+
+    if(after_amount > total_cost)
+    {
+        $("#id_after_cleaning").val("0");
+        $("#id_before_cleaning").val("0");
+    } 
+
+}
 
 //Check Breakdown Amounts
 function CheckForm(){
@@ -1656,7 +1677,7 @@ function CheckForm(){
         total                  = "{{order.evaluation.total_cost|default_if_none:'0.000'|floatformat:'3'}}";
         if(total == manual_total)
         {
-          axios.post(url+'/api/payment-policy-edit/',{ params: { 'payment_method': $('#id_payment').val(), 'before_cleaning_amount':$("#id_before_cleaning").val(), 'after_cleaning_amount':$("#id_after_cleaning").val() } })
+          axios.get(url+'/api/payment-policy-edit/',{ params: { 'evaluation_id':"{{order.evaluation.id}}", 'payment_method': $('#id_payment').val(), 'before_cleaning_amount':$("#id_before_cleaning").val(), 'after_cleaning_amount':$("#id_after_cleaning").val() } })
             .then(function (response) {
                 alert("success!")
             })
@@ -1668,24 +1689,21 @@ function CheckForm(){
   }
   else
     {
-    axios.post(url+'/api/payment-policy-edit/',{ params: { 'payment_method': $('#id_payment').val(), 'before_cleaning_amount':$("#id_before_cleaning").val(), 'after_cleaning_amount':$("#id_after_cleaning").val() } })
+    axios.get(url+'/api/payment-policy-edit/',{ params: { 'evaluation_id':"{{order.evaluation.id}}", 'payment_method': $('#id_payment').val(), 'before_cleaning_amount':$("#id_before_cleaning").val(), 'after_cleaning_amount':$("#id_after_cleaning").val() } })
     .then(function (response) {
-        alert("success!")
+        alert("Payment Policy Updated !")
+        window.location.reload();    
     })
   }
 }
 
-</script>
+//send invoice,receipt,quotation,feedbackform
+function send_items(){
+    var send_item = document.querySelector('input[name="radio"]:checked').value;
+    console.log(send_item,"itm")
 
-<script>
-
-$(document).ready(function(){
-$(".pn-prev").click();
-});
-
-
-    function sendinvoice(){
-    $.ajax({
+    if (send_item == 'invoice'){
+        $.ajax({
         url: "/order-data/send-invoice",
         data: {
         'order_no': "{{order.evaluation.evaluation_id}}"
@@ -1703,10 +1721,11 @@ $(".pn-prev").click();
         }
     
     })
-};
+    }
 
-  function sendquotation(){
-      $.ajax({
+    if (send_item == 'quotation'){
+
+        $.ajax({
           url: "/order-data/send-quotation",
           data: {
           'order_no': "{{order.evaluation.evaluation_id}}"
@@ -1724,11 +1743,11 @@ $(".pn-prev").click();
           }
       
       })
-  };
+        
+    }
 
-
-  function sendreceipt(){
-      $.ajax({
+    if (send_item == 'receipt'){
+        $.ajax({
           url: "/order-data/send-receipt",
           data: {
           'order_no': "{{order.evaluation.evaluation_id}}"
@@ -1747,11 +1766,10 @@ $(".pn-prev").click();
           }
       
       })
-  };
+    }
 
-
-  function sendfeedbacklink(){
-      $.ajax({
+    if (send_item == 'feedback'){
+        $.ajax({
           url: "/order-data/send-feedback-link",
           data: {
           'order_no': "{{order.evaluation.evaluation_id}}"
@@ -1770,7 +1788,42 @@ $(".pn-prev").click();
           }
       
       })
-  };
+    }
+}
+
+//view invoice,quotation,receipt
+function view_page(){
+    var view_item = document.querySelector('input[name="radio"]:checked').value;
+
+    if (view_item == 'quotation'){
+        window.open("/customer/quatation/paw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}", "_blank");
+    }
+
+    if (view_item == 'invoice'){
+        window.open("/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}", "_blank");
+    }
+
+    if (view_item == 'receipt'){
+        {% for payment in order.paymenthistory %}
+        {% if forloop.last %}
+        window.open("/customer/payment/receipt/pvw{{payment.id}}", "_blank");
+        {% endif %}
+        {% endfor %}
+    }
+
+    if (view_item == 'feedback'){
+        window.open("/customer/feedback-page/{{order.id}}", "_blank");
+    }
+}
+
+</script>
+
+<script>
+
+$(document).ready(function(){
+$(".pn-prev").click();
+});
+
 
     $(window).ready(function(){
         

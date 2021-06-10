@@ -757,16 +757,17 @@ class PaymentPolicyEditAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
 
-	def post(self,request):
+	def get(self,request):
 		
-		payment_method 			= request.POST.get('payment_method')
-		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
-		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
+		evaluation_id 			= request.GET.get('evaluation_id')
+		payment_method 			= request.GET.get('payment_method')
+		before_cleaning_amount	= float(request.GET.get('before_cleaning_amount')or 0)
+		after_cleaning_amount	= float(request.GET.get('after_cleaning_amount')or 0)
 
-		print(payment_method,before_cleaning_amount,after_cleaning_amount,"amts")
+		print(evaluation_id,payment_method,before_cleaning_amount,after_cleaning_amount,"amts")
 
 		#update payment method
-		# Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
 		
 		response_dict = {'success':True}
 
