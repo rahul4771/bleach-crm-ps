@@ -172,6 +172,7 @@
 <th data-hide="phone,tablet">Service Type</th>
 <th>Contact</th>
 <th data-hide="phone,tablet" style="text-align:center;">Ratings</th>
+<th data-hide="phone,tablet" style="text-align:center;">Shortcuts</th>
 </tr>
 </thead>
 <tbody>
@@ -193,7 +194,7 @@
     </td>
     <td>{{order.evaluation.customer.mobile_number}}</td>
     <td>
-      <div class="clickable-row-list" {% if order.is_feedback_marked %}data-href="{% url 'common_items:feedbackadvanced' order.evaluation.customer.id order.id %}"{% else %}data-href=""{% endif %} align="center"> 
+      <div align="center"> 
       {% if order.avg_starring >= 4.5 %}
         <span class="fa fa-star checked"></span>
         <span class="fa fa-star checked"></span>
@@ -229,6 +230,7 @@
         {% endif %}
         </div>
     </td>
+    <td><a class="d-flex dropdown-orders" {% if order.is_feedback_marked %}href="{% url 'common_items:feedbackadvanced' order.evaluation.customer.id order.id %}" target="_blank"{% else %}{% endif%}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Feedback Details</div></a></td>
     </tr>
   {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>    

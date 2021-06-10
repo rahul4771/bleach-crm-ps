@@ -249,9 +249,14 @@
           {% else %}
 
           {% if invoice.dropzerosamountpaid == invoice.dropzerostotalamount %}{% else %}
-          <div class="d-flex dropdown-orders send_invoice" data-id="{{invoice.id}}" data-blcno="{{invoice.evaluation.evaluation_id}}" data-customername="{{invoice.evaluation.customer.mobile_number}}" data-contactno="{{invoice.evaluation.customer.name}}" {% for schedule in invoice.orderschedules %}{% if forloop.first %}data-startdate="{{schedule.start_at|date:'d-m-Y'}}" {% endif %}{% if forloop.last %}data-enddate="{{schedule.start_at|date:'d-m-Y'}}"{% endif %}{% endfor %} data-totalamount="{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}" data-paidamount="{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}" data-balance="{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}" data-remining="{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}">
+          <div class="d-flex dropdown-orders send_invoice" data-id="{{invoice.id}}" data-blcno="{{invoice.evaluation.evaluation_id}}" data-customername="{{invoice.evaluation.customer.mobile_number}}" data-contactno="{{invoice.evaluation.customer.name}}" {% for schedule in invoice.orderschedules %}{% if forloop.first %}data-startdate="{{schedule.start_at|date:'d-m-Y'}}" {% endif %}{% if forloop.last %}data-enddate="{{schedule.start_at|date:'d-m-Y'}}"{% endif %}{% endfor %} data-totalamount="{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}" data-paidamount="{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}" data-balance="{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}" data-invoice-type="invoice" data-remining="{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}">
           <img src="{% static 'files/images/SendInvoice.png' %}" class="dropdown-icon pr-2"><div class="ml-2 dropdown-text">Send Invoice</div>
-          </div> {% endif %}
+          </div> 
+          
+          <div class="d-flex dropdown-orders send_invoice" data-id="{{invoice.id}}" data-blcno="{{invoice.evaluation.evaluation_id}}" data-customername="{{invoice.evaluation.customer.mobile_number}}" data-contactno="{{invoice.evaluation.customer.name}}" {% for schedule in invoice.orderschedules %}{% if forloop.first %}data-startdate="{{schedule.start_at|date:'d-m-Y'}}" {% endif %}{% if forloop.last %}data-enddate="{{schedule.start_at|date:'d-m-Y'}}"{% endif %}{% endfor %} data-totalamount="{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}" data-paidamount="{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}" data-balance="{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}" data-invoice-type="issued" data-remining="{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}">
+          <img src="{% static 'files/images/SendInvoice.png' %}" class="dropdown-icon pr-2"><div class="ml-2 dropdown-text">Issue Invoice</div>
+          </div>
+          {% endif %}
 
           <div class="d-flex dropdown-orders clickable-row" data-href="/customer/subscription/quatation/paw{{invoice.evaluation.evaluation_id|slice:'3:'}}{{invoice.evaluation.customer.username}}"><img src="{% static 'files/images/ViewQuotation.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Quotation</div></div>
           {% endif %}
@@ -343,6 +348,7 @@
             <div class="content"><!--content-->        
 <form method="post" enctype="multipart/form-data">{% csrf_token %}                      
 <input type="hidden" name="order" id="order_id">
+<input type="hidden" name="invoice_type" id="invoice_type">
             <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->
 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
@@ -466,6 +472,7 @@ $("#governorate_filter_id").change(function(){
     $('#total_price_invoice_id').text($(this).data('totalamount'));
     $('#paid_invoice_id').text($(this).data('paidamount'));
     $('#balance_invoice_id').text($(this).data('balance'));
+    $('#invoice_type').val($(this).data('invoice-type'));
 
     remining_amount = parseFloat($(this).data('remining'));
     if(remining_amount <= 0)

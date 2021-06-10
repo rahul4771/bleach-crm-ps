@@ -11,8 +11,8 @@ b, u, i, center,
 dl, dt, dd, ol, ul, li,
 fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
+article, aside, canvas, header, footer,details, embed,
+figure, figcaption, hgroup,
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
   margin: 0;
@@ -618,10 +618,38 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 .table1tr4 {display:none;}
 }
 
-@page {
+/*@page {
     size: A4 portrait;
     margin: 0.2in 9in 0.2in 0.44in;
-}
+
+}*/
+
+@page {
+                size: A4 portrait; /* can use also 'landscape' for orientation */
+                margin: 0.2in 9in 0.2in 0.44in;
+
+                @bottom-left{
+                    content: element(footer);
+                }
+
+                @top-left{
+                    content: element(header);
+                }
+
+
+        }
+
+        header {
+            position: running(header);
+            /*height: 100px;*/
+        }
+
+        footer {
+            position: running(footer);
+            width: 100%;
+            background: #616161;
+            /*height: 150px;*/
+        }
 
 
 /* table automatic row count */

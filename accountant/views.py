@@ -188,6 +188,7 @@ def GetFineCollectOrderInfo(request):
 
 class AccountantHome(IsAccountant,View):
 	def get(self,request):
+
 		#Payment Details
 		search                  = request.GET.get('search')
 
@@ -199,40 +200,61 @@ class AccountantHome(IsAccountant,View):
 
 		#Payment Details
 		payment_history = PaymentHistory.objects.filter(is_active=True)
+		##week
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)		
-		this_week_sales = payment_history.filter(paid_date__gte=count_today_start-timedelta(7)).aggregate(total=Sum('amount_paid'))['total']
-		last_week_sales = payment_history.filter(paid_date__gte=count_today_start-timedelta(14),paid_date__lte=count_today_start-timedelta(7)).aggregate(total=Sum('amount_paid'))['total']		
+		this_week_sales = payment_history.filter(paid_date__week=count_today_start.isocalendar()[1],paid_date__year=count_today_start.year).aggregate(total=Sum('amount_paid'))['total']
+		last_week_sales = payment_history.filter(paid_date__week=count_today_start.isocalendar()[1]-1,paid_date__year=count_today_start.year).aggregate(total=Sum('amount_paid'))['total']				
+		##month		
+		prvmonth  = count_today_start-relativedelta(months=1)
+		this_month_sales=payment_history.filter(paid_date__month=count_today_start.month,paid_date__year=count_today_start.year).aggregate(total=Sum('amount_paid'))['total']
+		last_month_sales=payment_history.filter(paid_date__month=prvmonth.month,paid_date__year=prvmonth.year).aggregate(total=Sum('amount_paid'))['total']	
 		
-		month_start_date     = count_today_start.replace(day=1)
-		nxtmonth_start_date  = month_start_date+relativedelta(months=1)
-		prvmonth_start_date  = month_start_date-relativedelta(months=1)
-		this_month_sales=payment_history.filter(paid_date__gte=month_start_date,paid_date__lt=nxtmonth_start_date).aggregate(total=Sum('amount_paid'))['total']
-		last_month_sales=payment_history.filter(paid_date__gte=prvmonth_start_date,paid_date__lt=month_start_date).aggregate(total=Sum('amount_paid'))['total']	
-		
-		quarter_start_date   = month_start_date-relativedelta(months=2)
-		prvquarter_start_date= month_start_date-relativedelta(months=5)
-		this_quarter_sales=payment_history.filter(paid_date__gte=quarter_start_date,paid_date__lt=nxtmonth_start_date).aggregate(total=Sum('amount_paid'))['total']
-		last_quarter_sales=payment_history.filter(paid_date__gte=prvquarter_start_date,paid_date__lt=quarter_start_date).aggregate(total=Sum('amount_paid'))['total']	
 
+		##quarter
+		curquarter      = []
+		prvquarter      = []
+		curquarternumber= int((count_today_start.month-1)/3)+1
+		prvquarternumber= curquarternumber-1
+		
+		if prvquarternumber == 0:
+			prvquarternumber = 4
+			prvquarteryear   = (count_today_start.year)-1
+		else:	
+			prvquarteryear   = count_today_start.year
+
+		#cur quarter
+		if curquarternumber == 1:
+			curquarter=[1,2,3]
+		if curquarternumber == 2:
+			curquarter=[4,5,6]
+		if curquarternumber == 3:
+			curquarter=[7,8,9]
+		if curquarternumber == 4:
+			curquarter=[10,11,12]
+
+		#prv quarter
+		if prvquarternumber == 1:
+			prvquarter=[1,2,3]
+		if prvquarternumber == 2:
+			prvquarter=[4,5,6]
+		if prvquarternumber == 3:
+			prvquarter=[7,8,9]
+		if prvquarternumber == 4:
+			prvquarter=[10,11,12]
+			
+
+		this_quarter_sales=payment_history.filter(paid_date__month__in=curquarter,paid_date__year=count_today_start.year).aggregate(total=Sum('amount_paid'))['total']
+		last_quarter_sales=payment_history.filter(paid_date__month__in=prvquarter,paid_date__year=prvquarteryear).aggregate(total=Sum('amount_paid'))['total']	
+
+
+		#due payments
+		due_payments     = invoices.filter(Q( Q( Q(Q(evaluation__payment_method='PREPAID')|Q(evaluation__payment_method='POSTPAID')|Q(evaluation__payment_method='BREAKDOWN')) & Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD')) & Q(completed_cleaning_count=F('cleaning_count')) ) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
+		#Due Payment and Order Count			
+		total_due_amount = due_payments.aggregate(Sum('remining_amount'))['remining_amount__sum']
+		total_due_orders = due_payments.count()
 		
 		#Pending Payments
 		pending_payments = invoices.filter(Q( Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))) | Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(preamount_paid=0)) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
-		
-
-		#Pending Payment and Order Count	
-		if pending_payments: 
-			total_pending_amount = 0
-			total_pending_orders = pending_payments.count()
-			for payment in pending_payments:
-				if payment.evaluation.payment_method in ['PREPAID','POSTPAID','BREAKDOWN']:
-					total_pending_amount += payment.remining_amount
-					
-				if payment.evaluation.payment_method == 'SUBSCRIPTION':
-					total_pending_amount += payment.subscription_topay
-		else:
-			total_pending_amount = 0
-			total_pending_orders = 0		
-
 
 		#remove object in postpaid if not last cleaning fulfilled	
 		#remove if subscription to pay date
@@ -303,7 +325,7 @@ class AccountantHome(IsAccountant,View):
 					cleaning_price += scheduler.order_scheduler_book.total_cost/len(order_cancell_cashback.order.order_scheduler_order.all())			
 			order_cancell_cashback.job_completed_amount = cleaning_price
 
-		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders,"approved_paybackdiscounts":approved_paybackdiscounts,"subscriptions":subscriptions,"ticket_count":ticket_count,"order_cancell_cashbacks":order_cancell_cashbacks})
+		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_due_amount':total_due_amount,"total_due_orders":total_due_orders,"approved_paybackdiscounts":approved_paybackdiscounts,"subscriptions":subscriptions,"ticket_count":ticket_count,"order_cancell_cashbacks":order_cancell_cashbacks})
 
 	
 

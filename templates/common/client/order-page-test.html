@@ -1,0 +1,2139 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<link href="{% static 'files/css/client-details.css' %}" rel="stylesheet" />
+<link href="{% static 'files/css/orders.css' %}" rel="stylesheet" />
+<link href="{% static 'files/css/colors.css' %}" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<!--Bootstrap 3.3.7 -->
+<link rel='stylesheet' href="{% static 'files/plugins/bootstrap-3.3.7/css/bootstrap.min.css'%}">
+<link rel='stylesheet' href="{% static 'files/plugins/bootstrap-3.3.7/css/bootstrap-theme.min.css'%}">
+<!--Bootstrap 3.3.7 -->
+<link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
+<link href="{% static 'files/css/colors.css' %}" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.standalone.min.css" integrity="sha512-TQQ3J4WkE/rwojNFo6OJdyu6G8Xe9z8rMrlF9y7xpFbQfW5g8aSWcygCQ4vqRiJqFsDsE1T6MoAOMJkFXlrI9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<div class="wrapper" id="app"><!--wrapper-->
+
+{% if request.user.user_type == 'SALESADMIN' %}
+  {% include "salesadmin/common/header.html" %}
+{% elif request.user.user_type == 'AGENT' %}
+  {% include "agent/common/header.html" %}
+{% elif request.user.user_type == 'ADMIN' %}
+  {% include "admin/common/header.html" %}
+{% elif request.user.user_type == 'BOOKINGOFFICER' %}
+  {% include "bookingofficer/common/header.html" %} 
+{% elif request.user.user_type == 'EVALUATOR' %}
+  {% include "evaluator/common/header.html" %}
+{% elif request.user.user_type == 'SENIORTEAMLEADER' %}
+  {% include "stl/common/header.html" %}
+{% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
+  {% include "operationsupervisor/common/header.html" %}
+{% elif request.user.user_type == 'TECHNICALSUPERVISOR' %}
+  {% include "technicalsupervisor/common/header.html" %}
+{% elif request.user.user_type == 'ACCOUNTANT' %}
+  {% include "accountant/common/header.html" %}
+{% endif %}
+
+    <section class="content">
+        <!--content-->
+        <div class="container-fluid space topspace">
+            <!--container-fluid space topspace-->
+            <div class="welcome-wrapper">
+                <!--welcome-wrapper-->
+                <h1 class="dashboard-head">{{order.evaluation.evaluation_id}} (BKID0013)</h1>
+                <div>
+                    <!--rating section-->
+
+                    {% if average_feedback < 2 and average_feedback >= 1 %}
+                    <i class="fas fa-star yellow-icon"></i><span class="rating-value">1</span>
+                    {% elif average_feedback < 3 and average_feedback >= 2 %}
+                    <i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><span class="rating-value">2</span>
+                    {% elif average_feedback < 4 and average_feedback >= 3 %}
+                    <i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><span class="rating-value">3</span>
+                    {% elif average_feedback < 5 and average_feedback >= 4 %}
+                    <i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><span class="rating-value">4</span>
+                    {% elif average_feedback == 5 %}
+                    <i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><span class="rating-value">5</span>
+                    {% else %}
+                    <i class="fas fa-star yellow-icon"></i><span class="rating-value">1</span>
+                    {% endif %}
+                    <!--rating section-->
+                </div>
+                
+
+                {% if order.evaluation.quatation_status == 'APPROVED' %}
+                
+            
+                {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
+                {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+                <div class="order-status approved-status-bg">Approved</div>
+                {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
+                <div class="order-status order-in-progress-status-bg">Order in progress</div>
+                {% elif order.order_status == 'ORDER_CLOSED' %}
+                <div class="order-status completed-status-bg">Order closed</div>
+                {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
+                <div class="order-status cancel-in-progress-status-bg">Cancel in progress</div>
+                {% else %}
+                <div class="order-status cancelled-status-bg">Cancelled</div>
+                {% endif %}
+                {% else %}
+                <div class="order-status approved-not-paid-status-bg">Approved Not Paid</div>
+                {% endif %}
+            
+
+                {% elif order.evaluation.quatation_status == 'REJECTED' %}<div class="order-status rejected-status-bg">Rejected</div>
+                {% elif order.evaluation.quatation_status == 'PENDING' %}<div class="order-status pending-status-bg">Pending</div>
+                {% elif order.evaluation.quatation_status == 'EXPIRED' %}<div class="order-status expired-status-bg">Expired</div>
+                {% else %}
+                <div class="order-status evaluating-status-bg">Evaluating</div>
+                {%endif%}
+                
+            </div>
+
+
+
+            <div class="row order-top-wrapper">
+                <div class="col-md-10 pl-25 m-pr-25">
+                    <div class="row">
+                        <div class="order-left-stretch">
+
+                            <div class="order-left-stretch"><!--order-left-stretch-->
+ 
+                <div class="order-bar-container"><!--order-bar-container-->
+                    <div class="order-loaderbar"><!--order-loaderbar-->
+                    	<div class="bar-loader"></div>
+                    </div><!--order-loaderbar-->
+                </div><!--order-bar-container-->
+ 				
+                <div class="order-progress-wrapper"><!--order-progress-wrapper-->
+                
+                    <div class="order-progress-widget order-progress-widget-column1"><!--order-progress-widget order-progress-widget-column1-->
+                        <div class="evaluation">Evaluation</div>
+                        <div class="evaluation-icon"><img src="{% static 'files/images/evaluation-green-icon.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                        <div class="evaluation-status">{{order.created|date:"M d, Y"}}</div>
+                    </div><!--order-progress-widget order-progress-widget-column1-->
+                   
+                    {% if order.evaluation.payment_method == 'PREPAID' or order.evaluation.payment_method == 'BREAKDOWN' %}
+                    <div class="order-progress-widget order-progress-widget-column2"><!--order-progress-widget order-progress-widget-column2-->
+                        <div class="evaluation">Payment</div>
+                        {% if order.payment_status == 'COMPLETED' %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                        {% for payment in order.paymenthistory %}
+                            {% if forloop.last %}
+                                <div class="evaluation-status">{{payment.paid_date|date:"M d, Y"}}</div>
+                            {% endif %}
+                        {% endfor %}
+                        {% elif order.evaluation.before_cleaning_amount == order.preamount_paid and order.evaluation.payment_method == 'BREAKDOWN'  %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                        {% for payment in order.paymenthistory %}
+                            {% if forloop.last %}
+                                <div class="evaluation-status">{{payment.paid_date|date:"M d, Y"}}</div>
+                            {% endif %}
+                        {% endfor %}
+                        {% else %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-gray-payment.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Waiting</div>
+                        {% endif %}
+                    </div><!--order-progress-widget order-progress-widget-column2-->
+                    {% endif %}
+                    
+                    <!-- <div class="order-progress-widget order-progress-widget-column3">
+                        <div class="evaluation">Date Confirmation</div>
+                        <div class="evaluation-icon"><img id="date_confirmed_image" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed <span id="date_confirmed"></span>/<span>{{order.orderschedules|length}}</span></div>
+                    </div> -->                    
+                    
+                    <div class="order-progress-widget order-progress-widget-column4"><!--order-progress-widget order-progress-widget-column4-->
+                        <div class="evaluation">Assigning Team</div>
+                        <div class="evaluation-icon"><img id="team_assigned_image" class="orderEval-icon"></div>
+                        <div class="evaluation-status assign1">Completed <span id="team_assigned"></span>/<span>{{order.orderschedules|length}}</span></div>
+                        <div class="evaluation-status assign2">Waiting</div>
+                        <div class="evaluation-status assign3">Completed</div>
+
+                        {% for schedule in order.orderschedules|slice:":1" %}
+                            {% if  schedule.cleaning_team %}
+                                {% for cleaning_team in schedule.cleaning_team %}
+                                    {% if forloop.last %}
+                                        <div class="evaluation-status assign1">{{cleaning_team.created|date:"M d, Y"}}</div>
+                                        <div class="evaluation-status assign3">{{cleaning_team.created|date:"M d, Y"}}</div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+
+                    </div><!--order-progress-widget order-progress-widget-column4-->                     
+                    
+                    <div class="order-progress-widget order-progress-widget-column5"><!--order-progress-widget order-progress-widget-column5-->
+                        <div class="evaluation">Cleaning</div>
+                        <div class="evaluation-icon"><img id="cleaning_completed_image" class="orderEval-icon"></div>
+                        <div class="evaluation-status cleaning1">Completed <span id="cleaning_completed">1</span>/<span>{{order.orderschedules|length}}</span></div>
+                        <div class="evaluation-status cleaning2">Waiting</div>
+                        <div class="evaluation-status cleaning3">Completed</div>
+                        {% for orderschedule in order.orderschedules %}
+                            {% if orderschedule.work_status == 'CLEANING_FULFILLED' and forloop.last %}
+                            <div class="evaluation-status cleaning1">{{orderschedule.end_at|date:"M d, Y"}}</div>
+                            <div class="evaluation-status cleaning3">{{orderschedule.end_at|date:"M d, Y"}}</div>
+                            {% endif %}
+                        {% endfor %}
+                        
+                    </div><!--order-progress-widget order-progress-widget-column5-->                      
+                    
+                    {% if order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'BREAKDOWN' %}
+                    <div class="order-progress-widget order-progress-widget-column2"><!--order-progress-widget order-progress-widget-column2-->
+                        <div class="evaluation">Payment</div>
+                        {% if order.payment_status == 'COMPLETED' %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                        {% for payment in order.paymenthistory %}
+                            {% if forloop.last %}
+                                <div class="evaluation-status">{{payment.paid_date|date:"M d, Y"}}</div>
+                            {% endif %}
+                        {% endfor %}
+                        {% elif order.evaluation.after_cleaning_amount == order.postamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                        {% for payment in order.paymenthistory %}
+                            {% if forloop.last %}
+                                <div class="evaluation-status">{{payment.paid_date|date:"M d, Y"}}</div>
+                            {% endif %}
+                        {% endfor %}
+                        {% else %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-gray-payment.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Waiting</div>
+                        {% endif %}
+                    </div><!--order-progress-widget order-progress-widget-column2-->
+                    {% endif %}
+
+                    {% if order.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' %}
+                    <div class="order-progress-widget order-progress-widget-column2"><!--order-progress-widget order-progress-widget-column2-->
+                        <div class="evaluation">Payment</div>
+                        {% if order.payment_status == 'COMPLETED' %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-green-payment.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                        {% for payment in order.paymenthistory %}
+                            {% if forloop.last %}
+                                <div class="evaluation-status">{{payment.paid_date|date:"M d, Y"}}</div>
+                            {% endif %}
+                        {% endfor %}
+                        {% else %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-gray-payment.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Waiting</div>
+                        {% endif %}
+                    </div><!--order-progress-widget order-progress-widget-column2-->
+                    {% endif %}
+
+                    <div class="order-progress-widget order-progress-widget-column6"><!--order-progress-widget order-progress-widget-column6-->
+                        <div class="evaluation">Feedback</div>
+                        {% if order.is_feedback_marked %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-green-feedback.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Completed</div>
+                        <div class="evaluation-status">{{order.feedback_marked_date|date:"M d, Y"}}</div>
+                        {% else %}
+                        <div class="evaluation-icon"><img src="{% static 'files/images/order-gray-feedback.png' %}" class="orderEval-icon"></div>
+                        <div class="evaluation-status">Waiting</div>
+                        {% endif %}
+                    </div><!--order-progress-widget order-progress-widget-column6-->                      
+                </div><!--order-progress-wrapper-->
+            </div><!--order-left-stretch-->
+
+
+
+                        </div>
+                    </div>
+                    <div class="row c-mt-20">
+                        <div class="order-details-left-wrapper "><!--order details start-->
+                            
+                            <div class="order-edit">
+                                <img class="pointer" v-if="!edit" @click="edit = true"
+                                    src="{% static 'files/icons/edit.png' %}">
+                            </div>
+                            <div class="order-edit" v-if="edit">
+                                <input name="paid" type="button" @click="edit = false" class="done-button" value="Done"
+                                    id="done">
+                            </div>
+
+                            {% for orderschedule in order.orderschedules %}
+                            <div id="details{{orderschedule.id}}">
+                                <div class="order-container-main">
+                                    <div class="order-header-class">
+                                        <h2>{{orderschedule.order_scheduler_book.service_type.name}}</h2>
+                                        {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
+                                        <button class="subscription-button">One Time</button>
+                                        {% else %}
+                                        <button class="subscription-button">Subscription</button>
+                                        {% endif %}
+                                        <button class="ticket-button">2 Tickets <i class="fa fa-flag"
+                                                aria-hidden="true"></i></button>
+                                    </div>
+                                    <div class="row order-section-1">
+                                        <div class="col-md-4 c-mt-50">
+                                        
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                {% if orderschedule.evaluation_details.evaluator.profile_image %}
+                                                    <img class="order-agent-profile-pic" src="{{orderschedule.evaluation_details.evaluator.profile_image.url}}">
+                                                {% else %}
+                                                    {% if orderschedule.evaluation_details.evaluation.call_attender.profile_image %}
+                                                        <img class="order-agent-profile-pic" src="{{orderschedule.evaluation_details.evaluation.call_attender.profile_image.url}}">
+                                                    {% else %}
+                                                        <img class="order-agent-profile-pic" src="{% static 'files/icons/profile.png' %}">
+                                                    {% endif %}
+                                                {% endif %}
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <div class="order-agent-content">
+                                                        <div v-if="edit" class="order-agent-edit">
+                                                            <img class="pointer"src="{% static 'files/icons/edit.png' %}">
+                                                        </div>
+
+                                                        {% if orderschedule.evaluation_details.evaluator %}
+                                                        <h2>{{orderschedule.evaluation_details.evaluator.name}}</h2>
+                                                        <h6>{{orderschedule.evaluation_details.evaluator.user_type}}</h6>
+                                                        {% else %}
+                                                        <h2>{{orderschedule.evaluation_details.evaluation.call_attender.name}}</h2>
+                                                        <h6>{{orderschedule.evaluation_details.evaluation.call_attender.user_type}}</h6>
+                                                        {% endif %}
+                                                        
+                                                        <p>{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 m-mt30">
+                                            <div class="agent-content-section1 c-mt-022">
+                                                <div v-if="edit" class="order-agent-edit">
+                                                    <img class="pointer" src="{% static 'files/icons/edit.png' %}">
+                                                </div>
+                                                <ul>
+                                                {% if orderschedule.order_scheduler_book.cleaning_method %}
+                                                    <li><i class="fas fa-check-circle yellow-tick "></i> {{orderschedule.order_scheduler_book.cleaning_method}} Method
+                                                    </li>
+                                                {% endif %}
+
+                                                {% if orderschedule.order_scheduler_book.area_type %}
+                                                    <li><i class="fas fa-check-circle yellow-tick"></i> {{orderschedule.order_scheduler_book.area_type}}
+                                                    </li>
+                                                {% endif %}
+
+                                                {% if orderschedule.order_scheduler_book.location_type %}
+                                                    <li><i class="fas fa-check-circle yellow-tick"></i> {{orderschedule.order_scheduler_book.location_type}}
+                                                    </li>
+                                                {% endif %}
+
+                                                {% if orderschedule.customer_address.area %}
+                                                    <li><i class="fas fa-check-circle yellow-tick"></i> {{orderschedule.customer_address.area.name}}</li>
+                                                {% endif %}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 m-mt30">
+                                            <div class="agent-content-section1 c-mt-022">
+                                                <div v-if="edit" class="order-agent-edit">
+                                                    <img class="pointer" src="{% static 'files/icons/edit.png' %}">
+                                                </div>
+                                                <ul>
+
+                                                    {% if orderschedule.customer_address.gps_location %}<li><i class="fas  test-color fa-map-marker c-mr-10"></i><a href="{{orderschedule.customer_address.gps_location}}">GPS</a></li>{% endif %}
+                                                    <li><i class="fas test-color fa-users c-mr-10"></i> {{orderschedule.order_scheduler_book.number_of_cleaners|floatformat:-1}} cleaners</li>
+                                                    <li><i class="fas test-color fa-clock-o c-mr-10"></i> {{orderschedule.order_scheduler_book.cleaning_hours}} Hours</li>
+                                                    <li><i class="fas  test-color fa-money c-mr-10"></i> {{orderschedule.order_scheduler_book.total_cost|floatformat:3}} KD</li>
+                                                    <li><i class="fas test-color fa-address-card c-mr-10"></i><b>{{orderschedule.customer_address.apartment}}</b>: {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}},<br> {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},<br> {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %} {{orderschedule.customer_address.area.name}},<br> {{orderschedule.customer_address.governorate.name}}</li>
+
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 m-mt30">
+                                            <div id="visti-section"
+                                                class="agent-content-section2 visti-section  c-mt-022">
+                                                <p>Total no of Visits <span style="color:#0D87C5;"> {{order.orderschedules|length}}</span> </p>
+
+                                                
+                                                <div class="row visit-times">
+                                                    
+                                                {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
+                                                {% for multi_order_schedule in order.orderschedules %}
+                                                {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
+                                                    <div class="col-md-6  time-text"><i
+                                                            class="fa test-color  fa-calendar  c-mr-5"></i>{{multi_order_schedule.start_at}} <img v-if="edit" class="order-time-edit pointer"
+                                                            src="{% static 'files/icons/edit.png' %}">
+                                                    </div>
+
+                                                {% endif %}
+                                                {% endfor %}
+                                                {% else %}
+                                                {% for subscription_schedule in order.orderschedules %}
+                                                {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
+                                                    <div class="col-md-6  time-text"><i
+                                                            class="fa test-color  fa-calendar  c-mr-5"></i>{{subscription_schedule.start_at}} <img v-if="edit" class="order-time-edit pointer"
+                                                            src="{% static 'files/icons/edit.png' %}">
+                                                    </div>
+                                                {% endif %}
+                                                {% endfor %}
+                                                {% endif %}
+
+                                                </div>
+                                                <div class="time-more text-center" onclick="myFunction()">
+                                                    <i class="fa fa-chevron-down more-icon" aria-hidden="true"></i>
+                                                </div>
+
+                                            </div>
+                                            <div id="myDropdown" class="c-dropdown-content">
+                                                <div id="visti-section"
+                                                    class="agent-content-section2 visti-section  c-mt-022">
+                                                    <p>Total no of Visits <span style="color:#0D87C5;"> {{order.orderschedules|length}}</span> </p>
+                                                    <div class="row ">
+                                                        {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
+                                                        {% for multi_order_schedule in order.orderschedules %}
+                                                        {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
+                                                            <div class="col-md-6  time-text"><i
+                                                                    class="fa test-color  fa-calendar  c-mr-5"></i>{{multi_order_schedule.start_at}} <img v-if="edit" class="order-time-edit pointer"
+                                                                    src="{% static 'files/icons/edit.png' %}">
+                                                            </div>
+
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                        {% else %}
+                                                        {% for subscription_schedule in order.orderschedules %}
+                                                        {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
+                                                            <div class="col-md-6  time-text"><i
+                                                                    class="fa test-color  fa-calendar  c-mr-5"></i>{{subscription_schedule.start_at}} <img v-if="edit" class="order-time-edit pointer"
+                                                                    src="{% static 'files/icons/edit.png' %}">
+                                                            </div>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                        {% endif %}
+
+
+                                                    </div>
+                                                    <div class="time-more text-center" onclick="myFunction()">
+                                                        <i class="fa fa-chevron-up more-icon" aria-hidden="true"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="moreless-button" id="show">Show More</div>
+                                <hr class="bar">
+                            </div>
+                            
+
+                            <div id="showmore" class="showmore">
+                            
+                                {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
+                                <div id="showmore1" style="display: none;"
+                                    class="order-container-main order-clean-section">
+                                    <div v-if="edit" class="order-clean-edit">
+                                        <img class="pointer" src="{% static 'files/icons/edit.png' %}">
+                                    </div>
+                                    <div class="order-clean-section-header c-mb-10">
+                                        <h2>Section {{forloop.counter}} : {{section.section_name}}</h2>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 c-right-border" style="padding-left: 1px;">
+                                            <div class="col-md-6">
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Category</div>
+                                                    <div class="col-xs-6">: <span class="c-text ">{{section.category}}</span></div>
+                                                </div>
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Dirt level</div>
+                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.dirt_level}}</span>
+                                                    </div>
+                                                </div>
+
+                                                {% if section.age %}
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Age</div>
+                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.age}}</span>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Size</div>
+                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.size}} {{section.unit|default_if_none:''}}</span>
+                                                    </div>
+                                                </div>
+
+                                                {% if section.floor %}
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Floor</div>
+                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.floor}}</span>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+
+                                                {% if section.apartment %}
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Apartments</div>
+                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.apartment}}</span>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+
+                                                {% if section.room %}
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Rooms</div>
+                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.room}}</span>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-6">
+                                                {% if section.wall_type %}
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Wall Type</div>
+                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.wall_type}}</span></div>
+                                                </div>
+                                                {% endif %}
+
+                                                {% if section.ceiling_type %}
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Celling Type</div>
+                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.ceiling_type}}</span></div>
+                                                </div>
+                                                {% endif %}
+
+                                                {% if section.floor_type %}
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Floor Type</div>
+                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.floor_type}}</span></div>
+                                                </div>
+                                                {% endif %}
+
+                                                {% if section.material %}
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Material</div>
+                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.material}}</span></div>
+                                                </div>
+                                                {% endif %}
+
+                                                {% if section.colour %}
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Color</div>
+                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.colour}}</span></div>
+                                                </div>
+                                                {% endif %}
+
+                                                {% if section.cause_of_stain %}
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Cause of Stain</div>
+                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.cause_of_stain}}</span></div>
+                                                </div>
+                                                {% endif %}
+
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Cost</div>
+                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.section_cost|floatformat:'3'}} KD</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 m-mt30 pl-0">
+
+                                            {% if section.sectionkeynotes %}
+
+                                            <div class="col-md-3 ml-0 ">
+
+                                            {% for keynote in section.sectionkeynotes %}
+                                            {% if forloop.counter|divisibleby:2 %}
+                                            {% else %}
+                                                <div class="clean-section-card">
+                                                    <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
+                                                </div>
+                                            {% endif %}
+                                            {% endfor %}
+
+                                            </div>
+
+                                            <div class="col-md-3 ml-0 ">
+                                            {% for keynote in section.sectionkeynotes %}
+                                            {% if forloop.counter|divisibleby:2 %}
+                                            <div class="clean-section-card">
+                                                <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
+                                            </div>
+                                            {% else %}
+                                            {% endif %}
+                                            {% endfor %}
+                                            </div>
+                                            
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <hr class="bar">
+                                </div>
+                                {% endfor %}
+
+                                {% endfor %}
+
+                                
+                                <div id="showmore2" style="display: none;"
+                                    class="order-container-main order-clean-section">
+                                    <div class="order-clean-section-header c-mb-10">
+                                        <h2>Cleaning Visit</h2>
+                                    </div>
+                                    <div class="testimonial-group">
+                                        <div class="row">
+                                            <div class="col-md-4  c-pr5">
+                                                <div class="cleaning-status-container  pointer ">
+                                                    <div class="row cleaning-status-row  cleaning-status-card">
+                                                        <div class="vist-card-item-first">
+                                                            Visit 1
+                                                        </div>
+                                                        <div class="vist-card-item-second">
+                                                            April 4 2021 12:30 pm
+                                                        </div>
+                                                        <div class="vist-card-item-last ml-5">
+                                                            <i class="fa fa-flag c-red"></i>
+                                                            <button class="completed-button">Completed</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4  c-pr5">
+                                                <div class="cleaning-status-container pointer">
+                                                    <div class="row cleaning-status-row cleaning-status-card">
+                                                        <div class="vist-card-item-first">
+                                                            Visit 2
+                                                        </div>
+                                                        <div class="vist-card-item-second">
+                                                            April 4 2021 12:30 pm
+                                                        </div>
+                                                        <div class="vist-card-item-last ml-5">
+                                                            <i class="fa fa-flag c-red"></i>
+                                                            <button class="completed-button">Completed</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4  c-pr5">
+                                                <div class="cleaning-status-container pointer">
+                                                    <div class="row cleaning-status-row cleaning-status-card">
+                                                        <div class="vist-card-item-first">
+                                                            Visit 3
+                                                        </div>
+                                                        <div class="vist-card-item-second">
+                                                            April 4 2021 12:30 pm
+                                                        </div>
+                                                        <div class="vist-card-item-last ml-5">
+
+                                                            <button class="canceled-button">Canceled</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4  c-pr5">
+                                                <div class="cleaning-status-container pointer">
+                                                    <div class="row cleaning-status-row cleaning-status-card">
+                                                        <div class="vist-card-item-first">
+                                                            Visit 4
+                                                        </div>
+                                                        <div class="vist-card-item-second">
+                                                            April 4 2021 12:30 pm
+                                                        </div>
+                                                        <div class="vist-card-item-last ml-5">
+
+                                                            <button class="inprogress-button">In Progress</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4  c-pr5">
+                                                <div class="cleaning-status-container pointer">
+                                                    <div class="row cleaning-status-row cleaning-status-card">
+                                                        <div class="vist-card-item-first">
+                                                            Visit 5
+                                                        </div>
+                                                        <div class="vist-card-item-second">
+                                                            April 4 2021 12:30 pm
+                                                        </div>
+                                                        <div class="vist-card-item-last ml-5">
+
+                                                            <button class="notassing-button">Team Not Assigned</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4  c-pr5">
+                                                <div class="cleaning-status-container pointer">
+                                                    <div class="row cleaning-status-row cleaning-status-card">
+                                                        <div class="vist-card-item-first">
+                                                            Visit 6
+                                                        </div>
+                                                        <div class="vist-card-item-second">
+                                                            April 4 2021 12:30 pm
+                                                        </div>
+                                                        <div class="vist-card-item-last ml-5">
+
+                                                            <button class="assigned-button">Team Assigned</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="clean-visit-section">
+                                        <div class="order-clean-section-header c-mb-10">
+                                            <h1>Visit 1</h1>
+                                        </div>
+                                        <div class="row c-mt-20">
+                                            <div class="col-md-2">
+                                                <div class="row c-mb-10 ">
+                                                    <div class="col-xs-7">
+                                                        <img class="button-icons"
+                                                            src="{% static 'files/icons/time-in.png' %}">
+                                                        Check in
+                                                    </div>
+                                                    <div class="col-xs-5">07:30 am</div>
+                                                </div>
+                                                <div class="row c-mb-10 ">
+                                                    <div class="col-xs-7">
+                                                        <img class="button-icons"
+                                                            src="{% static 'files/icons/time-out.png' %}">
+                                                        Check Out
+                                                    </div>
+                                                    <div class="col-xs-5">07:30 am</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="order-clean-section-header c-clean-team-header c-mt-10">
+                                            <div class="row">
+
+                                                <h3 class="ml-10">Cleaning Team</h3>
+                                                <div v-if="edit" class="clean-team-edit">
+                                                    <img src="{% static 'files/icons/edit.png' %}">
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="row c-mt-10">
+                                            <div class="col-md-2 m-mt20 .c-mb-10 mr-0 ml-0">
+                                                <div class="row">
+                                                    <div class="col-xs-3">
+                                                        <img class="clean-team-profile-pic"
+                                                            src="{% static 'files/icons/profile.png' %}">
+                                                    </div>
+                                                    <div class="col-xs-9">
+                                                        <div class="order-agent-content text-left">
+                                                            <h2>Jahir Rain</h2>
+                                                            <h6>Team Leader</h6>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 m-mt20 .c-mb-10 mr-0 ml-0">
+                                                <div class="row">
+                                                    <div class="col-xs-3">
+                                                        <img class="clean-team-profile-pic"
+                                                            src="{% static 'files/icons/profile.png' %}">
+                                                    </div>
+                                                    <div class="col-xs-9">
+                                                        <div class="order-agent-content text-left">
+                                                            <h2>Jahir Rain</h2>
+                                                            <h6>Team Member</h6>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+                                        <div class="order-clean-section-header c-mt-10">
+                                            <h3>Backup In/Out</h3>
+                                        </div>
+
+                                        <div class="row c-mt-10">
+                                            <div class="col-md-2 mr-0 ml-0">
+                                                <div class="row">
+                                                    <div class="col-xs-3">
+                                                        <img class="clean-team-profile-pic"
+                                                            src="{% static 'files/icons/profile.png' %}">
+                                                    </div>
+                                                    <div class="col-xs-9">
+                                                        <div class="order-agent-content text-left">
+                                                            <h2>Jahir Rain</h2>
+                                                            <h6>Team Leader</h6>
+                                                            <h6>In time : 12:30 pm</h6>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="order-clean-section-header c-mt-10">
+                                            <h5>Assigned by</h5>
+                                        </div>
+
+                                        <div class="row c-mt-10">
+                                            <div class="col-md-2 mr-0 ml-0">
+                                                <div class="row">
+                                                    <div class="col-xs-3">
+                                                        <img class="clean-team-profile-pic"
+                                                            src="{% static 'files/icons/profile.png' %}">
+                                                    </div>
+                                                    <div class="col-xs-9">
+                                                        <div class="order-agent-content text-left">
+                                                            <h2>Jahir Rain</h2>
+                                                            <h6>Team Leader</h6>
+
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+
+                                            <div id="modal01" class="w3-modal" onclick="this.style.display='none'">
+                                                <div class="topright">
+                                                    <button class="img-close-button" onclick="onClose()"><i
+                                                            class="fa fa-times fa-lg"></i></button>
+                                                </div>
+                                                <div class="w3-modal-content w3-animate-zoom">
+                                                    <img id="img01" style="width:100%">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 media-gap">
+                                                <div class="order-clean-section-header c-mt-10">
+                                                    <h3>Cleaning Before</h3>
+                                                    <div class="owl-carousel c-mt-10">
+                                                        <div>
+                                                            <img class="slider-img pointer" onclick="onClick(this)"
+                                                                src="{% static 'files/images/1.jpg' %}" alt="">
+                                                        </div>
+                                                        <div>
+                                                            <img class="slider-img pointer" onclick="onClick(this)"
+                                                                src="{% static 'files/images/2.jpg' %}" alt="">
+                                                        </div>
+                                                        <div>
+                                                            <img class="slider-img pointer" onclick="onClick(this)"
+                                                                src="{% static 'files/images/1.jpg' %}" alt="">
+                                                        </div>
+                                                        <div>
+                                                            <img class="slider-img pointer" onclick="onClick(this)"
+                                                                src="{% static 'files/images/2.jpg' %}" alt="">
+                                                        </div>
+                                                        <div>
+                                                            <img class="slider-img pointer" onclick="onClick(this)"
+                                                                src="{% static 'files/images/1.jpg' %}" alt="">
+                                                        </div>
+                                                        <div>
+                                                            <img class="slider-img pointer" onclick="onClick(this)"
+                                                                src="{% static 'files/images/2.jpg' %}" alt="">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 media-gap">
+                                                <div class="order-clean-section-header c-mt-10">
+                                                    <h3>Cleaning After</h3>
+                                                    <div class="owl-carousel c-mt-10">
+                                                        <div>
+                                                            <img class="slider-img pointer" onclick="onClick(this)"
+                                                                src="{% static 'files/images/1.jpg' %}" alt="">
+                                                        </div>
+                                                        <div>
+                                                            <img class="slider-img pointer" onclick="onClick(this)"
+                                                                src="{% static 'files/images/2.jpg' %}" alt="">
+                                                        </div>
+                                                        <div>
+                                                            <img class="slider-img pointer" onclick="onClick(this)"
+                                                                src="{% static 'files/images/1.jpg' %}" alt="">
+                                                        </div>
+                                                        <div>
+                                                            <img class="slider-img pointer" onclick="onClick(this)"
+                                                                src="{% static 'files/images/2.jpg' %}" alt="">
+                                                        </div>
+                                                        <div>
+                                                            <img class="slider-img pointer" onclick="onClick(this)"
+                                                                src="{% static 'files/images/1.jpg' %}" alt="">
+                                                        </div>
+                                                        <div>
+                                                            <img class="slider-img pointer" onclick="onClick(this)"
+                                                                src="{% static 'files/images/2.jpg' %}" alt="">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="c-mt-20">
+                                        <hr class="bar">
+                                    </div>
+                                    <h1 class="other-media">Other media</h1>
+                                    <div class="row">
+                                        <div class="col-md-3 media-gap">
+                                            <div class="order-clean-section-header c-mt-10">
+                                                <h3> From Customer</h3>
+                                                <div class="owl-carousel c-mt-10">
+                                                    <div>
+                                                        <img class="slider-img pointer" onclick="onClick(this)"
+                                                            src="{% static 'files/images/1.jpg' %}" alt="">
+                                                    </div>
+                                                    <div>
+                                                        <img class="slider-img pointer" onclick="onClick(this)"
+                                                            src="{% static 'files/images/2.jpg' %}" alt="">
+                                                    </div>
+                                                    <div>
+                                                        <img class="slider-img pointer" onclick="onClick(this)"
+                                                            src="{% static 'files/images/1.jpg' %}" alt="">
+                                                    </div>
+                                                    <div>
+                                                        <img class="slider-img pointer" onclick="onClick(this)"
+                                                            src="{% static 'files/images/2.jpg' %}" alt="">
+                                                    </div>
+                                                    <div>
+                                                        <img class="slider-img pointer" onclick="onClick(this)"
+                                                            src="{% static 'files/images/1.jpg' %}" alt="">
+                                                    </div>
+                                                    <div>
+                                                        <img class="slider-img pointer" onclick="onClick(this)"
+                                                            src="{% static 'files/images/2.jpg' %}" alt="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 media-gap">
+                                            <div class="order-clean-section-header c-mt-10">
+                                                <h3> From Evaluator</h3>
+                                                <div class="owl-carousel c-mt-10">
+                                                    <div>
+                                                        <img class="slider-img pointer" onclick="onClick(this)"
+                                                            src="{% static 'files/images/1.jpg' %}" alt="">
+                                                    </div>
+                                                    <div>
+                                                        <img class="slider-img pointer" onclick="onClick(this)"
+                                                            src="{% static 'files/images/2.jpg' %}" alt="">
+                                                    </div>
+                                                    <div>
+                                                        <img class="slider-img pointer" onclick="onClick(this)"
+                                                            src="{% static 'files/images/1.jpg' %}" alt="">
+                                                    </div>
+                                                    <div>
+                                                        <img class="slider-img pointer" onclick="onClick(this)"
+                                                            src="{% static 'files/images/2.jpg' %}" alt="">
+                                                    </div>
+                                                    <div>
+                                                        <img class="slider-img pointer" onclick="onClick(this)"
+                                                            src="{% static 'files/images/1.jpg' %}" alt="">
+                                                    </div>
+                                                    <div>
+                                                        <img class="slider-img pointer" onclick="onClick(this)"
+                                                            src="{% static 'files/images/2.jpg' %}" alt="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+                                <div class="up-animation"></div>
+                                <div class="moreless-button " id="showless">Show Less</div>
+                            </div>
+                        </div><!--order details end-->
+
+                    </div>
+                    <div class="row c-mt-20">
+                        <div class="order-details-left-wrapper ">
+                            <div class="order-payment-section">
+                                <div class="row">
+                                    <div class="col-md-9">
+
+                                        <h2>Payment</h2>
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Total amount</div>
+                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.estimated_cost|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
+                                                </div>
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Discount</div>
+                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.discount|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
+                                                </div>
+                                                
+                                                {% if order.evaluation.credit_amount %}
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Applied Credit</div>
+                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.credit_amount|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
+                                                </div>
+                                                {% endif %}
+
+                                                {% if order.evaluation.is_promocode_applied == True %}
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Promocode</div>
+                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.promocode_amount|default_if_none:'0.000'|floatformat:3}} KD</span></div>
+                                                </div>
+                                                {% endif %}
+
+                                                {% if order.evaluation.fine_amount != 0 %}
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Fine</div>
+                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.fine_amount|floatformat:'3'}} KD</span></div>
+                                                </div>
+                                                {% endif %}
+
+                                                {% if order.evaluation.writeback_amount != 0 %}
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Write-Off Amount</div>
+                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.writeback_amount|floatformat:'3'}} KD</span></div>
+                                                </div>
+                                                {% endif %}
+
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">
+                                                        <h2><b>Final Amount</b> </h2>
+                                                    </div>
+                                                    <div class="col-xs-6">
+                                                        <h2>{{order.evaluation.total_cost|default_if_none:'0.000'|floatformat:'3'}} KD</h2>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Payment Policy</div>
+                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.payment_method|default_if_none:''}}</span>
+                                                        {% if order.amount_paid == 0.000 and order.evaluation.is_promocode_applied == False and order.evaluation.payment_method != 'SUBSCRIPTION' %}
+                                                        <button class="model-close ml-10" data-toggle="modal" data-target="#paymentModel">
+                                                            <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}">
+                                                        </button>
+                                                        {% else %}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+
+                                                {% if order.evaluation.payment_method == 'BREAKDOWN' %}
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Before Cleaning Amount</div>
+                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.before_cleaning_amount|default_if_none:''}} KD</span></div>
+                                                </div>
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">After Cleaning Amount</div>
+                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.after_cleaning_amount|default_if_none:''}} KD</span></div>
+                                                </div>
+                                                {% endif %}
+
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Paid</div>
+                                                    <div class="col-xs-6">: <span class="c-text">{{order.amount_paid|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
+                                                </div>
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Balance</div>
+                                                    <div class="col-xs-6">: <span class="c-text">{{order.remining_amount|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
+                                                </div>
+
+                                                {% if order.paymenthistory %}
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Payment Type(s)</div>
+                                                    <div class="col-xs-6">: <span class="c-text">
+                                                    {% for history in order.paymenthistory %}
+                                                    {% if history.payment_mode == 'ONLINECREDIT' %}
+                                                    {{history.payment_gateway|default_if_none:''}},
+                                                    {% else %}
+                                                    {{history.payment_mode|default_if_none:''}},
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                    </span></div>
+                                                {% endif %}
+
+                                                 {% if order.payment_completed_date %}
+                                                 <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Closed Date</div>
+                                                    <div class="col-xs-6">: <span class="c-text">{{order.payment_completed_date|default_if_none:''}}</span></div>
+                                                </div>
+                                                {% endif %}
+
+                                            </div>
+                                        </div>
+
+                                        <!-- <div class="row">
+                                            <div class="col-md-5">
+                                               
+                                                
+                                            </div>
+                                        </div> -->
+                                    </div>
+                                    <div class="col-md-3 m-mt30">
+                                        <div class="c-pr0060">
+                                            <div class="order-payment-section-card">
+                                                <div>
+                                                    <form>
+                                                        <label class="cc-container">Invoice
+                                                            <input type="radio"  name="radio" value="invoice">
+                                                            <span class="cc-checkmark"></span>
+                                                          </label>
+                                                          <label class="cc-container">Quotation
+                                                            <input type="radio" name="radio" value="quotation">
+                                                            <span class="cc-checkmark"></span>
+                                                          </label>
+                                                          <label class="cc-container">Receipt Voucher
+                                                            <input type="radio" name="radio" value="receipt">
+                                                            <span class="cc-checkmark"></span>
+                                                          </label>
+                                                          <label class="cc-container">Feedback Form
+                                                            <input type="radio" name="radio" value="feedback">
+                                                            <span class="cc-checkmark"></span>
+                                                          </label>
+                                                    </form>
+                                                </div>
+                                                <div class="payment-section-button text-center">
+                                                    <button class="sent-button" onclick="send_items()">Send</button>
+                                                    <button class="view-button" onclick="view_page()">View</button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 ml-0 mr-0 m-p-25">
+                    <div class="row">
+                        <!--order-left-stretch-->
+                        <div class="order-right-fixed">
+                            <div class="order-right-fixed"><!--order-right-fixed-->
+                                <div class="order-card-column whitebg red-border clickable-row-list" data-href="{% url 'common_items:client-orders' client_details.id %}"><!--order-card-column-->
+                                    <div class="card-innerwrapper"><!--card-innerwrapper-->
+                                    <div class="column-left"><img src="{% static 'files/images/card-orders-icon.png' %}"></div>
+                                    <div class="column-right"><!--column-right-->
+                                    <h1>Orders</h1>
+                                    <h2><label class="red-text">Active<span>{{active_orders_count|default_if_none:'0'}}</span></label> </h2>
+                                    <p><label>Total<span>{{total_orders_count|default_if_none:'0'}}</span></label></p>
+                                    </div><!--column-right-->
+                                    </div><!--card-innerwrapper-->
+                                </div><!--order-card-column-->
+                            </div><!--order-right-fixed-->
+                        </div><!--order-steps-wrapper-->
+                    </div>
+                    <div class="row c-mt-20">
+                        <div class="cleaning--right-fixed">
+                            <!--order-details-right-fixed-->
+                            <div class="order-right-bgwrapper orange-border"><!--right-bgwrapper-->  
+                                <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>
+                                <div class="client-name">{{client_details.name}}</div>
+                                <div class="common-gray-text">{{client_details.mobile_number}}</div>
+                                <div class="common-gray-text">{{client_details.email}}</div>
+                                <br>
+                                <hr class="hr">
+                                {% if client_details.company  %}
+                                <div class="common-gray-text">Company Name : <span class="bold-text">{{client_details.company}}</span></div>
+                                {% endif %}
+                                {% if client_details.nationality %}
+                                <div class="common-gray-text">Nationality : <span class="bold-text">{{client_details.nationality}}</span></div>
+                                {% endif %}
+                                {% if client_details.phone_number %}
+                                <div class="common-gray-text">Other Contact : <span class="bold-text">{{client_details.phone_number}}</span></div>
+                                {% endif %}
+                                <hr class="hr">
+                                <br>
+                                {% for address in client_details.customer_addresses %}
+                                <div class="address-bold"><i class="fa fa-lg fa-home orange-text" aria-hidden="true"></i> Address {{forloop.counter}}: <b>{{address.apartment}}</b></div>
+                                <div class="address">{% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}}, {{address.block}}, {{address.street}}, {% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} {{address.area.name}}, {{address.governorate.name}}</div>
+                                <br>
+                                {% endfor %}
+                            </div><!--right-bgwrapper-->
+
+                            <div class="c-button-div">
+                                <button class="side-buttons" data-toggle="modal" data-target="#feedbackModel">
+                                    <div class="row">
+                                        <div class="col-xs-4 text-right">
+                                            <i class="fa fa-comments fa-lg c-blue c-mr-5"></i>
+                                        </div>
+                                        <div class="col-xs-6 text-left mpl-0">
+                                            Add feedback
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+
+                            {% for schedule in order.orderschedules|slice:"1" %}
+                            {% if forloop.first and schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' or order.order_status == 'ORDER_CLOSED'%}
+                            <div class="c-button-div">
+                                <button class="side-buttons" data-toggle="modal" data-target="#reorderModel">
+                                    <div class="row">
+                                        <div class="col-xs-4 text-right">
+                                            <img class="button-icons" src="{% static 'files/icons/reorder.png' %}">
+                                        </div>
+                                        <div class="col-xs-6 text-left mpl-0">
+                                            Reorder
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
+                            <div class="c-button-div">
+                                <button data-toggle="modal" data-target="#cancelModel" class="side-buttons">
+                                    <div class="row">
+                                        <div class="col-xs-4 text-right">
+                                            <img class="button-icons" src="{% static 'files/icons/close.png' %}">
+
+                                        </div>
+                                        <div class="col-xs-6 text-left mpl-0">
+                                            Order Cancel
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                            {% endif %}
+
+                            <div class="c-button-div">
+                                <button class="side-buttons" data-toggle="modal" data-target="#raiseTicketModel"
+                                    class="side-buttons">
+                                    <div class="row">
+                                        <div class="col-xs-4 text-right">
+                                            <img class="button-icons" src="{% static 'files/icons/flag.png' %}">
+
+                                        </div>
+                                        <div class="col-xs-6 text-left mpl-0">
+                                            Raise Ticket
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                            <!--right-bgwrapper-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--order-top-wrapper-->
+<!-- Modal Cancel -->
+<div class="modal fade bd-example-modal-lg" id="cancelModel" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog cancel-model cancel-order-border" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="d-flex cl-modal-icons">
+                        <button data-dismiss="modal" class="model-close">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="cancel-model-content">
+                        <h1>Do you want to Cancel this order?</h1>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                        <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center">{% csrf_token %}
+                        <input type="hidden" name="evaluation" id="evaluation_id" value="{{order.evaluation.id}}">
+                        <input type="hidden" name="action_type" value="cancell_order">
+                        <button class="sent-button" type="submit">Yes</button>
+                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                        </form><!--Content ends here-->
+                        
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Add feedback -->
+<div class="modal fade bd-example-modal-lg" id="feedbackModel" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog cancel-model cancel-order-border" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="d-flex cl-modal-icons">
+                        <button data-dismiss="modal" class="model-close">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="cancel-model-content">
+                        <h1>Do you want to Add Feedback?</h1>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                        <button class="sent-button">Yes</button>
+                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Add Reorder -->
+<div class="modal fade bd-example-modal-lg" id="reorderModel" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog cancel-model cancel-order-border" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="d-flex cl-modal-icons">
+                        <button data-dismiss="modal" class="model-close">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="cancel-model-content">
+                        <h1>Do you want to Reorder?</h1>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                        
+                        <a href="{% url 'agent:agent-makequatation1duplicate' order.evaluation.id%}"><button class="sent-button" type="submit">Yes</button></a>
+                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                        
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Add Reorder -->
+<div class="modal fade bd-example-modal-lg" id="raiseTicketModel" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog cancel-model cancel-order-border" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="d-flex cl-modal-icons">
+                        <button data-dismiss="modal" class="model-close">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="cancel-model-content">
+                        <h1>Do you want to Raise Ticket ?</h1>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                        <a href="{% url 'agent:agent-orderticketregister' order.id %}"><button class="sent-button">Yes</button></a>
+                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Cleaning Date -->
+<div class="modal fade bd-example-modal-lg" id="cleaningDateModel" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog cancel-model cancel-order-border" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 c-mt-10 c-model-head">
+                    <p>Cleaning Date</p>
+                    <div class="c-close-icon">
+                        <button data-dismiss="modal" class="model-close">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row p-10">
+                <div class="col-md-4">
+
+                    <div id="cal1" class="model-calender">
+                        <div style="padding: 10px;" class="model-calander-head">
+                            <h2> <% year %> </h2>
+                            <h1> <% day %> </h1>
+
+                        </div>
+                        <div id="calendar" style="width: 100%;"></div>
+                        <input type="hidden" id="date_hidden">
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="model-cleaning-solt">
+                        Slots for Cleaning  :
+                    </div>
+                    <div class="row model-time-solt">
+                        <button class="time-solt-button" >12:00 AM - 3:00 AM</button>
+                        <button class="time-solt-button" >12:00 AM - 3:00 AM</button>
+                        <button class="time-solt-button" >12:00 AM - 3:00 AM</button>
+                        <button class="time-solt-button" >12:00 AM - 3:00 AM</button>
+                        <button class="time-solt-button" >12:00 AM - 3:00 AM</button>
+                        <button class="time-solt-button" >12:00 AM - 3:00 AM</button>
+                        <button class="time-solt-button" >12:00 AM - 3:00 AM</button>
+                        <button class="time-solt-button" >12:00 AM - 3:00 AM</button>
+
+                        
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                        <button class="sent-button">Submit</button>
+                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Payment Policy -->
+<div class="modal fade bd-example-modal-lg" id="paymentModel" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog cancel-model cancel-order-border" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 c-mt-10 c-model-head">
+                    <h1>Payment Policy</h1>
+                    <div class="c-close-icon">
+                        <button data-dismiss="modal" class="model-close">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-6">
+                            
+                            <div  >
+                                <select id="id_payment" class="minimal" v-on:change="onChange($event)">
+                                  <option value="Choosen Payment Method" >Choosen Payment Method</option>
+                                  <option value="PREPAID" {% if order.evaluation.payment_method == 'PREPAID' %}selected{% endif %}>Prepaid</option>
+                                  <option value="POSTPAID" {% if order.evaluation.payment_method == 'POSTPAID' %}selected{% endif %}>Post Paid</option>
+                                  <option value="Break-Down" {% if order.evaluation.payment_method == 'BREAKDOWN' %}selected{% endif %}>Break-Down</option>
+                                </select>
+                              </div>
+                        </div>
+                    </div>
+                    <div class="row c-mt-20" v-if="breakDownFlag" >
+                        <div class="col-md-6">
+                            <p>Before Cleaning</p>
+                            <input name="before_cleaning" id="id_before_cleaning" type="text" class="textBox model-text-border" placeholder=" " value="{{order.evaluation.before_cleaning_amount|default_if_none:''}}" onkeyup="beforeamountcheck()" required="required">
+                        </div>
+                        <div class="col-md-6">
+                            <p>After Cleaning</p>
+                            <input name="before_cleaning" id="id_after_cleaning" type="text" class="textBox model-text-border" placeholder=" " value="{{order.evaluation.after_cleaning_amount|default_if_none:''}}" onkeyup="afteramountcheck()" required="required">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 m-mt30">
+                    <div class="amount-card">
+                        <h2>Total Amount</h2>
+                        <div class="text-center amount-text"> <span id="id_amount">{{order.evaluation.total_cost|default_if_none:'0.000'|floatformat:'3'}}</span> KD</div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                        <button class="sent-button" onclick="CheckForm();">Submit</button>
+                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+<!--container-fluid space topspace-->
+
+
+
+</section>
+
+
+<!--content-->
+
+{% include 'agent/common/footer.html' %}
+</div>
+<!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+
+{% comment %} <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> {% endcomment %}
+<script src="{% static 'files/js/jquery.formset.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.en-AU.min.js" integrity="sha512-ghvIK/3dPoQzHCrGQxvxAeTtLGNHobiKoLA8tdztoqiiINxSre6RiloNaN6uVLg1ESyBiZh7rnmRBa+psz85Zw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
+<script src="{% static 'files/js/order/main.js' %}"></script>
+<!-- <script>
+    var x, i, j, l, ll, selElmnt, a, b, c;
+   
+    x = document.getElementsByClassName("custom-select");
+    l = x.length;
+    for (i = 0; i < l; i++) {
+      selElmnt = x[i].getElementsByTagName("select")[0];
+      ll = selElmnt.length;
+     
+      a = document.createElement("DIV");
+      a.setAttribute("class", "select-selected");
+      a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+      x[i].appendChild(a);
+   
+      b = document.createElement("DIV");
+      b.setAttribute("class", "select-items select-hide");
+      for (j = 1; j < ll; j++) {
+        
+        c = document.createElement("DIV");
+        c.innerHTML = selElmnt.options[j].innerHTML;
+        c.addEventListener("click", function(e) {
+            
+            var y, i, k, s, h, sl, yl;
+            s = this.parentNode.parentNode.getElementsByTagName("select")[0];
+            sl = s.length;
+            h = this.parentNode.previousSibling;
+            for (i = 0; i < sl; i++) {
+              if (s.options[i].innerHTML == this.innerHTML) {
+                s.selectedIndex = i;
+                h.innerHTML = this.innerHTML;
+                y = this.parentNode.getElementsByClassName("same-as-selected");
+                yl = y.length;
+                for (k = 0; k < yl; k++) {
+                  y[k].removeAttribute("class");
+                }
+                this.setAttribute("class", "same-as-selected");
+                break;
+              }
+            }
+            h.click();
+        });
+        b.appendChild(c);
+      }
+      x[i].appendChild(b);
+      a.addEventListener("click", function(e) {
+          
+          e.stopPropagation();
+          closeAllSelect(this);
+          this.nextSibling.classList.toggle("select-hide");
+          this.classList.toggle("select-arrow-active");
+        });
+    }
+    function closeAllSelect(elmnt) {
+     
+      var x, y, i, xl, yl, arrNo = [];
+      x = document.getElementsByClassName("select-items");
+      y = document.getElementsByClassName("select-selected");
+      xl = x.length;
+      yl = y.length;
+      for (i = 0; i < yl; i++) {
+        if (elmnt == y[i]) {
+          arrNo.push(i)
+        } else {
+          y[i].classList.remove("select-arrow-active");
+        }
+      }
+      for (i = 0; i < xl; i++) {
+        if (arrNo.indexOf(i)) {
+          x[i].classList.add("select-hide");
+        }
+      }
+    }
+   
+    document.addEventListener("click", closeAllSelect);
+    </script> -->
+    
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        //         $('#myModal').on('shown.bs.modal', function () {
+        //   $('#myInput').trigger('focus')
+        // })
+
+  
+        $("#show").click(function () {
+            if ($("#show").text() == "Show More") {
+                $("#show").text("Show Less");
+                $("#showmore").fadeIn();
+                $("#showmore1").fadeIn();
+                $("#showmore2").fadeIn();
+            } else {
+                $("#show").text("Show More");
+                $("#showmore1").fadeOut();
+                $("#showmore2").fadeOut();
+                $("#showmore").fadeOut();
+            }
+
+        });
+        $("#showless").click(function () {
+
+            $("#show").text("Show More");
+            $("#showmore1").fadeOut();
+            $("#showmore2").fadeOut();
+            $("#showmore").fadeOut();
+
+
+        });
+    });
+
+//total adjustment
+total_cost = parseFloat("{{order.evaluation.total_cost}}")
+
+function beforeamountcheck(){
+
+    after_amount  =  $("#id_after_cleaning").val();
+    before_amount =  $("#id_before_cleaning").val();
+
+    after_cleaning_amount = parseFloat(parseFloat(total_cost)-parseFloat(before_amount)).toFixed(3)
+    $("#id_after_cleaning").val(after_cleaning_amount) 
+
+    if(before_amount > total_cost)
+    {
+        $("#id_after_cleaning").val("0");
+        $("#id_before_cleaning").val("0");
+    } 
+
+}
+
+function afteramountcheck(){
+
+    after_amount  =  $("#id_after_cleaning").val();
+    before_amount =  $("#id_before_cleaning").val();
+
+    before_cleaning_amount = parseFloat(parseFloat(total_cost)-parseFloat(after_amount)).toFixed(3)
+    $("#id_before_cleaning").val(before_cleaning_amount) 
+
+    if(after_amount > total_cost)
+    {
+        $("#id_after_cleaning").val("0");
+        $("#id_before_cleaning").val("0");
+    } 
+
+}
+
+//Check Breakdown Amounts
+function CheckForm(){
+    console.log($('#id_payment').val(),"ptyp")
+  
+  if($('#id_payment').val() == 'BREAKDOWN')
+  {
+        before_cleaning_amount = $("#id_before_cleaning").val();
+        after_cleaning_amount  = $("#id_after_cleaning").val();
+        manual_total           = parseFloat(before_cleaning_amount)+parseFloat(after_cleaning_amount)
+        total                  = "{{order.evaluation.total_cost|default_if_none:'0.000'|floatformat:'3'}}";
+        if(total == manual_total)
+        {
+          axios.get(url+'/api/payment-policy-edit/',{ params: { 'evaluation_id':"{{order.evaluation.id}}", 'payment_method': $('#id_payment').val(), 'before_cleaning_amount':$("#id_before_cleaning").val(), 'after_cleaning_amount':$("#id_after_cleaning").val() } })
+            .then(function (response) {
+                alert("success!")
+            })
+        }
+        else
+        {
+          alert("Please Enter the Breakdown Amount Correctly")
+        }
+  }
+  else
+    {
+    axios.get(url+'/api/payment-policy-edit/',{ params: { 'evaluation_id':"{{order.evaluation.id}}", 'payment_method': $('#id_payment').val(), 'before_cleaning_amount':$("#id_before_cleaning").val(), 'after_cleaning_amount':$("#id_after_cleaning").val() } })
+    .then(function (response) {
+        alert("Payment Policy Updated !")
+        window.location.reload();    
+    })
+  }
+}
+
+//send invoice,receipt,quotation,feedbackform
+function send_items(){
+    var send_item = document.querySelector('input[name="radio"]:checked').value;
+    console.log(send_item,"itm")
+
+    if (send_item == 'invoice'){
+        $.ajax({
+        url: "/order-data/send-invoice",
+        data: {
+        'order_no': "{{order.evaluation.evaluation_id}}"
+        },
+        dataType: "json",
+        type: "GET",
+        contentType: "application/json;charset=utf-8",
+        
+        success: function(data) {
+            if (data == true){
+            alert("Invoice Sent!")
+              }else{
+                alert("Customer not opted for SMS!")  
+              }
+        }
+    
+    })
+    }
+
+    if (send_item == 'quotation'){
+
+        $.ajax({
+          url: "/order-data/send-quotation",
+          data: {
+          'order_no': "{{order.evaluation.evaluation_id}}"
+          },
+          dataType: "json",
+          type: "GET",
+          contentType: "application/json;charset=utf-8",
+          
+          success: function(data) {
+              if (data == true){
+              alert("Quotation Sent!")
+              }else{
+                alert("Customer not opted for SMS!")  
+              }
+          }
+      
+      })
+        
+    }
+
+    if (send_item == 'receipt'){
+        $.ajax({
+          url: "/order-data/send-receipt",
+          data: {
+          'order_no': "{{order.evaluation.evaluation_id}}"
+          },
+          dataType: "json",
+          type: "GET",
+          contentType: "application/json;charset=utf-8",
+          
+          success: function(data) {
+              console.log(data,"dat")
+              if (data == true){
+              alert("Receipt Sent!")
+              }else{
+                alert("No Payment History / Customer not opted for SMS!")  
+              }
+          }
+      
+      })
+    }
+
+    if (send_item == 'feedback'){
+        $.ajax({
+          url: "/order-data/send-feedback-link",
+          data: {
+          'order_no': "{{order.evaluation.evaluation_id}}"
+          },
+          dataType: "json",
+          type: "GET",
+          contentType: "application/json;charset=utf-8",
+          
+          success: function(data) {
+              console.log(data,"dat")
+              if (data == true){
+              alert("Feedback link Sent!")
+              }else{
+                alert("Customer not opted for SMS!")  
+              }
+          }
+      
+      })
+    }
+}
+
+//view invoice,quotation,receipt
+function view_page(){
+    var view_item = document.querySelector('input[name="radio"]:checked').value;
+
+    if (view_item == 'quotation'){
+        window.open("/customer/quatation/paw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}", "_blank");
+    }
+
+    if (view_item == 'invoice'){
+        window.open("/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}", "_blank");
+    }
+
+    if (view_item == 'receipt'){
+        {% for payment in order.paymenthistory %}
+        {% if forloop.last %}
+        window.open("/customer/payment/receipt/pvw{{payment.id}}", "_blank");
+        {% endif %}
+        {% endfor %}
+    }
+
+    if (view_item == 'feedback'){
+        window.open("/customer/feedback-page/{{order.id}}", "_blank");
+    }
+}
+
+</script>
+
+<script>
+
+$(document).ready(function(){
+$(".pn-prev").click();
+});
+
+
+    $(window).ready(function(){
+        
+        //Remove Duplicate details
+        duplicates_array = []
+        {% for orderschedule in order.orderschedules %}
+        book_id = "{{orderschedule.order_scheduler_book.id}}"
+        
+        if(duplicates_array.includes(book_id))
+        {
+            $("#details{{orderschedule.id}}").remove();
+        }
+        else
+        {
+            duplicates_array.push("{{orderschedule.order_scheduler_book.id}}");
+        }
+        {% endfor %}
+
+    })
+</script>
+   
+<script id="rendered-js">
+// dateconfirm_completed_count = 0    
+teamassign_completed_count  = 0
+cleaning_completed_count    = 0
+total_schedules = parseInt("{{order.orderschedules|length}}")
+
+{% for orderschedule in order.orderschedules %}
+
+//To Hide Images 
+    evaluation_img      = $('#media{{forloop.counter}}1').data('src');
+    investigation_img   = $('#media{{forloop.counter}}2').data('src');
+    before_img          = $('#media{{forloop.counter}}3').data('src');
+    after_img           = $('#media{{forloop.counter}}4').data('src');
+
+    if(investigation_img == '')
+    {
+        $('.gallery-widget-column-deletecolumn{{forloop.counter}}2').remove();
+    }
+    if(before_img == '')
+    {
+        $('.gallery-widget-column-deletecolumn{{forloop.counter}}3').remove();
+    }
+    if(after_img == '')
+    {
+        $('.gallery-widget-column-deletecolumn{{forloop.counter}}4').remove();
+    }
+
+    //remove Media box
+    if(investigation_img == '' & before_img == '' & after_img == '' & evaluation_img == undefined)
+    {
+        $('.media-head-{{orderschedule.id}}').remove();
+        $('.media-explain-{{orderschedule.id}}').remove();
+    }
+
+
+$('.moreless-button{{orderschedule.id}}').click(function () {
+  $('.more-details{{orderschedule.id}}').slideToggle();
+  if ($('.moreless-button{{orderschedule.id}}').text() == "Show More") {
+    $(this).text("Show Less");
+  } else {
+    $(this).text("Show More");
+  }
+});
+
+// {% if orderschedule.status == 'CONFIRMED' %}
+// dateconfirm_completed_count += 1;
+// {% endif %}  
+{% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' or orderschedule.work_status == 'CLEANING_FULFILLED' or orderschedule.work_status == 'CLEANING_IN_PROGRESS' %}
+teamassign_completed_count += 1;
+{% endif %}
+{% if orderschedule.work_status == 'CLEANING_FULFILLED' %}
+cleaning_completed_count += 1;
+{% endif %}
+
+{% endfor %}
+
+//payment policy edit button hide / Show
+if (teamassign_completed_count > 0){
+    $('.paymentedit').remove();
+}else{
+    $('.edit_payment_policy').append('<span style="color: blue "><i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</span>');
+}
+
+//feedback button hide/show
+if (cleaning_completed_count == total_schedules){
+    $('.send_feedback').attr("hidden",false);
+    $('.send_feedback').attr("disabled",false);
+}else{
+    $('.send_feedback').attr("hidden",true);
+    $('.send_feedback').attr("disabled",true);
+};
+
+if (cleaning_completed_count >= 1){
+    $('.raise_ticket_div').attr("hidden",false)
+};
+
+//change html
+// $("#date_confirmed").html(dateconfirm_completed_count)
+$("#team_assigned").html(teamassign_completed_count)
+
+//assigning team status hide / show
+if (teamassign_completed_count == 0){
+    $('.assign1').attr("hidden",true);
+    $('.assign3').attr("hidden",true);
+    $('.assign2').attr("hidden",false);
+}else if (teamassign_completed_count == total_schedules){
+    $('.assign1').attr("hidden",true);
+    $('.assign3').attr("hidden",false);
+    $('.assign2').attr("hidden",true);
+}else{
+    $('.assign1').attr("hidden",false);
+    $('.assign3').attr("hidden",true);
+    $('.assign2').attr("hidden",true);
+}
+
+$("#cleaning_completed").html(cleaning_completed_count)
+
+//cleaning status hide / show
+if (cleaning_completed_count == 0){
+    $('.cleaning1').attr("hidden",true);
+    $('.cleaning3').attr("hidden",true);
+    $('.cleaning2').attr("hidden",false);
+}else if (cleaning_completed_count == total_schedules){
+    $('.cleaning1').attr("hidden",true);
+    $('.cleaning3').attr("hidden",false);
+    $('.cleaning2').attr("hidden",true);
+}else{
+    $('.cleaning1').attr("hidden",false);
+    $('.cleaning3').attr("hidden",true);
+    $('.cleaning2').attr("hidden",true);
+}
+
+// if(dateconfirm_completed_count == total_schedules)
+// {
+// $("#date_confirmed_image").attr("src","{% static 'files/images/order-green-dateconfirmation.png' %}")
+// }
+// else if(dateconfirm_completed_count > 0)
+// {
+// $("#date_confirmed_image").attr("src","{% static 'files/images/order-dateconfirmation.png' %}")
+// }
+// else
+// {
+// $("#date_confirmed_image").attr("src","{% static 'files/images/order-gray-dateconfirmation.png' %}")
+// }
+
+if(teamassign_completed_count == total_schedules)
+{
+$("#team_assigned_image").attr("src","{% static 'files/images/order-green-assigningteam.png' %}")
+}
+else if(teamassign_completed_count > 0)
+{
+$("#team_assigned_image").attr("src","{% static 'files/images/order-assigningteam.png' %}")
+}
+else
+{
+$("#team_assigned_image").attr("src","{% static 'files/images/order-gray-assigningteam.png' %}")    
+}
+
+if(cleaning_completed_count == total_schedules)
+{
+$("#cleaning_completed_image").attr("src","{% static 'files/images/order-green-cleaning.png' %}")
+}
+else if(cleaning_completed_count > 0)
+{
+$("#cleaning_completed_image").attr("src","{% static 'files/images/order-cleaning.png' %}")
+}
+else
+{
+$("#cleaning_completed_image").attr("src","{% static 'files/images/order-gray-cleaning.png' %}")    
+}
+//bar percentage count
+total_percentage = (total_schedules*4)
+{% if order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'PREPAID' %}
+total_percentage += total_schedules
+{% else %}
+total_percentage += total_schedules*2
+{% endif %}
+
+active_percentage = teamassign_completed_count+cleaning_completed_count+total_schedules
+
+{% if order.evaluation.before_cleaning_amount == order.preamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
+active_percentage += total_schedules
+{% endif %}
+
+{% if order.evaluation.after_cleaning_amount == order.postamount_paid and order.evaluation.payment_method == 'BREAKDOWN' %}
+active_percentage += total_schedules
+{% endif %}
+
+{% if order.payment_status == 'COMPLETED' %} {% if order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'PREPAID' or order.evaluation.payment_method == 'PREPAIDSUBSCRIPTION' or order.evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' %}
+active_percentage += total_schedules
+{% endif %}
+{% endif %}
+
+{% if order.is_feedback_marked %}
+active_percentage += total_schedules
+{% endif %}
+
+console.log(active_percentage)
+console.log(total_percentage)
+marking_percentage = (active_percentage/total_percentage)*100
+$(".bar-loader").css("width",marking_percentage+'%');
+
+
+function appendsubscriptiondetails(schedule_id,media_append){
+
+{% for orderschedule in order.orderschedules %}
+if(schedule_id == {{orderschedule.id}} )
+{
+
+//Media Update  
+$('#media'+media_append+'1').empty()
+$('#media'+media_append+'1').attr('data-src','{% for media in orderschedule.order_scheduler_book.evaluationmedia %}{{media.media.url}},{% endfor %}');
+
+$('#media'+media_append+'2').empty();
+$('#media'+media_append+'2').attr('data-src','{% for investigation in orderschedule.investigations %}{% for media in investigation.investigationmedias %}{{media.media.url}},{% endfor %}{% endfor %}');
+
+$('#media'+media_append+'3').empty();
+$('#media'+media_append+'3').attr('data-src','{% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'BEFORE_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}');
+
+$('#media'+media_append+'4').empty();
+$('#media'+media_append+'4').attr('data-src','{% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'AFTER_CLEANING' %}{{media.media.url}},{% endif %}{% endfor %}{% endfor %}');
+
+$.getScript("{% static 'files/js/presentation.js' %}");
+
+
+
+append_html = '{% if  orderschedule.cleaning_team %}{% for cleaning_team in orderschedule.cleaning_team %}<div class="details-sub-head align-left small-head">Cleaning Team (Cleaning {{forloop.parentloop.counter}})</div><div class="order-clean-outer-wrapper whitebg"><!--order-clean-outer-wrapper--><div class="order-clean-team-wrapper"><!--order-clean-team-wrapper--><div class="order-common-date">{{orderschedule.start_at}}</div><div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1--><div class="team-profile-pic"><img src="{% static 'files/images/team-leader.png' %}"></div></div><!--order-clean-team-widget order-clean-team-widget-column1--><div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column1--><div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper--><div class="order-clean-inColumn"><!--order-clean-inColumn--><div class="team-Name">{{cleaning_team.team_leader.name}}</div><div class="team-profile">Team Incharge</div></div><!--order-clean-inColumn--></div><!--order-clean-team-inside-wrapper--></div><!--order-clean-team-widget order-clean-team-widget-column2--></div><!--order-clean-team-wrapper--><hr class="bar"><div class="order-clean-team-wrapper"><!--order-clean-team-wrapper--><div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1--><div class="team-profile-pic"><img src="{% static 'files/images/team-member.png' %}"></div></div><!--order-clean-team-widget order-clean-team-widget-column1--><div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2--><div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->{% for team_member in cleaning_team.cleaning_team_members %}{% if team_member.member != cleaning_team.team_leader %}<div class="order-clean-inColumn"><!--order-clean-inColumn--><div class="team-Name">{{team_member.member.name}}</div><div class="team-profile">Team Member</div></div><!--order-clean-inColumn-->{% endif %}{% endfor %}</div><!--order-clean-team-inside-wrapper--></div><!--order-clean-team-widget order-clean-team-widget-column2--></div><!--order-clean-team-wrapper-->{% if orderschedule.complaint %}<hr class="bar"><div class="order-clean-team-wrapper"><!--order-clean-team-wrapper--><div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column2--><div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper--><div class="notes"><div class="blue-text">Cases and Complaints</div><br><p>{{orderschedule.complaint}}</p></div></div><!--order-clean-team-inside-wrapper--></div><!--order-clean-team-widget order-clean-team-widget-column2--></div><!--order-clean-team-wrapper-->{% endif %}</div><!--order-clean-outer-wrapper-->{% endfor %}{% endif %}{% if orderschedule.investigations %}{% for investigation in orderschedule.investigations %}<div class="details-sub-head align-left">Investigation</div>     <div class="investigation-columns whitebg"><!--investigation-columns--><div class="investigation-columns-left"><!--investigation-columns-left-->{% if investigation.investigator.profile_image %}<div class="profile-pic"><img src="{{investigation.investigator.profile_image.url}}"></div>{% else %}<div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>{% endif %}<div class="client-name">{{investigation.investigator.name}}<div class="common-gray-text">Investigator</div></div></div><!--investigation-columns-left--><div class="investigation-columns-middle"><!--investigation-columns-middle--><div class="order-invest-date">{{investigation.sheduled_at}}</div><div class="notes">Notes</div><p>{{investigation.notes|linebreaksbr}}</p></div><!--investigation-columns-middle--><div class="investigation-columns-right"><!--investigation-columns-right--><div class=" "><img src="{% static 'files/images/cleaning1.jpg' %}"></div></div><!--investigation-columns-right--></div><!--investigation-columns-->{% for followup in investigation.followups %}{% for follow_up_scheduler in followup.follow_up_schedules %}{% for team in follow_up_scheduler.followupteams %}{% if team.followupmembers %}<div class="details-sub-head align-left small-head">Follow-up Cleaning</div><div class="order-clean-outer-wrapper whitebg"><!--order-clean-outer-wrapper--><div class="order-clean-team-wrapper"><!--order-clean-team-wrapper--><div class="order-common-date">{{follow_up_scheduler.start_at}}</div><div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1--><div class="team-profile-pic"><img src="{% static 'files/images/team-leader.png' %}"></div></div><!--order-clean-team-widget order-clean-team-widget-column1--><div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column1--><div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper--><div class="order-clean-inColumn"><!--order-clean-inColumn--><div class="team-Name">{{team.team_leader}}</div><div class="team-profile">Team Incharge</div></div><!--order-clean-inColumn--></div> <!--order-clean-team-inside-wrapper--></div><!--order-clean-team-widget order-clean-team-widget-column2--></div><!--order-clean-team-wrapper--><hr class="bar"><div class="order-clean-team-wrapper"><!--order-clean-team-wrapper--><div class="order-clean-team-widget order-clean-team-widget-column1"><!--order-clean-team-widget order-clean-team-widget-column1--><div class="team-profile-pic"><img src="{% static 'files/images/team-member.png' %}"></div></div><!--order-clean-team-widget order-clean-team-widget-column1--><div class="order-clean-team-widget order-clean-team-widget-column2"><!--order-clean-team-widget order-clean-team-widget-column2--><div class="order-clean-team-inside-wrapper"><!--order-clean-team-inside-wrapper-->{% for member in team.followupmembers %}<div class="order-clean-inColumn"><!--order-clean-inColumn--><div class="team-Name">{{member.member.name}}</div><div class="team-profile">Team Member</div></div><!--order-clean-inColumn-->{% endfor %}</div><!--order-clean-team-inside-wrapper--></div><!--order-clean-team-widget order-clean-team-widget-column2--></div><!--order-clean-team-wrapper--></div><!--order-clean-outer-wrapper-->{% endif %}{% endfor %}{% endfor %}{% endfor %}{% endfor %}{% endif %}'
+    
+    $('.appendsubscription').empty();
+    $('.appendsubscription').append(append_html);
+}
+{% endfor %}
+
+    }
+
+//followup total amount calculation
+var followup_total = 0;
+var cashback_total = 0;
+var buybackpromocode_total = 0;
+
+{% for orderschedule in order.orderschedules%}
+{% for investigation in orderschedule.investigations %} 
+
+{% for followup in investigation.followups %}
+{% if followup.total_cost != None %}
+followup_total += parseFloat("{{followup.total_cost}}") ;
+{% endif %}
+{% endfor %}
+
+{% for paybackdiscount in investigation.paybackdiscounts %}
+{% if paybackdiscount.approved_total_cost != None and investigation.is_paybackdiscount_approved and paybackdiscount.is_completed %}
+cashback_total += parseFloat("{{paybackdiscount.approved_total_cost}}") ;
+{% endif %}
+{% endfor %}
+
+{% for buybackpromocodegift in investigation.buybackpromocodegift %}
+{% if buybackpromocodegift.total_cost != None and investigation.is_buybackgiftpromo_approved and buybackpromocodegift.is_completed %}
+buybackpromocode_total += parseFloat("{{buybackpromocodegift.total_cost}}") ;
+{% endif %}
+{% endfor %}
+
+{% endfor %}
+{% endfor %}
+ 
+if(parseInt(followup_total) != 0)
+{
+$('.ticketcash').append('<div class="payment-text" ><div>Follow Up Total</div> : <span id="followup_total">'+parseFloat(followup_total).toFixed(3)+'</span> KD</div><br>');
+}
+if(parseInt(cashback_total) != 0)
+{
+$('.ticketcash').append('<div class="payment-text" ><div>Cash Back Total</div> : <span id="cashback_total">'+parseFloat(cashback_total).toFixed(3)+'</span> KD</div><br>')
+}
+if(parseInt(buybackpromocode_total) != 0)
+{
+$('.ticketcash').append('<div class="payment-text" ><div>Buy Back/Promo Code/Gift Total</div> : <span id="buybackpromocode_total">'+parseFloat(buybackpromocode_total).toFixed(3)+'</span> KD</div>');
+}
+
+//send invoice popup
+$('.send_invoice').click(function(){
+    $('#order_id').val($(this).data('id'));
+    $('#blcno_invoice_id').text($(this).data('blcno'));
+    $('#customername_invoice_id').text($(this).data('customername'));
+    $('#mobileno_invoice_id').text($(this).data('contactno'));
+    $('#starting_date_invoice_id').text($(this).data('startdate'));
+    $('#ending_date_invoice_id').text($(this).data('enddate'));
+    $('#total_price_invoice_id').text($(this).data('totalamount'));
+    $('#paid_invoice_id').text($(this).data('paidamount'));
+    $('#balance_invoice_id').text($(this).data('balance'));
+
+    remining_amount = parseFloat($(this).data('remining'));
+    if(remining_amount <= 0)
+    {
+        $('#remining_invoice_id').text((remining_amount));
+        $('#remining_invoice_id').addClass('green-text');
+    }
+    else
+    {
+        $('#remining_invoice_id').text($(this).data('remining'));
+        $('#remining_invoice_id').addClass('red-text');
+    }
+
+    $('#subscription_topay_id').prop('max',parseFloat($(this).data('balance')));
+
+    $('#send_invoice_popup').css({'visibility':'visible','opacity':1,});
+});
+$('#close_send_invoice_popup').click(function(){
+      $('#send_invoice_popup').css({'visibility':'hidden','opacity':0,});
+  });
+
+ </script>
+
+{% endblock %}

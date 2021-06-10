@@ -664,7 +664,15 @@ from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 
-from weasyprint import HTML
+from weasyprint import HTML,CSS
+
+def get_page_body(boxes):
+    for box in boxes:
+        if box.element_tag == 'body':
+            return box
+
+        return get_page_body(box.all_children())
+
 
 def quatation_html_to_pdf_view(request,evaluation_id):
 
@@ -687,16 +695,20 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 
 		duplicate_schedules.append(orderschedule.order_scheduler_book)
     
-
+	#Main Content
 	if order.evaluation.payment_method == 'SUBSCRIPTION':
 		html_string = render_to_string('customer/subscriptionquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 	else:
-		html_string = render_to_string('customer/newquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
+		html_string = render_to_string('customer/downloads/onetimequatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
+	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
+	main_doc = html.render()
+	return render(request,'customer/downloads/onetimequatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
+	
+	
 
-	html = HTML(string=html_string,base_url=request.build_absolute_uri())
-	html.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');
+	main_doc.write_pdf(target='/home/sonu/pdf/tmp/quatation/quatation.pdf');
 
-	fs = FileSystemStorage('/home/pdf/tmp/quatation/')
+	fs = FileSystemStorage('/home/sonu/pdf/tmp/quatation/')
 	with fs.open('quatation.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_quatation.pdf"'
@@ -940,7 +952,7 @@ def addpromocode(request):
 					order_amount = order.total_amount
 					promocode_amount = float(promocode.percentage/100) * float(order_amount)
 
-					if promocode_amount > promocode.percentage_upto_price:
+					if promocode.percentage_upto_price and promocode_amount > promocode.percentage_upto_price:
 						promocode_amount = promocode.percentage_upto_price
 
 				elif promocode.price:

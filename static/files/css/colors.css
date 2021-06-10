@@ -83,6 +83,22 @@
     background: #3cbbb1 !important;
 }
 
+.prepaid-bg{
+    background: #165baa !important;
+}
+
+.postpaid-bg{
+    background: #f765a3 !important;
+}
+
+.breakdown-bg{
+    background: #a155b9 !important;
+}
+
+.subscription-bg{
+    background: #3cbbb1 !important;
+}
+
 .round-marker{
     width: 12px;
     height: 12px;
@@ -90,6 +106,11 @@
     border-radius: 20px;
     margin: 5px;
 }
+
+.prepaid-line{ border-left:4px solid #165baa !important;}
+.postpaid-line{ border-left:4px solid #f765a3 !important;}
+.breakdown-line{ border-left:4px solid #a155b9 !important;}
+.subscription-line{ border-left:4px solid #3cbbb1 !important;}
 
 .completed-line{ border-left:4px solid #393983 !important;}
 .approved-line{ border-left:4px solid #31AA4A !important;}
@@ -192,4 +213,7 @@ Popups
 }
 .not-approved-border{
     border:1px solid  #8B8B8B !important;
+}
+.cancel-order-border{
+    border-bottom: 1px ​solid #2C4C82 !important;
 }
