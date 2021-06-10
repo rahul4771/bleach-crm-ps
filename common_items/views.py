@@ -1731,8 +1731,14 @@ class LeaveScheduler(IsAuthenticated,View):
 
 class ResourceManagementTest(IsAuthenticated,View):
 	def get(self,request):
-		return render(request,'common/resource/resource-new.html',{})
+
+		workers_date       = timezone.now().date()
+		workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date)|Q(end_at__date=workers_date)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__date=workers_date)|Q(end_at__date=workers_date)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
+
+		return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date})
+
 
 class ProductivityTest(IsAuthenticated,View):
 	def get(self,request):
 		return render(request,'common/productivity/productivity-test.html',{})
+

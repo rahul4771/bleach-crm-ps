@@ -566,70 +566,77 @@
   min-height: 288px;
   padding: 45px 5px 5px 25px;
 }
-.c-container {
+
+
+
+.cc-container {
   display: block;
   position: relative;
   padding-left: 35px;
   margin-bottom: 12px;
   cursor: pointer;
   font-size: 16px;
+  font-weight: 100;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  color: #434343;
-  font-weight: 100;
 }
 
-.c-container input {
+
+.cc-container input {
   position: absolute;
   opacity: 0;
   cursor: pointer;
-  height: 0;
-  width: 0;
 }
 
-.c-checkmark {
+
+.cc-checkmark {
   position: absolute;
   top: 0;
   left: 0;
-  height: 16px;
-  width: 16px;
-  background: #ffffff 0% 0% no-repeat padding-box;
+  height: 17px;
+  width: 17px;
+  background-color: #fff;
+  border-radius: 5px;
   border: 1px solid #707070;
-  border-radius: 4px;
-  opacity: 1;
 }
 
-.c-container:hover input ~ .c-checkmark {
+
+.cc-container:hover input ~ .cc-checkmark {
   background-color: #ccc;
 }
 
-.c-container input:checked ~ .c-checkmark {
-  background-color: #434343;
+
+.cc-container input:checked ~ .cc-checkmark {
+  background-color: #707070;
 }
 
-.c-checkmark:after {
+
+.cc-checkmark:after {
   content: "";
   position: absolute;
   display: none;
 }
 
-.c-container input:checked ~ .c-checkmark:after {
+
+.cc-container input:checked ~ .cc-checkmark:after {
   display: block;
 }
 
-.c-container .c-checkmark:after {
-  left: 5px;
-  top: 2px;
-  width: 5px;
-  height: 10px;
-  border: solid white;
-  border-width: 0 3px 3px 0;
-  -webkit-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  transform: rotate(45deg);
+
+.cc-container .cc-checkmark:after {
+ 	top: 5px;
+	left: 5px;
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	background: white;
 }
+
+
+
+
 
 .sent-button {
   background: #2c4c82 0% 0% no-repeat padding-box;
