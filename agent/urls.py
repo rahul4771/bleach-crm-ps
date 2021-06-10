@@ -22,6 +22,7 @@ urlpatterns = [
 	url(r'^feedbacks/$',views.FeedbackDetails.as_view(),name='agent-feedbacks'),
 	url(r'^feedback/details/(?P<client_id>[-\w]+)/(?P<order_id>[-\w]+)/$',views.FeedbackAdvanced.as_view(),name='agent-feedbackadvanced'),	
 	url(r'^newfeedback/$',views.AddFeedBack.as_view(),name='new-feedback'),
+	url(r'^newfeedback/order/(?P<orderid>[-\w]+)/$',views.AddFeedBackOrder.as_view(),name='new-feedback-order'),
 
 	
 	url(r'^tickets/edit/(?P<ticket_id>[-\w]+)/(?P<order_id>[-\w]+)/$',views.TicketDetailsEdit.as_view(),name='agent-tickets-edit'),
