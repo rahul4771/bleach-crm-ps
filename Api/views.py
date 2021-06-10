@@ -752,3 +752,22 @@ class DailySalesChartAPI(APIView):
 		response_dict = {'success':True,'list':saleslist}
 
 		return Response(response_dict,HTTP_200_OK)
+
+class PaymentPolicyEditAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def post(self,request):
+		
+		payment_method 			= request.POST.get('payment_method')
+		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
+		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
+
+		print(payment_method,before_cleaning_amount,after_cleaning_amount,"amts")
+
+		#update payment method
+		# Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+		
+		response_dict = {'success':True}
+
+		return Response(response_dict,HTTP_200_OK)
