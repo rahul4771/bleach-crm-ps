@@ -664,7 +664,15 @@ from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 
-from weasyprint import HTML
+from weasyprint import HTML,CSS
+
+def get_page_body(boxes):
+    for box in boxes:
+        if box.element_tag == 'body':
+            return box
+
+        return get_page_body(box.all_children())
+
 
 def quatation_html_to_pdf_view(request,evaluation_id):
 
@@ -687,14 +695,49 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 
 		duplicate_schedules.append(orderschedule.order_scheduler_book)
     
-
+	#Main Content
 	if order.evaluation.payment_method == 'SUBSCRIPTION':
 		html_string = render_to_string('customer/subscriptionquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 	else:
-		html_string = render_to_string('customer/newquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
+		html_string = render_to_string('customer/downloads/onetimequatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
+	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
+	main_doc = html.render()
+	
+	exists_links = False
+	#Header
+	html = HTML('templates/customer/downloads/header.html')
+	header = html.render(stylesheets=[CSS(string='div {position: fixed; top: 1cm; left: 1cm;}')])
 
-	html = HTML(string=html_string,base_url=request.build_absolute_uri())
-	html.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');
+	header_page = header.pages[0]
+	exists_links = exists_links or header_page.links
+	header_body = get_page_body(header_page._page_box.all_children())
+	header_body = header_body.copy_with_children(header_body.all_children())
+	
+	#Footer
+	html = HTML('templates/customer/downloads/footer.html')
+	footer = html.render(stylesheets=[CSS(string='div {position: fixed; bottom: 1cm; left: 1cm;}')])
+
+	footer_page  = footer.pages[0]
+	exists_links = exists_links or footer_page.links
+	footer_body = get_page_body(footer_page._page_box.all_children())
+	footer_body = footer_body.copy_with_children(footer_body.all_children())
+
+	#Insert header and footer in main doc
+	for i, page in enumerate(main_doc.pages):
+		print(i,"page")
+		if not i:
+		    continue
+
+		page_body = get_page_body(page._page_box.all_children())
+
+		page_body.children += header_body.all_children()
+		page_body.children += footer_body.all_children()
+
+		if exists_links:
+			page.links.extend(header_page.links)
+			page.links.extend(footer_page.links)
+
+	main_doc.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');
 
 	fs = FileSystemStorage('/home/pdf/tmp/quatation/')
 	with fs.open('quatation.pdf') as pdf:
