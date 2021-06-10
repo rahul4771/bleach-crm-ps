@@ -85,6 +85,10 @@ const app=new Vue({
         
       },
     data: {
+      customDateSelected:[],
+      customDialog:false,
+      cleaningPolicy:'',
+      altweekStat:false,
       subStat:'',
       altdaysStat:false,
       currentPageTitle:'Booking',
@@ -452,6 +456,27 @@ selected_double_slots:[],
 visits:[],
 visitDateTime:[],
 no_of_visits:null,
+monthly_starting_date:'',
+menu2: false,
+monthlyDialog:false,
+week1:['01','02','03','04','05','06','07'],
+week2:['08','09','10','11','12','13','14'],
+week3:['15','16','17','18','19','20','21'],
+week4:['22','23','24','25','26','27','28'],
+week5:['29','30','31'],
+autofixStat:false,
+selected_monthly_date:[],
+reselectDialog:false,
+reselectSlot:[],
+reselectDate:{},
+reselectDateIndex:null,
+scheduleFormat:{
+  allSchedule:{},
+  individual:{}
+},
+
+schedule_serviceTypes:[],
+schedule_serviceTypes_selected:[],
 slotFormat:{
   "1":{
     start_time:'12:00 AM',
@@ -501,16 +526,166 @@ slotFormat:{
     start_time:'10:00 PM',
     end_time:'12:00 AM'
   }
-}    
+},
+fixedSlots:{}    
       },
       methods: {
+        calcSelectedServices(){
+          this.schedule_serviceTypes=[]
+          if(this.scheduleStat){
+            this.schedule_serviceTypes=[...this.serviceTypes]
+          }
+          else{
+            for(var i=0;i<this.schedule_serviceTypes_selected.length;i++){
+              this.schedule_serviceTypes.push(this.multiServicesBill[this.schedule_serviceTypes_selected[i]].service)
+            }
+          }
+        },
+        addScheduledService(service,index){
+          this.schedule_serviceTypes_selected[index]={
+            service:service
+          }
+        },
+       
+        addToSchedule(){
+          if(this.scheduleStat){
+            this.scheduleFormat.allSchedule={
+              starting_date:this.visits[0].dateTime,
+              visits:this.visits
+            }
+          }
+          else{
+            for(var i=0;i<this.schedule_serviceTypes_selected.length;i++){
+              
+              this.scheduleFormat.individual[this.schedule_serviceTypes_selected[i]]={
+                starting_date:this.visits[0].dateTime,
+                visits:this.visits
+              }
+            }
+          }
+          this.visits=[]
+          
+          this.activeTab='Cart'
+        },
+        changeVisitDate(){
+          
+          var day=moment(this.dateSelected,'YYYY-MM-DD') 
+            var dayname=day.format('ddd')
+            var startSlot=Math.min(...this.selected_double_slots)
+            var dateTime=day.format('DD-MM-YYYY')+' '+this.slotFormat[startSlot].start_time
+            this.visits[this.reselectDateIndex]={
+              date:day.format('DD-MM-YYYY'),      
+              slots:this.selected_double_slots,
+              day:dayname,
+              dateTime:day.format('DD-MM-YYYY')+' '+this.slotFormat[startSlot].start_time
+            }
+            this.visitDateTime=[]
+            this.visitDateTime.push(dateTime)
+            this.fixedSlots={}
+            this.checkAvailablility()
+            this.reselectDialog=false
+           
+
+        },
+        reselectVisitDate(slot,index){
+          this.reselectDate=slot
+          this.reselectDateIndex=index
+          this.reselectDialog=true
+          this.selected_double_slots=[]
+        },
+        selectMonthlyDate(date){
+          if(this.selected_monthly_date.includes(date)){
+            var index=this.selected_monthly_date.indexOf(date)
+            this.selected_monthly_date.splice(index,1)
+          }
+          else{
+            this.selected_monthly_date.push(date)
+          }
+          
+          
+        },
+        checkFixedSlots(slot,index){
+          console.log("fixed slot is "+this.fixedSlots[slot])
+          var duration=this.visits[index].slots.length*2
+          console.log("duration : "+duration)
+          var startTime=''
+          var end=''
+          var endTime=''
+          var totalTime=''
+          if(this.fixedSlots[slot]!='Not Available' && this.fixedSlots[slot] ){
+           // console.log("found the slot")
+           this.visits[index].slots=[]
+            var start=this.fixedSlots[slot]
+             console.log("start is"+start)
+             startTime=moment(start,'DD-MM-YYYY hh:mm A').format('hh:mm A')
+             end=moment(start,'DD-MM-YYYY hh:mm A').add(duration,'hours')
+             endTime=moment(end).format('hh:mm A')
+             totalTime=startTime+' - '+endTime
+             console.log("START time is"+moment(start)+'end time :'+end)
+            console.log("fixed time is"+totalTime)
+           
+            this.visits[index].status='fixed'
+           this.visits[index].dateTime=slot.split(' ')[0]+' '+startTime
+            
+            var counter=startTime
+            var limit=endTime
+            console.log("counter"+counter+'limit :'+limit)
+            while(moment(counter,'hh:mm A').isBefore(moment(limit,'hh:mm A')))
+            {
+            for(var i in this.slotFormat){
+              console.log("slot format:"+this.slotFormat[i].start_time+'counter :'+counter)
+              if(this.slotFormat[i].start_time==counter){
+                this.visits[index].slots.push(parseInt(i))
+              }
+            }
+            counter=moment(counter,'hh:mm A').add(2,'hours').format('hh:mm A')
+            
+          }
+          return totalTime
+        }
+          else{
+            return false
+          }
+          
+        },
+        getCombinedSlot(slots){
+          var min=Math.min(...slots)
+          var max=Math.max(...slots)
+          console.log("aray:"+slots+"min is"+min+"max is"+max)
+          var combined = this.slotFormat[String(min)].start_time+' - '+this.slotFormat[String(max)].end_time
+          return combined
+        },
+        findCustomVisits(){
+         for(var i=0;i<this.customDateSelected.length;i++){
+           var day=moment(this.customDateSelected[i],'YYYY-MM-DD')
+           var dayname=day.format('ddd')
+           var startSlot=Math.min(...this.selected_double_slots)
+           var dateTime=day.format('DD-MM-YYYY')+' '+this.slotFormat[startSlot].start_time
+           this.visits.push({
+            date:day.format('DD-MM-YYYY'),      
+            slots:this.selected_double_slots,
+            day:dayname,
+            dateTime:day.format('DD-MM-YYYY')+' '+this.slotFormat[startSlot].start_time
+          })
+          
+           this.visitDateTime.push(dateTime)
+         }
+         this.checkAvailablility()
+         this.customDialog=false
+          
+        },
         findVisits(){
         
          this.scheduleDialog=false
+
+         /* Weekly Cleaning calculator */
+         if(this.subStat=='Weekly')
+         {
          var count=0
         var visitcount=0
 
           while(count<999){
+            
             var day=moment(this.dateSelected,'YYYY-MM-DD').add(count,"days")
             
             var dayname=day.format('ddd')
@@ -532,32 +707,151 @@ slotFormat:{
               this.checkAvailablility()
               break;
             }
+            if(this.altweekStat && dayname=='Sat'){
+              count=count+8
+            }
+           else{
+            count++
+           }
+          }   
+          }  
+          /* Daily Cleaning calculator */
+          else if(this.subStat=='Daily')
+         {
+          var count=0
+          var visitcount=0
+          while(count<999){
             
-           count++
+            var day=moment(this.dateSelected,'YYYY-MM-DD').add(count,"days")
             
+          
+            var startSlot=Math.min(...this.selected_double_slots)
+            var dateTime=day.format('DD-MM-YYYY')+' '+this.slotFormat[startSlot].start_time
+            
+              this.visits.push({
+                date:day.format('DD-MM-YYYY'),      
+                slots:this.selected_double_slots,
+              
+                dateTime:day.format('DD-MM-YYYY')+' '+this.slotFormat[startSlot].start_time
+              })
+              
+               this.visitDateTime.push(dateTime)
+              visitcount++
+           
+            
+            if(visitcount==parseInt(this.no_of_visits)){
+              this.checkAvailablility()
+              break;
+            }
+            if(this.altdaysStat){
+              count=count+2
+            }
+           else{
+            count++
+           }
+          } 
+         }
+          
+        },
+        findMonthlyVisits(){
+         
+          console.log("called monthly")
+          var count=0
+          var visitcount=0
+          while(count<999){
+            
+            var day=moment(this.monthly_starting_date,'YYYY-MM-DD').add(count,"days")
+          
+           var dayNo=day.format('DD')
+           console.log("dayno"+dayNo)
+           if(dayNo!=undefined)
+           {
+           if(this.selected_monthly_date.includes(String(dayNo)))
+           {
+           console.log("yes i foiund")
+            var startSlot=Math.min(...this.selected_double_slots)
+            var dateTime=day.format('DD-MM-YYYY')+' '+this.slotFormat[startSlot].start_time
+            
+              this.visits.push({
+                date:day.format('DD-MM-YYYY'),      
+                slots:this.selected_double_slots,
+              
+                dateTime:day.format('DD-MM-YYYY')+' '+this.slotFormat[startSlot].start_time
+              })
+              
+               this.visitDateTime.push(dateTime)
+               visitcount++
+            }
           }
+              
+           
+            
+            if(visitcount==parseInt(this.no_of_visits)){
+             this.checkAvailablility()
+              break;
+            }
+           
+            
+           
+            count++
+           
+          }
+          this.monthlyDialog=false 
         },
         checkAvailablility(){
          axios.post(this.url+'/customer/ajax/multipleservice/multipledates/cleaningslotes/',{number_of_cleaners:this.selectedDuration.cleaners,
           cleaning_hours:this.selectedDuration.hours,
-          service_types:this.serviceTypes,
+          service_types:this.schedule_serviceTypes,
           cleaning_datetimes:this.visitDateTime}).then(response=>{
             this.slotStat=response.data
+            for(var i=0;i<this.visits.length;i++){
+              if(this.slotStat.available_slotes.includes(this.visits[i].dateTime)){
+                this.visits[i].status='fixed'
+              }
+            }
+            if(this.slotStat.busy_slotes.length>0){
+              this.autofixStat=false
+            }
+            else{
+              this.autofixStat=true
+            }
 
          })
           
           
         },
         autoFix(){
+          this.fixedSlots={}
           axios.post(this.url+'/customer/ajax/multipleservice/multipledates/cleaningslotes/autofix/',{number_of_cleaners:this.selectedDuration.cleaners,
            cleaning_hours:this.selectedDuration.hours,
-           service_types:this.serviceTypes,
+           service_types:this.schedule_serviceTypes,
            cleaning_datetimes:this.slotStat.busy_slotes}).then(response=>{
-             this.slotStat=response.data
+             this.fixedSlots=response.data.slote_details
+             this.autofixStat=true
+             
  
           })
            
            
+         },
+         checkFixStatus(){
+           var flag=false
+          for(var i=0;i<this.visits.length;i++){
+            if(this.visits[i].status){
+              if(this.visits[i].status=='fixed'){
+                flag=true
+              }
+              else{
+                flag=false
+                break
+              }
+            }
+            else{
+              flag=false
+              break
+            }
+          }
+          return flag
          },
         calcSlots(){
           this.double_slots=[]
@@ -2135,6 +2429,7 @@ try {
   goToSchedule(){
       this.activeTab='Schedule'
       this.currentPageTitle='Schedule',
+      this.calcSelectedServices()
       this.newdurationcalculation();
   },
   goToBilling(){
@@ -2686,13 +2981,13 @@ try {
        axios
       .get(
         this.url+"/customer/ajax/getserviceproductivity?service_type=" +
-          this.serviceTypes[k]
+          this.schedule_serviceTypes[k]
       )
       .then((response) => {
           
-           var selected_service=this.serviceTypes[k]
+           var selected_service=this.schedule_serviceTypes[k]
           console.log(response.data)
-          this.durationData[this.serviceTypes[k]]=response.data
+          this.durationData[this.schedule_serviceTypes[k]]=response.data
 
           /*   Calculation begins */
          console.log("selected service is"+selected_service)
@@ -2782,7 +3077,7 @@ try {
      this.duration=[]
   let promises = [];
   var count=0;
-     for(var k=0;k<this.serviceTypes.length;k++){
+     for(var k=0;k<this.schedule_serviceTypes.length;k++){
       
      
   promises.push(

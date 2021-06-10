@@ -35,13 +35,248 @@
 
 
       <div>
+<!-- Reselect Dialog-->
+
+<v-dialog
+v-model="reselectDialog"
+width="1000"
+
+>
+<v-card>
+<div class="row " style="margin:0 !important" v-if="selectedDuration.hours">
+  <div class="col-md-4">
+    <div >
+      Choose starting Date
+    </div>
+    <v-date-picker  v-model="dateSelected" full-width elevation="5" color="primary"
+    v-on:change="calcSlots()" class="mt-2" :min="today"></v-date-picker>
+  </div>
+
+  <div class="col-md-8"  >
+    <div>
+      Select  Slots
+    </div>
+<div class="row mt-4">
+  <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+    <div class="time-slot duration text-center p-2" 
+   @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
+     <% slot.start_time+' - '+ slot.end_time %>
+    </div>
+
+    <div class="time-slot duration-active text-center p-2"  v-if='selected_double_slots.includes((sindex+1))' @click="removeDoubleSlot((sindex+1))">
+      <% slot.start_time+' - '+ slot.end_time %>
+    </div>
+    <div class="time-slot duration-inactive text-center p-2"  v-if='!checkSlotStat((sindex+1)) && !selected_double_slots.includes((sindex+1))' >
+      <% slot.start_time+' - '+ slot.end_time %>
+    </div>
+  </div>
+  <div class="col-md-12 ">
+    <div class="d-flex justify-center">
+    <v-btn color="primary" @click="changeVisitDate()">
+      Proceed
+    </v-btn>
+    <v-btn color="primary" outlined class="ml-2" @click="scheduleDialog=false">
+      Cancel
+    </v-btn>
+    </div>
+  </div>
+  </div>
+
+  </div>
+</div>
+</v-card>
+</v-dialog>
+<!-- Reselect dialog ends here-->
+<!-- Custpm Booking Begins -->
+<v-dialog
+v-model="customDialog"
+width="1000"
+
+>
+<v-card style="min-height:600px">
+  <div class="row m-0" style="margin:0 !important">
+    <div class="col-md-12">
+      <h6>Choose a duration</h6>
+    </div>
+    <div class="col-md-2 col-12">
+      <div class="text-center p-2">In Hours</div>
+    </div>
+    <div class="col-md-2 col-6" v-for="(item, durindex) in duration" v-bind:key="durindex">
+      <div class="duration-active text-center p-2" v-on:click="selectDuration(item)"
+        v-if="selectedDuration == item">
+        <b>
+          <% item.hours %>
+        </b>
+      </div>
+      <div class="duration text-center p-2" v-on:click="selectDuration(item)" v-else>
+        <b>
+          <% item.hours %>
+        </b>
+      </div>
+      <div v-if="selectedDuration == item" class="text-center sub-content">
+        <% item.hours / 2 %> slots
+      </div>
+    </div>
+    </div>
+  <div class="row m-0" v-if="selectedDuration.hours" style="margin:0 !important">
+    <div class="col-md-4">
+      <div >
+        Choose Visit Dates
+      </div>
+      <v-date-picker  v-model="customDateSelected" full-width elevation="5" color="primary"
+      v-on:change="calcSlots()" class="mt-2" :min="today" multiple></v-date-picker>
+    </div>
+    <div class="col-md-8 "  >
+      <div class="mt-4">
+        Select  Slots
+      </div>
+  <div class="row mt-2" style="margin:0 !important">
+    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+      <div class="time-slot duration text-center p-2" 
+     @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
+       <% slot.start_time+' - '+ slot.end_time %>
+      </div>
+  
+      <div class="time-slot duration-active text-center p-2"  v-if='selected_double_slots.includes((sindex+1))' @click="removeDoubleSlot((sindex+1))">
+        <% slot.start_time+' - '+ slot.end_time %>
+      </div>
+      <div class="time-slot duration-inactive text-center p-2"  v-if='!checkSlotStat((sindex+1)) && !selected_double_slots.includes((sindex+1))' >
+        <% slot.start_time+' - '+ slot.end_time %>
+      </div>
+    </div>
+    <div class="col-md-12 ">
+      <div class="d-flex justify-center">
+      <v-btn color="primary" @click="findCustomVisits()">
+        Proceed
+      </v-btn>
+      <v-btn color="primary" outlined class="ml-2" @click="scheduleDialog=false">
+        Cancel
+      </v-btn>
+      </div>
+    </div>
+    </div>
+  
+    </div>
+  </div>
+</v-card>
+</v-dialog>
+
+<!-- Custom booking ends here-->        
+
+<!-- Monthly Booking Begins -->
+<v-dialog
+v-model="monthlyDialog"
+width="1000"
+
+>
+<v-card style="min-height:600px">
+  <div class="row m-0" style="margin:0 !important">
+    <div class="col-md-12">
+      <h6>Choose a duration</h6>
+    </div>
+    <div class="col-md-2 col-12">
+      <div class="text-center p-2">In Hours</div>
+    </div>
+    <div class="col-md-2 col-6" v-for="(item, durindex) in duration" v-bind:key="durindex">
+      <div class="duration-active text-center p-2" v-on:click="selectDuration(item)"
+        v-if="selectedDuration == item">
+        <b>
+          <% item.hours %>
+        </b>
+      </div>
+      <div class="duration text-center p-2" v-on:click="selectDuration(item)" v-else>
+        <b>
+          <% item.hours %>
+        </b>
+      </div>
+      <div v-if="selectedDuration == item" class="text-center sub-content">
+        <% item.hours / 2 %> slots
+      </div>
+    </div>
+    </div>
+  <div class="row m-0" v-if="selectedDuration.hours" style="margin:0 !important">
+    <div class="col-md-4 text-center">
+      <div class="mt-4">
+        Select Visit Date
+      </div>
+      <div class="custom_cal justify-center mt-2">
+        <div class="d-flex">
+          <div v-for="(day,dindex) in week1" class="cal-column"  @click="selectMonthlyDate(day)">
+            <div v-if="!selected_monthly_date.includes(day)" class="monthly-day"><% day %></div>
+            <div v-else class="monthly-day-active"><% day %></div>
+          </div>
+        </div>
+        <div class="d-flex">
+          <div v-for="(day,dindex) in week2" class="cal-column"  @click="selectMonthlyDate(day)">
+            <div v-if="!selected_monthly_date.includes(day)" class="monthly-day"><% day %></div>
+            <div v-else class="monthly-day-active"><% day %></div>
+          </div>
+        </div>
+        <div class="d-flex">
+          <div v-for="(day,dindex) in week3" class="cal-column"  @click="selectMonthlyDate(day)">
+            <div v-if="!selected_monthly_date.includes(day)" class="monthly-day"><% day %></div>
+            <div v-else class="monthly-day-active"><% day %></div>
+          </div>
+        </div>
+        <div class="d-flex">
+          <div v-for="(day,dindex) in week4" class="cal-column"  @click="selectMonthlyDate(day)">
+            <div v-if="!selected_monthly_date.includes(day)" class="monthly-day"><% day %></div>
+            <div v-else class="monthly-day-active"><% day %></div>
+          </div>
+        </div>
+        <div class="d-flex">
+          <div v-for="(day,dindex) in week5" class="cal-column"  @click="selectMonthlyDate(day)">
+            <div v-if="!selected_monthly_date.includes(day)" class="monthly-day"><% day %></div>
+            <div v-else class="monthly-day-active"><% day %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8 "  >
+      <div class="mt-4">
+        Select  Slots
+      </div>
+  <div class="row mt-2" style="margin:0 !important">
+    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+      <div class="time-slot duration text-center p-2" 
+     @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
+       <% slot.start_time+' - '+ slot.end_time %>
+      </div>
+  
+      <div class="time-slot duration-active text-center p-2"  v-if='selected_double_slots.includes((sindex+1))' @click="removeDoubleSlot((sindex+1))">
+        <% slot.start_time+' - '+ slot.end_time %>
+      </div>
+      <div class="time-slot duration-inactive text-center p-2"  v-if='!checkSlotStat((sindex+1)) && !selected_double_slots.includes((sindex+1))' >
+        <% slot.start_time+' - '+ slot.end_time %>
+      </div>
+    </div>
+    <div class="col-md-12 ">
+      <div class="d-flex justify-center">
+      <v-btn color="primary" @click="findMonthlyVisits()">
+        Proceed
+      </v-btn>
+      <v-btn color="primary" outlined class="ml-2" @click="scheduleDialog=false">
+        Cancel
+      </v-btn>
+      </div>
+    </div>
+    </div>
+  
+    </div>
+  </div>
+</v-card>
+</v-dialog>
+
+<!-- Monthly booking ends here-->
+
         <!--- Schedule Dialog Begins-->
 <v-dialog
 v-model="scheduleDialog"
 
 width="1000"
+
 >
-<v-card>
+<v-card style="min-height:500px">
   
 <div class="row m-0" style="margin:0 !important">
   <div class="col-md-12">
@@ -1549,6 +1784,7 @@ width="1000"
                            inset
                            class="book-stat"
                           label="Schedule Together"
+                          @change="calcSelectedServices()"
                            ></v-switch>
                       </div>
                     </div>
@@ -1558,10 +1794,10 @@ width="1000"
                           <div class="d-flex">
                               <div class="text-left mr-auto">
                                 <v-checkbox
-                                v-model="cartItems"
-                                value='cart1'
+                                v-model="schedule_serviceTypes_selected"
+                                :value='sindex'
                                 class="mt-0 pt-0 "
-                                v-if="!scheduleStat"
+                                v-if="!scheduleStat && !scheduleFormat.individual[sindex]"
                                
                               ></v-checkbox>
                             
@@ -1573,6 +1809,22 @@ width="1000"
                                 <i class="far fa-trash-alt"></i>
 
                               </div>
+                          </div>
+                          <div class="d-flex" v-if="scheduleFormat.allSchedule.starting_date && scheduleStat">
+                            <div>
+                              <% scheduleFormat.allSchedule.starting_date.split(' ')[0] %>
+                            </div>
+                            <div class="ml-4">
+                              <% scheduleFormat.allSchedule.visits.length %> Visits
+                            </div>
+                          </div>
+                          <div class="d-flex" v-if="scheduleFormat.individual[sindex] && !scheduleStat">
+                            <div>
+                              <% scheduleFormat.individual[sindex].starting_date.split(' ')[0] %>
+                            </div>
+                            <div class="ml-4">
+                              <% scheduleFormat.individual[sindex].visits.length %> Visits
+                            </div>
                           </div>
                           <div class="cart-card-items">
                           <div v-for="(bill,bindex) in service.bill" v-bind:key="bindex">
@@ -1667,6 +1919,7 @@ width="1000"
           :items="['Subscription','One Time']"
           label="Cleaning Policy"
           dense
+          v-model="cleaningPolicy"
          
         ></v-select>
                         </div>
@@ -1674,7 +1927,7 @@ width="1000"
                       <div class="col-md-3">
                         <div >
                           <v-select
-          :items="['Daily','Weekly','Monthly']"
+          :items="['Daily','Weekly','Monthly','Custom']"
           label="Subscription Plan"
           v-model="subStat"
           dense
@@ -1691,7 +1944,15 @@ width="1000"
                         class="mt-0 book-stat"
                       ></v-switch>
                       </div>
-                      <div class="col-md-3">
+                      <div class="col-md-2"  v-if="subStat=='Weekly'">
+                        <v-switch
+                        v-model="altweekStat"   
+                        inset
+                        label="Alternate Weeks"
+                        class="mt-0 book-stat"
+                      ></v-switch>
+                      </div>
+                      <div class="col-md-3" v-if="subStat!='Custom'">
                         <div>
                           <v-text-field
                           label="No of Visits"
@@ -1703,7 +1964,7 @@ width="1000"
                       </div>
 
                     </div>
-                    <div class="row m-0">
+                    <div class="row m-0" v-if="subStat=='Weekly'">
                       <div class="col-md-12">
                       <div> Preferred Days</div> </div>
                       <div class="col-sm-2 col-md-1">
@@ -1762,12 +2023,30 @@ width="1000"
                           Sat
                           </div>
                           </div>
+                          </div>
+                          <div class="row m-0">
+                            <div class="col-md-12 " v-if="subStat=='Custom'">
+                              <v-btn
+                              tile
+                              color="primary"
+                              @click="customDialog=true"
+                              
+                            >
+                              <v-icon left>
+                                mdi-calendar
+                              </v-icon>
+                             Select Visit Dates
+                            </v-btn>
+                             </div>
+                          </div>
+                          <div class="row m-0" v-if="subStat && cleaningPolicy && no_of_visits">
                          
-                             <div class="col-md-12 ">
+                             <div class="col-md-12 " v-if="subStat!='Monthly' && subStat!='Custom'">
                               <v-btn
                               tile
                               color="primary"
                               @click="scheduleDialog=true"
+                              
                             >
                               <v-icon left>
                                 mdi-calendar
@@ -1775,13 +2054,57 @@ width="1000"
                              Choose a Starting Date
                             </v-btn>
                              </div>
-                             <div class="col-md-12">
+                             
+                             <div v-if="subStat=='Monthly'" class="col-md-3">
+                            <v-menu
+                            v-model="menu2"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="auto"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field
+                                v-model="monthly_starting_date"
+                                
+                                label="Starting Date"
+                                prepend-icon="mdi-calendar"
+                                readonly
+                                v-bind="attrs"
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
+                            v-model="monthly_starting_date"
+                              @input="menu2 = false"
+                              style="max-width:300px"
+                              :min="today"
+
+                            ></v-date-picker>
+                          </v-menu>
+                          <div>
+                            <v-btn tile
+                            color="primary"
+                            @click="monthlyDialog=true"
+                            >
+                              <v-icon left>
+                                mdi-calendar
+                              </v-icon>
+                              Select Visit Dates
+                            </v-btn>
+                          </div>
+                           
+                             </div>
+                             </div>
+                             <div class="row m-0">
+                             <div class="col-md-12" v-if="visits.length>0">
                                 <div>
                                   Please Change Unavailable Slots
                                 </div>
                                 <div class="row mt-2">
                                     <div class="col-md-2" v-for="(visit,vindex) in visits" v-bind:key="vindex">
-                                      <div class="available-slot-card p-2"  v-if="slotStat.available_slotes.includes(visit.dateTime)">
+                                      <div class="available-slot-card p-2"  v-if="slotStat.available_slotes.includes(visit.dateTime)||visit.status=='fixed'">
                                         <div class="d-flex">
                                           <div>
                                            <b>Visit <% (vindex+1) %></b> 
@@ -1791,10 +2114,11 @@ width="1000"
                                           </div>
                                         </div>
                                         <div class="text-center pt-2">
-                                         <span v-for="(time,tindex) in visit.slots" v-bind:key="tindex"><% slotFormat[time].start_time + ' - '+ slotFormat[time].end_time%> </span> 
+                                          <% getCombinedSlot(visit.slots) %>
+                                       <!-- <span v-for="(time,tindex) in visit.slots" v-bind:key="tindex"><% slotFormat[time].start_time + ' - '+ slotFormat[time].end_time%> </span> -->
                                         </div>
                                       </div>
-                                      <div class="not-available-slot-card p-2"  v-if="!slotStat.available_slotes.includes(visit.dateTime)">
+                                      <div class="not-available-slot-card p-2"  v-if="!slotStat.available_slotes.includes(visit.dateTime) && !checkFixedSlots(visit.dateTime,vindex) && visit.status!='fixed'" @click="reselectVisitDate(visit,vindex)">
                                         <div class="d-flex">
                                           <div>
                                            <b>Visit <% (vindex+1) %></b> 
@@ -1804,15 +2128,42 @@ width="1000"
                                           </div>
                                         </div>
                                         <div class="text-center pt-2">
-                                         <span v-for="(time,tindex) in visit.slots" v-bind:key="tindex"><% slotFormat[time].start_time + ' - '+ slotFormat[time].end_time%> </span> 
+                                          <% getCombinedSlot(visit.slots) %>
                                         </div>
                                       </div>
+
+
+                                      <!-- autofixed slots-->
+                                      <div class="available-slot-card p-2"  v-if="checkFixedSlots(visit.dateTime,vindex) && !slotStat.available_slotes.includes(visit.dateTime)">
+                                        <div class="d-flex">
+                                          <div>
+                                           <b>Visit <% (vindex+1) %></b> 
+                                          </div>
+                                          <div class="ml-auto">
+                                           <% visit.date %>
+                                          </div>
+                                        </div>
+                                        <div class="text-center pt-2">
+                                          <% checkFixedSlots(visit.dateTime,vindex) %>
+                                       <!-- <span v-for="(time,tindex) in visit.slots" v-bind:key="tindex"><% slotFormat[time].start_time + ' - '+ slotFormat[time].end_time%> </span> -->
+                                        </div>
+                                      </div>
+
+                                      <!-- autofixed slots ended-->
                                     </div>
                                    
                                 </div>
-                                <div class="text-center mt-4">
+                                <div class="text-center mt-4" v-if="visits.length>0 && !autofixStat">
                                   <v-btn color="primary" @click="autoFix()">
                                     Autofix
+                                  </v-btn>
+                                </div>
+                                <div class="text-center mt-4" v-if="visits.length>0 && autofixStat">
+                                  Please select Unavailable dates manually
+                                </div>
+                                <div class="text-center mt-2" v-if="visits.length>0 && autofixStat">
+                                  <v-btn color="primary" v-if="checkFixStatus()" @click="addToSchedule()">
+                                    Proceed
                                   </v-btn>
                                 </div>
                              </div>
@@ -1855,9 +2206,10 @@ width="1000"
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.33/moment-timezone.min.js"
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.33/moment-timezone.min.js"
   integrity="sha512-jkvef+BAlqJubZdUhcyvaE84uD9XOoLR3e5GGX7YW7y8ywt0rwcGmTQHoxSMRzrJA3+Jh2T8Uy6f8TLU3WQhpQ=="
-  crossorigin="anonymous"></script>
+  crossorigin="anonymous"></script>-->
 
 <script src="{% static 'files/js/booking/booking.js' %}"></script>
 
