@@ -618,15 +618,13 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 .table1tr4 {display:none;}
 }
 
-/*@page {
-    size: A4 portrait;
-    margin: 0.2in 9in 0.2in 0.44in;
 
-}*/
+
 
 @page {
                 size: A4 portrait; /* can use also 'landscape' for orientation */
-                margin: 0.2in 9in 0.2in 0.44in;
+                margin: 1in 9in 1in 0.44in;
+                padding-bottom: 1in;
 
                 @bottom-left{
                     content: element(footer);
@@ -638,20 +636,27 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 
 
         }
-
         header {
             position: running(header);
+            width: 100%;
+            padding-left: 30px;
+            margin-bottom: 40px;
+            padding-top: 60px;
             /*height: 100px;*/
         }
 
         footer {
-            position: running(footer);
-            width: 100%;
+            margin: 0px 0px -200px -50px !important;
+            position: fixed;
+            width: 1240px;
             background: #616161;
-            /*height: 150px;*/
+            height: 150px;
+            padding-left: 25px;
+            bottom: 0;
+
         }
 
-
+        
 /* table automatic row count */
 .css-serial {
   counter-reset: serial-number;  /* Set the serial number counter to 0 */

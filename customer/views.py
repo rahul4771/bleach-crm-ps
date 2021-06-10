@@ -702,7 +702,7 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 		html_string = render_to_string('customer/downloads/onetimequatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
 	main_doc = html.render()
-	return render(request,'customer/downloads/onetimequatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
+	# return render(request,'customer/downloads/onetimequatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 	
 	
 

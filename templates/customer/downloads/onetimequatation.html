@@ -21,15 +21,7 @@
     <link href="{% static 'files/css/externalusers.css' %}" rel="stylesheet" type="text/css">
   </head>
 <header>
-  <section id="memo">
-    <div class="company-info">
-<div>Bleach Cleaning Services<div class="company-name-arabic"> بليتش &nbsp;&nbsp;لخدمات &nbsp;&nbsp;التنظيف</div>	
-      </div>
-</div>
-<div class="logo_invoice">
-  <img src="{% static 'files/images/bleach logo.png' %}" />
-</div>
-</section>
+  {% include 'customer/downloads/header.html' %}
 </header>
   <body>
     <div id="container">
@@ -40,6 +32,16 @@
       </div>
 
           <div class="right-invoice">
+            <!-- <section id="memo">
+              <div class="company-info">
+    			<div>Bleach Cleaning Services<div class="company-name-arabic"> بليتش &nbsp;&nbsp;لخدمات &nbsp;&nbsp;التنظيف</div>	
+              	</div>
+    		  </div>
+          <div class="logo_invoice">
+            <img src="{% static 'files/images/bleach logo.png' %}" />
+          </div>
+        </section> -->
+
         <section id="invoice-title-number">
           <div class="title-top">
             <!--<span class="x-hidden"></span>-->
