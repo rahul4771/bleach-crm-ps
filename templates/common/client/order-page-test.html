@@ -250,7 +250,9 @@
                         </div>
                     </div>
                     <div class="row c-mt-20">
+
                         <div class="order-details-left-wrapper "><!--order details start-->
+                        {% for orderschedule in order.orderschedules %}
                             
                             <div class="order-edit">
                                 <img class="pointer" v-if="!edit" @click="edit = true"
@@ -261,7 +263,7 @@
                                     id="done">
                             </div>
 
-                            {% for orderschedule in order.orderschedules %}
+                            
                             <div id="details{{orderschedule.id}}">
                                 <div class="order-container-main">
                                     <div class="order-header-class">
@@ -587,109 +589,38 @@
                                     </div>
                                     <div class="testimonial-group">
                                         <div class="row">
-                                            <div class="col-md-4  c-pr5">
+
+                                        {% for multi_order_schedule in order.orderschedules %}
+                                        {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
+                                            <div class="col-md-4  c-pr5" onclick="load_cleaning_team({{forloop.counter}},{{multi_order_schedule.id}})">
                                                 <div class="cleaning-status-container  pointer ">
                                                     <div class="row cleaning-status-row  cleaning-status-card">
                                                         <div class="vist-card-item-first">
-                                                            Visit 1
+                                                            Visit {{forloop.counter}}
                                                         </div>
                                                         <div class="vist-card-item-second">
-                                                            April 4 2021 12:30 pm
+                                                            {{multi_order_schedule.start_at}}
                                                         </div>
                                                         <div class="vist-card-item-last ml-5">
                                                             <i class="fa fa-flag c-red"></i>
-                                                            <button class="completed-button">Completed</button>
+                                                            <button {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}class="inprogress-button"{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}class="assigned-button"{% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED'%}class="completed-button"{% else %}class="canceled-button"{% endif %}>{{multi_order_schedule.work_status|default_if_none:'NOT STARTED'}}</button>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4  c-pr5">
-                                                <div class="cleaning-status-container pointer">
-                                                    <div class="row cleaning-status-row cleaning-status-card">
-                                                        <div class="vist-card-item-first">
-                                                            Visit 2
-                                                        </div>
-                                                        <div class="vist-card-item-second">
-                                                            April 4 2021 12:30 pm
-                                                        </div>
-                                                        <div class="vist-card-item-last ml-5">
-                                                            <i class="fa fa-flag c-red"></i>
-                                                            <button class="completed-button">Completed</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4  c-pr5">
-                                                <div class="cleaning-status-container pointer">
-                                                    <div class="row cleaning-status-row cleaning-status-card">
-                                                        <div class="vist-card-item-first">
-                                                            Visit 3
-                                                        </div>
-                                                        <div class="vist-card-item-second">
-                                                            April 4 2021 12:30 pm
-                                                        </div>
-                                                        <div class="vist-card-item-last ml-5">
+                                        {% endif %}
+                                        {% endfor %} 
 
-                                                            <button class="canceled-button">Canceled</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4  c-pr5">
-                                                <div class="cleaning-status-container pointer">
-                                                    <div class="row cleaning-status-row cleaning-status-card">
-                                                        <div class="vist-card-item-first">
-                                                            Visit 4
-                                                        </div>
-                                                        <div class="vist-card-item-second">
-                                                            April 4 2021 12:30 pm
-                                                        </div>
-                                                        <div class="vist-card-item-last ml-5">
-
-                                                            <button class="inprogress-button">In Progress</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4  c-pr5">
-                                                <div class="cleaning-status-container pointer">
-                                                    <div class="row cleaning-status-row cleaning-status-card">
-                                                        <div class="vist-card-item-first">
-                                                            Visit 5
-                                                        </div>
-                                                        <div class="vist-card-item-second">
-                                                            April 4 2021 12:30 pm
-                                                        </div>
-                                                        <div class="vist-card-item-last ml-5">
-
-                                                            <button class="notassing-button">Team Not Assigned</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4  c-pr5">
-                                                <div class="cleaning-status-container pointer">
-                                                    <div class="row cleaning-status-row cleaning-status-card">
-                                                        <div class="vist-card-item-first">
-                                                            Visit 6
-                                                        </div>
-                                                        <div class="vist-card-item-second">
-                                                            April 4 2021 12:30 pm
-                                                        </div>
-                                                        <div class="vist-card-item-last ml-5">
-
-                                                            <button class="assigned-button">Team Assigned</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
 
+                                    <!--cleaningteam start-->
+                                    <div class="clean-visit-section" id="visit{{orderschedule.id}}">
+                                    {% if  orderschedule.cleaning_team %}
+                                    {% for cleaning_team in orderschedule.cleaning_team %}  
 
-                                    <div class="clean-visit-section">
                                         <div class="order-clean-section-header c-mb-10">
-                                            <h1>Visit 1</h1>
+                                            <h1><span>Visit</span> <span class="visit_count">1</span></h1>
                                         </div>
                                         <div class="row c-mt-20">
                                             <div class="col-md-2">
@@ -699,7 +630,7 @@
                                                             src="{% static 'files/icons/time-in.png' %}">
                                                         Check in
                                                     </div>
-                                                    <div class="col-xs-5">07:30 am</div>
+                                                    <div class="col-xs-5 id_check_in">{{cleaning_team.start_at|time|lower}}</div>
                                                 </div>
                                                 <div class="row c-mb-10 ">
                                                     <div class="col-xs-7">
@@ -707,7 +638,7 @@
                                                             src="{% static 'files/icons/time-out.png' %}">
                                                         Check Out
                                                     </div>
-                                                    <div class="col-xs-5">07:30 am</div>
+                                                    <div class="col-xs-5 id_check_out">{{cleaning_team.end_at|time|lower}}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -722,37 +653,24 @@
                                             </div>
                                         </div>
 
-                                        <div class="row c-mt-10">
+                                        <div class="row c-mt-10 id_team_members_div">
+                                        {% for team_member in cleaning_team.cleaning_team_members %}
+                                        {% if team_member.member != cleaning_team.team_leader %}
                                             <div class="col-md-2 m-mt20 .c-mb-10 mr-0 ml-0">
                                                 <div class="row">
                                                     <div class="col-xs-3">
-                                                        <img class="clean-team-profile-pic"
-                                                            src="{% static 'files/icons/profile.png' %}">
+                                                        <img class="clean-team-profile-pic" src="{{team_member.member.profile_image.url}}">
                                                     </div>
                                                     <div class="col-xs-9">
                                                         <div class="order-agent-content text-left">
-                                                            <h2>Jahir Rain</h2>
-                                                            <h6>Team Leader</h6>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2 m-mt20 .c-mb-10 mr-0 ml-0">
-                                                <div class="row">
-                                                    <div class="col-xs-3">
-                                                        <img class="clean-team-profile-pic"
-                                                            src="{% static 'files/icons/profile.png' %}">
-                                                    </div>
-                                                    <div class="col-xs-9">
-                                                        <div class="order-agent-content text-left">
-                                                            <h2>Jahir Rain</h2>
+                                                            <h2>{{team_member.member.name}}</h2>
                                                             <h6>Team Member</h6>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-
-
+                                        {% endif %}
+                                        {% endfor %}
                                         </div>
 
                                         <div class="order-clean-section-header c-mt-10">
@@ -785,12 +703,11 @@
                                             <div class="col-md-2 mr-0 ml-0">
                                                 <div class="row">
                                                     <div class="col-xs-3">
-                                                        <img class="clean-team-profile-pic"
-                                                            src="{% static 'files/icons/profile.png' %}">
+                                                        <img class="clean-team-profile-pic id_team_leader_img" src="{{cleaning_team.team_leader.profile_image.url}}">
                                                     </div>
                                                     <div class="col-xs-9">
                                                         <div class="order-agent-content text-left">
-                                                            <h2>Jahir Rain</h2>
+                                                            <h2 class="id_team_leader">{{cleaning_team.team_leader.name}}</h2>
                                                             <h6>Team Leader</h6>
 
 
@@ -799,7 +716,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+
+                                        <div class="row" id="id_cleaning_images">
 
                                             <div id="modal01" class="w3-modal" onclick="this.style.display='none'">
                                                 <div class="topright">
@@ -810,144 +728,90 @@
                                                     <img id="img01" style="width:100%">
                                                 </div>
                                             </div>
-                                            <div class="col-md-3 media-gap">
+
+                                            
+                                            <div class="col-md-3 media-gap id_cleaning_before_div">
                                                 <div class="order-clean-section-header c-mt-10">
                                                     <h3>Cleaning Before</h3>
-                                                    <div class="owl-carousel c-mt-10">
+                                                    <div class="owl-carousel c-mt-10 id_cleaning_before_images">
+                                                    {% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'BEFORE_CLEANING' %}
                                                         <div>
-                                                            <img class="slider-img pointer" onclick="onClick(this)"
-                                                                src="{% static 'files/images/1.jpg' %}" alt="">
+                                                            <img class="slider-img pointer" onclick="onClick(this)" src="{{media.media.url}}" alt="">
                                                         </div>
-                                                        <div>
-                                                            <img class="slider-img pointer" onclick="onClick(this)"
-                                                                src="{% static 'files/images/2.jpg' %}" alt="">
-                                                        </div>
-                                                        <div>
-                                                            <img class="slider-img pointer" onclick="onClick(this)"
-                                                                src="{% static 'files/images/1.jpg' %}" alt="">
-                                                        </div>
-                                                        <div>
-                                                            <img class="slider-img pointer" onclick="onClick(this)"
-                                                                src="{% static 'files/images/2.jpg' %}" alt="">
-                                                        </div>
-                                                        <div>
-                                                            <img class="slider-img pointer" onclick="onClick(this)"
-                                                                src="{% static 'files/images/1.jpg' %}" alt="">
-                                                        </div>
-                                                        <div>
-                                                            <img class="slider-img pointer" onclick="onClick(this)"
-                                                                src="{% static 'files/images/2.jpg' %}" alt="">
-                                                        </div>
+                                                    {% endif %}{% endfor %}{% endfor %}
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-3 media-gap">
+                                            
+
+                                            <div class="col-md-3 media-gap id_cleaning_after_div">
                                                 <div class="order-clean-section-header c-mt-10">
                                                     <h3>Cleaning After</h3>
-                                                    <div class="owl-carousel c-mt-10">
+                                                    <div class="owl-carousel c-mt-10 id_cleaning_after_images">
+                                                        {% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'AFTER_CLEANING' %}
                                                         <div>
-                                                            <img class="slider-img pointer" onclick="onClick(this)"
-                                                                src="{% static 'files/images/1.jpg' %}" alt="">
+                                                            <img class="slider-img pointer" onclick="onClick(this)" src="{{media.media.url}}" alt="">
                                                         </div>
-                                                        <div>
-                                                            <img class="slider-img pointer" onclick="onClick(this)"
-                                                                src="{% static 'files/images/2.jpg' %}" alt="">
-                                                        </div>
-                                                        <div>
-                                                            <img class="slider-img pointer" onclick="onClick(this)"
-                                                                src="{% static 'files/images/1.jpg' %}" alt="">
-                                                        </div>
-                                                        <div>
-                                                            <img class="slider-img pointer" onclick="onClick(this)"
-                                                                src="{% static 'files/images/2.jpg' %}" alt="">
-                                                        </div>
-                                                        <div>
-                                                            <img class="slider-img pointer" onclick="onClick(this)"
-                                                                src="{% static 'files/images/1.jpg' %}" alt="">
-                                                        </div>
-                                                        <div>
-                                                            <img class="slider-img pointer" onclick="onClick(this)"
-                                                                src="{% static 'files/images/2.jpg' %}" alt="">
-                                                        </div>
+                                                        {% endif %}{% endfor %}{% endfor %}
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+
+
+                                    {% endfor %}
+                                    {% endif %}
                                     </div>
+                                    <!--cleaningteam end-->
+                                    
+
                                     <div class="c-mt-20">
                                         <hr class="bar">
                                     </div>
+
+                                    {% if orderschedule.order_scheduler_book.evaluationmedia or orderschedule.investigations.investigationmedias %}
+                                    
                                     <h1 class="other-media">Other media</h1>
                                     <div class="row">
+                                        {% if orderschedule.investigations.investigationmedias %}
                                         <div class="col-md-3 media-gap">
                                             <div class="order-clean-section-header c-mt-10">
                                                 <h3> From Customer</h3>
                                                 <div class="owl-carousel c-mt-10">
+                                                {% for investigation in orderschedule.investigations %}{% for media in investigation.investigationmedias %}{% if media.taken_status == 'CUSTOMER_SEND' %}
                                                     <div>
-                                                        <img class="slider-img pointer" onclick="onClick(this)"
-                                                            src="{% static 'files/images/1.jpg' %}" alt="">
+                                                        <img class="slider-img pointer" onclick="onClick(this)" src="{{media.media.url}}" alt="">
                                                     </div>
-                                                    <div>
-                                                        <img class="slider-img pointer" onclick="onClick(this)"
-                                                            src="{% static 'files/images/2.jpg' %}" alt="">
-                                                    </div>
-                                                    <div>
-                                                        <img class="slider-img pointer" onclick="onClick(this)"
-                                                            src="{% static 'files/images/1.jpg' %}" alt="">
-                                                    </div>
-                                                    <div>
-                                                        <img class="slider-img pointer" onclick="onClick(this)"
-                                                            src="{% static 'files/images/2.jpg' %}" alt="">
-                                                    </div>
-                                                    <div>
-                                                        <img class="slider-img pointer" onclick="onClick(this)"
-                                                            src="{% static 'files/images/1.jpg' %}" alt="">
-                                                    </div>
-                                                    <div>
-                                                        <img class="slider-img pointer" onclick="onClick(this)"
-                                                            src="{% static 'files/images/2.jpg' %}" alt="">
-                                                    </div>
+                                                {% endif %}{% endfor %}{% endfor %}
                                                 </div>
                                             </div>
                                         </div>
+                                        {% endif %}
+                                        
+                                        {% if orderschedule.order_scheduler_book.evaluationmedia %}
                                         <div class="col-md-3 media-gap">
                                             <div class="order-clean-section-header c-mt-10">
                                                 <h3> From Evaluator</h3>
                                                 <div class="owl-carousel c-mt-10">
+                                                {% for media in orderschedule.order_scheduler_book.evaluationmedia %}
                                                     <div>
-                                                        <img class="slider-img pointer" onclick="onClick(this)"
-                                                            src="{% static 'files/images/1.jpg' %}" alt="">
+                                                        <img class="slider-img pointer" onclick="onClick(this)" src="{{media.media.url}}" alt="">
                                                     </div>
-                                                    <div>
-                                                        <img class="slider-img pointer" onclick="onClick(this)"
-                                                            src="{% static 'files/images/2.jpg' %}" alt="">
-                                                    </div>
-                                                    <div>
-                                                        <img class="slider-img pointer" onclick="onClick(this)"
-                                                            src="{% static 'files/images/1.jpg' %}" alt="">
-                                                    </div>
-                                                    <div>
-                                                        <img class="slider-img pointer" onclick="onClick(this)"
-                                                            src="{% static 'files/images/2.jpg' %}" alt="">
-                                                    </div>
-                                                    <div>
-                                                        <img class="slider-img pointer" onclick="onClick(this)"
-                                                            src="{% static 'files/images/1.jpg' %}" alt="">
-                                                    </div>
-                                                    <div>
-                                                        <img class="slider-img pointer" onclick="onClick(this)"
-                                                            src="{% static 'files/images/2.jpg' %}" alt="">
-                                                    </div>
+                                                {% endfor %}
                                                 </div>
                                             </div>
                                         </div>
+                                        {% endif %}
+
                                     </div>
+                                    {% endif %}
                                    
                                 </div>
                                 <div class="up-animation"></div>
                                 <div class="moreless-button " id="showless">Show Less</div>
                             </div>
-                            {% endfor %}
+
+                        {% endfor %}
                         </div><!--order details end-->
                         
 
@@ -1053,6 +917,7 @@
                                                     {% endif %}
                                                     {% endfor %}
                                                     </span></div>
+                                                </div>
                                                 {% endif %}
 
                                                  {% if order.payment_completed_date %}
@@ -1537,6 +1402,74 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
 <script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
 <script src="{% static 'files/js/order/main.js' %}"></script>
+
+
+<script>
+//load cleaning team data
+function load_cleaning_team(visitcount,scheduleid){
+
+    axios.get(url+'/api/cleaning-team-data/',{ params: { 'visit_count':visitcount, 'schedule_id': scheduleid } })
+                .then(function (response) {
+                    console.log(response.data,"respdata")
+                    if (response.data.success == true){
+                        
+                        $('.visit_count').text(response.data.visit_count);
+                        $('.id_check_in').text(response.data.start_at);
+                        $('.id_check_out').text(response.data.end_at);
+                        $('.id_team_members_div').empty();
+
+                        $.each(response.data.members,function(key,value){
+                            console.log(value,"valk")
+                            $('.id_team_members_div').append('<div class="col-md-2 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-3"> <img class="clean-team-profile-pic" src="'+value.member_image+'"> </div> <div class="col-xs-9"> <div class="order-agent-content text-left"> <h2>'+value.member_name+'</h2> <h6>Team Member</h6> </div></div></div></div>');
+                        })
+
+                        $('.id_team_leader').text(response.data.team_leader);
+                        $('.id_team_leader_img').attr("src",response.data.team_leader_image);
+
+                        $('.id_cleaning_before_images').empty();
+                        $('.id_cleaning_after_images').empty();
+
+                        //hiding and showing image divs if images exist
+                        if (response.data.before_cleaning_media == '' && response.data.after_cleaning_media == ''){
+                            $('.id_cleaning_images').hide();
+                        }else{
+                            $('.id_cleaning_images').show();
+                        }
+
+                        if (response.data.before_cleaning_media == ''){
+                            $('.id_cleaning_before_div').hide();
+                        } else{
+                            $('.id_cleaning_before_div').show();
+                        }
+
+                        if (response.data.after_cleaning_media == ''){
+                            $('.id_cleaning_after_div').hide();
+                        } else{
+                            $('.id_cleaning_after_div').show();
+                        }
+                        
+                        //looping before cleaning images
+                        $.each(response.data.before_cleaning_media,function(key,value){
+                            
+                            $('.id_cleaning_before_images').append('<div> <img class="slider-img pointer" onclick="onClick(this)" src="'+value.before_cleaning_url+'" alt=""> </div>');
+                        })
+
+                        //looping after cleaning images
+                        $.each(response.data.after_cleaning_media,function(key,value){
+                            
+                            $('.id_cleaning_after_images').append('<div> <img class="slider-img pointer" onclick="onClick(this)" src="'+value.after_cleaning_url+'" alt=""> </div>');
+                        })                        
+
+                    }else{
+                        console.log("no data")
+                    }; 
+                })
+}
+</script>
+
+
+
+
 <!-- <script>
     var x, i, j, l, ll, selElmnt, a, b, c;
    
@@ -2053,7 +1986,7 @@ marking_percentage = (active_percentage/total_percentage)*100
 $(".bar-loader").css("width",marking_percentage+'%');
 
 
-function appendsubscriptiondetails(schedule_id,media_append){
+{% comment %} function appendsubscriptiondetails(schedule_id,media_append){
 
 {% for orderschedule in order.orderschedules %}
 if(schedule_id == {{orderschedule.id}} )
@@ -2083,7 +2016,7 @@ append_html = '{% if  orderschedule.cleaning_team %}{% for cleaning_team in orde
 }
 {% endfor %}
 
-    }
+    } {% endcomment %}
 
 //followup total amount calculation
 var followup_total = 0;

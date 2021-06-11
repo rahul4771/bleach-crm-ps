@@ -29,66 +29,64 @@
   <!-- Reject Modal-->
 
   <div id="container">
-
+    {% for orderschedule in order.orderschedules %}
+    {% if forloop.first %}
     <section id="new-customer-info">
       <div>
         <span id="customer-text">Customer </span>
-        <span id="customer-name">Mr. Alaa Five</span>
+        <span id="customer-name">{{orderschedule.customer_address.customer.name}}</span>
       </div>
       <br>
       <div>
         <span id="contact-text">Contact No</span>
-        <span id="contact-number">00000023</span>
+        <span id="contact-number">{{orderschedule.customer_address.customer.mobile_number}}</span>
       </div>
       <div>
         <span id="contact-text">Email</span>
-        <span id="contact-number">alaaa@gmail.com</span>
+        <span id="contact-number">{{orderschedule.customer_address.customer.email}}</span>
       </div>
       <div>
         <span id="address-text">Addrees </span>
-        <span id="customer-address">Jabriya-Hawalli/Kuwait, 6 Floor 22,C Block, Jabriya Street,5 Avenue
-          Jabriya, Hawalli</span>
+        <span id="customer-address">{{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}} {% else %}{% endif %} {{orderschedule.customer_address.building}},{{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},{% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %}{{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</span>
       </div><br>
     </section>
+    {% endif %}
+    {% endfor %}
     <section id="quotation_data">
       <h1 id="qu-text">QUOTATION</h1>
       <div>
         <span id="contact-text">Quotation Number</span>
-        <span id="contact-number">BLC20210510115</span>
+        <span id="contact-number">{{order.order_no}}</span>
       </div>
       <div>
         <span id="contact-text">Initiated Date</span>
-        <span id="contact-number">25-05-2021</span>
+        <span id="contact-number">{{order.evaluation.created|date:'d-m-Y'}}</span>
       </div>
       <div>
         <span id="contact-text">Due Date</span>
-        <span id="contact-number">08-06-2021</span>
+        <span id="contact-number">{{order.evaluation.quatation_expiry_date|date:'d-m-Y'}}</span>
       </div>
       <div>
         <span id="contact-text">Payment Policy</span>
-        <span id="contact-number">PREPAID</span>
+        <span id="contact-number">{{order.evaluation.payment_method}}</span>
       </div>
     </section>
+    {% for orderschedule in nonduplicate_schedules %}            
+    {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
     <!-- items sectino -->
     <section id="order-items">
-      <span id="order-item-name">Kitchen Cleaning-Floor</span>
+      <span id="order-item-name">{{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}</span>
       <span id="netprice-text">NET PRICE</span>
       <div>
-        <span>Size : <b>500 Square meter</b> Quantity : <b>1</b> Unit Price : <b>325.000</b> </span>
-        <span id="netprice"><b>325.000</b> KD</span>
+        <span>Size : <b>{{section.size}} {{section.unit|default_if_none:''}}</b> Quantity : <b>{% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</b> Unit Price : <b>{{section.section_cost|floatformat:'3'}}</b> </span>
+        <span id="netprice"><b>{{section.section_cost|floatformat:'3'}}</b> KD</span>
       </div>
     </section>
-    <section id="order-items">
-      <span id="order-item-name">Kitchen Cleaning-Floor</span>
-      <span id="netprice-text">NET PRICE</span>
-      <div>
-        <span>Size : <b>500 Square meter</b> Quantity : <b>1</b> Unit Price : <b>325.000</b> </span>
-        <span id="netprice"><b>325.000</b> KD</span>
-      </div>
-    </section>
-    
     <!-- items end -->
+    {% endfor %}
+    {% endfor %}
 
+    {% if order.evaluation.payment_method == 'BREAKDOWN' %}
     <section id="paymentmode-sec">
       <span> BREAKDOWN Payment Mode</span>
     </section>
@@ -98,7 +96,7 @@
           Payment Before Cleaning
         </span>
         <span id="paymenttime-amount">
-          <b>120.000</b> KD
+          <b>{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</b> KD
         </span>
       </div>
       <div>
@@ -106,32 +104,108 @@
           Payment After Cleaning
         </span>
         <span id="paymenttime-amount">
-          <b>120.000</b> KD
+          <b>{{order.evaluation.after_cleaning_amount|floatformat:'3'}}</b> KD
         </span>
       </div>
     </section>
+    {% endif %}
+
+    {% if order.evaluation.payment_method == 'PREPAID' %}
+    <section id="lastsection">
+      <div>
+        <span id="paymenttime">
+          Payment Before Cleaning
+        </span>
+        <span id="paymenttime-amount">
+          <b>{{order.total_amount|floatformat:"3"}}</b> KD
+        </span>
+      </div>
+    </section>
+    {% endif %}
+
+    {% if order.evaluation.payment_method == 'POSTPAID' %}
+    <section id="lastsection">
+      <div>
+        <span id="paymenttime">
+          Payment After Cleaning
+        </span>
+        <span id="paymenttime-amount">
+          <b>{{order.total_amount|floatformat:"3"}}</b> KD
+        </span>
+      </div>
+    </section>
+    {% endif %}
+
     <section id="total-section">
       <div>
         <span id="paymenttime">
           <b>Sub Total</b>
         </span>
         <span id="paymenttime-amount">
-          <b>120.000</b>
+          <b>{{order.evaluation.estimated_cost|floatformat:'3'}}</b>
         </span>
       </div>
+      
+      {% if order.evaluation.discount != 0 %}
       <div>
         <span id="paymenttime">
           <b>Discount</b>
         </span>
         <span id="paymenttime-amount">
-          <b>-5.000</b>
+          <b>-{{order.evaluation.discount|floatformat:"3"}}</b>
         </span>
       </div>
+      {% endif %}
+
+      {% if order.evaluation.credit_amount != 0 %}
+      <div>
+        <span id="paymenttime">
+          <b>Credit Added</b>
+        </span>
+        <span id="paymenttime-amount">
+          <b>-{{order.evaluation.credit_amount|floatformat:"3"}}}</b>
+        </span>
+      </div>
+      {% endif %}
+      
+      {% if order.evaluation.fine_amount != 0 %}
+      <div>
+        <span id="paymenttime">
+          <b>Fine</b>
+        </span>
+        <span id="paymenttime-amount">
+          <b>-{{order.evaluation.fine_amount|floatformat:'3'}}</b>
+        </span>
+      </div>
+      {% endif %}
+
+      {% if order.evaluation.writeback_amount != 0 %}
+      <div>
+        <span id="paymenttime">
+          <b>Write-Off Amount</b>
+        </span>
+        <span id="paymenttime-amount">
+          <b>-{{order.evaluation.writeback_amount|floatformat:'3'}}</b>
+        </span>
+      </div>
+      {% endif %}
+
+      {% if order.evaluation.is_promocode_applied == True %}
+      <div>
+        <span id="paymenttime">
+          <b>Coupon Added</b>
+        </span>
+        <span id="paymenttime-amount">
+          <b>-{{order.evaluation.promocode_amount|floatformat:"3"}}</b>
+        </span>
+      </div>
+      {% endif %}
+
     </section>
     <section id="final-section">
       <span id="total_id">Total</span>
       <h1 id="total_amount">
-        920.000 <span id="kd-font">KD</span>
+        {{order.total_amount|floatformat:"3"}} <span id="kd-font">KD</span>
       </h1>
     </section>
   </div>

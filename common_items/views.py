@@ -1034,7 +1034,7 @@ class ClientOrderDetails(IsAuthenticated,View):
 				invoice.balance = int(invoice.balance)
 
 
-		return render(request,"common/client/order-page-test.html",{"booking_id":booking_id,"order":order,"invoice":invoice,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,})
+		return render(request,"common/client/order-page-test.html",{"invoice":invoice,"booking_id":booking_id,"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,})
 
 	def post(self,request,order_id):
 		action = request.POST.get('action_type')
