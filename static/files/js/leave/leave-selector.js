@@ -445,7 +445,6 @@ function getUsers(){
 
     
 }
-
 getLeave();
 
 })
@@ -498,7 +497,6 @@ function getLeave(){
     axios.get(url+'/api/leave-scheduler/')
 .then(function (response) {
   // handle success
-    
     for(var i=0;i<response.data.staffs.length;i++){
        
        var userIndex=userSearch(response.data.staffs[i].staff)

@@ -1736,12 +1736,119 @@ class LeaveScheduler(IsAuthenticated,View):
 
 class ResourceManagementTest(IsAuthenticated,View):
 	def get(self,request):
+		
+		#workers_date
+		workers_calendar_date	= request.GET.get('workers_calendar_date')
+		
+		try:
+			workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
+		except:
+			workers_date = timezone.now().date()
 
-		workers_date       = timezone.now().date()
-		workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date)|Q(end_at__date=workers_date)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__date=workers_date)|Q(end_at__date=workers_date)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
+		#time filter
+		try:
+			starting_datetime  = datetime.strptime(str(workers_calendar_date+' '+request.GET.get('starting_time')),'%d-%m-%Y %I:%M %p')
+			ending_datetime    = datetime.strptime(str(workers_calendar_date+' '+request.GET.get('ending_time')),'%d-%m-%Y %I:%M %p')
+		except:
+			starting_datetime  = None 
+			ending_datetime    = None
 
-		return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date})
+		#apply time and date filter
+		if starting_datetime and ending_datetime:
+			workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date)|Q(end_at__date=workers_date)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__date=workers_date)|Q(end_at__date=workers_date)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details')).annotate(cleaning_contained=Sum(Case(When(Q(Q(cleaning_member_user__start_at__range=(starting_datetime,ending_datetime))|Q(cleaning_member_user__end_at__range=(starting_datetime,ending_datetime))),then=1),default=0,output_field=IntegerField()))).filter(cleaning_contained=0)
+		else:
+			workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date)|Q(end_at__date=workers_date)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__date=workers_date)|Q(end_at__date=workers_date)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
 
+		#otherfilters
+		search 		   = request.GET.get('search')
+		staff_type     = request.GET.get('staff_type')
+		service_type   = request.GET.get('service_type')
+		
+
+		filters=[]
+		if search: 
+		    case1 = Q(name__icontains=search)
+		    filters.append(case1)
+		if staff_type:
+			case2 = Q(user_type=staff_type)
+			filters.append(case2)
+		if service_type:
+			if service_type == 'is_general_skill':
+				case3 = Q(is_general_skill=True)
+			if service_type == 'is_deep_skill':
+				case3 = Q(is_deep_skill=True)
+			if service_type == 'is_upholstery_skill':
+				case3 = Q(is_upholstery_skill=True)
+			if service_type == 'is_carpet_skill':
+				case3 = Q(is_carpet_skill=True)
+			if service_type == 'is_kitchen_skill':
+				case3 = Q(is_kitchen_skill=True)
+			if service_type == 'is_sterilization_skill':
+				case3 = Q(is_sterilization_skill=True)
+			if service_type == 'is_carpet_skill':
+				case3 = Q(is_carpet_skill=True)
+			if service_type == 'is_mattress_skill':
+				case3 = Q(is_mattress_skill=True)
+			if service_type == 'is_facade_skill':
+				case3 = Q(is_facade_skill=True)
+			if service_type == 'is_storagearea_skill':
+				case3 = Q(is_storagearea_skill=True)
+			if service_type == 'is_carparkingumbrella_skill':
+				case3 = Q(is_carparkingumbrella_skill=True)
+			if service_type == 'is_outdoor_skill':
+				case3 = Q(is_outdoor_skill=True)
+			if service_type == 'is_window_skill':
+				case3 = Q(is_window_skill=True)
+			
+			filters.append(case3)
+		
+		if staff_type or service_type or search: 
+		    filters         = functools.reduce(operator.and_,filters)
+		    workers = workers.filter(filters)
+
+		##Monthlly Data
+		month_start    = workers_date.replace(day=1)
+		month_end      = month_start+relativedelta(months=1)-relativedelta(days=1)
+		month_range    = pd.date_range(month_start, month_end)
+		
+		for worker in workers:
+			cleanings = CleaningTeamMember.objects.filter(is_active=True,member=worker).filter(Q(Q(start_at__month=workers_date.month)|Q(end_at__month=workers_date.month))).values('team__order_scheduler__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at').annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField()))
+			followups = FollowUpTeamMember.objects.filter(is_active=True,member=worker).filter(Q(Q(start_at__month=workers_date.month)|Q(end_at__month=workers_date.month))).select_related('team__followup_scheduler__follow_up__investigation__order__feed_backs_order').values('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at').annotate(duration = ExpressionWrapper(F('start_at') - F('start_at'), output_field=DurationField()))		
+
+			###to find worked days
+			worked_days = 0
+			for date in month_range:
+				start_date_day = date
+				end_date_day   = date+timedelta(1)
+				if cleanings.filter(start_at__range=(start_date_day,end_date_day),end_at__range=(start_date_day,end_date_day)) or followups.filter(start_at__range=(start_date_day,end_date_day),end_at__range=(start_date_day,end_date_day)):
+					worked_days = worked_days+1		
+			worker.worked_days = worked_days
+
+			###to find total hours
+			cleaning_hours     = cleanings.aggregate(total_duration=Sum('duration'))
+			followup_hours     = followups.aggregate(total_duration=Sum('duration'))
+			total_time         = (cleaning_hours['total_duration']or timedelta()) + (followup_hours['total_duration']or timedelta())
+			total_hours        = total_time.days*24+total_time.seconds/3600
+			worker.total_hours = total_hours
+			
+			###to find average work hour
+			if total_hours and worked_days:
+				worker.average_hours = total_hours/worked_days
+			else:
+				worker.average_hours = 0.00
+
+			###to find total rating
+			worker.rating = cleanings.aggregate(total_rating=Sum('team__order_scheduler__order__feed_backs_order__rating')/Count('team__order_scheduler__order__feed_backs_order__rating'))['total_rating']or 0			
+
+		return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date,"service_type":service_type,"staff_type":staff_type,"search":search,"starting_datetime":starting_datetime,"ending_datetime":ending_datetime})
+
+	def post(self,request):
+		
+		response_dict = {}
+		user = UserProfile.objects.filter(id=request.POST.get('user_id')).update(is_general_skill=request.POST.get('is_general_skill'),is_deep_skill=request.POST.get('is_deep_skill'),is_upholstery_skill=request.POST.get('is_upholstery_skill'),is_carpet_skill=request.POST.get('is_carpet_skill'),is_kitchen_skill=request.POST.get('is_kitchen_skill'),is_sterilization_skill=request.POST.get('is_sterilization_skill'),is_mattress_skill=request.POST.get('is_mattress_skill'),is_facade_skill=request.POST.get('is_facade_skill'),is_storagearea_skill=request.POST.get('is_storagearea_skill'),is_carparkingumbrella_skill=request.POST.get('is_carparkingumbrella_skill'),is_outdoor_skill=request.POST.get('is_outdoor_skill'),is_window_skill=request.POST.get('is_window_skill'))
+		response_dict['success'] = True
+
+		return JsonResponse(response_dict)
 
 class ProductivityTest(IsAuthenticated,View):
 	def get(self,request):
