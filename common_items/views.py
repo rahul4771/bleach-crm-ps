@@ -1738,14 +1738,17 @@ class ResourceManagementTest(IsAuthenticated,View):
 	def get(self,request):
 
 		#search
-		search = request.GET.get('search',None)
+		search 		   = request.GET.get('search')
 		
 		#staff type
 		staff_type     = request.GET.get('staff_type')
 		
+		#service_type
+		service_type   = request.GET.get('service_type')
+
 		#slotes
-		slote_start_at = request.GET.get('slote_start_at')
-		slote_end_at   = request.GET.get('slote_end_at')
+		# slote_start_at = request.GET.get('slote_start_at')
+		# slote_end_at   = request.GET.get('slote_end_at')
 		
 		#workers_date
 		workers_date             = timezone.now().date()
@@ -1774,17 +1777,20 @@ class ResourceManagementTest(IsAuthenticated,View):
 			###to find total hours
 			cleaning_hours     = cleanings.aggregate(total_duration=Sum('duration'))
 			followup_hours     = followups.aggregate(total_duration=Sum('duration'))
-			total_hours        = (cleaning_hours['total_duration']or timedelta()) + (followup_hours['total_duration']or timedelta())
-			worker.total_hours = total_hours.days*24+total_hours.seconds/3600
+			total_time         = (cleaning_hours['total_duration']or timedelta()) + (followup_hours['total_duration']or timedelta())
+			total_hours        = total_time.days*24+total_time.seconds/3600
+			worker.total_hours = total_hours
 			
 			###to find average work hour
 			if total_hours and worked_days:
-				worker.average_hours = (total_hours/worked_days)or 0
+				worker.average_hours = total_hours/worked_days
+			else:
+				worker.average_hours = 0.00
 
 			###to find total rating
 			worker.rating = cleanings.aggregate(total_rating=Sum('team__order_scheduler__order__feed_backs_order__rating')/Count('team__order_scheduler__order__feed_backs_order__rating'))['total_rating']or 0			
 
-		return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date})
+		return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date,"service_type":service_type,"staff_type":staff_type,"search":search})
 
 
 class ProductivityTest(IsAuthenticated,View):
