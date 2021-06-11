@@ -462,9 +462,13 @@ margin: auto;
       height:100% !important;
   }
   .cart-item-add{
-    background: #8B8B8B 0% 0% no-repeat padding-box;
+    background: #EDF1F6 0% 0% no-repeat padding-box;
     opacity: 1;
     position: relative;
+  }
+  .schedule-details-head{
+    background: #EDF1F6;
+    border-radius: 10px;
   }
   .available-slot-card{
     border: 1px solid #8B8B8B;
@@ -507,6 +511,25 @@ margin: auto;
     margin: auto;
    
   }
+  .m-0{
+      margin:0 !important;
+  }
+  .keynote-item:nth-child(3n){
+        page-break-after: always; /* CSS 2.1 syntax */
+        break-after: always; /* New syntax */
+      
+  }
+ #keynote-chip .v-icon {
+    margin-left: auto !important;
+   
+ }
+ .kitchen-box{
+    background: #EDF1F6;
+    border-radius:20px;
+ }
+ #keynote-chip .v-chip__content{
+    min-width: 100% !important;
+ }
   .cart-plus{
       margin-top:100px;
   }
