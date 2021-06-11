@@ -1,3 +1,20 @@
+.lv-shift-btn {
+    margin-left: 10px !important;
+    padding: 12px;
+    cursor: pointer;
+    background-color: #3968c6;
+    color: #ffffff;
+    border-radius: 20px;
+    font-size: 14px;
+    height: 100%;
+    border: none;
+}
+.lv-shift-btn:hover {
+
+    background-color: #3968c6;
+    color: #ffffff;
+
+}
 .lv-day{
     padding:10px;
     font-size:14px;
@@ -338,6 +355,8 @@
   .lv-friday{
     background-color:#f2f2f2;
 }
+
+
   
   @media only screen and (max-width: 600px) {
       .lv-month{

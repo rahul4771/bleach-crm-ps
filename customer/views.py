@@ -699,12 +699,57 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 	if order.evaluation.payment_method == 'SUBSCRIPTION':
 		html_string = render_to_string('customer/subscriptionquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 	else:
-		html_string = render_to_string('customer/downloads/onetimequatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
+		html_string = render_to_string('customer/newquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
 	main_doc = html.render()
-	return render(request,'customer/downloads/onetimequatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
+
+	main_doc.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');
+
+	fs = FileSystemStorage('/home/pdf/tmp/quatation/')
+	with fs.open('quatation.pdf') as pdf:
+		response = HttpResponse(pdf, content_type='application/pdf')
+		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_quatation.pdf"'
+		return response
+	return response
+
+
+def testquatation_html_to_pdf_view(request,evaluation_id):
+
+	#evaluation id decryption
+	evaluation_id_encrypted = evaluation_id
+	evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
+	user_name     =  evaluation_id_encrypted[14:]
+
+
+	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
+
+	nonduplicate_schedules = []
+	#Remove duplicates for subscription
+	duplicate_schedules    = []
+	for orderschedule in order.orderschedules:
+		if orderschedule.order_scheduler_book in duplicate_schedules:
+			pass
+		else:	
+			nonduplicate_schedules.append(orderschedule)	
+
+		duplicate_schedules.append(orderschedule.order_scheduler_book)
+    
+	#Main Content
+	if order.evaluation.payment_method == 'SUBSCRIPTION':
+		#per job cost
+		per_job_cost = 0
+		for orderschedule in nonduplicate_schedules:            
+			for section in orderschedule.order_scheduler_book.evaluationbooksection:
+				per_job_cost += section.section_cost
+
+		# return render(request,'customer/downloads/quatation.html',{"order":order,"nonduplicate_schedules":nonduplicate_schedules,"per_job_cost":per_job_cost})
+		html_string = render_to_string("customer/downloads/quatation.html",{"order":order,"nonduplicate_schedules":nonduplicate_schedules,"per_job_cost":per_job_cost})
+	else:
+		#return render(request,'customer/downloads/quatation.html',{"order":order,"nonduplicate_schedules":nonduplicate_schedules})
+		html_string = render_to_string('customer/downloads/quatation.html',{"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 	
-	
+	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
+	main_doc = html.render()
 
 	main_doc.write_pdf(target='/home/sonu/pdf/tmp/quatation/quatation.pdf');
 
@@ -714,6 +759,7 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_quatation.pdf"'
 		return response
 	return response
+
 
 def orderdetail_html_to_pdf_view(request,order_id,service_id,section_id):
 

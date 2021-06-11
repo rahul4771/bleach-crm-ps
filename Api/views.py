@@ -772,3 +772,44 @@ class PaymentPolicyEditAPI(APIView):
 		response_dict = {'success':True}
 
 		return Response(response_dict,HTTP_200_OK)
+
+class CleaningTeamAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+
+		visit_count = request.GET.get('visit_count')
+		schedule_id = request.GET.get('schedule_id')
+
+		cleaningteam = CleaningTeam.objects.filter(is_active=True,order_scheduler__id=int(schedule_id)).prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')).first()
+
+		if cleaningteam:
+
+			team_members_list = []
+			for team_member in cleaningteam.cleaning_team_members:
+				if cleaningteam.team_leader.id != team_member.member.id :
+					team_members_list.append({"member_name":team_member.member.name,"member_image":team_member.member.profile_image.url})
+
+			before_cleaning_media_list = []
+			after_cleaning_media_list = []
+			for cleaning_media in cleaningteam.cleaning_team_medias:
+				if cleaning_media.taken_status == 'BEFORE_CLEANING':
+					before_cleaning_media_list.append({"before_cleaning_url":cleaning_media.media.url})
+				elif cleaning_media.taken_status == 'AFTER_CLEANING':
+					after_cleaning_media_list.append({"after_cleaning_url":cleaning_media.media.url})
+				else:
+					pass
+			
+			check_in = cleaningteam.start_at + timedelta(hours=3)
+			check_out = cleaningteam.end_at + timedelta(hours=3)
+
+			print(check_in,"printest")
+
+			response_dict = {'success':True,"visit_count":visit_count,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"start_at":check_in.time().strftime("%I:%M %p"),"end_at":check_out.time().strftime("%I:%M %p"),'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list}
+
+		else:
+
+			response_dict = {'success':False}
+
+		return Response(response_dict,HTTP_200_OK)	

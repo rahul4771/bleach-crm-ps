@@ -527,12 +527,12 @@
         </div>
        
       </div>
-      <div class="d-flex text-center no-print">
-        <div class="inv-white-btn text-center  mt-4 mb-4 inv-receipt-download" id="download">
+      <div class="d-flex text-center no-print"> 
+        <div class="inv-white-btn text-center  mt-4 mb-4 inv-receipt-download" id="download_id">
           <input type="hidden" class="filename" value="Quotation_{{order.order_no}}" />
           <i class="fa fa-download" ></i>
-          Download
-        </div> 
+        <a href="/customer/test/quatation/download/paw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">Download</a>
+        </div>
         <div class="inv-white-btn text-center  mt-4 mb-4 inv-receipt-print  " onclick="printDiv()">
           <i class="fa fa-print"></i>
           Print

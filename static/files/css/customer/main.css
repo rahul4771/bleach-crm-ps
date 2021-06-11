@@ -863,3 +863,39 @@ height: 42px;
     }
 
 }
+
+
+@page {
+    size: A4 portrait; /* can use also 'landscape' for orientation */
+    margin: 1in 9in 1in 0.44in;
+    padding-bottom: 1in;
+
+    @bottom-left{
+        content: element(footer);
+    }
+
+    @top-left{
+        content: element(header);
+    }
+
+
+}
+header {
+position: running(header);
+width: 100%;
+padding-left: 30px;
+margin-bottom: 40px;
+padding-top: 60px;
+/*height: 100px;*/
+}
+
+footer {
+margin: 0px 0px -200px -50px !important;
+position: fixed;
+width: 1240px;
+background: #616161;
+height: 150px;
+padding-left: 25px;
+bottom: 0;
+
+}

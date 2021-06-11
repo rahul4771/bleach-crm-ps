@@ -129,8 +129,8 @@
                                                 <label for="favcity">
                                                 <select name="staff_filter" id="staff_type_filter_id">
                                                 <option value=''>---ALL---</option>
-                                                <option value='TEAMINCHARGE' >TEAMINCHARGE</option>
-                                                <option value='CLEANER' >CLEANER</option>
+                                                <option value='TEAMINCHARGE' {% if staff_type == "TEAMINCHARGE" %}selected{% endif %}>TEAMINCHARGE</option>
+                                                <option value='CLEANER' {% if staff_type == "CLEANER" %}selected{% endif %}>CLEANER</option>
                                                 </select>
                                                 </label>
                                   </div><!--ticket-form-left-->
@@ -139,98 +139,34 @@
                                                 <label for="favcity">
                                                 <select name="servicetype_filter" id="service_type_filter_id">
                                                 <option value=''>---ALL---</option>
-                                                <option value='is_general_skill'>General Cleaning</option>
-                                                <option value='is_deep_skill'>Deep Cleaning</option>
-                                                <option value='is_upholstery_skill' >Upholstery Cleaning</option>
-                                                <option value='is_carpet_skill' >Carpet Cleaning</option>
-                                                <option value='is_kitchen_skill' >Kitchen Cleaning</option>
-                                                <option value='is_sterilization_skill' >Sterilization</option>
+                                                <option value='is_general_skill' {% if service_type == "is_general_skill" %}selected{% endif %}>General Cleaning</option>
+                                                <option value='is_deep_skill' {% if service_type == "is_deep_skill" %}selected{% endif %}>Deep Cleaning</option>
+                                                <option value='is_upholstery_skill' {% if service_type == "is_upholstery_skill" %}selected{% endif %}>Upholstery Cleaning</option>
+                                                <option value='is_carpet_skill' {% if service_type == "is_carpet_skill" %}selected{% endif %}>Carpet Cleaning</option>
+                                                <option value='is_kitchen_skill' {% if service_type == "is_kitchen_skill" %}selected{% endif %}>Kitchen Cleaning</option>
+                                                <option value='is_sterilization_skill' {% if service_type == "is_sterilization_skill" %}selected{% endif %}>Sterilization</option>
+                                                <option value="is_carpet_skill" {% if service_type == "is_carpet_skill" %}selected{% endif %}>Carpet Cleaning</option>
+                                                <option value="is_mattress_skill" {% if service_type == "is_mattress_skill" %}selected{% endif %}>Mattress Cleaning</option>
+                                                <option value="is_facade_skill" {% if service_type == "is_facade_skill" %}selected{% endif %}>Facade Cleaning</option>
+                                                <option value="is_storagearea_skill" {% if service_type == "is_storagearea_skill" %}selected{% endif %}>Storage Area Cleaning</option>
+                                                <option value="is_carparkingumbrella_skill" {% if service_type == "is_carparkingumbrella_skill" %}selected{% endif %}>Car Parking Umbrella</option>
+                                                <option value="is_outdoor_skill" {% if service_type == "is_outdoor_skill" %}selected{% endif %}>Outdoor Cleaning</option>
+                                                <option value="is_window_skill" {% if service_type == "is_outdoor_skill" %}selected{% endif %}>Window Cleaning</option>
                                                 </select>
                                                 </label>
                                   </div><!--ticket-form-right-->
-                                </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-                                <hr class="hr-dashedpad"> 
-                                <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-
-                                    <div class="row" id="appResource2">
-                                        <div v-for="item,i in solt"  :key="item.solt" @click="selectSolt(item.solt)" class="col-xs-2">
-                                            <div class="solt-filter-box-1 " :class="item.check ? 'solt-filter-box-active-1' : ''">
-                                                <% item.solt %>
-                                            </div>
-                                        </div> 
-                                        <!-- <div class="col-xs-2">
-                                            <div class="solt-filter-box-1 ">
-                                                2
-                                            </div>
-                                        </div> 
-                                        <div class="col-xs-2">
-                                            <div class="solt-filter-box-1 ">
-                                                3
-                                            </div>
-                                        </div> 
-                                        <div class="col-xs-2">
-                                            <div class="solt-filter-box-1 ">
-                                                4
-                                            </div>
-                                        </div> 
-                                        <div class="col-xs-2">
-                                            <div class="solt-filter-box-1 ">
-                                                5
-                                            </div>
-                                        </div> 
-                                        <div class="col-xs-2">
-                                            <div class="solt-filter-box-1 ">
-                                                6
-                                            </div>
-                                        </div> 
-                                        <div class="col-xs-2">
-                                            <div class="solt-filter-box-1 ">
-                                                7
-                                            </div>
-                                        </div> 
-                                        <div class="col-xs-2">
-                                            <div class="solt-filter-box-1 ">
-                                                8
-                                            </div>
-                                        </div> 
-                                        <div class="col-xs-2">
-                                            <div class="solt-filter-box-1 ">
-                                                9
-                                            </div>
-                                        </div> 
-                                        <div class="col-xs-2">
-                                            <div class="solt-filter-box-1 ">
-                                                10
-                                            </div>
-                                        </div> 
-                                        <div class="col-xs-2">
-                                            <div class="solt-filter-box-1 ">
-                                                11
-                                            </div>
-                                        </div> 
-                                        <div class="col-xs-2">
-                                            <div class="solt-filter-box-1 ">
-                                                12
-                                            </div>
-                                        </div>  -->
-                                    </div>
-                                </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-                                
+                                </div><!--ticket-wrapper-row ticket-forms-boxes-->  
                                 <div align="center"> 
-                                <button type="button" class="red-btn assignButton" onclick="set_params_go({});">Submit</button> 
-                                <button type="button" class="red-btn2 assignButton" onclick="load_workers_data();" hidden>Submit</button>
+                                <button type="button" class="red-btn assignButton" onclick="set_params_go();">Submit</button> 
                                 <button type="button" class="cancel-Button arrow-left-close" id="id_reset">Reset</button>
                                 </div>
                                 </div><!--menu-filter-left ltgreen-border-->
 
 
                             <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar"
-                                    placeholder="Search Worker Name Here" value="{{search_query|default_if_none:''}}"
-                                    onchange="set_params_go()">
-                                <span id="resource_search"><img class="search-icon"
-                                        src="{% static 'files/images/search-icon.png' %}"></span>
-                                <a id="resource_search2" onclick="load_workers_data();" hidden><img class="search-icon"
-                                        src="{% static 'files/images/search-icon.png' %}"></a>
+                                    placeholder="Search Worker Name Here" value="{{search|default_if_none:''}}" onchange="set_params_go()">
+                            <span id="resource_search"><img class="search-icon"
+                                    src="{% static 'files/images/search-icon.png' %}"></span>
                             </span>
                         </div>
                         <div id="appResource" class="filter-columns-center">
@@ -302,7 +238,7 @@
                                         <button class="prev-day-resource previous-button"><i class="fa fa-caret-left"
                                                 aria-hidden="true"></i></button>
                                         <input type='text' id='working_calendar_date' name='datepicker'
-                                            class="date-box resource_date_pick">
+                                            class="date-box resource_date_pick" value="{{workers_date|date:"d-m-Y"}}" onchange="set_params_go()">
                                         <button class='next-day-resource next-button'><i class="fa fa-caret-right"
                                                 aria-hidden="true"></i></button>
                                         <button class='today-date-resource current-date'>Today</button>
@@ -365,10 +301,41 @@
                                                                 </h6>
                                                                 <div class="resource-user-rating">
                                                                     <!--rating section-->
+                                                                    {% if worker.rating >= 4.5 %}
                                                                     <i class="fas fa-star yellow-icon"></i>
                                                                     <i class="fas fa-star yellow-icon"></i>
                                                                     <i class="fas fa-star yellow-icon"></i>
                                                                     <i class="fas fa-star yellow-icon"></i>
+                                                                    <i class="fas fa-star yellow-icon"></i>
+                                                                    {% elif worker.rating < 4.5 and worker.rating >= 3.5 %}
+                                                                    <i class="fas fa-star yellow-icon"></i>
+                                                                    <i class="fas fa-star yellow-icon"></i>
+                                                                    <i class="fas fa-star yellow-icon"></i>
+                                                                    <i class="fas fa-star yellow-icon"></i>
+                                                                    <i class="fas fa-star "></i>
+                                                                    {% elif worker.rating < 3.5 and worker.rating >= 2.5 %}
+                                                                    <i class="fas fa-star yellow-icon"></i>
+                                                                    <i class="fas fa-star yellow-icon"></i>
+                                                                    <i class="fas fa-star yellow-icon"></i>
+                                                                    <i class="fas fa-star "></i>
+                                                                    <i class="fas fa-star "></i>
+                                                                    {% elif worker.rating < 2.5 and worker.rating >= 1.5 %}
+                                                                    <i class="fas fa-star yellow-icon"></i>
+                                                                    <i class="fas fa-star yellow-icon"></i>
+                                                                    <i class="fas fa-star"></i>
+                                                                    <i class="fas fa-star"></i>
+                                                                    <i class="fas fa-star "></i>
+                                                                    {% elif worker.rating < 1.5 and worker.rating >= .5 %}
+                                                                    <i class="fas fa-star yellow-icon"></i>
+                                                                    <i class="fas fa-star "></i>
+                                                                    <i class="fas fa-star "></i>
+                                                                    <i class="fas fa-star "></i>
+                                                                    <i class="fas fa-star "></i>
+                                                                    {% endif %}
+                                                                    <i class="fas fa-star "></i>
+                                                                    <i class="fas fa-star "></i>
+                                                                    <i class="fas fa-star "></i>
+                                                                    <i class="fas fa-star "></i>
                                                                     <i class="fas fa-star "></i>
                                                                     <!--rating section-->
                                                                 </div>
@@ -384,18 +351,18 @@
                                                         <div class="row ">
                                                             <div class="col-xs-9  pr-0">Worked Days</div>
                                                             <div class="col-xs-3 pl-0 pr-0">: <span
-                                                                    class="c-text">27</span></div>
+                                                                    class="c-text">{{worker.worked_days}}</span></div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-xs-9  pr-0">Worked Hours</div>
                                                             <div class="col-xs-3 pl-0 pr-0">: <span
-                                                                    class="c-text">200</span></div>
+                                                                    class="c-text">{{worker.total_hours|floatformat:'2'}}</span></div>
                                                         </div>
 
                                                         <div class="row ">
                                                             <div class="col-xs-9  pr-0">Average Work Hours</div>
                                                             <div class="col-xs-3 pl-0 pr-0">: <span
-                                                                    class="c-text">7.14</span></div>
+                                                                    class="c-text">{{worker.average_hours|floatformat:'2'}}</span></div>
                                                         </div>
 
                                                     </div>
@@ -476,14 +443,14 @@
                                         <div class="resource-card" id="back_id_{{worker.id}}">
                                             <div class="resource-user-details">
                                                 <h2>Skill Of {{worker.name}}</h2>
-                                                <div onclick="editShow()" class="skill-edit" id="id_edit">
+                                                <div onclick="editShow(this)" data-id="{{worker.id}}" class="skill-edit" id="edit_id_{{worker.id}}">
                                                     <img src="{% static 'files/icons/edit.png' %}">
                                                 </div>
-                                                <div onclick="editDone()" id="id_done" class="skill-edit-done">
+                                                <div onclick="editDone(this)" data-id="{{worker.id}}" id="id_done_{{worker.id}}" class="skill-edit-done">
                                                     <button class="resource-card-button">Done</button>
                                                 </div>
                                             </div>
-                                            <div id="id_skill_list" class="skil-list">
+                                            <div id="id_skill_list_{{worker.id}}" class="skil-list">
                                                 <div class="row mt-10">
 
                                                     {% if worker.is_general_skill %}
@@ -561,77 +528,78 @@
 
                                                 </div>
                                             </div>
-                                            <div id="id_skill_edit_list" class="skil-list-edit">
+                                            <div id="id_skill_edit_list_{{worker.id}}" class="skil-list-edit">
                                                 <div class="row mt-10">
+                                                    <input type="hidden" name="user_id" value="{{worker.id}}">
                                                     <div class="col-xs-6 mb-5">
                                                         <label class="c-container">General Cleaning
-                                                            <input type="checkbox" {% if worker.is_general_skill %}checked{% endif %}>
+                                                            <input type="checkbox" {% if worker.is_general_skill %}checked{% endif %} name="is_general_skill">
                                                             <span class="c-checkmark"></span>
                                                         </label>
                                                     </div>
                                                     <div class="col-xs-6 mb-5">
                                                         <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox" {% if worker.is_deep_skill %}checked{% endif %}>
+                                                            <input type="checkbox" {% if worker.is_deep_skill %}checked{% endif %} name="is_deep_skill">
                                                             <span class="c-checkmark"></span>
                                                         </label>
                                                     </div>
                                                     <div class="col-xs-6 mb-5">
                                                         <label class="c-container">Upholstery Cleaning
-                                                            <input type="checkbox" {% if worker.is_upholstery_skill %}checked{% endif %}>
+                                                            <input type="checkbox" {% if worker.is_upholstery_skill %}checked{% endif %} name="is_upholstery_skill">
                                                             <span class="c-checkmark"></span>
                                                         </label>
                                                     </div>
                                                     <div class="col-xs-6 mb-5">
                                                         <label class="c-container">Kitchen Cleaning
-                                                            <input type="checkbox" {% if worker.is_kitchen_skill %}checked{% endif %}>
+                                                            <input type="checkbox" {% if worker.is_kitchen_skill %}checked{% endif %} name="is_kitchen_skill">
                                                             <span class="c-checkmark"></span>
                                                         </label>
                                                     </div>
                                                     <div class="col-xs-6 mb-5">
                                                         <label class="c-container">Sterilization Cleaning
-                                                            <input type="checkbox" {% if worker.is_sterilization_skill %}checked{% endif %}>
+                                                            <input type="checkbox" {% if worker.is_sterilization_skill %}checked{% endif %} name="is_sterilization_skill">
                                                             <span class="c-checkmark"></span>
                                                         </label>
                                                     </div>
                                                     <div class="col-xs-6 mb-5">
                                                         <label class="c-container">Carpet Cleaning
-                                                            <input type="checkbox" {% if worker.is_carpet_skill %}checked{% endif %}>
+                                                            <input type="checkbox" {% if worker.is_carpet_skill %}checked{% endif %} name="is_carpet_skill">
                                                             <span class="c-checkmark"></span>
                                                         </label>
                                                     </div>
                                                     <div class="col-xs-6 mb-5">
                                                         <label class="c-container">Mattress Cleaning
-                                                            <input type="checkbox" {% if worker.is_mattress_skill %}checked{% endif %}>
+                                                            <input type="checkbox" {% if worker.is_mattress_skill %}checked{% endif %} name="is_mattress_skill">
                                                             <span class="c-checkmark"></span>
                                                         </label>
                                                     </div>
                                                     <div class="col-xs-6 mb-5">
                                                         <label class="c-container">Facade Cleaning
-                                                            <input type="checkbox" {% if worker.is_facade_skill %}checked{% endif %}>
+                                                            <input type="checkbox" {% if worker.is_facade_skill %}checked{% endif %} name="is_facade_skill">
                                                             <span class="c-checkmark"></span>
                                                         </label>
                                                     </div>
                                                     <div class="col-xs-6 mb-5">
                                                         <label class="c-container">Storage Area Cleaning
-                                                            <input type="checkbox"{% if worker.is_storagearea_skill %}checked{% endif %}>
+                                                            <input type="checkbox"{% if worker.is_storagearea_skill %}checked{% endif %} name="is_storagearea_skill">
                                                             <span class="c-checkmark"></span>
                                                         </label>
                                                     </div>
                                                     <div class="col-xs-6 mb-5">
                                                         <label class="c-container">Car Parking Umbrella
-                                                            <input type="checkbox" {% if worker.is_carparkingumbrella_skill %}checked{% endif %}>
+                                                            <input type="checkbox" {% if worker.is_carparkingumbrella_skill %}checked{% endif %} name="is_carparkingumbrella_skill">
                                                             <span class="c-checkmark"></span>
                                                         </label>
                                                     </div>
                                                     <div class="col-xs-6 mb-5">
                                                         <label class="c-container">Outdoor Cleaning
-                                                            <input type="checkbox" {% if worker.is_outdoor_skill %}checked{% endif %}>
+                                                            <input type="checkbox" {% if worker.is_outdoor_skill %}checked{% endif %} name="is_outdoor_skill">
                                                             <span class="c-checkmark"></span>
                                                         </label>
                                                     </div>
                                                     <div class="col-xs-6 mb-5">
                                                         <label class="c-container">Window Cleaning
-                                                            <input type="checkbox" {% if worker.is_window_skill %}checked{% endif %}>
+                                                            <input type="checkbox" {% if worker.is_window_skill %}checked{% endif %} name="is_window_skill">
                                                             <span class="c-checkmark"></span>
                                                         </label>
                                                     </div>
@@ -648,1032 +616,6 @@
                             </div>
                         </div>
                         {% endfor %}
-
-                        <div class="col-md-3 pr-0 m-mb-60 m-pl-0 m-mlr-0">
-                            <div class="flip-container">
-                                <div class="flipper">
-                                    <div class="front">
-                                        <div class="resource-card" id="front_id_1">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="row">
-                                                        <div class="col-xs-5">
-                                                            <div class="resource-card-profile">
-                                                                <img class="resource-user-pic"
-                                                                    src="{% static 'files/images/lalettan.jpg' %}">
-                                                                <span class="dot-green"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-xs-7">
-                                                            <div class="resource-user-details text-left">
-                                                                <h2>Joy</h2>
-                                                                <h6>Team Leader</h6>
-                                                                <div class="resource-user-rating">
-                                                                    <!--rating section-->
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star "></i>
-                                                                    <!--rating section-->
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 ">
-                                                    <div class="woking-details">
-                                                        <h2>
-                                                            May 2021
-                                                        </h2>
-                                                        <div class="row ">
-                                                            <div class="col-xs-9  pr-0">Worked Days</div>
-                                                            <div class="col-xs-3 pl-0 pr-0">: <span
-                                                                    class="c-text">27</span></div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-xs-9  pr-0">Worked Hours</div>
-                                                            <div class="col-xs-3 pl-0 pr-0">: <span
-                                                                    class="c-text">200</span></div>
-                                                        </div>
-
-                                                        <div class="row ">
-                                                            <div class="col-xs-9  pr-0">Average Work Hours</div>
-                                                            <div class="col-xs-3 pl-0 pr-0">: <span
-                                                                    class="c-text">7.14</span></div>
-                                                        </div>
-
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                            <a onclick="flip(1)">View Skils</a>
-                                            <p class="resource-card-text">Daily Occupancy 15 May 2021</p>
-                                            <div class="row ml-5 m-pr-0">
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        1
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        2
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        3
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2  mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        4
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-3">
-                                                        5
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-3">
-                                                        6
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        7
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        8
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        9
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2  mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        10
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-3">
-                                                        11
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-3">
-                                                        12
-                                                    </div>
-                                                </div>
-
-
-
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="back">
-                                        <div class="resource-card" id="back_id_1">
-                                            <div class="resource-user-details">
-                                                <h2>Skill Of Joy</h2>
-                                                <div onclick="editShow()" class="skill-edit" id="id_edit">
-                                                    <img src="{% static 'files/icons/edit.png' %}">
-                                                </div>
-                                                <div onclick="editDone()" id="id_done" class="skill-edit-done">
-                                                    <button class="resource-card-button">Done</button>
-                                                </div>
-                                            </div>
-                                            <div id="id_skill_list" class="skil-list">
-                                                <div class="row mt-10">
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-
-
-                                                </div>
-                                            </div>
-                                            <div id="id_skill_edit_list" class="skil-list-edit">
-                                                <div class="row mt-10">
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-
-                                            <div class="back-button" >
-                                                <button onclick="flipBack(1)" class="resource-card-button">Back</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-3 pr-0 m-mb-60 m-pl-0 m-mlr-0">
-                            <div class="flip-container">
-                                <div class="flipper">
-                                    <div class="front">
-                                        <div class="resource-card" id="front_id_2">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="row">
-                                                        <div class="col-xs-5">
-                                                            <div class="resource-card-profile">
-                                                                <img class="resource-user-pic"
-                                                                    src="{% static 'files/icons/profile.png' %}">
-                                                                <span class="dot-red"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-xs-7">
-                                                            <div class="resource-user-details text-left">
-                                                                <h2>Joy</h2>
-                                                                <h6>Team Leader</h6>
-                                                                <div class="resource-user-rating">
-                                                                    <!--rating section-->
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star "></i>
-                                                                    <!--rating section-->
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 ">
-                                                    <div class="woking-details">
-                                                        <h2>
-                                                            May 2021
-                                                        </h2>
-                                                        <div class="row ">
-                                                            <div class="col-xs-9  pr-0">Worked Days</div>
-                                                            <div class="col-xs-3 pl-0 pr-0">: <span
-                                                                    class="c-text">27</span></div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-xs-9  pr-0">Worked Hours</div>
-                                                            <div class="col-xs-3 pl-0 pr-0">: <span
-                                                                    class="c-text">200</span></div>
-                                                        </div>
-
-                                                        <div class="row ">
-                                                            <div class="col-xs-9  pr-0">Average Work Hours</div>
-                                                            <div class="col-xs-3 pl-0 pr-0">: <span
-                                                                    class="c-text">7.14</span></div>
-                                                        </div>
-
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                            <a onclick="flip(2)" >View Skils</a>
-                                            <p class="resource-card-text">Daily Occupancy 15 May 2021</p>
-                                            <div class="row ml-5 m-pr-0">
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        1
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        2
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        3
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2  mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        4
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-3">
-                                                        5
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-3">
-                                                        6
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        7
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        8
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        9
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2  mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        10
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-3">
-                                                        11
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-3">
-                                                        12
-                                                    </div>
-                                                </div>
-
-
-
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="back">
-                                        <div class="resource-card" id="back_id_2">
-                                            <div class="resource-user-details">
-                                                <h2>Skill Of Joy</h2>
-                                                <div onclick="editShow()" class="skill-edit" id="id_edit">
-                                                    <img src="{% static 'files/icons/edit.png' %}">
-                                                </div>
-                                                <div onclick="editDone()" id="id_done" class="skill-edit-done">
-                                                    <button class="resource-card-button">Done</button>
-                                                </div>
-                                            </div>
-                                            <div id="id_skill_list" class="skil-list">
-                                                <div class="row mt-10">
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-
-
-                                                </div>
-                                            </div>
-                                            <div id="id_skill_edit_list" class="skil-list-edit">
-                                                <div class="row mt-10">
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-
-                                            <div class="back-button" >
-                                                <button onclick="flipBack(2)" class="resource-card-button">Back</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-3 pr-0 m-mb-60 m-pl-0 m-mlr-0">
-                            <div class="flip-container">
-                                <div class="flipper">
-                                    <div class="front">
-                                        <div class="resource-card" id="id_a">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="row">
-                                                        <div class="col-xs-5">
-                                                            <div class="resource-card-profile">
-                                                                <img class="resource-user-pic"
-                                                                    src="{% static 'files/icons/profile.png' %}">
-                                                                <span class="dot-gray"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-xs-7">
-                                                            <div class="resource-user-details text-left">
-                                                                <h2>Joy</h2>
-                                                                <h6>Team Leader</h6>
-                                                                <div class="resource-user-rating">
-                                                                    <!--rating section-->
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star "></i>
-                                                                    <!--rating section-->
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 ">
-                                                    <div class="woking-details">
-                                                        <h2>
-                                                            May 2021
-                                                        </h2>
-                                                        <div class="row ">
-                                                            <div class="col-xs-9  pr-0">Worked Days</div>
-                                                            <div class="col-xs-3 pl-0 pr-0">: <span
-                                                                    class="c-text">27</span></div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-xs-9  pr-0">Worked Hours</div>
-                                                            <div class="col-xs-3 pl-0 pr-0">: <span
-                                                                    class="c-text">200</span></div>
-                                                        </div>
-
-                                                        <div class="row ">
-                                                            <div class="col-xs-9  pr-0">Average Work Hours</div>
-                                                            <div class="col-xs-3 pl-0 pr-0">: <span
-                                                                    class="c-text">7.14</span></div>
-                                                        </div>
-
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                            <a>View Skils</a>
-                                            <p class="resource-card-text">Daily Occupancy 15 May 2021</p>
-                                            <div class="row ml-5 m-pr-0">
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        1
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        2
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        3
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2  mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        4
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-3">
-                                                        5
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-3">
-                                                        6
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        7
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        8
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        9
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2  mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        10
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-3">
-                                                        11
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-3">
-                                                        12
-                                                    </div>
-                                                </div>
-
-
-
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="back">
-                                        <div class="resource-card">
-                                            <div class="resource-user-details">
-                                                <h2>Skill Of Joy</h2>
-                                                <div onclick="editShow()" class="skill-edit" id="id_edit">
-                                                    <img src="{% static 'files/icons/edit.png' %}">
-                                                </div>
-                                                <div onclick="editDone()" id="id_done" class="skill-edit-done">
-                                                    <button class="resource-card-button">Done</button>
-                                                </div>
-                                            </div>
-                                            <div id="id_skill_list" class="skil-list">
-                                                <div class="row mt-10">
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-
-
-                                                </div>
-                                            </div>
-                                            <div id="id_skill_edit_list" class="skil-list-edit">
-                                                <div class="row mt-10">
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-
-                                            <div class="back-button" id="id_b">
-                                                <button class="resource-card-button">Back</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-3 pr-0 m-mb-60 m-pl-0 m-mlr-0">
-                            <div class="flip-container">
-                                <div class="flipper">
-                                    <div class="front">
-                                        <div class="resource-card" id="id_a">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="row">
-                                                        <div class="col-xs-5">
-                                                            <div class="resource-card-profile">
-                                                                <img class="resource-user-pic"
-                                                                    src="{% static 'files/icons/profile.png' %}">
-                                                                <span class="dot-gray"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-xs-7">
-                                                            <div class="resource-user-details text-left">
-                                                                <h2>Joy</h2>
-                                                                <h6>Team Leader</h6>
-                                                                <div class="resource-user-rating">
-                                                                    <!--rating section-->
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star "></i>
-                                                                    <!--rating section-->
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 ">
-                                                    <div class="woking-details">
-                                                        <h2>
-                                                            May 2021
-                                                        </h2>
-                                                        <div class="row ">
-                                                            <div class="col-xs-9  pr-0">Worked Days</div>
-                                                            <div class="col-xs-3 pl-0 pr-0">: <span
-                                                                    class="c-text">27</span></div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-xs-9  pr-0">Worked Hours</div>
-                                                            <div class="col-xs-3 pl-0 pr-0">: <span
-                                                                    class="c-text">200</span></div>
-                                                        </div>
-
-                                                        <div class="row ">
-                                                            <div class="col-xs-9  pr-0">Average Work Hours</div>
-                                                            <div class="col-xs-3 pl-0 pr-0">: <span
-                                                                    class="c-text">7.14</span></div>
-                                                        </div>
-
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                            <a>View Skils</a>
-                                            <p class="resource-card-text">Daily Occupancy 15 May 2021</p>
-                                            <div class="row ml-5 m-pr-0">
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        1
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        2
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        3
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2  mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        4
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-3">
-                                                        5
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-3">
-                                                        6
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        7
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        8
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        9
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2  mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-2">
-                                                        10
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-3">
-                                                        11
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-3">
-                                                        12
-                                                    </div>
-                                                </div>
-
-
-
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="back">
-                                        <div class="resource-card">
-                                            <div class="resource-user-details">
-                                                <h2>Skill Of Joy</h2>
-                                                <div onclick="editShow()" class="skill-edit" id="id_edit">
-                                                    <img src="{% static 'files/icons/edit.png' %}">
-                                                </div>
-                                                <div onclick="editDone()" id="id_done" class="skill-edit-done">
-                                                    <button class="resource-card-button">Done</button>
-                                                </div>
-                                            </div>
-                                            <div id="id_skill_list" class="skil-list">
-                                                <div class="row mt-10">
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-
-
-                                                </div>
-                                            </div>
-                                            <div id="id_skill_edit_list" class="skil-list-edit">
-                                                <div class="row mt-10">
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-
-                                            <div class="back-button" id="id_b">
-                                                <button class="resource-card-button">Back</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                       
                     </div>
 
@@ -1686,6 +628,8 @@
         </div>
 
 
+        <input type="hidden" id="starting_id" name="starting_time" >
+        <input type="hidden" id="ending_id" name="ending_time" >
 
 
 
@@ -1708,23 +652,19 @@
 
 
 <script>
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0');
-    var yyyy = today.getFullYear();
-    today = mm + '-' + dd + '-' + yyyy;
-    $("#working_calendar_date").val(today);
-    function editShow() {
-        document.getElementById("id_done").style.display = "block";
-        document.getElementById("id_edit").style.display = "none";
-        document.getElementById("id_skill_list").style.display = "none";
-        document.getElementById("id_skill_edit_list").style.display = "block";
+
+    function editShow(element) {
+   
+        document.getElementById("id_done_"+$(element).data('id')).style.display = "block";
+        document.getElementById("id_skill_edit_list_"+$(element).data('id')).style.display = "none";
+        document.getElementById("id_skill_list_"+$(element).data('id')).style.display = "none";
+        document.getElementById("id_skill_edit_list_"+$(element).data('id')).style.display = "block";
     }
-    function editDone() {
-        document.getElementById("id_skill_edit_list").style.display = "none";
-        document.getElementById("id_done").style.display = "none";
-        document.getElementById("id_edit").style.display = "block";
-        document.getElementById("id_skill_list").style.display = "block";
+    function editDone(element) {
+        document.getElementById("id_done_"+$(element).data('id')).style.display = "none";
+        document.getElementById("id_skill_edit_list_"+$(element).data('id')).style.display = "block";
+        document.getElementById("id_skill_list_"+$(element).data('id')).style.display = "block";
+        document.getElementById("id_skill_edit_list_"+$(element).data('id')).style.display = "none";
     }
     function flip(element) {
         $('#front_id_'+$(element).data('id')).closest('.flip-container').toggleClass('flip-hover');
@@ -1734,14 +674,7 @@
         $('#back_id_'+$(element).data('id')).closest('.flip-container').toggleClass('flip-hover');
         $('#back_id_'+$(element).data('id')).css('transform, rotateY(180deg)');
     }
-    // $('#id_a').click(function () {
-    //     $(this).closest('.flip-container').toggleClass('flip-hover');
-    //     $(this).css('transform, rotateY(180deg)');
-    // });
-    // $('#id_b').click(function () {
-    //     $(this).closest('.flip-container').toggleClass('flip-hover');
-    //     $(this).css('transform, rotateY(180deg)');
-    // });
+
     $(document).ready(function(){
         
         {% for worker in workers %}
@@ -1812,5 +745,19 @@
         {% endfor %}
     });
 
+    function set_params_go(args)
+            {
+            var url='{% url 'common_items:resource-management-new' %}';
+            var params={workers_calendar_date:$('#working_calendar_date').val(),search:$('#search-bar').val(),staff_type:$('#staff_type_filter_id').val(),service_type:$('#service_type_filter_id').val(),starting_time:$('#starting_id').val(),ending_time:$('#ending_id').val()
+            };
+            for(key in args) 
+                params[key]=args[key];
+            var query='';
+            for(key in params)
+                if(params[key]) 
+                    query+='&'+key+'='+params[key].toString();
+            query=query.replace('&','?');
+            window.location.href=url+query;  
+            }
 </script>
 {% endblock %}
