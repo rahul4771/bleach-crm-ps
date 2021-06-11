@@ -745,7 +745,7 @@ def testquatation_html_to_pdf_view(request,evaluation_id):
 		# return render(request,'customer/downloads/quatation.html',{"order":order,"nonduplicate_schedules":nonduplicate_schedules,"per_job_cost":per_job_cost})
 		html_string = render_to_string("customer/downloads/quatation.html",{"order":order,"nonduplicate_schedules":nonduplicate_schedules,"per_job_cost":per_job_cost})
 	else:
-		# return render(request,'customer/downloads/quatation.html',{"order":order,"nonduplicate_schedules":nonduplicate_schedules})
+		#return render(request,'customer/downloads/quatation.html',{"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 		html_string = render_to_string('customer/downloads/quatation.html',{"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 	
 	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
