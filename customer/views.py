@@ -751,9 +751,9 @@ def testquatation_html_to_pdf_view(request,evaluation_id):
 	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
 	main_doc = html.render()
 
-	main_doc.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');
+	main_doc.write_pdf(target='/home/sonu/pdf/tmp/quatation/quatation.pdf');
 
-	fs = FileSystemStorage('/home/pdf/tmp/quatation/')
+	fs = FileSystemStorage('/home/sonu/pdf/tmp/quatation/')
 	with fs.open('quatation.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_quatation.pdf"'
