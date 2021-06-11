@@ -1737,8 +1737,52 @@ class LeaveScheduler(IsAuthenticated,View):
 class ResourceManagementTest(IsAuthenticated,View):
 	def get(self,request):
 
-		workers_date       = timezone.now().date()
+		#search
+		search = request.GET.get('search',None)
+		
+		#staff type
+		staff_type     = request.GET.get('staff_type')
+		
+		#slotes
+		slote_start_at = request.GET.get('slote_start_at')
+		slote_end_at   = request.GET.get('slote_end_at')
+		
+		#workers_date
+		workers_date             = timezone.now().date()
+		
+		##Daily Data
 		workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date)|Q(end_at__date=workers_date)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__date=workers_date)|Q(end_at__date=workers_date)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
+
+		##Monthlly Data
+		month_start    = workers_date.replace(day=1)
+		month_end      = month_start+relativedelta(months=1)-relativedelta(days=1)
+		month_range    = pd.date_range(month_start, month_end)
+		
+		for worker in workers:
+			cleanings = CleaningTeamMember.objects.filter(is_active=True,member=worker).filter(Q(Q(start_at__month=workers_date.month)|Q(end_at__month=workers_date.month))).values('team__order_scheduler__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at').annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField()))
+			followups = FollowUpTeamMember.objects.filter(is_active=True,member=worker).filter(Q(Q(start_at__month=workers_date.month)|Q(end_at__month=workers_date.month))).select_related('team__followup_scheduler__follow_up__investigation__order__feed_backs_order').values('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at').annotate(duration = ExpressionWrapper(F('start_at') - F('start_at'), output_field=DurationField()))		
+
+			###to find worked days
+			worked_days = 0
+			for date in month_range:
+				start_date_day = date
+				end_date_day   = date+timedelta(1)
+				if cleanings.filter(start_at__range=(start_date_day,end_date_day),end_at__range=(start_date_day,end_date_day)) or followups.filter(start_at__range=(start_date_day,end_date_day),end_at__range=(start_date_day,end_date_day)):
+					worked_days = worked_days+1		
+			worker.worked_days = worked_days
+
+			###to find total hours
+			cleaning_hours     = cleanings.aggregate(total_duration=Sum('duration'))
+			followup_hours     = followups.aggregate(total_duration=Sum('duration'))
+			total_hours        = (cleaning_hours['total_duration']or timedelta()) + (followup_hours['total_duration']or timedelta())
+			worker.total_hours = total_hours.days*24+total_hours.seconds/3600
+			
+			###to find average work hour
+			if total_hours and worked_days:
+				worker.average_hours = (total_hours/worked_days)or 0
+
+			###to find total rating
+			worker.rating = cleanings.aggregate(total_rating=Sum('team__order_scheduler__order__feed_backs_order__rating')/Count('team__order_scheduler__order__feed_backs_order__rating'))['total_rating']or 0			
 
 		return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date})
 
