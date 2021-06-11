@@ -627,15 +627,9 @@
             </div>
         </div>
 
-        <form >
-            <input type="hidden" id="starting_id" name="starting" >
-            <input type="hidden" id="ending_id" name="ending" >
-          </form>
 
-          <form >
-            <input type="hidden" id="filter_starting_id" name="fl_starting" >
-            <input type="hidden" id="filter_ending_id" name="fl_ending" >
-          </form>
+        <input type="hidden" id="starting_id" name="starting_time" >
+        <input type="hidden" id="ending_id" name="ending_time" >
 
 
 
@@ -754,7 +748,7 @@
     function set_params_go(args)
             {
             var url='{% url 'common_items:resource-management-new' %}';
-            var params={workers_calendar_date:$('#working_calendar_date').val(),search:$('#search-bar').val(),staff_type:$('#staff_type_filter_id').val(),service_type:$('#service_type_filter_id').val(),
+            var params={workers_calendar_date:$('#working_calendar_date').val(),search:$('#search-bar').val(),staff_type:$('#staff_type_filter_id').val(),service_type:$('#service_type_filter_id').val(),starting_time:$('#starting_id').val(),ending_time:$('#ending_id').val()
             };
             for(key in args) 
                 params[key]=args[key];
