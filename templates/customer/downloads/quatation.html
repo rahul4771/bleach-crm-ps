@@ -1,423 +1,141 @@
 {% load static %}
 {% load mathfilters %}
 <!DOCTYPE html>
-<html lang="en" xml:lang="en" >
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    
-    
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" id="viewportMeta" />
+<html lang="en" xml:lang="en">
 
-    
-    <meta name="description" content="Bleach Invoice">
-    <meta name="author" content="Invoice">
-
-    
-
-   
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
-    <link rel="stylesheet" href="{% static 'files/css/customer/main.css' %}">
-    
-    <title>Bleach Cleaning Services | Invoice</title>
-
-  </head>
-  <header>
-    {% include 'customer/downloads/header.html' %}
-  </header>
- 
-  <body id="printableArea">
-   <!-- Reject Modal-->
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
 
 
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" id="viewportMeta" />
 
 
-   <div class="container mb-4 mt-4" id="content" >
-      <div class="row" id="printableArea">
-        <div class="col-md-8 col-print-12 mx-auto" id="canvas" >
-          
-          <div class="inv-card mb-4">
-            <!-- <div class="d-flex p-4">
-           <div >
-            <img src="{% static 'files/images/customer/logo.png' %}" class="inv-logo mr-4"/>
-          </div>
-            
-          <div class=" pt-4 inv-translator " data-html2canvas-ignore="true">
-            <div class="form-check form-switch inv-form-switch select-language">
-              <input type="checkbox"  id="lang-selector" />
-              <input class="form-check-input" type="checkbox"  id="lang-selector" > 
-              <label class="form-check-label notranslate" for="flexSwitchCheckChecked" id="lang-label" data-html2canvas-ignore="true">English</label>
-            </div>
-           
-            
-            <div id="google_translate_element" style="display: none;"></div>
-          </div>
-          
-            </div> -->
+  <meta name="description" content="Bleach Invoice">
+  <meta name="author" content="Invoice">
 
-          <div class="container">
-          <div class="row ">
+  <link href="{% static 'files/css/externalusers.css' %}" rel="stylesheet" type="text/css">
 
-          {% for orderschedule in order.orderschedules %}
-          {% if forloop.first %}
-            <div class="col-md-5 col-print-5 inv-customer-details order-2 order-md-1 mt-4 mt-md-0">
-              <div class="">
-          
 
-                <h4 class="inv-content pt-2 inv-heading-light inv-primary-text"></h4>
-                
-                <div class="d-flex pt-1 inv-invoice-details ">
-                  <div class="w-30 inv-text-left">
-                   <b>Customer</b> 
-                  </div>
-                  <div class="w-70 inv-text-right">
-                    <b>{{orderschedule.customer_address.customer.name}}</b>
-                  </div>
-                </div>
-              
-              <div class="d-flex pt-1 inv-invoice-details">
-                <div class="w-30 inv-text-left">
-                 Address
-                </div>
-                <div class="w-70 inv-text-right">
-                  {{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}} {% else %}{% endif %} {{orderschedule.customer_address.building}},{{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},{% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}} {% else %}{% endif %}<br>{{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}
-                </div>
-              </div>
-           
-              <div class="d-flex pt-1 inv-invoice-details ">
-                <div class="w-30 inv-text-left">
-                Contact No
-                </div>
-                <div class="w-70 inv-text-right">
-                  {{orderschedule.customer_address.customer.mobile_number}}
-                </div>
-              </div>
-              <div class="d-flex pt-1 inv-invoice-details pb-4">
-                <div class="w-30 inv-text-left">
-                Email
-                </div>
-                <div class="w-70 inv-text-right">
-                  {{orderschedule.customer_address.customer.email}}
-                </div>
-              </div>
-                </div>
-              </div>
-              {% endif %}
-              {% endfor %}
+  <title>Bleach Cleaning Services | Invoice</title>
+</head>
+<header>
+  {% include 'customer/downloads/header.html' %}
+</header>
 
-            
-            <div class="col-md-5 col-print-5 offset-md-2 order-md-2 order-1 inv-invoice-card" >
-              <div class="inv-content-card">
-              <h1 class="text-center qt-title inv-primary-text">QUOTATION</h1>
-              <h6 class="text-center"></h6>
-              <div>
-                <div class="d-flex pt-1 inv-invoice-details">
-                  <div class="w-70 inv-text-left">
-                      Quotation Number
-                  </div>
-                  <div class="w-50 inv-text-right">
-                    {{order.order_no}}
-                  </div>
-                </div>
-              <div class="d-flex pt-1 inv-invoice-details">
-                <div class="w-70 inv-text-left">
-                    Initiated Date
-                </div>
-                <div class="w-50 inv-text-right">
-                   {{order.evaluation.created|date:'d-m-Y'}}
-                </div>
-              </div>
-              <div class="d-flex pt-1 inv-invoice-details">
-                <div class="w-70 inv-text-left">
-                    Due Date
-                </div>
-                <div class="w-50 inv-text-right">
-                   {{order.evaluation.quatation_expiry_date|date:'d-m-Y'}}
-                </div>
-              </div>
-              <div class="d-flex pt-1 inv-invoice-details">
-                <div class="w-70 inv-text-left">
-                    Evaluator
-                </div>
-                <div class="w-50 inv-text-right">
-                   {% for orderschedule in nonduplicate_schedules %}{% if orderschedule.evaluation_details.evaluator %}{% ifchanged orderschedule.evaluation_details.evaluator.name %}{{orderschedule.evaluation_details.evaluator.name}}, {% endifchanged %}{% else %}{% if forloop.last %}{{orderschedule.evaluation_details.evaluation.call_attender.name}}{% endif %}{% endif %}{% endfor %}
-                </div>
-              </div>
-              <div class="d-flex pt-1 inv-invoice-details pb-4">
-                <div class="w-70 inv-text-left">
-                    Payment Policy
-                </div>
-                <div class="w-50 inv-text-right">
-                    {{order.evaluation.payment_method}}
-                </div>
-              </div>
-            </div>
-            </div>
-              
-              
-              
-            </div>
+<body id="printableArea">
+  <!-- Reject Modal-->
 
-            {% for orderschedule in nonduplicate_schedules %}            
-            {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
-            <div class="col-md-12 col-print-12 order-3">
-              <div class="inv-price-card mt-4 row">
-                <div class="col-md-8 col-print-8">
-                  <div class="inv-service-title p-2 inv-text-bold">
-                    {{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}
-                  </div>
-                  <div class="d-md-flex d-print-flex">
-                    <div class="p-2">
-                      Size : <span class="inv-text-bold">{{section.size}} {{section.unit|default_if_none:''}}</span>
-                    </div>
-                    <div class="p-2">
-                      Quantity : <span class="inv-text-bold">
-                      {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</span>
-                    </div>
-                    <div class="p-2">
-                      Unit Price : <span class="inv-text-bold">{{section.section_cost|floatformat:'3'}}</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-3 col-print-3 offset-md-1 p-2">
-                  <div class="p-2">
-                    NET PRICE
-                  </div>
-                  <div class="inv-price p-1 ">
-                   
-                    <span class="inv-text-bold" style="text-align:right"> 
-                    {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
-                    {{section.section_cost|floatformat:'3'}}
-                    {% else %}
-                    {{section.section_cost|mul:section.section_cleanings|floatformat:'3'}}
-                    {% endif %}
-                    </span> KD
-                 
-                  </div>
-                  <div>
+  <div id="container">
 
-                  </div>
-                </div>
-                
-              </div>
-            </div>
-            
-            {% endfor %}
-            {% endfor %} 
-                   
-           </div>
-          
-          
-        <!--  <hr class="mt-3 mb-3 pl-2 pr-2 inv-divider"/>-->
-          <div class="row mt-4">
-            <div class=" col-md-6 col-print-6 order-2 order-md-1">
-            {% if order.evaluation.payment_method == 'SUBSCRIPTION' %}{% else %}<div class="qt-subheading">{{order.evaluation.payment_method}} Payment Mode</div>{% endif %}
-
-                {% if order.evaluation.payment_method == 'BREAKDOWN' %}
-                <div class="d-flex mt-2 ">
-                    <div class="text-left w-70 qt-sub-text">
-                        Payment Before Cleaning
-                    </div>
-                    <div class="text-right  qt-sub-text  w-30">
-                       <b>{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</b>   KD
-                    </div>
-                </div>
-
-                <div class="d-flex">
-                    <div class="text-left w-70 qt-sub-text ">
-                        Payment After Cleaning
-                    </div>
-                    <div class="text-right  qt-sub-text  w-30">
-                       <b>{{order.evaluation.after_cleaning_amount|floatformat:'3'}}</b> KD 
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if order.evaluation.payment_method == 'PREPAID' %}
-                <div class="d-flex mt-2 ">
-                    <div class="text-left w-70 qt-sub-text">
-                        Payment Before Cleaning
-                    </div>
-                    <div class="text-right  qt-sub-text  w-30">
-                       <b>{{order.total_amount|floatformat:"3"}}</b>   KD
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if order.evaluation.payment_method == 'POSTPAID' %}
-                <div class="d-flex">
-                    <div class="text-left w-70 qt-sub-text ">
-                        Payment After Cleaning
-                    </div>
-                    <div class="text-right  qt-sub-text  w-30">
-                       <b>{{order.total_amount|floatformat:"3"}}</b> KD 
-                    </div>
-                </div>
-                {% endif %}
-
-                {% comment %} {% if order.evaluation.payment_method == 'SUBSCRIPTION' %}
-                <div class="d-flex mt-2 ">
-                    <div class="text-left w-70 qt-sub-text">
-                        Subscription To Pay
-                    </div>
-                    <div class="text-right  qt-sub-text  w-30">
-                       <b>{{order.subscription_topay|floatformat:"3"}}</b>   KD
-                    </div>
-                </div>
-                {% endif %} {% endcomment %}
-                 
-               </div>
-            <div class=" col-md-5 offset-md-1 col-print-5 order-1 order-md-2">
-             <div class="d-flex pt-4">
-                <div class="inv-text-left w-50">
-                <b>Sub Total</b>  
-                </div>
-                <div class="inv-text-right w-50">
-                   
-                  <span class="inv-text-bold">{{order.evaluation.estimated_cost|floatformat:'3'}}</span> 
-                </div>
-              </div>
-
-            {% if order.evaluation.discount != 0 %}
-              <div class="d-flex pt-2">
-                <div class="inv-text-left w-50">
-                <b>Discount</b>
-                </div>
-                <div class="inv-text-right w-50">
-                   
-                  <span class="inv-text-bold">-{{order.evaluation.discount|floatformat:"3"}}</span>  
-                </div>
-              </div>
-            {% endif %}
-
-            {% if order.evaluation.credit_amount != 0 %}
-              <div class="d-flex pt-2">
-                <div class="inv-text-left w-50">
-                <b>Credit Added</b>
-                </div>
-                <div class="inv-text-right w-50">
-                   
-                  <span class="inv-text-bold">-{{order.evaluation.credit_amount|floatformat:"3"}}</span>  
-                </div>
-              </div>
-            {% endif %}
-
-            {% if order.evaluation.fine_amount != 0 %}
-              <div class="d-flex pt-2">
-                <div class="inv-text-left w-50">
-                <b>Fine Amount</b>
-                </div>
-                <div class="inv-text-right w-50">
-                   
-                  <span class="inv-text-bold">{{order.evaluation.fine_amount|floatformat:'3'}}</span>  
-                </div>
-              </div>
-            {% endif %}
-
-            {% if order.evaluation.writeback_amount != 0 %}
-            <div class="d-flex pt-2">
-                <div class="inv-text-left w-50">
-                <b>Write-Off Amount</b>
-                </div>
-                <div class="inv-text-right w-50">
-                   
-                  <span class="inv-text-bold">-{{order.evaluation.writeback_amount|floatformat:'3'}}</span>  
-                </div>
-              </div>
-            {% endif %}
-
-              {% if order.evaluation.is_promocode_applied == True %}
-              <div class="d-flex pt-2 inv-highlight-text ">
-                  <div class="inv-text-left w-50">
-                    Coupon Added
-                    </div>
-                    
-                    <div class="inv-text-right w-50 ">
-                      <span class="inv-text-bold inv-highlight-text couponamount">-{{order.evaluation.promocode_amount|floatformat:"3"}}</span> KD
-                    </div>
-                </div>
-              {% endif %}
-
-              <div class="inv-total-payment p-2 mt-4 mb-4">
-                <div class="inv-text-left  pt-1">
-               Total
-                </div>
-                <div class="inv-text-right inv-text-lg  ">
-                  
-                  <span class="inv-heading ">{{order.total_amount|floatformat:"3"}}</span> KD
-                </div>
-              </div>
-              
-            </div>
-            
-          </div>
-          <div class="row pt-2 pb-2" data-html2canvas-ignore="true">
-        
-              <div class="col-md-5 offset-md-7 no-print">
-
-                  {% if request.user.user_type != 'ADMIN' and request.user.user_type != 'EVALUATOR' %} {% if order.evaluation.quatation_status != 'APPROVED' and order.evaluation.quatation_status != 'REJECTED' %}
-                  <div class="d-flex mt-4 mb-4">
-                    <div class="inv-btn text-center text-white"  id="bk-approve" onclick="openModal()">
-                       Approve
-                      </div>
-                     
-
-                      <div class="inv-btn text-center  text-white"  onclick="openRejectModal()">
-                        Reject
-                      </div>
-                     
-                   
-                  </div>
-                  {% else %}
-                  <!-- <div class="inv-btn text-center text-white mt-4 mb-4"  id="bk-invoice-btn" {% if order.evaluation.payment_method == 'SUBSCRIPTION' %}onclick="location.href='/customer/subscription/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';"{% else %}onclick="location.href='/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';"{% endif %}>
-                    Invoice
-                   </div> -->
-                  {% endif %}
-                  {% endif %}
-                  
-              </div>
-          </div>
-        </div>
-         
-         
-          </div>
-          
-        </div>
-       
+    <section id="new-customer-info">
+      <div>
+        <span id="customer-text">Customer </span>
+        <span id="customer-name">Mr. Alaa Five</span>
       </div>
-      <!-- <div class="d-flex text-center no-print">
-        <div class="inv-white-btn text-center  mt-4 mb-4 inv-receipt-download" id="download">
-          <input type="hidden" class="filename" value="Quotation_{{order.order_no}}" />
-          <i class="fa fa-download" ></i>
-          Download
-        </div> 
-        <div class="inv-white-btn text-center  mt-4 mb-4 inv-receipt-print  " onclick="printDiv()">
-          <i class="fa fa-print"></i>
-          Print
-        </div> 
-      </div> -->
-      
-   </div>
- 
-   
-   <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>   
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/pdfmake.js" integrity="sha512-rn5JpU98RtYVMtZeQJfzmJ67rl4/dqDpGZ393z5f9WMYHXEU4+8Stm/PQAma2gbsLbpClmUHJzT0DaG32OmEyQ==" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js" integrity="sha512-jzL0FvPiDtXef2o2XZJWgaEpVAihqquZT/tT89qCVaxVuHwJ/1DFcJ+8TBMXplSJXE8gLbVAUv+Lj20qHpGx+A==" crossorigin="anonymous"></script>
-    <script src="{% static 'files/js/convertToPdf.js' %}"></script>
-   
-    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" type="text/javascript"></script>
-        <script src="{% static 'files/js/customer/main.js' %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+      <br>
+      <div>
+        <span id="contact-text">Contact No</span>
+        <span id="contact-number">00000023</span>
+      </div>
+      <div>
+        <span id="contact-text">Email</span>
+        <span id="contact-number">alaaa@gmail.com</span>
+      </div>
+      <div>
+        <span id="address-text">Addrees </span>
+        <span id="customer-address">Jabriya-Hawalli/Kuwait, 6 Floor 22,C Block, Jabriya Street,5 Avenue
+          Jabriya, Hawalli</span>
+      </div><br>
+    </section>
+    <section id="quotation_data">
+      <h1 id="qu-text">QUOTATION</h1>
+      <div>
+        <span id="contact-text">Quotation Number</span>
+        <span id="contact-number">BLC20210510115</span>
+      </div>
+      <div>
+        <span id="contact-text">Initiated Date</span>
+        <span id="contact-number">25-05-2021</span>
+      </div>
+      <div>
+        <span id="contact-text">Due Date</span>
+        <span id="contact-number">08-06-2021</span>
+      </div>
+      <div>
+        <span id="contact-text">Payment Policy</span>
+        <span id="contact-number">PREPAID</span>
+      </div>
+    </section>
+    <!-- items sectino -->
+    <section id="order-items">
+      <span id="order-item-name">Kitchen Cleaning-Floor</span>
+      <span id="netprice-text">NET PRICE</span>
+      <div>
+        <span>Size : <b>500 Square meter</b> Quantity : <b>1</b> Unit Price : <b>325.000</b> </span>
+        <span id="netprice"><b>325.000</b> KD</span>
+      </div>
+    </section>
+    <section id="order-items">
+      <span id="order-item-name">Kitchen Cleaning-Floor</span>
+      <span id="netprice-text">NET PRICE</span>
+      <div>
+        <span>Size : <b>500 Square meter</b> Quantity : <b>1</b> Unit Price : <b>325.000</b> </span>
+        <span id="netprice"><b>325.000</b> KD</span>
+      </div>
+    </section>
+    
+    <!-- items end -->
 
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
-    <script src="{% static 'files/js/modal.js' %}"> </script>
-  </body>
-  <footer>{% include 'customer/downloads/footer.html' %}</footer>
+    <section id="paymentmode-sec">
+      <span> BREAKDOWN Payment Mode</span>
+    </section>
+    <section id="lastsection">
+      <div>
+        <span id="paymenttime">
+          Payment Before Cleaning
+        </span>
+        <span id="paymenttime-amount">
+          <b>120.000</b> KD
+        </span>
+      </div>
+      <div>
+        <span id="paymenttime">
+          Payment After Cleaning
+        </span>
+        <span id="paymenttime-amount">
+          <b>120.000</b> KD
+        </span>
+      </div>
+    </section>
+    <section id="total-section">
+      <div>
+        <span id="paymenttime">
+          <b>Sub Total</b>
+        </span>
+        <span id="paymenttime-amount">
+          <b>120.000</b>
+        </span>
+      </div>
+      <div>
+        <span id="paymenttime">
+          <b>Discount</b>
+        </span>
+        <span id="paymenttime-amount">
+          <b>-5.000</b>
+        </span>
+      </div>
+    </section>
+    <section id="final-section">
+      <span id="total_id">Total</span>
+      <h1 id="total_amount">
+        920.000 <span id="kd-font">KD</span>
+      </h1>
+    </section>
+  </div>
+</body>
+<footer>{% include 'customer/downloads/footer.html' %}</footer>
+
 </html>
