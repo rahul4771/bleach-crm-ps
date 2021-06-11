@@ -160,9 +160,9 @@
                                 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
 
                                     <div class="row" id="appResource2">
-                                        <div v-for="item,i in solt"  :key="item.solt" @click="selectSolt(item.solt)" class="col-xs-2">
+                                        <div v-for="item,i in solt2"  :key="item.solt" @click="selectsolt2(item.solt2)" class="col-xs-2">
                                             <div class="solt-filter-box-1 " :class="item.check ? 'solt-filter-box-active-1' : ''">
-                                                <% item.solt %>
+                                                <% item.solt2 %>
                                             </div>
                                         </div> 
                                         <!-- <div class="col-xs-2">
@@ -510,14 +510,14 @@
                                         <div class="resource-card" id="back_id_{{worker.id}}">
                                             <div class="resource-user-details">
                                                 <h2>Skill Of {{worker.name}}</h2>
-                                                <div onclick="editShow()" class="skill-edit" id="id_edit">
+                                                <div onclick="editShow(this)" data-id="{{worker.id}}" class="skill-edit" id="edit_id_{{worker.id}}">
                                                     <img src="{% static 'files/icons/edit.png' %}">
                                                 </div>
-                                                <div onclick="editDone()" id="id_done" class="skill-edit-done">
+                                                <div onclick="editDone(this)" data-id="{{worker.id}}" id="id_done_{{worker.id}}" class="skill-edit-done">
                                                     <button class="resource-card-button">Done</button>
                                                 </div>
                                             </div>
-                                            <div id="id_skill_list" class="skil-list">
+                                            <div id="id_skill_list_{{worker.id}}" class="skil-list">
                                                 <div class="row mt-10">
 
                                                     {% if worker.is_general_skill %}
@@ -595,7 +595,7 @@
 
                                                 </div>
                                             </div>
-                                            <div id="id_skill_edit_list" class="skil-list-edit">
+                                            <div id="id_skill_edit_list_{{worker.id}}" class="skil-list-edit">
                                                 <div class="row mt-10">
                                                     <div class="col-xs-6 mb-5">
                                                         <label class="c-container">General Cleaning
@@ -1719,7 +1719,15 @@
             </div>
         </div>
 
+        <form >
+            <input type="hidden" id="starting_id" name="starting" >
+            <input type="hidden" id="ending_id" name="ending" >
+          </form>
 
+          <form >
+            <input type="hidden" id="filter_starting_id" name="fl_starting" >
+            <input type="hidden" id="filter_ending_id" name="fl_ending" >
+          </form>
 
 
 
@@ -1748,17 +1756,18 @@
     var yyyy = today.getFullYear();
     today = mm + '-' + dd + '-' + yyyy;
     $("#working_calendar_date").val(today);
-    function editShow() {
-        document.getElementById("id_done").style.display = "block";
-        document.getElementById("id_edit").style.display = "none";
-        document.getElementById("id_skill_list").style.display = "none";
-        document.getElementById("id_skill_edit_list").style.display = "block";
+    function editShow(element) {
+   
+        document.getElementById("id_done_"+$(element).data('id')).style.display = "block";
+        document.getElementById("id_skill_edit_list_"+$(element).data('id')).style.display = "none";
+        document.getElementById("id_skill_list_"+$(element).data('id')).style.display = "none";
+        document.getElementById("id_skill_edit_list_"+$(element).data('id')).style.display = "block";
     }
-    function editDone() {
-        document.getElementById("id_skill_edit_list").style.display = "none";
-        document.getElementById("id_done").style.display = "none";
-        document.getElementById("id_edit").style.display = "block";
-        document.getElementById("id_skill_list").style.display = "block";
+    function editDone(element) {
+        document.getElementById("id_done_"+$(element).data('id')).style.display = "none";
+        document.getElementById("id_skill_edit_list_"+$(element).data('id')).style.display = "block";
+        document.getElementById("id_skill_list_"+$(element).data('id')).style.display = "block";
+        document.getElementById("id_skill_edit_list_"+$(element).data('id')).style.display = "none";
     }
     function flip(element) {
         $('#front_id_'+$(element).data('id')).closest('.flip-container').toggleClass('flip-hover');
