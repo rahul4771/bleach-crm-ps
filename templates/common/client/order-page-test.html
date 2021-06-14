@@ -275,7 +275,7 @@
                                         <button class="subscription-button">Subscription</button>
                                         {% endif %}
                                         
-                                        <a class="ticket-button ticketredirect{{orderschedule.id}}" href="#"><span id="ticketcount{{orderschedule.id}}">0 Tickets</span> <i class="fa fa-flag" aria-hidden="true"></i></a>
+                                        <a class="ticket-button ticketredirect{{orderschedule.id}}" href="#" target="_blank"><span id="ticketcount{{orderschedule.id}}">0 Tickets</span> <i class="fa fa-flag" aria-hidden="true"></i></a>
 
                                     </div>
                                     <div id="id_order" class="row order-section-1">
@@ -1598,7 +1598,7 @@ function load_cleaning_team(visitcount,scheduleid){
         {% if followup %}
         followup_count += {{forloop.counter}}
         $('#ticketcount'+{{followup.investigation.order_schedule.id}}+'').text(followup_count+' Tickets');
-        $('.ticketredirect'+{{followup.investigation.order_schedule.id}}+'').attr('href','/common/ticket/details/'+followup.investigation.order_schedule.order.evaluation.customer.id+'/'+followup.id+'/')
+        $('.ticketredirect'+{{followup.investigation.order_schedule.id}}+'').attr('href','/common/ticket/details/'+{{followup.investigation.order_schedule.order.evaluation.customer.id}}+'/'+{{followup.id}}+'/')
         {% else %}
         $('.ticket-button').attr("hidden",true);
         {% endif %}
