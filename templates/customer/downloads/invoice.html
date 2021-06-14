@@ -624,10 +624,10 @@
               </div>
         {% endif %}
 
-              <div class="col-5 offset-1 inv-white-btn text-center  mt-4 mb-4 ">
-
+              <div class="col-5 offset-1 inv-white-btn text-center  mt-4 mb-4 " id="download">
+              <input type="hidden" class="filename" value="Invoice_INV{{order.invoice_no}}" />
                 <i class="fa fa-download" ></i>
-                <a href="/customer/test/invoice/download/paw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">Download</a>
+                Download
               </div> 
               <div class="col-5 offset-1  inv-white-btn text-center  mt-4 mb-4 " onclick="printDiv()">
                 <i class="fa fa-print"></i>

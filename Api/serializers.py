@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule
+from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails
 from order.models import Promocode
 
@@ -37,7 +37,12 @@ class LeaveUsersSerializer(serializers.ModelSerializer):
 class LeaveScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = LeaveSchedule
-        fields = ('id','staff','leave_date','leave_type')      
+        fields = ('id','staff','leave_date','leave_type')
+
+class ShiftScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShiftSchedule
+        fields = ('id','staff','shift_date','shift1','shift2')      
 
 class GovernorateSerializer(serializers.ModelSerializer):
     class Meta:      

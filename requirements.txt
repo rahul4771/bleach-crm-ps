@@ -12,4 +12,4 @@ requests==2.18.4
 opencv-python
 xlwt
 django-crontab==0.7.1
-django-cors-headers==1.1.0
+django-cors-headers==1.2.0
