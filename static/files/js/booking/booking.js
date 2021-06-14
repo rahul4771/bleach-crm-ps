@@ -149,7 +149,7 @@ const app=new Vue({
   buildingCount:1,
   kitchenCleaningServices:[],
   infectionControlServices:[],
-    valid:true,
+    valid:[],
     validApartment:true,
     validKitchen:true,
     validKitchenDialog:true,
@@ -527,9 +527,91 @@ slotFormat:{
     end_time:'12:00 AM'
   }
 },
-fixedSlots:{}    
+fixedSlots:{},
+keynote_list:[],
+keynote_data:{
+  name:'',
+  value:''
+},    
+keynote_name:'',
+keynote_value:'',
+scheduleDateSat:false,
+confirmation_dialog:false,
+schedule_err_msg:false,
+onetime_dialog:false,
+oneTimeDateSelected:'',
+one_time_slots:{},
+onetimerender:true,
+selected_onetime_slots:{},
+oneTimeSelectionStat:false,
+onetime_scheduled:{},
+togetherStat:false
+
       },
       methods: {
+        oneTimeDateChange(){
+          if(!this.one_time_slots[this.oneTimeDateSelected]){
+            this.one_time_slots[this.oneTimeDateSelected]={
+              slots:[]
+            }
+          }
+          
+          this.calcSlots()
+        },
+        resetScheduler(){
+          this.cleaningPolicy='',
+          this.subStat='',
+          this.visits=[],
+          this.fixedSlots={},
+          this.altdaysStat=false,
+          this.altweekStat=false,
+          this.selected_double_slots=[],
+          this.selected_monthly_date=[],
+          this.autofixStat=false,
+          this.selected_monthly_date=[],
+          this.reselectDialog=false,
+          this.reselectSlot=[],
+          this.reselectDate={},
+          this.reselectDateIndex=null,
+          this.scheduleFormat={
+            allSchedule:{},
+            individual:{}
+          },
+          this.no_of_visits='',
+          this.scheduleDateSat=false
+          this.confirmation_dialog=false
+          this.monthly_starting_date=''
+          this.customDateSelected=[]
+          this.selectedDuration={
+            cleaners:null,
+            hours:null,
+            slots:null
+          },
+          this.schedule_err_msg=false
+
+        },
+        addKeynote(building,floor){
+          this.building[building].floors[floor].keynote_data.push({
+            name:this.keynote_name,
+            value:this.keynote_value
+          })
+          this.keynote_name=''
+          this.keynote_value=''
+        },
+        removeKeynote(building,floor,keynote){
+            this.building[building].floors[floor].keynote_data.splice(keynote,1)
+        },
+        addApartmentKeynote(building,floor,apartment){
+          this.building[building].floors[floor].apartments[apartment].keynote_data.push({
+            name:this.keynote_name,
+            value:this.keynote_value
+          })
+          this.keynote_name=''
+          this.keynote_value=''
+        },
+        removeApartmentKeynote(building,floor,apartment,keynote){
+            this.building[building].floors[floor].apartments[apartment].keynote_data.splice(keynote,1)
+        },
         calcSelectedServices(){
           this.schedule_serviceTypes=[]
           if(this.scheduleStat){
@@ -546,7 +628,21 @@ fixedSlots:{}
             service:service
           }
         },
-       
+        addOneTimeToSchedule(){
+          if(this.scheduleStat){
+            this.onetime_scheduled=this.selected_onetime_slots
+            this.togetherStat=true
+          }
+          else{
+            for(var j=0;j<this.schedule_serviceTypes_selected.length;j++){
+              this.onetime_scheduled[this.schedule_serviceTypes_selected[j]]={
+                slot:this.selected_onetime_slots
+              }
+            }
+          }
+         
+          this.activeTab='Cart'
+        },
         addToSchedule(){
           if(this.scheduleStat){
             this.scheduleFormat.allSchedule={
@@ -564,7 +660,18 @@ fixedSlots:{}
             }
           }
           this.visits=[]
-          
+          this.selected_double_slots=[]
+          this.selectedDuration={
+            cleaners:'',
+            hours:'',
+            slots:''
+          }
+          this.fixedSlots={}
+          this.reselectDateIndex=null
+          this.reselectDate={}
+          this.subStat='',
+          cleaningPolicy='',
+          no_of_visits='',
           this.activeTab='Cart'
         },
         changeVisitDate(){
@@ -656,6 +763,8 @@ fixedSlots:{}
           return combined
         },
         findCustomVisits(){
+          if(this.customDateSelected.length>0 && this.selected_double_slots.length>0 )
+          {
          for(var i=0;i<this.customDateSelected.length;i++){
            var day=moment(this.customDateSelected[i],'YYYY-MM-DD')
            var dayname=day.format('ddd')
@@ -672,10 +781,17 @@ fixedSlots:{}
          }
          this.checkAvailablility()
          this.customDialog=false
+         this.scheduleDateSat=true
+         this.schedule_err_msg=false
+        }
+        else{
+          this.schedule_err_msg=true
+        }
           
         },
         findVisits(){
-        
+        if(this.selected_double_slots.length>0 && this.dateSelected)
+        {
          this.scheduleDialog=false
 
          /* Weekly Cleaning calculator */
@@ -751,10 +867,15 @@ fixedSlots:{}
            }
           } 
          }
-          
+         this.scheduleDateSat=true
+        }
+        else{
+          this.schedule_err_msg=true
+        }
         },
         findMonthlyVisits(){
-         
+          if(this.selected_monthly_date.length>0 && this.selected_double_slots.length>0 )
+          {
           console.log("called monthly")
           var count=0
           var visitcount=0
@@ -797,6 +918,11 @@ fixedSlots:{}
            
           }
           this.monthlyDialog=false 
+          this.scheduleDateSat=true
+        }
+        else{
+          this.schedule_err_msg=true
+        }
         },
         checkAvailablility(){
          axios.post(this.url+'/customer/ajax/multipleservice/multipledates/cleaningslotes/',{number_of_cleaners:this.selectedDuration.cleaners,
@@ -1164,7 +1290,7 @@ console.log(response)
     },
     addKitchen(building,floor){
       
-        if(this.$refs.kitchenForm[0].validate())
+        if(this.$refs['kitchenFloor-building-'+(building)+'floor-'+(floor)][0].validate())
      { 
         console.log("kitchen data is  "+JSON.stringify(this.kitchenData))
         this.building[building].floors[floor].kitchens.push(this.kitchenData)
@@ -1203,7 +1329,7 @@ console.log(response)
     },
       addMoreKitchen(building,floor){
       
-        if(this.$refs.kitchenDialogForm.validate())
+        if(this.$refs['KitchenForm-building-'+building+'floor'-floor].validate())
      { 
         console.log("kitchen data is  "+JSON.stringify(this.kitchenData))
         this.building[building].floors[floor].kitchens.push(this.kitchenData)
@@ -1510,6 +1636,33 @@ console.log(response)
   addDoubleSlot(start,end,slot){
       this.selected_double_slots.push(slot)
   },
+  addOneTimeSlot(start,end,slot){
+   this.onetimerender=false
+    this.one_time_slots[this.oneTimeDateSelected].slots.push(slot)
+    this.onetimerender=true
+},
+removeOneTimeSlot(slot){
+  this.onetimerender=false
+  var prevSlot=parseInt(slot)-1
+  var nextSlot=parseInt(slot)+1
+  var index=this.one_time_slots[this.oneTimeDateSelected].slots.indexOf(slot)
+  this.one_time_slots[this.oneTimeDateSelected].slots.splice(index,1)
+  if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(nextSlot)&&this.one_time_slots[this.oneTimeDateSelected].slots.includes(prevSlot))
+  {
+    var tempSlots=[...this.one_time_slots[this.oneTimeDateSelected].slots]
+    for(var i=0;i<this.one_time_slots[this.oneTimeDateSelected].slots.length;i++){
+      if(this.one_time_slots[this.oneTimeDateSelected].slots[i]>slot){
+        var slotindex=tempSlots.indexOf(this.one_time_slots[this.oneTimeDateSelected].slots[i])
+        tempSlots.splice(slotindex,1)
+      }
+    }
+    console.log("duble slot is "+this.selected_double_slots+"tempslot:"+tempSlots)
+    this.one_time_slots[this.oneTimeDateSelected].slots=[...tempSlots]
+
+  }
+  this.onetimerender=true
+},
+
   removeDoubleSlot(slot){
     var prevSlot=parseInt(slot)-1
     var nextSlot=parseInt(slot)+1
@@ -1568,6 +1721,74 @@ console.log(response)
   else{
     return false
   }
+  },
+  checkOneTimeSlotStat(slot){
+    var prevSlot=parseInt(slot)-1
+    var nextSlot=parseInt(slot)+1
+    var counter=0
+    for(var i in this.one_time_slots){
+      counter=counter+this.one_time_slots[i].slots.length
+    }
+    if(counter<this.selectedDuration.slots)
+    {
+    if(this.one_time_slots[this.oneTimeDateSelected].slots.length>0)
+    {
+    if(slot==1){
+      if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(nextSlot)){
+        return true
+      }
+      else {
+        return false
+      }
+    }
+    else if(slot==12){
+      if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(prevSlot)){
+        return true
+      }
+      else {
+        return false
+      }
+    }
+    else{
+      if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(prevSlot)||this.one_time_slots[this.oneTimeDateSelected].slots.includes(nextSlot))
+      {
+        return true
+      }
+      else{
+        return false
+      }
+    }
+    }
+    else{
+      return true
+    }
+  }
+  else{
+    return false
+  }
+  },
+  oneTimeSlotCounter(){
+    var counter=0
+    for(var i in this.one_time_slots){
+      counter=counter+this.one_time_slots[i].slots.length
+    }
+    return counter
+  },
+  submitOneTimeSlots(){
+    this.selected_onetime_slots={}
+    
+      for(var i in this.one_time_slots){
+        if(this.one_time_slots[i].slots.length>0){
+          this.selected_onetime_slots[i]={
+            slots:this.one_time_slots[i].slots
+          }
+        }
+      }
+    
+  
+  
+    this.onetime_dialog=false
+    this.oneTimeSelectionStat=true
   },
   addSlot(slot) {
     if (this.time_slot[this.slotDate].selectedSlot.length == 0) {
@@ -2577,6 +2798,7 @@ try {
         apartments: [],
         kitchen: false,
         kitchens: [],
+        keynote_data:[],
         completed: false,
         paint_residue: false,
         upholsteries: ["Sofa", ""],
@@ -2585,6 +2807,9 @@ try {
         floors: [],
         e: 1,
       });
+      this.valid.push({
+        floors:[]
+      })
     }
   },
   setApartments(building, floor) {
@@ -2609,6 +2834,7 @@ try {
         no_of_rooms: "",
         no_of_bathrooms: "",
         no_of_windows: "",
+        keynote_data:[],
         kitchen: false,
         kitchens: [],
         keynotes: {},
@@ -2780,6 +3006,8 @@ try {
   },
   nextApartment(building, floor, apartment) {
     //this.$refs.apartmentForm[0].validate()
+      if(this.$refs['building-'+building+'floor-'+floor+'apartment-'+ apartment][0].validate()){
+
       
       this.building[building].floors[floor].apartments[apartment].section_cost=0
     this.e.building[building].floors[floor].e = apartment + 2;
@@ -2830,6 +3058,7 @@ try {
 
     this.recalcApartmentPrice(building,floor,apartment);
     this.findTempcost()
+}
      
   },
   findTempcost(){
@@ -2840,7 +3069,7 @@ try {
   },
   nextFloor(building, floor) {
       console.log('validate is '+this.$refs.form)
-     if(this.$refs.form[0].validate())
+     if(this.$refs['building-'+building+'floor-'+(floor-1)][0].validate())
      { 
       console.log('validation passsed')
     this.building[building].floors[floor-1].section_cost=this.building[building].floors[floor-1].size.cost
@@ -3539,6 +3768,10 @@ mounted() {
 
   this.dateSelected = moment().format().split("T")[0];
   this.today = moment().format().split("T")[0];
+  this.oneTimeDateSelected=moment().format().split("T")[0];
+  this.one_time_slots[this.oneTimeDateSelected]={
+    slots:[]
+  }
   this.formatDate();
      // this.getMultipleSlots()
      
