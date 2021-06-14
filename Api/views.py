@@ -801,12 +801,28 @@ class CleaningTeamAPI(APIView):
 				else:
 					pass
 			
-			check_in = cleaningteam.start_at + timedelta(hours=3)
-			check_out = cleaningteam.end_at + timedelta(hours=3)
+			if cleaningteam.check_in:
+				check_in = cleaningteam.check_in + timedelta(hours=3)
+				check_in_time = check_in.time().strftime("%I:%M %p")
+			else:
+				check_in = None
+				check_in_time = None
+				
 
-			print(check_in,"printest")
+			if cleaningteam.check_out:
+				check_out = cleaningteam.check_out + timedelta(hours=3)
+				check_out_time = check_out.time().strftime("%I:%M %p")
+			else:
+				check_out = None
+				check_out_time = None
 
-			response_dict = {'success':True,"visit_count":visit_count,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"start_at":check_in.time().strftime("%I:%M %p"),"end_at":check_out.time().strftime("%I:%M %p"),'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list}
+			cleaning_status = cleaningteam.order_scheduler.work_status
+
+			
+
+			print(cleaning_status,"printest")
+
+			response_dict = {'success':True,"visit_count":visit_count,"cleaning_status":cleaning_status,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"start_at":check_in_time,"end_at":check_out_time,'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list}
 
 		else:
 
