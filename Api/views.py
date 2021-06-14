@@ -839,9 +839,17 @@ class CleaningTeamAPI(APIView):
 
 			cleaning_status = cleaningteam.order_scheduler.work_status
 
+			followup = FollowUp.objects.filter(is_active=True,investigation__order_schedule__id=cleaningteam.order_scheduler.id).last()
+			if followup:
+				followup_id = followup.id
+			else:
+				followup_id = None
+
+			customer_id = cleaningteam.order_scheduler.order.evaluation.customer.id
+			
 			print(cleaning_status,"printest")
 
-			response_dict = {'success':True,"visit_count":visit_count,"cleaning_status":cleaning_status,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"start_at":check_in_time,"end_at":check_out_time,'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list}
+			response_dict = {'success':True,"visit_count":visit_count,"schedule_id":schedule_id, "customer_id":customer_id,"followup_id":followup_id,"cleaning_status":cleaning_status,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"start_at":check_in_time,"end_at":check_out_time,'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list}
 
 		else:
 

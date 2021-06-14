@@ -539,7 +539,7 @@ class TicketAdvanced(IsAuthenticated,View):
 		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
 		total_orders_count  = orders.count()
 
-		return render(request,'common/ticket/followup-page.html',{"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"followup_details":followup_details,})
+		return render(request,'common/ticket/followup-tickets.html',{"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"followup_details":followup_details,})
 
 	
 class CustomerBookingsList(IsAuthenticated,View):
@@ -757,6 +757,7 @@ class PaymentDetails(IsAuthenticated,View):
 		else:
 			try:
 				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).filter(~Q(order_status='ORDER_CANCELLED')).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
+									# Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
 			except:
 				invoices         = None
 				
@@ -765,6 +766,12 @@ class PaymentDetails(IsAuthenticated,View):
 			pending_payments = invoices.filter(Q( Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))) | Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(preamount_paid=0)) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
 		except:
 			pending_payments = None
+
+		#due Payments
+		try:
+			due_payments = invoices.filter(Q( Q( Q(Q(evaluation__payment_method='PREPAID')|Q(evaluation__payment_method='POSTPAID')|Q(evaluation__payment_method='BREAKDOWN')) & Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD')) & Q(completed_cleaning_count=F('cleaning_count')) ) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
+		except:
+			due_payments = None
 
 		#Pending Payment and Order Count	
 		if pending_payments: 
@@ -877,9 +884,21 @@ class PaymentDetails(IsAuthenticated,View):
 		except EmptyPage:
 			pending_payments=paginator.page(paginator.num_pages) 
 
+		page = request.GET.get('page3',1) 
+
+		paginator=Paginator(due_payments,no_of_entries)
+			
+		try: 
+			due_payments=paginator.page(page) 
+		except PageNotAnInteger:
+			due_payments=paginator.page(1) 
+		except EmptyPage:
+			due_payments=paginator.page(paginator.num_pages) 
+
 		# Get the index of the current page
 		index = invoices.number - 1
 		index = pending_payments.number - 1
+		index = due_payments.number - 1
 		# edited to something easier without index
 		# This value is maximum index of your pages, so the last page - 1
 		max_index = len(paginator.page_range)
@@ -893,10 +912,11 @@ class PaymentDetails(IsAuthenticated,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(invoices.end_index())-(invoices.start_index())+1
 		entry_per_page=(pending_payments.end_index())-(pending_payments.start_index())+1
+		entry_per_page=(due_payments.end_index())-(due_payments.start_index())+1
 
 		print(tab,"tab")
 
-		return render(request,'common/payment/payments.html',{'tab':tab,'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status,"pending_payments":pending_payments})
+		return render(request,'common/payment/payments.html',{'tab':tab,'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status,"pending_payments":pending_payments,"due_payments":due_payments})
 
 
 class ActiveSubscriptions(IsAuthenticated,View):
@@ -1005,7 +1025,7 @@ class ClientOrderDetails(IsAuthenticated,View):
 		except:
 			booking_id = None
 		
-		# invoice = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') )).get(is_active=True,id=order_id)
+		invoice = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') )).get(is_active=True,id=order_id)
 		
 		try:
 			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=order.evaluation.customer_id)
@@ -1020,21 +1040,21 @@ class ClientOrderDetails(IsAuthenticated,View):
 		#average feedbacks
 		average_feedback 	= order.feed_backs_order.aggregate(Avg('rating'))['rating__avg']
 
-		# if invoice:
-		# 	cleaning_price = 0
-		# 	for scheduler in invoice.orderschedules:
-		# 		if scheduler.work_status=='CLEANING_FULFILLED':
-		# 			cleaning_price += scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
-		# 	if cleaning_price > invoice.amount_paid:
-		# 		invoice.balance       = cleaning_price-invoice.amount_paid
-		# 	else:
-		# 		invoice.balance       = cleaning_price-invoice.amount_paid
+		if invoice:
+			cleaning_price = 0
+			for scheduler in invoice.orderschedules:
+				if scheduler.work_status=='CLEANING_FULFILLED':
+					cleaning_price += scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
+			if cleaning_price > invoice.amount_paid:
+				invoice.balance       = cleaning_price-invoice.amount_paid
+			else:
+				invoice.balance       = cleaning_price-invoice.amount_paid
 
-		# 	if invoice.balance == int(invoice.balance):
-		# 		invoice.balance = int(invoice.balance)
+			if invoice.balance == int(invoice.balance):
+				invoice.balance = int(invoice.balance)
 
 
-		return render(request,"common/client/order-page-test.html",{"booking_id":booking_id,"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,})
+		return render(request,"common/client/order-page-test.html",{"invoice":invoice,"booking_id":booking_id,"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,})
 
 	def post(self,request,order_id):
 		action = request.POST.get('action_type')
@@ -1263,7 +1283,7 @@ class DailySales(IsAuthenticated, View):
 		return render(request,'common/dailysales/daily-sales.html',{"dailysales":daily_sales,"monthlysales":monthly_sales,"month_name":full_month_name})
 
 
-class ResourceManagement(IsAuthenticated,View):
+class ResourceManagementOld(IsAuthenticated,View):
 	def get(self,request):
 
 		try:
@@ -1734,7 +1754,7 @@ class LeaveScheduler(IsAuthenticated,View):
 	def get(self,request):
 		return render(request,'common/leavescheduler/leave.html',{})
 
-class ResourceManagementTest(IsAuthenticated,View):
+class ResourceManagement(IsAuthenticated,View):
 	def get(self,request):
 		
 		#workers_date
@@ -1850,7 +1870,7 @@ class ResourceManagementTest(IsAuthenticated,View):
 
 		return JsonResponse(response_dict)
 
-class ProductivityTest(IsAuthenticated,View):
+class Productivity(IsAuthenticated,View):
 	def get(self,request):
-		return render(request,'common/productivity/productivity-test.html',{})
+		return render(request,'common/productivity/productivity.html',{})
 
