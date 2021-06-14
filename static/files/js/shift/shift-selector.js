@@ -232,6 +232,7 @@ function selectDayShift(el){
     selectedDates[userId].name=user;
     shiftId=getShiftId($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString(),userId);
     console.log(shiftId)
+    console.log("hellooo")
 
     if($('#'+dayId).find('.lv-date').hasClass('lv-weekend')){
         $('#'+dayId).find('.lv-date').removeClass('lv-weekend');

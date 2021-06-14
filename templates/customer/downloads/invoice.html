@@ -29,23 +29,25 @@
 
   <div id="container">
 
+    {% for orderschedule in order.orderschedules %}
+          {% if forloop.first %}
     <section id="new-customer-info">
       <div>
-        <span id="customer-text">Customer </span>
+        <span id="customer-text">{{orderschedule.customer_address.customer.name}} </span>
         <span id="customer-name">Mr. Alaa Five</span>
       </div>
       <br>
       <div>
         <span id="contact-text">Contact No</span>
-        <span id="contact-number">00000023</span>
+        <span id="contact-number">{{orderschedule.customer_address.customer.mobile_number}}</span>
       </div>
       <div>
         <span id="contact-text">Email</span>
-        <span id="contact-number">alaaa@gmail.com</span>
+        <span id="contact-number">{{orderschedule.customer_address.customer.email}}</span>
       </div>
       <div>
-        <span id="address-text">Addrees </span>
-        <span id="customer-address">Jabriya-Hawalli/Kuwait, 6 Floor 22,C Block, Jabriya Street,5 Avenue Jabriya, Hawalli</span>
+        <span id="address-text">Address </span>
+        <span id="customer-address">{{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}} {% else %}{% endif %} {{orderschedule.customer_address.building}},{{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},{% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}} {% else %}{% endif %}<br>{{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</span>
       </div><br>
     </section>
 
@@ -53,75 +55,86 @@
       <h1 id="qu-text">INVOICE</h1>
       <div>
         <span id="contact-text">Invoice Number</span>
-        <span id="contact-number">INV202100148</span>
+        <span id="contact-number">INV{{order.invoice_no}}</span>
       </div>
       <div>
         <span id="contact-text">Invoice Date</span>
-        <span id="contact-number">25-05-2021</span>
+        <span id="contact-number">{{order.evaluation.created|date:'d-m-Y'}}</span>
       </div>
       <div>
         <span id="contact-text">Payment Policy</span>
-        <span id="contact-number">PREPAID</span>
+        <span id="contact-number">{{order.evaluation.payment_method}}</span>
       </div>
       <div>
         <span id="contact-text">Order Number</span>
-        <span id="contact-number">BLC20210510115</span>
+        <span id="contact-number">{{order.evaluation.evaluation_id}}</span>
       </div>
       <div>
         <span style="color: #0BA300;" id="contact-text">Cleaning</span>
-        <span id="contact-number" style="color: #0BA300;">01-07-2021 3:00AM</span>
+        <span id="contact-number" style="color: #0BA300;">
+        {% for orderschedule in order.orderschedules %}
+        {% if forloop.last %}
+            {{orderschedule.start_at|date:'d-m-Y g:iA'}}<br>
+        {% else %}
+          {{orderschedule.start_at|date:'d-m-Y g:iA'}},<br>
+        {% endif %}
+        {% endfor %}
+      </span>
       </div>
       <div>
         <span style="color: #0BA300;" id="contact-text">Appointment(s)
         </span>
-        <span id="contact-number" style="color: #0BA300;">01-07-2021 3:00AM</span>
       </div>
     </section>
+    {% endif %}
+    {% endfor %}
 
+    {% for orderschedule in nonduplicate_schedules %}            
+    {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
     <!-- itmes-->
     <section id="order-items">
-      <span id="order-item-name">Carpet Cleaning-Carpet</span>
+      <span id="order-item-name">{{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}</span>
       <span id="netprice-text">NET PRICE</span>
       <div>
-        <span>Size : <b>20 Square meter</b> Quantity : <b>1</b> Unit Price : <b>350.000</b> </span>
-        <span id="netprice"><b>350.000</b> KD</span>
-      </div>
-    </section>
-    <section id="order-items">
-      <span id="order-item-name">Carpet Cleaning-Carpet</span>
-      <span id="netprice-text">NET PRICE</span>
-      <div>
-        <span>Size : <b>20 Square meter</b> Quantity : <b>1</b> Unit Price : <b>350.000</b> </span>
-        <span id="netprice"><b>350.000</b> KD</span>
+        <span>Size : <b>{{section.size}} {{section.unit|default_if_none:''}}</b> Quantity : <b>{% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</b> Unit Price : <b>350.000</b> </span>
+        <span id="netprice"><b>{% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
+          {{section.section_cost|floatformat:'3'}}
+          {% else %}
+          {{section.section_cost|mul:section.section_cleanings|floatformat:'3'}}
+          {% endif %}</b> KD</span>
       </div>
     </section>
     <!-- itmes-->
+    {% endfor %}
+    {% endfor %}
 
     <section id="new-customer-info_1">
       <div>
         <span id="contact-text">Completed Jobs</span>
-        <span id="contact-number"><b>0</b></span>
+        <span id="contact-number"><b>{{order.orderschedules|length}}</b></span>
       </div>
       <br>
       <div>
         <span id="contact-text">Total</span>
-        <span id="contact-number"><b>28</b></span>
+        <span id="contact-number"><b>{{completed_jobs_count}}</b></span>
       </div>
     </section>
     <section id="invoice_total">
       <div>
         <span id="contact-text">Sub Total</span>
-        <span id="contact-number"><b>4200.00</b> KD</span>
+        <span id="contact-number"><b>{{order.evaluation.estimated_cost|floatformat:'3'}}</b> KD</span>
       </div>
       <br>
+      {% if order.evaluation.discount != 0 %}
       <div>
         <span id="contact-text" style="color: #0BA300;">Discount</span>
-        <span id="contact-number" style="color: #0BA300;"><b>-5.00</b> KD</span>
+        <span id="contact-number" style="color: #0BA300;"><b>-{{order.evaluation.discount|floatformat:"3"}}</b> KD</span>
       </div>
+      {% endif %}
 
       <div id="invoice_total_amount">
         <span id="contact-text">Grand Total</span>
-        <span id="contact-number"><b>4200.00</b> KD</span>
+        <span id="contact-number"><b>{{order.total_amount|floatformat:"3"}}</b> KD</span>
       </div>
     </section>
   

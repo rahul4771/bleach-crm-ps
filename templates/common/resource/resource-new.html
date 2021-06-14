@@ -8,7 +8,7 @@
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-<div class="wrapper" >
+<div class="wrapper" id="refresh">
     {% include "agent/common/header.html" %}
     <section class="content">
         <!--content-->
@@ -754,7 +754,6 @@
 
     function set_params_go(args)
             {
-                console.log("set parm")
             var url='{% url 'common_items:resource-management-new' %}';
             var params={workers_calendar_date:$('#working_calendar_date').val(),search:$('#search-bar').val(),staff_type:$('#staff_type_filter_id').val(),service_type:$('#service_type_filter_id').val(),starting_time:$('#starting_id').val(),ending_time:$('#ending_id').val()
             };
@@ -765,7 +764,8 @@
                 if(params[key]) 
                     query+='&'+key+'='+params[key].toString();
             query=query.replace('&','?');
-            window.location.href=url+query;  
+            // window.location.href=url+query;  
+            $( "#refresh" ).load(url+query + " #refresh" );
             }
 
    
