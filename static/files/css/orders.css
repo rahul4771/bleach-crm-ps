@@ -1,3 +1,11 @@
+.gray-icon{
+  color: gray;
+}
+
+.visit-border{
+  border: 1px solid #B9CFEB;
+}
+
 .mr-0 {
   margin-right: 0px !important;
 }
@@ -309,10 +317,9 @@
 }
 
 .order-agent-profile-pic {
-  width: 83px;
-  height: 83px;
+  width: 100%;
   border: 1px solid #707070;
-  border-radius: 42px;
+  border-radius: 50%;
   opacity: 1;
 }
 .order-agent-content {
@@ -337,7 +344,7 @@
   top: 0;
 }
 .order-agent-edit img {
-  width: 22px;
+  width: 1vw;
 }
 .agent-content-section1 {
   padding: 0;
@@ -1031,7 +1038,27 @@ select.minimal:focus {
     transform: scaleY(0);
   }
 }
+@media only screen and (max-width: 1400px) {
 
+  .agent-content-section2 p {
+    font-size: 16px;
+  }
+  .agent-content-section1 ul li{
+    font-size: 12px;
+  }
+  .time-text {
+    font-size: 11px;
+}
+.section-detials-text{
+  font-size: 12px;
+}
+.clean-section-card p {
+  font-size: 10px;
+}
+.cleaning-status-container{
+  font-size: 12px;
+}
+}
 
 @media only screen and (max-width: 950px) {
   .model-time-solt{
