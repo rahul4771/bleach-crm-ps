@@ -274,9 +274,15 @@
                                         {% else %}
                                         <button class="subscription-button">Subscription</button>
                                         {% endif %}
-
-                                        <button class="ticket-button ticket{{orderschedule.id}}"> Tickets <i class="fa fa-flag" aria-hidden="true"></i></button>
                                         
+                                        {% for investigation in orderschedule.investigations %}
+                                        {% for followup in investigation.followups %}
+                                        {% if followup %}
+                                        <button class="ticket-button ticket{{orderschedule.id}}">{{followup.ticket_no}} Tickets <i class="fa fa-flag" aria-hidden="true"></i></button>
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% endfor %}
+
                                     </div>
                                     <div class="row order-section-1">
                                         <div class="col-md-4 c-mt-50">
@@ -603,7 +609,11 @@
                                                             {{multi_order_schedule.start_at}}
                                                         </div>
                                                         <div class="vist-card-item-last ml-5">
-                                                            <i class="fa fa-flag c-red"></i>
+                                                        {% for investigation in multi_order_schedule.investigations|slice:":1" %}
+                                                        {% for followup in investigation.followups|slice:":1" %}
+                                                        {% if followup %} <i class="fa fa-flag c-red ticketflag"></i> {% endif %}
+                                                        {% endfor %}
+                                                        {% endfor %}
                                                             <button {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}class="inprogress-button"{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}class="assigned-button"{% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED'%}class="completed-button"{% else %}class="canceled-button"{% endif %}>{{multi_order_schedule.work_status|default_if_none:'NOT STARTED'}}</button>
                                                         </div>
                                                     </div>
@@ -1563,16 +1573,19 @@ function load_cleaning_team(visitcount,scheduleid){
         //   $('#myInput').trigger('focus')
         // })
 
-        //{% for orderschedule in order.orderschedules %}
-        //{% for investigation in orderschedule.investigations %} 
-        //{% for followup in investigation.followups %}
-
-        //var followup_count
-
-        //{% endfor %}
-        //{% endfor %}
-        //{% endfor %}
-
+        {% for orderschedule in order.orderschedules%}
+        {% for investigation in orderschedule.investigations %}
+        {% for followup in investigation.followups %}
+        {% if followup %}
+        var followup_count += {{forloop.counter}}
+        {% endif %}
+        {% if followup.last %}
+        $('.ticket'+{{followup.investigation.order_schedule}}+'')
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+        {% endfor %}
+        
         $("#show").click(function () {
             if ($("#show").text() == "Show More") {
                 $("#show").text("Show Less");

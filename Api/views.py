@@ -818,8 +818,6 @@ class CleaningTeamAPI(APIView):
 
 			cleaning_status = cleaningteam.order_scheduler.work_status
 
-			
-
 			print(cleaning_status,"printest")
 
 			response_dict = {'success':True,"visit_count":visit_count,"cleaning_status":cleaning_status,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"start_at":check_in_time,"end_at":check_out_time,'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list}
