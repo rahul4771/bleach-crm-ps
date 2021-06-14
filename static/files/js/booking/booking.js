@@ -540,10 +540,24 @@ confirmation_dialog:false,
 schedule_err_msg:false,
 onetime_dialog:false,
 oneTimeDateSelected:'',
-one_time_slots:{}
+one_time_slots:{},
+onetimerender:true,
+selected_onetime_slots:{},
+oneTimeSelectionStat:false,
+onetime_scheduled:{},
+togetherStat:false
 
       },
       methods: {
+        oneTimeDateChange(){
+          if(!this.one_time_slots[this.oneTimeDateSelected]){
+            this.one_time_slots[this.oneTimeDateSelected]={
+              slots:[]
+            }
+          }
+          
+          this.calcSlots()
+        },
         resetScheduler(){
           this.cleaningPolicy='',
           this.subStat='',
@@ -614,7 +628,21 @@ one_time_slots:{}
             service:service
           }
         },
-       
+        addOneTimeToSchedule(){
+          if(this.scheduleStat){
+            this.onetime_scheduled=this.selected_onetime_slots
+            this.togetherStat=true
+          }
+          else{
+            for(var j=0;j<this.schedule_serviceTypes_selected.length;j++){
+              this.onetime_scheduled[this.schedule_serviceTypes_selected[j]]={
+                slot:this.selected_onetime_slots
+              }
+            }
+          }
+         
+          this.activeTab='Cart'
+        },
         addToSchedule(){
           if(this.scheduleStat){
             this.scheduleFormat.allSchedule={
@@ -1609,8 +1637,30 @@ console.log(response)
       this.selected_double_slots.push(slot)
   },
   addOneTimeSlot(start,end,slot){
-    this.one_time_slots[this.oneTimeDateSelected]={}
+   this.onetimerender=false
     this.one_time_slots[this.oneTimeDateSelected].slots.push(slot)
+    this.onetimerender=true
+},
+removeOneTimeSlot(slot){
+  this.onetimerender=false
+  var prevSlot=parseInt(slot)-1
+  var nextSlot=parseInt(slot)+1
+  var index=this.one_time_slots[this.oneTimeDateSelected].slots.indexOf(slot)
+  this.one_time_slots[this.oneTimeDateSelected].slots.splice(index,1)
+  if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(nextSlot)&&this.one_time_slots[this.oneTimeDateSelected].slots.includes(prevSlot))
+  {
+    var tempSlots=[...this.one_time_slots[this.oneTimeDateSelected].slots]
+    for(var i=0;i<this.one_time_slots[this.oneTimeDateSelected].slots.length;i++){
+      if(this.one_time_slots[this.oneTimeDateSelected].slots[i]>slot){
+        var slotindex=tempSlots.indexOf(this.one_time_slots[this.oneTimeDateSelected].slots[i])
+        tempSlots.splice(slotindex,1)
+      }
+    }
+    console.log("duble slot is "+this.selected_double_slots+"tempslot:"+tempSlots)
+    this.one_time_slots[this.oneTimeDateSelected].slots=[...tempSlots]
+
+  }
+  this.onetimerender=true
 },
 
   removeDoubleSlot(slot){
@@ -1671,6 +1721,74 @@ console.log(response)
   else{
     return false
   }
+  },
+  checkOneTimeSlotStat(slot){
+    var prevSlot=parseInt(slot)-1
+    var nextSlot=parseInt(slot)+1
+    var counter=0
+    for(var i in this.one_time_slots){
+      counter=counter+this.one_time_slots[i].slots.length
+    }
+    if(counter<this.selectedDuration.slots)
+    {
+    if(this.one_time_slots[this.oneTimeDateSelected].slots.length>0)
+    {
+    if(slot==1){
+      if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(nextSlot)){
+        return true
+      }
+      else {
+        return false
+      }
+    }
+    else if(slot==12){
+      if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(prevSlot)){
+        return true
+      }
+      else {
+        return false
+      }
+    }
+    else{
+      if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(prevSlot)||this.one_time_slots[this.oneTimeDateSelected].slots.includes(nextSlot))
+      {
+        return true
+      }
+      else{
+        return false
+      }
+    }
+    }
+    else{
+      return true
+    }
+  }
+  else{
+    return false
+  }
+  },
+  oneTimeSlotCounter(){
+    var counter=0
+    for(var i in this.one_time_slots){
+      counter=counter+this.one_time_slots[i].slots.length
+    }
+    return counter
+  },
+  submitOneTimeSlots(){
+    this.selected_onetime_slots={}
+    
+      for(var i in this.one_time_slots){
+        if(this.one_time_slots[i].slots.length>0){
+          this.selected_onetime_slots[i]={
+            slots:this.one_time_slots[i].slots
+          }
+        }
+      }
+    
+  
+  
+    this.onetime_dialog=false
+    this.oneTimeSelectionStat=true
   },
   addSlot(slot) {
     if (this.time_slot[this.slotDate].selectedSlot.length == 0) {
@@ -3650,6 +3768,10 @@ mounted() {
 
   this.dateSelected = moment().format().split("T")[0];
   this.today = moment().format().split("T")[0];
+  this.oneTimeDateSelected=moment().format().split("T")[0];
+  this.one_time_slots[this.oneTimeDateSelected]={
+    slots:[]
+  }
   this.formatDate();
      // this.getMultipleSlots()
      

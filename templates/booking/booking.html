@@ -115,13 +115,13 @@
     </div>
   </div>
 </div>
-<div class="row m-0" v-if="selectedDuration.hours" style="margin:0 !important">
+<div class="row m-0" v-if="selectedDuration.hours && onetimerender" style="margin:0 !important">
   <div class="col-md-4">
     <div >
       Choose Cleaning Slots
     </div>
     <v-date-picker  v-model="oneTimeDateSelected" full-width elevation="5" color="primary"
-    v-on:change="calcSlots()" class="mt-2" :min="today" ></v-date-picker>
+    v-on:change="oneTimeDateChange()" class="mt-2" :min="today" ></v-date-picker>
   </div>
   <div class="col-md-8 "  >
     <div class="mt-4">
@@ -130,19 +130,19 @@
 <div class="row mt-2" style="margin:0 !important">
   <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
     <div class="time-slot duration text-center p-2" 
-   @click="addOneTimeSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!one_time_slots[oneTimeDateSelected].slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
+   @click="addOneTimeSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!one_time_slots[oneTimeDateSelected].slots.includes((sindex+1)) && checkOneTimeSlotStat((sindex+1))'>
      <% slot.start_time+' - '+ slot.end_time %>
     </div>
 
-    <div class="time-slot duration-active text-center p-2"  v-if='one_time_slots[oneTimeDateSelected].slots.includes((sindex+1))' @click="removeOneTimeSlotSlot((sindex+1))">
+    <div class="time-slot duration-active text-center p-2"  v-if='one_time_slots[oneTimeDateSelected].slots.includes((sindex+1))' @click="removeOneTimeSlot((sindex+1))">
       <% slot.start_time+' - '+ slot.end_time %>
     </div>
-    <div class="time-slot duration-inactive text-center p-2"  v-if='!checkSlotStat((sindex+1)) && !one_time_slots[oneTimeDateSelected].slots.includes((sindex+1))'>
+    <div class="time-slot duration-inactive text-center p-2"  v-if='!checkOneTimeSlotStat((sindex+1)) && !one_time_slots[oneTimeDateSelected].slots.includes((sindex+1))'>
       <% slot.start_time+' - '+ slot.end_time %>
     </div>
   </div>
   <div class="col-md-12 ">
-    <div v-if="selected_double_slots.length<1 || customDateSelected.length<1">
+    <div v-if="oneTimeSlotCounter()<1">
     <v-alert
     dense
     outlined
@@ -153,10 +153,10 @@
   </v-alert>
 </div>
     <div class="d-flex justify-center">
-    <v-btn color="primary" @click="findCustomVisits()">
+    <v-btn color="primary" @click="submitOneTimeSlots()">
       Proceed
     </v-btn>
-    <v-btn color="primary" outlined class="ml-2" @click="scheduleDialog=false">
+    <v-btn color="primary" outlined class="ml-2" @click="onetime_dialog=false">
       Cancel
     </v-btn>
     </div>
@@ -2139,9 +2139,10 @@ width="1000"
                                 v-model="schedule_serviceTypes_selected"
                                 :value='sindex'
                                 class="mt-0 pt-0 "
-                                v-if="!scheduleStat && !scheduleFormat.individual[sindex]"
+                                v-if="!scheduleStat && !scheduleFormat.individual[sindex]  && !onetime_scheduled[sindex]"
                                
                               ></v-checkbox>
+                             
                             
                               </div>
                               <div>
@@ -2152,7 +2153,7 @@ width="1000"
 
                               </div>
                           </div>
-                          <div class="d-flex" v-if="scheduleFormat.allSchedule.starting_date && scheduleStat">
+                          <div class="d-flex" v-if="scheduleFormat.allSchedule.starting_date && scheduleStat && cleaningPolicy!='One Time'">
                             <div>
                               <% scheduleFormat.allSchedule.starting_date.split(' ')[0] %>
                             </div>
@@ -2160,13 +2161,24 @@ width="1000"
                               <% scheduleFormat.allSchedule.visits.length %> Visits
                             </div>
                           </div>
-                          <div class="d-flex" v-if="scheduleFormat.individual[sindex] && !scheduleStat">
+                          <div class="d-flex" v-if="scheduleFormat.individual[sindex] && !scheduleStat && cleaningPolicy!='One Time'">
                             <div>
                               <% scheduleFormat.individual[sindex].starting_date.split(' ')[0] %>
                             </div>
                             <div class="ml-4">
                               <% scheduleFormat.individual[sindex].visits.length %> Visits
                             </div>
+                          </div>
+                          <div class="d-flex" v-if="oneTimeSelectionStat && cleaningPolicy=='One Time'">
+                            <div v-if='scheduleStat && togetherStat'>
+                             <span v-for="(slot,slindex) in onetime_scheduled"> <% slindex + ' ' %> </span>
+                            </div>
+                            <div v-if='!scheduleStat && onetime_scheduled[sindex]'>
+                              <span v-for="(slot,slindex) in onetime_scheduled[sindex].slot"> <% slindex + ' ' %> </span>
+                             </div>
+                          <!--  <div class="ml-4">
+                              <% scheduleFormat.individual[sindex].visits.length %> Visits
+                            </div>-->
                           </div>
                           <div class="cart-card-items">
                           <div v-for="(bill,bindex) in service.bill" v-bind:key="bindex">
@@ -2540,6 +2552,7 @@ width="1000"
                                     </div>
                                    
                                 </div>
+                                
                                 <div class="text-center mt-4" v-if="visits.length>0 && !autofixStat && cleaningPolicy!='One Time'">
                                   <v-btn color="primary" @click="autoFix()">
                                     Autofix
@@ -2554,6 +2567,37 @@ width="1000"
                                   </v-btn>
                                 </div>
                              </div>
+                              <!-- One time cleaning selected slots-->
+                            <div class="col-md-12" v-if="cleaningPolicy=='One Time'">
+                            
+                             <div class="row" >
+                             
+                            <div class="col-md-2" v-for="(visit,vindex) in selected_onetime_slots" v-bind:key="vindex">
+                              <div class="available-slot-card p-2"  >
+                                <div class="d-flex">
+                                  <div>
+                                  <!-- <b>Slot </b> -->
+                                  </div>
+                                  <div class="ml-auto">
+                                   <% vindex %>
+                                  </div>
+                                </div>
+                                <div class="text-center pt-2">
+                                  <% getCombinedSlot(visit.slots) %>
+                               <!-- <span v-for="(time,tindex) in visit.slots" v-bind:key="tindex"><% slotFormat[time].start_time + ' - '+ slotFormat[time].end_time%> </span> -->
+                                </div>
+                              </div>
+                              </div>
+                          
+
+                            </div>
+                          </div>
+                          <div class="text-center mt-4" v-if="oneTimeSelectionStat">
+                            <v-btn color="primary"  @click="addOneTimeToSchedule()">
+                              Proceed
+                            </v-btn>
+                          </div>
+                            <!-- One time cleaning selected slots ends here-->
 
                       
                       </div>
@@ -2561,7 +2605,7 @@ width="1000"
                       <!-- One time cleaning begins here-->
                         
                       <div class="row m-0"  v-if="cleaningPolicy=='One Time'">
-                        <div class="col-md-12 " >
+                        <div class="col-md-12 " v-if="!oneTimeSelectionStat">
                           <v-btn
                           tile
                           color="primary"
