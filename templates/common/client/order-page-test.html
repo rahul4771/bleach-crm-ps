@@ -278,11 +278,11 @@
                                         <a class="ticket-button ticketredirect{{orderschedule.id}}" href="#"><span id="ticketcount{{orderschedule.id}}">0 Tickets</span> <i class="fa fa-flag" aria-hidden="true"></i></a>
 
                                     </div>
-                                    <div class="row order-section-1">
+                                    <div id="id_order" class="row order-section-1">
                                         <div class="col-md-4 c-mt-50">
                                         
                                             <div class="row">
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                 {% if orderschedule.evaluation_details.evaluator.profile_image %}
                                                     <img class="order-agent-profile-pic" src="{{orderschedule.evaluation_details.evaluator.profile_image.url}}">
                                                 {% else %}
@@ -293,7 +293,7 @@
                                                     {% endif %}
                                                 {% endif %}
                                                 </div>
-                                                <div class="col-md-9 pr-0 pl-0">
+                                                <div class="col-md-10">
                                                     <div class="order-agent-content">
                                                         <div v-if="edit" class="order-agent-edit">
                                                             <img class="pointer"src="{% static 'files/icons/edit.png' %}">
@@ -307,12 +307,17 @@
                                                         <h6>{{orderschedule.evaluation_details.evaluation.call_attender.user_type}}</h6>
                                                         {% endif %}
                                                         
-                                                        <p>{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}}</p>
+                                                        <!-- <p id="evalution-note">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}}</p> -->
+                                                        <p id="evalution-note" class="evalution-note-less">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}} </p>
+                                                        <span class="see-more" id="id_see" onclick="seefull()">See More</span>
+                                                        <span class="see-more" style="display: none;" id="id_see_less" onclick="seeless()">See Less</span>
+                                                        
+
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-2 m-mt30">
+                                        <div class="col-md-2 m-mt30">
                                             <div class="agent-content-section1 c-mt-022">
                                                 <div v-if="edit" class="order-agent-edit">
                                                     <img class="pointer" src="{% static 'files/icons/edit.png' %}">
@@ -446,9 +451,9 @@
                                     <div class="order-clean-section-header c-mb-10">
                                         <h2>Section {{forloop.counter}} : {{section.section_name}}</h2>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-6 c-right-border section-detials-text" style="padding-left: 1px;">
-                                            <div class="col-md-6 ">
+                                    <div class="row section-detials-text">
+                                        <div class="col-md-6 c-right-border" style="padding-left: 1px;">
+                                            <div class="col-md-6">
                                                 <div class="row c-mb-3">
                                                     <div class="col-xs-5">Category</div>
                                                     <div class="col-xs-7">: <span class="c-text ">{{section.category}}</span></div>
@@ -595,7 +600,7 @@
                                         {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
                                             <div class="col-md-4  c-pr5" onclick="load_cleaning_team({{forloop.counter}},{{multi_order_schedule.id}})">
                                                 <div class="cleaning-status-container  pointer ">
-                                                    <div class="row cleaning-status-row visit-border cleaning-status-card">
+                                                    <div class="row cleaning-status-row  cleaning-status-card">
                                                         <div class="vist-card-item-first">
                                                             Visit {{forloop.counter}}
                                                         </div>
@@ -824,7 +829,7 @@
                         <div class="order-details-left-wrapper ">
                             <div class="order-payment-section">
                                 <div class="row">
-                                    <div class="col-md-9">
+                                    <div class="col-md-9 payment-text-order">
 
                                         <h2>Payment</h2>
                                         <div class="row">
@@ -1562,7 +1567,25 @@ function load_cleaning_team(visitcount,scheduleid){
 
 <script type="text/javascript">
 
+    function seefull() {
+        document.getElementById("id_order").style.maxHeight = "none";
+        document.getElementById("evalution-note").style.maxHeight = "none";
+        document.getElementById("id_see").style.display = "none";
+        document.getElementById("id_see_less").style.display = "block";
+    }
+
+    function seeless() {
+        document.getElementById("id_order").style.maxHeight = "152px";
+        document.getElementById("evalution-note").style.maxHeight = "80px";
+        document.getElementById("id_see").style.display = "block";
+        document.getElementById("id_see_less").style.display = "none";
+    }
     $(document).ready(function () {
+        var text =  $("#evalution-note").text()
+        if(text.length<223){
+        document.getElementById("id_see").style.display = "none";
+            
+        }
         //         $('#myModal').on('shown.bs.modal', function () {
         //   $('#myInput').trigger('focus')
         // })

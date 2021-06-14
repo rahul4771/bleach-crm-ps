@@ -214,6 +214,8 @@
          </div>
          <!--leave ends here -->
 
+
+
          <!--shift goes here -->     
          <div id="work_id" style="display: none;">
           <div class="lv-month d-flex">
@@ -227,19 +229,19 @@
                 </div>
                 <input type="hidden" name="user-type">
                 <ul class="lv-dropdown-menu">
-                  <li id="all" onclick="resetResources('ALL')">ALL</li>
-                  <li id="team-incharge" onclick="resetResources('TEAM IN CHARGE')">TEAM IN CHARGE</li>
-                  <li id="cleaner" onclick="resetResources('CLEANER')">CLEANER</li>
+                  <li id="all-2" onclick="resetResourcesShift('ALL')">ALL</li>
+                  <li id="team-incharge-2" onclick="resetResourcesShift('TEAM IN CHARGE')">TEAM IN CHARGE</li>
+                  <li id="cleaner-2" onclick="resetResourcesShift('CLEANER')">CLEANER</li>
                 </ul>
               </div>
 
             </div>
 
 
-            <span class="material-icons next-arrow" onclick="previousMonth()">
+            <span class="material-icons next-arrow" onclick="previousMonthShift()">
               arrow_backward
             </span>
-            <span class="material-icons next-arrow" onclick="nextMonth()">
+            <span class="material-icons next-arrow" onclick="nextMonthShift()">
               arrow_forward
             </span>
             <span class="lv-month-select" id="lv-month-select-2">JANUARY 2021</span>
@@ -299,7 +301,6 @@
     $("#work_button_id").addClass("productivity-tab-border");
     $("#leave_button_id").removeClass("productivity-tab-border");
 
-    var url='https://test.bleach-kw.com';
 
     var resourceList=[];
     var cleanerList=[];
