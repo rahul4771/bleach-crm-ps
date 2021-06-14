@@ -1918,13 +1918,13 @@ this.infectionControlServices=[]
       $('#service-carousel').html(`
       <div class="sr-service-card m-2 p-2 service-one"  onclick="selectService('General Cleaning',this)">
       <i class="far fa-circle inactive-icon"></i>
-      <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+      <img src="/static/files/icons/booking/icons/detailed_cleaning.png" class="service-icon"> 
       <div class="text-center pt-2 service-title">
       General Cleaning
     </div></div>
     <div class="sr-service-card m-2 p-2 "  onclick="selectService('Deep Cleaning',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/deepcleaning.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Deep Cleaning
   </div>
@@ -1934,35 +1934,35 @@ this.infectionControlServices=[]
   
     <div class="sr-service-card m-2 p-2"  onclick="selectService('Facade Cleaning',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/FacadeCleaning.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Facade Cleaning
   </div></div>
  
     <div class="sr-service-card m-2 p-2"  onclick="selectService('Storage Area',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/StorageArea.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Storage Area
   </div></div>
  
     <div class="sr-service-card m-2 p-2"  onclick="selectService('Car Parking Umbrella',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/car.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Car Parking Umbrella
   </div></div>
   
     <div class="sr-service-card m-2 p-2"  onclick="selectService('Window Cleaning',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/WindowCleaning.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Window Cleaning
   </div></div>
  
     <div class="sr-service-card m-2 p-2"  onclick="selectService('Outdoor Cleaning',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/outdoorCleaning.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Outdoor Cleaning
   </div></div>
@@ -1985,21 +1985,21 @@ this.infectionControlServices=[]
    
     <div class="sr-service-card m-2 p-2 service-one"  onclick="selectService('Upholstery Cleaning',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/UpholsteryCleaning.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Upholstery Cleaning
   </div></div>
   
     <div class="sr-service-card m-2 p-2"  onclick="selectService('Mattress Cleaning',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/bed.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Mattress Cleaning
   </div></div>
   
     <div class="sr-service-card m-2 p-2"  onclick="selectService('Carpet Cleaning',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/carpet.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Carpet Cleaning
   </div></div>
@@ -2021,7 +2021,7 @@ this.infectionControlServices=[]
    
     <div class="sr-service-card m-2 p-2 service-one"   onclick="selectService('Kitchen Cleaning',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/kitchen.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Kitchen Cleaning
   </div></div>
@@ -2045,7 +2045,7 @@ this.infectionControlServices=[]
    
     <div class="sr-service-card m-2 p-2 service-one"  onclick="selectService('Sanitization',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/sanitisation.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Sterilization
   </div></div>

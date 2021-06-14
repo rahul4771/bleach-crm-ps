@@ -693,13 +693,13 @@ width="1000"
                     <!--@click="selectService('<%service.name%>',<%forloop.counter%>)" v-if="serviceType=='<%service.name%>'"-->
                     <i class="far fa-circle inactive-icon" v-if="selectedCategory != item"></i>
                     <i class="fa fa-check-circle active-icon" v-if="selectedCategory == item"></i>
-                    <img src="{% static 'files/icons/booking/icons/household.png' %}" class="service-icon"
+                    <img src="{% static 'files/icons/booking/icons/detailed_cleaning.png' %}" class="service-icon"
                       v-if="item == 'Detailed Cleaning'" />
-                    <img src="{% static 'files/icons/booking/icons/sofa.png' %}" class="service-icon"
+                    <img src="{% static 'files/icons/booking/icons/UpholsteryCleaning.png' %}" class="service-icon"
                       v-if="item == 'Special Care'" />
                     <img src="{% static 'files/icons/booking/icons/kitchen.png' %}" class="service-icon"
                       v-if="item == 'Kitchen Cleaning'" />
-                    <img src="{% static 'files/icons/booking/icons/spray.png' %}" class="service-icon"
+                    <img src="{% static 'files/icons/booking/icons/sanitisation.png' %}" class="service-icon"
                       v-if="item == 'Infection Control'" />
 
                     <div class="text-center pt-2 service-title">
