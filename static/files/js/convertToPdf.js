@@ -30,7 +30,7 @@ $('#download').click(async function () {
        
         doc.addImage(img, 'PNG',10,10,190,180);
         
-        // doc.save(''+$('.filename').val()+'.pdf');
+        doc.save(''+$('.filename').val()+'.pdf');
         document.getElementById("viewportMeta").setAttribute("content", vp);
         }
      
