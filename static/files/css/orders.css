@@ -1,9 +1,21 @@
-.gray-icon{
-  color: gray;
+/*  */
+
+.evalution-note-less{
+  overflow: hidden;
+  max-height: 80px;
+  padding: 0px !important;
+  margin: 0px !important;
+}
+.see-more{
+  color: blue;
 }
 
-.visit-border{
-  border: 1px solid #B9CFEB;
+
+.gray-icon {
+  color: gray;
+}
+.visit-border {
+  border: 1px solid #b9cfeb;
 }
 
 .mr-0 {
@@ -80,7 +92,7 @@
   padding-right: 5px;
 }
 
-.media-gap{
+.media-gap {
   margin-right: 100px;
 }
 
@@ -574,8 +586,6 @@
   padding: 45px 5px 5px 25px;
 }
 
-
-
 .cc-container {
   display: block;
   position: relative;
@@ -590,13 +600,11 @@
   user-select: none;
 }
 
-
 .cc-container input {
   position: absolute;
   opacity: 0;
   cursor: pointer;
 }
-
 
 .cc-checkmark {
   position: absolute;
@@ -609,16 +617,13 @@
   border: 1px solid #707070;
 }
 
-
 .cc-container:hover input ~ .cc-checkmark {
   background-color: #ccc;
 }
 
-
 .cc-container input:checked ~ .cc-checkmark {
   background-color: #707070;
 }
-
 
 .cc-checkmark:after {
   content: "";
@@ -626,24 +631,18 @@
   display: none;
 }
 
-
 .cc-container input:checked ~ .cc-checkmark:after {
   display: block;
 }
 
-
 .cc-container .cc-checkmark:after {
- 	top: 5px;
-	left: 5px;
-	width: 5px;
-	height: 5px;
-	border-radius: 50%;
-	background: white;
+  top: 5px;
+  left: 5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: white;
 }
-
-
-
-
 
 .sent-button {
   background: #2c4c82 0% 0% no-repeat padding-box;
@@ -652,7 +651,7 @@
   color: #fff;
   border: none;
   border-radius: 3px;
-  padding: 5px 40px 5px 40px;
+  padding: 5px 30px 5px 30px;
   margin: 3px;
 }
 .sent-button:hover {
@@ -667,7 +666,7 @@
   color: #2c4c82;
   border: 1px solid #2c4c82;
   border-radius: 3px;
-  padding: 5px 40px 5px 40px;
+  padding: 5px 30px 5px 30px;
   margin: 3px;
 }
 .view-button:hover {
@@ -821,68 +820,76 @@
   margin-right: 30px;
 }
 
-.c-model-head{
+.c-model-head {
   position: relative;
 }
 .c-model-head p {
   margin-top: 10px;
-  color: #4A4A4A;
+  color: #4a4a4a;
   font-size: 15px;
 }
-.c-close-icon{
+.c-close-icon {
   position: absolute;
   right: 0;
   top: 0;
 }
 
-.c-model-head h1{
+.c-model-head h1 {
   letter-spacing: 0px;
-color: #535353;
-opacity: 1;
-font-size: 24px;
-font-weight: 400;
+  color: #535353;
+  opacity: 1;
+  font-size: 24px;
+  font-weight: 400;
 }
-.model-calander-head{
-  background-color: #2C4C82;
-   width: 100%;
-   min-height: 85px;
-   color: #ffffff;
+.model-calander-head {
+  background-color: #2c4c82;
+  width: 100%;
+  min-height: 85px;
+  color: #ffffff;
 }
 
-.model-calender{
+.model-calender {
   box-shadow: 0 3px 4px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%) !important;
 }
-.model-cleaning-solt{
+.model-cleaning-solt {
   margin-top: 100px;
-  color: #4E4E4E;
+  color: #4e4e4e;
   font-size: 13px;
 }
 
-.amount-card{
-  background: #EDF1F6;
+.amount-card {
+  background: #edf1f6;
   border-radius: 8px;
   padding: 10px 20px 30px 20px;
 }
-.amount-card h2{
+.amount-card h2 {
   letter-spacing: 0px;
-color: #535353;
-opacity: 1;
-font-size: 22px;
-font-weight: 400;
+  color: #535353;
+  opacity: 1;
+  font-size: 22px;
+  font-weight: 400;
 }
-.amount-text{
+.amount-text {
   color: #434343;
-opacity: 1;
-font-size: 34px;
-line-height: 1;
+  opacity: 1;
+  font-size: 34px;
+  line-height: 1;
 }
-.table-condensed{
+.table-condensed {
   width: 290px !important;
 }
-.datepicker table td, .datepicker table th {
+.datepicker table td,
+.datepicker table th {
   background: #ffffff !important;
 }
-.datepicker table tr td.active.active, .datepicker table tr td.active.disabled.active, .datepicker table tr td.active.disabled:active, .datepicker table tr td.active.disabled:hover.active, .datepicker table tr td.active.disabled:hover:active, .datepicker table tr td.active:active, .datepicker table tr td.active:hover.active, .datepicker table tr td.active:hover:active {
+.datepicker table tr td.active.active,
+.datepicker table tr td.active.disabled.active,
+.datepicker table tr td.active.disabled:active,
+.datepicker table tr td.active.disabled:hover.active,
+.datepicker table tr td.active.disabled:hover:active,
+.datepicker table tr td.active:active,
+.datepicker table tr td.active:hover.active,
+.datepicker table tr td.active:hover:active {
   background-color: #2c4c82 !important;
 }
 .datepicker table td.day {
@@ -893,74 +900,63 @@ line-height: 1;
   background-color: #ffffff;
   border-radius: 50%;
 }
-.time-solt-button{
+.time-solt-button {
   border: 1px solid #efebeb;
   border-radius: 5px;
-  color: #4E4E4E;
+  color: #4e4e4e;
   padding: 10px 20px 10px 20px;
   margin: 20px;
   background: #ffffff;
 }
-.time-solt-button:hover{
+.time-solt-button:hover {
   background: #ffffff;
 }
 
-.model-calander-head h1{
+.model-calander-head h1 {
   font-size: 26px;
   color: #ffffff;
   margin: 0px;
-
 }
-.model-calander-head h2{
+.model-calander-head h2 {
   font-size: 16px;
   color: #ffffff;
   opacity: 0.7;
   margin: 0px;
-
 }
 .policy-time-edit {
   width: 18px;
   margin-left: 5px;
 }
-.model-text-border{
+.model-text-border {
   border: 1px solid #707070 !important;
   border-radius: 5px !important;
 }
 
-.model-select{
+.model-select {
   background: #fff;
   border: 1px solid;
   border-radius: 5px;
 }
-
 
 select.minimal {
   padding-left: 5px;
   border: 1px solid #707070 !important;
   border-radius: 5px !important;
   background-color: #fff;
-  background-image:
-    linear-gradient(45deg, transparent 50%, gray 50%),
+  background-image: linear-gradient(45deg, transparent 50%, gray 50%),
     linear-gradient(135deg, gray 50%, transparent 50%),
     linear-gradient(to right, #ccc, #ccc);
-  background-position:
-    calc(100% - 20px) calc(1em + 2px),
-    calc(100% - 15px) calc(1em + 2px),
-    calc(100% - 2.5em) 0.5em;
-  background-size:
-    5px 5px,
-    5px 5px,
-    0px 1.5em;
+  background-position: calc(100% - 20px) calc(1em + 2px),
+    calc(100% - 15px) calc(1em + 2px), calc(100% - 2.5em) 0.5em;
+  background-size: 5px 5px, 5px 5px, 0px 1.5em;
   background-repeat: no-repeat;
 }
 
 select.minimal:focus {
-
   background-repeat: no-repeat;
   border-color: #707070;
   outline: 0;
 }
-
 
 .order-status {
   padding: 4px 5px;
@@ -969,11 +965,11 @@ select.minimal:focus {
   text-align: center;
   color: #fff;
   font-size: 13px;
-  
+
   display: inline-block;
 }
 
-.other-media{
+.other-media {
   letter-spacing: 0px;
   color: #434343;
   opacity: 1;
@@ -983,7 +979,8 @@ select.minimal:focus {
   font-weight: 200;
 }
 
-.select-items div:hover, .same-as-selected {
+.select-items div:hover,
+.same-as-selected {
   background-color: rgba(0, 0, 0, 0.1) !;
 }
 
@@ -1039,32 +1036,68 @@ select.minimal:focus {
   }
 }
 @media only screen and (max-width: 1400px) {
-
-  .agent-content-section2 p {
-    font-size: 16px;
-  }
-  .agent-content-section1 ul li{
+  .vist-card-item-first {
+   margin-right: 10px;
+    flex: none;
+}
+.vist-card-item-second {
+  flex: none;
+}
+  #evalution-note{
     font-size: 12px;
   }
-  .time-text {
+  .agent-content-section2 p {
+    font-size: 13px;
+  }
+  .agent-content-section1 ul li {
     font-size: 11px;
-}
-.section-detials-text{
-  font-size: 12px;
-}
-.clean-section-card p {
-  font-size: 10px;
-}
-.cleaning-status-container{
-  font-size: 12px;
-}
+  }
+  .time-text {
+    font-size: 10px;
+  }
+  .section-detials-text {
+    font-size: 10px;
+  }
+  .clean-section-card p {
+    font-size: 9px;
+  }
+  .cleaning-status-container {
+    font-size: 10px;
+  }
+  .order-agent-content h2 {
+    font-size: 14px;
+  }
+  .order-agent-content h6 {
+    font-size: 10px;
+  }
+  .order-header-class h2 {
+    font-size: 20px;
+  }
+  .subscription-button {
+    font-size: 12px;
+  }
+  .ticket-button {
+    font-size: 12px;
+  }
+  .c-button-div {
+    font-size: 12px;
+  }
+  .order-payment-section-card {
+    font-size: 12px !important;
+  }
+  .cc-container {
+    font-size: 12px;
+  }
+  .payment-text-order {
+    font-size: 12px;
+  }
 }
 
 @media only screen and (max-width: 950px) {
-  .model-time-solt{
+  .model-time-solt {
     display: grid;
   }
-  .media-gap{
+  .media-gap {
     margin-right: 0px;
   }
   .modal-dialog {
@@ -1111,6 +1144,7 @@ select.minimal:focus {
     display: block;
     margin-left: auto;
     margin-right: auto;
+    width: 20%;
   }
   .order-agent-content h2 {
     text-align: center;
