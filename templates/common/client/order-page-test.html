@@ -51,17 +51,17 @@
                     <!--rating section-->
 
                     {% if average_feedback < 2 and average_feedback >= 1 %}
-                    <i class="fas fa-star yellow-icon"></i><span class="rating-value">1</span>
+                    <i class="fas fa-star yellow-icon"></i><i class="fas fa-star gray-icon"></i><i class="fas fa-star gray-icon"></i><i class="fas fa-star gray-icon"></i><i class="fas fa-star gray-icon"></i><span class="rating-value">1</span>
                     {% elif average_feedback < 3 and average_feedback >= 2 %}
-                    <i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><span class="rating-value">2</span>
+                    <i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star gray-icon"></i><i class="fas fa-star gray-icon"></i><i class="fas fa-star gray-icon"></i><span class="rating-value">2</span>
                     {% elif average_feedback < 4 and average_feedback >= 3 %}
-                    <i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><span class="rating-value">3</span>
+                    <i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star gray-icon"></i><i class="fas fa-star gray-icon"></i><span class="rating-value">3</span>
                     {% elif average_feedback < 5 and average_feedback >= 4 %}
-                    <i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><span class="rating-value">4</span>
+                    <i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star gray-icon"></i><span class="rating-value">4</span>
                     {% elif average_feedback == 5 %}
                     <i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><span class="rating-value">5</span>
                     {% else %}
-                    <i class="fas fa-star yellow-icon"></i><span class="rating-value">1</span>
+                    <i class="fas fa-star yellow-icon"></i><i class="fas fa-star gray-icon"></i><i class="fas fa-star gray-icon"></i><i class="fas fa-star gray-icon"></i><i class="fas fa-star gray-icon"></i><span class="rating-value">1</span>
                     {% endif %}
                     <!--rating section-->
                 </div>
@@ -275,13 +275,7 @@
                                         <button class="subscription-button">Subscription</button>
                                         {% endif %}
                                         
-                                        {% for investigation in orderschedule.investigations %}
-                                        {% for followup in investigation.followups %}
-                                        {% if followup %}
-                                        <button class="ticket-button ticket{{orderschedule.id}}">{{followup.ticket_no}} Tickets <i class="fa fa-flag" aria-hidden="true"></i></button>
-                                        {% endif %}
-                                        {% endfor %}
-                                        {% endfor %}
+                                        <a class="ticket-button ticketredirect{{orderschedule.id}}" href="#"><span id="ticketcount{{orderschedule.id}}">0 Tickets</span> <i class="fa fa-flag" aria-hidden="true"></i></a>
 
                                     </div>
                                     <div class="row order-section-1">
@@ -436,15 +430,15 @@
                                     </div>
                                 </div>
                                 <br>
-                                <div class="moreless-button" id="show">Show More</div>
+                                <div class="moreless-button" id="show{{orderschedule.id}}">Show More</div>
                                 <hr class="bar">
                             </div>
                             
 
-                            <div id="showmore" class="showmore">
+                            <div id="showmore{{orderschedule.id}}" class="showmore">
                             
                                 {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
-                                <div id="showmore1" style="display: none;"
+                                <div id="showmore1{{orderschedule.id}}" style="display: none;"
                                     class="order-container-main order-clean-section">
                                     <div v-if="edit" class="order-clean-edit">
                                         <img class="pointer" src="{% static 'files/icons/edit.png' %}">
@@ -589,7 +583,7 @@
                                 {% endfor %}
 
                                 
-                                <div id="showmore2" style="display: none;"
+                                <div id="showmore2{{orderschedule.id}}" style="display: none;"
                                     class="order-container-main order-clean-section">
                                     <div class="order-clean-section-header c-mb-10">
                                         <h2>Cleaning Visit</h2>
@@ -818,7 +812,7 @@
                                    
                                 </div>
                                 <div class="up-animation"></div>
-                                <div class="moreless-button " id="showless">Show Less</div>
+                                <div class="moreless-button " id="showless{{orderschedule.id}}">Show Less</div>
                             </div>
 
                         </div><!--order details end-->
@@ -1573,42 +1567,48 @@ function load_cleaning_team(visitcount,scheduleid){
         //   $('#myInput').trigger('focus')
         // })
 
+        //ticket count for cleaning section
+        var followup_count = 0;
         {% for orderschedule in order.orderschedules%}
         {% for investigation in orderschedule.investigations %}
         {% for followup in investigation.followups %}
         {% if followup %}
-        var followup_count += {{forloop.counter}}
+        followup_count += {{forloop.counter}}
+        $('#ticketcount'+{{followup.investigation.order_schedule.id}}+'').text(followup_count+' Tickets');
+        $('.ticketredirect'+{{followup.investigation.order_schedule.id}}+'').attr('href','/common/ticket/details/'+followup.investigation.order_schedule.order.evaluation.customer.id+'/'+followup.id+'/')
+        {% else %}
+        $('.ticket-button').attr("hidden",true);
         {% endif %}
-        {% if followup.last %}
-        $('.ticket'+{{followup.investigation.order_schedule}}+'')
-        {% endif %}
+        
         {% endfor %}
         {% endfor %}
         {% endfor %}
         
-        $("#show").click(function () {
-            if ($("#show").text() == "Show More") {
-                $("#show").text("Show Less");
-                $("#showmore").fadeIn();
-                $("#showmore1").fadeIn();
-                $("#showmore2").fadeIn();
+        {% for orderschedule in order.orderschedules %}
+        $("#show{{orderschedule.id}}").click(function () {
+            if ($("#show{{orderschedule.id}}").text() == "Show More") {
+                $("#show{{orderschedule.id}}").text("Show Less");
+                $("#showmore{{orderschedule.id}}").fadeIn();
+                $("#showmore1{{orderschedule.id}}").fadeIn();
+                $("#showmore2{{orderschedule.id}}").fadeIn();
             } else {
-                $("#show").text("Show More");
-                $("#showmore1").fadeOut();
-                $("#showmore2").fadeOut();
-                $("#showmore").fadeOut();
+                $("#show{{orderschedule.id}}").text("Show More");
+                $("#showmore1{{orderschedule.id}}").fadeOut();
+                $("#showmore2{{orderschedule.id}}").fadeOut();
+                $("#showmore{{orderschedule.id}}").fadeOut();
             }
 
         });
-        $("#showless").click(function () {
+        $("#showless{{orderschedule.id}}").click(function () {
 
-            $("#show").text("Show More");
-            $("#showmore1").fadeOut();
-            $("#showmore2").fadeOut();
-            $("#showmore").fadeOut();
+            $("#show{{orderschedule.id}}").text("Show More");
+            $("#showmore1{{orderschedule.id}}").fadeOut();
+            $("#showmore2{{orderschedule.id}}").fadeOut();
+            $("#showmore{{orderschedule.id}}").fadeOut();
 
 
         });
+        {% endfor %}
     });
 
 //total amount for payment policy edit adjustment
@@ -1866,16 +1866,6 @@ total_schedules = parseInt("{{order.orderschedules|length}}")
         $('.media-head-{{orderschedule.id}}').remove();
         $('.media-explain-{{orderschedule.id}}').remove();
     }
-
-
-$('.moreless-button{{orderschedule.id}}').click(function () {
-  $('.more-details{{orderschedule.id}}').slideToggle();
-  if ($('.moreless-button{{orderschedule.id}}').text() == "Show More") {
-    $(this).text("Show Less");
-  } else {
-    $(this).text("Show More");
-  }
-});
 
 // {% if orderschedule.status == 'CONFIRMED' %}
 // dateconfirm_completed_count += 1;
