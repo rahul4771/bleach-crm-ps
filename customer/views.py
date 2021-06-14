@@ -862,9 +862,9 @@ def testinvoice_html_to_pdf_view(request,evaluation_id):
 	html_string = render_to_string("customer/downloads/invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,})
 
 	html = HTML(string=html_string,base_url=request.build_absolute_uri())
-	html.write_pdf(target='/home/pdf/tmp/invoice/invoice.pdf');
+	html.write_pdf(target='/home/sonu/pdf/tmp/invoice/invoice.pdf');
 
-	fs = FileSystemStorage('/home/pdf/tmp/invoice/')
+	fs = FileSystemStorage('/home/sonu/pdf/tmp/invoice/')
 	with fs.open('invoice.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_invoice.pdf"'

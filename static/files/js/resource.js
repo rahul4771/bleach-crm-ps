@@ -108,50 +108,78 @@ const appCard = new Vue({
   methods: {
     saveEdit(id){
       var userData = new FormData()
+
       userData.append("user_id",id)
+      userData.append("csrfmiddlewaretoken",$("input[name=csrfmiddlewaretoken]").val())
+
       if($("#is_general_skill_"+id+":checked").val()=="on"){
-        userData.append('is_general_skill','on')
+        userData.append('is_general_skill','True')
+      }else{
+        userData.append('is_general_skill','False')
       }
       if($("#is_deep_skill_"+id+":checked").val()=="on"){
-        userData.append('is_deep_skill','on')
+        userData.append('is_deep_skill','True')
+      }else{
+        userData.append('is_deep_skill','False')
       }
       if($("#is_upholstery_skill_"+id+":checked").val()=="on"){
-        userData.append('is_upholstery_skill','on')
+        userData.append('is_upholstery_skill','True')
+      }else{
+        userData.append('is_upholstery_skill','False')
       }
       if($("#is_kitchen_skill_"+id+":checked").val()=="on"){
-        userData.append('is_kitchen_skill','on')
+        userData.append('is_kitchen_skill','True')
+      }else{
+        userData.append('is_kitchen_skill','False')
       }
       if($("#is_sterilization_skill_"+id+":checked").val()=="on"){
-        userData.append('is_sterilization_skill','on')
+        userData.append('is_sterilization_skill','True')
+      }else{
+        userData.append('is_sterilization_skill','False')
       }
       if($("#is_carpet_skill_"+id+":checked").val()=="on"){
-        userData.append('is_carpet_skill','on')
+        userData.append('is_carpet_skill','True')
+      }else{
+        userData.append('is_carpet_skill','False')
       }
       if($("#is_mattress_skill_"+id+":checked").val()=="on"){
-        userData.append('is_mattress_skill','on')
+        userData.append('is_mattress_skill','True')
+      }else{
+        userData.append('is_mattress_skill','False')
       }
       if($("#is_facade_skill_"+id+":checked").val()=="on"){
-        userData.append('is_facade_skill','on')
+        userData.append('is_facade_skill','True')
+      }else{
+        userData.append('is_facade_skill','False')
       }
       if($("#is_storagearea_skill_"+id+":checked").val()=="on"){
-        userData.append('is_storagearea_skill','on')
+        userData.append('is_storagearea_skill','True')
+      }else{
+        userData.append('is_storagearea_skill','False')
       }
       if($("#is_carparkingumbrella_skill_"+id+":checked").val()=="on"){
-        userData.append('is_carparkingumbrella_skill','on')
+        userData.append('is_carparkingumbrella_skill','True')
+      }else{
+        userData.append('is_carparkingumbrella_skill','False')
       }
       if($("#is_outdoor_skill_"+id+":checked").val()=="on"){
-        userData.append('is_outdoor_skill','on')
+        userData.append('is_outdoor_skill','True')
+      }else{
+        userData.append('is_outdoor_skill','False')
       }
       if($("#is_window_skill_"+id+":checked").val()=="on"){
-        userData.append('is_window_skill','on')
+        userData.append('is_window_skill','True')
+      }else{
+        userData.append('is_window_skill','False')
       }
       axios.post(this.url+"common/resources-new/",userData).then((response) => {
-                console.log(response)
+        // editDone(id)
+        location.reload();
               })
                .catch((error) => {
                 console.log(error);
               });
-              editDone(id)
+      
     }
   },
 });

@@ -531,6 +531,7 @@
                                             <div id="id_skill_edit_list_{{worker.id}}" class="skil-list-edit">
                                                 <div class="row mt-10">
                                                     <input type="hidden" id="{{worker.id}}" name="user_id"  value="{{worker.id}}">
+                                                    {% csrf_token %}
                                                     <div class="col-xs-6 mb-5">
                                                         <label class="c-container">General Cleaning
                                                             <input type="checkbox" id="is_general_skill_{{worker.id}}"  {% if worker.is_general_skill %}checked{% endif %} name="is_general_skill">

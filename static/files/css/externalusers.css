@@ -913,3 +913,24 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 #kd-font{
   font-weight: 100;
 }
+#invoice_total{
+  margin-top: 30px;
+  float: right;
+  right: 0;
+  width: 300px;
+}
+#invoice_total div{
+  margin-bottom: 10px;
+}
+
+#new-customer-info_1 {
+  float: left;
+  margin-top: 30px;
+  width: 350px;
+}
+#new-customer-info_1 div{
+  margin-bottom: 10px;
+}
+#invoice_total_amount{
+  margin-top: 30px;
+}
