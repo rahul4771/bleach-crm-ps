@@ -1,13 +1,13 @@
 from django.shortcuts import render
 
-from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule
+from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
 
-from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer
+from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer
 from agent.views import generate_random_username
 
 import re
@@ -414,6 +414,27 @@ class LeaveScheduleAPI(APIView):
 		response_dict['success']  = True  
 
 		return Response(response_dict,HTTP_200_OK)
+
+#Get Existing Shift
+class ShiftScheduleAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {"success":False}
+
+		try:
+			shiftschedules = ShiftSchedule.objects.filter(is_active=True)
+		except:
+			shiftschedules = None
+
+		shiftschedule_serializer = ShiftScheduleSerializer(shiftschedules,many=True).data
+
+		response_dict["staffs"]  = shiftschedule_serializer
+		response_dict["success"]  = True
+
+		return Response(response_dict,HTTP_200_OK)
+
 
 class CancelEvaluation(APIView):
 	permission_classes  	=   (AllowAny,)
