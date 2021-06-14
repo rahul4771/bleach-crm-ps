@@ -275,7 +275,7 @@
                                         <button class="subscription-button">Subscription</button>
                                         {% endif %}
                                         
-                                        <a class="ticket-button ticketredirect{{orderschedule.id}}" href="#" target="_blank"><span id="ticketcount{{orderschedule.id}}">0 Tickets</span> <i class="fa fa-flag" aria-hidden="true"></i></a>
+                                        <a class="ticket-button ticketredirect{{orderschedule.id}}" href="#" target="_blank"><span id="ticketcount{{orderschedule.order_scheduler_book.id}}">0 Tickets</span> <i class="fa fa-flag" aria-hidden="true"></i></a>
 
                                     </div>
                                     <div id="id_order" class="row order-section-1">
@@ -363,7 +363,7 @@
                                         <div class="col-md-4 m-mt30">
                                             <div id="visti-section"
                                                 class="agent-content-section2 visti-section  c-mt-022">
-                                                <p>Total no of Visits <span style="color:#0D87C5;"> {{order.orderschedules|length}}</span> </p>
+                                                <p>Total no of Visits <span style="color:#0D87C5;" class="visitcount{{orderschedule.order_scheduler_book.id}}"></span> </p>
 
                                                 
                                                 <div class="row visit-times">
@@ -398,7 +398,7 @@
                                             <div id="myDropdown" class="c-dropdown-content">
                                                 <div id="visti-section"
                                                     class="agent-content-section2 visti-section  c-mt-022">
-                                                    <p>Total no of Visits <span style="color:#0D87C5;"> {{order.orderschedules|length}}</span> </p>
+                                                    <p>Total no of Visits <span style="color:#0D87C5;" class="visitcount{{orderschedule.order_scheduler_book.id}}"></span> </p>
                                                     <div class="row ">
                                                         {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
                                                         {% for multi_order_schedule in order.orderschedules %}
@@ -1590,23 +1590,33 @@ function load_cleaning_team(visitcount,scheduleid){
         //   $('#myInput').trigger('focus')
         // })
 
-        //ticket count for cleaning section
+        //ticket count for cleaning section and visit count
         var followup_count = 0;
+        var visit_count = 0 ;
         {% for orderschedule in order.orderschedules%}
-        {% for investigation in orderschedule.investigations %}
-        {% for followup in investigation.followups %}
-        {% if followup %}
-        followup_count += {{forloop.counter}}
-        $('#ticketcount'+{{followup.investigation.order_schedule.id}}+'').text(followup_count+' Tickets');
-        $('.ticketredirect'+{{followup.investigation.order_schedule.id}}+'').attr('href','/common/ticket/details/'+{{followup.investigation.order_schedule.order.evaluation.customer.id}}+'/'+{{followup.id}}+'/')
-        {% else %}
-        $('.ticket-button').attr("hidden",true);
-        {% endif %}
+            //visit count
+            {% if orderschedule.order_scheduler_book %}
+            visit_count += {{forloop.counter}};
+            console.log(visit_count,"vcount")
+            $('.visitcount'+{{orderschedule.order_scheduler_book.id}}+'').text(visit_count);
+            {% endif %}
         
+            //ticket count
+            {% for investigation in orderschedule.investigations %}{% for followup in investigation.followups %}
+            {% if followup and orderschedule.order_scheduler_book %}
+            followup_count += {{forloop.counter}}
+            $('#ticketcount'+{{followup.investigation.order_schedule.order_scheduler_book.id}}+'').text(followup_count+' Tickets');
+            {% else %}
+            $('.ticket-button').attr("hidden",true);
+            {% endif %}
+            {% if forloop.last %}
+            $('.ticketredirect'+{{followup.investigation.order_schedule.id}}+'').attr('href','/common/ticket/details/'+{{followup.investigation.order_schedule.order.evaluation.customer.id}}+'/'+{{followup.id}}+'/')
+            {% endif %}
+            {% endfor %}{% endfor %}
         {% endfor %}
-        {% endfor %}
-        {% endfor %}
+
         
+        //order details tab expand and hide
         {% for orderschedule in order.orderschedules %}
         $("#show{{orderschedule.id}}").click(function () {
             if ($("#show{{orderschedule.id}}").text() == "Show More") {
