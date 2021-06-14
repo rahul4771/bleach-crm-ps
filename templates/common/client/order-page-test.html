@@ -278,7 +278,7 @@
                                         <a class="ticket-button ticketredirect{{orderschedule.id}}" href="#" target="_blank"><span id="ticketcount{{orderschedule.order_scheduler_book.id}}">0 Tickets</span> <i class="fa fa-flag" aria-hidden="true"></i></a>
 
                                     </div>
-                                    <div id="id_order" class="row order-section-1">
+                                    <div id="id_order{{orderschedule.order_scheduler_book.id}}" class="row order-section-1">
                                         <div class="col-md-4 c-mt-50">
                                         
                                             <div class="row">
@@ -308,9 +308,9 @@
                                                         {% endif %}
                                                         
                                                         <!-- <p id="evalution-note">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}}</p> -->
-                                                        <p id="evalution-note" class="evalution-note-less">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}} </p>
-                                                        <span class="see-more" id="id_see" onclick="seefull()">See More</span>
-                                                        <span class="see-more" style="display: none;" id="id_see_less" onclick="seeless()">See Less</span>
+                                                        <p id="evalution-note{{orderschedule.order_scheduler_book.id}}" class="evalution-note-less">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}} </p>
+                                                        <span class="see-more" id="id_see{{orderschedule.order_scheduler_book.id}}" onclick="seefull({{orderschedule.order_scheduler_book.id}})">See More</span>
+                                                        <span class="see-more" style="display: none;" id="id_see_less{{orderschedule.order_scheduler_book.id}}" onclick="seeless({{orderschedule.order_scheduler_book.id}})">See Less</span>
                                                         
 
                                                     </div>
@@ -361,7 +361,7 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4 m-mt30">
-                                            <div id="visti-section"
+                                            <div id="visti-section{{orderschedule.order_scheduler_book.id}}"
                                                 class="agent-content-section2 visti-section  c-mt-022">
                                                 <p>Total no of Visits <span style="color:#0D87C5;" class="visitcount{{orderschedule.order_scheduler_book.id}}"></span> </p>
 
@@ -390,14 +390,13 @@
                                                 {% endif %}
 
                                                 </div>
-                                                <div class="time-more text-center" onclick="myFunction()">
+                                                <div class="time-more text-center" onclick="myFunction({{orderschedule.order_scheduler_book.id}})">
                                                     <i class="fa fa-chevron-down more-icon" aria-hidden="true"></i>
                                                 </div>
 
                                             </div>
-                                            <div id="myDropdown" class="c-dropdown-content">
-                                                <div id="visti-section"
-                                                    class="agent-content-section2 visti-section  c-mt-022">
+                                            <div id="myDropdown{{orderschedule.order_scheduler_book.id}}" class="c-dropdown-content">
+                                                <div id="visti-section{{orderschedule.order_scheduler_book.id}}" class="agent-content-section2 visti-section  c-mt-022">
                                                     <p>Total no of Visits <span style="color:#0D87C5;" class="visitcount{{orderschedule.order_scheduler_book.id}}"></span> </p>
                                                     <div class="row ">
                                                         {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
@@ -423,7 +422,7 @@
 
 
                                                     </div>
-                                                    <div class="time-more text-center" onclick="myFunction()">
+                                                    <div class="time-more text-center" onclick="myFunction({{orderschedule.order_scheduler_book.id}})">
                                                         <i class="fa fa-chevron-up more-icon" aria-hidden="true"></i>
                                                     </div>
 
@@ -1567,25 +1566,25 @@ function load_cleaning_team(visitcount,scheduleid){
 
 <script type="text/javascript">
 
-    function seefull() {
-        document.getElementById("id_order").style.maxHeight = "none";
-        document.getElementById("evalution-note").style.maxHeight = "none";
-        document.getElementById("id_see").style.display = "none";
-        document.getElementById("id_see_less").style.display = "block";
+    function seefull(book_id) {
+        document.getElementById("id_order"+book_id+"").style.maxHeight = "none";
+        document.getElementById("evalution-note"+book_id+"").style.maxHeight = "none";
+        document.getElementById("id_see"+book_id+"").style.display = "none";
+        document.getElementById("id_see_less"+book_id+"").style.display = "block";
     }
 
-    function seeless() {
-        document.getElementById("id_order").style.maxHeight = "152px";
-        document.getElementById("evalution-note").style.maxHeight = "80px";
-        document.getElementById("id_see").style.display = "block";
-        document.getElementById("id_see_less").style.display = "none";
+    function seeless(book_id) {
+        document.getElementById("id_order"+book_id+"").style.maxHeight = "152px";
+        document.getElementById("evalution-note"+book_id+"").style.maxHeight = "80px";
+        document.getElementById("id_see"+book_id+"").style.display = "block";
+        document.getElementById("id_see_less"+book_id+"").style.display = "none";
     }
     $(document).ready(function () {
-        var text =  $("#evalution-note").text()
-        if(text.length<200){
-        document.getElementById("id_see").style.display = "none";
-            
-        }
+        //var text =  $("#evalution-note").text()
+        //if(text.length<200){
+        //document.getElementById("id_see").style.display = "none";   
+        //}
+
         //         $('#myModal').on('shown.bs.modal', function () {
         //   $('#myInput').trigger('focus')
         // })
@@ -1593,18 +1592,21 @@ function load_cleaning_team(visitcount,scheduleid){
         //ticket count for cleaning section and visit count
         var followup_count = 0;
         var visit_count = 0 ;
-        {% for orderschedule in order.orderschedules%}
+        {% for orderschedule in order.orderschedules %}
+            console.log({{forloop.counter}},"vcount")
             //visit count
             {% if orderschedule.order_scheduler_book %}
-            visit_count += {{forloop.counter}};
-            console.log(visit_count,"vcount")
+            visit_count += 1
             $('.visitcount'+{{orderschedule.order_scheduler_book.id}}+'').text(visit_count);
             {% endif %}
+        {% endfor %}
+
+        {% for orderschedule in order.orderschedules%}
         
             //ticket count
             {% for investigation in orderschedule.investigations %}{% for followup in investigation.followups %}
             {% if followup and orderschedule.order_scheduler_book %}
-            followup_count += {{forloop.counter}}
+            followup_count += 1
             $('#ticketcount'+{{followup.investigation.order_schedule.order_scheduler_book.id}}+'').text(followup_count+' Tickets');
             {% else %}
             $('.ticket-button').attr("hidden",true);
