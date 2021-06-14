@@ -282,7 +282,7 @@
                                         <div class="col-md-4 c-mt-50">
                                         
                                             <div class="row">
-                                                <div class="col-md-2">
+                                                <div class="col-md-3">
                                                 {% if orderschedule.evaluation_details.evaluator.profile_image %}
                                                     <img class="order-agent-profile-pic" src="{{orderschedule.evaluation_details.evaluator.profile_image.url}}">
                                                 {% else %}
@@ -293,7 +293,7 @@
                                                     {% endif %}
                                                 {% endif %}
                                                 </div>
-                                                <div class="col-md-10">
+                                                <div class="col-md-9 pl-0">
                                                     <div class="order-agent-content">
                                                         <div v-if="edit" class="order-agent-edit">
                                                             <img class="pointer"src="{% static 'files/icons/edit.png' %}">
@@ -1578,7 +1578,7 @@ function load_cleaning_team(visitcount,scheduleid){
     }
     $(document).ready(function () {
         var text =  $("#evalution-note").text()
-        if(text.length<223){
+        if(text.length<200){
         document.getElementById("id_see").style.display = "none";
             
         }
