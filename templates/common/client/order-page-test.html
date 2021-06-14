@@ -282,7 +282,7 @@
                                         <div class="col-md-4 c-mt-50">
                                         
                                             <div class="row">
-                                                <div class="col-md-2">
+                                                <div class="col-md-3">
                                                 {% if orderschedule.evaluation_details.evaluator.profile_image %}
                                                     <img class="order-agent-profile-pic" src="{{orderschedule.evaluation_details.evaluator.profile_image.url}}">
                                                 {% else %}
@@ -293,7 +293,7 @@
                                                     {% endif %}
                                                 {% endif %}
                                                 </div>
-                                                <div class="col-md-10">
+                                                <div class="col-md-9 pr-0 pl-0">
                                                     <div class="order-agent-content">
                                                         <div v-if="edit" class="order-agent-edit">
                                                             <img class="pointer"src="{% static 'files/icons/edit.png' %}">
@@ -312,7 +312,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-2 m-mt30">
+                                        <div class="col-xs-2 m-mt30">
                                             <div class="agent-content-section1 c-mt-022">
                                                 <div v-if="edit" class="order-agent-edit">
                                                     <img class="pointer" src="{% static 'files/icons/edit.png' %}">
@@ -447,52 +447,52 @@
                                         <h2>Section {{forloop.counter}} : {{section.section_name}}</h2>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-6 c-right-border" style="padding-left: 1px;">
-                                            <div class="col-md-6">
+                                        <div class="col-md-6 c-right-border section-detials-text" style="padding-left: 1px;">
+                                            <div class="col-md-6 ">
                                                 <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Category</div>
-                                                    <div class="col-xs-6">: <span class="c-text ">{{section.category}}</span></div>
+                                                    <div class="col-xs-5">Category</div>
+                                                    <div class="col-xs-7">: <span class="c-text ">{{section.category}}</span></div>
                                                 </div>
                                                 <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Dirt level</div>
-                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.dirt_level}}</span>
+                                                    <div class="col-xs-5">Dirt level</div>
+                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.dirt_level}}</span>
                                                     </div>
                                                 </div>
 
                                                 {% if section.age %}
                                                 <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Age</div>
-                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.age}}</span>
+                                                    <div class="col-xs-5">Age</div>
+                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.age}}</span>
                                                     </div>
                                                 </div>
                                                 {% endif %}
 
                                                 <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Size</div>
-                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.size}} {{section.unit|default_if_none:''}}</span>
+                                                    <div class="col-xs-5">Size</div>
+                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.size}} {{section.unit|default_if_none:''}}</span>
                                                     </div>
                                                 </div>
 
                                                 {% if section.floor %}
                                                 <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Floor</div>
-                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.floor}}</span>
+                                                    <div class="col-xs-5">Floor</div>
+                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.floor}}</span>
                                                     </div>
                                                 </div>
                                                 {% endif %}
 
                                                 {% if section.apartment %}
                                                 <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Apartments</div>
-                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.apartment}}</span>
+                                                    <div class="col-xs-5">Apartments</div>
+                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.apartment}}</span>
                                                     </div>
                                                 </div>
                                                 {% endif %}
 
                                                 {% if section.room %}
                                                 <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Rooms</div>
-                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.room}}</span>
+                                                    <div class="col-xs-5">Rooms</div>
+                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.room}}</span>
                                                     </div>
                                                 </div>
                                                 {% endif %}
@@ -500,49 +500,49 @@
                                             <div class="col-md-6">
                                                 {% if section.wall_type %}
                                                 <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Wall Type</div>
-                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.wall_type}}</span></div>
+                                                    <div class="col-xs-5">Wall Type</div>
+                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.wall_type}}</span></div>
                                                 </div>
                                                 {% endif %}
 
                                                 {% if section.ceiling_type %}
                                                 <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Celling Type</div>
-                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.ceiling_type}}</span></div>
+                                                    <div class="col-xs-5">Celling Type</div>
+                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.ceiling_type}}</span></div>
                                                 </div>
                                                 {% endif %}
 
                                                 {% if section.floor_type %}
                                                 <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Floor Type</div>
-                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.floor_type}}</span></div>
+                                                    <div class="col-xs-5">Floor Type</div>
+                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.floor_type}}</span></div>
                                                 </div>
                                                 {% endif %}
 
                                                 {% if section.material %}
                                                 <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Material</div>
-                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.material}}</span></div>
+                                                    <div class="col-xs-5">Material</div>
+                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.material}}</span></div>
                                                 </div>
                                                 {% endif %}
 
                                                 {% if section.colour %}
                                                 <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Color</div>
-                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.colour}}</span></div>
+                                                    <div class="col-xs-5">Color</div>
+                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.colour}}</span></div>
                                                 </div>
                                                 {% endif %}
 
                                                 {% if section.cause_of_stain %}
                                                 <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Cause of Stain</div>
-                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.cause_of_stain}}</span></div>
+                                                    <div class="col-xs-5">Cause of Stain</div>
+                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.cause_of_stain}}</span></div>
                                                 </div>
                                                 {% endif %}
 
                                                 <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Cost</div>
-                                                    <div class="col-xs-6">: <span class="c-text  ">{{section.section_cost|floatformat:'3'}} KD</span>
+                                                    <div class="col-xs-5">Cost</div>
+                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.section_cost|floatformat:'3'}} KD</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -595,7 +595,7 @@
                                         {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
                                             <div class="col-md-4  c-pr5" onclick="load_cleaning_team({{forloop.counter}},{{multi_order_schedule.id}})">
                                                 <div class="cleaning-status-container  pointer ">
-                                                    <div class="row cleaning-status-row  cleaning-status-card">
+                                                    <div class="row cleaning-status-row visit-border cleaning-status-card">
                                                         <div class="vist-card-item-first">
                                                             Visit {{forloop.counter}}
                                                         </div>
