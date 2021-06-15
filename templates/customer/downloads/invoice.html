@@ -28,7 +28,9 @@
 <body id="printableArea">
 
   <div id="container">
-
+    <section>
+       <h1 id="qu-text">INVOICE</h1>
+    </section>
     {% for orderschedule in order.orderschedules %}
           {% if forloop.first %}
     <section id="new-customer-info">
@@ -52,10 +54,10 @@
     </section>
 
     <section id="quotation_data">
-      <h1 id="qu-text">INVOICE</h1>
+     
       <div>
         <span id="contact-text">Invoice Number</span>
-        <span id="contact-number">INV{{order.invoice_no}}</span>
+        <span id="contact-number"> <b>INV{{order.invoice_no}}</b> </span>
       </div>
       <div>
         <span id="contact-text">Invoice Date</span>
@@ -69,7 +71,7 @@
         <span id="contact-text">Order Number</span>
         <span id="contact-number">{{order.evaluation.evaluation_id}}</span>
       </div>
-      <div>
+      <!-- <div>
         <span style="color: #0BA300;" id="contact-text">Cleaning</span>
         <span id="contact-number" style="color: #0BA300;">
         {% for orderschedule in order.orderschedules %}
@@ -80,11 +82,11 @@
         {% endif %}
         {% endfor %}
       </span>
-      </div>
-      <div>
+      </div> -->
+      <!-- <div>
         <span style="color: #0BA300;" id="contact-text">Appointment(s)
         </span>
-      </div>
+      </div> -->
     </section>
     {% endif %}
     {% endfor %}
@@ -109,7 +111,7 @@
     {% endfor %}
 
     <section id="new-customer-info_1">
-      <div>
+      <!-- <div>
         <span id="contact-text">Completed Jobs</span>
         <span id="contact-number"><b>{{order.orderschedules|length}}</b></span>
       </div>
@@ -117,8 +119,18 @@
       <div>
         <span id="contact-text">Total</span>
         <span id="contact-number"><b>{{completed_jobs_count}}</b></span>
+      </div> -->
+      <div>
+        <span id="contact-text">Payment Before Cleaning</span>
+        <span id="contact-number"><b>340.000</b> KD</span>
+      </div>
+      <br>
+      <div>
+        <span id="contact-text">Payment After Cleaning</span>
+        <span id="contact-number"><b>35.000</b> KD</span>
       </div>
     </section>
+   
     <section id="invoice_total">
       <div>
         <span id="contact-text">Sub Total</span>
@@ -137,6 +149,22 @@
         <span id="contact-number"><b>{{order.total_amount|floatformat:"3"}}</b> KD</span>
       </div>
     </section>
+    <section id="payment-section-invoice">
+      <h1 id="payment-text"> Payment</h1>
+      <div>
+        <span id="contact-text">Paid till date</span>
+        <span id="contact-number">0 </span>
+      </div>
+      <div>
+        <span id="contact-text">Balance till date</span>
+        <span id="contact-number">0 </span>
+      </div>
+      <div style="margin-top: 20px;">
+        <span id="contact-text">Payable Amount</span>
+      </div>
+      <h1 id="payment-amount">350.000 KD</h1>
+    </section>
+    
   
   </div>
 </body>
