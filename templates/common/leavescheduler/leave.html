@@ -247,7 +247,7 @@
             <span class="lv-month-select" id="lv-month-select-2">JANUARY 2021</span>
             {% if request.user.user_type == 'ADMIN' %}
             {% else %}
-            <div class="lv-clear-btn d-flex" onclick="clearAll()">
+            <div class="lv-clear-btn d-flex" onclick="clearAllShift()">
               <div class="lv-select-counter" id="select-counter">0</div>
               <div class="pr-20"> Clear All</div>
             </div>
@@ -255,10 +255,10 @@
             
             {% endif %}
 
-            <button id="id_shift_1" class="lv-shift-btn">
-              <i class="fa fa-plus" style="margin-right: 10px;" aria-hidden="true"></i> Shift 1
+            <button id="id_shift_1" class="lv-shift-btn" onclick="addToShift1()">
+              <i class="fa fa-plus" style="margin-right: 10px;" aria-hidden="true" ></i> Shift 1
             </button>
-            <button id="id_shift_2" class="lv-shift-btn">
+            <button id="id_shift_2" class="lv-shift-btn" onclick="addToShift2()">
               <i class="fa fa-plus" style="margin-right: 10px;" aria-hidden="true"></i> Shift 2
             </button>
           </div>
@@ -266,7 +266,7 @@
           <div id="table-wrapper">
             <div id="#table-scroll " style="max-height:100vh;">
               <table cellspacing="0" cellpadding="0" id="leave-table">
-                <th width="200" class="noBorder " id="lv-head-2-">
+                <th width="200" class="noBorder " id="lv-head-2-1">
 
                 </th>
                 <tbody id="lv-body-head-2">

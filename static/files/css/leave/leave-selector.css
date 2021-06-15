@@ -29,6 +29,10 @@
     cursor:pointer;
     padding:5px;
 }
+.lv-shift-date{
+    cursor:pointer;
+    padding:5px;
+}
 .lv-day-container{
     margin-left:145px;
 }
