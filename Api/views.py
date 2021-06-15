@@ -435,6 +435,32 @@ class ShiftScheduleAPI(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
+	def post(self,request):
+		response_dict = {'success':False}
+
+		for schedule in request.data:
+			serializer = ShiftScheduleSerializer(data=schedule)
+			
+			if serializer.shift1:
+				serializer.shift1_start_at = datetime.strptime('06:00:00 AM',"%I:%M %p")
+				serializer.shift1_end_at   = datetime.strptime('06:00:00 PM',"%I:%M %p")
+			if serializer.shift2:
+				serializer.shift2_start_at = datetime.strptime('09:00:00 AM',"%I:%M %p")
+				serializer.shift2_end_at   = datetime.strptime('09:00:00 PM',"%I:%M %p")
+
+			if serializer.is_valid():
+				serializer.save()
+   
+			else: 
+				errors= serializer.errors   
+				key=tuple(errors.keys())[0] 
+				error=errors[key]
+				response_dict['Error']=key +':'+ error[0]
+				response_dict['Error_List'] = serializer.errors
+
+		response_dict['success']  = True  
+
+		return Response(response_dict,HTTP_200_OK)
 
 class CancelEvaluation(APIView):
 	permission_classes  	=   (AllowAny,)
@@ -475,6 +501,28 @@ class DeleteLeaveSchedule(APIView):
 
 		if leavescehdule:
 			leavescehdule.delete()
+			response_dict = {'success':True}  
+			return Response(response_dict, HTTP_200_OK)
+		else:
+			response_dict['reason'] = 'Invalid Id' 
+
+		return Response(response_dict,HTTP_200_OK)
+
+
+class DeleteShiftSchedule(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request,shift_id):
+		response_dict = {'success':False}
+
+		try:
+			shiftscehdule = ShiftSchedule.objects.get(is_active=True,id=int(shift_id))
+		except:
+			shiftschedule = None
+
+		if shiftscehdule:
+			shiftscehdule.delete()
 			response_dict = {'success':True}  
 			return Response(response_dict, HTTP_200_OK)
 		else:
