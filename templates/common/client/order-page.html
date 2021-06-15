@@ -754,7 +754,7 @@
                                                     
                                                     <div class="owl-carousel c-mt-10 id_cleaning_before_images">
                                                     {% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'BEFORE_CLEANING' %}
-                                                        <div>
+                                                        <div >
                                                             <img class="slider-img pointer" onclick="onClick(this)" src="{{media.media.url}}" alt="">
                                                         </div>
                                                     {% endif %}{% endfor %}{% endfor %}
@@ -1590,15 +1590,20 @@ function load_cleaning_team(visitcount,scheduleid){
                         //looping before cleaning images
                         $.each(response.data.before_cleaning_media,function(key,value){
                             
-                            $('.id_cleaning_before_images').append('<div> <img class="slider-img pointer" onclick="onClick(this)" src="'+value.before_cleaning_url+'" alt=""> </div>');
+                            $('.id_cleaning_before_images').append('<div> <img class="slider-img pointer" onclick="onClick(this)" src="'+value.before_cleaning_url+'" alt=""></div>');
                         })
 
                         //looping after cleaning images
                         $.each(response.data.after_cleaning_media,function(key,value){
+                            $('.owl-carousel').owlCarousel('add', '<div><img class="slider-img pointer" onclick="onClick(this)" src="'+value.after_cleaning_url+'" alt=""></div>').owlCarousel('update');
                             
-                            $('.id_cleaning_after_images').append('<div> <img class="slider-img pointer" onclick="onClick(this)" src="'+value.after_cleaning_url+'" alt=""> </div>');
+                            //$('.id_cleaning_after_images').append('<div><img class="slider-img pointer" onclick="onClick(this)" src="'+value.after_cleaning_url+'" alt=""></div>');
                         })  
 
+                        $('.owl-carousel').owlCarousel({
+                            margin:10
+                        });
+                        
                         //view ticket
                         if (response.data.followup_id === null){
                             $('.id_view_ticket').hide();
