@@ -149,7 +149,7 @@ const app=  new Vue({
             end_time:'12:00 AM'
           }
         },
-        url:'https://test.bleach-kw.com',
+        url:'http://localhost:8000',
         cleaningData:{
           cleaning_datetime_start:'',
           cleaning_datetime_end:'',
