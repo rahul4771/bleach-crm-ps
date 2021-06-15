@@ -1,13 +1,13 @@
 from django.shortcuts import render
 
-from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule
+from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
 
-from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer
+from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer
 from agent.views import generate_random_username
 
 import re
@@ -415,6 +415,53 @@ class LeaveScheduleAPI(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
+#Get Existing Shift
+class ShiftScheduleAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {"success":False}
+
+		try:
+			shiftschedules = ShiftSchedule.objects.filter(is_active=True)
+		except:
+			shiftschedules = None
+
+		shiftschedule_serializer = ShiftScheduleSerializer(shiftschedules,many=True).data
+
+		response_dict["staffs"]  = shiftschedule_serializer
+		response_dict["success"]  = True
+
+		return Response(response_dict,HTTP_200_OK)
+
+	def post(self,request):
+		response_dict = {'success':False}
+
+		for schedule in request.data:
+			serializer = ShiftScheduleSerializer(data=schedule)
+			
+			if serializer.shift1:
+				serializer.shift1_start_at = datetime.strptime('06:00:00 AM',"%I:%M %p")
+				serializer.shift1_end_at   = datetime.strptime('06:00:00 PM',"%I:%M %p")
+			if serializer.shift2:
+				serializer.shift2_start_at = datetime.strptime('09:00:00 AM',"%I:%M %p")
+				serializer.shift2_end_at   = datetime.strptime('09:00:00 PM',"%I:%M %p")
+
+			if serializer.is_valid():
+				serializer.save()
+   
+			else: 
+				errors= serializer.errors   
+				key=tuple(errors.keys())[0] 
+				error=errors[key]
+				response_dict['Error']=key +':'+ error[0]
+				response_dict['Error_List'] = serializer.errors
+
+		response_dict['success']  = True  
+
+		return Response(response_dict,HTTP_200_OK)
+
 class CancelEvaluation(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
@@ -454,6 +501,28 @@ class DeleteLeaveSchedule(APIView):
 
 		if leavescehdule:
 			leavescehdule.delete()
+			response_dict = {'success':True}  
+			return Response(response_dict, HTTP_200_OK)
+		else:
+			response_dict['reason'] = 'Invalid Id' 
+
+		return Response(response_dict,HTTP_200_OK)
+
+
+class DeleteShiftSchedule(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request,shift_id):
+		response_dict = {'success':False}
+
+		try:
+			shiftscehdule = ShiftSchedule.objects.get(is_active=True,id=int(shift_id))
+		except:
+			shiftschedule = None
+
+		if shiftscehdule:
+			shiftscehdule.delete()
 			response_dict = {'success':True}  
 			return Response(response_dict, HTTP_200_OK)
 		else:
@@ -801,12 +870,34 @@ class CleaningTeamAPI(APIView):
 				else:
 					pass
 			
-			check_in = cleaningteam.start_at + timedelta(hours=3)
-			check_out = cleaningteam.end_at + timedelta(hours=3)
+			if cleaningteam.check_in:
+				check_in = cleaningteam.check_in + timedelta(hours=3)
+				check_in_time = check_in.time().strftime("%I:%M %p")
+			else:
+				check_in = None
+				check_in_time = None
+				
 
-			print(check_in,"printest")
+			if cleaningteam.check_out:
+				check_out = cleaningteam.check_out + timedelta(hours=3)
+				check_out_time = check_out.time().strftime("%I:%M %p")
+			else:
+				check_out = None
+				check_out_time = None
 
-			response_dict = {'success':True,"visit_count":visit_count,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"start_at":check_in.time().strftime("%I:%M %p"),"end_at":check_out.time().strftime("%I:%M %p"),'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list}
+			cleaning_status = cleaningteam.order_scheduler.work_status
+
+			followup = FollowUp.objects.filter(is_active=True,investigation__order_schedule__id=cleaningteam.order_scheduler.id).last()
+			if followup:
+				followup_id = followup.id
+			else:
+				followup_id = None
+
+			customer_id = cleaningteam.order_scheduler.order.evaluation.customer.id
+			
+			print(cleaning_status,"printest")
+
+			response_dict = {'success':True,"visit_count":visit_count,"schedule_id":schedule_id, "customer_id":customer_id,"followup_id":followup_id,"cleaning_status":cleaning_status,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"start_at":check_in_time,"end_at":check_out_time,'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list}
 
 		else:
 

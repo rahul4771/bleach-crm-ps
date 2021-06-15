@@ -267,7 +267,7 @@
 
 
 
-                    <div class="row mb-40" id="vueCard">
+                    <div class="row mb-40"  id="refresh">
 
                         {% for worker in workers %}
                         <div class="col-md-3 pr-0 m-mb-60 m-pl-0 m-mlr-0">
@@ -531,6 +531,7 @@
                                             <div id="id_skill_edit_list_{{worker.id}}" class="skil-list-edit">
                                                 <div class="row mt-10">
                                                     <input type="hidden" id="{{worker.id}}" name="user_id"  value="{{worker.id}}">
+                                                    {% csrf_token %}
                                                     <div class="col-xs-6 mb-5">
                                                         <label class="c-container">General Cleaning
                                                             <input type="checkbox" id="is_general_skill_{{worker.id}}"  {% if worker.is_general_skill %}checked{% endif %} name="is_general_skill">
@@ -641,7 +642,9 @@
 {% block javascript %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+
+
+<script src="{% static  'files/plugins/vue/vue.js' %}" type="text/javascript"></script>
 <script src="{% static 'files/js/resource.js' %}"></script>
 
 <!--Bootstrap Date Picker-->
@@ -753,7 +756,6 @@
 
     function set_params_go(args)
             {
-                console.log("set parm")
             var url='{% url 'common_items:resource-management-new' %}';
             var params={workers_calendar_date:$('#working_calendar_date').val(),search:$('#search-bar').val(),staff_type:$('#staff_type_filter_id').val(),service_type:$('#service_type_filter_id').val(),starting_time:$('#starting_id').val(),ending_time:$('#ending_id').val()
             };
@@ -764,7 +766,8 @@
                 if(params[key]) 
                     query+='&'+key+'='+params[key].toString();
             query=query.replace('&','?');
-            window.location.href=url+query;  
+            // window.location.href=url+query;  
+            $( "#refresh" ).load(url+query + " #refresh" );
             }
 
    

@@ -822,6 +822,50 @@ def invoice_html_to_pdf_view(request,evaluation_id):
 		return response
 	return response		
 
+
+def testinvoice_html_to_pdf_view(request,evaluation_id):
+
+	#evaluation id decryption
+	evaluation_id_encrypted = evaluation_id
+	evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
+	user_name     =  evaluation_id_encrypted[14:]
+
+	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
+
+	nonduplicate_schedules = []
+	
+	#Remove duplicates for subscription
+	duplicate_schedules    = []
+	for orderschedule in order.orderschedules:
+		if orderschedule.order_scheduler_book in duplicate_schedules:
+			pass
+		else:	
+			nonduplicate_schedules.append(orderschedule)	
+
+		duplicate_schedules.append(orderschedule.order_scheduler_book)
+
+	#per completed jobs count
+	completed_jobs_count = 0 
+	for schedule in order.orderschedules:
+		if schedule.work_status == 'CLEANING_FULFILLED':
+			completed_jobs_count += 1
+
+	# return render(request,"customer/customer_invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,})
+    
+
+	html_string = render_to_string("customer/downloads/invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'completed_jobs_count':completed_jobs_count})
+
+	html = HTML(string=html_string,base_url=request.build_absolute_uri())
+	html.write_pdf(target='/home/sonu/pdf/tmp/invoice/invoice.pdf');
+
+	fs = FileSystemStorage('/home/sonu/pdf/tmp/invoice/')
+	with fs.open('invoice.pdf') as pdf:
+		response = HttpResponse(pdf, content_type='application/pdf')
+		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_invoice.pdf"'
+		return response
+	return response
+
+
 def receipt_html_to_pdf_view(request,payment_id):
 
 	try:
