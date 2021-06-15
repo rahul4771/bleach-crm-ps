@@ -12,6 +12,7 @@ urlpatterns = [
 		url(r'^subscription/invoice/(?P<evaluation_id>[-\w]+)$',views.CustomerSubscriptionInvoice.as_view(),name='subscriptioninvoice'),
 		
 		url(r'^statement-of-account/(?P<client_id>[-\w]+)$',views.statement_of_account,name='statement-of-account'),
+		url(r'^statement-of-account-test/$',views.statement_of_account_test,name='statement-of-account-test'),
 
 		url(r'^payment/response/$',views.PaymentResponseDebit.as_view(),name='response'),
 		url(r'^payment/receipt/(?P<payment_id>[-\w]+)$',views.PaymentReceipt.as_view(),name='payment-receipt'),
