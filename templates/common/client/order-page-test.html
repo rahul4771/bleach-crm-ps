@@ -680,7 +680,7 @@
                                         {% if team_member.member != cleaning_team.team_leader %}
                                             <div class="col-md-2 m-mt20 .c-mb-10 mr-0 ml-0">
                                                 <div class="row">
-                                                    <div class="col-xs-4">
+                                                    <div class="col-xs-4 pr-0">
                                                         <img class="clean-team-profile-pic" src="{{team_member.member.profile_image.url}}">
                                                     </div>
                                                     <div class="col-xs-8">
@@ -702,7 +702,7 @@
                                         <div class="row c-mt-10">
                                             <div class="col-md-2 mr-0 ml-0">
                                                 <div class="row">
-                                                    <div class="col-xs-4">
+                                                    <div class="col-xs-4 pr-0">
                                                         <img class="clean-team-profile-pic"
                                                             src="{% static 'files/icons/profile.png' %}">
                                                     </div>
@@ -725,7 +725,7 @@
                                         <div class="row c-mt-10">
                                             <div class="col-md-2 mr-0 ml-0">
                                                 <div class="row">
-                                                    <div class="col-xs-4">
+                                                    <div class="col-xs-4 pr-0">
                                                         <img class="clean-team-profile-pic id_team_leader_img" src="{{cleaning_team.team_leader.profile_image.url}}">
                                                     </div>
                                                     <div class="col-xs-8">
@@ -740,7 +740,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="row" id="id_cleaning_images">
+                                        <div class="row c-mt-10" id="id_cleaning_images">
 
                                             <div id="modal01" class="w3-modal" onclick="this.style.display='none'">
                                                 <div class="topright">
@@ -754,8 +754,9 @@
 
                                             
                                             <div class="col-md-3 media-gap id_cleaning_before_div">
+                                                <h3 class="clean-img-head">Cleaning Before</h3>
                                                 <div class="order-clean-section-header c-mt-10">
-                                                    <h3>Cleaning Before</h3>
+                                                    
                                                     <div class="owl-carousel c-mt-10 id_cleaning_before_images">
                                                     {% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'BEFORE_CLEANING' %}
                                                         <div>
@@ -767,9 +768,10 @@
                                             </div>
                                             
 
-                                            <div class="col-md-3 media-gap id_cleaning_after_div">
+                                            <div class="col-md-3  media-gap id_cleaning_after_div">
+                                                <h3 class="clean-img-head">Cleaning After</h3>
                                                 <div class="order-clean-section-header c-mt-10">
-                                                    <h3>Cleaning After</h3>
+                                                    
                                                     <div class="owl-carousel c-mt-10 id_cleaning_after_images">
                                                         {% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'AFTER_CLEANING' %}
                                                         <div>
@@ -797,8 +799,9 @@
                                     <div class="row">
                                         {% if orderschedule.investigations.investigationmedias %}
                                         <div class="col-md-3 media-gap">
+                                            <h3 class="clean-img-head">From Customer</h3>
                                             <div class="order-clean-section-header c-mt-10">
-                                                <h3> From Customer</h3>
+                                                
                                                 <div class="owl-carousel c-mt-10">
                                                 {% for investigation in orderschedule.investigations %}{% for media in investigation.investigationmedias %}{% if media.taken_status == 'CUSTOMER_SEND' %}
                                                     <div>
@@ -812,8 +815,9 @@
                                         
                                         {% if orderschedule.order_scheduler_book.evaluationmedia %}
                                         <div class="col-md-3 media-gap">
+                                            <h3 class="clean-img-head">From Evaluator</h3>
                                             <div class="order-clean-section-header c-mt-10">
-                                                <h3> From Evaluator</h3>
+                                               
                                                 <div class="owl-carousel c-mt-10">
                                                 {% for media in orderschedule.order_scheduler_book.evaluationmedia %}
                                                     <div>

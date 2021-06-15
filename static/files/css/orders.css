@@ -1,4 +1,14 @@
 /*  */
+.clean-img-head {
+  letter-spacing: 0px;
+  color: #434343;
+  opacity: 1;
+  margin: 10px 0px 0px 0px;
+  padding: 0;
+  font-size: 16px;
+  font-weight: 200;
+ 
+}
 .customer-detials-text{
   font-size: 18px;
   color: #737373;
