@@ -100,6 +100,16 @@ b, strong, .bold {
   font-weight: 400;
   
 }
+#container_soa1 {
+  font: normal 14px/1.4em 'Open Sans', Sans-serif;
+  margin: 0 auto; 
+  width:1024px; background:#fff;
+  /*min-height: 1158px;*/
+  position: relative; 
+  line-height: 1.1;
+  font-weight: 400;
+  
+}
 
 .left-stripes {
   position: absolute;
@@ -809,6 +819,7 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
   float: right;
   right: 0;
   width: 350px;
+  margin-top: 10px;
 }
 
 #quotation_data div{
@@ -934,3 +945,210 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 #invoice_total_amount{
   margin-top: 30px;
 }
+#heading-section{
+  margin-top: 30px;
+  margin-bottom: 15px;
+  width: 800px;
+  float: left;
+  text-align: center;
+}
+#payment-section-invoice{
+  float: left;
+  width: 350px;
+  margin-top: 40px;
+}
+#payment-text{
+  font-size: 22px;
+  color: #616161;
+  font-weight: 300;
+}
+#payment-section-invoice div{
+  margin-top: 10px;
+}
+#payment-amount{
+  font-size: 22px;
+  color: #616161;
+  font-weight: bold;
+}
+
+#container_soa {
+  font: normal 13px/1.4em 'Open Sans', Sans-serif;
+  margin: 0 auto; width:820px;  background:#fff;
+  /*min-height: 1158px;*/
+  position: relative; 
+}
+
+
+.right-statement {/*padding: 40px 30px 40px 130px;*/
+  padding: 40px 30px 15px 30px;
+  /*min-height: 1078px;*/
+}
+.right-statement-footer {/*padding: 40px 30px 40px 130px;*/
+  padding:  10px 30px 15px 10px;
+  /*min-height: 1078px;*/
+}
+#soa-logo-div{
+  width: 100%;
+  text-align: center;
+}
+
+#soa-logo-div img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#soa_heading{
+  text-align: center;
+  letter-spacing: 0px;
+  color: #289BAC;
+  opacity: 1;
+  font-size: 30px;
+  font-weight: 300;
+  margin-top: 30px;
+}
+#soa-customer-detials{
+  width: 95% !important;
+  background: #EDF1F6;
+  padding: 20px;
+  color: #303030;
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+#soa-customer-detials h6{ 
+  color: #303030;
+  font-weight: 300;
+  font-size: 18px;
+}
+#soa_detials{
+  margin-top: 10px;
+  display: flex;
+}
+#soa_right{
+  width: 100px;
+
+}
+#soa_detials div{
+  font-size: 14px;
+}
+
+#soa_table{
+  margin-top: 20px;
+  width: 100%;
+}
+#soa_table th {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 8px;
+  text-align: left;
+  background-color: #EDF1F6;
+  color: #303030;
+}
+#soa_table td, #soa_table th {
+  border: 1px solid #528CE6;
+  padding: 8px;
+}
+/* #soa_table th:first-child{text-align: center;} */
+#soa_table tr:last-child{background-color: #EDF1F6;font-size: 16px; font-weight: 500; color: #303030 !important;}
+#soa_section3{
+  float: left;
+  width: 100%;
+}
+#soa_amount_section{
+  margin-left: 70%;
+  margin-top: 20px;
+  background: #EDF1F6;
+  color: #4A4A4B;
+  width: 26%;
+  padding: 15px;
+}
+#soa_balance{
+  font-size: 16px;
+  color: #4A4A4B;
+  text-align: left;
+}
+#soa_balance_amount{
+  letter-spacing: 0px;
+  color: #2A8EA2;
+  opacity: 1;
+  font-size: 30px;
+  text-align: right;
+  font-weight: 300;
+  margin-bottom: 20px;
+}
+#soa-footer{
+  width: 95%;
+  background: #616161;
+  padding: 21px;
+  color: #fff;
+  height: 70px;
+}
+#soa-footer_1{
+  float: left;
+  width: 310px;
+  margin-bottom: 20px;
+}
+#soa-footer_2{
+  float: right;
+  width: 310px;
+}
+#soa_foote_sub{
+  display: flex;
+}
+#soa_footer_contact{
+  display: flex;
+  margin-bottom: 10px;
+}
+#footer_right_contact {
+  width: 50px;
+}
+#soa_button_section{
+  margin-top: 10px;
+  float: left;
+}
+
+.download_button_id{
+  float: left;
+  background: none;
+  border: none;
+  color: #2E4E85;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.mr-5{
+  margin-right: 5px;
+}
+.soa-button{
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  box-shadow: 0px 3px 6px #00000026;
+  border: 1px solid #767676;
+  border-radius: 6px;
+  opacity: 1;
+  padding: 10px 20px 10px 20px;
+  color: #000000;
+  margin: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.soa-button:hover{
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  color: #000000;
+}
+/* .m-hide{
+  display: block;
+}
+.footer-img{
+  display: none;
+}
+
+@media only screen and (max-width: 950px) {
+  .m-hide{
+    display: none;
+  }
+  .footer-img{
+    display: block;
+  }
+  
+} */

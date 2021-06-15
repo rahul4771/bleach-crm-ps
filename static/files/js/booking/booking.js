@@ -162,7 +162,7 @@ const app=new Vue({
   rules: {
     required: v => !!v || 'this field is required',
   },
-    url:'https://test.bleach-kw.com',
+    url:'http://localhost:8000',
     kitchenData:{
         wall_type:'',
         floor_type:'',
@@ -545,10 +545,20 @@ onetimerender:true,
 selected_onetime_slots:{},
 oneTimeSelectionStat:false,
 onetime_scheduled:{},
-togetherStat:false
+togetherStat:false,
+del_confirmation_dialog:false,
+service_index:null
 
       },
       methods: {
+        openDelConfirm(index){
+          this.service_index=index
+          this.del_confirmation_dialog=true
+        },
+        removeService(){
+            this.multiServicesBill.splice(this.service_index,1)
+            this.del_confirmation_dialog=false
+        },
         oneTimeDateChange(){
           if(!this.one_time_slots[this.oneTimeDateSelected]){
             this.one_time_slots[this.oneTimeDateSelected]={
@@ -614,14 +624,11 @@ togetherStat:false
         },
         calcSelectedServices(){
           this.schedule_serviceTypes=[]
-          if(this.scheduleStat){
-            this.schedule_serviceTypes=[...this.serviceTypes]
-          }
-          else{
+          
             for(var i=0;i<this.schedule_serviceTypes_selected.length;i++){
               this.schedule_serviceTypes.push(this.multiServicesBill[this.schedule_serviceTypes_selected[i]].service)
             }
-          }
+          
         },
         addScheduledService(service,index){
           this.schedule_serviceTypes_selected[index]={
@@ -629,36 +636,83 @@ togetherStat:false
           }
         },
         addOneTimeToSchedule(){
-          if(this.scheduleStat){
-            this.onetime_scheduled=this.selected_onetime_slots
-            this.togetherStat=true
-          }
-          else{
+          
+          
             for(var j=0;j<this.schedule_serviceTypes_selected.length;j++){
               this.onetime_scheduled[this.schedule_serviceTypes_selected[j]]={
                 slot:this.selected_onetime_slots
               }
             }
+          
+          for(var j=0;j<this.schedule_serviceTypes_selected.length;j++){
+            this.multiServicesBill[this.schedule_serviceTypes_selected[j]].cleaning_policy='ONE TIME SERVICE'
+            this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details={}
+            var count=0
+            for(var k in this.selected_onetime_slots){
+              var yr=k.split('-')[0]
+              var month=k.split('-')[1]
+              var day=k.split('-')[2]
+              var date=day+'-'+month+'-'+yr
+              var min_slot=Math.min(...this.selected_onetime_slots[k].slots)
+              this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details[count+1]={
+                
+                "date":date,
+               "time":this.slotFormat[min_slot].start_time,
+              "no_of_cleaners":this.selectedDuration.cleaners,
+               "cleaning_hours":this.selectedDuration.hours
+              }
+              count=count+1
+            }
           }
-         
+          this.selected_onetime_slots={}
+          this.onetime_scheduled={}
+          this.oneTimeSelectionStat=false
+          this.schedule_serviceTypes_selected=[]
+         // this.oneTimeDateSelected=''
+         //this.one_time_slots={}
           this.activeTab='Cart'
         },
-        addToSchedule(){
+        addAllServiceTypes(){
+          this.schedule_serviceTypes_selected=[]
           if(this.scheduleStat){
-            this.scheduleFormat.allSchedule={
-              starting_date:this.visits[0].dateTime,
-              visits:this.visits
+            for(var i=0;i<this.multiServicesBill.length;i++){
+              this.schedule_serviceTypes_selected.push(i)
             }
           }
           else{
+            this.schedule_serviceTypes_selected=[]
+          }
+          this.calcSelectedServices()
+        },
+        addToSchedule(){
+          
+          
             for(var i=0;i<this.schedule_serviceTypes_selected.length;i++){
               
               this.scheduleFormat.individual[this.schedule_serviceTypes_selected[i]]={
                 starting_date:this.visits[0].dateTime,
                 visits:this.visits
               }
+              
             }
+          
+          for(var j=0;j<this.schedule_serviceTypes_selected.length;j++){
+            this.multiServicesBill[this.schedule_serviceTypes_selected[j]].cleaning_policy='SUBSCRIPTION'
+            this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details={}
+            for(var k=0;k<this.visits.length;k++){
+              var min_slot=Math.min(...this.visits[k].slots)
+              
+              this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details[k+1]={
+                
+                "date":this.visits[k].date,
+               "time":this.slotFormat[min_slot].start_time,
+              "no_of_cleaners":this.selectedDuration.cleaners,
+               "cleaning_hours":this.selectedDuration.hours
+              }
+            }
+           
           }
+
           this.visits=[]
           this.selected_double_slots=[]
           this.selectedDuration={
@@ -672,6 +726,9 @@ togetherStat:false
           this.subStat='',
           cleaningPolicy='',
           no_of_visits='',
+          this.visits=[]
+          
+          this.scheduleDateSat=false
           this.activeTab='Cart'
         },
         changeVisitDate(){
@@ -2281,7 +2338,8 @@ getAreaTypes() {
   const options = {
   maxSizeMB: 1,
   maxWidthOrHeight: 1920,
-  useWebWorker: true
+  useWebWorker: true,
+  onProgress:Function(2)
 }
 try {
   const compressedFile = await imageCompression(event.target.files[0], options);
@@ -2604,6 +2662,7 @@ try {
      }
 
   },
+  
   deleteItem(a) {
     this.otherServices.splice(a, 1);
     this.billingData.splice(a,1)
@@ -2648,8 +2707,12 @@ try {
   }).trigger('refresh.owl.carousel');
   },
   goToSchedule(){
+      
       this.activeTab='Schedule'
-      this.currentPageTitle='Schedule',
+      this.currentPageTitle='Schedule'
+      if(this.scheduleStat){
+        this.addAllServiceTypes()
+      }
       this.calcSelectedServices()
       this.newdurationcalculation();
   },
@@ -2727,7 +2790,8 @@ try {
        this.findTotalSize()
        this.findServiceCost()
     this.tempCost=0
-       
+      this.schedule_serviceTypes_selected=[]
+      this.schedule_serviceTypes=[]
     //  this.durationcalculation();
      
       

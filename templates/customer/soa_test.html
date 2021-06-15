@@ -1,0 +1,288 @@
+{% load mathfilters %}
+{% load static %}
+
+<!DOCTYPE html>
+<!--
+  Invoice template by invoicebus.com
+  To customize this template consider following this guide https://invoicebus.com/how-to-create-invoice-template/
+  This template is under Invoicebus Template License, see https://invoicebus.com/templates/license/
+-->
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Bleach Cleaning Services | Quotation</title>
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="description" content="Invoicebus Invoice Template">
+  <meta name="author" content="Invoicebus">
+
+  <meta name="template-hash" content="91216e926eab41d8aa403bf4b00f4e19">
+
+  <!--new message wrapper-->
+  <link href='https://fonts.googleapis.com/css?family=Roboto:300italic,400italic,400,100,300,600,700' rel='stylesheet'
+    type='text/css'>
+  <!--new message wrapper-->
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="{% static 'files/css/customer/main.css' %}"> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
+    integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w=="
+    crossorigin="anonymous" />
+  <link href="{% static 'files/css/externalusers.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'files/css/message_wrapper.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'files/css/template.css' %}" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="right-statement">
+
+      <div id="soa-logo-div">
+        <img style="height: 84px;" src="{% static 'files/images/customer/logo2.png' %}" />
+      </div>
+      <div id="soa-logo-div">
+        <h1 id="soa_heading">STATEMENT OF ACCOUNT</h1>
+      </div>
+
+      <div id="soa-customer-detials">
+        <h6>Customer Details</h6>
+        <div id="soa_detials">
+          <div id="soa_right">Customer ID </div>
+          <div>: 0000000 </div>
+        </div>
+        <div id="soa_detials">
+          <div id="soa_right">Name </div>
+          <div>: TABCO </div>
+        </div>
+        <div id="soa_detials">
+          <div id="soa_right">Address </div>
+          <div>: 0 Floor, 0,0 Block,0 Street,0 Avenue,Sharq, Al Asimah </div>
+        </div>
+        <div id="soa_detials">
+          <div id="soa_right">Contact </div>
+          <div>: 000000000 </div>
+        </div>
+      </div>
+      <table id="soa_table">
+        <tr>
+          <th style="text-align: center;">Date</th>
+          <th style="width: 14%; text-align: center;">Order Ref</th>
+          <th style="text-align: center;">Details</th>
+          <th style="text-align: center;">Debit</th>
+          <th style="text-align: center;">Credit</th>
+          <th style="text-align: center;">Balance</th>
+          <th style="text-align: center;">Due Inv</th>
+        </tr>
+        <tr>
+          <td>30-05-21</td>
+          <td>BLC20210510115</td>
+          <td>Sterilization</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">100.000</td>
+
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">--</td>
+        </tr>
+        <tr>
+          <td>30-05-21</td>
+          <td>BLC2006270</td>
+          <td>Sterilization</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">--</td>
+          <td style="text-align: right;">100.000</td>
+
+          <td style="text-align: right;">--</td>
+        </tr>
+        <tr>
+          <td>30-05-21</td>
+          <td>BLC2006270</td>
+          <td>Sterilization</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">100.000</td>
+
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">--</td>
+        </tr>
+        <tr>
+          <td>30-05-21</td>
+          <td>BLC2006270</td>
+          <td>Sterilization</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">--</td>
+        </tr>
+        <tr>
+          <td>30-05-21</td>
+          <td>BLC2006270</td>
+          <td>Sterilization</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">--</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">--</td>
+        </tr>
+        <tr>
+          <td>30-05-21</td>
+          <td>BLC2006270</td>
+          <td>Sterilization</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">100.000</td>
+
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">--</td>
+        </tr>
+        <tr>
+          <td>30-05-21</td>
+          <td>BLC2006270</td>
+          <td>Sterilization</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">--</td>
+        </tr>
+        <tr>
+          <td>30-05-21</td>
+          <td>BLC2006270</td>
+          <td>Sterilization</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">--</td>
+        </tr>
+        <tr>
+          <td>30-05-21</td>
+          <td>BLC2006270</td>
+          <td>Sterilization</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">--</td>
+        </tr>
+        <tr>
+          <td>30-05-21</td>
+          <td>BLC2006270</td>
+          <td>Sterilization</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">--</td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            Total
+          </td>
+          <td style="text-align: right;">
+            7,916.900
+          </td>
+          <td style="text-align: right;">
+            4,996.000
+          </td>
+          <td style="text-align: right;"></td>
+          <td style="text-align: right;">2,920.900</td>
+        </tr>
+      </table>
+      <div class="soa_section3">
+        <div id="soa_amount_section">
+          <div id="soa_balance">
+            Balance Due
+          </div>
+          <h1 id="soa_balance_amount">2,920.900</h1>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="inv-footer ">
+      <div class="container m-hide">
+        <div class="row">
+          <div class="col-md-6">
+           <div class="d-flex pt-4 pb-4">
+             <div class="p-2">
+               <img src="{% static 'files/icons/placeholder.png' %}" class="inv-icon"/>
+             </div>
+            
+             <div class="p-2" style="text-align: justify;">
+              
+               <b>Bleach International Contracting Company<br> for Cleaning Building & Cities WLL</b>, 
+               Qibla area, Block 14 Usama Bin Mongith St. AlMashora Tower 8th Floor.
+             </div>
+           </div>
+          </div>
+          <div class="col-md-6">
+           <div class="d-flex pt-4 pb-4 ">
+             <div class="p-2">
+               <img src="{% static 'files/icons/contact.png' %}" class="inv-icon"/>
+             </div>
+            
+             <div class="p-2 w-100">
+              <span> Tel</span> <span class="float-right">+965 1882707</span> <br><span>Email</span><span class="float-right">customercare@bleach-kw.com</span>  <br><span>Website</span> <span class="float-right"> www.bleach-kw.com</span>
+             </div>
+           </div>
+         </div>
+
+        </div>
+      </div>
+      
+    </div> -->
+    <div id="soa-footer">
+      <section id="soa-footer_1">
+        <div id="soa_foote_sub">
+          <div>
+            <img src="{% static 'files/icons/placeholder.png' %}" style="width: 22px;" />
+          </div>
+          <div style="margin-left: 10px;">
+            <p> <b>Bleach International Contracting Company<br> for Cleaning Building & Cities WLL</b>,
+              Qibla area, Block 14 Usama Bin Mongith St. AlMashora Tower 8th Floor.</p>
+          </div>
+        </div>
+      </section>
+      <section id="soa-footer_2">
+        <div id="soa_foote_sub">
+          <div>
+            <img src="{% static 'files/icons/contact.png' %}" style="width: 22px;" />
+          </div>
+          <div style="margin-left: 10px;">
+            <div id="soa_footer_contact">
+              <div id="footer_right_contact">Tel </div>
+              <div>: +965 1882707 </div>
+            </div>
+            <div id="soa_footer_contact">
+              <div id="footer_right_contact">Email </div>
+              <div>: customercare@bleach-kw.com </div>
+            </div>
+            <div id="soa_footer_contact">
+              <div id="footer_right_contact">Website </div>
+              <div>: www.bleach-kw.com </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <div style="background: none !important; box-shadow: none !important;" id="container">
+
+    <div class="right-statement">
+      <div class="download_button_id">
+        <i class="fa fa-download mr-5" ></i> Download
+      </div>
+      <br>
+      <div class="download_button_id">
+        <i class="fa fa-print mr-5" ></i> Print
+      </div>
+      <br>
+      <div style="text-align: center;">
+        <button class="soa-button"> <i class="fa fa-file-excel mr-5" aria-hidden="true"></i> Export to exel</button>
+        <button class="soa-button"> <i class="fa fa-paper-plane mr-5" aria-hidden="true"></i>Sent to customer</button>
+      </div>
+
+     
+    </div>
+
+
+  </div>
+
+</body>
+
+</html>

@@ -605,11 +605,17 @@ max-height: 367px;
 
 padding:10px;
 }
+.cp{
+    cursor:pointer;
+}
 .cart-card-items{
     margin-top:10px;
   
     height: 210px;
     overflow-y:auto;
+}
+.bk-image-upload{
+    height: 200px;
 }
 /*.owl-prev {
   

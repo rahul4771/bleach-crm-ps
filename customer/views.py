@@ -1016,6 +1016,8 @@ def statement_of_account(request,client_id):
 	
 	return render(request,"customer/statement_of_account.html",{"client":client,"address":address,"accounts":accounts_list,"pending_payments":pending_payments})
 
+def statement_of_account_test(request):
+	return render(request,"customer/soa_test.html")
 
 def addpromocode(request):
 	
