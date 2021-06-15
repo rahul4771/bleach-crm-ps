@@ -275,10 +275,10 @@
                                         <button class="subscription-button">Subscription</button>
                                         {% endif %}
                                         
-                                        <a class="ticket-button ticketredirect{{orderschedule.id}}" href="#" target="_blank"><span id="ticketcount{{orderschedule.id}}">0 Tickets</span> <i class="fa fa-flag" aria-hidden="true"></i></a>
+                                        <button class="ticket-button" ><span id="ticketcount{{orderschedule.order_scheduler_book.id}}">0 Tickets</span> <i class="fa fa-flag" aria-hidden="true"></i></button>
 
                                     </div>
-                                    <div id="id_order" class="row order-section-1">
+                                    <div id="id_order{{orderschedule.order_scheduler_book.id}}" class="row order-section-1">
                                         <div class="col-md-4 c-mt-50">
                                         
                                             <div class="row">
@@ -308,9 +308,9 @@
                                                         {% endif %}
                                                         
                                                         <!-- <p id="evalution-note">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}}</p> -->
-                                                        <p id="evalution-note" class="evalution-note-less">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}} </p>
-                                                        <span class="see-more" id="id_see" onclick="seefull()">See More</span>
-                                                        <span class="see-more" style="display: none;" id="id_see_less" onclick="seeless()">See Less</span>
+                                                        <p id="evalution-note{{orderschedule.order_scheduler_book.id}}" class="evalution-note-less">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}} </p>
+                                                        <span class="see-more" id="id_see{{orderschedule.order_scheduler_book.id}}" onclick="seefull({{orderschedule.order_scheduler_book.id}})">See More</span>
+                                                        <span class="see-more" style="display: none;" id="id_see_less{{orderschedule.order_scheduler_book.id}}" onclick="seeless({{orderschedule.order_scheduler_book.id}})">See Less</span>
                                                         
 
                                                     </div>
@@ -361,9 +361,9 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4 m-mt30">
-                                            <div id="visti-section"
+                                            <div id="visti-section{{orderschedule.order_scheduler_book.id}}"
                                                 class="agent-content-section2 visti-section  c-mt-022">
-                                                <p>Total no of Visits <span style="color:#0D87C5;"> {{order.orderschedules|length}}</span> </p>
+                                                <p>Total no of Visits <span style="color:#0D87C5;" class="visitcount{{orderschedule.order_scheduler_book.id}}"></span> </p>
 
                                                 
                                                 <div class="row visit-times">
@@ -390,15 +390,14 @@
                                                 {% endif %}
 
                                                 </div>
-                                                <div class="time-more text-center" onclick="myFunction()">
+                                                <div class="time-more text-center" onclick="myFunction({{orderschedule.order_scheduler_book.id}})">
                                                     <i class="fa fa-chevron-down more-icon" aria-hidden="true"></i>
                                                 </div>
 
                                             </div>
-                                            <div id="myDropdown" class="c-dropdown-content">
-                                                <div id="visti-section"
-                                                    class="agent-content-section2 visti-section  c-mt-022">
-                                                    <p>Total no of Visits <span style="color:#0D87C5;"> {{order.orderschedules|length}}</span> </p>
+                                            <div id="myDropdown{{orderschedule.order_scheduler_book.id}}" class="c-dropdown-content">
+                                                <div id="visti-section{{orderschedule.order_scheduler_book.id}}" class="agent-content-section2 visti-section  c-mt-022">
+                                                    <p>Total no of Visits <span style="color:#0D87C5;" class="visitcount{{orderschedule.order_scheduler_book.id}}"></span> </p>
                                                     <div class="row ">
                                                         {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
                                                         {% for multi_order_schedule in order.orderschedules %}
@@ -423,7 +422,7 @@
 
 
                                                     </div>
-                                                    <div class="time-more text-center" onclick="myFunction()">
+                                                    <div class="time-more text-center" onclick="myFunction({{orderschedule.order_scheduler_book.id}})">
                                                         <i class="fa fa-chevron-up more-icon" aria-hidden="true"></i>
                                                     </div>
 
@@ -598,7 +597,7 @@
 
                                         {% for multi_order_schedule in order.orderschedules %}
                                         {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
-                                            <div class="col-md-4  c-pr5" onclick="load_cleaning_team({{forloop.counter}},{{multi_order_schedule.id}})">
+                                            <div class="col-md-4  c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team({{forloop.counter}},{{multi_order_schedule.id}})">
                                                 <div class="cleaning-status-container  pointer ">
                                                     <div class="row cleaning-status-row  cleaning-status-card">
                                                         <div class="vist-card-item-first">
@@ -628,27 +627,41 @@
                                     {% if  orderschedule.cleaning_team %}
                                     {% for cleaning_team in orderschedule.cleaning_team %}  
                                     <div class="clean-visit-section">
+                                        
                                         <div class="order-clean-section-header c-mb-10">
-                                            <h1><span>Visit</span> <span class="visit_count">1</span></h1>
+                                            <div>
+                                                <h1><span>Visit</span> <span class="visit_count">1</span>  </h1> 
+                                            </div>
+                                           <div class="ml-10">
+                                           {% for investigation in orderschedule.investigations %}{% for followup in investigation.followups %}{% if followup %}
+                                               <a class="id_view_ticket" href="/common/ticket/details/{{orderschedule.order.evaluation.customer.id}}/{{followup.id}}" target="_blank"><button class="sent-button">View Tickets</button></a>
+                                           {% endif %}{% endfor %}{% endfor %}
+                                           </div>
+                                          
                                         </div>
                                         <div class="row c-mt-20 check_in_out">
                                             <div class="col-md-2">
+                                                {% if cleaning_team.check_in %}
                                                 <div class="row c-mb-10 ">
                                                     <div class="col-xs-7">
                                                         <img class="button-icons"
                                                             src="{% static 'files/icons/time-in.png' %}">
                                                         Check in
                                                     </div>
-                                                    <div class="col-xs-5 id_check_in">{{cleaning_team.start_at|time|lower}}</div>
+                                                    <div class="col-xs-5 id_check_in">{{cleaning_team.check_in|time|lower}}</div>
                                                 </div>
+                                                {% endif %}
+
+                                                {% if cleaning_team.check_out %}
                                                 <div class="row c-mb-10 check_out">
                                                     <div class="col-xs-7">
                                                         <img class="button-icons"
                                                             src="{% static 'files/icons/time-out.png' %}">
                                                         Check Out
                                                     </div>
-                                                    <div class="col-xs-5 id_check_out">{{cleaning_team.end_at|time|lower}}</div>
+                                                    <div class="col-xs-5 id_check_out">{{cleaning_team.check_out|time|lower}}</div>
                                                 </div>
+                                                {% endif %}
                                             </div>
                                         </div>
                                         <div class="order-clean-section-header c-clean-team-header c-mt-10">
@@ -667,10 +680,10 @@
                                         {% if team_member.member != cleaning_team.team_leader %}
                                             <div class="col-md-2 m-mt20 .c-mb-10 mr-0 ml-0">
                                                 <div class="row">
-                                                    <div class="col-xs-3">
+                                                    <div class="col-xs-4">
                                                         <img class="clean-team-profile-pic" src="{{team_member.member.profile_image.url}}">
                                                     </div>
-                                                    <div class="col-xs-9">
+                                                    <div class="col-xs-8">
                                                         <div class="order-agent-content text-left">
                                                             <h2>{{team_member.member.name}}</h2>
                                                             <h6>Team Member</h6>
@@ -689,11 +702,11 @@
                                         <div class="row c-mt-10">
                                             <div class="col-md-2 mr-0 ml-0">
                                                 <div class="row">
-                                                    <div class="col-xs-3">
+                                                    <div class="col-xs-4">
                                                         <img class="clean-team-profile-pic"
                                                             src="{% static 'files/icons/profile.png' %}">
                                                     </div>
-                                                    <div class="col-xs-9">
+                                                    <div class="col-xs-8">
                                                         <div class="order-agent-content text-left">
                                                             <h2>Jahir Rain</h2>
                                                             <h6>Team Leader</h6>
@@ -712,10 +725,10 @@
                                         <div class="row c-mt-10">
                                             <div class="col-md-2 mr-0 ml-0">
                                                 <div class="row">
-                                                    <div class="col-xs-3">
+                                                    <div class="col-xs-4">
                                                         <img class="clean-team-profile-pic id_team_leader_img" src="{{cleaning_team.team_leader.profile_image.url}}">
                                                     </div>
-                                                    <div class="col-xs-9">
+                                                    <div class="col-xs-8">
                                                         <div class="order-agent-content text-left">
                                                             <h2 class="id_team_leader">{{cleaning_team.team_leader.name}}</h2>
                                                             <h6>Team Leader</h6>
@@ -1475,7 +1488,19 @@ function load_cleaning_team(visitcount,scheduleid){
                         $.each(response.data.after_cleaning_media,function(key,value){
                             
                             $('.id_cleaning_after_images').append('<div> <img class="slider-img pointer" onclick="onClick(this)" src="'+value.after_cleaning_url+'" alt=""> </div>');
-                        })                        
+                        })  
+
+                        //view ticket
+                        if (response.data.followup_id === null){
+                            $('.id_view_ticket').hide();
+                        }else{
+                            $('.id_view_ticket').show();
+                            $('.id_view_ticket').attr('href','/common/ticket/details/'+response.data.customer_id+'/'+response.data.followup_id+'')
+                        }
+
+                        //mark selected visit
+                        $('.visit-list').removeClass('visit-border');
+                        $('#id_select_visit'+response.data.schedule_id+'').addClass('visit-border');
 
                     }else{
                         console.log("no data")
@@ -1567,46 +1592,56 @@ function load_cleaning_team(visitcount,scheduleid){
 
 <script type="text/javascript">
 
-    function seefull() {
-        document.getElementById("id_order").style.maxHeight = "none";
-        document.getElementById("evalution-note").style.maxHeight = "none";
-        document.getElementById("id_see").style.display = "none";
-        document.getElementById("id_see_less").style.display = "block";
+    function seefull(book_id) {
+        document.getElementById("id_order"+book_id+"").style.maxHeight = "none";
+        document.getElementById("evalution-note"+book_id+"").style.maxHeight = "none";
+        document.getElementById("id_see"+book_id+"").style.display = "none";
+        document.getElementById("id_see_less"+book_id+"").style.display = "block";
     }
 
-    function seeless() {
-        document.getElementById("id_order").style.maxHeight = "152px";
-        document.getElementById("evalution-note").style.maxHeight = "80px";
-        document.getElementById("id_see").style.display = "block";
-        document.getElementById("id_see_less").style.display = "none";
+    function seeless(book_id) {
+        document.getElementById("id_order"+book_id+"").style.maxHeight = "152px";
+        document.getElementById("evalution-note"+book_id+"").style.maxHeight = "80px";
+        document.getElementById("id_see"+book_id+"").style.display = "block";
+        document.getElementById("id_see_less"+book_id+"").style.display = "none";
     }
     $(document).ready(function () {
-        var text =  $("#evalution-note").text()
-        if(text.length<200){
-        document.getElementById("id_see").style.display = "none";
-            
-        }
+        //var text =  $("#evalution-note").text()
+        //if(text.length<200){
+        //document.getElementById("id_see").style.display = "none";   
+        //}
+
         //         $('#myModal').on('shown.bs.modal', function () {
         //   $('#myInput').trigger('focus')
         // })
 
-        //ticket count for cleaning section
+        //ticket count for cleaning section and visit count
         var followup_count = 0;
+        var visit_count = 0 ;
+        {% for orderschedule in order.orderschedules %}
+            console.log({{forloop.counter}},"vcount")
+            //visit count
+            {% if orderschedule.order_scheduler_book %}
+            visit_count += 1
+            $('.visitcount'+{{orderschedule.order_scheduler_book.id}}+'').text(visit_count);
+            {% endif %}
+        {% endfor %}
+
         {% for orderschedule in order.orderschedules%}
-        {% for investigation in orderschedule.investigations %}
-        {% for followup in investigation.followups %}
-        {% if followup %}
-        followup_count += {{forloop.counter}}
-        $('#ticketcount'+{{followup.investigation.order_schedule.id}}+'').text(followup_count+' Tickets');
-        $('.ticketredirect'+{{followup.investigation.order_schedule.id}}+'').attr('href','/common/ticket/details/'+{{followup.investigation.order_schedule.order.evaluation.customer.id}}+'/'+{{followup.id}}+'/')
-        {% else %}
-        $('.ticket-button').attr("hidden",true);
-        {% endif %}
         
+            //ticket count
+            {% for investigation in orderschedule.investigations %}{% for followup in investigation.followups %}
+            {% if followup.investigation.order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
+            followup_count += 1
+            $('#ticketcount'+{{followup.investigation.order_schedule.order_scheduler_book.id}}+'').text(followup_count+' Tickets');
+            {% else %}
+            $('.ticket-button').attr("hidden",true);
+            {% endif %}
+            {% endfor %}{% endfor %}
         {% endfor %}
-        {% endfor %}
-        {% endfor %}
+
         
+        //order details tab expand and hide
         {% for orderschedule in order.orderschedules %}
         $("#show{{orderschedule.id}}").click(function () {
             if ($("#show{{orderschedule.id}}").text() == "Show More") {

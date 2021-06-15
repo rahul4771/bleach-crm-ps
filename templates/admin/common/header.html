@@ -49,7 +49,7 @@
             <ul id="accordion" class="nav">
                 <li class="active lhs-home"><a href="{% url 'bleach_admin:admindash-board' %}" title="My Dashboard"><span>My Dashboard</span></a> </li>
                 <li class="lhs-orders"><a href="{% url 'common_items:orders' %}" title="Orders"><span>Orders</span></a></li>
-                <li class="lhs-booking"><a href="{% url 'common_items:customer-bookings' %}" title="Bookings"><span>Bookings</span></a></li>
+                {% comment %} <li class="lhs-booking"><a href="{% url 'common_items:customer-bookings' %}" title="Bookings"><span>Bookings</span></a></li> {% endcomment %}
                 <li class="lhs-clients"><a href="{% url 'common_items:clients' %}" title="Clients"><span>Clients</span></a><div></div></li>
                 <li class="lhs-tickets"><a href="{% url 'common_items:tickets' %}" title="Tickets"><span>Tickets</span></a></li>
                 <li class="lhs-feedbacks"><a href="{% url 'common_items:feedbacks' %}" title="Feedbacks"><span>Feedbacks</span></a></li>
@@ -59,8 +59,8 @@
                 <li class="lhs_subscription"><a href="{% url 'common_items:active-subscriptions' %}" title="Active Subscriptions"><span>Subscriptions</span></a></li>
                 <br><br>
                 <li class="lhs-resources border"><a href="{% url 'common_items:resource-management' %}" title="Resources"><span>Resources</span></a></li>
-                <li class="lhs-promocodes border"><a href="{% url 'common_items:promocode' %}" title="Resources"><span>Promocodes</span></a></li>
-                <li class="lhs-promocodes border"><a href="{% url 'bleach_admin:admin-productivity' %}" title="Resources"><span>Productivity</span></a></li>
+                <li class="lhs-promocodes border"><a href="{% url 'common_items:promocode' %}" title="Promocode"><span>Promocodes</span></a></li>
+                <li class="lhs-productivity border"><a href="{% url 'common_items:productivity' %}" title="Productivity"><span>Productivity</span></a></li>
             </ul>
         </section>
     </aside>
