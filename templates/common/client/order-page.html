@@ -266,6 +266,7 @@
 
                             
                             <div id="details{{orderschedule.id}}">
+                            <input type="hidden" value="{{orderschedule.order_scheduler_book.id}}" class="book_id" />
                                 <div class="order-container-main">
                                     <div class="order-header-class">
                                         <h2>{{orderschedule.order_scheduler_book.service_type.name}}</h2>
@@ -275,7 +276,7 @@
                                         <button class="subscription-button">Subscription</button>
                                         {% endif %}
                                         
-                                        <button class="ticket-button" ><span id="ticketcount{{orderschedule.order_scheduler_book.id}}">0 Tickets</span> <i class="fa fa-flag" aria-hidden="true"></i></button>
+                                        <button class="ticket-button ticket-btn{{orderschedule.order_scheduler_book.id}}" ><span class="ticketcount{{orderschedule.order_scheduler_book.id}}">0 Tickets</span> <i class="fa fa-flag" aria-hidden="true"></i></button>
 
                                     </div>
                                     <div id="id_order{{orderschedule.order_scheduler_book.id}}" class="row order-section-1">
@@ -307,11 +308,13 @@
                                                         <h6>{{orderschedule.evaluation_details.evaluation.call_attender.user_type}}</h6>
                                                         {% endif %}
                                                         
+                                                        {% if orderschedule.order_scheduler_book.evaluator_note %}
                                                         <!-- <p id="evalution-note">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}}</p> -->
                                                         <p id="evalution-note{{orderschedule.order_scheduler_book.id}}" class="evalution-note-less">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}} </p>
                                                         <span class="see-more" id="id_see{{orderschedule.order_scheduler_book.id}}" onclick="seefull({{orderschedule.order_scheduler_book.id}})">See More</span>
                                                         <span class="see-more" style="display: none;" id="id_see_less{{orderschedule.order_scheduler_book.id}}" onclick="seeless({{orderschedule.order_scheduler_book.id}})">See Less</span>
                                                         
+                                                        {% endif %}
 
                                                     </div>
                                                 </div>
@@ -751,6 +754,7 @@
                                             <div class="col-md-3 media-gap id_cleaning_before_div">
                                                 <h3 class="clean-img-head">Cleaning Before</h3>
                                                 <div class="order-clean-section-header c-mt-10">
+
                                                     
                                                     <div class="owl-carousel c-mt-10 id_cleaning_before_images">
                                                     {% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'BEFORE_CLEANING' %}
@@ -1534,13 +1538,19 @@
 
 
 <script>
+
+$(document).ready(function () {
+    
+})
+
+
 //load cleaning team data
 function load_cleaning_team(visitcount,scheduleid){
 
     axios.get(url+'/api/cleaning-team-data/',{ params: { 'visit_count':visitcount, 'schedule_id': scheduleid } })
                 .then(function (response) {
                     console.log(response.data,"respdata")
-                    if (response.data.success == true){
+                    if (response.data.success == true){  
                         
                         $('.visit_count').text(response.data.visit_count);
 
@@ -1565,6 +1575,8 @@ function load_cleaning_team(visitcount,scheduleid){
                         $('.id_team_leader').text(response.data.team_leader);
                         $('.id_team_leader_img').attr("src",response.data.team_leader_image);
 
+
+                        
                         $('.id_cleaning_before_images').empty();
                         $('.id_cleaning_after_images').empty();
 
@@ -1586,8 +1598,9 @@ function load_cleaning_team(visitcount,scheduleid){
                         } else{
                             $('.id_cleaning_after_div').show();
                         }
-                        
+
                         //looping before cleaning images
+                        
                         $.each(response.data.before_cleaning_media,function(key,value){
                             
                             $('.id_cleaning_before_images').append('<div> <img class="slider-img pointer" onclick="onClick(this)" src="'+value.before_cleaning_url+'" alt=""></div>');
@@ -1595,14 +1608,9 @@ function load_cleaning_team(visitcount,scheduleid){
 
                         //looping after cleaning images
                         $.each(response.data.after_cleaning_media,function(key,value){
-                            $('.owl-carousel').owlCarousel('add', '<div><img class="slider-img pointer" onclick="onClick(this)" src="'+value.after_cleaning_url+'" alt=""></div>').owlCarousel('update');
-                            
-                            //$('.id_cleaning_after_images').append('<div><img class="slider-img pointer" onclick="onClick(this)" src="'+value.after_cleaning_url+'" alt=""></div>');
-                        })  
 
-                        $('.owl-carousel').owlCarousel({
-                            margin:10
-                        });
+                            $('.id_cleaning_after_images').append('<div><img class="slider-img pointer" onclick="onClick(this)" src="'+value.after_cleaning_url+'" alt=""></div>');
+                        })  
                         
                         //view ticket
                         if (response.data.followup_id === null){
@@ -1728,31 +1736,6 @@ function load_cleaning_team(visitcount,scheduleid){
         //         $('#myModal').on('shown.bs.modal', function () {
         //   $('#myInput').trigger('focus')
         // })
-
-        //ticket count for cleaning section and visit count
-        var followup_count = 0;
-        var visit_count = 0 ;
-        {% for orderschedule in order.orderschedules %}
-            console.log({{forloop.counter}},"vcount")
-            //visit count
-            {% if orderschedule.order_scheduler_book %}
-            visit_count += 1
-            $('.visitcount'+{{orderschedule.order_scheduler_book.id}}+'').text(visit_count);
-            {% endif %}
-        {% endfor %}
-
-        {% for orderschedule in order.orderschedules%}
-        
-            //ticket count
-            {% for investigation in orderschedule.investigations %}{% for followup in investigation.followups %}
-            {% if followup.investigation.order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
-            followup_count += 1
-            $('#ticketcount'+{{followup.investigation.order_schedule.order_scheduler_book.id}}+'').text(followup_count+' Tickets');
-            {% else %}
-            $('.ticket-button').attr("hidden",true);
-            {% endif %}
-            {% endfor %}{% endfor %}
-        {% endfor %}
 
         
         //order details tab expand and hide
@@ -2001,6 +1984,40 @@ $(".pn-prev").click();
             duplicates_array.push("{{orderschedule.order_scheduler_book.id}}");
         }
         {% endfor %}
+
+        //visit count and ticket count calculation
+        var evaluationbook_ids = document.getElementsByClassName("book_id");
+
+        for (var i = 0; i < evaluationbook_ids.length; i++) {
+            var visitcount = 0;
+            var ticketcount = 0;
+            var book_id = parseInt(evaluationbook_ids[i].value);
+            
+            {% for schedule in order.orderschedules %}
+            
+            if ({{schedule.order_scheduler_book.id}} == book_id ){
+                visitcount += 1
+            }
+
+            //ticket count
+            {% for investigation in schedule.investigations %}{% for followup in investigation.followups %}
+            console.log({{followup.id}},"tcnt")
+            if ({{followup.investigation.order_schedule.order_scheduler_book.id}} == book_id ){
+                ticketcount += 1
+            }
+            {% endfor %}{% endfor %}
+
+            {% endfor %}
+            
+            $('.visitcount'+book_id+'').text(visitcount);
+
+            if (ticketcount > 0){
+                $('.ticket-btn'+book_id+'').show();
+                $('.ticketcount'+book_id+'').text(ticketcount+' Ticket(s)');
+            }else{
+                $('.ticket-btn'+book_id+'').hide();
+            }
+            }    
 
     })
 </script>
