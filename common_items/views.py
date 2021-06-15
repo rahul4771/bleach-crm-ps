@@ -38,6 +38,7 @@ from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
 from order.forms import InvestigationForm,PromocodeForm
 from bleachadmin.models import ServiceProductivity,ServicePriceRange
+from bleachadmin.forms import ServicePriceRangeForm
 
 from django.db.models import Count
 
@@ -1891,3 +1892,15 @@ class Productivity(IsAuthenticated,View):
 
 		return render(request,'common/productivity/productivity.html',{'service_price_ranges':service_price_ranges,'service_productivities':service_productivities,'service_types':service_types})
 
+	def post(self,request):
+		action = request.POST.get('action_type')
+		if action == 'edit_price_range':
+			price_range_id       = request.POST.get('price_range')
+			price_range          = ServicePriceRange.objects.get(id=price_range_id)
+			price_range_form     = ServicePriceRangeForm(request.POST,instance=price_range)
+			if price_range_form.is_valid():
+				price_range_form.save()
+				messages.success(request,"Service Price Range Updated Successfully")
+			else:
+				messages.error(request,get_error(price_range_form))
+		return redirect('commmon:productivity')
