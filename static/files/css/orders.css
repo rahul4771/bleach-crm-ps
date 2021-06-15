@@ -1,5 +1,22 @@
 /*  */
-
+.clean-img-head {
+  letter-spacing: 0px;
+  color: #434343;
+  opacity: 1;
+  margin: 10px 0px 0px 0px;
+  padding: 0;
+  font-size: 16px;
+  font-weight: 200;
+ 
+}
+.customer-detials-text{
+  font-size: 18px;
+  color: #737373;
+  font-weight: 600 !important;
+}
+.customer-data{
+  color: #434343;
+}
 .evalution-note-less{
   overflow: hidden;
   max-height: 80px;
@@ -804,10 +821,11 @@
 
 .vist-card-item-first {
   text-align: left;
-  flex: 1;
+  flex: none;
+  margin-right: 15px;
 }
 .vist-card-item-second {
-  flex: 1;
+  flex: none;
 }
 .vist-card-item-last {
   text-align: right;
@@ -1012,6 +1030,14 @@ select.minimal:focus {
   transform-origin: top center;
   display: block;
 }
+
+
+
+.bottom-card{
+  display: none;
+}
+
+
 @keyframes growUp {
   0% {
     transform: scaleY(1);
@@ -1092,8 +1118,24 @@ select.minimal:focus {
     font-size: 12px;
   }
 }
-
+@media only screen and (max-width: 1280px) {
+  .custmer-hide{
+    display: none;
+  }
+  .full-width{
+    width: 100% !important;
+  }
+  .bottom-card{
+    display: block;
+  }
+}
 @media only screen and (max-width: 950px) {
+  .bottom-card{
+    display: none;
+  }
+  .custmer-hide{
+    display: block;
+  }
   .clean-team-profile-pic{
     width: 30%;
   }
