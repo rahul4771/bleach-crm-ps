@@ -607,12 +607,7 @@
                                                             {{multi_order_schedule.start_at}}
                                                         </div>
                                                         <div class="vist-card-item-last ml-5">
-                                                        {% for investigation in multi_order_schedule.investigations|slice:":1" %}
-                                                        {% for followup in investigation.followups|slice:":1" %}
-                                                        {% if followup %} <i class="fa fa-flag c-red ticketflag"></i> {% endif %}
-                                                        {% endfor %}
-                                                        {% endfor %}
-                                                            <button {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}class="inprogress-button"{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}class="assigned-button"{% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED'%}class="completed-button"{% else %}class="canceled-button"{% endif %}><i aria-hidden="true" class="fa fa-flag" style="margin-right: 5px ;"></i> {{multi_order_schedule.work_status|default_if_none:'NOT STARTED'}}</button>
+                                                            <button {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}class="inprogress-button"{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}class="assigned-button"{% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED'%}class="completed-button"{% else %}class="canceled-button"{% endif %}>  {% for investigation in multi_order_schedule.investigations|slice:":1" %}{% for followup in investigation.followups|slice:":1" %}{% if followup %} <i aria-hidden="true" class="fa fa-flag" style="margin-right: 5px ;"></i> {% endif %}{% endfor %}{% endfor %} {{multi_order_schedule.work_status|default_if_none:'NOT STARTED'}}</button>
                                                         </div>
                                                     </div>
                                                 </div>
