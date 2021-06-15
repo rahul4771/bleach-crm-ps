@@ -99,7 +99,7 @@
 
 
             <div class="row order-top-wrapper">
-                <div class="col-md-10 pl-25 m-pr-25">
+                <div class="col-md-10 full-width pl-25 m-pr-25">
                     <div class="row">
                         <div class="order-left-stretch">
 
@@ -590,7 +590,7 @@
                                 <div id="showmore2{{orderschedule.id}}" style="display: none;"
                                     class="order-container-main order-clean-section">
                                     <div class="order-clean-section-header c-mb-10">
-                                        <h2>Cleaning Visit</h2>
+                                        <h2>Cleaning Visit(s)</h2>
                                     </div>
                                     <div class="testimonial-group">
                                         <div class="row">
@@ -612,7 +612,7 @@
                                                         {% if followup %} <i class="fa fa-flag c-red ticketflag"></i> {% endif %}
                                                         {% endfor %}
                                                         {% endfor %}
-                                                            <button {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}class="inprogress-button"{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}class="assigned-button"{% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED'%}class="completed-button"{% else %}class="canceled-button"{% endif %}>{{multi_order_schedule.work_status|default_if_none:'NOT STARTED'}}</button>
+                                                            <button {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}class="inprogress-button"{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}class="assigned-button"{% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED'%}class="completed-button"{% else %}class="canceled-button"{% endif %}><i aria-hidden="true" class="fa fa-flag" style="margin-right: 5px ;"></i> {{multi_order_schedule.work_status|default_if_none:'NOT STARTED'}}</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1009,9 +1009,117 @@
 
                         </div>
                     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <div class="row bottom-card c-mt-20">
+                        <div class="col-md-3 pl-0">
+                            <div class="order-right-fixed">
+                                <div class="order-right-fixed"><!--order-right-fixed-->
+                                    <a href="{% url 'common_items:client-orders' client_details.id %}" target="_blank"><div class="order-card-column whitebg red-border"><!--order-card-column-->
+                                        <div class="card-innerwrapper"><!--card-innerwrapper-->
+                                        <div class="column-left"><img src="{% static 'files/images/card-orders-icon.png' %}"></div>
+                                        <div class="column-right"><!--column-right-->
+                                        <h1 class="customer-detials-text">Orders</h1>
+                                        <h2><label class="red-text">Active<span>{{active_orders_count|default_if_none:'0'}}</span></label> </h2>
+                                        <p><label>Total<span>{{total_orders_count|default_if_none:'0'}}</span></label></p>
+                                        </div><!--column-right-->
+                                        </div><!--card-innerwrapper-->
+                                    </div><!--order-card-column--></a>
+                                </div><!--order-right-fixed-->
+                            </div>
+                        </div>
+                        <div class="col-md-9 m-mt30 ">
+                            <div class="whitebg orange-border order-card-column">
+                                <h1 class="customer-detials-text">Customer Details</h1>
+                                <div class="row customer-data">
+                                    <div class="col-md-4">
+                                        <div class="row">
+                                            <div class="col-xs-5">Name</div>
+                                            <div class="col-xs-7">: {{client_details.name}}</div>
+
+                                        </div>
+                                        <div class="row c-mt-10">
+                                            <div class="col-xs-5">Contact no</div>
+                                            <div class="col-xs-7">: {{client_details.mobile_number}}</div>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="row ">
+                                            <div class="col-xs-3">Nationality</div>
+                                            <div class="col-xs-7">: {{client_details.nationality}}</div>
+                                        </div>
+                                        <div class="row c-mt-10">
+                                            <div class="col-xs-3">Email</div>
+                                            <div class="col-xs-7">: {{client_details.email}}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3" style="margin-top: -38px;">
+                                        <div class="row">
+                                            <button style="width: 153px !important;" class="view-button">Add Feedback</button>
+                                        </div>
+                                        {% for schedule in order.orderschedules|slice:"1" %}
+                                        {% if forloop.first and schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' or order.order_status == 'ORDER_CLOSED'%}
+                                        <div class="row">
+                                            <button style="width: 153px !important;" class="view-button">Reorder</button>
+                                        </div>
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
+                                        <div class="row">
+                                            <button style="width: 153px !important;" class="view-button">Order Cancel</button>
+                                        </div>
+                                        {% endif %}
+                                        <div class="row">
+                                            <button style="width: 153px !important;" class="view-button">Raise Ticket</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 </div>
 
-                <div class="col-md-2 ml-0 mr-0 m-p-25">
+                <div class="col-md-2 custmer-hide ml-0 mr-0 m-p-25">
                     <div class="row">
                         <!--order-left-stretch-->
                         <div class="order-right-fixed">
@@ -1121,7 +1229,9 @@
                         </div>
                     </div>
                 </div>
+              
             </div>
+           
         </div>
         <!--order-top-wrapper-->
 <!-- Modal Cancel -->

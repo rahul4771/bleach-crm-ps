@@ -809,6 +809,7 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
   float: right;
   right: 0;
   width: 350px;
+  margin-top: 10px;
 }
 
 #quotation_data div{
@@ -933,4 +934,29 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 }
 #invoice_total_amount{
   margin-top: 30px;
+}
+#heading-section{
+  margin-top: 30px;
+  margin-bottom: 15px;
+  width: 800px;
+  float: left;
+  text-align: center;
+}
+#payment-section-invoice{
+  float: left;
+  width: 350px;
+  margin-top: 40px;
+}
+#payment-text{
+  font-size: 22px;
+  color: #616161;
+  font-weight: 300;
+}
+#payment-section-invoice div{
+  margin-top: 10px;
+}
+#payment-amount{
+  font-size: 22px;
+  color: #616161;
+  font-weight: bold;
 }
