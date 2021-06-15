@@ -37,6 +37,7 @@ from customer.models import CustomerBooking
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
 from order.forms import InvestigationForm,PromocodeForm
+from bleachadmin.models import ServiceProductivity,ServicePriceRange
 
 from django.db.models import Count
 
@@ -1872,5 +1873,21 @@ class ResourceManagement(IsAuthenticated,View):
 
 class Productivity(IsAuthenticated,View):
 	def get(self,request):
-		return render(request,'common/productivity/productivity.html',{})
+
+		try:
+			service_types = ServiceType.objects.filter(is_active=True)	
+		except:
+			service_types = None
+
+		try:
+			service_price_ranges = ServicePriceRange.objects.filter(is_active=True)
+		except:
+			service_price_ranges = None
+
+		try:
+			service_productivities = ServiceProductivity.objects.filter(is_active=True)
+		except:
+			service_productivities = None
+
+		return render(request,'common/productivity/productivity.html',{'service_price_ranges':service_price_ranges,'service_productivities':service_productivities,'service_types':service_types})
 
