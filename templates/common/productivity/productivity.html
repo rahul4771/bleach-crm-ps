@@ -38,9 +38,10 @@
                 <div class="white-wrapper">
                     <!--white-wrapper-->
                     <div class="row">
+                        {% for service_type in service_types %}
                         <div class="col-md-6">
                             <div class="productivity-card">
-                              <h2 class="productivity-name"> General Cleaning</h2>
+                              <h2 class="productivity-name"> {{service_type.name}}</h2>
                               <div class="productivity-card-sub">
                                   <div class="productivity-sub-top">
                                       <div class="productivity-sub-top-item-left">
@@ -52,27 +53,61 @@
                                     </div>
                                   </div>
                                   <div class="productivity-card-sub-content">
-                                    <h1 id="id_pro_value_1" >11.23 <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
+                                    <h1 id="id_pro_value_1" >11.5 <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
                                     <input  id="id_pro_1" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
                                  </div>
                               </div>
                               <div class="productivity-tab">
-                                  <button id="normal_button_id_1" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal(1)">Normal</button>
-                                  <button id="special_button_id_1" class="productivity-tab-item " onclick="viewSpecial(1)">Special</button>
+                                  <button id="normal_button_id_{{service_type.id}}" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal({{service_type.id}})">Normal</button>
+                                  <button id="special_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewSpecial({{service_type.id}})">Special</button>
+                                  <button id="veryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVerySpecial({{service_type.id}})">Very Special</button>
                               </div>
-                              <div id="normal_id_1" class="productivity-card-content"> <!--normal-->              
-                                <div class="row productivity-card-items">
+
+                              <div id="normal_id_{{service_type.id}}" class="productivity-card-content"> <!--normal-->
+                              {% for service_price_range in service_price_ranges %}
+                              {% if service_price_range.service_type == service_type %}
+                              {% if not service_price_range.is_newkitchen and not service_price_range.is_highprice_facade and not service_price_range.is_highprice_window and service_price_range.upholstery_type != 'CHAIR' and service_price_range.upholstery_type != 'CURTAIN' %}
+                              <div class="row productivity-card-items">
                                     <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
+                                        {{service_price_range.name}}
                                     </div>
                                     <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
+                                        {{service_price_range.minimum_area|floatformat:'2'}}-{{service_price_range.maximum_area|floatformat:'2'}}
                                     </div>
                                     <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
+                                        {{service_price_range.price|floatformat:'3'}} KD
                                     </div>
                                     <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
+                                        <button onclick="edit_price_range(this);" data-toggle="modal" data-target="#editModal"  class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price}}">
+                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                        </button>
+                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button" data-id="{{service_price_range.id}}">
+                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
+                                        </button>
+                                    </div>
+                                </div>
+                              {% endif %}
+                              {% endif %}
+                              {% endfor %}
+                              </div>
+
+
+                              <div id="special_id_{{service_type.id}}" class="productivity-card-content none-div"> <!--Special-->
+                              {% for service_price_range in service_price_ranges %}
+                              {% if service_price_range.service_type == service_type %}
+                              {% if service_price_range.is_newkitchen or service_price_range.is_highprice_facade or service_price_range.is_highprice_window or service_price_range.upholstery_type == 'CHAIR' %}
+                              <div class="row productivity-card-items">
+                                    <div class="col-md-3 productivity-card-items-1">
+                                        {{service_price_range.name}}
+                                    </div>
+                                    <div class="col-md-3 productivity-card-items-2">
+                                        {{service_price_range.minimum_area|floatformat:'2'}}-{{service_price_range.maximum_area|floatformat:'2'}}
+                                    </div>
+                                    <div class="col-md-3 productivity-card-items-3">
+                                        {{service_price_range.price|floatformat:'3'}} KD
+                                    </div>
+                                    <div class="col-md-3 productivity-card-items-4">
+                                        <button onclick="edit_price_range(this);" data-toggle="modal" data-target="#editModal"  class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price}}">
                                             <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
                                         </button>
                                         <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
@@ -80,149 +115,45 @@
                                         </button>
                                     </div>
                                 </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
+                              {% endif %}
+                              {% endif %}
+                              {% endfor %}
+                              </div>
+
+                              <div id="veryspecial_id_{{service_type.id}}" class="productivity-card-content none-div"> <!-- very Special-->
+                                {% for service_price_range in service_price_ranges %}
+                                {% if service_price_range.service_type == service_type %}
+                                {% if service_price_range.upholstery_type == 'CURTAIN' %}
+                                  <div class="row productivity-card-items">
+                                      <div class="col-md-3 productivity-card-items-1">
+                                          {{service_price_range.name}}
+                                      </div>
+                                      <div class="col-md-3 productivity-card-items-2">
+                                          {{service_price_range.minimum_area|floatformat:'2'}}-{{service_price_range.maximum_area|floatformat:'2'}}
+                                      </div>
+                                      <div class="col-md-3 productivity-card-items-3">
+                                          {{service_price_range.price|floatformat:'3'}} KD
+                                      </div>
+                                      <div class="col-md-3 productivity-card-items-4">
+                                        <button onclick="edit_price_range(this);" data-toggle="modal" data-target="#editModal"  class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price}}">
+                                              <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                          </button>
+                                          <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
+                                              <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
+                                          </button>
+                                      </div>
+                                  </div>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
                                 </div>
 
-                              </div>
-                              <div id="special_id_1" class="productivity-card-content none-div"> <!--Special-->
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-
-                              </div>
                               <div class="addNewPrice">
                                     <button class="border-button" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus-circle" aria-hidden="true"></i> Price Range</button>
                               </div>
                             </div>
                         </div>
+                        {% endfor %}
                         <div class="col-md-6">
                             <div class="productivity-card">
                               <h2 class="productivity-name"> General Cleaning</h2>
@@ -1200,24 +1131,51 @@
                     </div>
                 </div>
             </div>
-            <h2 class="productivity-name"> General Cleaning</h2>
-            <h3 class="productivity-name-type"> Normal</h3>
+            <h2 class="productivity-name" id="edit_service_type_name_id"> </h2>
+            <!-- <h3 class="productivity-name-type"> Normal</h3> -->
+            <input type="hidden" name="action_type" value="edit_price_range">
+            <input type="hidden" name="price_range" id="edit_price_range_id">
+            <input type="hidden" name="service_type" id="edit_service_type_id">
             <div class="row mt-10">
                 <div class="col-md-6 mt-10">
                     <label > Name</label>
-                    <input name="before_cleaning" id="id_name" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    <input name="name" id="edit_name_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
                 </div>
                 <div class="col-md-6 mt-10">
                     <label > Price</label>
-                    <input name="id_price" id="id_before_cleaning" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    <input name="price" id="edit_price_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
                 </div>
                 <div class="col-md-6 mt-10">
                     <label > Minimum Area</label>
-                    <input name="id_minimum" id="id_before_cleaning" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    <input name="minimum_area" id="edit_minimum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
                 </div>
                 <div class="col-md-6 mt-10">
                     <label > Maximum Area</label>
-                    <input name="id_maxium" id="id_before_cleaning" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    <input name="maxium_area" id="edit_maxium_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                </div>
+                <div class="col-md-6 mt-10">
+                    <label > Unit Price</label>
+                    <input name="unit_price" id="edit_unit_price_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                </div>
+                <div class="col-md-6 mt-10 kitchen-checkbox">
+                    <label > New Kitchen</label>
+                    <input name="is_newkitchen" id="edit_is_newkitchen_id" type="checkbox">
+                </div>
+                <div class="col-md-6 mt-10 facade-checkbox">
+                    <label > High Price Facade</label>
+                    <input name="is_highprice_facade" id="edit_is_highprice_facade_id" type="checkbox">
+                </div>
+                <div class="col-md-6 mt-10 window-checkbox">
+                    <label > High Price Window</label>
+                    <input name="is_newkitchen" id="edit_is_highprice_window_id" type="checkbox">
+                </div>
+                <div class="col-md-6 mt-10 upholstery-checkbox">
+                    <label > Upholstery Type</label>
+                    <select name="upholstery_type" id="edit_upholstery_type_id" class="textBox model-text-border">
+                        <option value="SOFA">SOFA</option>
+                        <option value="CHAIR">CHAIR</option>
+                        <option value="CURTAIN">CURTAIN</option>
+                    </select>
                 </div>
 
             </div>
@@ -1297,17 +1255,29 @@
 {% endblock %}
 {% block javascript %}
 <script>
-  function viewSpecial(id) {
+  function viewVerySpecial(id) {
+    document.getElementById("veryspecial_id_"+id).style.display = "block";
     document.getElementById("normal_id_"+id).style.display = "none";
+    document.getElementById("special_id_"+id).style.display = "none";
+    $("#veryspecial_button_id_"+id).addClass("productivity-tab-border");
+    $("#normal_button_id_"+id).removeClass("productivity-tab-border");
+    $("#special_button_id_"+id).removeClass("productivity-tab-border");
+  }
+  function viewSpecial(id) {
     document.getElementById("special_id_"+id).style.display = "block";
+    document.getElementById("normal_id_"+id).style.display = "none";
+    document.getElementById("veryspecial_id_"+id).style.display = "none";
     $("#special_button_id_"+id).addClass("productivity-tab-border");
     $("#normal_button_id_"+id).removeClass("productivity-tab-border");
+    $("#veryspecial_button_id_"+id).removeClass("productivity-tab-border");
   }
   function viewNormal(id) {
     document.getElementById("normal_id_"+id).style.display = "block";
     document.getElementById("special_id_"+id).style.display = "none";
-    $("#special_button_id_"+id).removeClass("productivity-tab-border");
+    document.getElementById("veryspecial_id_"+id).style.display = "none";
     $("#normal_button_id_"+id).addClass("productivity-tab-border");
+    $("#special_button_id_"+id).removeClass("productivity-tab-border");
+    $("#veryspecial_button_id_"+id).removeClass("productivity-tab-border");
   }
   function editPro(id) {
     document.getElementById("id_edit_"+id).style.display = "none";
@@ -1326,5 +1296,84 @@
     document.getElementById("id_pro_"+id).style.display = "none";
   }
 
+
+  function edit_price_range(this)
+  {
+      alert("hiiiiiiiii")
+  $('#edit_price_range_id').val($(this).data('id'));
+  $('#edit_name_id').val($(this).data('name'));
+  $('#edit_maximum_area_id').val($(this).data('maximum_area'));
+  $('#edit_minimum_area_id').val($(this).data('minimum_area'));
+  $('#edit_price_id').val($(this).data('price'));
+  $('#edit_unit_price_id').val($(this).data('unit_price'));
+
+  $("#edit_service_type_name_id").text($(this).data('service_type_name'));
+  $("#edit_service_type_id").val($(this).data('service_type_id'));
+
+  servicename = $(this).data('service_type_name');
+  if(servicename=='Facade Cleaning'){
+      $('.facade-checkbox').show()
+      $('.window-checkbox').hide()
+      $('.upholstery-checkbox').hide()
+      $('.kitchen-checkbox').hide()
+
+      if($(this).data('is_highprice_facade') == 'True')
+      {
+        $('#edit_is_highprice_facade_id').attr('checked',true)
+      }
+      else
+      {
+       $('#edit_is_highprice_facade_id').attr('checked',false) 
+      }
+    }
+    else if(servicename=='Window Cleaning'){
+      $('.window-checkbox').show()
+      $('.facade-checkbox').hide()
+     
+      $('.upholstery-checkbox').hide()
+      $('.kitchen-checkbox').hide()
+    
+      if($(this).data('is_highprice_window') == 'True')
+      {
+      $('#edit_is_highprice_window_id').attr('checked',true)
+      }
+      else
+      {
+        $('#edit_is_highprice_window_id').attr('checked',false)
+      }
+    }
+    else if(servicename=='Upholstery Cleaning'){
+      $('.upholstery-checkbox').show()
+      $('.facade-checkbox').hide()
+      $('.window-checkbox').hide()
+    
+      $('.kitchen-checkbox').hide()
+    
+      $('#edit_upholstery_type_id').val($(this).data('upholstery_type'));
+    }
+    else if(servicename=='Kitchen Cleaning'){
+      $('.kitchen-checkbox').show()
+      $('.facade-checkbox').hide()
+      $('.window-checkbox').hide()
+      $('.upholstery-checkbox').hide()
+ 
+      if($(this).data('is_newkitchen')=='True')
+      {
+     
+        $('#edit_is_newkitchen_id').attr('checked',true)
+      }
+      else
+      {
+        $('#edit_is_newkitchen_id').attr('checked',false) 
+      }
+    }
+    else{
+      $('.facade-checkbox').hide()
+      $('.window-checkbox').hide()
+      $('.upholstery-checkbox').hide()
+      $('.kitchen-checkbox').hide()
+    }
+
+}
 </script>
 {% endblock %}
