@@ -1387,3 +1387,25 @@ select.minimal:focus {
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
+
+.client-address-text{
+  font-size: 24px;
+  color: #434343;
+  font-weight: 100;
+  text-align: center;
+
+}
+.client-address-items{
+  width: 100%;
+  margin-top: 10px;
+  text-align: left;
+  font-size: 16px;
+  color: #434343;
+  font-weight: 100;
+  text-align: justify;
+}
+.cd-client-name{
+  color: #434343;
+  font-size: 28px;
+  text-align: center;
+}
