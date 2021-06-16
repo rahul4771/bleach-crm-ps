@@ -102,8 +102,8 @@ for (var j=0;j<resourceList.length;j++){
             
         }
         if(DateTime.local(currentYear, currentMonth, i).weekdayShort.substring(0,1)=='F'){
-            $('#lv-day-2'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('lv-weekend');
-            $('#lv-day-2'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('is-weekend');
+            $('#lv-day-2-'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('lv-weekend');
+            $('#lv-day-2-'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('is-weekend');
 
         }
       
@@ -153,11 +153,11 @@ function reCalc(){
 for (var k=1;k<=noOfDays;k++){
     var day=DateTime.local(currentYear, currentMonth, k).weekday-1;
     if(DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)=='F'){
-        $('#lv-head-2'+k).after('<th class="noBorder day-head" id="lv-head-2'+(k+1)+'"> <div class="lv-day lv-friday">'+DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)+'</div></th>');
+        $('#lv-head-2-'+k).after('<th class="noBorder day-head" id="lv-head-2-'+(k+1)+'"> <div class="lv-day lv-friday">'+DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)+'</div></th>');
 
     }
    else{
-    $('#lv-head-2'+k).after('<th class="noBorder day-head" id="lv-head-2'+(k+1)+'"> <div class="lv-day">'+DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)+'</div></th>');
+    $('#lv-head-2-'+k).after('<th class="noBorder day-head" id="lv-head-2-'+(k+1)+'"> <div class="lv-day">'+DateTime.local(currentYear, currentMonth, k).weekdayShort.substring(0,1)+'</div></th>');
 
    }
   
@@ -196,8 +196,8 @@ for (var j=0;j<resourceList.length;j++){
            
         }
         if(DateTime.local(currentYear, currentMonth, i).weekdayShort.substring(0,1)=='F'){
-            $('#lv-day-2'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('lv-weekend');
-            $('#lv-day-2'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('is-weekend');
+            $('#lv-day-2-'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('lv-weekend');
+            $('#lv-day-2-'+j+'-'+i+'-'+currentMonth+'-'+currentYear).addClass('is-weekend');
 
         }
       
@@ -340,61 +340,6 @@ function openForm(){
 function closeForm(){
   
     $(".lv-result-box").hide();
-  
-}
-function applyLeave(){
-    resourceLeave=[];
-    for(var i=0;i<selectedDates.length;i++){
-        for (var j=0;j<selectedDates[i].dates.length;j++){
-            var leaveSelected={};
-            var leaveData={
-                type:$("#lv-result-content").text(),
-                date:selectedDates[i].dates[j]
-            }
-            leaveSelected['leave_type']=$("#lv-result-content").text().toUpperCase();
-            var lvmonth=selectedDates[i].dates[j].split('-')[1];
-            if(lvmonth.length<2){
-                lvmonth='0'+lvmonth;
-            }
-            var lvyear=selectedDates[i].dates[j].split('-')[2];
-            var lvday=selectedDates[i].dates[j].split('-')[0];
-            if(lvday.length<2){
-                lvday='0'+lvday;
-            }
-            leaveSelected['leave_date']=lvyear+'-'+lvmonth+'-'+lvday;
-            leaveSelected['staff']=resourceList[i].id;
-            resourceLeave.push(leaveSelected);
-            resourceList[i].leave.push(leaveData);
-        }
-    }
-
-    /* add leave */
-
-    axios.post(url+'/api/leave-scheduler/',resourceLeave)
-    .then(function (response) {
-      // handle success
-   
-      resourceLeave=[];
-      selectedDates=[];
-      resourceList=[];
-      reinitVal();
-      getUsersShift();
-   
-     
-    
-   // getInitDatas();
-    })
-    .catch(function (error) {
-      // handle error
-      console.log(error);
-    })
-    
-   
-    selectedDates=[];
- 
-    $(".lv-result-box").hide();
-    dateCounter=0;
-      $('#select-counter').text(dateCounter);
   
 }
 function openConf(){
@@ -659,11 +604,16 @@ function shiftSearch(staffId){
         }
     }
 }
-// function closeCancelModal(){
-//     $('#cancelModal').hide();
-//     closeConf();
+function closeLeaveModal(){
+    $('#leaveModal').hide();
+    closeConf();
 
-// }
+}
+ /*function closeCancelModal(){
+     $('#cancelModal').hide();
+     closeConf();
+
+ }*/
 
 // function cancelLeave(){
     
