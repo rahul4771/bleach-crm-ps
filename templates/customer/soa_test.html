@@ -69,22 +69,22 @@
       <table id="soa_table">
         <tr>
           <th style="text-align: center;">Date</th>
-          <th style="width: 14%; text-align: center;">Order Ref</th>
+          <th style="width: 14%; text-align: center;">Reference</th>
           <th style="text-align: center;">Details</th>
-          <th style="text-align: center;">Debit</th>
+          <th style="text-align: center;">Order Amount</th>
           <th style="text-align: center;">Credit</th>
+          <th style="text-align: center;">Debit</th>
           <th style="text-align: center;">Balance</th>
-          <th style="text-align: center;">Due Inv</th>
         </tr>
         {% for order in orders %}
         <tr>
-          <td>{{order.created|date:'d-m-Y'}}</td>
-          <td>{{order.order_no}}</td>
-          <td>Cleaning Service</td>
-          <td style="text-align: right;">{{order.total_amount|floatformat:3}}</td>
-          <td style="text-align: right;">{{order.amount_paid|floatformat:3}}</td>
+          <td>{{order.date|date:'d-m-Y'}}</td>
+          <td>{{order.invoice_no}}</td>
+          <td>{{order.details}}</td>
+          <td style="text-align: right;">{{order.amount|floatformat:3}}</td>
+          <td style="text-align: right;">{{order.credit|floatformat:3}}</td>
 
-          <td style="text-align: right;">{{order.remining_amount|floatformat:3}}</td>
+          <td style="text-align: right;">{{order.debit|floatformat:3}}</td>
           <td style="text-align: right;">{% if order.amount_paid == 0 %}{{order.remining_amount|floatformat:3}}{% else %}--{% endif %}</td>
         </tr>
         {% endfor %}
