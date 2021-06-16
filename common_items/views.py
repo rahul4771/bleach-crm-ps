@@ -412,7 +412,7 @@ class ClientOrders(IsAuthenticated,View):
 		#COUNT
 		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
 
-		return render(request,"common/client/client-page-test.html",{"client_details":client_details,"orders":orders,"active_orders_count":active_orders_count,})
+		return render(request,"common/client/client-page.html",{"client_details":client_details,"orders":orders,"active_orders_count":active_orders_count,})
 
 class TicketDetails(IsAuthenticated,View):
 	def get(self,request):
