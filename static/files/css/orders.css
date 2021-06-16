@@ -1247,3 +1247,21 @@ select.minimal:focus {
     margin-right: 0px;
   }
 }
+
+
+.c-content-slider h3 {
+  margin: 0;
+  padding: 70px 0;
+}
+
+.c-ul{
+  list-style: none outside none;
+    padding-left: 0;
+        margin: 0;
+}
+    .c-demo .c-item{
+        margin-bottom: 60px;
+    }
+.c-content-slider li{
+   
+}
